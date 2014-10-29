@@ -1,0 +1,13 @@
+/\*
+  \$Id*
+
+  Copyright \(C\) \d\d\d\d Virginia Tech*
+  All rights reserved\.
+
+  SEE LICENSE FOR MORE INFORMATION
+
+  Author:  *
+  Email:   *\@*\.*
+  Version: \$Revision*
+  Updated: \$Date*
+\*/
