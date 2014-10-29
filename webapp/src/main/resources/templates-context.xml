@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
+
+  <bean id="searchExecutor"
+        class="org.ldaptive.concurrent.AggregatePooledSearchExecutor"
+        p:baseDn="${baseDn}">
+    <constructor-arg index="0">
+      <bean class="java.util.concurrent.Executors"
+            factory-method="newCachedThreadPool"/>
+    </constructor-arg>
+  </bean>
+
+  <bean id="connectionFactory"
+        class="org.ldaptive.pool.PooledConnectionFactory">
+    <constructor-arg index="0">
+      <bean class="org.ldaptive.pool.BlockingConnectionPool"
+            init-method="initialize"
+            p:blockWaitTime="5000">
+        <constructor-arg index="0">
+          <bean class="org.ldaptive.pool.PoolConfig"
+                p:minPoolSize="5"
+                p:maxPoolSize="10"
+                p:validatePeriodically="true"
+          />
+        </constructor-arg>
+        <constructor-arg index="1">
+          <bean class="org.ldaptive.DefaultConnectionFactory">
+            <constructor-arg index="0">
+              <bean class="org.ldaptive.ConnectionConfig"
+                    p:ldapUrl="${ldapUrl}"
+              />
+            </constructor-arg>
+          </bean>
+        </constructor-arg>
+        <property name="validator">
+          <bean class="org.ldaptive.pool.SearchValidator"/>
+        </property>
+      </bean>
+    </constructor-arg>
+  </bean>
+
+  <!-- SEARCH CONFIG -->
+
+  <!-- searches are defined in the following section
+       A bean is defined to handle a specific number of query terms.
+       When a query arrives the searches are executed that match the number of
+       terms entered.
+       The following syntax is used to match query terms:
+       {term1} == the first query term entered
+       {term2} == the second query term entered, and so forth
+       {initial1} == the first letter of the first query term entered
+       in this manner you can construct search filters such as:
+       (givenName={term1})(middleName={initial2}*)(sn={term3}) -->
+
+  <!-- ONE TERM QUERIES -->
+  <bean id="oneTermSearch" class="org.ldaptive.templates.SearchTemplates">
+    <constructor-arg>
+      <list>
+        <!-- phone number search -->
+        <!-- note that openldap removes dashes and spaces for all phone number queries -->
+        <value>(telephoneNumber={term1})</value>
+        <value>(telephoneNumber=*{term1})</value>
+
+        <!-- name search -->
+        <value>(|(givenName={term1})(sn={term1}))</value>
+        <value>(|(givenName={term1}*)(sn={term1}*))</value>
+        <value>(|(givenName=*{term1}*)(sn=*{term1}*))</value>
+
+        <!-- email search -->
+        <value>(mail={term1})</value>
+        <value>(mail={term1}*)</value>
+        <value>(mail=*{term1}*)</value>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <!-- TWO TERM QUERIES -->
+  <bean id="twoTermSearch" class="org.ldaptive.templates.SearchTemplates">
+    <constructor-arg>
+      <list>
+        <!-- name search -->
+        <value>(&amp;(givenName={term1})(sn={term2}))</value>
+        <value>(cn={term1} {term2})</value>
+        <value>(&amp;(givenName={term1}*)(sn={term2}*))</value>
+        <value>(cn={term1}* {term2}*)</value>
+        <value>(&amp;(givenName=*{term1}*)(sn=*{term2}*))</value>
+        <value>(cn=*{term1}* *{term2}*)</value>
+
+        <!-- initial search -->
+        <value>(|(&amp;(givenName={initial1}*)(sn={term2}))(&amp;(middleName={initial1}*)(sn={term2})))</value>
+
+        <!-- last name search -->
+        <value>(sn={term2})</value>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <!-- THREE TERM QUERIES -->
+  <bean id="threeTermSearch" class="org.ldaptive.templates.SearchTemplates">
+    <constructor-arg>
+      <list>
+        <!-- name search -->
+        <value>(|(&amp;(givenName={term1})(sn={term3}))(&amp;(givenName={term2})(sn={term3})))</value>
+        <value>(|(cn={term1} {term2} {term3})(cn={term2} {term1} {term3}))</value>
+        <value>(|(&amp;(givenName={term1}*)(sn={term3}*))(&amp;(givenName={term2}*)(sn={term3}*)))</value>
+        <value>(|(cn={term1}* {term2}* {term3}*)(cn={term2}* {term1}* {term3}*))</value>
+        <value>(|(&amp;(givenName=*{term1}*)(sn=*{term3}*))(&amp;(givenName=*{term2}*)(sn=*{term3}*)))</value>
+        <value>(|(cn=*{term1}* *{term2}* *{term3}*)(cn=*{term2}* *{term1}* *{term3}*))</value>
+
+        <!-- initial search -->
+        <value>(|(&amp;(givenName={term1})(middleName={initial2}*)(sn={term3}))(&amp;(givenName={term2})(middleName={initial1}*)(sn={term3})))</value>
+        <value>(|(&amp;p(givenName={initial1}*)(middlename={initial2}*)(sn={term3}))(&amp;(givenName={initial2}*)(middleName={initial1}*)(sn={term3})))</value>
+
+        <!-- last name search -->
+        <value>(sn={term3})</value>
+      </list>
+    </constructor-arg>
+  </bean>
+
+</beans>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="ldaptive-templates"
+         version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+  <display-name>Templates Search</display-name>
+  <description>
+    Templates Search is a web application which accepts search queries and returns best fit information from a LDAP.
+  </description>
+
+  <!-- Search servlet -->
+  <servlet>
+    <servlet-name>JsonSearch</servlet-name>
+    <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>searchExecutorClass</param-name>
+      <param-value>org.ldaptive.servlets.JsonServletSearchTemplatesExecutor</param-value>
+    </init-param>
+    <!-- Classpath location of the spring context -->
+    <init-param>
+      <param-name>springContextPath</param-name>
+      <param-value>/templates-context.xml</param-value>
+    </init-param>
+    <!-- Ignore pattern -->
+    <init-param>
+      <param-name>ignorePattern</param-name>
+      <param-value>^\w{1,2}$</param-value>
+    </init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>JsonSearch</servlet-name>
+    <url-pattern>/Search</url-pattern>
+  </servlet-mapping>
+
+</web-app>

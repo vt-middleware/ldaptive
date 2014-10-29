@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" " http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd ">
+<html xmlns=" http://www.w3.org/1999/xhtml ">
+<head>
+  <title>Ldaptive</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <link rel="stylesheet" type="text/css" media="screen" href="css/templates.css" />
+  <script src="js/jquery-1.8.2.min.js"></script>
+  <script type="text/javascript">
+    var size = 10; // change this to control page size
+    var from = null;
+    var to = null;
+    var cache = null;
+    $(document).ready(function(){
+      $('#search').keyup(function() {
+        var val = $(this).val();
+        if (val != '') {
+          $('#query').val(val);
+          $.getJSON('Search?query='+encodeURIComponent(val), function(data) {
+            if ($('#query').val() == val) {
+              cache = data;
+              from = 1;
+              to = size;
+              showResults(from, to);
+            }
+          });
+        } else {
+          $('#results').html("<tbody><tr><td>Start typing to search</td></tr></tbody>");
+        }
+      });
+      //focus first input form field on page
+      $("input:visible:enabled:first").focus();
+    });
+    function showResults(from, to) {
+      if (cache != null && cache.length > 0) {
+        var x = from - 1;
+        var y = to < cache.length ? to : cache.length;
+        var html = "";
+        $.each(cache, function(index, value) {
+          if (index >= x && index < y) {
+            var name = !value.displayName ? "" : value.displayName[0];
+            var title = !value.title ? "" : value.title[0];
+            var address = !value.postalAddress ? "" : value.postalAddress[0];
+            var mail = !value.mail ? "" : value.mail[0];
+            var phone = !value.telephoneNumber ? "" : value.telephoneNumber[0];
+
+            html += "<tr>";
+            html += "<td>"+name+"<br/><em>"+title+"</em></td>";
+            html += "<td>"+address.replace(/\$/g,"<br/>")+"</td>";
+            html += "<td><a href=\"mailto:"+mail+"\">"+mail+"</a><br/>"+phone.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3')+"</td>";
+            html += "</tr>";
+          }
+        });
+        var out = "<tbody><tr>";
+        out += "<td>Results "+(x+1)+" - "+y+" of "+cache.length+"</td>";
+        out += "<td>&nbsp;</td>";
+        out += "<td align=\"right\">";
+        if (x - size >= 0) {
+          out += "<a id=\"prev\" href=\"#\" onClick=\"prev();return false;\">Prev</a>&nbsp;&nbsp;&nbsp;";
+        } else {
+          out += "<a id=\"prev\" href=\"#\" onClick=\"prev();return false;\" style=\"display:none\">Prev</a>&nbsp;&nbsp;&nbsp;";
+        }
+        if (y < cache.length) {
+          out += "<a id=\"next\" href=\"#\" onClick=\"next();return false;\">Next</a>";
+        } else {
+          out += "<a id=\"next\" href=\"#\" onClick=\"next();return false;\" style=\"display:none\">Next</a>";
+        }
+        out += "</td></tr>"+html+"</tbody>";
+        $('#results').html(out);
+      } else {
+        $('#results').html("<tbody><tr><td>No results found</td></tr></tbody>");
+      }
+    }
+    function prev() {
+      from -= size;
+      to -= size;
+      showResults(from, to);
+    }
+    function next() {
+      from += size;
+      to += size;
+      showResults(from, to);
+    }
+  </script>
+</head>
+<body>
+<div id="page-wrapper">
+  <div id="page-header" align="center">
+    <a href="http://www.ldaptive.org"><img src="images/logo.png" alt="Ldaptive Logo" border="0"/></a>
+  </div>
+  <div id="content" align="center">
+    <form onSubmit="return false;">
+      <input id="search" type="text"/>
+      <input id="query" type="hidden"/>
+    </form>
+    <br/><br/>
+    <div>
+      <table id="results" cellspacing="0" cellpadding="0" border="0" width="100%"><tbody/></table>
+    </div>
+  </div>
+  <div id="page-footer" align="right">
+    <p>&copy; 2013 <a href="http://www.vt.edu" target="_blank">Virginia Polytechnic Institute and State University</a></p>
+  </div>
+</div>
+</body>
+</html>
