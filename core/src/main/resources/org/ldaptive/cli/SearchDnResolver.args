@@ -1,0 +1,8 @@
+allowMultipleDns:whether finding multiple DNs should throw an exception (true|false)
+baseDn:base dn
+connectionFactory:fully qualified class name that implements org.ldaptive.ConnectionFactory
+derefAliases:how to handle aliases (NEVER|SEARCHING|FINDING|ALWAYS)
+followReferrals:how to handle referrals (true|false)
+subtreeSearch:whether to search for the user using a subtree search (true|false)
+userFilter:LDAP filter to search for the user
+userFilterParameters:LDAP filter parameters to apply to the userFilter

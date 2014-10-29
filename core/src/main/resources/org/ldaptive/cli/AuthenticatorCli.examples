@@ -1,0 +1,14 @@
+- Authenticate a user and return their ldap entry
+
+   ldapauth -ldapUrl ldap://directory.ldaptive.org -baseDn dc=ldaptive,dc=org \
+            -useStartTLS true -userFilter uupid={user}
+
+- Authenticate a user and return their mail attribute in dsmlv1 format
+
+   ldapauth -ldapUrl ldap://directory.ldaptive.org -baseDn dc=ldaptive,dc=org \
+            -useStartTLS true -dsmlv1 \
+            -userFilter uupid={user} -returnAttributes mail
+
+- Display all the command line options available 
+
+   ldapauth -help

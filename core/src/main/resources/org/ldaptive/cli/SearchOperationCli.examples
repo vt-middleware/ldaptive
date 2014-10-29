@@ -1,0 +1,19 @@
+- Search an ldap directory returning the mail attribute in ldif format
+
+   ldapsearch -ldapUrl ldap://directory.ldaptive.org -baseDn dc=ldaptive,dc=org \
+              -searchFilter uid=dfisher -returnAttributes mail
+
+- Search a ldap directory returning all attributes in dsmlv1 format
+
+   ldapsearch -ldapUrl ldap://directory.ldaptive.org -baseDn dc=ldaptive,dc=org \
+              -dsmlv1 -searchFilter uid=dfisher
+
+- Search a ldap directory as an authenticated user returning all attributes in dsmlv1 format
+
+   ldapsearch -ldapUrl ldap://directory.ldaptive.org -baseDn dc=ldaptive,dc=org \
+              -bindDn cn=manager,ou=people,dc=ldaptive,dc=org -useStartTLS true \
+              -dsmlv1 -searchFilter uid=dfisher
+
+- Display all the command line options available 
+
+   ldapsearch -help

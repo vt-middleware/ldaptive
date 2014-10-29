@@ -1,0 +1,5 @@
+credentialConfig:fully qualified class name that implements org.ldaptive.ssl.CredentialConfig
+enabledCipherSuites:comma delimited list of SSL cipher suites to use
+enabledProtocols:comma delimited list of SSL protocol versions to use
+handshakeCompletedListeners:fully qualified class name(s) that implements javax.net.ssl.HandshakeCompletedListener
+trustManagers:fully qualified class name(s) that implements javax.net.ssl.TrustManager

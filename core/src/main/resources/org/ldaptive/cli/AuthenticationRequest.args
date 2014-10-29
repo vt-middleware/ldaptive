@@ -1,0 +1,3 @@
+credential:to authenticate user with
+returnAttributes:comma delimited list of attributes to return from the search
+user:to authenticate

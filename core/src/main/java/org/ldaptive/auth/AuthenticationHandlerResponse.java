@@ -1,0 +1,121 @@
+/*
+  $Id$
+
+  Copyright (C) 2003-2014 Virginia Tech.
+  All rights reserved.
+
+  SEE LICENSE FOR MORE INFORMATION
+
+  Author:  Middleware Services
+  Email:   middleware@vt.edu
+  Version: $Revision$
+  Updated: $Date$
+*/
+package org.ldaptive.auth;
+
+import java.util.Arrays;
+import org.ldaptive.Connection;
+import org.ldaptive.Response;
+import org.ldaptive.ResultCode;
+import org.ldaptive.control.ResponseControl;
+
+/**
+ * Response object for authentication handlers.
+ *
+ * @author  Middleware Services
+ * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
+ */
+public class AuthenticationHandlerResponse extends Response<Boolean>
+{
+
+  /** Connection that authentication occurred on. */
+  private final Connection connection;
+
+
+  /**
+   * Creates a new authentication response.
+   *
+   * @param  success  authentication result
+   * @param  rc  result code from the underlying ldap operation
+   * @param  conn  connection the authentication occurred on
+   */
+  public AuthenticationHandlerResponse(
+    final boolean success,
+    final ResultCode rc,
+    final Connection conn)
+  {
+    super(success, rc);
+    connection = conn;
+  }
+
+
+  /**
+   * Creates a new authentication response.
+   *
+   * @param  success  authentication result
+   * @param  rc  result code from the underlying ldap operation
+   * @param  conn  connection the authentication occurred on
+   * @param  msg  authentication message
+   */
+  public AuthenticationHandlerResponse(
+    final boolean success,
+    final ResultCode rc,
+    final Connection conn,
+    final String msg)
+  {
+    super(success, rc, msg, null, null, null, -1);
+    connection = conn;
+  }
+
+
+  /**
+   * Creates a new ldap response.
+   *
+   * @param  success  authentication result
+   * @param  rc  result code from the underlying ldap operation
+   * @param  conn  connection the authentication occurred on
+   * @param  msg  authentication message
+   * @param  controls  response controls from the underlying ldap operation
+   * @param  msgId  message id from the underlying ldap operation
+   */
+  public AuthenticationHandlerResponse(
+    final boolean success,
+    final ResultCode rc,
+    final Connection conn,
+    final String msg,
+    final ResponseControl[] controls,
+    final int msgId)
+  {
+    super(success, rc, msg, null, controls, null, msgId);
+    connection = conn;
+  }
+
+
+  /**
+   * Returns the connection that the ldap operation occurred on.
+   *
+   * @return  connection
+   */
+  public Connection getConnection()
+  {
+    return connection;
+  }
+
+
+  /** {@inheritDoc} */
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::connection=%s, result=%s, resultCode=%s, message=%s, " +
+        "controls=%s]",
+        getClass().getName(),
+        hashCode(),
+        connection,
+        getResult(),
+        getResultCode(),
+        getMessage(),
+        Arrays.toString(getControls()));
+  }
+}

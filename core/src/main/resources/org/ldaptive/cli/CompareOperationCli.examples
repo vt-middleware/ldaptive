@@ -1,0 +1,7 @@
+- Compare an attribute on an entry from an ldap directory
+   ldapcompare -ldapUrl ldap://directory.ldaptive.org \
+               -dn uid=dfisher,ou=people,dc=ldaptive,dc=org -attribute uid:dfisher
+
+- Display all the command line options available 
+
+   ldapcompare -help

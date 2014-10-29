@@ -1,0 +1,7 @@
+- Delete an entry from an ldap directory
+   ldapdelete -ldapUrl ldap://directory.ldaptive.org \
+              -dn uid=dfisher,ou=people,dc=ldaptive,dc=org
+
+- Display all the command line options available 
+
+   ldapdelete -help
