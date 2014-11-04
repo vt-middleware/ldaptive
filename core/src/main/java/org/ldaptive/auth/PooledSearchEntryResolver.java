@@ -52,24 +52,6 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
   }
 
 
-  /**
-   * Creates a new pooled search entry resolver.
-   *
-   * @param  cf  connection factory
-   * @param  attrs  to return
-   *
-   * @deprecated  return attributes are provided in the authentication criteria
-   */
-  @Deprecated
-  public PooledSearchEntryResolver(
-    final PooledConnectionFactory cf,
-    final String... attrs)
-  {
-    setConnectionFactory(cf);
-    setReturnAttributes(attrs);
-  }
-
-
   /** {@inheritDoc} */
   @Override
   public PooledConnectionFactory getConnectionFactory()

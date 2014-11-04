@@ -328,20 +328,6 @@ public class NotificationClient
 
 
     /**
-     * Returns whether this item represents a search entry.
-     *
-     * @return  whether this item represents a search entry
-     *
-     * @deprecated  use {@link #isEntry()} instead
-     */
-    @Deprecated
-    public boolean isSearchEntry()
-    {
-      return searchEntry != null;
-    }
-
-
-    /**
      * Returns the search entry contained in this item or null if this item does
      * not contain a search entry.
      *

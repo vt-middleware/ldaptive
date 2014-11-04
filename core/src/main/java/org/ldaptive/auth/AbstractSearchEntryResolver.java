@@ -59,10 +59,6 @@ public abstract class AbstractSearchEntryResolver
   /** Whether to follow referrals. */
   private boolean followReferrals;
 
-  /** @deprecated  User attributes to return. */
-  @Deprecated
-  private String[] retAttrs;
-
   /** Ldap entry handlers. */
   private SearchEntryHandler[] entryHandlers;
 
@@ -236,34 +232,6 @@ public abstract class AbstractSearchEntryResolver
 
 
   /**
-   * Returns the return attributes.
-   *
-   * @return  attributes to return
-   *
-   * @deprecated  return attributes retrieved from the authentication request
-   */
-  @Deprecated
-  public String[] getReturnAttributes()
-  {
-    return retAttrs;
-  }
-
-
-  /**
-   * Sets the return attributes.
-   *
-   * @param  attrs  to return
-   *
-   * @deprecated  return attributes retrieved from the authentication request
-   */
-  @Deprecated
-  public void setReturnAttributes(final String... attrs)
-  {
-    retAttrs = attrs;
-  }
-
-
-  /**
    * Returns the search entry handlers.
    *
    * @return  search entry handlers
@@ -327,46 +295,6 @@ public abstract class AbstractSearchEntryResolver
       logger.error("Invalid userFilter, cannot be null or empty.");
     }
     return filter;
-  }
-
-
-  /**
-   * Returns a search request for the supplied authentication criteria. If no
-   * {@link #userFilter} is defined then an object level search on the
-   * authentication criteria DN is returned. Otherwise the {@link #userFilter},
-   * {@link #baseDn} and {@link #subtreeSearch} are used to create the search
-   * request.
-   *
-   * @param  ac  authentication criteria containing a DN
-   * @param  returnAttributes  to request
-   *
-   * @return  search request
-   *
-   * @deprecated  use {@link #createSearchRequest(AuthenticationCriteria)}
-   */
-  @Deprecated
-  protected SearchRequest createSearchRequest(
-    final AuthenticationCriteria ac,
-    final String[] returnAttributes)
-  {
-    SearchRequest request;
-    if (userFilter != null) {
-      request = new SearchRequest(baseDn, createSearchFilter(ac));
-      request.setReturnAttributes(returnAttributes);
-      if (subtreeSearch) {
-        request.setSearchScope(SearchScope.SUBTREE);
-      } else {
-        request.setSearchScope(SearchScope.ONELEVEL);
-      }
-    } else {
-      request = SearchRequest.newObjectScopeSearchRequest(
-        ac.getDn(),
-        returnAttributes);
-    }
-    request.setDerefAliases(derefAliases);
-    request.setFollowReferrals(followReferrals);
-    request.setSearchEntryHandlers(entryHandlers);
-    return request;
   }
 
 

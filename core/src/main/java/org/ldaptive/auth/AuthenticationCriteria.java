@@ -95,21 +95,6 @@ public class AuthenticationCriteria
 
 
   /**
-   * Sets the credential.
-   *
-   * @param  c  to set credential
-   *
-   * @deprecated  use {@link #setAuthenticationRequest(AuthenticationRequest)}
-   * instead
-   */
-  @Deprecated
-  public void setCredential(final Credential c)
-  {
-    authenticationRequest.setCredential(c);
-  }
-
-
-  /**
    * Returns the authentication request.
    *
    * @return  authentication request

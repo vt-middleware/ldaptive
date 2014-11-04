@@ -88,34 +88,6 @@ public class PasswordModifyRequest extends AbstractRequest
 
 
   /**
-   * Returns the DN to modify.
-   *
-   * @return  DN
-   *
-   * @deprecated  use {@link #getUserIdentity()}
-   */
-  @Deprecated
-  public String getDn()
-  {
-    return userIdentity;
-  }
-
-
-  /**
-   * Sets the DN to modify.
-   *
-   * @param  dn  to modify
-   *
-   * @deprecated  use {@link #setUserIdentity(String)}
-   */
-  @Deprecated
-  public void setDn(final String dn)
-  {
-    userIdentity = dn;
-  }
-
-
-  /**
    * Returns the user to modify.
    *
    * @return  user identity

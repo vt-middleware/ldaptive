@@ -56,9 +56,6 @@ public class SyncReplClient
   /** Controls which mode the sync repl control should use. */
   private final boolean refreshAndPersist;
 
-  /** Cookie manager used by the deprecated constructor. */
-  private final CookieManager cookieManager;
-
 
   /**
    * Creates a new sync repl client.
@@ -70,28 +67,6 @@ public class SyncReplClient
   {
     connection = conn;
     refreshAndPersist = persist;
-    cookieManager = null;
-  }
-
-
-  /**
-   * Creates a new sync repl client.
-   *
-   * @param  conn  to execute the async search operation on
-   * @param  persist  whether to refresh and persist or just refresh
-   * @param  cookie  optional sync repl cookie
-   *
-   * @deprecated  use {@link #SyncReplClient(Connection, boolean)} instead
-   */
-  @Deprecated
-  public SyncReplClient(
-    final Connection conn,
-    final boolean persist,
-    final byte[] cookie)
-  {
-    connection = conn;
-    refreshAndPersist = persist;
-    cookieManager = new DefaultCookieManager(cookie);
   }
 
 
@@ -108,9 +83,7 @@ public class SyncReplClient
   public BlockingQueue<SyncReplItem> execute(final SearchRequest request)
     throws LdapException
   {
-    final CookieManager manager = cookieManager != null
-      ? cookieManager : new DefaultCookieManager();
-    return execute(request, manager, Integer.MAX_VALUE);
+    return execute(request, new DefaultCookieManager(), Integer.MAX_VALUE);
   }
 
 

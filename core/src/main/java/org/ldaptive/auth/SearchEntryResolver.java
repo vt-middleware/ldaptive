@@ -46,41 +46,11 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   /**
    * Creates a new search entry resolver.
    *
-   * @param  attrs  to return
-   *
-   * @deprecated  return attributes are provided in the authentication criteria
-   */
-  @Deprecated
-  public SearchEntryResolver(final String... attrs)
-  {
-    setReturnAttributes(attrs);
-  }
-
-
-  /**
-   * Creates a new search entry resolver.
-   *
    * @param  cf  connection factory
    */
   public SearchEntryResolver(final ConnectionFactory cf)
   {
     setConnectionFactory(cf);
-  }
-
-
-  /**
-   * Creates a new search entry resolver.
-   *
-   * @param  cf  connection factory
-   * @param  attrs  to return
-   *
-   * @deprecated  return attributes are provided in the authentication criteria
-   */
-  @Deprecated
-  public SearchEntryResolver(final ConnectionFactory cf, final String... attrs)
-  {
-    setConnectionFactory(cf);
-    setReturnAttributes(attrs);
   }
 
 
