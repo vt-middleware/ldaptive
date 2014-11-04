@@ -107,7 +107,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       search(
         factory,
         null,
-        (String[]) null,
+        null,
         (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
@@ -132,7 +132,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       search(
         factory,
         new SearchFilter(filter),
-        (String[]) null,
+        null,
         (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
@@ -157,7 +157,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       search(
         factory,
         filter,
-        (String[]) null,
+        null,
         (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
@@ -236,7 +236,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     final org.ldaptive.handler.SearchEntryHandler... handlers)
     throws LdapException
   {
-    final BlockingQueue<SearchItem> queue = new LinkedBlockingQueue<SearchItem>(
+    final BlockingQueue<SearchItem> queue = new LinkedBlockingQueue<>(
       queueCapacity);
 
     final SearchRequest sr = newSearchRequest(this);
@@ -382,7 +382,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       throws LdapException
     {
       insert(new SearchItem(entry));
-      return new HandlerResult<SearchEntry>(null);
+      return new HandlerResult<>(null);
     }
 
 
@@ -418,7 +418,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       throws LdapException
     {
       insert(new SearchItem(reference));
-      return new HandlerResult<SearchReference>(null);
+      return new HandlerResult<>(null);
     }
 
 
@@ -454,7 +454,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       throws LdapException
     {
       insert(new SearchItem(response));
-      return new HandlerResult<IntermediateResponse>(null);
+      return new HandlerResult<>(null);
     }
   }
 

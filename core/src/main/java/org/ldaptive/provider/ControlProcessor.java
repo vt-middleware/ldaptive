@@ -68,7 +68,7 @@ public class ControlProcessor<T>
       "processing request controls: {}",
       new Object[] {requestControls});
 
-    final List<T> providerCtls = new ArrayList<T>(requestControls.length);
+    final List<T> providerCtls = new ArrayList<>(requestControls.length);
     for (RequestControl c : requestControls) {
       final T providerCtl = processRequest(c);
       if (providerCtl != null) {
@@ -121,8 +121,7 @@ public class ControlProcessor<T>
     }
     logger.trace("processing provider response controls: {}", responseControls);
 
-    final List<ResponseControl> ctls = new ArrayList<ResponseControl>(
-      responseControls.length);
+    final List<ResponseControl> ctls = new ArrayList<>(responseControls.length);
     for (T c : responseControls) {
       final ResponseControl ctl = processResponse(c);
       if (ctl != null) {

@@ -35,8 +35,7 @@ public class ConfigTest
 {
 
   /** Map of default primitive type values. */
-  private static final Map<Class<?>, Object> PRIMITIVE_TYPES =
-    new HashMap<Class<?>, Object>();
+  private static final Map<Class<?>, Object> PRIMITIVE_TYPES = new HashMap<>();
 
   /**
    * Initialize primitive type values.

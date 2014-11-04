@@ -102,9 +102,7 @@ public class Dsmlv1Reader implements SearchResultReader
       final DocumentBuilder db = DOC_BUILDER_FACTORY.newDocumentBuilder();
       final Document dsml = db.parse(new InputSource(dsmlReader));
       return createSearchResult(dsml);
-    } catch (ParserConfigurationException e) {
-      throw new IOException(e);
-    } catch (SAXException e) {
+    } catch (ParserConfigurationException | SAXException e) {
       throw new IOException(e);
     }
   }
@@ -199,7 +197,7 @@ public class Dsmlv1Reader implements SearchResultReader
     final NodeList nodes)
   {
     boolean isBase64 = false;
-    final Set<Object> values = new HashSet<Object>();
+    final Set<Object> values = new HashSet<>();
     for (int i = 0; i < nodes.getLength(); i++) {
       final Element valueElement = (Element) nodes.item(i);
       if (valueElement != null) {

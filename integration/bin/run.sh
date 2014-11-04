@@ -35,6 +35,7 @@ if [ ! -z "${PROVIDER}" ]; then
 fi
 
 mvn \
+  -Pintegration,apache,jldap,opendj,unboundid,ldapi \
   -DrunTests \
   -DldapTestHost=ldap://${HOST} \
   -DldapSslTestHost=ldap://${SSL_HOST} \

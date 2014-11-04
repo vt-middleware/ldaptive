@@ -28,7 +28,7 @@ public final class TranscoderFactory
 
   /** Value transcoders. */
   private static final Map<String, ValueTranscoder<?>> TRANSCODERS =
-    new HashMap<String, ValueTranscoder<?>>();
+    new HashMap<>();
 
 
   /** Default constructor. */

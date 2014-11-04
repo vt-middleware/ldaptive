@@ -97,12 +97,7 @@ public class AsyncSearchOperation
           final ExceptionHandler handler = getExceptionHandler();
           try {
             return AsyncSearchOperation.super.execute(request);
-          } catch (LdapException e) {
-            if (handler != null) {
-              handler.handle(getConnection(), request, e);
-            }
-            throw e;
-          } catch (RuntimeException e) {
+          } catch (LdapException | RuntimeException e) {
             if (handler != null) {
               handler.handle(getConnection(), request, e);
             }
@@ -110,7 +105,7 @@ public class AsyncSearchOperation
           }
         }
       });
-    return new FutureResponse<SearchResult>(future);
+    return new FutureResponse<>(future);
   }
 
 
@@ -251,7 +246,7 @@ public class AsyncSearchOperation
     @Override
     public void responseReceived(final Response<Void> response)
     {
-      searchResponse = new Response<SearchResult>(
+      searchResponse = new Response<>(
         searchResult,
         response.getResultCode(),
         response.getMessage(),

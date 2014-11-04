@@ -50,8 +50,7 @@ public class AuthenticatorLoadTest extends AbstractTest
   public static final String INVALID_FILTER = "(departmentNumber=1111)";
 
   /** Entries for auth tests. */
-  private static Map<String, LdapEntry[]> entries =
-    new HashMap<String, LdapEntry[]>();
+  private static final Map<String, LdapEntry[]> entries = new HashMap<>();
 
   /**
    * Initialize the map of entries.
@@ -63,16 +62,16 @@ public class AuthenticatorLoadTest extends AbstractTest
   }
 
   /** Authenticator instance for concurrency testing. */
-  private Authenticator singleTLSAuth;
+  private final Authenticator singleTLSAuth;
 
   /** Authenticator instance for concurrency testing. */
-  private Authenticator pooledTLSAuth;
+  private final Authenticator pooledTLSAuth;
 
   /** Authenticator instance for concurrency testing. */
-  private Authenticator singleADFastBind;
+  private final Authenticator singleADFastBind;
 
   /** Authenticator instance for concurrency testing. */
-  private Authenticator pooledADFastBind;
+  private final Authenticator pooledADFastBind;
 
 
   /**

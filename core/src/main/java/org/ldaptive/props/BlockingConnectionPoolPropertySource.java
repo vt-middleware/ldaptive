@@ -135,7 +135,7 @@ public final class BlockingConnectionPoolPropertySource
       object.setPoolConfig(pc);
     } else {
       final SimplePropertySource<PoolConfig> sPropSource =
-        new SimplePropertySource<PoolConfig>(pc, propertiesDomain, properties);
+        new SimplePropertySource<>(pc, propertiesDomain, properties);
       sPropSource.initialize();
     }
   }

@@ -42,7 +42,7 @@ public class Extensions
 
   /** Extensions. */
   private final Map<String, List<String>> extensions =
-    new LinkedHashMap<String, List<String>>();
+    new LinkedHashMap<>();
 
 
   /** Creates a new extensions. */
@@ -150,7 +150,7 @@ public class Extensions
     final Extensions exts = new Extensions();
     while (m.find()) {
       final String name = m.group(1).trim();
-      final List<String> values = new ArrayList<String>(1);
+      final List<String> values = new ArrayList<>(1);
 
       // CheckStyle:MagicNumber OFF
       if (m.group(2) != null) {

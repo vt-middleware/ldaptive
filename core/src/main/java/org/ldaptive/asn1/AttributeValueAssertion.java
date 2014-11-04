@@ -112,8 +112,7 @@ public class AttributeValueAssertion extends AbstractDERType
    */
   public static AttributeValueAssertion[] decode(final ByteBuffer encoded)
   {
-    final List<AttributeValueAssertion> assertions =
-      new ArrayList<AttributeValueAssertion>();
+    final List<AttributeValueAssertion> assertions = new ArrayList<>();
     final DERParser parser = new DERParser();
     parser.registerHandler(
       "/SEQ",

@@ -54,7 +54,7 @@ public class Query
   public Query(final String query)
   {
     if (query != null) {
-      final List<String> l = new ArrayList<String>();
+      final List<String> l = new ArrayList<>();
       final StringTokenizer queryTokens = new StringTokenizer(
         query.toLowerCase().trim());
       while (queryTokens.hasMoreTokens()) {

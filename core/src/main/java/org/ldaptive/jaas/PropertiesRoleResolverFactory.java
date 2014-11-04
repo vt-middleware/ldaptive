@@ -37,8 +37,7 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory
 {
 
   /** Object CACHE. */
-  private static final Map<String, RoleResolver> CACHE =
-    new HashMap<String, RoleResolver>();
+  private static final Map<String, RoleResolver> CACHE = new HashMap<>();
 
 
   /** {@inheritDoc} */
@@ -81,11 +80,9 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory
       try {
         final String className = (String) options.get("roleResolver");
         rr = (RoleResolver) Class.forName(className).newInstance();
-      } catch (ClassNotFoundException e) {
-        throw new IllegalArgumentException(e);
-      } catch (InstantiationException e) {
-        throw new IllegalArgumentException(e);
-      } catch (IllegalAccessException e) {
+      } catch (ClassNotFoundException |
+               IllegalAccessException |
+               InstantiationException e) {
         throw new IllegalArgumentException(e);
       }
     } else {

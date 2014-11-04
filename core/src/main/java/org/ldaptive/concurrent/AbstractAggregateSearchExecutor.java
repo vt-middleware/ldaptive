@@ -65,7 +65,7 @@ AbstractAggregateSearchExecutor<T extends ConnectionFactory>
     for (int i = 0; i < filters.length; i++) {
       sf[i] = new SearchFilter(filters[i]);
     }
-    return search(factories, sf, (String[]) null, (SearchEntryHandler[]) null);
+    return search(factories, sf, null, (SearchEntryHandler[]) null);
   }
 
 
@@ -85,7 +85,7 @@ AbstractAggregateSearchExecutor<T extends ConnectionFactory>
     throws LdapException
   {
     return
-      search(factories, filters, (String[]) null, (SearchEntryHandler[]) null);
+      search(factories, filters, null, (SearchEntryHandler[]) null);
   }
 
 

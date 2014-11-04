@@ -71,10 +71,7 @@ public abstract class AbstractAuthenticationHandler
     boolean closeConn = false;
     try {
       response = authenticateInternal(conn, ac);
-    } catch (LdapException e) {
-      closeConn = true;
-      throw e;
-    } catch (RuntimeException e) {
+    } catch (LdapException | RuntimeException e) {
       closeConn = true;
       throw e;
     } finally {

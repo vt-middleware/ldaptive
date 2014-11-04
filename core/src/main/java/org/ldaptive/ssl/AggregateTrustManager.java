@@ -39,7 +39,7 @@ public class AggregateTrustManager implements X509TrustManager
     ALL,
 
     /** any trust manager must succeed. */
-    ANY;
+    ANY
   }
 
   /** Logger for this class. */
@@ -151,7 +151,7 @@ public class AggregateTrustManager implements X509TrustManager
   @Override
   public X509Certificate[] getAcceptedIssuers()
   {
-    final List<X509Certificate> issuers = new ArrayList<X509Certificate>();
+    final List<X509Certificate> issuers = new ArrayList<>();
     if (trustManagers != null) {
       for (X509TrustManager tm : trustManagers) {
         logger.debug("invoking getAcceptedIssuers invoked for {}", tm);

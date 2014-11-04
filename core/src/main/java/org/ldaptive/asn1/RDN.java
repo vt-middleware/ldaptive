@@ -80,8 +80,7 @@ public class RDN implements DEREncoder
    */
   public AttributeValueAssertion.Value[] getAttributeValues(final String oid)
   {
-    final List<AttributeValueAssertion.Value> values =
-      new ArrayList<AttributeValueAssertion.Value>();
+    final List<AttributeValueAssertion.Value> values = new ArrayList<>();
     for (AttributeValueAssertion type : attributeValueAssertions) {
       if (type.getOid().equals(oid)) {
         values.add(type.getValue());
@@ -123,7 +122,7 @@ public class RDN implements DEREncoder
     final String oid,
     final ValueTranscoder<T> transcoder)
   {
-    final List<T> values = new ArrayList<T>();
+    final List<T> values = new ArrayList<>();
     for (AttributeValueAssertion type : attributeValueAssertions) {
       if (type.getOid().equals(oid)) {
         values.add(transcoder.decodeBinaryValue(type.getValue().getBytes()));
@@ -159,7 +158,7 @@ public class RDN implements DEREncoder
   @Override
   public byte[] encode()
   {
-    final List<DEREncoder> typeEncoders = new ArrayList<DEREncoder>();
+    final List<DEREncoder> typeEncoders = new ArrayList<>();
     for (final AttributeValueAssertion types : attributeValueAssertions) {
       typeEncoders.add(
         new DEREncoder() {
@@ -190,7 +189,7 @@ public class RDN implements DEREncoder
    */
   public static RDN[] decode(final ByteBuffer encoded)
   {
-    final List<RDN> rdns = new ArrayList<RDN>();
+    final List<RDN> rdns = new ArrayList<>();
     final DERParser parser = new DERParser();
     parser.registerHandler(
       "/SEQ/SET",

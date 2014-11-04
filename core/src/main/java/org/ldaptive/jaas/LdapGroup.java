@@ -41,7 +41,7 @@ public class LdapGroup implements Group, Serializable
   private final String roleName;
 
   /** Principal members. */
-  private final Set<Principal> members = new HashSet<Principal>();
+  private final Set<Principal> members = new HashSet<>();
 
 
   /**

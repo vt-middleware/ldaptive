@@ -66,7 +66,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
     for (int i = 0; i < filters.length; i++) {
       sf[i] = new SearchFilter(filters[i]);
     }
-    return search(factory, sf, (String[]) null, (SearchEntryHandler[]) null);
+    return search(factory, sf, null, (SearchEntryHandler[]) null);
   }
 
 
@@ -86,7 +86,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
     throws LdapException
   {
     return
-      search(factory, filters, (String[]) null, (SearchEntryHandler[]) null);
+      search(factory, filters, null, (SearchEntryHandler[]) null);
   }
 
 

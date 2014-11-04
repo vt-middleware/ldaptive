@@ -113,11 +113,11 @@ public enum UniversalDERTag implements DERTag {
 
   /** Maps tag numbers to tags. */
   private static final Map<Integer, UniversalDERTag> TAGNO_MAP =
-    new HashMap<Integer, UniversalDERTag>();
+    new HashMap<>();
 
   /** Maps tag names to tags. */
   private static final Map<String, UniversalDERTag> TAGNAME_MAP =
-    new HashMap<String, UniversalDERTag>();
+    new HashMap<>();
 
 
   /**

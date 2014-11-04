@@ -74,8 +74,7 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
     final SearchEntry entry)
     throws LdapException
   {
-    final Map<LdapAttribute, Matcher> matchingAttrs =
-      new HashMap<LdapAttribute, Matcher>();
+    final Map<LdapAttribute, Matcher> matchingAttrs = new HashMap<>();
     for (LdapAttribute la : entry.getAttributes()) {
       // Match attribute ID against the pattern
       final Matcher matcher = RANGE_PATTERN.matcher(la.getName());

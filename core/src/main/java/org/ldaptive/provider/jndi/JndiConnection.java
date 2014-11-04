@@ -679,7 +679,7 @@ public class JndiConnection implements ProviderConnection
     final LdapContext ctx)
   {
     return
-      new Response<T>(
+      new Response<>(
         result,
         code,
         null,
@@ -717,7 +717,7 @@ public class JndiConnection implements ProviderConnection
       rc = NamingExceptionUtils.getResultCode(e.getMessage());
     }
     return
-      new Response<T>(
+      new Response<>(
         result,
         rc,
         e.getMessage(),
@@ -806,7 +806,7 @@ public class JndiConnection implements ProviderConnection
   protected static Map<String, Object> getSaslProperties(
     final SaslConfig config)
   {
-    final Map<String, Object> env = new HashMap<String, Object>();
+    final Map<String, Object> env = new HashMap<>();
     if (
       config.getAuthorizationId() != null &&
         !"".equals(config.getAuthorizationId())) {
@@ -1135,7 +1135,7 @@ public class JndiConnection implements ProviderConnection
      */
     protected String[] readReferralUrls(final LdapReferralException refEx)
     {
-      final List<String> urls = new ArrayList<String>();
+      final List<String> urls = new ArrayList<>();
       LdapReferralException loopEx = refEx;
       urls.add((String) loopEx.getReferralInfo());
       while (loopEx.skipReferral()) {

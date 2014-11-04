@@ -174,8 +174,8 @@ public class SyncReplClient
     final int capacity)
     throws LdapException
   {
-    final BlockingQueue<SyncReplItem> queue =
-      new LinkedBlockingQueue<SyncReplItem>(capacity);
+    final BlockingQueue<SyncReplItem> queue = new LinkedBlockingQueue<>(
+      capacity);
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
     search.setOperationResponseHandlers(
@@ -204,7 +204,7 @@ public class SyncReplClient
           } catch (Exception e) {
             logger.warn("Unable to enqueue response {}", response);
           }
-          return new HandlerResult<Response<SearchResult>>(response);
+          return new HandlerResult<>(response);
         }
       });
     search.setAsyncRequestHandlers(
@@ -222,7 +222,7 @@ public class SyncReplClient
           } catch (Exception e) {
             logger.warn("Unable to enqueue async request {}", asyncRequest);
           }
-          return new HandlerResult<AsyncRequest>(null);
+          return new HandlerResult<>(null);
         }
       });
     search.setExceptionHandler(
@@ -240,7 +240,7 @@ public class SyncReplClient
           } catch (Exception e) {
             logger.warn("Unable to enqueue exception:", exception);
           }
-          return new HandlerResult<Exception>(null);
+          return new HandlerResult<>(null);
         }
       });
 
@@ -275,7 +275,7 @@ public class SyncReplClient
           } catch (Exception e) {
             logger.warn("Unable to enqueue entry {}", entry);
           }
-          return new HandlerResult<SearchEntry>(null);
+          return new HandlerResult<>(null);
         }
 
         @Override
@@ -305,7 +305,7 @@ public class SyncReplClient
                 response);
             }
           }
-          return new HandlerResult<IntermediateResponse>(null);
+          return new HandlerResult<>(null);
         }
       });
 

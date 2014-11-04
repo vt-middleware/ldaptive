@@ -55,7 +55,7 @@ public class StringCustomObject implements CustomObject
   private List<String> typeList1;
   protected List<String> typeList2;
   private String transcoded;
-  private String[] nullArray1 = new String[] {null};
+  private final String[] nullArray1 = new String[] {null};
   private List<String> nullList1;
   // CheckStyle:DeclarationOrder ON
   // CheckStyle:JavadocVariable ON
@@ -95,7 +95,7 @@ public class StringCustomObject implements CustomObject
   @Override
   public void initialize()
   {
-    nullList1 = new ArrayList<String>(1);
+    nullList1 = new ArrayList<>(1);
     nullList1.add(null);
   }
 
@@ -172,16 +172,14 @@ public class StringCustomObject implements CustomObject
   public static <T extends StringCustomObject> T createCustomObject(
     final Class<T> type)
   {
-    final Set<String> s1 = new HashSet<String>();
+    final Set<String> s1 = new HashSet<>();
     s1.add("tsv1");
     s1.add("tsv2");
 
     final T o1;
     try {
       o1 = type.newInstance();
-    } catch (InstantiationException e) {
-      throw new IllegalStateException(e);
-    } catch (IllegalAccessException e) {
+    } catch (InstantiationException | IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
     o1.setType1("tv1");

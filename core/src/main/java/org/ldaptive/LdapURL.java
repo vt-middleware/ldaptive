@@ -38,7 +38,7 @@ public class LdapURL
   private static final String DEFAULT_DELIMITER = " ";
 
   /** URL entries. */
-  private final List<Entry> ldapEntries = new ArrayList<Entry>();
+  private final List<Entry> ldapEntries = new ArrayList<>();
 
 
   /**

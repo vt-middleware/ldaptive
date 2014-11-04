@@ -49,8 +49,8 @@ public class BeanGeneratorPropertyInvoker extends AbstractPropertyInvoker
         newValue = new HashMap<String, Object>();
 
         final String[] keyValues = value.split(",");
-        for (int i = 0; i < keyValues.length; i++) {
-          final String[] s = keyValues[i].split("=");
+        for (String keyValue : keyValues) {
+          final String[] s = keyValue.split("=");
           if (s[1].endsWith(".class")) {
             ((Map) newValue).put(
               s[0],

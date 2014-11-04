@@ -134,7 +134,7 @@ public class PersistentSearchClient
     throws LdapException
   {
     final BlockingQueue<PersistentSearchItem> queue =
-      new LinkedBlockingQueue<PersistentSearchItem>(capacity);
+      new LinkedBlockingQueue<>(capacity);
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
     search.setOperationResponseHandlers(
@@ -154,7 +154,7 @@ public class PersistentSearchClient
           } catch (Exception e) {
             logger.warn("Unable to enqueue response {}", response);
           }
-          return new HandlerResult<Response<SearchResult>>(response);
+          return new HandlerResult<>(response);
         }
       });
     search.setAsyncRequestHandlers(
@@ -172,7 +172,7 @@ public class PersistentSearchClient
           } catch (Exception e) {
             logger.warn("Unable to enqueue async request {}", asyncRequest);
           }
-          return new HandlerResult<AsyncRequest>(null);
+          return new HandlerResult<>(null);
         }
       });
     search.setExceptionHandler(
@@ -190,7 +190,7 @@ public class PersistentSearchClient
           } catch (Exception e) {
             logger.warn("Unable to enqueue exception:", exception);
           }
-          return new HandlerResult<Exception>(null);
+          return new HandlerResult<>(null);
         }
       });
 
@@ -218,7 +218,7 @@ public class PersistentSearchClient
           } catch (Exception e) {
             logger.warn("Unable to enqueue entry {}", entry);
           }
-          return new HandlerResult<SearchEntry>(null);
+          return new HandlerResult<>(null);
         }
 
         @Override

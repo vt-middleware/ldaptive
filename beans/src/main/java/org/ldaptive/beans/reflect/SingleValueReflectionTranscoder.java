@@ -57,7 +57,7 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   public static <T> SingleValueReflectionTranscoder<T> newInstance(
     final ValueTranscoder<T> transcoder)
   {
-    return new SingleValueReflectionTranscoder<T>(transcoder);
+    return new SingleValueReflectionTranscoder<>(transcoder);
   }
 
 
@@ -93,7 +93,7 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   @Override
   public Collection<String> encodeStringValues(final Object value)
   {
-    final List<String> l = new ArrayList<String>(1);
+    final List<String> l = new ArrayList<>(1);
     if (value != null) {
       @SuppressWarnings("unchecked")
       final String s = valueTranscoder.encodeStringValue((T) value);
@@ -109,7 +109,7 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   @Override
   public Collection<byte[]> encodeBinaryValues(final Object value)
   {
-    final List<byte[]> l = new ArrayList<byte[]>(1);
+    final List<byte[]> l = new ArrayList<>(1);
     if (value != null) {
       @SuppressWarnings("unchecked")
       final byte[] b = valueTranscoder.encodeBinaryValue((T) value);

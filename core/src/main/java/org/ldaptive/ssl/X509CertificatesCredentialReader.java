@@ -39,7 +39,7 @@ public class X509CertificatesCredentialReader
     throws IOException, GeneralSecurityException
   {
     final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-    final List<X509Certificate> certList = new ArrayList<X509Certificate>();
+    final List<X509Certificate> certList = new ArrayList<>();
     final InputStream bufIs = getBufferedInputStream(is);
     while (bufIs.available() > 0) {
       final X509Certificate cert = (X509Certificate) cf.generateCertificate(

@@ -78,10 +78,7 @@ public class TestLoginModule implements LoginModule
         LdapLoginModule.LOGIN_PASSWORD,
         passCb.getPassword());
       success = true;
-    } catch (IOException e) {
-      success = false;
-      throw new LoginException(e.toString());
-    } catch (UnsupportedCallbackException e) {
+    } catch (IOException | UnsupportedCallbackException e) {
       success = false;
       throw new LoginException(e.toString());
     }

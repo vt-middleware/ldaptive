@@ -27,7 +27,7 @@ public class TestAuthenticationResponseHandler
 {
 
   /** results. */
-  private Map<String, Boolean> results = new HashMap<String, Boolean>();
+  private final Map<String, Boolean> results = new HashMap<>();
 
 
   /** {@inheritDoc} */

@@ -44,8 +44,7 @@ public class UnboundIDProviderConfig extends ProviderConfig<Control>
   public UnboundIDProviderConfig()
   {
     setOperationExceptionResultCodes(ResultCode.SERVER_DOWN);
-    setControlProcessor(
-      new ControlProcessor<Control>(new UnboundIDControlHandler()));
+    setControlProcessor(new ControlProcessor<>(new UnboundIDControlHandler()));
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,

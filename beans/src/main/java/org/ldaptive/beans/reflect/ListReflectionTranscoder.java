@@ -64,9 +64,9 @@ public class ListReflectionTranscoder
     final Class<?> type = getType();
     List<T> l;
     if (LinkedList.class.isAssignableFrom(type)) {
-      l = new LinkedList<T>();
+      l = new LinkedList<>();
     } else {
-      l = new ArrayList<T>();
+      l = new ArrayList<>();
     }
     return l;
   }

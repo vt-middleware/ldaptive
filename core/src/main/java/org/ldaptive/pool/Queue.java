@@ -44,7 +44,7 @@ public class Queue<T> implements Iterable<T>
   public Queue(final QueueType type)
   {
     queueType = type;
-    queue = new LinkedList<T>();
+    queue = new LinkedList<>();
   }
 
 

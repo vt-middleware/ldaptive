@@ -244,8 +244,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
         getPruneStrategy());
     }
 
-    available = new Queue<PooledConnectionProxy>(queueType);
-    active = new Queue<PooledConnectionProxy>(queueType);
+    available = new Queue<>(queueType);
+    active = new Queue<>(queueType);
 
     IllegalStateException growException = null;
     try {
@@ -798,8 +798,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
             available.size(),
             this);
 
-          final List<PooledConnectionProxy> remove =
-            new ArrayList<PooledConnectionProxy>();
+          final List<PooledConnectionProxy> remove = new ArrayList<>();
           for (PooledConnectionProxy pc : available) {
             logger.trace("validating {}", pc);
             if (validate(pc.getConnection())) {

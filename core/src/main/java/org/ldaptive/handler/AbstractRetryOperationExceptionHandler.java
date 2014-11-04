@@ -139,7 +139,7 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
         logger.error("unable to handle operation exception", e);
         if (!retry(i)) {
           // handle failed, throw the original exception
-          return new HandlerResult<Response<S>>(null, true);
+          return new HandlerResult<>(null, true);
         }
       }
     }

@@ -51,44 +51,58 @@ public final class ControlFactory
     final byte[] encoded)
   {
     ResponseControl ctl = null;
-    if (SortResponseControl.OID.equals(oid)) {
+    switch (oid) {
+    case SortResponseControl.OID:
       ctl = new SortResponseControl(critical);
       ctl.decode(encoded);
-    } else if (PagedResultsControl.OID.equals(oid)) {
+      break;
+    case PagedResultsControl.OID:
       ctl = new PagedResultsControl(critical);
       ctl.decode(encoded);
-    } else if (VirtualListViewResponseControl.OID.equals(oid)) {
+      break;
+    case VirtualListViewResponseControl.OID:
       ctl = new VirtualListViewResponseControl(critical);
       ctl.decode(encoded);
-    } else if (PasswordPolicyControl.OID.equals(oid)) {
+      break;
+    case PasswordPolicyControl.OID:
       ctl = new PasswordPolicyControl(critical);
       ctl.decode(encoded);
-    } else if (SyncStateControl.OID.equals(oid)) {
+      break;
+    case SyncStateControl.OID:
       ctl = new SyncStateControl(critical);
       ctl.decode(encoded);
-    } else if (SyncDoneControl.OID.equals(oid)) {
+      break;
+    case SyncDoneControl.OID:
       ctl = new SyncDoneControl(critical);
       ctl.decode(encoded);
-    } else if (DirSyncControl.OID.equals(oid)) {
+      break;
+    case DirSyncControl.OID:
       ctl = new DirSyncControl(critical);
       ctl.decode(encoded);
-    } else if (EntryChangeNotificationControl.OID.equals(oid)) {
+      break;
+    case EntryChangeNotificationControl.OID:
       ctl = new EntryChangeNotificationControl(critical);
       ctl.decode(encoded);
-    } else if (GetStatsControl.OID.equals(oid)) {
+      break;
+    case GetStatsControl.OID:
       ctl = new GetStatsControl(critical);
       ctl.decode(encoded);
-    } else if (PasswordExpiredControl.OID.equals(oid)) {
+      break;
+    case PasswordExpiredControl.OID:
       ctl = new PasswordExpiredControl(critical);
       ctl.decode(encoded);
-    } else if (PasswordExpiringControl.OID.equals(oid)) {
+      break;
+    case PasswordExpiringControl.OID:
       ctl = new PasswordExpiringControl(critical);
       ctl.decode(encoded);
-    } else if (AuthorizationIdentityResponseControl.OID.equals(oid)) {
+      break;
+    case AuthorizationIdentityResponseControl.OID:
       ctl = new AuthorizationIdentityResponseControl(critical);
       ctl.decode(encoded);
-    } else {
+      break;
+    default:
       LOGGER.debug("Unsupported response control OID {}", oid);
+      break;
     }
     return ctl;
   }

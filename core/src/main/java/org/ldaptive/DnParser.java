@@ -55,7 +55,7 @@ public final class DnParser
    */
   public static Collection<String> getValues(final String dn, final String name)
   {
-    final Collection<String> values = new ArrayList<String>();
+    final Collection<String> values = new ArrayList<>();
     for (LdapAttribute la : convertDnToAttributes(dn)) {
       if (la.getName().equalsIgnoreCase(name)) {
         values.addAll(la.getStringValues());
@@ -134,7 +134,7 @@ public final class DnParser
   {
     LOGGER.debug("parsing DN: {}", dn);
 
-    final List<LdapAttribute> attributes = new ArrayList<LdapAttribute>();
+    final List<LdapAttribute> attributes = new ArrayList<>();
     if (dn.isEmpty()) {
       return attributes;
     }

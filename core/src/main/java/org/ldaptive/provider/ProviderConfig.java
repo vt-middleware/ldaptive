@@ -39,7 +39,7 @@ public class ProviderConfig<C> extends AbstractConfig
   private ResultCode[] operationExceptionResultCodes;
 
   /** Additional provider properties. */
-  private Map<String, Object> properties = new HashMap<String, Object>();
+  private Map<String, Object> properties = new HashMap<>();
 
   /** Connection strategy. */
   private ConnectionStrategy connectionStrategy = ConnectionStrategy.DEFAULT;

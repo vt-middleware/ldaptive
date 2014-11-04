@@ -56,8 +56,7 @@ public class LdapLoginModuleTest extends AbstractTest
   private static LdapEntry testLdapEntry;
 
   /** Entries for group tests. */
-  private static Map<String, LdapEntry[]> groupEntries =
-    new HashMap<String, LdapEntry[]>();
+  private static final Map<String, LdapEntry[]> groupEntries = new HashMap<>();
 
   /**
    * Initialize the map of group entries.
@@ -140,11 +139,9 @@ public class LdapLoginModuleTest extends AbstractTest
               AttributeModificationType.ADD,
               new LdapAttribute(
                 "member",
-                new String[]{
-                  "cn=John Tyler," +
-                    DnParser.substring(testLdapEntry.getDn(), 1),
-                  "cn=Group 7," +
-                    DnParser.substring(testLdapEntry.getDn(), 1), }))));
+                "cn=John Tyler," + DnParser.substring(testLdapEntry.getDn(), 1),
+                "cn=Group 7," +
+                  DnParser.substring(testLdapEntry.getDn(), 1)))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -157,12 +154,10 @@ public class LdapLoginModuleTest extends AbstractTest
             new AttributeModification(
               AttributeModificationType.ADD,
               new LdapAttribute(
-                "member",
-                new String[]{
-                  "cn=Group 8," +
-                    DnParser.substring(testLdapEntry.getDn(), 1),
-                  "cn=Group 9," +
-                    DnParser.substring(testLdapEntry.getDn(), 1), }))));
+                "member", "cn=Group 8," +
+                  DnParser.substring(testLdapEntry.getDn(), 1),
+                "cn=Group 9," +
+                  DnParser.substring(testLdapEntry.getDn(), 1)))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -176,9 +171,8 @@ public class LdapLoginModuleTest extends AbstractTest
               AttributeModificationType.ADD,
               new LdapAttribute(
                 "member",
-                new String[]{
-                  "cn=Group 7," +
-                    DnParser.substring(testLdapEntry.getDn(), 1)}))));
+                "cn=Group 7," +
+                  DnParser.substring(testLdapEntry.getDn(), 1)))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {

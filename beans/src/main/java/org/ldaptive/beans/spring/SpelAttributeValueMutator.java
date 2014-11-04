@@ -306,20 +306,20 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
     Collection<T> c;
     if (List.class.isAssignableFrom(type)) {
       if (LinkedList.class.isAssignableFrom(type)) {
-        c = new LinkedList<T>();
+        c = new LinkedList<>();
       } else {
-        c = new ArrayList<T>(size);
+        c = new ArrayList<>(size);
       }
     } else if (Set.class.isAssignableFrom(type)) {
       if (LinkedHashSet.class.isAssignableFrom(type)) {
-        c = new LinkedHashSet<T>(size);
+        c = new LinkedHashSet<>(size);
       } else if (TreeSet.class.isAssignableFrom(type)) {
-        c = new TreeSet<T>();
+        c = new TreeSet<>();
       } else {
-        c = new HashSet<T>(size);
+        c = new HashSet<>(size);
       }
     } else {
-      c = new ArrayList<T>(size);
+      c = new ArrayList<>(size);
     }
     return c;
   }

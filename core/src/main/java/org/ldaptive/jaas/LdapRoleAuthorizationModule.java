@@ -87,11 +87,9 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
         try {
           roleResolverFactory =
             (RoleResolverFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException e) {
-          throw new IllegalArgumentException(e);
-        } catch (InstantiationException e) {
-          throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
+        } catch (ClassNotFoundException |
+                 IllegalAccessException |
+                 InstantiationException e) {
           throw new IllegalArgumentException(e);
         }
       }

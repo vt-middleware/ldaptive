@@ -89,7 +89,7 @@ public class BeanGenerator
   private Map<String, Class<?>> typeMappings = getDefaultTypeMappings();
 
   /** Name mappings. */
-  private Map<String, String> nameMappings = new HashMap<String, String>();
+  private Map<String, String> nameMappings = new HashMap<>();
 
   /** Excluded names. */
   private String[] excludedNames = new String[0];
@@ -337,7 +337,7 @@ public class BeanGenerator
    */
   protected static Map<String, Class<?>> getDefaultTypeMappings()
   {
-    final Map<String, Class<?>> m = new HashMap<String, Class<?>>();
+    final Map<String, Class<?>> m = new HashMap<>();
     m.put("1.3.6.1.4.1.1466.115.121.1.7", Boolean.class);
     m.put("1.3.6.1.4.1.1466.115.121.1.5", byte[].class);
     m.put("1.3.6.1.4.1.1466.115.121.1.8", Certificate.class);
@@ -404,8 +404,7 @@ public class BeanGenerator
         }
       }
 
-      final Map<String, AttributeType> mutators =
-        new TreeMap<String, AttributeType>();
+      final Map<String, AttributeType> mutators = new TreeMap<>();
       for (String name : attributeNames) {
         final AttributeType type = schema.getAttributeType(name);
         if (!isNameExcluded(type)) {
@@ -486,7 +485,7 @@ public class BeanGenerator
     final ObjectClass objectClass,
     final Set<ObjectClass> processed)
   {
-    final Set<String> attributeNames = new HashSet<String>();
+    final Set<String> attributeNames = new HashSet<>();
     if (objectClass != null) {
       if (objectClass.getRequiredAttributes() != null) {
         attributeNames.addAll(
@@ -641,7 +640,7 @@ public class BeanGenerator
 
   /**
    * Creates the hashCode method on the supplied class. Leverages {@link
-   * LdapUtils#computeHashCode(int, Object...)}.
+   * org.ldaptive.LdapUtils#computeHashCode(int, Object...)}.
    *
    * @param  clazz  to put hashCode method on
    */
@@ -664,7 +663,7 @@ public class BeanGenerator
 
   /**
    * Creates the equals method on the supplied class. Leverages {@link
-   * LdapUtils#areEqual(Object, Object)}.
+   * org.ldaptive.LdapUtils#areEqual(Object, Object)}.
    *
    * @param  clazz  to put equals method on
    */

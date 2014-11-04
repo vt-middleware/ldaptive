@@ -285,15 +285,12 @@ public final class TestUtils
   public static String readFileIntoString(final String filename)
     throws Exception
   {
-    final StringBuffer result = new StringBuffer();
-    final BufferedReader br = readFile(filename);
-    try {
+    final StringBuilder result = new StringBuilder();
+    try (BufferedReader br = readFile(filename)) {
       String line;
       while ((line = br.readLine()) != null) {
         result.append(line).append(System.getProperty("line.separator"));
       }
-    } finally {
-      br.close();
     }
     return result.toString();
   }
@@ -329,9 +326,8 @@ public final class TestUtils
     final String dn, final String attrs)
   {
     final LdapEntry le = new LdapEntry(dn);
-    final String[] s = attrs.split("\\|");
-    for (int i = 0; i < s.length; i++) {
-      final String[] nameValuePairs = s[i].trim().split("=", 2);
+    for (String s : attrs.split("\\|")) {
+      final String[] nameValuePairs = s.trim().split("=", 2);
       if (le.getAttribute(nameValuePairs[0]) != null) {
         le.getAttribute(nameValuePairs[0]).addStringValue(nameValuePairs[1]);
       } else {
@@ -395,7 +391,7 @@ public final class TestUtils
     final BufferedReader br = new BufferedReader(
       new InputStreamReader(p.getInputStream()));
     String line;
-    final List<String> openConns = new ArrayList<String>();
+    final List<String> openConns = new ArrayList<>();
     while ((line = br.readLine()) != null) {
       if (line.matches("(.*)ESTABLISHED(.*)")) {
         final String s = line.split("\\s+")[NETSTAT_HOST_INDEX];
@@ -416,15 +412,15 @@ public final class TestUtils
   /**
    * Returns a string representation of the supplied byte array in hex format.
    *
-   * @param  b  to create hex string with
+   * @param  bytes  to create hex string with
    * @return  hex string
    */
-  public static String bytesToString(final byte[] b)
+  public static String bytesToString(final byte[] bytes)
   {
-    final StringBuilder sb = new StringBuilder(b.length * 2);
+    final StringBuilder sb = new StringBuilder(bytes.length * 2);
     // CheckStyle:MagicNumber OFF
-    for (int i = 0; i < b.length; i++) {
-      final int v = b[i] & 0xff;
+    for (byte b : bytes) {
+      final int v = b & 0xff;
       if (v < 16) {
         sb.append('0');
       }

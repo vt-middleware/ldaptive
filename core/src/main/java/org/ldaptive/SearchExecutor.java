@@ -126,7 +126,7 @@ public class SearchExecutor extends SearchRequest
   public Response<SearchResult> search(final ConnectionFactory factory)
     throws LdapException
   {
-    return search(factory, null, (String[]) null, (SearchEntryHandler[]) null);
+    return search(factory, null, null, (SearchEntryHandler[]) null);
   }
 
 
@@ -149,7 +149,7 @@ public class SearchExecutor extends SearchRequest
       search(
         factory,
         new SearchFilter(filter),
-        (String[]) null,
+        null,
         (SearchEntryHandler[]) null);
   }
 
@@ -170,7 +170,7 @@ public class SearchExecutor extends SearchRequest
     throws LdapException
   {
     return
-      search(factory, filter, (String[]) null, (SearchEntryHandler[]) null);
+      search(factory, filter, null, (SearchEntryHandler[]) null);
   }
 
 

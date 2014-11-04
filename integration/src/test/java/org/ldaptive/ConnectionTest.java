@@ -106,11 +106,11 @@ public class ConnectionTest
       conn.open();
       final ModifyOperation modify = new ModifyOperation(conn);
       final Response<Void> response = modify.execute(
-        new ModifyRequest(testLdapEntry.getDn(),
-          new AttributeModification[] {
-            new AttributeModification(
-              AttributeModificationType.ADD,
-              new LdapAttribute("title", "President")), }));
+        new ModifyRequest(
+          testLdapEntry.getDn(),
+          new AttributeModification(
+            AttributeModificationType.ADD,
+            new LdapAttribute("title", "President"))));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     } finally {
       conn.close();

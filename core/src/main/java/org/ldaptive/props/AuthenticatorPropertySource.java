@@ -132,7 +132,7 @@ public final class AuthenticatorPropertySource
       object.setDnResolver(dnResolver);
     } else {
       final SimplePropertySource<DnResolver> sPropSource =
-        new SimplePropertySource<DnResolver>(
+        new SimplePropertySource<>(
           dnResolver,
           propertiesDomain,
           properties);
@@ -167,7 +167,7 @@ public final class AuthenticatorPropertySource
       object.setAuthenticationHandler(authHandler);
     } else {
       final SimplePropertySource<AuthenticationHandler> sPropSource =
-        new SimplePropertySource<AuthenticationHandler>(
+        new SimplePropertySource<>(
           authHandler,
           propertiesDomain,
           properties);

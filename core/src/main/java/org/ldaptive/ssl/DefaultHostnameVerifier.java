@@ -235,7 +235,7 @@ public class DefaultHostnameVerifier
     final X509Certificate cert,
     final SubjectAltNameType type)
   {
-    final List<String> names = new ArrayList<String>();
+    final List<String> names = new ArrayList<>();
     try {
       final Collection<List<?>> subjAltNames =
         cert.getSubjectAlternativeNames();
@@ -263,7 +263,7 @@ public class DefaultHostnameVerifier
    */
   private String[] getCNs(final X509Certificate cert)
   {
-    final List<String> names = new ArrayList<String>();
+    final List<String> names = new ArrayList<>();
     final byte[] encodedDn = cert.getSubjectX500Principal().getEncoded();
     if (encodedDn != null && encodedDn.length > 0) {
       final DN dn = DN.decode(ByteBuffer.wrap(encodedDn));

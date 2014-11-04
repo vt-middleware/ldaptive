@@ -105,7 +105,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
    */
   public static Set<LdapRole> toRoles(final SearchResult result)
   {
-    final Set<LdapRole> r = new HashSet<LdapRole>();
+    final Set<LdapRole> r = new HashSet<>();
     for (LdapEntry le : result.getEntries()) {
       r.addAll(toRoles(le));
     }
@@ -138,7 +138,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   public static Set<LdapRole> toRoles(
     final Collection<LdapAttribute> attributes)
   {
-    final Set<LdapRole> r = new HashSet<LdapRole>();
+    final Set<LdapRole> r = new HashSet<>();
     if (attributes != null) {
       for (LdapAttribute ldapAttr : attributes) {
         for (String attrValue : ldapAttr.getStringValues()) {

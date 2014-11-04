@@ -37,7 +37,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
 
   /** Attribute value mutators for this class. */
   private final Map<String, AttributeValueMutator> attributeMutators =
-    new HashMap<String, AttributeValueMutator>();
+    new HashMap<>();
 
   /** Dn value mutator for this class. */
   private DnValueMutator dnMutator;

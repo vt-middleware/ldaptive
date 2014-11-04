@@ -73,7 +73,7 @@ public class DN implements DEREncoder
   @Override
   public byte[] encode()
   {
-    final List<DEREncoder> typeEncoders = new ArrayList<DEREncoder>();
+    final List<DEREncoder> typeEncoders = new ArrayList<>();
     for (final RDN rdn : rdns) {
       typeEncoders.add(
         new DEREncoder() {

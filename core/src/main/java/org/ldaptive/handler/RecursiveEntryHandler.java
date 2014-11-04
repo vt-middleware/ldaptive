@@ -166,14 +166,14 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
   {
     // Recursively searches a list of attributes and merges those results with
     // the existing entry.
-    final List<String> searchedDns = new ArrayList<String>();
+    final List<String> searchedDns = new ArrayList<>();
     if (entry.getAttribute(searchAttribute) != null) {
       searchedDns.add(entry.getDn());
       readSearchAttribute(conn, entry, searchedDns);
     } else {
       recursiveSearch(conn, entry.getDn(), entry, searchedDns);
     }
-    return new HandlerResult<SearchEntry>(entry);
+    return new HandlerResult<>(entry);
   }
 
 
@@ -196,7 +196,7 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
     if (entry != null) {
       final LdapAttribute attr = entry.getAttribute(searchAttribute);
       if (attr != null && !attr.isBinary()) {
-        final Set<String> values = new HashSet<String>(attr.getStringValues());
+        final Set<String> values = new HashSet<>(attr.getStringValues());
         for (String s : values) {
           recursiveSearch(conn, s, entry, searchedDns);
         }

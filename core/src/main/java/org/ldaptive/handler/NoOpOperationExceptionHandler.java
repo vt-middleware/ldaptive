@@ -41,6 +41,6 @@ public class NoOpOperationExceptionHandler<Q extends Request, S>
     final Response<S> response)
     throws LdapException
   {
-    return new HandlerResult<Response<S>>(response);
+    return new HandlerResult<>(response);
   }
 }

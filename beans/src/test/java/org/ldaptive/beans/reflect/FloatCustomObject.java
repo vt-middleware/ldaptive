@@ -162,16 +162,14 @@ public class FloatCustomObject implements CustomObject
     final Class<T> type)
   {
     // CheckStyle:MagicNumber OFF
-    final Set<Float> s1 = new HashSet<Float>();
+    final Set<Float> s1 = new HashSet<>();
     s1.add(601.6f);
     s1.add(602.6f);
 
     final T o1;
     try {
       o1 = type.newInstance();
-    } catch (InstantiationException e) {
-      throw new IllegalStateException(e);
-    } catch (IllegalAccessException e) {
+    } catch (InstantiationException | IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
     o1.setFloatDn("cn=Float Entry,ou=people,dc=ldaptive,dc=org");

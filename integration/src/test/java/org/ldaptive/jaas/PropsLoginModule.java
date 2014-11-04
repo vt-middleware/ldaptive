@@ -32,12 +32,6 @@ import org.ldaptive.auth.Authenticator;
 public class PropsLoginModule extends AbstractLoginModule
 {
 
-  /** Factory for creating authenticators with JAAS options. */
-  private AuthenticatorFactory authenticatorFactory;
-
-  /** Factory for creating role resolvers with JAAS options. */
-  private RoleResolverFactory roleResolverFactory;
-
   /** Authenticator to load properties for. */
   private Authenticator auth;
 
@@ -60,10 +54,10 @@ public class PropsLoginModule extends AbstractLoginModule
     final Map<String, ?> options)
   {
     super.initialize(subject, callbackHandler, sharedState, options);
-    authenticatorFactory = new PropertiesAuthenticatorFactory();
+    AuthenticatorFactory authenticatorFactory = new PropertiesAuthenticatorFactory();
     auth = authenticatorFactory.createAuthenticator(options);
     authRequest = authenticatorFactory.createAuthenticationRequest(options);
-    roleResolverFactory = new PropertiesRoleResolverFactory();
+    RoleResolverFactory roleResolverFactory = new PropertiesRoleResolverFactory();
     roleResolver = roleResolverFactory.createRoleResolver(options);
     searchRequest = roleResolverFactory.createSearchRequest(options);
   }

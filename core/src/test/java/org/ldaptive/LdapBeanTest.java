@@ -100,7 +100,7 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(0, sr.size());
 
     // test create with collection
-    final Set<LdapEntry> s = new HashSet<LdapEntry>();
+    final Set<LdapEntry> s = new HashSet<>();
     s.add(entry1);
     sr = new SearchResult(s);
     sr.addEntry(entry2);
@@ -211,7 +211,7 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(0, le.size());
 
     // test create with collection
-    final Set<LdapAttribute> s = new HashSet<LdapAttribute>();
+    final Set<LdapAttribute> s = new HashSet<>();
     s.add(attr1);
     le = new LdapEntry("uid=1", s);
     le.addAttribute(attr2);
@@ -332,11 +332,11 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(0, la.size());
 
     // test string values
-    final List<String> commonNames = new ArrayList<String>();
+    final List<String> commonNames = new ArrayList<>();
     commonNames.add("Bill Wallace");
     commonNames.add("William Wallace");
 
-    final List<byte[]> binaryCommonNames = new ArrayList<byte[]>();
+    final List<byte[]> binaryCommonNames = new ArrayList<>();
     binaryCommonNames.add("Bill Wallace".getBytes(Charset.forName("UTF-8")));
     binaryCommonNames.add("William Wallace".getBytes(Charset.forName("UTF-8")));
 
@@ -417,11 +417,11 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(0, la.size());
 
     // test binary values
-    final List<byte[]> jpegPhotos = new ArrayList<byte[]>();
+    final List<byte[]> jpegPhotos = new ArrayList<>();
     jpegPhotos.add("image1".getBytes());
     jpegPhotos.add("image2".getBytes());
 
-    final List<String> stringJpegPhotos = new ArrayList<String>();
+    final List<String> stringJpegPhotos = new ArrayList<>();
     stringJpegPhotos.add("aW1hZ2Ux");
     stringJpegPhotos.add("aW1hZ2Uy");
 

@@ -32,8 +32,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link Dsmlv1Reader}, {@link Dsmlv1Writer},
- * {@link Dsmlv2Reader}, and {@link Dsmlv2Writer}.
+ * Unit test for {@link Dsmlv1Reader} and {@link Dsmlv1Writer}.
  *
  * @author  Middleware Services
  * @version  $Revision: 2669 $

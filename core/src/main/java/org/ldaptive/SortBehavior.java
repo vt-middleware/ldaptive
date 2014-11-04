@@ -57,11 +57,9 @@ public enum SortBehavior {
           Class.forName(sb).newInstance();
         LOGGER.info("Set default sort behavior to {}", sortBehavior);
         defaultSortBehavior = sortBehavior;
-      } catch (ClassNotFoundException e) {
-        LOGGER.error("Error instantiating {}", sb, e);
-      } catch (InstantiationException e) {
-        LOGGER.error("Error instantiating {}", sb, e);
-      } catch (IllegalAccessException e) {
+      } catch (ClassNotFoundException |
+               IllegalAccessException |
+               InstantiationException e) {
         LOGGER.error("Error instantiating {}", sb, e);
       }
     }

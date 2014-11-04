@@ -45,21 +45,26 @@ public final class ExtendedResponseFactory
     final byte[] encoded)
   {
     ExtendedResponse<?> res;
-    if (PasswordModifyRequest.OID.equals(requestOID)) {
+    switch (requestOID) {
+    case PasswordModifyRequest.OID:
       res = new PasswordModifyResponse();
       if (encoded != null) {
         res.decode(encoded);
       }
-    } else if (WhoAmIRequest.OID.equals(requestOID)) {
+      break;
+    case WhoAmIRequest.OID:
       res = new WhoAmIResponse();
       if (encoded != null) {
         res.decode(encoded);
       }
-    } else if (CancelRequest.OID.equals(requestOID)) {
+      break;
+    case CancelRequest.OID:
       res = new CancelResponse();
-    } else if (FastBindRequest.OID.equals(requestOID)) {
+      break;
+    case FastBindRequest.OID:
       res = new FastBindResponse();
-    } else {
+      break;
+    default:
       throw new IllegalArgumentException("Unknown OID: " + responseOID);
     }
     return res;

@@ -39,11 +39,10 @@ public class DERParser
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Handlers for DER paths. */
-  private final Map<DERPath, ParseHandler> handlerMap =
-    new HashMap<DERPath, ParseHandler>();
+  private final Map<DERPath, ParseHandler> handlerMap = new HashMap<>();
 
   /** Permutations of the current path. */
-  private final Queue<DERPath> permutations = new ArrayDeque<DERPath>();
+  private final Queue<DERPath> permutations = new ArrayDeque<>();
 
 
   /**
@@ -231,7 +230,7 @@ public class DERParser
       permutations.add(new DERPath().pushNode(tag.name()));
       permutations.add(new DERPath().pushNode(tag.name(), index));
     } else {
-      final Collection<DERPath> generation = new ArrayDeque<DERPath>(
+      final Collection<DERPath> generation = new ArrayDeque<>(
         permutations.size());
       for (DERPath p : permutations) {
         generation.add(new DERPath(p).pushNode(tag.name()));

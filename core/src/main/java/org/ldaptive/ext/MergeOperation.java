@@ -15,6 +15,7 @@ package org.ldaptive.ext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.ldaptive.AbstractOperation;
 import org.ldaptive.AddOperation;
@@ -114,7 +115,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
         logger.info(
           "target entry does not exist, no delete performed for request {}",
           request);
-        response = new Response<Void>(null, null);
+        response = new Response<>(null, null);
       } else {
         // entry does not exist, add it
         response = add(request, sourceEntry);
@@ -158,8 +159,8 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
     final AttributeModification[] modifications =
       LdapEntry.computeModifications(source, target);
     if (modifications != null && modifications.length > 0) {
-      final List<AttributeModification> resultModifications =
-        new ArrayList<AttributeModification>(modifications.length);
+      final List<AttributeModification> resultModifications = new ArrayList<>(
+        modifications.length);
       final String[] includeAttrs = request.getIncludeAttributes();
       final String[] excludeAttrs = request.getExcludeAttributes();
       if (includeAttrs != null && includeAttrs.length > 0) {
@@ -177,9 +178,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
           }
         }
       } else {
-        for (AttributeModification am : modifications) {
-          resultModifications.add(am);
-        }
+        Collections.addAll(resultModifications, modifications);
       }
       if (!resultModifications.isEmpty()) {
         logger.info(
@@ -206,7 +205,7 @@ public class MergeOperation extends AbstractOperation<MergeRequest, Void>
         return response;
       }
     }
-    response = new Response<Void>(null, null);
+    response = new Response<>(null, null);
     logger.info(
       "target entry {} equals source entry {}, no modification performed for " +
       "request {}",

@@ -53,7 +53,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
 
   /** Properties that are not in the ldaptive domain. */
   protected final Map<String, Object> extraProps =
-    new HashMap<String, Object>();
+    new HashMap<>();
 
 
   /**
@@ -131,7 +131,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
    */
   protected void initializeObject(final PropertyInvoker invoker)
   {
-    final Map<String, String> props = new HashMap<String, String>();
+    final Map<String, String> props = new HashMap<>();
     final Enumeration<?> en = properties.keys();
     if (en != null) {
       while (en.hasMoreElements()) {

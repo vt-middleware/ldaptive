@@ -187,7 +187,7 @@ public class ApacheLdapUtils
    */
   public Attribute[] fromLdapAttributes(final Collection<LdapAttribute> c)
   {
-    final List<Attribute> attributes = new ArrayList<Attribute>();
+    final List<Attribute> attributes = new ArrayList<>();
     for (LdapAttribute a : c) {
       attributes.add(fromLdapAttribute(a));
     }

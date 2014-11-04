@@ -81,11 +81,9 @@ public class LdapLoginModule extends AbstractLoginModule
         try {
           authenticatorFactory =
             (AuthenticatorFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException e) {
-          throw new IllegalArgumentException(e);
-        } catch (InstantiationException e) {
-          throw new IllegalArgumentException(e);
-        } catch (IllegalAccessException e) {
+        } catch (ClassNotFoundException |
+                 IllegalAccessException |
+                 InstantiationException e) {
           throw new IllegalArgumentException(e);
         }
       }

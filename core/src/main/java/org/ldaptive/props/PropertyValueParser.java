@@ -56,7 +56,7 @@ public class PropertyValueParser
   private String className;
 
   /** Properties found in the config to set on the class. */
-  private final Map<String, String> properties = new HashMap<String, String>();
+  private final Map<String, String> properties = new HashMap<>();
 
 
   /** Default constructor. */

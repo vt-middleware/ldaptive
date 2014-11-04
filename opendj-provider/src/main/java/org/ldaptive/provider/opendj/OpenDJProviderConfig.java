@@ -40,8 +40,7 @@ public class OpenDJProviderConfig extends ProviderConfig<Control>
   public OpenDJProviderConfig()
   {
     setOperationExceptionResultCodes(ResultCode.SERVER_DOWN);
-    setControlProcessor(
-      new ControlProcessor<Control>(new OpenDJControlHandler()));
+    setControlProcessor(new ControlProcessor<>(new OpenDJControlHandler()));
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,

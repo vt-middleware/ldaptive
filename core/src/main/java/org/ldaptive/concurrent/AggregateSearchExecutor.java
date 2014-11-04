@@ -77,8 +77,7 @@ public class AggregateSearchExecutor
     throws LdapException
   {
     final CompletionService<Collection<Response<SearchResult>>> searches =
-      new ExecutorCompletionService<Collection<Response<SearchResult>>>(
-        getExecutorService());
+      new ExecutorCompletionService<>(getExecutorService());
     final SearchRequest[] requests = new SearchRequest[filters.length];
     for (int i = 0; i < filters.length; i++) {
       final SearchRequest sr = newSearchRequest(this);
@@ -95,8 +94,7 @@ public class AggregateSearchExecutor
     }
 
     final List<Future<Collection<Response<SearchResult>>>> futures =
-      new ArrayList<Future<Collection<Response<SearchResult>>>>(
-        factories.length * filters.length);
+      new ArrayList<>(factories.length * filters.length);
     for (ConnectionFactory factory : factories) {
       final Connection conn = factory.getConnection();
       final SearchOperation op = createSearchOperation(conn);
@@ -107,7 +105,7 @@ public class AggregateSearchExecutor
     }
 
     final List<Response<SearchResult>> responses =
-      new ArrayList<Response<SearchResult>>(factories.length * filters.length);
+      new ArrayList<>(factories.length * filters.length);
     for (Future<Collection<Response<SearchResult>>> future : futures) {
       try {
         responses.addAll(future.get());

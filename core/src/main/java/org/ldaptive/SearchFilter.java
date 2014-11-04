@@ -33,7 +33,7 @@ public class SearchFilter
   private String searchFilter;
 
   /** filter parameters. */
-  private final Map<String, Object> parameters = new HashMap<String, Object>();
+  private final Map<String, Object> parameters = new HashMap<>();
 
 
   /** Default constructor. */

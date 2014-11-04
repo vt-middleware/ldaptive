@@ -54,7 +54,7 @@ public class EhcacheTest
         .timeToIdleSeconds(0)
         .diskExpiryThreadIntervalSeconds(3));
     manager.addCache(ehcache);
-    cache = new Ehcache<SearchRequest>(ehcache);
+    cache = new Ehcache<>(ehcache);
     fillCache();
   }
 

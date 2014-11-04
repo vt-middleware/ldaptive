@@ -59,16 +59,16 @@ public class JsonWriter implements SearchResultWriter
   public void write(final SearchResult result)
     throws IOException
   {
-    final List<Map<String, Object>> json = new ArrayList<Map<String, Object>>();
+    final List<Map<String, Object>> json = new ArrayList<>();
     for (LdapEntry e : result.getEntries()) {
-      final Map<String, Object> jsonEntry = new LinkedHashMap<String, Object>();
+      final Map<String, Object> jsonEntry = new LinkedHashMap<>();
       final String dn = e.getDn();
       if (dn != null) {
         jsonEntry.put("dn", e.getDn());
       }
       for (LdapAttribute a : e.getAttributes()) {
         final String name = a.getName();
-        final List<String> l = new ArrayList<String>();
+        final List<String> l = new ArrayList<>();
         l.addAll(a.getStringValues());
         jsonEntry.put(name, l);
       }

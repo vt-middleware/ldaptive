@@ -202,11 +202,8 @@ public class TestControl
       new String[] {"vendorName"});
     try {
       final LdapEntry rootDSE = search.execute(request).getResult().getEntry();
-      if (rootDSE.getAttribute("vendorName") != null) {
-        return rootDSE.getAttribute(
-          "vendorName").getStringValue().contains("Oracle");
-      }
-      return false;
+      return rootDSE.getAttribute("vendorName") != null &&
+             rootDSE.getAttribute("vendorName").getStringValue().contains("Oracle");
     } catch (LdapException e) {
       if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() ||
         ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
@@ -237,9 +234,8 @@ public class TestControl
       modify.execute(
         new ModifyRequest(
           bindDn,
-          new AttributeModification[] {
-            new AttributeModification(
-              AttributeModificationType.REPLACE, ATTR_IDLE), }));
+          new AttributeModification(
+            AttributeModificationType.REPLACE, ATTR_IDLE)));
     } finally {
       conn.close();
     }

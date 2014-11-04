@@ -151,16 +151,14 @@ public class BooleanCustomObject implements CustomObject
   public static <T extends BooleanCustomObject> T createCustomObject(
     final Class<T> type)
   {
-    final Set<Boolean> s1 = new HashSet<Boolean>();
+    final Set<Boolean> s1 = new HashSet<>();
     s1.add(true);
     s1.add(false);
 
     final T o1;
     try {
       o1 = type.newInstance();
-    } catch (InstantiationException e) {
-      throw new IllegalStateException(e);
-    } catch (IllegalAccessException e) {
+    } catch (InstantiationException | IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
     o1.setType1(true);

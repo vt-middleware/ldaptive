@@ -89,7 +89,7 @@ public class PerformanceTest
   public Object[][] connectionFactories()
     throws Exception
   {
-    final Map<String, Object> props = new HashMap<String, Object>();
+    final Map<String, Object> props = new HashMap<>();
     props.put(
       JndiProvider.SOCKET_FACTORY,
       "org.ldaptive.ldapi.AFUnixSocketFactory");

@@ -58,7 +58,7 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
       values.size());
     final Iterator<String> iter = values.iterator();
     for (int i = 0; i < values.size(); i++) {
-      final List<String> l = new ArrayList<String>(1);
+      final List<String> l = new ArrayList<>(1);
       l.add(iter.next());
       Array.set(decoded, i, valueTranscoder.decodeStringValues(l));
     }
@@ -75,7 +75,7 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
       values.size());
     final Iterator<byte[]> iter = values.iterator();
     for (int i = 0; i < values.size(); i++) {
-      final List<byte[]> l = new ArrayList<byte[]>(1);
+      final List<byte[]> l = new ArrayList<>(1);
       l.add(iter.next());
       Array.set(decoded, i, valueTranscoder.decodeBinaryValues(l));
     }
@@ -87,7 +87,7 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   @Override
   public Collection<String> encodeStringValues(final Object values)
   {
-    final List<String> encoded = new ArrayList<String>();
+    final List<String> encoded = new ArrayList<>();
     if (values instanceof Object[]) {
       for (Object o : (Object[]) values) {
         encoded.addAll(valueTranscoder.encodeStringValues(o));
@@ -129,7 +129,7 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   @Override
   public Collection<byte[]> encodeBinaryValues(final Object values)
   {
-    final List<byte[]> encoded = new ArrayList<byte[]>();
+    final List<byte[]> encoded = new ArrayList<>();
     if (values instanceof Object[]) {
       for (Object o : (Object[]) values) {
         encoded.addAll(valueTranscoder.encodeBinaryValues(o));

@@ -78,7 +78,7 @@ public class JndiStartTLSConnectionFactory
   {
     // CheckStyle:IllegalType OFF
     // the JNDI API requires the Hashtable type
-    final Hashtable<String, Object> env = new Hashtable<String, Object>(
+    final Hashtable<String, Object> env = new Hashtable<>(
       environment);
     // CheckStyle:IllegalType ON
     env.put(JndiProvider.PROVIDER_URL, url);

@@ -92,7 +92,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
   private boolean refreshDeletes;
 
   /** entry uuids. */
-  private Set<UUID> entryUuids = new HashSet<UUID>();
+  private Set<UUID> entryUuids = new HashSet<>();
 
 
   /** Default constructor. */

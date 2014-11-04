@@ -97,7 +97,7 @@ public class DERPath
   }
 
   /** Describes the path as a FIFO set of nodes. */
-  private final Deque<Node> nodeStack = new ArrayDeque<Node>();
+  private final Deque<Node> nodeStack = new ArrayDeque<>();
 
 
   /** Creates an empty path specification. */

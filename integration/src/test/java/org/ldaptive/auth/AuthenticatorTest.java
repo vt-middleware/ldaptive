@@ -329,7 +329,7 @@ public class AuthenticatorTest extends AbstractTest
     sr2.setUserFilter(sr1.getUserFilter());
     sr2.setUserFilterParameters(sr1.getUserFilterParameters());
 
-    final Map<String, DnResolver> resolvers = new HashMap<String, DnResolver>();
+    final Map<String, DnResolver> resolvers = new HashMap<>();
     resolvers.put("resover1", sr1);
     resolvers.put("resover2", sr2);
     final AggregateDnResolver resolver = new AggregateDnResolver(resolvers);
@@ -483,26 +483,25 @@ public class AuthenticatorTest extends AbstractTest
 
     final TestAuthenticationResponseHandler authHandler =
       new TestAuthenticationResponseHandler();
-    auth.setAuthenticationResponseHandlers(
-      new AuthenticationResponseHandler[] {authHandler});
+    auth.setAuthenticationResponseHandlers(authHandler);
 
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(dn, new Credential(INVALID_PASSWD)));
     AssertJUnit.assertFalse(response.getResult());
     AssertJUnit.assertTrue(!authHandler.getResults().isEmpty());
-    AssertJUnit.assertFalse(authHandler.getResults().get(dn).booleanValue());
+    AssertJUnit.assertFalse(authHandler.getResults().get(dn));
 
     response = auth.authenticate(
       new AuthenticationRequest(dn, new Credential(credential)));
     AssertJUnit.assertTrue(response.getResult());
-    AssertJUnit.assertTrue(authHandler.getResults().get(dn).booleanValue());
+    AssertJUnit.assertTrue(authHandler.getResults().get(dn));
 
     authHandler.getResults().clear();
 
     response = auth.authenticate(
       new AuthenticationRequest(dn, new Credential(credential)));
     AssertJUnit.assertTrue(response.getResult());
-    AssertJUnit.assertTrue(authHandler.getResults().get(dn).booleanValue());
+    AssertJUnit.assertTrue(authHandler.getResults().get(dn));
   }
 
 
@@ -1000,8 +999,7 @@ public class AuthenticatorTest extends AbstractTest
     PasswordPolicyControl ppcResponse = null;
     final Authenticator auth = createTLSAuthenticator(true);
     auth.setAuthenticationResponseHandlers(
-      new AuthenticationResponseHandler[] {
-        new PasswordPolicyAuthenticationResponseHandler(), });
+      new PasswordPolicyAuthenticationResponseHandler());
     try {
       conn.open();
 
@@ -1019,10 +1017,9 @@ public class AuthenticatorTest extends AbstractTest
       modify.execute(
         new ModifyRequest(
           entry.getDn(),
-          new AttributeModification[] {
-            new AttributeModification(
-              AttributeModificationType.ADD,
-              new LdapAttribute("pwdAccountLockedTime", "000001010000Z")), }));
+          new AttributeModification(
+            AttributeModificationType.ADD,
+            new LdapAttribute("pwdAccountLockedTime", "000001010000Z"))));
 
       response = auth.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
@@ -1039,10 +1036,9 @@ public class AuthenticatorTest extends AbstractTest
       modify.execute(
         new ModifyRequest(
           entry.getDn(),
-          new AttributeModification[] {
-            new AttributeModification(
-              AttributeModificationType.REMOVE,
-              new LdapAttribute("pwdAccountLockedTime")), }));
+          new AttributeModification(
+            AttributeModificationType.REMOVE,
+            new LdapAttribute("pwdAccountLockedTime"))));
 
       response = auth.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));

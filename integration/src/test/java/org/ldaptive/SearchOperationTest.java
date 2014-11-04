@@ -71,8 +71,7 @@ public class SearchOperationTest extends AbstractTest
   private static LdapEntry specialCharsLdapEntry;
 
   /** Entries for group tests. */
-  private static Map<String, LdapEntry[]> groupEntries =
-    new HashMap<String, LdapEntry[]>();
+  private static final Map<String, LdapEntry[]> groupEntries = new HashMap<>();
 
   /**
    * Initialize the map of group entries.
@@ -177,8 +176,7 @@ public class SearchOperationTest extends AbstractTest
           groupEntries.get("2")[0].getDn(),
             new AttributeModification(
               AttributeModificationType.ADD,
-              new LdapAttribute(
-                "member", new String[]{ "cn=Group 3," + baseDn}))));
+              new LdapAttribute("member", "cn=Group 3," + baseDn))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -191,9 +189,7 @@ public class SearchOperationTest extends AbstractTest
             new AttributeModification(
               AttributeModificationType.ADD,
               new LdapAttribute(
-                "member",
-                new String[]{
-                  "cn=Group 4," + baseDn, "cn=Group 5," + baseDn, }))));
+                "member", "cn=Group 4," + baseDn, "cn=Group 5," + baseDn))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -206,9 +202,7 @@ public class SearchOperationTest extends AbstractTest
             new AttributeModification(
               AttributeModificationType.ADD,
               new LdapAttribute(
-                "member",
-                new String[]{
-                  "cn=Group 2," + baseDn, "cn=Group 3," + baseDn}))));
+                "member", "cn=Group 2," + baseDn, "cn=Group 3," + baseDn))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -1006,8 +1000,7 @@ public class SearchOperationTest extends AbstractTest
       final MergeAttributeEntryHandler handler =
         new MergeAttributeEntryHandler();
       handler.setMergeAttributeName("cn");
-      handler.setAttributeNames(
-        new String[] {"displayName", "givenName", "sn", });
+      handler.setAttributeNames("displayName", "givenName", "sn");
 
       final SearchRequest sr = new SearchRequest(
         dn,
@@ -1053,9 +1046,8 @@ public class SearchOperationTest extends AbstractTest
     // test binary searching
     SearchRequest request = new SearchRequest(
       dn,
-      new SearchFilter(filter),
-      new String[] {returnAttr});
-    request.setBinaryAttributes(new String[]{returnAttr});
+      new SearchFilter(filter), returnAttr);
+    request.setBinaryAttributes(returnAttr);
     SearchResult result = search.execute(request).getResult();
     AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
     AssertJUnit.assertEquals(
@@ -1064,8 +1056,7 @@ public class SearchOperationTest extends AbstractTest
 
     request = new SearchRequest(
       dn,
-      new SearchFilter(filter),
-      new String[] {returnAttr});
+      new SearchFilter(filter), returnAttr);
     result = search.execute(request).getResult();
     AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
     AssertJUnit.assertEquals(
@@ -1074,9 +1065,8 @@ public class SearchOperationTest extends AbstractTest
 
     request = new SearchRequest(
       dn,
-      new SearchFilter(filter),
-      new String[] {"sn"});
-    request.setBinaryAttributes(new String[]{"sn"});
+      new SearchFilter(filter), "sn");
+    request.setBinaryAttributes("sn");
     result = search.execute(request).getResult();
     AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
     AssertJUnit.assertNotNull(
@@ -1084,8 +1074,7 @@ public class SearchOperationTest extends AbstractTest
 
     request = new SearchRequest(
       dn,
-      new SearchFilter(filter),
-      new String[] {"userCertificate;binary"});
+      new SearchFilter(filter), "userCertificate;binary");
     result = search.execute(request).getResult();
     AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
     AssertJUnit.assertNotNull(
@@ -1144,7 +1133,7 @@ public class SearchOperationTest extends AbstractTest
       final SearchResult lcValuesChangeResult = TestUtils.convertLdifToResult(
         expected);
       for (LdapAttribute la : lcValuesChangeResult.getEntry().getAttributes()) {
-        final Set<String> s = new HashSet<String>();
+        final Set<String> s = new HashSet<>();
         for (String value : la.getStringValues()) {
           s.add(value.toLowerCase());
         }
@@ -1185,7 +1174,7 @@ public class SearchOperationTest extends AbstractTest
         lcAllChangeResult.getEntry().setDn(
           lcAllChangeResult.getEntry().getDn().toLowerCase());
         la.setName(la.getName().toLowerCase());
-        final Set<String> s = new HashSet<String>();
+        final Set<String> s = new HashSet<>();
         for (String value : la.getStringValues()) {
           s.add(value.toLowerCase());
         }
@@ -1632,7 +1621,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     Connection conn = createLdapConnection(true);
-    final List<SearchReference> refs = new ArrayList<SearchReference>();
+    final List<SearchReference> refs = new ArrayList<>();
 
     // expects a referral on the root dn
     final String referralDn = DnParser.substring(dn, 1);
@@ -1650,7 +1639,7 @@ public class SearchOperationTest extends AbstractTest
         throws LdapException
       {
         refs.add(reference);
-        return new HandlerResult<SearchReference>(null);
+        return new HandlerResult<>(null);
       }
 
       @Override
@@ -1743,7 +1732,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     Connection conn = createLdapConnection(true);
-    final List<SearchReference> refs = new ArrayList<SearchReference>();
+    final List<SearchReference> refs = new ArrayList<>();
 
     // expects a referral on the root dn
     final String referralDn = DnParser.substring(dn, 1);
@@ -1763,7 +1752,7 @@ public class SearchOperationTest extends AbstractTest
         throws LdapException
       {
         refs.add(reference);
-        return new HandlerResult<SearchReference>(null);
+        return new HandlerResult<>(null);
       }
 
       @Override
@@ -1851,7 +1840,7 @@ public class SearchOperationTest extends AbstractTest
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
     DefaultConnectionFactory cf = new DefaultConnectionFactory(cc);
     cf.getProvider().getProviderConfig().setOperationExceptionResultCodes(
-      new ResultCode[]{retryResultCode,});
+      retryResultCode);
 
     Connection conn = cf.getConnection();
     RetrySearchOperation search = new RetrySearchOperation(
@@ -1908,7 +1897,7 @@ public class SearchOperationTest extends AbstractTest
     // test retry count and wait time
     cf = new DefaultConnectionFactory(cc);
     cf.getProvider().getProviderConfig().setOperationExceptionResultCodes(
-      new ResultCode[]{retryResultCode,});
+      retryResultCode);
     conn = cf.getConnection();
     search = new RetrySearchOperation(
       conn,
@@ -2029,7 +2018,7 @@ public class SearchOperationTest extends AbstractTest
       final SearchOperation search = new SearchOperation(conn);
       final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
         dn, returnAttrs.split("\\|"));
-      request.setBinaryAttributes(new String[]{"jpegPhoto"});
+      request.setBinaryAttributes("jpegPhoto");
       final SearchResult result = search.execute(request).getResult();
       AssertJUnit.assertEquals(
         TestUtils.convertStringToEntry(

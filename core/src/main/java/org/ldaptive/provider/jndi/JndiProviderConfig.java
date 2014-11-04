@@ -71,7 +71,7 @@ public class JndiProviderConfig extends ProviderConfig<Control>
       ResultCode.PARTIAL_RESULTS,
     };
     setControlProcessor(
-      new ControlProcessor<Control>(new JndiControlHandler()));
+      new ControlProcessor<>(new JndiControlHandler()));
   }
 
 

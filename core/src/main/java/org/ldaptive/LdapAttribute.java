@@ -86,9 +86,9 @@ public class LdapAttribute extends AbstractLdapBean
   {
     super(sb);
     if (binary) {
-      attributeValues = new LdapAttributeValues<byte[]>(byte[].class);
+      attributeValues = new LdapAttributeValues<>(byte[].class);
     } else {
-      attributeValues = new LdapAttributeValues<String>(String.class);
+      attributeValues = new LdapAttributeValues<>(String.class);
     }
   }
 
@@ -516,14 +516,14 @@ public class LdapAttribute extends AbstractLdapBean
   {
     Collection<E> values = null;
     if (SortBehavior.UNORDERED == getSortBehavior()) {
-      values = new HashSet<E>();
+      values = new HashSet<>();
     } else if (SortBehavior.ORDERED == getSortBehavior()) {
-      values = new LinkedHashSet<E>();
+      values = new LinkedHashSet<>();
     } else if (SortBehavior.SORTED == getSortBehavior()) {
       if (!c.isAssignableFrom(Comparable.class)) {
-        values = new TreeSet<E>(getComparator(c));
+        values = new TreeSet<>(getComparator(c));
       } else {
-        values = new TreeSet<E>();
+        values = new TreeSet<>();
       }
     }
     return values;
@@ -584,8 +584,8 @@ public class LdapAttribute extends AbstractLdapBean
     final String name,
     final Collection<Object> values)
   {
-    final Collection<String> stringValues = new ArrayList<String>();
-    final Collection<byte[]> binaryValues = new ArrayList<byte[]>();
+    final Collection<String> stringValues = new ArrayList<>();
+    final Collection<byte[]> binaryValues = new ArrayList<>();
     for (Object value : values) {
       if (value instanceof byte[]) {
         binaryValues.add((byte[]) value);

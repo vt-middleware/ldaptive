@@ -16,14 +16,11 @@ package org.ldaptive.beans.reflect;
 import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.security.cert.Certificate;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import org.ldaptive.io.BooleanValueTranscoder;
 import org.ldaptive.io.ByteArrayValueTranscoder;
 import org.ldaptive.io.CertificateValueTranscoder;
@@ -147,57 +144,46 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
   protected Set<SingleValueReflectionTranscoder<?>>
   getDefaultSingleValueTranscoders()
   {
-    final Set<SingleValueReflectionTranscoder<?>> transcoders =
-      new HashSet<SingleValueReflectionTranscoder<?>>();
+    final Set<SingleValueReflectionTranscoder<?>> transcoders = new HashSet<>();
     transcoders.add(
-      new SingleValueReflectionTranscoder<Object>(new ObjectValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new ObjectValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Boolean>(
-        new BooleanValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new BooleanValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Boolean>(
-        new BooleanValueTranscoder(true)));
+      new SingleValueReflectionTranscoder<>(new BooleanValueTranscoder(true)));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Double>(new DoubleValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new DoubleValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Double>(
-        new DoubleValueTranscoder(true)));
+      new SingleValueReflectionTranscoder<>(new DoubleValueTranscoder(true)));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Float>(new FloatValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new FloatValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Float>(
-        new FloatValueTranscoder(true)));
+      new SingleValueReflectionTranscoder<>(new FloatValueTranscoder(true)));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Integer>(
-        new IntegerValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new IntegerValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Integer>(
-        new IntegerValueTranscoder(true)));
+      new SingleValueReflectionTranscoder<>(new IntegerValueTranscoder(true)));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Long>(new LongValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new LongValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Long>(new LongValueTranscoder(true)));
+      new SingleValueReflectionTranscoder<>(new LongValueTranscoder(true)));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Short>(new ShortValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new ShortValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Short>(
-        new ShortValueTranscoder(true)));
+      new SingleValueReflectionTranscoder<>(new ShortValueTranscoder(true)));
     transcoders.add(
-      new SingleValueReflectionTranscoder<String>(new StringValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new StringValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<byte[]>(
-        new ByteArrayValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new ByteArrayValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<char[]>(
-        new CharArrayValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new CharArrayValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Certificate>(
-        new CertificateValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new CertificateValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<Calendar>(
+      new SingleValueReflectionTranscoder<>(
         new GeneralizedTimeValueTranscoder()));
     transcoders.add(
-      new SingleValueReflectionTranscoder<UUID>(new UUIDValueTranscoder()));
+      new SingleValueReflectionTranscoder<>(new UUIDValueTranscoder()));
     return transcoders;
   }
 

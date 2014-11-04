@@ -104,9 +104,7 @@ public class AsyncSearchOperationTest extends AbstractTest
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       TestUtils.assertEquals(
         TestUtils.convertLdifToResult(expected), response.getResult());
-    } catch (ExecutionException e) {
-      throw (Exception) e.getCause();
-    } catch (IllegalStateException e) {
+    } catch (ExecutionException | IllegalStateException e) {
       throw (Exception) e.getCause();
     } finally {
       conn.close();

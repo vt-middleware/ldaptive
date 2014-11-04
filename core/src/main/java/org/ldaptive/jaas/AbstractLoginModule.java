@@ -55,7 +55,7 @@ public abstract class AbstractLoginModule implements LoginModule
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Default roles. */
-  protected final List<LdapRole> defaultRole = new ArrayList<LdapRole>();
+  protected final List<LdapRole> defaultRole = new ArrayList<>();
 
   /** Initialized subject. */
   protected Subject subject;
@@ -170,9 +170,9 @@ public abstract class AbstractLoginModule implements LoginModule
         roleGroupName,
       });
 
-    principals = new TreeSet<Principal>();
-    credentials = new HashSet<LdapCredential>();
-    roles = new TreeSet<Principal>();
+    principals = new TreeSet<>();
+    credentials = new HashSet<>();
+    roles = new TreeSet<>();
   }
 
 

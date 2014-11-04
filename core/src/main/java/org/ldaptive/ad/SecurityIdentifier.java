@@ -105,7 +105,7 @@ public final class SecurityIdentifier
     // third token is the authority
     final long authority = Long.valueOf(st.nextToken());
     // remaining token are the sub authorities
-    final List<String> subAuthorities = new ArrayList<String>();
+    final List<String> subAuthorities = new ArrayList<>();
     while (st.hasMoreTokens()) {
       subAuthorities.add(st.nextToken());
     }

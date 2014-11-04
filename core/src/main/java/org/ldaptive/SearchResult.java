@@ -64,15 +64,15 @@ public class SearchResult extends AbstractLdapBean
   {
     super(sb);
     if (SortBehavior.UNORDERED == sb) {
-      resultEntries = new HashMap<String, LdapEntry>();
-      searchReferences = new HashSet<SearchReference>();
+      resultEntries = new HashMap<>();
+      searchReferences = new HashSet<>();
     } else if (SortBehavior.ORDERED == sb) {
-      resultEntries = new LinkedHashMap<String, LdapEntry>();
-      searchReferences = new LinkedHashSet<SearchReference>();
+      resultEntries = new LinkedHashMap<>();
+      searchReferences = new LinkedHashSet<>();
     } else if (SortBehavior.SORTED == sb) {
-      resultEntries = new TreeMap<String, LdapEntry>(
+      resultEntries = new TreeMap<>(
         String.CASE_INSENSITIVE_ORDER);
-      searchReferences = new TreeSet<SearchReference>(
+      searchReferences = new TreeSet<>(
         new Comparator<SearchReference>() {
           @Override
           public int compare(

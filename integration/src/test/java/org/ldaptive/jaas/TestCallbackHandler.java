@@ -60,17 +60,17 @@ public class TestCallbackHandler implements CallbackHandler
   public void handle(final Callback[] callbacks)
     throws IOException, UnsupportedCallbackException
   {
-    for (int i = 0; i < callbacks.length; i++) {
-      if (callbacks[i] instanceof NameCallback) {
-        final NameCallback nc = (NameCallback) callbacks[i];
+    for (Callback callback : callbacks) {
+      if (callback instanceof NameCallback) {
+        final NameCallback nc = (NameCallback) callback;
         nc.setName(name);
-      } else if (callbacks[i] instanceof PasswordCallback) {
-        final PasswordCallback pc = (PasswordCallback) callbacks[i];
+      } else if (callback instanceof PasswordCallback) {
+        final PasswordCallback pc = (PasswordCallback) callback;
         if (password != null) {
           pc.setPassword(password.toCharArray());
         }
       } else {
-        throw new UnsupportedCallbackException(callbacks[i], "Unsupported");
+        throw new UnsupportedCallbackException(callback, "Unsupported");
       }
     }
   }

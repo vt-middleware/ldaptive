@@ -108,8 +108,7 @@ public class SearchTemplates
    */
   public SearchFilter[] format(final Query query)
   {
-    final List<SearchFilter> filters = new ArrayList<SearchFilter>(
-      filterTemplates.length);
+    final List<SearchFilter> filters = new ArrayList<>(filterTemplates.length);
     for (String template : filterTemplates) {
       final SearchFilter filter = new SearchFilter(
         concatFilters(
@@ -138,7 +137,7 @@ public class SearchTemplates
    */
   private String concatFilters(final String... filters)
   {
-    final List<String> nonNullFilters = new ArrayList<String>(filters.length);
+    final List<String> nonNullFilters = new ArrayList<>(filters.length);
     for (String s : filters) {
       if (s != null) {
         nonNullFilters.add(s);
@@ -207,8 +206,7 @@ public class SearchTemplates
     @Override
     public Map<String, String> parse(final String[] terms)
     {
-      final Map<String, String> filterParams = new HashMap<String, String>(
-        terms.length);
+      final Map<String, String> filterParams = new HashMap<>(terms.length);
       for (int i = 1; i <= terms.length; i++) {
         filterParams.put("term" + i, terms[i - 1]);
       }
@@ -237,8 +235,7 @@ public class SearchTemplates
     @Override
     public Map<String, String> parse(final String[] terms)
     {
-      final Map<String, String> filterParams = new HashMap<String, String>(
-        terms.length);
+      final Map<String, String> filterParams = new HashMap<>(terms.length);
       final String[] initialParams = getInitials(terms);
       for (int i = 1; i <= initialParams.length; i++) {
         filterParams.put("initial" + i, initialParams[i - 1]);

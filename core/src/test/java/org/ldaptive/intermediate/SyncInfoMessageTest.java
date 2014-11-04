@@ -65,7 +65,7 @@ public class SyncInfoMessageTest
     m3.setCookie(cookie);
     m3.setRefreshDone(false);
 
-    final Set<UUID> uuids = new HashSet<UUID>();
+    final Set<UUID> uuids = new HashSet<>();
     uuids.add(UUID.fromString("5d5da5d0-5be2-1031-8284-116ff56e4e59"));
     uuids.add(UUID.fromString("843177ec-5b0e-1031-827f-116ff56e4e59"));
 

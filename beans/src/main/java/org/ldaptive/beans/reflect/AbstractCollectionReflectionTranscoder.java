@@ -78,7 +78,7 @@ public abstract class AbstractCollectionReflectionTranscoder
       decoded.add(arrayTranscoder.decodeStringValues(values));
     } else {
       for (String value : values) {
-        final List<String> l = new ArrayList<String>(1);
+        final List<String> l = new ArrayList<>(1);
         l.add(value);
         decoded.add(singleValueTranscoder.decodeStringValues(l));
       }
@@ -96,7 +96,7 @@ public abstract class AbstractCollectionReflectionTranscoder
       decoded.add(arrayTranscoder.decodeBinaryValues(values));
     } else {
       for (byte[] value : values) {
-        final List<byte[]> l = new ArrayList<byte[]>(1);
+        final List<byte[]> l = new ArrayList<>(1);
         l.add(value);
         decoded.add(singleValueTranscoder.decodeBinaryValues(l));
       }

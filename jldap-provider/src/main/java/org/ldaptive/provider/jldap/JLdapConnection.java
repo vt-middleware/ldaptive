@@ -172,9 +172,9 @@ public class JLdapConnection implements ProviderConnection
     try {
       final LDAPResponseQueue queue = connection.bind(
         LDAPConnection.LDAP_V3,
-        (String) null,
-        (byte[]) null,
-        (LDAPResponseQueue) null,
+        null,
+        null,
+        null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = createResponse(request, null, lr);
@@ -203,7 +203,7 @@ public class JLdapConnection implements ProviderConnection
         LDAPConnection.LDAP_V3,
         request.getDn(),
         request.getCredential().getBytes(),
-        (LDAPResponseQueue) null,
+        null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = createResponse(request, null, lr);
@@ -245,7 +245,7 @@ public class JLdapConnection implements ProviderConnection
 
       case DIGEST_MD5:
         connection.bind(
-          (String) null,
+          null,
           request.getDn(),
           new String[] {"DIGEST-MD5"},
           null,
@@ -268,7 +268,7 @@ public class JLdapConnection implements ProviderConnection
     } catch (LDAPException e) {
       processLDAPException(e);
     }
-    return new Response<Void>(null, ResultCode.SUCCESS);
+    return new Response<>(null, ResultCode.SUCCESS);
   }
 
 
@@ -284,7 +284,7 @@ public class JLdapConnection implements ProviderConnection
         new LDAPEntry(
           request.getDn(),
           bu.fromLdapAttributes(request.getLdapAttributes())),
-        (LDAPResponseQueue) null,
+        null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = createResponse(request, null, lr);
@@ -306,7 +306,7 @@ public class JLdapConnection implements ProviderConnection
       final LDAPResponseQueue queue = connection.compare(
         request.getDn(),
         bu.fromLdapAttribute(request.getAttribute()),
-        (LDAPResponseQueue) null,
+        null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = createResponse(
@@ -329,7 +329,7 @@ public class JLdapConnection implements ProviderConnection
     try {
       final LDAPResponseQueue queue = connection.delete(
         request.getDn(),
-        (LDAPResponseQueue) null,
+        null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = createResponse(request, null, lr);
@@ -351,7 +351,7 @@ public class JLdapConnection implements ProviderConnection
       final LDAPResponseQueue queue = connection.modify(
         request.getDn(),
         bu.fromAttributeModification(request.getAttributeModifications()),
-        (LDAPResponseQueue) null,
+        null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = createResponse(request, null, lr);
@@ -375,7 +375,7 @@ public class JLdapConnection implements ProviderConnection
         dn[0],
         dn[1],
         request.getDeleteOldRDn(),
-        (LDAPResponseQueue) null,
+        null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = createResponse(request, null, lr);
@@ -550,7 +550,7 @@ public class JLdapConnection implements ProviderConnection
     final LDAPResponse ldapResponse)
   {
     return
-      new Response<T>(
+      new Response<>(
         result,
         ResultCode.valueOf(ldapResponse.getResultCode()),
         ldapResponse.getErrorMessage(),
@@ -698,7 +698,7 @@ public class JLdapConnection implements ProviderConnection
         if (rc == null) {
           processLDAPException(e);
         }
-        response = new Response<Void>(
+        response = new Response<>(
           null,
           rc,
           e.getLDAPErrorMessage(),
@@ -886,7 +886,7 @@ public class JLdapConnection implements ProviderConnection
           sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
           sr.getReturnAttributes(),
           sr.getTypesOnly(),
-          (LDAPSearchQueue) null,
+          null,
           constraints);
     }
 
@@ -1227,7 +1227,7 @@ public class JLdapConnection implements ProviderConnection
 
     /** Listeners to receive unsolicited notifications. */
     private final List<UnsolicitedNotificationListener> listeners =
-      new ArrayList<UnsolicitedNotificationListener>();
+      new ArrayList<>();
 
 
     /**

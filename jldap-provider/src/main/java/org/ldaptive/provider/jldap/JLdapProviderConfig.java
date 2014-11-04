@@ -44,8 +44,7 @@ public class JLdapProviderConfig extends ProviderConfig<LDAPControl>
   public JLdapProviderConfig()
   {
     setOperationExceptionResultCodes(ResultCode.CONNECT_ERROR);
-    setControlProcessor(
-      new ControlProcessor<LDAPControl>(new JLdapControlHandler()));
+    setControlProcessor(new ControlProcessor<>(new JLdapControlHandler()));
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,

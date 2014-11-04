@@ -647,7 +647,7 @@ public class ApacheLdapConnection implements ProviderConnection
     final LdapResult ldapResult = resultResponse.getLdapResult();
     final Referral ref = ldapResult.getReferral();
     return
-      new Response<T>(
+      new Response<>(
         result,
         ResultCode.valueOf(ldapResult.getResultCode().getValue()),
         ldapResult.getDiagnosticMessage(),
@@ -840,9 +840,7 @@ public class ApacheLdapConnection implements ProviderConnection
         processLdapOperationException(e);
       } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
         processLdapException(e);
-      } catch (org.ldaptive.LdapException e) {
-        throw e;
-      } catch (RuntimeException e) {
+      } catch (LdapException | RuntimeException e) {
         throw e;
       } catch (Exception e) {
         throw new org.ldaptive.LdapException(e);

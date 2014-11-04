@@ -445,7 +445,7 @@ public class VirtualListViewRequestControl extends AbstractControl
   @Override
   public byte[] encode()
   {
-    final List<DEREncoder> l = new ArrayList<DEREncoder>();
+    final List<DEREncoder> l = new ArrayList<>();
     if (getAssertionValue() != null) {
       l.add(new IntegerType(getBeforeCount()));
       l.add(new IntegerType(getAfterCount()));

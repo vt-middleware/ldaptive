@@ -137,7 +137,7 @@ public class SortRequestControl extends AbstractControl
   {
     final DEREncoder[] keyEncoders = new DEREncoder[sortKeys.length];
     for (int i = 0; i < sortKeys.length; i++) {
-      final List<DEREncoder> l = new ArrayList<DEREncoder>();
+      final List<DEREncoder> l = new ArrayList<>();
       l.add(new OctetStringType(sortKeys[i].getAttributeDescription()));
       if (sortKeys[i].getMatchingRuleId() != null) {
         l.add(new ContextType(0, sortKeys[i].getMatchingRuleId()));

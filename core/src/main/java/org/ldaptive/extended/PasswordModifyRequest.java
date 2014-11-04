@@ -185,7 +185,7 @@ public class PasswordModifyRequest extends AbstractRequest
   @Override
   public byte[] encode()
   {
-    final List<DEREncoder> l = new ArrayList<DEREncoder>();
+    final List<DEREncoder> l = new ArrayList<>();
     if (getUserIdentity() != null) {
       l.add(new ContextType(0, getUserIdentity()));
     }

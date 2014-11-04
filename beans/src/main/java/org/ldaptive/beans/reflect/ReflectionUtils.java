@@ -108,9 +108,7 @@ public final class ReflectionUtils
   {
     try {
       return method.invoke(object);
-    } catch (IllegalAccessException e) {
-      throw new IllegalArgumentException(e);
-    } catch (InvocationTargetException e) {
+    } catch (IllegalAccessException | InvocationTargetException e) {
       throw new IllegalArgumentException(e);
     }
   }
@@ -133,9 +131,7 @@ public final class ReflectionUtils
   {
     try {
       method.invoke(object, value);
-    } catch (IllegalAccessException e) {
-      throw new IllegalArgumentException(e);
-    } catch (InvocationTargetException e) {
+    } catch (IllegalAccessException | InvocationTargetException e) {
       throw new IllegalArgumentException(e);
     }
   }

@@ -71,8 +71,7 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
   protected Map<String, PropertyDescriptor> getPropertyDescriptors(
     final Class<?> type)
   {
-    final Map<String, PropertyDescriptor> descriptors =
-      new HashMap<String, PropertyDescriptor>();
+    final Map<String, PropertyDescriptor> descriptors = new HashMap<>();
     try {
       final BeanInfo info = Introspector.getBeanInfo(type);
       if (info != null) {

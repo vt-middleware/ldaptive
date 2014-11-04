@@ -226,7 +226,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     final ConnectionConfig cc,
     final String factory)
   {
-    final Map<String, Object> env = new HashMap<String, Object>();
+    final Map<String, Object> env = new HashMap<>();
     env.put(CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
     env.put(VERSION, "3");
     if (cc.getUseSSL()) {

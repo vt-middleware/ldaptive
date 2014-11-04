@@ -13,7 +13,6 @@
 */
 package org.ldaptive.extended;
 
-import java.util.concurrent.ExecutionException;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
@@ -89,9 +88,9 @@ public class CancelOperationTest extends AbstractTest
                 new CancelRequest(entry.getMessageId()));
               AssertJUnit.assertEquals(
                 ResultCode.SUCCESS, response.getResultCode());
-              return new HandlerResult<SearchEntry>(null);
+              return new HandlerResult<>(null);
             } catch (LdapException e) {
-              return new HandlerResult<SearchEntry>(null, true);
+              return new HandlerResult<>(null, true);
             }
           }
 

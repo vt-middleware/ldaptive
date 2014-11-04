@@ -42,7 +42,7 @@ public final class ConnectionStrategies
    */
   protected static List<String> splitLdapUrl(final String url)
   {
-    final List<String> urls = new ArrayList<String>();
+    final List<String> urls = new ArrayList<>();
     if (url != null) {
       final StringTokenizer st = new StringTokenizer(url);
       while (st.hasMoreTokens()) {

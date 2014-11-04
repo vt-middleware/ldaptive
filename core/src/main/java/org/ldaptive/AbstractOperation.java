@@ -217,7 +217,7 @@ public abstract class AbstractOperation<Q extends Request, S>
         }
       }
     }
-    return new HandlerResult<S>(processed, abort);
+    return new HandlerResult<>(processed, abort);
   }
 
 
@@ -292,7 +292,7 @@ public abstract class AbstractOperation<Q extends Request, S>
       final Response<S> response)
       throws LdapException
     {
-      return new HandlerResult<Response<S>>(invoke(request));
+      return new HandlerResult<>(invoke(request));
     }
 
 

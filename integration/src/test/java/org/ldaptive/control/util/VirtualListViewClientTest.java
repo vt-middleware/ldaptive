@@ -81,8 +81,8 @@ public class VirtualListViewClientTest extends AbstractTest
   public void deleteLdapEntry()
     throws Exception
   {
-    for (int i = 0; i < testLdapEntries.length; i++) {
-      super.deleteLdapEntry(testLdapEntries[i].getDn());
+    for (LdapEntry testLdapEntry : testLdapEntries) {
+      super.deleteLdapEntry(testLdapEntry.getDn());
     }
   }
 

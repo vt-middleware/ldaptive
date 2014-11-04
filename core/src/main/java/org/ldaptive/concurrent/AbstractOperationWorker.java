@@ -105,8 +105,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
   @SuppressWarnings("unchecked")
   public Collection<Future<Response<S>>> execute(final Q... requests)
   {
-    final List<Future<Response<S>>> results =
-      new ArrayList<Future<Response<S>>>(requests.length);
+    final List<Future<Response<S>>> results = new ArrayList<>(requests.length);
     for (Q request : requests) {
       results.add(service.submit(createCallable(operation, request)));
     }
@@ -126,16 +125,14 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
   @SuppressWarnings("unchecked")
   public Collection<Response<S>> executeToCompletion(final Q... requests)
   {
-    final CompletionService<Response<S>> cs =
-      new ExecutorCompletionService<Response<S>>(service);
-    final List<Future<Response<S>>> futures =
-      new ArrayList<Future<Response<S>>>(requests.length);
+    final CompletionService<Response<S>> cs = new ExecutorCompletionService<>(
+      service);
+    final List<Future<Response<S>>> futures = new ArrayList<>(requests.length);
     for (Q request : requests) {
       futures.add(cs.submit(createCallable(operation, request)));
     }
 
-    final List<Response<S>> responses = new ArrayList<Response<S>>(
-      requests.length);
+    final List<Response<S>> responses = new ArrayList<>(requests.length);
     for (Future<Response<S>> future : futures) {
       try {
         responses.add(future.get());

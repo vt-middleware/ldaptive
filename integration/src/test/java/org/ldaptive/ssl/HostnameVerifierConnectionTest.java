@@ -41,6 +41,7 @@ public class HostnameVerifierConnectionTest
    */
   @BeforeClass(groups = {"ssl-hostname"})
   public void setProperties()
+    throws Exception
   {
     System.setProperty(
       "javax.net.ssl.trustStore",
@@ -53,6 +54,7 @@ public class HostnameVerifierConnectionTest
   /** @throws  Exception  On test failure. */
   @AfterClass(groups = {"ssl-hostname"})
   public void clearProperties()
+    throws Exception
   {
     System.clearProperty("javax.net.ssl.trustStore");
     System.clearProperty("javax.net.ssl.trustStoreType");

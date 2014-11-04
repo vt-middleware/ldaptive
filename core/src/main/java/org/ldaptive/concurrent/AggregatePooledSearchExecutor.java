@@ -78,11 +78,9 @@ public class AggregatePooledSearchExecutor
     throws LdapException
   {
     final CompletionService<Response<SearchResult>> searches =
-      new ExecutorCompletionService<Response<SearchResult>>(
-        getExecutorService());
+      new ExecutorCompletionService<>(getExecutorService());
     final List<Future<Response<SearchResult>>> futures =
-      new ArrayList<Future<Response<SearchResult>>>(
-        factories.length * filters.length);
+      new ArrayList<>(factories.length * filters.length);
     for (ConnectionFactory factory : factories) {
       for (SearchFilter filter : filters) {
         final SearchRequest sr = newSearchRequest(this);
@@ -103,7 +101,7 @@ public class AggregatePooledSearchExecutor
     }
 
     final List<Response<SearchResult>> responses =
-      new ArrayList<Response<SearchResult>>(factories.length * filters.length);
+      new ArrayList<>(factories.length * filters.length);
     for (Future<Response<SearchResult>> future : futures) {
       try {
         responses.add(future.get());

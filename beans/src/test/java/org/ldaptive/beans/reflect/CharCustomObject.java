@@ -150,7 +150,7 @@ public class CharCustomObject implements CustomObject
     if (c != null) {
       s = "";
       for (char[] t : c) {
-        s += Arrays.toString((char[]) t);
+        s += Arrays.toString(t);
       }
     }
     return s;
@@ -168,16 +168,14 @@ public class CharCustomObject implements CustomObject
   public static <T extends CharCustomObject> T createCustomObject(
     final Class<T> type)
   {
-    final Set<char[]> s1 = new HashSet<char[]>();
+    final Set<char[]> s1 = new HashSet<>();
     s1.add(new char[] {'t', 's', 'v', '1'});
     s1.add(new char[] {'t', 's', 'v', '2'});
 
     final T o1;
     try {
       o1 = type.newInstance();
-    } catch (InstantiationException e) {
-      throw new IllegalStateException(e);
-    } catch (IllegalAccessException e) {
+    } catch (InstantiationException | IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
     o1.setCustomDn("cn=String Entry,ou=people,dc=ldaptive,dc=org");

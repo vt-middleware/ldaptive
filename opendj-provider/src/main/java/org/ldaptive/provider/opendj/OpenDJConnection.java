@@ -673,7 +673,7 @@ public class OpenDJConnection
     final List<Control> ctls = ldapResult.getControls();
     final List<String> urls = ldapResult.getReferralURIs();
     return
-      new Response<T>(
+      new Response<>(
         result,
         ResultCode.valueOf(ldapResult.getResultCode().intValue()),
         ldapResult.getDiagnosticMessage(),
@@ -837,7 +837,7 @@ public class OpenDJConnection
     {
 
       /** Search items. */
-      protected final Queue<SearchItem> queue = new ArrayDeque<SearchItem>();
+      protected final Queue<SearchItem> queue = new ArrayDeque<>();
 
       /** Search result. */
       private Result result;
@@ -1315,7 +1315,7 @@ public class OpenDJConnection
 
     /** Listeners to receive unsolicited notifications. */
     private final List<UnsolicitedNotificationListener> listeners =
-      new ArrayList<UnsolicitedNotificationListener>();
+      new ArrayList<>();
 
 
     /**

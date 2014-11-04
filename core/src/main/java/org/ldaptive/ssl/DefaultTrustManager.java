@@ -94,7 +94,7 @@ public class DefaultTrustManager implements X509TrustManager
   @Override
   public X509Certificate[] getAcceptedIssuers()
   {
-    final List<X509Certificate> issuers = new ArrayList<X509Certificate>();
+    final List<X509Certificate> issuers = new ArrayList<>();
     if (trustManagers != null) {
       for (X509TrustManager tm : trustManagers) {
         logger.trace("invoking getAcceptedIssuers for {}", tm);

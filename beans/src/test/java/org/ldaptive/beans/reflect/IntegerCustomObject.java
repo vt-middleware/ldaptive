@@ -162,16 +162,14 @@ public class IntegerCustomObject implements CustomObject
     final Class<T> type)
   {
     // CheckStyle:MagicNumber OFF
-    final Set<Integer> s1 = new HashSet<Integer>();
+    final Set<Integer> s1 = new HashSet<>();
     s1.add(601);
     s1.add(602);
 
     final T o1;
     try {
       o1 = type.newInstance();
-    } catch (InstantiationException e) {
-      throw new IllegalStateException(e);
-    } catch (IllegalAccessException e) {
+    } catch (InstantiationException | IllegalAccessException e) {
       throw new IllegalStateException(e);
     }
     o1.setIntegerDn("cn=Integer Entry,ou=people,dc=ldaptive,dc=org");

@@ -47,8 +47,7 @@ public class ConnectionPoolTest extends AbstractTest
 {
 
   /** Entries for pool tests. */
-  private static Map<String, LdapEntry[]> entries =
-    new HashMap<String, LdapEntry[]>();
+  private static final Map<String, LdapEntry[]> entries = new HashMap<>();
 
   /**
    * Initialize the map of entries.
@@ -355,64 +354,82 @@ public class ConnectionPoolTest extends AbstractTest
           new SearchRequest(
             searchBaseDn,
             new SearchFilter("(mail=jadams@ldaptive.org)"),
-            new String[] {"departmentNumber", "givenName", "sn", }),
+            "departmentNumber",
+            "givenName",
+            "sn"),
           entries.get("2")[1],
         },
         {
           new SearchRequest(
             searchBaseDn,
             new SearchFilter("(mail=tjefferson@ldaptive.org)"),
-            new String[] {"departmentNumber", "givenName", "sn", }),
+            "departmentNumber",
+            "givenName",
+            "sn"),
           entries.get("3")[1],
         },
         {
           new SearchRequest(
             searchBaseDn,
             new SearchFilter("(mail=jmadison@ldaptive.org)"),
-            new String[] {"departmentNumber", "givenName", "sn", }),
+            "departmentNumber",
+            "givenName",
+            "sn"),
           entries.get("4")[1],
         },
         {
           new SearchRequest(
             searchBaseDn,
             new SearchFilter("(mail=jmonroe@ldaptive.org)"),
-            new String[] {"departmentNumber", "givenName", "sn", }),
+            "departmentNumber",
+            "givenName",
+            "sn"),
           entries.get("5")[1],
         },
         {
           new SearchRequest(
             searchBaseDn,
             new SearchFilter("(mail=jqadams@ldaptive.org)"),
-            new String[] {"departmentNumber", "givenName", "sn", }),
+            "departmentNumber",
+            "givenName",
+            "sn"),
           entries.get("6")[1],
         },
         {
           new SearchRequest(
             searchBaseDn,
             new SearchFilter("(mail=ajackson@ldaptive.org)"),
-            new String[] {"departmentNumber", "givenName", "sn", }),
+            "departmentNumber",
+            "givenName",
+            "sn"),
           entries.get("7")[1],
         },
         {
           new SearchRequest(
             searchBaseDn,
             new SearchFilter("(mail=mvburen@ldaptive.org)"),
-            new String[] {
-              "departmentNumber", "givenName", "sn", "jpegPhoto", }),
+            "departmentNumber",
+            "givenName",
+            "sn",
+            "jpegPhoto"),
           entries.get("8")[1],
         },
         {
           new SearchRequest(
             searchBaseDn,
             new SearchFilter("(mail=whharrison@ldaptive.org)"),
-            new String[] {"departmentNumber", "givenName", "sn", }),
+            "departmentNumber",
+            "givenName",
+            "sn"),
           entries.get("9")[1],
         },
         {
           new SearchRequest(
             searchBaseDn,
             new SearchFilter("(mail=jtyler@ldaptive.org)"),
-            new String[] {"departmentNumber", "givenName", "sn", }),
+            "departmentNumber",
+            "givenName",
+            "sn"),
           entries.get("10")[1],
         },
       };

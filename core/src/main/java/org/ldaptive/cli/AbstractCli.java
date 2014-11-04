@@ -219,7 +219,7 @@ public abstract class AbstractCli
    */
   protected Map<String, String> getArgDesc(final Class<?>... classes)
   {
-    final Map<String, String> args = new HashMap<String, String>();
+    final Map<String, String> args = new HashMap<>();
     for (Class<?> c : classes) {
       final String name = c.getSimpleName();
       final InputStream in = getClass().getResourceAsStream(name + ".args");

@@ -72,7 +72,7 @@ public final class NamingExceptionUtils
    */
   static {
     EXCEPTIONS_TO_RESULT_CODES =
-      new HashMap<Class<? extends NamingException>, ResultCode[]>();
+      new HashMap<>();
     EXCEPTIONS_TO_RESULT_CODES.put(
       NamingException.class,
       new ResultCode[] {
@@ -178,7 +178,7 @@ public final class NamingExceptionUtils
    */
   static {
     RESULT_CODES_TO_EXCEPTION =
-      new HashMap<ResultCode, Class<? extends NamingException>>();
+      new HashMap<>();
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.SUCCESS, null);
     RESULT_CODES_TO_EXCEPTION.put(
       ResultCode.OPERATIONS_ERROR,

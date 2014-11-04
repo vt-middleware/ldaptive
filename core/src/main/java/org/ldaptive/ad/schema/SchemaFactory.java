@@ -106,8 +106,8 @@ public final class SchemaFactory
    */
   public static Schema createSchema(final SearchResult schemaResult)
   {
-    final Set<AttributeType> attributeTypes = new HashSet<AttributeType>();
-    final Set<ObjectClass> objectClasses = new HashSet<ObjectClass>();
+    final Set<AttributeType> attributeTypes = new HashSet<>();
+    final Set<ObjectClass> objectClasses = new HashSet<>();
     for (LdapEntry entry : schemaResult.getEntries()) {
       final LdapAttribute la = entry.getAttribute("objectClass");
       if (la != null && la.getStringValues().contains("attributeSchema")) {

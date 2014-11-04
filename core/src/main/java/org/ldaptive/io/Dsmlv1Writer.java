@@ -68,7 +68,7 @@ public class Dsmlv1Writer implements SearchResultWriter
    * Transformer output properties. See {@link
    * Transformer#setOutputProperty(String, String)}.
    */
-  private Map<String, String> outputProperties = new HashMap<String, String>();
+  private Map<String, String> outputProperties = new HashMap<>();
 
 
   /**
@@ -135,9 +135,7 @@ public class Dsmlv1Writer implements SearchResultWriter
       final DOMSource source = new DOMSource(createDsml(result));
       transformer.transform(source, sr);
       dsmlWriter.flush();
-    } catch (ParserConfigurationException e) {
-      throw new IOException(e);
-    } catch (TransformerException e) {
+    } catch (ParserConfigurationException | TransformerException e) {
       throw new IOException(e);
     }
   }
@@ -197,7 +195,7 @@ public class Dsmlv1Writer implements SearchResultWriter
     final Document doc,
     final Collection<LdapAttribute> attrs)
   {
-    final List<Element> attrElements = new ArrayList<Element>();
+    final List<Element> attrElements = new ArrayList<>();
     for (LdapAttribute attr : attrs) {
       final String attrName = attr.getName();
       Element attrElement;

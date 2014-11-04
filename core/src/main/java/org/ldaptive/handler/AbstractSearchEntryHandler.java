@@ -49,7 +49,7 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
       entry.setDn(handleDn(conn, request, entry));
       handleAttributes(conn, request, entry);
     }
-    return new HandlerResult<SearchEntry>(entry);
+    return new HandlerResult<>(entry);
   }
 
 
@@ -110,14 +110,14 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
     if (attr != null) {
       attr.setName(handleAttributeName(conn, request, attr.getName()));
       if (attr.isBinary()) {
-        final Set<byte[]> newValues = new HashSet<byte[]>(attr.size());
+        final Set<byte[]> newValues = new HashSet<>(attr.size());
         for (byte[] b : attr.getBinaryValues()) {
           newValues.add(handleAttributeValue(conn, request, b));
         }
         attr.clear();
         attr.addBinaryValues(newValues);
       } else {
-        final Set<String> newValues = new HashSet<String>(attr.size());
+        final Set<String> newValues = new HashSet<>(attr.size());
         for (String s : attr.getStringValues()) {
           newValues.add(handleAttributeValue(conn, request, s));
         }

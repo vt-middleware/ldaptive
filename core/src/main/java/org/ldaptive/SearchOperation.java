@@ -95,7 +95,7 @@ public class SearchOperation
         logger.debug("invoke stored result={} in cache", response.getResult());
       } else {
         logger.debug("invoke found result={} in cache", sr);
-        response = new Response<SearchResult>(sr, null);
+        response = new Response<>(sr, null);
       }
     } else {
       response = executeSearch(request);
@@ -121,7 +121,7 @@ public class SearchOperation
     final SearchResult result = readResult(request, si);
     final Response<Void> response = si.getResponse();
     return
-      new Response<SearchResult>(
+      new Response<>(
         result,
         response.getResultCode(),
         response.getMessage(),

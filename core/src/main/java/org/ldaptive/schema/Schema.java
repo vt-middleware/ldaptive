@@ -145,7 +145,7 @@ public class Schema
    */
   public String[] getBinaryAttributeNames()
   {
-    final List<String> binaryAttrs = new ArrayList<String>();
+    final List<String> binaryAttrs = new ArrayList<>();
     for (AttributeType type : attributeTypes) {
       boolean isBinary = false;
       final String syntaxOid = type.getSyntaxOID(false);
@@ -159,9 +159,7 @@ public class Schema
         }
       }
       if (isBinary) {
-        for (String name : type.getNames()) {
-          binaryAttrs.add(name);
-        }
+        Collections.addAll(binaryAttrs, type.getNames());
       }
     }
     return binaryAttrs.toArray(new String[binaryAttrs.size()]);

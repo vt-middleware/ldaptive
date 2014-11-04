@@ -112,12 +112,10 @@ public class SerializableTest
     throws Exception
   {
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    final ObjectOutputStream oos = new ObjectOutputStream(bos);
-    try {
+    try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
       oos.writeObject(s);
       return bos.toByteArray();
     } finally {
-      oos.close();
       bos.close();
     }
   }
@@ -135,12 +133,9 @@ public class SerializableTest
   private Object deserialize(final byte[] b)
     throws Exception
   {
-    ObjectInputStream is = null;
-    try {
-      is = new ObjectInputStream(new ByteArrayInputStream(b));
+    try (ObjectInputStream is = new ObjectInputStream(
+      new ByteArrayInputStream(b))) {
       return is.readObject();
-    } finally {
-      is.close();
     }
   }
 }

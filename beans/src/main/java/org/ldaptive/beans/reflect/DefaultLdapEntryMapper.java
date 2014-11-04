@@ -29,7 +29,7 @@ public class DefaultLdapEntryMapper extends AbstractLdapEntryMapper<Object>
 
   /** Class descriptors for mapping objects. */
   private static final Map<Class<?>, ClassDescriptor> CLASS_DESCRIPTORS =
-    new HashMap<Class<?>, ClassDescriptor>();
+    new HashMap<>();
 
 
   /** {@inheritDoc} */

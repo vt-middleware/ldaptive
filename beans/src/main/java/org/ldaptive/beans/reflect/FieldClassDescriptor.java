@@ -64,7 +64,7 @@ public class FieldClassDescriptor extends AbstractClassDescriptor
    */
   protected Map<String, Field> getDeclaredFields(final Class<?> type)
   {
-    final Map<String, Field> fields = new HashMap<String, Field>();
+    final Map<String, Field> fields = new HashMap<>();
     Class<?> c = type;
     while (c != null) {
       for (Field field : c.getDeclaredFields()) {

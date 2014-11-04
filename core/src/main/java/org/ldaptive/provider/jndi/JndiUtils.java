@@ -106,7 +106,7 @@ public class JndiUtils
   public LdapAttribute toLdapAttribute(final Attribute attr)
     throws NamingException
   {
-    final Set<Object> values = new HashSet<Object>();
+    final Set<Object> values = new HashSet<>();
     final NamingEnumeration<?> ne = attr.getAll();
     while (ne.hasMore()) {
       values.add(ne.next());

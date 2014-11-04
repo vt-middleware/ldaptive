@@ -296,7 +296,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
       if (config.getConnectionInitializer() != null) {
         return config.getConnectionInitializer().initialize(this);
       } else {
-        return new Response<Void>(null, null);
+        return new Response<>(null, null);
       }
     }
 
@@ -388,7 +388,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
       if (config.getConnectionInitializer() != null) {
         return config.getConnectionInitializer().initialize(this);
       } else {
-        return new Response<Void>(null, null);
+        return new Response<>(null, null);
       }
     }
 

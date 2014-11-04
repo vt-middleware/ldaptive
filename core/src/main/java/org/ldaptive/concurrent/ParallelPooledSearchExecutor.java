@@ -77,10 +77,9 @@ public class ParallelPooledSearchExecutor
     throws LdapException
   {
     final CompletionService<Response<SearchResult>> searches =
-      new ExecutorCompletionService<Response<SearchResult>>(
-        getExecutorService());
-    final List<Future<Response<SearchResult>>> futures =
-      new ArrayList<Future<Response<SearchResult>>>(filters.length);
+      new ExecutorCompletionService<>(getExecutorService());
+    final List<Future<Response<SearchResult>>> futures = new ArrayList<>(
+      filters.length);
     for (SearchFilter filter : filters) {
       final SearchRequest sr = newSearchRequest(this);
       if (filter != null) {
@@ -98,8 +97,8 @@ public class ParallelPooledSearchExecutor
       futures.add(searches.submit(createCallable(conn, op, sr)));
     }
 
-    final List<Response<SearchResult>> responses =
-      new ArrayList<Response<SearchResult>>(filters.length);
+    final List<Response<SearchResult>> responses = new ArrayList<>(
+      filters.length);
     for (Future<Response<SearchResult>> future : futures) {
       try {
         responses.add(future.get());

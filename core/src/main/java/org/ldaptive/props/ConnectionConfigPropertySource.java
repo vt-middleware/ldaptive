@@ -127,7 +127,7 @@ public final class ConnectionConfigPropertySource
       }
     } else {
       final SimplePropertySource<SslConfig> sPropSource =
-        new SimplePropertySource<SslConfig>(sc, propertiesDomain, properties);
+        new SimplePropertySource<>(sc, propertiesDomain, properties);
       sPropSource.initialize();
     }
 
@@ -148,7 +148,7 @@ public final class ConnectionConfigPropertySource
       }
     } else {
       final SimplePropertySource<ConnectionInitializer> sPropSource =
-        new SimplePropertySource<ConnectionInitializer>(
+        new SimplePropertySource<>(
           ci,
           propertiesDomain,
           properties);

@@ -80,8 +80,8 @@ public class DirSyncClientTest extends AbstractTest
   public void deleteLdapEntry()
     throws Exception
   {
-    for (int i = 0; i < testLdapEntries.length; i++) {
-      super.deleteLdapEntry(testLdapEntries[i].getDn());
+    for (LdapEntry testLdapEntry : testLdapEntries) {
+      super.deleteLdapEntry(testLdapEntry.getDn());
     }
   }
 
@@ -116,7 +116,7 @@ public class DirSyncClientTest extends AbstractTest
       final SearchRequest request = new SearchRequest(
         dn.substring(dn.indexOf(",") + 1, dn.length()),
         new SearchFilter(filter),
-        new String[] {"uid"});
+        "uid");
       Response<SearchResult> response = client.execute(request);
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertTrue(response.getResult().size() > 0);
@@ -157,7 +157,7 @@ public class DirSyncClientTest extends AbstractTest
       final SearchRequest request = new SearchRequest(
         dn.substring(dn.indexOf(",") + 1, dn.length()),
         new SearchFilter(filter),
-        new String[] {"uid"});
+        "uid");
       Response<SearchResult> response = client.executeToCompletion(request);
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertTrue(response.getResult().size() > 0);

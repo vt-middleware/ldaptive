@@ -562,7 +562,7 @@ public class UnboundIDConnection implements ProviderConnection
     final LDAPResult ldapResult)
   {
     return
-      new Response<T>(
+      new Response<>(
         result,
         ResultCode.valueOf(ldapResult.getResultCode().intValue()),
         ldapResult.getDiagnosticMessage(),
@@ -729,7 +729,7 @@ public class UnboundIDConnection implements ProviderConnection
     {
 
       /** Search items. */
-      protected final Queue<SearchItem> queue = new ArrayDeque<SearchItem>();
+      protected final Queue<SearchItem> queue = new ArrayDeque<>();
 
 
       /**
@@ -1216,7 +1216,7 @@ public class UnboundIDConnection implements ProviderConnection
 
     /** Listeners to receive unsolicited notifications. */
     private final Queue<UnsolicitedNotificationListener> listeners =
-      new ConcurrentLinkedQueue<UnsolicitedNotificationListener>();
+      new ConcurrentLinkedQueue<>();
 
 
     /**
@@ -1268,7 +1268,7 @@ public class UnboundIDConnection implements ProviderConnection
 
     /** Handlers to receive disconnect notifications. */
     private final Queue<DisconnectHandler> handlers =
-      new ConcurrentLinkedQueue<DisconnectHandler>();
+      new ConcurrentLinkedQueue<>();
 
 
     /**

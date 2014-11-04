@@ -36,7 +36,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
 
   /** Cache of properties. */
   private static final Map<String, Map<String, Method[]>> PROPERTIES_CACHE =
-    new HashMap<String, Map<String, Method[]>>();
+    new HashMap<>();
 
   /** Class to invoke methods on. */
   private Class<?> clazz;
@@ -58,7 +58,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
     if (PROPERTIES_CACHE.containsKey(cacheKey)) {
       properties = PROPERTIES_CACHE.get(cacheKey);
     } else {
-      properties = new HashMap<String, Method[]>();
+      properties = new HashMap<>();
       for (Method method : c.getMethods()) {
         if (!method.isBridge()) {
           if (
@@ -227,13 +227,10 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
         final Constructor<?> con = clazz.getDeclaredConstructor((Class[]) null);
         @SuppressWarnings("unchecked") final T t = (T) con.newInstance();
         return t;
-      } catch (NoSuchMethodException e) {
-        throw new IllegalArgumentException(e);
-      } catch (InvocationTargetException e) {
-        throw new IllegalArgumentException(e);
-      } catch (InstantiationException e) {
-        throw new IllegalArgumentException(e);
-      } catch (IllegalAccessException e) {
+      } catch (NoSuchMethodException |
+               InvocationTargetException |
+               InstantiationException |
+               IllegalAccessException e) {
         throw new IllegalArgumentException(e);
       }
     } catch (RuntimeException e) {
@@ -457,12 +454,10 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       try {
         Object[] params = new Object[] {arg};
         if (arg == null && method.getParameterTypes().length == 0) {
-          params = (Object[]) null;
+          params = null;
         }
         return method.invoke(object, params);
-      } catch (InvocationTargetException e) {
-        throw new IllegalArgumentException(e);
-      } catch (IllegalAccessException e) {
+      } catch (InvocationTargetException | IllegalAccessException e) {
         throw new IllegalArgumentException(e);
       }
     } catch (RuntimeException e) {

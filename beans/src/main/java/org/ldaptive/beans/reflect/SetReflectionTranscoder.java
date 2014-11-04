@@ -65,11 +65,11 @@ public class SetReflectionTranscoder
     final Class<?> type = getType();
     Set<T> s;
     if (LinkedHashSet.class.isAssignableFrom(type)) {
-      s = new LinkedHashSet<T>();
+      s = new LinkedHashSet<>();
     } else if (TreeSet.class.isAssignableFrom(type)) {
-      s = new TreeSet<T>();
+      s = new TreeSet<>();
     } else {
-      s = new HashSet<T>();
+      s = new HashSet<>();
     }
     return s;
   }

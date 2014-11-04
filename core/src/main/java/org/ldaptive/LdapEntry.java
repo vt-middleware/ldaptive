@@ -59,11 +59,11 @@ public class LdapEntry extends AbstractLdapBean
   {
     super(sb);
     if (SortBehavior.UNORDERED == sb) {
-      entryAttributes = new HashMap<String, LdapAttribute>();
+      entryAttributes = new HashMap<>();
     } else if (SortBehavior.ORDERED == sb) {
-      entryAttributes = new LinkedHashMap<String, LdapAttribute>();
+      entryAttributes = new LinkedHashMap<>();
     } else if (SortBehavior.SORTED == sb) {
-      entryAttributes = new TreeMap<String, LdapAttribute>(
+      entryAttributes = new TreeMap<>(
         String.CASE_INSENSITIVE_ORDER);
     } else {
       throw new IllegalArgumentException("Unknown sort behavior: " + sb);
@@ -309,8 +309,7 @@ public class LdapEntry extends AbstractLdapBean
     final LdapEntry source,
     final LdapEntry target)
   {
-    final List<AttributeModification> mods =
-      new ArrayList<AttributeModification>();
+    final List<AttributeModification> mods = new ArrayList<>();
     for (LdapAttribute sourceAttr : source.getAttributes()) {
       final LdapAttribute targetAttr = target.getAttribute(
         sourceAttr.getName());

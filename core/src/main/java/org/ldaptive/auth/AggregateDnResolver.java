@@ -138,9 +138,9 @@ public class AggregateDnResolver implements DnResolver
   public String resolve(final String user)
     throws LdapException
   {
-    final CompletionService<String> cs = new ExecutorCompletionService<String>(
+    final CompletionService<String> cs = new ExecutorCompletionService<>(
       service);
-    final List<String> results = new ArrayList<String>(dnResolvers.size());
+    final List<String> results = new ArrayList<>(dnResolvers.size());
     for (final Map.Entry<String, DnResolver> entry : dnResolvers.entrySet()) {
       cs.submit(
         new Callable<String>() {
