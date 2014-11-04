@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="ldaptive-ldapi" verbose="1" parallel="tests" thread-count="1">
+
+  <parameter name="ldapSocketFile" value="${ldapSocketFile}"/>
+  <parameter name="ldapTestHost" value="${ldapTestHost}"/>
+  <parameter name="ldapBaseDn" value="${ldapBaseDn}"/>
+  <parameter name="ldapSearchFilter" value="${ldapSearchFilter}"/>
+
+  <test name="tests" parallel="methods" thread-count="2">
+    <groups>
+      <run>
+        <include name="ldapi" />
+      </run>
+    </groups>
+    <packages>
+      <package name="org.ldaptive.ldapi.*" />
+    </packages>
+  </test>
+</suite>
