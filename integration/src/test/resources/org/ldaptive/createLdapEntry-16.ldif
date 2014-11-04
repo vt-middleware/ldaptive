@@ -1,0 +1,14 @@
+dn: cn=Abraham Lincoln,${ldapBaseDn}
+cn: Abraham Lincoln
+departmentNumber: 0836
+displayName: Abraham Lincoln
+givenName: Abraham
+initials: AL
+mail: alincoln@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Lincoln
+uid: 16
+userPassword: {SHA}Ped45RXnBxFLYi52mjCNGi+EBSs=

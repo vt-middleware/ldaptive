@@ -1,0 +1,13 @@
+dn: cn=James Garfield,${ldapBaseDn}
+cn: James Garfield
+departmentNumber: 0840
+displayName: James Garfield
+givenName: James
+initials: JG
+mail: jgarfield@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Garfield
+uid: 20

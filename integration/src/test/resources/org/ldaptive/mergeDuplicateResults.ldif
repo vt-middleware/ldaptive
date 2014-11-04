@@ -1,0 +1,26 @@
+dn: cn=Group 3,${ldapBaseDn}
+cn: Group 3
+cn: Group 4
+cn: Group 5
+contactPerson: cn=John Adams,${ldapBaseDn}
+contactPerson: cn=John Adams,${ldapBaseDn}
+contactPerson: cn=John Adams,${ldapBaseDn}
+creationDate: 2010-06-06T12:00:00
+creationDate: 2010-06-06T12:00:00
+creationDate: 2010-06-06T12:00:00
+member: cn=Group 2,${ldapBaseDn}
+member: cn=Group 3,${ldapBaseDn}
+member: cn=Group 4,${ldapBaseDn}
+member: cn=Group 5,${ldapBaseDn}
+objectClass: virginiaTechGroup
+objectClass: virginiaTechGroup
+objectClass: virginiaTechGroup
+objectClass: top
+objectClass: top
+objectClass: top
+uid: 2003
+uid: 2004
+uid: 2005
+uugid: group3
+uugid: group4
+uugid: group5

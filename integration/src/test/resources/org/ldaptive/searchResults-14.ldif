@@ -1,0 +1,4 @@
+dn: CN=Franklin Pierce,${ldapBaseDn}
+departmentNumber: 0834
+givenName: Franklin
+sn: Pierce

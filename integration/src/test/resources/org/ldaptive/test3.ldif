@@ -1,0 +1,4 @@
+dn: uid=test3,${ldapBaseDn}
+cn: test3
+sn: test3
+uid: test3

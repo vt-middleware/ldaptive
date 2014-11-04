@@ -1,0 +1,4 @@
+dn: cn=Andrew Johnson,${ldapBaseDn}
+departmentNumber: 0837
+givenName: Andrew
+sn: Johnson

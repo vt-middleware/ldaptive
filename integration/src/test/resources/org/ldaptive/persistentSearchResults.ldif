@@ -1,0 +1,9 @@
+dn: cn=Herbert Hoover,${ldapBaseDn}
+cn: Herbert Hoover
+mail: hhoover@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Hoover
+uid: 31

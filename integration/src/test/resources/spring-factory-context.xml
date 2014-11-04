@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+  <bean id="connectionFactory"
+    class="org.ldaptive.DefaultConnectionFactory"
+    p:connectionConfig-ref="connectionConfig"
+  />
+  
+  <bean id="connectionConfig"
+    class="org.ldaptive.ConnectionConfig"
+    p:ldapUrl="${ldapTestHost}"
+    p:useStartTLS="true"
+    p:sslConfig-ref="sslConfig"
+    p:connectionInitializer-ref="bindConnectionInitializer"
+  />
+
+  <bean id="bindConnectionInitializer"
+    class="org.ldaptive.BindConnectionInitializer"
+    p:bindDn="${ldapBindDn}"
+    p:bindCredential="${ldapBindCredential}"
+  />
+
+  <bean id="sslConfig"
+    class="org.ldaptive.ssl.SslConfig"
+    p:credentialConfig-ref="credentialConfig"
+  />
+  
+  <bean id="credentialConfig" 
+    class="org.ldaptive.ssl.CredentialConfigFactory" 
+    factory-method="createX509CredentialConfig">
+    <constructor-arg>
+      <value>-----BEGIN CERTIFICATE-----
+MIIDhzCCAvCgAwIBAgIJAPpeFAkJP5xgMA0GCSqGSIb3DQEBBQUAMIGKMQswCQYD
+VQQGEwJVUzERMA8GA1UECBMIVmlyZ2luaWExEzARBgNVBAcTCkJsYWNrc2J1cmcx
+FjAUBgNVBAoTDVZpcmdpbmlhIFRlY2gxEzARBgNVBAsTCk1pZGRsZXdhcmUxJjAk
+BgNVBAMTHWxkYXAtdGVzdC0xLm1pZGRsZXdhcmUudnQuZWR1MB4XDTExMDkyNjE2
+NDczOFoXDTIxMDkyMzE2NDczOFowgYoxCzAJBgNVBAYTAlVTMREwDwYDVQQIEwhW
+aXJnaW5pYTETMBEGA1UEBxMKQmxhY2tzYnVyZzEWMBQGA1UEChMNVmlyZ2luaWEg
+VGVjaDETMBEGA1UECxMKTWlkZGxld2FyZTEmMCQGA1UEAxMdbGRhcC10ZXN0LTEu
+bWlkZGxld2FyZS52dC5lZHUwgZ8wDQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAJWf
+/vBsfFn6sQo57IHrBzMlPARpDI1DJeqH7zl2UeVzeiZDjGiU4ETSjEsvvQRzLfXZ
+IgJEr1IEAzjCX8wKF4svrmkPK3KN6JvdlknM7Thw5p0NzAh2Bq1R1h7+bUvQJGep
+aizNM0od/mKrJnOnUCWEgcpG91mWg8b1PphGobeNAgMBAAGjgfIwge8wHQYDVR0O
+BBYEFMT2Hkcp6JFq242hWfdMOeT3/hZ1MIG/BgNVHSMEgbcwgbSAFMT2Hkcp6JFq
+242hWfdMOeT3/hZ1oYGQpIGNMIGKMQswCQYDVQQGEwJVUzERMA8GA1UECBMIVmly
+Z2luaWExEzARBgNVBAcTCkJsYWNrc2J1cmcxFjAUBgNVBAoTDVZpcmdpbmlhIFRl
+Y2gxEzARBgNVBAsTCk1pZGRsZXdhcmUxJjAkBgNVBAMTHWxkYXAtdGVzdC0xLm1p
+ZGRsZXdhcmUudnQuZWR1ggkA+l4UCQk/nGAwDAYDVR0TBAUwAwEB/zANBgkqhkiG
+9w0BAQUFAAOBgQBe0bV5iZyPupNh2zmdH7opuwldz1sxlkRdUQhKSlYsOqgAKDvS
+DypmR4mqntAULTFGZIdcQ1W8HJcnRc8KuPfNatAV8A9OqMbtDLnmfWkl33JPiDUd
+fIKCXuG4dZ6nn3RbjlKhXzHYADmJzdQNIC3M9eDQBEYmMy8+mV+ErVebBg==
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+MIIDYjCCAkqgAwIBAgIETwyocDANBgkqhkiG9w0BAQUFADBzMRMwEQYKCZImiZPy
+LGQBGRYDZWR1MRIwEAYKCZImiZPyLGQBGRYCdnQxCzAJBgNVBAoTAnZ0MRMwEQYD
+VQQLEwptaWRkbGV3YXJlMSYwJAYDVQQDEx1sZGFwLXRlc3QtMi5taWRkbGV3YXJl
+LnZ0LmVkdTAeFw0xMjAxMTAyMTA2NTZaFw0xNDAxMDkyMTA2NTZaMHMxEzARBgoJ
+kiaJk/IsZAEZFgNlZHUxEjAQBgoJkiaJk/IsZAEZFgJ2dDELMAkGA1UEChMCdnQx
+EzARBgNVBAsTCm1pZGRsZXdhcmUxJjAkBgNVBAMTHWxkYXAtdGVzdC0yLm1pZGRs
+ZXdhcmUudnQuZWR1MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAm5xR
+Lm8+NlxUJSR/2tXZrYW8+9kQSJAR+a/xfcxcWETntbLHE4XZzCde28wDRM5QZo5z
+fK91upR3uf4/O+4xmOgiBarP6x1Dtob6JeMeUh6/lSpNuNdkSEbSZ3gS0Vc/OYIr
+mcwLQroqNxi3BPVy6ryzGSnd9/PhOf5R2C3mZcBunCQU9GyEexlvQ4d8UkYBNKz5
+sEHl4hcIIirDNTJ27v752rjVWkxPOtF6KUeRsarP4qK2N5nOipAGRrG5nON5ggFl
+YC3UNdj3tvoDstxRSgPY9RaHgN5uNrMPmLrbwNY3q9YsiRZ7veiqIIvirGc3CXfc
+4tTD5sClKhafguf6BQIDAQABMA0GCSqGSIb3DQEBBQUAA4IBAQCMvZzuxAVc/G7W
+4Ci/Oxa6YAH6Yq745SVuVAjBAhD9wz+Ney4cuFHeyPFnbYWNlikgeWpoglLkEBta
+SGxSnVM74ZxGLwpaWOuI5d2tv7bWm318a0kDaTiXRrJ+6tg/rjyQ7xxYlI5+CqO+
+nK+rB4hawRhRvzguItNzKJhnCuydM5lZoXMZAPDxRxDy/2LfokvaCKpNjCYb+nGE
+Q66oXAH7AP4OynJ2B5fu4eNgbr8JH4dRH667Y+Pkb03xWabdvp5b+YLmP2iOuq10
+DDm9bpasI5c/SfWdZfWTC3a12WdzZaGBLVxlTRJvegAaktEBXm79OtoSr4TJtNLC
+QTHsT7nJ
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+MIIC+TCCAeGgAwIBAgIQap33EU39DI5Mq0kKqi3UqDANBgkqhkiG9w0BAQUFADAk
+MSIwIAYDVQQDExltaWRkbGV3YXJlLXRlc3QuY2MudnQuZWR1MB4XDTEyMDIxNDIx
+MDMxOVoXDTIyMDIxMTIxMDMxOVowJDEiMCAGA1UEAxMZbWlkZGxld2FyZS10ZXN0
+LmNjLnZ0LmVkdTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAN0KHXSC
+ON/ua9WkeZdPavD89fhSW2O/VP5yjPxNRFvKSvqnCDBaSlv3LmAFpk2JB2C38/8I
+5jl+fNBME0cREFBm8oBVeX4d9hURyOhcQD2Avokq2TjPB3NdVSGOF9qfEyg+jd/Q
+mj1htx2KbFSdi1v3g24ENLYsJlmnwDirtaI1Q1IgjIsdDV3WgsgiDj44cKnsOCeX
+xKaBmyjZMxoPdkMiHe/fn6/5xRW7PxypFdsLaJksN5aLGllNZ/p6TgEgO5JLR/SH
+Pq15MeNA2/nc6NEDs+0H3sYs0g661DKxgLNJstGsuJynLZ+yp6JTbmVPzuJA3Vy9
+PSxurFarFxz5R9ECAwEAAaMnMCUwEwYDVR0lBAwwCgYIKwYBBQUHAwEwDgYDVR0P
+BAcDBQCwAAAAMA0GCSqGSIb3DQEBBQUAA4IBAQBoj9bTke/aC5VIspIsEDN+HgKa
++orB5VP0v/RZab82eC9cXBj8y1P330f+panhu5iJJouXOYTyIx6QIxz4eHArw8RZ
+l+3lNAFYEpWAIKReais4TJcQuU6sddjNBksCvo6FYU4sF8Pk4Ip22ZUO5X8YTcks
+hQCOdGCyF3JCh42SWoRH6wxXc/BU13jYgBfXja2YFsADuT1UVlKJXKxtL58XiVrC
+SyQXsmy4lryzNa4s9h5yfM3Hsrgyg9XTcKRyZe70IhJizs6HdqddpjPOw7wmf65m
+vx/DLCgVsnlMSAkVHSScQZukcVt9LfzFz9DF5IaVze34pnVpsNi+JHaVyv71
+-----END CERTIFICATE-----
+-----BEGIN CERTIFICATE-----
+MIICjjCCAfegAwIBAgIFAJneB9AwDQYJKoZIhvcNAQEFBQAwgYoxJjAkBgNVBAMT
+HWxkYXAtdGVzdC0zLm1pZGRsZXdhcmUudnQuZWR1MRMwEQYDVQQLEwpNaWRkbGV3
+YXJlMRYwFAYDVQQKEw1WaXJnaW5pYSBUZWNoMRMwEQYDVQQHEwpCbGFja3NidXJn
+MREwDwYDVQQIEwhWaXJnaW5pYTELMAkGA1UEBhMCVVMwHhcNMTIxMTIwMTcwNTQz
+WhcNMTQxMTIwMTcwNTQzWjCBijEmMCQGA1UEAxMdbGRhcC10ZXN0LTMubWlkZGxl
+d2FyZS52dC5lZHUxEzARBgNVBAsTCk1pZGRsZXdhcmUxFjAUBgNVBAoTDVZpcmdp
+bmlhIFRlY2gxEzARBgNVBAcTCkJsYWNrc2J1cmcxETAPBgNVBAgTCFZpcmdpbmlh
+MQswCQYDVQQGEwJVUzCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAl13KcfcN
+M8OUzyyZjwzyli/DdcCDR29R4woSn8v0kiLFi/vM6OCO9VYXcJp5YqTQ7P/JtFKz
+/D98RJrnDEp0uaSEv6KWXOloJ4xJvcS+snB1DALPEJrAHzBtOQbbps1iisXHqA0T
+RmlS1O33AGR6J+PP+f0+THobS5Ud57Xmg5ECAwEAATANBgkqhkiG9w0BAQUFAAOB
+gQBJkrCSA9/V6KwCrAetvXTqNt9dCAEwMs0gyzwigHxVxanXIVSn+171fRHeolVc
+ykRT/CadTHXpJ7dr355s8UwYsbL84LdZrhBIBa/emprbHxYTOqrw5coQSCJhkVRS
+Xy1fhtxTC5pZk5XTNWw3lK493neCD0CZiB8PQ/iRZiULDg==
+-----END CERTIFICATE-----</value>
+    </constructor-arg>
+  </bean>
+
+</beans>

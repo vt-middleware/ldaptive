@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:p="http://www.springframework.org/schema/p"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+  <bean id="pool"
+    class="org.ldaptive.pool.BlockingConnectionPool"
+    init-method="initialize"
+    p:blockWaitTime="5000"
+    p:validator-ref="compareValidator">
+    <constructor-arg index="0">
+      <bean class="org.ldaptive.pool.PoolConfig"
+        p:minPoolSize="5"
+        p:maxPoolSize="20"
+        p:validatePeriodically="true"
+        p:validatePeriod="30"
+      />
+    </constructor-arg>
+    <constructor-arg index="1" ref="connectionFactory"/>
+  </bean>
+  
+  <bean id="compareValidator"
+    class="org.ldaptive.pool.CompareValidator"
+  />
+  
+  <bean id="connectionFactory"
+    class="org.ldaptive.DefaultConnectionFactory"
+    p:connectionConfig-ref="connectionConfig"
+  />
+  
+  <bean id="connectionConfig"
+    class="org.ldaptive.ConnectionConfig"
+    p:ldapUrl="${ldapTestHost}"
+    p:useStartTLS="true"
+    p:sslConfig-ref="sslConfig"
+    p:connectionInitializer-ref="bindConnectionInitializer"
+  />
+
+  <bean id="sslConfig"
+    class="org.ldaptive.ssl.SslConfig"
+    p:credentialConfig-ref="credentialConfig"
+  />
+
+  <bean id="bindConnectionInitializer"
+    class="org.ldaptive.BindConnectionInitializer"
+    p:bindDn="${ldapBindDn}"
+    p:bindCredential="${ldapBindCredential}"
+  />
+
+  <bean id="credentialConfig"
+    class="org.ldaptive.ssl.KeyStoreCredentialConfig"
+    p:keyStore="classpath:/ldaptive.keystore"
+    p:keyStoreType="BKS"
+    p:keyStorePassword="changeit"
+    p:trustStore="classpath:/ldaptive.truststore"
+    p:trustStoreType="BKS"
+    p:trustStorePassword="changeit"
+  />
+
+</beans>

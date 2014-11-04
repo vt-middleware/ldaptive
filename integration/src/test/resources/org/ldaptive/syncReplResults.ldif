@@ -1,0 +1,9 @@
+dn: cn=Ulysses Grant,${ldapBaseDn}
+cn: Ulysses Grant
+mail: usgrant@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Grant
+uid: 18

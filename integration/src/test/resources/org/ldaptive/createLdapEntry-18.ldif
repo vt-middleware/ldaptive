@@ -1,0 +1,13 @@
+dn: cn=Ulysses Grant,${ldapBaseDn}
+cn: Ulysses Grant
+departmentNumber: 0838
+displayName: Ulysses S. Grant
+givenName: Ulysses
+initials: USG
+mail: usgrant@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Grant
+uid: 18

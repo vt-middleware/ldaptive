@@ -1,0 +1,13 @@
+dn: cn=Theodore Roosevelt,${ldapBaseDn}
+cn: Theodore Roosevelt
+departmentNumber: 0846
+displayName: Theodore Roosevelt
+givenName: Theodore
+initials: TR
+mail: troosevelt@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Roosevelt
+uid: 26

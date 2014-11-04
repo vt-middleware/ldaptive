@@ -1,0 +1,11 @@
+dn: AttributeDefinition
+objectclass: AttributeDefinition
+
+dn: ClassDefinition
+objectclass: ClassDefinition
+
+dn: MatchingRule
+objectclass: MatchingRule
+
+dn: SyntaxDefinition
+objectclass: SyntaxDefinition

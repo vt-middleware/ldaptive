@@ -1,0 +1,13 @@
+dn: cn=Warren Harding,${ldapBaseDn}
+cn: Warren Harding
+departmentNumber: 0849
+displayName: Warren G. Harding
+givenName: Warren
+initials: WGH
+mail: wgharding@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Harding
+uid: 29

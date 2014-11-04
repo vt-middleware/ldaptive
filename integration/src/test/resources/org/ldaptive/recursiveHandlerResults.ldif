@@ -1,0 +1,15 @@
+dn: cn=Group 2,${ldapBaseDn}
+cn: Group 2
+contactPerson: cn=John Adams,${ldapBaseDn}
+creationDate: 2010-06-06T12:00:00
+member: cn=Group 3,${ldapBaseDn}
+objectClass: virginiaTechGroup
+objectClass: top
+uid: 2002
+uid: 2003
+uid: 2004
+uid: 2005
+uugid: group2
+uugid: group3
+uugid: group4
+uugid: group5

@@ -1,0 +1,13 @@
+dn: cn=Rutherford Hayes,${ldapBaseDn}
+cn: Rutherford Hayes
+departmentNumber: 0839
+displayName: Rutherford B. Hayes
+givenName: Rutherford
+initials: RBH
+mail: rbhayes@vldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Hayes
+uid: 19

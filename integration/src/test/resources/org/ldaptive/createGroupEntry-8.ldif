@@ -1,0 +1,8 @@
+dn: cn=Group 8,${ldapBaseDn}
+cn: Group 8
+contactPerson: cn=John Tyler,${ldapBaseDn}
+creationDate: 2010-06-06T12:00:00
+objectClass: virginiaTechGroup
+objectClass: top
+uid: 2008
+uugid: group8

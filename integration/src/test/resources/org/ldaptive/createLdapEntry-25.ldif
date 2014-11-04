@@ -1,0 +1,13 @@
+dn: cn=William McKinley,${ldapBaseDn}
+cn: William McKinley
+departmentNumber: 0845
+displayName: William McKinley
+givenName: William
+initials: WM
+mail: wmckinley@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: McKinley
+uid: 25

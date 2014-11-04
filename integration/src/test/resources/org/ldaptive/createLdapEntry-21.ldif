@@ -1,0 +1,13 @@
+dn: cn=Chester Arthur,${ldapBaseDn}
+cn: Chester Arthur
+departmentNumber: 0841
+displayName: Chester A. Arthur
+givenName: Chester
+initials: CAA
+mail: caarthur@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Arthur
+uid: 21

@@ -1,0 +1,76 @@
+dn: uid=818037,ou=People,dc=vt,dc=edu
+middleName: W
+uid: 818037
+mail: dfisher@vt.edu
+sn: Fisher
+instantMessagingID: Yahoo!:dfish3r
+instantMessagingID: Google:dfisher@gmail.com
+instantMessagingID: Virginia Tech:dfisher@im.vt.edu
+instantMessagingID: ICQ:8168282
+department: MiddleWare
+objectClass: virginiaTechPerson
+suppressedAttribute: localPostalAddress
+suppressedAttribute: homePostalAddress
+suppressedAttribute: homePhone
+suppressedAttribute: localPhone
+givenName: Daniel
+title: Project Manager, Middleware
+mailStop: 0479
+departmentNumber: 066103
+cn: Daniel W Fisher
+authId: dfisher
+telephoneNumber: 5402312096
+userCertificate;binary:: MIIC7zCCAligAwIBAgIQCBdZgzdx+yX5+jSRD50SJzANBgkqhkiG9w0BAQUFADBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwHhcNMDkwNjI5MTg0NTQ2WhcNMTAwNjI5MTg0NTQ2WjBZMQ8wDQYDVQQEEwZGaXNoZXIxDzANBgNVBCoTBkRhbmllbDEWMBQGA1UEAxMNRGFuaWVsIEZpc2hlcjEdMBsGCSqGSIb3DQEJARYOZGZpc2hlckB2dC5lZHUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCbsC0qvAkU3oWwz39oq/ur/mhHZ+KNODug+pAsg0ZZbSnxWD9EVBiMerevD5bJ0weTWR2dSVJqkxoJ2pZCHUpCt8CBE8LDsLJc+qAHOOfTuEywulc1ifSbevam3ehAvRg9wjmmKcm7Hwz9LniIZefxh3Tr9YwHTbw9YRaVC7nVkRu+eMY+T1+Uz3mLmCQI8YsOYCvZ1C+a1Dh9EA4Ms+EisH3Mn4dA+6i8L0nTbyUnz0kgKUTPDrkPhXsNRv1KbSmWBlShhRWXqd7qo0fAqKo5h+j5wppVabINtYdv73OShfzcJKf1qrmZqL0JFsT6fUWE12kgPT7tpMxMgaUR2I7lAgMBAAGjKzApMBkGA1UdEQQSMBCBDmRmaXNoZXJAdnQuZWR1MAwGA1UdEwEB/wQCMAAwDQYJKoZIhvcNAQEFBQADgYEAUhjHo5Mp4HiMooqINVEeJcijTSf8LpWgmNTBteVPRsQfXv4o0/684ccmWO46aNy23uDt+qEU6DplKJmILwievVMPB/Fkc3rqSSG+BLGRHCKE4z2ypzOiZ9TRO/Ckux4dQCVnXCQ6tDNHofeph9zTBHFEIgYtC3YfHmCdvayJKy0=
+postalAddress: SETI-Middleware 1700 Pratt Drive Blacksburg, VA 24060
+displayName: Daniel W Fisher
+suppressDisplay: false
+jpegPhoto:: /9j/4AAQSkZJRgABAQEASABIAAD//gATQ3JlYXRlZCB3aXRoIEdJTVD/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCAANABcDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIEAQP/xAAiEAEAAgIABQUAAAAAAAAAAAABAAMCEQQSMUFxISIjMnP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A71fHZZW+ge48MWqvG0bLMRcnZvsdpnGH0R0ryvhlAAAdCBPRTXkZ7wHWaEI/D9LP0yhA/9k=
+uupid: dfisher
+
+dn: uid=1152120,ou=People,dc=vt,dc=edu
+middleName: H
+uid: 1152120
+mail: dhawes@vt.edu
+sn: Hawes
+instantMessagingID: Google:dhawes@gmail.com
+instantMessagingID: Virginia Tech:dhawes@im.iad.vt.edu
+department: MiddleWare
+objectClass: virginiaTechPerson
+suppressedAttribute: localPostalAddress
+givenName: David
+labeledURI: Homepage:http://filebox.vt.edu/users/dhawes
+title: Middleware Application Developer
+mailStop: 0479
+localPhone: 5405529055
+departmentNumber: 066103
+cn: David H Hawes
+authId: dhawes
+telephoneNumber: 5402316978
+postalAddress: SETI-Middleware$1700 Pratt Dr.$Blacksburg, VA 24061
+displayName: David H Hawes
+suppressDisplay: false
+uupid: dhawes
+
+dn: uid=1145718,ou=People,dc=vt,dc=edu
+middleName: S
+uid: 1145718
+mail: serac@vt.edu
+sn: Addison
+instantMessagingID: Virginia Tech:serac@im.vt.edu
+department: MiddleWare
+objectClass: virginiaTechPerson
+suppressedAttribute: localPostalAddress
+givenName: Marvin
+labeledURI: Homepage:http://www.middleware.vt.edu/doku.php?id=middleware:serac
+title: IT Specialist
+mailStop: 0479
+departmentNumber: 066103
+cn: Marvin S Addison
+authId: serac
+telephoneNumber: 5402317050
+userCertificate;binary:: MIIC/TCCAmagAwIBAgIQKQxJ2CQ0bujrfVdU9505nzANBgkqhkiG9w0BAQUFADBiMQswCQYDVQQGEwJaQTElMCMGA1UEChMcVGhhd3RlIENvbnN1bHRpbmcgKFB0eSkgTHRkLjEsMCoGA1UEAxMjVGhhd3RlIFBlcnNvbmFsIEZyZWVtYWlsIElzc3VpbmcgQ0EwHhcNMDkwODI3MjAwNzExWhcNMTAwODI3MjAwNzExWjBZMRAwDgYDVQQEEwdBZGRpc29uMQ8wDQYDVQQqEwZNYXJ2aW4xFzAVBgNVBAMTDk1hcnZpbiBBZGRpc29uMRswGQYJKoZIhvcNAQkBFgxzZXJhY0B2dC5lZHUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCYU7i0HPyrjhLdm09uprGeIJQnkdxU+HCu1oT0SPVg6I0/KYw64bbKSc36cHE5d03RpqkU5HCSJ5m4OaluDYezaOz6TcSUhAAmYnkF8lCXI7zBS1VGlPe2w3ronZoBb6bZ0PobBpD+1AdRRfV+6FNqhnqG+ZAOlEsAwyUkEd/lTPjYsS7Te0GXOyhPTDUiKixBdPSuMSuAJJZKrAIBTRe62dpDSOvBYJSVVpuGdiCSaG1YQWI3DkvjzLT4+0zvDPjb7dvePnbkbpwyFfK+e1wYpK2yShHiJeOPAdVUZ+PjeBFnD2TkDgk/Tf8j6QJLMw0Apt7rATxW9NAUEPLoPeCFAgMBAAGjOTA3MA4GA1UdDwEB/wQEAwID+DAXBgNVHREEEDAOgQxzZXJhY0B2dC5lZHUwDAYDVR0TAQH/BAIwADANBgkqhkiG9w0BAQUFAAOBgQC5V1Kb0q7ajm7OZjbjv8xosxblvt9Qhl5yBhnX4xL9QomntH60LZc2pf20hnJ6Pl6Onxk4LejTtemyL0Bm0i3DJbqCCBFaOsEdX2G3D3HPNhdphYckn7fjzuvUudMEkfvrPDj0evdJIgwOXDEvsh8y8LggO1Bp6xj63H0oPePHBw==
+postalAddress: SETI-Middleware 1700 Pratt Drive Room 111A Blacksburg, VA 24060
+displayName: Marvin S Addison
+suppressDisplay: false
+uupid: serac
+

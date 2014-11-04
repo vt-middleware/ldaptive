@@ -1,0 +1,19 @@
+dn: cn=Group 2,${ldapBaseDn}
+member: cn=Group 2,${ldapBaseDn}
+member: cn=Group 3,${ldapBaseDn}
+member: cn=Group 4,${ldapBaseDn}
+member: cn=Group 5,${ldapBaseDn}
+
+dn: cn=Group 3,${ldapBaseDn}
+member: cn=Group 2,${ldapBaseDn}
+member: cn=Group 3,${ldapBaseDn}
+member: cn=Group 4,${ldapBaseDn}
+member: cn=Group 5,${ldapBaseDn}
+
+dn: cn=Group 4,${ldapBaseDn}
+member: cn=Group 2,${ldapBaseDn}
+member: cn=Group 3,${ldapBaseDn}
+member: cn=Group 4,${ldapBaseDn}
+member: cn=Group 5,${ldapBaseDn}
+
+dn: cn=Group 5,${ldapBaseDn}

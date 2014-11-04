@@ -1,0 +1,4 @@
+dn: CN=Thomas Jefferson,${ldapBaseDn}
+departmentNumber: 0823
+givenName: Thomas
+sn: Jefferson

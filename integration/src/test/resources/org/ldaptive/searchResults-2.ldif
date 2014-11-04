@@ -1,0 +1,4 @@
+dn: CN=John Adams,${ldapBaseDn}
+departmentNumber: 0822
+givenName: John
+sn: Adams

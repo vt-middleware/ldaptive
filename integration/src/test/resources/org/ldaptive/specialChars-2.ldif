@@ -1,0 +1,10 @@
+dn: cn=Test/User/ #2\,3\=4/\+5\<6\>7\;8,${ldapBaseDn}
+cn: Test/User/ #2,3=4/+5<6>7;8
+givenName: Test
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: User
+uid: 17894
+userPassword: {SHA}8vnY59vr9MsOYRA0q8wN3NDyGDk=

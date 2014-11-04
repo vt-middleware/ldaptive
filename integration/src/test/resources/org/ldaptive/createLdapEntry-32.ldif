@@ -1,0 +1,14 @@
+dn: cn=Franklin Roosevelt,${ldapBaseDn}
+cn: Franklin Roosevelt
+departmentNumber: 0852
+displayName: Franklin Roosevelt
+givenName: Franklin
+initials: FR
+mail: froosevelt@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Roosevelt
+uid: 32
+userPassword: {SHA}Tg9EGzPtWfabIHVgTPdPC03F+Pc=

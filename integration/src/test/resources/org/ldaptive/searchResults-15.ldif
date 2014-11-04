@@ -1,0 +1,4 @@
+dn: CN=James Buchanan,${ldapBaseDn}
+departmentNumber: 0835
+givenName: James
+sn: Buchanan

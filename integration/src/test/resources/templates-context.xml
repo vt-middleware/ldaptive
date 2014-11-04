@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+  <bean id="searchExecutor"
+        class="org.ldaptive.concurrent.AggregatePooledSearchExecutor"
+        p:baseDn="${ldapBaseDn}">
+    <constructor-arg index="0">
+      <bean class="java.util.concurrent.Executors"
+            factory-method="newCachedThreadPool"/>
+    </constructor-arg>
+  </bean>
+
+  <bean id="connectionFactory"
+        class="org.ldaptive.pool.PooledConnectionFactory">
+    <constructor-arg index="0">
+      <bean class="org.ldaptive.pool.BlockingConnectionPool"
+            init-method="initialize"
+            p:blockWaitTime="5000">
+        <constructor-arg index="0">
+          <bean class="org.ldaptive.pool.PoolConfig"
+                p:minPoolSize="3"
+                p:maxPoolSize="10"
+                p:validatePeriodically="true"
+          />
+        </constructor-arg>
+        <constructor-arg index="1">
+          <bean class="org.ldaptive.DefaultConnectionFactory">
+            <constructor-arg index="0">
+              <bean class="org.ldaptive.ConnectionConfig"
+                    p:ldapUrl="${ldapTestHost}">
+                <property name="connectionInitializer">
+                  <bean class="org.ldaptive.BindConnectionInitializer"
+                        p:bindDn="${ldapBindDn}"
+                        p:bindCredential="${ldapBindCredential}"
+                  />
+                </property>
+              </bean>
+            </constructor-arg>
+          </bean>
+        </constructor-arg>
+        <property name="validator">
+          <bean class="org.ldaptive.pool.SearchValidator"/>
+        </property>
+      </bean>
+    </constructor-arg>
+  </bean>
+
+  <bean id="oneTermSearch" class="org.ldaptive.templates.SearchTemplates">
+    <constructor-arg>
+      <list>
+        <value>(|(givenName={term1})(sn={term1}))</value>
+        <value>(|(givenName={term1}*)(sn={term1}*))</value>
+        <value>(|(givenName=*{term1}*)(sn=*{term1}*))</value>
+        <value>(mail={term1})</value>
+        <value>(mail={term1}*)</value>
+        <value>(mail=*{term1}*)</value>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <bean id="twoTermSearch" class="org.ldaptive.templates.SearchTemplates">
+    <constructor-arg>
+      <list>
+        <value>(&amp;(givenName={term1})(sn={term2}))</value>
+        <value>(cn={term1} {term2})</value>
+        <value>(&amp;(givenName={term1}*)(sn={term2}*))</value>
+        <value>(cn={term1}* {term2}*)</value>
+        <value>(&amp;(givenName=*{term1}*)(sn=*{term2}*))</value>
+        <value>(cn=*{term1}* *{term2}*)</value>
+        <value>(&amp;(givenName={initial1}*)(sn={term2}))</value>
+        <value>(sn={term2})</value>
+      </list>
+    </constructor-arg>
+  </bean>
+
+  <bean id="threeTermSearch" class="org.ldaptive.templates.SearchTemplates">
+    <constructor-arg>
+      <list>
+        <value>(|(&amp;(givenName={term1})(sn={term3}))(&amp;(givenName={term2})(sn={term3})))</value>
+        <value>(|(cn={term1} {term2} {term3})(cn={term2} {term1} {term3}))</value>
+        <value>(|(&amp;(givenName={term1}*)(sn={term3}*))(&amp;(givenName={term2}*)(sn={term3}*)))</value>
+        <value>(|(cn={term1}* {term2}* {term3}*)(cn={term2}* {term1}* {term3}*))</value>
+        <value>(|(&amp;(givenName=*{term1}*)(sn=*{term3}*))(&amp;(givenName=*{term2}*)(sn=*{term3}*)))</value>
+        <value>(|(cn=*{term1}* *{term2}* *{term3}*)(cn=*{term2}* *{term1}* *{term3}*))</value>
+        <value>(|(&amp;(givenName={term1})(sn={term3}))(&amp;(givenName={term2})(sn={term3})))</value>
+        <value>(|(&amp;p(givenName={initial1}*)(sn={term3}))(&amp;(givenName={initial2}*)(sn={term3})))</value>
+        <value>(sn={term3})</value>
+      </list>
+    </constructor-arg>
+  </bean>
+
+</beans>

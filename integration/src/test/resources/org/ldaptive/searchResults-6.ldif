@@ -1,0 +1,4 @@
+dn: CN=John Quincy Adams,${ldapBaseDn}
+departmentNumber: 0826
+givenName: John
+sn: Adams

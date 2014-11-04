@@ -1,0 +1,13 @@
+dn: cn=Benjamin Harrison,${ldapBaseDn}
+cn: Benjamin Harrison
+departmentNumber: 0843
+displayName: Benjamin Harrison
+givenName: Benjamin
+initials: BH
+mail: bharrison@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Harrison
+uid: 23

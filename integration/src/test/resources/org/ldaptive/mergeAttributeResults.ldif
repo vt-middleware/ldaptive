@@ -1,0 +1,10 @@
+dn: cn=John Adams,${ldapBaseDn}
+cn: John Adams
+cn: John Adams
+cn: John
+cn: Adams
+departmentNumber: 0822
+displayName: John Adams
+givenName: John
+sn: Adams
+uid: 2

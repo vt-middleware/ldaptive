@@ -1,0 +1,13 @@
+dn: cn=Andrew Johnson,${ldapBaseDn}
+cn: Andrew Johnson
+departmentNumber: 0837
+displayName: Andrew Johnson
+givenName: Andrew
+initials: AJ
+mail: ajohnson@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Johnson
+uid: 17

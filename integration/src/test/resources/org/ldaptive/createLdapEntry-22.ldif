@@ -1,0 +1,13 @@
+dn: cn=Grover Cleveland,${ldapBaseDn}
+cn: Grover Cleveland
+departmentNumber: 0842
+displayName: Grover Cleveland
+givenName: Grover
+initials: GC
+mail: gcleveland@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Cleveland
+uid: 22

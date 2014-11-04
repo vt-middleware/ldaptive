@@ -1,0 +1,13 @@
+dn: cn=Woodrow Wilson,${ldapBaseDn}
+cn: Woodrow Wilson
+departmentNumber: 0848
+displayName: Woodrow Wilson
+givenName: Woodrow
+initials: WW
+mail: wwilson@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Wilson
+uid: 28

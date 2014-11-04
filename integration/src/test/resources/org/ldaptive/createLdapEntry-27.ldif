@@ -1,0 +1,13 @@
+dn: cn=William Howard Taft,${ldapBaseDn}
+cn: William Howard Taft
+departmentNumber: 0847
+displayName: William Taft
+givenName: William
+initials: WHT
+mail: whtaft@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Taft
+uid: 27

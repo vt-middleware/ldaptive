@@ -1,0 +1,5 @@
+dn: cn=Test/User/ #1,${ldapBaseDn}
+cn: Test/User/ #1
+givenName: Test
+sn: (Us\er)*
+uid: 17893

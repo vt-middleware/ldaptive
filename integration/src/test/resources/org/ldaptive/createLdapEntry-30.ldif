@@ -1,0 +1,13 @@
+dn: cn=Calvin Coolidge,${ldapBaseDn}
+cn: Calvin Coolidge
+departmentNumber: 0850
+displayName: Calvin Coolidge
+givenName: Calvin
+initials: CC
+mail: ccoolidge@ldaptive.org
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+sn: Coolidge
+uid: 30
