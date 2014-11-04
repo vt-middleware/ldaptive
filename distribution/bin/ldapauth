@@ -1,0 +1,24 @@
+#!/bin/sh
+
+JAVA=java
+
+#KEYSTORE_OPTS="-Djavax.net.ssl.keyStore= -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.keyStoreType=BKS"
+
+#TRUSTSTORE_OPTS="-Djavax.net.ssl.trustStore= -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=BKS"
+
+JAVA_OPTS="${JAVA_OPTS} ${KEYSTORE_OPTS} ${TRUSTSTORE_OPTS}"
+
+if [ "x$LDAPTIVE_HOME" = "x" ]; then
+  PREFIX=`dirname $0`/..
+else
+  PREFIX="$LDAPTIVE_HOME"
+fi
+
+CLASSPATH="${PREFIX}/jars/ldaptive-${project.version}.jar"
+for JAR in `ls ${PREFIX}/lib/*.jar` ; do
+  CLASSPATH=${CLASSPATH}:$JAR
+done
+
+${JAVA} ${JAVA_OPTS} -cp ${CLASSPATH} \
+  org.ldaptive.cli.AuthenticatorCli "$@"
+

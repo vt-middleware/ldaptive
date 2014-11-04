@@ -1,0 +1,27 @@
+#!/bin/sh
+
+JAVA=java
+
+# sample options for kerberos
+#KRB5_OPTS="-Djava.security.auth.login.config=krb5_jaas.config -Djavax.security.auth.useSubjectCredsOnly=false -Djava.security.krb5.realm=VT.EDU -Djava.security.krb5.kdc=directory.ldaptive.org"
+
+#KEYSTORE_OPTS="-Djavax.net.ssl.keyStore= -Djavax.net.ssl.keyStorePassword=changeit -Djavax.net.ssl.keyStoreType=BKS"
+
+#TRUSTSTORE_OPTS="-Djavax.net.ssl.trustStore= -Djavax.net.ssl.trustStorePassword=changeit -Djavax.net.ssl.trustStoreType=BKS"
+
+JAVA_OPTS="${JAVA_OPTS} ${KRB5_OPTS} ${KEYSTORE_OPTS} ${TRUSTSTORE_OPTS}"
+
+if [ "x$LDAPTIVE_HOME" = "x" ]; then
+  PREFIX=`dirname $0`/..
+else
+  PREFIX="$LDAPTIVE_HOME"
+fi
+
+CLASSPATH="${PREFIX}/jars/ldaptive-${project.version}.jar"
+for JAR in `ls ${PREFIX}/lib/*.jar` ; do
+  CLASSPATH=${CLASSPATH}:$JAR
+done
+
+${JAVA} ${JAVA_OPTS} -cp ${CLASSPATH} \
+  org.ldaptive.cli.SearchOperationCli "$@"
+
