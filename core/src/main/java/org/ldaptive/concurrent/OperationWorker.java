@@ -49,6 +49,7 @@ public interface OperationWorker<Q extends Request, S>
    *
    * @return  future responses for this operation
    */
+  @SuppressWarnings("unchecked")
   Collection<Future<Response<S>>> execute(Q... requests);
 
 
@@ -60,5 +61,6 @@ public interface OperationWorker<Q extends Request, S>
    *
    * @return  responses for this operation
    */
+  @SuppressWarnings("unchecked")
   Collection<Response<S>> executeToCompletion(Q... requests);
 }

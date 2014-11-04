@@ -119,6 +119,7 @@ public abstract class AbstractSearchExecutor extends SearchRequest
    *
    * @param  handlers  search response handlers
    */
+  @SuppressWarnings("unchecked")
   public void setSearchResponseHandlers(
     final OperationResponseHandler<SearchRequest, SearchResult>... handlers)
   {

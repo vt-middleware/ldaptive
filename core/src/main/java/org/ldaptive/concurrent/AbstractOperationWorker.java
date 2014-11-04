@@ -102,6 +102,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
    * @return  future responses for this operation
    */
   @Override
+  @SuppressWarnings("unchecked")
   public Collection<Future<Response<S>>> execute(final Q... requests)
   {
     final List<Future<Response<S>>> results =
@@ -122,6 +123,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
    * @return  responses for this operation
    */
   @Override
+  @SuppressWarnings("unchecked")
   public Collection<Response<S>> executeToCompletion(final Q... requests)
   {
     final CompletionService<Response<S>> cs =

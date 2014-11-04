@@ -88,6 +88,7 @@ public abstract class AbstractSearchOperationFactory
    *
    * @param  handlers  search response handlers
    */
+  @SuppressWarnings("unchecked")
   public void setSearchResponseHandlers(
     final OperationResponseHandler<SearchRequest, SearchResult>... handlers)
   {

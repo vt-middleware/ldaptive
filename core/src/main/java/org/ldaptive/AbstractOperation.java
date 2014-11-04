@@ -110,6 +110,7 @@ public abstract class AbstractOperation<Q extends Request, S>
    *
    * @param  handlers  operation response handlers
    */
+  @SuppressWarnings("unchecked")
   public void setOperationResponseHandlers(
     final OperationResponseHandler<Q, S>... handlers)
   {

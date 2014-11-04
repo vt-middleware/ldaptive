@@ -374,6 +374,7 @@ public class LdapAttribute extends AbstractLdapBean
    *
    * @throws  NullPointerException  if value is null
    */
+  @SuppressWarnings("unchecked")
   public <T> void addValue(
     final ValueTranscoder<T> transcoder,
     final T... value)

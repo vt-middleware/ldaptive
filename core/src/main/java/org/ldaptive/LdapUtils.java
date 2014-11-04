@@ -237,6 +237,7 @@ public final class LdapUtils
    *
    * @return  array containing the concatenation of all parameters
    */
+  @SuppressWarnings("unchecked")
   public static <T> T[] concatArrays(final T[] first, final T[]... rest)
   {
     int totalLength = first.length;
