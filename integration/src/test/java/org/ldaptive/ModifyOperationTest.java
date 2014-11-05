@@ -1,16 +1,4 @@
-/*
-  $Id: ModifyOperationTest.java 2468 2012-08-07 18:54:52Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2468 $
-  Updated: $Date: 2012-08-07 14:54:52 -0400 (Tue, 07 Aug 2012) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import org.testng.AssertJUnit;

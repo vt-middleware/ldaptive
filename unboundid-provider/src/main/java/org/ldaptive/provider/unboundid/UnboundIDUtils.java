@@ -1,16 +1,4 @@
-/*
-  $Id: UnboundIDUtils.java 3039 2014-08-20 17:45:32Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3039 $
-  Updated: $Date: 2014-08-20 13:45:32 -0400 (Wed, 20 Aug 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.unboundid;
 
 import java.util.ArrayList;

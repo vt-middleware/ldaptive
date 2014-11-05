@@ -1,16 +1,4 @@
-/*
-  $Id: AbstractTLSSocketFactory.java 2885 2014-02-05 21:28:49Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2885 $
-  Updated: $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
 import java.io.IOException;

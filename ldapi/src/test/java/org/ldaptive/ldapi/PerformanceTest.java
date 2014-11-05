@@ -1,16 +1,4 @@
-/*
-  $Id: PerformanceTest.java 3011 2014-07-02 15:15:42Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3011 $
-  Updated: $Date: 2014-07-02 11:15:42 -0400 (Wed, 02 Jul 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ldapi;
 
 import java.util.HashMap;

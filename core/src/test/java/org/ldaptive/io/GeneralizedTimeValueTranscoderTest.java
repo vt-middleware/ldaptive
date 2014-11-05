@@ -1,16 +1,4 @@
-/*
-  $Id: GeneralizedTimeValueTranscoderTest.java 3005 2014-07-02 14:20:47Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3005 $
-  Updated: $Date: 2014-07-02 10:20:47 -0400 (Wed, 02 Jul 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.io;
 
 import java.util.Calendar;

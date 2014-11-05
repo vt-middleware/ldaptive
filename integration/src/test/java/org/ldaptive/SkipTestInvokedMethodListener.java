@@ -1,16 +1,4 @@
-/*
-  $Id: SkipTestInvokedMethodListener.java 2198 2012-01-04 21:02:09Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2198 $
-  Updated: $Date: 2012-01-04 16:02:09 -0500 (Wed, 04 Jan 2012) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import org.testng.IInvokedMethod;

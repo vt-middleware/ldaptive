@@ -1,16 +1,4 @@
-/*
-  $Id: OperationCliTest.java 2666 2013-03-14 19:09:28Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2666 $
-  Updated: $Date: 2013-03-14 15:09:28 -0400 (Thu, 14 Mar 2013) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.cli;
 
 import java.io.ByteArrayOutputStream;

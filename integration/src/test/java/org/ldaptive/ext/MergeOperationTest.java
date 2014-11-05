@@ -1,16 +1,4 @@
-/*
-  $Id: MergeOperationTest.java 2934 2014-03-28 16:41:39Z dfisher $
-
-  Copyright (C) 2003-2013 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2934 $
-  Updated: $Date: 2014-03-28 12:41:39 -0400 (Fri, 28 Mar 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ext;
 
 import org.ldaptive.AbstractTest;

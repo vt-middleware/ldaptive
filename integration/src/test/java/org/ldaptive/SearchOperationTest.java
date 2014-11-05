@@ -1,16 +1,4 @@
-/*
-  $Id: SearchOperationTest.java 3041 2014-08-21 14:20:21Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3041 $
-  Updated: $Date: 2014-08-21 10:20:21 -0400 (Thu, 21 Aug 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import java.util.ArrayList;

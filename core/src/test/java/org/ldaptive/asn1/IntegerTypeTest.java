@@ -1,16 +1,4 @@
-/*
-  $Id: IntegerTypeTest.java 3050 2014-09-04 18:24:42Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3050 $
-  Updated: $Date: 2014-09-04 14:24:42 -0400 (Thu, 04 Sep 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
 import java.math.BigInteger;

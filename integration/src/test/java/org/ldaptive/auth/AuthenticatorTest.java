@@ -1,16 +1,4 @@
-/*
-  $Id: AuthenticatorTest.java 3089 2014-10-30 14:53:59Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3089 $
-  Updated: $Date: 2014-10-30 10:53:59 -0400 (Thu, 30 Oct 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
 import java.util.HashMap;

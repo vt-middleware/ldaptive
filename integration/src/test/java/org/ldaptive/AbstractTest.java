@@ -1,16 +1,4 @@
-/*
-  $Id: AbstractTest.java 2819 2013-09-23 20:23:31Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2819 $
-  Updated: $Date: 2013-09-23 16:23:31 -0400 (Mon, 23 Sep 2013) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import java.security.Security;

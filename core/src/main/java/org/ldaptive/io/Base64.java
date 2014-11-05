@@ -1,16 +1,4 @@
-/**
- * A very fast and memory efficient class to encode and decode to and from
- * BASE64 in full accordance with RFC 2045.
- * <br><br>
- *
- * On Windows XP sp1 with 1.4.2_04 and later ;), this encoder and decoder is
- * about 10 times faster on small arrays (10 - 1000 bytes) and 2-3 times as fast
- * on larger arrays (10000 - 1000000 bytes) compared to
- * <code>sun.misc.Encoder()/Decoder()</code>.
- * <br><br>
- *
- * On byte arrays the encoder is about 20% faster than Jakarta Commons Base64
- * Codec for encode and about 50% faster for decoding large arrays. This
+/* See LICENSE for licensing and NOTICE for copyright. */
  * implementation is about twice as fast on very small arrays (&lt 30 bytes). If
  * source/destination is a <code>String</code> this version is about three times
  * as fast due to the fact that the Commons Codec result has to be recoded to a

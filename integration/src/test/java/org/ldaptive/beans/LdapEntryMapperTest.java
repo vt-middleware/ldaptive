@@ -1,16 +1,4 @@
-/*
-  $Id: LdapEntryMapperTest.java 2931 2014-03-26 14:10:52Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2931 $
-  Updated: $Date: 2014-03-26 10:10:52 -0400 (Wed, 26 Mar 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans;
 
 import org.ldaptive.AbstractTest;

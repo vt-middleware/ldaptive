@@ -1,16 +1,4 @@
-/*
-  $Id: ApacheLdapControlHandler.java 3029 2014-07-02 21:00:42Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3029 $
-  Updated: $Date: 2014-07-02 17:00:42 -0400 (Wed, 02 Jul 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.apache;
 
 import java.nio.ByteBuffer;

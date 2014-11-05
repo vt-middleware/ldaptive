@@ -1,16 +1,4 @@
-/*
-  $Id$
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision$
-  Updated: $Date$
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
 import java.util.Set;

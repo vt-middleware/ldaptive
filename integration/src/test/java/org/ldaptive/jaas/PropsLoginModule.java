@@ -1,16 +1,4 @@
-/*
-  $Id: PropsLoginModule.java 2909 2014-03-17 19:28:44Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2909 $
-  Updated: $Date: 2014-03-17 15:28:44 -0400 (Mon, 17 Mar 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.jaas;
 
 import java.util.Map;

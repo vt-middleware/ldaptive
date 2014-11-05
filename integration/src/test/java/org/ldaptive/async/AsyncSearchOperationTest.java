@@ -1,16 +1,4 @@
-/*
-  $Id: AsyncSearchOperationTest.java 2737 2013-06-20 21:36:05Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2737 $
-  Updated: $Date: 2013-06-20 17:36:05 -0400 (Thu, 20 Jun 2013) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.async;
 
 import java.util.concurrent.ExecutionException;

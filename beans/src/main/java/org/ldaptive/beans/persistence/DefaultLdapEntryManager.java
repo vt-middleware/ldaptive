@@ -1,16 +1,4 @@
-/*
-  $Id: DefaultLdapEntryManager.java 3065 2014-10-01 17:40:26Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3065 $
-  Updated: $Date: 2014-10-01 13:40:26 -0400 (Wed, 01 Oct 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.persistence;
 
 import org.ldaptive.AddOperation;

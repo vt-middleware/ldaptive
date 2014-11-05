@@ -1,16 +1,4 @@
-/*
-  $Id: ConnectionTest.java 2876 2013-11-26 17:03:02Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2876 $
-  Updated: $Date: 2013-11-26 12:03:02 -0500 (Tue, 26 Nov 2013) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import org.ldaptive.provider.ConnectionStrategy;

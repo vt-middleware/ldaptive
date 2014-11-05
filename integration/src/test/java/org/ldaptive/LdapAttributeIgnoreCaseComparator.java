@@ -1,16 +1,4 @@
-/*
-  $Id: LdapAttributeIgnoreCaseComparator.java 2349 2012-04-10 05:13:16Z dfisher $
-
-  Copyright (C) 2003-2012 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2349 $
-  Updated: $Date: 2012-04-10 01:13:16 -0400 (Tue, 10 Apr 2012) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import java.util.Comparator;

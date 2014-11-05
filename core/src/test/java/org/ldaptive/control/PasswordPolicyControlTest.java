@@ -1,16 +1,4 @@
-/*
-  $Id: PasswordPolicyControlTest.java 3045 2014-08-26 14:59:18Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3045 $
-  Updated: $Date: 2014-08-26 10:59:18 -0400 (Tue, 26 Aug 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
 import org.ldaptive.LdapUtils;

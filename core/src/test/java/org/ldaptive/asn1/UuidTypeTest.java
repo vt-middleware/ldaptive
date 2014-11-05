@@ -1,16 +1,4 @@
-/*
-  $Id: UuidTypeTest.java 3052 2014-09-05 17:56:42Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3052 $
-  Updated: $Date: 2014-09-05 13:56:42 -0400 (Fri, 05 Sep 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
 import java.nio.ByteBuffer;

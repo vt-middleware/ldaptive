@@ -1,16 +1,4 @@
-/*
-  $Id: OpenDJConnection.java 2943 2014-03-31 15:49:06Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2943 $
-  Updated: $Date: 2014-03-31 11:49:06 -0400 (Mon, 31 Mar 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.opendj;
 
 import java.util.ArrayDeque;

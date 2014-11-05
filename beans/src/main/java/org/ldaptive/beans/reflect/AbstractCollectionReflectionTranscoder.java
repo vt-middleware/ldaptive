@@ -1,16 +1,4 @@
-/*
-  $Id: AbstractCollectionReflectionTranscoder.java 3013 2014-07-02 15:26:52Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3013 $
-  Updated: $Date: 2014-07-02 11:26:52 -0400 (Wed, 02 Jul 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.reflect;
 
 import java.util.ArrayList;

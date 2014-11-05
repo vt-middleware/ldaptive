@@ -1,16 +1,4 @@
-/*
-  $Id: Schema.java 3060 2014-09-11 18:53:57Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3060 $
-  Updated: $Date: 2014-09-11 14:53:57 -0400 (Thu, 11 Sep 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
 import java.util.ArrayList;

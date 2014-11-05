@@ -1,16 +1,4 @@
-/*
-  $Id: AuthorizationIdentityResponseControlTest.java 3064 2014-09-16 14:54:06Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3064 $
-  Updated: $Date: 2014-09-16 10:54:06 -0400 (Tue, 16 Sep 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
 import org.ldaptive.LdapUtils;

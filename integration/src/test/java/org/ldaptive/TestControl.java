@@ -1,16 +1,4 @@
-/*
-  $Id: TestControl.java 2993 2014-06-02 21:16:40Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2993 $
-  Updated: $Date: 2014-06-02 17:16:40 -0400 (Mon, 02 Jun 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import org.ldaptive.provider.Provider;

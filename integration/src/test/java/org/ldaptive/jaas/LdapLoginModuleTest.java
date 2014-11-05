@@ -1,16 +1,4 @@
-/*
-  $Id: LdapLoginModuleTest.java 2344 2012-04-09 03:09:25Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2344 $
-  Updated: $Date: 2012-04-08 23:09:25 -0400 (Sun, 08 Apr 2012) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.jaas;
 
 import java.security.Principal;

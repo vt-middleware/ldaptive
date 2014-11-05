@@ -1,16 +1,4 @@
-/*
-  $Id: SpringTest.java 2766 2013-07-01 13:47:20Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2766 $
-  Updated: $Date: 2013-07-01 09:47:20 -0400 (Mon, 01 Jul 2013) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import org.ldaptive.pool.BlockingConnectionPool;

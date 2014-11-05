@@ -1,16 +1,4 @@
-/*
-  $Id: SpringAuthenticatorFactory.java 2238 2012-02-06 20:21:41Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2238 $
-  Updated: $Date: 2012-02-06 15:21:41 -0500 (Mon, 06 Feb 2012) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.jaas;
 
 import java.util.Map;

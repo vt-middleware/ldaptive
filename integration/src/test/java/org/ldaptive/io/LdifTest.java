@@ -1,16 +1,4 @@
-/*
-  $Id: LdifTest.java 2982 2014-05-19 19:34:28Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2982 $
-  Updated: $Date: 2014-05-19 15:34:28 -0400 (Mon, 19 May 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.io;
 
 import java.io.StringReader;

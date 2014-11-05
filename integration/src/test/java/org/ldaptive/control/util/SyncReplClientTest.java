@@ -1,16 +1,4 @@
-/*
-  $Id: SyncReplClientTest.java 2966 2014-04-02 22:43:45Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2966 $
-  Updated: $Date: 2014-04-02 18:43:45 -0400 (Wed, 02 Apr 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
 import java.util.concurrent.BlockingQueue;

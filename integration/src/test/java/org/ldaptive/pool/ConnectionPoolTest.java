@@ -1,16 +1,4 @@
-/*
-  $Id: ConnectionPoolTest.java 2669 2013-03-15 20:32:36Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2669 $
-  Updated: $Date: 2013-03-15 16:32:36 -0400 (Fri, 15 Mar 2013) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
 import java.io.StringWriter;

@@ -1,16 +1,4 @@
-/*
-  $Id: DirSyncClientTest.java 2554 2012-11-20 20:48:33Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2554 $
-  Updated: $Date: 2012-11-20 15:48:33 -0500 (Tue, 20 Nov 2012) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.control.util;
 
 import org.ldaptive.AbstractTest;

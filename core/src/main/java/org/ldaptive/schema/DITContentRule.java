@@ -1,16 +1,4 @@
-/*
-  $Id: DITContentRule.java 2940 2014-03-31 15:10:46Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2940 $
-  Updated: $Date: 2014-03-31 11:10:46 -0400 (Mon, 31 Mar 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
 import java.text.ParseException;

@@ -1,16 +1,4 @@
-/*
-  $Id: TestUtils.java 2976 2014-04-28 16:10:10Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2976 $
-  Updated: $Date: 2014-04-28 12:10:10 -0400 (Mon, 28 Apr 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import java.io.BufferedReader;

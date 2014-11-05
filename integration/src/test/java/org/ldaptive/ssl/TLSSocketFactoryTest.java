@@ -1,16 +1,4 @@
-/*
-  $Id: TLSSocketFactoryTest.java 2979 2014-05-05 19:45:13Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2979 $
-  Updated: $Date: 2014-05-05 15:45:13 -0400 (Mon, 05 May 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
 import java.net.Socket;

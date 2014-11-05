@@ -1,16 +1,4 @@
-/*
-  $Id: AbstractConnectionPool.java 3006 2014-07-02 14:22:50Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3006 $
-  Updated: $Date: 2014-07-02 10:22:50 -0400 (Wed, 02 Jul 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
 import java.lang.reflect.InvocationTargetException;

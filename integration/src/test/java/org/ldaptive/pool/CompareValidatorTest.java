@@ -1,16 +1,4 @@
-/*
-  $Id: CompareValidatorTest.java 2513 2012-09-28 21:18:33Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2513 $
-  Updated: $Date: 2012-09-28 17:18:33 -0400 (Fri, 28 Sep 2012) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
 import org.ldaptive.AbstractTest;

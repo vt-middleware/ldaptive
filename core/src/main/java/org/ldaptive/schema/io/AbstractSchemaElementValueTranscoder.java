@@ -1,16 +1,4 @@
-/*
-  $Id: AbstractSchemaElementValueTranscoder.java 2994 2014-06-03 19:00:45Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2994 $
-  Updated: $Date: 2014-06-03 15:00:45 -0400 (Tue, 03 Jun 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema.io;
 
 import org.ldaptive.io.AbstractStringValueTranscoder;

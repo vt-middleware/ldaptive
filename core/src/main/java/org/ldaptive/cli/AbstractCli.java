@@ -1,16 +1,4 @@
-/*
-  $Id: AbstractCli.java 3066 2014-10-16 16:23:27Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 3066 $
-  Updated: $Date: 2014-10-16 12:23:27 -0400 (Thu, 16 Oct 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.cli;
 
 import java.io.BufferedReader;

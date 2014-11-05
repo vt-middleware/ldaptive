@@ -1,16 +1,4 @@
-/*
-  $Id: ServletSearchExecutorTest.java 2618 2013-02-12 21:51:49Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2618 $
-  Updated: $Date: 2013-02-12 16:51:49 -0500 (Tue, 12 Feb 2013) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.servlets;
 
 import java.io.File;

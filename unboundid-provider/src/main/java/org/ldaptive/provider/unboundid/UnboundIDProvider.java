@@ -1,16 +1,4 @@
-/*
-  $Id: UnboundIDProvider.java 2944 2014-03-31 17:58:44Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2944 $
-  Updated: $Date: 2014-03-31 13:58:44 -0400 (Mon, 31 Mar 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.unboundid;
 
 import java.security.GeneralSecurityException;

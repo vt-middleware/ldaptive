@@ -1,16 +1,4 @@
-/*
-  $Id: JndiConnection.java 2937 2014-03-28 22:21:36Z dfisher $
-
-  Copyright (C) 2003-2014 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2937 $
-  Updated: $Date: 2014-03-28 18:21:36 -0400 (Fri, 28 Mar 2014) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.jndi;
 
 import java.net.URI;

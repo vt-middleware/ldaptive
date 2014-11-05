@@ -1,16 +1,4 @@
-/*
-  $Id: AttributeValueServletSearchExecutorTest.java 2541 2012-11-08 21:16:53Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2541 $
-  Updated: $Date: 2012-11-08 16:16:53 -0500 (Thu, 08 Nov 2012) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.servlets;
 
 import java.io.ByteArrayOutputStream;

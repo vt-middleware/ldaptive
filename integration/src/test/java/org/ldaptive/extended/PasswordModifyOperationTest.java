@@ -1,16 +1,4 @@
-/*
-  $Id: PasswordModifyOperationTest.java 2820 2013-09-23 20:24:54Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2820 $
-  Updated: $Date: 2013-09-23 16:24:54 -0400 (Mon, 23 Sep 2013) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
 import org.ldaptive.AbstractTest;

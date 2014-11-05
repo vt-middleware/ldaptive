@@ -1,16 +1,4 @@
-/*
-  $Id: PersistentSearchClientTest.java 2831 2013-11-07 16:50:59Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2831 $
-  Updated: $Date: 2013-11-07 11:50:59 -0500 (Thu, 07 Nov 2013) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
 import java.util.EnumSet;

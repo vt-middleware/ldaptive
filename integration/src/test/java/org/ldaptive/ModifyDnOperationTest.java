@@ -1,16 +1,4 @@
-/*
-  $Id: ModifyDnOperationTest.java 2412 2012-06-17 03:14:28Z dfisher $
-
-  Copyright (C) 2003-2010 Virginia Tech.
-  All rights reserved.
-
-  SEE LICENSE FOR MORE INFORMATION
-
-  Author:  Middleware Services
-  Email:   middleware@vt.edu
-  Version: $Revision: 2412 $
-  Updated: $Date: 2012-06-16 23:14:28 -0400 (Sat, 16 Jun 2012) $
-*/
+/* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
 import org.testng.AssertJUnit;
