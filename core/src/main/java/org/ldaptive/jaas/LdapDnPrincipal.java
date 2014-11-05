@@ -10,7 +10,6 @@ import org.ldaptive.LdapUtils;
  * Provides a custom implementation for adding LDAP principals to a subject.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class LdapDnPrincipal
   implements Principal, Serializable, Comparable<Principal>

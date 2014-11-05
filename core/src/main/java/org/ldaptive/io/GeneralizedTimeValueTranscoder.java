@@ -15,7 +15,6 @@ import java.util.regex.Pattern;
  * See http://tools.ietf.org/html/rfc4517#section-3.3.13
  *
  * @author  Middleware Services
- * @version  $Revision: 2994 $ $Date: 2014-06-03 15:00:45 -0400 (Tue, 03 Jun 2014) $
  */
 public class GeneralizedTimeValueTranscoder
   extends AbstractStringValueTranscoder<Calendar>

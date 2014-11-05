@@ -7,7 +7,6 @@ import org.ldaptive.ConnectionInitializer;
  * Handles properties for {@link org.ldaptive.ConnectionConfig}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class ConnectionConfigPropertyInvoker extends AbstractPropertyInvoker
 {

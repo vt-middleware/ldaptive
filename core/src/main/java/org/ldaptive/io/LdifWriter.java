@@ -13,7 +13,6 @@ import org.ldaptive.SearchResult;
  * Writes a {@link SearchResult} as LDIF to a {@link Writer}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3002 $ $Date: 2014-06-17 11:52:51 -0400 (Tue, 17 Jun 2014) $
  */
 public class LdifWriter implements SearchResultWriter
 {

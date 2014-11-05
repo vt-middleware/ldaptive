@@ -18,7 +18,6 @@ import org.testng.annotations.Test;
  *   -extensions my_ext
  *
  * @author  Middleware Services
- * @version  $Revision: 3061 $ $Date: 2014-09-11 15:19:16 -0400 (Thu, 11 Sep 2014) $
  */
 public class DefaultHostnameVerifierTest
 {

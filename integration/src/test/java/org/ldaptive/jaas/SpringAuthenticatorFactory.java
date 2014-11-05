@@ -14,7 +14,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Provides an authentication factory implementation that uses a spring context.
  *
  * @author  Middleware Services
- * @version  $Revision: 2238 $ $Date: 2012-02-06 15:21:41 -0500 (Mon, 06 Feb 2012) $
  */
 public class SpringAuthenticatorFactory implements AuthenticatorFactory
 {

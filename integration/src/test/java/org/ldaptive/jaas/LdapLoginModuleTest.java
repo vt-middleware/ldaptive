@@ -32,7 +32,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link LdapLoginModule}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2344 $
  */
 public class LdapLoginModuleTest extends AbstractTest
 {

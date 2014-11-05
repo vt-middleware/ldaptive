@@ -5,7 +5,6 @@ package org.ldaptive.asn1;
  * Abstract base class for custom DER tag types.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $
  */
 public abstract class AbstractDERTag implements DERTag
 {

@@ -23,7 +23,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link Dsmlv1Reader} and {@link Dsmlv1Writer}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2669 $
  */
 public class DsmlTest extends AbstractTest
 {

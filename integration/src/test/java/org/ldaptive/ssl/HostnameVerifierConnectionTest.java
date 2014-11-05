@@ -18,7 +18,6 @@ import org.testng.annotations.Test;
  * Unit test for default hostname verification behavior.
  *
  * @author  Middleware Services
- * @version  $Revision: 2665 $
  */
 public class HostnameVerifierConnectionTest
 {

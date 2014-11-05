@@ -6,7 +6,6 @@ package org.ldaptive.provider;
  * ordered list of URLs to attempt when opening a connection.
  *
  * @author  Middleware Services
- * @version  $Revision: 2974 $ $Date: 2014-04-21 15:29:45 -0400 (Mon, 21 Apr 2014) $
  */
 public interface ConnectionStrategy
 {

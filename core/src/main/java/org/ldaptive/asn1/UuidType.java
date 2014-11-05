@@ -8,7 +8,6 @@ import java.util.UUID;
  * Converts UUIDs to and from their DER encoded format. See RFC 4122.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class UuidType extends AbstractDERType implements DEREncoder
 {

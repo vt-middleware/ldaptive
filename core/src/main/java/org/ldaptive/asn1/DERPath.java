@@ -54,7 +54,6 @@ import org.ldaptive.LdapUtils;
  * </ul>
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  * @see  DERParser
  */
 public class DERPath
@@ -259,7 +258,6 @@ public class DERPath
    * children that share a common parent.
    *
    * @author  Middleware Services
-   * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
    */
   static class Node
   {

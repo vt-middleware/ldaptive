@@ -5,7 +5,6 @@ package org.ldaptive.asn1;
  * Generic application-specific tag.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $
  */
 public class ApplicationDERTag extends AbstractDERTag
 {

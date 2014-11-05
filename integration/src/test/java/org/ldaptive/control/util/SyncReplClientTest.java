@@ -27,7 +27,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link SyncReplClient}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2966 $ $Date: 2014-04-02 18:43:45 -0400 (Wed, 02 Apr 2014) $
  */
 public class SyncReplClientTest extends AbstractTest
 {

@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link GeneralizedTimeValueTranscoder}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3005 $ $Date: 2014-07-02 10:20:47 -0400 (Wed, 02 Jul 2014) $
  */
 public class GeneralizedTimeValueTranscoderTest
 {

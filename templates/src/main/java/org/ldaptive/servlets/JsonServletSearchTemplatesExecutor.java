@@ -13,7 +13,6 @@ import org.ldaptive.io.JsonWriter;
  * AbstractServletSearchTemplatesExecutor}.
  *
  * @author  Middleware Services
- * @version  $Revision $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class JsonServletSearchTemplatesExecutor
   extends AbstractServletSearchTemplatesExecutor

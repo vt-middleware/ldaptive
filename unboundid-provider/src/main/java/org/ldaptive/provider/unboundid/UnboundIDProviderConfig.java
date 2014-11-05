@@ -13,7 +13,6 @@ import org.ldaptive.provider.ProviderConfig;
  * Contains configuration data for the UnboundID provider.
  *
  * @author  Middleware Services
- * @version  $Revision: 2991 $ $Date: 2014-06-02 17:11:39 -0400 (Mon, 02 Jun 2014) $
  */
 public class UnboundIDProviderConfig extends ProviderConfig<Control>
 {

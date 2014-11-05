@@ -9,7 +9,6 @@ import org.testng.ITestResult;
  * Marks a test as skipped if it's results indicate such.
  *
  * @author  Middleware Services
- * @version  $Revision: 2198 $ $Date: 2012-01-04 16:02:09 -0500 (Wed, 04 Jan 2012) $
  */
 public class SkipTestInvokedMethodListener implements IInvokedMethodListener
 {

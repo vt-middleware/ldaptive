@@ -19,7 +19,6 @@ import org.testng.annotations.DataProvider;
  * Utility methods for ldap tests.
  *
  * @author  Middleware Services
- * @version  $Revision: 2976 $ $Date: 2014-04-28 12:10:10 -0400 (Mon, 28 Apr 2014) $
  */
 public final class TestUtils
 {

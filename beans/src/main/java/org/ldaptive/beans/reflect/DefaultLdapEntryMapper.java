@@ -10,7 +10,6 @@ import org.ldaptive.beans.ClassDescriptor;
  * Stores the class descriptors for a specific object in a static map.
  *
  * @author  Middleware Services
- * @version  $Revision: 2985 $ $Date: 2014-05-29 13:06:48 -0400 (Thu, 29 May 2014) $
  */
 public class DefaultLdapEntryMapper extends AbstractLdapEntryMapper<Object>
 {

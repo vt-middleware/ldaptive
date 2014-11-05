@@ -28,7 +28,6 @@ import org.w3c.dom.Element;
  * Writes a {@link SearchResult} as DSML version 1 to a {@link Writer}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2975 $ $Date: 2014-04-28 12:08:38 -0400 (Mon, 28 Apr 2014) $
  */
 public class Dsmlv1Writer implements SearchResultWriter
 {

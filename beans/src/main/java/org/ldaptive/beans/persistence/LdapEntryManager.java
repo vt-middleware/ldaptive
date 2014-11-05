@@ -10,7 +10,6 @@ import org.ldaptive.Response;
  * @param  <T>  type of object to manage
  *
  * @author  Middleware Services
- * @version  $Revision: 2971 $ $Date: 2014-04-17 16:28:19 -0400 (Thu, 17 Apr 2014) $
  */
 public interface LdapEntryManager<T>
 {

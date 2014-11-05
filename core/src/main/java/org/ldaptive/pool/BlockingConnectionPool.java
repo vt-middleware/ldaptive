@@ -17,7 +17,6 @@ import org.ldaptive.DefaultConnectionFactory;
  * connections that can be created. See {@link AbstractConnectionPool}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2967 $ $Date: 2014-04-09 16:37:01 -0400 (Wed, 09 Apr 2014) $
  */
 public class BlockingConnectionPool extends AbstractConnectionPool
 {

@@ -8,7 +8,6 @@ import org.ldaptive.io.ValueTranscoder;
  * Compares two ldap attributes, ignoring the case of all attribute values.
  *
  * @author  Middleware Services
- * @version  $Revision: 2349 $ $Date: 2012-04-10 01:13:16 -0400 (Tue, 10 Apr 2012) $
  */
 public class LdapAttributeIgnoreCaseComparator
   implements Comparator<LdapAttribute>

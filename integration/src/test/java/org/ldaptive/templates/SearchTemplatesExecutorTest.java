@@ -21,7 +21,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link SearchTemplatesExecutor}.
  *
  * @author  Middleware Services
- * @version  $Revision $ $Date$
  */
 public class SearchTemplatesExecutorTest extends AbstractTest
 {

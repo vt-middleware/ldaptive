@@ -37,7 +37,6 @@ import org.ldaptive.provider.ControlHandler;
  * Apache Ldap control handler.
  *
  * @author  Middleware Services
- * @version  $Revision: 3029 $ $Date: 2014-07-02 17:00:42 -0400 (Wed, 02 Jul 2014) $
  */
 public class ApacheLdapControlHandler implements ControlHandler<Control>
 {

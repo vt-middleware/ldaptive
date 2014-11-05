@@ -33,7 +33,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link PersistentSearchClient}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2831 $ $Date: 2013-11-07 11:50:59 -0500 (Thu, 07 Nov 2013) $
  */
 public class PersistentSearchClientTest extends AbstractTest
 {

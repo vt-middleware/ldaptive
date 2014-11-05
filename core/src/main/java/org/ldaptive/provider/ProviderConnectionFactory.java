@@ -9,7 +9,6 @@ import org.ldaptive.LdapException;
  * @param  <T>  type of provider config for this connection factory
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public interface ProviderConnectionFactory<T extends ProviderConfig>
 {

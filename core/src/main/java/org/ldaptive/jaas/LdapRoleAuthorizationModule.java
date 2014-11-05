@@ -23,7 +23,6 @@ import org.ldaptive.SearchRequest;
  * state or for the name returned by the CallbackHandler.
  *
  * @author  Middleware Services
- * @version  $Revision: 2904 $ $Date: 2014-03-14 12:15:20 -0400 (Fri, 14 Mar 2014) $
  */
 public class LdapRoleAuthorizationModule extends AbstractLoginModule
 {

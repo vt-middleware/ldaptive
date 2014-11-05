@@ -13,7 +13,6 @@ import javax.net.ssl.TrustManagerFactory;
  * key and trust managers.
  *
  * @author  Middleware Services
- * @version  $Revision: 2936 $ $Date: 2014-03-28 14:18:03 -0400 (Fri, 28 Mar 2014) $
  */
 public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
 {

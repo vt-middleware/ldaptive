@@ -5,7 +5,6 @@ package org.ldaptive.schema;
  * Provides utility methods for this package.
  *
  * @author  Middleware Services
- * @version  $Revision: 3044 $ $Date: 2014-08-26 10:58:50 -0400 (Tue, 26 Aug 2014) $
  */
 public final class SchemaUtils
 {

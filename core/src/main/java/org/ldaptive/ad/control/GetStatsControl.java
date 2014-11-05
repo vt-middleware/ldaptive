@@ -53,7 +53,6 @@ import org.ldaptive.control.ResponseControl;
  * <p>See http://msdn.microsoft.com/en-us/library/cc223350.aspx</p>
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class GetStatsControl extends AbstractControl
   implements RequestControl, ResponseControl

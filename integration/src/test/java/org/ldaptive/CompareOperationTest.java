@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link CompareOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2468 $
  */
 public class CompareOperationTest extends AbstractTest
 {

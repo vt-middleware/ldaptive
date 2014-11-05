@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
  * @param  <C>  type of control produced by the control processor
  *
  * @author  Middleware Services
- * @version  $Revision: 2990 $ $Date: 2014-06-02 16:52:22 -0400 (Mon, 02 Jun 2014) $
  */
 public class ProviderConfig<C> extends AbstractConfig
 {

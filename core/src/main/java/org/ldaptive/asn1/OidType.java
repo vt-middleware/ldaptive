@@ -10,7 +10,6 @@ import java.util.StringTokenizer;
  * Converts object identifiers to and from their DER encoded format.
  *
  * @author  Middleware Services
- * @version  $Revision: 3068 $ $Date: 2014-10-24 13:22:32 -0400 (Fri, 24 Oct 2014) $
  */
 public class OidType extends AbstractDERType implements DEREncoder
 {

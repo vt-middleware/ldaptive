@@ -16,7 +16,6 @@ import org.testng.annotations.Test;
  * Unit test for ldap operation cli classes.
  *
  * @author  Middleware Services
- * @version  $Revision: 2666 $
  */
 public class OperationCliTest extends AbstractTest
 {

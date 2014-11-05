@@ -17,7 +17,6 @@ import org.ldaptive.SortBehavior;
  * Reads JSON from a {@link Reader} and returns a {@link SearchResult}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class JsonReader implements SearchResultReader
 {

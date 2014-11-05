@@ -12,7 +12,6 @@ import org.ldaptive.LdapUtils;
  * A sequence of RDN values.
  *
  * @author  Middleware Services
- * @version  $Revision: 3068 $ $Date: 2014-10-24 13:22:32 -0400 (Fri, 24 Oct 2014) $
  */
 public class DN implements DEREncoder
 {

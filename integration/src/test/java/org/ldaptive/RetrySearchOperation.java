@@ -7,7 +7,6 @@ import org.ldaptive.handler.OperationExceptionHandler;
  * Provides a wrapper class for testing {@link OperationExceptionHandler}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2619 $ $Date: 2013-02-12 16:52:33 -0500 (Tue, 12 Feb 2013) $
  */
 public class RetrySearchOperation extends SearchOperation
 {

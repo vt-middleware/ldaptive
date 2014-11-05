@@ -15,7 +15,6 @@ import org.ldaptive.SortBehavior;
  * Reads an LDIF from a {@link Reader} and returns a {@link SearchResult}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2893 $ $Date: 2014-03-07 10:47:46 -0500 (Fri, 07 Mar 2014) $
  */
 public class LdifReader implements SearchResultReader
 {

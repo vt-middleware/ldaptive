@@ -11,7 +11,6 @@ import org.ldaptive.LdapUtils;
  * Bean that contains the schema definitions in RFC 4512.
  *
  * @author  Middleware Services
- * @version  $Revision: 3060 $ $Date: 2014-09-11 14:53:57 -0400 (Thu, 11 Sep 2014) $
  */
 public class Schema
 {

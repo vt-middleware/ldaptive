@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link UuidType}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3052 $ $Date: 2014-09-05 13:56:42 -0400 (Fri, 05 Sep 2014) $
  */
 public class UuidTypeTest
 {

@@ -9,7 +9,6 @@ import org.ldaptive.io.AbstractBinaryValueTranscoder;
  * attribute value.
  *
  * @author  Middleware Services
- * @version  $Revision: 2998 $ $Date: 2014-06-11 13:28:09 -0400 (Wed, 11 Jun 2014) $
  */
 public class UnicodePwdValueTranscoder
   extends AbstractBinaryValueTranscoder<String>

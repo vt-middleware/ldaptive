@@ -13,7 +13,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link BeanGenerator}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3040 $ $Date: 2014-08-21 10:18:51 -0400 (Thu, 21 Aug 2014) $
  */
 public class BeanGeneratorTest extends AbstractTest
 {

@@ -11,7 +11,6 @@ import org.ldaptive.beans.Entry;
  * annotation and sets the appropriate DN and attribute value mutators.
  *
  * @author  Middleware Services
- * @version  $Revision: 2890 $ $Date: 2014-03-07 10:22:31 -0500 (Fri, 07 Mar 2014) $
  */
 public class DefaultClassDescriptor extends AbstractClassDescriptor
 {

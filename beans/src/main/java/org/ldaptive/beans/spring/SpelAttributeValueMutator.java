@@ -26,7 +26,6 @@ import org.springframework.expression.spel.standard.SpelExpressionParser;
  * Attribute mutator that uses a SPEL expression and evaluation context.
  *
  * @author  Middleware Services
- * @version  $Revision: 3013 $ $Date: 2014-07-02 11:26:52 -0400 (Wed, 02 Jul 2014) $
  */
 public class SpelAttributeValueMutator implements AttributeValueMutator
 {

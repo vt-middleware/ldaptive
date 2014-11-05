@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link NotificationClient}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2993 $ $Date: 2014-06-02 17:16:40 -0400 (Mon, 02 Jun 2014) $
  */
 public class NotificationClientTest extends AbstractTest
 {

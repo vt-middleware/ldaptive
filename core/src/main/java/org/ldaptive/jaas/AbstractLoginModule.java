@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
  * Provides functionality common to ldap based JAAS login modules.
  *
  * @author  Middleware Services
- * @version  $Revision: 2904 $ $Date: 2014-03-14 12:15:20 -0400 (Fri, 14 Mar 2014) $
  */
 public abstract class AbstractLoginModule implements LoginModule
 {

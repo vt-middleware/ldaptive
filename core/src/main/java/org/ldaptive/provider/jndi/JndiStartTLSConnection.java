@@ -11,7 +11,6 @@ import org.ldaptive.control.RequestControl;
  * JNDI provider implementation of ldap operations using startTLS.
  *
  * @author  Middleware Services
- * @version  $Revision: 2939 $ $Date: 2014-03-31 10:38:15 -0400 (Mon, 31 Mar 2014) $
  */
 public class JndiStartTLSConnection extends JndiConnection
 {

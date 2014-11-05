@@ -20,7 +20,6 @@ import org.slf4j.LoggerFactory;
  * returned by this implementation always returns -1 for logins remaining.
  *
  * @author  Middleware Services
- * @version  $Revision: 2940 $ $Date: 2014-03-31 11:10:46 -0400 (Mon, 31 Mar 2014) $
  */
 public class ActiveDirectoryAccountState extends AccountState
 {

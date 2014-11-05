@@ -23,7 +23,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link PagedResultsClient}.
  *
  * @author  Middleware Services
- * @version  $Revision$ $Date$
  */
 public class PagedResultsClientTest extends AbstractTest
 {

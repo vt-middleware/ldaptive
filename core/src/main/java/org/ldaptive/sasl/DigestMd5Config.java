@@ -5,7 +5,6 @@ package org.ldaptive.sasl;
  * Contains all the configuration data for SASL Digest-MD5 authentication.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class DigestMd5Config extends SaslConfig
 {

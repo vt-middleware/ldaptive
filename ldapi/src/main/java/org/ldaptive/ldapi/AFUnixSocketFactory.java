@@ -16,7 +16,6 @@ import org.newsclub.net.unix.AFUNIXSocketAddress;
  * native socket connections only.
  *
  * @author  Middleware Services
- * @version  $Revision: 3008 $ $Date: 2014-07-02 10:36:23 -0400 (Wed, 02 Jul 2014) $
  */
 public class AFUnixSocketFactory extends SocketFactory
 {

@@ -16,7 +16,6 @@ import javax.security.auth.spi.LoginModule;
  * Login module for testing.
  *
  * @author  Middleware Services
- * @version  $Revision: 2198 $ $Date: 2012-01-04 16:02:09 -0500 (Wed, 04 Jan 2012) $
  */
 public class TestLoginModule implements LoginModule
 {

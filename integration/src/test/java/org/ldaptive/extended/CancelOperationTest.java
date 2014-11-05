@@ -25,7 +25,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link CancelOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision$ $Date$
  */
 public class CancelOperationTest extends AbstractTest
 {

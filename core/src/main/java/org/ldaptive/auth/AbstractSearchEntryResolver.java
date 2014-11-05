@@ -20,7 +20,6 @@ import org.ldaptive.handler.SearchEntryHandler;
  * using that filter.
  *
  * @author  Middleware Services
- * @version  $Revision: 3059 $ $Date: 2014-09-10 10:01:15 -0400 (Wed, 10 Sep 2014) $
  */
 public abstract class AbstractSearchEntryResolver
   extends AbstractSearchOperationFactory implements EntryResolver

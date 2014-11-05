@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
  * Provides implementation common to properties based factories.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public abstract class AbstractPropertiesFactory
 {

@@ -15,7 +15,6 @@ import org.ldaptive.auth.Authenticator;
  * Login module for testing configuration properties.
  *
  * @author  Middleware Services
- * @version  $Revision: 2909 $ $Date: 2014-03-17 15:28:44 -0400 (Mon, 17 Mar 2014) $
  */
 public class PropsLoginModule extends AbstractLoginModule
 {

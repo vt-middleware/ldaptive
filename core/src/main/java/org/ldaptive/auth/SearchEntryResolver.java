@@ -17,7 +17,6 @@ import org.ldaptive.SearchResult;
  * attempted on.
  *
  * @author  Middleware Services
- * @version  $Revision: 3056 $ $Date: 2014-09-09 16:01:06 -0400 (Tue, 09 Sep 2014) $
  */
 public class SearchEntryResolver extends AbstractSearchEntryResolver
   implements ConnectionFactoryManager

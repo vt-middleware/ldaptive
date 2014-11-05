@@ -26,7 +26,6 @@ import org.testng.annotations.Test;
  * Load test for {@link Authenticator}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2669 $
  */
 public class AuthenticatorLoadTest extends AbstractTest
 {

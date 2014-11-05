@@ -8,7 +8,6 @@ import java.io.IOException;
  * Encodes constructed types to their DER format.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class ConstructedDEREncoder extends AbstractDERType implements DEREncoder
 {

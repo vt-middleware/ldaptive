@@ -7,7 +7,6 @@ import java.util.UUID;
  * Decodes and encodes a UUID for use in an ldap attribute value.
  *
  * @author  Middleware Services
- * @version  $Revision: 2994 $ $Date: 2014-06-03 15:00:45 -0400 (Tue, 03 Jun 2014) $
  */
 public class UUIDValueTranscoder extends AbstractStringValueTranscoder<UUID>
 {

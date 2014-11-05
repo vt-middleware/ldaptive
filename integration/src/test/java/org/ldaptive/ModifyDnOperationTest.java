@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link ModifyDnOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2412 $
  */
 public class ModifyDnOperationTest extends AbstractTest
 {

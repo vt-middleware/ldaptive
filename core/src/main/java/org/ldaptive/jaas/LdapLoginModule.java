@@ -24,7 +24,6 @@ import org.ldaptive.auth.Authenticator;
  * Provides a JAAS authentication hook for LDAP authentication.
  *
  * @author  Middleware Services
- * @version  $Revision: 2904 $ $Date: 2014-03-14 12:15:20 -0400 (Fri, 14 Mar 2014) $
  */
 public class LdapLoginModule extends AbstractLoginModule
 {

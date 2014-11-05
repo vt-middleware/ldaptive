@@ -7,7 +7,6 @@ import org.ldaptive.LdapUtils;
  * Request control for authorization identify. See RFC 3829.
  *
  * @author  Middleware Services
- * @version  $Revision: 3064 $ $Date: 2014-09-16 10:54:06 -0400 (Tue, 16 Sep 2014) $
  */
 public class AuthorizationIdentityRequestControl extends AbstractControl
   implements RequestControl

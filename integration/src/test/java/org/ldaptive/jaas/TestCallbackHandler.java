@@ -12,7 +12,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
  * Class that implements a callback handler to help with jaas testing.
  *
  * @author  Middleware Services
- * @version  $Revision: 2198 $
  */
 public class TestCallbackHandler implements CallbackHandler
 {

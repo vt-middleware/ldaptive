@@ -11,7 +11,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link IntegerType}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3050 $ $Date: 2014-09-04 14:24:42 -0400 (Thu, 04 Sep 2014) $
  */
 public class IntegerTypeTest
 {

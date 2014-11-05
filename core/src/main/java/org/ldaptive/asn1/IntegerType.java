@@ -8,7 +8,6 @@ import java.nio.ByteBuffer;
  * Converts arbitrary-precision integers to and from their DER encoded format.
  *
  * @author  Middleware Services
- * @version  $Revision: 3050 $ $Date: 2014-09-04 14:24:42 -0400 (Thu, 04 Sep 2014) $
  */
 public class IntegerType extends AbstractDERType implements DEREncoder
 {

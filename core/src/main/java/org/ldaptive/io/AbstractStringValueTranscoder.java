@@ -10,7 +10,6 @@ import org.ldaptive.LdapUtils;
  * @param  <T>  type of object to transcode
  *
  * @author  Middleware Services
- * @version  $Revision: 2998 $ $Date: 2014-06-11 13:28:09 -0400 (Wed, 11 Jun 2014) $
  */
 public abstract class AbstractStringValueTranscoder<T>
   implements ValueTranscoder<T>

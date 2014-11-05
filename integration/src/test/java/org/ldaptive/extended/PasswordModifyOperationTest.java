@@ -23,7 +23,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link PasswordModifyOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2820 $ $Date: 2013-09-23 16:24:54 -0400 (Mon, 23 Sep 2013) $
  */
 public class PasswordModifyOperationTest extends AbstractTest
 {

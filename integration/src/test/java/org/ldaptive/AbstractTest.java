@@ -9,7 +9,6 @@ import org.ldaptive.ad.UnicodePwdAttribute;
  * Contains functions common to all tests.
  *
  * @author  Middleware Services
- * @version  $Revision: 2819 $
  */
 public abstract class AbstractTest
 {

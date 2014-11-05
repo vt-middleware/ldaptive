@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
  * AttributeValueMutator} and a {@link DnValueMutator}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3013 $ $Date: 2014-07-02 11:26:52 -0400 (Wed, 02 Jul 2014) $
  */
 public abstract class AbstractClassDescriptor implements ClassDescriptor
 {

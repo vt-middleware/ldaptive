@@ -22,7 +22,6 @@ import org.ldaptive.control.ResponseControl;
  * ldaptive specific objects.
  *
  * @author  Middleware Services
- * @version  $Revision: 3039 $ $Date: 2014-08-20 13:45:32 -0400 (Wed, 20 Aug 2014) $
  */
 public class UnboundIDUtils
 {

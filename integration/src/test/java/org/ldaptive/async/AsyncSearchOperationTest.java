@@ -20,7 +20,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link AsyncSearchOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2737 $ $Date: 2013-06-20 17:36:05 -0400 (Thu, 20 Jun 2013) $
  */
 public class AsyncSearchOperationTest extends AbstractTest
 {

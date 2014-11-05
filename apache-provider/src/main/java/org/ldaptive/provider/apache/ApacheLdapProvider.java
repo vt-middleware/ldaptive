@@ -19,7 +19,6 @@ import org.ldaptive.ssl.SSLContextInitializer;
  * Exposes a connection factory for creating ldap connections with Apache LDAP.
  *
  * @author  Middleware Services
- * @version  $Revision: 2941 $ $Date: 2014-03-31 11:23:36 -0400 (Mon, 31 Mar 2014) $
  */
 public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
 {

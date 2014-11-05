@@ -11,7 +11,6 @@ import org.ldaptive.control.ResponseControl;
  * Response object for authentication handlers.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class AuthenticationHandlerResponse extends Response<Boolean>
 {

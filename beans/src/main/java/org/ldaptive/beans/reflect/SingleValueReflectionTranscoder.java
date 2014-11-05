@@ -13,7 +13,6 @@ import org.ldaptive.io.ValueTranscoder;
  * @param  <T>  type of object to transcode
  *
  * @author  Middleware Services
- * @version  $Revision: 3013 $ $Date: 2014-07-02 11:26:52 -0400 (Wed, 02 Jul 2014) $
  */
 public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
 {

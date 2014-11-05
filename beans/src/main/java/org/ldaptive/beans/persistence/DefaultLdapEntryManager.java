@@ -27,7 +27,6 @@ import org.slf4j.LoggerFactory;
  * @param  <T>  type of object to manage
  *
  * @author  Middleware Services
- * @version  $Revision: 3065 $ $Date: 2014-10-01 13:40:26 -0400 (Wed, 01 Oct 2014) $
  */
 public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
 {

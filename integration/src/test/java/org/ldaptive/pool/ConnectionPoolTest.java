@@ -29,7 +29,6 @@ import org.testng.annotations.Test;
  * Load test for connection pools.
  *
  * @author  Middleware Services
- * @version  $Revision: 2669 $
  */
 public class ConnectionPoolTest extends AbstractTest
 {

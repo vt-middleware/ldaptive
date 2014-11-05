@@ -21,7 +21,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link TLSSocketFactory}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2979 $
  */
 public class TLSSocketFactoryTest
 {

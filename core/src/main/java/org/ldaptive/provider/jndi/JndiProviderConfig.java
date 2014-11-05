@@ -16,7 +16,6 @@ import org.ldaptive.ssl.AllowAnyHostnameVerifier;
  * Contains configuration data for the JNDI provider.
  *
  * @author  Middleware Services
- * @version  $Revision: 2990 $ $Date: 2014-06-02 16:52:22 -0400 (Mon, 02 Jun 2014) $
  */
 public class JndiProviderConfig extends ProviderConfig<Control>
 {

@@ -20,7 +20,6 @@ import org.ldaptive.auth.Authenticator;
  * other JAAS modules.
  *
  * @author  Middleware Services
- * @version  $Revision: 2904 $ $Date: 2014-03-14 12:15:20 -0400 (Fri, 14 Mar 2014) $
  */
 public class LdapDnAuthorizationModule extends AbstractLoginModule
 {

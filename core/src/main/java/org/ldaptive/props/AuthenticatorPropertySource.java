@@ -19,7 +19,6 @@ import org.ldaptive.pool.PooledConnectionFactoryManager;
  * returns an initialized object of that type.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public final class AuthenticatorPropertySource
   extends AbstractPropertySource<Authenticator>

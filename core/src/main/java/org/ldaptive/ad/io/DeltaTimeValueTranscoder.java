@@ -8,7 +8,6 @@ import org.ldaptive.io.AbstractStringValueTranscoder;
  * attribute value.
  *
  * @author  Middleware Services
- * @version  $Revision: 3006 $ $Date: 2014-07-02 10:22:50 -0400 (Wed, 02 Jul 2014) $
  */
 public class DeltaTimeValueTranscoder
   extends AbstractStringValueTranscoder<Long>

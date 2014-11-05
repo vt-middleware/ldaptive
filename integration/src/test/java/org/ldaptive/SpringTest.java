@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
  * Unit test for Spring integration.
  *
  * @author  Middleware Services
- * @version  $Revision: 2766 $
  */
 public class SpringTest
 {

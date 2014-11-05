@@ -23,7 +23,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link LdifReader} and {@link LdifWriter}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2982 $
  */
 public class LdifTest extends AbstractTest
 {

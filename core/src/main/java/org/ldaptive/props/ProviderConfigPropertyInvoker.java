@@ -8,7 +8,6 @@ import org.ldaptive.provider.ControlProcessor;
  * Handles properties for {@link org.ldaptive.provider.ProviderConfig}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2999 $ $Date: 2014-06-11 13:29:32 -0400 (Wed, 11 Jun 2014) $
  */
 public class ProviderConfigPropertyInvoker extends AbstractPropertyInvoker
 {

@@ -23,7 +23,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link AttributeValueServletSearchExecutor}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2541 $
  */
 public class AttributeValueServletSearchExecutorTest extends AbstractTest
 {

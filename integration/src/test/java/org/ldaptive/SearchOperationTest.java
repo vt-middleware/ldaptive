@@ -47,7 +47,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link SearchOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3041 $
  */
 public class SearchOperationTest extends AbstractTest
 {

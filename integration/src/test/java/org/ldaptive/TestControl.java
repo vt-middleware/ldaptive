@@ -10,7 +10,6 @@ import org.testng.annotations.Parameters;
  * Contains functions that run before and after all tests.
  *
  * @author  Middleware Services
- * @version  $Revision: 2993 $
  */
 public class TestControl
 {

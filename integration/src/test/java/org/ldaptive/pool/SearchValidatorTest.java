@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
  * Test for {@link SearchValidator}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2668 $
  */
 public class SearchValidatorTest extends AbstractTest
 {

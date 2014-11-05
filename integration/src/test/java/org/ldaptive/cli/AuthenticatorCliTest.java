@@ -17,7 +17,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link AuthenticatorCli} class.
  *
  * @author  Middleware Services
- * @version  $Revision: 2666 $
  */
 public class AuthenticatorCliTest extends AbstractTest
 {

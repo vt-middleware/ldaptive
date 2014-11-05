@@ -20,7 +20,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link MergeOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2934 $
  */
 public class MergeOperationTest extends AbstractTest
 {

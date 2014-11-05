@@ -28,7 +28,6 @@ import org.ldaptive.props.PropertySource.PropertyDomain;
  * Abstract base class for all CLI classes.
  *
  * @author  Middleware Services
- * @version  $Revision: 3066 $ $Date: 2014-10-16 12:23:27 -0400 (Thu, 16 Oct 2014) $
  */
 public abstract class AbstractCli
 {

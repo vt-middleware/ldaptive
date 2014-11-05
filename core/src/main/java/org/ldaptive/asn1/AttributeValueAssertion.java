@@ -10,7 +10,6 @@ import org.ldaptive.LdapUtils;
  * An OID representing the type of attribute and its value.
  *
  * @author  Middleware Services
- * @version  $Revision: 3068 $ $Date: 2014-10-24 13:22:32 -0400 (Fri, 24 Oct 2014) $
  */
 public class AttributeValueAssertion extends AbstractDERType
   implements DEREncoder

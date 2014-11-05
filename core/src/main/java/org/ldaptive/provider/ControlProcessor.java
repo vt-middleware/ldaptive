@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
  * @param  <T>  type of provider specific control
  *
  * @author  Middleware Services
- * @version  $Revision: 2989 $ $Date: 2014-06-02 16:51:05 -0400 (Mon, 02 Jun 2014) $
  */
 public class ControlProcessor<T>
 {

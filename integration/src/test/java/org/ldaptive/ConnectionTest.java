@@ -13,7 +13,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link Connection}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2876 $
  */
 public class ConnectionTest
 {

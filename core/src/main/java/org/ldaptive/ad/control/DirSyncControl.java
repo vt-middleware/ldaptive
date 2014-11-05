@@ -30,7 +30,6 @@ import org.ldaptive.control.ResponseControl;
  * <p>See http://msdn.microsoft.com/en-us/library/cc223347.aspx</p>
  *
  * @author  Middleware Services
- * @version  $Revision: 2988 $ $Date: 2014-06-02 16:31:55 -0400 (Mon, 02 Jun 2014) $
  */
 public class DirSyncControl extends AbstractControl
   implements RequestControl, ResponseControl

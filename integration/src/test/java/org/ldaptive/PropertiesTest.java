@@ -32,7 +32,6 @@ import org.testng.annotations.Test;
  * Unit test for property source implementations in the props package.
  *
  * @author  Middleware Services
- * @version  $Revision: 3001 $
  */
 public class PropertiesTest
 {

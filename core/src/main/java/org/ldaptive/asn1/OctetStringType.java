@@ -8,7 +8,6 @@ import java.nio.charset.Charset;
  * Converts strings to and from their DER encoded format.
  *
  * @author  Middleware Services
- * @version  $Revision: 3049 $ $Date: 2014-09-03 15:30:49 -0400 (Wed, 03 Sep 2014) $
  */
 public class OctetStringType extends AbstractDERType implements DEREncoder
 {

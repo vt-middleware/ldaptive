@@ -14,7 +14,6 @@ import javax.net.ssl.TrustManager;
  * expect the socket factory to function immediately after construction.
  *
  * @author  Middleware Services
- * @version  $Revision: 2940 $ $Date: 2014-03-31 11:10:46 -0400 (Mon, 31 Mar 2014) $
  */
 public class TLSSocketFactory extends AbstractTLSSocketFactory
 {

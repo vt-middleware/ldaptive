@@ -11,7 +11,6 @@ import org.ldaptive.SortBehavior;
  * Annotation to describe LDAP attribute data on a bean.
  *
  * @author  Middleware Services
- * @version  $Revision: 3000 $ $Date: 2014-06-11 14:08:42 -0400 (Wed, 11 Jun 2014) $
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.ANNOTATION_TYPE)

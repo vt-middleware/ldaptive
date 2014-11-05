@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
  * handlers to elements of interest.
  *
  * @author  Middleware Services
- * @version  $Revision: 3050 $ $Date: 2014-09-04 14:24:42 -0400 (Thu, 04 Sep 2014) $
  * @see  DERPath
  */
 public class DERParser

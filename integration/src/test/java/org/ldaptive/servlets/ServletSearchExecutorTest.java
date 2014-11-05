@@ -24,7 +24,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link SearchServlet}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2618 $
  */
 public class ServletSearchExecutorTest extends AbstractTest
 {

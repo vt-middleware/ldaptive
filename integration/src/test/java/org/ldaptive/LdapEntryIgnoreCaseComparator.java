@@ -7,7 +7,6 @@ import java.util.Comparator;
  * Compares two ldap entries, ignoring the case of supplied attribute values.
  *
  * @author  Middleware Services
- * @version  $Revision: 2379 $ $Date: 2012-05-04 12:15:59 -0400 (Fri, 04 May 2012) $
  */
 public class LdapEntryIgnoreCaseComparator implements Comparator<LdapEntry>
 {

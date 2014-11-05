@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
  * Utility class for creating controls.
  *
  * @author  Middleware Services
- * @version  $Revision: 3064 $ $Date: 2014-09-16 10:54:06 -0400 (Tue, 16 Sep 2014) $
  */
 public final class ControlFactory
 {

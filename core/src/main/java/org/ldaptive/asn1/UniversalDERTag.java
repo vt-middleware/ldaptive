@@ -8,7 +8,6 @@ import java.util.Map;
  * Enumeration with common BER/DER universal tag types.
  *
  * @author  Middleware Services
- * @version  $Revision: 3052 $ $Date: 2014-09-05 13:56:42 -0400 (Fri, 05 Sep 2014) $
  */
 public enum UniversalDERTag implements DERTag {
 

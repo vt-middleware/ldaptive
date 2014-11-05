@@ -16,7 +16,6 @@ import org.springframework.expression.spel.support.StandardTypeConverter;
  * Uses a {@link SpringClassDescriptor} for ldap entry mapping.
  *
  * @author  Middleware Services
- * @version  $Revision: 3013 $ $Date: 2014-07-02 11:26:52 -0400 (Wed, 02 Jul 2014) $
  */
 public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
 {

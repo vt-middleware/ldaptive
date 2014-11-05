@@ -11,7 +11,6 @@ import org.ldaptive.SearchResult;
  * @param  <Q>  type of search request
  *
  * @author  Middleware Services
- * @version  $Revision: 3005 $ $Date: 2014-07-02 10:20:47 -0400 (Wed, 02 Jul 2014) $
  */
 public class Ehcache<Q extends SearchRequest> implements Cache<Q>
 {

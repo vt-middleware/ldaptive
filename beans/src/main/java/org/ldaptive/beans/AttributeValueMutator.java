@@ -8,7 +8,6 @@ import org.ldaptive.SortBehavior;
  * Interface for mutating an attribute value on an arbitrary object.
  *
  * @author  Middleware Services
- * @version  $Revision: 2887 $ $Date: 2014-02-26 12:23:53 -0500 (Wed, 26 Feb 2014) $
  */
 public interface AttributeValueMutator
 {

@@ -15,7 +15,6 @@ import org.ldaptive.DefaultConnectionFactory;
  * that this pool will begin blocking if it cannot create new connections.
  *
  * @author  Middleware Services
- * @version  $Revision: 2967 $ $Date: 2014-04-09 16:37:01 -0400 (Wed, 09 Apr 2014) $
  */
 public class SoftLimitConnectionPool extends BlockingConnectionPool
 {

@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
  * Test for {@link CompareValidator}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2513 $
  */
 public class CompareValidatorTest extends AbstractTest
 {

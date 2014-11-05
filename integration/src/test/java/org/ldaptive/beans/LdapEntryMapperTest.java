@@ -24,7 +24,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link LdapEntryMapper} implementations.
  *
  * @author  Middleware Services
- * @version  $Revision: 2931 $ $Date: 2014-03-26 10:10:52 -0400 (Wed, 26 Mar 2014) $
  */
 public class LdapEntryMapperTest extends AbstractTest
 {

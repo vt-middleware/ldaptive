@@ -10,7 +10,6 @@ import java.util.List;
  * Reflection transcoder for an object that implements {@link List}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2917 $ $Date: 2014-03-21 16:06:36 -0400 (Fri, 21 Mar 2014) $
  */
 public class ListReflectionTranscoder
   extends AbstractCollectionReflectionTranscoder

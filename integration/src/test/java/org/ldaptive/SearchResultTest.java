@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link SearchResult}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2468 $
  */
 public class SearchResultTest extends AbstractTest
 {

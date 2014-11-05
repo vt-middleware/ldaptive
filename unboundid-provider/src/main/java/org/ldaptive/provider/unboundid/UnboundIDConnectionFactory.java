@@ -14,7 +14,6 @@ import org.ldaptive.provider.ConnectionException;
  * Creates ldap connections using the UnboundID LDAPConnection class.
  *
  * @author  Middleware Services
- * @version  $Revision: 2944 $ $Date: 2014-03-31 13:58:44 -0400 (Mon, 31 Mar 2014) $
  */
 public class UnboundIDConnectionFactory
   extends AbstractProviderConnectionFactory<UnboundIDProviderConfig>

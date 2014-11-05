@@ -19,7 +19,6 @@ import org.ldaptive.io.ValueTranscoder;
  * on a type. Leverages the {@link Introspector} class for reading descriptors.
  *
  * @author  Middleware Services
- * @version  $Revision: 3013 $ $Date: 2014-07-02 11:26:52 -0400 (Wed, 02 Jul 2014) $
  */
 public class MethodClassDescriptor extends AbstractClassDescriptor
 {

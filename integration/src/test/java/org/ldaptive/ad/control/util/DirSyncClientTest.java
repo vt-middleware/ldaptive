@@ -22,7 +22,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link DirSyncClient}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2554 $ $Date: 2012-11-20 15:48:33 -0500 (Tue, 20 Nov 2012) $
  */
 public class DirSyncClientTest extends AbstractTest
 {

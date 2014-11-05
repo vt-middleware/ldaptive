@@ -53,7 +53,6 @@ import org.slf4j.LoggerFactory;
  * JNDI provider implementation of ldap operations.
  *
  * @author  Middleware Services
- * @version  $Revision: 2937 $ $Date: 2014-03-28 18:21:36 -0400 (Fri, 28 Mar 2014) $
  */
 public class JndiConnection implements ProviderConnection
 {

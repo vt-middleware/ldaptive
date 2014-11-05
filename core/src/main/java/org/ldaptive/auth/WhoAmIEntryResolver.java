@@ -16,7 +16,6 @@ import org.ldaptive.extended.WhoAmIRequest;
  * with some mapped identifier, like DIGEST-MD5.
  *
  * @author  Middleware Services
- * @version  $Revision: 3068 $ $Date: 2014-10-24 13:22:32 -0400 (Fri, 24 Oct 2014) $
  */
 public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
 {

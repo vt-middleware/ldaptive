@@ -7,7 +7,6 @@ import org.ldaptive.LdapUtils;
  * Entry handler that does nothing.
  *
  * @author  Middleware Services
- * @version  $Revision: 2468 $ $Date: 2012-08-07 14:54:52 -0400 (Tue, 07 Aug 2012) $
  */
 public class NoOpEntryHandler extends AbstractSearchEntryHandler
 {

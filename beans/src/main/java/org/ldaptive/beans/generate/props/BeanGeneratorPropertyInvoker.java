@@ -9,7 +9,6 @@ import org.ldaptive.props.AbstractPropertyInvoker;
  * Handles properties for {@link org.ldaptive.beans.generate.BeanGenerator}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3013 $ $Date: 2014-07-02 11:26:52 -0400 (Wed, 02 Jul 2014) $
  */
 public class BeanGeneratorPropertyInvoker extends AbstractPropertyInvoker
 {

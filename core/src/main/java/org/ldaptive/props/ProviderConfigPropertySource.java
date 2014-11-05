@@ -11,7 +11,6 @@ import org.ldaptive.provider.ProviderConfig;
  * initialized object of that type.
  *
  * @author  Middleware Services
- * @version  $Revision: 2999 $ $Date: 2014-06-11 13:29:32 -0400 (Wed, 11 Jun 2014) $
  */
 public final class ProviderConfigPropertySource
   extends AbstractPropertySource<ProviderConfig<?>>

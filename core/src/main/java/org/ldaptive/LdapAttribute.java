@@ -17,7 +17,6 @@ import org.ldaptive.io.ValueTranscoder;
  * of values.
  *
  * @author  Middleware Services
- * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
  */
 public class LdapAttribute extends AbstractLdapBean
 {
@@ -663,7 +662,6 @@ public class LdapAttribute extends AbstractLdapBean
    * @param  <T>  type of values
    *
    * @author  Middleware Services
-   * @version  $Revision: 2885 $ $Date: 2014-02-05 16:28:49 -0500 (Wed, 05 Feb 2014) $
    */
   private class LdapAttributeValues<T> implements Serializable
   {

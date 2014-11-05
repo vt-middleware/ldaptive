@@ -7,7 +7,6 @@ package org.ldaptive.io;
  * @param  <T>  type of object to transcode
  *
  * @author  Middleware Services
- * @version  $Revision: 2994 $ $Date: 2014-06-03 15:00:45 -0400 (Tue, 03 Jun 2014) $
  */
 public abstract class AbstractPrimitiveValueTranscoder<T>
   extends AbstractStringValueTranscoder<T>

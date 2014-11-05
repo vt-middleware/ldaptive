@@ -21,7 +21,6 @@ import org.testng.annotations.Test;
  * Performance test for an ldap search operation over native sockets.
  *
  * @author  Middleware Services
- * @version  $Revision: 3011 $ $Date: 2014-07-02 11:15:42 -0400 (Wed, 02 Jul 2014) $
  */
 public class PerformanceTest
 {

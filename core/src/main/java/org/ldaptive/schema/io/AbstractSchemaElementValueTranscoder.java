@@ -10,7 +10,6 @@ import org.ldaptive.schema.SchemaElement;
  * @param  <T>  type of schema element
  *
  * @author  Middleware Services
- * @version  $Revision: 2994 $ $Date: 2014-06-03 15:00:45 -0400 (Tue, 03 Jun 2014) $
  */
 public abstract class
 AbstractSchemaElementValueTranscoder<T extends SchemaElement>

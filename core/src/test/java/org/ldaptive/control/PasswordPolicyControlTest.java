@@ -10,7 +10,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link PasswordPolicyControl}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3045 $ $Date: 2014-08-26 10:59:18 -0400 (Tue, 26 Aug 2014) $
  */
 public class PasswordPolicyControlTest
 {

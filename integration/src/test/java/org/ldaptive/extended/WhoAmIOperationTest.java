@@ -14,7 +14,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link WhoAmIOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision: 2669 $ $Date: 2013-03-15 16:32:36 -0400 (Fri, 15 Mar 2013) $
  */
 public class WhoAmIOperationTest extends AbstractTest
 {

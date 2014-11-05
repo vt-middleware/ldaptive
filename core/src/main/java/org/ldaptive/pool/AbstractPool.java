@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
  * @param  <T>  type of object being pooled
  *
  * @author  Middleware Services
- * @version  $Revision: 2972 $ $Date: 2014-04-21 12:15:38 -0400 (Mon, 21 Apr 2014) $
  */
 public abstract class AbstractPool<T>
 {

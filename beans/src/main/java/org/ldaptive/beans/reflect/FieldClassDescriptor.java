@@ -15,7 +15,6 @@ import org.ldaptive.io.ValueTranscoder;
  * Creates DN and attribute mutators for the {@link Field}s on a type.
  *
  * @author  Middleware Services
- * @version  $Revision: 3013 $ $Date: 2014-07-02 11:26:52 -0400 (Wed, 02 Jul 2014) $
  */
 public class FieldClassDescriptor extends AbstractClassDescriptor
 {

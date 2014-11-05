@@ -13,7 +13,6 @@ import org.testng.annotations.Test;
  * Unit test for {@link BindOperation}.
  *
  * @author  Middleware Services
- * @version  $Revision: 3089 $
  */
 public class BindOperationTest extends AbstractTest
 {

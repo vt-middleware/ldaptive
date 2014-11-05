@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
  * ReflectionTranscoder} for mutating values.
  *
  * @author  Middleware Services
- * @version  $Revision: 2887 $ $Date: 2014-02-26 12:23:53 -0500 (Wed, 26 Feb 2014) $
  */
 public abstract class AbstractAttributeValueMutator
   implements AttributeValueMutator

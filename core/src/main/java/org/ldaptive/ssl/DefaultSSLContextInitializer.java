@@ -12,7 +12,6 @@ import javax.net.ssl.TrustManagerFactory;
  * setting of trust and key managers in order to create an SSL context.
  *
  * @author  Middleware Services
- * @version  $Revision: 2936 $ $Date: 2014-03-28 14:18:03 -0400 (Fri, 28 Mar 2014) $
  */
 public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
 {
