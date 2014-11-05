@@ -33,7 +33,6 @@
     <!-- javadocs -->
     <module name="JavadocType">
       <property name="authorFormat" value="\S+"/>
-      <property name="versionFormat" value="\S+"/>
     </module>
     <module name="JavadocMethod">
       <property name="allowThrowsTagsForSubclasses" value="true"/>
