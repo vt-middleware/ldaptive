@@ -1,0 +1,3 @@
+#!/bin/sh
+
+mvn -Pdistribution,apache,jldap,opendj,unboundid,ldapi package

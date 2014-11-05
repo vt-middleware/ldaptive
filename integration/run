@@ -31,18 +31,17 @@ SSL_HOST=`echo ${HOST} |sed 's/389/636/'`
 
 MVN_CMD="clean verify"
 if [ ! -z "${PROVIDER}" ]; then
-  MVN_CMD="-P${PROVIDER} ${MVN_CMD}"
+  MVN_CMD="-Pintegration,${PROVIDER} ${MVN_CMD}"
+else
+  MVN_CMD="-Pintegration ${MVN_CMD}"
 fi
 
 mvn \
-  -Pintegration,apache,jldap,opendj,unboundid,ldapi \
-  -DrunTests \
   -DldapTestHost=ldap://${HOST} \
   -DldapSslTestHost=ldap://${SSL_HOST} \
   -DldapBaseDn="${BASE_DN}" \
   -DldapBindDn="${BIND_DN}" \
   -DldapBindCredential="${BIND_CREDENTIAL}" \
   -DldapTestGroup=${TEST_GROUP} \
-  -DldapTestsIgnoreLock=true \
   ${MVN_CMD}
 
