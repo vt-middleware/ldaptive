@@ -8,7 +8,7 @@ ldaptive@googlegroups.com.
 ```sh
 git clone git@github.com:vt-middleware/ldaptive.git
 cd ldaptive
-mvn package
+./package
 ```
 
 ### Documentation
