@@ -1,4 +1,16 @@
-/* See LICENSE for licensing and NOTICE for copyright. */
+
+package org.ldaptive.beans.generate;
+
+import java.util.Collection;
+import org.ldaptive.LdapUtils;
+import org.ldaptive.beans.Attribute;
+import org.ldaptive.beans.Entry;
+
+
+/**
+ * Ldaptive generated bean for objectClass 'organizationalPerson'
+ *
+ */
 @Entry(dn = "dn", attributes = {
     @Attribute(name = "customname1", values = "customvalue1"),
     @Attribute(name = "customname2", values = {"customvalue1", "customvalue2"}),

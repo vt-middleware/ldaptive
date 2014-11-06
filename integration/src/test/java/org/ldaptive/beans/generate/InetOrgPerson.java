@@ -1,6 +1,18 @@
-/* See LICENSE for licensing and NOTICE for copyright. */
+
+package org.ldaptive.beans.generate;
+
+import java.security.cert.Certificate;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.UUID;
+import org.ldaptive.LdapUtils;
+import org.ldaptive.beans.Attribute;
+import org.ldaptive.beans.Entry;
+
+
+/**
  * Ldaptive generated bean for objectClass 'inetOrgPerson'
- * 
+ *
  */
 @Entry(dn = "dn", attributes = {
     @Attribute(name = "customname1", values = "customvalue1"),
