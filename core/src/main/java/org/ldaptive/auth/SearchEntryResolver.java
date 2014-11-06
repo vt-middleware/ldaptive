@@ -60,13 +60,14 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   /** {@inheritDoc} */
   @Override
   public SearchResult performLdapSearch(
-    final Connection conn,
-    final AuthenticationCriteria ac)
+    final AuthenticationCriteria criteria,
+    final AuthenticationHandlerResponse response)
     throws LdapException
   {
     if (factory == null) {
-      final SearchOperation op = createSearchOperation(conn);
-      return op.execute(createSearchRequest(ac)).getResult();
+      final SearchOperation op = createSearchOperation(
+        response.getConnection());
+      return op.execute(createSearchRequest(criteria)).getResult();
     } else {
       Connection factoryConn = null;
       try {
@@ -74,7 +75,7 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
         factoryConn.open();
 
         final SearchOperation op = createSearchOperation(factoryConn);
-        return op.execute(createSearchRequest(ac)).getResult();
+        return op.execute(createSearchRequest(criteria)).getResult();
       } finally {
         if (factoryConn != null) {
           factoryConn.close();

@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
-import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 
@@ -16,18 +15,20 @@ public interface EntryResolver
 
 
   /**
-   * Attempts to find the LDAP entry for the supplied authentication criteria,
-   * using the supplied connection. The supplied connection should <b>not</b> be
-   * closed in this method.
+   * Attempts to find the LDAP entry for the supplied authentication criteria
+   * and authentication handler response. The connection available in the
+   * response should <b>not</b> be closed in this method.
    *
-   * @param  conn  that authentication occurred on
    * @param  criteria  authentication criteria used to perform the
    * authentication
+   * @param  response  produced by the authentication handler
    *
    * @return  ldap entry
    *
    * @throws  LdapException  if an LDAP error occurs
    */
-  LdapEntry resolve(Connection conn, AuthenticationCriteria criteria)
+  LdapEntry resolve(
+    AuthenticationCriteria criteria,
+    AuthenticationHandlerResponse response)
     throws LdapException;
 }

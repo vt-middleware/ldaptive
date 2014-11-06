@@ -58,8 +58,8 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
   /** {@inheritDoc} */
   @Override
   protected SearchResult performLdapSearch(
-    final Connection conn,
-    final AuthenticationCriteria ac)
+    final AuthenticationCriteria criteria,
+    final AuthenticationHandlerResponse response)
     throws LdapException
   {
     Connection pooledConn = null;
@@ -67,7 +67,7 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
       pooledConn = factory.getConnection();
 
       final SearchOperation op = createSearchOperation(pooledConn);
-      return op.execute(createSearchRequest(ac)).getResult();
+      return op.execute(createSearchRequest(criteria)).getResult();
     } finally {
       if (pooledConn != null) {
         pooledConn.close();

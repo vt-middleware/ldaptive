@@ -23,6 +23,7 @@ import org.ldaptive.TestUtils;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
+import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
@@ -910,9 +911,8 @@ public class AuthenticatorTest extends AbstractTest
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    TestUtils.assertEquals(
-      TestUtils.convertLdifToResult(expected),
-      new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected),
+                           new SearchResult(response.getLdapEntry()));
   }
 
 
@@ -957,6 +957,60 @@ public class AuthenticatorTest extends AbstractTest
     TestUtils.assertEquals(
       TestUtils.convertLdifToResult(expected),
       new SearchResult(response.getLdapEntry()));
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "authenticateUser",
+      "authenticateCredential",
+      "authenticateReturnAttrs",
+      "authenticateResults"
+    }
+  )
+  @Test(groups = {"auth"})
+  public void authenticateAuthorizationIdentity(
+    final String user,
+    final String credential,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
+      return;
+    }
+
+    final Authenticator auth = createTLSAuthenticator(true);
+    BindAuthenticationHandler ah = (BindAuthenticationHandler)
+      auth.getAuthenticationHandler();
+    ah.setAuthenticationControls(new AuthorizationIdentityRequestControl());
+    auth.setEntryResolver(new AuthorizationIdentityEntryResolver());
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    try {
+      final AuthenticationResponse response = auth.authenticate(
+        new AuthenticationRequest(
+          user,
+          new Credential(credential),
+          returnAttrs.split("\\|")));
+      AssertJUnit.assertTrue(response.getResult());
+      AssertJUnit.assertEquals(
+        AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+        response.getAuthenticationResultCode());
+      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+      TestUtils.assertEquals(
+        TestUtils.convertLdifToResult(expected),
+        new SearchResult(response.getLdapEntry()));
+    } catch (IllegalStateException e) {
+      throw new UnsupportedOperationException(
+        "LDAP server does not support this control");
+    }
   }
 
 
