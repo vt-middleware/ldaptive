@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
-import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 
@@ -17,11 +16,11 @@ public class NoOpEntryResolver implements EntryResolver
   /** {@inheritDoc} */
   @Override
   public LdapEntry resolve(
-    final Connection conn,
-    final AuthenticationCriteria ac)
+    final AuthenticationCriteria criteria,
+    final AuthenticationHandlerResponse response)
     throws LdapException
   {
-    return new LdapEntry(ac.getDn());
+    return new LdapEntry(criteria.getDn());
   }
 
 

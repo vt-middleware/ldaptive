@@ -2,21 +2,22 @@
 package org.ldaptive.auth;
 
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
-import org.ldaptive.extended.WhoAmIOperation;
-import org.ldaptive.extended.WhoAmIRequest;
+import org.ldaptive.control.AuthorizationIdentityResponseControl;
 
 /**
- * Executes the {@link WhoAmIOperation} on the authenticated connection, then
- * performs an object level search on the result. Useful when users authenticate
- * with some mapped identifier, like DIGEST-MD5.
+ * Reads the authorization identity response control, then performs an object
+ * level search on the result. Useful when users authenticate with some mapped
+ * identifier, like DIGEST-MD5. This resolver must be used with an {@link
+ * AuthenticationHandler} that is configured to send the {@link
+ * org.ldaptive.control.AuthorizationIdentityRequestControl}.
  *
  * @author  Middleware Services
  */
-public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
+public class AuthorizationIdentityEntryResolver
+  extends AbstractSearchEntryResolver
 {
 
 
@@ -27,17 +28,16 @@ public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
     final AuthenticationHandlerResponse response)
     throws LdapException
   {
-    final WhoAmIOperation whoami = new WhoAmIOperation(
-      response.getConnection());
-    final Response<String> res = whoami.execute(new WhoAmIRequest());
-    logger.debug("whoami operation returned {}", res);
-
-    final String authzId = res.getResult();
-    if (authzId == null) {
+    final AuthorizationIdentityResponseControl ctrl =
+      (AuthorizationIdentityResponseControl) response.getControl(
+        AuthorizationIdentityResponseControl.OID);
+    if (ctrl == null) {
       throw new IllegalStateException(
-        "WhoAmI operation did not return an authorization ID");
+        "Authorization Identity Response Control not found");
     }
+    logger.debug("found authorization identity response control {}", ctrl);
 
+    final String authzId = ctrl.getAuthorizationId();
     final String dn = authzId.split(":", 2)[1].trim();
     final SearchOperation search = createSearchOperation(
       response.getConnection());

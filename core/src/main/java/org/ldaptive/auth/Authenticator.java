@@ -362,14 +362,14 @@ public class Authenticator
         er = NOOP_RESOLVER;
       }
       try {
-        entry = er.resolve(response.getConnection(), criteria);
+        entry = er.resolve(criteria, response);
         logger.trace("resolved entry={} with resolver={}", entry, er);
       } catch (LdapException e) {
         logger.debug("entry resolution failed for resolver={}", er, e);
       }
     }
     if (entry == null) {
-      entry = NOOP_RESOLVER.resolve(response.getConnection(), criteria);
+      entry = NOOP_RESOLVER.resolve(criteria, response);
       logger.trace("resolved entry={} with resolver={}", entry, NOOP_RESOLVER);
     }
     return entry;

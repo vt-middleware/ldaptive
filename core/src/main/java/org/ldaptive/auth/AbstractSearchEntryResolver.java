@@ -3,7 +3,6 @@ package org.ldaptive.auth;
 
 import java.util.Arrays;
 import java.util.Iterator;
-import org.ldaptive.Connection;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -134,9 +133,10 @@ public abstract class AbstractSearchEntryResolver
 
   /**
    * Sets whether entry resolution should fail if multiple entries are found. If
-   * false an exception will be thrown if {@link #resolve(Connection,
-   * AuthenticationCriteria)} finds more than one entry matching it's filter.
-   * Otherwise the first entry found is returned.
+   * false an exception will be thrown if {@link
+   * #resolve(AuthenticationCriteria, AuthenticationHandlerResponse)} finds more
+   * than one entry matching it's filter. Otherwise the first entry found is
+   * returned.
    *
    * @param  b  whether multiple entries are allowed
    */
@@ -243,16 +243,16 @@ public abstract class AbstractSearchEntryResolver
   /**
    * Executes an ldap search with the supplied authentication criteria.
    *
-   * @param  conn  that the user attempted to bind on
-   * @param  ac  authentication criteria associated with the user
+   * @param  criteria  authentication criteria associated with the user
+   * @param  response  response from the authentication event
    *
    * @return  search result
    *
    * @throws  LdapException  if an error occurs attempting the search
    */
   protected abstract SearchResult performLdapSearch(
-    final Connection conn,
-    final AuthenticationCriteria ac)
+    final AuthenticationCriteria criteria,
+    final AuthenticationHandlerResponse response)
     throws LdapException;
 
 
@@ -323,24 +323,24 @@ public abstract class AbstractSearchEntryResolver
   /** {@inheritDoc} */
   @Override
   public LdapEntry resolve(
-    final Connection conn,
-    final AuthenticationCriteria ac)
+    final AuthenticationCriteria criteria,
+    final AuthenticationHandlerResponse response)
     throws LdapException
   {
-    logger.debug("resolve criteria={}", ac);
+    logger.debug("resolve criteria={}", criteria);
 
-    final SearchResult result = performLdapSearch(conn, ac);
-    logger.debug("resolved result={} for criteria={}", result, ac);
+    final SearchResult result = performLdapSearch(criteria, response);
+    logger.debug("resolved result={} for criteria={}", result, criteria);
 
     LdapEntry entry = null;
     final Iterator<LdapEntry> answer = result.getEntries().iterator();
     if (answer != null && answer.hasNext()) {
       entry = answer.next();
       if (answer.hasNext()) {
-        logger.debug("multiple results found for user={}", ac.getDn());
+        logger.debug("multiple results found for user={}", criteria.getDn());
         if (!allowMultipleEntries) {
           throw new LdapException(
-            "Found more than (1) entry for: " + ac.getDn());
+            "Found more than (1) entry for: " + criteria.getDn());
         }
       }
     }
