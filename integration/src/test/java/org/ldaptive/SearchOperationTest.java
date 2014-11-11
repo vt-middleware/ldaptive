@@ -18,6 +18,7 @@ import org.ldaptive.ad.control.ShowDeletedControl;
 import org.ldaptive.ad.control.ShowRecycledControl;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
+import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.ProxyAuthorizationControl;
@@ -1729,7 +1730,9 @@ public class SearchOperationTest extends AbstractTest
     request.setReturnAttributes(ReturnAttributes.NONE.value());
     request.setSearchFilter(new SearchFilter(filter));
     request.setSearchEntryHandlers(
-      new ObjectSidHandler(), new ObjectGuidHandler());
+      new ObjectSidHandler(),
+      new ObjectGuidHandler(),
+      new PrimaryGroupIdHandler());
     request.setSearchReferenceHandlers(new SearchReferenceHandler() {
       @Override
       public HandlerResult<SearchReference> handle(
