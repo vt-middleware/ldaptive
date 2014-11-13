@@ -21,6 +21,7 @@ import org.ldaptive.handler.AbstractSearchEntryHandler;
  * 'primaryGroupID' attributes. If those attributes are not found this handler
  * is a no-op. This handler should be used in conjunction with the {@link
  * ObjectSidHandler} to ensure the 'objectSid' attribute is in the proper form.
+ * See http://support2.microsoft.com/kb/297951
  *
  * @author  Middleware Services
  */
@@ -106,15 +107,11 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
       } else {
         sid = objectSid.getStringValue();
       }
-      final StringBuilder sb = new StringBuilder();
-      final String[] tokens = sid.split("-");
-      for (int i = 0; i < tokens.length - 1; i++) {
-        sb.append(tokens[i]).append("-");
-      }
-      sb.append(primaryGroupId.getStringValue());
+      final String groupSid = sid.substring(0, sid.lastIndexOf('-') + 1) +
+                              primaryGroupId.getStringValue();
       logger.debug(
         "created primary group SID {} from object SID {} and primaryGroupID {}",
-        sb.toString(),
+        groupSid,
         sid,
         primaryGroupId.getStringValue());
 
@@ -122,11 +119,11 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
       sr.setBaseDn(baseDn != null ? baseDn : request.getBaseDn());
       sr.setReturnAttributes(ReturnAttributes.NONE.value());
       sr.setSearchFilter(
-        new SearchFilter(groupFilter, new Object[] {sb.toString()}));
+        new SearchFilter(groupFilter, new Object[] {groupSid}));
       final SearchOperation search = new SearchOperation(conn);
       final SearchResult result = search.execute(sr).getResult();
       if (result.size() == 0) {
-        logger.debug("could not find primary group for SID {}", sb.toString());
+        logger.debug("could not find primary group for SID {}", groupSid);
       } else {
         LdapAttribute memberOf = entry.getAttribute("memberOf");
         if (memberOf == null) {
