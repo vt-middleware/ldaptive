@@ -11,20 +11,16 @@ public interface ConnectionStrategy
 {
 
   /** default strategy. */
-  ConnectionStrategy DEFAULT =
-    new ConnectionStrategies.DefaultConnectionStrategy();
+  ConnectionStrategy DEFAULT = new DefaultConnectionStrategy();
 
   /** active-passive strategy. */
-  ConnectionStrategy ACTIVE_PASSIVE =
-    new ConnectionStrategies.ActivePassiveConnectionStrategy();
+  ConnectionStrategy ACTIVE_PASSIVE = new ActivePassiveConnectionStrategy();
 
   /** round robin strategy. */
-  ConnectionStrategy ROUND_ROBIN =
-    new ConnectionStrategies.RoundRobinConnectionStrategy();
+  ConnectionStrategy ROUND_ROBIN = new RoundRobinConnectionStrategy();
 
   /** random strategy. */
-  ConnectionStrategy RANDOM =
-    new ConnectionStrategies.RandomConnectionStrategy();
+  ConnectionStrategy RANDOM = new RandomConnectionStrategy();
 
 
   /**

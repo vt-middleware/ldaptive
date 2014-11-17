@@ -73,6 +73,11 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     LdapException lastThrown = null;
     final String[] urls = providerConfig.getConnectionStrategy().getLdapUrls(
       metadata);
+    if (urls == null || urls.length == 0) {
+      throw new ConnectionException(
+        "Connection strategy " + providerConfig.getConnectionStrategy() +
+        " did not produce any LDAP URLs for " + metadata);
+    }
     ProviderConnection conn = null;
     for (String url : urls) {
       try {
