@@ -15,6 +15,12 @@ import java.util.List;
 public class LdapURL
 {
 
+  /** Scheme used for LDAP. */
+  public static final String LDAP_SCHEME = "ldap";
+
+  /** Scheme used for LDAPS. */
+  public static final String LDAPS_SCHEME = "ldaps";
+
   /** Default LDAP port, value is {@value}. */
   public static final int DEFAULT_LDAP_PORT = 389;
 
@@ -50,6 +56,7 @@ public class LdapURL
     final String[] urls = url.split(delimiter);
 
     for (String s : urls) {
+      String scheme = LDAP_SCHEME;
       String hostname = s;
       int port = DEFAULT_LDAP_PORT;
       // remove scheme, if it exists
@@ -57,6 +64,7 @@ public class LdapURL
         hostname = hostname.substring("ldap://".length());
       } else if (hostname.startsWith("ldaps://")) {
         hostname = hostname.substring("ldaps://".length());
+        scheme = LDAPS_SCHEME;
         port = DEFAULT_LDAPS_PORT;
       }
 
@@ -67,7 +75,7 @@ public class LdapURL
         hostname = hostname.substring(0, hostname.indexOf(":"));
       }
 
-      ldapEntries.add(new Entry(hostname, port));
+      ldapEntries.add(new Entry(scheme, hostname, port));
     }
   }
 
@@ -106,11 +114,26 @@ public class LdapURL
 
 
   /**
+   * Returns a list of all the URLs in this ldap url.
+   *
+   * @return  ldap urls
+   */
+  public String[] getUrlsAsString()
+  {
+    final String[] entries = new String[ldapEntries.size()];
+    for (int i = 0; i < ldapEntries.size(); i++) {
+      entries[i] = ldapEntries.get(i).getHostnameWithSchemeAndPort();
+    }
+    return entries;
+  }
+
+
+  /**
    * Returns a list of all the hostnames in this ldap url.
    *
    * @return  ldap url hostnames
    */
-  public String[] getEntriesAsString()
+  public String[] getHostnamesAsString()
   {
     final String[] entries = new String[ldapEntries.size()];
     for (int i = 0; i < ldapEntries.size(); i++) {
@@ -148,6 +171,9 @@ public class LdapURL
   public static class Entry
   {
 
+    /** Scheme of the ldap url. */
+    private final String scheme;
+
     /** Hostname of the ldap url. */
     private final String hostname;
 
@@ -158,13 +184,26 @@ public class LdapURL
     /**
      * Creates a new entry.
      *
+     * @param  s  scheme
      * @param  h  hostname
      * @param  p  port
      */
-    public Entry(final String h, final int p)
+    public Entry(final String s, final String h, final int p)
     {
+      scheme = s;
       hostname = h;
       port = p;
+    }
+
+
+    /**
+     * Returns the scheme.
+     *
+     * @return  scheme
+     */
+    public String getScheme()
+    {
+      return scheme;
     }
 
 
@@ -191,6 +230,21 @@ public class LdapURL
 
 
     /**
+     * Returns the scheme://hostname:port.
+     *
+     * @return  scheme://hostname:port
+     */
+    public String getHostnameWithSchemeAndPort()
+    {
+      if (scheme != null) {
+        return String.format("%s://%s:%s", scheme, hostname, port);
+      } else {
+        return getHostnameWithPort();
+      }
+    }
+
+
+    /**
      * Returns the port.
      *
      * @return  port
@@ -207,9 +261,10 @@ public class LdapURL
     {
       return
         String.format(
-          "[%s@%d::hostname=%s, port=%s]",
+          "[%s@%d::scheme=%s, hostname=%s, port=%s]",
           getClass().getName(),
           hashCode(),
+          scheme,
           hostname,
           port);
     }
