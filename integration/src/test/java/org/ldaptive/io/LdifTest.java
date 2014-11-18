@@ -79,6 +79,8 @@ public class LdifTest extends AbstractTest
         new SearchRequest(dn, new SearchFilter(filter));
       if (TestControl.isActiveDirectory()) {
         request.setBinaryAttributes("objectSid", "objectGUID", "jpegPhoto");
+      } else {
+        request.setBinaryAttributes("jpegPhoto");
       }
       final SearchResult result1 = search.execute(request).getResult();
 

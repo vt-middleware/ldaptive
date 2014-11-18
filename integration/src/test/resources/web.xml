@@ -28,6 +28,10 @@
       <param-value>${ldapBindCredential}</param-value>
     </init-param>
     <init-param>
+      <param-name>binaryAttributes</param-name>
+      <param-value>jpegPhoto</param-value>
+    </init-param>
+    <init-param>
       <param-name>poolType</param-name>
       <param-value>BLOCKING</param-value>
     </init-param>
@@ -56,6 +60,10 @@
       <param-value>${ldapBindCredential}</param-value>
     </init-param>
     <init-param>
+      <param-name>binaryAttributes</param-name>
+      <param-value>jpegPhoto</param-value>
+    </init-param>
+    <init-param>
       <param-name>poolType</param-name>
       <param-value>SOFTLIMIT</param-value>
     </init-param>
@@ -82,6 +90,10 @@
     <init-param>
       <param-name>bindCredential</param-name>
       <param-value>${ldapBindCredential}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>binaryAttributes</param-name>
+      <param-value>jpegPhoto</param-value>
     </init-param>
     <init-param>
       <param-name>poolType</param-name>

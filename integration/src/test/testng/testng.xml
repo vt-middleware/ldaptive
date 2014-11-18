@@ -398,7 +398,7 @@
   <parameter name="cliAddArgs"
              value="-ldapUrl|${ldapTestHost}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-file|target/test-classes/org/ldaptive/createLdapEntry-8.ldif"/>
   <parameter name="cliSearchArgs"
-             value="-ldapUrl|${ldapTestHost}|-baseDn|${ldapBaseDn}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-searchFilter|(mail=mvburen@ldaptive.org)|-returnAttributes|departmentNumber,givenName,jpegPhoto,sn"/>
+             value="-ldapUrl|${ldapTestHost}|-baseDn|${ldapBaseDn}|-bindDn|${ldapBindDn}|-bindCredential|${ldapBindCredential}|-searchFilter|(mail=mvburen@ldaptive.org)|-returnAttributes|departmentNumber,givenName,jpegPhoto,sn|-binaryAttributes|jpegPhoto"/>
   <parameter name="cliSearchResults"
              value="/org/ldaptive/searchResults-8.ldif"/>
   <parameter name="cliCompareArgs"

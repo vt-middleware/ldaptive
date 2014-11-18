@@ -8,7 +8,8 @@
 
   <bean id="searchExecutor"
         class="org.ldaptive.concurrent.AggregatePooledSearchExecutor"
-        p:baseDn="${ldapBaseDn}">
+        p:baseDn="${ldapBaseDn}"
+        p:binaryAttributes="jpegPhoto">
     <constructor-arg index="0">
       <bean class="java.util.concurrent.Executors"
             factory-method="newCachedThreadPool"/>

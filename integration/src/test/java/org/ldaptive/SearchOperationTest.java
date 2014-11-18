@@ -1035,16 +1035,13 @@ public class SearchOperationTest extends AbstractTest
     SearchRequest request = new SearchRequest(
       dn,
       new SearchFilter(filter), returnAttr);
-    request.setBinaryAttributes(returnAttr);
     SearchResult result = search.execute(request).getResult();
-    AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
-    AssertJUnit.assertEquals(
-      base64Value,
-      result.getEntry().getAttribute().getStringValue());
+    AssertJUnit.assertFalse(result.getEntry().getAttribute().isBinary());
 
     request = new SearchRequest(
       dn,
       new SearchFilter(filter), returnAttr);
+    request.setBinaryAttributes(returnAttr);
     result = search.execute(request).getResult();
     AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
     AssertJUnit.assertEquals(

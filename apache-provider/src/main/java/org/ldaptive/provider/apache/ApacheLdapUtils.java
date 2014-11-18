@@ -147,8 +147,6 @@ public class ApacheLdapUtils
       isBinary = true;
     } else if (binaryAttrs != null && binaryAttrs.contains(a.getUpId())) {
       isBinary = true;
-    } else if (!a.isHumanReadable() && a.get() != null) {
-      isBinary = true;
     }
 
     final LdapAttribute la = new LdapAttribute(sortBehavior, isBinary);

@@ -205,12 +205,6 @@ public class OpenDJUtils
       isBinary = true;
     }
 
-    if (!isBinary) {
-      final String oid =
-        a.getAttributeDescription().getAttributeType().getOID();
-      isBinary = "1.3.6.1.4.1.1466.115.121.1.5".equals(oid);
-    }
-
     final LdapAttribute la = new LdapAttribute(sortBehavior, isBinary);
     la.setName(a.getAttributeDescriptionAsString());
     if (isBinary) {
