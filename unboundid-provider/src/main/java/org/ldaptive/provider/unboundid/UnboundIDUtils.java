@@ -111,8 +111,6 @@ public class UnboundIDUtils
       isBinary = true;
     } else if (binaryAttrs != null && binaryAttrs.contains(a.getName())) {
       isBinary = true;
-    } else if (a.needsBase64Encoding()) {
-      isBinary = true;
     }
 
     final LdapAttribute la = new LdapAttribute(sortBehavior, isBinary);

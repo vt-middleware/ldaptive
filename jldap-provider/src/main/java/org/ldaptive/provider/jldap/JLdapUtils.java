@@ -9,7 +9,6 @@ import com.novell.ldap.LDAPAttributeSet;
 import com.novell.ldap.LDAPEntry;
 import com.novell.ldap.LDAPModification;
 import com.novell.ldap.controls.LDAPSortKey;
-import com.novell.ldap.util.Base64;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.LdapAttribute;
@@ -115,11 +114,6 @@ public class JLdapUtils
       isBinary = true;
     } else if (binaryAttrs != null && binaryAttrs.contains(a.getName())) {
       isBinary = true;
-    }
-
-    if (!isBinary && a.getStringValue() != null) {
-      // check if first value needs to be encoded
-      isBinary = !Base64.isLDIFSafe(a.getStringValue());
     }
 
     final LdapAttribute la = new LdapAttribute(sortBehavior, isBinary);

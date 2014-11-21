@@ -32,18 +32,11 @@ import org.ldaptive.control.ResponseControl;
 public class OpenDJUtils
 {
 
-  /** Default binary attributes. */
-  protected static final String[] DEFAULT_BINARY_ATTRS = new String[] {
-    "userPassword",
-    "jpegPhoto",
-    "userCertificate",
-  };
-
   /** Ldap result sort behavior. */
   private final SortBehavior sortBehavior;
 
   /** Attributes that should be treated as binary. */
-  private List<String> binaryAttrs = Arrays.asList(DEFAULT_BINARY_ATTRS);
+  private List<String> binaryAttrs;
 
 
   /** Default constructor. */
@@ -203,12 +196,6 @@ public class OpenDJUtils
     } else if (binaryAttrs != null &&
                binaryAttrs.contains(a.getAttributeDescriptionAsString())) {
       isBinary = true;
-    }
-
-    if (!isBinary) {
-      final String oid =
-        a.getAttributeDescription().getAttributeType().getOID();
-      isBinary = "1.3.6.1.4.1.1466.115.121.1.5".equals(oid);
     }
 
     final LdapAttribute la = new LdapAttribute(sortBehavior, isBinary);
