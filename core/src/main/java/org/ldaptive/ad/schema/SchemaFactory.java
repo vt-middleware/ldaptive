@@ -133,8 +133,7 @@ public final class SchemaFactory
     final String[] retAttrs)
     throws LdapException
   {
-    final Connection conn = factory.getConnection();
-    try {
+    try (Connection conn = factory.getConnection()) {
       conn.open();
 
       final PagedResultsClient client = new PagedResultsClient(conn, 100);
@@ -142,8 +141,6 @@ public final class SchemaFactory
       final Response<SearchResult> response = client.executeToCompletion(
         request);
       return response.getResult();
-    } finally {
-      conn.close();
     }
   }
 

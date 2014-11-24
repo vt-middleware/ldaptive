@@ -62,16 +62,9 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
     final AuthenticationHandlerResponse response)
     throws LdapException
   {
-    Connection pooledConn = null;
-    try {
-      pooledConn = factory.getConnection();
-
+    try (Connection pooledConn = factory.getConnection()) {
       final SearchOperation op = createSearchOperation(pooledConn);
       return op.execute(createSearchRequest(criteria)).getResult();
-    } finally {
-      if (pooledConn != null) {
-        pooledConn.close();
-      }
     }
   }
 

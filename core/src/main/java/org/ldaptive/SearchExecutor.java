@@ -228,8 +228,7 @@ public class SearchExecutor extends SearchRequest
     throws LdapException
   {
     Response<SearchResult> response = null;
-    final Connection conn = factory.getConnection();
-    try {
+    try (Connection conn = factory.getConnection()) {
       conn.open();
 
       final SearchOperation op = new SearchOperation(conn);
@@ -254,8 +253,6 @@ public class SearchExecutor extends SearchRequest
         sr.setSearchEntryHandlers(handlers);
       }
       response = op.execute(sr);
-    } finally {
-      conn.close();
     }
     return response;
   }
