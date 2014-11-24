@@ -9,7 +9,7 @@ import org.ldaptive.provider.ProviderConnection;
  *
  * @author  Middleware Services
  */
-public interface Connection
+public interface Connection extends AutoCloseable
 {
 
 

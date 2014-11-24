@@ -85,8 +85,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   {
     final String dn = getLdapEntryMapper().mapDn(object);
     final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn);
-    final Connection conn = getConnectionFactory().getConnection();
-    try {
+    try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -106,10 +105,6 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
             response));
       }
       getLdapEntryMapper().map(object, response.getResult().getEntry());
-    } finally {
-      if (conn != null) {
-        conn.close();
-      }
     }
     return object;
   }
@@ -126,16 +121,11 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
     final AddRequest request = new AddRequest(
       entry.getDn(),
       entry.getAttributes());
-    final Connection conn = getConnectionFactory().getConnection();
-    try {
+    try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
 
       final AddOperation add = new AddOperation(conn);
       return add.execute(request);
-    } finally {
-      if (conn != null) {
-        conn.close();
-      }
     }
   }
 
@@ -149,16 +139,11 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
     getLdapEntryMapper().map(object, entry);
 
     final MergeRequest request = new MergeRequest(entry);
-    final Connection conn = getConnectionFactory().getConnection();
-    try {
+    try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
 
       final MergeOperation merge = new MergeOperation(conn);
       return merge.execute(request);
-    } finally {
-      if (conn != null) {
-        conn.close();
-      }
     }
   }
 
@@ -170,16 +155,11 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   {
     final String dn = getLdapEntryMapper().mapDn(object);
     final DeleteRequest request = new DeleteRequest(dn);
-    final Connection conn = getConnectionFactory().getConnection();
-    try {
+    try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
 
       final DeleteOperation delete = new DeleteOperation(conn);
       return delete.execute(request);
-    } finally {
-      if (conn != null) {
-        conn.close();
-      }
     }
   }
 }

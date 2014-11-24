@@ -53,9 +53,8 @@ public class ParallelSearchExecutor
     final SearchEntryHandler... handlers)
     throws LdapException
   {
-    Collection<Response<SearchResult>> response = null;
-    final Connection conn = factory.getConnection();
-    try {
+    Collection<Response<SearchResult>> response;
+    try (Connection conn = factory.getConnection()) {
       conn.open();
 
       final SearchOperation op = createSearchOperation(conn);
@@ -77,8 +76,6 @@ public class ParallelSearchExecutor
         }
       }
       response = worker.executeToCompletion(sr);
-    } finally {
-      conn.close();
     }
     return response;
   }

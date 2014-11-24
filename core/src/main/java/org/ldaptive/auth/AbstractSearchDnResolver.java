@@ -346,16 +346,9 @@ public abstract class AbstractSearchDnResolver
     throws LdapException
   {
     final SearchRequest request = createSearchRequest(filter);
-    Connection conn = null;
-    try {
-      conn = getConnection();
-
+    try (Connection conn = getConnection()) {
       final SearchOperation op = createSearchOperation(conn);
       return op.execute(request).getResult();
-    } finally {
-      if (conn != null) {
-        conn.close();
-      }
     }
   }
 
