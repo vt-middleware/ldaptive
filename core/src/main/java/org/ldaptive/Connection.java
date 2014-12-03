@@ -53,7 +53,7 @@ public interface Connection extends AutoCloseable
 
   /**
    * Returns whether {@link #open(BindRequest)} was successfully invoked on this
-   * connection and {@link #close()} and not been invoked. This method does not
+   * connection and {@link #close()} has not been invoked. This method does not
    * indicate the viability of this connection for use.
    *
    * @return  whether this connection is open
