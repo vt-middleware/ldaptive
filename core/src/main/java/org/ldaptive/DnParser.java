@@ -117,7 +117,7 @@ public final class DnParser
    *
    * @return  list of ldap attributes for each RDN
    */
-  protected static List<LdapAttribute> convertDnToAttributes(final String dn)
+  public static List<LdapAttribute> convertDnToAttributes(final String dn)
   {
     LOGGER.debug("parsing DN: {}", dn);
 
