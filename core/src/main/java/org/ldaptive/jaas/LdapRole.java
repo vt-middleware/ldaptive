@@ -41,7 +41,6 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getName()
   {
@@ -49,7 +48,6 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -57,7 +55,6 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -65,7 +62,6 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -74,7 +70,6 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int compareTo(final Principal p)
   {

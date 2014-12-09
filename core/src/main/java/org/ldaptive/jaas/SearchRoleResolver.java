@@ -75,7 +75,6 @@ public class SearchRoleResolver extends AbstractSearchRoleResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -91,12 +91,10 @@ public abstract class AbstractSchemaElement implements SchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public abstract int hashCode();
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {

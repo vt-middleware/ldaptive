@@ -109,7 +109,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void close(final RequestControl[] controls)
     throws LdapException
@@ -126,7 +125,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> bind(final BindRequest request)
     throws LdapException
@@ -259,7 +257,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> add(final AddRequest request)
     throws LdapException
@@ -282,7 +279,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Boolean> compare(final CompareRequest request)
     throws LdapException
@@ -307,7 +303,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> delete(final DeleteRequest request)
     throws LdapException
@@ -327,7 +322,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> modify(final ModifyRequest request)
     throws LdapException
@@ -349,7 +343,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
@@ -373,7 +366,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SearchIterator search(final SearchRequest request)
     throws LdapException
@@ -384,7 +376,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void searchAsync(
     final SearchRequest request,
@@ -398,7 +389,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
@@ -411,7 +401,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
@@ -432,7 +421,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void addUnsolicitedNotificationListener(
     final UnsolicitedNotificationListener listener)
@@ -441,7 +429,6 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void removeUnsolicitedNotificationListener(
     final UnsolicitedNotificationListener listener)
@@ -599,7 +586,6 @@ public class JLdapConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final Callback[] callbacks)
       throws IOException, UnsupportedCallbackException
@@ -660,7 +646,6 @@ public class JLdapConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean hasNext()
       throws LdapException
@@ -698,7 +683,6 @@ public class JLdapConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public SearchItem next()
       throws LdapException
@@ -720,7 +704,6 @@ public class JLdapConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public Response<Void> getResponse()
     {
@@ -728,7 +711,6 @@ public class JLdapConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void close()
       throws LdapException {}
@@ -1153,7 +1135,6 @@ public class JLdapConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int getMessageId()
     {
@@ -1165,7 +1146,6 @@ public class JLdapConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void abandon()
       throws LdapException
@@ -1182,7 +1162,6 @@ public class JLdapConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void abandon(final RequestControl[] controls)
       throws LdapException
@@ -1245,7 +1224,6 @@ public class JLdapConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void messageReceived(final LDAPExtendedResponse extendedResponse)
     {

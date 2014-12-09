@@ -17,7 +17,6 @@ public class WhoAmIRequest extends AbstractRequest implements ExtendedRequest
   public static final String OID = "1.3.6.1.4.1.4203.1.11.3";
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -25,7 +24,6 @@ public class WhoAmIRequest extends AbstractRequest implements ExtendedRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID()
   {
@@ -33,7 +31,6 @@ public class WhoAmIRequest extends AbstractRequest implements ExtendedRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

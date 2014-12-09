@@ -26,7 +26,6 @@ public class WhoAmIOperation extends AbstractOperation<WhoAmIRequest, String>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<String> invoke(final WhoAmIRequest request)
     throws LdapException

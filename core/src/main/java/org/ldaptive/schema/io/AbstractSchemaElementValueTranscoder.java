@@ -17,7 +17,6 @@ AbstractSchemaElementValueTranscoder<T extends SchemaElement>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final T value)
   {

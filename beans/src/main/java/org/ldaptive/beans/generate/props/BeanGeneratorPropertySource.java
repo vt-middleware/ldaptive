@@ -97,7 +97,6 @@ public final class BeanGeneratorPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

@@ -41,7 +41,6 @@ public class LdapPrincipal
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getName()
   {
@@ -60,7 +59,6 @@ public class LdapPrincipal
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -68,7 +66,6 @@ public class LdapPrincipal
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -76,7 +73,6 @@ public class LdapPrincipal
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -90,7 +86,6 @@ public class LdapPrincipal
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int compareTo(final Principal p)
   {

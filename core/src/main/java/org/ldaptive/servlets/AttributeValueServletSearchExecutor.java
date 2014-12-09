@@ -20,7 +20,6 @@ public class AttributeValueServletSearchExecutor
 {
 
 
-  /** {@inheritDoc} */
   @Override
   protected void writeResponse(
     final SearchResult result,

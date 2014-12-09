@@ -173,7 +173,6 @@ public class VirtualListViewParams
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

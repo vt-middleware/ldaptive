@@ -74,7 +74,6 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

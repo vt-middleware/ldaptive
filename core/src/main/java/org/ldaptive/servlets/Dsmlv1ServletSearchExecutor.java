@@ -18,7 +18,6 @@ public class Dsmlv1ServletSearchExecutor extends AbstractServletSearchExecutor
 {
 
 
-  /** {@inheritDoc} */
   @Override
   protected void writeResponse(
     final SearchResult result,

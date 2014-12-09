@@ -35,7 +35,6 @@ public class DefaultDnValueMutator implements DnValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getValue(final Object object)
   {
@@ -47,7 +46,6 @@ public class DefaultDnValueMutator implements DnValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setValue(final Object object, final String value)
   {
@@ -55,7 +53,6 @@ public class DefaultDnValueMutator implements DnValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

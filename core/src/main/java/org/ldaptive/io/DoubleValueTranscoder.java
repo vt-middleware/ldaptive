@@ -26,7 +26,6 @@ public class DoubleValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Double decodeStringValue(final String value)
   {
@@ -34,7 +33,6 @@ public class DoubleValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Double> getType()
   {

@@ -69,7 +69,6 @@ public class EDirectoryAccountState extends AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int getCode()
     {
@@ -77,7 +76,6 @@ public class EDirectoryAccountState extends AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String getMessage()
     {
@@ -85,7 +83,6 @@ public class EDirectoryAccountState extends AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void throwSecurityException()
       throws LoginException

@@ -138,7 +138,6 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

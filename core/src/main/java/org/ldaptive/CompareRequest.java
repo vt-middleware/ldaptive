@@ -81,7 +81,6 @@ public class CompareRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

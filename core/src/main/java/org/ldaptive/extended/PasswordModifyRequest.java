@@ -140,7 +140,6 @@ public class PasswordModifyRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -162,7 +161,6 @@ public class PasswordModifyRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID()
   {
@@ -170,7 +168,6 @@ public class PasswordModifyRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

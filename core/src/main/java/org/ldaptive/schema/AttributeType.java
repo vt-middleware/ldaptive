@@ -449,7 +449,6 @@ public class AttributeType extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String format()
   {
@@ -501,7 +500,6 @@ public class AttributeType extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -525,7 +523,6 @@ public class AttributeType extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

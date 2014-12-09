@@ -296,7 +296,6 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -420,7 +419,6 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object o)
     {
@@ -428,7 +426,6 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -443,7 +440,6 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

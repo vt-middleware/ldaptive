@@ -33,7 +33,6 @@ public class JLdapConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected LDAPConnection createLDAPConnection()
     throws LDAPException
@@ -42,7 +41,6 @@ public class JLdapConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected JLdapConnection createJLdapConnection(
     final LDAPConnection conn,

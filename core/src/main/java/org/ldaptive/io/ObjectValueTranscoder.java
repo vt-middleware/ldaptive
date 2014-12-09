@@ -12,7 +12,6 @@ public class ObjectValueTranscoder implements ValueTranscoder<Object>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public Object decodeStringValue(final String value)
   {
@@ -20,7 +19,6 @@ public class ObjectValueTranscoder implements ValueTranscoder<Object>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Object decodeBinaryValue(final byte[] value)
   {
@@ -28,7 +26,6 @@ public class ObjectValueTranscoder implements ValueTranscoder<Object>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final Object value)
   {
@@ -36,7 +33,6 @@ public class ObjectValueTranscoder implements ValueTranscoder<Object>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encodeBinaryValue(final Object value)
   {
@@ -44,7 +40,6 @@ public class ObjectValueTranscoder implements ValueTranscoder<Object>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Object> getType()
   {

@@ -15,7 +15,6 @@ public class NoOpEntryHandler extends AbstractSearchEntryHandler
   private static final int HASH_CODE_SEED = 887;
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {

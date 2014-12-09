@@ -208,7 +208,6 @@ public class JndiProviderConfig extends ProviderConfig<Control>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setProperties(final Map<String, Object> props)
   {
@@ -223,7 +222,6 @@ public class JndiProviderConfig extends ProviderConfig<Control>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -482,7 +482,6 @@ public class SearchRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -490,7 +489,6 @@ public class SearchRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -515,7 +513,6 @@ public class SearchRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

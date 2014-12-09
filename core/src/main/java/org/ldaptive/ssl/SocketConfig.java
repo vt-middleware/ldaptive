@@ -311,7 +311,6 @@ public class SocketConfig extends AbstractConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

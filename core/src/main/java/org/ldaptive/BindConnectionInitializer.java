@@ -141,7 +141,6 @@ public class BindConnectionInitializer implements ConnectionInitializer
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> initialize(final Connection c)
     throws LdapException
@@ -172,7 +171,6 @@ public class BindConnectionInitializer implements ConnectionInitializer
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

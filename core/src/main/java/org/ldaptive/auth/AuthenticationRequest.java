@@ -124,7 +124,6 @@ public class AuthenticationRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

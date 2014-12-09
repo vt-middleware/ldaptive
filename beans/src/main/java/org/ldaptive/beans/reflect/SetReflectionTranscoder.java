@@ -45,7 +45,6 @@ public class SetReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected <T> Collection<T> createCollection(final Class<T> clazz)
   {

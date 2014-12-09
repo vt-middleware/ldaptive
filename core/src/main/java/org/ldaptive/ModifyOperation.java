@@ -21,7 +21,6 @@ public class ModifyOperation extends AbstractOperation<ModifyRequest, Void>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<Void> invoke(final ModifyRequest request)
     throws LdapException

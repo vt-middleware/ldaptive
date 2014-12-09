@@ -15,7 +15,6 @@ public interface ExceptionHandler extends Handler<Request, Exception>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   HandlerResult<Exception> handle(
     Connection conn,

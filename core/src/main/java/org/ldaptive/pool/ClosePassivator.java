@@ -12,7 +12,6 @@ public class ClosePassivator implements Passivator<Connection>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean passivate(final Connection c)
   {

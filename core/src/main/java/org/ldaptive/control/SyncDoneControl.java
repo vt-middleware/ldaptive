@@ -143,7 +143,6 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -157,7 +156,6 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -172,7 +170,6 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] berValue)
   {
@@ -207,7 +204,6 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
@@ -239,7 +235,6 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {

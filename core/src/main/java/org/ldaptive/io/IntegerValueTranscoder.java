@@ -26,7 +26,6 @@ public class IntegerValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Integer decodeStringValue(final String value)
   {
@@ -34,7 +33,6 @@ public class IntegerValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Integer> getType()
   {

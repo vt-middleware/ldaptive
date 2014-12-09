@@ -83,7 +83,6 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Connection getConnection()
     throws PoolException
@@ -251,7 +250,6 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void putConnection(final Connection c)
   {

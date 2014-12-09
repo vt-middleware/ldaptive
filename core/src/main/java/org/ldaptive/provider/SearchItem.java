@@ -131,7 +131,6 @@ public class SearchItem
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

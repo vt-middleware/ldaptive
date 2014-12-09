@@ -51,7 +51,6 @@ public class BooleanType extends AbstractDERType implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

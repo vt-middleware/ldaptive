@@ -99,7 +99,6 @@ public abstract class AbstractLoginModule implements LoginModule
   protected Set<Principal> roles;
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize(
     final Subject subj,
@@ -163,7 +162,6 @@ public abstract class AbstractLoginModule implements LoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean login()
     throws LoginException
@@ -192,7 +190,6 @@ public abstract class AbstractLoginModule implements LoginModule
     throws LoginException;
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean commit()
     throws LoginException
@@ -234,7 +231,6 @@ public abstract class AbstractLoginModule implements LoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean abort()
     throws LoginException
@@ -252,7 +248,6 @@ public abstract class AbstractLoginModule implements LoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean logout()
     throws LoginException

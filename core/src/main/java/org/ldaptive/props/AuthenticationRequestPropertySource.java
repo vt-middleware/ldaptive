@@ -92,7 +92,6 @@ public final class AuthenticationRequestPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

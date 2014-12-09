@@ -46,7 +46,6 @@ public class UnboundIDConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected UnboundIDConnection createInternal(final String url)
     throws LdapException

@@ -16,7 +16,6 @@ public class DefaultClassDescriptor extends AbstractClassDescriptor
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize(final Class<?> type)
   {

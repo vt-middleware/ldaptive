@@ -21,7 +21,6 @@ public class BindOperation extends AbstractOperation<BindRequest, Void>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<Void> invoke(final BindRequest request)
     throws LdapException

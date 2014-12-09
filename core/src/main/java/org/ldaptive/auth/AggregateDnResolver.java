@@ -120,7 +120,6 @@ public class AggregateDnResolver implements DnResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String resolve(final String user)
     throws LdapException
@@ -176,7 +175,6 @@ public class AggregateDnResolver implements DnResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected void finalize()
     throws Throwable
@@ -247,7 +245,6 @@ public class AggregateDnResolver implements DnResolver
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public AuthenticationHandlerResponse authenticate(
       final AuthenticationCriteria criteria)

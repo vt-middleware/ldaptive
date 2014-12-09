@@ -170,7 +170,6 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected void finalize()
     throws Throwable

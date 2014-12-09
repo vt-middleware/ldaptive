@@ -15,7 +15,6 @@ public interface SearchEntryHandler extends Handler<SearchRequest, SearchEntry>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   HandlerResult<SearchEntry> handle(
     Connection conn,

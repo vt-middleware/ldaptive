@@ -54,7 +54,6 @@ public class AggregateSearchExecutor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<Response<SearchResult>> search(
     final ConnectionFactory[] factories,

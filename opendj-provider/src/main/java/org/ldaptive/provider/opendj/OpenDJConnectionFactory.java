@@ -40,7 +40,6 @@ public class OpenDJConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected OpenDJConnection createInternal(final String url)
     throws LdapException

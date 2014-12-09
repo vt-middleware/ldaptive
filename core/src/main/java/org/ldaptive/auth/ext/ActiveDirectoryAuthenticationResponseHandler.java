@@ -42,7 +42,6 @@ public class ActiveDirectoryAuthenticationResponseHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void handle(final AuthenticationResponse response)
   {

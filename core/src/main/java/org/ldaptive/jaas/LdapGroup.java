@@ -42,7 +42,6 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getName()
   {
@@ -50,7 +49,6 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean addMember(final Principal user)
   {
@@ -58,7 +56,6 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean removeMember(final Principal user)
   {
@@ -66,7 +63,6 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean isMember(final Principal member)
   {
@@ -79,7 +75,6 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Enumeration<? extends Principal> members()
   {
@@ -98,7 +93,6 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -106,7 +100,6 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -114,7 +107,6 @@ public class LdapGroup implements Group, Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

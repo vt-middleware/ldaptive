@@ -372,7 +372,6 @@ public class NotificationClient
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

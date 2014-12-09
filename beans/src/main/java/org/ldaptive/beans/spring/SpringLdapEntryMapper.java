@@ -35,7 +35,6 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected ClassDescriptor getClassDescriptor(final Object object)
   {

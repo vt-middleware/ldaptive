@@ -47,7 +47,6 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected T createInternal(final String url)
     throws LdapException

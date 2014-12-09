@@ -21,7 +21,6 @@ public class EDirectoryAuthenticationResponseHandler
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public void handle(final AuthenticationResponse response)
   {

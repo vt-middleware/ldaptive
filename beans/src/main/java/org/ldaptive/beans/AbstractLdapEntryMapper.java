@@ -32,7 +32,6 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
   protected abstract ClassDescriptor getClassDescriptor(final T object);
 
 
-  /** {@inheritDoc} */
   @Override
   public String mapDn(final T object)
   {
@@ -58,7 +57,6 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void map(final T source, final LdapEntry dest)
   {
@@ -96,7 +94,6 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void map(final LdapEntry source, final T dest)
   {

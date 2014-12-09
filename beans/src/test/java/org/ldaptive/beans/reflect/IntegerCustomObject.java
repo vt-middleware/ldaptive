@@ -72,12 +72,10 @@ public class IntegerCustomObject implements CustomObject
   // CheckStyle:JavadocMethod ON
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize() {}
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -85,7 +83,6 @@ public class IntegerCustomObject implements CustomObject
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -107,7 +104,6 @@ public class IntegerCustomObject implements CustomObject
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

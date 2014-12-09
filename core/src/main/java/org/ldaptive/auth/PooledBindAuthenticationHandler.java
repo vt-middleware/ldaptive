@@ -41,7 +41,6 @@ public class PooledBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public PooledConnectionFactory getConnectionFactory()
   {
@@ -49,7 +48,6 @@ public class PooledBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setConnectionFactory(final PooledConnectionFactory cf)
   {
@@ -57,7 +55,6 @@ public class PooledBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Connection getConnection()
     throws LdapException
@@ -66,7 +63,6 @@ public class PooledBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected AuthenticationHandlerResponse authenticateInternal(
     final Connection c,
@@ -107,7 +103,6 @@ public class PooledBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -16,7 +16,6 @@ public abstract class AbstractBinaryValueTranscoder<T>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public T decodeStringValue(final String value)
   {
@@ -24,7 +23,6 @@ public abstract class AbstractBinaryValueTranscoder<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final T value)
   {

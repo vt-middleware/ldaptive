@@ -168,7 +168,6 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String format()
   {
@@ -197,7 +196,6 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -213,7 +211,6 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

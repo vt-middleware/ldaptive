@@ -22,7 +22,6 @@ public abstract class AbstractRequest implements Request
   private IntermediateResponseHandler[] intermediateResponseHandlers;
 
 
-  /** {@inheritDoc} */
   @Override
   public RequestControl[] getControls()
   {
@@ -41,7 +40,6 @@ public abstract class AbstractRequest implements Request
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean getFollowReferrals()
   {
@@ -60,7 +58,6 @@ public abstract class AbstractRequest implements Request
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public IntermediateResponseHandler[] getIntermediateResponseHandlers()
   {

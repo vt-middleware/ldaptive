@@ -91,7 +91,6 @@ public final class ProviderConfigPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

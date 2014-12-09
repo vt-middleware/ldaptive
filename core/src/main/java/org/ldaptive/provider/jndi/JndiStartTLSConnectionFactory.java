@@ -58,7 +58,6 @@ public class JndiStartTLSConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected JndiStartTLSConnection createInternal(final String url)
     throws LdapException
@@ -134,7 +133,6 @@ public class JndiStartTLSConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

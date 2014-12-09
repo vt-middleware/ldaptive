@@ -14,7 +14,6 @@ public class SyntaxValueTranscoder
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public Syntax decodeStringValue(final String value)
   {
@@ -28,7 +27,6 @@ public class SyntaxValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Syntax> getType()
   {

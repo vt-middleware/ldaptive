@@ -25,7 +25,6 @@ public class CertificateValueTranscoder implements ValueTranscoder<Certificate>
     "-----END CERTIFICATE-----";
 
 
-  /** {@inheritDoc} */
   @Override
   public Certificate decodeStringValue(final String value)
   {
@@ -33,7 +32,6 @@ public class CertificateValueTranscoder implements ValueTranscoder<Certificate>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Certificate decodeBinaryValue(final byte[] value)
   {
@@ -48,7 +46,6 @@ public class CertificateValueTranscoder implements ValueTranscoder<Certificate>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final Certificate value)
   {
@@ -60,7 +57,6 @@ public class CertificateValueTranscoder implements ValueTranscoder<Certificate>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encodeBinaryValue(final Certificate value)
   {
@@ -72,7 +68,6 @@ public class CertificateValueTranscoder implements ValueTranscoder<Certificate>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Certificate> getType()
   {

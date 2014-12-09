@@ -93,7 +93,6 @@ public class PasswordPolicyControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int getCode()
     {
@@ -101,7 +100,6 @@ public class PasswordPolicyControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String getMessage()
     {
@@ -109,7 +107,6 @@ public class PasswordPolicyControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void throwSecurityException()
       throws LoginException
@@ -262,7 +259,6 @@ public class PasswordPolicyControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -277,7 +273,6 @@ public class PasswordPolicyControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -294,7 +289,6 @@ public class PasswordPolicyControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -302,7 +296,6 @@ public class PasswordPolicyControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] berValue)
   {
@@ -340,7 +333,6 @@ public class PasswordPolicyControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
@@ -370,7 +362,6 @@ public class PasswordPolicyControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
@@ -400,7 +391,6 @@ public class PasswordPolicyControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {

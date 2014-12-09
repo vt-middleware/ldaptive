@@ -38,7 +38,6 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected String convertValue(final byte[] value)
   {
@@ -46,7 +45,6 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {

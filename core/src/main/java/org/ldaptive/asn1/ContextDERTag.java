@@ -28,7 +28,6 @@ public class ContextDERTag extends AbstractDERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getTagByte()
   {
@@ -36,7 +35,6 @@ public class ContextDERTag extends AbstractDERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String name()
   {

@@ -112,7 +112,6 @@ public class Syntax extends AbstractSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String format()
   {
@@ -130,7 +129,6 @@ public class Syntax extends AbstractSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -143,7 +141,6 @@ public class Syntax extends AbstractSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -53,7 +53,6 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
     Pattern.CASE_INSENSITIVE);
 
 
-  /** {@inheritDoc} */
   @Override
   protected void handleAttributes(
     final Connection conn,
@@ -141,7 +140,6 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {

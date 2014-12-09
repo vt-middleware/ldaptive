@@ -279,7 +279,6 @@ public class DITContentRule extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String format()
   {
@@ -320,7 +319,6 @@ public class DITContentRule extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -339,7 +337,6 @@ public class DITContentRule extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

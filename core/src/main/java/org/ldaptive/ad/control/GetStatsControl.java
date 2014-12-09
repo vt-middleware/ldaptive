@@ -97,7 +97,6 @@ public class GetStatsControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -110,7 +109,6 @@ public class GetStatsControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -124,7 +122,6 @@ public class GetStatsControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -132,7 +129,6 @@ public class GetStatsControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] berValue)
   {
@@ -198,7 +194,6 @@ public class GetStatsControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
@@ -231,7 +226,6 @@ public class GetStatsControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {

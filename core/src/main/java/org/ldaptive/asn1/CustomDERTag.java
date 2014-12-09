@@ -31,7 +31,6 @@ public class CustomDERTag extends AbstractDERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String name()
   {
@@ -39,7 +38,6 @@ public class CustomDERTag extends AbstractDERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

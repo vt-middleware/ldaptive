@@ -73,7 +73,6 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected void handleAttributes(
     final Connection conn,
@@ -104,7 +103,6 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -116,7 +114,6 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -60,7 +60,6 @@ public class JLdapStartTLSConnection extends JLdapConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void close(final RequestControl[] controls)
     throws LdapException

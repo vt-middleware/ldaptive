@@ -41,7 +41,6 @@ public class LdapLoginModule extends AbstractLoginModule
   private AuthenticationRequest authRequest;
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize(
     final Subject subject,
@@ -96,7 +95,6 @@ public class LdapLoginModule extends AbstractLoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected boolean login(
     final NameCallback nameCb,

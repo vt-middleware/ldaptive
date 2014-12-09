@@ -59,7 +59,6 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
       private static final long serialVersionUID = -4082551016104288539L;
 
 
-      /** {@inheritDoc} */
       @Override
       protected boolean removeEldestEntry(final Map.Entry<Q, Item> entry)
       {
@@ -96,7 +95,6 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SearchResult get(final Q request)
   {
@@ -110,7 +108,6 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void put(final Q request, final SearchResult result)
   {

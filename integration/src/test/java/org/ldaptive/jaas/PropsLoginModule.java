@@ -32,7 +32,6 @@ public class PropsLoginModule extends AbstractLoginModule
   private SearchRequest searchRequest;
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize(
     final Subject subject,
@@ -50,7 +49,6 @@ public class PropsLoginModule extends AbstractLoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected boolean login(
     final NameCallback nameCb,
@@ -61,7 +59,6 @@ public class PropsLoginModule extends AbstractLoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean commit()
     throws LoginException
@@ -74,7 +71,6 @@ public class PropsLoginModule extends AbstractLoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean abort()
   {
@@ -83,7 +79,6 @@ public class PropsLoginModule extends AbstractLoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean logout()
   {

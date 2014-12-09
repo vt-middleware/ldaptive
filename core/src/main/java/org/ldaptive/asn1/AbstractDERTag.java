@@ -29,7 +29,6 @@ public abstract class AbstractDERTag implements DERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getTagNo()
   {
@@ -37,7 +36,6 @@ public abstract class AbstractDERTag implements DERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean isConstructed()
   {
@@ -45,7 +43,6 @@ public abstract class AbstractDERTag implements DERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getTagByte()
   {
@@ -53,7 +50,6 @@ public abstract class AbstractDERTag implements DERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

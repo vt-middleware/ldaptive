@@ -85,7 +85,6 @@ public class Credential
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

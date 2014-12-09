@@ -26,7 +26,6 @@ public class BindAuthenticationHandlerPropertyInvoker
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Object convertValue(final Class<?> type, final String value)
   {

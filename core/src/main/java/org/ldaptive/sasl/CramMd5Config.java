@@ -17,7 +17,6 @@ public class CramMd5Config extends SaslConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

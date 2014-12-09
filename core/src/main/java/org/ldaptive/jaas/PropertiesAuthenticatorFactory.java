@@ -24,7 +24,6 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory
   private static final Map<String, Authenticator> CACHE = new HashMap<>();
 
 
-  /** {@inheritDoc} */
   @Override
   public Authenticator createAuthenticator(final Map<String, ?> jaasOptions)
   {
@@ -68,7 +67,6 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public AuthenticationRequest createAuthenticationRequest(
     final Map<String, ?> jaasOptions)

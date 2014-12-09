@@ -49,7 +49,6 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Connection getConnection()
     throws PoolException

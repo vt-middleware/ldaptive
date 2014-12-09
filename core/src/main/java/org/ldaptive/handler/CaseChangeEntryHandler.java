@@ -129,7 +129,6 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected String handleDn(
     final Connection conn,
@@ -140,7 +139,6 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected String handleAttributeName(
     final Connection conn,
@@ -151,7 +149,6 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected String handleAttributeValue(
     final Connection conn,
@@ -162,7 +159,6 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected byte[] handleAttributeValue(
     final Connection conn,
@@ -173,7 +169,6 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -186,7 +181,6 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

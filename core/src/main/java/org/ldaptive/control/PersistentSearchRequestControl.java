@@ -183,7 +183,6 @@ public class PersistentSearchRequestControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -198,7 +197,6 @@ public class PersistentSearchRequestControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -214,7 +212,6 @@ public class PersistentSearchRequestControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

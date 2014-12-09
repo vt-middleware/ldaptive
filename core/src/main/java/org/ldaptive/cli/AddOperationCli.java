@@ -46,7 +46,6 @@ public class AddOperationCli extends AbstractCli
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected void initOptions()
   {
@@ -68,7 +67,6 @@ public class AddOperationCli extends AbstractCli
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected int dispatch(final CommandLine line)
     throws Exception
@@ -110,7 +108,6 @@ public class AddOperationCli extends AbstractCli
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected String getCommandName()
   {

@@ -15,7 +15,6 @@ public class UnboundIDSyncProvider extends UnboundIDProvider
 {
 
 
-  /** {@inheritDoc} */
   @Override
   protected LDAPConnectionOptions getDefaultLDAPConnectionOptions(
     final ConnectionConfig cc)

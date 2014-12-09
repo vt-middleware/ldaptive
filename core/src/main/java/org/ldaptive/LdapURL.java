@@ -154,7 +154,6 @@ public class LdapURL
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -255,7 +254,6 @@ public class LdapURL
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

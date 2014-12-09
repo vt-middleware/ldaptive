@@ -29,7 +29,6 @@ public class NoOpDnResolver implements DnResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

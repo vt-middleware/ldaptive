@@ -35,7 +35,6 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Authenticator createAuthenticator(final Map<String, ?> jaasOptions)
   {
@@ -47,7 +46,6 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public AuthenticationRequest createAuthenticationRequest(
     final Map<String, ?> jaasOptions)

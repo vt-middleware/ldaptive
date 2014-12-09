@@ -13,7 +13,6 @@ public class WhoAmIResponse extends AbstractExtendedResponse<String>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID()
   {
@@ -22,7 +21,6 @@ public class WhoAmIResponse extends AbstractExtendedResponse<String>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] encoded)
   {
@@ -30,7 +28,6 @@ public class WhoAmIResponse extends AbstractExtendedResponse<String>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

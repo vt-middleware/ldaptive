@@ -36,7 +36,6 @@ public class PooledConnectionStatistics
     availableStats = new LinkedList<Long>() {
 
 
-      /** {@inheritDoc} */
       @Override
       public boolean add(final Long e)
       {
@@ -54,7 +53,6 @@ public class PooledConnectionStatistics
     activeStats = new LinkedList<Long>() {
 
 
-      /** {@inheritDoc} */
       @Override
       public boolean add(final Long e)
       {
@@ -130,7 +128,6 @@ public class PooledConnectionStatistics
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

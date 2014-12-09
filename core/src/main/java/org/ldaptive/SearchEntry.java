@@ -53,7 +53,6 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl[] getControls()
   {
@@ -61,7 +60,6 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl getControl(final String oid)
   {
@@ -76,7 +74,6 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getMessageId()
   {
@@ -84,7 +81,6 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -98,7 +94,6 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

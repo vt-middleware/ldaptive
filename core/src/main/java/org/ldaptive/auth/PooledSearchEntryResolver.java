@@ -39,7 +39,6 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public PooledConnectionFactory getConnectionFactory()
   {
@@ -47,7 +46,6 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setConnectionFactory(final PooledConnectionFactory cf)
   {
@@ -55,7 +53,6 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected SearchResult performLdapSearch(
     final AuthenticationCriteria criteria,
@@ -69,7 +66,6 @@ public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

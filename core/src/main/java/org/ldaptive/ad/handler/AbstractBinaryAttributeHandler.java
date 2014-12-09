@@ -45,7 +45,6 @@ public abstract class AbstractBinaryAttributeHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected void handleAttributes(
     final Connection conn,
@@ -87,7 +86,6 @@ public abstract class AbstractBinaryAttributeHandler
   protected abstract String convertValue(final byte[] value);
 
 
-  /** {@inheritDoc} */
   @Override
   public void initializeRequest(final SearchRequest request)
   {

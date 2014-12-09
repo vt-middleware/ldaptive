@@ -37,7 +37,6 @@ public class Ehcache<Q extends SearchRequest> implements Cache<Q>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SearchResult get(final Q request)
   {
@@ -49,7 +48,6 @@ public class Ehcache<Q extends SearchRequest> implements Cache<Q>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void put(final Q request, final SearchResult result)
   {

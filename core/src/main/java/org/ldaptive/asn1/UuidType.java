@@ -49,7 +49,6 @@ public class UuidType extends AbstractDERType implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

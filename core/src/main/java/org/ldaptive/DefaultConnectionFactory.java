@@ -190,7 +190,6 @@ public class DefaultConnectionFactory implements ConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -236,7 +235,6 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public ConnectionConfig getConnectionConfig()
     {
@@ -324,7 +322,6 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public synchronized void close()
     {
@@ -340,7 +337,6 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public synchronized void close(final RequestControl[] controls)
     {
@@ -356,7 +352,6 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public synchronized Response<Void> reopen()
       throws LdapException
@@ -380,7 +375,6 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public synchronized Response<Void> reopen(final BindRequest request)
       throws LdapException
@@ -400,7 +394,6 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -416,7 +409,6 @@ public class DefaultConnectionFactory implements ConnectionFactory
     }
 
 
-    /** {@inheritDoc} */
     @Override
     protected void finalize()
       throws Throwable

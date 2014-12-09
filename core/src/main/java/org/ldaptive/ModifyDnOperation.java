@@ -21,7 +21,6 @@ public class ModifyDnOperation extends AbstractOperation<ModifyDnRequest, Void>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<Void> invoke(final ModifyDnRequest request)
     throws LdapException

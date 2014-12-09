@@ -17,7 +17,6 @@ public class FastBindRequest extends AbstractRequest implements ExtendedRequest
   public static final String OID = "1.2.840.113556.1.4.1781";
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -25,7 +24,6 @@ public class FastBindRequest extends AbstractRequest implements ExtendedRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID()
   {
@@ -33,7 +31,6 @@ public class FastBindRequest extends AbstractRequest implements ExtendedRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

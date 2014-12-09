@@ -243,7 +243,6 @@ public class SearchTemplatesExecutor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

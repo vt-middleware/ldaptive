@@ -81,7 +81,6 @@ public class OpenDJProviderConfig extends ProviderConfig<Control>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

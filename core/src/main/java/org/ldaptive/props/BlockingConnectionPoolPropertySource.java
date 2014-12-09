@@ -93,7 +93,6 @@ public final class BlockingConnectionPoolPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

@@ -78,7 +78,6 @@ public class OidType extends AbstractDERType implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

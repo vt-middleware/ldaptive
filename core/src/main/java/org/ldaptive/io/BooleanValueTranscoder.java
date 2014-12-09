@@ -26,7 +26,6 @@ public class BooleanValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Boolean decodeStringValue(final String value)
   {
@@ -34,7 +33,6 @@ public class BooleanValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Boolean> getType()
   {

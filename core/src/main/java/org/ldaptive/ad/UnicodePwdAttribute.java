@@ -47,7 +47,6 @@ public class UnicodePwdAttribute extends LdapAttribute
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<String> getStringValues()
   {
@@ -55,7 +54,6 @@ public class UnicodePwdAttribute extends LdapAttribute
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void addStringValue(final String... value)
   {
@@ -65,7 +63,6 @@ public class UnicodePwdAttribute extends LdapAttribute
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void removeStringValue(final String... value)
   {

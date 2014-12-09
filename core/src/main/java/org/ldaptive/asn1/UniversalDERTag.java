@@ -161,7 +161,6 @@ public enum UniversalDERTag implements DERTag {
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getTagByte()
   {

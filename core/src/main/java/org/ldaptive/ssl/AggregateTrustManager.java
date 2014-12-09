@@ -68,7 +68,6 @@ public class AggregateTrustManager implements X509TrustManager
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void checkClientTrusted(
     final X509Certificate[] chain,
@@ -101,7 +100,6 @@ public class AggregateTrustManager implements X509TrustManager
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void checkServerTrusted(
     final X509Certificate[] chain,
@@ -134,7 +132,6 @@ public class AggregateTrustManager implements X509TrustManager
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public X509Certificate[] getAcceptedIssuers()
   {
@@ -149,7 +146,6 @@ public class AggregateTrustManager implements X509TrustManager
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

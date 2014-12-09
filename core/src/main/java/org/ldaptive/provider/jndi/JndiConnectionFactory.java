@@ -52,7 +52,6 @@ public class JndiConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected JndiConnection createInternal(final String url)
     throws LdapException
@@ -78,7 +77,6 @@ public class JndiConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

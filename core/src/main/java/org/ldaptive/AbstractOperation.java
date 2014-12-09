@@ -118,7 +118,6 @@ public abstract class AbstractOperation<Q extends Request, S>
     throws LdapException;
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<S> execute(final Q request)
     throws LdapException
@@ -208,7 +207,6 @@ public abstract class AbstractOperation<Q extends Request, S>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -254,7 +252,6 @@ public abstract class AbstractOperation<Q extends Request, S>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     protected void handleInternal(
       final Connection conn,
@@ -271,7 +268,6 @@ public abstract class AbstractOperation<Q extends Request, S>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     protected HandlerResult<Response<S>> createResult(
       final Connection conn,
@@ -283,7 +279,6 @@ public abstract class AbstractOperation<Q extends Request, S>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

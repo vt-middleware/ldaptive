@@ -141,7 +141,6 @@ public class RDN implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -193,7 +192,6 @@ public class RDN implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -201,7 +199,6 @@ public class RDN implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -212,7 +209,6 @@ public class RDN implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

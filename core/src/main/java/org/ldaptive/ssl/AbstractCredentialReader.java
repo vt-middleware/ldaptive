@@ -27,7 +27,6 @@ public abstract class AbstractCredentialReader<T> implements CredentialReader<T>
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
-  /** {@inheritDoc} */
   @Override
   public T read(final String path, final String... params)
     throws IOException, GeneralSecurityException

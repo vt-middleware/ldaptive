@@ -41,7 +41,6 @@ public class ForceUpdateControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -50,7 +49,6 @@ public class ForceUpdateControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -63,7 +61,6 @@ public class ForceUpdateControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

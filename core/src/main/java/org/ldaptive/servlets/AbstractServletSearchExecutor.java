@@ -42,7 +42,6 @@ public abstract class AbstractServletSearchExecutor
   private SearchExecutor searchExecutor;
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize(final ServletConfig config)
   {
@@ -93,7 +92,6 @@ public abstract class AbstractServletSearchExecutor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void search(
     final HttpServletRequest request,
@@ -127,7 +125,6 @@ public abstract class AbstractServletSearchExecutor
     throws IOException;
 
 
-  /** {@inheritDoc} */
   @Override
   public void close()
   {

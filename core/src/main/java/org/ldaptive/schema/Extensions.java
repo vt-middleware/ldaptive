@@ -174,7 +174,6 @@ public class Extensions
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -182,7 +181,6 @@ public class Extensions
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -17,7 +17,6 @@ public class PasswordPolicyAuthenticationResponseHandler
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public void handle(final AuthenticationResponse response)
   {

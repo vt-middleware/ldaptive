@@ -35,7 +35,6 @@ public class SearchDnResolver extends AbstractSearchDnResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ConnectionFactory getConnectionFactory()
   {
@@ -43,7 +42,6 @@ public class SearchDnResolver extends AbstractSearchDnResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setConnectionFactory(final ConnectionFactory cf)
   {
@@ -51,7 +49,6 @@ public class SearchDnResolver extends AbstractSearchDnResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Connection getConnection()
     throws LdapException
@@ -62,7 +59,6 @@ public class SearchDnResolver extends AbstractSearchDnResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

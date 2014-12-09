@@ -360,7 +360,6 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public HandlerResult<SearchEntry> handle(
       final Connection conn,
@@ -373,7 +372,6 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void initializeRequest(final SearchRequest request) {}
   }
@@ -396,7 +394,6 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public HandlerResult<SearchReference> handle(
       final Connection conn,
@@ -409,7 +406,6 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void initializeRequest(final SearchRequest request) {}
   }
@@ -432,7 +428,6 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public HandlerResult<IntermediateResponse> handle(
       final Connection conn,
@@ -692,7 +687,6 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

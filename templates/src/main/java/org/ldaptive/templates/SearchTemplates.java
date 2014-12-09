@@ -143,7 +143,6 @@ public class SearchTemplates
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -189,7 +188,6 @@ public class SearchTemplates
   {
 
 
-    /** {@inheritDoc} */
     @Override
     public Map<String, String> parse(final String[] terms)
     {
@@ -218,7 +216,6 @@ public class SearchTemplates
   {
 
 
-    /** {@inheritDoc} */
     @Override
     public Map<String, String> parse(final String[] terms)
     {

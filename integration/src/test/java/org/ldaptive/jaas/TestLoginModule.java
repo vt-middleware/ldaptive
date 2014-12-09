@@ -33,7 +33,6 @@ public class TestLoginModule implements LoginModule
   protected boolean success;
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize(
     final Subject s,
@@ -47,7 +46,6 @@ public class TestLoginModule implements LoginModule
   }
 
 
-  /** {@inheritDoc} */
   @SuppressWarnings("unchecked")
   @Override
   public boolean login()
@@ -73,7 +71,6 @@ public class TestLoginModule implements LoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean commit()
     throws LoginException
@@ -82,7 +79,6 @@ public class TestLoginModule implements LoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean abort()
   {
@@ -91,7 +87,6 @@ public class TestLoginModule implements LoginModule
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean logout()
   {

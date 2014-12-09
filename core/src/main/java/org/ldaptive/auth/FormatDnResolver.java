@@ -157,7 +157,6 @@ public class FormatDnResolver implements DnResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

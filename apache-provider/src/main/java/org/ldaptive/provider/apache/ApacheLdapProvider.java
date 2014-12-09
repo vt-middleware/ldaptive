@@ -28,7 +28,6 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   private ApacheLdapProviderConfig config = new ApacheLdapProviderConfig();
 
 
-  /** {@inheritDoc} */
   @Override
   public ProviderConnectionFactory<ApacheLdapProviderConfig>
   getConnectionFactory(final ConnectionConfig cc)
@@ -125,7 +124,6 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ApacheLdapProviderConfig getProviderConfig()
   {
@@ -133,7 +131,6 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setProviderConfig(final ApacheLdapProviderConfig pc)
   {
@@ -141,7 +138,6 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ApacheLdapProvider newInstance()
   {

@@ -147,7 +147,6 @@ public class AuthenticationResponse extends Response<Boolean>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

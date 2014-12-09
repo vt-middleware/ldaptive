@@ -468,7 +468,6 @@ public class LdapAttribute extends AbstractLdapBean
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -480,7 +479,6 @@ public class LdapAttribute extends AbstractLdapBean
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -824,7 +822,6 @@ public class LdapAttribute extends AbstractLdapBean
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -832,7 +829,6 @@ public class LdapAttribute extends AbstractLdapBean
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

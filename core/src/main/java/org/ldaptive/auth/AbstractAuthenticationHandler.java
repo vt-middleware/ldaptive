@@ -45,7 +45,6 @@ public abstract class AbstractAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public AuthenticationHandlerResponse authenticate(
     final AuthenticationCriteria ac)

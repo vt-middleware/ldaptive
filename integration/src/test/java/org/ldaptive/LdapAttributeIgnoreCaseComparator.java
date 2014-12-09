@@ -63,7 +63,6 @@ public class LdapAttributeIgnoreCaseComparator
   {
 
 
-    /** {@inheritDoc} */
     @Override
     public String decodeStringValue(final String value)
     {
@@ -71,7 +70,6 @@ public class LdapAttributeIgnoreCaseComparator
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String decodeBinaryValue(final byte[] value)
     {
@@ -80,7 +78,6 @@ public class LdapAttributeIgnoreCaseComparator
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String encodeStringValue(final String value)
     {
@@ -88,7 +85,6 @@ public class LdapAttributeIgnoreCaseComparator
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public byte[] encodeBinaryValue(final String value)
     {
@@ -97,7 +93,6 @@ public class LdapAttributeIgnoreCaseComparator
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public Class<String> getType()
     {

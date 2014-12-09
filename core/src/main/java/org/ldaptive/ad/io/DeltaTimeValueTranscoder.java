@@ -20,7 +20,6 @@ public class DeltaTimeValueTranscoder
   private static final long ONE_HUNDRED_NANOSECOND_INTERVAL = 10000L;
 
 
-  /** {@inheritDoc} */
   @Override
   public Long decodeStringValue(final String value)
   {
@@ -28,7 +27,6 @@ public class DeltaTimeValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final Long value)
   {
@@ -36,7 +34,6 @@ public class DeltaTimeValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Long> getType()
   {

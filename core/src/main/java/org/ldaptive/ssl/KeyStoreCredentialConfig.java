@@ -223,7 +223,6 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SSLContextInitializer createSSLContextInitializer()
     throws GeneralSecurityException
@@ -250,7 +249,6 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -258,7 +256,6 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -276,7 +273,6 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -29,7 +29,6 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
   private UnboundIDProviderConfig config = new UnboundIDProviderConfig();
 
 
-  /** {@inheritDoc} */
   @Override
   public ProviderConnectionFactory<UnboundIDProviderConfig>
   getConnectionFactory(final ConnectionConfig cc)
@@ -157,7 +156,6 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public UnboundIDProviderConfig getProviderConfig()
   {
@@ -165,7 +163,6 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setProviderConfig(final UnboundIDProviderConfig pc)
   {
@@ -173,7 +170,6 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public UnboundIDProvider newInstance()
   {

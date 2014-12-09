@@ -140,7 +140,6 @@ public class RetrySearchOperation extends SearchOperation
   {
 
 
-    /** {@inheritDoc} */
     @Override
     public void handleInternal(
       final Connection conn,
@@ -158,7 +157,6 @@ public class RetrySearchOperation extends SearchOperation
     }
 
 
-    /** {@inheritDoc} */
     @Override
     protected boolean retry(final int count)
     {

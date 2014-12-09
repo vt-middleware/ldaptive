@@ -276,7 +276,6 @@ public class ObjectClass extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String format()
   {
@@ -316,7 +315,6 @@ public class ObjectClass extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -335,7 +333,6 @@ public class ObjectClass extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

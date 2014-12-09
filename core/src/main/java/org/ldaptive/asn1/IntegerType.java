@@ -76,7 +76,6 @@ public class IntegerType extends AbstractDERType implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

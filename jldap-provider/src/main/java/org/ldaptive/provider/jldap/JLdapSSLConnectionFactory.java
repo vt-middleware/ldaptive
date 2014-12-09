@@ -41,7 +41,6 @@ public class JLdapSSLConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected LDAPConnection createLDAPConnection()
     throws LDAPException
@@ -57,7 +56,6 @@ public class JLdapSSLConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected JLdapSSLConnection createJLdapConnection(
     final LDAPConnection conn,

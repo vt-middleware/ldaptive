@@ -48,7 +48,6 @@ public abstract class AbstractControl implements Control
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID()
   {
@@ -56,7 +55,6 @@ public abstract class AbstractControl implements Control
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean getCriticality()
   {
@@ -64,7 +62,6 @@ public abstract class AbstractControl implements Control
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {

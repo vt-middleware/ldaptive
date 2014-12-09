@@ -74,7 +74,6 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<String> getStringValues(final Object object)
   {
@@ -87,7 +86,6 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<byte[]> getBinaryValues(final Object object)
   {
@@ -100,7 +98,6 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setStringValues(
     final Object object,
@@ -115,7 +112,6 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setBinaryValues(
     final Object object,
@@ -130,7 +126,6 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

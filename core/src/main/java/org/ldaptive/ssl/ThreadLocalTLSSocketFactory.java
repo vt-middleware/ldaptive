@@ -20,7 +20,6 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
     new ThreadLocalSslConfig();
 
 
-  /** {@inheritDoc} */
   @Override
   public SslConfig getSslConfig()
   {
@@ -28,7 +27,6 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setSslConfig(final SslConfig config)
   {
@@ -90,7 +88,6 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

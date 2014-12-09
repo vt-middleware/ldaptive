@@ -91,7 +91,6 @@ public final class SearchDnResolverPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

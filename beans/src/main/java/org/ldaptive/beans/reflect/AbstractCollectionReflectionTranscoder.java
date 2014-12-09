@@ -56,7 +56,6 @@ public abstract class AbstractCollectionReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Object decodeStringValues(final Collection<String> values)
   {
@@ -74,7 +73,6 @@ public abstract class AbstractCollectionReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Object decodeBinaryValues(final Collection<byte[]> values)
   {
@@ -92,7 +90,6 @@ public abstract class AbstractCollectionReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<String> encodeStringValues(final Object values)
   {
@@ -110,7 +107,6 @@ public abstract class AbstractCollectionReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<byte[]> encodeBinaryValues(final Object values)
   {
@@ -140,7 +136,6 @@ public abstract class AbstractCollectionReflectionTranscoder
   protected abstract <T> Collection<T> createCollection(Class<T> clazz);
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<?> getType()
   {
@@ -148,7 +143,6 @@ public abstract class AbstractCollectionReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean supports(final Class<?> t)
   {
@@ -156,7 +150,6 @@ public abstract class AbstractCollectionReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

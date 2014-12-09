@@ -351,7 +351,6 @@ public class SearchResult extends AbstractLdapBean
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -363,7 +362,6 @@ public class SearchResult extends AbstractLdapBean
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

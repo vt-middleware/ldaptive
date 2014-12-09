@@ -17,7 +17,6 @@ public class TestAuthenticationResponseHandler
   private final Map<String, Boolean> results = new HashMap<>();
 
 
-  /** {@inheritDoc} */
   @Override
   public void handle(final AuthenticationResponse response)
   {

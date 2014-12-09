@@ -231,7 +231,6 @@ public class SslConfig extends AbstractConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

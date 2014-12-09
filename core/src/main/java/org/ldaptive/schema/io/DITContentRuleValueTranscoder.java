@@ -14,7 +14,6 @@ public class DITContentRuleValueTranscoder
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public DITContentRule decodeStringValue(final String value)
   {
@@ -28,7 +27,6 @@ public class DITContentRuleValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<DITContentRule> getType()
   {

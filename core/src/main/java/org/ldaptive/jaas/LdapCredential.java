@@ -44,7 +44,6 @@ public class LdapCredential implements Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -52,7 +51,6 @@ public class LdapCredential implements Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -60,7 +58,6 @@ public class LdapCredential implements Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -26,7 +26,6 @@ public class FloatValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Float decodeStringValue(final String value)
   {
@@ -34,7 +33,6 @@ public class FloatValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Float> getType()
   {

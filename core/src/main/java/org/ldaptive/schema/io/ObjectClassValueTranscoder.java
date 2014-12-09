@@ -14,7 +14,6 @@ public class ObjectClassValueTranscoder
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public ObjectClass decodeStringValue(final String value)
   {
@@ -26,7 +25,6 @@ public class ObjectClassValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<ObjectClass> getType()
   {

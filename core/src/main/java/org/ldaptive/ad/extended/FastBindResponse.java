@@ -12,7 +12,6 @@ public class FastBindResponse extends AbstractExtendedResponse<Void>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID()
   {
@@ -20,12 +19,10 @@ public class FastBindResponse extends AbstractExtendedResponse<Void>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] encoded) {}
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -56,7 +56,6 @@ public class DN implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -95,7 +94,6 @@ public class DN implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -103,7 +101,6 @@ public class DN implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -111,7 +108,6 @@ public class DN implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

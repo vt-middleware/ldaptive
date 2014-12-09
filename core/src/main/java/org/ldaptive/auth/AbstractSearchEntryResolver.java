@@ -320,7 +320,6 @@ public abstract class AbstractSearchEntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public LdapEntry resolve(
     final AuthenticationCriteria criteria,

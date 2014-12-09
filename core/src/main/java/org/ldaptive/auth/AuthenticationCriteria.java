@@ -103,7 +103,6 @@ public class AuthenticationCriteria
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

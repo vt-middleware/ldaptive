@@ -15,7 +15,6 @@ public abstract class AbstractExtendedResponse<T> implements ExtendedResponse<T>
   private T value;
 
 
-  /** {@inheritDoc} */
   @Override
   public T getValue()
   {

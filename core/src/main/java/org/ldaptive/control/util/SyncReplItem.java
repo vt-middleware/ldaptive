@@ -222,7 +222,6 @@ public class SyncReplItem
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -316,7 +315,6 @@ public class SyncReplItem
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {
@@ -381,7 +379,6 @@ public class SyncReplItem
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

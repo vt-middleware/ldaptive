@@ -55,7 +55,6 @@ public class AggregatePooledSearchExecutor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<Response<SearchResult>> search(
     final PooledConnectionFactory[] factories,

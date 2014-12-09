@@ -11,7 +11,6 @@ public class CharArrayValueTranscoder
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public char[] decodeStringValue(final String value)
   {
@@ -19,7 +18,6 @@ public class CharArrayValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final char[] value)
   {
@@ -27,7 +25,6 @@ public class CharArrayValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<char[]> getType()
   {

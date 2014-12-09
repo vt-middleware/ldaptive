@@ -17,7 +17,6 @@ public class ExternalConfig extends SaslConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

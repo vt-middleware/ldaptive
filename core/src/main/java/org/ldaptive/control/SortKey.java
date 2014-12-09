@@ -137,7 +137,6 @@ public class SortKey
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -145,7 +144,6 @@ public class SortKey
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -158,7 +156,6 @@ public class SortKey
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

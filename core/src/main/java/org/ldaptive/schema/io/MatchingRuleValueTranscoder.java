@@ -14,7 +14,6 @@ public class MatchingRuleValueTranscoder
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public MatchingRule decodeStringValue(final String value)
   {
@@ -28,7 +27,6 @@ public class MatchingRuleValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<MatchingRule> getType()
   {

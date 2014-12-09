@@ -34,7 +34,6 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize(final Class<?> type)
   {

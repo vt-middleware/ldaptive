@@ -99,7 +99,6 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -112,7 +111,6 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -126,7 +124,6 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

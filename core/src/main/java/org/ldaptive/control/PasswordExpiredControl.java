@@ -45,7 +45,6 @@ public class PasswordExpiredControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -54,7 +53,6 @@ public class PasswordExpiredControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -67,7 +65,6 @@ public class PasswordExpiredControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] berValue)
   {

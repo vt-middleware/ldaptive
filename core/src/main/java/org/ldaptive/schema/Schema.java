@@ -451,7 +451,6 @@ public class Schema
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -469,7 +468,6 @@ public class Schema
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -477,7 +475,6 @@ public class Schema
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

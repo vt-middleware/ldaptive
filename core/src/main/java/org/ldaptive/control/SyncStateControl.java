@@ -256,7 +256,6 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -271,7 +270,6 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -287,7 +285,6 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] berValue)
   {
@@ -321,7 +318,6 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
@@ -355,7 +351,6 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
@@ -386,7 +381,6 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {

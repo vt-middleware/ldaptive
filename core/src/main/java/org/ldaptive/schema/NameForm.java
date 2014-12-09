@@ -235,7 +235,6 @@ public class NameForm extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String format()
   {
@@ -271,7 +270,6 @@ public class NameForm extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -289,7 +287,6 @@ public class NameForm extends AbstractNamedSchemaElement
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

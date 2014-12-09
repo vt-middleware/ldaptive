@@ -134,7 +134,6 @@ public class BindRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

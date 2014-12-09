@@ -376,7 +376,6 @@ public class Authenticator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

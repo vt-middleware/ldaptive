@@ -25,7 +25,6 @@ public class LongValueTranscoder extends AbstractPrimitiveValueTranscoder<Long>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Long decodeStringValue(final String value)
   {
@@ -33,7 +32,6 @@ public class LongValueTranscoder extends AbstractPrimitiveValueTranscoder<Long>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Long> getType()
   {

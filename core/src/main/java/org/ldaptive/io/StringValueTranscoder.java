@@ -10,7 +10,6 @@ public class StringValueTranscoder extends AbstractStringValueTranscoder<String>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String decodeStringValue(final String value)
   {
@@ -18,7 +17,6 @@ public class StringValueTranscoder extends AbstractStringValueTranscoder<String>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final String value)
   {
@@ -26,7 +24,6 @@ public class StringValueTranscoder extends AbstractStringValueTranscoder<String>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<String> getType()
   {

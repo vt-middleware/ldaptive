@@ -16,7 +16,6 @@ public class JndiControlHandler
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID(final javax.naming.ldap.Control control)
   {
@@ -24,7 +23,6 @@ public class JndiControlHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public javax.naming.ldap.Control handleRequest(
     final RequestControl requestControl)
@@ -37,7 +35,6 @@ public class JndiControlHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl handleResponse(
     final javax.naming.ldap.Control responseControl)

@@ -41,7 +41,6 @@ public abstract class AbstractIntermediateResponse
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID()
   {
@@ -49,7 +48,6 @@ public abstract class AbstractIntermediateResponse
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl[] getControls()
   {
@@ -57,7 +55,6 @@ public abstract class AbstractIntermediateResponse
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl getControl(final String oid)
   {
@@ -72,7 +69,6 @@ public abstract class AbstractIntermediateResponse
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getMessageId()
   {
@@ -80,7 +76,6 @@ public abstract class AbstractIntermediateResponse
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {

@@ -290,7 +290,6 @@ public class DirSyncControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -305,7 +304,6 @@ public class DirSyncControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -321,7 +319,6 @@ public class DirSyncControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -334,7 +331,6 @@ public class DirSyncControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] berValue)
   {
@@ -369,7 +365,6 @@ public class DirSyncControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
@@ -398,7 +393,6 @@ public class DirSyncControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
@@ -427,7 +421,6 @@ public class DirSyncControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {

@@ -38,7 +38,6 @@ public abstract class AbstractPrimitiveValueTranscoder<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final T value)
   {

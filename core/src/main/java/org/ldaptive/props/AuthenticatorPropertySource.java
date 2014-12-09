@@ -99,7 +99,6 @@ public final class AuthenticatorPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

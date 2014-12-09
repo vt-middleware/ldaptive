@@ -19,7 +19,6 @@ public class Dsmlv1ServletSearchTemplatesExecutor
 {
 
 
-  /** {@inheritDoc} */
   @Override
   protected void writeResponse(
     final SearchResult result,

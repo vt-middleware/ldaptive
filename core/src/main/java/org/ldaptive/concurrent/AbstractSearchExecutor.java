@@ -181,7 +181,6 @@ public abstract class AbstractSearchExecutor extends SearchRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected void finalize()
     throws Throwable
@@ -194,7 +193,6 @@ public abstract class AbstractSearchExecutor extends SearchRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

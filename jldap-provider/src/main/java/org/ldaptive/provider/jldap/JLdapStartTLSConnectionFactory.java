@@ -42,7 +42,6 @@ public class JLdapStartTLSConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected LDAPConnection createLDAPConnection()
     throws LDAPException
@@ -57,7 +56,6 @@ public class JLdapStartTLSConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected void initializeConnection(final LDAPConnection conn)
     throws LDAPException
@@ -66,7 +64,6 @@ public class JLdapStartTLSConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected JLdapStartTLSConnection createJLdapConnection(
     final LDAPConnection conn,

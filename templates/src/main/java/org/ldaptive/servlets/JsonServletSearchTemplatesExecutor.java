@@ -19,7 +19,6 @@ public class JsonServletSearchTemplatesExecutor
 {
 
 
-  /** {@inheritDoc} */
   @Override
   protected void writeResponse(
     final SearchResult result,

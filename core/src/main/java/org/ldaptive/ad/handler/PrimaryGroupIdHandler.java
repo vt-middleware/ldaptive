@@ -85,7 +85,6 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected void handleAttributes(
     final Connection conn,
@@ -136,7 +135,6 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {

@@ -68,7 +68,6 @@ public class SearchOperation
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<SearchResult> invoke(final SearchRequest request)
     throws LdapException

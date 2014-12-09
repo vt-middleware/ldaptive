@@ -13,7 +13,6 @@ public class NoHostnameVerifier implements HostnameVerifier
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean verify(final String hostname, final SSLSession session)
   {

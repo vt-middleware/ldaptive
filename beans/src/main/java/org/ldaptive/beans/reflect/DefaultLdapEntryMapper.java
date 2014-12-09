@@ -19,7 +19,6 @@ public class DefaultLdapEntryMapper extends AbstractLdapEntryMapper<Object>
     new HashMap<>();
 
 
-  /** {@inheritDoc} */
   @Override
   protected ClassDescriptor getClassDescriptor(final Object object)
   {

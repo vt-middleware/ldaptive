@@ -20,7 +20,6 @@ public class X509CertificatesCredentialReader
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public X509Certificate[] read(final InputStream is, final String... params)
     throws IOException, GeneralSecurityException

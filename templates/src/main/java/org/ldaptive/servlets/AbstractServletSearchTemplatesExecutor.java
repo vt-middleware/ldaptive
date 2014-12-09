@@ -43,7 +43,6 @@ public abstract class AbstractServletSearchTemplatesExecutor
   private Pattern ignorePattern;
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize(final ServletConfig config)
   {
@@ -79,7 +78,6 @@ public abstract class AbstractServletSearchTemplatesExecutor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void search(
     final HttpServletRequest request,

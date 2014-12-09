@@ -21,7 +21,6 @@ public class AddOperation extends AbstractOperation<AddRequest, Void>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<Void> invoke(final AddRequest request)
     throws LdapException

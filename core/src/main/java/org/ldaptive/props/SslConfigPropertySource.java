@@ -86,7 +86,6 @@ public final class SslConfigPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

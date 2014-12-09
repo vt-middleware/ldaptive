@@ -111,7 +111,6 @@ public class JLdapProviderConfig extends ProviderConfig<LDAPControl>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

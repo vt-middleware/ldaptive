@@ -24,7 +24,6 @@ public class PasswordExpirationAuthenticationResponseHandler
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
-  /** {@inheritDoc} */
   @Override
   public void handle(final AuthenticationResponse response)
   {

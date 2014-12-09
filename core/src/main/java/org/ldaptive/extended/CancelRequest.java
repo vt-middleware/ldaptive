@@ -59,7 +59,6 @@ public class CancelRequest extends AbstractRequest implements ExtendedRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -70,7 +69,6 @@ public class CancelRequest extends AbstractRequest implements ExtendedRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID()
   {
@@ -78,7 +76,6 @@ public class CancelRequest extends AbstractRequest implements ExtendedRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

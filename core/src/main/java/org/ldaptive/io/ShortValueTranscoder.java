@@ -26,7 +26,6 @@ public class ShortValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Short decodeStringValue(final String value)
   {
@@ -34,7 +33,6 @@ public class ShortValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Short> getType()
   {

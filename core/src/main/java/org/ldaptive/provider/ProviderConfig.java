@@ -133,7 +133,6 @@ public class ProviderConfig<C> extends AbstractConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

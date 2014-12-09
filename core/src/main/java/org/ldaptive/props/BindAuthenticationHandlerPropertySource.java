@@ -93,7 +93,6 @@ public final class BindAuthenticationHandlerPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

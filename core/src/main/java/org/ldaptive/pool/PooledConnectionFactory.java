@@ -70,7 +70,6 @@ public class PooledConnectionFactory implements ConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

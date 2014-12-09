@@ -41,7 +41,6 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ConnectionFactory getConnectionFactory()
   {
@@ -49,7 +48,6 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setConnectionFactory(final ConnectionFactory cf)
   {
@@ -57,7 +55,6 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SearchResult performLdapSearch(
     final AuthenticationCriteria criteria,
@@ -79,7 +76,6 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

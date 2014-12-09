@@ -45,7 +45,6 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected TrustManager[] createTrustManagers()
     throws GeneralSecurityException
@@ -60,7 +59,6 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public KeyManager[] getKeyManagers()
     throws GeneralSecurityException

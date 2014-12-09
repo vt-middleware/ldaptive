@@ -54,7 +54,6 @@ public class ParallelPooledSearchExecutor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<Response<SearchResult>> search(
     final PooledConnectionFactory factory,

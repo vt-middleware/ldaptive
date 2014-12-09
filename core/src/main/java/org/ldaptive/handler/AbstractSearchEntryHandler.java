@@ -24,7 +24,6 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
-  /** {@inheritDoc} */
   @Override
   public HandlerResult<SearchEntry> handle(
     final Connection conn,
@@ -169,12 +168,10 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initializeRequest(final SearchRequest request) {}
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -182,7 +179,6 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public abstract int hashCode();
 }

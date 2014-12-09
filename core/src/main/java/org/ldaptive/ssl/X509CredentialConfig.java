@@ -105,7 +105,6 @@ public class X509CredentialConfig implements CredentialConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SSLContextInitializer createSSLContextInitializer()
     throws GeneralSecurityException
@@ -129,7 +128,6 @@ public class X509CredentialConfig implements CredentialConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -137,7 +135,6 @@ public class X509CredentialConfig implements CredentialConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -150,7 +147,6 @@ public class X509CredentialConfig implements CredentialConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

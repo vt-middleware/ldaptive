@@ -64,7 +64,6 @@ public class BindPassivator implements Passivator<Connection>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean passivate(final Connection c)
   {
@@ -82,7 +81,6 @@ public class BindPassivator implements Passivator<Connection>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

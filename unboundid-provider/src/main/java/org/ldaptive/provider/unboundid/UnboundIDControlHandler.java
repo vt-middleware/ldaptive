@@ -17,7 +17,6 @@ public class UnboundIDControlHandler
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID(final com.unboundid.ldap.sdk.Control control)
   {
@@ -25,7 +24,6 @@ public class UnboundIDControlHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public com.unboundid.ldap.sdk.Control handleRequest(
     final RequestControl requestControl)
@@ -46,7 +44,6 @@ public class UnboundIDControlHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl handleResponse(
     final com.unboundid.ldap.sdk.Control responseControl)

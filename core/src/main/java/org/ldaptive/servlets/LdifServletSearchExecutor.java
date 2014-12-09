@@ -18,7 +18,6 @@ public class LdifServletSearchExecutor extends AbstractServletSearchExecutor
 {
 
 
-  /** {@inheritDoc} */
   @Override
   protected void writeResponse(
     final SearchResult result,

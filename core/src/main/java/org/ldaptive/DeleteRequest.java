@@ -52,7 +52,6 @@ public class DeleteRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

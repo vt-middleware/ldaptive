@@ -91,7 +91,6 @@ public final class SearchRequestPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

@@ -113,7 +113,6 @@ public final class PooledConnectionFactoryPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

@@ -54,7 +54,6 @@ public final class SearchServlet extends HttpServlet
   private ServletSearchExecutor searchExecutor;
 
 
-  /** {@inheritDoc} */
   @Override
   public void init(final ServletConfig config)
     throws ServletException
@@ -79,7 +78,6 @@ public final class SearchServlet extends HttpServlet
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void service(
     final HttpServletRequest request,
@@ -99,7 +97,6 @@ public final class SearchServlet extends HttpServlet
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void destroy()
   {

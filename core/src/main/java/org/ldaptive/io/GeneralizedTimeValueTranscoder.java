@@ -71,7 +71,6 @@ public class GeneralizedTimeValueTranscoder
   private static final ThreadLocal<DateFormat> DATE_FORMAT =
     new ThreadLocal<DateFormat>() {
 
-      /** {@inheritDoc} */
       @Override
       protected DateFormat initialValue()
       {
@@ -123,7 +122,6 @@ public class GeneralizedTimeValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Calendar decodeStringValue(final String value)
   {
@@ -135,7 +133,6 @@ public class GeneralizedTimeValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final Calendar value)
   {
@@ -144,7 +141,6 @@ public class GeneralizedTimeValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Calendar> getType()
   {

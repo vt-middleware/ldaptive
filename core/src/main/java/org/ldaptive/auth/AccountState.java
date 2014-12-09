@@ -93,7 +93,6 @@ public class AccountState
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -184,7 +183,6 @@ public class AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public Calendar getExpiration()
     {
@@ -192,7 +190,6 @@ public class AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int getLoginsRemaining()
     {
@@ -200,7 +197,6 @@ public class AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

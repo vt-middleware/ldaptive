@@ -80,7 +80,6 @@ public class ActiveDirectoryAccountState extends AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int getCode()
     {
@@ -88,7 +87,6 @@ public class ActiveDirectoryAccountState extends AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String getMessage()
     {
@@ -96,7 +94,6 @@ public class ActiveDirectoryAccountState extends AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void throwSecurityException()
       throws LoginException

@@ -14,7 +14,6 @@ public class AttributeTypeValueTranscoder
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public AttributeType decodeStringValue(final String value)
   {
@@ -28,7 +27,6 @@ public class AttributeTypeValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<AttributeType> getType()
   {

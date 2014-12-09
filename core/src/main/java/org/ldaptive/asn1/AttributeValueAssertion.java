@@ -61,7 +61,6 @@ public class AttributeValueAssertion extends AbstractDERType
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
@@ -132,7 +131,6 @@ public class AttributeValueAssertion extends AbstractDERType
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -140,7 +138,6 @@ public class AttributeValueAssertion extends AbstractDERType
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -149,7 +146,6 @@ public class AttributeValueAssertion extends AbstractDERType
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -212,7 +208,6 @@ public class AttributeValueAssertion extends AbstractDERType
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object o)
     {
@@ -220,7 +215,6 @@ public class AttributeValueAssertion extends AbstractDERType
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -232,7 +226,6 @@ public class AttributeValueAssertion extends AbstractDERType
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

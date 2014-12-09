@@ -44,7 +44,6 @@ public class ParallelSearchExecutor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<Response<SearchResult>> search(
     final ConnectionFactory factory,

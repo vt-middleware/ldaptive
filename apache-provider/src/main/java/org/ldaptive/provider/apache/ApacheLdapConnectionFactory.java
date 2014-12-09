@@ -52,7 +52,6 @@ public class ApacheLdapConnectionFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected ApacheLdapConnection createInternal(final String url)
     throws LdapException

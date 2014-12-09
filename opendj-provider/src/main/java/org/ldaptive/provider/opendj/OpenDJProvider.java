@@ -28,7 +28,6 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
   private OpenDJProviderConfig config = new OpenDJProviderConfig();
 
 
-  /** {@inheritDoc} */
   @Override
   public ProviderConnectionFactory<OpenDJProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
@@ -117,7 +116,6 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public OpenDJProviderConfig getProviderConfig()
   {
@@ -125,7 +123,6 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setProviderConfig(final OpenDJProviderConfig pc)
   {
@@ -133,7 +130,6 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public OpenDJProvider newInstance()
   {

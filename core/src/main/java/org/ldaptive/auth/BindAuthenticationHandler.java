@@ -39,7 +39,6 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ConnectionFactory getConnectionFactory()
   {
@@ -47,7 +46,6 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setConnectionFactory(final ConnectionFactory cf)
   {
@@ -55,7 +53,6 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Connection getConnection()
     throws LdapException
@@ -64,7 +61,6 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected AuthenticationHandlerResponse authenticateInternal(
     final Connection c,
@@ -103,7 +99,6 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

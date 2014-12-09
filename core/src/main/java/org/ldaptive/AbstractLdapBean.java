@@ -43,7 +43,6 @@ public abstract class AbstractLdapBean implements Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -51,7 +50,6 @@ public abstract class AbstractLdapBean implements Serializable
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public abstract int hashCode();
 }

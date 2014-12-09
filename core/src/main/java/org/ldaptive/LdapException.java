@@ -452,7 +452,6 @@ public class LdapException extends Exception implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl[] getControls()
   {
@@ -460,7 +459,6 @@ public class LdapException extends Exception implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl getControl(final String oid)
   {
@@ -486,7 +484,6 @@ public class LdapException extends Exception implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getMessageId()
   {
@@ -494,7 +491,6 @@ public class LdapException extends Exception implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

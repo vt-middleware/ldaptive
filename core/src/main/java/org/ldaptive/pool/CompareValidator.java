@@ -65,7 +65,6 @@ public class CompareValidator implements Validator<Connection>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean validate(final Connection c)
   {
@@ -85,7 +84,6 @@ public class CompareValidator implements Validator<Connection>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

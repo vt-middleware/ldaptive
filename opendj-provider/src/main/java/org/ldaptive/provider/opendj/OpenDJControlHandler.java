@@ -18,7 +18,6 @@ public class OpenDJControlHandler
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID(final org.forgerock.opendj.ldap.controls.Control control)
   {
@@ -26,7 +25,6 @@ public class OpenDJControlHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public org.forgerock.opendj.ldap.controls.Control handleRequest(
     final RequestControl requestControl)
@@ -49,7 +47,6 @@ public class OpenDJControlHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl handleResponse(
     final org.forgerock.opendj.ldap.controls.Control responseControl)

@@ -127,7 +127,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void close(final RequestControl[] controls)
     throws LdapException
@@ -143,7 +142,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> bind(final BindRequest request)
     throws LdapException
@@ -306,7 +304,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> add(final AddRequest request)
     throws LdapException
@@ -331,7 +328,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Boolean> compare(final CompareRequest request)
     throws LdapException
@@ -365,7 +361,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> delete(final DeleteRequest request)
     throws LdapException
@@ -388,7 +383,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> modify(final ModifyRequest request)
     throws LdapException
@@ -413,7 +407,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
@@ -441,7 +434,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SearchIterator search(final org.ldaptive.SearchRequest request)
     throws LdapException
@@ -452,7 +444,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void searchAsync(
     final org.ldaptive.SearchRequest request,
@@ -466,7 +457,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
@@ -476,7 +466,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
@@ -515,7 +504,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void addUnsolicitedNotificationListener(
     final UnsolicitedNotificationListener listener)
@@ -524,7 +512,6 @@ public class UnboundIDConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void removeUnsolicitedNotificationListener(
     final UnsolicitedNotificationListener listener)
@@ -675,7 +662,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean hasNext()
       throws org.ldaptive.LdapException
@@ -684,7 +670,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public SearchItem next()
       throws org.ldaptive.LdapException
@@ -693,7 +678,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public org.ldaptive.Response<Void> getResponse()
     {
@@ -701,7 +685,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void close()
       throws LdapException {}
@@ -741,7 +724,6 @@ public class UnboundIDConnection implements ProviderConnection
       }
 
 
-      /** {@inheritDoc} */
       @Override
       public void searchEntryReturned(final SearchResultEntry entry)
       {
@@ -749,7 +731,6 @@ public class UnboundIDConnection implements ProviderConnection
       }
 
 
-      /** {@inheritDoc} */
       @Override
       public void searchReferenceReturned(final SearchResultReference ref)
       {
@@ -757,7 +738,6 @@ public class UnboundIDConnection implements ProviderConnection
       }
 
 
-      /** {@inheritDoc} */
       @Override
       public void intermediateResponseReturned(final IntermediateResponse res)
       {
@@ -869,7 +849,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void searchEntryReturned(final SearchResultEntry entry)
     {
@@ -877,7 +856,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void searchReferenceReturned(final SearchResultReference ref)
     {
@@ -885,7 +863,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void intermediateResponseReturned(final IntermediateResponse res)
     {
@@ -893,7 +870,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void searchResultReceived(
       final AsyncRequestID id,
@@ -1155,7 +1131,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int getMessageId()
     {
@@ -1163,7 +1138,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void abandon()
       throws LdapException
@@ -1176,7 +1150,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void abandon(final RequestControl[] controls)
       throws LdapException
@@ -1230,7 +1203,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handleUnsolicitedNotification(
       final LDAPConnection ldapConnection,
@@ -1280,7 +1252,6 @@ public class UnboundIDConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handleDisconnect(
       final LDAPConnection ldapConnection,

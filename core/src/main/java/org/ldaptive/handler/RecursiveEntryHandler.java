@@ -143,7 +143,6 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public HandlerResult<SearchEntry> handle(
     final Connection conn,
@@ -257,7 +256,6 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -270,7 +268,6 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

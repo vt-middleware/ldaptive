@@ -38,7 +38,6 @@ public class CompareAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ConnectionFactory getConnectionFactory()
   {
@@ -46,7 +45,6 @@ public class CompareAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setConnectionFactory(final ConnectionFactory cf)
   {
@@ -54,7 +52,6 @@ public class CompareAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Connection getConnection()
     throws LdapException
@@ -65,7 +62,6 @@ public class CompareAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

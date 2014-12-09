@@ -46,7 +46,6 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public T getProviderConfig()
   {
@@ -65,7 +64,6 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ProviderConnection create()
     throws LdapException
@@ -117,7 +115,6 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     throws LdapException;
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -154,7 +151,6 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String getLdapUrl()
     {
@@ -162,7 +158,6 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int getConnectionCount()
     {
@@ -181,7 +176,6 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

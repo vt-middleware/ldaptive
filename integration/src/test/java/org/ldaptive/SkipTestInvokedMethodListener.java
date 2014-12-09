@@ -14,7 +14,6 @@ public class SkipTestInvokedMethodListener implements IInvokedMethodListener
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public void afterInvocation(
     final IInvokedMethod method, final ITestResult testResult)
@@ -30,7 +29,6 @@ public class SkipTestInvokedMethodListener implements IInvokedMethodListener
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void beforeInvocation(
     final IInvokedMethod method, final ITestResult testResult) {}

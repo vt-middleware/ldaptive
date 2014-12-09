@@ -17,7 +17,6 @@ public class ConnectActivator implements Activator<Connection>
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean activate(final Connection c)
   {

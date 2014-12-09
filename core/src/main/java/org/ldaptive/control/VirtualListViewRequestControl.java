@@ -390,7 +390,6 @@ public class VirtualListViewRequestControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -408,7 +407,6 @@ public class VirtualListViewRequestControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -428,7 +426,6 @@ public class VirtualListViewRequestControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

@@ -83,7 +83,6 @@ public final class SimplePropertySource<T> extends AbstractPropertySource<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

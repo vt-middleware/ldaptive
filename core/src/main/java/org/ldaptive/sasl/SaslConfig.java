@@ -147,7 +147,6 @@ public class SaslConfig extends AbstractConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

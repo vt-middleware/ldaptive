@@ -175,7 +175,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void close(final RequestControl[] controls)
     throws LdapException
@@ -200,7 +199,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> bind(final BindRequest request)
     throws LdapException
@@ -341,7 +339,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> add(final AddRequest request)
     throws LdapException
@@ -373,7 +370,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Boolean> compare(final CompareRequest request)
     throws LdapException
@@ -418,7 +414,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> delete(final DeleteRequest request)
     throws LdapException
@@ -446,7 +441,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> modify(final ModifyRequest request)
     throws LdapException
@@ -478,7 +472,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
@@ -511,7 +504,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SearchIterator search(final SearchRequest request)
     throws LdapException
@@ -522,7 +514,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void searchAsync(
     final SearchRequest request,
@@ -534,7 +525,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
@@ -543,7 +533,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
@@ -582,7 +571,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void addUnsolicitedNotificationListener(
     final UnsolicitedNotificationListener listener)
@@ -592,7 +580,6 @@ public class JndiConnection implements ProviderConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void removeUnsolicitedNotificationListener(
     final UnsolicitedNotificationListener listener)
@@ -1016,7 +1003,6 @@ public class JndiConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean hasNext()
       throws LdapException
@@ -1057,7 +1043,6 @@ public class JndiConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public SearchItem next()
       throws LdapException
@@ -1149,7 +1134,6 @@ public class JndiConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public Response<Void> getResponse()
     {
@@ -1257,7 +1241,6 @@ public class JndiConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void close()
       throws LdapException
@@ -1305,7 +1288,6 @@ public class JndiConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String getID()
     {
@@ -1313,7 +1295,6 @@ public class JndiConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public byte[] getEncodedValue()
     {
@@ -1321,7 +1302,6 @@ public class JndiConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public javax.naming.ldap.ExtendedResponse createExtendedResponse(
       final String id,
@@ -1365,7 +1345,6 @@ public class JndiConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String getID()
     {
@@ -1373,7 +1352,6 @@ public class JndiConnection implements ProviderConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public byte[] getEncodedValue()
     {

@@ -14,7 +14,6 @@ public class NameFormValueTranscoder
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public NameForm decodeStringValue(final String value)
   {
@@ -26,7 +25,6 @@ public class NameFormValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<NameForm> getType()
   {

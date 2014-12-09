@@ -70,7 +70,6 @@ public class AsyncSearchOperation
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public FutureResponse<SearchResult> execute(final SearchRequest request)
     throws LdapException
@@ -96,7 +95,6 @@ public class AsyncSearchOperation
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<SearchResult> invoke(final SearchRequest request)
     throws LdapException
@@ -121,7 +119,6 @@ public class AsyncSearchOperation
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected void finalize()
     throws Throwable
@@ -169,7 +166,6 @@ public class AsyncSearchOperation
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void asyncRequestReceived(final AsyncRequest request)
     {
@@ -199,7 +195,6 @@ public class AsyncSearchOperation
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void searchItemReceived(final SearchItem item)
     {
@@ -229,7 +224,6 @@ public class AsyncSearchOperation
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void responseReceived(final Response<Void> response)
     {
@@ -266,7 +260,6 @@ public class AsyncSearchOperation
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void exceptionReceived(final Exception exception)
     {

@@ -58,7 +58,6 @@ public class PooledSearchRoleResolver extends AbstractSearchRoleResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Connection getConnection()
     throws LdapException
@@ -67,7 +66,6 @@ public class PooledSearchRoleResolver extends AbstractSearchRoleResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -16,7 +16,6 @@ public interface IntermediateResponseHandler
 {
 
 
-  /** {@inheritDoc} */
   @Override
   HandlerResult<IntermediateResponse> handle(
     Connection conn,

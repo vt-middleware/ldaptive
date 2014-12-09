@@ -94,7 +94,6 @@ public final class DefaultConnectionFactoryPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   @SuppressWarnings("unchecked")
   public void initialize()

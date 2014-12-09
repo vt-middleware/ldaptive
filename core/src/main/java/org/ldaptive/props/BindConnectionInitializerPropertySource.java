@@ -93,7 +93,6 @@ public final class BindConnectionInitializerPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

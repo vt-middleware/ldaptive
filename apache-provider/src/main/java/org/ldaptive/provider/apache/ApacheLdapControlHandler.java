@@ -42,7 +42,6 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID(final Control control)
   {
@@ -50,7 +49,6 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Control handleRequest(
     final org.ldaptive.control.RequestControl requestControl)
@@ -100,7 +98,6 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public org.ldaptive.control.ResponseControl handleResponse(
     final Control responseControl)

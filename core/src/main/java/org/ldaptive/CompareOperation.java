@@ -21,7 +21,6 @@ public class CompareOperation extends AbstractOperation<CompareRequest, Boolean>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<Boolean> invoke(final CompareRequest request)
     throws LdapException

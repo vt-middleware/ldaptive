@@ -262,7 +262,6 @@ public class LdapEntry extends AbstractLdapBean
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -274,7 +273,6 @@ public class LdapEntry extends AbstractLdapBean
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

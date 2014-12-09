@@ -28,7 +28,6 @@ public class PasswordModifyOperation
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<Credential> invoke(final PasswordModifyRequest request)
     throws LdapException

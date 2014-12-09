@@ -83,7 +83,6 @@ public class JndiProvider implements Provider<JndiProviderConfig>
   private JndiProviderConfig config = new JndiProviderConfig();
 
 
-  /** {@inheritDoc} */
   @Override
   public ProviderConnectionFactory<JndiProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
@@ -98,7 +97,6 @@ public class JndiProvider implements Provider<JndiProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public JndiProviderConfig getProviderConfig()
   {
@@ -106,7 +104,6 @@ public class JndiProvider implements Provider<JndiProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setProviderConfig(final JndiProviderConfig jpc)
   {
@@ -114,7 +111,6 @@ public class JndiProvider implements Provider<JndiProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public JndiProvider newInstance()
   {

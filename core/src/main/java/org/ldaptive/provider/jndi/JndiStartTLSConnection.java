@@ -103,7 +103,6 @@ public class JndiStartTLSConnection extends JndiConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void close(final RequestControl[] controls)
     throws LdapException

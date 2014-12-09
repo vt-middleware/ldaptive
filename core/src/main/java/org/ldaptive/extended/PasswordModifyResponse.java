@@ -23,7 +23,6 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID()
   {
@@ -32,7 +31,6 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] encoded)
   {
@@ -42,7 +40,6 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -70,7 +67,6 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {

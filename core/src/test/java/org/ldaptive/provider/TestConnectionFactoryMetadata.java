@@ -49,7 +49,6 @@ public class TestConnectionFactoryMetadata implements ConnectionFactoryMetadata
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getLdapUrl()
   {
@@ -57,7 +56,6 @@ public class TestConnectionFactoryMetadata implements ConnectionFactoryMetadata
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getConnectionCount()
   {

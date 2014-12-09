@@ -20,7 +20,6 @@ public abstract class AbstractSSLContextInitializer
   private TrustManager[] trustManagers;
 
 
-  /** {@inheritDoc} */
   @Override
   public TrustManager[] getTrustManagers()
     throws GeneralSecurityException
@@ -62,7 +61,6 @@ public abstract class AbstractSSLContextInitializer
     throws GeneralSecurityException;
 
 
-  /** {@inheritDoc} */
   @Override
   public SSLContext initSSLContext(final String protocol)
     throws GeneralSecurityException

@@ -18,7 +18,6 @@ public class UnicodePwdValueTranscoder
   private static final Charset UTF_16LE = Charset.forName("UTF-16LE");
 
 
-  /** {@inheritDoc} */
   @Override
   public String decodeBinaryValue(final byte[] value)
   {
@@ -31,7 +30,6 @@ public class UnicodePwdValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encodeBinaryValue(final String value)
   {
@@ -44,7 +42,6 @@ public class UnicodePwdValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<String> getType()
   {

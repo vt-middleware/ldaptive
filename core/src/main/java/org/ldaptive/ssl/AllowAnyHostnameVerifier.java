@@ -15,7 +15,6 @@ public class AllowAnyHostnameVerifier
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean verify(final String hostname, final SSLSession session)
   {
@@ -23,7 +22,6 @@ public class AllowAnyHostnameVerifier
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean verify(final String hostname, final X509Certificate cert)
   {

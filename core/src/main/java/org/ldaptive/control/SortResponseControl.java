@@ -152,7 +152,6 @@ public class SortResponseControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -166,7 +165,6 @@ public class SortResponseControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -181,7 +179,6 @@ public class SortResponseControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void decode(final byte[] berValue)
   {
@@ -216,7 +213,6 @@ public class SortResponseControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
@@ -251,7 +247,6 @@ public class SortResponseControl extends AbstractControl
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {

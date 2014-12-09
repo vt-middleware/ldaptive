@@ -817,7 +817,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int availableCount()
   {
@@ -828,7 +827,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int activeCount()
   {
@@ -839,7 +837,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Set<PooledConnectionStatistics> getPooledConnectionStatistics()
   {
@@ -911,7 +908,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -976,7 +972,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public ConnectionPool getConnectionPool()
     {
@@ -984,7 +979,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public Connection getConnection()
     {
@@ -992,7 +986,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public long getCreatedTime()
     {
@@ -1000,7 +993,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public PooledConnectionStatistics getPooledConnectionStatistics()
     {
@@ -1008,7 +1000,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object o)
     {
@@ -1016,7 +1007,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -1024,7 +1014,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     }
 
 
-    /** {@inheritDoc} */
     @Override
     @SuppressWarnings("unchecked")
     public Object invoke(

@@ -26,7 +26,6 @@ public class CancelOperation extends AbstractOperation<CancelRequest, Void>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<Void> invoke(final CancelRequest request)
     throws LdapException

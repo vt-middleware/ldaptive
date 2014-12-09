@@ -12,7 +12,6 @@ public class UUIDValueTranscoder extends AbstractStringValueTranscoder<UUID>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public UUID decodeStringValue(final String value)
   {
@@ -20,7 +19,6 @@ public class UUIDValueTranscoder extends AbstractStringValueTranscoder<UUID>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final UUID value)
   {
@@ -28,7 +26,6 @@ public class UUIDValueTranscoder extends AbstractStringValueTranscoder<UUID>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<UUID> getType()
   {

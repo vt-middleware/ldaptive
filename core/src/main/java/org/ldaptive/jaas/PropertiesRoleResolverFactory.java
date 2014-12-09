@@ -27,7 +27,6 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory
   private static final Map<String, RoleResolver> CACHE = new HashMap<>();
 
 
-  /** {@inheritDoc} */
   @Override
   public RoleResolver createRoleResolver(final Map<String, ?> jaasOptions)
   {
@@ -102,7 +101,6 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SearchRequest createSearchRequest(final Map<String, ?> jaasOptions)
   {

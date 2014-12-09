@@ -79,7 +79,6 @@ public class ModifyRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

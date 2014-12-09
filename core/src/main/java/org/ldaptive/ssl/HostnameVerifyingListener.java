@@ -61,7 +61,6 @@ public class HostnameVerifyingListener implements HandshakeCompletedListener
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void handshakeCompleted(final HandshakeCompletedEvent event)
   {

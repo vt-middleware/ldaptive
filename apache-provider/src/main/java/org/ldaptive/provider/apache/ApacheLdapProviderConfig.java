@@ -53,7 +53,6 @@ public class ApacheLdapProviderConfig extends ProviderConfig<Control>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

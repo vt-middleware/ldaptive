@@ -53,7 +53,6 @@ public abstract class AbstractAttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getName()
   {
@@ -61,7 +60,6 @@ public abstract class AbstractAttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean isBinary()
   {
@@ -69,7 +67,6 @@ public abstract class AbstractAttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SortBehavior getSortBehavior()
   {

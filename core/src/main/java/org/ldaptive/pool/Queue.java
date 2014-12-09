@@ -125,7 +125,6 @@ public class Queue<T> implements Iterable<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Iterator<T> iterator()
   {
@@ -133,7 +132,6 @@ public class Queue<T> implements Iterable<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

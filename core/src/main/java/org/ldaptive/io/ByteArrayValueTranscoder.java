@@ -11,7 +11,6 @@ public class ByteArrayValueTranscoder
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] decodeBinaryValue(final byte[] value)
   {
@@ -19,7 +18,6 @@ public class ByteArrayValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encodeBinaryValue(final byte[] value)
   {
@@ -27,7 +25,6 @@ public class ByteArrayValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<byte[]> getType()
   {

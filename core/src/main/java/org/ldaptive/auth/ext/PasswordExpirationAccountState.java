@@ -25,7 +25,6 @@ public class PasswordExpirationAccountState extends AccountState
     PASSWORD_EXPIRED;
 
 
-    /** {@inheritDoc} */
     @Override
     public int getCode()
     {
@@ -33,7 +32,6 @@ public class PasswordExpirationAccountState extends AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String getMessage()
     {
@@ -41,7 +39,6 @@ public class PasswordExpirationAccountState extends AccountState
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void throwSecurityException()
       throws LoginException

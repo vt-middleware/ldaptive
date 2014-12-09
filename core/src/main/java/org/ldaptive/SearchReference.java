@@ -73,7 +73,6 @@ public class SearchReference implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl[] getControls()
   {
@@ -81,7 +80,6 @@ public class SearchReference implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl getControl(final String oid)
   {
@@ -96,7 +94,6 @@ public class SearchReference implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getMessageId()
   {
@@ -104,7 +101,6 @@ public class SearchReference implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -117,7 +113,6 @@ public class SearchReference implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

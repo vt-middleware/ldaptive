@@ -110,7 +110,6 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public HandlerResult<Response<S>> handle(
     final Connection conn,

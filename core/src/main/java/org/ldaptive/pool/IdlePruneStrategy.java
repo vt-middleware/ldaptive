@@ -54,7 +54,6 @@ public class IdlePruneStrategy implements PruneStrategy
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean prune(final PooledConnectionProxy conn)
   {
@@ -70,7 +69,6 @@ public class IdlePruneStrategy implements PruneStrategy
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getStatisticsSize()
   {
@@ -78,7 +76,6 @@ public class IdlePruneStrategy implements PruneStrategy
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public long getPrunePeriod()
   {
@@ -119,7 +116,6 @@ public class IdlePruneStrategy implements PruneStrategy
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

@@ -18,7 +18,6 @@ public abstract class AbstractSearchRoleResolver
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public Set<LdapRole> search(final SearchRequest request)
     throws LdapException

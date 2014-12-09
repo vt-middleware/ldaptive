@@ -44,7 +44,6 @@ public class GssApiConfig extends SaslConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

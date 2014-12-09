@@ -153,7 +153,6 @@ public class Query
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

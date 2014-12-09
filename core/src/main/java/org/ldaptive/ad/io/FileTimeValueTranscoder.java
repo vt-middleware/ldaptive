@@ -35,7 +35,6 @@ public class FileTimeValueTranscoder
   private static final long ONE_HUNDRED_NANOSECOND_INTERVAL = 10000L;
 
 
-  /** {@inheritDoc} */
   @Override
   public Calendar decodeStringValue(final String value)
   {
@@ -46,7 +45,6 @@ public class FileTimeValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String encodeStringValue(final Calendar value)
   {
@@ -57,7 +55,6 @@ public class FileTimeValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<Calendar> getType()
   {

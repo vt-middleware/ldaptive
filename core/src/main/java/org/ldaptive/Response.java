@@ -128,7 +128,6 @@ public class Response<T> implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl[] getControls()
   {
@@ -136,7 +135,6 @@ public class Response<T> implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl getControl(final String oid)
   {
@@ -162,7 +160,6 @@ public class Response<T> implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getMessageId()
   {
@@ -170,7 +167,6 @@ public class Response<T> implements ResponseMessage
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

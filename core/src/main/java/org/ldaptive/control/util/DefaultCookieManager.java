@@ -28,7 +28,6 @@ public class DefaultCookieManager implements CookieManager
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] readCookie()
   {
@@ -36,7 +35,6 @@ public class DefaultCookieManager implements CookieManager
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void writeCookie(final byte[] b)
   {

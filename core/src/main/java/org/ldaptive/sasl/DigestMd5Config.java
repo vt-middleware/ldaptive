@@ -44,7 +44,6 @@ public class DigestMd5Config extends SaslConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

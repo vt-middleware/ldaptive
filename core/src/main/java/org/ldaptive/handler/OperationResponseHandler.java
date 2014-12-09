@@ -19,7 +19,6 @@ public interface OperationResponseHandler<Q extends Request, T>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   HandlerResult<Response<T>> handle(
     Connection conn,

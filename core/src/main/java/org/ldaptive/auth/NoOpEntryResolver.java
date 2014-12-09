@@ -13,7 +13,6 @@ public class NoOpEntryResolver implements EntryResolver
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public LdapEntry resolve(
     final AuthenticationCriteria criteria,
@@ -24,7 +23,6 @@ public class NoOpEntryResolver implements EntryResolver
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

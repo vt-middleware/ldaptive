@@ -14,7 +14,6 @@ public class DITStructureRuleValueTranscoder
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public DITStructureRule decodeStringValue(final String value)
   {
@@ -28,7 +27,6 @@ public class DITStructureRuleValueTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<DITStructureRule> getType()
   {

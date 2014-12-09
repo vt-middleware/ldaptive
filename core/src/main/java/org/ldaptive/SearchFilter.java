@@ -253,7 +253,6 @@ public class SearchFilter
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -261,7 +260,6 @@ public class SearchFilter
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -269,7 +267,6 @@ public class SearchFilter
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

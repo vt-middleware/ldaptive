@@ -25,7 +25,6 @@ public class BeanGeneratorPropertyInvoker extends AbstractPropertyInvoker
   }
 
 
-  /** {@inheritDoc} */
   @Override
   @SuppressWarnings("unchecked")
   protected Object convertValue(final Class<?> type, final String value)

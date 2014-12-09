@@ -168,7 +168,6 @@ public class MergeRequest extends AbstractRequest
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

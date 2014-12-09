@@ -72,7 +72,6 @@ public class DefaultHostnameVerifier
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean verify(final String hostname, final SSLSession session)
   {

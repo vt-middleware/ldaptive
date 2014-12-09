@@ -53,7 +53,6 @@ public class FutureResponse<T> extends Response<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public T getResult()
   {
@@ -61,7 +60,6 @@ public class FutureResponse<T> extends Response<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResultCode getResultCode()
   {
@@ -69,7 +67,6 @@ public class FutureResponse<T> extends Response<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getMessage()
   {
@@ -77,7 +74,6 @@ public class FutureResponse<T> extends Response<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getMatchedDn()
   {
@@ -85,7 +81,6 @@ public class FutureResponse<T> extends Response<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl[] getControls()
   {
@@ -93,7 +88,6 @@ public class FutureResponse<T> extends Response<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String[] getReferralURLs()
   {
@@ -101,7 +95,6 @@ public class FutureResponse<T> extends Response<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getMessageId()
   {
@@ -109,7 +102,6 @@ public class FutureResponse<T> extends Response<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

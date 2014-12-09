@@ -206,7 +206,6 @@ public class PoolConfig extends AbstractConfig
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

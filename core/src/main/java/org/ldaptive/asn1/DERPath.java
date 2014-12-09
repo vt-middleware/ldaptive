@@ -199,7 +199,6 @@ public class DERPath
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -207,7 +206,6 @@ public class DERPath
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -215,7 +213,6 @@ public class DERPath
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -322,7 +319,6 @@ public class DERPath
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean equals(final Object o)
     {
@@ -330,7 +326,6 @@ public class DERPath
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int hashCode()
     {
@@ -338,7 +333,6 @@ public class DERPath
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

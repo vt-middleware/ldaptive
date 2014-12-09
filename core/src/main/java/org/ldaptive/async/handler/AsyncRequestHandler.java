@@ -17,7 +17,6 @@ public interface AsyncRequestHandler extends Handler<Request, AsyncRequest>
 {
 
 
-  /** {@inheritDoc} */
   @Override
   HandlerResult<AsyncRequest> handle(
     Connection conn,

@@ -16,7 +16,6 @@ public interface SearchReferenceHandler
 {
 
 
-  /** {@inheritDoc} */
   @Override
   HandlerResult<SearchReference> handle(
     Connection conn,

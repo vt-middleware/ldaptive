@@ -72,7 +72,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String getName()
   {
@@ -80,7 +79,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean isBinary()
   {
@@ -88,7 +86,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SortBehavior getSortBehavior()
   {
@@ -96,7 +93,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<String> getStringValues(final Object object)
   {
@@ -104,7 +100,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<byte[]> getBinaryValues(final Object object)
   {
@@ -204,7 +199,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setStringValues(
     final Object object,
@@ -214,7 +208,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setBinaryValues(
     final Object object,
@@ -260,7 +253,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

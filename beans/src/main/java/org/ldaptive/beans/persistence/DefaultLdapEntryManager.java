@@ -78,7 +78,6 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public T find(final T object)
     throws LdapException
@@ -110,7 +109,6 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> add(final T object)
     throws LdapException
@@ -130,7 +128,6 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> merge(final T object)
     throws LdapException
@@ -148,7 +145,6 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> delete(final T object)
     throws LdapException

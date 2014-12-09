@@ -78,7 +78,6 @@ public class StringCustomObject implements CustomObject
   // CheckStyle:JavadocMethod ON
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {
@@ -87,7 +86,6 @@ public class StringCustomObject implements CustomObject
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean equals(final Object o)
   {
@@ -95,7 +93,6 @@ public class StringCustomObject implements CustomObject
   }
 
 
-  /** {@inheritDoc} */
   @Override
   @SuppressWarnings("unchecked")
   public int hashCode()
@@ -120,7 +117,6 @@ public class StringCustomObject implements CustomObject
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

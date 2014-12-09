@@ -110,7 +110,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void close(final RequestControl[] controls)
     throws LdapException
@@ -134,7 +133,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> bind(final BindRequest request)
     throws LdapException
@@ -352,7 +350,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> add(final AddRequest request)
     throws LdapException
@@ -386,7 +383,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Boolean> compare(final CompareRequest request)
     throws LdapException
@@ -428,7 +424,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> delete(final DeleteRequest request)
     throws LdapException
@@ -459,7 +454,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> modify(final ModifyRequest request)
     throws LdapException
@@ -496,7 +490,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
@@ -528,7 +521,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public SearchIterator search(final org.ldaptive.SearchRequest request)
     throws LdapException
@@ -544,7 +536,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void searchAsync(
     final org.ldaptive.SearchRequest request,
@@ -563,7 +554,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
@@ -581,7 +571,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
@@ -624,7 +613,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void addUnsolicitedNotificationListener(
     final UnsolicitedNotificationListener listener)
@@ -633,7 +621,6 @@ public class OpenDJConnection
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void removeUnsolicitedNotificationListener(
     final UnsolicitedNotificationListener listener)
@@ -774,7 +761,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean hasNext()
       throws LdapException
@@ -793,7 +779,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public SearchItem next()
       throws LdapException
@@ -802,7 +787,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public org.ldaptive.Response<Void> getResponse()
     {
@@ -810,7 +794,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void close()
       throws LdapException {}
@@ -863,7 +846,6 @@ public class OpenDJConnection
       }
 
 
-      /** {@inheritDoc} */
       @Override
       public void handleErrorResult(final ErrorResultException e)
       {
@@ -872,7 +854,6 @@ public class OpenDJConnection
       }
 
 
-      /** {@inheritDoc} */
       @Override
       public void handleResult(final Result r)
       {
@@ -881,7 +862,6 @@ public class OpenDJConnection
       }
 
 
-      /** {@inheritDoc} */
       @Override
       public boolean handleEntry(final SearchResultEntry entry)
       {
@@ -889,7 +869,6 @@ public class OpenDJConnection
       }
 
 
-      /** {@inheritDoc} */
       @Override
       public boolean handleReference(final SearchResultReference ref)
       {
@@ -965,7 +944,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handleErrorResult(final ErrorResultException e)
     {
@@ -985,7 +963,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handleResult(final Result r)
     {
@@ -999,7 +976,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean handleEntry(final SearchResultEntry entry)
     {
@@ -1008,7 +984,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean handleReference(final SearchResultReference ref)
     {
@@ -1017,7 +992,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean handleIntermediateResponse(final IntermediateResponse res)
     {
@@ -1254,7 +1228,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public int getMessageId()
     {
@@ -1262,7 +1235,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void abandon()
       throws LdapException
@@ -1273,7 +1245,6 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void abandon(final RequestControl[] controls)
       throws LdapException
@@ -1333,19 +1304,16 @@ public class OpenDJConnection
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void handleConnectionClosed() {}
 
 
-    /** {@inheritDoc} */
     @Override
     public void handleConnectionError(
       final boolean b,
       final ErrorResultException e) {}
 
 
-    /** {@inheritDoc} */
     @Override
     public void handleUnsolicitedNotification(
       final ExtendedResult extendedResult)

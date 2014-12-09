@@ -35,7 +35,6 @@ public class ConstructedDEREncoder extends AbstractDERType implements DEREncoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {

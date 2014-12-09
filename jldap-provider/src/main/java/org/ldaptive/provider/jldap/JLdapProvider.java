@@ -30,7 +30,6 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
   private JLdapProviderConfig config = new JLdapProviderConfig();
 
 
-  /** {@inheritDoc} */
   @Override
   public ProviderConnectionFactory<JLdapProviderConfig> getConnectionFactory(
     final ConnectionConfig cc)
@@ -158,7 +157,6 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public JLdapProviderConfig getProviderConfig()
   {
@@ -166,7 +164,6 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setProviderConfig(final JLdapProviderConfig pc)
   {
@@ -174,7 +171,6 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public JLdapProvider newInstance()
   {

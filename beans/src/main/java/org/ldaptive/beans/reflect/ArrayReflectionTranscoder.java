@@ -36,7 +36,6 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Object decodeStringValues(final Collection<String> values)
   {
@@ -53,7 +52,6 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Object decodeBinaryValues(final Collection<byte[]> values)
   {
@@ -70,7 +68,6 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<String> encodeStringValues(final Object values)
   {
@@ -112,7 +109,6 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<byte[]> encodeBinaryValues(final Object values)
   {
@@ -154,7 +150,6 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Class<?> getType()
   {
@@ -162,7 +157,6 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean supports(final Class<?> t)
   {
@@ -170,7 +164,6 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

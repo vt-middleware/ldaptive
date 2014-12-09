@@ -289,7 +289,6 @@ public final class DnParser
     private String decoded;
 
 
-    /** {@inheritDoc} */
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {

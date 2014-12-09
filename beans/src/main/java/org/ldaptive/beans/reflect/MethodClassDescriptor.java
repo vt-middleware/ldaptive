@@ -24,7 +24,6 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize(final Class<?> type)
   {

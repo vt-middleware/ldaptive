@@ -21,7 +21,6 @@ public class DeleteOperation extends AbstractOperation<DeleteRequest, Void>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<Void> invoke(final DeleteRequest request)
     throws LdapException

@@ -49,7 +49,6 @@ public abstract class AbstractCompareAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected AuthenticationHandlerResponse authenticateInternal(
     final Connection c,

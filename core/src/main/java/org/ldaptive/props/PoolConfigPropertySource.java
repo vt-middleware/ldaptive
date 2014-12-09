@@ -85,7 +85,6 @@ public final class PoolConfigPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

@@ -28,7 +28,6 @@ public class ApplicationDERTag extends AbstractDERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int getTagByte()
   {
@@ -36,7 +35,6 @@ public class ApplicationDERTag extends AbstractDERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String name()
   {
@@ -44,7 +42,6 @@ public class ApplicationDERTag extends AbstractDERTag
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

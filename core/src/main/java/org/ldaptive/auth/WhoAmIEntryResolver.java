@@ -20,7 +20,6 @@ public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
 {
 
 
-  /** {@inheritDoc} */
   @Override
   protected SearchResult performLdapSearch(
     final AuthenticationCriteria criteria,

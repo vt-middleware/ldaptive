@@ -73,7 +73,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public DnValueMutator getDnValueMutator()
   {
@@ -81,7 +80,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public Collection<AttributeValueMutator> getAttributeValueMutators()
   {
@@ -89,7 +87,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public AttributeValueMutator getAttributeValueMutator(final String name)
   {
@@ -97,7 +94,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -133,7 +129,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String getValue(final Object object)
     {
@@ -141,7 +136,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void setValue(final Object object, final String value) {}
   }
@@ -184,7 +178,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String getName()
     {
@@ -192,7 +185,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public boolean isBinary()
     {
@@ -200,7 +192,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public SortBehavior getSortBehavior()
     {
@@ -208,7 +199,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public Collection<String> getStringValues(final Object object)
     {
@@ -216,7 +206,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public Collection<byte[]> getBinaryValues(final Object object)
     {
@@ -224,21 +213,18 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public void setStringValues(
       final Object object,
       final Collection<String> values) {}
 
 
-    /** {@inheritDoc} */
     @Override
     public void setBinaryValues(
       final Object object,
       final Collection<byte[]> values) {}
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

@@ -175,7 +175,6 @@ public class PersistentSearchItem
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -263,7 +262,6 @@ public class PersistentSearchItem
     }
 
 
-    /** {@inheritDoc} */
     @Override
     public String toString()
     {

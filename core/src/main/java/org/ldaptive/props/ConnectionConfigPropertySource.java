@@ -94,7 +94,6 @@ public final class ConnectionConfigPropertySource
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void initialize()
   {

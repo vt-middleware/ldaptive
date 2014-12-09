@@ -38,7 +38,6 @@ public class PooledCompareAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public PooledConnectionFactory getConnectionFactory()
   {
@@ -46,7 +45,6 @@ public class PooledCompareAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public void setConnectionFactory(final PooledConnectionFactory cf)
   {
@@ -54,7 +52,6 @@ public class PooledCompareAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Connection getConnection()
     throws LdapException
@@ -63,7 +60,6 @@ public class PooledCompareAuthenticationHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {

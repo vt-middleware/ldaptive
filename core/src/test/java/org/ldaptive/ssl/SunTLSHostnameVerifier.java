@@ -22,7 +22,6 @@ public class SunTLSHostnameVerifier
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public boolean verify(final String hostname, final SSLSession session)
   {

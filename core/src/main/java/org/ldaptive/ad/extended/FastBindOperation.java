@@ -28,7 +28,6 @@ public class FastBindOperation extends AbstractOperation<FastBindRequest, Void>
   }
 
 
-  /** {@inheritDoc} */
   @Override
   protected Response<Void> invoke(final FastBindRequest request)
     throws LdapException
@@ -46,7 +45,6 @@ public class FastBindOperation extends AbstractOperation<FastBindRequest, Void>
   {
 
 
-    /** {@inheritDoc} */
     @Override
     public Response<Void> initialize(final Connection c)
       throws LdapException

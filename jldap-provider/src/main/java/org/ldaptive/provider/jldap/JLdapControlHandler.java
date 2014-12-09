@@ -16,7 +16,6 @@ public class JLdapControlHandler
 {
 
 
-  /** {@inheritDoc} */
   @Override
   public String getOID(final com.novell.ldap.LDAPControl control)
   {
@@ -24,7 +23,6 @@ public class JLdapControlHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public com.novell.ldap.LDAPControl handleRequest(
     final RequestControl requestControl)
@@ -37,7 +35,6 @@ public class JLdapControlHandler
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public ResponseControl handleResponse(
     final com.novell.ldap.LDAPControl responseControl)

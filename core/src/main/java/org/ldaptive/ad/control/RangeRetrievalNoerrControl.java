@@ -40,7 +40,6 @@ public class RangeRetrievalNoerrControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public int hashCode()
   {
@@ -49,7 +48,6 @@ public class RangeRetrievalNoerrControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public String toString()
   {
@@ -62,7 +60,6 @@ public class RangeRetrievalNoerrControl extends AbstractControl
   }
 
 
-  /** {@inheritDoc} */
   @Override
   public byte[] encode()
   {
