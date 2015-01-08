@@ -50,7 +50,7 @@ public class DefaultConnectionStrategyTest
             3),
           new String[] {
             "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org " +
-            "ldap://directory-3.ldaptive.org",
+              "ldap://directory-3.ldaptive.org",
           },
         },
       };
