@@ -245,6 +245,26 @@ public class LdapEntry extends AbstractLdapBean
 
 
   /**
+   * Changes the name of an attribute in this entry. The old attribute is
+   * removed from this entry, the name is changed with {@link
+   * LdapAttribute#setName(String)}, and the attribute is added back to this
+   * entry. If oldName does not exist, this method does nothing.
+   *
+   * @param  oldName  attribute name to change from
+   * @param  newName  attribute name to change to
+   */
+  public void renameAttribute(final String oldName, final String newName)
+  {
+    final LdapAttribute la = getAttribute(oldName);
+    if (la != null) {
+      removeAttribute(oldName);
+      la.setName(newName);
+      addAttribute(la);
+    }
+  }
+
+
+  /**
    * Returns the number of attributes in this ldap attributes.
    *
    * @return  number of attributes in this ldap attributes
