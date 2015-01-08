@@ -4,227 +4,29 @@ package org.ldaptive;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link SearchResult}, {@link LdapEntry}, and {@link
- * LdapAttribute}.
+ * Unit test for {@link LdapAttribute}.
  *
  * @author  Middleware Services
  */
-public class LdapBeanTest
+public class LdapAttributeTest
 {
 
-
-  /**
-   * Tests aspects of ldap result.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(groups = {"bean"})
-  public void ldapResult()
-    throws Exception
-  {
-    final LdapEntry entry1 = new LdapEntry("uid=1");
-    final LdapEntry entry2 = new LdapEntry("uid=2");
-
-    // test default sort behavior
-    SearchResult sr = new SearchResult();
-    AssertJUnit.assertEquals(
-      SortBehavior.getDefaultSortBehavior(),
-      sr.getSortBehavior());
-    AssertJUnit.assertEquals(0, sr.size());
-    AssertJUnit.assertNull(sr.getEntry());
-    sr.clear();
-    AssertJUnit.assertEquals(0, sr.size());
-
-    // test ordered
-    sr = new SearchResult(SortBehavior.ORDERED);
-    AssertJUnit.assertEquals(SortBehavior.ORDERED, sr.getSortBehavior());
-    sr.addEntry(entry2, entry1);
-
-    LdapEntry[] entries = sr.getEntries().toArray(new LdapEntry[2]);
-    AssertJUnit.assertEquals(entry2, entries[0]);
-    AssertJUnit.assertEquals(entry1, entries[1]);
-    sr.clear();
-    AssertJUnit.assertEquals(0, sr.size());
-
-    // test sorted
-    sr = new SearchResult(SortBehavior.SORTED);
-    AssertJUnit.assertEquals(SortBehavior.SORTED, sr.getSortBehavior());
-    sr.addEntry(entry2, entry1);
-    entries = sr.getEntries().toArray(new LdapEntry[2]);
-    AssertJUnit.assertEquals(entry1, entries[0]);
-    AssertJUnit.assertEquals(entry2, entries[1]);
-    sr.clear();
-    AssertJUnit.assertEquals(0, sr.size());
-
-    // test create with one entry
-    sr = new SearchResult(entry1);
-    AssertJUnit.assertEquals(entry1, sr.getEntry());
-    AssertJUnit.assertEquals(entry1, sr.getEntry("uid=1"));
-    AssertJUnit.assertEquals(entry1, sr.getEntry("UID=1"));
-    AssertJUnit.assertEquals("uid=1", sr.getEntryDns()[0]);
-    AssertJUnit.assertEquals(1, sr.size());
-    AssertJUnit.assertEquals(sr, new SearchResult(entry1));
-    sr.clear();
-    AssertJUnit.assertEquals(0, sr.size());
-
-    // test create with two entries
-    sr = new SearchResult(entry2, entry1);
-    AssertJUnit.assertEquals(entry1, sr.getEntry("uid=1"));
-    AssertJUnit.assertEquals(entry2, sr.getEntry("UID=2"));
-    AssertJUnit.assertEquals(2, sr.getEntryDns().length);
-    AssertJUnit.assertEquals(2, sr.size());
-    AssertJUnit.assertEquals(sr, new SearchResult(entry1, entry2));
-    sr.removeEntry(entry2);
-    AssertJUnit.assertEquals(1, sr.size());
-    sr.clear();
-    AssertJUnit.assertEquals(0, sr.size());
-
-    // test create with collection
-    final Set<LdapEntry> s = new HashSet<>();
-    s.add(entry1);
-    sr = new SearchResult(s);
-    sr.addEntry(entry2);
-    AssertJUnit.assertEquals(entry1, sr.getEntry("UID=1"));
-    AssertJUnit.assertEquals(entry2, sr.getEntry("uid=2"));
-    AssertJUnit.assertEquals(2, sr.getEntryDns().length);
-    AssertJUnit.assertEquals(2, sr.size());
-    AssertJUnit.assertEquals(sr, new SearchResult(entry1, entry2));
-    sr.removeEntry("UID=1");
-    AssertJUnit.assertEquals(1, sr.size());
-    sr.clear();
-    AssertJUnit.assertEquals(0, sr.size());
-
-    // test sub results
-    sr = new SearchResult(SortBehavior.SORTED);
-    sr.addEntry(entry2, entry1);
-    AssertJUnit.assertEquals(0, sr.subResult(2, 2).size());
-    AssertJUnit.assertEquals(1, sr.subResult(1, 2).size());
-    AssertJUnit.assertEquals(2, sr.subResult(0, 2).size());
-    try {
-      sr.subResult(-1, 1);
-      AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
-    } catch (Exception e) {
-      AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
-    }
-    try {
-      sr.subResult(0, 3);
-      AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
-    } catch (Exception e) {
-      AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
-    }
-    try {
-      sr.subResult(1, 0);
-      AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
-    } catch (Exception e) {
-      AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
-    }
-  }
+  /** UTF-8 charset. */
+  private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
 
   /**
-   * Tests aspects of ldap entry.
-   *
-   * @throws  Exception  On test failure.
+   * Tests default sort behavior.
    */
   @Test(groups = {"bean"})
-  public void ldapEntry()
-    throws Exception
+  public void defaultSortBehavior()
   {
-    final LdapAttribute attr1 = new LdapAttribute("givenName", "John");
-    final LdapAttribute attr2 = new LdapAttribute("sn", "Doe");
-
-    // test default sort behavior
-    LdapEntry le = new LdapEntry("uid=1");
-    AssertJUnit.assertEquals(
-      SortBehavior.getDefaultSortBehavior(),
-      le.getSortBehavior());
-    AssertJUnit.assertEquals(0, le.size());
-    AssertJUnit.assertNull(le.getAttribute());
-    AssertJUnit.assertEquals("uid=1", le.getDn());
-    le.setDn("uid=2");
-    AssertJUnit.assertEquals("uid=2", le.getDn());
-    le.clear();
-    AssertJUnit.assertEquals(0, le.size());
-
-    // test ordered
-    le = new LdapEntry(SortBehavior.ORDERED);
-    AssertJUnit.assertEquals(SortBehavior.ORDERED, le.getSortBehavior());
-    le.addAttribute(attr2, attr1);
-
-    LdapAttribute[] attrs = le.getAttributes().toArray(new LdapAttribute[2]);
-    AssertJUnit.assertEquals(attr2, attrs[0]);
-    AssertJUnit.assertEquals(attr1, attrs[1]);
-    le.clear();
-    AssertJUnit.assertEquals(0, le.size());
-
-    // test sorted
-    le = new LdapEntry(SortBehavior.SORTED);
-    AssertJUnit.assertEquals(SortBehavior.SORTED, le.getSortBehavior());
-    le.addAttribute(attr2, attr1);
-    attrs = le.getAttributes().toArray(new LdapAttribute[2]);
-    AssertJUnit.assertEquals(attr1, attrs[0]);
-    AssertJUnit.assertEquals(attr2, attrs[1]);
-    le.clear();
-    AssertJUnit.assertEquals(0, le.size());
-
-    // test create with one entry
-    le = new LdapEntry("uid=1", attr1);
-    AssertJUnit.assertEquals(attr1, le.getAttribute());
-    AssertJUnit.assertEquals(attr1, le.getAttribute("givenName"));
-    AssertJUnit.assertEquals(attr1, le.getAttribute("givenname"));
-    AssertJUnit.assertEquals("givenName", le.getAttributeNames()[0]);
-    AssertJUnit.assertEquals(1, le.size());
-    AssertJUnit.assertEquals(le, new LdapEntry("uid=1", attr1));
-    le.clear();
-    AssertJUnit.assertEquals(0, le.size());
-
-    // test create with two entries
-    le = new LdapEntry("uid=1", attr2, attr1);
-    AssertJUnit.assertEquals(attr1, le.getAttribute("givenName"));
-    AssertJUnit.assertEquals(attr2, le.getAttribute("SN"));
-    AssertJUnit.assertEquals(2, le.getAttributeNames().length);
-    AssertJUnit.assertEquals(2, le.size());
-    AssertJUnit.assertEquals(le, new LdapEntry("uid=1", attr1, attr2));
-    le.removeAttribute(attr2);
-    AssertJUnit.assertEquals(1, le.size());
-    le.clear();
-    AssertJUnit.assertEquals(0, le.size());
-
-    // test create with collection
-    final Set<LdapAttribute> s = new HashSet<>();
-    s.add(attr1);
-    le = new LdapEntry("uid=1", s);
-    le.addAttribute(attr2);
-    AssertJUnit.assertEquals(attr1, le.getAttribute("GIVENNAME"));
-    AssertJUnit.assertEquals(attr2, le.getAttribute("sn"));
-    AssertJUnit.assertEquals(2, le.getAttributeNames().length);
-    AssertJUnit.assertEquals(2, le.size());
-    AssertJUnit.assertEquals(le, new LdapEntry("uid=1", attr1, attr2));
-    le.removeAttribute("GIVENNAME");
-    AssertJUnit.assertEquals(1, le.size());
-    le.clear();
-    AssertJUnit.assertEquals(0, le.size());
-  }
-
-
-  /**
-   * Tests aspects of ldap attribute.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(groups = {"bean"})
-  public void ldapAttribute()
-    throws Exception
-  {
-    // test default sort behavior
-    LdapAttribute la = new LdapAttribute("givenName");
+    final LdapAttribute la = new LdapAttribute("givenName");
     AssertJUnit.assertEquals(
       SortBehavior.getDefaultSortBehavior(),
       la.getSortBehavior());
@@ -236,30 +38,51 @@ public class LdapBeanTest
     AssertJUnit.assertEquals("sn", la.getName());
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+  }
 
-    // test ordered
-    la = new LdapAttribute(SortBehavior.ORDERED);
+
+  /**
+   * Tests ordered sort behavior.
+   */
+  @Test(groups = {"bean"})
+  public void orderedSortBehavior()
+  {
+    final LdapAttribute la = new LdapAttribute(SortBehavior.ORDERED);
     AssertJUnit.assertEquals(SortBehavior.ORDERED, la.getSortBehavior());
     la.addStringValue("William", "Bill");
 
-    String[] values = la.getStringValues().toArray(new String[2]);
+    final String[] values = la.getStringValues().toArray(new String[2]);
     AssertJUnit.assertEquals("William", values[0]);
     AssertJUnit.assertEquals("Bill", values[1]);
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+  }
 
-    // test sorted
-    la = new LdapAttribute(SortBehavior.SORTED);
+
+  /**
+   * Tests sorted sort behavior.
+   */
+  @Test(groups = {"bean"})
+  public void sortedSortBehavior()
+  {
+    final LdapAttribute la = new LdapAttribute(SortBehavior.SORTED);
     AssertJUnit.assertEquals(SortBehavior.SORTED, la.getSortBehavior());
     la.addStringValue("William", "Bill");
-    values = la.getStringValues().toArray(new String[2]);
+    final String[] values = la.getStringValues().toArray(new String[2]);
     AssertJUnit.assertEquals("Bill", values[0]);
     AssertJUnit.assertEquals("William", values[1]);
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+  }
 
-    // test create with one entry
-    la = new LdapAttribute("givenName", "William");
+
+  /**
+   * Tests create with one value.
+   */
+  @Test(groups = {"bean"})
+  public void createOne()
+  {
+    final LdapAttribute la = new LdapAttribute("givenName", "William");
     AssertJUnit.assertEquals("William", la.getStringValue());
     AssertJUnit.assertEquals(1, la.getStringValues().size());
     AssertJUnit.assertEquals("William", la.getStringValues().iterator().next());
@@ -281,9 +104,16 @@ public class LdapBeanTest
     }
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+  }
 
-    // test create with two entries
-    la = new LdapAttribute("givenName", "Bill", "William");
+
+  /**
+   * Tests create with two values.
+   */
+  @Test(groups = {"bean"})
+  public void createTwo()
+  {
+    final LdapAttribute la = new LdapAttribute("givenName", "Bill", "William");
     AssertJUnit.assertEquals(2, la.getStringValues().size());
     AssertJUnit.assertEquals(2, la.size());
     AssertJUnit.assertEquals(
@@ -293,12 +123,19 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(1, la.size());
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+  }
 
-    // test string value
-    la = new LdapAttribute("cn", "William Wallace");
+
+  /**
+   * Tests various string input.
+   */
+  @Test(groups = {"bean"})
+  public void stringValue()
+  {
+    final LdapAttribute la = new LdapAttribute("cn", "William Wallace");
     AssertJUnit.assertEquals("William Wallace", la.getStringValue());
     AssertJUnit.assertEquals(
-      "William Wallace".getBytes(Charset.forName("UTF-8")),
+      "William Wallace".getBytes(UTF8_CHARSET),
       la.getBinaryValue());
     AssertJUnit.assertEquals(1, la.getStringValues().size());
     AssertJUnit.assertEquals(1, la.getBinaryValues().size());
@@ -317,17 +154,24 @@ public class LdapBeanTest
     }
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+  }
 
-    // test string values
+
+  /**
+   * Tests multiple string input.
+   */
+  @Test(groups = {"bean"})
+  public void stringValues()
+  {
     final List<String> commonNames = new ArrayList<>();
     commonNames.add("Bill Wallace");
     commonNames.add("William Wallace");
 
     final List<byte[]> binaryCommonNames = new ArrayList<>();
-    binaryCommonNames.add("Bill Wallace".getBytes(Charset.forName("UTF-8")));
-    binaryCommonNames.add("William Wallace".getBytes(Charset.forName("UTF-8")));
+    binaryCommonNames.add("Bill Wallace".getBytes(UTF8_CHARSET));
+    binaryCommonNames.add("William Wallace".getBytes(UTF8_CHARSET));
 
-    la = new LdapAttribute(SortBehavior.UNORDERED);
+    LdapAttribute la = new LdapAttribute(SortBehavior.UNORDERED);
     la.setName("cn");
     la.addStringValue(commonNames.get(0));
     la.addStringValue(commonNames.get(1));
@@ -350,7 +194,7 @@ public class LdapBeanTest
       la.getStringValues().toArray(new String[2]));
     AssertJUnit.assertEquals(2, la.getStringValues().size());
     AssertJUnit.assertEquals(
-      "Bill Wallace".getBytes(Charset.forName("UTF-8")),
+      "Bill Wallace".getBytes(UTF8_CHARSET),
       la.getBinaryValue());
     AssertJUnit.assertArrayEquals(
       binaryCommonNames.toArray(new byte[2][0]),
@@ -369,7 +213,7 @@ public class LdapBeanTest
       la.getStringValues().toArray(new String[2]));
     AssertJUnit.assertEquals(2, la.getStringValues().size());
     AssertJUnit.assertEquals(
-      "Bill Wallace".getBytes(Charset.forName("UTF-8")),
+      "Bill Wallace".getBytes(UTF8_CHARSET),
       la.getBinaryValue());
     AssertJUnit.assertArrayEquals(
       binaryCommonNames.toArray(new byte[2][0]),
@@ -377,9 +221,16 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(2, la.getBinaryValues().size());
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+  }
 
-    // test binary value
-    la = new LdapAttribute("jpegPhoto", "image".getBytes());
+
+  /**
+   * Tests various binary input.
+   */
+  @Test(groups = {"bean"})
+  public void binaryValue()
+  {
+    final LdapAttribute la = new LdapAttribute("jpegPhoto", "image".getBytes());
     AssertJUnit.assertTrue(
       Arrays.equals("image".getBytes(), la.getBinaryValue()));
     AssertJUnit.assertEquals(1, la.getBinaryValues().size());
@@ -402,8 +253,15 @@ public class LdapBeanTest
     }
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+  }
 
-    // test binary values
+
+  /**
+   * Tests multiple string input.
+   */
+  @Test(groups = {"bean"})
+  public void binaryValues()
+  {
     final List<byte[]> jpegPhotos = new ArrayList<>();
     jpegPhotos.add("image1".getBytes());
     jpegPhotos.add("image2".getBytes());
@@ -412,7 +270,7 @@ public class LdapBeanTest
     stringJpegPhotos.add("aW1hZ2Ux");
     stringJpegPhotos.add("aW1hZ2Uy");
 
-    la = new LdapAttribute(SortBehavior.UNORDERED, true);
+    LdapAttribute la = new LdapAttribute(SortBehavior.UNORDERED, true);
     la.setName("jpegPhoto");
     la.addBinaryValue(jpegPhotos.get(0));
     la.addBinaryValue(jpegPhotos.get(1));
@@ -458,9 +316,16 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(2, la.getBinaryValues().size());
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
+  }
 
-    // test attribute options
-    la = new LdapAttribute("cn", "William Wallace");
+
+  /**
+   * Tests attribute options.
+   */
+  @Test(groups = {"bean"})
+  public void attributeOptions()
+  {
+    LdapAttribute la = new LdapAttribute("cn", "William Wallace");
     AssertJUnit.assertEquals("cn", la.getName());
     AssertJUnit.assertEquals("cn", la.getName(true));
     AssertJUnit.assertEquals("cn", la.getName(false));
@@ -483,35 +348,5 @@ public class LdapBeanTest
     AssertJUnit.assertEquals(2, la.getOptions().length);
     AssertJUnit.assertEquals("lang-lv", la.getOptions()[0]);
     AssertJUnit.assertEquals("dynamic", la.getOptions()[1]);
-  }
-
-
-  /**
-   * Test {@link LdapAttribute#escapeValue(String)}.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(groups = {"bean"})
-  public void ldapAttributeValueEscape()
-    throws Exception
-  {
-    AssertJUnit.assertEquals(
-      "James \\\"Jim\\\" Smith\\, III",
-      LdapAttribute.escapeValue("James \"Jim\" Smith, III"));
-    AssertJUnit.assertEquals(
-      "\\ William Wallace\\ ",
-      LdapAttribute.escapeValue(" William Wallace "));
-    AssertJUnit.assertEquals(
-      "Bill\\+Wallace  \\#2",
-      LdapAttribute.escapeValue("Bill+Wallace  #2"));
-    AssertJUnit.assertEquals(
-      "William\\;Bill \\<Wallace\\>",
-      LdapAttribute.escapeValue("William;Bill <Wallace>"));
-    AssertJUnit.assertEquals(
-      "William\\\\Bill Wallace\\,  ou\\=restricted",
-      LdapAttribute.escapeValue("William\\Bill Wallace,  ou=restricted"));
-    AssertJUnit.assertEquals(
-      "WilliÅm WallÅce",
-      LdapAttribute.escapeValue("WilliÅm WallÅce"));
   }
 }
