@@ -146,7 +146,7 @@ public class BinaryCustomObject implements CustomObject
   {
     // CheckStyle:MagicNumber OFF
     final Set<byte[]> s1 = new LinkedHashSet<>();
-    s1.add(new byte[] {0x22});
+    s1.add(new byte[] {0x22, 0x0F, 0x1F});
     s1.add(new byte[] {0x23});
 
     final T o1;
@@ -156,14 +156,18 @@ public class BinaryCustomObject implements CustomObject
       throw new IllegalStateException(e);
     }
     o1.setType1(new byte[] {0x01});
-    o1.writeType2(new byte[] {0x02});
-    o1.setType3(new byte[] {0x03});
-    o1.setTypeCol1(Arrays.asList(new byte[] {0x20}, new byte[] {0x21}));
-    o1.writeTypeCol2(Arrays.asList(new byte[] {0x20}, new byte[] {0x21}));
+    o1.writeType2(new byte[] {0x02, 0x0F});
+    o1.setType3(new byte[] {0x03, 0x0F, 0x1F});
+    o1.setTypeCol1(
+      Arrays.asList(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21}));
+    o1.writeTypeCol2(
+      Arrays.asList(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21}));
     o1.setTypeSet1(s1);
     o1.writeTypeSet2(s1);
-    o1.setTypeList1(Arrays.asList(new byte[] {0x24}, new byte[] {0x25}));
-    o1.writeTypeList2(Arrays.asList(new byte[] {0x24}, new byte[] {0x25}));
+    o1.setTypeList1(
+      Arrays.asList(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25}));
+    o1.writeTypeList2(
+      Arrays.asList(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25}));
 
     return o1;
     // CheckStyle:MagicNumber ON
@@ -182,37 +186,37 @@ public class BinaryCustomObject implements CustomObject
       SortBehavior.ORDERED,
       true);
     typeCol1.setName("typeCol1");
-    typeCol1.addBinaryValue(new byte[] {0x20}, new byte[] {0x21});
+    typeCol1.addBinaryValue(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
 
     final LdapAttribute typeCol2 = new LdapAttribute(
       SortBehavior.ORDERED,
       true);
     typeCol2.setName("typeCol2");
-    typeCol2.addBinaryValue(new byte[] {0x20}, new byte[] {0x21});
+    typeCol2.addBinaryValue(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
 
     final LdapAttribute typeSet1 = new LdapAttribute(
       SortBehavior.ORDERED,
       true);
     typeSet1.setName("typeSet1");
-    typeSet1.addBinaryValue(new byte[] {0x22}, new byte[] {0x23});
+    typeSet1.addBinaryValue(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
 
     final LdapAttribute typeSet2 = new LdapAttribute(
       SortBehavior.ORDERED,
       true);
     typeSet2.setName("typeSet2");
-    typeSet2.addBinaryValue(new byte[] {0x22}, new byte[] {0x23});
+    typeSet2.addBinaryValue(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
 
     final LdapAttribute typeList1 = new LdapAttribute(
       SortBehavior.ORDERED,
       true);
     typeList1.setName("typeList1");
-    typeList1.addBinaryValue(new byte[] {0x24}, new byte[] {0x25});
+    typeList1.addBinaryValue(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
 
     final LdapAttribute typeList2 = new LdapAttribute(
       SortBehavior.ORDERED,
       true);
     typeList2.setName("typeList2");
-    typeList2.addBinaryValue(new byte[] {0x24}, new byte[] {0x25});
+    typeList2.addBinaryValue(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=Binary Entry,ou=people,dc=ldaptive,dc=org");
@@ -223,8 +227,8 @@ public class BinaryCustomObject implements CustomObject
         new byte[] {0x44, 0x45, 0x46, 0x47},
         new byte[] {0x48, 0x49, 0x50, 0x51}),
       new LdapAttribute("type1", new byte[] {0x01}),
-      new LdapAttribute("type2", new byte[] {0x02}),
-      new LdapAttribute("binarythree", new byte[] {0x03}),
+      new LdapAttribute("type2", new byte[] {0x02, 0x0F}),
+      new LdapAttribute("binarythree", new byte[] {0x03, 0x0F, 0x1F}),
       typeCol1,
       typeCol2,
       typeSet1,

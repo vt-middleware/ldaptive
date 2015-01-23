@@ -125,7 +125,14 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
     Collection<T> values = null;
     final Object converted = expression.getValue(evaluationContext, object);
     if (converted != null) {
-      if (converted.getClass().isArray()) {
+      if (converted instanceof byte[] || converted instanceof char[]) {
+        values = createCollection(List.class, 1);
+
+        final T value = convertValue(converted, converted.getClass(), type);
+        if (value != null) {
+          values.add(value);
+        }
+      } else if (converted.getClass().isArray()) {
         final int length = Array.getLength(converted);
         values = createCollection(List.class, length);
         for (int i = 0; i < length; i++) {
@@ -248,7 +255,11 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
       }
       expression.setValue(evaluationContext, object, newValues);
     } else {
-      expression.setValue(evaluationContext, object, values);
+      if (values != null && values.size() == 1) {
+        expression.setValue(evaluationContext, object, values.iterator().next());
+      } else {
+        expression.setValue(evaluationContext, object, values);
+      }
     }
   }
 
