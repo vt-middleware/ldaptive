@@ -202,7 +202,8 @@ public class AggregateDnResolver implements DnResolver
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /** Labeled authentication handlers. */
-    private Map<String, AuthenticationHandler> authenticationHandlers;
+    private Map<String, org.ldaptive.auth.AuthenticationHandler>
+      authenticationHandlers;
 
 
     /** Default constructor. */
@@ -215,7 +216,7 @@ public class AggregateDnResolver implements DnResolver
      * @param  handlers  authentication handlers
      */
     public AuthenticationHandler(
-      final Map<String, AuthenticationHandler> handlers)
+      final Map<String, org.ldaptive.auth.AuthenticationHandler> handlers)
     {
       setAuthenticationHandlers(handlers);
     }
@@ -226,7 +227,8 @@ public class AggregateDnResolver implements DnResolver
      *
      * @return  map of label to authentication handler
      */
-    public Map<String, AuthenticationHandler> getAuthenticationHandlers()
+    public Map<String, org.ldaptive.auth.AuthenticationHandler>
+    getAuthenticationHandlers()
     {
       return Collections.unmodifiableMap(authenticationHandlers);
     }
@@ -238,7 +240,7 @@ public class AggregateDnResolver implements DnResolver
      * @param  handlers  to set
      */
     public void setAuthenticationHandlers(
-      final Map<String, AuthenticationHandler> handlers)
+      final Map<String, org.ldaptive.auth.AuthenticationHandler> handlers)
     {
       logger.trace("setting authenticationHandlers: {}", handlers);
       authenticationHandlers = handlers;
@@ -251,7 +253,8 @@ public class AggregateDnResolver implements DnResolver
       throws LdapException
     {
       final String[] labeledDn = criteria.getDn().split(":", 2);
-      final AuthenticationHandler ah = authenticationHandlers.get(labeledDn[0]);
+      final org.ldaptive.auth.AuthenticationHandler ah =
+        authenticationHandlers.get(labeledDn[0]);
       if (ah == null) {
         throw new LdapException(
           "Could not find authentication handler for label: " + labeledDn[0]);

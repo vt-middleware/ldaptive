@@ -318,8 +318,8 @@ public class AuthenticatorTest extends AbstractTest
     sr2.setUserFilterParameters(sr1.getUserFilterParameters());
 
     final Map<String, DnResolver> resolvers = new HashMap<>();
-    resolvers.put("resover1", sr1);
-    resolvers.put("resover2", sr2);
+    resolvers.put("resolver1", sr1);
+    resolvers.put("resolver2", sr2);
     final AggregateDnResolver resolver = new AggregateDnResolver(resolvers);
     auth.setDnResolver(resolver);
 
@@ -742,6 +742,112 @@ public class AuthenticatorTest extends AbstractTest
         user,
         new Credential(credential),
         returnAttrs.split("\\|")));
+    TestUtils.assertEquals(
+      TestUtils.convertLdifToResult(expected),
+      new SearchResult(response.getLdapEntry()));
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
+   * @param  returnAttrs  to search for.
+   * @param  ldifFile  to expect from the search.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "authenticateUser",
+      "authenticateCredential",
+      "authenticateReturnAttrs",
+      "authenticateResults"
+    }
+  )
+  @Test(groups = {"auth"})
+  public void authenticateAggregate(
+    final String user,
+    final String credential,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(true);
+    final SearchDnResolver sr1 = (SearchDnResolver) auth.getDnResolver();
+    final SearchDnResolver sr2 = new SearchDnResolver();
+    sr2.setAllowMultipleDns(sr1.getAllowMultipleDns());
+    sr2.setConnectionFactory(sr1.getConnectionFactory());
+    sr2.setBaseDn(sr1.getBaseDn());
+    sr2.setSubtreeSearch(sr1.getSubtreeSearch());
+    sr2.setUserFilter(sr1.getUserFilter());
+    sr2.setUserFilterParameters(sr1.getUserFilterParameters());
+
+    final Map<String, DnResolver> resolvers = new HashMap<>();
+    resolvers.put("system1", sr1);
+    resolvers.put("system2", sr2);
+    final AggregateDnResolver resolver = new AggregateDnResolver(resolvers);
+    auth.setDnResolver(resolver);
+
+    final Map<String, AuthenticationHandler> handlers = new HashMap<>();
+    handlers.put("system1", auth.getAuthenticationHandler());
+    handlers.put("system2", auth.getAuthenticationHandler());
+    final AggregateDnResolver.AuthenticationHandler handler = new AggregateDnResolver.AuthenticationHandler();
+    handler.setAuthenticationHandlers(handlers);
+    auth.setAuthenticationHandler(handler);
+
+    // test invalid user
+    AuthenticationResponse response = auth.authenticate(
+      new AuthenticationRequest("i-do-not-exist", new Credential(credential)));
+    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.DN_RESOLUTION_FAILURE,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertNull(response.getResultCode());
+    AssertJUnit.assertNotNull(response.getMessage());
+
+    // test multiple DNs
+    try {
+      auth.authenticate(
+        new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
+      AssertJUnit.fail("Should have thrown LdapException");
+    } catch (Exception e) {
+      AssertJUnit.assertEquals(LdapException.class, e.getClass());
+    }
+    resolver.setAllowMultipleDns(true);
+
+    // test failed auth with return attributes
+    response = auth.authenticate(
+      new AuthenticationRequest(
+        user,
+        new Credential(INVALID_PASSWD),
+        returnAttrs.split("\\|")));
+    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(
+      ResultCode.INVALID_CREDENTIALS, response.getResultCode());
+
+    response = auth.authenticate(
+      new AuthenticationRequest(user, new Credential(credential)));
+    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+
+    // test auth with return attributes
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    response = auth.authenticate(
+      new AuthenticationRequest(
+        user,
+        new Credential(credential),
+        returnAttrs.split("\\|")));
+    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     TestUtils.assertEquals(
       TestUtils.convertLdifToResult(expected),
       new SearchResult(response.getLdapEntry()));
