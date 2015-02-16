@@ -1119,9 +1119,9 @@ public class JndiConnection implements ProviderConnection
           search(ctx, request);
         } catch (LdapReferralException e) {
           if (
-            loopEx.getReferralInfo() != null &&
-              loopEx.getReferralInfo() instanceof String) {
-            urls.add((String) loopEx.getReferralInfo());
+            e.getReferralInfo() != null &&
+              e.getReferralInfo() instanceof String) {
+            urls.add((String) e.getReferralInfo());
           }
           loopEx = e;
         } catch (NamingException namingEx) {
