@@ -203,7 +203,7 @@ public class AggregateDnResolver implements DnResolver
 
     /** Labeled authentication handlers. */
     private Map<String, org.ldaptive.auth.AuthenticationHandler>
-      authenticationHandlers;
+    authenticationHandlers;
 
 
     /** Default constructor. */
