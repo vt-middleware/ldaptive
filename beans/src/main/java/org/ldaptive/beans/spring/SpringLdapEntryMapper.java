@@ -9,6 +9,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.expression.EvaluationContext;
+import org.springframework.expression.TypeConverter;
 import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.expression.spel.support.StandardTypeConverter;
 
@@ -20,18 +21,27 @@ import org.springframework.expression.spel.support.StandardTypeConverter;
 public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
 {
 
-  /** Custom converters for the spring conversion service. */
-  private Converter<?, ?>[] converters;
+  /** Type converter used by all contexts. */
+  private final TypeConverter typeConverter;
 
 
   /**
-   * Sets additional converters to add to the spring conversion service.
-   *
-   * @param  c  additional converters
+   * Default constructor.
    */
-  public void setConverters(final Converter<?, ?>... c)
+  public SpringLdapEntryMapper()
   {
-    converters = c;
+    this(null);
+  }
+
+
+  /**
+   * Creates a new spring ldap entry mapper.
+   *
+   * @param  c  additional converters to add to the spring conversion service.
+   */
+  public SpringLdapEntryMapper(final Converter<?, ?>... c)
+  {
+    typeConverter = createTypeConverter(c);
   }
 
 
@@ -55,6 +65,25 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
    */
   protected EvaluationContext createEvaluationContext(final Object object)
   {
+    final StandardEvaluationContext context = new StandardEvaluationContext(
+      object);
+    context.setTypeConverter(typeConverter);
+    return context;
+  }
+
+
+  /**
+   * Returns a type converter that is initialized with the supplied converters
+   * and any converters supplied by {@link
+   * #addDefaultConverters(GenericConversionService)}.
+   *
+   * @param  converters  to add to the conversion service
+   *
+   * @return  type converter
+   */
+  protected TypeConverter createTypeConverter(
+    final Converter<?, ?>... converters)
+  {
     final GenericConversionService conversionService =
       new GenericConversionService();
     DefaultConversionService.addDefaultConverters(conversionService);
@@ -64,11 +93,7 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
       }
     }
     addDefaultConverters(conversionService);
-
-    final StandardEvaluationContext context = new StandardEvaluationContext(
-      object);
-    context.setTypeConverter(new StandardTypeConverter(conversionService));
-    return context;
+    return new StandardTypeConverter(conversionService);
   }
 
 
