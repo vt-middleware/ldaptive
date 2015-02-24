@@ -5,6 +5,8 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 
 /**
+ * Factory for creating connections used by referrals.
+ *
  * @author  Middleware Services
  */
 public interface ReferralConnectionFactory

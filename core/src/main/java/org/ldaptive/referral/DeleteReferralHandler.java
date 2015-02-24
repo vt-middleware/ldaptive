@@ -8,7 +8,7 @@ import org.ldaptive.LdapURL;
 import org.ldaptive.Operation;
 
 /**
- * Provides handling of an ldap referral.
+ * Provides handling of an ldap referral for delete operations.
  *
  * @author  Middleware Services
  */

@@ -14,7 +14,9 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.handler.HandlerResult;
 
 /**
- * Provides handling of an ldap referral.
+ * Provides handling of an ldap referral for search operations. Injects a
+ * {@link org.ldaptive.handler.SearchReferenceHandler} so that both referrals
+ * and search references will be followed.
  *
  * @author  Middleware Services
  */

@@ -8,7 +8,7 @@ import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.Operation;
 
 /**
- * Provides handling of an ldap referral.
+ * Provides handling of an ldap referral for modify dn operations.
  *
  * @author  Middleware Services
  */

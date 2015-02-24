@@ -8,7 +8,7 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.Operation;
 
 /**
- * Provides handling of an ldap referral.
+ * Provides handling of an ldap referral for modify operations.
  *
  * @author  Middleware Services
  */
