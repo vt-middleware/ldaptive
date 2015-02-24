@@ -79,7 +79,7 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
       contextInit.setTrustManagers(
         new HostnameVerifyingTrustManager(
           new DefaultHostnameVerifier(),
-          ldapUrl.getHostnamesAsString()));
+          ldapUrl.getHostnames()));
     }
     return contextInit;
   }

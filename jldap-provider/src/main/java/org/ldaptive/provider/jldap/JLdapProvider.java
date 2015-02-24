@@ -140,7 +140,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     return
       TLSSocketFactory.getHostnameVerifierFactory(
         cc.getSslConfig(),
-        ldapUrl.getHostnamesAsString());
+        ldapUrl.getHostnames());
   }
 
 

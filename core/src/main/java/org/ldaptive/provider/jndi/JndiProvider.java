@@ -182,7 +182,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       factory = ThreadLocalTLSSocketFactory.getHostnameVerifierFactory(
         cc.getSslConfig(),
-        ldapUrl.getHostnamesAsString());
+        ldapUrl.getHostnames());
     }
     return
       new JndiConnectionFactory(

@@ -109,7 +109,7 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
       contextInit.setTrustManagers(
         new HostnameVerifyingTrustManager(
           new DefaultHostnameVerifier(),
-          ldapUrl.getHostnamesAsString()));
+          ldapUrl.getHostnames()));
     }
     try {
       sslContext = contextInit.initSSLContext("TLS");
@@ -134,7 +134,7 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
     return
       TLSSocketFactory.getHostnameVerifierFactory(
         cc.getSslConfig(),
-        ldapUrl.getHostnamesAsString());
+        ldapUrl.getHostnames());
   }
 
 

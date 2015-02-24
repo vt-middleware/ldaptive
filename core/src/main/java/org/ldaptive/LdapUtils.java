@@ -145,6 +145,68 @@ public final class LdapUtils
 
 
   /**
+   * Implementation of percent encoding as described in RFC 3986 section 2.1.
+   *
+   * @param  value  to encode
+   *
+   * @return  percent encoded value
+   */
+  public static String percentEncode(final String value)
+  {
+    if (value == null) {
+      return null;
+    }
+    final StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < value.length(); i++) {
+      final char ch = value.charAt(i);
+      // uppercase
+      if (ch >= 'A' && ch <= 'Z') {
+        sb.append(ch);
+      // lowercase
+      } else if (ch >= 'a' && ch <= 'z') {
+        sb.append(ch);
+      // digit
+      } else if (ch >= '0' && ch <= '9') {
+        sb.append(ch);
+      } else {
+        // unreserved and reserved
+        switch (ch) {
+
+        case '-':
+        case '.':
+        case '_':
+        case '~':
+        case '!':
+        case '$':
+        case '&':
+        case '\'':
+        case '(':
+        case ')':
+        case '*':
+        case '+':
+        case ',':
+        case ';':
+        case '=':
+          sb.append(ch);
+          break;
+
+        default:
+          sb.append("%");
+          // CheckStyle:MagicNumber OFF
+          if (ch <= 0x7F) {
+            sb.append(hexEncode(new byte[] {(byte) (ch & 0x7F)}));
+          } else {
+            sb.append(hexEncode(utf8Encode(String.valueOf(ch))));
+          }
+          // CheckStyle:MagicNumber ON
+        }
+      }
+    }
+    return sb.toString();
+  }
+
+
+  /**
    * This will decode the supplied value as a base64 encoded string to a byte[].
    * Returns null if the supplied string is null.
    *
@@ -169,6 +231,36 @@ public final class LdapUtils
   public static byte[] hexDecode(final char[] value)
   {
     return value != null ? Hex.decode(value) : null;
+  }
+
+
+  /**
+   * Implementation of percent decoding as described in RFC 3986 section 2.1.
+   *
+   * @param  value  to decode
+   *
+   * @return  percent decoded value
+   */
+  public static String percentDecode(final String value)
+  {
+    if (value == null || value.indexOf("%") == -1) {
+      return value;
+    }
+    final StringBuilder sb = new StringBuilder();
+    int pos = 0;
+    while (pos < value.length()) {
+      final char c = value.charAt(pos++);
+      if (c == '%') {
+        final char[] hex = new char[] {
+          value.charAt(pos++),
+          value.charAt(pos++),
+        };
+        sb.append(utf8Encode(hexDecode(hex)));
+      } else {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
   }
 
 
