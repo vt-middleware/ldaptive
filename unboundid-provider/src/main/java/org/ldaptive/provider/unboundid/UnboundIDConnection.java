@@ -182,12 +182,15 @@ public class UnboundIDConnection implements ProviderConnection
       } else {
         sbr = new SimpleBindRequest();
       }
-      sbr.setFollowReferrals(request.getFollowReferrals());
 
       final BindResult result = connection.bind(sbr);
       response = createResponse(request, null, result);
     } catch (LDAPException e) {
-      processLDAPException(request, e);
+      if (com.unboundid.ldap.sdk.ResultCode.REFERRAL == e.getResultCode()) {
+        response = createResponse(request, null, e.toLDAPResult());
+      } else {
+        processLDAPException(request, e);
+      }
     }
     return response;
   }
@@ -219,12 +222,15 @@ public class UnboundIDConnection implements ProviderConnection
           request.getDn(),
           request.getCredential().getBytes());
       }
-      sbr.setFollowReferrals(request.getFollowReferrals());
 
       final BindResult result = connection.bind(sbr);
       response = createResponse(request, null, result);
     } catch (LDAPException e) {
-      processLDAPException(request, e);
+      if (com.unboundid.ldap.sdk.ResultCode.REFERRAL == e.getResultCode()) {
+        response = createResponse(request, null, e.toLDAPResult());
+      } else {
+        processLDAPException(request, e);
+      }
     }
     return response;
   }
@@ -293,12 +299,14 @@ public class UnboundIDConnection implements ProviderConnection
           "Unknown SASL authentication mechanism: " + sc.getMechanism());
       }
 
-      sbr.setFollowReferrals(request.getFollowReferrals());
-
       final BindResult result = connection.bind(sbr);
       response = createResponse(request, null, result);
     } catch (LDAPException e) {
-      processLDAPException(request, e);
+      if (com.unboundid.ldap.sdk.ResultCode.REFERRAL == e.getResultCode()) {
+        response = createResponse(request, null, e.toLDAPResult());
+      } else {
+        processLDAPException(request, e);
+      }
     }
     return response;
   }
@@ -317,12 +325,15 @@ public class UnboundIDConnection implements ProviderConnection
           util.fromLdapAttributes(request.getLdapAttributes()),
           config.getControlProcessor().processRequestControls(
             request.getControls()));
-      ar.setFollowReferrals(request.getFollowReferrals());
 
       final LDAPResult result = connection.add(ar);
       response = createResponse(request, null, result);
     } catch (LDAPException e) {
-      processLDAPException(request, e);
+      if (com.unboundid.ldap.sdk.ResultCode.REFERRAL == e.getResultCode()) {
+        response = createResponse(request, null, e.toLDAPResult());
+      } else {
+        processLDAPException(request, e);
+      }
     }
     return response;
   }
@@ -350,12 +361,15 @@ public class UnboundIDConnection implements ProviderConnection
           config.getControlProcessor().processRequestControls(
             request.getControls()));
       }
-      cr.setFollowReferrals(request.getFollowReferrals());
 
       final CompareResult result = connection.compare(cr);
       response = createResponse(request, result.compareMatched(), result);
     } catch (LDAPException e) {
-      processLDAPException(request, e);
+      if (com.unboundid.ldap.sdk.ResultCode.REFERRAL == e.getResultCode()) {
+        response = createResponse(request, null, e.toLDAPResult());
+      } else {
+        processLDAPException(request, e);
+      }
     }
     return response;
   }
@@ -372,12 +386,15 @@ public class UnboundIDConnection implements ProviderConnection
           new DN(request.getDn()),
           config.getControlProcessor().processRequestControls(
             request.getControls()));
-      dr.setFollowReferrals(request.getFollowReferrals());
 
       final LDAPResult result = connection.delete(dr);
       response = createResponse(request, null, result);
     } catch (LDAPException e) {
-      processLDAPException(request, e);
+      if (com.unboundid.ldap.sdk.ResultCode.REFERRAL == e.getResultCode()) {
+        response = createResponse(request, null, e.toLDAPResult());
+      } else {
+        processLDAPException(request, e);
+      }
     }
     return response;
   }
@@ -396,12 +413,15 @@ public class UnboundIDConnection implements ProviderConnection
           bu.fromAttributeModification(request.getAttributeModifications()),
           config.getControlProcessor().processRequestControls(
             request.getControls()));
-      mr.setFollowReferrals(request.getFollowReferrals());
 
       final LDAPResult result = connection.modify(mr);
       response = createResponse(request, null, result);
     } catch (LDAPException e) {
-      processLDAPException(request, e);
+      if (com.unboundid.ldap.sdk.ResultCode.REFERRAL == e.getResultCode()) {
+        response = createResponse(request, null, e.toLDAPResult());
+      } else {
+        processLDAPException(request, e);
+      }
     }
     return response;
   }
@@ -423,12 +443,15 @@ public class UnboundIDConnection implements ProviderConnection
           newDn.getParent(),
           config.getControlProcessor().processRequestControls(
             request.getControls()));
-      mdr.setFollowReferrals(request.getFollowReferrals());
 
       final LDAPResult result = connection.modifyDN(mdr);
       response = createResponse(request, null, result);
     } catch (LDAPException e) {
-      processLDAPException(request, e);
+      if (com.unboundid.ldap.sdk.ResultCode.REFERRAL == e.getResultCode()) {
+        response = createResponse(request, null, e.toLDAPResult());
+      } else {
+        processLDAPException(request, e);
+      }
     }
     return response;
   }
@@ -486,7 +509,6 @@ public class UnboundIDConnection implements ProviderConnection
           config.getControlProcessor().processRequestControls(
             request.getControls()));
       }
-      er.setFollowReferrals(request.getFollowReferrals());
 
       final ExtendedResult result = connection.processExtendedOperation(er);
       final byte[] responseBerValue = result.getValue() != null
@@ -654,7 +676,7 @@ public class UnboundIDConnection implements ProviderConnection
             e.getEntryCount(),
             e.getReferenceCount(),
             e.getResponseControls()));
-        logger.debug("created response: {}", response);
+        logger.debug("created response from exception: {}", response);
       } catch (LDAPException e) {
         processLDAPException(sr, e);
       }
@@ -942,7 +964,6 @@ public class UnboundIDConnection implements ProviderConnection
           sr.getTypesOnly(),
           sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
           sr.getReturnAttributes());
-        req.setFollowReferrals(sr.getFollowReferrals());
         if (irListener != null) {
           req.setIntermediateResponseListener(irListener);
         }

@@ -6,6 +6,7 @@ import org.ldaptive.control.RequestControl;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.handler.SearchReferenceHandler;
+import org.ldaptive.referral.ReferralHandler;
 
 /**
  * Handles properties for {@link org.ldaptive.SearchRequest}.
@@ -37,6 +38,10 @@ public class SearchRequestPropertyInvoker extends AbstractPropertyInvoker
       } else if (RequestControl[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(
           RequestControl.class,
+          value);
+      } else if (ReferralHandler.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(
+          ReferralHandler.class,
           value);
       } else if (SearchEntryHandler[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(

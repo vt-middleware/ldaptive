@@ -174,7 +174,8 @@ public class MergeRequest extends AbstractRequest
     return
       String.format(
         "[%s@%d::ldapEntry=%s, deleteEntry=%s, searchAttributes=%s, " +
-        "includeAttributes=%s, excludeAttributes=%s, controls=%s]",
+        "includeAttributes=%s, excludeAttributes=%s, controls=%s, " +
+        "referralHandler=%s, intermediateResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         ldapEntry,
@@ -182,6 +183,8 @@ public class MergeRequest extends AbstractRequest
         Arrays.toString(searchAttrs),
         Arrays.toString(includeAttrs),
         Arrays.toString(excludeAttrs),
-        Arrays.toString(getControls()));
+        Arrays.toString(getControls()),
+        getReferralHandler(),
+        Arrays.toString(getIntermediateResponseHandlers()));
   }
 }

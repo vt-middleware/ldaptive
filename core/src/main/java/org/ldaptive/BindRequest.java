@@ -139,11 +139,14 @@ public class BindRequest extends AbstractRequest
   {
     return
       String.format(
-        "[%s@%d::bindDn=%s, saslConfig=%s, controls=%s]",
+        "[%s@%d::bindDn=%s, saslConfig=%s, controls=%s, referralHandler=%s, " +
+        "intermediateResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         bindDn,
         saslConfig,
-        Arrays.toString(getControls()));
+        Arrays.toString(getControls()),
+        getReferralHandler(),
+        Arrays.toString(getIntermediateResponseHandlers()));
   }
 }

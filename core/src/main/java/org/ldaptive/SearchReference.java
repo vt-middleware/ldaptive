@@ -25,6 +25,9 @@ public class SearchReference implements ResponseMessage
   /** message ID. */
   private final int messageId;
 
+  /** response from following the reference. */
+  private Response<SearchResult> referenceResponse;
+
 
   /**
    * Creates a search reference.
@@ -101,6 +104,28 @@ public class SearchReference implements ResponseMessage
   }
 
 
+  /**
+   * Returns the response from following the reference.
+   *
+   * @return  reference response or null.
+   */
+  public Response<SearchResult> getReferenceResponse()
+  {
+    return referenceResponse;
+  }
+
+
+  /**
+   * Sets the response from following the reference.
+   *
+   * @param  response  from following the reference
+   */
+  public void setReferenceResponse(final Response<SearchResult> response)
+  {
+    referenceResponse = response;
+  }
+
+
   @Override
   public int hashCode()
   {
@@ -118,11 +143,13 @@ public class SearchReference implements ResponseMessage
   {
     return
       String.format(
-        "[%s@%d::referralUrls=%s, responseControls=%s, messageId=%s]",
+        "[%s@%d::referralUrls=%s, responseControls=%s, " +
+        "messageId=%s, referenceResponse=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(referralUrls),
         Arrays.toString(responseControls),
-        messageId);
+        messageId,
+        referenceResponse);
   }
 }

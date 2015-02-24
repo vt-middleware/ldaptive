@@ -13,6 +13,7 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
+import org.ldaptive.referral.ReferralHandler;
 
 /**
  * Base implementation for search dn resolvers.
@@ -41,8 +42,8 @@ public abstract class AbstractSearchDnResolver
   /** How to handle aliases. */
   private DerefAliases derefAliases;
 
-  /** Whether to follow referrals. */
-  private boolean followReferrals;
+  /** Referral handler. */
+  private ReferralHandler referralHandler;
 
 
   /**
@@ -190,25 +191,25 @@ public abstract class AbstractSearchDnResolver
 
 
   /**
-   * Returns whether to follow referrals.
+   * Returns the referral handler.
    *
-   * @return  whether to follow referrals
+   * @return  referral handler
    */
-  public boolean getFollowReferrals()
+  public ReferralHandler getReferralHandler()
   {
-    return followReferrals;
+    return referralHandler;
   }
 
 
   /**
-   * Sets whether to follow referrals.
+   * Sets the referral handler.
    *
-   * @param  b  whether to follow referrals
+   * @param  handler  referral handler
    */
-  public void setFollowReferrals(final boolean b)
+  public void setReferralHandler(final ReferralHandler handler)
   {
-    logger.trace("setting followReferrals: {}", b);
-    followReferrals = b;
+    logger.trace("setting referralHandler: {}", handler);
+    referralHandler = handler;
   }
 
 
@@ -328,7 +329,7 @@ public abstract class AbstractSearchDnResolver
       request.setSearchScope(SearchScope.ONELEVEL);
     }
     request.setDerefAliases(derefAliases);
-    request.setFollowReferrals(followReferrals);
+    request.setReferralHandler(referralHandler);
     return request;
   }
 

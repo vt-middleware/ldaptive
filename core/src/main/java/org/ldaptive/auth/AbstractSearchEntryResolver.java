@@ -11,6 +11,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
 import org.ldaptive.handler.SearchEntryHandler;
+import org.ldaptive.referral.ReferralHandler;
 
 /**
  * Base implementation for search entry resolvers. Uses an object level search
@@ -42,8 +43,8 @@ public abstract class AbstractSearchEntryResolver
   /** How to handle aliases. */
   private DerefAliases derefAliases;
 
-  /** Whether to follow referrals. */
-  private boolean followReferrals;
+  /** Referral handler. */
+  private ReferralHandler referralHandler;
 
   /** Ldap entry handlers. */
   private SearchEntryHandler[] entryHandlers;
@@ -196,25 +197,25 @@ public abstract class AbstractSearchEntryResolver
 
 
   /**
-   * Returns whether to follow referrals.
+   * Returns the referral handler.
    *
-   * @return  whether to follow referrals
+   * @return  referral handler
    */
-  public boolean getFollowReferrals()
+  public ReferralHandler getReferralHandler()
   {
-    return followReferrals;
+    return referralHandler;
   }
 
 
   /**
-   * Sets whether to follow referrals.
+   * Sets the referral handler.
    *
-   * @param  b  whether to follow referrals
+   * @param  handler  referral handler
    */
-  public void setFollowReferrals(final boolean b)
+  public void setReferralHandler(final ReferralHandler handler)
   {
-    logger.trace("setting followReferrals: {}", b);
-    followReferrals = b;
+    logger.trace("setting referralHandler: {}", handler);
+    referralHandler = handler;
   }
 
 
@@ -314,7 +315,7 @@ public abstract class AbstractSearchEntryResolver
         ac.getAuthenticationRequest().getReturnAttributes());
     }
     request.setDerefAliases(derefAliases);
-    request.setFollowReferrals(followReferrals);
+    request.setReferralHandler(referralHandler);
     request.setSearchEntryHandlers(entryHandlers);
     return request;
   }

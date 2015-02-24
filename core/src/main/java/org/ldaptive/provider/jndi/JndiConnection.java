@@ -3,6 +3,7 @@ package org.ldaptive.provider.jndi;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -244,7 +245,12 @@ public class JndiConnection implements ProviderConnection
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
-      processNamingException(request, e, refUrls, context);
+      response = createResponse(
+        request,
+        null,
+        ResultCode.REFERRAL,
+        refUrls,
+        context);
     } catch (NamingException e) {
       processNamingException(request, e, null, context);
     }
@@ -281,7 +287,12 @@ public class JndiConnection implements ProviderConnection
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
-      processNamingException(request, e, refUrls, context);
+      response = createResponse(
+        request,
+        null,
+        ResultCode.REFERRAL,
+        refUrls,
+        context);
     } catch (NamingException e) {
       processNamingException(request, e, null, context);
     }
@@ -331,7 +342,12 @@ public class JndiConnection implements ProviderConnection
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
-      processNamingException(request, e, refUrls, context);
+      response = createResponse(
+        request,
+        null,
+        ResultCode.REFERRAL,
+        refUrls,
+        context);
     } catch (NamingException e) {
       processNamingException(request, e, null, context);
     }
@@ -362,7 +378,12 @@ public class JndiConnection implements ProviderConnection
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
-      processNamingException(request, e, refUrls, ctx);
+      response = createResponse(
+        request,
+        null,
+        ResultCode.REFERRAL,
+        refUrls,
+        ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -406,7 +427,12 @@ public class JndiConnection implements ProviderConnection
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
-      processNamingException(request, e, refUrls, ctx);
+      response = createResponse(
+        request,
+        null,
+        ResultCode.REFERRAL,
+        refUrls,
+        ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -433,7 +459,12 @@ public class JndiConnection implements ProviderConnection
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
-      processNamingException(request, e, refUrls, ctx);
+      response = createResponse(
+        request,
+        null,
+        ResultCode.REFERRAL,
+        refUrls,
+        ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -464,7 +495,12 @@ public class JndiConnection implements ProviderConnection
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
-      processNamingException(request, e, refUrls, ctx);
+      response = createResponse(
+        request,
+        null,
+        ResultCode.REFERRAL,
+        refUrls,
+        ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -496,7 +532,12 @@ public class JndiConnection implements ProviderConnection
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
-      processNamingException(request, e, refUrls, ctx);
+      response = createResponse(
+        request,
+        null,
+        ResultCode.REFERRAL,
+        refUrls,
+        ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -563,7 +604,12 @@ public class JndiConnection implements ProviderConnection
     } catch (ReferralException e) {
       final String[] refUrls = e.getReferralInfo() != null ?
         new String[] {(String) e.getReferralInfo()} : null;
-      processNamingException(request, e, refUrls, ctx);
+      response = createResponse(
+        request,
+        null,
+        ResultCode.REFERRAL,
+        refUrls,
+        ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -624,11 +670,7 @@ public class JndiConnection implements ProviderConnection
 
     // by default set referral behavior to throw, otherwise jndi will send the
     // ManageDsaIT control
-    if (request.getFollowReferrals()) {
-      ctx.addToEnvironment(REFERRAL, "follow");
-    } else {
-      ctx.addToEnvironment(REFERRAL, "throw");
-    }
+    ctx.addToEnvironment(REFERRAL, "throw");
     return ctx;
   }
 
@@ -657,44 +699,6 @@ public class JndiConnection implements ProviderConnection
         result,
         code,
         null,
-        null,
-        processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          ctx),
-        urls,
-        -1);
-  }
-
-
-  /**
-   * Creates an operation response with the supplied referral response data.
-   *
-   * @param  <T>  type of response
-   * @param  request  containing controls
-   * @param  result  of the operation
-   * @param  e  naming exception produced by the operation
-   * @param  urls  referral urls
-   * @param  ctx  ldap context
-   *
-   * @return  operation response
-   */
-  protected <T> Response<T> createResponse(
-    final Request request,
-    final T result,
-    final NamingException e,
-    final String[] urls,
-    final LdapContext ctx)
-  {
-    ResultCode rc = NamingExceptionUtils.getResultCode(e.getClass());
-    if (rc == null) {
-      rc = NamingExceptionUtils.getResultCode(e.getMessage());
-    }
-    return
-      new Response<>(
-        result,
-        rc,
-        e.getMessage(),
         null,
         processResponseControls(
           config.getControlProcessor(),
@@ -821,6 +825,9 @@ public class JndiConnection implements ProviderConnection
     /** Response result code. */
     private ResultCode responseResultCode;
 
+    /** Search reference URLs. */
+    private List<String> searchReferences;
+
     /** Ldap context to search with. */
     private LdapContext searchContext;
 
@@ -856,7 +863,12 @@ public class JndiConnection implements ProviderConnection
         results = search(searchContext, request);
       } catch (LdapReferralException e) {
         closeContext = true;
-        processNamingException(request, e, readReferralUrls(e), searchContext);
+        response = createResponse(
+          request,
+          null,
+          ResultCode.REFERRAL,
+          readReferralUrls(e),
+          searchContext);
       } catch (NamingException e) {
         closeContext = true;
         processNamingException(request, e, null, searchContext);
@@ -890,11 +902,7 @@ public class JndiConnection implements ProviderConnection
     {
       // by default set referral behavior to throw, otherwise jndi will send the
       // ManageDsaIT control
-      if (sr.getFollowReferrals()) {
-        ctx.addToEnvironment(REFERRAL, "follow");
-      } else {
-        ctx.addToEnvironment(REFERRAL, "throw");
-      }
+      ctx.addToEnvironment(REFERRAL, "throw");
       // by default set dereferencing aliases to never, jndi default is always
       if (sr.getDerefAliases() != null) {
         ctx.addToEnvironment(
@@ -1012,32 +1020,38 @@ public class JndiConnection implements ProviderConnection
       }
 
       boolean more = false;
-      try {
-        more = results.hasMore();
-        if (!more) {
+      if (searchReferences != null) {
+        more = true;
+      } else {
+        try {
+          more = results.hasMore();
+          if (!more) {
+            response = createResponse(
+              request,
+              null,
+              responseResultCode != null ? responseResultCode
+                : ResultCode.SUCCESS,
+              null,
+              searchContext);
+          }
+        } catch (LdapReferralException e) {
+          searchReferences = new ArrayList<>(
+            Arrays.asList(readReferralUrls(e)));
+          more = true;
+        } catch (NamingException e) {
+          final ResultCode ignoreRc = ignoreSearchException(
+            config.getSearchIgnoreResultCodes(),
+            e);
+          if (ignoreRc == null) {
+            processNamingException(request, e, null, searchContext);
+          }
           response = createResponse(
             request,
             null,
-            responseResultCode != null ? responseResultCode
-                                       : ResultCode.SUCCESS,
+            ignoreRc,
             null,
             searchContext);
         }
-      } catch (LdapReferralException e) {
-        response = createResponse(
-          request,
-          null,
-          ResultCode.SUCCESS,
-          readReferralUrls(e),
-          searchContext);
-      } catch (NamingException e) {
-        final ResultCode ignoreRc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(),
-          e);
-        if (ignoreRc == null) {
-          processNamingException(request, e, null, searchContext);
-        }
-        response = createResponse(request, null, ignoreRc, null, searchContext);
       }
       return more;
     }
@@ -1047,24 +1061,39 @@ public class JndiConnection implements ProviderConnection
     public SearchItem next()
       throws LdapException
     {
-      final JndiUtils bu = new JndiUtils(request.getSortBehavior());
       SearchItem item = null;
-      try {
-        final SearchResult result = results.next();
-        logger.trace("reading search result: {}", result);
-        result.setName(formatDn(result, getSearchDn(searchContext, request)));
-        item = new SearchItem(bu.toSearchEntry(result));
-      } catch (LdapReferralException e) {
-        item = new SearchItem(
-          new SearchReference(-1, null, readReferralUrls(e)));
-      } catch (NamingException e) {
-        final ResultCode ignoreRc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(),
-          e);
-        if (ignoreRc == null) {
-          processNamingException(request, e, null, searchContext);
+      if (searchReferences != null) {
+        if (!searchReferences.isEmpty()) {
+          item = new SearchItem(
+            new SearchReference(-1, null, searchReferences.remove(0)));
         }
-        responseResultCode = ignoreRc;
+        if (searchReferences.isEmpty()) {
+          response = createResponse(
+            request,
+            null,
+            ResultCode.SUCCESS,
+            null,
+            searchContext);
+        }
+      } else {
+        final JndiUtils bu = new JndiUtils(request.getSortBehavior());
+        try {
+          final SearchResult result = results.next();
+          logger.trace("reading search result: {}", result);
+          result.setName(formatDn(result, getSearchDn(searchContext, request)));
+          item = new SearchItem(bu.toSearchEntry(result));
+        } catch (LdapReferralException e) {
+          item = new SearchItem(
+            new SearchReference(-1, null, readReferralUrls(e)));
+        } catch (NamingException e) {
+          final ResultCode ignoreRc = ignoreSearchException(
+            config.getSearchIgnoreResultCodes(),
+            e);
+          if (ignoreRc == null) {
+            processNamingException(request, e, null, searchContext);
+          }
+          responseResultCode = ignoreRc;
+        }
       }
       return item;
     }
@@ -1099,7 +1128,8 @@ public class JndiConnection implements ProviderConnection
     /**
      * Reads all referral URLs associated with this exception by invoking the
      * search operation on the referral context until all referrals have been
-     * read.
+     * read. JNDI does not distinguish the URLs contained in specific
+     * references. So each URL must be treated as a separate search reference.
      *
      * @param  refEx  to read URLs from
      *

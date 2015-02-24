@@ -85,11 +85,14 @@ public class AddRequest extends AbstractRequest
   {
     return
       String.format(
-        "[%s@%d::createDn=%s, attributes=%s, controls=%s]",
+        "[%s@%d::createDn=%s, attributes=%s, controls=%s, " +
+        "referralHandler=%s, intermediateResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         createDn,
         attributes,
-        Arrays.toString(getControls()));
+        Arrays.toString(getControls()),
+        getReferralHandler(),
+        Arrays.toString(getIntermediateResponseHandlers()));
   }
 }

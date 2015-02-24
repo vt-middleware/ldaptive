@@ -162,7 +162,18 @@ public class SearchOperation
               request,
               sr);
             if (hr.getResult() != null) {
-              result.addReference(hr.getResult());
+              final SearchReference reference = hr.getResult();
+              final Response<SearchResult> refResponse =
+                reference.getReferenceResponse();
+              if (refResponse != null) {
+                if (refResponse.getResultCode() == ResultCode.SUCCESS) {
+                  result.addEntries(refResponse.getResult().getEntries());
+                } else {
+                  result.addReference(reference);
+                }
+              } else {
+                result.addReference(reference);
+              }
             }
             if (hr.getAbort()) {
               logger.debug("Aborting search on reference=%s", sr);

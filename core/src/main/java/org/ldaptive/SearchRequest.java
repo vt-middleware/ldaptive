@@ -469,7 +469,6 @@ public class SearchRequest extends AbstractRequest
     sr.setDerefAliases(request.getDerefAliases());
     sr.setSearchEntryHandlers(request.getSearchEntryHandlers());
     sr.setSearchReferenceHandlers(request.getSearchReferenceHandlers());
-    sr.setFollowReferrals(request.getFollowReferrals());
     sr.setReturnAttributes(request.getReturnAttributes());
     sr.setSearchFilter(request.getSearchFilter());
     sr.setSearchScope(request.getSearchScope());
@@ -478,6 +477,9 @@ public class SearchRequest extends AbstractRequest
     sr.setTimeLimit(request.getTimeLimit());
     sr.setTypesOnly(request.getTypesOnly());
     sr.setControls(request.getControls());
+    sr.setReferralHandler(request.getReferralHandler());
+    sr.setIntermediateResponseHandlers(
+      request.getIntermediateResponseHandlers());
     return sr;
   }
 
@@ -508,7 +510,7 @@ public class SearchRequest extends AbstractRequest
         timeLimit,
         typesOnly,
         getControls(),
-        getFollowReferrals(),
+        getReferralHandler(),
         getIntermediateResponseHandlers());
   }
 
@@ -522,7 +524,7 @@ public class SearchRequest extends AbstractRequest
         "searchScope=%s, timeLimit=%s, sizeLimit=%s, derefAliases=%s, " +
         "typesOnly=%s, binaryAttributes=%s, sortBehavior=%s, " +
         "searchEntryHandlers=%s, searchReferenceHandlers=%s, controls=%s, " +
-        "followReferrals=%s, intermediateResponseHandlers=%s]",
+        "referralHandler=%s, intermediateResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         baseDn,
@@ -538,7 +540,7 @@ public class SearchRequest extends AbstractRequest
         Arrays.toString(entryHandlers),
         Arrays.toString(referenceHandlers),
         Arrays.toString(getControls()),
-        getFollowReferrals(),
+        getReferralHandler(),
         Arrays.toString(getIntermediateResponseHandlers()));
   }
 }

@@ -145,11 +145,6 @@ public class ApacheLdapConnection implements ProviderConnection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
@@ -302,11 +297,6 @@ public class ApacheLdapConnection implements ProviderConnection
   public Response<Void> add(final AddRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response = null;
     try {
       final ApacheLdapUtils bu = new ApacheLdapUtils();
@@ -336,11 +326,6 @@ public class ApacheLdapConnection implements ProviderConnection
   public Response<Boolean> compare(final CompareRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Boolean> response = null;
     try {
       final CompareRequestImpl cri = new CompareRequestImpl();
@@ -373,11 +358,6 @@ public class ApacheLdapConnection implements ProviderConnection
   public Response<Void> delete(final DeleteRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response = null;
     try {
       final DeleteRequestImpl dri = new DeleteRequestImpl();
@@ -404,11 +384,6 @@ public class ApacheLdapConnection implements ProviderConnection
   public Response<Void> modify(final ModifyRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response = null;
     try {
       final ApacheLdapUtils bu = new ApacheLdapUtils();
@@ -441,11 +416,6 @@ public class ApacheLdapConnection implements ProviderConnection
   public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response = null;
     try {
       final Dn dn = new Dn(request.getDn());
@@ -477,11 +447,6 @@ public class ApacheLdapConnection implements ProviderConnection
   public SearchIterator search(final org.ldaptive.SearchRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     final ApacheLdapSearchIterator i = new ApacheLdapSearchIterator(request);
     i.initialize();
     return i;
@@ -494,11 +459,6 @@ public class ApacheLdapConnection implements ProviderConnection
     final SearchListener listener)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     final ApacheLdapSearchListener l = new ApacheLdapSearchListener(
       request,
       listener);
@@ -524,11 +484,6 @@ public class ApacheLdapConnection implements ProviderConnection
   public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<?> response = null;
     try {
       final ExtendedResponse apacheExtRes = connection.extended(
@@ -802,11 +757,6 @@ public class ApacheLdapConnection implements ProviderConnection
           throwOperationException(request, done);
 
           final LdapResult ldapResult = done.getLdapResult();
-          final Referral ref = ldapResult.getReferral();
-          if (ref != null && request.getFollowReferrals()) {
-            throw new UnsupportedOperationException(
-              "Referral following not supported");
-          }
           response = createResponse(request, null, done);
         }
       } catch (LdapOperationException e) {
@@ -833,10 +783,6 @@ public class ApacheLdapConnection implements ProviderConnection
         if (curRes instanceof SearchResultEntry) {
           si = processSearchResultEntry((SearchResultEntry) curRes);
         } else if (curRes instanceof SearchResultReference) {
-          if (request.getFollowReferrals()) {
-            throw new UnsupportedOperationException(
-              "Referral following not supported");
-          }
           si = processSearchResultReference((SearchResultReference) curRes);
         } else if (curRes instanceof IntermediateResponse) {
           si = processIntermediateResponse((IntermediateResponse) curRes);

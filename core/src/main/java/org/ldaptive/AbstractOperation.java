@@ -7,6 +7,7 @@ import org.ldaptive.handler.Handler;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.OperationExceptionHandler;
 import org.ldaptive.handler.OperationResponseHandler;
+import org.ldaptive.referral.ReferralHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,6 +145,21 @@ public abstract class AbstractOperation<Q extends Request, S>
         throw e;
       }
       response = hr.getResult();
+    }
+
+    if (ResultCode.REFERRAL == response.getResultCode()) {
+      @SuppressWarnings("unchecked")
+      final ReferralHandler<Q, S> handler = request.getReferralHandler();
+      if (handler != null) {
+        logger.debug(
+          "Encountered referral, invoking referral handler: {}",
+          handler);
+        final HandlerResult<Response<S>> hr = handler.handle(
+          connection,
+          request,
+          response);
+        response = hr.getResult();
+      }
     }
 
     // execute response handlers
