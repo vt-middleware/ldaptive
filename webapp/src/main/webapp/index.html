@@ -30,6 +30,9 @@
       //focus first input form field on page
       $("input:visible:enabled:first").focus();
     });
+    String.prototype.htmlEscape = function() {
+      return $('<div/>').text(this.toString()).html();
+    };
     function showResults(from, to) {
       if (cache != null && cache.length > 0) {
         var x = from - 1;
@@ -37,11 +40,11 @@
         var html = "";
         $.each(cache, function(index, value) {
           if (index >= x && index < y) {
-            var name = !value.displayName ? "" : value.displayName[0];
-            var title = !value.title ? "" : value.title[0];
-            var address = !value.postalAddress ? "" : value.postalAddress[0];
-            var mail = !value.mail ? "" : value.mail[0];
-            var phone = !value.telephoneNumber ? "" : value.telephoneNumber[0];
+            var name = !value.displayName ? "" : value.displayName[0].htmlEscape();
+            var title = !value.title ? "" : value.title[0].htmlEscape();
+            var address = !value.postalAddress ? "" : value.postalAddress[0].htmlEscape();
+            var mail = !value.mail ? "" : value.mail[0].htmlEscape();
+            var phone = !value.telephoneNumber ? "" : value.telephoneNumber[0].htmlEscape();
 
             html += "<tr>";
             html += "<td>"+name+"<br/><em>"+title+"</em></td>";
