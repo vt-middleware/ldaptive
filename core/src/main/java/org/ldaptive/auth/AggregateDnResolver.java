@@ -153,7 +153,13 @@ public class AggregateDnResolver implements DnResolver
           results.add(dn);
         }
       } catch (ExecutionException e) {
-        logger.debug("ExecutionException thrown, ignoring", e);
+        if (e.getCause() instanceof LdapException) {
+          throw (LdapException) e.getCause();
+        } else if (e.getCause() instanceof RuntimeException) {
+          throw (RuntimeException) e.getCause();
+        } else {
+          logger.warn("ExecutionException thrown, ignoring", e);
+        }
       } catch (InterruptedException e) {
         logger.warn("InterruptedException thrown, ignoring", e);
       }

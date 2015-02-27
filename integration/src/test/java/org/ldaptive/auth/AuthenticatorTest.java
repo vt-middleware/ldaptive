@@ -332,6 +332,9 @@ public class AuthenticatorTest extends AbstractTest
     try {
       auth.resolveDn(user);
       AssertJUnit.fail("Should have thrown LdapException");
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported by the provider
+      AssertJUnit.assertNotNull(e);
     } catch (Exception e) {
       AssertJUnit.assertEquals(LdapException.class, e.getClass());
     }
