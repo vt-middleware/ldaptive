@@ -38,6 +38,7 @@ import org.ldaptive.handler.SearchReferenceHandler;
 import org.ldaptive.io.GeneralizedTimeValueTranscoder;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.referral.SearchReferralHandler;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -1538,7 +1539,6 @@ public class SearchOperationTest extends AbstractTest
     request.setReturnAttributes(ReturnAttributes.NONE.value());
     request.setSearchFilter(new SearchFilter(filter));
 
-    request.setFollowReferrals(false);
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
@@ -1564,7 +1564,7 @@ public class SearchOperationTest extends AbstractTest
       conn.close();
     }
 
-    request.setFollowReferrals(true);
+    request.setReferralHandler(new SearchReferralHandler());
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
@@ -1633,7 +1633,6 @@ public class SearchOperationTest extends AbstractTest
       public void initializeRequest(final SearchRequest request) {}
     });
 
-    request.setFollowReferrals(false);
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
@@ -1667,7 +1666,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     refs.clear();
-    request.setFollowReferrals(true);
+    request.setReferralHandler(new SearchReferralHandler());
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
@@ -1748,7 +1747,6 @@ public class SearchOperationTest extends AbstractTest
       public void initializeRequest(final SearchRequest request) {}
     });
 
-    request.setFollowReferrals(false);
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
@@ -1781,7 +1779,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     refs.clear();
-    request.setFollowReferrals(true);
+    request.setReferralHandler(new SearchReferralHandler());
     try {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);

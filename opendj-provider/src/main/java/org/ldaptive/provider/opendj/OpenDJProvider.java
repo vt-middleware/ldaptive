@@ -72,7 +72,7 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
       contextInit.setTrustManagers(
         new HostnameVerifyingTrustManager(
           new DefaultHostnameVerifier(),
-          ldapUrl.getHostnamesAsString()));
+          ldapUrl.getHostnames()));
     }
     try {
       sslContext = contextInit.initSSLContext("TLS");

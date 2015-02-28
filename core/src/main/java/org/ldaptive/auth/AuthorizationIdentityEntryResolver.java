@@ -60,7 +60,7 @@ public class AuthorizationIdentityEntryResolver
       dn,
       ac.getAuthenticationRequest().getReturnAttributes());
     request.setDerefAliases(getDerefAliases());
-    request.setFollowReferrals(getFollowReferrals());
+    request.setReferralHandler(getReferralHandler());
     request.setSearchEntryHandlers(getSearchEntryHandlers());
     return request;
   }

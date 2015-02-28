@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.handler.IntermediateResponseHandler;
+import org.ldaptive.referral.ReferralHandler;
 
 /**
  * Marker interface for all ldap requests.
@@ -14,11 +15,11 @@ public interface Request extends Message<RequestControl>
 
 
   /**
-   * Returns whether to follow referrals.
+   * Returns the referral handler.
    *
-   * @return  whether to follow referrals
+   * @return  referral handler
    */
-  boolean getFollowReferrals();
+  ReferralHandler getReferralHandler();
 
 
   /**

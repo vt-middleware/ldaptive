@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.handler.IntermediateResponseHandler;
+import org.ldaptive.referral.ReferralHandler;
 
 /**
  * Contains the data common to all request objects.
@@ -15,8 +16,8 @@ public abstract class AbstractRequest implements Request
   /** Request controls. */
   private RequestControl[] controls;
 
-  /** Whether to follow referrals. */
-  private boolean followReferrals;
+  /** Referral handler. */
+  private ReferralHandler referralHandler;
 
   /** Intermediate response handlers. */
   private IntermediateResponseHandler[] intermediateResponseHandlers;
@@ -41,20 +42,24 @@ public abstract class AbstractRequest implements Request
 
 
   @Override
-  public boolean getFollowReferrals()
+  public ReferralHandler getReferralHandler()
   {
-    return followReferrals;
+    return referralHandler;
   }
 
 
   /**
-   * Sets whether to follow referrals.
+   * Sets the referral handler.
    *
-   * @param  b  whether to follow referrals
+   * @param  handler  referral handler
    */
-  public void setFollowReferrals(final boolean b)
+  @SuppressWarnings("unchecked")
+  public void setReferralHandler(final ReferralHandler handler)
   {
-    followReferrals = b;
+    if (handler != null) {
+      handler.initializeRequest(this);
+    }
+    referralHandler = handler;
   }
 
 

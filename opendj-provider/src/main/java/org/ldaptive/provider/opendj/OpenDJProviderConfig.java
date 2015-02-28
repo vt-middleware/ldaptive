@@ -31,6 +31,7 @@ public class OpenDJProviderConfig extends ProviderConfig<Control>
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
+      ResultCode.REFERRAL,
     };
   }
 

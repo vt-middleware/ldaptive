@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import org.ldaptive.referral.CompareReferralHandler;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -119,7 +120,6 @@ public class CompareOperationTest extends AbstractTest
       try {
         final CompareRequest request = new CompareRequest(
           referralDn, new LdapAttribute(attrName, attrValue));
-        request.setFollowReferrals(false);
         Response<Boolean> response = compare.execute(request);
         AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
         AssertJUnit.assertTrue(response.getReferralURLs().length > 0);
@@ -147,7 +147,7 @@ public class CompareOperationTest extends AbstractTest
       try {
         final CompareRequest request = new CompareRequest(
           referralDn, new LdapAttribute(attrName, attrValue));
-        request.setFollowReferrals(true);
+        request.setReferralHandler(new CompareReferralHandler());
         Response<Boolean> response = compare.execute(request);
         if (response.getResultCode() == ResultCode.COMPARE_TRUE) {
           AssertJUnit.assertTrue(response.getResult());

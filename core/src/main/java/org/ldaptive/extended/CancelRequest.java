@@ -81,10 +81,13 @@ public class CancelRequest extends AbstractRequest implements ExtendedRequest
   {
     return
       String.format(
-        "[%s@%d::messageId=%s, controls=%s]",
+        "[%s@%d::messageId=%s, controls=%s, referralHandler=%s, " +
+        "intermediateResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         messageId,
-        Arrays.toString(getControls()));
+        Arrays.toString(getControls()),
+        getReferralHandler(),
+        Arrays.toString(getIntermediateResponseHandlers()));
   }
 }

@@ -13,6 +13,7 @@ import org.forgerock.opendj.ldap.ErrorResultException;
 import org.forgerock.opendj.ldap.FutureResult;
 import org.forgerock.opendj.ldap.IntermediateResponseHandler;
 import org.forgerock.opendj.ldap.Modification;
+import org.forgerock.opendj.ldap.ReferralException;
 import org.forgerock.opendj.ldap.SearchResultHandler;
 import org.forgerock.opendj.ldap.SearchScope;
 import org.forgerock.opendj.ldap.controls.Control;
@@ -137,11 +138,6 @@ public class OpenDJConnection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
@@ -179,6 +175,8 @@ public class OpenDJConnection
 
       final BindResult result = connection.bind(sbr);
       response = createResponse(request, null, result);
+    } catch (ReferralException e) {
+      response = createResponse(request, null, e.getResult());
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
     }
@@ -213,6 +211,8 @@ public class OpenDJConnection
 
       final BindResult result = connection.bind(sbr);
       response = createResponse(request, null, result);
+    } catch (ReferralException e) {
+      response = createResponse(request, null, e.getResult());
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
     }
@@ -311,6 +311,8 @@ public class OpenDJConnection
     try {
       final BindResult result = connection.bind(sbr);
       response = createResponse(request, null, result);
+    } catch (ReferralException e) {
+      response = createResponse(request, null, e.getResult());
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
     }
@@ -354,11 +356,6 @@ public class OpenDJConnection
   public Response<Void> add(final AddRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response = null;
     try {
       final OpenDJUtils util = new OpenDJUtils();
@@ -376,6 +373,8 @@ public class OpenDJConnection
 
       final Result result = connection.add(ar);
       response = createResponse(request, null, result);
+    } catch (ReferralException e) {
+      response = createResponse(request, null, e.getResult());
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
     }
@@ -387,11 +386,6 @@ public class OpenDJConnection
   public Response<Boolean> compare(final CompareRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Boolean> response = null;
     try {
       final OpenDJUtils util = new OpenDJUtils();
@@ -417,6 +411,8 @@ public class OpenDJConnection
 
       final CompareResult result = connection.compare(cr);
       response = createResponse(request, result.matched(), result);
+    } catch (ReferralException e) {
+      response = createResponse(request, null, e.getResult());
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
     }
@@ -428,11 +424,6 @@ public class OpenDJConnection
   public Response<Void> delete(final DeleteRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response = null;
     try {
       final org.forgerock.opendj.ldap.requests.DeleteRequest dr =
@@ -447,6 +438,8 @@ public class OpenDJConnection
 
       final Result result = connection.delete(dr);
       response = createResponse(request, null, result);
+    } catch (ReferralException e) {
+      response = createResponse(request, null, e.getResult());
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
     }
@@ -458,11 +451,6 @@ public class OpenDJConnection
   public Response<Void> modify(final ModifyRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response = null;
     try {
       final OpenDJUtils util = new OpenDJUtils();
@@ -483,6 +471,8 @@ public class OpenDJConnection
 
       final Result result = connection.modify(mr);
       response = createResponse(request, null, result);
+    } catch (ReferralException e) {
+      response = createResponse(request, null, e.getResult());
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
     }
@@ -494,11 +484,6 @@ public class OpenDJConnection
   public Response<Void> modifyDn(final ModifyDnRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<Void> response = null;
     try {
       final org.forgerock.opendj.ldap.requests.ModifyDNRequest mdr =
@@ -514,6 +499,8 @@ public class OpenDJConnection
 
       final Result result = connection.modifyDN(mdr);
       response = createResponse(request, null, result);
+    } catch (ReferralException e) {
+      response = createResponse(request, null, e.getResult());
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
     }
@@ -525,11 +512,6 @@ public class OpenDJConnection
   public SearchIterator search(final org.ldaptive.SearchRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     final OpenDJSearchIterator i = new OpenDJSearchIterator(request);
     i.initialize();
     return i;
@@ -542,11 +524,6 @@ public class OpenDJConnection
     final SearchListener listener)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     final OpenDJAsyncSearchListener l = new OpenDJAsyncSearchListener(
       request,
       listener);
@@ -575,11 +552,6 @@ public class OpenDJConnection
   public Response<?> extendedOperation(final ExtendedRequest request)
     throws LdapException
   {
-    if (request.getFollowReferrals()) {
-      throw new UnsupportedOperationException(
-        "Referral following not supported");
-    }
-
     Response<?> response = null;
     try {
       GenericExtendedRequest er;
@@ -1158,11 +1130,6 @@ public class OpenDJConnection
       final SearchResultReference ref)
     {
       logger.trace("reading search reference: {}", ref);
-      if (request.getFollowReferrals()) {
-        throw new UnsupportedOperationException(
-          "Referral following not supported");
-      }
-
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().size() > 0) {
         final List<Control> ctls = ref.getControls();

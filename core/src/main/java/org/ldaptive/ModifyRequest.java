@@ -84,11 +84,14 @@ public class ModifyRequest extends AbstractRequest
   {
     return
       String.format(
-        "[%s@%d::modifyDn=%s, attrMods=%s, controls=%s]",
+        "[%s@%d::modifyDn=%s, attrMods=%s, controls=%s, referralHandler=%s, " +
+        "intermediateResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         modifyDn,
         Arrays.toString(attrMods),
-        Arrays.toString(getControls()));
+        Arrays.toString(getControls()),
+        getReferralHandler(),
+        Arrays.toString(getIntermediateResponseHandlers()));
   }
 }

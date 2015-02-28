@@ -109,12 +109,15 @@ public class ModifyDnRequest extends AbstractRequest
   {
     return
       String.format(
-        "[%s@%d::oldModifyDn=%s, newModifyDn=%s, deleteOldRDn=%s, controls=%s]",
+        "[%s@%d::oldModifyDn=%s, newModifyDn=%s, deleteOldRDn=%s, " +
+        "controls=%s, referralHandler=%s, intermediateResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         oldModifyDn,
         newModifyDn,
         deleteOldRDn,
-        Arrays.toString(getControls()));
+        Arrays.toString(getControls()),
+        getReferralHandler(),
+        Arrays.toString(getIntermediateResponseHandlers()));
   }
 }

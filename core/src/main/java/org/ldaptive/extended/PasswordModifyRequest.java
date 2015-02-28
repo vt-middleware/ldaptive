@@ -173,10 +173,13 @@ public class PasswordModifyRequest extends AbstractRequest
   {
     return
       String.format(
-        "[%s@%d::userIdentity=%s, controls=%s]",
+        "[%s@%d::userIdentity=%s, controls=%s, referralHandler=%s, " +
+        "intermediateResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         userIdentity,
-        Arrays.toString(getControls()));
+        Arrays.toString(getControls()),
+        getReferralHandler(),
+        Arrays.toString(getIntermediateResponseHandlers()));
   }
 }

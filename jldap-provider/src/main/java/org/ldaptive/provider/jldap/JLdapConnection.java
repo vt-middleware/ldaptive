@@ -455,7 +455,6 @@ public class JLdapConnection implements ProviderConnection
         config.getControlProcessor().processRequestControls(
           request.getControls()));
     }
-    constraints.setReferralFollowing(request.getFollowReferrals());
     return constraints;
   }
 
@@ -911,7 +910,6 @@ public class JLdapConnection implements ProviderConnection
           constraints.setDereference(LDAPSearchConstraints.DEREF_SEARCHING);
         }
       }
-      constraints.setReferralFollowing(sr.getFollowReferrals());
       return constraints;
     }
 
