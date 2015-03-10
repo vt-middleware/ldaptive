@@ -12,8 +12,7 @@ import org.ldaptive.asn1.DEREncoder;
 import org.ldaptive.asn1.UniversalDERTag;
 
 /**
- * Contains the data required to perform an ldap password modify operation. See
- * RFC 3062. Request is defined as:
+ * Contains the data required to perform an ldap password modify operation. See RFC 3062. Request is defined as:
  *
  * <pre>
    PasswdModifyRequestValue ::= SEQUENCE {
@@ -24,8 +23,7 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class PasswordModifyRequest extends AbstractRequest
-  implements ExtendedRequest
+public class PasswordModifyRequest extends AbstractRequest implements ExtendedRequest
 {
 
   /** OID of this extended request. */
@@ -63,10 +61,7 @@ public class PasswordModifyRequest extends AbstractRequest
    * @param  oldPass  current password for the dn
    * @param  newPass  desired password for the dn
    */
-  public PasswordModifyRequest(
-    final String identity,
-    final Credential oldPass,
-    final Credential newPass)
+  public PasswordModifyRequest(final String identity, final Credential oldPass, final Credential newPass)
   {
     setUserIdentity(identity);
     setOldPassword(oldPass);

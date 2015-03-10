@@ -122,13 +122,9 @@ public class LdifReader implements SearchResultReader
                 ldapEntry.addAttribute(ldapAttr);
               }
               if (isBinary) {
-                ldapAttr.addValue(
-                  new ByteArrayValueTranscoder(),
-                  LdapUtils.base64Decode(attrValue));
+                ldapAttr.addValue(new ByteArrayValueTranscoder(), LdapUtils.base64Decode(attrValue));
               } else if (isUrl) {
-                ldapAttr.addValue(
-                  new ByteArrayValueTranscoder(),
-                  LdapUtils.readURL(new URL(attrValue)));
+                ldapAttr.addValue(new ByteArrayValueTranscoder(), LdapUtils.readURL(new URL(attrValue)));
               } else {
                 ldapAttr.addValue(new StringValueTranscoder(), attrValue);
               }

@@ -29,12 +29,10 @@ public abstract class AbstractSearchExecutor extends SearchRequest
   private final ExecutorService service;
 
   /** Handler to handle search exceptions. */
-  private OperationExceptionHandler<SearchRequest, SearchResult>
-  searchExceptionHandler;
+  private OperationExceptionHandler<SearchRequest, SearchResult> searchExceptionHandler;
 
   /** Handlers to handle search responses. */
-  private OperationResponseHandler<SearchRequest, SearchResult>[]
-  searchResponseHandlers;
+  private OperationResponseHandler<SearchRequest, SearchResult>[] searchResponseHandlers;
 
   /** Cache to use when performing searches. */
   private Cache<SearchRequest> searchCache;
@@ -70,8 +68,7 @@ public abstract class AbstractSearchExecutor extends SearchRequest
    *
    * @return  search exception handler
    */
-  public OperationExceptionHandler<SearchRequest, SearchResult>
-  getSearchExceptionHandler()
+  public OperationExceptionHandler<SearchRequest, SearchResult> getSearchExceptionHandler()
   {
     return searchExceptionHandler;
   }
@@ -82,8 +79,7 @@ public abstract class AbstractSearchExecutor extends SearchRequest
    *
    * @param  handler  search exception handler
    */
-  public void setSearchExceptionHandler(
-    final OperationExceptionHandler<SearchRequest, SearchResult> handler)
+  public void setSearchExceptionHandler(final OperationExceptionHandler<SearchRequest, SearchResult> handler)
   {
     searchExceptionHandler = handler;
   }
@@ -94,8 +90,7 @@ public abstract class AbstractSearchExecutor extends SearchRequest
    *
    * @return  search response handlers
    */
-  public OperationResponseHandler<SearchRequest, SearchResult>[]
-  getSearchResponseHandlers()
+  public OperationResponseHandler<SearchRequest, SearchResult>[] getSearchResponseHandlers()
   {
     return searchResponseHandlers;
   }
@@ -107,8 +102,7 @@ public abstract class AbstractSearchExecutor extends SearchRequest
    * @param  handlers  search response handlers
    */
   @SuppressWarnings("unchecked")
-  public void setSearchResponseHandlers(
-    final OperationResponseHandler<SearchRequest, SearchResult>... handlers)
+  public void setSearchResponseHandlers(final OperationResponseHandler<SearchRequest, SearchResult>... handlers)
   {
     searchResponseHandlers = handlers;
   }
@@ -136,9 +130,7 @@ public abstract class AbstractSearchExecutor extends SearchRequest
   }
 
 
-  /**
-   * Shuts down the executor service. See {@link ExecutorService#shutdown()}.
-   */
+  /** Shuts down the executor service. See {@link ExecutorService#shutdown()}. */
   public void shutdown()
   {
     service.shutdown();
@@ -146,8 +138,7 @@ public abstract class AbstractSearchExecutor extends SearchRequest
 
 
   /**
-   * Immediately shuts down the executor service. See {@link
-   * ExecutorService#shutdownNow()}.
+   * Immediately shuts down the executor service. See {@link ExecutorService#shutdownNow()}.
    *
    * @return  list of tasks that never executed
    */
@@ -158,8 +149,7 @@ public abstract class AbstractSearchExecutor extends SearchRequest
 
 
   /**
-   * Creates a new search operation configured with the properties on this
-   * search executor.
+   * Creates a new search operation configured with the properties on this search executor.
    *
    * @param  conn  to pass to the search operation
    *

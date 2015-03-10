@@ -14,8 +14,7 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * Returns the connection config for this connection. The config may be
-   * read-only.
+   * Returns the connection config for this connection. The config may be read-only.
    *
    * @return  connection config
    */
@@ -23,11 +22,10 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * This will establish a connection to the LDAP. This connection should be
-   * closed using {@link #close()}.
+   * This will establish a connection to the LDAP. This connection should be closed using {@link #close()}.
    *
-   * @return  response associated with the {@link ConnectionInitializer} or an
-   * empty response if no connection initializer was configured
+   * @return  response associated with the {@link ConnectionInitializer} or an empty response if no connection
+   *          initializer was configured
    *
    * @throws  IllegalStateException  if the connection is already open
    * @throws  LdapException  if the LDAP cannot be reached
@@ -37,8 +35,8 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * This will establish a connection to the LDAP using the supplied bind
-   * request. This connection should be closed using {@link #close()}.
+   * This will establish a connection to the LDAP using the supplied bind request. This connection should be closed
+   * using {@link #close()}.
    *
    * @param  request  containing bind information
    *
@@ -52,9 +50,8 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * Returns whether {@link #open(BindRequest)} was successfully invoked on this
-   * connection and {@link #close()} has not been invoked. This method does not
-   * indicate the viability of this connection for use.
+   * Returns whether {@link #open(BindRequest)} was successfully invoked on this connection and {@link #close()} has not
+   * been invoked. This method does not indicate the viability of this connection for use.
    *
    * @return  whether this connection is open
    */
@@ -62,8 +59,8 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * Returns the provider connection to invoke the provider specific
-   * implementation. Must be called after a successful call to {@link #open()}.
+   * Returns the provider connection to invoke the provider specific implementation. Must be called after a successful
+   * call to {@link #open()}.
    *
    * @return  provider connection
    */
@@ -83,11 +80,10 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * This will close an existing connection to the LDAP and establish a new
-   * connection to the LDAP.
+   * This will close an existing connection to the LDAP and establish a new connection to the LDAP.
    *
-   * @return  response associated with the {@link ConnectionInitializer} or an
-   * empty response if no connection initializer was configured
+   * @return  response associated with the {@link ConnectionInitializer} or an empty response if no connection
+   *          initializer was configured
    *
    * @throws  LdapException  if the LDAP cannot be reached
    */
@@ -96,8 +92,8 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * This will close an existing connection to the LDAP and establish a new
-   * connection to the LDAP using the supplied bind request.
+   * This will close an existing connection to the LDAP and establish a new connection to the LDAP using the supplied
+   * bind request.
    *
    * @param  request  containing bind information
    *

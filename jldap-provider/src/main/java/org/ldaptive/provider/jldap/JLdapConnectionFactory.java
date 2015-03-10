@@ -10,8 +10,7 @@ import com.novell.ldap.LDAPException;
  *
  * @author  Middleware Services
  */
-public class JLdapConnectionFactory
-  extends AbstractJLdapConnectionFactory<JLdapConnection>
+public class JLdapConnectionFactory extends AbstractJLdapConnectionFactory<JLdapConnection>
 {
 
 
@@ -42,9 +41,7 @@ public class JLdapConnectionFactory
 
 
   @Override
-  protected JLdapConnection createJLdapConnection(
-    final LDAPConnection conn,
-    final JLdapProviderConfig config)
+  protected JLdapConnection createJLdapConnection(final LDAPConnection conn, final JLdapProviderConfig config)
   {
     return new JLdapConnection(conn, config);
   }

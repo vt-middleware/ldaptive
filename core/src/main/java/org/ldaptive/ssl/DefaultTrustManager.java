@@ -15,8 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Loads the trust managers from the default {@link TrustManagerFactory} and
- * delegates to those.
+ * Loads the trust managers from the default {@link TrustManagerFactory} and delegates to those.
  *
  * @author  Middleware Services
  */
@@ -34,8 +33,7 @@ public class DefaultTrustManager implements X509TrustManager
   public DefaultTrustManager()
   {
     try {
-      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-        TrustManagerFactory.getDefaultAlgorithm());
+      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
       tmf.init((KeyStore) null);
 
       final TrustManager[] tm = tmf.getTrustManagers();
@@ -50,9 +48,7 @@ public class DefaultTrustManager implements X509TrustManager
 
 
   @Override
-  public void checkClientTrusted(
-    final X509Certificate[] chain,
-    final String authType)
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
     for (X509TrustManager tm : trustManagers) {
@@ -63,9 +59,7 @@ public class DefaultTrustManager implements X509TrustManager
 
 
   @Override
-  public void checkServerTrusted(
-    final X509Certificate[] chain,
-    final String authType)
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
     for (X509TrustManager tm : trustManagers) {

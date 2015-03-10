@@ -7,23 +7,19 @@ import java.util.Set;
 import org.ldaptive.SearchRequest;
 
 /**
- * Reads properties specific to {@link SearchRequest} and returns an initialized
- * object of that type.
+ * Reads properties specific to {@link SearchRequest} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class SearchRequestPropertySource
-  extends AbstractPropertySource<SearchRequest>
+public final class SearchRequestPropertySource extends AbstractPropertySource<SearchRequest>
 {
 
   /** Invoker for search request. */
-  private static final SearchRequestPropertyInvoker INVOKER =
-    new SearchRequestPropertyInvoker(SearchRequest.class);
+  private static final SearchRequestPropertyInvoker INVOKER = new SearchRequestPropertyInvoker(SearchRequest.class);
 
 
   /**
-   * Creates a new search request property source using the default properties
-   * file.
+   * Creates a new search request property source using the default properties file.
    *
    * @param  request  search request to invoke properties on
    */
@@ -39,9 +35,7 @@ public final class SearchRequestPropertySource
    * @param  request  search request to invoke properties on
    * @param  paths  to read properties from
    */
-  public SearchRequestPropertySource(
-    final SearchRequest request,
-    final String... paths)
+  public SearchRequestPropertySource(final SearchRequest request, final String... paths)
   {
     this(request, loadProperties(paths));
   }
@@ -53,9 +47,7 @@ public final class SearchRequestPropertySource
    * @param  request  search request to invoke properties on
    * @param  readers  to read properties from
    */
-  public SearchRequestPropertySource(
-    final SearchRequest request,
-    final Reader... readers)
+  public SearchRequestPropertySource(final SearchRequest request, final Reader... readers)
   {
     this(request, loadProperties(readers));
   }
@@ -67,9 +59,7 @@ public final class SearchRequestPropertySource
    * @param  request  search request to invoke properties on
    * @param  props  to read properties from
    */
-  public SearchRequestPropertySource(
-    final SearchRequest request,
-    final Properties props)
+  public SearchRequestPropertySource(final SearchRequest request, final Properties props)
   {
     this(request, PropertyDomain.LDAP, props);
   }
@@ -82,10 +72,7 @@ public final class SearchRequestPropertySource
    * @param  domain  that properties are in
    * @param  props  to read properties from
    */
-  public SearchRequestPropertySource(
-    final SearchRequest request,
-    final PropertyDomain domain,
-    final Properties props)
+  public SearchRequestPropertySource(final SearchRequest request, final PropertyDomain domain, final Properties props)
   {
     super(request, domain, props);
   }

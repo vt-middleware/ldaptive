@@ -22,8 +22,7 @@ public interface ResponseListener
 
 
   /**
-   * Invoked when a response is received from a provider indicating the
-   * operation has completed.
+   * Invoked when a response is received from a provider indicating the operation has completed.
    *
    * @param  response  containing the result
    */
@@ -31,8 +30,7 @@ public interface ResponseListener
 
 
   /**
-   * Invoked when an exception is thrown from a provider indicating the
-   * operation cannot be completed.
+   * Invoked when an exception is thrown from a provider indicating the operation cannot be completed.
    *
    * @param  exception  thrown from the async operation
    */

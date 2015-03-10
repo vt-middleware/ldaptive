@@ -25,8 +25,7 @@ public class Schema
   private Collection<DITContentRule> ditContentRules = Collections.emptySet();
 
   /** DIT structure rules. */
-  private Collection<DITStructureRule> ditStructureRules =
-    Collections.emptySet();
+  private Collection<DITStructureRule> ditStructureRules = Collections.emptySet();
 
   /** Syntaxes. */
   private Collection<Syntax> syntaxes = Collections.emptySet();
@@ -124,9 +123,8 @@ public class Schema
 
 
   /**
-   * Returns the attribute names in this schema that represent binary data. This
-   * includes attributes with a syntax OID of '1.3.6.1.4.1.1466.115.121.1.5' and
-   * any syntax with the 'X-NOT-HUMAN-READABLE' extension.
+   * Returns the attribute names in this schema that represent binary data. This includes attributes with a syntax OID
+   * of '1.3.6.1.4.1.1466.115.121.1.5' and any syntax with the 'X-NOT-HUMAN-READABLE' extension.
    *
    * @return  binary attribute names
    */
@@ -140,8 +138,7 @@ public class Schema
         isBinary = true;
       } else {
         final Syntax syntax = getSyntax(syntaxOid);
-        if (syntax != null &&
-            Syntax.containsBooleanExtension(syntax, "X-NOT-HUMAN-READABLE")) {
+        if (syntax != null && Syntax.containsBooleanExtension(syntax, "X-NOT-HUMAN-READABLE")) {
           isBinary = true;
         }
       }

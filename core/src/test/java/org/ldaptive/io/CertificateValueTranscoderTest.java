@@ -41,8 +41,7 @@ public class CertificateValueTranscoderTest
     "AhDym4nIfzng6fgYBeLT1Hp/bKHivQP4ef4wgre6r1ztnFA=";
 
   /** Transcoder to test. */
-  private final CertificateValueTranscoder transcoder =
-    new CertificateValueTranscoder();
+  private final CertificateValueTranscoder transcoder = new CertificateValueTranscoder();
 
 
   /**
@@ -57,15 +56,13 @@ public class CertificateValueTranscoderTest
     throws Exception
   {
     final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-    final Certificate cert = cf.generateCertificate(
-      new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_CERT)));
+    final Certificate cert = cf.generateCertificate(new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_CERT)));
 
     return
       new Object[][] {
         new Object[] {
           cert,
-          "-----BEGIN CERTIFICATE-----\n" + A_FOO_COM_CERT +
-            "\n-----END CERTIFICATE-----",
+          "-----BEGIN CERTIFICATE-----\n" + A_FOO_COM_CERT + "\n-----END CERTIFICATE-----",
           LdapUtils.base64Decode(A_FOO_COM_CERT),
         },
       };
@@ -79,14 +76,8 @@ public class CertificateValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"io"},
-    dataProvider = "certs"
-  )
-  public void testTranscode(
-    final Certificate cert,
-    final String s,
-    final byte[] b)
+  @Test(groups = {"io"}, dataProvider = "certs")
+  public void testTranscode(final Certificate cert, final String s, final byte[] b)
     throws Exception
   {
     Assert.assertEquals(cert, transcoder.decodeStringValue(s));

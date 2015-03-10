@@ -13,8 +13,7 @@ import java.util.TreeSet;
 import org.ldaptive.io.ValueTranscoder;
 
 /**
- * Simple bean representing an ldap attribute. Contains a name and a collection
- * of values.
+ * Simple bean representing an ldap attribute. Contains a name and a collection of values.
  *
  * @author  Middleware Services
  */
@@ -144,9 +143,7 @@ public class LdapAttribute extends AbstractLdapBean
       return attributeName;
     } else {
       final int optionIndex = attributeName.indexOf(";");
-      return
-        optionIndex > 0 ? attributeName.substring(0, optionIndex)
-                        : attributeName;
+      return optionIndex > 0 ? attributeName.substring(0, optionIndex) : attributeName;
     }
   }
 
@@ -163,8 +160,7 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns the options for this attribute. Returns an empty array if attribute
-   * contains no options.
+   * Returns the options for this attribute. Returns an empty array if attribute contains no options.
    *
    * @return  options parsed from the attribute name
    */
@@ -183,8 +179,8 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns the values of this attribute as strings. Binary data is base64
-   * encoded. The return collection cannot be modified.
+   * Returns the values of this attribute as strings. Binary data is base64 encoded. The return collection cannot be
+   * modified.
    *
    * @return  collection of string attribute values
    */
@@ -195,8 +191,7 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns a single string value of this attribute. See {@link
-   * #getStringValues()}.
+   * Returns a single string value of this attribute. See {@link #getStringValues()}.
    *
    * @return  single string attribute value
    */
@@ -211,8 +206,8 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns the values of this attribute as byte arrays. String data is UTF-8
-   * encoded. The return collection cannot be modified.
+   * Returns the values of this attribute as byte arrays. String data is UTF-8 encoded. The return collection cannot be
+   * modified.
    *
    * @return  collection of byte array attribute values
    */
@@ -223,8 +218,7 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns a single byte array value of this attribute. See {@link
-   * #getBinaryValues()}.
+   * Returns a single byte array value of this attribute. See {@link #getBinaryValues()}.
    *
    * @return  single byte array attribute value
    */
@@ -259,8 +253,7 @@ public class LdapAttribute extends AbstractLdapBean
    */
   public <T> Collection<T> getValues(final ValueTranscoder<T> transcoder)
   {
-    final Collection<T> values = createSortBehaviorCollection(
-      transcoder.getType());
+    final Collection<T> values = createSortBehaviorCollection(transcoder.getType());
     if (isBinary()) {
       for (byte[] b : getBinaryValues()) {
         values.add(transcoder.decodeBinaryValue(b));
@@ -275,8 +268,7 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns a single decoded value of this attribute. See {@link
-   * #getValues(ValueTranscoder)}.
+   * Returns a single decoded value of this attribute. See {@link #getValues(ValueTranscoder)}.
    *
    * @param  <T>  type of decoded attributes
    * @param  transcoder  to decode attribute values with
@@ -309,8 +301,8 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Adds all the strings in the supplied collection as values for this
-   * attribute. See {@link #addStringValue(String...)}.
+   * Adds all the strings in the supplied collection as values for this attribute. See {@link
+   * #addStringValue(String...)}.
    *
    * @param  values  to add
    */
@@ -338,8 +330,8 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Adds all the byte arrays in the supplied collection as values for this
-   * attribute. See {@link #addBinaryValue(byte[][])}.
+   * Adds all the byte arrays in the supplied collection as values for this attribute. See {@link
+   * #addBinaryValue(byte[][])}.
    *
    * @param  values  to add
    */
@@ -352,8 +344,7 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Adds the supplied values for this attribute by encoding them with the
-   * supplied transcoder.
+   * Adds the supplied values for this attribute by encoding them with the supplied transcoder.
    *
    * @param  <T>  type attribute to encode
    * @param  transcoder  to encode value with
@@ -362,9 +353,7 @@ public class LdapAttribute extends AbstractLdapBean
    * @throws  NullPointerException  if value is null
    */
   @SuppressWarnings("unchecked")
-  public <T> void addValue(
-    final ValueTranscoder<T> transcoder,
-    final T... value)
+  public <T> void addValue(final ValueTranscoder<T> transcoder, final T... value)
   {
     for (T t : value) {
       if (isBinary()) {
@@ -377,18 +366,15 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Adds all the values in the supplied collection for this attribute by
-   * encoding them with the supplied transcoder. See {@link
-   * #addValue(ValueTranscoder, Object...)}.
+   * Adds all the values in the supplied collection for this attribute by encoding them with the supplied transcoder.
+   * See {@link #addValue(ValueTranscoder, Object...)}.
    *
    * @param  <T>  type attribute to encode
    * @param  transcoder  to encode value with
    * @param  values  to encode and add
    */
   @SuppressWarnings("unchecked")
-  public <T> void addValues(
-    final ValueTranscoder<T> transcoder,
-    final Collection<T> values)
+  public <T> void addValues(final ValueTranscoder<T> transcoder, final Collection<T> values)
   {
     for (T value : values) {
       addValue(transcoder, value);
@@ -410,8 +396,7 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Removes the supplied values from the attribute values if they exists. See
-   * {@link #removeStringValue(String...)}.
+   * Removes the supplied values from the attribute values if they exists. See {@link #removeStringValue(String...)}.
    *
    * @param  values  to remove
    */
@@ -437,8 +422,7 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Removes the supplied values from the attribute values if they exists. See
-   * {@link #removeBinaryValue(byte[][])}.
+   * Removes the supplied values from the attribute values if they exists. See {@link #removeBinaryValue(byte[][])}.
    *
    * @param  values  to remove
    */
@@ -487,9 +471,8 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns an implementation of collection for the sort behavior of this bean.
-   * This implementation returns HashSet for {@link SortBehavior#UNORDERED},
-   * LinkedHashSet for {@link SortBehavior#ORDERED}, and TreeSet for {@link
+   * Returns an implementation of collection for the sort behavior of this bean. This implementation returns HashSet for
+   * {@link SortBehavior#UNORDERED}, LinkedHashSet for {@link SortBehavior#ORDERED}, and TreeSet for {@link
    * SortBehavior#SORTED}.
    *
    * @param  <E>  contained in the collection
@@ -516,9 +499,8 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Returns a comparator for the supplied class type. Should not be invoked for
-   * classes that have a natural ordering. Returns a comparator that uses {@link
-   * Object#toString()} for unknown types.
+   * Returns a comparator for the supplied class type. Should not be invoked for classes that have a natural ordering.
+   * Returns a comparator that uses {@link Object#toString()} for unknown types.
    *
    * @param  <E>  type of class
    * @param  c  type to compare
@@ -552,8 +534,8 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Creates a new ldap attribute. The collection of values is inspected for
-   * either String or byte[] and the appropriate attribute is created.
+   * Creates a new ldap attribute. The collection of values is inspected for either String or byte[] and the appropriate
+   * attribute is created.
    *
    * @param  sb  sort behavior
    * @param  name  of this attribute
@@ -561,8 +543,7 @@ public class LdapAttribute extends AbstractLdapBean
    *
    * @return  ldap attribute
    *
-   * @throws  IllegalArgumentException  if values contains something other than
-   * String or byte[]
+   * @throws  IllegalArgumentException  if values contains something other than String or byte[]
    */
   public static LdapAttribute createLdapAttribute(
     final SortBehavior sb,
@@ -577,8 +558,7 @@ public class LdapAttribute extends AbstractLdapBean
       } else if (value instanceof String) {
         stringValues.add((String) value);
       } else {
-        throw new IllegalArgumentException(
-          "Values must contain either String or byte[]");
+        throw new IllegalArgumentException("Values must contain either String or byte[]");
       }
     }
 
@@ -686,11 +666,8 @@ public class LdapAttribute extends AbstractLdapBean
      */
     public LdapAttributeValues(final Class<T> t)
     {
-      if (
-        !(t.isAssignableFrom(String.class) ||
-            t.isAssignableFrom(byte[].class))) {
-        throw new IllegalArgumentException(
-          "Only String and byte[] values are supported");
+      if (!(t.isAssignableFrom(String.class) || t.isAssignableFrom(byte[].class))) {
+        throw new IllegalArgumentException("Only String and byte[] values are supported");
       }
       type = t;
       values = createSortBehaviorCollection(type);
@@ -711,10 +688,8 @@ public class LdapAttribute extends AbstractLdapBean
 
 
     /**
-     * Returns the values in string format. If the type of this values is
-     * String, values are returned as is. If the type of this values is byte[],
-     * values are base64 encoded. See {@link
-     * #convertValuesToString(Collection)}.
+     * Returns the values in string format. If the type of this values is String, values are returned as is. If the type
+     * of this values is byte[], values are base64 encoded. See {@link #convertValuesToString(Collection)}.
      *
      * @return  unmodifiable collection
      */
@@ -724,17 +699,13 @@ public class LdapAttribute extends AbstractLdapBean
       if (isType(String.class)) {
         return Collections.unmodifiableCollection((Collection<String>) values);
       }
-      return
-        Collections.unmodifiableCollection(
-          convertValuesToString((Collection<byte[]>) values));
+      return Collections.unmodifiableCollection(convertValuesToString((Collection<byte[]>) values));
     }
 
 
     /**
-     * Returns the values in binary format. If the type of this values is
-     * byte[], values are returned as is. If the type of this values is String,
-     * values are UTF-8 encoded. See {@link
-     * #convertValuesToByteArray(Collection)}.
+     * Returns the values in binary format. If the type of this values is byte[], values are returned as is. If the type
+     * of this values is String, values are UTF-8 encoded. See {@link #convertValuesToByteArray(Collection)}.
      *
      * @return  unmodifiable collection
      */
@@ -744,9 +715,7 @@ public class LdapAttribute extends AbstractLdapBean
       if (isType(byte[].class)) {
         return Collections.unmodifiableCollection((Collection<byte[]>) values);
       }
-      return
-        Collections.unmodifiableCollection(
-          convertValuesToByteArray((Collection<String>) values));
+      return Collections.unmodifiableCollection(convertValuesToByteArray((Collection<String>) values));
     }
 
 
@@ -755,8 +724,7 @@ public class LdapAttribute extends AbstractLdapBean
      *
      * @param  o  to add
      *
-     * @throws  IllegalArgumentException  if o is null or if o is not the
-     * correct type
+     * @throws  IllegalArgumentException  if o is null or if o is not the correct type
      */
     public void add(final Object o)
     {
@@ -770,8 +738,7 @@ public class LdapAttribute extends AbstractLdapBean
      *
      * @param  o  to remove
      *
-     * @throws  IllegalArgumentException  if o is null or if o is not the
-     * correct type
+     * @throws  IllegalArgumentException  if o is null or if o is not the correct type
      */
     public void remove(final Object o)
     {
@@ -785,8 +752,7 @@ public class LdapAttribute extends AbstractLdapBean
      *
      * @param  o  object to check
      *
-     * @throws  IllegalArgumentException  if o is null or if o is not the
-     * correct type
+     * @throws  IllegalArgumentException  if o is null or if o is not the correct type
      */
     private void checkValue(final Object o)
     {
@@ -798,8 +764,7 @@ public class LdapAttribute extends AbstractLdapBean
           String.format(
             "Attribute %s does not support values of type %s",
             attributeName,
-            o.getClass().isArray() ? o.getClass().getComponentType()
-                                   : o.getClass().getName()));
+            o.getClass().isArray() ? o.getClass().getComponentType() : o.getClass().getName()));
       }
     }
 
@@ -843,8 +808,7 @@ public class LdapAttribute extends AbstractLdapBean
      *
      * @return  collection of string values
      */
-    protected Collection<String> convertValuesToString(
-      final Collection<byte[]> v)
+    protected Collection<String> convertValuesToString(final Collection<byte[]> v)
     {
       final Collection<String> c = createSortBehaviorCollection(String.class);
       for (byte[] value : v) {
@@ -861,8 +825,7 @@ public class LdapAttribute extends AbstractLdapBean
      *
      * @return  collection of byte array values
      */
-    protected Collection<byte[]> convertValuesToByteArray(
-      final Collection<String> v)
+    protected Collection<byte[]> convertValuesToByteArray(final Collection<String> v)
     {
       final Collection<byte[]> c = createSortBehaviorCollection(byte[].class);
       for (String value : v) {

@@ -18,9 +18,7 @@ public class BeanGeneratorTest extends AbstractTest
 {
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"beans-generate"})
   public void generate()
     throws Exception
@@ -28,9 +26,9 @@ public class BeanGeneratorTest extends AbstractTest
     if (TestControl.isActiveDirectory()) {
       return;
     }
+
     final DefaultConnectionFactory factory = new DefaultConnectionFactory(
-      TestUtils.readConnectionConfig(
-        "classpath:/org/ldaptive/ldap.setup.properties"));
+      TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
     final Schema schema = SchemaFactory.createSchema(factory);
     final BeanGenerator generator = new BeanGenerator();
     generator.setSchema(schema);
@@ -45,9 +43,7 @@ public class BeanGeneratorTest extends AbstractTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"beans-generate"})
   public void generateAD()
     throws Exception
@@ -55,9 +51,9 @@ public class BeanGeneratorTest extends AbstractTest
     if (!TestControl.isActiveDirectory()) {
       return;
     }
+
     final DefaultConnectionFactory factory = new DefaultConnectionFactory(
-      TestUtils.readConnectionConfig(
-        "classpath:/org/ldaptive/ldap.setup.properties"));
+      TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
     final Schema schema = org.ldaptive.ad.schema.SchemaFactory.createSchema(
       factory,
       "CN=Schema,CN=Configuration,DC=middleware,DC=vt,DC=edu");

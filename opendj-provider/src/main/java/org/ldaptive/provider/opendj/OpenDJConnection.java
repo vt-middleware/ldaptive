@@ -68,8 +68,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class OpenDJConnection
-  implements org.ldaptive.provider.ProviderConnection
+public class OpenDJConnection implements org.ldaptive.provider.ProviderConnection
 {
 
   /** Logger for this class. */
@@ -116,11 +115,9 @@ public class OpenDJConnection
     throws LdapException
   {
     if (connection != null) {
-      final org.forgerock.opendj.ldap.requests.UnbindRequest ur =
-        Requests.newUnbindRequest();
+      final org.forgerock.opendj.ldap.requests.UnbindRequest ur = Requests.newUnbindRequest();
       if (controls != null) {
-        for (Control c :
-          config.getControlProcessor().processRequestControls(controls)) {
+        for (Control c : config.getControlProcessor().processRequestControls(controls)) {
           ur.addControl(c);
         }
       }
@@ -166,9 +163,7 @@ public class OpenDJConnection
     try {
       final SimpleBindRequest sbr = Requests.newSimpleBindRequest();
       if (request.getControls() != null) {
-        for (Control c :
-             config.getControlProcessor().processRequestControls(
-               request.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(request.getControls())) {
           sbr.addControl(c);
         }
       }
@@ -198,13 +193,9 @@ public class OpenDJConnection
   {
     Response<Void> response = null;
     try {
-      final SimpleBindRequest sbr = Requests.newSimpleBindRequest(
-        request.getDn(),
-        request.getCredential().getChars());
+      final SimpleBindRequest sbr = Requests.newSimpleBindRequest(request.getDn(), request.getCredential().getChars());
       if (request.getControls() != null) {
-        for (Control c :
-             config.getControlProcessor().processRequestControls(
-               request.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(request.getControls())) {
           sbr.addControl(c);
         }
       }
@@ -239,71 +230,67 @@ public class OpenDJConnection
 
     case EXTERNAL:
       sbr = Requests.newExternalSASLBindRequest();
-      ((ExternalSASLBindRequest) sbr).setAuthorizationID(
-        sc.getAuthorizationId());
+      ((ExternalSASLBindRequest) sbr).setAuthorizationID(sc.getAuthorizationId());
       break;
 
     case DIGEST_MD5:
       throw new UnsupportedOperationException("DIGEST-MD5 not supported");
       // returns a result code 82 (Local Error) when the server returns 49
       /*
-      sbr = Requests.newDigestMD5SASLBindRequest(
-        request.getDn() != null ? request.getDn() : "",
-        request.getCredential() != null ?
-          request.getCredential().getBytes() : null);
-      String digestMd5Realm = sc instanceof DigestMd5Config
-        ? ((DigestMd5Config) sc).getRealm() : null;
-      if (digestMd5Realm == null && request.getDn().contains("@")) {
-        digestMd5Realm = request.getDn().substring(
-          request.getDn().indexOf("@") + 1);
-      }
-      if (digestMd5Realm != null) {
-        ((DigestMD5SASLBindRequest) sbr).setRealm(digestMd5Realm);
-      }
-      break;
-      */
+       * sbr = Requests.newDigestMD5SASLBindRequest(
+       * request.getDn() != null ? request.getDn() : "",
+       * request.getCredential() != null ?
+       *  request.getCredential().getBytes() : null);
+       * String digestMd5Realm = sc instanceof DigestMd5Config
+       * ? ((DigestMd5Config) sc).getRealm() : null;
+       * if (digestMd5Realm == null && request.getDn().contains("@")) {
+       * digestMd5Realm = request.getDn().substring(
+       *  request.getDn().indexOf("@") + 1);
+       * }
+       * if (digestMd5Realm != null) {
+       * ((DigestMD5SASLBindRequest) sbr).setRealm(digestMd5Realm);
+       * }
+       * break;
+       */
 
     case CRAM_MD5:
       throw new UnsupportedOperationException("CRAM-MD5 not supported");
       // LDAP reports: error: SASL bind in progress (tag=99)
       /*
-      sbr = Requests.newCRAMMD5SASLBindRequest(
-        request.getDn() != null ? request.getDn() : "",
-        request.getCredential() != null ?
-          request.getCredential().getBytes() : null);
-      break;
-      */
+       * sbr = Requests.newCRAMMD5SASLBindRequest(
+       * request.getDn() != null ? request.getDn() : "",
+       * request.getCredential() != null ?
+       *  request.getCredential().getBytes() : null);
+       * break;
+       */
 
     case GSSAPI:
       throw new UnsupportedOperationException("GSSAPI not supported");
       /*
-      sbr = Requests.newGSSAPISASLBindRequest(
-        request.getDn() != null ? request.getDn() : "",
-        request.getCredential() != null ?
-          request.getCredential().getBytes() : new byte[0]);
-      ((GSSAPISASLBindRequest) sbr).setAuthorizationID(
-        sc.getAuthorizationId());
-      final String gssApiRealm = sc instanceof GssApiConfig
-        ? ((GssApiConfig) sc).getRealm() : null;
-      if (gssApiRealm != null) {
-        ((GSSAPISASLBindRequest) sbr).setRealm(gssApiRealm);
-      }
-      if (sc.getQualityOfProtection() != null) {
-        ((GSSAPISASLBindRequest) sbr).addQOP(
-          getQualityOfProtection(sc.getQualityOfProtection()));
-      }
-      break;
-      */
+       * sbr = Requests.newGSSAPISASLBindRequest(
+       * request.getDn() != null ? request.getDn() : "",
+       * request.getCredential() != null ?
+       *  request.getCredential().getBytes() : new byte[0]);
+       * ((GSSAPISASLBindRequest) sbr).setAuthorizationID(
+       * sc.getAuthorizationId());
+       * final String gssApiRealm = sc instanceof GssApiConfig
+       * ? ((GssApiConfig) sc).getRealm() : null;
+       * if (gssApiRealm != null) {
+       * ((GSSAPISASLBindRequest) sbr).setRealm(gssApiRealm);
+       * }
+       * if (sc.getQualityOfProtection() != null) {
+       * ((GSSAPISASLBindRequest) sbr).addQOP(
+       *  getQualityOfProtection(sc.getQualityOfProtection()));
+       * }
+       * break;
+       */
 
     default:
-      throw new IllegalArgumentException(
-        "Unknown SASL authentication mechanism: " + sc.getMechanism());
+      throw new IllegalArgumentException("Unknown SASL authentication mechanism: " + sc.getMechanism());
     }
 
     if (request.getControls() != null) {
-      for (Control c :
-           config.getControlProcessor().processRequestControls(
-             request.getControls())) {
+      for (Control c : config.getControlProcessor().processRequestControls(request.getControls())) {
         sbr.addControl(c);
       }
     }
@@ -345,8 +332,7 @@ public class OpenDJConnection
       break;
 
     default:
-      throw new IllegalArgumentException(
-        "Unknown SASL quality of protection: " + qop);
+      throw new IllegalArgumentException("Unknown SASL quality of protection: " + qop);
     }
     return name;
   }
@@ -359,14 +345,10 @@ public class OpenDJConnection
     Response<Void> response = null;
     try {
       final OpenDJUtils util = new OpenDJUtils();
-      final org.forgerock.opendj.ldap.requests.AddRequest ar =
-        Requests.newAddRequest(
-          util.fromLdapEntry(
-            new LdapEntry(request.getDn(), request.getLdapAttributes())));
+      final org.forgerock.opendj.ldap.requests.AddRequest ar = Requests.newAddRequest(
+        util.fromLdapEntry(new LdapEntry(request.getDn(), request.getLdapAttributes())));
       if (request.getControls() != null) {
-        for (Control c :
-             config.getControlProcessor().processRequestControls(
-               request.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(request.getControls())) {
           ar.addControl(c);
         }
       }
@@ -402,9 +384,7 @@ public class OpenDJConnection
           util.fromStringValues(request.getAttribute().getStringValues())[0]);
       }
       if (request.getControls() != null) {
-        for (Control c :
-             config.getControlProcessor().processRequestControls(
-               request.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(request.getControls())) {
           cr.addControl(c);
         }
       }
@@ -426,12 +406,9 @@ public class OpenDJConnection
   {
     Response<Void> response = null;
     try {
-      final org.forgerock.opendj.ldap.requests.DeleteRequest dr =
-        Requests.newDeleteRequest(request.getDn());
+      final org.forgerock.opendj.ldap.requests.DeleteRequest dr = Requests.newDeleteRequest(request.getDn());
       if (request.getControls() != null) {
-        for (Control c :
-             config.getControlProcessor().processRequestControls(
-               request.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(request.getControls())) {
           dr.addControl(c);
         }
       }
@@ -454,17 +431,12 @@ public class OpenDJConnection
     Response<Void> response = null;
     try {
       final OpenDJUtils util = new OpenDJUtils();
-      final org.forgerock.opendj.ldap.requests.ModifyRequest mr =
-        Requests.newModifyRequest(request.getDn());
-      for (Modification m :
-           util.fromAttributeModification(
-             request.getAttributeModifications())) {
+      final org.forgerock.opendj.ldap.requests.ModifyRequest mr = Requests.newModifyRequest(request.getDn());
+      for (Modification m : util.fromAttributeModification(request.getAttributeModifications())) {
         mr.addModification(m);
       }
       if (request.getControls() != null) {
-        for (Control c :
-             config.getControlProcessor().processRequestControls(
-               request.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(request.getControls())) {
           mr.addControl(c);
         }
       }
@@ -486,13 +458,12 @@ public class OpenDJConnection
   {
     Response<Void> response = null;
     try {
-      final org.forgerock.opendj.ldap.requests.ModifyDNRequest mdr =
-          Requests.newModifyDNRequest(request.getDn(), request.getNewDn());
+      final org.forgerock.opendj.ldap.requests.ModifyDNRequest mdr = Requests.newModifyDNRequest(
+        request.getDn(),
+        request.getNewDn());
       mdr.setDeleteOldRDN(request.getDeleteOldRDn());
       if (request.getControls() != null) {
-        for (Control c :
-             config.getControlProcessor().processRequestControls(
-               request.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(request.getControls())) {
           mdr.addControl(c);
         }
       }
@@ -519,14 +490,10 @@ public class OpenDJConnection
 
 
   @Override
-  public void searchAsync(
-    final org.ldaptive.SearchRequest request,
-    final SearchListener listener)
+  public void searchAsync(final org.ldaptive.SearchRequest request, final SearchListener listener)
     throws LdapException
   {
-    final OpenDJAsyncSearchListener l = new OpenDJAsyncSearchListener(
-      request,
-      listener);
+    final OpenDJAsyncSearchListener l = new OpenDJAsyncSearchListener(request, listener);
     l.initialize();
   }
 
@@ -535,11 +502,9 @@ public class OpenDJConnection
   public void abandon(final int messageId, final RequestControl[] controls)
     throws LdapException
   {
-    final org.forgerock.opendj.ldap.requests.AbandonRequest ar =
-      Requests.newAbandonRequest(messageId);
+    final org.forgerock.opendj.ldap.requests.AbandonRequest ar = Requests.newAbandonRequest(messageId);
     if (controls != null) {
-      for (Control c :
-        config.getControlProcessor().processRequestControls(controls)) {
+      for (Control c : config.getControlProcessor().processRequestControls(controls)) {
         ar.addControl(c);
       }
     }
@@ -559,24 +524,20 @@ public class OpenDJConnection
       if (requestBerValue == null) {
         er = Requests.newGenericExtendedRequest(request.getOID());
       } else {
-        er = Requests.newGenericExtendedRequest(
-          request.getOID(),
-          ByteString.wrap(requestBerValue));
+        er = Requests.newGenericExtendedRequest(request.getOID(), ByteString.wrap(requestBerValue));
       }
       if (request.getControls() != null) {
-        for (Control c :
-          config.getControlProcessor().processRequestControls(
-            request.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(request.getControls())) {
           er.addControl(c);
         }
       }
 
       final GenericExtendedResult result = connection.extendedRequest(er);
-      final byte[] responseBerValue =
-        result.getValue() != null ? result.getValue().toByteArray() : null;
-      final ExtendedResponse<?> extRes =
-        ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(), result.getOID(), responseBerValue);
+      final byte[] responseBerValue = result.getValue() != null ? result.getValue().toByteArray() : null;
+      final ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(
+        request.getOID(),
+        result.getOID(),
+        responseBerValue);
       response = createResponse(request, extRes.getValue(), result);
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
@@ -586,16 +547,14 @@ public class OpenDJConnection
 
 
   @Override
-  public void addUnsolicitedNotificationListener(
-    final UnsolicitedNotificationListener listener)
+  public void addUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
   {
     notificationListener.addUnsolicitedNotificationListener(listener);
   }
 
 
   @Override
-  public void removeUnsolicitedNotificationListener(
-    final UnsolicitedNotificationListener listener)
+  public void removeUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
   {
     notificationListener.removeUnsolicitedNotificationListener(listener);
   }
@@ -611,10 +570,7 @@ public class OpenDJConnection
    *
    * @return  operation response
    */
-  protected <T> Response<T> createResponse(
-    final Request request,
-    final T result,
-    final Result ldapResult)
+  protected <T> Response<T> createResponse(final Request request, final T result, final Result ldapResult)
   {
     final List<Control> ctls = ldapResult.getControls();
     final List<String> urls = ldapResult.getReferralURIs();
@@ -624,25 +580,21 @@ public class OpenDJConnection
         ResultCode.valueOf(ldapResult.getResultCode().intValue()),
         ldapResult.getDiagnosticMessage(),
         ldapResult.getMatchedDN(),
-        config.getControlProcessor().processResponseControls(
-          ctls.toArray(new Control[ctls.size()])),
+        config.getControlProcessor().processResponseControls(ctls.toArray(new Control[ctls.size()])),
         urls.toArray(new String[urls.size()]),
         -1);
   }
 
 
   /**
-   * Determines if the supplied error result exception should result in an
-   * operation retry.
+   * Determines if the supplied error result exception should result in an operation retry.
    *
    * @param  request  that produced the exception
    * @param  e  that was produced
    *
    * @throws  LdapException  wrapping the error result exception
    */
-  protected void processErrorResultException(
-    final Request request,
-    final ErrorResultException e)
+  protected void processErrorResultException(final Request request, final ErrorResultException e)
     throws LdapException
   {
     final List<Control> ctls = e.getResult().getControls();
@@ -652,16 +604,14 @@ public class OpenDJConnection
       e,
       e.getResult().getResultCode().intValue(),
       e.getResult().getMatchedDN(),
-      config.getControlProcessor().processResponseControls(
-        ctls.toArray(new Control[ctls.size()])),
+      config.getControlProcessor().processResponseControls(ctls.toArray(new Control[ctls.size()])),
       urls.toArray(new String[urls.size()]),
       true);
   }
 
 
   /** Search iterator for opendj search results. */
-  protected class OpenDJSearchIterator extends AbstractOpenDJSearch
-    implements SearchIterator
+  protected class OpenDJSearchIterator extends AbstractOpenDJSearch implements SearchIterator
   {
 
     /** Response data. */
@@ -704,16 +654,12 @@ public class OpenDJConnection
      *
      * @throws  LdapException  if an error occurs
      */
-    protected SearchResultIterator search(
-      final Connection conn,
-      final org.ldaptive.SearchRequest sr)
+    protected SearchResultIterator search(final Connection conn, final org.ldaptive.SearchRequest sr)
       throws LdapException
     {
       final SearchRequest opendjSr = getSearchRequest(sr);
       if (sr.getControls() != null) {
-        for (Control c :
-          config.getControlProcessor().processRequestControls(
-            sr.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(sr.getControls())) {
           opendjSr.addControl(c);
         }
       }
@@ -722,9 +668,7 @@ public class OpenDJConnection
       try {
         conn.search(opendjSr, i);
       } catch (ErrorResultException e) {
-        final ResultCode rc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(),
-          e);
+        final ResultCode rc = ignoreSearchException(config.getSearchIgnoreResultCodes(), e);
         if (rc == null) {
           processErrorResultException(request, e);
         }
@@ -771,10 +715,7 @@ public class OpenDJConnection
       throws LdapException {}
 
 
-    /**
-     * Search results handler for storing entries returned by a search
-     * operation.
-     */
+    /** Search results handler for storing entries returned by a search operation. */
     protected class SearchResultIterator implements SearchResultHandler
     {
 
@@ -865,9 +806,7 @@ public class OpenDJConnection
      * @param  sr  search request
      * @param  sl  search listener
      */
-    public OpenDJAsyncSearchListener(
-      final org.ldaptive.SearchRequest sr,
-      final SearchListener sl)
+    public OpenDJAsyncSearchListener(final org.ldaptive.SearchRequest sr, final SearchListener sl)
     {
       super(sr);
       listener = sl;
@@ -894,24 +833,17 @@ public class OpenDJConnection
      *
      * @throws  LdapException  if an error occurs
      */
-    protected void search(
-      final Connection conn,
-      final org.ldaptive.SearchRequest sr)
+    protected void search(final Connection conn, final org.ldaptive.SearchRequest sr)
       throws LdapException
     {
       final SearchRequest opendjSr = getSearchRequest(sr);
       if (sr.getControls() != null) {
-        for (Control c :
-          config.getControlProcessor().processRequestControls(
-            sr.getControls())) {
+        for (Control c : config.getControlProcessor().processRequestControls(sr.getControls())) {
           opendjSr.addControl(c);
         }
       }
 
-      final FutureResult<Result> result = conn.searchAsync(
-        opendjSr,
-        this,
-        this);
+      final FutureResult<Result> result = conn.searchAsync(opendjSr, this, this);
       listener.asyncRequestReceived(new OpenDJAsyncRequest(result));
     }
 
@@ -929,8 +861,7 @@ public class OpenDJConnection
           new Exception(e.getCause()),
           ResultCode.valueOf(e.getResult().getResultCode().intValue()),
           e.getResult().getMatchedDN(),
-          config.getControlProcessor().processResponseControls(
-            ctls.toArray(new Control[ctls.size()])),
+          config.getControlProcessor().processResponseControls(ctls.toArray(new Control[ctls.size()])),
           urls.toArray(new String[urls.size()])));
     }
 
@@ -940,10 +871,7 @@ public class OpenDJConnection
     {
       logger.trace("reading result: {}", r);
 
-      final org.ldaptive.Response<Void> response = createResponse(
-        request,
-        null,
-        r);
+      final org.ldaptive.Response<Void> response = createResponse(request, null, r);
       listener.responseReceived(response);
     }
 
@@ -998,24 +926,20 @@ public class OpenDJConnection
 
 
     /**
-     * Returns an opendj search request object configured with the supplied
-     * search request.
+     * Returns an opendj search request object configured with the supplied search request.
      *
-     * @param  sr  search request containing configuration to create opendj
-     * search request
+     * @param  sr  search request containing configuration to create opendj search request
      *
      * @return  search request
      */
-    protected SearchRequest getSearchRequest(
-      final org.ldaptive.SearchRequest sr)
+    protected SearchRequest getSearchRequest(final org.ldaptive.SearchRequest sr)
     {
       final SearchRequest opendjSr = Requests.newSearchRequest(
         sr.getBaseDn(),
         getSearchScope(sr.getSearchScope()),
         sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
         sr.getReturnAttributes());
-      opendjSr.setDereferenceAliasesPolicy(
-        getDereferencePolicy(sr.getDerefAliases()));
+      opendjSr.setDereferenceAliasesPolicy(getDereferencePolicy(sr.getDerefAliases()));
       opendjSr.setSizeLimit((int) sr.getSizeLimit());
       opendjSr.setTimeLimit((int) sr.getTimeLimit());
       opendjSr.setTypesOnly(sr.getTypesOnly());
@@ -1051,8 +975,7 @@ public class OpenDJConnection
      *
      * @return  dereference policy
      */
-    protected DereferenceAliasesPolicy getDereferencePolicy(
-      final DerefAliases deref)
+    protected DereferenceAliasesPolicy getDereferencePolicy(final DerefAliases deref)
     {
       DereferenceAliasesPolicy policy = DereferenceAliasesPolicy.NEVER;
       if (deref == DerefAliases.ALWAYS) {
@@ -1076,9 +999,7 @@ public class OpenDJConnection
      *
      * @return  result code that should be ignored or null
      */
-    protected ResultCode ignoreSearchException(
-      final ResultCode[] ignoreResultCodes,
-      final ErrorResultException e)
+    protected ResultCode ignoreSearchException(final ResultCode[] ignoreResultCodes, final ErrorResultException e)
     {
       ResultCode ignore = null;
       if (ignoreResultCodes != null && ignoreResultCodes.length > 0) {
@@ -1095,8 +1016,7 @@ public class OpenDJConnection
 
 
     /**
-     * Processes the response controls on the supplied entry and returns a
-     * corresponding search item.
+     * Processes the response controls on the supplied entry and returns a corresponding search item.
      *
      * @param  entry  to process
      *
@@ -1109,8 +1029,7 @@ public class OpenDJConnection
       ResponseControl[] respControls = null;
       if (entry.getControls() != null && entry.getControls().size() > 0) {
         final List<Control> ctls = entry.getControls();
-        respControls = config.getControlProcessor().processResponseControls(
-          ctls.toArray(new Control[ctls.size()]));
+        respControls = config.getControlProcessor().processResponseControls(ctls.toArray(new Control[ctls.size()]));
       }
 
       final SearchEntry se = util.toSearchEntry(entry, respControls, -1);
@@ -1119,58 +1038,49 @@ public class OpenDJConnection
 
 
     /**
-     * Processes the response controls on the supplied reference and returns a
-     * corresponding search item.
+     * Processes the response controls on the supplied reference and returns a corresponding search item.
      *
      * @param  ref  to process
      *
      * @return  search item
      */
-    protected SearchItem processSearchResultReference(
-      final SearchResultReference ref)
+    protected SearchItem processSearchResultReference(final SearchResultReference ref)
     {
       logger.trace("reading search reference: {}", ref);
+
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().size() > 0) {
         final List<Control> ctls = ref.getControls();
-        respControls = config.getControlProcessor().processResponseControls(
-          ctls.toArray(new Control[ctls.size()]));
+        respControls = config.getControlProcessor().processResponseControls(ctls.toArray(new Control[ctls.size()]));
       }
 
-      final SearchReference sr = new SearchReference(
-        -1,
-        respControls,
-        ref.getURIs());
+      final SearchReference sr = new SearchReference(-1, respControls, ref.getURIs());
       return new SearchItem(sr);
     }
 
 
     /**
-     * Processes the response controls on the supplied response and returns a
-     * corresponding search item.
+     * Processes the response controls on the supplied response and returns a corresponding search item.
      *
      * @param  res  to process
      *
      * @return  search item
      */
-    protected SearchItem processIntermediateResponse(
-      final IntermediateResponse res)
+    protected SearchItem processIntermediateResponse(final IntermediateResponse res)
     {
       logger.trace("reading intermediate response: {}", res);
 
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().size() > 0) {
         final List<Control> ctls = res.getControls();
-        respControls = config.getControlProcessor().processResponseControls(
-          ctls.toArray(new Control[ctls.size()]));
+        respControls = config.getControlProcessor().processResponseControls(ctls.toArray(new Control[ctls.size()]));
       }
 
-      final org.ldaptive.intermediate.IntermediateResponse ir =
-        IntermediateResponseFactory.createIntermediateResponse(
-          res.getOID(),
-          res.getValue().toByteArray(),
-          respControls,
-          -1);
+      final org.ldaptive.intermediate.IntermediateResponse ir = IntermediateResponseFactory.createIntermediateResponse(
+        res.getOID(),
+        res.getValue().toByteArray(),
+        respControls,
+        -1);
       return new SearchItem(ir);
     }
   }
@@ -1206,8 +1116,7 @@ public class OpenDJConnection
     public void abandon()
       throws LdapException
     {
-      final org.forgerock.opendj.ldap.requests.AbandonRequest ar =
-        Requests.newAbandonRequest(result.getRequestID());
+      final org.forgerock.opendj.ldap.requests.AbandonRequest ar = Requests.newAbandonRequest(result.getRequestID());
       connection.abandonAsync(ar);
     }
 
@@ -1216,12 +1125,9 @@ public class OpenDJConnection
     public void abandon(final RequestControl[] controls)
       throws LdapException
     {
-      final org.forgerock.opendj.ldap.requests.AbandonRequest ar =
-        Requests.newAbandonRequest(result.getRequestID());
+      final org.forgerock.opendj.ldap.requests.AbandonRequest ar = Requests.newAbandonRequest(result.getRequestID());
       if (controls != null) {
-        for (Control c :
-          config.getControlProcessor().processRequestControls(
-            controls)) {
+        for (Control c : config.getControlProcessor().processRequestControls(controls)) {
           ar.addControl(c);
         }
       }
@@ -1230,17 +1136,12 @@ public class OpenDJConnection
   }
 
 
-  /**
-   * Allows the use of multiple unsolicited notification listeners per
-   * connection.
-   */
-  protected class AggregateUnsolicitedNotificationListener
-    implements ConnectionEventListener
+  /** Allows the use of multiple unsolicited notification listeners per connection. */
+  protected class AggregateUnsolicitedNotificationListener implements ConnectionEventListener
   {
 
     /** Listeners to receive unsolicited notifications. */
-    private final List<UnsolicitedNotificationListener> listeners =
-      new ArrayList<>();
+    private final List<UnsolicitedNotificationListener> listeners = new ArrayList<>();
 
 
     /**
@@ -1248,8 +1149,7 @@ public class OpenDJConnection
      *
      * @param  listener  to receive unsolicited notifications
      */
-    public void addUnsolicitedNotificationListener(
-      final UnsolicitedNotificationListener listener)
+    public void addUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
     {
       synchronized (listeners) {
         listeners.add(listener);
@@ -1262,8 +1162,7 @@ public class OpenDJConnection
      *
      * @param  listener  to stop receiving unsolicited notifications
      */
-    public void removeUnsolicitedNotificationListener(
-      final UnsolicitedNotificationListener listener)
+    public void removeUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
     {
       synchronized (listeners) {
         listeners.remove(listener);
@@ -1276,21 +1175,15 @@ public class OpenDJConnection
 
 
     @Override
-    public void handleConnectionError(
-      final boolean b,
-      final ErrorResultException e) {}
+    public void handleConnectionError(final boolean b, final ErrorResultException e) {}
 
 
     @Override
-    public void handleUnsolicitedNotification(
-      final ExtendedResult extendedResult)
+    public void handleUnsolicitedNotification(final ExtendedResult extendedResult)
     {
       logger.debug("Unsolicited notification received: {}", extendedResult);
       synchronized (listeners) {
-        final Response<Void> response = createResponse(
-          null,
-          null,
-          extendedResult);
+        final Response<Void> response = createResponse(null, null, extendedResult);
         for (UnsolicitedNotificationListener listener : listeners) {
           listener.notificationReceived(extendedResult.getOID(), response);
         }

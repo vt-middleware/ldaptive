@@ -17,22 +17,33 @@ import org.ldaptive.SortBehavior;
 public @interface Attribute
 {
 
-  /** Attribute name. */
+  /**
+   * Attribute name.
+   */
   String name() default "";
 
-  /** Attribute values. Mutually exclusive with {@link #property()}. */
+  /**
+   * Attribute values. Mutually exclusive with {@link #property()}.
+   */
   String[] values() default {};
 
-  /** Name of the method or field that maps to this attribute. Mutually
-   * exclusive with {@link #values()}. */
+  /**
+   * Name of the method or field that maps to this attribute. Mutually exclusive with {@link #values()}.
+   */
   String property() default "";
 
-  /** Whether this attribute is binary. */
+  /**
+   * Whether this attribute is binary.
+   */
   boolean binary() default false;
 
-  /** Sort behavior for this attribute. */
+  /**
+   * Sort behavior for this attribute.
+   */
   SortBehavior sortBehavior() default SortBehavior.UNORDERED;
 
-  /** Transcoder for this attribute. */
+  /**
+   * Transcoder for this attribute.
+   */
   String transcoder() default "";
 }

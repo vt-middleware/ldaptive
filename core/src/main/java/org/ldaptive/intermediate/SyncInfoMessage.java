@@ -16,8 +16,7 @@ import org.ldaptive.asn1.UuidType;
 import org.ldaptive.control.ResponseControl;
 
 /**
- * Intermediate response message for ldap content synchronization. See RFC 4533.
- * Message is defined as:
+ * Intermediate response message for ldap content synchronization. See RFC 4533. Message is defined as:
  *
  * <pre>
      syncInfoValue ::= CHOICE {
@@ -216,34 +215,16 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(NewCookieHandler.PATH, new NewCookieHandler(this));
-    parser.registerHandler(
-      RefreshDeleteHandler.PATH,
-      new RefreshDeleteHandler(this));
-    parser.registerHandler(
-      RefreshDeleteCookieHandler.PATH,
-      new RefreshDeleteCookieHandler(this));
-    parser.registerHandler(
-      RefreshDeleteDoneHandler.PATH,
-      new RefreshDeleteDoneHandler(this));
-    parser.registerHandler(
-      RefreshPresentHandler.PATH,
-      new RefreshPresentHandler(this));
-    parser.registerHandler(
-      RefreshPresentCookieHandler.PATH,
-      new RefreshPresentCookieHandler(this));
-    parser.registerHandler(
-      RefreshPresentDoneHandler.PATH,
-      new RefreshPresentDoneHandler(this));
+    parser.registerHandler(RefreshDeleteHandler.PATH, new RefreshDeleteHandler(this));
+    parser.registerHandler(RefreshDeleteCookieHandler.PATH, new RefreshDeleteCookieHandler(this));
+    parser.registerHandler(RefreshDeleteDoneHandler.PATH, new RefreshDeleteDoneHandler(this));
+    parser.registerHandler(RefreshPresentHandler.PATH, new RefreshPresentHandler(this));
+    parser.registerHandler(RefreshPresentCookieHandler.PATH, new RefreshPresentCookieHandler(this));
+    parser.registerHandler(RefreshPresentDoneHandler.PATH, new RefreshPresentDoneHandler(this));
     parser.registerHandler(SyncIdSetHandler.PATH, new SyncIdSetHandler(this));
-    parser.registerHandler(
-      SyncIdSetCookieHandler.PATH,
-      new SyncIdSetCookieHandler(this));
-    parser.registerHandler(
-      SyncIdSetDeletesHandler.PATH,
-      new SyncIdSetDeletesHandler(this));
-    parser.registerHandler(
-      SyncIdSetUuidsHandler.PATH,
-      new SyncIdSetUuidsHandler(this));
+    parser.registerHandler(SyncIdSetCookieHandler.PATH, new SyncIdSetCookieHandler(this));
+    parser.registerHandler(SyncIdSetDeletesHandler.PATH, new SyncIdSetDeletesHandler(this));
+    parser.registerHandler(SyncIdSetUuidsHandler.PATH, new SyncIdSetUuidsHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
@@ -252,14 +233,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
   public int hashCode()
   {
     return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        messageType,
-        cookie,
-        refreshDone,
-        refreshDeletes,
-        entryUuids);
+      LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), messageType, cookie, refreshDone, refreshDeletes, entryUuids);
   }
 
 
@@ -283,8 +257,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for new cookie. */
-  private static class NewCookieHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class NewCookieHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -316,8 +289,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for refresh delete. */
-  private static class RefreshDeleteHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class RefreshDeleteHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -344,8 +316,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for refresh delete cookie. */
-  private static class RefreshDeleteCookieHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class RefreshDeleteCookieHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -375,8 +346,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for refresh delete done. */
-  private static class RefreshDeleteDoneHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class RefreshDeleteDoneHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -403,8 +373,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for refresh present. */
-  private static class RefreshPresentHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class RefreshPresentHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -431,8 +400,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for refresh present cookie. */
-  private static class RefreshPresentCookieHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class RefreshPresentCookieHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -462,8 +430,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for refresh present done. */
-  private static class RefreshPresentDoneHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class RefreshPresentDoneHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -490,8 +457,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for sync id set. */
-  private static class SyncIdSetHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class SyncIdSetHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -518,8 +484,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for sync id set cookie. */
-  private static class SyncIdSetCookieHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class SyncIdSetCookieHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -549,8 +514,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for sync id set deletes. */
-  private static class SyncIdSetDeletesHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class SyncIdSetDeletesHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */
@@ -577,8 +541,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   /** Parse handler implementation for sync id set uuids. */
-  private static class SyncIdSetUuidsHandler
-    extends AbstractParseHandler<SyncInfoMessage>
+  private static class SyncIdSetUuidsHandler extends AbstractParseHandler<SyncInfoMessage>
   {
 
     /** DER path to value. */

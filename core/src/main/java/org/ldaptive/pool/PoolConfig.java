@@ -4,8 +4,7 @@ package org.ldaptive.pool;
 import org.ldaptive.AbstractConfig;
 
 /**
- * Contains all the configuration data that the pooling implementations need to
- * control the pool.
+ * Contains all the configuration data that the pooling implementations need to control the pool.
  *
  * @author  Middleware Services
  */
@@ -50,8 +49,8 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
-   * Returns the min pool size. Default value is {@link #DEFAULT_MIN_POOL_SIZE}.
-   * This value represents the size of the pool after a prune has occurred.
+   * Returns the min pool size. Default value is {@link #DEFAULT_MIN_POOL_SIZE}. This value represents the size of the
+   * pool after a prune has occurred.
    *
    * @return  min pool size
    */
@@ -77,9 +76,8 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
-   * Returns the max pool size. Default value is {@link #DEFAULT_MAX_POOL_SIZE}.
-   * This value may or may not be strictly enforced depending on the pooling
-   * implementation.
+   * Returns the max pool size. Default value is {@link #DEFAULT_MAX_POOL_SIZE}. This value may or may not be strictly
+   * enforced depending on the pooling implementation.
    *
    * @return  max pool size
    */
@@ -105,8 +103,7 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
-   * Returns the validate on check in flag. Default value is {@link
-   * #DEFAULT_VALIDATE_ON_CHECKIN}.
+   * Returns the validate on check in flag. Default value is {@link #DEFAULT_VALIDATE_ON_CHECKIN}.
    *
    * @return  validate on check in
    */
@@ -130,8 +127,7 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
-   * Returns the validate on check out flag. Default value is {@link
-   * #DEFAULT_VALIDATE_ON_CHECKOUT}.
+   * Returns the validate on check out flag. Default value is {@link #DEFAULT_VALIDATE_ON_CHECKOUT}.
    *
    * @return  validate on check in
    */
@@ -155,8 +151,7 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
-   * Returns the validate periodically flag. Default value is {@link
-   * #DEFAULT_VALIDATE_PERIODICALLY}.
+   * Returns the validate periodically flag. Default value is {@link #DEFAULT_VALIDATE_PERIODICALLY}.
    *
    * @return  validate periodically
    */
@@ -180,8 +175,7 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
-   * Returns the validate period. Default value is {@link
-   * #DEFAULT_VALIDATE_PERIOD}.
+   * Returns the validate period. Default value is {@link #DEFAULT_VALIDATE_PERIOD}.
    *
    * @return  validate period in seconds
    */

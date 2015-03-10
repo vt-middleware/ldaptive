@@ -11,8 +11,7 @@ import org.ldaptive.provider.ControlHandler;
  *
  * @author  Middleware Services
  */
-public class JLdapControlHandler
-  implements ControlHandler<com.novell.ldap.LDAPControl>
+public class JLdapControlHandler implements ControlHandler<com.novell.ldap.LDAPControl>
 {
 
 
@@ -24,8 +23,7 @@ public class JLdapControlHandler
 
 
   @Override
-  public com.novell.ldap.LDAPControl handleRequest(
-    final RequestControl requestControl)
+  public com.novell.ldap.LDAPControl handleRequest(final RequestControl requestControl)
   {
     return
       new com.novell.ldap.LDAPControl(
@@ -36,8 +34,7 @@ public class JLdapControlHandler
 
 
   @Override
-  public ResponseControl handleResponse(
-    final com.novell.ldap.LDAPControl responseControl)
+  public ResponseControl handleResponse(final com.novell.ldap.LDAPControl responseControl)
   {
     return
       ControlFactory.createResponseControl(

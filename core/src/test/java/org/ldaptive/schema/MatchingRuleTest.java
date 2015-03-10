@@ -29,23 +29,11 @@ public class MatchingRuleTest
           "( 1.3.6.1.1.16.3 )",
         },
         new Object[] {
-          new MatchingRule(
-            "1.3.6.1.1.16.3",
-            new String[] {"UUIDOrderingMatch"},
-            null,
-            false,
-            null,
-            null),
+          new MatchingRule("1.3.6.1.1.16.3", new String[] {"UUIDOrderingMatch"}, null, false, null, null),
           "( 1.3.6.1.1.16.3 NAME 'UUIDOrderingMatch' )",
         },
         new Object[] {
-          new MatchingRule(
-            "1.3.6.1.1.16.3",
-            new String[] {"UUIDOrderingMatch"},
-            null,
-            false,
-            "1.3.6.1.1.16.1",
-            null),
+          new MatchingRule("1.3.6.1.1.16.3", new String[] {"UUIDOrderingMatch"}, null, false, "1.3.6.1.1.16.1", null),
           "( 1.3.6.1.1.16.3 NAME 'UUIDOrderingMatch' SYNTAX 1.3.6.1.1.16.1 )",
         },
         new Object[] {
@@ -56,8 +44,7 @@ public class MatchingRuleTest
             false,
             "1.3.6.1.4.1.1466.115.121.1.24",
             null),
-          "( 2.5.13.27 NAME 'generalizedTimeMatch' " +
-            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 )",
+          "( 2.5.13.27 NAME 'generalizedTimeMatch' SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 )",
         },
         new Object[] {
           new MatchingRule(
@@ -67,8 +54,7 @@ public class MatchingRuleTest
             false,
             "1.3.6.1.4.1.1466.115.121.1.15",
             null),
-          "( 2.5.13.6 NAME 'caseExactOrderingMatch' " +
-            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )",
+          "( 2.5.13.6 NAME 'caseExactOrderingMatch' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )",
         },
       };
   }
@@ -80,10 +66,7 @@ public class MatchingRuleTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"schema"},
-    dataProvider = "definitions"
-  )
+  @Test(groups = {"schema"}, dataProvider = "definitions")
   public void parse(final MatchingRule matchingRule, final String definition)
     throws Exception
   {

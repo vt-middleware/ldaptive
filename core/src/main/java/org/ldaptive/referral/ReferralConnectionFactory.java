@@ -21,7 +21,5 @@ public interface ReferralConnectionFactory
    *
    * @return  connection factory
    */
-  ConnectionFactory getConnectionFactory(
-    ConnectionConfig config,
-    String ldapUrl);
+  ConnectionFactory getConnectionFactory(ConnectionConfig config, String ldapUrl);
 }

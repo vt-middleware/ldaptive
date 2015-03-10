@@ -11,8 +11,7 @@ import org.ldaptive.provider.ControlHandler;
  *
  * @author  Middleware Services
  */
-public class JndiControlHandler
-  implements ControlHandler<javax.naming.ldap.Control>
+public class JndiControlHandler implements ControlHandler<javax.naming.ldap.Control>
 {
 
 
@@ -24,8 +23,7 @@ public class JndiControlHandler
 
 
   @Override
-  public javax.naming.ldap.Control handleRequest(
-    final RequestControl requestControl)
+  public javax.naming.ldap.Control handleRequest(final RequestControl requestControl)
   {
     return
       new javax.naming.ldap.BasicControl(
@@ -36,8 +34,7 @@ public class JndiControlHandler
 
 
   @Override
-  public ResponseControl handleResponse(
-    final javax.naming.ldap.Control responseControl)
+  public ResponseControl handleResponse(final javax.naming.ldap.Control responseControl)
   {
     return
       ControlFactory.createResponseControl(

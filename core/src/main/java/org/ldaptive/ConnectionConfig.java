@@ -74,8 +74,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the connect timeout. If this value is <= 0, then connects will wait
-   * indefinitely.
+   * Returns the connect timeout. If this value is <= 0, then connects will wait indefinitely.
    *
    * @return  timeout
    */
@@ -99,8 +98,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the response timeout. If this value is <= 0, then operations will
-   * wait indefinitely for a response.
+   * Returns the response timeout. If this value is <= 0, then operations will wait indefinitely for a response.
    *
    * @return  timeout
    */
@@ -111,8 +109,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Sets the maximum amount of time in milliseconds that operations will wait
-   * for a response.
+   * Sets the maximum amount of time in milliseconds that operations will wait for a response.
    *
    * @param  time  timeout for responses
    */
@@ -227,8 +224,7 @@ public class ConnectionConfig extends AbstractConfig
    *
    * @return  connection config
    */
-  public static ConnectionConfig newConnectionConfig(
-    final ConnectionConfig config)
+  public static ConnectionConfig newConnectionConfig(final ConnectionConfig config)
   {
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl(config.getLdapUrl());

@@ -33,16 +33,14 @@ public interface SSLContextInitializer
    *
    * @return  trust managers
    *
-   * @throws  GeneralSecurityException  if an errors occurs while loading the
-   * TrustManagers
+   * @throws  GeneralSecurityException  if an errors occurs while loading the TrustManagers
    */
   TrustManager[] getTrustManagers()
     throws GeneralSecurityException;
 
 
   /**
-   * Sets the trust managers. May be in isolation or in conjunction with other
-   * trust material.
+   * Sets the trust managers. May be in isolation or in conjunction with other trust material.
    *
    * @param  managers  trust managers
    */
@@ -54,8 +52,7 @@ public interface SSLContextInitializer
    *
    * @return  key managers
    *
-   * @throws  GeneralSecurityException  if an errors occurs while loading the
-   * KeyManagers
+   * @throws  GeneralSecurityException  if an errors occurs while loading the KeyManagers
    */
   KeyManager[] getKeyManagers()
     throws GeneralSecurityException;

@@ -54,13 +54,9 @@ public class SearchOperationCli extends AbstractCli
   @Override
   protected void initOptions()
   {
-    options.addOption(
-      new Option(OPT_DSMLV1, false, "output results in DSML v1"));
+    options.addOption(new Option(OPT_DSMLV1, false, "output results in DSML v1"));
 
-    final Map<String, String> desc = getArgDesc(
-      ConnectionConfig.class,
-      SslConfig.class,
-      SearchRequest.class);
+    final Map<String, String> desc = getArgDesc(ConnectionConfig.class, SslConfig.class, SearchRequest.class);
     for (String s : ConnectionConfigPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
@@ -87,10 +83,9 @@ public class SearchOperationCli extends AbstractCli
   protected SearchRequest initSearchRequest(final CommandLine line)
   {
     final SearchRequest request = new SearchRequest();
-    final SearchRequestPropertySource srSource =
-      new SearchRequestPropertySource(
-        request,
-        getPropertiesFromOptions(PropertyDomain.LDAP.value(), line));
+    final SearchRequestPropertySource srSource = new SearchRequestPropertySource(
+      request,
+      getPropertiesFromOptions(PropertyDomain.LDAP.value(), line));
     srSource.initialize();
     return request;
   }
@@ -133,11 +128,9 @@ public class SearchOperationCli extends AbstractCli
     final SearchResult result = response.getResult();
     SearchResultWriter writer;
     if (outputDsmlv1) {
-      writer = new Dsmlv1Writer(
-        new BufferedWriter(new OutputStreamWriter(System.out)));
+      writer = new Dsmlv1Writer(new BufferedWriter(new OutputStreamWriter(System.out)));
     } else {
-      writer = new LdifWriter(
-        new BufferedWriter(new OutputStreamWriter(System.out)));
+      writer = new LdifWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
     }
     writer.write(result);
     conn.close();

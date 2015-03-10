@@ -11,8 +11,7 @@ import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
- * Response control for virtual list view. See
- * http://tools.ietf.org/html/draft-ietf-ldapext-ldapv3-vlv-09. Control is
+ * Response control for virtual list view. See http://tools.ietf.org/html/draft-ietf-ldapext-ldapv3-vlv-09. Control is
  * defined as:
  *
  * <pre>
@@ -37,8 +36,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class VirtualListViewResponseControl extends AbstractControl
-  implements ResponseControl
+public class VirtualListViewResponseControl extends AbstractControl implements ResponseControl
 {
 
   /** OID of this control. */
@@ -50,19 +48,15 @@ public class VirtualListViewResponseControl extends AbstractControl
   /** list offset for the target entry. */
   private int targetPosition;
 
-  /**
-   * server's estimate of the current number of entries in the ordered search
-   * result set.
-   */
+  /** server's estimate of the current number of entries in the ordered search result set. */
   private int contentCount;
 
   /** Result of the vlv operation. */
   private ResultCode viewResult;
 
   /**
-   * value that clients should send back to the server to indicate that the
-   * server is willing to return contiguous data from a subsequent search
-   * request which uses the same search criteria.
+   * value that clients should send back to the server to indicate that the server is willing to return contiguous data
+   * from a subsequent search request which uses the same search criteria.
    */
   private byte[] contextID;
 
@@ -128,8 +122,7 @@ public class VirtualListViewResponseControl extends AbstractControl
 
 
   /**
-   * Returns the target position. This indicates the list offset for the target
-   * entry.
+   * Returns the target position. This indicates the list offset for the target entry.
    *
    * @return  target position
    */
@@ -153,11 +146,10 @@ public class VirtualListViewResponseControl extends AbstractControl
   /**
    * Returns the content count. From the RFC:
    *
-   * <p>contentCount gives the server's estimate of the current number of
-   * entries in the list. Together these give sufficient information for the
-   * client to update a list box slider position to match the newly retrieved
-   * entries and identify the target entry. The contentCount value returned
-   * SHOULD be used in a subsequent VirtualListViewRequest control.</p>
+   * <p>contentCount gives the server's estimate of the current number of entries in the list. Together these give
+   * sufficient information for the client to update a list box slider position to match the newly retrieved entries and
+   * identify the target entry. The contentCount value returned SHOULD be used in a subsequent VirtualListViewRequest
+   * control.</p>
    *
    * @return  content count
    */
@@ -203,13 +195,11 @@ public class VirtualListViewResponseControl extends AbstractControl
   /**
    * Returns the context id. From the RFC:
    *
-   * <p>The contextID is a server-defined octet string. If present, the contents
-   * of the contextID field SHOULD be returned to the server by a client in a
-   * subsequent virtual list request. The presence of a contextID here indicates
-   * that the server is willing to return contiguous data from a subsequent
-   * search request which uses the same search criteria, accompanied by a
-   * VirtualListViewRequest which indicates that the client wishes to receive an
-   * adjoining page of data.</p>
+   * <p>The contextID is a server-defined octet string. If present, the contents of the contextID field SHOULD be
+   * returned to the server by a client in a subsequent virtual list request. The presence of a contextID here indicates
+   * that the server is willing to return contiguous data from a subsequent search request which uses the same search
+   * criteria, accompanied by a VirtualListViewRequest which indicates that the client wishes to receive an adjoining
+   * page of data.</p>
    *
    * @return  context id
    */
@@ -268,12 +258,8 @@ public class VirtualListViewResponseControl extends AbstractControl
     logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
 
     final DERParser parser = new DERParser();
-    parser.registerHandler(
-      TargetPositionHandler.PATH,
-      new TargetPositionHandler(this));
-    parser.registerHandler(
-      ContentCountHandler.PATH,
-      new ContentCountHandler(this));
+    parser.registerHandler(TargetPositionHandler.PATH, new TargetPositionHandler(this));
+    parser.registerHandler(ContentCountHandler.PATH, new ContentCountHandler(this));
     parser.registerHandler(ViewResultHandler.PATH, new ViewResultHandler(this));
     parser.registerHandler(ContextIDHandler.PATH, new ContextIDHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
@@ -281,8 +267,7 @@ public class VirtualListViewResponseControl extends AbstractControl
 
 
   /** Parse handler implementation for the target position. */
-  private static class TargetPositionHandler
-    extends AbstractParseHandler<VirtualListViewResponseControl>
+  private static class TargetPositionHandler extends AbstractParseHandler<VirtualListViewResponseControl>
   {
 
     /** DER path to target position. */
@@ -309,8 +294,7 @@ public class VirtualListViewResponseControl extends AbstractControl
 
 
   /** Parse handler implementation for the content count. */
-  private static class ContentCountHandler
-    extends AbstractParseHandler<VirtualListViewResponseControl>
+  private static class ContentCountHandler extends AbstractParseHandler<VirtualListViewResponseControl>
   {
 
     /** DER path to content count. */
@@ -337,8 +321,7 @@ public class VirtualListViewResponseControl extends AbstractControl
 
 
   /** Parse handler implementation for the view result. */
-  private static class ViewResultHandler
-    extends AbstractParseHandler<VirtualListViewResponseControl>
+  private static class ViewResultHandler extends AbstractParseHandler<VirtualListViewResponseControl>
   {
 
     /** DER path to result code. */
@@ -362,8 +345,7 @@ public class VirtualListViewResponseControl extends AbstractControl
       final int resultValue = IntegerType.decode(encoded).intValue();
       final ResultCode rc = ResultCode.valueOf(resultValue);
       if (rc == null) {
-        throw new IllegalArgumentException(
-          "Unknown result code " + resultValue);
+        throw new IllegalArgumentException("Unknown result code " + resultValue);
       }
       getObject().setViewResult(rc);
     }
@@ -371,8 +353,7 @@ public class VirtualListViewResponseControl extends AbstractControl
 
 
   /** Parse handler implementation for the context ID. */
-  private static class ContextIDHandler
-    extends AbstractParseHandler<VirtualListViewResponseControl>
+  private static class ContextIDHandler extends AbstractParseHandler<VirtualListViewResponseControl>
   {
 
     /** DER path to context value. */

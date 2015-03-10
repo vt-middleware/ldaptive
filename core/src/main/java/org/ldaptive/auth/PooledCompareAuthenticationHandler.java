@@ -8,14 +8,12 @@ import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
 
 /**
- * Provides an LDAP authentication implementation that leverages a pool of ldap
- * connections to perform the compare operation against the userPassword
- * attribute. The default password scheme used is 'SHA'.
+ * Provides an LDAP authentication implementation that leverages a pool of ldap connections to perform the compare
+ * operation against the userPassword attribute. The default password scheme used is 'SHA'.
  *
  * @author  Middleware Services
  */
-public class PooledCompareAuthenticationHandler
-  extends AbstractCompareAuthenticationHandler
+public class PooledCompareAuthenticationHandler extends AbstractCompareAuthenticationHandler
   implements PooledConnectionFactoryManager
 {
 

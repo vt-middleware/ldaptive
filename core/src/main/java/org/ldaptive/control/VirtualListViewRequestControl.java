@@ -12,8 +12,7 @@ import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UniversalDERTag;
 
 /**
- * Request control for virtual list view. See
- * http://tools.ietf.org/html/draft-ietf-ldapext-ldapv3-vlv-09. Control is
+ * Request control for virtual list view. See http://tools.ietf.org/html/draft-ietf-ldapext-ldapv3-vlv-09. Control is
  * defined as:
  *
  * <pre>
@@ -30,8 +29,7 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class VirtualListViewRequestControl extends AbstractControl
-  implements RequestControl
+public class VirtualListViewRequestControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -49,22 +47,15 @@ public class VirtualListViewRequestControl extends AbstractControl
   /** target entry's offset within the ordered search result set. */
   private int targetOffset;
 
-  /**
-   * server's estimate of the current number of entries in the ordered search
-   * result set.
-   */
+  /** server's estimate of the current number of entries in the ordered search result set. */
   private int contentCount;
 
-  /**
-   * value to match against the ordering matching rule for the
-   * attributeDescription in the sort control.
-   */
+  /** value to match against the ordering matching rule for the attributeDescription in the sort control. */
   private String assertionValue;
 
   /**
-   * value that clients should send back to the server to indicate that the
-   * server is willing to return contiguous data from a subsequent search
-   * request which uses the same search criteria.
+   * value that clients should send back to the server to indicate that the server is willing to return contiguous data
+   * from a subsequent search request which uses the same search criteria.
    */
   private byte[] contextID;
 
@@ -83,10 +74,7 @@ public class VirtualListViewRequestControl extends AbstractControl
    * @param  before  number of entries before the target
    * @param  after  number of entries after the target
    */
-  public VirtualListViewRequestControl(
-    final int offset,
-    final int before,
-    final int after)
+  public VirtualListViewRequestControl(final int offset, final int before, final int after)
   {
     this(offset, before, after, 0, null, false);
   }
@@ -100,11 +88,7 @@ public class VirtualListViewRequestControl extends AbstractControl
    * @param  after  number of entries after the target
    * @param  critical  whether this control is critical
    */
-  public VirtualListViewRequestControl(
-    final int offset,
-    final int before,
-    final int after,
-    final boolean critical)
+  public VirtualListViewRequestControl(final int offset, final int before, final int after, final boolean critical)
   {
     this(offset, before, after, 0, null, critical);
   }
@@ -164,10 +148,7 @@ public class VirtualListViewRequestControl extends AbstractControl
    * @param  before  number of entries before the target
    * @param  after  number of entries after the target
    */
-  public VirtualListViewRequestControl(
-    final String assertion,
-    final int before,
-    final int after)
+  public VirtualListViewRequestControl(final String assertion, final int before, final int after)
   {
     this(assertion, before, after, null, false);
   }
@@ -199,11 +180,7 @@ public class VirtualListViewRequestControl extends AbstractControl
    * @param  after  number of entries after the target
    * @param  context  server context id
    */
-  public VirtualListViewRequestControl(
-    final String assertion,
-    final int before,
-    final int after,
-    final byte[] context)
+  public VirtualListViewRequestControl(final String assertion, final int before, final int after, final byte[] context)
   {
     this(assertion, before, after, context, false);
   }
@@ -234,8 +211,8 @@ public class VirtualListViewRequestControl extends AbstractControl
 
 
   /**
-   * Returns the before count. This indicates how many entries before the target
-   * entry the client wants the server to send.
+   * Returns the before count. This indicates how many entries before the target entry the client wants the server to
+   * send.
    *
    * @return  before count
    */
@@ -257,8 +234,8 @@ public class VirtualListViewRequestControl extends AbstractControl
 
 
   /**
-   * Returns the after count. This indicates how many entries after the target
-   * entry the client wants the server to send.
+   * Returns the after count. This indicates how many entries after the target entry the client wants the server to
+   * send.
    *
    * @return  after count
    */
@@ -280,8 +257,7 @@ public class VirtualListViewRequestControl extends AbstractControl
 
 
   /**
-   * Returns the target offset. This indicates the return entry's offset within
-   * the ordered search result set.
+   * Returns the target offset. This indicates the return entry's offset within the ordered search result set.
    *
    * @return  target offset
    */
@@ -305,11 +281,10 @@ public class VirtualListViewRequestControl extends AbstractControl
   /**
    * Returns the content count. From the RFC:
    *
-   * <p>contentCount gives the server's estimate of the current number of
-   * entries in the list. Together these give sufficient information for the
-   * client to update a list box slider position to match the newly retrieved
-   * entries and identify the target entry. The contentCount value returned
-   * SHOULD be used in a subsequent VirtualListViewRequest control.</p>
+   * <p>contentCount gives the server's estimate of the current number of entries in the list. Together these give
+   * sufficient information for the client to update a list box slider position to match the newly retrieved entries and
+   * identify the target entry. The contentCount value returned SHOULD be used in a subsequent VirtualListViewRequest
+   * control.</p>
    *
    * @return  content count
    */
@@ -333,13 +308,10 @@ public class VirtualListViewRequestControl extends AbstractControl
   /**
    * Returns the assertion value. From the RFC:
    *
-   * <p>The assertion value is encoded according to the ORDERING matching rule
-   * for the attributeDescription in the sort control [SSS]. If present, the
-   * value supplied in greaterThanOrEqual is used to determine the target entry
-   * by comparison with the values of the attribute specified as the primary
-   * sort key. The first list entry who's value is no less than (less than or
-   * equal to when the sort order is reversed) the supplied value is the target
-   * entry.</p>
+   * <p>The assertion value is encoded according to the ORDERING matching rule for the attributeDescription in the sort
+   * control [SSS]. If present, the value supplied in greaterThanOrEqual is used to determine the target entry by
+   * comparison with the values of the attribute specified as the primary sort key. The first list entry who's value is
+   * no less than (less than or equal to when the sort order is reversed) the supplied value is the target entry.</p>
    *
    * @return  assertion value
    */
@@ -363,13 +335,11 @@ public class VirtualListViewRequestControl extends AbstractControl
   /**
    * Returns the context id. From the RFC:
    *
-   * <p>The contextID is a server-defined octet string. If present, the contents
-   * of the contextID field SHOULD be returned to the server by a client in a
-   * subsequent virtual list request. The presence of a contextID here indicates
-   * that the server is willing to return contiguous data from a subsequent
-   * search request which uses the same search criteria, accompanied by a
-   * VirtualListViewRequest which indicates that the client wishes to receive an
-   * adjoining page of data.</p>
+   * <p>The contextID is a server-defined octet string. If present, the contents of the contextID field SHOULD be
+   * returned to the server by a client in a subsequent virtual list request. The presence of a contextID here indicates
+   * that the server is willing to return contiguous data from a subsequent search request which uses the same search
+   * criteria, accompanied by a VirtualListViewRequest which indicates that the client wishes to receive an adjoining
+   * page of data.</p>
    *
    * @return  context id
    */
@@ -433,8 +403,7 @@ public class VirtualListViewRequestControl extends AbstractControl
     if (getAssertionValue() != null) {
       l.add(new IntegerType(getBeforeCount()));
       l.add(new IntegerType(getAfterCount()));
-      l.add(
-        new OctetStringType(new ContextDERTag(1, false), getAssertionValue()));
+      l.add(new OctetStringType(new ContextDERTag(1, false), getAssertionValue()));
       if (getContextID() != null) {
         l.add(new OctetStringType(getContextID()));
       }

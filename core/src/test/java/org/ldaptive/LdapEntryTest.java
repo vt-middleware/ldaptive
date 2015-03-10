@@ -24,26 +24,21 @@ public class LdapEntryTest
   @DataProvider(name = "attributes")
   public Object[][] createSerializable()
   {
-    return
-      new Object[][] {
-        new Object[] {
-          new LdapAttribute("givenName", "John"),
-          new LdapAttribute("sn", "Doe"),
-        },
-      };
+    return new Object[][] {
+      new Object[] {
+        new LdapAttribute("givenName", "John"),
+        new LdapAttribute("sn", "Doe"),
+      },
+    };
   }
 
 
-  /**
-   * Tests default sort behavior.
-   */
+  /** Tests default sort behavior. */
   @Test(groups = {"bean"})
   public void defaultSortBehavior()
   {
     final LdapEntry le = new LdapEntry("uid=1");
-    AssertJUnit.assertEquals(
-      SortBehavior.getDefaultSortBehavior(),
-      le.getSortBehavior());
+    AssertJUnit.assertEquals(SortBehavior.getDefaultSortBehavior(), le.getSortBehavior());
     AssertJUnit.assertEquals(0, le.size());
     AssertJUnit.assertNull(le.getAttribute());
     AssertJUnit.assertEquals("uid=1", le.getDn());
@@ -61,16 +56,13 @@ public class LdapEntryTest
    * @param  attr2  ldap attribute
    */
   @Test(groups = {"bean"}, dataProvider = "attributes")
-  public void orderedSortBehavior(
-    final LdapAttribute attr1,
-    final LdapAttribute attr2)
+  public void orderedSortBehavior(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry(SortBehavior.ORDERED);
     AssertJUnit.assertEquals(SortBehavior.ORDERED, le.getSortBehavior());
     le.addAttribute(attr2, attr1);
 
-    final LdapAttribute[] attrs = le.getAttributes().toArray(
-      new LdapAttribute[2]);
+    final LdapAttribute[] attrs = le.getAttributes().toArray(new LdapAttribute[2]);
     AssertJUnit.assertEquals(attr2, attrs[0]);
     AssertJUnit.assertEquals(attr1, attrs[1]);
     le.clear();
@@ -85,15 +77,13 @@ public class LdapEntryTest
    * @param  attr2  ldap attribute
    */
   @Test(groups = {"bean"}, dataProvider = "attributes")
-  public void sortedSortBehavior(
-    final LdapAttribute attr1,
-    final LdapAttribute attr2)
+  public void sortedSortBehavior(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry(SortBehavior.SORTED);
     AssertJUnit.assertEquals(SortBehavior.SORTED, le.getSortBehavior());
     le.addAttribute(attr2, attr1);
-    final LdapAttribute[] attrs = le.getAttributes().toArray(
-      new LdapAttribute[2]);
+
+    final LdapAttribute[] attrs = le.getAttributes().toArray(new LdapAttribute[2]);
     AssertJUnit.assertEquals(attr1, attrs[0]);
     AssertJUnit.assertEquals(attr2, attrs[1]);
     le.clear();
@@ -108,9 +98,7 @@ public class LdapEntryTest
    * @param  attr2  ldap attribute
    */
   @Test(groups = {"bean"}, dataProvider = "attributes")
-  public void createOne(
-    final LdapAttribute attr1,
-    final LdapAttribute attr2)
+  public void createOne(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry("uid=1", attr1);
     AssertJUnit.assertEquals(attr1, le.getAttribute());
@@ -131,9 +119,7 @@ public class LdapEntryTest
    * @param  attr2  ldap attribute
    */
   @Test(groups = {"bean"}, dataProvider = "attributes")
-  public void createTwo(
-    final LdapAttribute attr1,
-    final LdapAttribute attr2)
+  public void createTwo(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry("uid=1", attr2, attr1);
     AssertJUnit.assertEquals(attr1, le.getAttribute("givenName"));
@@ -155,12 +141,11 @@ public class LdapEntryTest
    * @param  attr2  ldap attribute
    */
   @Test(groups = {"bean"}, dataProvider = "attributes")
-  public void createCollection(
-    final LdapAttribute attr1,
-    final LdapAttribute attr2)
+  public void createCollection(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final Set<LdapAttribute> s = new HashSet<>();
     s.add(attr1);
+
     final LdapEntry le = new LdapEntry("uid=1", s);
     le.addAttribute(attr2);
     AssertJUnit.assertEquals(attr1, le.getAttribute("GIVENNAME"));
@@ -182,25 +167,20 @@ public class LdapEntryTest
    * @param  attr2  ldap attribute
    */
   @Test(groups = {"bean"}, dataProvider = "attributes")
-  public void renameAttribute(
-    final LdapAttribute attr1,
-    final LdapAttribute attr2)
+  public void renameAttribute(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry("uid=1", attr2, attr1);
-    AssertJUnit.assertEquals(
-      "givenName", le.getAttribute("givenname").getName());
+    AssertJUnit.assertEquals("givenName", le.getAttribute("givenname").getName());
     le.renameAttribute(null, "firstName");
-    AssertJUnit.assertEquals(
-      "givenName", le.getAttribute("givenname").getName());
+    AssertJUnit.assertEquals("givenName", le.getAttribute("givenname").getName());
     le.renameAttribute("noName", "firstName");
-    AssertJUnit.assertEquals(
-      "givenName", le.getAttribute("givenname").getName());
+    AssertJUnit.assertEquals("givenName", le.getAttribute("givenname").getName());
+
     final LdapAttribute la = le.getAttribute("givenName");
     le.renameAttribute("givenName", "firstName");
     AssertJUnit.assertNull(le.getAttribute("givenName"));
     AssertJUnit.assertNotNull(le.getAttribute("firstName"));
     AssertJUnit.assertEquals("firstName", la.getName());
-    AssertJUnit.assertEquals(
-      "firstName", le.getAttribute("firstName").getName());
+    AssertJUnit.assertEquals("firstName", le.getAttribute("firstName").getName());
   }
 }

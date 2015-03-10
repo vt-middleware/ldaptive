@@ -12,8 +12,7 @@ import org.ldaptive.provider.ControlHandler;
  *
  * @author  Middleware Services
  */
-public class UnboundIDControlHandler
-  implements ControlHandler<com.unboundid.ldap.sdk.Control>
+public class UnboundIDControlHandler implements ControlHandler<com.unboundid.ldap.sdk.Control>
 {
 
 
@@ -25,15 +24,11 @@ public class UnboundIDControlHandler
 
 
   @Override
-  public com.unboundid.ldap.sdk.Control handleRequest(
-    final RequestControl requestControl)
+  public com.unboundid.ldap.sdk.Control handleRequest(final RequestControl requestControl)
   {
     final byte[] value = requestControl.encode();
     if (value == null) {
-      return
-        new com.unboundid.ldap.sdk.Control(
-          requestControl.getOID(),
-          requestControl.getCriticality());
+      return new com.unboundid.ldap.sdk.Control(requestControl.getOID(), requestControl.getCriticality());
     } else {
       return
         new com.unboundid.ldap.sdk.Control(
@@ -45,8 +40,7 @@ public class UnboundIDControlHandler
 
 
   @Override
-  public ResponseControl handleResponse(
-    final com.unboundid.ldap.sdk.Control responseControl)
+  public ResponseControl handleResponse(final com.unboundid.ldap.sdk.Control responseControl)
   {
     return
       ControlFactory.createResponseControl(

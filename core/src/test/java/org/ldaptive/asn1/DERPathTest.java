@@ -36,14 +36,9 @@ public class DERPathTest
   public void testEquals()
     throws Exception
   {
-    Assert.assertTrue(
-      new DERPath("/SEQ[0]/OCTSTR[1]").equals(
-        new DERPath("/SEQ[0]/OCTSTR[1]")));
-    Assert.assertFalse(
-      new DERPath("/SEQ[0]/OCTSTR[1]").equals(
-        new DERPath("/SEQ[0]/OCTSTR[2]")));
-    Assert.assertFalse(
-      new DERPath("/SEQ[0]/OCTSTR[1]").equals(new DERPath("/SEQ/OCTSTR[2]")));
+    Assert.assertTrue(new DERPath("/SEQ[0]/OCTSTR[1]").equals(new DERPath("/SEQ[0]/OCTSTR[1]")));
+    Assert.assertFalse(new DERPath("/SEQ[0]/OCTSTR[1]").equals(new DERPath("/SEQ[0]/OCTSTR[2]")));
+    Assert.assertFalse(new DERPath("/SEQ[0]/OCTSTR[1]").equals(new DERPath("/SEQ/OCTSTR[2]")));
   }
 
 
@@ -52,15 +47,9 @@ public class DERPathTest
   public void testHashcode()
     throws Exception
   {
-    Assert.assertEquals(
-      new DERPath("/SEQ[0]/OCTSTR[1]").hashCode(),
-      new DERPath("/SEQ[0]/OCTSTR[1]").hashCode());
-    Assert.assertFalse(
-      new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() ==
-      new DERPath("/SEQ[0]/OCTSTR[2]").hashCode());
-    Assert.assertFalse(
-      new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() ==
-      new DERPath("/SEQ/OCTSTR[2]").hashCode());
+    Assert.assertEquals(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode(), new DERPath("/SEQ[0]/OCTSTR[1]").hashCode());
+    Assert.assertFalse(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() == new DERPath("/SEQ[0]/OCTSTR[2]").hashCode());
+    Assert.assertFalse(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() == new DERPath("/SEQ/OCTSTR[2]").hashCode());
   }
 
   /**
@@ -95,10 +84,7 @@ public class DERPathTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "paths"
-  )
+  @Test(groups = {"asn1"}, dataProvider = "paths")
   public void testToString(final String testPath, final String expected)
     throws Exception
   {
@@ -112,10 +98,7 @@ public class DERPathTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "paths"
-  )
+  @Test(groups = {"asn1"}, dataProvider = "paths")
   public void testEquals(final String testPath, final String expected)
     throws Exception
   {

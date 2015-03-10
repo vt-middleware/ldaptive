@@ -287,9 +287,7 @@ public class AttributeType extends AbstractNamedSchemaElement
   {
     if (syntaxOID != null) {
       if (syntaxOID.contains("{") && syntaxOID.endsWith("}")) {
-        final String count = syntaxOID.substring(
-          syntaxOID.indexOf('{') + 1,
-          syntaxOID.length() - 1);
+        final String count = syntaxOID.substring(syntaxOID.indexOf('{') + 1, syntaxOID.length() - 1);
         return Integer.parseInt(count);
       }
     }
@@ -397,8 +395,7 @@ public class AttributeType extends AbstractNamedSchemaElement
 
 
   /**
-   * Parses the supplied definition string and creates an initialized attribute
-   * type.
+   * Parses the supplied definition string and creates an initialized attribute type.
    *
    * @param  definition  to parse
    *
@@ -411,9 +408,7 @@ public class AttributeType extends AbstractNamedSchemaElement
   {
     final Matcher m = DEFINITION_PATTERN.matcher(definition);
     if (!m.matches()) {
-      throw new ParseException(
-        "Invalid attribute type definition: " + definition,
-        definition.length());
+      throw new ParseException("Invalid attribute type definition: " + definition, definition.length());
     }
 
     final AttributeType atd = new AttributeType(m.group(1).trim());

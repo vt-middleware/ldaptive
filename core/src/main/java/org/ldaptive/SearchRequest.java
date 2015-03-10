@@ -77,10 +77,7 @@ public class SearchRequest extends AbstractRequest
    * @param  filter  search filter
    * @param  attrs  to return
    */
-  public SearchRequest(
-    final String dn,
-    final SearchFilter filter,
-    final String... attrs)
+  public SearchRequest(final String dn, final SearchFilter filter, final String... attrs)
   {
     setBaseDn(dn);
     setSearchFilter(filter);
@@ -108,10 +105,7 @@ public class SearchRequest extends AbstractRequest
    * @param  filter  search filter
    * @param  attrs  to return
    */
-  public SearchRequest(
-    final String dn,
-    final String filter,
-    final String... attrs)
+  public SearchRequest(final String dn, final String filter, final String... attrs)
   {
     setBaseDn(dn);
     setSearchFilter(new SearchFilter(filter));
@@ -382,8 +376,7 @@ public class SearchRequest extends AbstractRequest
    *
    * @param  handlers  search reference handlers
    */
-  public void setSearchReferenceHandlers(
-    final SearchReferenceHandler... handlers)
+  public void setSearchReferenceHandlers(final SearchReferenceHandler... handlers)
   {
     if (handlers != null) {
       for (SearchReferenceHandler handler : handlers) {
@@ -395,8 +388,7 @@ public class SearchRequest extends AbstractRequest
 
 
   /**
-   * Returns a search request initialized for use with an object level search
-   * scope.
+   * Returns a search request initialized for use with an object level search scope.
    *
    * @param  dn  of an ldap entry
    *
@@ -409,29 +401,21 @@ public class SearchRequest extends AbstractRequest
 
 
   /**
-   * Returns a search request initialized for use with an object level search
-   * scope.
+   * Returns a search request initialized for use with an object level search scope.
    *
    * @param  dn  of an ldap entry
    * @param  attrs  to return
    *
    * @return  search request
    */
-  public static SearchRequest newObjectScopeSearchRequest(
-    final String dn,
-    final String[] attrs)
+  public static SearchRequest newObjectScopeSearchRequest(final String dn, final String[] attrs)
   {
-    return
-      newObjectScopeSearchRequest(
-        dn,
-        attrs,
-        new SearchFilter("(objectClass=*)"));
+    return newObjectScopeSearchRequest(dn, attrs, new SearchFilter("(objectClass=*)"));
   }
 
 
   /**
-   * Returns a search request initialized for use with an object level search
-   * scope.
+   * Returns a search request initialized for use with an object level search scope.
    *
    * @param  dn  of an ldap entry
    * @param  attrs  to return
@@ -454,8 +438,8 @@ public class SearchRequest extends AbstractRequest
 
 
   /**
-   * Returns a search request initialized with the supplied request. Note that
-   * stateful ldap entry handlers could cause thread safety issues.
+   * Returns a search request initialized with the supplied request. Note that stateful ldap entry handlers could cause
+   * thread safety issues.
    *
    * @param  request  search request to read properties from
    *
@@ -478,8 +462,7 @@ public class SearchRequest extends AbstractRequest
     sr.setTypesOnly(request.getTypesOnly());
     sr.setControls(request.getControls());
     sr.setReferralHandler(request.getReferralHandler());
-    sr.setIntermediateResponseHandlers(
-      request.getIntermediateResponseHandlers());
+    sr.setIntermediateResponseHandlers(request.getIntermediateResponseHandlers());
     return sr;
   }
 

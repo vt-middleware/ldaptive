@@ -20,9 +20,8 @@ public final class ProviderUtils
 
 
   /**
-   * Determines whether to throw operation exception or ldap exception. If
-   * operation exception is thrown, the operation will be retried. Otherwise the
-   * exception is propagated out.
+   * Determines whether to throw operation exception or ldap exception. If operation exception is thrown, the operation
+   * will be retried. Otherwise the exception is propagated out.
    *
    * @param  operationRetryResultCodes  to compare result code against
    * @param  e  provider exception to wrap
@@ -30,8 +29,7 @@ public final class ProviderUtils
    * @param  matchedDn  response matched dn
    * @param  respControls  response controls
    * @param  referralUrls  response referral urls
-   * @param  throwLdapException  throw an ldap exception if an operation
-   * exception is not thrown
+   * @param  throwLdapException  throw an ldap exception if an operation exception is not thrown
    *
    * @throws  OperationException  if the operation should be retried
    * @throws  LdapException  to propagate the exception out
@@ -46,35 +44,22 @@ public final class ProviderUtils
     final boolean throwLdapException)
     throws LdapException
   {
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
+    if (operationRetryResultCodes != null && operationRetryResultCodes.length > 0) {
       for (ResultCode rc : operationRetryResultCodes) {
         if (rc.value() == resultCode) {
-          throw new OperationException(
-            e,
-            rc,
-            matchedDn,
-            respControls,
-            referralUrls);
+          throw new OperationException(e, rc, matchedDn, respControls, referralUrls);
         }
       }
     }
     if (throwLdapException) {
-      throw new LdapException(
-        e,
-        ResultCode.valueOf(resultCode),
-        matchedDn,
-        respControls,
-        referralUrls);
+      throw new LdapException(e, ResultCode.valueOf(resultCode), matchedDn, respControls, referralUrls);
     }
   }
 
 
   /**
-   * Determines whether to throw operation exception or ldap exception. If
-   * operation exception is thrown, the operation will be retried. Otherwise the
-   * exception is propagated out.
+   * Determines whether to throw operation exception or ldap exception. If operation exception is thrown, the operation
+   * will be retried. Otherwise the exception is propagated out.
    *
    * @param  operationRetryResultCodes  to compare result code against
    * @param  msg  provider message
@@ -82,8 +67,7 @@ public final class ProviderUtils
    * @param  matchedDn  response matched dn
    * @param  respControls  response controls
    * @param  referralUrls  response referral urls
-   * @param  throwLdapException  throw an ldap exception if an operation
-   * exception is not thrown
+   * @param  throwLdapException  throw an ldap exception if an operation exception is not thrown
    *
    * @throws  OperationException  if the operation should be retried
    * @throws  LdapException  to propagate the exception out
@@ -98,27 +82,15 @@ public final class ProviderUtils
     final boolean throwLdapException)
     throws LdapException
   {
-    if (
-      operationRetryResultCodes != null &&
-        operationRetryResultCodes.length > 0) {
+    if (operationRetryResultCodes != null && operationRetryResultCodes.length > 0) {
       for (ResultCode rc : operationRetryResultCodes) {
         if (rc.value() == resultCode) {
-          throw new OperationException(
-            msg,
-            rc,
-            matchedDn,
-            respControls,
-            referralUrls);
+          throw new OperationException(msg, rc, matchedDn, respControls, referralUrls);
         }
       }
     }
     if (throwLdapException) {
-      throw new LdapException(
-        msg,
-        ResultCode.valueOf(resultCode),
-        matchedDn,
-        respControls,
-        referralUrls);
+      throw new LdapException(msg, ResultCode.valueOf(resultCode), matchedDn, respControls, referralUrls);
     }
   }
 }

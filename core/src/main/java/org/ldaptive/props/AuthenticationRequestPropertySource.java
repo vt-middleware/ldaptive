@@ -7,28 +7,25 @@ import java.util.Set;
 import org.ldaptive.auth.AuthenticationRequest;
 
 /**
- * Reads properties specific to {@link org.ldaptive.auth.AuthenticationRequest}
- * and returns an initialized object of that type.
+ * Reads properties specific to {@link org.ldaptive.auth.AuthenticationRequest} and returns an initialized object of
+ * that type.
  *
  * @author  Middleware Services
  */
-public final class AuthenticationRequestPropertySource
-  extends AbstractPropertySource<AuthenticationRequest>
+public final class AuthenticationRequestPropertySource extends AbstractPropertySource<AuthenticationRequest>
 {
 
   /** Invoker for authentication request. */
-  private static final AuthenticationRequestPropertyInvoker INVOKER =
-    new AuthenticationRequestPropertyInvoker(AuthenticationRequest.class);
+  private static final AuthenticationRequestPropertyInvoker INVOKER = new AuthenticationRequestPropertyInvoker(
+    AuthenticationRequest.class);
 
 
   /**
-   * Creates a new authentication request property source using the default
-   * properties file.
+   * Creates a new authentication request property source using the default properties file.
    *
    * @param  request  authentication request to set properties on
    */
-  public AuthenticationRequestPropertySource(
-    final AuthenticationRequest request)
+  public AuthenticationRequestPropertySource(final AuthenticationRequest request)
   {
     this(request, PROPERTIES_FILE);
   }
@@ -40,9 +37,7 @@ public final class AuthenticationRequestPropertySource
    * @param  request  authentication request to set properties on
    * @param  paths  to read properties from
    */
-  public AuthenticationRequestPropertySource(
-    final AuthenticationRequest request,
-    final String... paths)
+  public AuthenticationRequestPropertySource(final AuthenticationRequest request, final String... paths)
   {
     this(request, loadProperties(paths));
   }
@@ -54,9 +49,7 @@ public final class AuthenticationRequestPropertySource
    * @param  request  authentication request to set properties on
    * @param  readers  to read properties from
    */
-  public AuthenticationRequestPropertySource(
-    final AuthenticationRequest request,
-    final Reader... readers)
+  public AuthenticationRequestPropertySource(final AuthenticationRequest request, final Reader... readers)
   {
     this(request, loadProperties(readers));
   }
@@ -68,9 +61,7 @@ public final class AuthenticationRequestPropertySource
    * @param  request  authentication request to set properties on
    * @param  props  to read properties from
    */
-  public AuthenticationRequestPropertySource(
-    final AuthenticationRequest request,
-    final Properties props)
+  public AuthenticationRequestPropertySource(final AuthenticationRequest request, final Properties props)
   {
     this(request, PropertyDomain.AUTH, props);
   }

@@ -65,28 +65,26 @@ public class SyncInfoMessageTest
       new Object[][] {
         // refresh delete with cookie
         // BER:A1:36:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:30:31:32:30:
-        //     37:30:39:32:30:31:33:31:39:2E:37:36:34:39:31:35:5A:23:30:30:30:
-        //     30:30:30:23:30:30:30:23:30:30:30:30:30:30
+        // 37:30:39:32:30:31:33:31:39:2E:37:36:34:39:31:35:5A:23:30:30:30:
+        // 30:30:30:23:30:30:30:23:30:30:30:30:30:30
         new Object[] {
-          LdapUtils.base64Decode(
-            "oTYENHJpZD0wMDAsY3NuPTIwMTIwNzA5MjAxMzE5Ljc2NDkxNVojMDAwMDAwIzAw" +
+          LdapUtils.base64Decode("oTYENHJpZD0wMDAsY3NuPTIwMTIwNzA5MjAxMzE5Ljc2NDkxNVojMDAwMDAwIzAw" +
             "MCMwMDAwMDA="),
           m1,
         },
         // new cookie
         // BER:80:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:30:31:32:30:37:30:
-        //     39:32:30:31:33:31:39:2E:37:36:34:39:31:35:5A:23:30:30:30:30:30:
-        //     30:23:30:30:30:23:30:30:30:30:30:30:
+        // 39:32:30:31:33:31:39:2E:37:36:34:39:31:35:5A:23:30:30:30:30:30:
+        // 30:23:30:30:30:23:30:30:30:30:30:30:
         new Object[] {
-          LdapUtils.base64Decode(
-            "gDRyaWQ9MDAwLGNzbj0yMDEyMDcwOTIwMTMxOS43NjQ5MTVaIzAwMDAwMCMwMDAj" +
+          LdapUtils.base64Decode("gDRyaWQ9MDAwLGNzbj0yMDEyMDcwOTIwMTMxOS43NjQ5MTVaIzAwMDAwMCMwMDAj" +
             "MDAwMDAw"),
           m2,
         },
         // refresh present with cookie, refresh done false
         // BER:A2:39:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:30:31:32:30:
-        //     37:30:39:32:30:31:33:31:39:2E:37:36:34:39:31:35:5A:23:30:30:30:
-        //     30:30:30:23:30:30:30:23:30:30:30:30:30:30:01:01:00:
+        // 37:30:39:32:30:31:33:31:39:2E:37:36:34:39:31:35:5A:23:30:30:30:
+        // 30:30:30:23:30:30:30:23:30:30:30:30:30:30:01:01:00:
         new Object[] {
           LdapUtils.base64Decode(
             "ojkENHJpZD0wMDAsY3NuPTIwMTIwNzA5MjAxMzE5Ljc2NDkxNVojMDAwMDAwIzAw" +
@@ -95,10 +93,10 @@ public class SyncInfoMessageTest
         },
         // sync id set, refresh deletes true
         // BER:A3:5F:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:30:31:32:30:
-        //     37:30:39:32:30:31:33:31:39:2E:37:36:34:39:31:35:5A:23:30:30:30:
-        //     30:30:30:23:30:30:30:23:30:30:30:30:30:30:01:01:FF:31:24:04:10:
-        //     5D:5D:A5:D0:5B:E2:10:31:82:84:11:6F:F5:6E:4E:59:04:10:84:31:77:
-        //     EC:5B:0E:10:31:82:7F:11:6F:F5:6E:4E:59:
+        // 37:30:39:32:30:31:33:31:39:2E:37:36:34:39:31:35:5A:23:30:30:30:
+        // 30:30:30:23:30:30:30:23:30:30:30:30:30:30:01:01:FF:31:24:04:10:
+        // 5D:5D:A5:D0:5B:E2:10:31:82:84:11:6F:F5:6E:4E:59:04:10:84:31:77:
+        // EC:5B:0E:10:31:82:7F:11:6F:F5:6E:4E:59:
         new Object[] {
           LdapUtils.base64Decode(
             "o18ENHJpZD0wMDAsY3NuPTIwMTIwNzA5MjAxMzE5Ljc2NDkxNVojMDAwMDAwIzAw" +
@@ -116,10 +114,7 @@ public class SyncInfoMessageTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"intermediate"},
-    dataProvider = "response"
-  )
+  @Test(groups = {"intermediate"}, dataProvider = "response")
   public void decode(final byte[] berValue, final SyncInfoMessage expected)
     throws Exception
   {

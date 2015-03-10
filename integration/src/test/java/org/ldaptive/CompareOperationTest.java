@@ -54,32 +54,26 @@ public class CompareOperationTest extends AbstractTest
    */
   @Parameters({ "compareDn", "compareAttrName", "compareAttrValue" })
   @Test(
-    groups = {"compare"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"compare"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void compare(
-    final String dn,
-    final String attrName,
-    final String attrValue)
+  public void compare(final String dn, final String attrName, final String attrValue)
     throws Exception
   {
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final CompareOperation compare = new CompareOperation(conn);
       LdapAttribute la = new LdapAttribute();
       la.setName("cn");
       la.addStringValue("not-a-name");
-      AssertJUnit.assertFalse(
-        compare.execute(new CompareRequest(dn, la)).getResult());
+      AssertJUnit.assertFalse(compare.execute(new CompareRequest(dn, la)).getResult());
 
       la = new LdapAttribute();
       la.setName(attrName);
       la.addStringValue(attrValue);
-      AssertJUnit.assertTrue(
-        compare.execute(new CompareRequest(dn, la)).getResult());
+      AssertJUnit.assertTrue(compare.execute(new CompareRequest(dn, la)).getResult());
     } finally {
       conn.close();
     }
@@ -101,11 +95,8 @@ public class CompareOperationTest extends AbstractTest
     }
   )
   @Test(groups = {"compare"})
-  public void compareReferral(
-    final String dn,
-    final String attrName,
-    final String attrValue)
-  throws Exception
+  public void compareReferral(final String dn, final String attrName, final String attrValue)
+    throws Exception
   {
     if (TestControl.isActiveDirectory()) {
       return;
@@ -116,25 +107,21 @@ public class CompareOperationTest extends AbstractTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final CompareOperation compare = new CompareOperation(conn);
       try {
-        final CompareRequest request = new CompareRequest(
-          referralDn, new LdapAttribute(attrName, attrValue));
-        Response<Boolean> response = compare.execute(request);
+        final CompareRequest request = new CompareRequest(referralDn, new LdapAttribute(attrName, attrValue));
+        final Response<Boolean> response = compare.execute(request);
         AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
         AssertJUnit.assertTrue(response.getReferralURLs().length > 0);
         for (String s : response.getReferralURLs()) {
-          AssertJUnit.assertTrue(
-            response.getReferralURLs()[0].startsWith(
-              conn.getConnectionConfig().getLdapUrl()));
+          AssertJUnit.assertTrue(response.getReferralURLs()[0].startsWith(conn.getConnectionConfig().getLdapUrl()));
         }
       } catch (LdapException e) {
         AssertJUnit.assertEquals(ResultCode.REFERRAL, e.getResultCode());
         AssertJUnit.assertTrue(e.getReferralURLs().length > 0);
         for (String s : e.getReferralURLs()) {
-          AssertJUnit.assertTrue(
-            e.getReferralURLs()[0].startsWith(
-              conn.getConnectionConfig().getLdapUrl()));
+          AssertJUnit.assertTrue(e.getReferralURLs()[0].startsWith(conn.getConnectionConfig().getLdapUrl()));
         }
       }
     } finally {
@@ -143,18 +130,18 @@ public class CompareOperationTest extends AbstractTest
 
     try {
       conn.open();
+
       final CompareOperation compare = new CompareOperation(conn);
       try {
-        final CompareRequest request = new CompareRequest(
-          referralDn, new LdapAttribute(attrName, attrValue));
+        final CompareRequest request = new CompareRequest(referralDn, new LdapAttribute(attrName, attrValue));
         request.setReferralHandler(new CompareReferralHandler());
-        Response<Boolean> response = compare.execute(request);
+
+        final Response<Boolean> response = compare.execute(request);
         if (response.getResultCode() == ResultCode.COMPARE_TRUE) {
           AssertJUnit.assertTrue(response.getResult());
         } else {
           // some providers don't support authenticated referrals
-          AssertJUnit.assertEquals(
-            ResultCode.REFERRAL, response.getResultCode());
+          AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
         }
       } catch (UnsupportedOperationException e) {
         // ignore this test if not supported

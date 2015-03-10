@@ -12,8 +12,7 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchResult;
 
 /**
- * Provides a custom implementation for adding LDAP principals to a subject that
- * represent roles.
+ * Provides a custom implementation for adding LDAP principals to a subject that represent roles.
  *
  * @author  Middleware Services
  */
@@ -65,8 +64,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   @Override
   public String toString()
   {
-    return
-      String.format("[%s@%d::%s]", getClass().getName(), hashCode(), roleName);
+    return String.format("[%s@%d::%s]", getClass().getName(), hashCode(), roleName);
   }
 
 
@@ -78,8 +76,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
 
 
   /**
-   * Iterates over the supplied result and returns all attributes as a set of
-   * ldap roles.
+   * Iterates over the supplied result and returns all attributes as a set of ldap roles.
    *
    * @param  result  to read
    *
@@ -96,8 +93,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
 
 
   /**
-   * Iterates over the supplied entry and returns all attributes as a set of
-   * ldap roles.
+   * Iterates over the supplied entry and returns all attributes as a set of ldap roles.
    *
    * @param  entry  to read
    *
@@ -110,15 +106,13 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
 
 
   /**
-   * Iterates over the supplied attributes and returns all values as a set of
-   * ldap roles.
+   * Iterates over the supplied attributes and returns all values as a set of ldap roles.
    *
    * @param  attributes  to read
    *
    * @return  ldap roles
    */
-  public static Set<LdapRole> toRoles(
-    final Collection<LdapAttribute> attributes)
+  public static Set<LdapRole> toRoles(final Collection<LdapAttribute> attributes)
   {
     final Set<LdapRole> r = new HashSet<>();
     if (attributes != null) {

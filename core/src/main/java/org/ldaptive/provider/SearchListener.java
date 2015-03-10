@@ -13,8 +13,7 @@ public interface SearchListener extends ResponseListener
   /**
    * Invoked when a search item is received from a provider.
    *
-   * @param  item  containing a search result entry, reference, or intermediate
-   * response
+   * @param  item  containing a search result entry, reference, or intermediate response
    */
   void searchItemReceived(SearchItem item);
 }

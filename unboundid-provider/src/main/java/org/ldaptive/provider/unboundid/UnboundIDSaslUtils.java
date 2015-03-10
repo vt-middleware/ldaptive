@@ -37,17 +37,14 @@ public final class UnboundIDSaslUtils
     final Credential credential,
     final SaslConfig config)
   {
-    final DIGESTMD5BindRequestProperties props =
-      new DIGESTMD5BindRequestProperties(
-        username,
-        credential != null ? credential.getBytes() : null);
-    if (config.getAuthorizationId() != null &&
-        !"".equals(config.getAuthorizationId())) {
+    final DIGESTMD5BindRequestProperties props = new DIGESTMD5BindRequestProperties(
+      username,
+      credential != null ? credential.getBytes() : null);
+    if (config.getAuthorizationId() != null && !"".equals(config.getAuthorizationId())) {
       props.setAuthorizationID(config.getAuthorizationId());
     }
     if (config.getQualityOfProtection() != null) {
-      props.setAllowedQoP(
-        getQualityOfProtection(config.getQualityOfProtection()));
+      props.setAllowedQoP(getQualityOfProtection(config.getQualityOfProtection()));
     }
     if (config instanceof DigestMd5Config) {
       final DigestMd5Config c = (DigestMd5Config) config;
@@ -80,8 +77,7 @@ public final class UnboundIDSaslUtils
       props.setAuthorizationID(config.getAuthorizationId());
     }
     if (config.getQualityOfProtection() != null) {
-      props.setAllowedQoP(
-        getQualityOfProtection(config.getQualityOfProtection()));
+      props.setAllowedQoP(getQualityOfProtection(config.getQualityOfProtection()));
     }
     if (config instanceof GssApiConfig) {
       final GssApiConfig c = (GssApiConfig) config;
@@ -100,8 +96,7 @@ public final class UnboundIDSaslUtils
    *
    * @return  SASL quality of protection
    */
-  protected static SASLQualityOfProtection getQualityOfProtection(
-    final QualityOfProtection qop)
+  protected static SASLQualityOfProtection getQualityOfProtection(final QualityOfProtection qop)
   {
     SASLQualityOfProtection e;
     switch (qop) {
@@ -119,8 +114,7 @@ public final class UnboundIDSaslUtils
       break;
 
     default:
-      throw new IllegalArgumentException(
-        "Unknown SASL quality of protection: " + qop);
+      throw new IllegalArgumentException("Unknown SASL quality of protection: " + qop);
     }
     return e;
   }

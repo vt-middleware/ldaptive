@@ -8,8 +8,7 @@ package org.ldaptive.io;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractPrimitiveValueTranscoder<T>
-  extends AbstractStringValueTranscoder<T>
+public abstract class AbstractPrimitiveValueTranscoder<T> extends AbstractStringValueTranscoder<T>
 {
 
   /** Whether this transcoder operates on a primitive or an object. */

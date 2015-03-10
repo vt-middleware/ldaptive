@@ -48,20 +48,17 @@ public final class ApacheLdapSaslUtils
     if (credential != null) {
       request.setCredentials(credential.getBytes());
     }
-    if (config.getAuthorizationId() != null &&
-        !"".equals(config.getAuthorizationId())) {
+    if (config.getAuthorizationId() != null && !"".equals(config.getAuthorizationId())) {
       request.setAuthorizationId(config.getAuthorizationId());
     }
     if (config.getMutualAuthentication() != null) {
       request.setMutualAuthentication(config.getMutualAuthentication());
     }
     if (config.getQualityOfProtection() != null) {
-      request.setQualityOfProtection(
-        getQualityOfProtection(config.getQualityOfProtection()));
+      request.setQualityOfProtection(getQualityOfProtection(config.getQualityOfProtection()));
     }
     if (config.getSecurityStrength() != null) {
-      request.setSecurityStrength(
-        getSecurityStrength(config.getSecurityStrength()));
+      request.setSecurityStrength(getSecurityStrength(config.getSecurityStrength()));
     }
     if (config instanceof DigestMd5Config) {
       final DigestMd5Config c = (DigestMd5Config) config;
@@ -94,20 +91,17 @@ public final class ApacheLdapSaslUtils
     if (credential != null) {
       request.setCredentials(credential.getBytes());
     }
-    if (config.getAuthorizationId() != null &&
-        !"".equals(config.getAuthorizationId())) {
+    if (config.getAuthorizationId() != null && !"".equals(config.getAuthorizationId())) {
       request.setAuthorizationId(config.getAuthorizationId());
     }
     if (config.getMutualAuthentication() != null) {
       request.setMutualAuthentication(config.getMutualAuthentication());
     }
     if (config.getQualityOfProtection() != null) {
-      request.setQualityOfProtection(
-        getQualityOfProtection(config.getQualityOfProtection()));
+      request.setQualityOfProtection(getQualityOfProtection(config.getQualityOfProtection()));
     }
     if (config.getSecurityStrength() != null) {
-      request.setSecurityStrength(
-        getSecurityStrength(config.getSecurityStrength()));
+      request.setSecurityStrength(getSecurityStrength(config.getSecurityStrength()));
     }
     return request;
   }
@@ -141,12 +135,10 @@ public final class ApacheLdapSaslUtils
       request.setMutualAuthentication(config.getMutualAuthentication());
     }
     if (config.getQualityOfProtection() != null) {
-      request.setQualityOfProtection(
-        getQualityOfProtection(config.getQualityOfProtection()));
+      request.setQualityOfProtection(getQualityOfProtection(config.getQualityOfProtection()));
     }
     if (config.getSecurityStrength() != null) {
-      request.setSecurityStrength(
-        getSecurityStrength(config.getSecurityStrength()));
+      request.setSecurityStrength(getSecurityStrength(config.getSecurityStrength()));
     }
     if (config instanceof GssApiConfig) {
       final GssApiConfig c = (GssApiConfig) config;
@@ -165,8 +157,7 @@ public final class ApacheLdapSaslUtils
       request.setKdcHost(kdcHost);
     }
 
-    final String loginConfig = System.getProperty(
-      "java.security.auth.login.config");
+    final String loginConfig = System.getProperty("java.security.auth.login.config");
     if (loginConfig != null) {
       request.setLoginModuleConfiguration(Configuration.getConfiguration());
     }
@@ -200,8 +191,7 @@ public final class ApacheLdapSaslUtils
       break;
 
     default:
-      throw new IllegalArgumentException(
-        "Unknown SASL quality of protection: " + qop);
+      throw new IllegalArgumentException("Unknown SASL quality of protection: " + qop);
     }
     return e;
   }
@@ -214,8 +204,7 @@ public final class ApacheLdapSaslUtils
    *
    * @return  SASL security strength
    */
-  protected static SaslSecurityStrength getSecurityStrength(
-    final SecurityStrength ss)
+  protected static SaslSecurityStrength getSecurityStrength(final SecurityStrength ss)
   {
     SaslSecurityStrength e;
     switch (ss) {
@@ -233,8 +222,7 @@ public final class ApacheLdapSaslUtils
       break;
 
     default:
-      throw new IllegalArgumentException(
-        "Unknown SASL security strength: " + ss);
+      throw new IllegalArgumentException("Unknown SASL security strength: " + ss);
     }
     return e;
   }

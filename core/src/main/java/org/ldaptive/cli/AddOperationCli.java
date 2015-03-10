@@ -51,9 +51,7 @@ public class AddOperationCli extends AbstractCli
   {
     options.addOption(new Option(OPT_FILE, true, "LDIF file"));
 
-    final Map<String, String> desc = getArgDesc(
-      ConnectionConfig.class,
-      SslConfig.class);
+    final Map<String, String> desc = getArgDesc(ConnectionConfig.class, SslConfig.class);
     for (String s : ConnectionConfigPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }

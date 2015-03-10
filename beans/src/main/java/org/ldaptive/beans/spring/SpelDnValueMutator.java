@@ -8,8 +8,7 @@ import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 
 /**
- * Uses a SPEL expression and evaluation context to mutate the configured DN of
- * an object.
+ * Uses a SPEL expression and evaluation context to mutate the configured DN of an object.
  *
  * @author  Middleware Services
  */
@@ -32,9 +31,7 @@ public class SpelDnValueMutator implements DnValueMutator
    * @param  exp  to access the DN
    * @param  context  containing the DN
    */
-  public SpelDnValueMutator(
-    final Expression exp,
-    final EvaluationContext context)
+  public SpelDnValueMutator(final Expression exp, final EvaluationContext context)
   {
     expression = exp;
     evaluationContext = context;

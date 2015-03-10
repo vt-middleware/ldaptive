@@ -33,12 +33,10 @@ public class Dsmlv1Writer implements SearchResultWriter
 {
 
   /** Document builder factory. */
-  private static final DocumentBuilderFactory DOC_BUILDER_FACTORY =
-    DocumentBuilderFactory.newInstance();
+  private static final DocumentBuilderFactory DOC_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
   /** Transformer factory. */
-  private static final TransformerFactory TRANSFORMER_FACTORY =
-    TransformerFactory.newInstance();
+  private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
 
   /**
@@ -51,16 +49,12 @@ public class Dsmlv1Writer implements SearchResultWriter
   /** Writer to write to. */
   private final Writer dsmlWriter;
 
-  /**
-   * Transformer output properties. See {@link
-   * Transformer#setOutputProperty(String, String)}.
-   */
+  /** Transformer output properties. See {@link Transformer#setOutputProperty(String, String)}. */
   private Map<String, String> outputProperties = new HashMap<>();
 
 
   /**
-   * Creates a new dsml writer. The following transformer output properties are
-   * set by default:
+   * Creates a new dsml writer. The following transformer output properties are set by default:
    *
    * <ul>
    *   <li>"doctype-public", "yes"</li>
@@ -135,18 +129,14 @@ public class Dsmlv1Writer implements SearchResultWriter
    *
    * @return  DSML
    *
-   * @throws  ParserConfigurationException  if a document builder cannot be
-   * created
+   * @throws  ParserConfigurationException  if a document builder cannot be created
    */
   protected Document createDsml(final SearchResult result)
     throws ParserConfigurationException
   {
     final DocumentBuilder db = DOC_BUILDER_FACTORY.newDocumentBuilder();
     final DOMImplementation domImpl = db.getDOMImplementation();
-    final Document doc = domImpl.createDocument(
-      "http://www.dsml.org/DSML",
-      "dsml:dsml",
-      null);
+    final Document doc = domImpl.createDocument("http://www.dsml.org/DSML", "dsml:dsml", null);
     doc.setXmlStandalone(true);
 
     final Element entriesElement = doc.createElement("dsml:directory-entries");
@@ -178,9 +168,7 @@ public class Dsmlv1Writer implements SearchResultWriter
    *
    * @return  list of elements contains attributes
    */
-  protected List<Element> createDsmlAttributes(
-    final Document doc,
-    final Collection<LdapAttribute> attrs)
+  protected List<Element> createDsmlAttributes(final Document doc, final Collection<LdapAttribute> attrs)
   {
     final List<Element> attrElements = new ArrayList<>();
     for (LdapAttribute attr : attrs) {
@@ -210,9 +198,7 @@ public class Dsmlv1Writer implements SearchResultWriter
    *
    * @return  element containing the attribute
    */
-  protected Element createAttrElement(
-    final Document doc,
-    final LdapAttribute attr)
+  protected Element createAttrElement(final Document doc, final LdapAttribute attr)
   {
     final Element attrElement = doc.createElement("dsml:attr");
     attrElement.setAttribute("name", attr.getName());
@@ -233,9 +219,7 @@ public class Dsmlv1Writer implements SearchResultWriter
    *
    * @return  element containing the attribute values
    */
-  protected Element createObjectclassElement(
-    final Document doc,
-    final LdapAttribute attr)
+  protected Element createObjectclassElement(final Document doc, final LdapAttribute attr)
   {
     final Element ocElement = doc.createElement("dsml:objectclass");
     for (String s : attr.getStringValues()) {

@@ -141,8 +141,7 @@ public class FloatCustomObject implements CustomObject
    *
    * @return  instance of float custom object
    */
-  public static <T extends FloatCustomObject> T createCustomObject(
-    final Class<T> type)
+  public static <T extends FloatCustomObject> T createCustomObject(final Class<T> type)
   {
     // CheckStyle:MagicNumber OFF
     final Set<Float> s1 = new HashSet<>();
@@ -232,111 +231,35 @@ public class FloatCustomObject implements CustomObject
 
   /** Test class for the default ldap entry mapper. */
   @Entry(
-    dn = "floatDn",
-    attributes = {
-      @Attribute(
-        name = "type1",
-        property = "type1"
-      ),
-      @Attribute(
-        name = "type2",
-        property = "type2"
-      ),
-      @Attribute(
-        name = "numberthree",
-        property = "type3"
-      ),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeCol1",
-        property = "typeCol1"
-      ),
-      @Attribute(
-        name = "typeCol2",
-        property = "typeCol2"
-      ),
-      @Attribute(
-        name = "typeSet1",
-        property = "typeSet1"
-      ),
-      @Attribute(
-        name = "typeSet2",
-        property = "typeSet2"
-      ),
-      @Attribute(
-        name = "typeList1",
-        property = "typeList1"
-      ),
-      @Attribute(
-        name = "typeList2",
-        property = "typeList2"
-      )
-      }
-  )
+    dn = "floatDn", attributes = {
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")})
   public static class Default extends FloatCustomObject {}
 
 
   /** Test class for the spring ldap entry mapper. */
   @Entry(
-    dn = "floatDn",
-    attributes = {
-      @Attribute(
-        name = "type1",
-        property = "type1"
-      ),
-      @Attribute(
-        name = "type2",
-        property = "type2"
-      ),
-      @Attribute(
-        name = "numberthree",
-        property = "type3"
-      ),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeCol1",
-        property = "typeCol1"
-      ),
-      @Attribute(
-        name = "typeCol2",
-        property = "typeCol2"
-      ),
-      @Attribute(
-        name = "typeSet1",
-        property = "typeSet1"
-      ),
-      @Attribute(
-        name = "typeSet2",
-        property = "typeSet2"
-      ),
-      @Attribute(
-        name = "typeList1",
-        property = "typeList1"
-      ),
-      @Attribute(
-        name = "typeList2",
-        property = "typeList2"
-      )
-      }
-  )
+    dn = "floatDn", attributes = {
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "numberthree", property = "type3"),
+      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")})
   public static class Spring extends FloatCustomObject
   {
     // CheckStyle:JavadocMethod OFF

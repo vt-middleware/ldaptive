@@ -27,9 +27,7 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
    * @param  transcoder  for mutating the field
    * @param  field  to mutate
    */
-  public FieldAttributeValueMutator(
-    final ReflectionTranscoder transcoder,
-    final Field field)
+  public FieldAttributeValueMutator(final ReflectionTranscoder transcoder, final Field field)
   {
     super(null, false, null, transcoder);
     f = field;
@@ -64,45 +62,31 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public Collection<String> getStringValues(final Object object)
   {
-    return
-      getReflectionTranscoder().encodeStringValues(
-        ReflectionUtils.getField(f, object));
+    return getReflectionTranscoder().encodeStringValues(ReflectionUtils.getField(f, object));
   }
 
 
   @Override
   public Collection<byte[]> getBinaryValues(final Object object)
   {
-    return
-      getReflectionTranscoder().encodeBinaryValues(
-        ReflectionUtils.getField(f, object));
+    return getReflectionTranscoder().encodeBinaryValues(ReflectionUtils.getField(f, object));
   }
 
 
   @Override
-  public void setStringValues(
-    final Object object,
-    final Collection<String> values)
+  public void setStringValues(final Object object, final Collection<String> values)
   {
     if (!isFinal) {
-      ReflectionUtils.setField(
-        f,
-        object,
-        getReflectionTranscoder().decodeStringValues(values));
+      ReflectionUtils.setField(f, object, getReflectionTranscoder().decodeStringValues(values));
     }
   }
 
 
   @Override
-  public void setBinaryValues(
-    final Object object,
-    final Collection<byte[]> values)
+  public void setBinaryValues(final Object object, final Collection<byte[]> values)
   {
     if (!isFinal) {
-      ReflectionUtils.setField(
-        f,
-        object,
-        getReflectionTranscoder().decodeBinaryValues(values));
+      ReflectionUtils.setField(f, object, getReflectionTranscoder().decodeBinaryValues(values));
     }
   }
 

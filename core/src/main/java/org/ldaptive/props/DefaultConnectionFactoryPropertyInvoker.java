@@ -8,14 +8,12 @@ import org.ldaptive.provider.Provider;
  *
  * @author  Middleware Services
  */
-public class DefaultConnectionFactoryPropertyInvoker
-  extends AbstractPropertyInvoker
+public class DefaultConnectionFactoryPropertyInvoker extends AbstractPropertyInvoker
 {
 
 
   /**
-   * Creates a new default connection factory property invoker for the supplied
-   * class.
+   * Creates a new default connection factory property invoker for the supplied class.
    *
    * @param  c  class that has setter methods
    */

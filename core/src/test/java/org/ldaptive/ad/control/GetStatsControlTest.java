@@ -63,15 +63,11 @@ public class GetStatsControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "response"
-  )
+  @Test(groups = {"control"}, dataProvider = "response")
   public void decode(final byte[] berValue, final GetStatsControl expected)
     throws Exception
   {
-    final GetStatsControl actual = new GetStatsControl(
-      expected.getCriticality());
+    final GetStatsControl actual = new GetStatsControl(expected.getCriticality());
     actual.decode(berValue);
     Assert.assertEquals(actual, expected);
   }

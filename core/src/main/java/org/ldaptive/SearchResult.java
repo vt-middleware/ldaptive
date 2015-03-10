@@ -14,8 +14,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
- * Simple bean representing an ldap search result. Contains a map of entry DN to
- * ldap entry.
+ * Simple bean representing an ldap search result. Contains a map of entry DN to ldap entry.
  *
  * @author  Middleware Services
  */
@@ -57,18 +56,13 @@ public class SearchResult extends AbstractLdapBean
       resultEntries = new LinkedHashMap<>();
       searchReferences = new LinkedHashSet<>();
     } else if (SortBehavior.SORTED == sb) {
-      resultEntries = new TreeMap<>(
-        String.CASE_INSENSITIVE_ORDER);
+      resultEntries = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
       searchReferences = new TreeSet<>(
         new Comparator<SearchReference>() {
           @Override
-          public int compare(
-            final SearchReference ref1,
-            final SearchReference ref2)
+          public int compare(final SearchReference ref1, final SearchReference ref2)
           {
-            return
-              Arrays.toString(ref1.getReferralUrls()).compareTo(
-                Arrays.toString(ref2.getReferralUrls()));
+            return Arrays.toString(ref1.getReferralUrls()).compareTo(Arrays.toString(ref2.getReferralUrls()));
           }
         });
     } else {
@@ -115,9 +109,8 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Returns a single entry of this result. If multiple entries exist the first
-   * entry returned by the underlying iterator is used. If no entries exist null
-   * is returned.
+   * Returns a single entry of this result. If multiple entries exist the first entry returned by the underlying
+   * iterator is used. If no entries exist null is returned.
    *
    * @return  single entry
    */
@@ -150,8 +143,7 @@ public class SearchResult extends AbstractLdapBean
    */
   public String[] getEntryDns()
   {
-    return
-      resultEntries.keySet().toArray(new String[resultEntries.keySet().size()]);
+    return resultEntries.keySet().toArray(new String[resultEntries.keySet().size()]);
   }
 
 
@@ -230,9 +222,8 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Returns a single search reference of this result. If multiple references
-   * exist the first references returned by the underlying iterator is used. If
-   * no references exist null is returned.
+   * Returns a single search reference of this result. If multiple references exist the first references returned by the
+   * underlying iterator is used. If no references exist null is returned.
    *
    * @return  single search references
    */
@@ -296,10 +287,8 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Returns a portion of this result between the specified fromIndex,
-   * inclusive, and toIndex, exclusive. If fromIndex and toIndex are equal, the
-   * return result is empty. The result of this method is undefined for
-   * unordered results.
+   * Returns a portion of this result between the specified fromIndex, inclusive, and toIndex, exclusive. If fromIndex
+   * and toIndex are equal, the return result is empty. The result of this method is undefined for unordered results.
    *
    * @param  fromIndex  low endpoint of the search result (inclusive)
    * @param  toIndex  high endpoint of the search result (exclusive)
@@ -310,10 +299,7 @@ public class SearchResult extends AbstractLdapBean
    */
   public SearchResult subResult(final int fromIndex, final int toIndex)
   {
-    if (
-      fromIndex < 0 ||
-        toIndex > resultEntries.size() ||
-        fromIndex > toIndex) {
+    if (fromIndex < 0 || toIndex > resultEntries.size() || fromIndex > toIndex) {
       throw new IndexOutOfBoundsException("Illegal index value");
     }
 
@@ -354,11 +340,7 @@ public class SearchResult extends AbstractLdapBean
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        resultEntries.values(),
-        searchReferences);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, resultEntries.values(), searchReferences);
   }
 
 
@@ -376,8 +358,8 @@ public class SearchResult extends AbstractLdapBean
 
 
   /**
-   * Merges the entries in the supplied result into a single entry. This method
-   * always returns a search result of size zero or one.
+   * Merges the entries in the supplied result into a single entry. This method always returns a search result of size
+   * zero or one.
    *
    * @param  result  search result containing entries to merge
    *
@@ -392,8 +374,7 @@ public class SearchResult extends AbstractLdapBean
           mergedEntry = le;
         } else {
           for (LdapAttribute la : le.getAttributes()) {
-            final LdapAttribute oldAttr = mergedEntry.getAttribute(
-              la.getName());
+            final LdapAttribute oldAttr = mergedEntry.getAttribute(la.getName());
             if (oldAttr == null) {
               mergedEntry.addAttribute(la);
             } else {
@@ -407,7 +388,6 @@ public class SearchResult extends AbstractLdapBean
         }
       }
     }
-    return
-      mergedEntry != null ? new SearchResult(mergedEntry) : new SearchResult();
+    return mergedEntry != null ? new SearchResult(mergedEntry) : new SearchResult();
   }
 }

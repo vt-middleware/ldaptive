@@ -27,10 +27,7 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
    * @param  getter  method to read data
    * @param  setter  method to write data
    */
-  public MethodAttributeValueMutator(
-    final ReflectionTranscoder transcoder,
-    final Method getter,
-    final Method setter)
+  public MethodAttributeValueMutator(final ReflectionTranscoder transcoder, final Method getter, final Method setter)
   {
     super(null, false, null, transcoder);
     getterMethod = getter;
@@ -80,9 +77,7 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
     if (getterMethod == null) {
       return null;
     }
-    return
-      getReflectionTranscoder().encodeStringValues(
-        ReflectionUtils.invokeGetterMethod(getterMethod, object));
+    return getReflectionTranscoder().encodeStringValues(ReflectionUtils.invokeGetterMethod(getterMethod, object));
   }
 
 
@@ -92,36 +87,24 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
     if (getterMethod == null) {
       return null;
     }
-    return
-      getReflectionTranscoder().encodeBinaryValues(
-        ReflectionUtils.invokeGetterMethod(getterMethod, object));
+    return getReflectionTranscoder().encodeBinaryValues(ReflectionUtils.invokeGetterMethod(getterMethod, object));
   }
 
 
   @Override
-  public void setStringValues(
-    final Object object,
-    final Collection<String> values)
+  public void setStringValues(final Object object, final Collection<String> values)
   {
     if (setterMethod != null) {
-      ReflectionUtils.invokeSetterMethod(
-        setterMethod,
-        object,
-        getReflectionTranscoder().decodeStringValues(values));
+      ReflectionUtils.invokeSetterMethod(setterMethod, object, getReflectionTranscoder().decodeStringValues(values));
     }
   }
 
 
   @Override
-  public void setBinaryValues(
-    final Object object,
-    final Collection<byte[]> values)
+  public void setBinaryValues(final Object object, final Collection<byte[]> values)
   {
     if (setterMethod != null) {
-      ReflectionUtils.invokeSetterMethod(
-        setterMethod,
-        object,
-        getReflectionTranscoder().decodeBinaryValues(values));
+      ReflectionUtils.invokeSetterMethod(setterMethod, object, getReflectionTranscoder().decodeBinaryValues(values));
     }
   }
 

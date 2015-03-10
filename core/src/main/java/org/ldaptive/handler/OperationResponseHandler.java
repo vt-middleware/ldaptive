@@ -14,15 +14,11 @@ import org.ldaptive.Response;
  *
  * @author  Middleware Services
  */
-public interface OperationResponseHandler<Q extends Request, T>
-  extends Handler<Q, Response<T>>
+public interface OperationResponseHandler<Q extends Request, T> extends Handler<Q, Response<T>>
 {
 
 
   @Override
-  HandlerResult<Response<T>> handle(
-    Connection conn,
-    Q request,
-    Response<T> response)
+  HandlerResult<Response<T>> handle(Connection conn, Q request, Response<T> response)
     throws LdapException;
 }

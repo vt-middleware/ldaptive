@@ -25,9 +25,7 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
   private final TypeConverter typeConverter;
 
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   public SpringLdapEntryMapper()
   {
     this(null);
@@ -48,16 +46,15 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
   @Override
   protected ClassDescriptor getClassDescriptor(final Object object)
   {
-    final SpringClassDescriptor descriptor = new SpringClassDescriptor(
-      createEvaluationContext(object));
+    final SpringClassDescriptor descriptor = new SpringClassDescriptor(createEvaluationContext(object));
     descriptor.initialize(object.getClass());
     return descriptor;
   }
 
 
   /**
-   * Creates an evaluation context to use in the spring class descriptor. Adds
-   * the default converters from the default conversion service.
+   * Creates an evaluation context to use in the spring class descriptor. Adds the default converters from the default
+   * conversion service.
    *
    * @param  object  to supply to the evaluation context
    *
@@ -65,27 +62,23 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
    */
   protected EvaluationContext createEvaluationContext(final Object object)
   {
-    final StandardEvaluationContext context = new StandardEvaluationContext(
-      object);
+    final StandardEvaluationContext context = new StandardEvaluationContext(object);
     context.setTypeConverter(typeConverter);
     return context;
   }
 
 
   /**
-   * Returns a type converter that is initialized with the supplied converters
-   * and any converters supplied by {@link
+   * Returns a type converter that is initialized with the supplied converters and any converters supplied by {@link
    * #addDefaultConverters(GenericConversionService)}.
    *
    * @param  converters  to add to the conversion service
    *
    * @return  type converter
    */
-  protected TypeConverter createTypeConverter(
-    final Converter<?, ?>... converters)
+  protected TypeConverter createTypeConverter(final Converter<?, ?>... converters)
   {
-    final GenericConversionService conversionService =
-      new GenericConversionService();
+    final GenericConversionService conversionService = new GenericConversionService();
     DefaultConversionService.addDefaultConverters(conversionService);
     if (converters != null) {
       for (Converter<?, ?> converter : converters) {
@@ -110,8 +103,7 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
           @Override
           public Calendar convert(final String s)
           {
-            final GeneralizedTimeValueTranscoder transcoder =
-              new GeneralizedTimeValueTranscoder();
+            final GeneralizedTimeValueTranscoder transcoder = new GeneralizedTimeValueTranscoder();
             return transcoder.decodeStringValue(s);
           }
         });
@@ -122,8 +114,7 @@ public class SpringLdapEntryMapper extends AbstractLdapEntryMapper<Object>
           @Override
           public String convert(final Calendar c)
           {
-            final GeneralizedTimeValueTranscoder transcoder =
-              new GeneralizedTimeValueTranscoder();
+            final GeneralizedTimeValueTranscoder transcoder = new GeneralizedTimeValueTranscoder();
             return transcoder.encodeStringValue(c);
           }
         });

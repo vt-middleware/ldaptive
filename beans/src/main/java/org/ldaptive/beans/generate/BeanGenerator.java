@@ -87,8 +87,7 @@ public class BeanGenerator
 
 
   /**
-   * Creates a new bean generator. A bean will be generated for each supplied
-   * object class.
+   * Creates a new bean generator. A bean will be generated for each supplied object class.
    *
    * @param  s  schema containing directory data for generation
    * @param  name  package name to place the generated classes in
@@ -235,8 +234,8 @@ public class BeanGenerator
 
 
   /**
-   * Returns the type mappings. Type mappings is syntax OID to class type and is
-   * used to determine field type in the generated POJOs.
+   * Returns the type mappings. Type mappings is syntax OID to class type and is used to determine field type in the
+   * generated POJOs.
    *
    * @return  type mappings
    */
@@ -247,8 +246,8 @@ public class BeanGenerator
 
 
   /**
-   * Sets the type mappings. Type mappings is syntax OID to class type and is
-   * used to determine field type in the generated POJOs.
+   * Sets the type mappings. Type mappings is syntax OID to class type and is used to determine field type in the
+   * generated POJOs.
    *
    * @param  m  type mappings
    */
@@ -259,10 +258,8 @@ public class BeanGenerator
 
 
   /**
-   * Returns the mapping of directory attribute name to bean property. This
-   * property is used to override the default schema name. For instance, you may
-   * prefer using 'countryName' to 'c', which would be set as
-   * 'c'=>'countryName'.
+   * Returns the mapping of directory attribute name to bean property. This property is used to override the default
+   * schema name. For instance, you may prefer using 'countryName' to 'c', which would be set as 'c'=>'countryName'.
    *
    * @return  attribute name to bean property mapping
    */
@@ -289,9 +286,8 @@ public class BeanGenerator
 
 
   /**
-   * Returns the attribute names to exclude from bean generation. Excludes an
-   * attribute from the generated POJO. For instance, you may not want
-   * 'userPassword' included in your bean.
+   * Returns the attribute names to exclude from bean generation. Excludes an attribute from the generated POJO. For
+   * instance, you may not want 'userPassword' included in your bean.
    *
    * @return  attribute names to exclude
    */
@@ -336,18 +332,15 @@ public class BeanGenerator
 
 
   /**
-   * Returns the class for the supplied attribute type and syntax. If the
-   * attribute type syntax OID is found in the default type mapping it is used.
-   * Otherwise if the syntax is "X-NOT-HUMAN-READABLE", a byte array is used.
+   * Returns the class for the supplied attribute type and syntax. If the attribute type syntax OID is found in the
+   * default type mapping it is used. Otherwise if the syntax is "X-NOT-HUMAN-READABLE", a byte array is used.
    *
    * @param  type  attribute type
    * @param  syntax  associated with the attribute type
    *
    * @return  syntax type
    */
-  protected Class<?> getSyntaxType(
-    final AttributeType type,
-    final Syntax syntax)
+  protected Class<?> getSyntaxType(final AttributeType type, final Syntax syntax)
   {
     Class<?> t = null;
     for (Map.Entry<String, Class<?>> entry : typeMappings.entrySet()) {
@@ -367,19 +360,15 @@ public class BeanGenerator
 
 
   /**
-   * Generates a class for each configured object class. See {@link
-   * #objectClasses}. {@link #write(String)} must be invoked to write the
-   * classes to disk.
+   * Generates a class for each configured object class. See {@link #objectClasses}. {@link #write(String)} must be
+   * invoked to write the classes to disk.
    */
   public void generate()
   {
     for (String objectClass : objectClasses) {
       final JDefinedClass definedClass = createClass(packageName, objectClass);
       final JDocComment jDocComment = definedClass.javadoc();
-      jDocComment.add(
-        String.format(
-          "Ldaptive generated bean for objectClass '%s'",
-          objectClass));
+      jDocComment.add(String.format("Ldaptive generated bean for objectClass '%s'", objectClass));
 
       final ObjectClass oc = schema.getObjectClass(objectClass);
       final Set<String> attributeNames = getAttributeNames(oc);
@@ -404,12 +393,10 @@ public class BeanGenerator
       }
 
       // add entry annotation
-      final JAnnotationUse entryAnnotation = definedClass.annotate(
-        codeModel.ref(org.ldaptive.beans.Entry.class));
+      final JAnnotationUse entryAnnotation = definedClass.annotate(codeModel.ref(org.ldaptive.beans.Entry.class));
       entryAnnotation.param("dn", "dn");
 
-      final JAnnotationArrayMember attrArray = entryAnnotation.paramArray(
-        "attributes");
+      final JAnnotationArrayMember attrArray = entryAnnotation.paramArray("attributes");
 
       // add mutator for the DN
       createMutators(definedClass, "dn", String.class, false);
@@ -426,8 +413,7 @@ public class BeanGenerator
         }
 
         // add attribute annotation
-        final JAnnotationUse attrAnnotation = attrArray.annotate(
-          org.ldaptive.beans.Attribute.class);
+        final JAnnotationUse attrAnnotation = attrArray.annotate(org.ldaptive.beans.Attribute.class);
         attrAnnotation.param("name", mutator.getValue().getName());
         if (!mutator.getKey().equals(mutator.getValue().getName())) {
           attrAnnotation.param("property", mutator.getKey());
@@ -446,8 +432,7 @@ public class BeanGenerator
 
 
   /**
-   * Returns the attribute names to use for the supplied object class. See
-   * {@link #getAttributeNames(ObjectClass, Set)}.
+   * Returns the attribute names to use for the supplied object class. See {@link #getAttributeNames(ObjectClass, Set)}.
    *
    * @param  objectClass  to retrieve names from
    *
@@ -460,28 +445,23 @@ public class BeanGenerator
 
 
   /**
-   * Returns the attribute names to use for the supplied object class. This
-   * method is invoked recursively if superior classes are included.
+   * Returns the attribute names to use for the supplied object class. This method is invoked recursively if superior
+   * classes are included.
    *
    * @param  objectClass  to retrieve names from
    * @param  processed  object classes that have already been processed
    *
    * @return  set of all attribute names used for bean generation
    */
-  private Set<String> getAttributeNames(
-    final ObjectClass objectClass,
-    final Set<ObjectClass> processed)
+  private Set<String> getAttributeNames(final ObjectClass objectClass, final Set<ObjectClass> processed)
   {
     final Set<String> attributeNames = new HashSet<>();
     if (objectClass != null) {
       if (objectClass.getRequiredAttributes() != null) {
-        attributeNames.addAll(
-          Arrays.asList(objectClass.getRequiredAttributes()));
+        attributeNames.addAll(Arrays.asList(objectClass.getRequiredAttributes()));
       }
-      if (useOptionalAttributes &&
-          objectClass.getOptionalAttributes() != null) {
-        attributeNames.addAll(
-          Arrays.asList(objectClass.getOptionalAttributes()));
+      if (useOptionalAttributes && objectClass.getOptionalAttributes() != null) {
+        attributeNames.addAll(Arrays.asList(objectClass.getOptionalAttributes()));
       }
       processed.add(objectClass);
       if (includeSuperiorClasses && objectClass.getSuperiorClasses() != null) {
@@ -517,8 +497,7 @@ public class BeanGenerator
 
 
   /**
-   * Returns whether the supplied attribute type has a matching OID or name in
-   * the excluded names list.
+   * Returns whether the supplied attribute type has a matching OID or name in the excluded names list.
    *
    * @param  type  to compare
    *
@@ -547,17 +526,14 @@ public class BeanGenerator
    *
    * @throws  IllegalArgumentException  if the class already exists
    */
-  protected JDefinedClass createClass(
-    final String classPackage,
-    final String className)
+  protected JDefinedClass createClass(final String classPackage, final String className)
   {
     String fqClassName;
     if (!Character.isUpperCase(className.charAt(0))) {
       fqClassName = String.format(
         "%s.%s",
         classPackage,
-        className.substring(0, 1).toUpperCase() +
-          className.substring(1, className.length()));
+        className.substring(0, 1).toUpperCase() + className.substring(1, className.length()));
     } else {
       fqClassName = String.format("%s.%s", classPackage, className);
     }
@@ -565,16 +541,13 @@ public class BeanGenerator
     try {
       return codeModel._class(fqClassName);
     } catch (JClassAlreadyExistsException e) {
-      throw new IllegalArgumentException(
-        "Class already exists: " + fqClassName,
-        e);
+      throw new IllegalArgumentException("Class already exists: " + fqClassName, e);
     }
   }
 
 
   /**
-   * Creates the getter and setter methods on the supplied class for the
-   * supplied name.
+   * Creates the getter and setter methods on the supplied class for the supplied name.
    *
    * @param  clazz  to put getter and setter methods on
    * @param  name  of the property
@@ -587,38 +560,25 @@ public class BeanGenerator
     final Class<?> syntaxType,
     final boolean multivalue)
   {
-    final String upperName = name.substring(0, 1).toUpperCase() +
-      name.substring(1, name.length());
+    final String upperName = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
     if (multivalue) {
       final JClass detailClass = codeModel.ref(syntaxType);
       final JClass collectionClass = codeModel.ref(Collection.class);
       final JClass genericClass = collectionClass.narrow(detailClass);
       final JFieldVar field = clazz.field(JMod.PRIVATE, genericClass, name);
-      final JMethod getterMethod = clazz.method(
-        JMod.PUBLIC,
-        genericClass,
-        "get" + upperName);
+      final JMethod getterMethod = clazz.method(JMod.PUBLIC, genericClass, "get" + upperName);
       getterMethod.body()._return(field);
 
-      final JMethod setterMethod = clazz.method(
-        JMod.PUBLIC,
-        Void.TYPE,
-        "set" + upperName);
+      final JMethod setterMethod = clazz.method(JMod.PUBLIC, Void.TYPE, "set" + upperName);
       setterMethod.param(genericClass, "c");
       setterMethod.body().assign(JExpr._this().ref(name), JExpr.ref("c"));
 
     } else {
       final JFieldVar field = clazz.field(JMod.PRIVATE, syntaxType, name);
-      final JMethod getterMethod = clazz.method(
-        JMod.PUBLIC,
-        syntaxType,
-        "get" + upperName);
+      final JMethod getterMethod = clazz.method(JMod.PUBLIC, syntaxType, "get" + upperName);
       getterMethod.body()._return(field);
 
-      final JMethod setterMethod = clazz.method(
-        JMod.PUBLIC,
-        Void.TYPE,
-        "set" + upperName);
+      final JMethod setterMethod = clazz.method(JMod.PUBLIC, Void.TYPE, "set" + upperName);
       setterMethod.param(syntaxType, "s");
       setterMethod.body().assign(JExpr._this().ref(name), JExpr.ref("s"));
     }
@@ -626,16 +586,15 @@ public class BeanGenerator
 
 
   /**
-   * Creates the hashCode method on the supplied class. Leverages {@link
-   * org.ldaptive.LdapUtils#computeHashCode(int, Object...)}.
+   * Creates the hashCode method on the supplied class. Leverages {@link org.ldaptive.LdapUtils#computeHashCode(int,
+   * Object...)}.
    *
    * @param  clazz  to put hashCode method on
    */
   private void createHashCode(final JDefinedClass clazz)
   {
     final JClass ldapUtilsClass = codeModel.ref(org.ldaptive.LdapUtils.class);
-    final JInvocation computeHashCode = ldapUtilsClass.staticInvoke(
-      "computeHashCode");
+    final JInvocation computeHashCode = ldapUtilsClass.staticInvoke("computeHashCode");
     final JMethod hashCode = clazz.method(JMod.PUBLIC, int.class, "hashCode");
     hashCode.annotate(java.lang.Override.class);
     // CheckStyle:MagicNumber OFF
@@ -649,8 +608,7 @@ public class BeanGenerator
 
 
   /**
-   * Creates the equals method on the supplied class. Leverages {@link
-   * org.ldaptive.LdapUtils#areEqual(Object, Object)}.
+   * Creates the equals method on the supplied class. Leverages {@link org.ldaptive.LdapUtils#areEqual(Object, Object)}.
    *
    * @param  clazz  to put equals method on
    */
@@ -667,8 +625,8 @@ public class BeanGenerator
 
 
   /**
-   * Creates the toString method on the supplied class. Creates a string that
-   * contains every property on the generated bean.
+   * Creates the toString method on the supplied class. Creates a string that contains every property on the generated
+   * bean.
    *
    * @param  clazz  to put toString method on
    */
@@ -676,10 +634,7 @@ public class BeanGenerator
   {
     final JClass stringClass = codeModel.ref(java.lang.String.class);
     final JInvocation format = stringClass.staticInvoke("format");
-    final JMethod toString = clazz.method(
-      JMod.PUBLIC,
-      String.class,
-      "toString");
+    final JMethod toString = clazz.method(JMod.PUBLIC, String.class, "toString");
     toString.annotate(java.lang.Override.class);
 
     final StringBuilder sb = new StringBuilder("[%s@%d::");
@@ -699,8 +654,7 @@ public class BeanGenerator
 
 
   /**
-   * Writes the generated classes to disk. Invokes {@link #write(String)} with
-   * ".".
+   * Writes the generated classes to disk. Invokes {@link #write(String)} with ".".
    *
    * @throws  IOException  if the write fails
    */
@@ -730,8 +684,7 @@ public class BeanGenerator
 
 
   /**
-   * Provides command line access to a {@link BeanGenerator}. Expects two
-   * arguments:
+   * Provides command line access to a {@link BeanGenerator}. Expects two arguments:
    *
    * <ol>
    *   <li>path to a configuration property file</li>
@@ -759,9 +712,7 @@ public class BeanGenerator
     final String targetPath = args[1];
 
     final BeanGenerator generator = new BeanGenerator();
-    final BeanGeneratorPropertySource source = new BeanGeneratorPropertySource(
-      generator,
-      propsPath);
+    final BeanGeneratorPropertySource source = new BeanGeneratorPropertySource(generator, propsPath);
     source.initialize();
     generator.generate();
     generator.write(targetPath);

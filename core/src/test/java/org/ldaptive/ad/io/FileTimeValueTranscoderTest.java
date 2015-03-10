@@ -16,8 +16,7 @@ public class FileTimeValueTranscoderTest
 {
 
   /** Transcoder to test. */
-  private final FileTimeValueTranscoder transcoder =
-    new FileTimeValueTranscoder();
+  private final FileTimeValueTranscoder transcoder = new FileTimeValueTranscoder();
 
 
   /**
@@ -31,13 +30,12 @@ public class FileTimeValueTranscoderTest
   public Object[][] createDates()
     throws Exception
   {
-    return
-      new Object[][] {
-        new Object[] {
-          createCalendar("UTC", 2014, 1, 28, 21, 54, 27, 711),
-          "130354196677110000",
-        },
-      };
+    return new Object[][] {
+      new Object[] {
+        createCalendar("UTC", 2014, 1, 28, 21, 54, 27, 711),
+        "130354196677110000",
+      },
+    };
   }
 
 
@@ -47,10 +45,7 @@ public class FileTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"io"},
-    dataProvider = "times"
-  )
+  @Test(groups = {"io"}, dataProvider = "times")
   public void testTranscode(final Calendar date, final String fileTime)
     throws Exception
   {

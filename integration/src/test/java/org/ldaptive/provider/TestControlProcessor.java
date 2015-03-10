@@ -12,9 +12,7 @@ import org.ldaptive.provider.jndi.JndiControlHandler;
 public class TestControlProcessor extends ControlProcessor<Control>
 {
 
-  /**
-   * Default constructor.
-   */
+  /** Default constructor. */
   public TestControlProcessor()
   {
     super(new JndiControlHandler());

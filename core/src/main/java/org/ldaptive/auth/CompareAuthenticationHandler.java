@@ -8,14 +8,12 @@ import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
 
 /**
- * Provides an LDAP authentication implementation that leverages a compare
- * operation against the userPassword attribute. The default password scheme
- * used is 'SHA'.
+ * Provides an LDAP authentication implementation that leverages a compare operation against the userPassword attribute.
+ * The default password scheme used is 'SHA'.
  *
  * @author  Middleware Services
  */
-public class CompareAuthenticationHandler
-  extends AbstractCompareAuthenticationHandler
+public class CompareAuthenticationHandler extends AbstractCompareAuthenticationHandler
   implements ConnectionFactoryManager
 {
 

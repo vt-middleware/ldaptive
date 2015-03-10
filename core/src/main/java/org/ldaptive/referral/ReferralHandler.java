@@ -16,16 +16,12 @@ import org.ldaptive.handler.HandlerResult;
  *
  * @author  Middleware Services
  */
-public interface ReferralHandler<Q extends Request, S>
-  extends Handler<Q, Response<S>>
+public interface ReferralHandler<Q extends Request, S> extends Handler<Q, Response<S>>
 {
 
 
   @Override
-  HandlerResult<Response<S>> handle(
-    Connection conn,
-    Q request,
-    Response<S> response)
+  HandlerResult<Response<S>> handle(Connection conn, Q request, Response<S> response)
     throws LdapException;
 
 

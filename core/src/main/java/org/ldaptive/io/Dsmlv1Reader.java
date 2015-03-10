@@ -20,8 +20,7 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 /**
- * Reads DSML version 1 from a {@link Reader} and returns a {@link
- * SearchResult}.
+ * Reads DSML version 1 from a {@link Reader} and returns a {@link SearchResult}.
  *
  * @author  Middleware Services
  */
@@ -29,8 +28,7 @@ public class Dsmlv1Reader implements SearchResultReader
 {
 
   /** Document builder factory. */
-  private static final DocumentBuilderFactory DOC_BUILDER_FACTORY =
-    DocumentBuilderFactory.newInstance();
+  private static final DocumentBuilderFactory DOC_BUILDER_FACTORY = DocumentBuilderFactory.newInstance();
 
 
   /**
@@ -139,8 +137,7 @@ public class Dsmlv1Reader implements SearchResultReader
 
       if (entryElement.hasChildNodes()) {
 
-        final NodeList ocNodes = entryElement.getElementsByTagName(
-          "dsml:objectclass");
+        final NodeList ocNodes = entryElement.getElementsByTagName("dsml:objectclass");
         if (ocNodes.getLength() > 0) {
           final Element ocElement = (Element) ocNodes.item(0);
           if (ocElement != null && ocElement.hasChildNodes()) {
@@ -151,12 +148,10 @@ public class Dsmlv1Reader implements SearchResultReader
           }
         }
 
-        final NodeList attrNodes = entryElement.getElementsByTagName(
-          "dsml:attr");
+        final NodeList attrNodes = entryElement.getElementsByTagName("dsml:attr");
         for (int i = 0; i < attrNodes.getLength(); i++) {
           final Element attrElement = (Element) attrNodes.item(i);
-          final String attrName = attrElement.hasAttribute("name")
-            ? attrElement.getAttribute("name") : null;
+          final String attrName = attrElement.hasAttribute("name") ? attrElement.getAttribute("name") : null;
           if (attrName != null && attrElement.hasChildNodes()) {
             final LdapAttribute ldapAttribute = createLdapAttribute(
               attrName,
@@ -179,18 +174,14 @@ public class Dsmlv1Reader implements SearchResultReader
    *
    * @return  ldap attribute
    */
-  protected LdapAttribute createLdapAttribute(
-    final String name,
-    final NodeList nodes)
+  protected LdapAttribute createLdapAttribute(final String name, final NodeList nodes)
   {
     boolean isBase64 = false;
     final Set<Object> values = new HashSet<>();
     for (int i = 0; i < nodes.getLength(); i++) {
       final Element valueElement = (Element) nodes.item(i);
       if (valueElement != null) {
-        if (
-          valueElement.hasAttribute("encoding") &&
-            "base64".equals(valueElement.getAttribute("encoding"))) {
+        if (valueElement.hasAttribute("encoding") && "base64".equals(valueElement.getAttribute("encoding"))) {
           isBase64 = true;
         }
         values.add(getAttrValue(valueElement, isBase64));
@@ -201,17 +192,14 @@ public class Dsmlv1Reader implements SearchResultReader
 
 
   /**
-   * Returns the value of the supplied element taking into account whether the
-   * value needs to be base64 decoded.
+   * Returns the value of the supplied element taking into account whether the value needs to be base64 decoded.
    *
    * @param  valueElement  to read value from
    * @param  base64  whether to base64 decode the value
    *
    * @return  String or byte[] depending on the base64 flag
    */
-  protected Object getAttrValue(
-    final Element valueElement,
-    final boolean base64)
+  protected Object getAttrValue(final Element valueElement, final boolean base64)
   {
     final String value = valueElement.getChildNodes().item(0).getNodeValue();
     if (base64) {

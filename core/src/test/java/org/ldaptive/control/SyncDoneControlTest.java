@@ -27,8 +27,8 @@ public class SyncDoneControlTest
       new Object[][] {
         // 52 length cookie, refreshDeletes true
         // BER:30:39:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:30:31:32:30:37
-        //    :30:33:32:30:34:38:30:30:2E:36:30:39:37:32:31:5A:23:30:30:30:30:30
-        //    :30:23:30:30:30:23:30:30:30:30:30:30:01:01:FF
+        // :30:33:32:30:34:38:30:30:2E:36:30:39:37:32:31:5A:23:30:30:30:30:30
+        // :30:23:30:30:30:23:30:30:30:30:30:30:01:01:FF
         new Object[] {
           LdapUtils.base64Decode(
             "MDkENHJpZD0wMDAsY3NuPTIwMTIwNzAzMjA0ODAwLjYwOTcyMVojMDAwMDAwIzAw" +
@@ -60,15 +60,11 @@ public class SyncDoneControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "response"
-  )
+  @Test(groups = {"control"}, dataProvider = "response")
   public void decode(final byte[] berValue, final SyncDoneControl expected)
     throws Exception
   {
-    final SyncDoneControl actual = new SyncDoneControl(
-      expected.getCriticality());
+    final SyncDoneControl actual = new SyncDoneControl(expected.getCriticality());
     actual.decode(berValue);
     Assert.assertEquals(actual, expected);
   }

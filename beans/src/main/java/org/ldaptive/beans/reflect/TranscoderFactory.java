@@ -14,8 +14,7 @@ public final class TranscoderFactory
 {
 
   /** Value transcoders. */
-  private static final Map<String, ValueTranscoder<?>> TRANSCODERS =
-    new HashMap<>();
+  private static final Map<String, ValueTranscoder<?>> TRANSCODERS = new HashMap<>();
 
 
   /** Default constructor. */
@@ -23,8 +22,8 @@ public final class TranscoderFactory
 
 
   /**
-   * Returns a value transcoder for the supplied type. If the type cannot be
-   * found it is instantiated and cached for future use.
+   * Returns a value transcoder for the supplied type. If the type cannot be found it is instantiated and cached for
+   * future use.
    *
    * @param  type  of value transcoder
    *
@@ -56,8 +55,7 @@ public final class TranscoderFactory
    *
    * @return  value transcoder
    *
-   * @throws  IllegalArgumentException  if the supplied type cannot be
-   * instantiated
+   * @throws  IllegalArgumentException  if the supplied type cannot be instantiated
    */
   protected static ValueTranscoder<?> createValueTranscoder(final String type)
   {

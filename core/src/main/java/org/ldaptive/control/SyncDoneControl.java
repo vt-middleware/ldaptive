@@ -10,8 +10,7 @@ import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
- * Response control for ldap content synchronization. See RFC 4533. Control is
- * defined as:
+ * Response control for ldap content synchronization. See RFC 4533. Control is defined as:
  *
  * <pre>
     syncDoneValue ::= SEQUENCE {
@@ -88,10 +87,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
    * @param  refresh  whether to refresh deletes
    * @param  critical  whether this control is critical
    */
-  public SyncDoneControl(
-    final byte[] value,
-    final boolean refresh,
-    final boolean critical)
+  public SyncDoneControl(final byte[] value, final boolean refresh, final boolean critical)
   {
     super(OID, critical);
     setCookie(value);
@@ -146,13 +142,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        cookie,
-        refreshDeletes);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), cookie, refreshDeletes);
   }
 
 
@@ -177,16 +167,13 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
 
     final DERParser parser = new DERParser();
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
-    parser.registerHandler(
-      RefreshDeletesHandler.PATH,
-      new RefreshDeletesHandler(this));
+    parser.registerHandler(RefreshDeletesHandler.PATH, new RefreshDeletesHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
 
   /** Parse handler implementation for the cookie. */
-  private static class CookieHandler
-    extends AbstractParseHandler<SyncDoneControl>
+  private static class CookieHandler extends AbstractParseHandler<SyncDoneControl>
   {
 
     /** DER path to cookie value. */
@@ -216,8 +203,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
 
 
   /** Parse handler implementation for the refresh deletes flag. */
-  private static class RefreshDeletesHandler
-    extends AbstractParseHandler<SyncDoneControl>
+  private static class RefreshDeletesHandler extends AbstractParseHandler<SyncDoneControl>
   {
 
     /** DER path to the boolean. */

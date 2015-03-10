@@ -9,8 +9,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
- * Provides an SSL context initializer which can use java KeyStores to create
- * key and trust managers.
+ * Provides an SSL context initializer which can use java KeyStores to create key and trust managers.
  *
  * @author  Middleware Services
  */
@@ -94,15 +93,11 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
   {
     TrustManager[] tm = null;
     if (trustKeystore != null) {
-      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-        TrustManagerFactory.getDefaultAlgorithm());
+      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
       if (trustAliases != null) {
         final KeyStore ks = KeyStoreUtils.newInstance();
         for (String alias : trustAliases) {
-          final KeyStore.Entry entry = KeyStoreUtils.getEntry(
-            alias,
-            trustKeystore,
-            null);
+          final KeyStore.Entry entry = KeyStoreUtils.getEntry(alias, trustKeystore, null);
           KeyStoreUtils.setEntry(alias, entry, ks, null);
         }
         tmf.init(ks);
@@ -121,15 +116,11 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
   {
     KeyManager[] km = null;
     if (authenticationKeystore != null && authenticationPassword != null) {
-      final KeyManagerFactory kmf = KeyManagerFactory.getInstance(
-        KeyManagerFactory.getDefaultAlgorithm());
+      final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
       if (authenticationAliases != null) {
         final KeyStore ks = KeyStoreUtils.newInstance(authenticationPassword);
         for (String alias : authenticationAliases) {
-          final KeyStore.Entry entry = KeyStoreUtils.getEntry(
-            alias,
-            authenticationKeystore,
-            authenticationPassword);
+          final KeyStore.Entry entry = KeyStoreUtils.getEntry(alias, authenticationKeystore, authenticationPassword);
           KeyStoreUtils.setEntry(alias, entry, ks, authenticationPassword);
         }
         kmf.init(ks, authenticationPassword);

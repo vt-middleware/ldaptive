@@ -11,8 +11,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
- * Provides an SSL context initializer which can use X.509 certificates to
- * create key and trust managers.
+ * Provides an SSL context initializer which can use X.509 certificates to create key and trust managers.
  *
  * @author  Middleware Services
  */
@@ -104,8 +103,7 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
       final KeyStore ks = KeyStoreUtils.newInstance();
       KeyStoreUtils.setCertificateEntry("ldap_trust_", ks, trustCerts);
 
-      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-        TrustManagerFactory.getDefaultAlgorithm());
+      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
       tmf.init(ks);
       tm = tmf.getTrustManagers();
     }
@@ -127,8 +125,7 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
         authenticationKey,
         authenticationCert);
 
-      final KeyManagerFactory kmf = KeyManagerFactory.getInstance(
-        KeyManagerFactory.getDefaultAlgorithm());
+      final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
       kmf.init(ks, "changeit".toCharArray());
       km = kmf.getKeyManagers();
     }

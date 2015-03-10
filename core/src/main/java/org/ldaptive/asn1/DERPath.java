@@ -8,10 +8,9 @@ import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
 
 /**
- * Describes paths to individual elements of an encoded DER object that may be
- * addressed during parsing to associate a parsed element with a handler to
- * handle that element. Consider the following production rule for a complex
- * type that may be DER encoded:
+ * Describes paths to individual elements of an encoded DER object that may be addressed during parsing to associate a
+ * parsed element with a handler to handle that element. Consider the following production rule for a complex type that
+ * may be DER encoded:
  *
  * <pre>
 
@@ -33,15 +32,13 @@ import org.ldaptive.LdapUtils;
 
  * </pre>
  *
- * <p>Given an instance of BankAccountSet with two elements, the path to the
- * balance of each bank account in the set is given by the following
- * expression:</p>
+ * <p>Given an instance of BankAccountSet with two elements, the path to the balance of each bank account in the set is
+ * given by the following expression:</p>
  *
  * <pre>/SET/SEQ/REAL</pre>
  *
- * <p>Individual child elements can be accessed by explicitly mentioning the
- * index of the item relative to its parent. For example, the second bank
- * account in the set can be accessed as follows:</p>
+ * <p>Individual child elements can be accessed by explicitly mentioning the index of the item relative to its parent.
+ * For example, the second bank account in the set can be accessed as follows:</p>
  *
  * <pre>/SET/SEQ[1]</pre>
  *
@@ -79,8 +76,7 @@ public class DERPath
     for (UniversalDERTag tag : UniversalDERTag.values()) {
       validNames.append('|').append(tag.name());
     }
-    NODE_PATTERN = Pattern.compile(
-      String.format("(%s)(\\[(\\d+)\\])?", validNames.toString()));
+    NODE_PATTERN = Pattern.compile(String.format("(%s)(\\[(\\d+)\\])?", validNames.toString()));
   }
 
   /** Describes the path as a FIFO set of nodes. */
@@ -251,8 +247,7 @@ public class DERPath
 
 
   /**
-   * DER path node encapsulates the path name and its location among other
-   * children that share a common parent.
+   * DER path node encapsulates the path name and its location among other children that share a common parent.
    *
    * @author  Middleware Services
    */
@@ -345,8 +340,7 @@ public class DERPath
 
 
     /**
-     * Appends the string representation of this instance to the given string
-     * builder.
+     * Appends the string representation of this instance to the given string builder.
      *
      * @param  builder  Builder to hold string representation of this instance.
      */

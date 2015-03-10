@@ -9,8 +9,7 @@ import java.util.Map;
  *
  * @author  Middleware Services
  */
-public class TestAuthenticationResponseHandler
-  implements AuthenticationResponseHandler
+public class TestAuthenticationResponseHandler implements AuthenticationResponseHandler
 {
 
   /** results. */

@@ -13,8 +13,7 @@ public interface ResponseMessage extends Message<ResponseControl>
 
 
   /**
-   * Returns the first response control with the supplied OID for this response
-   * message.
+   * Returns the first response control with the supplied OID for this response message.
    *
    * @param  oid  of the response control to return
    *

@@ -54,9 +54,7 @@ public class ProviderConfig<C> extends AbstractConfig
   public void setOperationExceptionResultCodes(final ResultCode... codes)
   {
     checkImmutable();
-    logger.trace(
-      "setting operationExceptionResultCodes: {}",
-      Arrays.toString(codes));
+    logger.trace("setting operationExceptionResultCodes: {}", Arrays.toString(codes));
     operationExceptionResultCodes = codes;
   }
 

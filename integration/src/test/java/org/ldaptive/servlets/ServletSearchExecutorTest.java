@@ -79,17 +79,13 @@ public class ServletSearchExecutorTest extends AbstractTest
     }
   )
   @Test(groups = {"servlet"})
-  public void ldifSearchServlet(
-    final String query,
-    final String attrs,
-    final String ldifFile)
+  public void ldifSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
   {
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
     final ServletUnitClient sc = servletRunner.newClient();
-    final WebRequest request = new PostMethodWebRequest(
-      "http://servlets.ldaptive.org/LdifSearch");
+    final WebRequest request = new PostMethodWebRequest("http://servlets.ldaptive.org/LdifSearch");
     request.setParameter("query", query);
     request.setParameter("attrs", attrs.split("\\|"));
 
@@ -98,8 +94,7 @@ public class ServletSearchExecutorTest extends AbstractTest
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("text/plain", response.getContentType());
 
-    final SearchResult result =
-      TestUtils.convertLdifToResult(response.getText());
+    final SearchResult result = TestUtils.convertLdifToResult(response.getText());
     AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }
 
@@ -119,10 +114,7 @@ public class ServletSearchExecutorTest extends AbstractTest
     }
   )
   @Test(groups = {"servlet"})
-  public void dsmlSearchServlet(
-    final String query,
-    final String attrs,
-    final String ldifFile)
+  public void dsmlSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
   {
     final String ldif = TestUtils.readFileIntoString(ldifFile);
@@ -131,25 +123,23 @@ public class ServletSearchExecutorTest extends AbstractTest
     final StringWriter s1w = new StringWriter();
     final Dsmlv1Writer d1w = new Dsmlv1Writer(s1w);
     d1w.write(result);
+
     final String dsmlv1 = s1w.toString();
 
     final ServletUnitClient sc = servletRunner.newClient();
     // test basic dsml query
-    WebRequest request = new PostMethodWebRequest(
-      "http://servlets.ldaptive.org/DsmlSearch");
+    final WebRequest request = new PostMethodWebRequest("http://servlets.ldaptive.org/DsmlSearch");
     request.setParameter("query", query);
     request.setParameter("attrs", attrs.split("\\|"));
 
-    WebResponse response = sc.getResponse(request);
+    final WebResponse response = sc.getResponse(request);
 
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("text/xml", response.getContentType());
     // active directory uppercases CN in the DN
     AssertJUnit.assertEquals(
       dsmlv1,
-      response.getText().replaceAll(
-        "CN=", "cn=").replaceAll(
-          "OU=Test", "ou=test").replaceAll("DC=", "dc="));
+      response.getText().replaceAll("CN=", "cn=").replaceAll("OU=Test", "ou=test").replaceAll("DC=", "dc="));
   }
 
 
@@ -168,17 +158,13 @@ public class ServletSearchExecutorTest extends AbstractTest
     }
   )
   @Test(groups = {"servlet"})
-  public void templatesLdifSearchServlet(
-    final String query,
-    final String attrs,
-    final String ldifFile)
+  public void templatesLdifSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
   {
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
     final ServletUnitClient sc = servletRunner.newClient();
-    final WebRequest request = new PostMethodWebRequest(
-      "http://servlets.ldaptive.org/TemplatesLdifSearch");
+    final WebRequest request = new PostMethodWebRequest("http://servlets.ldaptive.org/TemplatesLdifSearch");
     request.setParameter("query", query);
     request.setParameter("attrs", attrs.split("\\|"));
 
@@ -187,8 +173,7 @@ public class ServletSearchExecutorTest extends AbstractTest
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("text/plain", response.getContentType());
 
-    final SearchResult result =
-      TestUtils.convertLdifToResult(response.getText());
+    final SearchResult result = TestUtils.convertLdifToResult(response.getText());
     AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }
 
@@ -208,10 +193,7 @@ public class ServletSearchExecutorTest extends AbstractTest
     }
   )
   @Test(groups = {"servlet"})
-  public void templatesDsmlSearchServlet(
-    final String query,
-    final String attrs,
-    final String ldifFile)
+  public void templatesDsmlSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
   {
     final String ldif = TestUtils.readFileIntoString(ldifFile);
@@ -220,11 +202,11 @@ public class ServletSearchExecutorTest extends AbstractTest
     final StringWriter s1w = new StringWriter();
     final Dsmlv1Writer d1w = new Dsmlv1Writer(s1w);
     d1w.write(result);
+
     final String dsmlv1 = s1w.toString();
 
     final ServletUnitClient sc = servletRunner.newClient();
-    final WebRequest request = new PostMethodWebRequest(
-      "http://servlets.ldaptive.org/TemplatesDsmlSearch");
+    final WebRequest request = new PostMethodWebRequest("http://servlets.ldaptive.org/TemplatesDsmlSearch");
     request.setParameter("query", query);
     request.setParameter("attrs", attrs.split("\\|"));
 
@@ -235,9 +217,7 @@ public class ServletSearchExecutorTest extends AbstractTest
     // active directory uppercases CN in the DN
     AssertJUnit.assertEquals(
       dsmlv1,
-      response.getText().replaceAll(
-        "CN=", "cn=").replaceAll(
-          "OU=Test", "ou=test").replaceAll("DC=", "dc="));
+      response.getText().replaceAll("CN=", "cn=").replaceAll("OU=Test", "ou=test").replaceAll("DC=", "dc="));
   }
 
 
@@ -256,10 +236,7 @@ public class ServletSearchExecutorTest extends AbstractTest
     }
   )
   @Test(groups = {"servlet"})
-  public void templatesJsonSearchServlet(
-    final String query,
-    final String attrs,
-    final String ldifFile)
+  public void templatesJsonSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
   {
     final String ldif = TestUtils.readFileIntoString(ldifFile);
@@ -268,11 +245,11 @@ public class ServletSearchExecutorTest extends AbstractTest
     final StringWriter s1w = new StringWriter();
     final JsonWriter j1w = new JsonWriter(s1w);
     j1w.write(result);
+
     final String json = s1w.toString();
 
     final ServletUnitClient sc = servletRunner.newClient();
-    final WebRequest request = new PostMethodWebRequest(
-      "http://servlets.ldaptive.org/TemplatesJsonSearch");
+    final WebRequest request = new PostMethodWebRequest("http://servlets.ldaptive.org/TemplatesJsonSearch");
     request.setParameter("query", query);
     request.setParameter("attrs", attrs.split("\\|"));
 
@@ -283,9 +260,7 @@ public class ServletSearchExecutorTest extends AbstractTest
     // active directory uppercases CN in the DN
     AssertJUnit.assertEquals(
       json,
-      response.getText().replaceAll(
-        "CN=", "cn=").replaceAll(
-          "OU=Test", "ou=test").replaceAll("DC=", "dc="));
+      response.getText().replaceAll("CN=", "cn=").replaceAll("OU=Test", "ou=test").replaceAll("DC=", "dc="));
   }
 
 
@@ -304,17 +279,13 @@ public class ServletSearchExecutorTest extends AbstractTest
     }
   )
   @Test(groups = {"servlet"})
-  public void templatesLdifIgnoreSearchServlet(
-    final String query,
-    final String attrs,
-    final String ldifFile)
+  public void templatesLdifIgnoreSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
   {
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
     final ServletUnitClient sc = servletRunner.newClient();
-    WebRequest request = new PostMethodWebRequest(
-      "http://servlets.ldaptive.org/TemplatesLdifIgnoreSearch");
+    WebRequest request = new PostMethodWebRequest("http://servlets.ldaptive.org/TemplatesLdifIgnoreSearch");
     request.setParameter("query", query);
     request.setParameter("attrs", attrs.split("\\|"));
 
@@ -322,12 +293,11 @@ public class ServletSearchExecutorTest extends AbstractTest
 
     AssertJUnit.assertNotNull(response);
     AssertJUnit.assertEquals("text/plain", response.getContentType());
-    final SearchResult result =
-      TestUtils.convertLdifToResult(response.getText());
+
+    final SearchResult result = TestUtils.convertLdifToResult(response.getText());
     AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
 
-    request = new PostMethodWebRequest(
-      "http://servlets.ldaptive.org/TemplatesLdifIgnoreSearch");
+    request = new PostMethodWebRequest("http://servlets.ldaptive.org/TemplatesLdifIgnoreSearch");
     request.setParameter("query", "df");
 
     response = sc.getResponse(request);

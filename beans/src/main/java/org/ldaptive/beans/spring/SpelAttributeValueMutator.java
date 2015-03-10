@@ -52,22 +52,17 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
    * @param  attr  containing the SPEL configuration
    * @param  context  containing the values
    */
-  public SpelAttributeValueMutator(
-    final Attribute attr,
-    final EvaluationContext context)
+  public SpelAttributeValueMutator(final Attribute attr, final EvaluationContext context)
   {
     attribute = attr;
 
     final ExpressionParser parser = new SpelExpressionParser();
-    expression = parser.parseExpression(
-      attribute.property().length() > 0 ?
-        attribute.property() : attribute.name());
+    expression = parser.parseExpression(attribute.property().length() > 0 ? attribute.property() : attribute.name());
     evaluationContext = context;
     if ("".equals(attribute.transcoder())) {
       transcoder = null;
     } else {
-      transcoder = parser.parseExpression(attribute.transcoder()).getValue(
-        ValueTranscoder.class);
+      transcoder = parser.parseExpression(attribute.transcoder()).getValue(ValueTranscoder.class);
     }
   }
 
@@ -108,9 +103,8 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
 
 
   /**
-   * Uses the configured expression and evaluation context to retrieve values
-   * from the supplied object. Values are the placed in a collection and
-   * returned.
+   * Uses the configured expression and evaluation context to retrieve values from the supplied object. Values are the
+   * placed in a collection and returned.
    *
    * @param  <T>  either String or byte[]
    * @param  object  to get values from
@@ -118,9 +112,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
    *
    * @return  values in the supplied object
    */
-  protected <T> Collection<T> getValues(
-    final Object object,
-    final Class<T> type)
+  protected <T> Collection<T> getValues(final Object object, final Class<T> type)
   {
     Collection<T> values = null;
     final Object converted = expression.getValue(evaluationContext, object);
@@ -169,9 +161,8 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
 
 
   /**
-   * Converts the supplied value to the target type. If a custom transcoder has
-   * been configured it is used. Otherwise the type converter from the
-   * evaluation context is used.
+   * Converts the supplied value to the target type. If a custom transcoder has been configured it is used. Otherwise
+   * the type converter from the evaluation context is used.
    *
    * @param  <T>  either String or byte[]
    * @param  value  to convert
@@ -181,10 +172,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
    * @return  converted value
    */
   @SuppressWarnings("unchecked")
-  protected <T> T convertValue(
-    final Object value,
-    final Class<?> sourceType,
-    final Class<T> targetType)
+  protected <T> T convertValue(final Object value, final Class<?> sourceType, final Class<T> targetType)
   {
     T converted;
     if (transcoder != null) {
@@ -193,8 +181,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
       } else if (String.class == targetType) {
         converted = (T) transcoder.encodeStringValue(value);
       } else {
-        throw new IllegalArgumentException(
-          "targetType must be either String.class or byte[].class");
+        throw new IllegalArgumentException("targetType must be either String.class or byte[].class");
       }
     } else {
       converted = (T) evaluationContext.getTypeConverter().convertValue(
@@ -207,50 +194,39 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
 
 
   @Override
-  public void setStringValues(
-    final Object object,
-    final Collection<String> values)
+  public void setStringValues(final Object object, final Collection<String> values)
   {
     setValues(object, values, String.class);
   }
 
 
   @Override
-  public void setBinaryValues(
-    final Object object,
-    final Collection<byte[]> values)
+  public void setBinaryValues(final Object object, final Collection<byte[]> values)
   {
     setValues(object, values, byte[].class);
   }
 
 
   /**
-   * Uses the configured expression and evaluation context to set values on the
-   * supplied object. If a custom transcoder has been configured it is executed
-   * on the values before they are passed to the expression.
+   * Uses the configured expression and evaluation context to set values on the supplied object. If a custom transcoder
+   * has been configured it is executed on the values before they are passed to the expression.
    *
    * @param  <T>  either String or byte[]
    * @param  object  to set values on
    * @param  values  to set
    * @param  type  of objects in the collection
    */
-  protected <T> void setValues(
-    final Object object,
-    final Collection<T> values,
-    final Class<T> type)
+  protected <T> void setValues(final Object object, final Collection<T> values, final Class<T> type)
   {
     if (transcoder != null) {
-      final Collection<Object> newValues = createCollection(
-        values.getClass(),
-        values.size());
+      final Collection<Object> newValues = createCollection(values.getClass(), values.size());
       for (T t : values) {
         if (byte[].class == type) {
           newValues.add(transcoder.decodeBinaryValue((byte[]) t));
         } else if (String.class == type) {
           newValues.add(transcoder.decodeStringValue((String) t));
         } else {
-          throw new IllegalArgumentException(
-            "type must be either String.class or byte[].class");
+          throw new IllegalArgumentException("type must be either String.class or byte[].class");
         }
       }
       expression.setValue(evaluationContext, object, newValues);
@@ -289,9 +265,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
    *
    * @return  collection
    */
-  protected static <T> Collection<T> createCollection(
-    final Class<?> type,
-    final int size)
+  protected static <T> Collection<T> createCollection(final Class<?> type, final int size)
   {
     Collection<T> c;
     if (List.class.isAssignableFrom(type)) {

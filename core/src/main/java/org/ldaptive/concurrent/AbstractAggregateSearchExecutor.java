@@ -17,9 +17,7 @@ import org.ldaptive.handler.SearchEntryHandler;
  *
  * @author  Middleware Services
  */
-public abstract class
-AbstractAggregateSearchExecutor<T extends ConnectionFactory>
-  extends AbstractSearchExecutor
+public abstract class AbstractAggregateSearchExecutor<T extends ConnectionFactory> extends AbstractSearchExecutor
 {
 
   /**
@@ -43,9 +41,7 @@ AbstractAggregateSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<SearchResult>> search(
-    final T[] factories,
-    final String... filters)
+  public Collection<Response<SearchResult>> search(final T[] factories, final String... filters)
     throws LdapException
   {
     final SearchFilter[] sf = new SearchFilter[filters.length];
@@ -66,13 +62,10 @@ AbstractAggregateSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<SearchResult>> search(
-    final T[] factories,
-    final SearchFilter[] filters)
+  public Collection<Response<SearchResult>> search(final T[] factories, final SearchFilter[] filters)
     throws LdapException
   {
-    return
-      search(factories, filters, null, (SearchEntryHandler[]) null);
+    return search(factories, filters, null, (SearchEntryHandler[]) null);
   }
 
 
@@ -87,10 +80,7 @@ AbstractAggregateSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<SearchResult>> search(
-    final T[] factories,
-    final String[] filters,
-    final String... attrs)
+  public Collection<Response<SearchResult>> search(final T[] factories, final String[] filters, final String... attrs)
     throws LdapException
   {
     final SearchFilter[] sf = new SearchFilter[filters.length];

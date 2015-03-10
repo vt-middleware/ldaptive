@@ -9,10 +9,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Utility class for parsing LDAP URLs.  See RFC 4516. Supports a space
- * delimited format for representing multiple URLs. Expects URLs of the form
- * scheme://hostname:port/baseDn?attrs?scope?filter. This implementation does
- * not support URL extensions.
+ * Utility class for parsing LDAP URLs. See RFC 4516. Supports a space delimited format for representing multiple URLs.
+ * Expects URLs of the form scheme://hostname:port/baseDn?attrs?scope?filter. This implementation does not support URL
+ * extensions.
  *
  * @author  Middleware Services
  */
@@ -85,11 +84,10 @@ public class LdapURL
         hostname = hostname.substring(1, hostname.length() - 1).trim();
       }
     }
+
     final int port = m.group(3) != null ? Integer.parseInt(m.group(3)) : -1;
-    final String baseDn = m.group(4) != null ?
-      LdapUtils.percentDecode(m.group(4)) : null;
-    final String[] attributes = m.group(5) != null ? m.group(5).length() > 0 ?
-      m.group(5).split(",") : null : null;
+    final String baseDn = m.group(4) != null ? LdapUtils.percentDecode(m.group(4)) : null;
+    final String[] attributes = m.group(5) != null ? m.group(5).length() > 0 ? m.group(5).split(",") : null : null;
     final String scope = m.group(6);
     SearchScope searchScope = null;
     if (scope != null && scope.length() > 0) {
@@ -103,17 +101,11 @@ public class LdapURL
         throw new IllegalArgumentException("Invalid scope: " + scope);
       }
     }
-    final SearchFilter filter = m.group(7) != null ? m.group(7).length() > 0 ?
-      new SearchFilter(LdapUtils.percentDecode(m.group(7))) : null : null;
 
-    return new Entry(
-      scheme,
-      hostname,
-      port,
-      baseDn,
-      attributes,
-      searchScope,
-      filter);
+    final SearchFilter filter = m.group(7) != null
+      ? m.group(7).length() > 0 ? new SearchFilter(LdapUtils.percentDecode(m.group(7))) : null : null;
+
+    return new Entry(scheme, hostname, port, baseDn, attributes, searchScope, filter);
     // CheckStyle:MagicNumber ON
   }
 
@@ -167,8 +159,7 @@ public class LdapURL
 
 
   /**
-   * Returns a list of all the hostnames including their scheme and port in
-   * this ldap url.
+   * Returns a list of all the hostnames including their scheme and port in this ldap url.
    *
    * @return  ldap url hostnames with scheme and port
    */
@@ -211,12 +202,7 @@ public class LdapURL
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::ldapEntries=%s]",
-        getClass().getName(),
-        hashCode(),
-        ldapEntries);
+    return String.format("[%s@%d::ldapEntries=%s]", getClass().getName(), hashCode(), ldapEntries);
   }
 
 
@@ -234,15 +220,13 @@ public class LdapURL
     protected static final String DEFAULT_BASE_DN = "";
 
     /** Default search filter value is '(objectClass=*)'. */
-    protected static final SearchFilter DEFAULT_FILTER = new SearchFilter(
-      "(objectClass=*)");
+    protected static final SearchFilter DEFAULT_FILTER = new SearchFilter("(objectClass=*)");
 
     /** Default scope, value is {@link SearchScope#OBJECT}. */
     protected static final SearchScope DEFAULT_SCOPE = SearchScope.OBJECT;
 
     /** Default return attributes, value is none. */
-    protected static final String[] DEFAULT_ATTRIBUTES =
-      ReturnAttributes.DEFAULT.value();
+    protected static final String[] DEFAULT_ATTRIBUTES = ReturnAttributes.DEFAULT.value();
 
     /** Scheme of the ldap url. */
     private final String urlScheme;
@@ -329,8 +313,7 @@ public class LdapURL
     public int getPort()
     {
       if (urlPort == -1) {
-        return "ldaps".equals(urlScheme) ?
-          DEFAULT_LDAPS_PORT : DEFAULT_LDAP_PORT;
+        return "ldaps".equals(urlScheme) ? DEFAULT_LDAPS_PORT : DEFAULT_LDAP_PORT;
       }
       return urlPort;
     }
@@ -436,8 +419,7 @@ public class LdapURL
 
 
     /**
-     * Returns the formatted URL as
-     * scheme://hostname:port/baseDn?attrs?scope?filter.
+     * Returns the formatted URL as scheme://hostname:port/baseDn?attrs?scope?filter.
      *
      * @return  url
      */
@@ -457,6 +439,7 @@ public class LdapURL
       sb.append(":").append(getPort());
       sb.append("/").append(LdapUtils.percentEncode(getBaseDn()));
       sb.append("?");
+
       final String[] attrs = getAttributes();
       for (int i = 0; i < attrs.length; i++) {
         sb.append(attrs[i]);
@@ -465,6 +448,7 @@ public class LdapURL
         }
       }
       sb.append("?");
+
       final SearchScope scope = getScope();
       if (SearchScope.OBJECT == scope) {
         sb.append("base");

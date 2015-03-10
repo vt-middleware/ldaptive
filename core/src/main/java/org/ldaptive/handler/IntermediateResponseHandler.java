@@ -11,15 +11,11 @@ import org.ldaptive.intermediate.IntermediateResponse;
  *
  * @author  Middleware Services
  */
-public interface IntermediateResponseHandler
-  extends Handler<Request, IntermediateResponse>
+public interface IntermediateResponseHandler extends Handler<Request, IntermediateResponse>
 {
 
 
   @Override
-  HandlerResult<IntermediateResponse> handle(
-    Connection conn,
-    Request request,
-    IntermediateResponse response)
+  HandlerResult<IntermediateResponse> handle(Connection conn, Request request, IntermediateResponse response)
     throws LdapException;
 }

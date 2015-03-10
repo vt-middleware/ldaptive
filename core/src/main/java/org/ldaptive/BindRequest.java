@@ -46,10 +46,7 @@ public class BindRequest extends AbstractRequest
    * @param  credential  to bind with
    * @param  config  sasl configuration
    */
-  public BindRequest(
-    final String dn,
-    final Credential credential,
-    final SaslConfig config)
+  public BindRequest(final String dn, final Credential credential, final SaslConfig config)
   {
     setDn(dn);
     setCredential(credential);

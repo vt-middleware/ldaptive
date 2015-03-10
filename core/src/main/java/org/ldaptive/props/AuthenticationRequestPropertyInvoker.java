@@ -8,14 +8,12 @@ import org.ldaptive.Credential;
  *
  * @author  Middleware Services
  */
-public class AuthenticationRequestPropertyInvoker
-  extends AbstractPropertyInvoker
+public class AuthenticationRequestPropertyInvoker extends AbstractPropertyInvoker
 {
 
 
   /**
-   * Creates a new authentication request property invoker for the supplied
-   * class.
+   * Creates a new authentication request property invoker for the supplied class.
    *
    * @param  c  class that has setter methods
    */

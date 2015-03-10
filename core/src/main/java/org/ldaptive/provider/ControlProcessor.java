@@ -38,8 +38,7 @@ public class ControlProcessor<T>
 
 
   /**
-   * Converts the supplied request controls to a provider specific request
-   * controls.
+   * Converts the supplied request controls to a provider specific request controls.
    *
    * @param  requestControls  to convert
    *
@@ -51,9 +50,7 @@ public class ControlProcessor<T>
     if (requestControls == null || requestControls.length == 0) {
       return null;
     }
-    logger.trace(
-      "processing request controls: {}",
-      new Object[] {requestControls});
+    logger.trace("processing request controls: {}", new Object[] {requestControls});
 
     final List<T> providerCtls = new ArrayList<>(requestControls.length);
     for (RequestControl c : requestControls) {
@@ -65,10 +62,8 @@ public class ControlProcessor<T>
     logger.trace("produced provider request controls: {}", providerCtls);
     return
       !providerCtls.isEmpty()
-      ? providerCtls.toArray(
-        (T[]) Array.newInstance(
-          providerCtls.iterator().next().getClass(),
-          providerCtls.size())) : null;
+      ? providerCtls.toArray((T[]) Array.newInstance(providerCtls.iterator().next().getClass(), providerCtls.size()))
+      : null;
   }
 
 
@@ -94,8 +89,8 @@ public class ControlProcessor<T>
 
 
   /**
-   * Converts the supplied provider controls to a response controls. The
-   * supplied request controls were used to produce the response.
+   * Converts the supplied provider controls to a response controls. The supplied request controls were used to produce
+   * the response.
    *
    * @param  responseControls  to convert
    *

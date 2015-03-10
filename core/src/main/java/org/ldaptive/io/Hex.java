@@ -32,8 +32,8 @@ public final class Hex
   };
 
   /**
-   * Decode table which stores characters from 0 to f. Anything higher than 'f'
-   * is invalid so that is the max size of the array.
+   * Decode table which stores characters from 0 to f. Anything higher than 'f' is invalid so that is the max size of
+   * the array.
    */
   private static final byte[] DECODE = new byte['f' + 1];
 
@@ -65,8 +65,7 @@ public final class Hex
 
 
   /**
-   * This will convert the supplied value to a hex encoded string. Returns null
-   * if the supplied value is null.
+   * This will convert the supplied value to a hex encoded string. Returns null if the supplied value is null.
    *
    * @param  value  to hex encode
    *
@@ -91,8 +90,7 @@ public final class Hex
 
 
   /**
-   * This will convert the supplied value to a hex encoded string. Returns null
-   * if the supplied value is null.
+   * This will convert the supplied value to a hex encoded string. Returns null if the supplied value is null.
    *
    * @param  value  to hex encode
    *
@@ -110,9 +108,7 @@ public final class Hex
     // CheckStyle:MagicNumber OFF
     if ((l & 0x01) != 0) {
       throw new IllegalArgumentException(
-        String.format(
-          "Cannot decode odd number of characters for %s",
-          String.valueOf(value)));
+        String.format("Cannot decode odd number of characters for %s", String.valueOf(value)));
     }
     // CheckStyle:MagicNumber ON
 
@@ -144,21 +140,13 @@ public final class Hex
     final char c = hex[i];
     if (c > 'f') {
       throw new IllegalArgumentException(
-        String.format(
-          "Invalid hex character '%s' at position %s in %s",
-          c,
-          i,
-          Arrays.toString(hex)));
+        String.format("Invalid hex character '%s' at position %s in %s", c, i, Arrays.toString(hex)));
     }
 
     final byte b = DECODE[c];
     if (b < 0) {
       throw new IllegalArgumentException(
-        String.format(
-          "Invalid hex character '%s' at position %s in %s",
-          c,
-          i,
-          Arrays.toString(hex)));
+        String.format("Invalid hex character '%s' at position %s in %s", c, i, Arrays.toString(hex)));
     }
     return b;
   }

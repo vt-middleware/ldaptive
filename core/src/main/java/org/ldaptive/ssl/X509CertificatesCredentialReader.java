@@ -10,13 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Loads X.509 certificate credentials from a classpath, filepath, or stream
- * resource. Supported certificate formats include: PEM, DER, and PKCS7.
+ * Loads X.509 certificate credentials from a classpath, filepath, or stream resource. Supported certificate formats
+ * include: PEM, DER, and PKCS7.
  *
  * @author  Middleware Services
  */
-public class X509CertificatesCredentialReader
-  extends AbstractCredentialReader<X509Certificate[]>
+public class X509CertificatesCredentialReader extends AbstractCredentialReader<X509Certificate[]>
 {
 
 
@@ -28,8 +27,7 @@ public class X509CertificatesCredentialReader
     final List<X509Certificate> certList = new ArrayList<>();
     final InputStream bufIs = getBufferedInputStream(is);
     while (bufIs.available() > 0) {
-      final X509Certificate cert = (X509Certificate) cf.generateCertificate(
-        bufIs);
+      final X509Certificate cert = (X509Certificate) cf.generateCertificate(bufIs);
       if (cert != null) {
         certList.add(cert);
       }

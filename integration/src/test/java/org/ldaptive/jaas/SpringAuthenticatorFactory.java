@@ -21,15 +21,15 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
   /** Application context. */
   private static ClassPathXmlApplicationContext context;
 
-  /** Initialize the context. */
+  /**
+   * Initialize the context.
+   */
   static {
     try {
-      context = new ClassPathXmlApplicationContext(new String[] {
-        "/spring-jaas-context.xml",
-      });
+      context = new ClassPathXmlApplicationContext(
+        new String[] {"/spring-jaas-context.xml", });
     } catch (Exception e) {
-      final Logger logger = LoggerFactory.getLogger(
-        SpringAuthenticatorFactory.class);
+      final Logger logger = LoggerFactory.getLogger(SpringAuthenticatorFactory.class);
       logger.warn("Could not create spring context", e.getMessage());
     }
   }
@@ -39,46 +39,38 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
   public Authenticator createAuthenticator(final Map<String, ?> jaasOptions)
   {
     if (context == null) {
-      throw new UnsupportedOperationException(
-        "Could not initialize spring context");
+      throw new UnsupportedOperationException("Could not initialize spring context");
     }
     return context.getBean("authenticator", Authenticator.class);
   }
 
 
   @Override
-  public AuthenticationRequest createAuthenticationRequest(
-    final Map<String, ?> jaasOptions)
+  public AuthenticationRequest createAuthenticationRequest(final Map<String, ?> jaasOptions)
   {
     if (context == null) {
-      throw new UnsupportedOperationException(
-        "Could not initialize spring context");
+      throw new UnsupportedOperationException("Could not initialize spring context");
     }
-    return context.getBean(
-      "authenticationRequest", AuthenticationRequest.class);
+    return context.getBean("authenticationRequest", AuthenticationRequest.class);
   }
 
 
-  /**
-   * Closes the authenticator dn resolver if it is a managed dn resolver.
-   */
+  /** Closes the authenticator dn resolver if it is a managed dn resolver. */
   public static void close()
   {
     if (context == null) {
-      throw new UnsupportedOperationException(
-        "Could not initialize spring context");
+      throw new UnsupportedOperationException("Could not initialize spring context");
     }
-    final Authenticator a = context.getBean(
-      "authenticator", Authenticator.class);
+
+    final Authenticator a = context.getBean("authenticator", Authenticator.class);
     if (a.getDnResolver() instanceof PooledConnectionFactoryManager) {
-      final PooledConnectionFactoryManager cfm =
-        (PooledConnectionFactoryManager) a.getDnResolver();
+      final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) a.getDnResolver();
       cfm.getConnectionFactory().getConnectionPool().close();
     }
+
     final AuthenticationHandler ah = a.getAuthenticationHandler();
     if (ah instanceof PooledConnectionFactoryManager) {
-      final PooledConnectionFactoryManager cfm =
-        (PooledConnectionFactoryManager) ah;
+      final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) ah;
       cfm.getConnectionFactory().getConnectionPool().close();
     }
   }

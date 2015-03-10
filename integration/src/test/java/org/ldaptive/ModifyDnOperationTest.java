@@ -64,22 +64,17 @@ public class ModifyDnOperationTest extends AbstractTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final SearchOperation search = new SearchOperation(conn);
-      AssertJUnit.assertTrue(
-        search.execute(
-          SearchRequest.newObjectScopeSearchRequest(
-            oldDn)).getResult().size() > 0);
+      AssertJUnit.assertTrue(search.execute(SearchRequest.newObjectScopeSearchRequest(oldDn)).getResult().size() > 0);
+
       final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
-      Response<Void> response = modifyDn.execute(
-        new ModifyDnRequest(oldDn, newDn));
+      Response<Void> response = modifyDn.execute(new ModifyDnRequest(oldDn, newDn));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      modifyDnLdapEntry = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(
-          newDn)).getResult().getEntry();
+      modifyDnLdapEntry = search.execute(SearchRequest.newObjectScopeSearchRequest(newDn)).getResult().getEntry();
       AssertJUnit.assertNotNull(modifyDnLdapEntry);
       try {
-        final Response<SearchResult> r = search.execute(
-          SearchRequest.newObjectScopeSearchRequest(oldDn));
+        final Response<SearchResult> r = search.execute(SearchRequest.newObjectScopeSearchRequest(oldDn));
         AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
       } catch (LdapException e) {
         AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, e.getResultCode());
@@ -88,13 +83,9 @@ public class ModifyDnOperationTest extends AbstractTest
       }
       response = modifyDn.execute(new ModifyDnRequest(newDn, oldDn));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertTrue(
-        search.execute(
-          SearchRequest.newObjectScopeSearchRequest(
-            oldDn)).getResult().size() > 0);
+      AssertJUnit.assertTrue(search.execute(SearchRequest.newObjectScopeSearchRequest(oldDn)).getResult().size() > 0);
       try {
-        final Response<SearchResult> r = search.execute(
-          SearchRequest.newObjectScopeSearchRequest(newDn));
+        final Response<SearchResult> r = search.execute(SearchRequest.newObjectScopeSearchRequest(newDn));
         AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
       } catch (LdapException e) {
         AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, e.getResultCode());

@@ -9,8 +9,7 @@ import org.ldaptive.schema.NameForm;
  *
  * @author  Middleware Services
  */
-public class NameFormValueTranscoder
-  extends AbstractSchemaElementValueTranscoder<NameForm>
+public class NameFormValueTranscoder extends AbstractSchemaElementValueTranscoder<NameForm>
 {
 
 

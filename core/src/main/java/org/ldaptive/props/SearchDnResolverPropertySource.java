@@ -7,23 +7,19 @@ import java.util.Set;
 import org.ldaptive.auth.SearchDnResolver;
 
 /**
- * Reads properties specific to {@link SearchDnResolver} and returns an
- * initialized object of that type.
+ * Reads properties specific to {@link SearchDnResolver} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class SearchDnResolverPropertySource
-  extends AbstractPropertySource<SearchDnResolver>
+public final class SearchDnResolverPropertySource extends AbstractPropertySource<SearchDnResolver>
 {
 
   /** Invoker for search dn resolver. */
-  private static final SimplePropertyInvoker INVOKER =
-    new SimplePropertyInvoker(SearchDnResolver.class);
+  private static final SimplePropertyInvoker INVOKER = new SimplePropertyInvoker(SearchDnResolver.class);
 
 
   /**
-   * Creates a new search dn resolver property source using the default
-   * properties file.
+   * Creates a new search dn resolver property source using the default properties file.
    *
    * @param  resolver  search dn resolver to invoke properties on
    */
@@ -39,9 +35,7 @@ public final class SearchDnResolverPropertySource
    * @param  resolver  search dn resolver to invoke properties on
    * @param  paths  to read properties from
    */
-  public SearchDnResolverPropertySource(
-    final SearchDnResolver resolver,
-    final String... paths)
+  public SearchDnResolverPropertySource(final SearchDnResolver resolver, final String... paths)
   {
     this(resolver, loadProperties(paths));
   }
@@ -53,9 +47,7 @@ public final class SearchDnResolverPropertySource
    * @param  resolver  search dn resolver to invoke properties on
    * @param  readers  to read properties from
    */
-  public SearchDnResolverPropertySource(
-    final SearchDnResolver resolver,
-    final Reader... readers)
+  public SearchDnResolverPropertySource(final SearchDnResolver resolver, final Reader... readers)
   {
     this(resolver, loadProperties(readers));
   }
@@ -67,9 +59,7 @@ public final class SearchDnResolverPropertySource
    * @param  resolver  search dn resolver to invoke properties on
    * @param  props  to read properties from
    */
-  public SearchDnResolverPropertySource(
-    final SearchDnResolver resolver,
-    final Properties props)
+  public SearchDnResolverPropertySource(final SearchDnResolver resolver, final Properties props)
   {
     this(resolver, PropertyDomain.AUTH, props);
   }

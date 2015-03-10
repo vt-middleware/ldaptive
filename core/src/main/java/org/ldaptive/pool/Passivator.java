@@ -2,8 +2,7 @@
 package org.ldaptive.pool;
 
 /**
- * Provides an interface for passivating objects when they are checked back into
- * the pool.
+ * Provides an interface for passivating objects when they are checked back into the pool.
  *
  * @param  <T>  type of object being pooled
  *

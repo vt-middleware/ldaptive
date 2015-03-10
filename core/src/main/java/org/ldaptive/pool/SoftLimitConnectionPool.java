@@ -6,13 +6,11 @@ import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
 
 /**
- * Implements a pool of connections that has a set minimum and maximum size. The
- * pool will grow beyond it's maximum size as necessary based on it's current
- * load. Pool size will return to it's minimum based on the configuration of the
- * prune strategy. See {@link PruneStrategy}. This implementation should be used
- * when you have some flexibility in the number of connections that can be
- * created to handle spikes in load. See {@link AbstractConnectionPool}. Note
- * that this pool will begin blocking if it cannot create new connections.
+ * Implements a pool of connections that has a set minimum and maximum size. The pool will grow beyond it's maximum size
+ * as necessary based on it's current load. Pool size will return to it's minimum based on the configuration of the
+ * prune strategy. See {@link PruneStrategy}. This implementation should be used when you have some flexibility in the
+ * number of connections that can be created to handle spikes in load. See {@link AbstractConnectionPool}. Note that
+ * this pool will begin blocking if it cannot create new connections.
  *
  * @author  Middleware Services
  */
@@ -41,9 +39,7 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
    * @param  pc  pool configuration
    * @param  cf  connection factory
    */
-  public SoftLimitConnectionPool(
-    final PoolConfig pc,
-    final DefaultConnectionFactory cf)
+  public SoftLimitConnectionPool(final PoolConfig pc, final DefaultConnectionFactory cf)
   {
     super(pc, cf);
   }
@@ -56,9 +52,7 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
     isInitialized();
 
     PooledConnectionProxy pc = null;
-    logger.trace(
-      "waiting on pool lock for check out {}",
-      poolLock.getQueueLength());
+    logger.trace("waiting on pool lock for check out {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
       // if an available connection exists, use it
@@ -82,8 +76,7 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
       if (pc == null) {
         if (available.isEmpty() && active.isEmpty()) {
           logger.error("Could not service check out request");
-          throw new PoolExhaustedException(
-            "Pool is empty and connection creation failed");
+          throw new PoolExhaustedException("Pool is empty and connection creation failed");
         }
         logger.debug("create failed, block until a connection is available");
         pc = blockAvailableConnection();
@@ -96,8 +89,7 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
       activateAndValidateConnection(pc);
     } else {
       logger.error("Could not service check out request");
-      throw new PoolExhaustedException(
-        "Pool is empty and connection creation failed");
+      throw new PoolExhaustedException("Pool is empty and connection creation failed");
     }
 
     return createConnectionProxy(pc);

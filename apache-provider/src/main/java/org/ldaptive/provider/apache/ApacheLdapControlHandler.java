@@ -50,8 +50,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
 
 
   @Override
-  public Control handleRequest(
-    final org.ldaptive.control.RequestControl requestControl)
+  public Control handleRequest(final org.ldaptive.control.RequestControl requestControl)
   {
     Control ctl = null;
     if (ManageDsaITControl.OID.equals(requestControl.getOID())) {
@@ -71,17 +70,13 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ctl = new SyncRequestValueImpl();
       ((SyncRequestValueImpl) ctl).setCookie(c.getCookie());
       ((SyncRequestValueImpl) ctl).setReloadHint(c.getReloadHint());
-      ((SyncRequestValueImpl) ctl).setMode(
-        SynchronizationModeEnum.getSyncMode(c.getRequestMode().value()));
+      ((SyncRequestValueImpl) ctl).setMode(SynchronizationModeEnum.getSyncMode(c.getRequestMode().value()));
       ctl.setCritical(c.getCriticality());
-    } else if (PersistentSearchRequestControl.OID.equals(
-               requestControl.getOID())) {
-      final PersistentSearchRequestControl c =
-        (PersistentSearchRequestControl) requestControl;
+    } else if (PersistentSearchRequestControl.OID.equals(requestControl.getOID())) {
+      final PersistentSearchRequestControl c = (PersistentSearchRequestControl) requestControl;
       ctl = new PersistentSearchImpl();
       for (PersistentSearchChangeType type : c.getChangeTypes()) {
-        ((PersistentSearchImpl) ctl).enableNotification(
-          ChangeType.getChangeType(type.value()));
+        ((PersistentSearchImpl) ctl).enableNotification(ChangeType.getChangeType(type.value()));
       }
       ((PersistentSearchImpl) ctl).setChangesOnly(c.getChangesOnly());
       ((PersistentSearchImpl) ctl).setReturnECs(c.getReturnEcs());
@@ -99,8 +94,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
 
 
   @Override
-  public org.ldaptive.control.ResponseControl handleResponse(
-    final Control responseControl)
+  public org.ldaptive.control.ResponseControl handleResponse(final Control responseControl)
   {
     org.ldaptive.control.ResponseControl ctl = null;
     if (PagedResultsControl.OID.equals(responseControl.getOid())) {
@@ -112,15 +106,12 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
         ctl = new PasswordPolicyControl(c.isCritical());
 
         final PasswordPolicyResponse ppr = c.getResponse();
-        ((PasswordPolicyControl) ctl).setTimeBeforeExpiration(
-          ppr.getTimeBeforeExpiration());
-        ((PasswordPolicyControl) ctl).setGraceAuthNsRemaining(
-          ppr.getGraceAuthNRemaining());
+        ((PasswordPolicyControl) ctl).setTimeBeforeExpiration(ppr.getTimeBeforeExpiration());
+        ((PasswordPolicyControl) ctl).setGraceAuthNsRemaining(ppr.getGraceAuthNRemaining());
 
         final PasswordPolicyErrorEnum error = ppr.getPasswordPolicyError();
         if (error != null) {
-          ((PasswordPolicyControl) ctl).setError(
-            PasswordPolicyControl.Error.valueOf(error.getValue()));
+          ((PasswordPolicyControl) ctl).setError(PasswordPolicyControl.Error.valueOf(error.getValue()));
         }
       }
     } else if (SyncStateControl.OID.equals(responseControl.getOid())) {
@@ -132,12 +123,8 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
         c.isCritical());
     } else if (SyncDoneControl.OID.equals(responseControl.getOid())) {
       final SyncDoneValue c = (SyncDoneValue) responseControl;
-      ctl = new SyncDoneControl(
-        c.getCookie(),
-        c.isRefreshDeletes(),
-        c.isCritical());
-    } else if (EntryChangeNotificationControl.OID.equals(
-               responseControl.getOid())) {
+      ctl = new SyncDoneControl(c.getCookie(), c.isRefreshDeletes(), c.isCritical());
+    } else if (EntryChangeNotificationControl.OID.equals(responseControl.getOid())) {
       final EntryChange c = (EntryChange) responseControl;
       ctl = new EntryChangeNotificationControl(
         PersistentSearchChangeType.valueOf(c.getChangeType().getValue()),
@@ -147,9 +134,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
     } else if (DirSyncControl.OID.equals(responseControl.getOid())) {
       final AdDirSync c = (AdDirSync) responseControl;
       ctl = new DirSyncControl(
-        new DirSyncControl.Flag[] {
-          DirSyncControl.Flag.valueOf(c.getFlag().getValue()),
-        },
+        new DirSyncControl.Flag[] {DirSyncControl.Flag.valueOf(c.getFlag().getValue()), },
         c.getCookie(),
         c.getMaxReturnLength(),
         c.isCritical());

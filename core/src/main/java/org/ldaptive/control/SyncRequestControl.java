@@ -9,8 +9,7 @@ import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UniversalDERTag;
 
 /**
- * Request control for ldap content synchronization. See RFC 4533. Control is
- * defined as:
+ * Request control for ldap content synchronization. See RFC 4533. Control is defined as:
  *
  * <pre>
     syncRequestValue ::= SEQUENCE {
@@ -27,8 +26,7 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class SyncRequestControl extends AbstractControl
-  implements RequestControl
+public class SyncRequestControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -139,10 +137,7 @@ public class SyncRequestControl extends AbstractControl
    * @param  value  sync request cookie
    * @param  critical  whether this control is critical
    */
-  public SyncRequestControl(
-    final Mode mode,
-    final byte[] value,
-    final boolean critical)
+  public SyncRequestControl(final Mode mode, final byte[] value, final boolean critical)
   {
     super(OID, critical);
     setRequestMode(mode);
@@ -158,11 +153,7 @@ public class SyncRequestControl extends AbstractControl
    * @param  hint  reload hint
    * @param  critical  whether this control is critical
    */
-  public SyncRequestControl(
-    final Mode mode,
-    final byte[] value,
-    final boolean hint,
-    final boolean critical)
+  public SyncRequestControl(final Mode mode, final byte[] value, final boolean hint, final boolean critical)
   {
     super(OID, critical);
     setRequestMode(mode);
@@ -240,14 +231,7 @@ public class SyncRequestControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        requestMode,
-        cookie,
-        reloadHint);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), requestMode, cookie, reloadHint);
   }
 
 

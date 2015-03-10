@@ -9,8 +9,7 @@ import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
 
 /**
- * Request control for active directory servers to control various search
- * behaviors. Control is defined as:
+ * Request control for active directory servers to control various search behaviors. Control is defined as:
  *
  * <pre>
      searchOptionsValue ::= SEQUENCE {
@@ -22,8 +21,7 @@ import org.ldaptive.control.RequestControl;
  *
  * @author  Middleware Services
  */
-public class SearchOptionsControl extends AbstractControl
-  implements RequestControl
+public class SearchOptionsControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -103,25 +101,14 @@ public class SearchOptionsControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        flag);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), flag);
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, flag=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        flag);
+    return String.format("[%s@%d::criticality=%s, flag=%s]", getClass().getName(), hashCode(), getCriticality(), flag);
   }
 
 

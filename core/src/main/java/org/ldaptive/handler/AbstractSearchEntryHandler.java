@@ -25,10 +25,7 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
 
 
   @Override
-  public HandlerResult<SearchEntry> handle(
-    final Connection conn,
-    final SearchRequest request,
-    final SearchEntry entry)
+  public HandlerResult<SearchEntry> handle(final Connection conn, final SearchRequest request, final SearchEntry entry)
     throws LdapException
   {
     if (entry != null) {
@@ -48,10 +45,7 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @return  handled dn
    */
-  protected String handleDn(
-    final Connection conn,
-    final SearchRequest request,
-    final SearchEntry entry)
+  protected String handleDn(final Connection conn, final SearchRequest request, final SearchEntry entry)
   {
     return entry.getDn();
   }
@@ -66,10 +60,7 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @throws  LdapException  if the LDAP returns an error
    */
-  protected void handleAttributes(
-    final Connection conn,
-    final SearchRequest request,
-    final SearchEntry entry)
+  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
     throws LdapException
   {
     for (LdapAttribute la : entry.getAttributes()) {
@@ -87,10 +78,7 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @throws  LdapException  if the LDAP returns an error
    */
-  protected void handleAttribute(
-    final Connection conn,
-    final SearchRequest request,
-    final LdapAttribute attr)
+  protected void handleAttribute(final Connection conn, final SearchRequest request, final LdapAttribute attr)
     throws LdapException
   {
     if (attr != null) {
@@ -123,10 +111,7 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @return  handled name
    */
-  protected String handleAttributeName(
-    final Connection conn,
-    final SearchRequest request,
-    final String name)
+  protected String handleAttributeName(final Connection conn, final SearchRequest request, final String name)
   {
     return name;
   }
@@ -141,10 +126,7 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @return  handled value
    */
-  protected String handleAttributeValue(
-    final Connection conn,
-    final SearchRequest request,
-    final String value)
+  protected String handleAttributeValue(final Connection conn, final SearchRequest request, final String value)
   {
     return value;
   }
@@ -159,10 +141,7 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
    *
    * @return  handled value
    */
-  protected byte[] handleAttributeValue(
-    final Connection conn,
-    final SearchRequest request,
-    final byte[] value)
+  protected byte[] handleAttributeValue(final Connection conn, final SearchRequest request, final byte[] value)
   {
     return value;
   }

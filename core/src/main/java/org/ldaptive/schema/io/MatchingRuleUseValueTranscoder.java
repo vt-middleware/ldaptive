@@ -9,8 +9,7 @@ import org.ldaptive.schema.MatchingRuleUse;
  *
  * @author  Middleware Services
  */
-public class MatchingRuleUseValueTranscoder
-  extends AbstractSchemaElementValueTranscoder<MatchingRuleUse>
+public class MatchingRuleUseValueTranscoder extends AbstractSchemaElementValueTranscoder<MatchingRuleUse>
 {
 
 
@@ -20,9 +19,7 @@ public class MatchingRuleUseValueTranscoder
     try {
       return MatchingRuleUse.parse(value);
     } catch (ParseException e) {
-      throw new IllegalArgumentException(
-        "Could not transcode matching rule use",
-        e);
+      throw new IllegalArgumentException("Could not transcode matching rule use", e);
     }
   }
 

@@ -60,21 +60,17 @@ public class SearchResultTest extends AbstractTest
     }
   )
   @Test(groups = {"bean"})
-  public void toSearchResults(
-    final String dn,
-    final String filter,
-    final String returnAttrs,
-    final String ldifFile)
+  public void toSearchResults(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final SearchOperation search = new SearchOperation(conn);
 
       final SearchResult result = search.execute(
-        new SearchRequest(
-          dn, new SearchFilter(filter), returnAttrs.split("\\|"))).getResult();
+        new SearchRequest(dn, new SearchFilter(filter), returnAttrs.split("\\|"))).getResult();
       final String expected = TestUtils.readFileIntoString(ldifFile);
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
     } finally {

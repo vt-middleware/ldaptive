@@ -15,10 +15,9 @@ public final class SchemaUtils
 
 
   /**
-   * Parses the supplied descriptors string and returns it's contents as a
-   * string array. If the string contains a single quote it is assumed to be a
-   * multivalue descriptor of the form "'value1' 'value2' 'value3'". Otherwise
-   * it is treated as a single value descriptor.
+   * Parses the supplied descriptors string and returns it's contents as a string array. If the string contains a single
+   * quote it is assumed to be a multivalue descriptor of the form "'value1' 'value2' 'value3'". Otherwise it is treated
+   * as a single value descriptor.
    *
    * @param  descrs  string to parse
    *
@@ -40,10 +39,9 @@ public final class SchemaUtils
 
 
   /**
-   * Parses the supplied OID string and returns it's contents as a string array.
-   * If the string contains a dollar sign it is assumed to be a multivalue OID
-   * of the form "value1 $ value2 $ value3". Otherwise it is treated as a single
-   * value OID.
+   * Parses the supplied OID string and returns it's contents as a string array. If the string contains a dollar sign it
+   * is assumed to be a multivalue OID of the form "value1 $ value2 $ value3". Otherwise it is treated as a single value
+   * OID.
    *
    * @param  oids  string to parse
    *
@@ -64,8 +62,7 @@ public final class SchemaUtils
 
 
   /**
-   * Parses the supplied number string and returns it's contents as a string
-   * array.
+   * Parses the supplied number string and returns it's contents as a string array.
    *
    * @param  numbers  string to parse
    *

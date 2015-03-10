@@ -20,21 +20,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Searches an LDAP using a defined set of search templates. For each term count
- * some number of templates are defined and used for searching.
+ * Searches an LDAP using a defined set of search templates. For each term count some number of templates are defined
+ * and used for searching.
  *
  * @author  Middleware Services
  */
-public abstract class AbstractServletSearchTemplatesExecutor
-  extends SearchTemplatesExecutor implements ServletSearchExecutor
+public abstract class AbstractServletSearchTemplatesExecutor extends SearchTemplatesExecutor
+  implements ServletSearchExecutor
 {
 
   /** Spring context path. */
   private static final String SPRING_CONTEXT_PATH = "springContextPath";
 
   /** Default spring context path. */
-  private static final String DEFAULT_SPRING_CONTEXT_PATH =
-    "/templates-context.xml";
+  private static final String DEFAULT_SPRING_CONTEXT_PATH = "/templates-context.xml";
 
   /** Ignore pattern. */
   private static final String IGNORE_PATTERN = "ignorePattern";
@@ -46,42 +45,30 @@ public abstract class AbstractServletSearchTemplatesExecutor
   @Override
   public void initialize(final ServletConfig config)
   {
-    final String springContextPath =
-      config.getInitParameter(SPRING_CONTEXT_PATH) != null ?
-        config.getInitParameter(SPRING_CONTEXT_PATH) :
-        DEFAULT_SPRING_CONTEXT_PATH;
+    final String springContextPath = config.getInitParameter(SPRING_CONTEXT_PATH) != null
+      ? config.getInitParameter(SPRING_CONTEXT_PATH) : DEFAULT_SPRING_CONTEXT_PATH;
     logger.debug("{} = {}", SPRING_CONTEXT_PATH, springContextPath);
 
-    final ApplicationContext context = new ClassPathXmlApplicationContext(
-      springContextPath);
+    final ApplicationContext context = new ClassPathXmlApplicationContext(springContextPath);
     setSearchExecutor(context.getBean(AggregatePooledSearchExecutor.class));
     logger.debug("searchExecutor = {}", getSearchExecutor());
 
-    final Map<String, PooledConnectionFactory> factories =
-      context.getBeansOfType(PooledConnectionFactory.class);
-    setConnectionFactories(
-      factories.values().toArray(
-        new PooledConnectionFactory[factories.size()]));
-    logger.debug(
-      "connectionFactories = {}",
-      Arrays.toString(getConnectionFactories()));
+    final Map<String, PooledConnectionFactory> factories = context.getBeansOfType(PooledConnectionFactory.class);
+    setConnectionFactories(factories.values().toArray(new PooledConnectionFactory[factories.size()]));
+    logger.debug("connectionFactories = {}", Arrays.toString(getConnectionFactories()));
 
-    final Map<String, SearchTemplates> templates = context.getBeansOfType(
-      SearchTemplates.class);
-    setSearchTemplates(
-      templates.values().toArray(new SearchTemplates[templates.size()]));
+    final Map<String, SearchTemplates> templates = context.getBeansOfType(SearchTemplates.class);
+    setSearchTemplates(templates.values().toArray(new SearchTemplates[templates.size()]));
     logger.debug("searchTemplates = {}", Arrays.toString(getSearchTemplates()));
 
-    ignorePattern = config.getInitParameter(IGNORE_PATTERN) != null ?
-      Pattern.compile(config.getInitParameter(IGNORE_PATTERN)) : null;
+    ignorePattern = config.getInitParameter(IGNORE_PATTERN) != null
+      ? Pattern.compile(config.getInitParameter(IGNORE_PATTERN)) : null;
     logger.debug("{} = {}", IGNORE_PATTERN, ignorePattern);
   }
 
 
   @Override
-  public void search(
-    final HttpServletRequest request,
-    final HttpServletResponse response)
+  public void search(final HttpServletRequest request, final HttpServletResponse response)
     throws LdapException, IOException
   {
     Integer fromResult = null;
@@ -89,9 +76,7 @@ public abstract class AbstractServletSearchTemplatesExecutor
       try {
         fromResult = Integer.valueOf(request.getParameter("from-result"));
       } catch (NumberFormatException e) {
-        logger.warn(
-          "Received invalid fromResult parameter: {}",
-          request.getParameter("from-result"));
+        logger.warn("Received invalid fromResult parameter: {}", request.getParameter("from-result"));
       }
     }
 
@@ -100,9 +85,7 @@ public abstract class AbstractServletSearchTemplatesExecutor
       try {
         toResult = Integer.valueOf(request.getParameter("to-result"));
       } catch (NumberFormatException e) {
-        logger.warn(
-          "Received invalid toResult parameter: {}",
-          request.getParameter("to-result"));
+        logger.warn("Received invalid toResult parameter: {}", request.getParameter("to-result"));
       }
     }
 
@@ -141,8 +124,6 @@ public abstract class AbstractServletSearchTemplatesExecutor
    *
    * @throws  IOException  if an error occurs writing to the response
    */
-  protected abstract void writeResponse(
-    final SearchResult result,
-    final HttpServletResponse response)
+  protected abstract void writeResponse(final SearchResult result, final HttpServletResponse response)
     throws IOException;
 }

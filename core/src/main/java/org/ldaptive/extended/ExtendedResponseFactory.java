@@ -33,24 +33,29 @@ public final class ExtendedResponseFactory
   {
     ExtendedResponse<?> res;
     switch (requestOID) {
+
     case PasswordModifyRequest.OID:
       res = new PasswordModifyResponse();
       if (encoded != null) {
         res.decode(encoded);
       }
       break;
+
     case WhoAmIRequest.OID:
       res = new WhoAmIResponse();
       if (encoded != null) {
         res.decode(encoded);
       }
       break;
+
     case CancelRequest.OID:
       res = new CancelResponse();
       break;
+
     case FastBindRequest.OID:
       res = new FastBindResponse();
       break;
+
     default:
       throw new IllegalArgumentException("Unknown OID: " + responseOID);
     }

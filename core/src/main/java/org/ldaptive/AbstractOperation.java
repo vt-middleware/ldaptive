@@ -19,8 +19,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractOperation<Q extends Request, S>
-  implements Operation<Q, S>
+public abstract class AbstractOperation<Q extends Request, S> implements Operation<Q, S>
 {
 
   /** Logger for this class. */
@@ -30,8 +29,7 @@ public abstract class AbstractOperation<Q extends Request, S>
   private final Connection connection;
 
   /** Handler to handle operation exceptions. */
-  private OperationExceptionHandler<Q, S> operationExceptionHandler =
-    new ReopenOperationExceptionHandler();
+  private OperationExceptionHandler<Q, S> operationExceptionHandler = new ReopenOperationExceptionHandler();
 
   /** Handlers to handle operation responses. */
   private OperationResponseHandler<Q, S>[] operationResponseHandlers;
@@ -75,8 +73,7 @@ public abstract class AbstractOperation<Q extends Request, S>
    *
    * @param  handler  operation exception handler
    */
-  public void setOperationExceptionHandler(
-    final OperationExceptionHandler<Q, S> handler)
+  public void setOperationExceptionHandler(final OperationExceptionHandler<Q, S> handler)
   {
     operationExceptionHandler = handler;
   }
@@ -99,8 +96,7 @@ public abstract class AbstractOperation<Q extends Request, S>
    * @param  handlers  operation response handlers
    */
   @SuppressWarnings("unchecked")
-  public void setOperationResponseHandlers(
-    final OperationResponseHandler<Q, S>... handlers)
+  public void setOperationResponseHandlers(final OperationResponseHandler<Q, S>... handlers)
   {
     operationResponseHandlers = handlers;
   }
@@ -132,15 +128,9 @@ public abstract class AbstractOperation<Q extends Request, S>
       if (operationExceptionHandler == null) {
         throw e;
       }
-      logger.debug(
-        "Error performing LDAP operation, invoking exception handler: {}",
-        operationExceptionHandler,
-        e);
+      logger.debug("Error performing LDAP operation, invoking exception handler: {}", operationExceptionHandler, e);
 
-      final HandlerResult<Response<S>> hr = operationExceptionHandler.handle(
-        connection,
-        request,
-        response);
+      final HandlerResult<Response<S>> hr = operationExceptionHandler.handle(connection, request, response);
       if (hr.getAbort()) {
         throw e;
       }
@@ -151,22 +141,15 @@ public abstract class AbstractOperation<Q extends Request, S>
       @SuppressWarnings("unchecked")
       final ReferralHandler<Q, S> handler = request.getReferralHandler();
       if (handler != null) {
-        logger.debug(
-          "Encountered referral, invoking referral handler: {}",
-          handler);
-        final HandlerResult<Response<S>> hr = handler.handle(
-          connection,
-          request,
-          response);
+        logger.debug("Encountered referral, invoking referral handler: {}", handler);
+
+        final HandlerResult<Response<S>> hr = handler.handle(connection, request, response);
         response = hr.getResult();
       }
     }
 
     // execute response handlers
-    final HandlerResult<Response<S>> hr = executeHandlers(
-      getOperationResponseHandlers(),
-      request,
-      response);
+    final HandlerResult<Response<S>> hr = executeHandlers(getOperationResponseHandlers(), request, response);
 
     logger.debug(
       "execute response={} for request={} with connection={}",
@@ -176,10 +159,9 @@ public abstract class AbstractOperation<Q extends Request, S>
 
 
   /**
-   * Processes each handler and returns a handler result containing a result
-   * processed by all handlers. If any handler indicates that the operation
-   * should be aborted, that flag is returned to the operation after all
-   * handlers have been invoked.
+   * Processes each handler and returns a handler result containing a result processed by all handlers. If any handler
+   * indicates that the operation should be aborted, that flag is returned to the operation after all handlers have been
+   * invoked.
    *
    * @param  <Q>  type of request
    * @param  <S>  type of response
@@ -203,10 +185,7 @@ public abstract class AbstractOperation<Q extends Request, S>
       for (Handler<Q, S> handler : handlers) {
         if (handler != null) {
           try {
-            final HandlerResult<S> hr = handler.handle(
-              getConnection(),
-              request,
-              processed);
+            final HandlerResult<S> hr = handler.handle(getConnection(), request, processed);
             if (hr != null) {
               if (hr.getAbort()) {
                 abort = true;
@@ -239,11 +218,10 @@ public abstract class AbstractOperation<Q extends Request, S>
 
 
   /**
-   * Exception handler that invokes {@link Connection#reopen(BindRequest)} when
-   * an operation exception occurs and then invokes the operation again.
+   * Exception handler that invokes {@link Connection#reopen(BindRequest)} when an operation exception occurs and then
+   * invokes the operation again.
    */
-  public class ReopenOperationExceptionHandler
-    extends AbstractRetryOperationExceptionHandler<Q, S>
+  public class ReopenOperationExceptionHandler extends AbstractRetryOperationExceptionHandler<Q, S>
   {
 
     /** Bind request to use when reopening a connection. */
@@ -269,10 +247,7 @@ public abstract class AbstractOperation<Q extends Request, S>
 
 
     @Override
-    protected void handleInternal(
-      final Connection conn,
-      final Q request,
-      final Response<S> response)
+    protected void handleInternal(final Connection conn, final Q request, final Response<S> response)
       throws LdapException
     {
       logger.warn("Operation exception encountered, reopening connection");

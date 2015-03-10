@@ -13,8 +13,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class ProxyAuthorizationControl extends AbstractControl
-  implements RequestControl
+public class ProxyAuthorizationControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -74,12 +73,7 @@ public class ProxyAuthorizationControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        authorizationId);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), authorizationId);
   }
 
 
@@ -99,8 +93,6 @@ public class ProxyAuthorizationControl extends AbstractControl
   @Override
   public byte[] encode()
   {
-    return
-      getAuthorizationId() != null
-      ? OctetStringType.toBytes(getAuthorizationId()) : EMPTY_AUTHZ;
+    return getAuthorizationId() != null ? OctetStringType.toBytes(getAuthorizationId()) : EMPTY_AUTHZ;
   }
 }

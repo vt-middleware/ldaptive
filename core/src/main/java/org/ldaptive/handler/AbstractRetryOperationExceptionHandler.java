@@ -17,8 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class
-AbstractRetryOperationExceptionHandler<Q extends Request, S>
+public abstract class AbstractRetryOperationExceptionHandler<Q extends Request, S>
   implements OperationExceptionHandler<Q, S>
 {
 
@@ -36,8 +35,7 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
 
 
   /**
-   * Returns the retry. This is the number of times the handler will retry when
-   * it fails.
+   * Returns the retry. This is the number of times the handler will retry when it fails.
    *
    * @return  retry
    */
@@ -60,8 +58,8 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
 
 
   /**
-   * Returns the retry wait. This is the amount of time in seconds that the
-   * executing thread will sleep before attempting to retry again.
+   * Returns the retry wait. This is the amount of time in seconds that the executing thread will sleep before
+   * attempting to retry again.
    *
    * @return  retry wait
    */
@@ -86,9 +84,8 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
 
 
   /**
-   * Returns the retry backoff. This is the factor by which the retry wait will
-   * be multiplied in order to progressively delay the amount of time between
-   * each retry.
+   * Returns the retry backoff. This is the factor by which the retry wait will be multiplied in order to progressively
+   * delay the amount of time between each retry.
    *
    * @return  retry backoff
    */
@@ -111,10 +108,7 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
 
 
   @Override
-  public HandlerResult<Response<S>> handle(
-    final Connection conn,
-    final Q request,
-    final Response<S> response)
+  public HandlerResult<Response<S>> handle(final Connection conn, final Q request, final Response<S> response)
     throws LdapException
   {
     for (int i = 0; i <= retry || retry == -1; i++) {
@@ -142,16 +136,12 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
    *
    * @throws  LdapException  if the retry fails
    */
-  protected abstract void handleInternal(
-    final Connection conn,
-    final Q request,
-    final Response<S> response)
+  protected abstract void handleInternal(final Connection conn, final Q request, final Response<S> response)
     throws LdapException;
 
 
   /**
-   * Invoked if {@link #handleInternal} succeeded. Creates a response for the
-   * original invocation that failed.
+   * Invoked if {@link #handleInternal} succeeded. Creates a response for the original invocation that failed.
    *
    * @param  conn  connection the operation was executed on
    * @param  request  executed by the operation
@@ -169,9 +159,8 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
 
 
   /**
-   * Returns whether the supplied count indicates that the operation should be
-   * retried. If a retry wait has been configured, this method will sleep the
-   * current thread for the configured time.
+   * Returns whether the supplied count indicates that the operation should be retried. If a retry wait has been
+   * configured, this method will sleep the current thread for the configured time.
    *
    * @param  count  number of times the operation has been retried
    *
@@ -180,12 +169,7 @@ AbstractRetryOperationExceptionHandler<Q extends Request, S>
   protected boolean retry(final int count)
   {
     if (count < retry || retry == -1) {
-      logger.warn(
-        "Retry attempt {} of {}: wait={}, backoff={}",
-        count + 1,
-        retry,
-        retryWait,
-        retryBackoff);
+      logger.warn("Retry attempt {} of {}: wait={}, backoff={}", count + 1, retry, retryWait, retryBackoff);
       if (retryWait > 0) {
         long sleepTime = retryWait;
         if (retryBackoff > 0 && count > 0) {

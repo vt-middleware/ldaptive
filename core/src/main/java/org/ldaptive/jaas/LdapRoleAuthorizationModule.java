@@ -18,9 +18,8 @@ import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 
 /**
- * Provides a JAAS authentication hook into LDAP roles. No authentication is
- * performed in this module. Role data is set for the login name in the shared
- * state or for the name returned by the CallbackHandler.
+ * Provides a JAAS authentication hook into LDAP roles. No authentication is performed in this module. Role data is set
+ * for the login name in the shared state or for the name returned by the CallbackHandler.
  *
  * @author  Middleware Services
  */
@@ -71,11 +70,8 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
         noResultsIsError = Boolean.valueOf(value);
       } else if ("roleResolverFactory".equalsIgnoreCase(key)) {
         try {
-          roleResolverFactory =
-            (RoleResolverFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException |
-                 IllegalAccessException |
-                 InstantiationException e) {
+          roleResolverFactory = (RoleResolverFactory) Class.forName(value).newInstance();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
           throw new IllegalArgumentException(e);
         }
       }
@@ -105,9 +101,7 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
 
 
   @Override
-  protected boolean login(
-    final NameCallback nameCb,
-    final PasswordCallback passCb)
+  protected boolean login(final NameCallback nameCb, final PasswordCallback passCb)
     throws LoginException
   {
     try {

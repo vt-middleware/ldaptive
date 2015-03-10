@@ -9,26 +9,21 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.io.JsonWriter;
 
 /**
- * Writes search results as JSON. See {@link
- * AbstractServletSearchTemplatesExecutor}.
+ * Writes search results as JSON. See {@link AbstractServletSearchTemplatesExecutor}.
  *
  * @author  Middleware Services
  */
-public class JsonServletSearchTemplatesExecutor
-  extends AbstractServletSearchTemplatesExecutor
+public class JsonServletSearchTemplatesExecutor extends AbstractServletSearchTemplatesExecutor
 {
 
 
   @Override
-  protected void writeResponse(
-    final SearchResult result,
-    final HttpServletResponse response)
+  protected void writeResponse(final SearchResult result, final HttpServletResponse response)
     throws IOException
   {
     response.setContentType("application/json");
 
-    final JsonWriter writer = new JsonWriter(
-      new BufferedWriter(new OutputStreamWriter(response.getOutputStream())));
+    final JsonWriter writer = new JsonWriter(new BufferedWriter(new OutputStreamWriter(response.getOutputStream())));
     writer.write(result);
   }
 }

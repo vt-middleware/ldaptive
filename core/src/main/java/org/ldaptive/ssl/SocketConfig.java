@@ -49,9 +49,8 @@ public class SocketConfig extends AbstractConfig
   public boolean isEmpty()
   {
     return
-      keepAlive == null && oobInline == null && receiveBufferSize == null &&
-      sendBufferSize == null && reuseAddress == null && soLinger == null &&
-      soTimeout == null && tcpNoDelay == null && trafficClass == null;
+      keepAlive == null && oobInline == null && receiveBufferSize == null && sendBufferSize == null &&
+      reuseAddress == null && soLinger == null && soTimeout == null && tcpNoDelay == null && trafficClass == null;
   }
 
 

@@ -152,8 +152,7 @@ public class StringCustomObject implements CustomObject
    *
    * @return  instance of string custom object
    */
-  public static <T extends StringCustomObject> T createCustomObject(
-    final Class<T> type)
+  public static <T extends StringCustomObject> T createCustomObject(final Class<T> type)
   {
     final Set<String> s1 = new HashSet<>();
     s1.add("tsv1");
@@ -257,179 +256,55 @@ public class StringCustomObject implements CustomObject
 
   /** Test class for the default ldap entry mapper. */
   @Entry(
-    dn = "cn=String Entry,ou=people,dc=ldaptive,dc=org",
-    attributes = {
+    dn = "cn=String Entry,ou=people,dc=ldaptive,dc=org", attributes = {
+      @Attribute(name = "customname1", values = "customvalue1"),
+      @Attribute(name = "customname2", values = {"customvalue1", "customvalue2"}),
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "stringthree", property = "type3"),
+      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "col1", property = "col1"),
+      @Attribute(name = "col2", property = "col2"),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeSet2", property = "typeSet2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeList1", property = "typeList1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeList2", property = "typeList2", sortBehavior = SortBehavior.ORDERED),
       @Attribute(
-        name = "customname1",
-        values = "customvalue1"
-      ),
-      @Attribute(
-        name = "customname2",
-        values = {"customvalue1", "customvalue2"}
-      ),
-      @Attribute(
-        name = "type1",
-        property = "type1"
-      ),
-      @Attribute(
-        name = "type2",
-        property = "type2"
-      ),
-      @Attribute(
-        name = "stringthree",
-        property = "type3"
-      ),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "col1",
-        property = "col1"
-      ),
-      @Attribute(
-        name = "col2",
-        property = "col2"
-      ),
-      @Attribute(
-        name = "typeCol1",
-        property = "typeCol1"
-      ),
-      @Attribute(
-        name = "typeCol2",
-        property = "typeCol2"
-      ),
-      @Attribute(
-        name = "typeSet1",
-        property = "typeSet1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeSet2",
-        property = "typeSet2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeList1",
-        property = "typeList1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeList2",
-        property = "typeList2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "transcoded",
-        property = "transcoded",
-        transcoder = "org.ldaptive.beans.reflect.CustomObject$" +
+        name = "transcoded", property = "transcoded", transcoder = "org.ldaptive.beans.reflect.CustomObject$" +
           "PrefixStringValueTranscoder"
       ),
-      @Attribute(
-        name = "nullArray1",
-        property = "nullArray1"
-      ),
-      @Attribute(
-        name = "nullList1",
-        property = "nullList1"
-      )
-      }
-  )
+      @Attribute(name = "nullArray1", property = "nullArray1"),
+      @Attribute(name = "nullList1", property = "nullList1")})
   public static class Default extends StringCustomObject {}
 
 
   /** Test class for the spring ldap entry mapper. */
   @Entry(
-    dn = "cn=String Entry,ou=people,dc=ldaptive,dc=org",
-    attributes = {
+    dn = "cn=String Entry,ou=people,dc=ldaptive,dc=org", attributes = {
+      @Attribute(name = "customname1", values = "customvalue1"),
+      @Attribute(name = "customname2", values = {"customvalue1", "customvalue2"}),
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "stringthree", property = "type3"),
+      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "col1", property = "col1"),
+      @Attribute(name = "col2", property = "col2"),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeSet2", property = "typeSet2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeList1", property = "typeList1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeList2", property = "typeList2", sortBehavior = SortBehavior.ORDERED),
       @Attribute(
-        name = "customname1",
-        values = "customvalue1"
-      ),
-      @Attribute(
-        name = "customname2",
-        values = {"customvalue1", "customvalue2"}
-      ),
-      @Attribute(
-        name = "type1",
-        property = "type1"
-      ),
-      @Attribute(
-        name = "type2",
-        property = "type2"
-      ),
-      @Attribute(
-        name = "stringthree",
-        property = "type3"
-      ),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "col1",
-        property = "col1"
-      ),
-      @Attribute(
-        name = "col2",
-        property = "col2"
-      ),
-      @Attribute(
-        name = "typeCol1",
-        property = "typeCol1"
-      ),
-      @Attribute(
-        name = "typeCol2",
-        property = "typeCol2"
-      ),
-      @Attribute(
-        name = "typeSet1",
-        property = "typeSet1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeSet2",
-        property = "typeSet2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeList1",
-        property = "typeList1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeList2",
-        property = "typeList2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "transcoded",
-        property = "transcoded",
-        transcoder = "new org.ldaptive.beans.reflect.CustomObject$" +
+        name = "transcoded", property = "transcoded", transcoder = "new org.ldaptive.beans.reflect.CustomObject$" +
           "PrefixStringValueTranscoder(1)"
       ),
-      @Attribute(
-        name = "nullArray1",
-        property = "nullArray1"
-      ),
-      @Attribute(
-        name = "nullList1",
-        property = "nullList1"
-      )
-      }
-  )
+      @Attribute(name = "nullArray1", property = "nullArray1"),
+      @Attribute(name = "nullList1", property = "nullList1")})
   public static class Spring extends StringCustomObject
   {
     // CheckStyle:JavadocMethod OFF

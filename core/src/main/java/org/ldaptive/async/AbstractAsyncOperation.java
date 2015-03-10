@@ -15,8 +15,7 @@ import org.ldaptive.async.handler.ExceptionHandler;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractAsyncOperation<Q extends Request, S>
-  extends AbstractOperation<Q, S>
+public abstract class AbstractAsyncOperation<Q extends Request, S> extends AbstractOperation<Q, S>
 {
 
   /** Handlers to handle async requests. */

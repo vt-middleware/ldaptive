@@ -34,14 +34,14 @@ public class ConnectionPoolTest extends AbstractTest
 {
 
   /** Entries for pool tests. */
-  private static final Map<String, LdapEntry[]> entries = new HashMap<>();
+  private static final Map<String, LdapEntry[]> ENTRIES = new HashMap<>();
 
   /**
    * Initialize the map of entries.
    */
   static {
     for (int i = 2; i <= 10; i++) {
-      entries.put(String.valueOf(i), new LdapEntry[2]);
+      ENTRIES.put(String.valueOf(i), new LdapEntry[2]);
     }
   }
 
@@ -75,6 +75,7 @@ public class ConnectionPoolTest extends AbstractTest
 
   /**
    * @param  host  to connect to.
+   * @param  dn  base DN for searching.
    *
    * @throws  Exception  On test failure.
    */
@@ -89,9 +90,7 @@ public class ConnectionPoolTest extends AbstractTest
       "softlimitpool",
       "blockingpool",
       "blockingtimeoutpool",
-      "connstrategypool"
-    }
-  )
+      "connstrategypool"})
   public void createPools(final String host, final String dn)
     throws Exception
   {
@@ -104,8 +103,7 @@ public class ConnectionPoolTest extends AbstractTest
     softLimitPc.setValidateOnCheckOut(true);
     softLimitPc.setValidatePeriodically(true);
     softLimitPc.setValidatePeriod(5L);
-    softLimitPool = new SoftLimitConnectionPool(
-      softLimitPc, new DefaultConnectionFactory(cc));
+    softLimitPool = new SoftLimitConnectionPool(softLimitPc, new DefaultConnectionFactory(cc));
     softLimitPool.setPruneStrategy(new IdlePruneStrategy(5L, 1L));
     softLimitPool.setValidator(new SearchValidator());
 
@@ -114,8 +112,7 @@ public class ConnectionPoolTest extends AbstractTest
     blockingPc.setValidateOnCheckOut(true);
     blockingPc.setValidatePeriodically(true);
     blockingPc.setValidatePeriod(5L);
-    blockingPool = new BlockingConnectionPool(
-      blockingPc, new DefaultConnectionFactory(cc));
+    blockingPool = new BlockingConnectionPool(blockingPc, new DefaultConnectionFactory(cc));
     blockingPool.setPruneStrategy(new IdlePruneStrategy(5L, 1L));
     blockingPool.setValidator(new SearchValidator());
 
@@ -124,21 +121,17 @@ public class ConnectionPoolTest extends AbstractTest
     blockingTimeoutPc.setValidateOnCheckOut(true);
     blockingTimeoutPc.setValidatePeriodically(true);
     blockingTimeoutPc.setValidatePeriod(5L);
-    blockingTimeoutPool = new BlockingConnectionPool(
-      blockingTimeoutPc, new DefaultConnectionFactory(cc));
+    blockingTimeoutPool = new BlockingConnectionPool(blockingTimeoutPc, new DefaultConnectionFactory(cc));
     blockingTimeoutPool.setPruneStrategy(new IdlePruneStrategy(5L, 1L));
     blockingTimeoutPool.setBlockWaitTime(1000L);
     blockingTimeoutPool.setValidator(new SearchValidator());
 
     final ConnectionConfig connStrategyCc = TestUtils.readConnectionConfig(null);
-    connStrategyCc.setLdapUrl(
-      String.format("%s ldap://dne.middleware.vt.edu", host));
-    final DefaultConnectionFactory connStrategyCf =
-      new DefaultConnectionFactory(connStrategyCc);
-    connStrategyCf.getProvider().getProviderConfig().setConnectionStrategy(
-      ConnectionStrategy.ROUND_ROBIN);
-    connStrategyPool = new BlockingConnectionPool(
-      new PoolConfig(), connStrategyCf);
+    connStrategyCc.setLdapUrl(String.format("%s ldap://dne.middleware.vt.edu", host));
+
+    final DefaultConnectionFactory connStrategyCf = new DefaultConnectionFactory(connStrategyCc);
+    connStrategyCf.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.ROUND_ROBIN);
+    connStrategyPool = new BlockingConnectionPool(new PoolConfig(), connStrategyCf);
   }
 
 
@@ -175,8 +168,8 @@ public class ConnectionPoolTest extends AbstractTest
       "blockingtimeoutpool",
       "connstrategypool"
       },
-    dependsOnMethods = {"createPools"}
-  )
+    dependsOnMethods = {"createPools"})
+  // CheckStyle:ParameterNumber OFF
   public void createPoolEntry(
     final String ldifFile2,
     final String ldifFile3,
@@ -190,27 +183,18 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    entries.get("2")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile2)).getEntry();
-    entries.get("3")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile3)).getEntry();
-    entries.get("4")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile4)).getEntry();
-    entries.get("5")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile5)).getEntry();
-    entries.get("6")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile6)).getEntry();
-    entries.get("7")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile7)).getEntry();
-    entries.get("8")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile8)).getEntry();
-    entries.get("9")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile9)).getEntry();
-    entries.get("10")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile10)).getEntry();
+    ENTRIES.get("2")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    ENTRIES.get("3")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    ENTRIES.get("4")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile4)).getEntry();
+    ENTRIES.get("5")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile5)).getEntry();
+    ENTRIES.get("6")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile6)).getEntry();
+    ENTRIES.get("7")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile7)).getEntry();
+    ENTRIES.get("8")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile8)).getEntry();
+    ENTRIES.get("9")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile9)).getEntry();
+    ENTRIES.get("10")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile10)).getEntry();
     // CheckStyle:Indentation ON
 
-    for (Map.Entry<String, LdapEntry[]> e : entries.entrySet()) {
+    for (Map.Entry<String, LdapEntry[]> e : ENTRIES.entrySet()) {
       super.createLdapEntry(e.getValue()[0]);
     }
 
@@ -219,6 +203,7 @@ public class ConnectionPoolTest extends AbstractTest
     blockingTimeoutPool.initialize();
     connStrategyPool.initialize();
   }
+  // CheckStyle:ParameterNumber ON
 
 
   /**
@@ -252,9 +237,8 @@ public class ConnectionPoolTest extends AbstractTest
       "softlimitpool",
       "blockingpool",
       "blockingtimeoutpool",
-      "connstrategypool"
-      }
-  )
+      "connstrategypool"})
+  // CheckStyle:ParameterNumber OFF
   public void loadPoolSearchResults(
     final String ldifFile2,
     final String ldifFile3,
@@ -268,26 +252,18 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    entries.get("2")[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile2)).getEntry();
-    entries.get("3")[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile3)).getEntry();
-    entries.get("4")[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile4)).getEntry();
-    entries.get("5")[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile5)).getEntry();
-    entries.get("6")[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile6)).getEntry();
-    entries.get("7")[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile7)).getEntry();
-    entries.get("8")[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile8)).getEntry();
-    entries.get("9")[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile9)).getEntry();
-    entries.get("10")[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile10)).getEntry();
+    ENTRIES.get("2")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    ENTRIES.get("3")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    ENTRIES.get("4")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile4)).getEntry();
+    ENTRIES.get("5")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile5)).getEntry();
+    ENTRIES.get("6")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile6)).getEntry();
+    ENTRIES.get("7")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile7)).getEntry();
+    ENTRIES.get("8")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile8)).getEntry();
+    ENTRIES.get("9")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile9)).getEntry();
+    ENTRIES.get("10")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile10)).getEntry();
     // CheckStyle:Indentation ON
   }
+  // CheckStyle:ParameterNumber ON
 
 
   /** @throws  Exception  On test failure. */
@@ -296,21 +272,19 @@ public class ConnectionPoolTest extends AbstractTest
       "softlimitpool",
       "blockingpool",
       "blockingtimeoutpool",
-      "connstrategypool"
-      }
-  )
+      "connstrategypool"})
   public void deletePoolEntry()
     throws Exception
   {
-    super.deleteLdapEntry(entries.get("2")[0].getDn());
-    super.deleteLdapEntry(entries.get("3")[0].getDn());
-    super.deleteLdapEntry(entries.get("4")[0].getDn());
-    super.deleteLdapEntry(entries.get("5")[0].getDn());
-    super.deleteLdapEntry(entries.get("6")[0].getDn());
-    super.deleteLdapEntry(entries.get("7")[0].getDn());
-    super.deleteLdapEntry(entries.get("8")[0].getDn());
-    super.deleteLdapEntry(entries.get("9")[0].getDn());
-    super.deleteLdapEntry(entries.get("10")[0].getDn());
+    super.deleteLdapEntry(ENTRIES.get("2")[0].getDn());
+    super.deleteLdapEntry(ENTRIES.get("3")[0].getDn());
+    super.deleteLdapEntry(ENTRIES.get("4")[0].getDn());
+    super.deleteLdapEntry(ENTRIES.get("5")[0].getDn());
+    super.deleteLdapEntry(ENTRIES.get("6")[0].getDn());
+    super.deleteLdapEntry(ENTRIES.get("7")[0].getDn());
+    super.deleteLdapEntry(ENTRIES.get("8")[0].getDn());
+    super.deleteLdapEntry(ENTRIES.get("9")[0].getDn());
+    super.deleteLdapEntry(ENTRIES.get("10")[0].getDn());
 
     softLimitPool.close();
     AssertJUnit.assertEquals(softLimitPool.availableCount(), 0);
@@ -344,7 +318,7 @@ public class ConnectionPoolTest extends AbstractTest
             "departmentNumber",
             "givenName",
             "sn"),
-          entries.get("2")[1],
+          ENTRIES.get("2")[1],
         },
         {
           new SearchRequest(
@@ -353,7 +327,7 @@ public class ConnectionPoolTest extends AbstractTest
             "departmentNumber",
             "givenName",
             "sn"),
-          entries.get("3")[1],
+          ENTRIES.get("3")[1],
         },
         {
           new SearchRequest(
@@ -362,7 +336,7 @@ public class ConnectionPoolTest extends AbstractTest
             "departmentNumber",
             "givenName",
             "sn"),
-          entries.get("4")[1],
+          ENTRIES.get("4")[1],
         },
         {
           new SearchRequest(
@@ -371,7 +345,7 @@ public class ConnectionPoolTest extends AbstractTest
             "departmentNumber",
             "givenName",
             "sn"),
-          entries.get("5")[1],
+          ENTRIES.get("5")[1],
         },
         {
           new SearchRequest(
@@ -380,7 +354,7 @@ public class ConnectionPoolTest extends AbstractTest
             "departmentNumber",
             "givenName",
             "sn"),
-          entries.get("6")[1],
+          ENTRIES.get("6")[1],
         },
         {
           new SearchRequest(
@@ -389,7 +363,7 @@ public class ConnectionPoolTest extends AbstractTest
             "departmentNumber",
             "givenName",
             "sn"),
-          entries.get("7")[1],
+          ENTRIES.get("7")[1],
         },
         {
           new SearchRequest(
@@ -399,7 +373,7 @@ public class ConnectionPoolTest extends AbstractTest
             "givenName",
             "sn",
             "jpegPhoto"),
-          entries.get("8")[1],
+          ENTRIES.get("8")[1],
         },
         {
           new SearchRequest(
@@ -408,7 +382,7 @@ public class ConnectionPoolTest extends AbstractTest
             "departmentNumber",
             "givenName",
             "sn"),
-          entries.get("9")[1],
+          ENTRIES.get("9")[1],
         },
         {
           new SearchRequest(
@@ -417,7 +391,7 @@ public class ConnectionPoolTest extends AbstractTest
             "departmentNumber",
             "givenName",
             "sn"),
-          entries.get("10")[1],
+          ENTRIES.get("10")[1],
         },
       };
   }
@@ -436,8 +410,7 @@ public class ConnectionPoolTest extends AbstractTest
     }
 
     try {
-      softLimitPool.getConnectionFactory().getConnectionConfig().
-        setConnectTimeout(10000);
+      softLimitPool.getConnectionFactory().getConnectionConfig().setConnectTimeout(10000);
       AssertJUnit.fail("Expected illegalstateexception to be thrown");
     } catch (IllegalStateException e) {
       AssertJUnit.assertEquals(IllegalStateException.class, e.getClass());
@@ -452,21 +425,12 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"softlimitpool"},
-    dataProvider = "pool-data",
-    threadPoolSize = 3,
-    invocationCount = 50,
-    timeOut = 60000
+    groups = {"softlimitpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000
   )
-  public void softLimitSmallSearch(
-    final SearchRequest request,
-    final LdapEntry results)
+  public void softLimitSmallSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
-    softLimitRuntime += search(
-      softLimitPool,
-      request,
-      results);
+    softLimitRuntime += search(softLimitPool, request, results);
   }
 
 
@@ -477,38 +441,24 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"softlimitpool"},
-    dataProvider = "pool-data",
-    threadPoolSize = 10,
-    invocationCount = 100,
-    timeOut = 60000,
+    groups = {"softlimitpool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100, timeOut = 60000,
     dependsOnMethods = {"softLimitSmallSearch"}
   )
-  public void softLimitMediumSearch(
-    final SearchRequest request,
-    final LdapEntry results)
+  public void softLimitMediumSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
-    softLimitRuntime += search(
-      softLimitPool,
-      request,
-      results);
+    softLimitRuntime += search(softLimitPool, request, results);
   }
 
 
   /** @throws  Exception  On test failure. */
-  @Test(
-    groups = {"softlimitpool"},
-    dependsOnMethods = {"softLimitMediumSearch"}
-  )
+  @Test(groups = {"softlimitpool"}, dependsOnMethods = {"softLimitMediumSearch"})
   public void softLimitMaxClean()
     throws Exception
   {
     Thread.sleep(10000);
     AssertJUnit.assertEquals(0, softLimitPool.activeCount());
-    AssertJUnit.assertEquals(
-      PoolConfig.DEFAULT_MIN_POOL_SIZE,
-      softLimitPool.availableCount());
+    AssertJUnit.assertEquals(PoolConfig.DEFAULT_MIN_POOL_SIZE, softLimitPool.availableCount());
   }
 
 
@@ -525,8 +475,7 @@ public class ConnectionPoolTest extends AbstractTest
     }
 
     try {
-      blockingPool.getConnectionFactory().getConnectionConfig().
-        setConnectTimeout(10000);
+      blockingPool.getConnectionFactory().getConnectionConfig().setConnectTimeout(10000);
       AssertJUnit.fail("Expected illegalstateexception to be thrown");
     } catch (IllegalStateException e) {
       AssertJUnit.assertEquals(IllegalStateException.class, e.getClass());
@@ -541,21 +490,12 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingpool"},
-    dataProvider = "pool-data",
-    threadPoolSize = 3,
-    invocationCount = 50,
-    timeOut = 60000
+    groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000
   )
-  public void blockingSmallSearch(
-    final SearchRequest request,
-    final LdapEntry results)
+  public void blockingSmallSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
-    blockingRuntime += search(
-      blockingPool,
-      request,
-      results);
+    blockingRuntime += search(blockingPool, request, results);
   }
 
 
@@ -566,22 +506,13 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingpool"},
-    dataProvider = "pool-data",
-    threadPoolSize = 10,
-    invocationCount = 100,
-    timeOut = 60000,
+    groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100, timeOut = 60000,
     dependsOnMethods = {"blockingSmallSearch"}
   )
-  public void blockingMediumSearch(
-    final SearchRequest request,
-    final LdapEntry results)
+  public void blockingMediumSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
-    blockingRuntime += search(
-      blockingPool,
-      request,
-      results);
+    blockingRuntime += search(blockingPool, request, results);
   }
 
 
@@ -592,38 +523,24 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingpool"},
-    dataProvider = "pool-data",
-    threadPoolSize = 50,
-    invocationCount = 1000,
-    timeOut = 60000,
+    groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 50, invocationCount = 1000, timeOut = 60000,
     dependsOnMethods = {"blockingMediumSearch"}
   )
-  public void blockingLargeSearch(
-    final SearchRequest request,
-    final LdapEntry results)
+  public void blockingLargeSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
-    blockingRuntime += search(
-      blockingPool,
-      request,
-      results);
+    blockingRuntime += search(blockingPool, request, results);
   }
 
 
   /** @throws  Exception  On test failure. */
-  @Test(
-    groups = {"blockingpool"},
-    dependsOnMethods = {"blockingLargeSearch"}
-  )
+  @Test(groups = {"blockingpool"}, dependsOnMethods = {"blockingLargeSearch"})
   public void blockingMaxClean()
     throws Exception
   {
     Thread.sleep(10000);
     AssertJUnit.assertEquals(0, blockingPool.activeCount());
-    AssertJUnit.assertEquals(
-      PoolConfig.DEFAULT_MIN_POOL_SIZE,
-      blockingPool.availableCount());
+    AssertJUnit.assertEquals(PoolConfig.DEFAULT_MIN_POOL_SIZE, blockingPool.availableCount());
   }
 
 
@@ -634,22 +551,14 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingtimeoutpool"},
-    dataProvider = "pool-data",
-    threadPoolSize = 3,
-    invocationCount = 50,
+    groups = {"blockingtimeoutpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50,
     timeOut = 60000
   )
-  public void blockingTimeoutSmallSearch(
-    final SearchRequest request,
-    final LdapEntry results)
+  public void blockingTimeoutSmallSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
     try {
-      blockingTimeoutRuntime += search(
-        blockingTimeoutPool,
-        request,
-        results);
+      blockingTimeoutRuntime += search(blockingTimeoutPool, request, results);
     } catch (BlockingTimeoutException e) {
       logger.warn("block timeout exceeded for small search", e);
     }
@@ -663,23 +572,14 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingtimeoutpool"},
-    dataProvider = "pool-data",
-    threadPoolSize = 10,
-    invocationCount = 100,
-    timeOut = 60000,
-    dependsOnMethods = {"blockingTimeoutSmallSearch"}
+    groups = {"blockingtimeoutpool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100,
+    timeOut = 60000, dependsOnMethods = {"blockingTimeoutSmallSearch"}
   )
-  public void blockingTimeoutMediumSearch(
-    final SearchRequest request,
-    final LdapEntry results)
+  public void blockingTimeoutMediumSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
     try {
-      blockingTimeoutRuntime += search(
-        blockingTimeoutPool,
-        request,
-        results);
+      blockingTimeoutRuntime += search(blockingTimeoutPool, request, results);
     } catch (BlockingTimeoutException e) {
       logger.warn("block timeout exceeded for medium search", e);
     }
@@ -693,23 +593,14 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingtimeoutpool"},
-    dataProvider = "pool-data",
-    threadPoolSize = 50,
-    invocationCount = 1000,
-    timeOut = 60000,
-    dependsOnMethods = {"blockingTimeoutMediumSearch"}
+    groups = {"blockingtimeoutpool"}, dataProvider = "pool-data", threadPoolSize = 50, invocationCount = 1000,
+    timeOut = 60000, dependsOnMethods = {"blockingTimeoutMediumSearch"}
   )
-  public void blockingTimeoutLargeSearch(
-    final SearchRequest request,
-    final LdapEntry results)
+  public void blockingTimeoutLargeSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
     try {
-      blockingTimeoutRuntime += search(
-        blockingTimeoutPool,
-        request,
-        results);
+      blockingTimeoutRuntime += search(blockingTimeoutPool, request, results);
     } catch (BlockingTimeoutException e) {
       logger.warn("block timeout exceeded for large search", e);
     }
@@ -717,18 +608,13 @@ public class ConnectionPoolTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(
-    groups = {"blockingtimeoutpool"},
-    dependsOnMethods = {"blockingTimeoutLargeSearch"}
-  )
+  @Test(groups = {"blockingtimeoutpool"}, dependsOnMethods = {"blockingTimeoutLargeSearch"})
   public void blockingTimeoutMaxClean()
     throws Exception
   {
     Thread.sleep(10000);
     AssertJUnit.assertEquals(0, blockingTimeoutPool.activeCount());
-    AssertJUnit.assertEquals(
-      PoolConfig.DEFAULT_MIN_POOL_SIZE,
-      blockingTimeoutPool.availableCount());
+    AssertJUnit.assertEquals(PoolConfig.DEFAULT_MIN_POOL_SIZE, blockingTimeoutPool.availableCount());
   }
 
 
@@ -739,15 +625,10 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"connstrategypool"},
-    dataProvider = "pool-data",
-    threadPoolSize = 10,
-    invocationCount = 100,
+    groups = {"connstrategypool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100,
     timeOut = 60000
   )
-  public void connStrategySearch(
-    final SearchRequest request,
-    final LdapEntry results)
+  public void connStrategySearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
     search(connStrategyPool, request, results);
@@ -763,10 +644,7 @@ public class ConnectionPoolTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  private long search(
-    final ConnectionPool pool,
-    final SearchRequest request,
-    final LdapEntry results)
+  private long search(final ConnectionPool pool, final SearchRequest request, final LdapEntry results)
     throws Exception
   {
     final long startTime = System.currentTimeMillis();
@@ -776,6 +654,7 @@ public class ConnectionPoolTest extends AbstractTest
       logger.trace("waiting for pool checkout");
       conn = pool.getConnection();
       logger.trace("performing search: {}", request);
+
       final SearchOperation search = new SearchOperation(conn);
       result = search.execute(request).getResult();
       logger.trace("search completed: {}", result);
@@ -785,12 +664,11 @@ public class ConnectionPoolTest extends AbstractTest
         conn.close();
       }
     }
+
     final StringWriter sw = new StringWriter();
     final LdifWriter lw = new LdifWriter(sw);
     lw.write(result);
-    AssertJUnit.assertEquals(
-      results,
-      TestUtils.convertLdifToResult(sw.toString()).getEntry());
+    AssertJUnit.assertEquals(results, TestUtils.convertLdifToResult(sw.toString()).getEntry());
     return System.currentTimeMillis() - startTime;
   }
 }

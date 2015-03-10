@@ -9,8 +9,7 @@ import org.ldaptive.control.ResponseControl;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractIntermediateResponse
-  implements IntermediateResponse
+public abstract class AbstractIntermediateResponse implements IntermediateResponse
 {
 
   /** response oid. */
@@ -30,10 +29,7 @@ public abstract class AbstractIntermediateResponse
    * @param  c  response controls
    * @param  i  message id
    */
-  public AbstractIntermediateResponse(
-    final String oid,
-    final ResponseControl[] c,
-    final int i)
+  public AbstractIntermediateResponse(final String oid, final ResponseControl[] c, final int i)
   {
     responseOid = oid;
     responseControls = c;

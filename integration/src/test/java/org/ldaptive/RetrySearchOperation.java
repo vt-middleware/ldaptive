@@ -1,8 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.ldaptive.handler.OperationExceptionHandler;
-
 /**
  * Provides a wrapper class for testing {@link OperationExceptionHandler}.
  *
@@ -104,8 +102,7 @@ public class RetrySearchOperation extends SearchOperation
    */
   public void setReopenRetry(final int i)
   {
-    ((ReopenOperationExceptionHandler)
-      getOperationExceptionHandler()).setRetry(i);
+    ((ReopenOperationExceptionHandler) getOperationExceptionHandler()).setRetry(i);
   }
 
 
@@ -116,8 +113,7 @@ public class RetrySearchOperation extends SearchOperation
    */
   public void setReopenRetryWait(final long l)
   {
-    ((ReopenOperationExceptionHandler)
-      getOperationExceptionHandler()).setRetryWait(l);
+    ((ReopenOperationExceptionHandler) getOperationExceptionHandler()).setRetryWait(l);
   }
 
 
@@ -128,14 +124,11 @@ public class RetrySearchOperation extends SearchOperation
    */
   public void setReopenRetryBackoff(final int i)
   {
-    ((ReopenOperationExceptionHandler)
-      getOperationExceptionHandler()).setRetryBackoff(i);
+    ((ReopenOperationExceptionHandler) getOperationExceptionHandler()).setRetryBackoff(i);
   }
 
 
-  /**
-   * Calculates the execution time of {@link ReopenOperationExceptionHandler}.
-   */
+  /** Calculates the execution time of {@link ReopenOperationExceptionHandler}. */
   public class RetryExceptionHandler extends ReopenOperationExceptionHandler
   {
 
@@ -150,6 +143,7 @@ public class RetrySearchOperation extends SearchOperation
       if (!allowRetry) {
         return;
       }
+
       final long t = System.currentTimeMillis();
       super.handleInternal(conn, request, response);
       runTime += System.currentTimeMillis() - t;
@@ -163,7 +157,8 @@ public class RetrySearchOperation extends SearchOperation
       if (stopCount > 0 && retryCount == stopCount) {
         return false;
       }
-      boolean b = super.retry(count);
+
+      final boolean b = super.retry(count);
       if (b) {
         retryCount++;
       }

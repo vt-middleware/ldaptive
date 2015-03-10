@@ -35,8 +35,7 @@ public abstract class AbstractLoginModule implements LoginModule
   public static final String LOGIN_DN = "org.ldaptive.jaas.login.entryDn";
 
   /** Constant for login password stored in shared state. */
-  public static final String LOGIN_PASSWORD =
-    "javax.security.auth.login.password";
+  public static final String LOGIN_PASSWORD = "javax.security.auth.login.password";
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -56,10 +55,7 @@ public abstract class AbstractLoginModule implements LoginModule
   /** Whether credentials from the shared state should be used. */
   protected boolean useFirstPass;
 
-  /**
-   * Whether credentials from the shared state should be used if they are
-   * available.
-   */
+  /** Whether credentials from the shared state should be used if they are available. */
   protected boolean tryFirstPass;
 
   /** Whether credentials should be stored in the shared state map. */
@@ -167,9 +163,7 @@ public abstract class AbstractLoginModule implements LoginModule
     throws LoginException
   {
     final NameCallback nameCb = new NameCallback("Enter user: ");
-    final PasswordCallback passCb = new PasswordCallback(
-      "Enter user password: ",
-      false);
+    final PasswordCallback passCb = new PasswordCallback("Enter user password: ", false);
     return login(nameCb, passCb);
   }
 
@@ -184,9 +178,7 @@ public abstract class AbstractLoginModule implements LoginModule
    *
    * @throws  LoginException  if the authentication fails
    */
-  protected abstract boolean login(
-    final NameCallback nameCb,
-    final PasswordCallback passCb)
+  protected abstract boolean login(final NameCallback nameCb, final PasswordCallback passCb)
     throws LoginException;
 
 
@@ -258,13 +250,11 @@ public abstract class AbstractLoginModule implements LoginModule
       throw new LoginException("Subject is read-only.");
     }
 
-    for (LdapPrincipal ldapPrincipal :
-         subject.getPrincipals(LdapPrincipal.class)) {
+    for (LdapPrincipal ldapPrincipal : subject.getPrincipals(LdapPrincipal.class)) {
       subject.getPrincipals().remove(ldapPrincipal);
     }
 
-    for (LdapDnPrincipal ldapDnPrincipal :
-         subject.getPrincipals(LdapDnPrincipal.class)) {
+    for (LdapDnPrincipal ldapDnPrincipal : subject.getPrincipals(LdapDnPrincipal.class)) {
       subject.getPrincipals().remove(ldapDnPrincipal);
     }
 
@@ -276,8 +266,7 @@ public abstract class AbstractLoginModule implements LoginModule
       subject.getPrincipals().remove(ldapGroup);
     }
 
-    for (LdapCredential ldapCredential :
-         subject.getPrivateCredentials(LdapCredential.class)) {
+    for (LdapCredential ldapCredential : subject.getPrivateCredentials(LdapCredential.class)) {
       subject.getPrivateCredentials().remove(ldapCredential);
     }
 
@@ -289,8 +278,8 @@ public abstract class AbstractLoginModule implements LoginModule
 
 
   /**
-   * Removes any stateful principals, credentials, or roles stored by login.
-   * Also removes shared state name, dn, and password if clearPass is set.
+   * Removes any stateful principals, credentials, or roles stored by login. Also removes shared state name, dn, and
+   * password if clearPass is set.
    */
   protected void clearState()
   {
@@ -306,10 +295,9 @@ public abstract class AbstractLoginModule implements LoginModule
 
 
   /**
-   * Attempts to retrieve credentials for the supplied name and password
-   * callbacks. If useFirstPass or tryFirstPass is set, then name and password
-   * data is retrieved from shared state. Otherwise a callback handler is used
-   * to get the data. Set useCallback to force a callback handler to be used.
+   * Attempts to retrieve credentials for the supplied name and password callbacks. If useFirstPass or tryFirstPass is
+   * set, then name and password data is retrieved from shared state. Otherwise a callback handler is used to get the
+   * data. Set useCallback to force a callback handler to be used.
    *
    * @param  nameCb  to set name for
    * @param  passCb  to set password for
@@ -317,10 +305,7 @@ public abstract class AbstractLoginModule implements LoginModule
    *
    * @throws  LoginException  if the callback handler fails
    */
-  protected void getCredentials(
-    final NameCallback nameCb,
-    final PasswordCallback passCb,
-    final boolean useCallback)
+  protected void getCredentials(final NameCallback nameCb, final PasswordCallback passCb, final boolean useCallback)
     throws LoginException
   {
     logger.trace(
@@ -359,18 +344,15 @@ public abstract class AbstractLoginModule implements LoginModule
 
 
   /**
-   * Stores the supplied name, password, and entry dn in the stored state map.
-   * storePass must be set for this method to have any affect.
+   * Stores the supplied name, password, and entry dn in the stored state map. storePass must be set for this method to
+   * have any affect.
    *
    * @param  nameCb  to store
    * @param  passCb  to store
    * @param  loginDn  to store
    */
   @SuppressWarnings("unchecked")
-  protected void storeCredentials(
-    final NameCallback nameCb,
-    final PasswordCallback passCb,
-    final String loginDn)
+  protected void storeCredentials(final NameCallback nameCb, final PasswordCallback passCb, final String loginDn)
   {
     if (storePass) {
       if (nameCb != null && nameCb.getName() != null) {

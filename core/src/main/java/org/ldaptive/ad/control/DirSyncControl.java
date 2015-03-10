@@ -16,8 +16,7 @@ import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 
 /**
- * Request/response control for active directory synchronization. Control is
- * defined as:
+ * Request/response control for active directory synchronization. Control is defined as:
  *
  * <pre>
     dirSyncValue ::= SEQUENCE {
@@ -31,8 +30,7 @@ import org.ldaptive.control.ResponseControl;
  *
  * @author  Middleware Services
  */
-public class DirSyncControl extends AbstractControl
-  implements RequestControl, ResponseControl
+public class DirSyncControl extends AbstractControl implements RequestControl, ResponseControl
 {
 
   /** OID of this control. */
@@ -186,10 +184,7 @@ public class DirSyncControl extends AbstractControl
    * @param  value  dir sync cookie
    * @param  critical  whether this control is critical
    */
-  public DirSyncControl(
-    final Flag[] f,
-    final byte[] value,
-    final boolean critical)
+  public DirSyncControl(final Flag[] f, final byte[] value, final boolean critical)
   {
     this(f, value, 0, critical);
   }
@@ -203,11 +198,7 @@ public class DirSyncControl extends AbstractControl
    * @param  count  maximum attribute count
    * @param  critical  whether this control is critical
    */
-  public DirSyncControl(
-    final Flag[] f,
-    final byte[] value,
-    final int count,
-    final boolean critical)
+  public DirSyncControl(final Flag[] f, final byte[] value, final int count, final boolean critical)
   {
     super(OID, critical);
     if (f != null) {
@@ -293,14 +284,7 @@ public class DirSyncControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        flags,
-        maxAttributeCount,
-        cookie);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), flags, maxAttributeCount, cookie);
   }
 
 
@@ -338,9 +322,7 @@ public class DirSyncControl extends AbstractControl
 
     final DERParser parser = new DERParser();
     parser.registerHandler(FlagHandler.PATH, new FlagHandler(this));
-    parser.registerHandler(
-      MaxAttrCountHandler.PATH,
-      new MaxAttrCountHandler(this));
+    parser.registerHandler(MaxAttrCountHandler.PATH, new MaxAttrCountHandler(this));
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
@@ -374,8 +356,7 @@ public class DirSyncControl extends AbstractControl
 
 
   /** Parse handler implementation for the maxAttributeCount. */
-  private static class MaxAttrCountHandler
-    extends AbstractParseHandler<DirSyncControl>
+  private static class MaxAttrCountHandler extends AbstractParseHandler<DirSyncControl>
   {
 
     /** DER path to cookie value. */
@@ -402,8 +383,7 @@ public class DirSyncControl extends AbstractControl
 
 
   /** Parse handler implementation for the cookie. */
-  private static class CookieHandler
-    extends AbstractParseHandler<DirSyncControl>
+  private static class CookieHandler extends AbstractParseHandler<DirSyncControl>
   {
 
     /** DER path to cookie value. */

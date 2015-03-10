@@ -210,8 +210,7 @@ public class DITContentRule extends AbstractNamedSchemaElement
 
 
   /**
-   * Parses the supplied definition string and creates an initialized DIT
-   * content rule.
+   * Parses the supplied definition string and creates an initialized DIT content rule.
    *
    * @param  definition  to parse
    *
@@ -224,9 +223,7 @@ public class DITContentRule extends AbstractNamedSchemaElement
   {
     final Matcher m = DEFINITION_PATTERN.matcher(definition);
     if (!m.matches()) {
-      throw new ParseException(
-        "Invalid DIT content rule definition: " + definition,
-        definition.length());
+      throw new ParseException("Invalid DIT content rule definition: " + definition, definition.length());
     }
 
     final DITContentRule dcrd = new DITContentRule(m.group(1).trim());

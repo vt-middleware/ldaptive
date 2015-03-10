@@ -17,9 +17,7 @@ import org.ldaptive.handler.SearchEntryHandler;
  *
  * @author  Middleware Services
  */
-public abstract class
-AbstractParallelSearchExecutor<T extends ConnectionFactory>
-  extends AbstractSearchExecutor
+public abstract class AbstractParallelSearchExecutor<T extends ConnectionFactory> extends AbstractSearchExecutor
 {
 
 
@@ -44,9 +42,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<SearchResult>> search(
-    final T factory,
-    final String... filters)
+  public Collection<Response<SearchResult>> search(final T factory, final String... filters)
     throws LdapException
   {
     final SearchFilter[] sf = new SearchFilter[filters.length];
@@ -67,13 +63,10 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<SearchResult>> search(
-    final T factory,
-    final SearchFilter[] filters)
+  public Collection<Response<SearchResult>> search(final T factory, final SearchFilter[] filters)
     throws LdapException
   {
-    return
-      search(factory, filters, null, (SearchEntryHandler[]) null);
+    return search(factory, filters, null, (SearchEntryHandler[]) null);
   }
 
 
@@ -88,10 +81,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<SearchResult>> search(
-    final T factory,
-    final String[] filters,
-    final String... attrs)
+  public Collection<Response<SearchResult>> search(final T factory, final String[] filters, final String... attrs)
     throws LdapException
   {
     final SearchFilter[] sf = new SearchFilter[filters.length];
@@ -113,10 +103,7 @@ AbstractParallelSearchExecutor<T extends ConnectionFactory>
    *
    * @throws  LdapException  if the search fails
    */
-  public Collection<Response<SearchResult>> search(
-    final T factory,
-    final SearchFilter[] filters,
-    final String... attrs)
+  public Collection<Response<SearchResult>> search(final T factory, final SearchFilter[] filters, final String... attrs)
     throws LdapException
   {
     return search(factory, filters, attrs, (SearchEntryHandler[]) null);

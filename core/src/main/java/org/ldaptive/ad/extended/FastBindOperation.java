@@ -32,16 +32,14 @@ public class FastBindOperation extends AbstractOperation<FastBindRequest, Void>
   protected Response<Void> invoke(final FastBindRequest request)
     throws LdapException
   {
-    @SuppressWarnings("unchecked") final Response<Void> response =
-      (Response<Void>)
-        getConnection().getProviderConnection().extendedOperation(request);
+    @SuppressWarnings("unchecked")
+    final Response<Void> response = (Response<Void>) getConnection().getProviderConnection().extendedOperation(request);
     return response;
   }
 
 
   /** Connection initializer that executes the {@link FastBindOperation}. */
-  public static class FastBindConnectionInitializer
-    implements ConnectionInitializer
+  public static class FastBindConnectionInitializer implements ConnectionInitializer
   {
 
 

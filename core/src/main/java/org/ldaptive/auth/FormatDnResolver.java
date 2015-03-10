@@ -101,8 +101,7 @@ public class FormatDnResolver implements DnResolver
 
 
   /**
-   * Returns whether the user input will be escaped. See {@link
-   * LdapAttribute#escapeValue(String)}.
+   * Returns whether the user input will be escaped. See {@link LdapAttribute#escapeValue(String)}.
    *
    * @return  whether the user input will be escaped.
    */
@@ -113,8 +112,7 @@ public class FormatDnResolver implements DnResolver
 
 
   /**
-   * Sets whether the user input will be escaped. See {@link
-   * LdapAttribute#escapeValue(String)}.
+   * Sets whether the user input will be escaped. See {@link LdapAttribute#escapeValue(String)}.
    *
    * @param  b  whether the user input will be escaped.
    */
@@ -139,8 +137,7 @@ public class FormatDnResolver implements DnResolver
   {
     String dn = null;
     if (user != null && !"".equals(user)) {
-      final String escapedUser = escapeUser ? LdapAttribute.escapeValue(user)
-                                            : user;
+      final String escapedUser = escapeUser ? LdapAttribute.escapeValue(user) : user;
       logger.debug("Formatting DN for {} with {}", escapedUser, formatString);
       if (formatArgs != null && formatArgs.length > 0) {
         final Object[] args = new Object[formatArgs.length + 1];

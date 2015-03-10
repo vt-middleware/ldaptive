@@ -4,8 +4,7 @@ package org.ldaptive;
 import java.nio.charset.Charset;
 
 /**
- * Provides convenience methods for converting the various types of passwords
- * into a byte array.
+ * Provides convenience methods for converting the various types of passwords into a byte array.
  *
  * @author  Middleware Services
  */
@@ -88,11 +87,6 @@ public class Credential
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::bytes=%s]",
-        getClass().getName(),
-        hashCode(),
-        new String(bytes, UTF8_CHARSET));
+    return String.format("[%s@%d::bytes=%s]", getClass().getName(), hashCode(), new String(bytes, UTF8_CHARSET));
   }
 }

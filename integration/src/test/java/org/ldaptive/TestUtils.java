@@ -33,10 +33,10 @@ public final class TestUtils
 
   /**
    * @param  path  to read properties from, if null use default properties
+   *
    * @return  connection config
    */
-  public static ConnectionConfig readConnectionConfig(
-    final String path)
+  public static ConnectionConfig readConnectionConfig(final String path)
   {
     final ConnectionConfig cc = new ConnectionConfig();
     ConnectionConfigPropertySource ccSource = null;
@@ -52,6 +52,7 @@ public final class TestUtils
 
   /**
    * @param  path  to read properties from, if null use default properties
+   *
    * @return  authenticator
    */
   public static Authenticator readAuthenticator(final String path)
@@ -77,8 +78,8 @@ public final class TestUtils
   public static Connection createSetupConnection()
     throws Exception
   {
-    return DefaultConnectionFactory.getConnection(
-      readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
+    return
+      DefaultConnectionFactory.getConnection(readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
   }
 
 
@@ -104,8 +105,8 @@ public final class TestUtils
   public static Connection createSaslExternalConnection()
     throws Exception
   {
-    return DefaultConnectionFactory.getConnection(
-      readConnectionConfig("classpath:/org/ldaptive/ldap.external.properties"));
+    return
+      DefaultConnectionFactory.getConnection(readConnectionConfig("classpath:/org/ldaptive/ldap.external.properties"));
   }
 
 
@@ -118,9 +119,9 @@ public final class TestUtils
   public static Connection createDigestMd5Connection()
     throws Exception
   {
-    return DefaultConnectionFactory.getConnection(
-      readConnectionConfig(
-        "classpath:/org/ldaptive/ldap.digest-md5.properties"));
+    return
+      DefaultConnectionFactory.getConnection(
+        readConnectionConfig("classpath:/org/ldaptive/ldap.digest-md5.properties"));
   }
 
 
@@ -133,8 +134,8 @@ public final class TestUtils
   public static Connection createCramMd5Connection()
     throws Exception
   {
-    return DefaultConnectionFactory.getConnection(
-      readConnectionConfig("classpath:/org/ldaptive/ldap.cram-md5.properties"));
+    return
+      DefaultConnectionFactory.getConnection(readConnectionConfig("classpath:/org/ldaptive/ldap.cram-md5.properties"));
   }
 
 
@@ -147,8 +148,8 @@ public final class TestUtils
   public static Connection createGssApiConnection()
     throws Exception
   {
-    return DefaultConnectionFactory.getConnection(
-      readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi.properties"));
+    return
+      DefaultConnectionFactory.getConnection(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi.properties"));
   }
 
 
@@ -174,8 +175,7 @@ public final class TestUtils
   public static Authenticator createSSLDnAuthenticator()
     throws Exception
   {
-    final Authenticator auth = readAuthenticator(
-      "classpath:/org/ldaptive/ldap.ssl.properties");
+    final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.ssl.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
   }
@@ -203,8 +203,7 @@ public final class TestUtils
   public static Authenticator createTLSDnAuthenticator()
     throws Exception
   {
-    final Authenticator auth = readAuthenticator(
-      "classpath:/org/ldaptive/ldap.tls.properties");
+    final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.tls.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
   }
@@ -219,8 +218,7 @@ public final class TestUtils
   public static Authenticator createDigestMD5Authenticator()
     throws Exception
   {
-    final Authenticator auth = readAuthenticator(
-      "classpath:/org/ldaptive/ldap.digest-md5.properties");
+    final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.digest-md5.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
   }
@@ -235,8 +233,7 @@ public final class TestUtils
   public static Authenticator createCramMD5Authenticator()
     throws Exception
   {
-    final Authenticator auth = readAuthenticator(
-      "classpath:/org/ldaptive/ldap.cram-md5.properties");
+    final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.cram-md5.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
   }
@@ -254,9 +251,7 @@ public final class TestUtils
   public static BufferedReader readFile(final String filename)
     throws Exception
   {
-    return
-      new BufferedReader(
-        new InputStreamReader(TestUtils.class.getResourceAsStream(filename)));
+    return new BufferedReader(new InputStreamReader(TestUtils.class.getResourceAsStream(filename)));
   }
 
 
@@ -301,16 +296,14 @@ public final class TestUtils
 
 
   /**
-   * Converts a string of the form: givenName=John|sn=Doe into a ldap attributes
-   * and stores them in an ldap entry.
+   * Converts a string of the form: givenName=John|sn=Doe into a ldap attributes and stores them in an ldap entry.
    *
    * @param  dn  of the entry
    * @param  attrs  to convert.
    *
    * @return  ldap entry with attributes but no dn.
    */
-  public static LdapEntry convertStringToEntry(
-    final String dn, final String attrs)
+  public static LdapEntry convertStringToEntry(final String dn, final String attrs)
   {
     final LdapEntry le = new LdapEntry(dn);
     for (String s : attrs.split("\\|")) {
@@ -318,8 +311,7 @@ public final class TestUtils
       if (le.getAttribute(nameValuePairs[0]) != null) {
         le.getAttribute(nameValuePairs[0]).addStringValue(nameValuePairs[1]);
       } else {
-        le.addAttribute(
-          new LdapAttribute(nameValuePairs[0], nameValuePairs[1]));
+        le.addAttribute(new LdapAttribute(nameValuePairs[0], nameValuePairs[1]));
       }
     }
     return le;
@@ -327,14 +319,13 @@ public final class TestUtils
 
 
   /**
-   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after converting
-   * the entries in actual from SearchEntry to LdapEntry.
+   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after converting the entries in actual from SearchEntry to
+   * LdapEntry.
    *
    * @param  expected  value
    * @param  actual  value
    */
-  public static void assertEquals(
-    final SearchResult expected, final SearchResult actual)
+  public static void assertEquals(final SearchResult expected, final SearchResult actual)
   {
     final SearchResult newResult = new SearchResult();
     for (LdapEntry e : actual.getEntries()) {
@@ -345,24 +336,20 @@ public final class TestUtils
 
 
   /**
-   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after converting
-   * the actual entry to an LdapEntry.
+   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after converting the actual entry to an LdapEntry.
    *
    * @param  expected  value
    * @param  actual  value
    */
-  public static void assertEquals(
-    final LdapEntry expected, final LdapEntry actual)
+  public static void assertEquals(final LdapEntry expected, final LdapEntry actual)
   {
-    final LdapEntry newEntry = new LdapEntry(
-      actual.getDn(), actual.getAttributes());
+    final LdapEntry newEntry = new LdapEntry(actual.getDn(), actual.getAttributes());
     AssertJUnit.assertEquals(expected, newEntry);
   }
 
 
   /**
-   * Returns the number of open connections to the supplied host. Uses 'netstat
-   * -al' to uncover open sockets.
+   * Returns the number of open connections to the supplied host. Uses 'netstat -al' to uncover open sockets.
    *
    * @param  host  host to look for.
    *
@@ -375,8 +362,7 @@ public final class TestUtils
   {
     final String[] cmd = new String[] {"netstat", "-al"};
     final Process p = new ProcessBuilder(cmd).start();
-    final BufferedReader br = new BufferedReader(
-      new InputStreamReader(p.getInputStream()));
+    final BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
     String line;
     final List<String> openConns = new ArrayList<>();
     while ((line = br.readLine()) != null) {
@@ -400,6 +386,7 @@ public final class TestUtils
    * Returns a string representation of the supplied byte array in hex format.
    *
    * @param  bytes  to create hex string with
+   *
    * @return  hex string
    */
   public static String bytesToString(final byte[] bytes)

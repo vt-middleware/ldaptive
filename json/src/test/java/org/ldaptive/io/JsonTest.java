@@ -37,9 +37,8 @@ public class JsonTest
               new LdapAttribute("departmentNumber", "066103"),
               new LdapAttribute("givenName", "Daniel", "Dan"),
               new LdapAttribute("sn", "Fisher"))),
-          "[{\"dn\":\"uid=818037,ou=people,dc=ldaptive,dc=org\"," +
-            "\"sn\":[\"Fisher\"],\"givenName\":[\"Dan\",\"Daniel\"]," +
-            "\"departmentNumber\":[\"066103\"]}]",
+          "[{\"dn\":\"uid=818037,ou=people,dc=ldaptive,dc=org\",\"sn\":[\"Fisher\"]," +
+            "\"givenName\":[\"Dan\",\"Daniel\"],\"departmentNumber\":[\"066103\"]}]",
         },
         {
           new SearchResult(
@@ -68,20 +67,13 @@ public class JsonTest
               new LdapAttribute("uid", "818037"),
               new LdapAttribute("givenName", "Joseph", "Joe"),
               new LdapAttribute("sn", "Anderson"))),
-          "[{\"dn\":\"uid=1095747,ou=people,dc=ldaptive,dc=org\"," +
-            "\"uid\":[\"1095747\"],\"sn\":[\"Jones\"]," +
-            "\"givenName\":[\"Robert\",\"Bob\"]}," +
-            "{\"dn\":\"uid=818037,ou=people,dc=ldaptive,dc=org\"," +
-            "\"uid\":[\"818037\"],\"sn\":[\"Anderson\"]," +
-            "\"givenName\":[\"Joseph\",\"Joe\"]}," +
-            "{\"dn\":\"uid=1152120,ou=people,dc=ldaptive,dc=org\"," +
-            "\"uid\":[\"1152120\"],\"sn\":[\"Brown\"]," +
-            "\"givenName\":[\"David\",\"Dave\"]}," +
-            "{\"dn\":\"uid=1145718,ou=people,dc=ldaptive,dc=org\"," +
-            "\"uid\":[\"1145718\"],\"sn\":[\"Johnson\"]," +
-            "\"givenName\":[\"Thomas\",\"Tom\"]}," +
-            "{\"dn\":\"uid=1141837,ou=people,dc=ldaptive,dc=org\"," +
-            "\"uid\":[\"1141837\"],\"sn\":[\"Smith\"]," +
+          "[{\"dn\":\"uid=1095747,ou=people,dc=ldaptive,dc=org\",\"uid\":[\"1095747\"],\"sn\":[\"Jones\"]," +
+            "\"givenName\":[\"Robert\",\"Bob\"]},{\"dn\":\"uid=818037,ou=people,dc=ldaptive,dc=org\"," +
+            "\"uid\":[\"818037\"],\"sn\":[\"Anderson\"],\"givenName\":[\"Joseph\",\"Joe\"]}," +
+            "{\"dn\":\"uid=1152120,ou=people,dc=ldaptive,dc=org\",\"uid\":[\"1152120\"],\"sn\":[\"Brown\"]," +
+            "\"givenName\":[\"David\",\"Dave\"]},{\"dn\":\"uid=1145718,ou=people,dc=ldaptive,dc=org\"," +
+            "\"uid\":[\"1145718\"],\"sn\":[\"Johnson\"],\"givenName\":[\"Thomas\",\"Tom\"]}," +
+            "{\"dn\":\"uid=1141837,ou=people,dc=ldaptive,dc=org\",\"uid\":[\"1141837\"],\"sn\":[\"Smith\"]," +
             "\"givenName\":[\"Bill\",\"William\"]}]",
         },
       };
@@ -94,18 +86,14 @@ public class JsonTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"jsontest"},
-    dataProvider = "search-data"
-  )
-  public void search(
-    final SearchResult result,
-    final String json)
+  @Test(groups = {"jsontest"}, dataProvider = "search-data")
+  public void search(final SearchResult result, final String json)
     throws Exception
   {
     final StringWriter writer = new StringWriter();
     (new JsonWriter(writer)).write(result);
     AssertJUnit.assertEquals(json, writer.toString());
+
     final StringReader reader = new StringReader(json);
     AssertJUnit.assertEquals(result, (new JsonReader(reader)).read());
   }

@@ -30,10 +30,8 @@ public class AuthorizationIdentityResponseControlTest
         // 64:6E:3A:75:69:64:3D:31:2C:6F:75:3D:74:65:73:74:2C:64:63:3D:6C:64:61:
         // 70:74:69:76:65:2C:64:63:3D:6F:72:67:
         new Object[] {
-          LdapUtils.base64Decode(
-            "ZG46dWlkPTEsb3U9dGVzdCxkYz1sZGFwdGl2ZSxkYz1vcmc="),
-          new AuthorizationIdentityResponseControl(
-            "dn:uid=1,ou=test,dc=ldaptive,dc=org"),
+          LdapUtils.base64Decode("ZG46dWlkPTEsb3U9dGVzdCxkYz1sZGFwdGl2ZSxkYz1vcmc="),
+          new AuthorizationIdentityResponseControl("dn:uid=1,ou=test,dc=ldaptive,dc=org"),
         },
       };
   }
@@ -45,17 +43,12 @@ public class AuthorizationIdentityResponseControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "response"
-  )
-  public void decode(
-    final byte[] berValue,
-    final AuthorizationIdentityResponseControl expected)
+  @Test(groups = {"control"}, dataProvider = "response")
+  public void decode(final byte[] berValue, final AuthorizationIdentityResponseControl expected)
     throws Exception
   {
-    final AuthorizationIdentityResponseControl actual =
-      new AuthorizationIdentityResponseControl(expected.getCriticality());
+    final AuthorizationIdentityResponseControl actual = new AuthorizationIdentityResponseControl(
+      expected.getCriticality());
     actual.decode(berValue);
     Assert.assertEquals(actual, expected);
   }

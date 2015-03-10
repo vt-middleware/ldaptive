@@ -12,8 +12,7 @@ import org.ldaptive.LdapException;
  *
  * @author  Middleware Services
  */
-public class SearchDnResolver extends AbstractSearchDnResolver
-  implements ConnectionFactoryManager
+public class SearchDnResolver extends AbstractSearchDnResolver implements ConnectionFactoryManager
 {
 
   /** Connection factory. */

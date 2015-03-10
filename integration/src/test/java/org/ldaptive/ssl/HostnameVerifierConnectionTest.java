@@ -23,16 +23,12 @@ public class HostnameVerifierConnectionTest
 {
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @BeforeClass(groups = {"ssl-hostname"})
   public void setProperties()
     throws Exception
   {
-    System.setProperty(
-      "javax.net.ssl.trustStore",
-      "target/test-classes/ldaptive.truststore");
+    System.setProperty("javax.net.ssl.trustStore", "target/test-classes/ldaptive.truststore");
     System.setProperty("javax.net.ssl.trustStoreType", "BKS");
     System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
   }
@@ -54,7 +50,7 @@ public class HostnameVerifierConnectionTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "ldapTestHost" })
+  @Parameters("ldapTestHost")
   @Test(groups = {"ssl-hostname"})
   public void connectStartTLS(final String host)
     throws Exception
@@ -62,6 +58,7 @@ public class HostnameVerifierConnectionTest
     // attempting to use startTLS by IP address should fail
     ConnectionConfig cc = new ConnectionConfig(convertUrlToIp(host));
     cc.setUseStartTLS(true);
+
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
@@ -89,7 +86,7 @@ public class HostnameVerifierConnectionTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "ldapSslTestHost" })
+  @Parameters("ldapSslTestHost")
   @Test(groups = {"ssl-hostname"})
   public void connectSSL(final String host)
     throws Exception
@@ -97,14 +94,15 @@ public class HostnameVerifierConnectionTest
     // attempting to use LDAPS by IP address should fail
     ConnectionConfig cc = new ConnectionConfig(convertUrlToIp(host));
     cc.setUseSSL(true);
+
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
+
       // some providers won't perform the handshake until an operation is
       // executed
       final CompareOperation op = new CompareOperation(conn);
-      op.execute(
-        new CompareRequest("", new LdapAttribute("objectClass", "top")));
+      op.execute(new CompareRequest("", new LdapAttribute("objectClass", "top")));
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
       AssertJUnit.assertNotNull(e);
@@ -131,7 +129,7 @@ public class HostnameVerifierConnectionTest
    *
    * @return  url with IP address
    *
-   * @throws Exception  if the ip address cannot be determined
+   * @throws  Exception  if the ip address cannot be determined
    */
   private String convertUrlToIp(final String host)
     throws Exception
@@ -143,6 +141,7 @@ public class HostnameVerifierConnectionTest
     } else {
       ipHost = host.substring("ldap://".length());
     }
+
     final InetAddress ip = InetAddress.getByName(ipHost);
     ipHost = "ldap://" + ip.getHostAddress();
     if (host.indexOf(":") < host.lastIndexOf(":")) {

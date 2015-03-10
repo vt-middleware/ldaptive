@@ -23,8 +23,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
 {
 
   /** Default file to read properties from, value is {@value}. */
-  public static final String PROPERTIES_FILE =
-    "classpath:/org/ldaptive/ldap.properties";
+  public static final String PROPERTIES_FILE = "classpath:/org/ldaptive/ldap.properties";
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -39,8 +38,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
   protected final Properties properties;
 
   /** Properties that are not in the ldaptive domain. */
-  protected final Map<String, Object> extraProps =
-    new HashMap<>();
+  protected final Map<String, Object> extraProps = new HashMap<>();
 
 
   /**
@@ -50,10 +48,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
    * @param  pd  domain that properties reside in
    * @param  p  properties to set
    */
-  public AbstractPropertySource(
-    final T t,
-    final PropertyDomain pd,
-    final Properties p)
+  public AbstractPropertySource(final T t, final PropertyDomain pd, final Properties p)
   {
     object = t;
     propertiesDomain = pd;
@@ -62,8 +57,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
 
 
   /**
-   * Creates properties from the supplied file paths. See {@link
-   * #loadProperties(Reader...)}.
+   * Creates properties from the supplied file paths. See {@link #loadProperties(Reader...)}.
    *
    * @param  paths  to read properties from
    *
@@ -84,8 +78,8 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
 
 
   /**
-   * Creates properties from the supplied reader. See {@link
-   * Properties#load(Reader)}. Readers supplied to this method will be closed.
+   * Creates properties from the supplied reader. See {@link Properties#load(Reader)}. Readers supplied to this method
+   * will be closed.
    *
    * @param  readers  to read properties from
    *
@@ -110,9 +104,8 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
 
 
   /**
-   * Iterates over the properties and uses the invoker to set those properties
-   * on the object. Any properties that do not belong to the object are set in
-   * the extraProps map.
+   * Iterates over the properties and uses the invoker to set those properties on the object. Any properties that do not
+   * belong to the object are set in the extraProps map.
    *
    * @param  invoker  to set properties on the object
    */

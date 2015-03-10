@@ -4,8 +4,7 @@ package org.ldaptive.asn1;
 import java.nio.ByteBuffer;
 
 /**
- * Provides a hook in the DER parser for handling specific paths as they are
- * encountered.
+ * Provides a hook in the DER parser for handling specific paths as they are encountered.
  *
  * @author  Middleware Services
  */

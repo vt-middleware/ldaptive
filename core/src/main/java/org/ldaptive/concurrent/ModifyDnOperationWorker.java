@@ -10,8 +10,7 @@ import org.ldaptive.ModifyDnRequest;
  *
  * @author  Middleware Services
  */
-public class ModifyDnOperationWorker
-  extends AbstractOperationWorker<ModifyDnRequest, Void>
+public class ModifyDnOperationWorker extends AbstractOperationWorker<ModifyDnRequest, Void>
 {
 
 
@@ -32,9 +31,7 @@ public class ModifyDnOperationWorker
    * @param  op  modify dn operation to execute
    * @param  es  executor service
    */
-  public ModifyDnOperationWorker(
-    final ModifyDnOperation op,
-    final ExecutorService es)
+  public ModifyDnOperationWorker(final ModifyDnOperation op, final ExecutorService es)
   {
     super(op, es);
   }

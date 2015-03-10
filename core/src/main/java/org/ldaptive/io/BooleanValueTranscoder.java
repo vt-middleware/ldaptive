@@ -6,8 +6,7 @@ package org.ldaptive.io;
  *
  * @author  Middleware Services
  */
-public class BooleanValueTranscoder
-  extends AbstractPrimitiveValueTranscoder<Boolean>
+public class BooleanValueTranscoder extends AbstractPrimitiveValueTranscoder<Boolean>
 {
 
 

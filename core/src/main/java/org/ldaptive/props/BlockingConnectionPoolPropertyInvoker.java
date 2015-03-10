@@ -11,14 +11,12 @@ import org.ldaptive.pool.Validator;
  *
  * @author  Middleware Services
  */
-public class BlockingConnectionPoolPropertyInvoker
-  extends AbstractPropertyInvoker
+public class BlockingConnectionPoolPropertyInvoker extends AbstractPropertyInvoker
 {
 
 
   /**
-   * Creates a new blocking connection pool property invoker for the supplied
-   * class.
+   * Creates a new blocking connection pool property invoker for the supplied class.
    *
    * @param  c  class that has setter methods
    */

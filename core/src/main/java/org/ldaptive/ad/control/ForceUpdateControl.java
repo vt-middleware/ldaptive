@@ -6,14 +6,12 @@ import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
 
 /**
- * Request control for active directory servers to perform an update even if the
- * data is already the same. See
+ * Request control for active directory servers to perform an update even if the data is already the same. See
  * http://msdn.microsoft.com/en-us/library/cc223344.aspx
  *
  * @author  Middleware Services
  */
-public class ForceUpdateControl extends AbstractControl
-  implements RequestControl
+public class ForceUpdateControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -44,20 +42,14 @@ public class ForceUpdateControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality());
+    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
   }
 
 

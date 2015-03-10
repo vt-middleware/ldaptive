@@ -9,15 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Parses the configuration data associated with classes that contain setter
- * properties. The format of the property string should be like:
+ * Parses the configuration data associated with classes that contain setter properties. The format of the property
+ * string should be like:
  *
  * <pre>
    MyClass{{propertyOne=foo}{propertyTwo=bar}}
  * </pre>
  *
- * <p>If the class name is supplied to the constructor, the property string need
- * not contain the class declaration.</p>
+ * <p>If the class name is supplied to the constructor, the property string need not contain the class declaration.</p>
  *
  * @author  Middleware Services
  */
@@ -25,16 +24,13 @@ public class PropertyValueParser
 {
 
   /** Property string containing configuration. */
-  protected static final Pattern CONFIG_PATTERN = Pattern.compile(
-    "([^\\{]+)\\s*\\{(.*)\\}\\s*");
+  protected static final Pattern CONFIG_PATTERN = Pattern.compile("([^\\{]+)\\s*\\{(.*)\\}\\s*");
 
   /** Property string for configuring a config where the class is known. */
-  protected static final Pattern PARAMS_ONLY_CONFIG_PATTERN = Pattern.compile(
-    "\\s*\\{\\s*(.*)\\s*\\}\\s*");
+  protected static final Pattern PARAMS_ONLY_CONFIG_PATTERN = Pattern.compile("\\s*\\{\\s*(.*)\\s*\\}\\s*");
 
   /** Pattern for finding properties. */
-  protected static final Pattern PROPERTY_PATTERN = Pattern.compile(
-    "([^\\}\\{])+");
+  protected static final Pattern PROPERTY_PATTERN = Pattern.compile("([^\\}\\{])+");
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -80,8 +76,7 @@ public class PropertyValueParser
 
 
   /**
-   * Invokes {@link #setClassName(String)} and {@link
-   * #initializeProperties(Matcher)}.
+   * Invokes {@link #setClassName(String)} and {@link #initializeProperties(Matcher)}.
    *
    * @param  clazz  type to create and initialize
    * @param  props  to set on the class
@@ -96,8 +91,7 @@ public class PropertyValueParser
 
 
   /**
-   * Finds all the matches in the supplied matcher puts them into the properties
-   * map. Properties are split on '='.
+   * Finds all the matches in the supplied matcher puts them into the properties map. Properties are split on '='.
    *
    * @param  matcher  to find matches
    */
@@ -108,8 +102,7 @@ public class PropertyValueParser
       if (input != null && !"".equals(input)) {
         final String[] s = input.split("=", 2);
         if (s.length < 2) {
-          throw new IllegalArgumentException(
-            "Invalid property syntax: " + input);
+          throw new IllegalArgumentException("Invalid property syntax: " + input);
         }
         properties.put(s[0].trim(), s[1].trim());
       }
@@ -164,13 +157,11 @@ public class PropertyValueParser
 
 
   /**
-   * Returns whether the supplied configuration data contains a params only
-   * config.
+   * Returns whether the supplied configuration data contains a params only config.
    *
    * @param  config  containing configuration data
    *
-   * @return  whether the supplied configuration data contains a params only
-   * config
+   * @return  whether the supplied configuration data contains a params only config
    */
   public static boolean isParamsOnlyConfig(final String config)
   {
@@ -179,8 +170,7 @@ public class PropertyValueParser
 
 
   /**
-   * Initialize an instance of the class type with the properties contained in
-   * this config.
+   * Initialize an instance of the class type with the properties contained in this config.
    *
    * @return  object of the type the config parsed
    */

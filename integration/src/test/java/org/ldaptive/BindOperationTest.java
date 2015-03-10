@@ -51,7 +51,7 @@ public class BindOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "bindDn" })
+  @Parameters("bindDn")
   @Test(groups = {"bind"})
   public void bindFailure(final String dn)
     throws Exception
@@ -59,11 +59,10 @@ public class BindOperationTest extends AbstractTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final BindOperation bind = new BindOperation(conn);
-      final Response<Void> response = bind.execute(
-        new BindRequest(dn, new Credential("INVALID-PASSWD")));
-      AssertJUnit.assertEquals(
-        ResultCode.INVALID_CREDENTIALS, response.getResultCode());
+      final Response<Void> response = bind.execute(new BindRequest(dn, new Credential("INVALID-PASSWD")));
+      AssertJUnit.assertEquals(ResultCode.INVALID_CREDENTIALS, response.getResultCode());
     } catch (LdapException e) {
       AssertJUnit.assertEquals(ResultCode.INVALID_CREDENTIALS, e.getResultCode());
     } finally {
@@ -86,11 +85,10 @@ public class BindOperationTest extends AbstractTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final BindOperation bind = new BindOperation(conn);
-      final Response<Void> response = bind.execute(
-        new BindRequest(dn, new Credential(passwd)));
-      AssertJUnit.assertEquals(
-        ResultCode.SUCCESS, response.getResultCode());
+      final Response<Void> response = bind.execute(new BindRequest(dn, new Credential(passwd)));
+      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     } finally {
       conn.close();
     }
@@ -116,22 +114,20 @@ public class BindOperationTest extends AbstractTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final BindOperation bind = new BindOperation(conn);
       final BindRequest request = new BindRequest(dn, new Credential(passwd));
       request.setControls(new AuthorizationIdentityRequestControl());
-      final Response<Void> response = bind.execute(request);
-      AssertJUnit.assertEquals(
-        ResultCode.SUCCESS, response.getResultCode());
 
-      final AuthorizationIdentityResponseControl ctrl =
-        (AuthorizationIdentityResponseControl) response.getControl(
-          AuthorizationIdentityResponseControl.OID);
+      final Response<Void> response = bind.execute(request);
+      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+
+      final AuthorizationIdentityResponseControl ctrl = (AuthorizationIdentityResponseControl) response.getControl(
+        AuthorizationIdentityResponseControl.OID);
       if (ctrl == null) {
-        throw new UnsupportedOperationException(
-          "Authorization Identity Control not supported");
+        throw new UnsupportedOperationException("Authorization Identity Control not supported");
       }
-      AssertJUnit.assertEquals(
-        "dn:" + dn.toLowerCase(), ctrl.getAuthorizationId().toLowerCase());
+      AssertJUnit.assertEquals("dn:" + dn.toLowerCase(), ctrl.getAuthorizationId().toLowerCase());
     } finally {
       conn.close();
     }

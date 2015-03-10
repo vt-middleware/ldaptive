@@ -156,8 +156,7 @@ public interface ProviderConnection
    *
    * @param  listener  to receive unsolicited notifications
    */
-  void addUnsolicitedNotificationListener(
-    UnsolicitedNotificationListener listener);
+  void addUnsolicitedNotificationListener(UnsolicitedNotificationListener listener);
 
 
   /**
@@ -165,8 +164,7 @@ public interface ProviderConnection
    *
    * @param  listener  that was registered to receive unsolicited notifications
    */
-  void removeUnsolicitedNotificationListener(
-    UnsolicitedNotificationListener listener);
+  void removeUnsolicitedNotificationListener(UnsolicitedNotificationListener listener);
 
 
   /**

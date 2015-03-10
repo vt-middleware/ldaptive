@@ -50,10 +50,7 @@ public class GlobalIdentifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"ad"},
-    dataProvider = "guids"
-  )
+  @Test(groups = {"ad"}, dataProvider = "guids")
   public void testToString(final String guidString, final byte[] guid)
     throws Exception
   {
@@ -67,10 +64,7 @@ public class GlobalIdentifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"ad"},
-    dataProvider = "guids"
-  )
+  @Test(groups = {"ad"}, dataProvider = "guids")
   public void testToBytes(final String guidString, final byte[] guid)
     throws Exception
   {

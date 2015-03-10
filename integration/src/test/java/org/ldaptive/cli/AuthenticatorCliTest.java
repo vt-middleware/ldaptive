@@ -21,11 +21,11 @@ import org.testng.annotations.Test;
 public class AuthenticatorCliTest extends AbstractTest
 {
 
-  /** System security manager. */
-  private final SecurityManager securityManager = System.getSecurityManager();
-
   /** Entry created for ldap tests. */
   private static LdapEntry testLdapEntry;
+
+  /** System security manager. */
+  private final SecurityManager securityManager = System.getSecurityManager();
 
 
   /**
@@ -42,21 +42,19 @@ public class AuthenticatorCliTest extends AbstractTest
     System.setSecurityManager(
       new SecurityManager() {
         @Override
-        public void checkPermission(Permission permission) {
+        public void checkPermission(final Permission permission)
+        {
           if (permission.getName().startsWith("exitVM")) {
             throw new SecurityException("System.exit blocked.");
           }
         }
-      }
-    );
+      });
 
     final String ldif = TestUtils.readFileIntoString(ldifFile);
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
 
-    System.setProperty(
-      "javax.net.ssl.trustStore",
-      "target/test-classes/ldaptive.truststore");
+    System.setProperty("javax.net.ssl.trustStore", "target/test-classes/ldaptive.truststore");
     System.setProperty("javax.net.ssl.trustStoreType", "BKS");
     System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
   }
@@ -123,10 +121,12 @@ public class AuthenticatorCliTest extends AbstractTest
 
       try {
         AuthenticatorCli.main(args.split("\\|"));
-      } catch (SecurityException e) {}
-        AssertJUnit.assertEquals(
-          TestUtils.convertLdifToResult(ldif),
-          TestUtils.convertLdifToResult(outStream.toString()));
+      } catch (SecurityException e) {
+        AssertJUnit.fail(e.getMessage());
+      }
+      AssertJUnit.assertEquals(
+        TestUtils.convertLdifToResult(ldif),
+        TestUtils.convertLdifToResult(outStream.toString()));
     } finally {
       // Restore STDOUT
       System.setOut(oldStdOut);

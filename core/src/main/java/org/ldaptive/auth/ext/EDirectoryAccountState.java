@@ -23,8 +23,7 @@ public class EDirectoryAccountState extends AccountState
 
 
   /**
-   * Enum to define edirectory errors. See
-   * http://support.novell.com/docs/Tids/Solutions/10067240.html and
+   * Enum to define edirectory errors. See http://support.novell.com/docs/Tids/Solutions/10067240.html and
    * http://www.novell.com/documentation/nwec/nwec_enu/nwec_nds_error_codes.html
    */
   public enum Error implements AccountState.Error {
@@ -51,8 +50,7 @@ public class EDirectoryAccountState extends AccountState
     LOGIN_LOCKOUT(-197);
 
     /** pattern to find decimal code in edirectory messages. */
-    private static final Pattern PATTERN = Pattern.compile(
-      "NDS error: (.+) \\((-\\d+)\\)");
+    private static final Pattern PATTERN = Pattern.compile("NDS error: (.+) \\((-\\d+)\\)");
 
     /** underlying error code. */
     private final int code;
@@ -111,8 +109,7 @@ public class EDirectoryAccountState extends AccountState
         throw new AccountLockedException(name());
 
       default:
-        throw new IllegalStateException(
-          "Unknown active directory error: " + this);
+        throw new IllegalStateException("Unknown active directory error: " + this);
       }
     }
 
@@ -136,9 +133,8 @@ public class EDirectoryAccountState extends AccountState
 
 
     /**
-     * Parses the supplied error messages and returns the corresponding error
-     * enum. Attempts to find {@link #PATTERN} and parses the second group match
-     * as a decimal integer.
+     * Parses the supplied error messages and returns the corresponding error enum. Attempts to find {@link #PATTERN}
+     * and parses the second group match as a decimal integer.
      *
      * @param  message  to parse
      *

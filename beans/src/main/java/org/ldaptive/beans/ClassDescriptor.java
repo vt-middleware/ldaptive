@@ -4,8 +4,7 @@ package org.ldaptive.beans;
 import java.util.Collection;
 
 /**
- * Describes the attribute value mutators and DN value mutators for a specific
- * type.
+ * Describes the attribute value mutators and DN value mutators for a specific type.
  *
  * @author  Middleware Services
  */
@@ -38,8 +37,7 @@ public interface ClassDescriptor
 
 
   /**
-   * Returns the attribute value mutator for the attribute with the supplied
-   * name.
+   * Returns the attribute value mutator for the attribute with the supplied name.
    *
    * @param  name  of the attribute
    *

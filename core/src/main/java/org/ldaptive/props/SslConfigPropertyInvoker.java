@@ -36,12 +36,10 @@ public class SslConfigPropertyInvoker extends AbstractPropertyInvoker
           newValue = null;
         } else {
           if (CredentialConfigParser.isCredentialConfig(value)) {
-            final CredentialConfigParser configParser =
-              new CredentialConfigParser(value);
+            final CredentialConfigParser configParser = new CredentialConfigParser(value);
             newValue = configParser.initializeType();
           } else if (PropertyValueParser.isConfig(value)) {
-            final PropertyValueParser configParser = new PropertyValueParser(
-              value);
+            final PropertyValueParser configParser = new PropertyValueParser(value);
             newValue = configParser.initializeType();
           } else {
             newValue = instantiateType(SslConfig.class, value);
@@ -50,9 +48,7 @@ public class SslConfigPropertyInvoker extends AbstractPropertyInvoker
       } else if (TrustManager[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(TrustManager.class, value);
       } else if (HandshakeCompletedListener[].class.isAssignableFrom(type)) {
-        newValue = createArrayTypeFromPropertyValue(
-          HandshakeCompletedListener.class,
-          value);
+        newValue = createArrayTypeFromPropertyValue(HandshakeCompletedListener.class, value);
       } else {
         newValue = convertSimpleType(type, value);
       }

@@ -59,12 +59,10 @@ public class BooleanType extends AbstractDERType implements DEREncoder
 
 
   /**
-   * Converts bytes in the buffer to a boolean by reading from the current
-   * position to the limit.
+   * Converts bytes in the buffer to a boolean by reading from the current position to the limit.
    *
-   * @param  encoded  buffer containing DER-encoded data where the buffer is
-   * positioned at the start of boolean bytes and the limit is set beyond the
-   * last byte of integer data.
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the start of boolean bytes
+   *                  and the limit is set beyond the last byte of integer data.
    *
    * @return  decoded bytes as a boolean.
    */
@@ -72,16 +70,14 @@ public class BooleanType extends AbstractDERType implements DEREncoder
   {
     final byte[] bytes = readBuffer(encoded);
     if (bytes.length > 1) {
-      throw new IllegalArgumentException(
-        "Boolean cannot be longer than 1 byte");
+      throw new IllegalArgumentException("Boolean cannot be longer than 1 byte");
     }
     if (bytes[0] == TRUE_BYTE) {
       return true;
     } else if (bytes[0] == FALSE_BYTE) {
       return false;
     } else {
-      throw new IllegalArgumentException(
-        "Invalid boolean value: " + (int) bytes[0]);
+      throw new IllegalArgumentException("Invalid boolean value: " + (int) bytes[0]);
     }
   }
 

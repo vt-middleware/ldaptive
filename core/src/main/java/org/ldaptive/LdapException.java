@@ -5,8 +5,7 @@ import java.util.Arrays;
 import org.ldaptive.control.ResponseControl;
 
 /**
- * Base exception for all ldap related exceptions. Provider specific exception
- * can be found using {@link #getCause()}.
+ * Base exception for all ldap related exceptions. Provider specific exception can be found using {@link #getCause()}.
  *
  * @author  Middleware Services
  */
@@ -91,11 +90,7 @@ public class LdapException extends Exception implements ResponseMessage
    * @param  dn  matched dn
    * @param  c  response controls
    */
-  public LdapException(
-    final String msg,
-    final ResultCode code,
-    final String dn,
-    final ResponseControl[] c)
+  public LdapException(final String msg, final ResultCode code, final String dn, final ResponseControl[] c)
   {
     super(msg);
     resultCode = code;
@@ -198,10 +193,7 @@ public class LdapException extends Exception implements ResponseMessage
    * @param  code  result code
    * @param  dn  matched dn
    */
-  public LdapException(
-    final Exception e,
-    final ResultCode code,
-    final String dn)
+  public LdapException(final Exception e, final ResultCode code, final String dn)
   {
     super(e);
     resultCode = code;
@@ -220,11 +212,7 @@ public class LdapException extends Exception implements ResponseMessage
    * @param  dn  matched dn
    * @param  c  response controls
    */
-  public LdapException(
-    final Exception e,
-    final ResultCode code,
-    final String dn,
-    final ResponseControl[] c)
+  public LdapException(final Exception e, final ResultCode code, final String dn, final ResponseControl[] c)
   {
     super(e);
     resultCode = code;
@@ -311,10 +299,7 @@ public class LdapException extends Exception implements ResponseMessage
    * @param  e  provider specific exception
    * @param  code  result code
    */
-  public LdapException(
-    final String msg,
-    final Exception e,
-    final ResultCode code)
+  public LdapException(final String msg, final Exception e, final ResultCode code)
   {
     super(msg, e);
     resultCode = code;
@@ -333,11 +318,7 @@ public class LdapException extends Exception implements ResponseMessage
    * @param  code  result code
    * @param  dn  matched dn
    */
-  public LdapException(
-    final String msg,
-    final Exception e,
-    final ResultCode code,
-    final String dn)
+  public LdapException(final String msg, final Exception e, final ResultCode code, final String dn)
   {
     super(msg, e);
     resultCode = code;
@@ -430,8 +411,8 @@ public class LdapException extends Exception implements ResponseMessage
 
 
   /**
-   * Returns the ldap result code associated with this exception. May be null if
-   * the provider did not set this value or could not determine this value.
+   * Returns the ldap result code associated with this exception. May be null if the provider did not set this value or
+   * could not determine this value.
    *
    * @return  ldap result code
    */

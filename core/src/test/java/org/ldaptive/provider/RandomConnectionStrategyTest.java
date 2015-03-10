@@ -14,8 +14,7 @@ public class RandomConnectionStrategyTest
 {
 
   /** Strategy to test. */
-  private final RandomConnectionStrategy strategy =
-    new RandomConnectionStrategy();
+  private final RandomConnectionStrategy strategy = new RandomConnectionStrategy();
 
 
   /**
@@ -37,8 +36,7 @@ public class RandomConnectionStrategyTest
           new String[] {"ldap://directory.ldaptive.org"},
         },
         new Object[] {
-          new TestConnectionFactoryMetadata(
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org"),
+          new TestConnectionFactoryMetadata("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org"),
           new String[] {
             "ldap://directory-1.ldaptive.org",
             "ldap://directory-2.ldaptive.org",
@@ -47,7 +45,7 @@ public class RandomConnectionStrategyTest
         new Object[] {
           new TestConnectionFactoryMetadata(
             "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org " +
-              "ldap://directory-3.ldaptive.org",
+            "ldap://directory-3.ldaptive.org",
             3),
           new String[] {
             "ldap://directory-1.ldaptive.org",
@@ -65,13 +63,8 @@ public class RandomConnectionStrategyTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"provider"},
-    dataProvider = "urls"
-  )
-  public void getLdapUrls(
-    final ConnectionFactoryMetadata metadata,
-    final String[] urls)
+  @Test(groups = {"provider"}, dataProvider = "urls")
+  public void getLdapUrls(final ConnectionFactoryMetadata metadata, final String[] urls)
     throws Exception
   {
     if (urls != null) {

@@ -13,8 +13,7 @@ public interface PropertyInvoker
 
 
   /**
-   * Invokes the setter method on the supplied object for the supplied property
-   * name and value.
+   * Invokes the setter method on the supplied object for the supplied property name and value.
    *
    * @param  object  to invoke property setter on
    * @param  name  of the property to invoke

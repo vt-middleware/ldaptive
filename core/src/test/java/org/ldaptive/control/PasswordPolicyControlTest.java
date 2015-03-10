@@ -81,17 +81,11 @@ public class PasswordPolicyControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "response"
-  )
-  public void decode(
-    final byte[] berValue,
-    final PasswordPolicyControl expected)
+  @Test(groups = {"control"}, dataProvider = "response")
+  public void decode(final byte[] berValue, final PasswordPolicyControl expected)
     throws Exception
   {
-    final PasswordPolicyControl actual = new PasswordPolicyControl(
-      expected.getCriticality());
+    final PasswordPolicyControl actual = new PasswordPolicyControl(expected.getCriticality());
     actual.decode(berValue);
     Assert.assertEquals(actual, expected);
   }

@@ -62,9 +62,7 @@ public class CancelRequest extends AbstractRequest implements ExtendedRequest
   @Override
   public byte[] encode()
   {
-    final ConstructedDEREncoder se = new ConstructedDEREncoder(
-      UniversalDERTag.SEQ,
-      new IntegerType(getMessageId()));
+    final ConstructedDEREncoder se = new ConstructedDEREncoder(UniversalDERTag.SEQ, new IntegerType(getMessageId()));
     return se.encode();
   }
 

@@ -65,13 +65,8 @@ public class EDirectoryAccountStateTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"auth-ext"},
-    dataProvider = "errors"
-  )
-  public void parseMessage(
-    final String message,
-    final EDirectoryAccountState.Error err)
+  @Test(groups = {"auth-ext"}, dataProvider = "errors")
+  public void parseMessage(final String message, final EDirectoryAccountState.Error err)
     throws Exception
   {
     AssertJUnit.assertEquals(err, EDirectoryAccountState.Error.parse(message));

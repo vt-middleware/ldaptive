@@ -12,14 +12,11 @@ import org.ldaptive.Operation;
  *
  * @author  Middleware Services
  */
-public class CompareReferralHandler
-  extends AbstractReferralHandler<CompareRequest, Boolean>
+public class CompareReferralHandler extends AbstractReferralHandler<CompareRequest, Boolean>
 {
 
 
-  /**
-   * Creates a compare add referral handler.
-   */
+  /** Creates a compare add referral handler. */
   public CompareReferralHandler()
   {
     this(DEFAULT_REFERRAL_LIMIT, 0, DEFAULT_CONNECTION_FACTORY);
@@ -54,9 +51,7 @@ public class CompareReferralHandler
    * @param  limit  number of referrals to follow
    * @param  factory  referral connection factory
    */
-  public CompareReferralHandler(
-    final int limit,
-    final ReferralConnectionFactory factory)
+  public CompareReferralHandler(final int limit, final ReferralConnectionFactory factory)
   {
     this(limit, 0, factory);
   }
@@ -69,29 +64,20 @@ public class CompareReferralHandler
    * @param  depth  number of referrals followed
    * @param  factory  referral connection factory
    */
-  private CompareReferralHandler(
-    final int limit,
-    final int depth,
-    final ReferralConnectionFactory factory)
+  private CompareReferralHandler(final int limit, final int depth, final ReferralConnectionFactory factory)
   {
     super(limit, depth, factory);
   }
 
 
   @Override
-  protected CompareRequest createReferralRequest(
-    final CompareRequest request,
-    final LdapURL url)
+  protected CompareRequest createReferralRequest(final CompareRequest request, final LdapURL url)
   {
     final CompareRequest referralRequest = new CompareRequest();
     referralRequest.setControls(request.getControls());
-    referralRequest.setIntermediateResponseHandlers(
-      request.getIntermediateResponseHandlers());
+    referralRequest.setIntermediateResponseHandlers(request.getIntermediateResponseHandlers());
     referralRequest.setReferralHandler(
-      new CompareReferralHandler(
-        getReferralLimit(),
-        getReferralDepth() + 1,
-        getReferralConnectionFactory()));
+      new CompareReferralHandler(getReferralLimit(), getReferralDepth() + 1, getReferralConnectionFactory()));
     if (!url.getEntry().isDefaultBaseDn()) {
       referralRequest.setDn(url.getEntry().getBaseDn());
     } else {
@@ -103,8 +89,7 @@ public class CompareReferralHandler
 
 
   @Override
-  protected Operation<CompareRequest, Boolean> createReferralOperation(
-    final Connection conn)
+  protected Operation<CompareRequest, Boolean> createReferralOperation(final Connection conn)
   {
     return new CompareOperation(conn);
   }

@@ -38,9 +38,7 @@ public abstract class AbstractPropertiesFactory
       if (entry.getKey().contains(".")) {
         p.setProperty(entry.getKey(), entry.getValue().toString());
       } else {
-        p.setProperty(
-          PropertyDomain.AUTH.value() + entry.getKey(),
-          entry.getValue().toString());
+        p.setProperty(PropertyDomain.AUTH.value() + entry.getKey(), entry.getValue().toString());
       }
     }
     return p;

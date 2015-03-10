@@ -119,8 +119,7 @@ public class SyncReplItem
 
 
   /**
-   * Returns the async request contained in this item or null if this item does
-   * not contain an async request.
+   * Returns the async request contained in this item or null if this item does not contain an async request.
    *
    * @return  async request
    */
@@ -142,8 +141,7 @@ public class SyncReplItem
 
 
   /**
-   * Returns the entry contained in this item or null if this item does not
-   * contain an entry.
+   * Returns the entry contained in this item or null if this item does not contain an entry.
    *
    * @return  sync repl entry
    */
@@ -165,8 +163,7 @@ public class SyncReplItem
 
 
   /**
-   * Returns the intermediate message contained in this item or null if this
-   * item does not contain a message.
+   * Returns the intermediate message contained in this item or null if this item does not contain a message.
    *
    * @return  sync info message
    */
@@ -188,8 +185,7 @@ public class SyncReplItem
 
 
   /**
-   * Returns the response contained in this item or null if this item does not
-   * contain a response.
+   * Returns the response contained in this item or null if this item does not contain a response.
    *
    * @return  response
    */
@@ -211,8 +207,7 @@ public class SyncReplItem
 
 
   /**
-   * Returns the exception contained in this item or null if this item does not
-   * contain an exception.
+   * Returns the exception contained in this item or null if this item does not contain an exception.
    *
    * @return  exception
    */
@@ -227,35 +222,15 @@ public class SyncReplItem
   {
     String s;
     if (isAsyncRequest()) {
-      s = String.format(
-        "[%s@%d::asyncRequest=%s]",
-        getClass().getName(),
-        hashCode(),
-        asyncRequest);
+      s = String.format("[%s@%d::asyncRequest=%s]", getClass().getName(), hashCode(), asyncRequest);
     } else if (isEntry()) {
-      s = String.format(
-        "[%s@%d::syncReplEntry=%s]",
-        getClass().getName(),
-        hashCode(),
-        syncReplEntry);
+      s = String.format("[%s@%d::syncReplEntry=%s]", getClass().getName(), hashCode(), syncReplEntry);
     } else if (isMessage()) {
-      s = String.format(
-        "[%s@%d::syncInfoMessage=%s]",
-        getClass().getName(),
-        hashCode(),
-        syncInfoMessage);
+      s = String.format("[%s@%d::syncInfoMessage=%s]", getClass().getName(), hashCode(), syncInfoMessage);
     } else if (isResponse()) {
-      s = String.format(
-        "[%s@%d::syncReplResponse=%s]",
-        getClass().getName(),
-        hashCode(),
-        syncReplResponse);
+      s = String.format("[%s@%d::syncReplResponse=%s]", getClass().getName(), hashCode(), syncReplResponse);
     } else if (isException()) {
-      s = String.format(
-        "[%s@%d::syncReplException=%s]",
-        getClass().getName(),
-        hashCode(),
-        syncReplException);
+      s = String.format("[%s@%d::syncReplException=%s]", getClass().getName(), hashCode(), syncReplException);
     } else {
       s = String.format("[%s@%d]", getClass().getName(), hashCode());
     }
@@ -263,10 +238,7 @@ public class SyncReplItem
   }
 
 
-  /**
-   * Wrapper class that provides easy access to the {@link SyncStateControl}
-   * contained in a search entry.
-   */
+  /** Wrapper class that provides easy access to the {@link SyncStateControl} contained in a search entry. */
   public static class Entry
   {
 
@@ -278,17 +250,15 @@ public class SyncReplItem
 
 
     /**
-     * Creates a new entry. If the supplied search entry contains a {@link
-     * SyncStateControl} it is made available via {@link
-     * #getSyncStateControl()}.
+     * Creates a new entry. If the supplied search entry contains a {@link SyncStateControl} it is made available via
+     * {@link #getSyncStateControl()}.
      *
      * @param  entry  to search for sync state control in
      */
     public Entry(final SearchEntry entry)
     {
       searchEntry = entry;
-      syncStateControl = (SyncStateControl) entry.getControl(
-        SyncStateControl.OID);
+      syncStateControl = (SyncStateControl) entry.getControl(SyncStateControl.OID);
     }
 
 
@@ -304,8 +274,7 @@ public class SyncReplItem
 
 
     /**
-     * Returns the sync state control or null if no such control exists in the
-     * search entry.
+     * Returns the sync state control or null if no such control exists in the search entry.
      *
      * @return  sync state control
      */
@@ -318,20 +287,12 @@ public class SyncReplItem
     @Override
     public String toString()
     {
-      return
-        String.format(
-          "[%s@%d::searchEntry=%s]",
-          getClass().getName(),
-          hashCode(),
-          searchEntry);
+      return String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
     }
   }
 
 
-  /**
-   * Wrapper class that provides easy access to the {@link SyncDoneControl}
-   * contained in a response.
-   */
+  /** Wrapper class that provides easy access to the {@link SyncDoneControl} contained in a response. */
   public static class Response
   {
 
@@ -343,16 +304,15 @@ public class SyncReplItem
 
 
     /**
-     * Creates a new response. If the supplied response contains a {@link
-     * SyncDoneControl} it is made available via {@link #getSyncDoneControl()}.
+     * Creates a new response. If the supplied response contains a {@link SyncDoneControl} it is made available via
+     * {@link #getSyncDoneControl()}.
      *
      * @param  res  to search for sync done control in
      */
     public Response(final org.ldaptive.Response<SearchResult> res)
     {
       response = res;
-      syncDoneControl = (SyncDoneControl) response.getControl(
-        SyncDoneControl.OID);
+      syncDoneControl = (SyncDoneControl) response.getControl(SyncDoneControl.OID);
     }
 
 
@@ -368,8 +328,7 @@ public class SyncReplItem
 
 
     /**
-     * Returns the sync done control or null if no such control exists in the
-     * response.
+     * Returns the sync done control or null if no such control exists in the response.
      *
      * @return  sync done control
      */
@@ -382,12 +341,7 @@ public class SyncReplItem
     @Override
     public String toString()
     {
-      return
-        String.format(
-          "[%s@%d::response=%s]",
-          getClass().getName(),
-          hashCode(),
-          response);
+      return String.format("[%s@%d::response=%s]", getClass().getName(), hashCode(), response);
     }
   }
 }

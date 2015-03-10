@@ -6,8 +6,7 @@ package org.ldaptive.io;
  *
  * @author  Middleware Services
  */
-public class ByteArrayValueTranscoder
-  extends AbstractBinaryValueTranscoder<byte[]>
+public class ByteArrayValueTranscoder extends AbstractBinaryValueTranscoder<byte[]>
 {
 
 

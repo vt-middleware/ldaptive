@@ -40,19 +40,19 @@ public class PropsLoginModule extends AbstractLoginModule
     final Map<String, ?> options)
   {
     super.initialize(subject, callbackHandler, sharedState, options);
-    AuthenticatorFactory authenticatorFactory = new PropertiesAuthenticatorFactory();
+
+    final AuthenticatorFactory authenticatorFactory = new PropertiesAuthenticatorFactory();
     auth = authenticatorFactory.createAuthenticator(options);
     authRequest = authenticatorFactory.createAuthenticationRequest(options);
-    RoleResolverFactory roleResolverFactory = new PropertiesRoleResolverFactory();
+
+    final RoleResolverFactory roleResolverFactory = new PropertiesRoleResolverFactory();
     roleResolver = roleResolverFactory.createRoleResolver(options);
     searchRequest = roleResolverFactory.createSearchRequest(options);
   }
 
 
   @Override
-  protected boolean login(
-    final NameCallback nameCb,
-    final PasswordCallback passCb)
+  protected boolean login(final NameCallback nameCb, final PasswordCallback passCb)
     throws LoginException
   {
     return true;

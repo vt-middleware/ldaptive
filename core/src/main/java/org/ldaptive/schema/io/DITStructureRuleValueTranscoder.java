@@ -9,8 +9,7 @@ import org.ldaptive.schema.DITStructureRule;
  *
  * @author  Middleware Services
  */
-public class DITStructureRuleValueTranscoder
-  extends AbstractSchemaElementValueTranscoder<DITStructureRule>
+public class DITStructureRuleValueTranscoder extends AbstractSchemaElementValueTranscoder<DITStructureRule>
 {
 
 
@@ -20,9 +19,7 @@ public class DITStructureRuleValueTranscoder
     try {
       return DITStructureRule.parse(value);
     } catch (ParseException e) {
-      throw new IllegalArgumentException(
-        "Could not transcode DIT structure rule",
-        e);
+      throw new IllegalArgumentException("Could not transcode DIT structure rule", e);
     }
   }
 

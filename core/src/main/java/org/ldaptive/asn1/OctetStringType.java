@@ -82,13 +82,11 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
 
 
   /**
-   * Converts bytes in the buffer to a string by reading from the current
-   * position to the limit, which assumes the bytes of the string are in
-   * big-endian order.
+   * Converts bytes in the buffer to a string by reading from the current position to the limit, which assumes the bytes
+   * of the string are in big-endian order.
    *
-   * @param  encoded  buffer containing DER-encoded data where the buffer is
-   * positioned at the start of string bytes and the limit is set beyond the
-   * last byte of string data.
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the start of string bytes and
+   *                  the limit is set beyond the last byte of string data.
    *
    * @return  decoded bytes as an string
    */

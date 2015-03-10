@@ -9,8 +9,7 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.io.LdifWriter;
 
 /**
- * Writes search results in LDIF format. See {@link
- * AbstractServletSearchExecutor}.
+ * Writes search results in LDIF format. See {@link AbstractServletSearchExecutor}.
  *
  * @author  Middleware Services
  */
@@ -19,15 +18,12 @@ public class LdifServletSearchExecutor extends AbstractServletSearchExecutor
 
 
   @Override
-  protected void writeResponse(
-    final SearchResult result,
-    final HttpServletResponse response)
+  protected void writeResponse(final SearchResult result, final HttpServletResponse response)
     throws IOException
   {
     response.setContentType("text/plain");
 
-    final LdifWriter writer = new LdifWriter(
-      new BufferedWriter(new OutputStreamWriter(response.getOutputStream())));
+    final LdifWriter writer = new LdifWriter(new BufferedWriter(new OutputStreamWriter(response.getOutputStream())));
     writer.write(result);
   }
 }

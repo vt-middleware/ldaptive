@@ -33,6 +33,8 @@ public class LdapEntryMapperTest extends AbstractTest
    * Mappers to test.
    *
    * @return  ldap entry mappers
+   *
+   * @throws  Exception  On test failure.
    */
   @DataProvider(name = "mappers")
   public Object[][] createMappers()
@@ -42,26 +44,29 @@ public class LdapEntryMapperTest extends AbstractTest
     final Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
+
       final BindConnectionInitializer ci =
-        (BindConnectionInitializer)
-          conn.getConnectionConfig().getConnectionInitializer();
+        (BindConnectionInitializer) conn.getConnectionConfig().getConnectionInitializer();
       final SearchOperation op = new SearchOperation(conn);
-      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
-        ci.getBindDn());
+      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(ci.getBindDn());
       request.setReturnAttributes(ReturnAttributes.ALL.value());
       entry = op.execute(request).getResult().getEntry();
     } finally {
       conn.close();
     }
 
-    return new Object[][] {
-      new Object[] {new DefaultLdapEntryMapper(), entry},
-      new Object[] {new SpringLdapEntryMapper(), entry},
-    };
+    return
+      new Object[][] {
+        new Object[] {new DefaultLdapEntryMapper(), entry},
+        new Object[] {new SpringLdapEntryMapper(), entry},
+      };
   }
 
 
   /**
+   * @param  mapper  to test
+   * @param  entry  to compare
+   *
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"beans-mapper"}, dataProvider = "mappers")
@@ -71,13 +76,9 @@ public class LdapEntryMapperTest extends AbstractTest
     if (TestControl.isActiveDirectory()) {
       final OrganizationalPerson person = new OrganizationalPerson();
       mapper.map(entry, person);
-      AssertJUnit.assertEquals(
-        entry.getAttribute("cn").getStringValue(),
-        person.getCn());
+      AssertJUnit.assertEquals(entry.getAttribute("cn").getStringValue(), person.getCn());
       AssertJUnit.assertEquals(entry.getDn(), person.getDn());
-      AssertJUnit.assertEquals(
-        entry.getAttribute("countryCode").getStringValue(),
-        person.getCountryCode());
+      AssertJUnit.assertEquals(entry.getAttribute("countryCode").getStringValue(), person.getCountryCode());
     } else {
       final InetOrgPerson person = new InetOrgPerson();
       mapper.map(entry, person);
@@ -85,8 +86,7 @@ public class LdapEntryMapperTest extends AbstractTest
         entry.getAttribute("cn").getStringValues().iterator().next(),
         person.getCn().iterator().next());
       AssertJUnit.assertEquals(
-        entry.getAttribute(
-          "createTimestamp").getValue(new GeneralizedTimeValueTranscoder()),
+        entry.getAttribute("createTimestamp").getValue(new GeneralizedTimeValueTranscoder()),
         person.getCreateTimestamp());
       AssertJUnit.assertEquals(entry.getDn(), person.getDn());
       AssertJUnit.assertEquals(
@@ -97,12 +97,13 @@ public class LdapEntryMapperTest extends AbstractTest
 
 
   /**
+   * @param  mapper  to test
+   * @param  entry  to compare
+   *
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"beans-mapper"}, dataProvider = "mappers")
-  public void mapToLdapEntry(
-    final LdapEntryMapper<Object> mapper,
-    final LdapEntry entry)
+  public void mapToLdapEntry(final LdapEntryMapper<Object> mapper, final LdapEntry entry)
     throws Exception
   {
     final LdapEntry mapped = new LdapEntry();
@@ -112,39 +113,28 @@ public class LdapEntryMapperTest extends AbstractTest
       person.setDn(entry.getDn());
       person.setCountryCode(entry.getAttribute("countryCode").getStringValue());
       mapper.map(person, mapped);
-      AssertJUnit.assertEquals(
-        person.getCn(),
-        mapped.getAttribute("cn").getStringValue());
+      AssertJUnit.assertEquals(person.getCn(), mapped.getAttribute("cn").getStringValue());
       AssertJUnit.assertEquals(person.getDn(), mapped.getDn());
-      AssertJUnit.assertEquals(
-        person.getCountryCode(),
-        mapped.getAttribute("countryCode").getStringValue());
-      AssertJUnit.assertEquals(
-        "customvalue1",
-        mapped.getAttribute("customname1").getStringValue());
+      AssertJUnit.assertEquals(person.getCountryCode(), mapped.getAttribute("countryCode").getStringValue());
+      AssertJUnit.assertEquals("customvalue1", mapped.getAttribute("customname1").getStringValue());
     } else {
       final InetOrgPerson person = new InetOrgPerson();
       person.setCn(entry.getAttribute("cn").getStringValues());
-      person.setCreateTimestamp(entry.getAttribute("createTimestamp").getValue(
-        new GeneralizedTimeValueTranscoder()));
+      person.setCreateTimestamp(entry.getAttribute("createTimestamp").getValue(new GeneralizedTimeValueTranscoder()));
       person.setDn(entry.getDn());
-      person.setEntryUUID(
-        entry.getAttribute("entryUUID").getValue(new UUIDValueTranscoder()));
+      person.setEntryUUID(entry.getAttribute("entryUUID").getValue(new UUIDValueTranscoder()));
       mapper.map(person, mapped);
       AssertJUnit.assertEquals(
         person.getCn().iterator().next(),
         mapped.getAttribute("cn").getStringValues().iterator().next());
       AssertJUnit.assertEquals(
         person.getCreateTimestamp(),
-        mapped.getAttribute(
-          "createTimestamp").getValue(new GeneralizedTimeValueTranscoder()));
+        mapped.getAttribute("createTimestamp").getValue(new GeneralizedTimeValueTranscoder()));
       AssertJUnit.assertEquals(person.getDn(), mapped.getDn());
       AssertJUnit.assertEquals(
         person.getEntryUUID(),
         mapped.getAttribute("entryUUID").getValue(new UUIDValueTranscoder()));
-      AssertJUnit.assertEquals(
-        "customvalue1",
-        mapped.getAttribute("customname1").getStringValue());
+      AssertJUnit.assertEquals("customvalue1", mapped.getAttribute("customname1").getStringValue());
     }
   }
 }

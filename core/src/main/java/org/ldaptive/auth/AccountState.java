@@ -6,8 +6,8 @@ import java.util.Calendar;
 import javax.security.auth.login.LoginException;
 
 /**
- * Represents the state of an LDAP account based account policies for that LDAP.
- * Note that only warning(s) or error(s) may be set, not both.
+ * Represents the state of an LDAP account based account policies for that LDAP. Note that only warning(s) or error(s)
+ * may be set, not both.
  *
  * @author  Middleware Services
  */
@@ -63,9 +63,7 @@ public class AccountState
    */
   public AccountState.Warning getWarning()
   {
-    return
-      accountWarnings != null && accountWarnings.length > 0 ? accountWarnings[0]
-                                                            : null;
+    return accountWarnings != null && accountWarnings.length > 0 ? accountWarnings[0] : null;
   }
 
 
@@ -87,9 +85,7 @@ public class AccountState
    */
   public AccountState.Error getError()
   {
-    return
-      accountErrors != null && accountErrors.length > 0 ? accountErrors[0]
-                                                        : null;
+    return accountErrors != null && accountErrors.length > 0 ? accountErrors[0] : null;
   }
 
 

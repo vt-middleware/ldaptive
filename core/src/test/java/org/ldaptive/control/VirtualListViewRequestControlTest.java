@@ -92,13 +92,8 @@ public class VirtualListViewRequestControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "request"
-  )
-  public void encode(
-    final byte[] berValue,
-    final VirtualListViewRequestControl expected)
+  @Test(groups = {"control"}, dataProvider = "request")
+  public void encode(final byte[] berValue, final VirtualListViewRequestControl expected)
     throws Exception
   {
     Assert.assertEquals(expected.encode(), berValue);

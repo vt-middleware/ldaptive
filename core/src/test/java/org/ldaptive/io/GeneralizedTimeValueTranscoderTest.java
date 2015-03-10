@@ -16,8 +16,7 @@ public class GeneralizedTimeValueTranscoderTest
 {
 
   /** Transcoder to test. */
-  private final GeneralizedTimeValueTranscoder transcoder =
-    new GeneralizedTimeValueTranscoder();
+  private final GeneralizedTimeValueTranscoder transcoder = new GeneralizedTimeValueTranscoder();
 
 
   /**
@@ -284,14 +283,8 @@ public class GeneralizedTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"io"},
-    dataProvider = "dates"
-  )
-  public void testTranscode(
-    final Calendar date,
-    final String generalizedTime,
-    final String formatTime)
+  @Test(groups = {"io"}, dataProvider = "dates")
+  public void testTranscode(final Calendar date, final String generalizedTime, final String formatTime)
     throws Exception
   {
     Assert.assertEquals(transcoder.decodeStringValue(generalizedTime), date);
@@ -308,10 +301,7 @@ public class GeneralizedTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"io"},
-    dataProvider = "invalid"
-  )
+  @Test(groups = {"io"}, dataProvider = "invalid")
   public void testInvalid(final String generalizedTime)
     throws Exception
   {

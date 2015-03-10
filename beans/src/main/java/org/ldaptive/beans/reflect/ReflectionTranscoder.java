@@ -33,8 +33,7 @@ public interface ReflectionTranscoder
 
 
   /**
-   * Encodes the supplied value into one or more strings for use in an
-   * attribute.
+   * Encodes the supplied value into one or more strings for use in an attribute.
    *
    * @param  value  containing data to encode as strings
    *
@@ -44,8 +43,7 @@ public interface ReflectionTranscoder
 
 
   /**
-   * Encodes the supplied value into one or more byte arrays for use in an
-   * attribute.
+   * Encodes the supplied value into one or more byte arrays for use in an attribute.
    *
    * @param  value  containing data to encode as byte arrays
    *

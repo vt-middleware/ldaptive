@@ -15,9 +15,8 @@ import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.auth.AccountState;
 
 /**
- * Request/response control for password policy. See
- * http://tools.ietf.org/html/draft-behera-ldap-password-policy-10. Control is
- * defined as:
+ * Request/response control for password policy. See http://tools.ietf.org/html/draft-behera-ldap-password-policy-10.
+ * Control is defined as:
  *
  * <pre>
    PasswordPolicyResponseValue ::= SEQUENCE {
@@ -38,8 +37,7 @@ import org.ldaptive.auth.AccountState;
  *
  * @author  Middleware Services
  */
-public class PasswordPolicyControl extends AbstractControl
-  implements RequestControl, ResponseControl
+public class PasswordPolicyControl extends AbstractControl implements RequestControl, ResponseControl
 {
 
   /** OID of this control. */
@@ -141,8 +139,7 @@ public class PasswordPolicyControl extends AbstractControl
         throw new CredentialException(name());
 
       default:
-        throw new IllegalStateException(
-          "Unknown password policy error: " + this);
+        throw new IllegalStateException("Unknown password policy error: " + this);
       }
     }
 
@@ -302,20 +299,15 @@ public class PasswordPolicyControl extends AbstractControl
     logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
 
     final DERParser parser = new DERParser();
-    parser.registerHandler(
-      TimeBeforeExpirationHandler.PATH,
-      new TimeBeforeExpirationHandler(this));
-    parser.registerHandler(
-      GraceAuthnsRemainingHandler.PATH,
-      new GraceAuthnsRemainingHandler(this));
+    parser.registerHandler(TimeBeforeExpirationHandler.PATH, new TimeBeforeExpirationHandler(this));
+    parser.registerHandler(GraceAuthnsRemainingHandler.PATH, new GraceAuthnsRemainingHandler(this));
     parser.registerHandler(ErrorHandler.PATH, new ErrorHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
 
   /** Parse handler implementation for the time before expiration. */
-  private static class TimeBeforeExpirationHandler
-    extends AbstractParseHandler<PasswordPolicyControl>
+  private static class TimeBeforeExpirationHandler extends AbstractParseHandler<PasswordPolicyControl>
   {
 
     /** DER path to warning. */
@@ -336,15 +328,13 @@ public class PasswordPolicyControl extends AbstractControl
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
-      getObject().setTimeBeforeExpiration(
-        IntegerType.decode(encoded).intValue());
+      getObject().setTimeBeforeExpiration(IntegerType.decode(encoded).intValue());
     }
   }
 
 
   /** Parse handler implementation for the grace authns remaining. */
-  private static class GraceAuthnsRemainingHandler
-    extends AbstractParseHandler<PasswordPolicyControl>
+  private static class GraceAuthnsRemainingHandler extends AbstractParseHandler<PasswordPolicyControl>
   {
 
     /** DER path to warning. */
@@ -365,15 +355,13 @@ public class PasswordPolicyControl extends AbstractControl
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
-      getObject().setGraceAuthNsRemaining(
-        IntegerType.decode(encoded).intValue());
+      getObject().setGraceAuthNsRemaining(IntegerType.decode(encoded).intValue());
     }
   }
 
 
   /** Parse handler implementation for the error. */
-  private static class ErrorHandler
-    extends AbstractParseHandler<PasswordPolicyControl>
+  private static class ErrorHandler extends AbstractParseHandler<PasswordPolicyControl>
   {
 
     /** DER path to error. */
@@ -395,8 +383,7 @@ public class PasswordPolicyControl extends AbstractControl
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
       final int errValue = IntegerType.decode(encoded).intValue();
-      final PasswordPolicyControl.Error e = PasswordPolicyControl.Error.valueOf(
-        errValue);
+      final PasswordPolicyControl.Error e = PasswordPolicyControl.Error.valueOf(errValue);
       if (e == null) {
         throw new IllegalArgumentException("Unknown error code " + errValue);
       }

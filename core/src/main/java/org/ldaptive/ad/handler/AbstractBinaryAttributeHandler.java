@@ -10,13 +10,11 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.handler.AbstractSearchEntryHandler;
 
 /**
- * Base class for entry handlers that convert a binary attribute to it's string
- * form.
+ * Base class for entry handlers that convert a binary attribute to it's string form.
  *
  * @author  Middleware Services
  */
-public abstract class AbstractBinaryAttributeHandler
-  extends AbstractSearchEntryHandler
+public abstract class AbstractBinaryAttributeHandler extends AbstractSearchEntryHandler
 {
 
   /** attribute name. */
@@ -46,10 +44,7 @@ public abstract class AbstractBinaryAttributeHandler
 
 
   @Override
-  protected void handleAttributes(
-    final Connection conn,
-    final SearchRequest request,
-    final SearchEntry entry)
+  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
     throws LdapException
   {
     for (LdapAttribute la : entry.getAttributes()) {
@@ -64,9 +59,7 @@ public abstract class AbstractBinaryAttributeHandler
           logger.debug("Processed attribute {}", newAttr);
           handleAttribute(conn, request, newAttr);
         } else {
-          logger.warn(
-            "Attribute {} must be set as a binary attribute",
-            attributeName);
+          logger.warn("Attribute {} must be set as a binary attribute", attributeName);
           handleAttribute(conn, request, la);
         }
       } else {
@@ -99,8 +92,7 @@ public abstract class AbstractBinaryAttributeHandler
         }
       }
       if (!isAttrSet) {
-        request.setBinaryAttributes(
-          LdapUtils.concatArrays(binaryAttrs, new String[] {attributeName}));
+        request.setBinaryAttributes(LdapUtils.concatArrays(binaryAttrs, new String[] {attributeName}));
       }
     } else {
       request.setBinaryAttributes(attributeName);

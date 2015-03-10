@@ -51,8 +51,7 @@ public class NotificationClient
 
 
   /**
-   * Invokes {@link #execute(SearchRequest, int)} with a capacity of {@link
-   * Integer#MAX_VALUE}.
+   * Invokes {@link #execute(SearchRequest, int)} with a capacity of {@link Integer#MAX_VALUE}.
    *
    * @param  request  search request to execute
    *
@@ -68,24 +67,20 @@ public class NotificationClient
 
 
   /**
-   * Performs a search operation with the {@link NotificationControl}. The
-   * supplied request is modified in the following way:
+   * Performs a search operation with the {@link NotificationControl}. The supplied request is modified in the following
+   * way:
    *
    * <ul>
-   *   <li>{@link SearchRequest#setControls(
-   *     org.ldaptive.control.RequestControl...)} is invoked with {@link
+   *   <li>{@link SearchRequest#setControls( org.ldaptive.control.RequestControl...)} is invoked with {@link
    *     NotificationControl}</li>
-   *   <li>{@link SearchRequest#setSearchEntryHandlers(SearchEntryHandler...)}
-   *     is invoked with a custom handler that places notification data in a
-   *     blocking queue. The {@link ObjectGuidHandler} and {@link
-   *     ObjectSidHandler} handlers are included as well.</li>
-   *   <li>{@link AsyncSearchOperation#setExceptionHandler(ExceptionHandler)} is
-   *     invoked with a custom handler that places the exception in a blocking
-   *     queue.</li>
+   *   <li>{@link SearchRequest#setSearchEntryHandlers(SearchEntryHandler...)} is invoked with a custom handler that
+   *     places notification data in a blocking queue. The {@link ObjectGuidHandler} and {@link ObjectSidHandler}
+   *     handlers are included as well.</li>
+   *   <li>{@link AsyncSearchOperation#setExceptionHandler(ExceptionHandler)} is invoked with a custom handler that
+   *     places the exception in a blocking queue.</li>
    * </ul>
    *
-   * <p>The search request object should not be reused for any other search
-   * operations.</p>
+   * <p>The search request object should not be reused for any other search operations.</p>
    *
    * @param  request  search request to execute
    * @param  capacity  of the returned blocking queue
@@ -95,13 +90,10 @@ public class NotificationClient
    * @throws  LdapException  if the search fails
    */
   @SuppressWarnings("unchecked")
-  public BlockingQueue<NotificationItem> execute(
-    final SearchRequest request,
-    final int capacity)
+  public BlockingQueue<NotificationItem> execute(final SearchRequest request, final int capacity)
     throws LdapException
   {
-    final BlockingQueue<NotificationItem> queue =
-      new LinkedBlockingQueue<>(capacity);
+    final BlockingQueue<NotificationItem> queue = new LinkedBlockingQueue<>(capacity);
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
     search.setOperationResponseHandlers(
@@ -145,10 +137,7 @@ public class NotificationClient
     search.setExceptionHandler(
       new ExceptionHandler() {
         @Override
-        public HandlerResult<Exception> handle(
-          final Connection conn,
-          final Request request,
-          final Exception exception)
+        public HandlerResult<Exception> handle(final Connection conn, final Request request, final Exception exception)
         {
           try {
             logger.debug("received exception:", exception);
@@ -192,8 +181,8 @@ public class NotificationClient
 
 
   /**
-   * Invokes an abandon operation on the supplied ldap message id. Convenience
-   * method supplied to abandon async search operations.
+   * Invokes an abandon operation on the supplied ldap message id. Convenience method supplied to abandon async search
+   * operations.
    *
    * @param  messageId  of the operation to abandon
    *
@@ -292,8 +281,7 @@ public class NotificationClient
 
 
     /**
-     * Returns the async request contained in this item or null if this item
-     * does not contain an async request.
+     * Returns the async request contained in this item or null if this item does not contain an async request.
      *
      * @return  async request
      */
@@ -315,8 +303,7 @@ public class NotificationClient
 
 
     /**
-     * Returns the search entry contained in this item or null if this item does
-     * not contain a search entry.
+     * Returns the search entry contained in this item or null if this item does not contain a search entry.
      *
      * @return  search entry
      */
@@ -338,8 +325,7 @@ public class NotificationClient
 
 
     /**
-     * Returns the response contained in this item or null if this item does not
-     * contain a response.
+     * Returns the response contained in this item or null if this item does not contain a response.
      *
      * @return  response
      */
@@ -361,8 +347,7 @@ public class NotificationClient
 
 
     /**
-     * Returns the exception contained in this item or null if this item does
-     * not contain an exception.
+     * Returns the exception contained in this item or null if this item does not contain an exception.
      *
      * @return  exception
      */
@@ -377,29 +362,13 @@ public class NotificationClient
     {
       String s;
       if (isAsyncRequest()) {
-        s = String.format(
-          "[%s@%d::asyncRequest=%s]",
-          getClass().getName(),
-          hashCode(),
-          asyncRequest);
+        s = String.format("[%s@%d::asyncRequest=%s]", getClass().getName(), hashCode(), asyncRequest);
       } else if (isEntry()) {
-        s = String.format(
-          "[%s@%d::searchEntry=%s]",
-          getClass().getName(),
-          hashCode(),
-          searchEntry);
+        s = String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
       } else if (isResponse()) {
-        s = String.format(
-          "[%s@%d::searchResponse=%s]",
-          getClass().getName(),
-          hashCode(),
-          searchResponse);
+        s = String.format("[%s@%d::searchResponse=%s]", getClass().getName(), hashCode(), searchResponse);
       } else if (isException()) {
-        s = String.format(
-          "[%s@%d::searchException=%s]",
-          getClass().getName(),
-          hashCode(),
-          searchException);
+        s = String.format("[%s@%d::searchException=%s]", getClass().getName(), hashCode(), searchException);
       } else {
         s = String.format("[%s@%d]", getClass().getName(), hashCode());
       }

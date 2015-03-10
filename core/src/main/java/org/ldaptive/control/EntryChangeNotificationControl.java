@@ -10,8 +10,7 @@ import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
- * Response control for persistent search. See
- * http://tools.ietf.org/id/draft-ietf-ldapext-psearch-03.txt. Control is
+ * Response control for persistent search. See http://tools.ietf.org/id/draft-ietf-ldapext-psearch-03.txt. Control is
  * defined as:
  *
  * <pre>
@@ -29,8 +28,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class EntryChangeNotificationControl extends AbstractControl
-  implements ResponseControl
+public class EntryChangeNotificationControl extends AbstractControl implements ResponseControl
 {
 
   /** OID of this control. */
@@ -84,9 +82,7 @@ public class EntryChangeNotificationControl extends AbstractControl
    * @param  type  persistent search change type
    * @param  critical  whether this control is critical
    */
-  public EntryChangeNotificationControl(
-    final PersistentSearchChangeType type,
-    final boolean critical)
+  public EntryChangeNotificationControl(final PersistentSearchChangeType type, final boolean critical)
   {
     super(OID, critical);
     setChangeType(type);
@@ -100,10 +96,7 @@ public class EntryChangeNotificationControl extends AbstractControl
    * @param  dn  previous dn
    * @param  number  change number
    */
-  public EntryChangeNotificationControl(
-    final PersistentSearchChangeType type,
-    final String dn,
-    final long number)
+  public EntryChangeNotificationControl(final PersistentSearchChangeType type, final String dn, final long number)
   {
     this(type, dn, number, false);
   }
@@ -199,14 +192,7 @@ public class EntryChangeNotificationControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        changeType,
-        previousDn,
-        changeNumber);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), changeType, previousDn, changeNumber);
   }
 
 
@@ -234,16 +220,13 @@ public class EntryChangeNotificationControl extends AbstractControl
     final DERParser parser = new DERParser();
     parser.registerHandler(ChangeTypeHandler.PATH, new ChangeTypeHandler(this));
     parser.registerHandler(PreviousDnHandler.PATH, new PreviousDnHandler(this));
-    parser.registerHandler(
-      ChangeNumberHandler.PATH,
-      new ChangeNumberHandler(this));
+    parser.registerHandler(ChangeNumberHandler.PATH, new ChangeNumberHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
 
   /** Parse handler implementation for the change type. */
-  private static class ChangeTypeHandler
-    extends AbstractParseHandler<EntryChangeNotificationControl>
+  private static class ChangeTypeHandler extends AbstractParseHandler<EntryChangeNotificationControl>
   {
 
     /** DER path to change type. */
@@ -265,11 +248,9 @@ public class EntryChangeNotificationControl extends AbstractControl
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
       final int typeValue = IntegerType.decode(encoded).intValue();
-      final PersistentSearchChangeType ct = PersistentSearchChangeType.valueOf(
-        typeValue);
+      final PersistentSearchChangeType ct = PersistentSearchChangeType.valueOf(typeValue);
       if (ct == null) {
-        throw new IllegalArgumentException(
-          "Unknown change type code " + typeValue);
+        throw new IllegalArgumentException("Unknown change type code " + typeValue);
       }
       getObject().setChangeType(ct);
     }
@@ -277,8 +258,7 @@ public class EntryChangeNotificationControl extends AbstractControl
 
 
   /** Parse handler implementation for the previous dn. */
-  private static class PreviousDnHandler
-    extends AbstractParseHandler<EntryChangeNotificationControl>
+  private static class PreviousDnHandler extends AbstractParseHandler<EntryChangeNotificationControl>
   {
 
     /** DER path to previous dn. */
@@ -305,8 +285,7 @@ public class EntryChangeNotificationControl extends AbstractControl
 
 
   /** Parse handler implementation for the change number. */
-  private static class ChangeNumberHandler
-    extends AbstractParseHandler<EntryChangeNotificationControl>
+  private static class ChangeNumberHandler extends AbstractParseHandler<EntryChangeNotificationControl>
   {
 
     /** DER path to change number. */

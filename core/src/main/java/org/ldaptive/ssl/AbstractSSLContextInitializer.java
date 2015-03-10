@@ -12,8 +12,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractSSLContextInitializer
-  implements SSLContextInitializer
+public abstract class AbstractSSLContextInitializer implements SSLContextInitializer
 {
 
   /** Trust managers. */
@@ -27,11 +26,9 @@ public abstract class AbstractSSLContextInitializer
     final TrustManager[] tm = createTrustManagers();
     TrustManager[] aggregate;
     if (tm == null) {
-      aggregate = trustManagers != null ? aggregateTrustManagers(trustManagers)
-                                        : null;
+      aggregate = trustManagers != null ? aggregateTrustManagers(trustManagers) : null;
     } else {
-      aggregate = aggregateTrustManagers(
-        LdapUtils.concatArrays(tm, trustManagers));
+      aggregate = aggregateTrustManagers(LdapUtils.concatArrays(tm, trustManagers));
     }
     return aggregate;
   }
@@ -54,8 +51,7 @@ public abstract class AbstractSSLContextInitializer
    *
    * @return  trust managers
    *
-   * @throws  GeneralSecurityException  if an errors occurs while loading the
-   * TrustManagers
+   * @throws  GeneralSecurityException  if an errors occurs while loading the TrustManagers
    */
   protected abstract TrustManager[] createTrustManagers()
     throws GeneralSecurityException;
@@ -72,15 +68,13 @@ public abstract class AbstractSSLContextInitializer
 
 
   /**
-   * Creates an {@link AggregateTrustManager} containing the supplied trust
-   * managers.
+   * Creates an {@link AggregateTrustManager} containing the supplied trust managers.
    *
    * @param  managers  to aggregate
    *
    * @return  array containing a single aggregate trust manager
    */
-  protected TrustManager[] aggregateTrustManagers(
-    final TrustManager... managers)
+  protected TrustManager[] aggregateTrustManagers(final TrustManager... managers)
   {
     X509TrustManager[] x509Managers = null;
     if (managers != null) {

@@ -10,14 +10,12 @@ import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
 
 /**
- * Looks up the LDAP entry associated with a user using a pool of LDAP
- * connections. Resolution will not occur using the connection that the user
- * attempted to bind on.
+ * Looks up the LDAP entry associated with a user using a pool of LDAP connections. Resolution will not occur using the
+ * connection that the user attempted to bind on.
  *
  * @author  Middleware Services
  */
-public class PooledSearchEntryResolver extends AbstractSearchEntryResolver
-  implements PooledConnectionFactoryManager
+public class PooledSearchEntryResolver extends AbstractSearchEntryResolver implements PooledConnectionFactoryManager
 {
 
   /** Connection factory. */

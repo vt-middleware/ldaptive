@@ -10,16 +10,13 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchResult;
 
 /**
- * Looks up the LDAP entry associated with a user. If a connection factory is
- * configured it will be used to perform the search for user. The connection
- * will be opened and closed for each resolution. If no connection factory is
- * configured the search will occur using the connection that the bind was
- * attempted on.
+ * Looks up the LDAP entry associated with a user. If a connection factory is configured it will be used to perform the
+ * search for user. The connection will be opened and closed for each resolution. If no connection factory is configured
+ * the search will occur using the connection that the bind was attempted on.
  *
  * @author  Middleware Services
  */
-public class SearchEntryResolver extends AbstractSearchEntryResolver
-  implements ConnectionFactoryManager
+public class SearchEntryResolver extends AbstractSearchEntryResolver implements ConnectionFactoryManager
 {
 
   /** Connection factory. */
@@ -62,8 +59,7 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
     throws LdapException
   {
     if (factory == null) {
-      final SearchOperation op = createSearchOperation(
-        response.getConnection());
+      final SearchOperation op = createSearchOperation(response.getConnection());
       return op.execute(createSearchRequest(criteria)).getResult();
     } else {
       try (Connection factoryConn = factory.getConnection()) {

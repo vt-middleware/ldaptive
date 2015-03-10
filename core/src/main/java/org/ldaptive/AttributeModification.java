@@ -25,9 +25,7 @@ public class AttributeModification
    * @param  type  attribute modification type
    * @param  attr  to modify
    */
-  public AttributeModification(
-    final AttributeModificationType type,
-    final LdapAttribute attr)
+  public AttributeModification(final AttributeModificationType type, final LdapAttribute attr)
   {
     setAttributeModificationType(type);
     setAttribute(attr);
@@ -81,12 +79,6 @@ public class AttributeModification
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::attrMod=%s, attribute=%s]",
-        getClass().getName(),
-        hashCode(),
-        attrMod,
-        attribute);
+    return String.format("[%s@%d::attrMod=%s, attribute=%s]", getClass().getName(), hashCode(), attrMod, attribute);
   }
 }

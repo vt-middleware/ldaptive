@@ -18,10 +18,7 @@ public class JndiStartTLSConnection extends JndiConnection
   /** Start TLS response. */
   private StartTlsResponse startTlsResponse;
 
-  /**
-   * Whether to call {@link StartTlsResponse#close()} when {@link
-   * #close(RequestControl[])} is called.
-   */
+  /** Whether to call {@link StartTlsResponse#close()} when {@link #close(RequestControl[])} is called. */
   private boolean stopTLSOnClose;
 
 
@@ -31,9 +28,7 @@ public class JndiStartTLSConnection extends JndiConnection
    * @param  lc  ldap context
    * @param  pc  provider configuration
    */
-  public JndiStartTLSConnection(
-    final LdapContext lc,
-    final JndiProviderConfig pc)
+  public JndiStartTLSConnection(final LdapContext lc, final JndiProviderConfig pc)
   {
     super(lc, pc);
   }
@@ -46,10 +41,7 @@ public class JndiStartTLSConnection extends JndiConnection
    * @param  pc  provider configuration
    * @param  tlsResponse  of successful TLS handshake
    */
-  public JndiStartTLSConnection(
-    final LdapContext lc,
-    final JndiProviderConfig pc,
-    final StartTlsResponse tlsResponse)
+  public JndiStartTLSConnection(final LdapContext lc, final JndiProviderConfig pc, final StartTlsResponse tlsResponse)
   {
     super(lc, pc);
     startTlsResponse = tlsResponse;
@@ -57,8 +49,7 @@ public class JndiStartTLSConnection extends JndiConnection
 
 
   /**
-   * Returns whether to call {@link StartTlsResponse#close()} when {@link
-   * #close(RequestControl[])} is called.
+   * Returns whether to call {@link StartTlsResponse#close()} when {@link #close(RequestControl[])} is called.
    *
    * @return  stop TLS on close
    */
@@ -69,8 +60,7 @@ public class JndiStartTLSConnection extends JndiConnection
 
 
   /**
-   * Sets whether to call {@link StartTlsResponse#close()} when {@link
-   * #close(RequestControl[])} is called.
+   * Sets whether to call {@link StartTlsResponse#close()} when {@link #close(RequestControl[])} is called.
    *
    * @param  b  stop TLS on close
    */

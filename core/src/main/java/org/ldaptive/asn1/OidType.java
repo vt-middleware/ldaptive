@@ -86,13 +86,11 @@ public class OidType extends AbstractDERType implements DEREncoder
 
 
   /**
-   * Converts bytes in the buffer to an OID by reading from the current position
-   * to the limit, which assumes the bytes of the integer are in big-endian
-   * order.
+   * Converts bytes in the buffer to an OID by reading from the current position to the limit, which assumes the bytes
+   * of the integer are in big-endian order.
    *
-   * @param  encoded  buffer containing DER-encoded data where the buffer is
-   * positioned at the start of OID bytes and the limit is set beyond the last
-   * byte of OID data.
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the start of OID bytes and
+   *                  the limit is set beyond the last byte of OID data.
    *
    * @return  decoded bytes as an OID.
    */
@@ -125,8 +123,7 @@ public class OidType extends AbstractDERType implements DEREncoder
    *
    * @return  byte array
    *
-   * @throws  IllegalArgumentException  if the oid is not valid. See {@link
-   * #isValid(int[])}
+   * @throws  IllegalArgumentException  if the oid is not valid. See {@link #isValid(int[])}
    */
   public static byte[] toBytes(final int[] oid)
   {
@@ -157,8 +154,7 @@ public class OidType extends AbstractDERType implements DEREncoder
 
 
   /**
-   * Checks whether the supplied oid is valid. Oids must meet the following
-   * criteria:
+   * Checks whether the supplied oid is valid. Oids must meet the following criteria:
    *
    * <ul>
    *   <li>must not be null and must have at least 2 elements</li>
@@ -175,15 +171,13 @@ public class OidType extends AbstractDERType implements DEREncoder
   {
     // CheckStyle:MagicNumber OFF
     if (oid == null || oid.length < 2) {
-      throw new IllegalArgumentException(
-        "OIDs must have at least two components");
+      throw new IllegalArgumentException("OIDs must have at least two components");
     }
     if (oid[0] < 0 || oid[0] > 2) {
       throw new IllegalArgumentException("The first OID must be 0, 1, or 2");
     }
     if (oid[0] < 2 && oid[1] > 39) {
-      throw new IllegalArgumentException(
-        "The second OID must be less than or equal to 38");
+      throw new IllegalArgumentException("The second OID must be less than or equal to 38");
     }
     for (int i : oid) {
       if (i < 0) {
@@ -195,8 +189,8 @@ public class OidType extends AbstractDERType implements DEREncoder
 
 
   /**
-   * Converts the supplied oid component to a byte array. The length of the byte
-   * array is the minimal size needed to contain the oid component.
+   * Converts the supplied oid component to a byte array. The length of the byte array is the minimal size needed to
+   * contain the oid component.
    *
    * @param  component  to convert to bytes
    *
@@ -222,13 +216,12 @@ public class OidType extends AbstractDERType implements DEREncoder
       bytes[i] = buffer[--size];
     }
     return bytes;
-    // CheckStyle:MagicNumber ON
+      // CheckStyle:MagicNumber ON
   }
 
 
   /**
-   * Reads the necessary encoded bytes from the supplied buffer to create an
-   * integer.
+   * Reads the necessary encoded bytes from the supplied buffer to create an integer.
    *
    * @param  buffer  to read
    *
@@ -261,8 +254,7 @@ public class OidType extends AbstractDERType implements DEREncoder
    *
    * @return  array of oid components
    *
-   * @throws  IllegalArgumentException  if the oid is not valid. See {@link
-   * #isValid(int[])}
+   * @throws  IllegalArgumentException  if the oid is not valid. See {@link #isValid(int[])}
    */
   public static int[] parse(final String oid)
   {

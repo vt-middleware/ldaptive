@@ -19,16 +19,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for worker operations. If no {@link ExecutorService} is provided a
- * cached thread pool is used by default.
+ * Base class for worker operations. If no {@link ExecutorService} is provided a cached thread pool is used by default.
  *
  * @param  <Q>  type of ldap request
  * @param  <S>  type of ldap response
  *
  * @author  Middleware Services
  */
-public abstract class AbstractOperationWorker<Q extends Request, S>
-  implements OperationWorker<Q, S>
+public abstract class AbstractOperationWorker<Q extends Request, S> implements OperationWorker<Q, S>
 {
 
   /** Logger for this class. */
@@ -58,9 +56,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
    * @param  op  operation
    * @param  es  executor service
    */
-  public AbstractOperationWorker(
-    final Operation<Q, S> op,
-    final ExecutorService es)
+  public AbstractOperationWorker(final Operation<Q, S> op, final ExecutorService es)
   {
     operation = op;
     service = es;
@@ -101,8 +97,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
 
 
   /**
-   * Execute an ldap operation for each request on a separate thread and waits
-   * for all operations to complete.
+   * Execute an ldap operation for each request on a separate thread and waits for all operations to complete.
    *
    * @param  requests  containing the data required by this operation
    *
@@ -112,8 +107,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
   @SuppressWarnings("unchecked")
   public Collection<Response<S>> executeToCompletion(final Q... requests)
   {
-    final CompletionService<Response<S>> cs = new ExecutorCompletionService<>(
-      service);
+    final CompletionService<Response<S>> cs = new ExecutorCompletionService<>(service);
     final List<Future<Response<S>>> futures = new ArrayList<>(requests.length);
     for (Q request : requests) {
       futures.add(cs.submit(createCallable(operation, request)));
@@ -134,8 +128,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
 
 
   /**
-   * Returns a {@link Callable} that executes the supplied request with the
-   * supplied operation.
+   * Returns a {@link Callable} that executes the supplied request with the supplied operation.
    *
    * @param  <Q>  type of ldap request
    * @param  <S>  type of ldap response
@@ -160,10 +153,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S>
   }
 
 
-  /**
-   * Invokes {@link ExecutorService#shutdown()} on the underlying executor
-   * service.
-   */
+  /** Invokes {@link ExecutorService#shutdown()} on the underlying executor service. */
   public void shutdown()
   {
     service.shutdown();

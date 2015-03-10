@@ -74,10 +74,7 @@ public class CompareValidator implements Validator<Connection>
         final CompareOperation compare = new CompareOperation(c);
         success = compare.execute(compareRequest).getResult();
       } catch (Exception e) {
-        logger.debug(
-          "validation failed for compare request {}",
-          compareRequest,
-          e);
+        logger.debug("validation failed for compare request {}", compareRequest, e);
       }
     }
     return success;
@@ -87,11 +84,6 @@ public class CompareValidator implements Validator<Connection>
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::compareRequest=%s]",
-        getClass().getName(),
-        hashCode(),
-        compareRequest);
+    return String.format("[%s@%d::compareRequest=%s]", getClass().getName(), hashCode(), compareRequest);
   }
 }

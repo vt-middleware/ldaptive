@@ -38,27 +38,23 @@ public class PagedResultsClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "createEntry22",
-    "createEntry23",
-    "createEntry25"
-  })
+  @Parameters(
+    {
+      "createEntry22",
+      "createEntry23",
+      "createEntry25"
+    }
+  )
   @BeforeClass(groups = {"control-util"})
-  public void createLdapEntry(
-    final String ldifFile1,
-    final String ldifFile2,
-    final String ldifFile3)
+  public void createLdapEntry(final String ldifFile1, final String ldifFile2, final String ldifFile3)
     throws Exception
   {
     testLdapEntries = new LdapEntry[3];
-    testLdapEntries[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile1)).getEntry();
+    testLdapEntries[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile1)).getEntry();
     super.createLdapEntry(testLdapEntries[0]);
-    testLdapEntries[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    testLdapEntries[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
     super.createLdapEntry(testLdapEntries[1]);
-    testLdapEntries[2] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    testLdapEntries[2] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
     super.createLdapEntry(testLdapEntries[2]);
   }
 
@@ -80,21 +76,23 @@ public class PagedResultsClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "prSearchDn",
-    "prSearchFilter"
-  })
+  @Parameters(
+    {
+      "prSearchDn",
+      "prSearchFilter"
+    }
+  )
   @Test(groups = {"control-util"})
   public void execute(final String dn, final String filter)
     throws Exception
   {
-    Connection conn = TestUtils.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final PagedResultsClient client = new PagedResultsClient(conn, 1);
 
-      final SearchRequest request = new SearchRequest(
-        dn, new SearchFilter(filter));
+      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
       Response<SearchResult> response = client.execute(request);
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertEquals(1, response.getResult().size());
@@ -120,8 +118,7 @@ public class PagedResultsClientTest extends AbstractTest
       }
     } catch (LdapException e) {
       // ignore this test if not supported by the server
-      AssertJUnit.assertEquals(
-        ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
+      AssertJUnit.assertEquals(ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
     } finally {
       conn.close();
     }
@@ -134,40 +131,37 @@ public class PagedResultsClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "prSearchDn",
-    "prSearchFilter"
-  })
+  @Parameters(
+    {
+      "prSearchDn",
+      "prSearchFilter"
+    }
+  )
   @Test(groups = {"control-util"})
   public void executeToCompletion(final String dn, final String filter)
     throws Exception
   {
-    Connection conn = TestUtils.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final PagedResultsClient client = new PagedResultsClient(conn, 1);
 
-      final SearchRequest request = new SearchRequest(
-        dn, new SearchFilter(filter));
+      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
       request.setSortBehavior(SortBehavior.SORTED);
-      Response<SearchResult> response = client.executeToCompletion(request);
+
+      final Response<SearchResult> response = client.executeToCompletion(request);
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertEquals(3, response.getResult().size());
-      Iterator<LdapEntry> i = response.getResult().getEntries().iterator();
+
+      final Iterator<LdapEntry> i = response.getResult().getEntries().iterator();
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(
-        testLdapEntries[1].getDn().toLowerCase(),
-        i.next().getDn().toLowerCase());
-      AssertJUnit.assertEquals(
-        testLdapEntries[0].getDn().toLowerCase(),
-        i.next().getDn().toLowerCase());
-      AssertJUnit.assertEquals(
-        testLdapEntries[2].getDn().toLowerCase(),
-        i.next().getDn().toLowerCase());
+      AssertJUnit.assertEquals(testLdapEntries[1].getDn().toLowerCase(), i.next().getDn().toLowerCase());
+      AssertJUnit.assertEquals(testLdapEntries[0].getDn().toLowerCase(), i.next().getDn().toLowerCase());
+      AssertJUnit.assertEquals(testLdapEntries[2].getDn().toLowerCase(), i.next().getDn().toLowerCase());
     } catch (LdapException e) {
       // ignore this test if not supported by the server
-      AssertJUnit.assertEquals(
-        ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
+      AssertJUnit.assertEquals(ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
     } finally {
       conn.close();
     }

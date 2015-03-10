@@ -36,8 +36,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
-   * Prepares this socket factory for use. Must be called before factory can be
-   * used.
+   * Prepares this socket factory for use. Must be called before factory can be used.
    *
    * @throws  GeneralSecurityException  if the factory cannot be initialized
    */
@@ -46,8 +45,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
-   * Returns the underlying SSL socket factory that this class uses for creating
-   * SSL Sockets.
+   * Returns the underlying SSL socket factory that this class uses for creating SSL Sockets.
    *
    * @return  SSL socket factory
    */
@@ -149,8 +147,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
         socket.setEnabledProtocols(sslC.getEnabledProtocols());
       }
       if (sslC.getHandshakeCompletedListeners() != null) {
-        for (HandshakeCompletedListener listener :
-             sslC.getHandshakeCompletedListeners()) {
+        for (HandshakeCompletedListener listener : sslC.getHandshakeCompletedListeners()) {
           socket.addHandshakeCompletedListener(listener);
         }
       }
@@ -162,10 +159,8 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
         socket.close();
         socket.getSession().invalidate();
         throw new SSLPeerUnverifiedException(
-          String.format(
-            "Hostname '%s' does not match the hostname in the server's " +
-            "certificate",
-            hostname));
+          String.format("Hostname '%s' does not match the hostname in the server's " +
+            "certificate", hostname));
       }
     }
     return socket;
@@ -173,8 +168,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
-   * Returns a socket layered over an existing socket connected to the named
-   * host, at the given port.
+   * Returns a socket layered over an existing socket connected to the named host, at the given port.
    *
    * @param  socket  existing socket
    * @param  host  server hostname
@@ -186,16 +180,10 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    * @throws  IOException  if an I/O error occurs when creating the socket
    */
   @Override
-  public Socket createSocket(
-    final Socket socket,
-    final String host,
-    final int port,
-    final boolean autoClose)
+  public Socket createSocket(final Socket socket, final String host, final int port, final boolean autoClose)
     throws IOException
   {
-    return
-      initSSLSocket(
-        (SSLSocket) factory.createSocket(socket, host, port, autoClose));
+    return initSSLSocket((SSLSocket) factory.createSocket(socket, host, port, autoClose));
   }
 
 
@@ -215,8 +203,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
-   * Creates a socket and connects it to the specified port number at the
-   * specified address.
+   * Creates a socket and connects it to the specified port number at the specified address.
    *
    * @param  host  server hostname
    * @param  port  server port
@@ -234,9 +221,8 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
-   * Creates a socket and connect it to the specified port number at the
-   * specified address. The socket will also be bound to the supplied local
-   * address and port.
+   * Creates a socket and connect it to the specified port number at the specified address. The socket will also be
+   * bound to the supplied local address and port.
    *
    * @param  address  server hostname
    * @param  port  server port
@@ -255,19 +241,12 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
     final int localPort)
     throws IOException
   {
-    return
-      initSSLSocket(
-        (SSLSocket) factory.createSocket(
-          address,
-          port,
-          localAddress,
-          localPort));
+    return initSSLSocket((SSLSocket) factory.createSocket(address, port, localAddress, localPort));
   }
 
 
   /**
-   * Creates a socket and connects it to the specified port number at the
-   * specified address.
+   * Creates a socket and connects it to the specified port number at the specified address.
    *
    * @param  host  server hostname
    * @param  port  server port
@@ -285,9 +264,8 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
-   * Creates a socket and connect it to the specified port number at the
-   * specified address. The socket will also be bound to the supplied local
-   * address and port.
+   * Creates a socket and connect it to the specified port number at the specified address. The socket will also be
+   * bound to the supplied local address and port.
    *
    * @param  host  server hostname
    * @param  port  server port
@@ -299,16 +277,10 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
    * @throws  IOException  if an I/O error occurs when creating the socket
    */
   @Override
-  public Socket createSocket(
-    final String host,
-    final int port,
-    final InetAddress localHost,
-    final int localPort)
+  public Socket createSocket(final String host, final int port, final InetAddress localHost, final int localPort)
     throws IOException
   {
-    return
-      initSSLSocket(
-        (SSLSocket) factory.createSocket(host, port, localHost, localPort));
+    return initSSLSocket((SSLSocket) factory.createSocket(host, port, localHost, localPort));
   }
 
 
@@ -325,8 +297,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
 
   /**
-   * Returns the names of the cipher suites which could be enabled for use on an
-   * SSL connection.
+   * Returns the names of the cipher suites which could be enabled for use on an SSL connection.
    *
    * @return  cipher suites
    */

@@ -22,9 +22,8 @@ import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.intermediate.IntermediateResponse;
 
 /**
- * Executes a search filter and places the results of the operation on a
- * blocking queue. The capacity of the queue can be configured to address memory
- * concerns related to large result sets.
+ * Executes a search filter and places the results of the operation on a blocking queue. The capacity of the queue can
+ * be configured to address memory concerns related to large result sets.
  *
  * @author  Middleware Services
  */
@@ -84,18 +83,12 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
    *
    * @return  blocking queue to receive search items
    *
-   * @throws  LdapException  if the connection factory cannot create a
-   * connection
+   * @throws  LdapException  if the connection factory cannot create a connection
    */
   public BlockingQueue<SearchItem> search(final ConnectionFactory factory)
     throws LdapException
   {
-    return
-      search(
-        factory,
-        null,
-        null,
-        (org.ldaptive.handler.SearchEntryHandler[]) null);
+    return search(factory, null, null, (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
 
@@ -107,20 +100,12 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
    *
    * @return  blocking queue to receive search items
    *
-   * @throws  LdapException  if the connection factory cannot create a
-   * connection
+   * @throws  LdapException  if the connection factory cannot create a connection
    */
-  public BlockingQueue<SearchItem> search(
-    final ConnectionFactory factory,
-    final String filter)
+  public BlockingQueue<SearchItem> search(final ConnectionFactory factory, final String filter)
     throws LdapException
   {
-    return
-      search(
-        factory,
-        new SearchFilter(filter),
-        null,
-        (org.ldaptive.handler.SearchEntryHandler[]) null);
+    return search(factory, new SearchFilter(filter), null, (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
 
@@ -132,20 +117,12 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
    *
    * @return  blocking queue to receive search items
    *
-   * @throws  LdapException  if the connection factory cannot create a
-   * connection
+   * @throws  LdapException  if the connection factory cannot create a connection
    */
-  public BlockingQueue<SearchItem> search(
-    final ConnectionFactory factory,
-    final SearchFilter filter)
+  public BlockingQueue<SearchItem> search(final ConnectionFactory factory, final SearchFilter filter)
     throws LdapException
   {
-    return
-      search(
-        factory,
-        filter,
-        null,
-        (org.ldaptive.handler.SearchEntryHandler[]) null);
+    return search(factory, filter, null, (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
 
@@ -158,21 +135,12 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
    *
    * @return  blocking queue to receive search items
    *
-   * @throws  LdapException  if the connection factory cannot create a
-   * connection
+   * @throws  LdapException  if the connection factory cannot create a connection
    */
-  public BlockingQueue<SearchItem> search(
-    final ConnectionFactory factory,
-    final String filter,
-    final String... attrs)
+  public BlockingQueue<SearchItem> search(final ConnectionFactory factory, final String filter, final String... attrs)
     throws LdapException
   {
-    return
-      search(
-        factory,
-        new SearchFilter(filter),
-        attrs,
-        (org.ldaptive.handler.SearchEntryHandler[]) null);
+    return search(factory, new SearchFilter(filter), attrs, (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
 
@@ -185,8 +153,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
    *
    * @return  blocking queue to receive search items
    *
-   * @throws  LdapException  if the connection factory cannot create a
-   * connection
+   * @throws  LdapException  if the connection factory cannot create a connection
    */
   public BlockingQueue<SearchItem> search(
     final ConnectionFactory factory,
@@ -194,12 +161,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     final String... attrs)
     throws LdapException
   {
-    return
-      search(
-        factory,
-        filter,
-        attrs,
-        (org.ldaptive.handler.SearchEntryHandler[]) null);
+    return search(factory, filter, attrs, (org.ldaptive.handler.SearchEntryHandler[]) null);
   }
 
 
@@ -213,8 +175,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
    *
    * @return  blocking queue to receive search items
    *
-   * @throws  LdapException  if the connection factory cannot create a
-   * connection
+   * @throws  LdapException  if the connection factory cannot create a connection
    */
   public BlockingQueue<SearchItem> search(
     final ConnectionFactory factory,
@@ -223,8 +184,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     final org.ldaptive.handler.SearchEntryHandler... handlers)
     throws LdapException
   {
-    final BlockingQueue<SearchItem> queue = new LinkedBlockingQueue<>(
-      queueCapacity);
+    final BlockingQueue<SearchItem> queue = new LinkedBlockingQueue<>(queueCapacity);
 
     final SearchRequest sr = newSearchRequest(this);
     if (filter != null) {
@@ -249,9 +209,8 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
 
 
   /**
-   * Returns a {@link Callable} that executes the supplied request with the
-   * supplied operation in a try-finally block that opens and closes the
-   * connection.
+   * Returns a {@link Callable} that executes the supplied request with the supplied operation in a try-finally block
+   * that opens and closes the connection.
    *
    * @param  conn  connection that the operation will execute on
    * @param  operation  to execute
@@ -298,24 +257,19 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
 
 
   /**
-   * Sets the appropriate handlers on the supplied search request so that
-   * entries, references, and intermediate responses are made available on the
-   * supplied queue.
+   * Sets the appropriate handlers on the supplied search request so that entries, references, and intermediate
+   * responses are made available on the supplied queue.
    *
    * @param  request  search request to modify
    * @param  queue  to use in the handlers
    */
-  protected void configureSearchRequest(
-    final SearchRequest request,
-    final BlockingQueue<SearchItem> queue)
+  protected void configureSearchRequest(final SearchRequest request, final BlockingQueue<SearchItem> queue)
   {
     if (request.getSearchEntryHandlers() != null) {
       request.setSearchEntryHandlers(
         LdapUtils.concatArrays(
           request.getSearchEntryHandlers(),
-          new org.ldaptive.handler.SearchEntryHandler[] {
-            new SearchEntryHandler(queue),
-          }));
+          new org.ldaptive.handler.SearchEntryHandler[] {new SearchEntryHandler(queue), }));
     } else {
       request.setSearchEntryHandlers(new SearchEntryHandler(queue));
     }
@@ -323,9 +277,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       request.setSearchReferenceHandlers(
         LdapUtils.concatArrays(
           request.getSearchReferenceHandlers(),
-          new org.ldaptive.handler.SearchReferenceHandler[] {
-            new SearchReferenceHandler(queue),
-          }));
+          new org.ldaptive.handler.SearchReferenceHandler[] {new SearchReferenceHandler(queue), }));
     } else {
       request.setSearchReferenceHandlers(new SearchReferenceHandler(queue));
     }
@@ -333,19 +285,15 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       request.setIntermediateResponseHandlers(
         LdapUtils.concatArrays(
           request.getIntermediateResponseHandlers(),
-          new org.ldaptive.handler.IntermediateResponseHandler[] {
-            new IntermediateResponseHandler(queue),
-          }));
+          new org.ldaptive.handler.IntermediateResponseHandler[] {new IntermediateResponseHandler(queue), }));
     } else {
-      request.setIntermediateResponseHandlers(
-        new IntermediateResponseHandler(queue));
+      request.setIntermediateResponseHandlers(new IntermediateResponseHandler(queue));
     }
   }
 
 
   /** Places search entries on a blocking queue. */
-  protected class SearchEntryHandler extends AbstractHandler
-    implements org.ldaptive.handler.SearchEntryHandler
+  protected class SearchEntryHandler extends AbstractHandler implements org.ldaptive.handler.SearchEntryHandler
   {
 
 
@@ -378,8 +326,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
 
 
   /** Places search references on a blocking queue. */
-  protected class SearchReferenceHandler extends AbstractHandler
-    implements org.ldaptive.handler.SearchReferenceHandler
+  protected class SearchReferenceHandler extends AbstractHandler implements org.ldaptive.handler.SearchReferenceHandler
   {
 
 
@@ -584,8 +531,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
 
 
     /**
-     * Returns the search entry contained in this item or null if this item does
-     * not contain a search entry.
+     * Returns the search entry contained in this item or null if this item does not contain a search entry.
      *
      * @return  search entry
      */
@@ -607,8 +553,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
 
 
     /**
-     * Returns the search reference contained in this item or null if this item
-     * does not contain a search reference.
+     * Returns the search reference contained in this item or null if this item does not contain a search reference.
      *
      * @return  search entry
      */
@@ -630,8 +575,8 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
 
 
     /**
-     * Returns the intermediate response contained in this item or null if this
-     * item does not contain an intermediate response.
+     * Returns the intermediate response contained in this item or null if this item does not contain an intermediate
+     * response.
      *
      * @return  intermediate response
      */
@@ -653,8 +598,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
 
 
     /**
-     * Returns the response contained in this item or null if this item does not
-     * contain a response.
+     * Returns the response contained in this item or null if this item does not contain a response.
      *
      * @return  response
      */
@@ -676,8 +620,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
 
 
     /**
-     * Returns the exception contained in this item or null if this item does
-     * not contain an exception.
+     * Returns the exception contained in this item or null if this item does not contain an exception.
      *
      * @return  exception
      */
@@ -692,35 +635,15 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     {
       String s;
       if (isEntry()) {
-        s = String.format(
-          "[%s@%d::searchEntry=%s]",
-          getClass().getName(),
-          hashCode(),
-          searchEntry);
+        s = String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
       } else if (isReference()) {
-        s = String.format(
-          "[%s@%d::searchReference=%s]",
-          getClass().getName(),
-          hashCode(),
-          searchReference);
+        s = String.format("[%s@%d::searchReference=%s]", getClass().getName(), hashCode(), searchReference);
       } else if (isIntermediateResponse()) {
-        s = String.format(
-          "[%s@%d::intermediateResponse=%s]",
-          getClass().getName(),
-          hashCode(),
-          intermediateResponse);
+        s = String.format("[%s@%d::intermediateResponse=%s]", getClass().getName(), hashCode(), intermediateResponse);
       } else if (isResponse()) {
-        s = String.format(
-          "[%s@%d::searchResponse=%s]",
-          getClass().getName(),
-          hashCode(),
-          searchResponse);
+        s = String.format("[%s@%d::searchResponse=%s]", getClass().getName(), hashCode(), searchResponse);
       } else if (isException()) {
-        s = String.format(
-          "[%s@%d::searchException=%s]",
-          getClass().getName(),
-          hashCode(),
-          searchException);
+        s = String.format("[%s@%d::searchException=%s]", getClass().getName(), hashCode(), searchException);
       } else {
         s = String.format("[%s@%d]", getClass().getName(), hashCode());
       }

@@ -74,8 +74,7 @@ public class SearchItem
 
 
   /**
-   * Returns the search entry in this search item or null if this search item
-   * does not contain a search entry.
+   * Returns the search entry in this search item or null if this search item does not contain a search entry.
    *
    * @return  search entry
    */
@@ -97,8 +96,7 @@ public class SearchItem
 
 
   /**
-   * Returns the search reference in this search item or null if this search
-   * item does not contain a search reference.
+   * Returns the search reference in this search item or null if this search item does not contain a search reference.
    *
    * @return  searchReference
    */
@@ -120,8 +118,8 @@ public class SearchItem
 
 
   /**
-   * Returns the intermediate response in this search item or null if this
-   * search item does not contain an intermediate response.
+   * Returns the intermediate response in this search item or null if this search item does not contain an intermediate
+   * response.
    *
    * @return  intermediate response
    */
@@ -136,23 +134,11 @@ public class SearchItem
   {
     String s;
     if (isSearchEntry()) {
-      s = String.format(
-        "[%s@%d::searchEntry=%s]",
-        getClass().getName(),
-        hashCode(),
-        searchEntry);
+      s = String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
     } else if (isSearchReference()) {
-      s = String.format(
-        "[%s@%d::searchReference=%s]",
-        getClass().getName(),
-        hashCode(),
-        searchReference);
+      s = String.format("[%s@%d::searchReference=%s]", getClass().getName(), hashCode(), searchReference);
     } else if (isIntermediateResponse()) {
-      s = String.format(
-        "[%s@%d::intermediateResponse=%s]",
-        getClass().getName(),
-        hashCode(),
-        intermediateResponse);
+      s = String.format("[%s@%d::intermediateResponse=%s]", getClass().getName(), hashCode(), intermediateResponse);
     } else {
       s = String.format("[%s@%d]", getClass().getName(), hashCode());
     }

@@ -26,31 +26,23 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractReferralHandler<Q extends Request, S>
-  implements ReferralHandler<Q, S>
+public abstract class AbstractReferralHandler<Q extends Request, S> implements ReferralHandler<Q, S>
 {
 
   /** Default referral limit. Value is {@value}. */
   protected static final int DEFAULT_REFERRAL_LIMIT = 10;
 
 
-  /**
-   * Default referral connection factory. Uses {@link
-   * DefaultConnectionFactory}.
-   */
-  protected static final ReferralConnectionFactory DEFAULT_CONNECTION_FACTORY
-    = new ReferralConnectionFactory() {
-      @Override
-      public ConnectionFactory getConnectionFactory(
-        final ConnectionConfig config,
-        final String ldapUrl)
-      {
-        final ConnectionConfig cc = ConnectionConfig.newConnectionConfig(
-          config);
-        cc.setLdapUrl(ldapUrl);
-        return new DefaultConnectionFactory(cc);
-      }
-    };
+  /** Default referral connection factory. Uses {@link DefaultConnectionFactory}. */
+  protected static final ReferralConnectionFactory DEFAULT_CONNECTION_FACTORY = new ReferralConnectionFactory() {
+    @Override
+    public ConnectionFactory getConnectionFactory(final ConnectionConfig config, final String ldapUrl)
+    {
+      final ConnectionConfig cc = ConnectionConfig.newConnectionConfig(config);
+      cc.setLdapUrl(ldapUrl);
+      return new DefaultConnectionFactory(cc);
+    }
+  };
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -72,10 +64,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S>
    * @param  depth  number of referrals followed
    * @param  factory  referral connection factory
    */
-  public AbstractReferralHandler(
-    final int limit,
-    final int depth,
-    final ReferralConnectionFactory factory)
+  public AbstractReferralHandler(final int limit, final int depth, final ReferralConnectionFactory factory)
   {
     referralLimit = limit;
     referralDepth = depth;
@@ -124,9 +113,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S>
    *
    * @return  new request
    */
-  protected abstract Q createReferralRequest(
-    final Q request,
-    final LdapURL url);
+  protected abstract Q createReferralRequest(final Q request, final LdapURL url);
 
 
   /**
@@ -136,14 +123,12 @@ public abstract class AbstractReferralHandler<Q extends Request, S>
    *
    * @return  new operation
    */
-  protected abstract Operation<Q, S> createReferralOperation(
-    final Connection conn);
+  protected abstract Operation<Q, S> createReferralOperation(final Connection conn);
 
 
   /**
-   * Follows the supplied referral URLs in order until a SUCCESS or
-   * REFERRAL_LIMIT_EXCEEDED occurs. If neither of those conditions occurs this
-   * method returns null.
+   * Follows the supplied referral URLs in order until a SUCCESS or REFERRAL_LIMIT_EXCEEDED occurs. If neither of those
+   * conditions occurs this method returns null.
    *
    * @param  conn  the original operation occurred on
    * @param  request  of the operation that produced a referral
@@ -153,10 +138,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S>
    *
    * @throws  LdapException  if a REFERRAL_LIMIT_EXCEEDED in encountered
    */
-  protected Response<S> followReferral(
-    final Connection conn,
-    final Q request,
-    final String[] referralUrls)
+  protected Response<S> followReferral(final Connection conn, final Q request, final String[] referralUrls)
     throws LdapException
   {
     Response<S> referralResponse = null;
@@ -174,6 +156,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S>
         ldapUrl.getEntry().getHostnameWithSchemeAndPort());
       try (Connection referralConn = cf.getConnection()) {
         referralConn.open();
+
         final Q referralRequest = createReferralRequest(request, ldapUrl);
         final Operation<Q, S> op = createReferralOperation(referralConn);
         referralResponse = op.execute(referralRequest);
@@ -183,8 +166,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S>
           throw e;
         }
       }
-      if (referralResponse != null &&
-          referralResponse.getResultCode() == ResultCode.SUCCESS) {
+      if (referralResponse != null && referralResponse.getResultCode() == ResultCode.SUCCESS) {
         break;
       }
     }
@@ -193,10 +175,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S>
 
 
   @Override
-  public HandlerResult<Response<S>> handle(
-    final Connection conn,
-    final Q request,
-    final Response<S> response)
+  public HandlerResult<Response<S>> handle(final Connection conn, final Q request, final Response<S> response)
     throws LdapException
   {
     HandlerResult<Response<S>> result;
@@ -211,10 +190,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S>
           response.getReferralURLs(),
           response.getMessageId()));
     } else {
-      final Response<S> referralResponse = followReferral(
-        conn,
-        request,
-        response.getReferralURLs());
+      final Response<S> referralResponse = followReferral(conn, request, response.getReferralURLs());
       if (referralResponse != null) {
         result = new HandlerResult<>(referralResponse);
       } else {
@@ -236,28 +212,15 @@ public abstract class AbstractReferralHandler<Q extends Request, S>
    *
    * @throws  LdapException  if an error occurs following referrals
    */
-  public HandlerResult<Response<S>> handle(
-    final Connection conn,
-    final Q request,
-    final String[] referralUrls)
+  public HandlerResult<Response<S>> handle(final Connection conn, final Q request, final String[] referralUrls)
     throws LdapException
   {
     HandlerResult<Response<S>> result;
     if (referralDepth > referralLimit) {
       result = new HandlerResult<>(
-        new Response<>(
-          (S) null,
-          ResultCode.REFERRAL_LIMIT_EXCEEDED,
-          null,
-          null,
-          null,
-          null,
-          -1));
+        new Response<>((S) null, ResultCode.REFERRAL_LIMIT_EXCEEDED, null, null, null, null, -1));
     } else {
-      final Response<S> referralResponse = followReferral(
-        conn,
-        request,
-        referralUrls);
+      final Response<S> referralResponse = followReferral(conn, request, referralUrls);
       if (referralResponse != null) {
         result = new HandlerResult<>(referralResponse);
       } else {

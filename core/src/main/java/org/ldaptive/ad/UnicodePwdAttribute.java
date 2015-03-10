@@ -7,9 +7,8 @@ import org.ldaptive.SortBehavior;
 import org.ldaptive.ad.io.UnicodePwdValueTranscoder;
 
 /**
- * Helper class for the active directory unicodePwd attribute. Configures a
- * binary attribute of that name and allows setting of the attribute value using
- * a string. See {@link UnicodePwdValueTranscoder}.
+ * Helper class for the active directory unicodePwd attribute. Configures a binary attribute of that name and allows
+ * setting of the attribute value using a string. See {@link UnicodePwdValueTranscoder}.
  *
  * @author  Middleware Services
  */
@@ -23,8 +22,7 @@ public class UnicodePwdAttribute extends LdapAttribute
   private static final String ATTR_NAME = "unicodePwd";
 
   /** transcoder used when adding string values. */
-  private static final UnicodePwdValueTranscoder TRANSCODER =
-    new UnicodePwdValueTranscoder();
+  private static final UnicodePwdValueTranscoder TRANSCODER = new UnicodePwdValueTranscoder();
 
 
   /** Default constructor. */

@@ -63,9 +63,7 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
       if (socketTimeOut > 0) {
         conn.setSocketTimeOut(socketTimeOut);
       }
-      conn.connect(
-        ldapUrl.getLastEntry().getHostnameWithPort(),
-        LDAPConnection.DEFAULT_PORT);
+      conn.connect(ldapUrl.getLastEntry().getHostnameWithPort(), LDAPConnection.DEFAULT_PORT);
       initializeConnection(conn);
       jldapConn = createJLdapConnection(conn, getProviderConfig());
     } catch (LDAPException e) {
@@ -112,15 +110,12 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
 
 
   /**
-   * Creates a jldap connection of the appropriate type for this connection
-   * factory.
+   * Creates a jldap connection of the appropriate type for this connection factory.
    *
    * @param  conn  to create jldap connection with
    * @param  config  provider configuration
    *
    * @return  jldap connection
    */
-  protected abstract T createJLdapConnection(
-    final LDAPConnection conn,
-    final JLdapProviderConfig config);
+  protected abstract T createJLdapConnection(final LDAPConnection conn, final JLdapProviderConfig config);
 }

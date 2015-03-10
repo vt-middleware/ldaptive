@@ -11,8 +11,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class AttributeValueAssertion extends AbstractDERType
-  implements DEREncoder
+public class AttributeValueAssertion extends AbstractDERType implements DEREncoder
 {
 
   /** hash code seed. */
@@ -87,12 +86,10 @@ public class AttributeValueAssertion extends AbstractDERType
 
 
   /**
-   * Converts bytes in the buffer to attribute value assertions by reading from
-   * the current position to the limit.
+   * Converts bytes in the buffer to attribute value assertions by reading from the current position to the limit.
    *
-   * @param  encoded  buffer containing DER-encoded data where the buffer is
-   * positioned at the tag of the oid and the limit is set beyond the last byte
-   * of attribute value data.
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the tag of the oid and the
+   *                  limit is set beyond the last byte of attribute value data.
    *
    * @return  decoded bytes as attribute value assertions
    */
@@ -106,8 +103,7 @@ public class AttributeValueAssertion extends AbstractDERType
         @Override
         public void handle(final DERParser parser, final ByteBuffer encoded)
         {
-          if (UniversalDERTag.OID.getTagNo() !=
-              parser.readTag(encoded).getTagNo()) {
+          if (UniversalDERTag.OID.getTagNo() != parser.readTag(encoded).getTagNo()) {
             throw new IllegalArgumentException("Expected OID tag");
           }
 
@@ -120,10 +116,7 @@ public class AttributeValueAssertion extends AbstractDERType
 
           final DERTag tag = parser.readTag(encoded);
           parser.readLength(encoded);
-          assertions.add(
-            new AttributeValueAssertion(
-              oid,
-              new Value(tag, readBuffer(encoded))));
+          assertions.add(new AttributeValueAssertion(oid, new Value(tag, readBuffer(encoded))));
         }
       });
     parser.parse(encoded);
@@ -141,8 +134,7 @@ public class AttributeValueAssertion extends AbstractDERType
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(HASH_CODE_SEED, attributeOid, attributeValue);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeOid, attributeValue);
   }
 
 
@@ -218,11 +210,7 @@ public class AttributeValueAssertion extends AbstractDERType
     @Override
     public int hashCode()
     {
-      return
-        LdapUtils.computeHashCode(
-          HASH_CODE_SEED,
-          attributeValueTag,
-          attributeValueBytes);
+      return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeValueTag, attributeValueBytes);
     }
 
 

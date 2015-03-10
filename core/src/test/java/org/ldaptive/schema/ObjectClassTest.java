@@ -25,29 +25,11 @@ public class ObjectClassTest
     return
       new Object[][] {
         new Object[] {
-          new ObjectClass(
-            "2.5.6.0",
-            null,
-            null,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null),
+          new ObjectClass("2.5.6.0", null, null, false, null, null, null, null, null),
           "( 2.5.6.0 )",
         },
         new Object[] {
-          new ObjectClass(
-            "2.5.6.0",
-            new String[] {"top"},
-            null,
-            false,
-            null,
-            null,
-            null,
-            null,
-            null),
+          new ObjectClass("2.5.6.0", new String[] {"top"}, null, false, null, null, null, null, null),
           "( 2.5.6.0 NAME 'top' )",
         },
         new Object[] {
@@ -87,8 +69,7 @@ public class ObjectClassTest
             new String[] {"objectClass"},
             null,
             null),
-          "( 2.5.6.0 NAME 'top' DESC 'top of the superclass chain' ABSTRACT " +
-            "MUST objectClass )",
+          "( 2.5.6.0 NAME 'top' DESC 'top of the superclass chain' ABSTRACT MUST objectClass )",
         },
         new Object[] {
           new ObjectClass(
@@ -101,8 +82,8 @@ public class ObjectClassTest
             null,
             null,
             null),
-          "( 1.3.6.1.4.1.1466.101.120.111 NAME 'extensibleObject' " +
-            "DESC 'RFC4512: extensible object' SUP top AUXILIARY )",
+          "( 1.3.6.1.4.1.1466.101.120.111 NAME 'extensibleObject' DESC 'RFC4512: extensible object' SUP top " +
+            "AUXILIARY )",
         },
         new Object[] {
           new ObjectClass(
@@ -115,8 +96,7 @@ public class ObjectClassTest
             new String[] {"aliasedObjectName"},
             null,
             null),
-          "( 2.5.6.1 NAME 'alias' DESC 'RFC4512: an alias' SUP top " +
-            "STRUCTURAL MUST aliasedObjectName )",
+          "( 2.5.6.1 NAME 'alias' DESC 'RFC4512: an alias' SUP top STRUCTURAL MUST aliasedObjectName )",
         },
         new Object[] {
           new ObjectClass(
@@ -129,8 +109,8 @@ public class ObjectClassTest
             null,
             new String[] {"cn"},
             null),
-          "( 1.3.6.1.4.1.4203.1.4.1 NAME ( 'OpenLDAProotDSE' 'LDAProotDSE' ) " +
-            "DESC 'OpenLDAP Root DSE object' SUP top STRUCTURAL MAY cn )",
+          "( 1.3.6.1.4.1.4203.1.4.1 NAME ( 'OpenLDAProotDSE' 'LDAProotDSE' ) DESC 'OpenLDAP Root DSE object' SUP top " +
+            "STRUCTURAL MAY cn )",
         },
         new Object[] {
           new ObjectClass(
@@ -143,8 +123,7 @@ public class ObjectClassTest
             new String[] {"cn", "subtreeSpecification"},
             null,
             null),
-          "( 2.5.17.0 NAME 'subentry' DESC 'RFC3672: subentry' SUP top " +
-            "STRUCTURAL MUST ( cn $ subtreeSpecification ) )",
+          "( 2.5.17.0 NAME 'subentry' DESC 'RFC3672: subentry' SUP top STRUCTURAL MUST ( cn $ subtreeSpecification ) )",
         },
         new Object[] {
           new ObjectClass(
@@ -179,15 +158,11 @@ public class ObjectClassTest
               "description",
             },
             null),
-          "( 2.5.6.5 NAME 'organizationalUnit' " +
-            "DESC 'RFC2256: an organizational unit' SUP top STRUCTURAL " +
-            "MUST ou MAY ( userPassword $ searchGuide $ seeAlso $ " +
-            "businessCategory $ x121Address $ registeredAddress $ " +
-            "destinationIndicator $ preferredDeliveryMethod $ telexNumber $ " +
-            "teletexTerminalIdentifier $ telephoneNumber $ " +
-            "internationaliSDNNumber $ facsimileTelephoneNumber $ street $ " +
-            "postOfficeBox $ postalCode $ postalAddress $ " +
-            "physicalDeliveryOfficeName $ st $ l $ description ) )",
+          "( 2.5.6.5 NAME 'organizationalUnit' DESC 'RFC2256: an organizational unit' SUP top STRUCTURAL MUST ou " +
+            "MAY ( userPassword $ searchGuide $ seeAlso $ businessCategory $ x121Address $ registeredAddress $ " +
+            "destinationIndicator $ preferredDeliveryMethod $ telexNumber $ teletexTerminalIdentifier $ " +
+            "telephoneNumber $ internationaliSDNNumber $ facsimileTelephoneNumber $ street $ postOfficeBox $ " +
+            "postalCode $ postalAddress $ physicalDeliveryOfficeName $ st $ l $ description ) )",
         },
       };
   }
@@ -199,10 +174,7 @@ public class ObjectClassTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"schema"},
-    dataProvider = "definitions"
-  )
+  @Test(groups = {"schema"}, dataProvider = "definitions")
   public void parse(final ObjectClass objectClass, final String definition)
     throws Exception
   {

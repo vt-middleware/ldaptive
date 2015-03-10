@@ -18,9 +18,6 @@ public interface AsyncRequestHandler extends Handler<Request, AsyncRequest>
 
 
   @Override
-  HandlerResult<AsyncRequest> handle(
-    Connection conn,
-    Request request,
-    AsyncRequest asyncRequest)
+  HandlerResult<AsyncRequest> handle(Connection conn, Request request, AsyncRequest asyncRequest)
     throws LdapException;
 }

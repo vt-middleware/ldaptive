@@ -53,15 +53,11 @@ public class TestLoginModule implements LoginModule
   {
     try {
       final NameCallback nameCb = new NameCallback("Enter user: ");
-      final PasswordCallback passCb = new PasswordCallback(
-        "Enter user password: ",
-        false);
+      final PasswordCallback passCb = new PasswordCallback("Enter user password: ", false);
       callbackHandler.handle(new Callback[] {nameCb, passCb});
 
       sharedState.put(LdapLoginModule.LOGIN_NAME, nameCb.getName());
-      sharedState.put(
-        LdapLoginModule.LOGIN_PASSWORD,
-        passCb.getPassword());
+      sharedState.put(LdapLoginModule.LOGIN_PASSWORD, passCb.getPassword());
       success = true;
     } catch (IOException | UnsupportedCallbackException e) {
       success = false;

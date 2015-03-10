@@ -7,8 +7,7 @@ import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
 
 /**
- * Provides convenience methods for creating jndi attributes and attribute
- * objects.
+ * Provides convenience methods for creating jndi attributes and attribute objects.
  *
  * @author  Middleware Services
  */
@@ -44,9 +43,7 @@ public final class AttributesFactory
    *
    * @return  attributes
    */
-  public static Attributes createAttributes(
-    final String name,
-    final boolean ignoreCase)
+  public static Attributes createAttributes(final String name, final boolean ignoreCase)
   {
     return createAttributes(name, null, ignoreCase);
   }
@@ -60,9 +57,7 @@ public final class AttributesFactory
    *
    * @return  attributes
    */
-  public static Attributes createAttributes(
-    final String name,
-    final Object value)
+  public static Attributes createAttributes(final String name, final Object value)
   {
     return createAttributes(name, value, DEFAULT_IGNORE_CASE);
   }
@@ -77,10 +72,7 @@ public final class AttributesFactory
    *
    * @return  attributes
    */
-  public static Attributes createAttributes(
-    final String name,
-    final Object value,
-    final boolean ignoreCase)
+  public static Attributes createAttributes(final String name, final Object value, final boolean ignoreCase)
   {
     if (value == null) {
       return createAttributes(name, null, ignoreCase);
@@ -98,9 +90,7 @@ public final class AttributesFactory
    *
    * @return  attributes
    */
-  public static Attributes createAttributes(
-    final String name,
-    final Object[] values)
+  public static Attributes createAttributes(final String name, final Object[] values)
   {
     return createAttributes(name, values, DEFAULT_IGNORE_CASE);
   }
@@ -115,10 +105,7 @@ public final class AttributesFactory
    *
    * @return  attributes
    */
-  public static Attributes createAttributes(
-    final String name,
-    final Object[] values,
-    final boolean ignoreCase)
+  public static Attributes createAttributes(final String name, final Object[] values, final boolean ignoreCase)
   {
     final Attributes attrs = new BasicAttributes(ignoreCase);
     attrs.put(createAttribute(name, values));
@@ -165,9 +152,7 @@ public final class AttributesFactory
    *
    * @return  attribute
    */
-  public static Attribute createAttribute(
-    final String name,
-    final Object[] values)
+  public static Attribute createAttribute(final String name, final Object[] values)
   {
     final Attribute attr = new BasicAttribute(name);
     if (values != null) {

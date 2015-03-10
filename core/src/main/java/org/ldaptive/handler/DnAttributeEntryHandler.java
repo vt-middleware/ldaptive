@@ -9,8 +9,7 @@ import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 
 /**
- * Adds the entry DN as an attribute to the result set. Provides a client side
- * implementation of RFC 5020.
+ * Adds the entry DN as an attribute to the result set. Provides a client side implementation of RFC 5020.
  *
  * @author  Middleware Services
  */
@@ -20,15 +19,12 @@ public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 823;
 
-  /**
-   * Attribute name for the entry dn. The default value of this variable is
-   * {@value}.
-   */
+  /** Attribute name for the entry dn. The default value of this variable is {@value}. */
   private String dnAttributeName = "entryDN";
 
   /**
-   * Whether to add the entry dn if an attribute of the same name exists. The
-   * default value of this variable is {@value}.
+   * Whether to add the entry dn if an attribute of the same name exists. The default value of this variable is
+   * {@value}.
    */
   private boolean addIfExists;
 
@@ -69,8 +65,7 @@ public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
   /**
    * Sets whether to add the entryDN if an attribute of the same name exists.
    *
-   * @param  b  whether to add the entryDN if an attribute of the same name
-   * exists
+   * @param  b  whether to add the entryDN if an attribute of the same name exists
    */
   public void setAddIfExists(final boolean b)
   {
@@ -79,10 +74,7 @@ public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected void handleAttributes(
-    final Connection conn,
-    final SearchRequest request,
-    final SearchEntry entry)
+  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
     throws LdapException
   {
     if (entry.getAttribute(dnAttributeName) == null) {
@@ -96,8 +88,7 @@ public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(HASH_CODE_SEED, addIfExists, dnAttributeName);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, addIfExists, dnAttributeName);
   }
 
 

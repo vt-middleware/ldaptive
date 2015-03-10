@@ -7,18 +7,15 @@ import java.util.Set;
 import org.ldaptive.ssl.SslConfig;
 
 /**
- * Reads properties specific to {@link SslConfig} and returns an initialized
- * object of that type.
+ * Reads properties specific to {@link SslConfig} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class SslConfigPropertySource
-  extends AbstractPropertySource<SslConfig>
+public final class SslConfigPropertySource extends AbstractPropertySource<SslConfig>
 {
 
   /** Invoker for ssl config. */
-  private static final SslConfigPropertyInvoker INVOKER =
-    new SslConfigPropertyInvoker(SslConfig.class);
+  private static final SslConfigPropertyInvoker INVOKER = new SslConfigPropertyInvoker(SslConfig.class);
 
 
   /**
@@ -50,9 +47,7 @@ public final class SslConfigPropertySource
    * @param  config  ssl config to invoke properties on
    * @param  readers  to read properties from
    */
-  public SslConfigPropertySource(
-    final SslConfig config,
-    final Reader... readers)
+  public SslConfigPropertySource(final SslConfig config, final Reader... readers)
   {
     this(config, loadProperties(readers));
   }
@@ -77,10 +72,7 @@ public final class SslConfigPropertySource
    * @param  domain  that properties are in
    * @param  props  to read properties from
    */
-  public SslConfigPropertySource(
-    final SslConfig config,
-    final PropertyDomain domain,
-    final Properties props)
+  public SslConfigPropertySource(final SslConfig config, final PropertyDomain domain, final Properties props)
   {
     super(config, domain, props);
   }

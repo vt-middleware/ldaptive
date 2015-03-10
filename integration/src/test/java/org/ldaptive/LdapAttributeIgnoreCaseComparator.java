@@ -9,13 +9,11 @@ import org.ldaptive.io.ValueTranscoder;
  *
  * @author  Middleware Services
  */
-public class LdapAttributeIgnoreCaseComparator
-  implements Comparator<LdapAttribute>
+public class LdapAttributeIgnoreCaseComparator implements Comparator<LdapAttribute>
 {
 
   /** for lower casing values. */
-  private static final LowerCaseValueTranscoder TRANSCODER =
-    new LowerCaseValueTranscoder();
+  private static final LowerCaseValueTranscoder TRANSCODER = new LowerCaseValueTranscoder();
 
 
   /**
@@ -24,8 +22,8 @@ public class LdapAttributeIgnoreCaseComparator
    * @param  a  first attribute for the comparison
    * @param  b  second attribute for the comparison
    *
-   * @return  a negative integer, zero, or a positive integer as the first
-   * argument is less than, equal to, or greater than the second.
+   * @return  a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater
+   *          than the second.
    */
   public int compare(final LdapAttribute a, final LdapAttribute b)
   {
@@ -55,11 +53,8 @@ public class LdapAttributeIgnoreCaseComparator
   }
 
 
-  /**
-   * Decodes and encodes a string by invoking {@link String#toLowerCase()}.
-   */
-  private static class LowerCaseValueTranscoder
-    implements ValueTranscoder<String>
+  /** Decodes and encodes a string by invoking {@link String#toLowerCase()}. */
+  private static class LowerCaseValueTranscoder implements ValueTranscoder<String>
   {
 
 
@@ -73,8 +68,7 @@ public class LdapAttributeIgnoreCaseComparator
     @Override
     public String decodeBinaryValue(final byte[] value)
     {
-      throw new UnsupportedOperationException(
-        "Binary values cannot be lower cased");
+      throw new UnsupportedOperationException("Binary values cannot be lower cased");
     }
 
 
@@ -88,8 +82,7 @@ public class LdapAttributeIgnoreCaseComparator
     @Override
     public byte[] encodeBinaryValue(final String value)
     {
-      throw new UnsupportedOperationException(
-        "Binary values cannot be lower cased");
+      throw new UnsupportedOperationException("Binary values cannot be lower cased");
     }
 
 

@@ -11,8 +11,7 @@ import org.ldaptive.LdapException;
  *
  * @author  Middleware Services
  */
-public class SearchRoleResolver extends AbstractSearchRoleResolver
-  implements ConnectionFactoryManager
+public class SearchRoleResolver extends AbstractSearchRoleResolver implements ConnectionFactoryManager
 {
 
   /** Connection factory. */
@@ -78,11 +77,6 @@ public class SearchRoleResolver extends AbstractSearchRoleResolver
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::factory=%s]",
-        getClass().getName(),
-        hashCode(),
-        factory);
+    return String.format("[%s@%d::factory=%s]", getClass().getName(), hashCode(), factory);
   }
 }

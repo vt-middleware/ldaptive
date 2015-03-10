@@ -47,10 +47,7 @@ public class AuthenticationRequest
    * @param  c  credential to authenticate the user
    * @param  attrs  attributes to return
    */
-  public AuthenticationRequest(
-    final String id,
-    final Credential c,
-    final String... attrs)
+  public AuthenticationRequest(final String id, final Credential c, final String... attrs)
   {
     setUser(id);
     setCredential(c);
@@ -128,11 +125,6 @@ public class AuthenticationRequest
   public String toString()
   {
     return
-      String.format(
-        "[%s@%d::user=%s, retAttrs=%s]",
-        getClass().getName(),
-        hashCode(),
-        user,
-        Arrays.toString(retAttrs));
+      String.format("[%s@%d::user=%s, retAttrs=%s]", getClass().getName(), hashCode(), user, Arrays.toString(retAttrs));
   }
 }

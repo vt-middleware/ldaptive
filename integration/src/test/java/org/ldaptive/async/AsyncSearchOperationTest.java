@@ -70,27 +70,22 @@ public class AsyncSearchOperationTest extends AbstractTest
     }
   )
   @Test(groups = {"async"})
-  public void search(
-    final String dn,
-    final String filter,
-    final String returnAttrs,
-    final String ldifFile)
+  public void search(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    Connection conn = TestUtils.createConnection();
+    final Connection conn = TestUtils.createConnection();
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
     try {
       conn.open();
+
       final AsyncSearchOperation search = new AsyncSearchOperation(conn);
-      final SearchRequest request = new SearchRequest(
-        dn, new SearchFilter(filter), returnAttrs.split("\\|"));
-      FutureResponse<SearchResult> response = search.execute(request);
+      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter), returnAttrs.split("\\|"));
+      final FutureResponse<SearchResult> response = search.execute(request);
       AssertJUnit.assertTrue(response.getResult().size() > 0);
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      TestUtils.assertEquals(
-        TestUtils.convertLdifToResult(expected), response.getResult());
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), response.getResult());
     } catch (ExecutionException | IllegalStateException e) {
       throw (Exception) e.getCause();
     } finally {

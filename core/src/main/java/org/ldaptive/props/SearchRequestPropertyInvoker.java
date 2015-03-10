@@ -36,25 +36,15 @@ public class SearchRequestPropertyInvoker extends AbstractPropertyInvoker
       if (SearchFilter.class.isAssignableFrom(type)) {
         newValue = new SearchFilter(value);
       } else if (RequestControl[].class.isAssignableFrom(type)) {
-        newValue = createArrayTypeFromPropertyValue(
-          RequestControl.class,
-          value);
+        newValue = createArrayTypeFromPropertyValue(RequestControl.class, value);
       } else if (ReferralHandler.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(
-          ReferralHandler.class,
-          value);
+        newValue = createTypeFromPropertyValue(ReferralHandler.class, value);
       } else if (SearchEntryHandler[].class.isAssignableFrom(type)) {
-        newValue = createArrayTypeFromPropertyValue(
-          SearchEntryHandler.class,
-          value);
+        newValue = createArrayTypeFromPropertyValue(SearchEntryHandler.class, value);
       } else if (SearchReferenceHandler[].class.isAssignableFrom(type)) {
-        newValue = createArrayTypeFromPropertyValue(
-          SearchReferenceHandler.class,
-          value);
+        newValue = createArrayTypeFromPropertyValue(SearchReferenceHandler.class, value);
       } else if (IntermediateResponseHandler[].class.isAssignableFrom(type)) {
-        newValue = createArrayTypeFromPropertyValue(
-          IntermediateResponseHandler.class,
-          value);
+        newValue = createArrayTypeFromPropertyValue(IntermediateResponseHandler.class, value);
       } else {
         newValue = convertSimpleType(type, value);
       }

@@ -41,10 +41,7 @@ public class VerifyNameControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "request"
-  )
+  @Test(groups = {"control"}, dataProvider = "request")
   public void encode(final byte[] berValue, final VerifyNameControl expected)
     throws Exception
   {

@@ -10,8 +10,7 @@ import org.ldaptive.CompareRequest;
  *
  * @author  Middleware Services
  */
-public class CompareOperationWorker
-  extends AbstractOperationWorker<CompareRequest, Boolean>
+public class CompareOperationWorker extends AbstractOperationWorker<CompareRequest, Boolean>
 {
 
 
@@ -32,9 +31,7 @@ public class CompareOperationWorker
    * @param  op  compare operation to execute
    * @param  es  executor service
    */
-  public CompareOperationWorker(
-    final CompareOperation op,
-    final ExecutorService es)
+  public CompareOperationWorker(final CompareOperation op, final ExecutorService es)
   {
     super(op, es);
   }

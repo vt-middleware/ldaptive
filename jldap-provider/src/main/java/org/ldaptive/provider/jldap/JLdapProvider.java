@@ -11,8 +11,7 @@ import org.ldaptive.provider.ProviderConnectionFactory;
 import org.ldaptive.ssl.TLSSocketFactory;
 
 /**
- * JLdap provider implementation. Provides connection factories for clear, SSL,
- * and TLS connections.
+ * JLdap provider implementation. Provides connection factories for clear, SSL, and TLS connections.
  *
  * @author  Middleware Services
  */
@@ -31,8 +30,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
 
 
   @Override
-  public ProviderConnectionFactory<JLdapProviderConfig> getConnectionFactory(
-    final ConnectionConfig cc)
+  public ProviderConnectionFactory<JLdapProviderConfig> getConnectionFactory(final ConnectionConfig cc)
   {
     ProviderConnectionFactory<JLdapProviderConfig> cf;
     if (cc.getUseStartTLS()) {
@@ -47,9 +45,8 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
 
 
   /**
-   * Returns a jldap startTLS connection factory using the properties found in
-   * the supplied connection config. If the supplied constraints is null, the
-   * environment is retrieved from {@link
+   * Returns a jldap startTLS connection factory using the properties found in the supplied connection config. If the
+   * supplied constraints is null, the environment is retrieved from {@link
    * #getDefaultLDAPConstraints(ConnectionConfig)}.
    *
    * @param  cc  connection config
@@ -67,16 +64,13 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
         config,
         constraints != null ? constraints : getDefaultLDAPConstraints(cc),
         (int) cc.getResponseTimeout(),
-        config.getSslSocketFactory() != null
-          ? config.getSslSocketFactory()
-          : getHostnameVerifierSocketFactory(cc));
+        config.getSslSocketFactory() != null ? config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
   }
 
 
   /**
-   * Returns a jldap SSL connection factory using the properties found in the
-   * supplied connection config. If the supplied constraints is null, the
-   * environment is retrieved from {@link
+   * Returns a jldap SSL connection factory using the properties found in the supplied connection config. If the
+   * supplied constraints is null, the environment is retrieved from {@link
    * #getDefaultLDAPConstraints(ConnectionConfig)}.
    *
    * @param  cc  connection config
@@ -94,17 +88,13 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
         config,
         constraints != null ? constraints : getDefaultLDAPConstraints(cc),
         (int) cc.getResponseTimeout(),
-        config.getSslSocketFactory() != null
-          ? config.getSslSocketFactory()
-          : getHostnameVerifierSocketFactory(cc));
+        config.getSslSocketFactory() != null ? config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
   }
 
 
   /**
-   * Returns a jldap connection factory using the properties found in the
-   * supplied connection config. If the supplied constraints is null, the
-   * environment is retrieved from {@link
-   * #getDefaultLDAPConstraints(ConnectionConfig)}.
+   * Returns a jldap connection factory using the properties found in the supplied connection config. If the supplied
+   * constraints is null, the environment is retrieved from {@link #getDefaultLDAPConstraints(ConnectionConfig)}.
    *
    * @param  cc  connection config
    * @param  constraints  connection constraints or null to use the default
@@ -131,16 +121,12 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
    *
    * @return  SSL socket factory
    */
-  protected SSLSocketFactory getHostnameVerifierSocketFactory(
-    final ConnectionConfig cc)
+  protected SSLSocketFactory getHostnameVerifierSocketFactory(final ConnectionConfig cc)
   {
     // JLdap does not do hostname verification by default
     // set a default hostname verifier
     final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
-    return
-      TLSSocketFactory.getHostnameVerifierFactory(
-        cc.getSslConfig(),
-        ldapUrl.getHostnames());
+    return TLSSocketFactory.getHostnameVerifierFactory(cc.getSslConfig(), ldapUrl.getHostnames());
   }
 
 

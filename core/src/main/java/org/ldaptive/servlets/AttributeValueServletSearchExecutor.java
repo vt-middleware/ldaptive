@@ -9,21 +9,17 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResult;
 
 /**
- * Writes a single attribute value to the HTTP response. Useful for providing a
- * mechanism to download large LDAP attributes, such as certificates and photos.
- * See {@link AbstractServletSearchExecutor}.
+ * Writes a single attribute value to the HTTP response. Useful for providing a mechanism to download large LDAP
+ * attributes, such as certificates and photos. See {@link AbstractServletSearchExecutor}.
  *
  * @author  Middleware Services
  */
-public class AttributeValueServletSearchExecutor
-  extends AbstractServletSearchExecutor
+public class AttributeValueServletSearchExecutor extends AbstractServletSearchExecutor
 {
 
 
   @Override
-  protected void writeResponse(
-    final SearchResult result,
-    final HttpServletResponse response)
+  protected void writeResponse(final SearchResult result, final HttpServletResponse response)
     throws IOException
   {
     final LdapEntry e = result.getEntry();
@@ -32,9 +28,7 @@ public class AttributeValueServletSearchExecutor
       if (a != null && a.size() > 0) {
         if (a.isBinary()) {
           response.setContentType("application/octet-stream");
-          response.setHeader(
-            "Content-Disposition",
-            String.format("attachment; filename=\"%s.bin\"", a.getName()));
+          response.setHeader("Content-Disposition", String.format("attachment; filename=\"%s.bin\"", a.getName()));
         } else {
           response.setContentType("text/plain");
         }

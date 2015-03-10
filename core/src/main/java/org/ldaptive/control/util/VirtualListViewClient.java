@@ -44,15 +44,12 @@ public class VirtualListViewClient
 
 
   /**
-   * Performs a search operation with the {@link
-   * org.ldaptive.control.VirtualListViewRequestControl}. The supplied request
-   * is modified in the following way:
+   * Performs a search operation with the {@link org.ldaptive.control.VirtualListViewRequestControl}. The supplied
+   * request is modified in the following way:
    *
    * <ul>
-   *   <li>{@link SearchRequest#setControls(
-   *     org.ldaptive.control.RequestControl...)} is invoked with {@link
-   *     SortRequestControl} and {@link
-   *     org.ldaptive.control.VirtualListViewRequestControl}</li>
+   *   <li>{@link SearchRequest#setControls( org.ldaptive.control.RequestControl...)} is invoked with {@link
+   *     SortRequestControl} and {@link org.ldaptive.control.VirtualListViewRequestControl}</li>
    * </ul>
    *
    * @param  request  search request to execute
@@ -62,9 +59,7 @@ public class VirtualListViewClient
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> execute(
-    final SearchRequest request,
-    final VirtualListViewParams params)
+  public Response<SearchResult> execute(final SearchRequest request, final VirtualListViewParams params)
     throws LdapException
   {
     final SearchOperation search = new SearchOperation(connection);
@@ -74,19 +69,16 @@ public class VirtualListViewClient
 
 
   /**
-   * Performs a search operation with the {@link
-   * org.ldaptive.control.VirtualListViewRequestControl}. The supplied request
-   * is modified in the following way:
+   * Performs a search operation with the {@link org.ldaptive.control.VirtualListViewRequestControl}. The supplied
+   * request is modified in the following way:
    *
    * <ul>
-   *   <li>{@link SearchRequest#setControls(
-   *     org.ldaptive.control.RequestControl...)} is invoked with {@link
-   *     SortRequestControl} and {@link
-   *     org.ldaptive.control.VirtualListViewRequestControl}</li>
+   *   <li>{@link SearchRequest#setControls( org.ldaptive.control.RequestControl...)} is invoked with {@link
+   *     SortRequestControl} and {@link org.ldaptive.control.VirtualListViewRequestControl}</li>
    * </ul>
    *
-   * <p>The content count and context id are extracted from the supplied
-   * response and replayed as appropriate in the request.</p>
+   * <p>The content count and context id are extracted from the supplied response and replayed as appropriate in the
+   * request.</p>
    *
    * @param  request  search request to execute
    * @param  params  virtual list view data
@@ -103,9 +95,7 @@ public class VirtualListViewClient
     throws LdapException
   {
     final SearchOperation search = new SearchOperation(connection);
-    request.setControls(
-      sortControl,
-      params.createRequestControl(response, true));
+    request.setControls(sortControl, params.createRequestControl(response, true));
     return search.execute(request);
   }
 }

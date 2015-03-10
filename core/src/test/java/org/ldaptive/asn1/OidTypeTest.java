@@ -27,9 +27,7 @@ public class OidTypeTest
     return
       new Object[][] {
         new Object[] {
-          new byte[] {
-            (byte) 0x01,
-          },
+          new byte[] {(byte) 0x01, },
           "0.1",
         },
         // account
@@ -66,9 +64,7 @@ public class OidTypeTest
         },
         // attributeTypes
         new Object[] {
-          new byte[] {
-            (byte) 0x55, (byte) 0x15, (byte) 0x05,
-          },
+          new byte[] {(byte) 0x55, (byte) 0x15, (byte) 0x05, },
           "2.5.21.5",
         },
         // calCalURI
@@ -89,9 +85,7 @@ public class OidTypeTest
         },
         // CN
         new Object[] {
-          new byte[] {
-            (byte) 0x55, (byte) 0x04, (byte) 0x03,
-          },
+          new byte[] {(byte) 0x55, (byte) 0x04, (byte) 0x03, },
           "2.5.4.3",
         },
         // distinguishedNameTableKey
@@ -142,10 +136,7 @@ public class OidTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "oids"
-  )
+  @Test(groups = {"asn1"}, dataProvider = "oids")
   public void decode(final byte[] bytes, final String expected)
     throws Exception
   {
@@ -159,10 +150,7 @@ public class OidTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "oids"
-  )
+  @Test(groups = {"asn1"}, dataProvider = "oids")
   public void encode(final byte[] expected, final String oid)
     throws Exception
   {
@@ -170,13 +158,8 @@ public class OidTypeTest
   }
 
 
-  /**
-   * @param  oid  to encode.
-   */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "invalid-oids"
-  )
+  /** @param  oid  to encode. */
+  @Test(groups = {"asn1"}, dataProvider = "invalid-oids")
   public void invalid(final String oid)
   {
     try {

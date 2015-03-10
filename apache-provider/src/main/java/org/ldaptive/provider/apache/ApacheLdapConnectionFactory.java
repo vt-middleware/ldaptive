@@ -15,8 +15,7 @@ import org.ldaptive.provider.ConnectionException;
  *
  * @author  Middleware Services
  */
-public class ApacheLdapConnectionFactory
-  extends AbstractProviderConnectionFactory<ApacheLdapProviderConfig>
+public class ApacheLdapConnectionFactory extends AbstractProviderConnectionFactory<ApacheLdapProviderConfig>
 {
 
   /** Connection configuration. */
@@ -63,8 +62,7 @@ public class ApacheLdapConnectionFactory
     ApacheLdapConnection conn = null;
     boolean closeConn = false;
     try {
-      final LdapNetworkConnection lc = new LdapNetworkConnection(
-        ldapConnectionConfig);
+      final LdapNetworkConnection lc = new LdapNetworkConnection(ldapConnectionConfig);
       conn = new ApacheLdapConnection(lc, getProviderConfig());
       lc.connect();
       if (useStartTLS) {
@@ -75,9 +73,7 @@ public class ApacheLdapConnectionFactory
       }
     } catch (LdapOperationException e) {
       closeConn = true;
-      throw new ConnectionException(
-        e,
-        ResultCode.valueOf(e.getResultCode().getValue()));
+      throw new ConnectionException(e, ResultCode.valueOf(e.getResultCode().getValue()));
     } catch (org.apache.directory.api.ldap.model.exception.LdapException e) {
       closeConn = true;
       throw new ConnectionException(e);

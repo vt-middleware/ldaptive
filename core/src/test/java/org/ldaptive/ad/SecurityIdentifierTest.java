@@ -50,10 +50,7 @@ public class SecurityIdentifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"ad"},
-    dataProvider = "sids"
-  )
+  @Test(groups = {"ad"}, dataProvider = "sids")
   public void testToString(final String sidString, final byte[] sid)
     throws Exception
   {
@@ -67,10 +64,7 @@ public class SecurityIdentifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"ad"},
-    dataProvider = "sids"
-  )
+  @Test(groups = {"ad"}, dataProvider = "sids")
   public void testToBytes(final String sidString, final byte[] sid)
     throws Exception
   {

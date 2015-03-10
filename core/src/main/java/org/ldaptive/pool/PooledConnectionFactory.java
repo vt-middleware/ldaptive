@@ -55,8 +55,7 @@ public class PooledConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Returns a connection from the pool. Connections returned from this method
-   * are ready to perform ldap operations.
+   * Returns a connection from the pool. Connections returned from this method are ready to perform ldap operations.
    *
    * @return  connection
    *
@@ -73,7 +72,6 @@ public class PooledConnectionFactory implements ConnectionFactory
   @Override
   public String toString()
   {
-    return
-      String.format("[%s@%d::pool=%s]", getClass().getName(), hashCode(), pool);
+    return String.format("[%s@%d::pool=%s]", getClass().getName(), hashCode(), pool);
   }
 }

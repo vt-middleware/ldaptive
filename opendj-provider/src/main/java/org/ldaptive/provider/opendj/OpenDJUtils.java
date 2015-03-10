@@ -24,8 +24,7 @@ import org.ldaptive.SortBehavior;
 import org.ldaptive.control.ResponseControl;
 
 /**
- * Provides methods for converting between OpenDJ specific objects and ldaptive
- * specific objects.
+ * Provides methods for converting between OpenDJ specific objects and ldaptive specific objects.
  *
  * @author  Middleware Services
  */
@@ -82,8 +81,7 @@ public class OpenDJUtils
 
 
   /**
-   * Returns an opendj byte string that represents the values in the supplied
-   * collection.
+   * Returns an opendj byte string that represents the values in the supplied collection.
    *
    * @param  values  to convert to byte strings
    *
@@ -103,8 +101,7 @@ public class OpenDJUtils
 
 
   /**
-   * Returns an opendj byte string that represents the values in the supplied
-   * collection.
+   * Returns an opendj byte string that represents the values in the supplied collection.
    *
    * @param  values  to convert to byte strings
    *
@@ -158,8 +155,7 @@ public class OpenDJUtils
 
 
   /**
-   * Returns an opendj attribute that represents the values in the supplied ldap
-   * attribute.
+   * Returns an opendj attribute that represents the values in the supplied ldap attribute.
    *
    * @param  la  ldap attribute
    *
@@ -169,13 +165,9 @@ public class OpenDJUtils
   {
     Attribute attribute;
     if (la.isBinary()) {
-      attribute = new LinkedAttribute(
-        la.getName(),
-        (Object[]) fromBinaryValues(la.getBinaryValues()));
+      attribute = new LinkedAttribute(la.getName(), (Object[]) fromBinaryValues(la.getBinaryValues()));
     } else {
-      attribute = new LinkedAttribute(
-        la.getName(),
-        (Object[]) fromStringValues(la.getStringValues()));
+      attribute = new LinkedAttribute(la.getName(), (Object[]) fromStringValues(la.getStringValues()));
     }
     return attribute;
   }
@@ -193,8 +185,7 @@ public class OpenDJUtils
     boolean isBinary = false;
     if (a.getAttributeDescriptionAsString().contains(";binary")) {
       isBinary = true;
-    } else if (binaryAttrs != null &&
-               binaryAttrs.contains(a.getAttributeDescriptionAsString())) {
+    } else if (binaryAttrs != null && binaryAttrs.contains(a.getAttributeDescriptionAsString())) {
       isBinary = true;
     }
 
@@ -210,8 +201,7 @@ public class OpenDJUtils
 
 
   /**
-   * Returns a list of opendj attribute that represents the values in the
-   * supplied ldap attributes.
+   * Returns a list of opendj attribute that represents the values in the supplied ldap attributes.
    *
    * @param  c  ldap attributes
    *
@@ -254,10 +244,7 @@ public class OpenDJUtils
    *
    * @return  search entry
    */
-  public SearchEntry toSearchEntry(
-    final Entry e,
-    final ResponseControl[] c,
-    final int id)
+  public SearchEntry toSearchEntry(final Entry e, final ResponseControl[] c, final int id)
   {
     final SearchEntry se = new SearchEntry(id, c, sortBehavior);
     se.setDn(e.getName().toString());
@@ -275,20 +262,15 @@ public class OpenDJUtils
    *
    * @return  opendj modifications
    */
-  public Modification[] fromAttributeModification(
-    final AttributeModification[] am)
+  public Modification[] fromAttributeModification(final AttributeModification[] am)
   {
     final Modification[] mods = new Modification[am.length];
     for (int i = 0; i < am.length; i++) {
       final Attribute a = fromLdapAttribute(am[i].getAttribute());
       if (am[i].getAttribute().isBinary()) {
-        mods[i] = new Modification(
-          getModificationType(am[i].getAttributeModificationType()),
-          a);
+        mods[i] = new Modification(getModificationType(am[i].getAttributeModificationType()), a);
       } else {
-        mods[i] = new Modification(
-          getModificationType(am[i].getAttributeModificationType()),
-          a);
+        mods[i] = new Modification(getModificationType(am[i].getAttributeModificationType()), a);
       }
     }
     return mods;
@@ -308,10 +290,7 @@ public class OpenDJUtils
     if (sk != null) {
       keys = new SortKey[sk.length];
       for (int i = 0; i < sk.length; i++) {
-        keys[i] = new SortKey(
-          sk[i].getAttributeDescription(),
-          sk[i].getReverseOrder(),
-          sk[i].getMatchingRuleId());
+        keys[i] = new SortKey(sk[i].getAttributeDescription(), sk[i].getReverseOrder(), sk[i].getMatchingRuleId());
       }
     }
     return keys;
@@ -319,15 +298,13 @@ public class OpenDJUtils
 
 
   /**
-   * Returns the opendj modification type for the supplied attribute
-   * modification type.
+   * Returns the opendj modification type for the supplied attribute modification type.
    *
    * @param  am  attribute modification type
    *
    * @return  modification type
    */
-  protected static ModificationType getModificationType(
-    final AttributeModificationType am)
+  protected static ModificationType getModificationType(final AttributeModificationType am)
   {
     ModificationType type = null;
     if (am == AttributeModificationType.ADD) {

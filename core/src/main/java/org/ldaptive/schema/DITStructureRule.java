@@ -150,8 +150,7 @@ public class DITStructureRule extends AbstractNamedSchemaElement
 
 
   /**
-   * Parses the supplied definition string and creates an initialized DIT
-   * structure rule.
+   * Parses the supplied definition string and creates an initialized DIT structure rule.
    *
    * @param  definition  to parse
    *
@@ -164,13 +163,10 @@ public class DITStructureRule extends AbstractNamedSchemaElement
   {
     final Matcher m = DEFINITION_PATTERN.matcher(definition);
     if (!m.matches()) {
-      throw new ParseException(
-        "Invalid DIT structure rule definition: " + definition,
-        definition.length());
+      throw new ParseException("Invalid DIT structure rule definition: " + definition, definition.length());
     }
 
-    final DITStructureRule dsrd = new DITStructureRule(
-      Integer.parseInt(m.group(1).trim()));
+    final DITStructureRule dsrd = new DITStructureRule(Integer.parseInt(m.group(1).trim()));
 
     // CheckStyle:MagicNumber OFF
     // parse names

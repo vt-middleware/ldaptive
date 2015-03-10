@@ -39,9 +39,7 @@ public class ProviderConfigPropertyInvoker extends AbstractPropertyInvoker
         } else if ("RANDOM".equals(value)) {
           newValue = ConnectionStrategy.RANDOM;
         } else {
-          newValue = createTypeFromPropertyValue(
-            ConnectionStrategy.class,
-            value);
+          newValue = createTypeFromPropertyValue(ConnectionStrategy.class, value);
         }
       } else if (ControlProcessor.class.isAssignableFrom(type)) {
         newValue = createTypeFromPropertyValue(ControlProcessor.class, value);

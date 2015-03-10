@@ -84,11 +84,6 @@ public class BindPassivator implements Passivator<Connection>
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::bindRequest=%s]",
-        getClass().getName(),
-        hashCode(),
-        bindRequest);
+    return String.format("[%s@%d::bindRequest=%s]", getClass().getName(), hashCode(), bindRequest);
   }
 }

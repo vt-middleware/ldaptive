@@ -18,8 +18,7 @@ import org.ldaptive.SortBehavior;
 import org.ldaptive.control.ResponseControl;
 
 /**
- * Provides methods for converting between Unbound ID specific objects and
- * ldaptive specific objects.
+ * Provides methods for converting between Unbound ID specific objects and ldaptive specific objects.
  *
  * @author  Middleware Services
  */
@@ -76,8 +75,7 @@ public class UnboundIDUtils
 
 
   /**
-   * Returns an unbound id attribute that represents the values in the supplied
-   * ldap attribute.
+   * Returns an unbound id attribute that represents the values in the supplied ldap attribute.
    *
    * @param  la  ldap attribute
    *
@@ -87,9 +85,7 @@ public class UnboundIDUtils
   {
     Attribute attribute;
     if (la.isBinary()) {
-      attribute = new Attribute(
-        la.getName(),
-        la.getBinaryValues().toArray(new byte[la.size()][]));
+      attribute = new Attribute(la.getName(), la.getBinaryValues().toArray(new byte[la.size()][]));
     } else {
       attribute = new Attribute(la.getName(), la.getStringValues());
     }
@@ -125,8 +121,7 @@ public class UnboundIDUtils
 
 
   /**
-   * Returns a list of unbound id attribute that represents the values in the
-   * supplied ldap attributes.
+   * Returns a list of unbound id attribute that represents the values in the supplied ldap attributes.
    *
    * @param  c  ldap attributes
    *
@@ -151,10 +146,7 @@ public class UnboundIDUtils
    *
    * @return  search entry
    */
-  public SearchEntry toSearchEntry(
-    final Entry e,
-    final ResponseControl[] c,
-    final int id)
+  public SearchEntry toSearchEntry(final Entry e, final ResponseControl[] c, final int id)
   {
     final SearchEntry se = new SearchEntry(id, c, sortBehavior);
     se.setDn(e.getDN());
@@ -166,15 +158,13 @@ public class UnboundIDUtils
 
 
   /**
-   * Returns unbound id modifications using the supplied attribute
-   * modifications.
+   * Returns unbound id modifications using the supplied attribute modifications.
    *
    * @param  am  attribute modifications
    *
    * @return  unbound id modifications
    */
-  public Modification[] fromAttributeModification(
-    final AttributeModification[] am)
+  public Modification[] fromAttributeModification(final AttributeModification[] am)
   {
     final Modification[] mods = new Modification[am.length];
     for (int i = 0; i < am.length; i++) {
@@ -208,10 +198,7 @@ public class UnboundIDUtils
     if (sk != null) {
       keys = new SortKey[sk.length];
       for (int i = 0; i < sk.length; i++) {
-        keys[i] = new SortKey(
-          sk[i].getAttributeDescription(),
-          sk[i].getMatchingRuleId(),
-          sk[i].getReverseOrder());
+        keys[i] = new SortKey(sk[i].getAttributeDescription(), sk[i].getMatchingRuleId(), sk[i].getReverseOrder());
       }
     }
     return keys;
@@ -219,15 +206,13 @@ public class UnboundIDUtils
 
 
   /**
-   * Returns the unbound id modification type for the supplied attribute
-   * modification type.
+   * Returns the unbound id modification type for the supplied attribute modification type.
    *
    * @param  am  attribute modification type
    *
    * @return  modification type
    */
-  protected static ModificationType getModificationType(
-    final AttributeModificationType am)
+  protected static ModificationType getModificationType(final AttributeModificationType am)
   {
     ModificationType type = null;
     if (am == AttributeModificationType.ADD) {

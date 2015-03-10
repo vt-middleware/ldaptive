@@ -94,9 +94,7 @@ public class ApacheLdapConnection implements ProviderConnection
    * @param  lc  ldap connection
    * @param  pc  provider configuration
    */
-  public ApacheLdapConnection(
-    final LdapNetworkConnection lc,
-    final ApacheLdapProviderConfig pc)
+  public ApacheLdapConnection(final LdapNetworkConnection lc, final ApacheLdapProviderConfig pc)
   {
     connection = lc;
     config = pc;
@@ -119,8 +117,7 @@ public class ApacheLdapConnection implements ProviderConnection
     throws LdapException
   {
     if (controls != null) {
-      throw new UnsupportedOperationException(
-        "Provider does not support unbind with controls");
+      throw new UnsupportedOperationException("Provider does not support unbind with controls");
     }
     if (connection != null) {
       try {
@@ -173,9 +170,7 @@ public class ApacheLdapConnection implements ProviderConnection
     try {
       final BindRequestImpl bri = new BindRequestImpl();
       if (request.getControls() != null) {
-        bri.addAllControls(
-          config.getControlProcessor().processRequestControls(
-            request.getControls()));
+        bri.addAllControls(config.getControlProcessor().processRequestControls(request.getControls()));
       }
 
       final BindResponse br = connection.bind(bri);
@@ -206,9 +201,7 @@ public class ApacheLdapConnection implements ProviderConnection
     try {
       final BindRequestImpl bri = new BindRequestImpl();
       if (request.getControls() != null) {
-        bri.addAllControls(
-          config.getControlProcessor().processRequestControls(
-            request.getControls()));
+        bri.addAllControls(config.getControlProcessor().processRequestControls(request.getControls()));
       }
       bri.setVersion3(true);
       bri.setSimple(true);
@@ -249,38 +242,34 @@ public class ApacheLdapConnection implements ProviderConnection
 
       case DIGEST_MD5:
 
-        final SaslDigestMd5Request digestMd5Request = ApacheLdapSaslUtils
-          .createDigestMd5Request(
-            request.getDn(),
-            request.getCredential(),
-            request.getSaslConfig());
+        final SaslDigestMd5Request digestMd5Request = ApacheLdapSaslUtils.createDigestMd5Request(
+          request.getDn(),
+          request.getCredential(),
+          request.getSaslConfig());
         br = connection.bind(digestMd5Request);
         break;
 
       case CRAM_MD5:
 
-        final SaslCramMd5Request cramMd5Request = ApacheLdapSaslUtils
-          .createCramMd5Request(
-            request.getDn(),
-            request.getCredential(),
-            request.getSaslConfig());
+        final SaslCramMd5Request cramMd5Request = ApacheLdapSaslUtils.createCramMd5Request(
+          request.getDn(),
+          request.getCredential(),
+          request.getSaslConfig());
         br = connection.bind(cramMd5Request);
         break;
 
       case GSSAPI:
 
-        final SaslGssApiRequest gssApiRequest = ApacheLdapSaslUtils
-          .createGssApiRequest(
-            request.getDn(),
-            request.getCredential(),
-            request.getSaslConfig());
+        final SaslGssApiRequest gssApiRequest = ApacheLdapSaslUtils.createGssApiRequest(
+          request.getDn(),
+          request.getCredential(),
+          request.getSaslConfig());
         br = connection.bind(gssApiRequest);
         break;
 
       default:
         throw new IllegalArgumentException(
-          "Unknown SASL authentication mechanism: " +
-          request.getSaslConfig().getMechanism());
+          "Unknown SASL authentication mechanism: " + request.getSaslConfig().getMechanism());
       }
       throwOperationException(request, br);
       response = createResponse(request, null, br);
@@ -302,13 +291,9 @@ public class ApacheLdapConnection implements ProviderConnection
       final ApacheLdapUtils bu = new ApacheLdapUtils();
       final AddRequestImpl ari = new AddRequestImpl();
       if (request.getControls() != null) {
-        ari.addAllControls(
-          config.getControlProcessor().processRequestControls(
-            request.getControls()));
+        ari.addAllControls(config.getControlProcessor().processRequestControls(request.getControls()));
       }
-      ari.setEntry(
-        bu.fromLdapEntry(
-          new LdapEntry(request.getDn(), request.getLdapAttributes())));
+      ari.setEntry(bu.fromLdapEntry(new LdapEntry(request.getDn(), request.getLdapAttributes())));
 
       final AddResponse ar = connection.add(ari);
       throwOperationException(request, ar);
@@ -330,9 +315,7 @@ public class ApacheLdapConnection implements ProviderConnection
     try {
       final CompareRequestImpl cri = new CompareRequestImpl();
       if (request.getControls() != null) {
-        cri.addAllControls(
-          config.getControlProcessor().processRequestControls(
-            request.getControls()));
+        cri.addAllControls(config.getControlProcessor().processRequestControls(request.getControls()));
       }
       cri.setName(new Dn(request.getDn()));
       cri.setAttributeId(request.getAttribute().getName());
@@ -362,9 +345,7 @@ public class ApacheLdapConnection implements ProviderConnection
     try {
       final DeleteRequestImpl dri = new DeleteRequestImpl();
       if (request.getControls() != null) {
-        dri.addAllControls(
-          config.getControlProcessor().processRequestControls(
-            request.getControls()));
+        dri.addAllControls(config.getControlProcessor().processRequestControls(request.getControls()));
       }
       dri.setName(new Dn(request.getDn()));
 
@@ -389,14 +370,10 @@ public class ApacheLdapConnection implements ProviderConnection
       final ApacheLdapUtils bu = new ApacheLdapUtils();
       final ModifyRequestImpl mri = new ModifyRequestImpl();
       if (request.getControls() != null) {
-        mri.addAllControls(
-          config.getControlProcessor().processRequestControls(
-            request.getControls()));
+        mri.addAllControls(config.getControlProcessor().processRequestControls(request.getControls()));
       }
       mri.setName(new Dn(request.getDn()));
-      for (
-        Modification m :
-        bu.fromAttributeModification(request.getAttributeModifications())) {
+      for (Modification m : bu.fromAttributeModification(request.getAttributeModifications())) {
         mri.addModification(m);
       }
 
@@ -422,9 +399,7 @@ public class ApacheLdapConnection implements ProviderConnection
       final Dn newDn = new Dn(request.getNewDn());
       final ModifyDnRequestImpl mdri = new ModifyDnRequestImpl();
       if (request.getControls() != null) {
-        mdri.addAllControls(
-          config.getControlProcessor().processRequestControls(
-            request.getControls()));
+        mdri.addAllControls(config.getControlProcessor().processRequestControls(request.getControls()));
       }
       mdri.setName(dn);
       mdri.setNewRdn(newDn.getRdn());
@@ -454,14 +429,10 @@ public class ApacheLdapConnection implements ProviderConnection
 
 
   @Override
-  public void searchAsync(
-    final org.ldaptive.SearchRequest request,
-    final SearchListener listener)
+  public void searchAsync(final org.ldaptive.SearchRequest request, final SearchListener listener)
     throws LdapException
   {
-    final ApacheLdapSearchListener l = new ApacheLdapSearchListener(
-      request,
-      listener);
+    final ApacheLdapSearchListener l = new ApacheLdapSearchListener(request, listener);
     l.initialize();
   }
 
@@ -472,8 +443,7 @@ public class ApacheLdapConnection implements ProviderConnection
   {
     final AbandonRequestImpl ari = new AbandonRequestImpl();
     if (controls != null) {
-      ari.addAllControls(
-        config.getControlProcessor().processRequestControls(controls));
+      ari.addAllControls(config.getControlProcessor().processRequestControls(controls));
     }
     ari.setAbandoned(messageId);
     connection.abandon(ari);
@@ -486,17 +456,14 @@ public class ApacheLdapConnection implements ProviderConnection
   {
     Response<?> response = null;
     try {
-      final ExtendedResponse apacheExtRes = connection.extended(
-        request.getOID(),
-        request.encode());
+      final ExtendedResponse apacheExtRes = connection.extended(request.getOID(), request.encode());
       throwOperationException(request, apacheExtRes);
 
       // only supports response without any value
-      final org.ldaptive.extended.ExtendedResponse<?> extRes =
-        ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(),
-          apacheExtRes.getResponseName(),
-          null);
+      final org.ldaptive.extended.ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(
+        request.getOID(),
+        apacheExtRes.getResponseName(),
+        null);
       response = createResponse(request, extRes.getValue(), apacheExtRes);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
@@ -508,20 +475,16 @@ public class ApacheLdapConnection implements ProviderConnection
 
 
   @Override
-  public void addUnsolicitedNotificationListener(
-    final UnsolicitedNotificationListener listener)
+  public void addUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
   {
-    throw new UnsupportedOperationException(
-      "Unsolicited notifications not supported");
+    throw new UnsupportedOperationException("Unsolicited notifications not supported");
   }
 
 
   @Override
-  public void removeUnsolicitedNotificationListener(
-    final UnsolicitedNotificationListener listener)
+  public void removeUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
   {
-    throw new UnsupportedOperationException(
-      "Unsolicited notifications not supported");
+    throw new UnsupportedOperationException("Unsolicited notifications not supported");
   }
 
 
@@ -533,27 +496,18 @@ public class ApacheLdapConnection implements ProviderConnection
    *
    * @throws  LdapException  wrapping the ldap exception
    */
-  protected void throwOperationException(
-    final Request request,
-    final ResultResponse resultResponse)
+  protected void throwOperationException(final Request request, final ResultResponse resultResponse)
     throws LdapException
   {
     final LdapResult ldapResult = resultResponse.getLdapResult();
     final Referral ref = ldapResult.getReferral();
     ProviderUtils.throwOperationException(
       config.getOperationExceptionResultCodes(),
-      String.format(
-        "Ldap returned result code: %s",
-        ldapResult.getResultCode()),
+      String.format("Ldap returned result code: %s", ldapResult.getResultCode()),
       ldapResult.getResultCode().getResultCode(),
-      ldapResult.getMatchedDn() != null
-        ? ldapResult.getMatchedDn().getName() : null,
-      processResponseControls(
-        config.getControlProcessor(),
-        request.getControls(),
-        resultResponse),
-      ref != null
-        ? ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) : null,
+      ldapResult.getMatchedDn() != null ? ldapResult.getMatchedDn().getName() : null,
+      processResponseControls(config.getControlProcessor(), request.getControls(), resultResponse),
+      ref != null ? ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) : null,
       false);
   }
 
@@ -568,10 +522,7 @@ public class ApacheLdapConnection implements ProviderConnection
    *
    * @return  operation response
    */
-  protected <T> Response<T> createResponse(
-    final Request request,
-    final T result,
-    final ResultResponse resultResponse)
+  protected <T> Response<T> createResponse(final Request request, final T result, final ResultResponse resultResponse)
   {
     final LdapResult ldapResult = resultResponse.getLdapResult();
     final Referral ref = ldapResult.getReferral();
@@ -580,23 +531,15 @@ public class ApacheLdapConnection implements ProviderConnection
         result,
         ResultCode.valueOf(ldapResult.getResultCode().getValue()),
         ldapResult.getDiagnosticMessage(),
-        ldapResult.getMatchedDn() != null
-          ? ldapResult.getMatchedDn().getName()
-          : null,
-        processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          resultResponse),
-        ref != null
-          ? ref.getLdapUrls().toArray(new String[ref.getReferralLength()])
-          : null,
+        ldapResult.getMatchedDn() != null ? ldapResult.getMatchedDn().getName() : null,
+        processResponseControls(config.getControlProcessor(), request.getControls(), resultResponse),
+        ref != null ? ref.getLdapUrls().toArray(new String[ref.getReferralLength()]) : null,
         resultResponse.getMessageId());
   }
 
 
   /**
-   * Determines if the supplied ldap exception should result in an operation
-   * exception.
+   * Determines if the supplied ldap exception should result in an operation exception.
    *
    * @param  e  that was produced
    *
@@ -617,15 +560,13 @@ public class ApacheLdapConnection implements ProviderConnection
 
 
   /**
-   * Determines if the supplied ldap exception should result in an operation
-   * exception.
+   * Determines if the supplied ldap exception should result in an operation exception.
    *
    * @param  e  that was produced
    *
    * @throws  LdapException  wrapping the ldap exception
    */
-  protected void processLdapException(
-    final org.apache.directory.api.ldap.model.exception.LdapException e)
+  protected void processLdapException(final org.apache.directory.api.ldap.model.exception.LdapException e)
     throws LdapException
   {
     if (e instanceof InvalidConnectionException) {
@@ -644,8 +585,7 @@ public class ApacheLdapConnection implements ProviderConnection
 
 
   /**
-   * Retrieves the response controls from the supplied response and processes
-   * them with the supplied control processor.
+   * Retrieves the response controls from the supplied response and processes them with the supplied control processor.
    *
    * @param  processor  control processor
    * @param  requestControls  that produced this response
@@ -681,8 +621,7 @@ public class ApacheLdapConnection implements ProviderConnection
 
 
   /** Search iterator for apache ldap search results. */
-  protected class ApacheLdapSearchIterator extends AbstractApacheLdapSearch
-    implements SearchIterator
+  protected class ApacheLdapSearchIterator extends AbstractApacheLdapSearch implements SearchIterator
   {
 
     /** Response data. */
@@ -778,8 +717,7 @@ public class ApacheLdapConnection implements ProviderConnection
     {
       SearchItem si = null;
       try {
-        final org.apache.directory.api.ldap.model.message.Response curRes =
-          cursor.get();
+        final org.apache.directory.api.ldap.model.message.Response curRes = cursor.get();
         if (curRes instanceof SearchResultEntry) {
           si = processSearchResultEntry((SearchResultEntry) curRes);
         } else if (curRes instanceof SearchResultReference) {
@@ -825,9 +763,7 @@ public class ApacheLdapConnection implements ProviderConnection
      * @param  sr  search request
      * @param  sl  search listener
      */
-    public ApacheLdapSearchListener(
-      final org.ldaptive.SearchRequest sr,
-      final SearchListener sl)
+    public ApacheLdapSearchListener(final org.ldaptive.SearchRequest sr, final SearchListener sl)
     {
       super(sr);
       listener = sl;
@@ -847,17 +783,13 @@ public class ApacheLdapConnection implements ProviderConnection
       try {
         cursor = search(connection, request);
         while (cursor.next()) {
-          final org.apache.directory.api.ldap.model.message.Response curRes =
-            cursor.get();
+          final org.apache.directory.api.ldap.model.message.Response curRes = cursor.get();
           if (curRes instanceof SearchResultEntry) {
-            listener.searchItemReceived(
-              processSearchResultEntry((SearchResultEntry) curRes));
+            listener.searchItemReceived(processSearchResultEntry((SearchResultEntry) curRes));
           } else if (curRes instanceof SearchResultReference) {
-            listener.searchItemReceived(
-              processSearchResultReference((SearchResultReference) curRes));
+            listener.searchItemReceived(processSearchResultReference((SearchResultReference) curRes));
           } else if (curRes instanceof IntermediateResponse) {
-            listener.searchItemReceived(
-              processIntermediateResponse((IntermediateResponse) curRes));
+            listener.searchItemReceived(processIntermediateResponse((IntermediateResponse) curRes));
           }
         }
 
@@ -923,17 +855,13 @@ public class ApacheLdapConnection implements ProviderConnection
      *
      * @return  ldap search results
      *
-     * @throws  org.apache.directory.api.ldap.model.exception.LdapException  if
-     * an error occurs
+     * @throws  org.apache.directory.api.ldap.model.exception.LdapException  if an error occurs
      */
-    protected SearchCursor search(
-      final LdapNetworkConnection conn,
-      final org.ldaptive.SearchRequest sr)
+    protected SearchCursor search(final LdapNetworkConnection conn, final org.ldaptive.SearchRequest sr)
       throws org.apache.directory.api.ldap.model.exception.LdapException
     {
       final SearchRequest apacheSr = getSearchRequest(sr);
-      final Control[] c = config.getControlProcessor().processRequestControls(
-        sr.getControls());
+      final Control[] c = config.getControlProcessor().processRequestControls(sr.getControls());
       if (c != null) {
         apacheSr.addAllControls(c);
       }
@@ -942,19 +870,15 @@ public class ApacheLdapConnection implements ProviderConnection
 
 
     /**
-     * Returns an apache ldap search request object configured with the supplied
-     * search request.
+     * Returns an apache ldap search request object configured with the supplied search request.
      *
-     * @param  sr  search request containing configuration to create apache ldap
-     * search request
+     * @param  sr  search request containing configuration to create apache ldap search request
      *
      * @return  search request
      *
-     * @throws  org.apache.directory.api.ldap.model.exception.LdapException  if
-     * the search request cannot be initialized
+     * @throws  org.apache.directory.api.ldap.model.exception.LdapException  if the search request cannot be initialized
      */
-    protected SearchRequest getSearchRequest(
-      final org.ldaptive.SearchRequest sr)
+    protected SearchRequest getSearchRequest(final org.ldaptive.SearchRequest sr)
       throws org.apache.directory.api.ldap.model.exception.LdapException
     {
       final SearchRequest apacheSr = new SearchRequestImpl();
@@ -1030,8 +954,7 @@ public class ApacheLdapConnection implements ProviderConnection
 
 
     /**
-     * Processes the response controls on the supplied entry and returns a
-     * corresponding search item.
+     * Processes the response controls on the supplied entry and returns a corresponding search item.
      *
      * @param  entry  to process
      *
@@ -1044,77 +967,57 @@ public class ApacheLdapConnection implements ProviderConnection
       final Entry e = entry.getEntry();
       ResponseControl[] respControls = null;
       if (entry.getControls() != null && entry.getControls().size() > 0) {
-        respControls = processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          entry);
+        respControls = processResponseControls(config.getControlProcessor(), request.getControls(), entry);
       }
 
-      final SearchEntry se = util.toSearchEntry(
-        e,
-        respControls,
-        entry.getMessageId());
+      final SearchEntry se = util.toSearchEntry(e, respControls, entry.getMessageId());
       return new SearchItem(se);
     }
 
 
     /**
-     * Processes the response controls on the supplied reference and returns a
-     * corresponding search item.
+     * Processes the response controls on the supplied reference and returns a corresponding search item.
      *
      * @param  ref  to process
      *
      * @return  search item
      */
-    protected SearchItem processSearchResultReference(
-      final SearchResultReference ref)
+    protected SearchItem processSearchResultReference(final SearchResultReference ref)
     {
       logger.trace("reading search reference: {}", ref);
 
       final Referral r = ref.getReferral();
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().size() > 0) {
-        respControls = processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          ref);
+        respControls = processResponseControls(config.getControlProcessor(), request.getControls(), ref);
       }
 
-      final SearchReference sr = new SearchReference(
-        ref.getMessageId(),
-        respControls,
-        r.getLdapUrls());
+      final SearchReference sr = new SearchReference(ref.getMessageId(), respControls, r.getLdapUrls());
       return new SearchItem(sr);
     }
 
 
     /**
-     * Processes the response controls on the supplied response and returns a
-     * corresponding search item.
+     * Processes the response controls on the supplied response and returns a corresponding search item.
      *
      * @param  res  to process
      *
      * @return  search item
      */
-    protected SearchItem processIntermediateResponse(
-      final IntermediateResponse res)
+    protected SearchItem processIntermediateResponse(final IntermediateResponse res)
     {
       logger.trace("reading intermediate response: {}", res);
 
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().size() > 0) {
-        respControls = processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          res);
+        respControls = processResponseControls(config.getControlProcessor(), request.getControls(), res);
       }
 
-      final org.ldaptive.intermediate.IntermediateResponse ir =
-        IntermediateResponseFactory.createIntermediateResponse(
-          res.getResponseName(),
-          res.getResponseValue(),
-          respControls,
-          res.getMessageId());
+      final org.ldaptive.intermediate.IntermediateResponse ir = IntermediateResponseFactory.createIntermediateResponse(
+        res.getResponseName(),
+        res.getResponseValue(),
+        respControls,
+        res.getMessageId());
       return new SearchItem(ir);
     }
   }

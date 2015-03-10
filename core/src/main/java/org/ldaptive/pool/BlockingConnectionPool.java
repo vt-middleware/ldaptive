@@ -7,14 +7,12 @@ import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
 
 /**
- * Implements a pool of connections that has a set minimum and maximum size. The
- * pool will not grow beyond the maximum size and when the pool is exhausted,
- * requests for new connections will block. The length of time the pool will
- * block is determined by {@link #getBlockWaitTime()}. By default the pool will
- * block indefinitely and there is no guarantee that waiting threads will be
- * serviced in the order in which they made their request. This implementation
- * should be used when you need to control the <em>exact</em> number of
- * connections that can be created. See {@link AbstractConnectionPool}.
+ * Implements a pool of connections that has a set minimum and maximum size. The pool will not grow beyond the maximum
+ * size and when the pool is exhausted, requests for new connections will block. The length of time the pool will block
+ * is determined by {@link #getBlockWaitTime()}. By default the pool will block indefinitely and there is no guarantee
+ * that waiting threads will be serviced in the order in which they made their request. This implementation should be
+ * used when you need to control the <em>exact</em> number of connections that can be created. See {@link
+ * AbstractConnectionPool}.
  *
  * @author  Middleware Services
  */
@@ -30,8 +28,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
 
 
   /**
-   * Creates a new blocking pool. The pool config is initialized with the
-   * default values.
+   * Creates a new blocking pool. The pool config is initialized with the default values.
    *
    * @param  cf  connection factory
    */
@@ -47,9 +44,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    * @param  pc  pool configuration
    * @param  cf  connection factory
    */
-  public BlockingConnectionPool(
-    final PoolConfig pc,
-    final DefaultConnectionFactory cf)
+  public BlockingConnectionPool(final PoolConfig pc, final DefaultConnectionFactory cf)
   {
     setPoolConfig(pc);
     setConnectionFactory(cf);
@@ -57,8 +52,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
 
 
   /**
-   * Returns the block wait time. Default time is 0, which will wait
-   * indefinitely.
+   * Returns the block wait time. Default time is 0, which will wait indefinitely.
    *
    * @return  time in milliseconds to wait for available connections
    */
@@ -76,8 +70,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   public void setBlockWaitTime(final long time)
   {
     if (time < 0) {
-      throw new IllegalArgumentException(
-        "Block wait time must be greater than or equal to zero");
+      throw new IllegalArgumentException("Block wait time must be greater than or equal to zero");
     }
     blockWaitTime = time;
   }
@@ -91,9 +84,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
 
     PooledConnectionProxy pc = null;
     boolean create = false;
-    logger.trace(
-      "waiting on pool lock for check out {}",
-      poolLock.getQueueLength());
+    logger.trace("waiting on pool lock for check out {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
       // if an available connection exists, use it
@@ -101,19 +92,15 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       // otherwise the pool is full, block until a connection is returned
       if (!available.isEmpty()) {
         try {
-          logger.trace(
-            "retrieve available connection from pool of size {}",
-            available.size());
+          logger.trace("retrieve available connection from pool of size {}", available.size());
           pc = retrieveAvailableConnection();
         } catch (NoSuchElementException e) {
           logger.error("could not remove connection from list", e);
           throw new IllegalStateException("Pool is empty", e);
         }
       } else if (active.size() < getPoolConfig().getMaxPoolSize()) {
-        logger.trace(
-          "pool can grow, attempt to create active connection in pool of " +
-          "size {}",
-          active.size());
+        logger.trace("pool can grow, attempt to create active connection in pool of " +
+          "size {}", active.size());
         create = true;
       } else {
         logger.trace("pool is full, block until connection is available");
@@ -133,12 +120,8 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         boolean b = true;
         poolLock.lock();
         try {
-          logger.trace(
-            "create connection in pool of size {}",
-            available.size() + active.size());
-          if (
-            available.size() + active.size() ==
-              getPoolConfig().getMaxPoolSize()) {
+          logger.trace("create connection in pool of size {}", available.size() + active.size());
+          if (available.size() + active.size() == getPoolConfig().getMaxPoolSize()) {
             logger.trace("pool at maximum size, create not allowed");
             b = false;
           }
@@ -154,8 +137,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       if (pc == null) {
         if (available.isEmpty() && active.isEmpty()) {
           logger.error("Could not service check out request");
-          throw new PoolExhaustedException(
-            "Pool is empty and connection creation failed");
+          throw new PoolExhaustedException("Pool is empty and connection creation failed");
         }
         logger.debug("create failed, block until connection is available");
         pc = blockAvailableConnection();
@@ -168,8 +150,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       activateAndValidateConnection(pc);
     } else {
       logger.error("Could not service check out request");
-      throw new PoolExhaustedException(
-        "Pool is empty and connection creation failed");
+      throw new PoolExhaustedException("Pool is empty and connection creation failed");
     }
 
     return createConnectionProxy(pc);
@@ -186,9 +167,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   protected PooledConnectionProxy retrieveAvailableConnection()
   {
     PooledConnectionProxy pc = null;
-    logger.trace(
-      "waiting on pool lock for retrieve available {}",
-      poolLock.getQueueLength());
+    logger.trace("waiting on pool lock for retrieve available {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
       pc = available.remove();
@@ -208,17 +187,14 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    * @return  connection from the pool
    *
    * @throws  PoolException  if this method fails
-   * @throws  BlockingTimeoutException  if this pool is configured with a block
-   * time and it occurs
+   * @throws  BlockingTimeoutException  if this pool is configured with a block time and it occurs
    * @throws  PoolInterruptedException  if the current thread is interrupted
    */
   protected PooledConnectionProxy blockAvailableConnection()
     throws PoolException
   {
     PooledConnectionProxy pc = null;
-    logger.trace(
-      "waiting on pool lock for block available {}",
-      poolLock.getQueueLength());
+    logger.trace("waiting on pool lock for block available {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
       while (pc == null) {
@@ -240,9 +216,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       }
     } catch (InterruptedException e) {
       logger.error("waiting for available connection interrupted", e);
-      throw new PoolInterruptedException(
-        "Interrupted while waiting for an available connection",
-        e);
+      throw new PoolInterruptedException("Interrupted while waiting for an available connection", e);
     } finally {
       poolLock.unlock();
     }
@@ -257,9 +231,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
 
     final PooledConnectionProxy pc = retrieveConnectionProxy(c);
     final boolean valid = validateAndPassivateConnection(pc);
-    logger.trace(
-      "waiting on pool lock for check in {}",
-      poolLock.getQueueLength());
+    logger.trace("waiting on pool lock for check in {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
       if (active.remove(pc)) {

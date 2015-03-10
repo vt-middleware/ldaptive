@@ -28,8 +28,7 @@ public class Extensions
   private static final int HASH_CODE_SEED = 1171;
 
   /** Extensions. */
-  private final Map<String, List<String>> extensions =
-    new LinkedHashMap<>();
+  private final Map<String, List<String>> extensions = new LinkedHashMap<>();
 
 
   /** Creates a new extensions. */
@@ -73,8 +72,7 @@ public class Extensions
 
 
   /**
-   * Returns a single string value for the extension with the supplied name. See
-   * {@link #getValues(String)}.
+   * Returns a single string value for the extension with the supplied name. See {@link #getValues(String)}.
    *
    * @param  name  of the extension
    *
@@ -143,8 +141,7 @@ public class Extensions
       if (m.group(2) != null) {
         values.add(m.group(2).trim());
       } else if (m.group(3) != null) {
-        values.addAll(
-          Arrays.asList(SchemaUtils.parseDescriptors(m.group(3).trim())));
+        values.addAll(Arrays.asList(SchemaUtils.parseDescriptors(m.group(3).trim())));
       }
       // CheckStyle:MagicNumber ON
       exts.addExtension(name, values);
@@ -165,9 +162,7 @@ public class Extensions
     for (Map.Entry<String, List<String>> entry : extensions.entrySet()) {
       sb.append(entry.getKey()).append(" ");
       if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-        sb.append(
-          SchemaUtils.formatDescriptors(
-            entry.getValue().toArray(new String[entry.getValue().size()])));
+        sb.append(SchemaUtils.formatDescriptors(entry.getValue().toArray(new String[entry.getValue().size()])));
       }
     }
     return sb.toString();
@@ -184,11 +179,6 @@ public class Extensions
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::extensions=%s]",
-        getClass().getName(),
-        hashCode(),
-        extensions);
+    return String.format("[%s@%d::extensions=%s]", getClass().getName(), hashCode(), extensions);
   }
 }

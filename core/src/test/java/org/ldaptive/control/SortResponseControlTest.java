@@ -42,15 +42,11 @@ public class SortResponseControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "response"
-  )
+  @Test(groups = {"control"}, dataProvider = "response")
   public void decode(final byte[] berValue, final SortResponseControl expected)
     throws Exception
   {
-    final SortResponseControl actual = new SortResponseControl(
-      expected.getCriticality());
+    final SortResponseControl actual = new SortResponseControl(expected.getCriticality());
     actual.decode(berValue);
     Assert.assertEquals(actual, expected);
   }

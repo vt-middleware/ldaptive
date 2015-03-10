@@ -49,9 +49,7 @@ public class Authenticator
    * @param  resolver  dn resolver
    * @param  handler  authentication handler
    */
-  public Authenticator(
-    final DnResolver resolver,
-    final AuthenticationHandler handler)
+  public Authenticator(final DnResolver resolver, final AuthenticationHandler handler)
   {
     setDnResolver(resolver);
     setAuthenticationHandler(handler);
@@ -162,16 +160,15 @@ public class Authenticator
    *
    * @param  handlers  authentication response handlers
    */
-  public void setAuthenticationResponseHandlers(
-    final AuthenticationResponseHandler... handlers)
+  public void setAuthenticationResponseHandlers(final AuthenticationResponseHandler... handlers)
   {
     authenticationResponseHandlers = handlers;
   }
 
 
   /**
-   * This will attempt to find the DN for the supplied user. {@link
-   * DnResolver#resolve(String)} is invoked to perform this operation.
+   * This will attempt to find the DN for the supplied user. {@link DnResolver#resolve(String)} is invoked to perform
+   * this operation.
    *
    * @param  user  to find DN for
    *
@@ -195,8 +192,7 @@ public class Authenticator
    *
    * @throws  LdapException  if an LDAP error occurs
    */
-  public AuthenticationResponse authenticate(
-    final AuthenticationRequest request)
+  public AuthenticationResponse authenticate(final AuthenticationRequest request)
     throws LdapException
   {
     return authenticate(resolveDn(request.getUser()), request);
@@ -204,9 +200,8 @@ public class Authenticator
 
 
   /**
-   * Performs authentication by opening a new connection to the LDAP and binding
-   * as the supplied DN. If return attributes have been request, the user entry
-   * will be searched on the same connection.
+   * Performs authentication by opening a new connection to the LDAP and binding as the supplied DN. If return
+   * attributes have been request, the user entry will be searched on the same connection.
    *
    * @param  dn  to authenticate as
    * @param  request  containing authentication parameters
@@ -215,9 +210,7 @@ public class Authenticator
    *
    * @throws  LdapException  if an LDAP error occurs
    */
-  protected AuthenticationResponse authenticate(
-    final String dn,
-    final AuthenticationRequest request)
+  protected AuthenticationResponse authenticate(final String dn, final AuthenticationRequest request)
     throws LdapException
   {
     logger.debug("authenticate dn={} with request={}", dn, request);
@@ -243,15 +236,11 @@ public class Authenticator
       }
     }
 
-    logger.info(
-      "Authentication {} for dn: {}",
-      response.getResult() ? "succeeded" : "failed",
-      dn);
+    logger.info("Authentication {} for dn: {}", response.getResult() ? "succeeded" : "failed", dn);
 
     final AuthenticationResponse authResponse = new AuthenticationResponse(
-      response.getResult()
-        ? AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS
-        : AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
+      response.getResult() ? AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS
+                           : AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
       response.getResultCode(),
       entry,
       response.getMessage(),
@@ -259,36 +248,26 @@ public class Authenticator
       response.getMessageId());
 
     // execute authentication response handlers
-    if (
-      getAuthenticationResponseHandlers() != null &&
-        getAuthenticationResponseHandlers().length > 0) {
-      for (AuthenticationResponseHandler ah :
-           getAuthenticationResponseHandlers()) {
+    if (getAuthenticationResponseHandlers() != null && getAuthenticationResponseHandlers().length > 0) {
+      for (AuthenticationResponseHandler ah : getAuthenticationResponseHandlers()) {
         ah.handle(authResponse);
       }
     }
 
-    logger.debug(
-      "authenticate response={} for dn={} with request={}",
-      response,
-      dn,
-      request);
+    logger.debug("authenticate response={} for dn={} with request={}", response, dn, request);
     return authResponse;
   }
 
 
   /**
-   * Validates the authentication request and resolved DN. Returns an
-   * authentication response if validation failed.
+   * Validates the authentication request and resolved DN. Returns an authentication response if validation failed.
    *
    * @param  dn  to validate
    * @param  request  to validate
    *
    * @return  authentication response if validation failed, otherwise null
    */
-  protected AuthenticationResponse validateInput(
-    final String dn,
-    final AuthenticationRequest request)
+  protected AuthenticationResponse validateInput(final String dn, final AuthenticationRequest request)
   {
     AuthenticationResponse response = null;
     final Credential credential = request.getCredential();
@@ -330,10 +309,9 @@ public class Authenticator
 
 
   /**
-   * Attempts to find the ldap entry for the supplied DN. If an entry resolver
-   * has been configured it is used. A {@link SearchEntryResolver} is used if
-   * return attributes have been requested. If none of these criteria is met, a
-   * {@link NoOpDnResolver} is used.
+   * Attempts to find the ldap entry for the supplied DN. If an entry resolver has been configured it is used. A {@link
+   * SearchEntryResolver} is used if return attributes have been requested. If none of these criteria is met, a {@link
+   * NoOpDnResolver} is used.
    *
    * @param  request  authentication request
    * @param  response  from the authentication handler
@@ -354,9 +332,7 @@ public class Authenticator
     if (resolveEntryOnFailure || response.getResult()) {
       if (entryResolver != null) {
         er = entryResolver;
-      } else if (
-        !ReturnAttributes.NONE.equalsAttributes(
-            request.getReturnAttributes())) {
+      } else if (!ReturnAttributes.NONE.equalsAttributes(request.getReturnAttributes())) {
         er = new SearchEntryResolver();
       } else {
         er = NOOP_RESOLVER;

@@ -15,15 +15,13 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.handler.SearchEntryHandler;
 
 /**
- * Executes a list of search filters in parallel. This implementation executes
- * each search on the same connection in separate threads. If you need parallel
- * searches over a pool of connections see {@link ParallelPooledSearchExecutor}.
+ * Executes a list of search filters in parallel. This implementation executes each search on the same connection in
+ * separate threads. If you need parallel searches over a pool of connections see {@link ParallelPooledSearchExecutor}.
  * A cached thread pool is used by default.
  *
  * @author  Middleware Services
  */
-public class ParallelSearchExecutor
-  extends AbstractParallelSearchExecutor<ConnectionFactory>
+public class ParallelSearchExecutor extends AbstractParallelSearchExecutor<ConnectionFactory>
 {
 
   /** Default constructor. */
@@ -58,9 +56,7 @@ public class ParallelSearchExecutor
 
       final SearchOperation op = createSearchOperation(conn);
 
-      final SearchOperationWorker worker = new SearchOperationWorker(
-        op,
-        getExecutorService());
+      final SearchOperationWorker worker = new SearchOperationWorker(op, getExecutorService());
       final SearchRequest[] sr = new SearchRequest[filters.length];
       for (int i = 0; i < filters.length; i++) {
         sr[i] = newSearchRequest(this);

@@ -4,8 +4,8 @@ package org.ldaptive.control;
 import org.ldaptive.LdapUtils;
 
 /**
- * Used by {@link SortRequestControl} to declare how sorting should occur. See
- * RFC 3698 for the definition of matchingRuleId.
+ * Used by {@link SortRequestControl} to declare how sorting should occur. See RFC 3698 for the definition of
+ * matchingRuleId.
  *
  * @author  Middleware Services
  */
@@ -60,10 +60,7 @@ public class SortKey
    * @param  ruleId  matching rule id
    * @param  reverse  reverse order
    */
-  public SortKey(
-    final String attrDescription,
-    final String ruleId,
-    final boolean reverse)
+  public SortKey(final String attrDescription, final String ruleId, final boolean reverse)
   {
     setAttributeDescription(attrDescription);
     setMatchingRuleId(ruleId);
@@ -147,12 +144,7 @@ public class SortKey
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        attributeDescription,
-        matchingRuleId,
-        reverseOrder);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeDescription, matchingRuleId, reverseOrder);
   }
 
 

@@ -10,8 +10,7 @@ import org.ldaptive.ModifyRequest;
  *
  * @author  Middleware Services
  */
-public class ModifyOperationWorker
-  extends AbstractOperationWorker<ModifyRequest, Void>
+public class ModifyOperationWorker extends AbstractOperationWorker<ModifyRequest, Void>
 {
 
 
@@ -32,9 +31,7 @@ public class ModifyOperationWorker
    * @param  op  modify operation to execute
    * @param  es  executor service
    */
-  public ModifyOperationWorker(
-    final ModifyOperation op,
-    final ExecutorService es)
+  public ModifyOperationWorker(final ModifyOperation op, final ExecutorService es)
   {
     super(op, es);
   }

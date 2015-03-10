@@ -7,23 +7,19 @@ import java.util.Set;
 import org.ldaptive.pool.PoolConfig;
 
 /**
- * Reads properties specific to {@link PoolConfig} and returns an initialized
- * object of that type.
+ * Reads properties specific to {@link PoolConfig} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class PoolConfigPropertySource
-  extends AbstractPropertySource<PoolConfig>
+public final class PoolConfigPropertySource extends AbstractPropertySource<PoolConfig>
 {
 
   /** Invoker for ldap pool config. */
-  private static final SimplePropertyInvoker INVOKER =
-    new SimplePropertyInvoker(PoolConfig.class);
+  private static final SimplePropertyInvoker INVOKER = new SimplePropertyInvoker(PoolConfig.class);
 
 
   /**
-   * Creates a new ldap pool config property source using the default properties
-   * file.
+   * Creates a new ldap pool config property source using the default properties file.
    *
    * @param  pc  pool config to invoke properties on
    */
@@ -76,10 +72,7 @@ public final class PoolConfigPropertySource
    * @param  domain  that properties are in
    * @param  props  to read properties from
    */
-  public PoolConfigPropertySource(
-    final PoolConfig pc,
-    final PropertyDomain domain,
-    final Properties props)
+  public PoolConfigPropertySource(final PoolConfig pc, final PropertyDomain domain, final Properties props)
   {
     super(pc, domain, props);
   }

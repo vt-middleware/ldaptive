@@ -15,8 +15,8 @@ import org.ldaptive.beans.Entry;
 import org.ldaptive.io.ValueTranscoder;
 
 /**
- * Creates DN and attribute mutators for the {@link java.lang.reflect.Method}s
- * on a type. Leverages the {@link Introspector} class for reading descriptors.
+ * Creates DN and attribute mutators for the {@link java.lang.reflect.Method}s on a type. Leverages the {@link
+ * Introspector} class for reading descriptors.
  *
  * @author  Middleware Services
  */
@@ -27,20 +27,16 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
   @Override
   public void initialize(final Class<?> type)
   {
-    final Map<String, PropertyDescriptor> descriptors = getPropertyDescriptors(
-      type);
+    final Map<String, PropertyDescriptor> descriptors = getPropertyDescriptors(type);
     final Entry entryAnnotation = type.getAnnotation(Entry.class);
     if (descriptors.containsKey(entryAnnotation.dn())) {
-      setDnValueMutator(
-        createDnValueMutator(descriptors.get(entryAnnotation.dn())));
+      setDnValueMutator(createDnValueMutator(descriptors.get(entryAnnotation.dn())));
     }
     for (Attribute attr : entryAnnotation.attributes()) {
       if (attr.values().length == 0) {
-        final String property = attr.property().length() > 0 ?
-          attr.property() : attr.name();
+        final String property = attr.property().length() > 0 ? attr.property() : attr.name();
         if (descriptors.containsKey(property)) {
-          addAttributeValueMutator(
-            createAttributeValueMutator(descriptors.get(property), attr));
+          addAttributeValueMutator(createAttributeValueMutator(descriptors.get(property), attr));
         }
       }
     }
@@ -54,8 +50,7 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
    *
    * @return  map of name to property descriptor
    */
-  protected Map<String, PropertyDescriptor> getPropertyDescriptors(
-    final Class<?> type)
+  protected Map<String, PropertyDescriptor> getPropertyDescriptors(final Class<?> type)
   {
     final Map<String, PropertyDescriptor> descriptors = new HashMap<>();
     try {
@@ -87,8 +82,7 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
     return
       new DefaultDnValueMutator(
         new MethodAttributeValueMutator(
-          new DefaultReflectionTranscoder(
-            desc.getReadMethod().getGenericReturnType()),
+          new DefaultReflectionTranscoder(desc.getReadMethod().getGenericReturnType()),
           desc.getReadMethod(),
           desc.getWriteMethod()));
   }
@@ -102,22 +96,16 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
    *
    * @return  attribute value mutator
    */
-  protected AttributeValueMutator createAttributeValueMutator(
-    final PropertyDescriptor desc,
-    final Attribute attribute)
+  protected AttributeValueMutator createAttributeValueMutator(final PropertyDescriptor desc, final Attribute attribute)
   {
-    final String name = "".equals(attribute.name()) ?
-      desc.getName() : attribute.name();
-    final ValueTranscoder<?> transcoder = TranscoderFactory.getInstance(
-      attribute.transcoder());
+    final String name = "".equals(attribute.name()) ? desc.getName() : attribute.name();
+    final ValueTranscoder<?> transcoder = TranscoderFactory.getInstance(attribute.transcoder());
     return
       new MethodAttributeValueMutator(
         name,
         attribute.binary(),
         attribute.sortBehavior(),
-        new DefaultReflectionTranscoder(
-          desc.getReadMethod().getGenericReturnType(),
-          transcoder),
+        new DefaultReflectionTranscoder(desc.getReadMethod().getGenericReturnType(), transcoder),
         desc.getReadMethod(),
         desc.getWriteMethod());
   }

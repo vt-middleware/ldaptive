@@ -6,9 +6,8 @@ import javax.net.SocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 
 /**
- * TLSSocketFactory implementation that uses a thread local variable to store
- * configuration. Useful for SSL configurations that can only retrieve the
- * SSLSocketFactory from getDefault().
+ * TLSSocketFactory implementation that uses a thread local variable to store configuration. Useful for SSL
+ * configurations that can only retrieve the SSLSocketFactory from getDefault().
  *
  * @author  Middleware Services
  */
@@ -16,8 +15,7 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
 {
 
   /** Thread local instance of the ssl config. */
-  private static final ThreadLocalSslConfig THREAD_LOCAL_SSL_CONFIG =
-    new ThreadLocalSslConfig();
+  private static final ThreadLocalSslConfig THREAD_LOCAL_SSL_CONFIG = new ThreadLocalSslConfig();
 
 
   @Override
@@ -48,29 +46,23 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
     try {
       sf.initialize();
     } catch (GeneralSecurityException e) {
-      throw new IllegalArgumentException(
-        "Error initializing socket factory",
-        e);
+      throw new IllegalArgumentException("Error initializing socket factory", e);
     }
     return sf;
   }
 
 
   /**
-   * Returns an instance of this socket factory configured with a hostname
-   * verifying trust manager. If the supplied ssl config does not contain trust
-   * managers, {@link HostnameVerifyingTrustManager} with {@link
-   * DefaultHostnameVerifier} is set. See {@link
-   * #addHostnameVerifyingTrustManager(SslConfig, String[])}.
+   * Returns an instance of this socket factory configured with a hostname verifying trust manager. If the supplied ssl
+   * config does not contain trust managers, {@link HostnameVerifyingTrustManager} with {@link DefaultHostnameVerifier}
+   * is set. See {@link #addHostnameVerifyingTrustManager(SslConfig, String[])}.
    *
    * @param  config  to set on the socket factory
    * @param  names  to use for hostname verification
    *
    * @return  socket factory
    */
-  public static SSLSocketFactory getHostnameVerifierFactory(
-    final SslConfig config,
-    final String[] names)
+  public static SSLSocketFactory getHostnameVerifierFactory(final SslConfig config, final String[] names)
   {
     final ThreadLocalTLSSocketFactory sf = new ThreadLocalTLSSocketFactory();
     if (config != null && !config.isEmpty()) {

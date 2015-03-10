@@ -20,16 +20,12 @@ public class LdapAttributeTest
   private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
 
-  /**
-   * Tests default sort behavior.
-   */
+  /** Tests default sort behavior. */
   @Test(groups = {"bean"})
   public void defaultSortBehavior()
   {
     final LdapAttribute la = new LdapAttribute("givenName");
-    AssertJUnit.assertEquals(
-      SortBehavior.getDefaultSortBehavior(),
-      la.getSortBehavior());
+    AssertJUnit.assertEquals(SortBehavior.getDefaultSortBehavior(), la.getSortBehavior());
     AssertJUnit.assertEquals(0, la.size());
     AssertJUnit.assertNull(la.getStringValue());
     AssertJUnit.assertNull(la.getBinaryValue());
@@ -41,9 +37,7 @@ public class LdapAttributeTest
   }
 
 
-  /**
-   * Tests ordered sort behavior.
-   */
+  /** Tests ordered sort behavior. */
   @Test(groups = {"bean"})
   public void orderedSortBehavior()
   {
@@ -59,15 +53,14 @@ public class LdapAttributeTest
   }
 
 
-  /**
-   * Tests sorted sort behavior.
-   */
+  /** Tests sorted sort behavior. */
   @Test(groups = {"bean"})
   public void sortedSortBehavior()
   {
     final LdapAttribute la = new LdapAttribute(SortBehavior.SORTED);
     AssertJUnit.assertEquals(SortBehavior.SORTED, la.getSortBehavior());
     la.addStringValue("William", "Bill");
+
     final String[] values = la.getStringValues().toArray(new String[2]);
     AssertJUnit.assertEquals("Bill", values[0]);
     AssertJUnit.assertEquals("William", values[1]);
@@ -76,9 +69,7 @@ public class LdapAttributeTest
   }
 
 
-  /**
-   * Tests create with one value.
-   */
+  /** Tests create with one value. */
   @Test(groups = {"bean"})
   public void createOne()
   {
@@ -86,8 +77,7 @@ public class LdapAttributeTest
     AssertJUnit.assertEquals("William", la.getStringValue());
     AssertJUnit.assertEquals(1, la.getStringValues().size());
     AssertJUnit.assertEquals("William", la.getStringValues().iterator().next());
-    AssertJUnit.assertTrue(
-      Arrays.equals("William".getBytes(), la.getBinaryValue()));
+    AssertJUnit.assertTrue(Arrays.equals("William".getBytes(), la.getBinaryValue()));
     AssertJUnit.assertEquals(1, la.size());
     AssertJUnit.assertEquals(la, new LdapAttribute("givenName", "William"));
     try {
@@ -107,18 +97,14 @@ public class LdapAttributeTest
   }
 
 
-  /**
-   * Tests create with two values.
-   */
+  /** Tests create with two values. */
   @Test(groups = {"bean"})
   public void createTwo()
   {
     final LdapAttribute la = new LdapAttribute("givenName", "Bill", "William");
     AssertJUnit.assertEquals(2, la.getStringValues().size());
     AssertJUnit.assertEquals(2, la.size());
-    AssertJUnit.assertEquals(
-      la,
-      new LdapAttribute("givenName", "William", "Bill"));
+    AssertJUnit.assertEquals(la, new LdapAttribute("givenName", "William", "Bill"));
     la.removeStringValue("William");
     AssertJUnit.assertEquals(1, la.size());
     la.clear();
@@ -126,17 +112,13 @@ public class LdapAttributeTest
   }
 
 
-  /**
-   * Tests various string input.
-   */
+  /** Tests various string input. */
   @Test(groups = {"bean"})
   public void stringValue()
   {
     final LdapAttribute la = new LdapAttribute("cn", "William Wallace");
     AssertJUnit.assertEquals("William Wallace", la.getStringValue());
-    AssertJUnit.assertEquals(
-      "William Wallace".getBytes(UTF8_CHARSET),
-      la.getBinaryValue());
+    AssertJUnit.assertEquals("William Wallace".getBytes(UTF8_CHARSET), la.getBinaryValue());
     AssertJUnit.assertEquals(1, la.getStringValues().size());
     AssertJUnit.assertEquals(1, la.getBinaryValues().size());
     AssertJUnit.assertEquals(la, new LdapAttribute("cn", "William Wallace"));
@@ -157,9 +139,7 @@ public class LdapAttributeTest
   }
 
 
-  /**
-   * Tests multiple string input.
-   */
+  /** Tests multiple string input. */
   @Test(groups = {"bean"})
   public void stringValues()
   {
@@ -189,13 +169,9 @@ public class LdapAttributeTest
     la.addStringValue(commonNames.get(0));
     la.addStringValue(commonNames.get(1));
     AssertJUnit.assertEquals("Bill Wallace", la.getStringValue());
-    AssertJUnit.assertArrayEquals(
-      commonNames.toArray(new String[2]),
-      la.getStringValues().toArray(new String[2]));
+    AssertJUnit.assertArrayEquals(commonNames.toArray(new String[2]), la.getStringValues().toArray(new String[2]));
     AssertJUnit.assertEquals(2, la.getStringValues().size());
-    AssertJUnit.assertEquals(
-      "Bill Wallace".getBytes(UTF8_CHARSET),
-      la.getBinaryValue());
+    AssertJUnit.assertEquals("Bill Wallace".getBytes(UTF8_CHARSET), la.getBinaryValue());
     AssertJUnit.assertArrayEquals(
       binaryCommonNames.toArray(new byte[2][0]),
       la.getBinaryValues().toArray(new byte[2][0]));
@@ -208,13 +184,9 @@ public class LdapAttributeTest
     la.addStringValue(commonNames.get(0));
     la.addStringValue(commonNames.get(1));
     AssertJUnit.assertEquals("Bill Wallace", la.getStringValue());
-    AssertJUnit.assertArrayEquals(
-      commonNames.toArray(new String[2]),
-      la.getStringValues().toArray(new String[2]));
+    AssertJUnit.assertArrayEquals(commonNames.toArray(new String[2]), la.getStringValues().toArray(new String[2]));
     AssertJUnit.assertEquals(2, la.getStringValues().size());
-    AssertJUnit.assertEquals(
-      "Bill Wallace".getBytes(UTF8_CHARSET),
-      la.getBinaryValue());
+    AssertJUnit.assertEquals("Bill Wallace".getBytes(UTF8_CHARSET), la.getBinaryValue());
     AssertJUnit.assertArrayEquals(
       binaryCommonNames.toArray(new byte[2][0]),
       la.getBinaryValues().toArray(new byte[2][0]));
@@ -224,21 +196,16 @@ public class LdapAttributeTest
   }
 
 
-  /**
-   * Tests various binary input.
-   */
+  /** Tests various binary input. */
   @Test(groups = {"bean"})
   public void binaryValue()
   {
     final LdapAttribute la = new LdapAttribute("jpegPhoto", "image".getBytes());
-    AssertJUnit.assertTrue(
-      Arrays.equals("image".getBytes(), la.getBinaryValue()));
+    AssertJUnit.assertTrue(Arrays.equals("image".getBytes(), la.getBinaryValue()));
     AssertJUnit.assertEquals(1, la.getBinaryValues().size());
     AssertJUnit.assertEquals("aW1hZ2U=", la.getStringValue());
     AssertJUnit.assertEquals(1, la.getStringValues().size());
-    AssertJUnit.assertEquals(
-      la,
-      new LdapAttribute("jpegPhoto", "image".getBytes()));
+    AssertJUnit.assertEquals(la, new LdapAttribute("jpegPhoto", "image".getBytes()));
     try {
       la.addBinaryValue((byte[][]) null);
       AssertJUnit.fail("Should have thrown NullPointerException");
@@ -256,9 +223,7 @@ public class LdapAttributeTest
   }
 
 
-  /**
-   * Tests multiple string input.
-   */
+  /** Tests multiple string input. */
   @Test(groups = {"bean"})
   public void binaryValues()
   {
@@ -288,14 +253,10 @@ public class LdapAttributeTest
     la.addBinaryValue(jpegPhotos.get(0));
     la.addBinaryValue(jpegPhotos.get(1));
     AssertJUnit.assertEquals("aW1hZ2Ux", la.getStringValue());
-    AssertJUnit.assertArrayEquals(
-      stringJpegPhotos.toArray(new String[2]),
-      la.getStringValues().toArray(new String[2]));
+    AssertJUnit.assertArrayEquals(stringJpegPhotos.toArray(new String[2]), la.getStringValues().toArray(new String[2]));
     AssertJUnit.assertEquals(2, la.getStringValues().size());
     AssertJUnit.assertEquals("image1".getBytes(), la.getBinaryValue());
-    AssertJUnit.assertArrayEquals(
-      jpegPhotos.toArray(new byte[2][0]),
-      la.getBinaryValues().toArray(new byte[2][0]));
+    AssertJUnit.assertArrayEquals(jpegPhotos.toArray(new byte[2][0]), la.getBinaryValues().toArray(new byte[2][0]));
     AssertJUnit.assertEquals(2, la.getBinaryValues().size());
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
@@ -305,23 +266,17 @@ public class LdapAttributeTest
     la.addBinaryValue(jpegPhotos.get(0));
     la.addBinaryValue(jpegPhotos.get(1));
     AssertJUnit.assertEquals("aW1hZ2Ux", la.getStringValue());
-    AssertJUnit.assertArrayEquals(
-      stringJpegPhotos.toArray(new String[2]),
-      la.getStringValues().toArray(new String[2]));
+    AssertJUnit.assertArrayEquals(stringJpegPhotos.toArray(new String[2]), la.getStringValues().toArray(new String[2]));
     AssertJUnit.assertEquals(2, la.getStringValues().size());
     AssertJUnit.assertEquals("image1".getBytes(), la.getBinaryValue());
-    AssertJUnit.assertArrayEquals(
-      jpegPhotos.toArray(new byte[2][0]),
-      la.getBinaryValues().toArray(new byte[2][0]));
+    AssertJUnit.assertArrayEquals(jpegPhotos.toArray(new byte[2][0]), la.getBinaryValues().toArray(new byte[2][0]));
     AssertJUnit.assertEquals(2, la.getBinaryValues().size());
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
   }
 
 
-  /**
-   * Tests attribute options.
-   */
+  /** Tests attribute options. */
   @Test(groups = {"bean"})
   public void attributeOptions()
   {

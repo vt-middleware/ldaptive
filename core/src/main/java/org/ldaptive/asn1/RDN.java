@@ -31,8 +31,7 @@ public class RDN implements DEREncoder
    */
   public RDN(final Collection<AttributeValueAssertion> assertions)
   {
-    attributeValueAssertions = assertions.toArray(
-      new AttributeValueAssertion[assertions.size()]);
+    attributeValueAssertions = assertions.toArray(new AttributeValueAssertion[assertions.size()]);
   }
 
 
@@ -78,8 +77,7 @@ public class RDN implements DEREncoder
 
 
   /**
-   * Returns a single attribute value for the supplied oid. See {@link
-   * #getAttributeValues(String)}.
+   * Returns a single attribute value for the supplied oid. See {@link #getAttributeValues(String)}.
    *
    * @param  oid  to match
    *
@@ -105,9 +103,7 @@ public class RDN implements DEREncoder
    * @return  decoded attribute values
    */
   @SuppressWarnings("unchecked")
-  public <T> T[] getAttributeValues(
-    final String oid,
-    final ValueTranscoder<T> transcoder)
+  public <T> T[] getAttributeValues(final String oid, final ValueTranscoder<T> transcoder)
   {
     final List<T> values = new ArrayList<>();
     for (AttributeValueAssertion type : attributeValueAssertions) {
@@ -120,8 +116,7 @@ public class RDN implements DEREncoder
 
 
   /**
-   * Returns a single attribute value for the supplied oid. See {@link
-   * #getAttributeValues(String, ValueTranscoder)}.
+   * Returns a single attribute value for the supplied oid. See {@link #getAttributeValues(String, ValueTranscoder)}.
    *
    * @param  <T>  type of value
    * @param  oid  to match
@@ -129,9 +124,7 @@ public class RDN implements DEREncoder
    *
    * @return  decoded attribute value
    */
-  public <T> T getAttributeValue(
-    final String oid,
-    final ValueTranscoder<T> transcoder)
+  public <T> T getAttributeValue(final String oid, final ValueTranscoder<T> transcoder)
   {
     final T[] values = getAttributeValues(oid, transcoder);
     if (values == null || values.length == 0) {
@@ -146,8 +139,7 @@ public class RDN implements DEREncoder
   {
     final List<DEREncoder> typeEncoders = new ArrayList<>();
     for (final AttributeValueAssertion types : attributeValueAssertions) {
-      typeEncoders.add(
-        new DEREncoder() {
+      typeEncoders.add(new DEREncoder() {
           @Override
           public byte[] encode()
           {
@@ -164,12 +156,10 @@ public class RDN implements DEREncoder
 
 
   /**
-   * Converts bytes in the buffer to RDNs by reading from the current position
-   * to the limit.
+   * Converts bytes in the buffer to RDNs by reading from the current position to the limit.
    *
-   * @param  encoded  buffer containing DER-encoded data where the buffer is
-   * positioned at the tag of the RDN and the limit is set beyond the last byte
-   * of the RDN.
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the tag of the RDN and the
+   *                  limit is set beyond the last byte of the RDN.
    *
    * @return  decoded bytes as RDNs
    */
@@ -202,10 +192,7 @@ public class RDN implements DEREncoder
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        (Object) attributeValueAssertions);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, (Object) attributeValueAssertions);
   }
 
 

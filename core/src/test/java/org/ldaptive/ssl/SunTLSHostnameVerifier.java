@@ -11,14 +11,12 @@ import sun.security.util.HostnameChecker;
 // CheckStyle:IllegalImport ON
 
 /**
- * A {@link HostnameVerifier} that delegates to the internal Sun implementation
- * at sun.security.util.HostnameChecker. This is the implementation used by JNDI
- * with StartTLS.
+ * A {@link HostnameVerifier} that delegates to the internal Sun implementation at sun.security.util.HostnameChecker.
+ * This is the implementation used by JNDI with StartTLS.
  *
  * @author  Middleware Services
  */
-public class SunTLSHostnameVerifier
-  implements HostnameVerifier, CertificateHostnameVerifier
+public class SunTLSHostnameVerifier implements HostnameVerifier, CertificateHostnameVerifier
 {
 
 
@@ -47,8 +45,7 @@ public class SunTLSHostnameVerifier
   public boolean verify(final String hostname, final X509Certificate cert)
   {
     boolean b;
-    final HostnameChecker checker = HostnameChecker.getInstance(
-      HostnameChecker.TYPE_LDAP);
+    final HostnameChecker checker = HostnameChecker.getInstance(HostnameChecker.TYPE_LDAP);
     try {
       checker.match(hostname, cert);
       b = true;

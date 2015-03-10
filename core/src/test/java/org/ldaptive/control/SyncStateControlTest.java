@@ -28,7 +28,7 @@ public class SyncStateControlTest
       new Object[][] {
         // Add state, no cookie
         // BER:30:15:0A:01:01:04:10:84:31:77:EC:5B:0E:10:31:82:7F:11:6F:F5:6E:4E
-        //    :59
+        // :59
         new Object[] {
           LdapUtils.base64Decode("MBUKAQEEEIQxd+xbDhAxgn8Rb/VuTlk="),
           new SyncStateControl(
@@ -39,9 +39,9 @@ public class SyncStateControlTest
         },
         // Modify state, cookie of length 52
         // BER:30:4B:0A:01:02:04:10:5D:5D:A5:D0:5B:E2:10:31:82:84:11:6F:F5:6E:4E
-        //    :59:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:30:31:32:30:37:30
-        //    :36:31:38:31:35:35:32:2E:33:33:37:37:31:38:5A:23:30:30:30:30:30:30
-        //    :23:30:30:30:23:30:30:30:30:30:30:
+        // :59:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:30:31:32:30:37:30
+        // :36:31:38:31:35:35:32:2E:33:33:37:37:31:38:5A:23:30:30:30:30:30:30
+        // :23:30:30:30:23:30:30:30:30:30:30:
         new Object[] {
           LdapUtils.base64Decode(
             "MEsKAQIEEF1dpdBb4hAxgoQRb/VuTlkENHJpZD0wMDAsY3NuPTIwMTIwNzA2MTgx" +
@@ -66,8 +66,8 @@ public class SyncStateControlTest
         },
         // Add state, cookie length of 52, empty UUID
         // BER:30:3B:0A:01:01:04:00:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32
-        //    :30:31:33:30:32:31:35:32:31:32:33:32:30:2E:34:36:34:34:38:35:5A:23
-        //    :30:30:30:30:30:30:23:30:30:30:23:30:30:30:30:30:30:
+        // :30:31:33:30:32:31:35:32:31:32:33:32:30:2E:34:36:34:34:38:35:5A:23
+        // :30:30:30:30:30:30:23:30:30:30:23:30:30:30:30:30:30:
         new Object[] {
           LdapUtils.base64Decode(
             "MDsKAQEEAAQ0cmlkPTAwMCxjc249MjAxMzAyMTUyMTIzMjAuNDY0NDg1WiMwMDAw" +
@@ -100,15 +100,11 @@ public class SyncStateControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "response"
-  )
+  @Test(groups = {"control"}, dataProvider = "response")
   public void decode(final byte[] berValue, final SyncStateControl expected)
     throws Exception
   {
-    final SyncStateControl actual = new SyncStateControl(
-      expected.getCriticality());
+    final SyncStateControl actual = new SyncStateControl(expected.getCriticality());
     actual.decode(berValue);
     Assert.assertEquals(actual, expected);
   }

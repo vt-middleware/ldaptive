@@ -16,8 +16,5 @@ public interface ExceptionHandler extends Handler<Request, Exception>
 
 
   @Override
-  HandlerResult<Exception> handle(
-    Connection conn,
-    Request request,
-    Exception exception);
+  HandlerResult<Exception> handle(Connection conn, Request request, Exception exception);
 }

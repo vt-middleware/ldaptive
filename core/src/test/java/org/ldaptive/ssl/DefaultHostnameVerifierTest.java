@@ -10,12 +10,9 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link DefaultHostnameVerifier}.
- * Generate key with: openssl genrsa -aes256 -out test.key 2048
- * Generate cert with:
- * openssl req -new -x509 -sha1 -days 3650 -key test.key -out test.crt \
- *   -subj "/CN=a.foo.com/DC=ldaptive/DC=org" -config openssl.cnf \
- *   -extensions my_ext
+ * Unit test for {@link DefaultHostnameVerifier}. Generate key with: openssl genrsa -aes256 -out test.key 2048 Generate
+ * cert with: openssl req -new -x509 -sha1 -days 3650 -key test.key -out test.crt \ -subj
+ * "/CN=a.foo.com/DC=ldaptive/DC=org" -config openssl.cnf \ -extensions my_ext
  *
  * @author  Middleware Services
  */
@@ -23,12 +20,10 @@ public class DefaultHostnameVerifierTest
 {
 
   /** Instance of the default hostname verifier. */
-  private static final DefaultHostnameVerifier DEFAULT_VERIFIER =
-    new DefaultHostnameVerifier();
+  private static final DefaultHostnameVerifier DEFAULT_VERIFIER = new DefaultHostnameVerifier();
 
   /** Instance of the default startTLS hostname verifier. */
-  private static final SunTLSHostnameVerifier SUN_VERIFIER =
-    new SunTLSHostnameVerifier();
+  private static final SunTLSHostnameVerifier SUN_VERIFIER = new SunTLSHostnameVerifier();
 
   /** Certificate with CN=a.foo.com. */
   private static final String A_FOO_COM_CERT =
@@ -99,10 +94,7 @@ public class DefaultHostnameVerifierTest
     "W1oko9r9zXl9AKWqEd2p/hD8GiHdK2oS+Ob4Hc3k9UqxaAUxidsQmhRLBJKuHjIt" +
     "GVqUK9J39FNxChacraSWTdx8yRQOxaKO5PfJDQRgCPg/9aV1AXQW+Y60ILvvHVA=";
 
-  /**
-   * Certificate with CN=a-c.foo.com
-   *                  subjAltName=DNS:a.foo.com,DNS:b.foo.com,DNS:c.foo.com.
-   */
+  /** Certificate with CN=a-c.foo.com subjAltName=DNS:a.foo.com,DNS:b.foo.com,DNS:c.foo.com. */
   private static final String A_FOO_COM_ALTNAME_CERT =
     "MIIEAzCCAuugAwIBAgIJAMMwgpWWMq0YMA0GCSqGSIb3DQEBBQUAMEUxFDASBgNV" +
     "BAMTC2EtYy5mb28uY29tMRgwFgYKCZImiZPyLGQBGRYIbGRhcHRpdmUxEzARBgoJ" +
@@ -127,10 +119,7 @@ public class DefaultHostnameVerifierTest
     "iGkLfFU0E2G5pzlk9AHyWiBwYbuUrwLVW7sT7awpnzQBf0NCNETcuRmML7YnunwI" +
     "3pJosuWr0LZy4fQbu3CquXgY9GNpto8=";
 
-  /**
-   * Certificate with CN=wc.foo.com
-   *                  subjAltName=DNS:*.foo.com.
-   */
+  /** Certificate with CN=wc.foo.com subjAltName=DNS:*.foo.com. */
   private static final String WC_FOO_COM_ALTNAME_CERT =
     "MIID6jCCAtKgAwIBAgIJAJrNbvmrBDUOMA0GCSqGSIb3DQEBBQUAMEQxEzARBgNV" +
     "BAMTCndjLmZvby5jb20xGDAWBgoJkiaJk/IsZAEZFghsZGFwdGl2ZTETMBEGCgmS" +
@@ -177,10 +166,7 @@ public class DefaultHostnameVerifierTest
     "s8nJ1c5f2zZaZEANTkvO6UFbYynAHisBn9xD++5OcjVJMgX1qOaoxurO2kov5oyw" +
     "bLLuQaV6NVa+DPs6X6P1+iAmPQNj+Izqveq+8C1vyYdu9VU=";
 
-  /**
-   * Certificate with CN=localhost
-   *                  subjAltName=IP:127.0.0.1.
-   */
+  /** Certificate with CN=localhost subjAltName=IP:127.0.0.1. */
   private static final String LOCALHOST_ALTNAME_CERT =
     "MIID4jCCAsqgAwIBAgIJAK/f77u+7Kw2MA0GCSqGSIb3DQEBBQUAMEMxEjAQBgNV" +
     "BAMTCWxvY2FsaG9zdDEYMBYGCgmSJomT8ixkARkWCGxkYXB0aXZlMRMwEQYKCZIm" +
@@ -204,9 +190,7 @@ public class DefaultHostnameVerifierTest
     "h65ugoRzPU690x6DkscPxSQKexEjEZG+z0QnsQgaig6SY3bX2kKMa48QywLp0/Vo" +
     "HddtVv0q6rQqonRHRuCyD+FuXUg0w7BVVRH9txYAsE5eciIc7z0=";
 
-  /**
-   * Certificate with CN=a.foo.com/CN=b.foo.com
-   */
+  /** Certificate with CN=a.foo.com/CN=b.foo.com. */
   private static final String A_FOO_COM_MV_CERT =
     "MIIC2zCCAkSgAwIBAgIDAVJ9MA0GCSqGSIb3DQEBBQUAMFcxEzARBgoJkiaJk/Is" +
     "ZAEZFgNvcmcxGDAWBgoJkiaJk/IsZAEZFghsZGFwdGl2ZTESMBAGA1UEAxMJYS5m" +
@@ -225,9 +209,7 @@ public class DefaultHostnameVerifierTest
     "TokXEIsNS7ODx8r/sBmJ2UHvRdPROtqwY4tCgYlf7LWD/s27eRVYCTZbcwMF1hBf" +
     "aNe1VTBZ5MLkzyewZ6tW";
 
-  /**
-   * Certificate with CN=a.foo.com+b.foo.com
-   */
+  /** Certificate with CN=a.foo.com+b.foo.com. */
   private static final String A_FOO_COM_MV_RDN_CERT =
     "MIIC1DCCAj2gAwIBAgIDAVJ9MA0GCSqGSIb3DQEBBQUAMFUxJDAQBgNVBAMTCWEu" +
     "Zm9vLmNvbTAQBgNVBAMTCWIuZm9vLmNvbTEYMBYGCgmSJomT8ixkARkWCGxkYXB0" +
@@ -314,48 +296,30 @@ public class DefaultHostnameVerifierTest
     throws Exception
   {
     final CertificateFactory cf = CertificateFactory.getInstance("X.509");
-    final X509Certificate aFooComCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_CERT)));
-    final X509Certificate wcFooComCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtils.base64Decode(WC_FOO_COM_CERT)));
-    final X509Certificate wcFooBarComCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtils.base64Decode(WC_FOO_BAR_COM_CERT)));
-    final X509Certificate aFooComAltNameCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(
-          LdapUtils.base64Decode(A_FOO_COM_ALTNAME_CERT)));
-    final X509Certificate wcFooComAltNameCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(
-          LdapUtils.base64Decode(WC_FOO_COM_ALTNAME_CERT)));
-    final X509Certificate localhostCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtils.base64Decode(LOCALHOST_CERT)));
-    final X509Certificate localhostAltNameCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(
-          LdapUtils.base64Decode(LOCALHOST_ALTNAME_CERT)));
-    final X509Certificate aFooComMvCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_MV_CERT)));
-    final X509Certificate aFooComMvRdnCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(
-          LdapUtils.base64Decode(A_FOO_COM_MV_RDN_CERT)));
-    final X509Certificate endBEmbedComCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(
-          LdapUtils.base64Decode(END_B_EMBED_COM_CERT)));
-    final X509Certificate beginBEmbedComCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(
-          LdapUtils.base64Decode(BEGIN_B_EMBED_COM_CERT)));
-    final X509Certificate mwCert = (X509Certificate)
-      cf.generateCertificate(
-        new ByteArrayInputStream(LdapUtils.base64Decode(MW_CERT)));
+    final X509Certificate aFooComCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_CERT)));
+    final X509Certificate wcFooComCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(WC_FOO_COM_CERT)));
+    final X509Certificate wcFooBarComCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(WC_FOO_BAR_COM_CERT)));
+    final X509Certificate aFooComAltNameCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_ALTNAME_CERT)));
+    final X509Certificate wcFooComAltNameCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(WC_FOO_COM_ALTNAME_CERT)));
+    final X509Certificate localhostCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(LOCALHOST_CERT)));
+    final X509Certificate localhostAltNameCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(LOCALHOST_ALTNAME_CERT)));
+    final X509Certificate aFooComMvCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_MV_CERT)));
+    final X509Certificate aFooComMvRdnCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_MV_RDN_CERT)));
+    final X509Certificate endBEmbedComCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(END_B_EMBED_COM_CERT)));
+    final X509Certificate beginBEmbedComCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(BEGIN_B_EMBED_COM_CERT)));
+    final X509Certificate mwCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(MW_CERT)));
 
     return
       new Object[][] {
@@ -420,14 +384,8 @@ public class DefaultHostnameVerifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"ssl"},
-    dataProvider = "certificates"
-  )
-  public void verifyDefault(
-    final String hostname,
-    final X509Certificate cert,
-    final boolean pass)
+  @Test(groups = {"ssl"}, dataProvider = "certificates")
+  public void verifyDefault(final String hostname, final X509Certificate cert, final boolean pass)
     throws Exception
   {
     Assert.assertEquals(DEFAULT_VERIFIER.verify(hostname, cert), pass);
@@ -441,14 +399,8 @@ public class DefaultHostnameVerifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"ssl"},
-    dataProvider = "certificates"
-  )
-  public void verifySun(
-    final String hostname,
-    final X509Certificate cert,
-    final boolean pass)
+  @Test(groups = {"ssl"}, dataProvider = "certificates")
+  public void verifySun(final String hostname, final X509Certificate cert, final boolean pass)
     throws Exception
   {
     Assert.assertEquals(SUN_VERIFIER.verify(hostname, cert), pass);

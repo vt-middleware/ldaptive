@@ -45,17 +45,11 @@ public class PasswordExpiringControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "response"
-  )
-  public void decode(
-    final byte[] berValue,
-    final PasswordExpiringControl expected)
+  @Test(groups = {"control"}, dataProvider = "response")
+  public void decode(final byte[] berValue, final PasswordExpiringControl expected)
     throws Exception
   {
-    final PasswordExpiringControl actual = new PasswordExpiringControl(
-      expected.getCriticality());
+    final PasswordExpiringControl actual = new PasswordExpiringControl(expected.getCriticality());
     actual.decode(berValue);
     Assert.assertEquals(actual, expected);
   }

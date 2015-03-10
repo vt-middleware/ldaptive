@@ -34,8 +34,7 @@ public interface LdapEntryMapper<T>
 
 
   /**
-   * Injects data from the supplied ldap entry into the supplied destination
-   * object.
+   * Injects data from the supplied ldap entry into the supplied destination object.
    *
    * @param  source  to read from
    * @param  dest  to write to

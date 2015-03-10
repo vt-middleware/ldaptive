@@ -67,16 +67,15 @@ public class SyncReplClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "syncReplSearchDn",
-    "syncReplSearchReturnAttrs",
-    "syncReplSearchResults"
-  })
+  @Parameters(
+    {
+      "syncReplSearchDn",
+      "syncReplSearchReturnAttrs",
+      "syncReplSearchResults"
+    }
+  )
   @Test(groups = {"control-util"})
-  public void syncReplRefreshOnly(
-    final String dn,
-    final String returnAttrs,
-    final String ldifFile)
+  public void syncReplRefreshOnly(final String dn, final String returnAttrs, final String ldifFile)
     throws Exception
   {
     if (TestControl.isActiveDirectory()) {
@@ -85,14 +84,13 @@ public class SyncReplClientTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    Connection conn = TestUtils.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final SyncReplClient client = new SyncReplClient(conn, false);
-      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
-        dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(
-        request, new DefaultCookieManager());
+      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn, returnAttrs.split("\\|"));
+      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
 
       SyncReplItem item = results.take();
       if (item.isException()) {
@@ -105,19 +103,14 @@ public class SyncReplClientTest extends AbstractTest
         item = results.take();
       }
       AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(
-        SyncStateControl.State.ADD,
-        item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(
-        item.getEntry().getSyncStateControl().getEntryUuid());
+      AssertJUnit.assertEquals(SyncStateControl.State.ADD, item.getEntry().getSyncStateControl().getSyncState());
+      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
       AssertJUnit.assertNull(item.getEntry().getSyncStateControl().getCookie());
 
       item = results.take();
       AssertJUnit.assertTrue(item.isResponse());
-      AssertJUnit.assertEquals(
-        true, item.getResponse().getSyncDoneControl().getRefreshDeletes());
-      AssertJUnit.assertNotNull(
-        item.getResponse().getSyncDoneControl().getCookie());
+      AssertJUnit.assertEquals(true, item.getResponse().getSyncDoneControl().getRefreshDeletes());
+      AssertJUnit.assertNotNull(item.getResponse().getSyncDoneControl().getCookie());
     } finally {
       conn.close();
     }
@@ -131,16 +124,15 @@ public class SyncReplClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "syncReplSearchDn",
-    "syncReplSearchReturnAttrs",
-    "syncReplSearchResults"
-  })
+  @Parameters(
+    {
+      "syncReplSearchDn",
+      "syncReplSearchReturnAttrs",
+      "syncReplSearchResults"
+    }
+  )
   @Test(groups = {"control-util"})
-  public void syncReplRefreshAndPersist(
-    final String dn,
-    final String returnAttrs,
-    final String ldifFile)
+  public void syncReplRefreshAndPersist(final String dn, final String returnAttrs, final String ldifFile)
     throws Exception
   {
     if (TestControl.isActiveDirectory()) {
@@ -149,14 +141,13 @@ public class SyncReplClientTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    Connection conn = TestUtils.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final SyncReplClient client = new SyncReplClient(conn, true);
-      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
-        dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(
-        request, new DefaultCookieManager());
+      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn, returnAttrs.split("\\|"));
+      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
 
       // test the async request
       SyncReplItem item = results.take();
@@ -172,11 +163,8 @@ public class SyncReplClientTest extends AbstractTest
 
       // test the first entry
       AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(
-        SyncStateControl.State.ADD,
-        item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(
-        item.getEntry().getSyncStateControl().getEntryUuid());
+      AssertJUnit.assertEquals(SyncStateControl.State.ADD, item.getEntry().getSyncStateControl().getSyncState());
+      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
       AssertJUnit.assertNull(item.getEntry().getSyncStateControl().getCookie());
       TestUtils.assertEquals(
         TestUtils.convertLdifToResult(expected),
@@ -188,45 +176,33 @@ public class SyncReplClientTest extends AbstractTest
         throw item.getException();
       }
       AssertJUnit.assertTrue(item.isMessage());
-      AssertJUnit.assertEquals(
-        SyncInfoMessage.Type.REFRESH_DELETE,
-        item.getMessage().getMessageType());
+      AssertJUnit.assertEquals(SyncInfoMessage.Type.REFRESH_DELETE, item.getMessage().getMessageType());
       AssertJUnit.assertNotNull(item.getMessage().getCookie());
       AssertJUnit.assertFalse(item.getMessage().getRefreshDeletes());
       AssertJUnit.assertTrue(item.getMessage().getRefreshDone());
 
       // make a change
       final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(new ModifyRequest(
-        dn,
-        new AttributeModification(
-          AttributeModificationType.ADD,
-          new LdapAttribute("employeeType", "Employee"))));
+      modify.execute(
+        new ModifyRequest(
+          dn,
+          new AttributeModification(AttributeModificationType.ADD, new LdapAttribute("employeeType", "Employee"))));
       item = results.take();
       AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(
-        SyncStateControl.State.MODIFY,
-        item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(
-        item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNotNull(
-        item.getEntry().getSyncStateControl().getCookie());
+      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, item.getEntry().getSyncStateControl().getSyncState());
+      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
+      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getCookie());
 
       // change it back
-      modify.execute(new ModifyRequest(
-        dn,
-        new AttributeModification(
-          AttributeModificationType.REMOVE,
-          new LdapAttribute("employeeType"))));
+      modify.execute(
+        new ModifyRequest(
+          dn,
+          new AttributeModification(AttributeModificationType.REMOVE, new LdapAttribute("employeeType"))));
       item = results.take();
       AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(
-        SyncStateControl.State.MODIFY,
-        item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(
-        item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNotNull(
-        item.getEntry().getSyncStateControl().getCookie());
+      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, item.getEntry().getSyncStateControl().getSyncState());
+      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
+      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getCookie());
       TestUtils.assertEquals(
         TestUtils.convertLdifToResult(expected),
         new SearchResult(item.getEntry().getSearchEntry()));
@@ -239,8 +215,7 @@ public class SyncReplClientTest extends AbstractTest
       }
       AssertJUnit.assertTrue(item.isResponse());
       AssertJUnit.assertTrue(results.isEmpty());
-      AssertJUnit.assertEquals(
-        ResultCode.CANCELED, item.getResponse().getResponse().getResultCode());
+      AssertJUnit.assertEquals(ResultCode.CANCELED, item.getResponse().getResponse().getResultCode());
     } finally {
       conn.close();
     }

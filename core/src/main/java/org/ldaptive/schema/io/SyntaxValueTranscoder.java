@@ -9,8 +9,7 @@ import org.ldaptive.schema.Syntax;
  *
  * @author  Middleware Services
  */
-public class SyntaxValueTranscoder
-  extends AbstractSchemaElementValueTranscoder<Syntax>
+public class SyntaxValueTranscoder extends AbstractSchemaElementValueTranscoder<Syntax>
 {
 
 
@@ -20,9 +19,7 @@ public class SyntaxValueTranscoder
     try {
       return Syntax.parse(value);
     } catch (ParseException e) {
-      throw new IllegalArgumentException(
-        "Could not transcode attribute syntax",
-        e);
+      throw new IllegalArgumentException("Could not transcode attribute syntax", e);
     }
   }
 

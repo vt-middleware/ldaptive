@@ -58,10 +58,7 @@ public class ConfigTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"config"},
-    dataProvider = "configs"
-  )
+  @Test(groups = {"config"}, dataProvider = "configs")
   public void testImmutable(
     // CheckStyle:IllegalType OFF
     final AbstractConfig config)
@@ -70,8 +67,7 @@ public class ConfigTest
   {
     config.makeImmutable();
     for (Method method : config.getClass().getMethods()) {
-      if (method.getName().startsWith("set") &&
-          method.getParameterTypes().length == 1) {
+      if (method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
         try {
           final Class<?> type = method.getParameterTypes()[0];
           if (type.isPrimitive()) {
@@ -81,9 +77,7 @@ public class ConfigTest
           }
           Assert.fail("Should have thrown IllegalStateException for " + method);
         } catch (Exception e) {
-          AssertJUnit.assertEquals(
-            IllegalStateException.class,
-            e.getCause().getClass());
+          AssertJUnit.assertEquals(IllegalStateException.class, e.getCause().getClass());
         }
       }
     }

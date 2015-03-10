@@ -120,8 +120,7 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
 
 
   /**
-   * Parses the supplied definition string and creates an initialized matching
-   * rule use.
+   * Parses the supplied definition string and creates an initialized matching rule use.
    *
    * @param  definition  to parse
    *
@@ -134,9 +133,7 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
   {
     final Matcher m = DEFINITION_PATTERN.matcher(definition);
     if (!m.matches()) {
-      throw new ParseException(
-        "Invalid matching rule use definition: " + definition,
-        definition.length());
+      throw new ParseException("Invalid matching rule use definition: " + definition, definition.length());
     }
 
     final MatchingRuleUse mrud = new MatchingRuleUse(m.group(1).trim());

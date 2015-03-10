@@ -210,8 +210,7 @@ public class ObjectClass extends AbstractNamedSchemaElement
 
 
   /**
-   * Parses the supplied definition string and creates an initialized object
-   * class.
+   * Parses the supplied definition string and creates an initialized object class.
    *
    * @param  definition  to parse
    *
@@ -224,9 +223,7 @@ public class ObjectClass extends AbstractNamedSchemaElement
   {
     final Matcher m = DEFINITION_PATTERN.matcher(definition);
     if (!m.matches()) {
-      throw new ParseException(
-        "Invalid object class definition: " + definition,
-        definition.length());
+      throw new ParseException("Invalid object class definition: " + definition, definition.length());
     }
 
     final ObjectClass ocd = new ObjectClass(m.group(1).trim());

@@ -25,8 +25,7 @@ import org.ldaptive.SortBehavior;
 import org.ldaptive.control.ResponseControl;
 
 /**
- * Provides methods for converting between Apache Ldap specific objects and
- * ldaptive specific objects.
+ * Provides methods for converting between Apache Ldap specific objects and ldaptive specific objects.
  *
  * @author  Middleware Services
  */
@@ -96,15 +95,13 @@ public class ApacheLdapUtils
     } else if (o instanceof byte[]) {
       return new BinaryValue((byte[]) o);
     } else {
-      throw new IllegalArgumentException(
-        "Unsupported attribute value type " + o.getClass());
+      throw new IllegalArgumentException("Unsupported attribute value type " + o.getClass());
     }
   }
 
 
   /**
-   * Returns an apache ldap attribute that represents the values in the supplied
-   * ldap attribute.
+   * Returns an apache ldap attribute that represents the values in the supplied ldap attribute.
    *
    * @param  la  ldap attribute
    *
@@ -156,8 +153,7 @@ public class ApacheLdapUtils
 
 
   /**
-   * Returns a list of apache ldap attribute that represents the values in the
-   * supplied ldap attributes.
+   * Returns a list of apache ldap attribute that represents the values in the supplied ldap attributes.
    *
    * @param  c  ldap attributes
    *
@@ -200,10 +196,7 @@ public class ApacheLdapUtils
    *
    * @return  search entry
    */
-  public SearchEntry toSearchEntry(
-    final Entry e,
-    final ResponseControl[] c,
-    final int id)
+  public SearchEntry toSearchEntry(final Entry e, final ResponseControl[] c, final int id)
   {
     final SearchEntry se = new SearchEntry(id, c, sortBehavior);
     se.setDn(e.getDn().getName());
@@ -215,15 +208,13 @@ public class ApacheLdapUtils
 
 
   /**
-   * Returns apache ldap modifications using the supplied attribute
-   * modifications.
+   * Returns apache ldap modifications using the supplied attribute modifications.
    *
    * @param  am  attribute modifications
    *
    * @return  apache ldap modifications
    */
-  public Modification[] fromAttributeModification(
-    final AttributeModification[] am)
+  public Modification[] fromAttributeModification(final AttributeModification[] am)
   {
     final Modification[] mods = new Modification[am.length];
     for (int i = 0; i < am.length; i++) {
@@ -236,15 +227,13 @@ public class ApacheLdapUtils
 
 
   /**
-   * Returns the apache ldap modification operation for the supplied attribute
-   * modification type.
+   * Returns the apache ldap modification operation for the supplied attribute modification type.
    *
    * @param  am  attribute modification type
    *
    * @return  modification operation
    */
-  protected static ModificationOperation getAttributeModification(
-    final AttributeModificationType am)
+  protected static ModificationOperation getAttributeModification(final AttributeModificationType am)
   {
     ModificationOperation op = null;
     if (am == AttributeModificationType.ADD) {

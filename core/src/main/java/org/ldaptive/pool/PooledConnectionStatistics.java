@@ -5,10 +5,8 @@ import java.util.Deque;
 import java.util.LinkedList;
 
 /**
- * Statistics associated with a connection's activity in the pool. Exposes the
- * timestamps when this connection entered both the available pool and the
- * active pool. A size of 512 uses approximately 50 kilobytes of memory per
- * connection.
+ * Statistics associated with a connection's activity in the pool. Exposes the timestamps when this connection entered
+ * both the available pool and the active pool. A size of 512 uses approximately 50 kilobytes of memory per connection.
  *
  * @author  Middleware Services
  */
@@ -131,7 +129,6 @@ public class PooledConnectionStatistics
   @Override
   public String toString()
   {
-    return
-      String.format("[%s@%d::size=%s]", getClass().getName(), hashCode(), size);
+    return String.format("[%s@%d::size=%s]", getClass().getName(), hashCode(), size);
   }
 }

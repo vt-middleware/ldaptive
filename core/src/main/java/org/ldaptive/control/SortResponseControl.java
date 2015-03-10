@@ -11,8 +11,7 @@ import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
- * Response control for server side sorting. See RFC 2891. Control is defined
- * as:
+ * Response control for server side sorting. See RFC 2891. Control is defined as:
  *
  * <pre>
        SortResult ::= SEQUENCE {
@@ -42,8 +41,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class SortResponseControl extends AbstractControl
-  implements ResponseControl
+public class SortResponseControl extends AbstractControl implements ResponseControl
 {
 
   /** OID of this control. */
@@ -97,10 +95,7 @@ public class SortResponseControl extends AbstractControl
    * @param  attrName  name of the failed attribute
    * @param  critical  whether this control is critical
    */
-  public SortResponseControl(
-    final ResultCode code,
-    final String attrName,
-    final boolean critical)
+  public SortResponseControl(final ResultCode code, final String attrName, final boolean critical)
   {
     super(OID, critical);
     setSortResult(code);
@@ -155,13 +150,7 @@ public class SortResponseControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        sortResult,
-        attributeName);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), sortResult, attributeName);
   }
 
 
@@ -186,16 +175,13 @@ public class SortResponseControl extends AbstractControl
 
     final DERParser parser = new DERParser();
     parser.registerHandler(SortResultHandler.PATH, new SortResultHandler(this));
-    parser.registerHandler(
-      AttributeTypeHandler.PATH,
-      new AttributeTypeHandler(this));
+    parser.registerHandler(AttributeTypeHandler.PATH, new AttributeTypeHandler(this));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
 
   /** Parse handler implementation for the sort result. */
-  private static class SortResultHandler
-    extends AbstractParseHandler<SortResponseControl>
+  private static class SortResultHandler extends AbstractParseHandler<SortResponseControl>
   {
 
     /** DER path to result code. */
@@ -219,8 +205,7 @@ public class SortResponseControl extends AbstractControl
       final int resultValue = IntegerType.decode(encoded).intValue();
       final ResultCode rc = ResultCode.valueOf(resultValue);
       if (rc == null) {
-        throw new IllegalArgumentException(
-          "Unknown result code " + resultValue);
+        throw new IllegalArgumentException("Unknown result code " + resultValue);
       }
       getObject().setSortResult(rc);
     }
@@ -228,8 +213,7 @@ public class SortResponseControl extends AbstractControl
 
 
   /** Parse handler implementation for the attribute type. */
-  private static class AttributeTypeHandler
-    extends AbstractParseHandler<SortResponseControl>
+  private static class AttributeTypeHandler extends AbstractParseHandler<SortResponseControl>
   {
 
     /** DER path to attr value. */

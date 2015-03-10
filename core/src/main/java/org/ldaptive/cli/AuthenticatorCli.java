@@ -56,8 +56,7 @@ public class AuthenticatorCli extends AbstractCli
   @Override
   protected void initOptions()
   {
-    options.addOption(
-      new Option(OPT_DSMLV1, false, "output results in DSML v1"));
+    options.addOption(new Option(OPT_DSMLV1, false, "output results in DSML v1"));
 
     final Map<String, String> desc = getArgDesc(
       ConnectionConfig.class,
@@ -97,7 +96,8 @@ public class AuthenticatorCli extends AbstractCli
   {
     final Authenticator auth = new Authenticator();
     final AuthenticatorPropertySource aSource = new AuthenticatorPropertySource(
-      auth, getPropertiesFromOptions(PropertyDomain.AUTH.value(), line));
+      auth,
+      getPropertiesFromOptions(PropertyDomain.AUTH.value(), line));
     aSource.initialize();
     return auth;
   }
@@ -110,14 +110,12 @@ public class AuthenticatorCli extends AbstractCli
    *
    * @return  authentication request that has been initialized
    */
-  protected AuthenticationRequest initAuthenticationRequest(
-    final CommandLine line)
+  protected AuthenticationRequest initAuthenticationRequest(final CommandLine line)
   {
     final AuthenticationRequest request = new AuthenticationRequest();
-    final AuthenticationRequestPropertySource arSource =
-      new AuthenticationRequestPropertySource(
-        request,
-        getPropertiesFromOptions(PropertyDomain.AUTH.value(), line));
+    final AuthenticationRequestPropertySource arSource = new AuthenticationRequestPropertySource(
+      request,
+      getPropertiesFromOptions(PropertyDomain.AUTH.value(), line));
     arSource.initialize();
     if (request.getUser() == null) {
       // prompt for a user name
@@ -127,9 +125,7 @@ public class AuthenticatorCli extends AbstractCli
 
     if (request.getCredential() == null) {
       // prompt the user to enter a password
-      final char[] pass = System.console().readPassword(
-        "[Enter password for %s]: ",
-        request.getUser());
+      final char[] pass = System.console().readPassword("[Enter password for %s]: ", request.getUser());
       request.setCredential(new Credential(pass));
     }
 
@@ -147,8 +143,7 @@ public class AuthenticatorCli extends AbstractCli
     if (line.hasOption(OPT_HELP)) {
       printHelp();
     } else {
-      return
-        authenticate(initAuthenticator(line), initAuthenticationRequest(line));
+      return authenticate(initAuthenticator(line), initAuthenticationRequest(line));
     }
     return -1;
   }
@@ -164,15 +159,11 @@ public class AuthenticatorCli extends AbstractCli
    *
    * @throws  Exception  on any LDAP error
    */
-  protected int authenticate(
-    final Authenticator auth,
-    final AuthenticationRequest request)
+  protected int authenticate(final Authenticator auth, final AuthenticationRequest request)
     throws Exception
   {
     // by default return all attributes
-    if (
-      request.getReturnAttributes() != null &&
-        request.getReturnAttributes().length == 0) {
+    if (request.getReturnAttributes() != null && request.getReturnAttributes().length == 0) {
       request.setReturnAttributes(ReturnAttributes.ALL_USER.value());
     }
 
@@ -182,11 +173,9 @@ public class AuthenticatorCli extends AbstractCli
       if (entry != null) {
         SearchResultWriter writer;
         if (outputDsmlv1) {
-          writer = new Dsmlv1Writer(
-            new BufferedWriter(new OutputStreamWriter(System.out)));
+          writer = new Dsmlv1Writer(new BufferedWriter(new OutputStreamWriter(System.out)));
         } else {
-          writer = new LdifWriter(
-            new BufferedWriter(new OutputStreamWriter(System.out)));
+          writer = new LdifWriter(new BufferedWriter(new OutputStreamWriter(System.out)));
         }
         writer.write(new SearchResult(entry));
       }

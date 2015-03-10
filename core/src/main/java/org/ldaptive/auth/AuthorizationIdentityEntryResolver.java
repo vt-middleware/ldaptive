@@ -8,16 +8,14 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.control.AuthorizationIdentityResponseControl;
 
 /**
- * Reads the authorization identity response control, then performs an object
- * level search on the result. Useful when users authenticate with some mapped
- * identifier, like DIGEST-MD5. This resolver must be used with an {@link
+ * Reads the authorization identity response control, then performs an object level search on the result. Useful when
+ * users authenticate with some mapped identifier, like DIGEST-MD5. This resolver must be used with an {@link
  * AuthenticationHandler} that is configured to send the {@link
  * org.ldaptive.control.AuthorizationIdentityRequestControl}.
  *
  * @author  Middleware Services
  */
-public class AuthorizationIdentityEntryResolver
-  extends AbstractSearchEntryResolver
+public class AuthorizationIdentityEntryResolver extends AbstractSearchEntryResolver
 {
 
 
@@ -27,19 +25,16 @@ public class AuthorizationIdentityEntryResolver
     final AuthenticationHandlerResponse response)
     throws LdapException
   {
-    final AuthorizationIdentityResponseControl ctrl =
-      (AuthorizationIdentityResponseControl) response.getControl(
-        AuthorizationIdentityResponseControl.OID);
+    final AuthorizationIdentityResponseControl ctrl = (AuthorizationIdentityResponseControl) response.getControl(
+      AuthorizationIdentityResponseControl.OID);
     if (ctrl == null) {
-      throw new IllegalStateException(
-        "Authorization Identity Response Control not found");
+      throw new IllegalStateException("Authorization Identity Response Control not found");
     }
     logger.debug("found authorization identity response control {}", ctrl);
 
     final String authzId = ctrl.getAuthorizationId();
     final String dn = authzId.split(":", 2)[1].trim();
-    final SearchOperation search = createSearchOperation(
-      response.getConnection());
+    final SearchOperation search = createSearchOperation(response.getConnection());
     return search.execute(createSearchRequest(criteria, dn)).getResult();
   }
 
@@ -52,9 +47,7 @@ public class AuthorizationIdentityEntryResolver
    *
    * @return  search request
    */
-  protected SearchRequest createSearchRequest(
-    final AuthenticationCriteria ac,
-    final String dn)
+  protected SearchRequest createSearchRequest(final AuthenticationCriteria ac, final String dn)
   {
     final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
       dn,

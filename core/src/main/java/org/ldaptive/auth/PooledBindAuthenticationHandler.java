@@ -12,13 +12,12 @@ import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
 
 /**
- * Provides an LDAP authentication implementation that leverages a pool of LDAP
- * connections to perform the LDAP bind operation.
+ * Provides an LDAP authentication implementation that leverages a pool of LDAP connections to perform the LDAP bind
+ * operation.
  *
  * @author  Middleware Services
  */
-public class PooledBindAuthenticationHandler
-  extends AbstractBindAuthenticationHandler
+public class PooledBindAuthenticationHandler extends AbstractBindAuthenticationHandler
   implements PooledConnectionFactoryManager
 {
 
@@ -70,9 +69,7 @@ public class PooledBindAuthenticationHandler
     throws LdapException
   {
     AuthenticationHandlerResponse response;
-    final BindRequest request = new BindRequest(
-      criteria.getDn(),
-      criteria.getCredential());
+    final BindRequest request = new BindRequest(criteria.getDn(), criteria.getCredential());
     request.setSaslConfig(getAuthenticationSaslConfig());
     request.setControls(getAuthenticationControls());
 

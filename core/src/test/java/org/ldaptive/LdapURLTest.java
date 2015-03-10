@@ -66,8 +66,7 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://ldap1.example.net/o=University%20of%20Michigan,c=US"),
+          new LdapURL("ldap://ldap1.example.net/o=University%20of%20Michigan,c=US"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -80,9 +79,8 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://ldap1.example.net/o=University%20of%20Michigan,c=US" +
-              "?postalAddress"),
+          new LdapURL("ldap://ldap1.example.net/o=University%20of%20Michigan,c=US" +
+            "?postalAddress"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -95,9 +93,8 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://ldap1.example.net:6666/o=University%20of%20Michigan,c=US" +
-              "??sub?(cn=Babs%20Jensen)"),
+          new LdapURL("ldap://ldap1.example.net:6666/o=University%20of%20Michigan,c=US" +
+            "??sub?(cn=Babs%20Jensen)"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -149,9 +146,8 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://ldap3.example.com/o=Babsco,c=US" +
-              "???(four-octet=%5c00%5c00%5c00%5c04)"),
+          new LdapURL("ldap://ldap3.example.com/o=Babsco,c=US" +
+            "???(four-octet=%5c00%5c00%5c00%5c04)"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -164,8 +160,7 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://ldap.example.com/o=An%20Example%5C2C%20Inc.,c=US"),
+          new LdapURL("ldap://ldap.example.com/o=An%20Example%5C2C%20Inc.,c=US"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -217,8 +212,7 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org"),
+          new LdapURL("ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -231,8 +225,7 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org?cn"),
+          new LdapURL("ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org?cn"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -245,8 +238,7 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org?cn,sn"),
+          new LdapURL("ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org?cn,sn"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -259,9 +251,8 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org" +
-              "?cn,sn?one"),
+          new LdapURL("ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org" +
+            "?cn,sn?one"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -274,9 +265,8 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org" +
-              "?cn,sn?one?(uid=dfisher)"),
+          new LdapURL("ldap://directory.ldaptive.org:10389/dc=ldaptive,dc=org" +
+            "?cn,sn?one?(uid=dfisher)"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldap",
@@ -311,8 +301,7 @@ public class LdapURLTest
           },
         },
         new Object[] {
-          new LdapURL(
-            "ldaps://directory1.ldaptive.org " +
+          new LdapURL("ldaps://directory1.ldaptive.org " +
             "ldap://directory2.ldaptive.org:10389"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
@@ -336,7 +325,7 @@ public class LdapURLTest
         new Object[] {
           new LdapURL(
             "ldaps://directory1.ldaptive.org/dc=ldaptive,dc=org " +
-              "ldap://directory2.ldaptive.org:10389/dc=ldaptive,dc=org"),
+            "ldap://directory2.ldaptive.org:10389/dc=ldaptive,dc=org"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldaps",
@@ -359,7 +348,7 @@ public class LdapURLTest
         new Object[] {
           new LdapURL(
             "ldaps://directory1.ldaptive.org/dc=ldaptive,dc=org?cn,sn " +
-              "ldap://directory2.ldaptive.org:10389/dc=ldaptive,dc=org?cn"),
+            "ldap://directory2.ldaptive.org:10389/dc=ldaptive,dc=org?cn"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldaps",
@@ -382,8 +371,8 @@ public class LdapURLTest
         new Object[] {
           new LdapURL(
             "ldaps://directory1.ldaptive.org/dc=ldaptive,dc=org" +
-              "?cn,sn?base ldap://directory2.ldaptive.org:10389/" +
-              "dc=ldaptive,dc=org?cn?sub"),
+            "?cn,sn?base ldap://directory2.ldaptive.org:10389/" +
+            "dc=ldaptive,dc=org?cn?sub"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldaps",
@@ -406,8 +395,8 @@ public class LdapURLTest
         new Object[] {
           new LdapURL(
             "ldaps://directory1.ldaptive.org/dc=ldaptive,dc=org?cn,sn?base?" +
-              "(uid=dfisher) ldap://directory2.ldaptive.org:10389/" +
-              "dc=ldaptive,dc=org?cn?sub?(uid=dfisher)"),
+            "(uid=dfisher) ldap://directory2.ldaptive.org:10389/" +
+            "dc=ldaptive,dc=org?cn?sub?(uid=dfisher)"),
           new LdapURL.Entry[] {
             new LdapURL.Entry(
               "ldaps",
@@ -438,13 +427,8 @@ public class LdapURLTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"ldapURL"},
-    dataProvider = "urls"
-  )
-  public void testParsing(
-    final LdapURL url,
-    final LdapURL.Entry[] entries)
+  @Test(groups = {"ldapURL"}, dataProvider = "urls")
+  public void testParsing(final LdapURL url, final LdapURL.Entry[] entries)
     throws Exception
   {
     final Iterator<LdapURL.Entry> iter = url.getEntries().iterator();
@@ -465,12 +449,9 @@ public class LdapURLTest
 
     final String[] hostnamesWithSchemeAndPort = new String[entries.length];
     for (int i = 0; i < entries.length; i++) {
-      hostnamesWithSchemeAndPort[i] =
-        entries[i].getHostnameWithSchemeAndPort();
+      hostnamesWithSchemeAndPort[i] = entries[i].getHostnameWithSchemeAndPort();
     }
-    Assert.assertEquals(
-      hostnamesWithSchemeAndPort,
-      url.getHostnamesWithSchemeAndPort());
+    Assert.assertEquals(hostnamesWithSchemeAndPort, url.getHostnamesWithSchemeAndPort());
 
     final String[] urls = new String[entries.length];
     for (int i = 0; i < entries.length; i++) {
@@ -486,9 +467,7 @@ public class LdapURLTest
    * @param  entry1  to compare
    * @param  entry2  to compare
    */
-  private void compareEntries(
-    final LdapURL.Entry entry1,
-    final LdapURL.Entry entry2)
+  private void compareEntries(final LdapURL.Entry entry1, final LdapURL.Entry entry2)
   {
     Assert.assertEquals(entry1.getScheme(), entry2.getScheme());
     Assert.assertEquals(entry1.getHostname(), entry2.getHostname());

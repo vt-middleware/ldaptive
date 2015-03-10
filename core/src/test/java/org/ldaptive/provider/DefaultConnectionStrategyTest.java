@@ -14,8 +14,7 @@ public class DefaultConnectionStrategyTest
 {
 
   /** Strategy to test. */
-  private final DefaultConnectionStrategy strategy =
-    new DefaultConnectionStrategy();
+  private final DefaultConnectionStrategy strategy = new DefaultConnectionStrategy();
 
 
   /**
@@ -37,11 +36,8 @@ public class DefaultConnectionStrategyTest
           new String[] {"ldap://directory.ldaptive.org"},
         },
         new Object[] {
-          new TestConnectionFactoryMetadata(
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org"),
-          new String[] {
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org",
-          },
+          new TestConnectionFactoryMetadata("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org"),
+          new String[] {"ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org", },
         },
         new Object[] {
           new TestConnectionFactoryMetadata(
@@ -63,13 +59,8 @@ public class DefaultConnectionStrategyTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"provider"},
-    dataProvider = "urls"
-  )
-  public void getLdapUrls(
-    final ConnectionFactoryMetadata metadata,
-    final String[] urls)
+  @Test(groups = {"provider"}, dataProvider = "urls")
+  public void getLdapUrls(final ConnectionFactoryMetadata metadata, final String[] urls)
     throws Exception
   {
     Assert.assertEquals(strategy.getLdapUrls(metadata), urls);

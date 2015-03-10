@@ -9,23 +9,20 @@ import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PoolConfig;
 
 /**
- * Reads properties specific to {@link BlockingConnectionPool} and returns an
- * initialized object of that type.
+ * Reads properties specific to {@link BlockingConnectionPool} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class BlockingConnectionPoolPropertySource
-  extends AbstractPropertySource<BlockingConnectionPool>
+public final class BlockingConnectionPoolPropertySource extends AbstractPropertySource<BlockingConnectionPool>
 {
 
   /** Invoker for connection factory. */
-  private static final BlockingConnectionPoolPropertyInvoker INVOKER =
-    new BlockingConnectionPoolPropertyInvoker(BlockingConnectionPool.class);
+  private static final BlockingConnectionPoolPropertyInvoker INVOKER = new BlockingConnectionPoolPropertyInvoker(
+    BlockingConnectionPool.class);
 
 
   /**
-   * Creates a new blocking connection pool property source using the default
-   * properties file.
+   * Creates a new blocking connection pool property source using the default properties file.
    *
    * @param  cp  connection pool to invoke properties on
    */
@@ -41,9 +38,7 @@ public final class BlockingConnectionPoolPropertySource
    * @param  cp  connection pool to invoke properties on
    * @param  paths  to read properties from
    */
-  public BlockingConnectionPoolPropertySource(
-    final BlockingConnectionPool cp,
-    final String... paths)
+  public BlockingConnectionPoolPropertySource(final BlockingConnectionPool cp, final String... paths)
   {
     this(cp, loadProperties(paths));
   }
@@ -55,9 +50,7 @@ public final class BlockingConnectionPoolPropertySource
    * @param  cp  connection pool to invoke properties on
    * @param  readers  to read properties from
    */
-  public BlockingConnectionPoolPropertySource(
-    final BlockingConnectionPool cp,
-    final Reader... readers)
+  public BlockingConnectionPoolPropertySource(final BlockingConnectionPool cp, final Reader... readers)
   {
     this(cp, loadProperties(readers));
   }
@@ -69,9 +62,7 @@ public final class BlockingConnectionPoolPropertySource
    * @param  cp  connection pool to invoke properties on
    * @param  props  to read properties from
    */
-  public BlockingConnectionPoolPropertySource(
-    final BlockingConnectionPool cp,
-    final Properties props)
+  public BlockingConnectionPoolPropertySource(final BlockingConnectionPool cp, final Properties props)
   {
     this(cp, PropertyDomain.POOL, props);
   }
@@ -102,11 +93,10 @@ public final class BlockingConnectionPoolPropertySource
     if (cf == null) {
       cf = new DefaultConnectionFactory();
 
-      final DefaultConnectionFactoryPropertySource cfPropSource =
-        new DefaultConnectionFactoryPropertySource(
-          cf,
-          propertiesDomain,
-          properties);
+      final DefaultConnectionFactoryPropertySource cfPropSource = new DefaultConnectionFactoryPropertySource(
+        cf,
+        propertiesDomain,
+        properties);
       cfPropSource.initialize();
       object.setConnectionFactory(cf);
     }
@@ -115,13 +105,11 @@ public final class BlockingConnectionPoolPropertySource
     if (pc == null) {
       pc = new PoolConfig();
 
-      final PoolConfigPropertySource pcPropSource =
-        new PoolConfigPropertySource(pc, propertiesDomain, properties);
+      final PoolConfigPropertySource pcPropSource = new PoolConfigPropertySource(pc, propertiesDomain, properties);
       pcPropSource.initialize();
       object.setPoolConfig(pc);
     } else {
-      final SimplePropertySource<PoolConfig> sPropSource =
-        new SimplePropertySource<>(pc, propertiesDomain, properties);
+      final SimplePropertySource<PoolConfig> sPropSource = new SimplePropertySource<>(pc, propertiesDomain, properties);
       sPropSource.initialize();
     }
   }

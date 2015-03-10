@@ -6,9 +6,8 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
- * Response control indicating an expired password. See
- * http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00. Control is defined
- * as:
+ * Response control indicating an expired password. See http://tools.ietf.org/html/draft-vchu-ldap-pwd-policy-00.
+ * Control is defined as:
  *
  * <pre>
    controlValue ::= OCTET STRING  -- always "0"
@@ -16,8 +15,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class PasswordExpiredControl extends AbstractControl
-  implements ResponseControl
+public class PasswordExpiredControl extends AbstractControl implements ResponseControl
 {
 
   /** OID of this control. */
@@ -48,20 +46,14 @@ public class PasswordExpiredControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality());
+    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
   }
 
 
@@ -72,8 +64,7 @@ public class PasswordExpiredControl extends AbstractControl
 
     final String value = OctetStringType.decode(ByteBuffer.wrap(berValue));
     if (!"0".equals(value)) {
-      throw new IllegalArgumentException(
-        "Response control value should always be '0'");
+      throw new IllegalArgumentException("Response control value should always be '0'");
     }
   }
 }

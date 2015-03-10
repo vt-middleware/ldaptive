@@ -22,7 +22,9 @@ public abstract class AbstractTest
   /** Timeout for threaded tests. */
   public static final int TEST_TIME_OUT = 60000;
 
-  /** Add the BC provider. */
+  /**
+   * Add the BC provider.
+   */
   static {
     Security.addProvider(new BouncyCastleProvider());
   }
@@ -38,24 +40,23 @@ public abstract class AbstractTest
   public void createLdapEntry(final LdapEntry entry)
     throws Exception
   {
-    Connection conn = TestUtils.createSetupConnection();
+    final Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
+
       final AddOperation create = new AddOperation(conn);
       create.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
       if (!entryExists(conn, entry)) {
         throw new IllegalStateException("Could not add entry to LDAP");
       }
-      if (TestControl.isActiveDirectory() &&
-          entry.getAttribute("userPassword") != null) {
+      if (TestControl.isActiveDirectory() && entry.getAttribute("userPassword") != null) {
         final ModifyOperation modify = new ModifyOperation(conn);
         modify.execute(
           new ModifyRequest(
             entry.getDn(),
             new AttributeModification(
               AttributeModificationType.REPLACE,
-              new UnicodePwdAttribute(
-                "password" + entry.getAttribute("uid").getStringValue())),
+              new UnicodePwdAttribute("password" + entry.getAttribute("uid").getStringValue())),
             new AttributeModification(
               AttributeModificationType.REPLACE,
               new LdapAttribute("userAccountControl", "512"))));
@@ -95,12 +96,13 @@ public abstract class AbstractTest
 
 
   /**
-   * Performs a compare on the supplied entry to determine if it exists in the
-   * LDAP.
+   * Performs a compare on the supplied entry to determine if it exists in the LDAP.
    *
    * @param  conn  to perform compare with
    * @param  entry  to perform compare on
+   *
    * @return  whether the supplied entry exists
+   *
    * @throws  Exception  On failure.
    */
   protected boolean entryExists(final Connection conn, final LdapEntry entry)
@@ -109,8 +111,7 @@ public abstract class AbstractTest
     final CompareOperation compare = new CompareOperation(conn);
     final LdapAttribute la = new LdapAttribute();
     la.setName(entry.getDn().split(",ou=")[0].split("=", 2)[0]);
-    la.addStringValue(
-      entry.getDn().split(",ou=")[0].split("=", 2)[1].replaceAll("\\\\", ""));
+    la.addStringValue(entry.getDn().split(",ou=")[0].split("=", 2)[1].replaceAll("\\\\", ""));
     try {
       return compare.execute(new CompareRequest(entry.getDn(), la)).getResult();
     } catch (LdapException e) {

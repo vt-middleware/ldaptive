@@ -113,8 +113,7 @@ public class MergeRequest extends AbstractRequest
 
 
   /**
-   * Sets the list of attribute names that are used when searching for the
-   * entry.
+   * Sets the list of attribute names that are used when searching for the entry.
    *
    * @param  attrs  names to return when searching
    */

@@ -6,8 +6,7 @@ package org.ldaptive.io;
  *
  * @author  Middleware Services
  */
-public class FloatValueTranscoder
-  extends AbstractPrimitiveValueTranscoder<Float>
+public class FloatValueTranscoder extends AbstractPrimitiveValueTranscoder<Float>
 {
 
 

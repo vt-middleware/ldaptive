@@ -70,9 +70,7 @@ public class DirSyncControlTest
         new Object[] {
           LdapUtils.base64Decode("MAkCAggAAgFkBAA="),
           new DirSyncControl(
-            new DirSyncControl.Flag[] {
-              DirSyncControl.Flag.ANCESTORS_FIRST_ORDER,
-            },
+            new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, },
             null,
             100,
             false),
@@ -84,9 +82,7 @@ public class DirSyncControlTest
             "AAAAAAAAAFvPAQAAAAAA86MezisHaUSLuGSFqQqLmwEAAAAAAAAAAQAAAAAAAADz" +
             "ox7OKwdpRIu4ZIWpCoubCdABAAAAAAA="),
           new DirSyncControl(
-            new DirSyncControl.Flag[] {
-              DirSyncControl.Flag.ANCESTORS_FIRST_ORDER,
-            },
+            new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, },
             new byte[] {
               (byte) 0x4D, (byte) 0x53, (byte) 0x44, (byte) 0x53, (byte) 0x03,
               (byte) 0x00, (byte) 0x00, (byte) 0x00, (byte) 0xDD, (byte) 0xA3,
@@ -124,10 +120,7 @@ public class DirSyncControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "request-response"
-  )
+  @Test(groups = {"control"}, dataProvider = "request-response")
   public void encode(final byte[] berValue, final DirSyncControl expected)
     throws Exception
   {
@@ -141,10 +134,7 @@ public class DirSyncControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "request-response"
-  )
+  @Test(groups = {"control"}, dataProvider = "request-response")
   public void decode(final byte[] berValue, final DirSyncControl expected)
     throws Exception
   {

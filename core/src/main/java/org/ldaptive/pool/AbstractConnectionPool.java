@@ -23,19 +23,16 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.Response;
 
 /**
- * Contains the base implementation for pooling connections. The main design
- * objective for the supplied pooling implementations is to provide a pool that
- * does not block on connection creation or destruction. This is what accounts
- * for the multiple locks available on this class. The pool is backed by two
- * queues, one for available connections and one for active connections.
- * Connections that are available via {@link #getConnection()} exist in the
- * available queue. Connections that are actively in use exist in the active
- * queue. This implementation uses FIFO operations for each queue.
+ * Contains the base implementation for pooling connections. The main design objective for the supplied pooling
+ * implementations is to provide a pool that does not block on connection creation or destruction. This is what accounts
+ * for the multiple locks available on this class. The pool is backed by two queues, one for available connections and
+ * one for active connections. Connections that are available via {@link #getConnection()} exist in the available queue.
+ * Connections that are actively in use exist in the active queue. This implementation uses FIFO operations for each
+ * queue.
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConnectionPool extends AbstractPool<Connection>
-  implements ConnectionPool
+public abstract class AbstractConnectionPool extends AbstractPool<Connection> implements ConnectionPool
 {
 
   /** Lock for the entire pool. */
@@ -59,10 +56,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   /** Connection factory to create connections with. */
   private DefaultConnectionFactory connectionFactory;
 
-  /**
-   * Whether to connect to the ldap on connection creation. Default value is
-   * {@value}.
-   */
+  /** Whether to connect to the ldap on connection creation. Default value is {@value}. */
   private boolean connectOnCreate = true;
 
   /** Type of queue. LIFO or FIFO. Default value is {@value}. */
@@ -75,8 +69,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   private boolean initialized;
 
   /**
-   * Whether {@link #initialize()} should throw if pooling configuration
-   * requirements are not met. Default value is {@value}.
+   * Whether {@link #initialize()} should throw if pooling configuration requirements are not met. Default value is
+   * {@value}.
    */
   private boolean failFastInitialize = true;
 
@@ -105,8 +99,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Returns whether connections will attempt to connect after creation. Default
-   * is true.
+   * Returns whether connections will attempt to connect after creation. Default is true.
    *
    * @return  whether connections will attempt to connect after creation
    */
@@ -117,8 +110,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Sets whether newly created connections will attempt to connect. Default is
-   * true.
+   * Sets whether newly created connections will attempt to connect. Default is true.
    *
    * @param  b  connect on create
    */
@@ -141,8 +133,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Sets the type of queue used for this connection pool. This property may
-   * have an impact on the success of the prune strategy.
+   * Sets the type of queue used for this connection pool. This property may have an impact on the success of the prune
+   * strategy.
    *
    * @param  type  of queue
    */
@@ -154,8 +146,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Returns whether {@link #initialize()} should throw if pooling configuration
-   * requirements are not met.
+   * Returns whether {@link #initialize()} should throw if pooling configuration requirements are not met.
    *
    * @return  whether {@link #initialize()} should throw
    */
@@ -166,8 +157,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Sets whether {@link #initialize()} should throw if pooling configuration
-   * requirements are not met.
+   * Sets whether {@link #initialize()} should throw if pooling configuration requirements are not met.
    *
    * @param  b  whether {@link #initialize()} should throw
    */
@@ -179,8 +169,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Used to determine whether {@link #initialize()} has been invoked for this
-   * pool.
+   * Used to determine whether {@link #initialize()} has been invoked for this pool.
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
@@ -193,12 +182,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Initialize this pool for use. Once invoked the pool config is made
-   * immutable. See {@link PoolConfig#makeImmutable()}.
+   * Initialize this pool for use. Once invoked the pool config is made immutable. See {@link
+   * PoolConfig#makeImmutable()}.
    *
-   * @throws  IllegalStateException  if this pool has already been initialized,
-   * the pooling configuration is inconsistent or the pool does not contain at
-   * least one connection and it's minimum size is greater than zero
+   * @throws  IllegalStateException  if this pool has already been initialized, the pooling configuration is
+   *                                 inconsistent or the pool does not contain at least one connection and it's minimum
+   *                                 size is greater than zero
    */
   @Override
   public void initialize()
@@ -226,9 +215,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
     if (getPruneStrategy() == null) {
       setPruneStrategy(new IdlePruneStrategy());
-      logger.debug(
-        "no prune strategy configured, using default prune strategy: {}",
-        getPruneStrategy());
+      logger.debug("no prune strategy configured, using default prune strategy: {}", getPruneStrategy());
     }
 
     available = new Queue<>(queueType);
@@ -271,9 +258,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
           try {
             prune();
           } catch (Exception e) {
-            logger.error(
-              "prune task failed for {}",
-              AbstractConnectionPool.this);
+            logger.error("prune task failed for {}", AbstractConnectionPool.this);
           }
           logger.debug("end prune task for {}", AbstractConnectionPool.this);
         }
@@ -288,15 +273,11 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
         @Override
         public void run()
         {
-          logger.debug(
-            "begin validate task for {}",
-            AbstractConnectionPool.this);
+          logger.debug("begin validate task for {}", AbstractConnectionPool.this);
           try {
             validate();
           } catch (Exception e) {
-            logger.error(
-              "validation task failed for {}",
-              AbstractConnectionPool.this);
+            logger.error("validation task failed for {}", AbstractConnectionPool.this);
           }
           logger.debug("end validate task for {}", AbstractConnectionPool.this);
         }
@@ -312,8 +293,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Attempts to grow the pool to the supplied size. If the pool size is greater
-   * than or equal to the supplied size, this method is a no-op.
+   * Attempts to grow the pool to the supplied size. If the pool size is greater than or equal to the supplied size,
+   * this method is a no-op.
    *
    * @param  size  to grow the pool to
    */
@@ -324,20 +305,18 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Attempts to grow the pool to the supplied size. If the pool size is greater
-   * than or equal to the supplied size, this method is a no-op.
+   * Attempts to grow the pool to the supplied size. If the pool size is greater than or equal to the supplied size,
+   * this method is a no-op.
    *
    * @param  size  to grow the pool to
    * @param  throwOnFailure  whether to throw illegal state exception
    *
-   * @throws  IllegalStateException  if the pool cannot grow to the supplied
-   * size and {@link #createAvailableConnection(boolean)} throws
+   * @throws  IllegalStateException  if the pool cannot grow to the supplied size and {@link
+   *                                 #createAvailableConnection(boolean)} throws
    */
   protected void grow(final int size, final boolean throwOnFailure)
   {
-    logger.trace(
-      "waiting for pool lock to initialize pool {}",
-      poolLock.getQueueLength());
+    logger.trace("waiting for pool lock to initialize pool {}", poolLock.getQueueLength());
 
     int count = 0;
     poolLock.lock();
@@ -347,8 +326,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       logger.debug("checking connection pool size >= {} for {}", size, this);
       while (currentPoolSize < size && count < size * 2) {
         try {
-          final PooledConnectionProxy pc = createAvailableConnection(
-            throwOnFailure);
+          final PooledConnectionProxy pc = createAvailableConnection(throwOnFailure);
           if (pc != null && getPoolConfig().isValidateOnCheckIn()) {
             if (validate(pc.getConnection())) {
               logger.trace("connection passed initialize validation: {}", pc);
@@ -381,10 +359,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
   public void close()
   {
     isInitialized();
-    logger.debug(
-      "closing connection pool of size {} for {}",
-      available.size() + active.size(),
-      this);
+    logger.debug("closing connection pool of size {} for {}", available.size() + active.size(), this);
     poolLock.lock();
     try {
       while (!available.isEmpty()) {
@@ -416,10 +391,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    * @return  connection
    *
    * @throws  PoolException  if this operation fails
-   * @throws  BlockingTimeoutException  if this pool is configured with a block
-   * time and it occurs
-   * @throws  PoolInterruptedException  if this pool is configured with a block
-   * time and the current thread is interrupted
+   * @throws  BlockingTimeoutException  if this pool is configured with a block time and it occurs
+   * @throws  PoolInterruptedException  if this pool is configured with a block time and the current thread is
+   *                                    interrupted
    * @throws  IllegalStateException  if this pool has not been initialized
    */
   @Override
@@ -438,8 +412,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Create a new connection. If {@link #connectOnCreate} is true, the
-   * connection will be opened.
+   * Create a new connection. If {@link #connectOnCreate} is true, the connection will be opened.
    *
    * @return  pooled connection
    */
@@ -450,15 +423,13 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Create a new connection. If {@link #connectOnCreate} is true, the
-   * connection will be opened.
+   * Create a new connection. If {@link #connectOnCreate} is true, the connection will be opened.
    *
    * @param  throwOnFailure  whether to throw illegal state exception
    *
    * @return  pooled connection
    *
-   * @throws  IllegalStateException  if {@link #connectOnCreate} is true and the
-   * connection cannot be opened
+   * @throws  IllegalStateException  if {@link #connectOnCreate} is true and the connection cannot be opened
    */
   protected PooledConnectionProxy createConnection(final boolean throwOnFailure)
   {
@@ -501,11 +472,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @return  connection that was placed in the available pool
    *
-   * @throws  IllegalStateException  if {@link #createConnection(boolean)}
-   * throws
+   * @throws  IllegalStateException  if {@link #createConnection(boolean)} throws
    */
-  protected PooledConnectionProxy createAvailableConnection(
-    final boolean throwOnFailure)
+  protected PooledConnectionProxy createAvailableConnection(final boolean throwOnFailure)
   {
     final PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
@@ -542,11 +511,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @return  connection that was placed in the active pool
    *
-   * @throws  IllegalStateException  if {@link #createConnection(boolean)}
-   * throws
+   * @throws  IllegalStateException  if {@link #createConnection(boolean)} throws
    */
-  protected PooledConnectionProxy createActiveConnection(
-    final boolean throwOnFailure)
+  protected PooledConnectionProxy createActiveConnection(final boolean throwOnFailure)
   {
     final PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
@@ -620,8 +587,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @param  pc  connection that is in both the available and active pools
    */
-  protected void removeAvailableAndActiveConnection(
-    final PooledConnectionProxy pc)
+  protected void removeAvailableAndActiveConnection(final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
@@ -647,8 +613,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Attempts to activate and validate a connection. Performed before a
-   * connection is returned from {@link #getConnection()}.
+   * Attempts to activate and validate a connection. Performed before a connection is returned from {@link
+   * #getConnection()}.
    *
    * @param  pc  connection
    *
@@ -664,9 +630,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
       removeAvailableAndActiveConnection(pc);
       throw new ActivationException("Activation of connection failed");
     }
-    if (
-      getPoolConfig().isValidateOnCheckOut() &&
-        !validate(pc.getConnection())) {
+    if (getPoolConfig().isValidateOnCheckOut() && !validate(pc.getConnection())) {
       logger.warn("connection failed check out validation: {}", pc);
       removeAvailableAndActiveConnection(pc);
       throw new ValidationException("Validation of connection failed");
@@ -675,15 +639,14 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Attempts to validate and passivate a connection. Performed when a
-   * connection is given to {@link #putConnection(Connection)}.
+   * Attempts to validate and passivate a connection. Performed when a connection is given to {@link
+   * #putConnection(Connection)}.
    *
    * @param  pc  connection
    *
    * @return  whether both validate and passivation succeeded
    */
-  protected boolean validateAndPassivateConnection(
-    final PooledConnectionProxy pc)
+  protected boolean validateAndPassivateConnection(final PooledConnectionProxy pc)
   {
     if (!pc.getConnection().isOpen()) {
       logger.debug("connection not open: {}", pc);
@@ -709,34 +672,25 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Attempts to reduce the size of the pool back to it's configured minimum.
-   * {@link PoolConfig#setMinPoolSize(int)}.
+   * Attempts to reduce the size of the pool back to it's configured minimum. {@link PoolConfig#setMinPoolSize(int)}.
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
   public void prune()
   {
     isInitialized();
-    logger.trace(
-      "waiting for pool lock to prune {}",
-      poolLock.getQueueLength());
+    logger.trace("waiting for pool lock to prune {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
       if (!available.isEmpty()) {
         final int minPoolSize = getPoolConfig().getMinPoolSize();
         int currentPoolSize = active.size() + available.size();
         if (currentPoolSize > minPoolSize) {
-          logger.debug(
-            "pruning available pool of size {} for {}",
-            available.size(),
-            this);
+          logger.debug("pruning available pool of size {} for {}", available.size(), this);
 
           final int numConnToPrune = available.size();
           final Iterator<PooledConnectionProxy> connIter = available.iterator();
-          for (int i = 0;
-               i < numConnToPrune && currentPoolSize > minPoolSize;
-               i++)
-          {
+          for (int i = 0; i < numConnToPrune && currentPoolSize > minPoolSize; i++) {
             final PooledConnectionProxy pc = connIter.next();
             if (getPruneStrategy().prune(pc)) {
               connIter.remove();
@@ -751,15 +705,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
             logger.debug("available pool size pruned to {}", available.size());
           }
         } else {
-          logger.debug(
-            "pool size is {}, no connections pruned for {}",
-            currentPoolSize,
-            this);
+          logger.debug("pool size is {}, no connections pruned for {}", currentPoolSize, this);
         }
       } else {
-        logger.debug(
-          "no available connections, no connections pruned for {}",
-          this);
+        logger.debug("no available connections, no connections pruned for {}", this);
       }
     } finally {
       poolLock.unlock();
@@ -768,8 +717,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Attempts to validate all objects in the pool. {@link
-   * PoolConfig#setValidatePeriodically(boolean)}.
+   * Attempts to validate all objects in the pool. {@link PoolConfig#setValidatePeriodically(boolean)}.
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
@@ -780,10 +728,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     try {
       if (!available.isEmpty()) {
         if (getPoolConfig().isValidatePeriodically()) {
-          logger.debug(
-            "validate available pool of size {} for {}",
-            available.size(),
-            this);
+          logger.debug("validate available pool of size {} for {}", available.size(), this);
 
           final List<PooledConnectionProxy> remove = new ArrayList<>();
           for (PooledConnectionProxy pc : available) {
@@ -803,14 +748,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
           }
         }
       } else {
-        logger.debug(
-          "no available connections, no validation performed for {}",
-          this);
+        logger.debug("no available connections, no validation performed for {}", this);
       }
       grow(getPoolConfig().getMinPoolSize());
-      logger.debug(
-        "pool size after validation is {}",
-        available.size() + active.size());
+      logger.debug("pool size after validation is {}", available.size() + active.size());
     } finally {
       poolLock.unlock();
     }
@@ -868,11 +809,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    */
   protected Connection createConnectionProxy(final PooledConnectionProxy pc)
   {
-    return
-      (Connection) Proxy.newProxyInstance(
-        Connection.class.getClassLoader(),
-        new Class[] {Connection.class},
-        pc);
+    return (Connection) Proxy.newProxyInstance(Connection.class.getClassLoader(), new Class[] {Connection.class}, pc);
   }
 
 
@@ -883,16 +820,15 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
    *
    * @return  pooled connection proxy
    */
-  protected PooledConnectionProxy retrieveConnectionProxy(
-    final Connection proxy)
+  protected PooledConnectionProxy retrieveConnectionProxy(final Connection proxy)
   {
     return (PooledConnectionProxy) Proxy.getInvocationHandler(proxy);
   }
 
 
   /**
-   * Called by the garbage collector on an object when garbage collection
-   * determines that there are no more references to the object.
+   * Called by the garbage collector on an object when garbage collection determines that there are no more references
+   * to the object.
    *
    * @throws  Throwable  if an exception is thrown by this method
    */
@@ -934,8 +870,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
 
   /**
-   * Contains a connection that is participating in this pool. Used to track how
-   * long a connection has been in use and override certain method invocations.
+   * Contains a connection that is participating in this pool. Used to track how long a connection has been in use and
+   * override certain method invocations.
    */
   protected class DefaultPooledConnectionProxy implements PooledConnectionProxy
   {
@@ -953,8 +889,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
     private final long createdTime = System.currentTimeMillis();
 
     /** Statistics for this connection. */
-    private final PooledConnectionStatistics statistics =
-      new PooledConnectionStatistics(getPruneStrategy().getStatisticsSize());
+    private final PooledConnectionStatistics statistics = new PooledConnectionStatistics(
+      getPruneStrategy().getStatisticsSize());
 
 
     /**
@@ -963,9 +899,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
      * @param  c  connection to participate in this pool
      * @param  r  response produced by opening the connection
      */
-    public DefaultPooledConnectionProxy(
-      final Connection c,
-      final Response<Void> r)
+    public DefaultPooledConnectionProxy(final Connection c, final Response<Void> r)
     {
       conn = c;
       openResponse = r;
@@ -1016,10 +950,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection>
 
     @Override
     @SuppressWarnings("unchecked")
-    public Object invoke(
-      final Object proxy,
-      final Method method,
-      final Object[] args)
+    public Object invoke(final Object proxy, final Method method, final Object[] args)
       throws Throwable
     {
       Object retValue = null;

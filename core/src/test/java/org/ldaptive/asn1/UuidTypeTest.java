@@ -57,10 +57,7 @@ public class UuidTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "uuids"
-  )
+  @Test(groups = {"asn1"}, dataProvider = "uuids")
   public void decode(final byte[] bytes, final UUID expected)
     throws Exception
   {
@@ -74,10 +71,7 @@ public class UuidTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "uuids"
-  )
+  @Test(groups = {"asn1"}, dataProvider = "uuids")
   public void encode(final byte[] expected, final UUID uuid)
     throws Exception
   {

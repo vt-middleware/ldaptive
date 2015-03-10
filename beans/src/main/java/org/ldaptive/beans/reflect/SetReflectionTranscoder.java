@@ -12,8 +12,7 @@ import java.util.TreeSet;
  *
  * @author  Middleware Services
  */
-public class SetReflectionTranscoder
-  extends AbstractCollectionReflectionTranscoder
+public class SetReflectionTranscoder extends AbstractCollectionReflectionTranscoder
 {
 
 
@@ -23,9 +22,7 @@ public class SetReflectionTranscoder
    * @param  c  class that is a set
    * @param  transcoder  to operate on elements of the set
    */
-  public SetReflectionTranscoder(
-    final Class<?> c,
-    final SingleValueReflectionTranscoder<?> transcoder)
+  public SetReflectionTranscoder(final Class<?> c, final SingleValueReflectionTranscoder<?> transcoder)
   {
     super(c, transcoder);
   }
@@ -37,9 +34,7 @@ public class SetReflectionTranscoder
    * @param  c  class that is a set
    * @param  transcoder  to operate on elements of the set
    */
-  public SetReflectionTranscoder(
-    final Class<?> c,
-    final ArrayReflectionTranscoder transcoder)
+  public SetReflectionTranscoder(final Class<?> c, final ArrayReflectionTranscoder transcoder)
   {
     super(c, transcoder);
   }

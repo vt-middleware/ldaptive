@@ -11,16 +11,12 @@ import org.ldaptive.SearchRequest;
  *
  * @author  Middleware Services
  */
-public interface SearchReferenceHandler
-  extends Handler<SearchRequest, SearchReference>
+public interface SearchReferenceHandler extends Handler<SearchRequest, SearchReference>
 {
 
 
   @Override
-  HandlerResult<SearchReference> handle(
-    Connection conn,
-    SearchRequest request,
-    SearchReference reference)
+  HandlerResult<SearchReference> handle(Connection conn, SearchRequest request, SearchReference reference)
     throws LdapException;
 
 

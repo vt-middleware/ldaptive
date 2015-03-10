@@ -78,24 +78,18 @@ public class AttributeValueServletSearchExecutorTest extends AbstractTest
     }
   )
   @Test(groups = {"servlet"})
-  public void attributeServlet(
-    final String query,
-    final String attr,
-    final String attributeValue)
+  public void attributeServlet(final String query, final String attr, final String attributeValue)
     throws Exception
   {
     final ServletUnitClient sc = servletRunner.newClient();
-    final WebRequest request = new PostMethodWebRequest(
-      "http://servlets.ldaptive.org/AttributeSearch");
+    final WebRequest request = new PostMethodWebRequest("http://servlets.ldaptive.org/AttributeSearch");
     request.setParameter("query", query);
     request.setParameter("attrs", attr);
 
     final WebResponse response = sc.getResponse(request);
 
     AssertJUnit.assertNotNull(response);
-    AssertJUnit.assertEquals(
-      "application/octet-stream",
-      response.getContentType());
+    AssertJUnit.assertEquals("application/octet-stream", response.getContentType());
     AssertJUnit.assertEquals(
       "attachment; filename=\"" + attr + ".bin\"",
       response.getHeaderField("Content-Disposition"));
@@ -113,8 +107,6 @@ public class AttributeValueServletSearchExecutorTest extends AbstractTest
         data.close();
       }
     }
-    AssertJUnit.assertEquals(
-      attributeValue,
-      LdapUtils.base64Encode(data.toByteArray()));
+    AssertJUnit.assertEquals(attributeValue, LdapUtils.base64Encode(data.toByteArray()));
   }
 }

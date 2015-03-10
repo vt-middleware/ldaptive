@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class
-AbstractProviderConnectionFactory<T extends ProviderConfig>
+public abstract class AbstractProviderConnectionFactory<T extends ProviderConfig>
   implements ProviderConnectionFactory<T>
 {
 
@@ -28,8 +27,7 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
 
 
   /**
-   * Creates a new abstract connection factory. Once invoked the supplied
-   * provider config is made immutable. See {@link
+   * Creates a new abstract connection factory. Once invoked the supplied provider config is made immutable. See {@link
    * ProviderConfig#makeImmutable()}.
    *
    * @param  url  of the ldap to connect to
@@ -69,13 +67,13 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
     throws LdapException
   {
     LdapException lastThrown = null;
-    final String[] urls = providerConfig.getConnectionStrategy().getLdapUrls(
-      metadata);
+    final String[] urls = providerConfig.getConnectionStrategy().getLdapUrls(metadata);
     if (urls == null || urls.length == 0) {
       throw new ConnectionException(
-        "Connection strategy " + providerConfig.getConnectionStrategy() +
-        " did not produce any LDAP URLs for " + metadata);
+        "Connection strategy " + providerConfig.getConnectionStrategy() + " did not produce any LDAP URLs for " +
+        metadata);
     }
+
     ProviderConnection conn = null;
     for (String url : urls) {
       try {
@@ -129,8 +127,7 @@ AbstractProviderConnectionFactory<T extends ProviderConfig>
 
 
   /** Provides an object to track the connection count. */
-  private class DefaultConnectionFactoryMetadata
-    implements ConnectionFactoryMetadata
+  private class DefaultConnectionFactoryMetadata implements ConnectionFactoryMetadata
   {
 
     /** ldap url. */

@@ -95,8 +95,7 @@ public class PersistentSearchItem
 
 
   /**
-   * Returns the async request contained in this item or null if this item does
-   * not contain an async request.
+   * Returns the async request contained in this item or null if this item does not contain an async request.
    *
    * @return  async request
    */
@@ -118,8 +117,7 @@ public class PersistentSearchItem
 
 
   /**
-   * Returns the entry contained in this item or null if this item does not
-   * contain an entry.
+   * Returns the entry contained in this item or null if this item does not contain an entry.
    *
    * @return  search entry
    */
@@ -141,8 +139,7 @@ public class PersistentSearchItem
 
 
   /**
-   * Returns the response contained in this item or null if this item does not
-   * contain a response.
+   * Returns the response contained in this item or null if this item does not contain a response.
    *
    * @return  response
    */
@@ -164,8 +161,7 @@ public class PersistentSearchItem
 
 
   /**
-   * Returns the exception contained in this item or null if this item does not
-   * contain an exception.
+   * Returns the exception contained in this item or null if this item does not contain an exception.
    *
    * @return  exception
    */
@@ -180,17 +176,9 @@ public class PersistentSearchItem
   {
     String s;
     if (isAsyncRequest()) {
-      s = String.format(
-        "[%s@%d::asyncRequest=%s]",
-        getClass().getName(),
-        hashCode(),
-        asyncRequest);
+      s = String.format("[%s@%d::asyncRequest=%s]", getClass().getName(), hashCode(), asyncRequest);
     } else if (isEntry()) {
-      s = String.format(
-        "[%s@%d::persistentSearchEntry=%s]",
-        getClass().getName(),
-        hashCode(),
-        persistentSearchEntry);
+      s = String.format("[%s@%d::persistentSearchEntry=%s]", getClass().getName(), hashCode(), persistentSearchEntry);
     } else if (isResponse()) {
       s = String.format(
         "[%s@%d::persistentSearchResponse=%s]",
@@ -211,8 +199,7 @@ public class PersistentSearchItem
 
 
   /**
-   * Wrapper class that provides easy access to the {@link
-   * EntryChangeNotificationControl} contained in a search entry.
+   * Wrapper class that provides easy access to the {@link EntryChangeNotificationControl} contained in a search entry.
    */
   public static class Entry
   {
@@ -225,17 +212,16 @@ public class PersistentSearchItem
 
 
     /**
-     * Creates a new entry. If the supplied search entry contains a {@link
-     * EntryChangeNotificationControl} it is made available via {@link
-     * #getEntryChangeNotificationControl()}.
+     * Creates a new entry. If the supplied search entry contains a {@link EntryChangeNotificationControl} it is made
+     * available via {@link #getEntryChangeNotificationControl()}.
      *
      * @param  entry  to search for entry change notification control in
      */
     public Entry(final SearchEntry entry)
     {
       searchEntry = entry;
-      entryChangeNotificationControl = (EntryChangeNotificationControl)
-        entry.getControl(EntryChangeNotificationControl.OID);
+      entryChangeNotificationControl = (EntryChangeNotificationControl) entry.getControl(
+        EntryChangeNotificationControl.OID);
     }
 
 
@@ -251,8 +237,7 @@ public class PersistentSearchItem
 
 
     /**
-     * Returns the entry change notification control or null if no such control
-     * exists in the search entry.
+     * Returns the entry change notification control or null if no such control exists in the search entry.
      *
      * @return  entry change notification control
      */
@@ -265,12 +250,7 @@ public class PersistentSearchItem
     @Override
     public String toString()
     {
-      return
-        String.format(
-          "[%s@%d::searchEntry=%s]",
-          getClass().getName(),
-          hashCode(),
-          searchEntry);
+      return String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
     }
   }
 }

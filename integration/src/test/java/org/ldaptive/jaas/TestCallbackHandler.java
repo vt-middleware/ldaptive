@@ -41,8 +41,7 @@ public class TestCallbackHandler implements CallbackHandler
    * @param  callbacks  to handle
    *
    * @throws  IOException  if an input or output error occurs
-   * @throws  UnsupportedCallbackException  if a supplied callback cannot be
-   * handled
+   * @throws  UnsupportedCallbackException  if a supplied callback cannot be handled
    */
   public void handle(final Callback[] callbacks)
     throws IOException, UnsupportedCallbackException

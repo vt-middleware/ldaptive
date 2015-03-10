@@ -12,9 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Validates a connection is healthy by performing a search operation.
- * Validation is considered successful if the search result size is greater than
- * zero.
+ * Validates a connection is healthy by performing a search operation. Validation is considered successful if the search
+ * result size is greater than zero.
  *
  * @author  Middleware Services
  */
@@ -83,10 +82,7 @@ public class SearchValidator implements Validator<Connection>
         final SearchResult result = search.execute(searchRequest).getResult();
         success = result.size() > 0;
       } catch (Exception e) {
-        logger.debug(
-          "validation failed for search request {}",
-          searchRequest,
-          e);
+        logger.debug("validation failed for search request {}", searchRequest, e);
       }
     }
     return success;
@@ -96,11 +92,6 @@ public class SearchValidator implements Validator<Connection>
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::searchRequest=%s]",
-        getClass().getName(),
-        hashCode(),
-        searchRequest);
+    return String.format("[%s@%d::searchRequest=%s]", getClass().getName(), hashCode(), searchRequest);
   }
 }

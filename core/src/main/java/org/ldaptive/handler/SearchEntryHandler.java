@@ -16,10 +16,7 @@ public interface SearchEntryHandler extends Handler<SearchRequest, SearchEntry>
 
 
   @Override
-  HandlerResult<SearchEntry> handle(
-    Connection conn,
-    SearchRequest request,
-    SearchEntry entry)
+  HandlerResult<SearchEntry> handle(Connection conn, SearchRequest request, SearchEntry entry)
     throws LdapException;
 
 

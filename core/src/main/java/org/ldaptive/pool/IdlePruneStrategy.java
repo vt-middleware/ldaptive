@@ -6,9 +6,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Removes connections from the pool based on how long they have been idle in
- * the available queue. By default this implementation executes every 5 minutes
- * and prunes connections that have been idle for more than 10 minutes.
+ * Removes connections from the pool based on how long they have been idle in the available queue. By default this
+ * implementation executes every 5 minutes and prunes connections that have been idle for more than 10 minutes.
  *
  * @author  Middleware Services
  */
@@ -57,15 +56,9 @@ public class IdlePruneStrategy implements PruneStrategy
   @Override
   public boolean prune(final PooledConnectionProxy conn)
   {
-    final long timeAvailable =
-      conn.getPooledConnectionStatistics().getLastAvailableState();
-    logger.trace(
-      "evaluating timestamp {} for connection {}",
-      timeAvailable,
-      conn);
-    return
-      System.currentTimeMillis() - timeAvailable >
-      TimeUnit.SECONDS.toMillis(idleTime);
+    final long timeAvailable = conn.getPooledConnectionStatistics().getLastAvailableState();
+    logger.trace("evaluating timestamp {} for connection {}", timeAvailable, conn);
+    return System.currentTimeMillis() - timeAvailable > TimeUnit.SECONDS.toMillis(idleTime);
   }
 
 
@@ -120,11 +113,6 @@ public class IdlePruneStrategy implements PruneStrategy
   public String toString()
   {
     return
-      String.format(
-        "[%s@%d::prunePeriod=%s, idleTime=%s]",
-        getClass().getName(),
-        hashCode(),
-        prunePeriod,
-        idleTime);
+      String.format("[%s@%d::prunePeriod=%s, idleTime=%s]", getClass().getName(), hashCode(), prunePeriod, idleTime);
   }
 }

@@ -19,8 +19,7 @@ import org.ldaptive.control.ResponseControl;
 import org.ldaptive.control.SortKey;
 
 /**
- * Provides methods for converting between JLDAP specific objects and ldaptive
- * specific objects.
+ * Provides methods for converting between JLDAP specific objects and ldaptive specific objects.
  *
  * @author  Middleware Services
  */
@@ -77,8 +76,7 @@ public class JLdapUtils
 
 
   /**
-   * Returns a jldap attribute that represents the values in the supplied ldap
-   * attribute.
+   * Returns a jldap attribute that represents the values in the supplied ldap attribute.
    *
    * @param  la  ldap attribute
    *
@@ -132,8 +130,7 @@ public class JLdapUtils
 
 
   /**
-   * Returns a jldap attribute set that represents the values in the supplied
-   * ldap attributes.
+   * Returns a jldap attribute set that represents the values in the supplied ldap attributes.
    *
    * @param  c  ldap attributes
    *
@@ -172,10 +169,7 @@ public class JLdapUtils
    * @return  search entry
    */
   @SuppressWarnings("unchecked")
-  public SearchEntry toSearchEntry(
-    final LDAPEntry entry,
-    final ResponseControl[] c,
-    final int id)
+  public SearchEntry toSearchEntry(final LDAPEntry entry, final ResponseControl[] c, final int id)
   {
     final SearchEntry se = new SearchEntry(id, c, sortBehavior);
     se.setDn(entry.getDN());
@@ -188,15 +182,13 @@ public class JLdapUtils
 
 
   /**
-   * Returns jldap ldap modifications using the supplied attribute
-   * modifications.
+   * Returns jldap ldap modifications using the supplied attribute modifications.
    *
    * @param  am  attribute modifications
    *
    * @return  jldap ldap modifications
    */
-  public LDAPModification[] fromAttributeModification(
-    final AttributeModification[] am)
+  public LDAPModification[] fromAttributeModification(final AttributeModification[] am)
   {
     final LDAPModification[] mods = new LDAPModification[am.length];
     for (int i = 0; i < am.length; i++) {
@@ -221,10 +213,7 @@ public class JLdapUtils
     if (sk != null) {
       keys = new LDAPSortKey[sk.length];
       for (int i = 0; i < sk.length; i++) {
-        keys[i] = new LDAPSortKey(
-          sk[i].getAttributeDescription(),
-          sk[i].getReverseOrder(),
-          sk[i].getMatchingRuleId());
+        keys[i] = new LDAPSortKey(sk[i].getAttributeDescription(), sk[i].getReverseOrder(), sk[i].getMatchingRuleId());
       }
     }
     return keys;
@@ -232,15 +221,13 @@ public class JLdapUtils
 
 
   /**
-   * Returns the jldap modification integer constant for the supplied attribute
-   * modification type.
+   * Returns the jldap modification integer constant for the supplied attribute modification type.
    *
    * @param  am  attribute modification type
    *
    * @return  integer constant
    */
-  protected static int getAttributeModification(
-    final AttributeModificationType am)
+  protected static int getAttributeModification(final AttributeModificationType am)
   {
     int op = -1;
     if (am == AttributeModificationType.ADD) {

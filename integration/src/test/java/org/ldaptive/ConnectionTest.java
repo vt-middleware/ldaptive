@@ -16,6 +16,7 @@ import org.testng.annotations.Test;
  */
 public class ConnectionTest
 {
+
   /** Entry created for ldap tests. */
   private static LdapEntry testLdapEntry;
 
@@ -32,12 +33,13 @@ public class ConnectionTest
   {
     final String ldif = TestUtils.readFileIntoString(ldifFile);
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final AddOperation add = new AddOperation(conn);
-      final Response<Void> response = add.execute(
-        new AddRequest(testLdapEntry.getDn(), testLdapEntry.getAttributes()));
+      final Response<Void> response = add.execute(new AddRequest(testLdapEntry.getDn(), testLdapEntry.getAttributes()));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     } finally {
       conn.close();
@@ -53,12 +55,10 @@ public class ConnectionTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final CompareOperation compare = new CompareOperation(conn);
       AssertJUnit.assertTrue(
-        compare.execute(
-          new CompareRequest(
-            testLdapEntry.getDn(),
-            testLdapEntry.getAttribute("mail"))).getResult());
+        compare.execute(new CompareRequest(testLdapEntry.getDn(), testLdapEntry.getAttribute("mail"))).getResult());
     } finally {
       conn.close();
     }
@@ -73,9 +73,9 @@ public class ConnectionTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final DeleteOperation delete = new DeleteOperation(conn);
-      final Response<Void> response = delete.execute(
-        new DeleteRequest(testLdapEntry.getDn()));
+      final Response<Void> response = delete.execute(new DeleteRequest(testLdapEntry.getDn()));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     } finally {
       conn.close();
@@ -91,13 +91,12 @@ public class ConnectionTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final ModifyOperation modify = new ModifyOperation(conn);
       final Response<Void> response = modify.execute(
         new ModifyRequest(
           testLdapEntry.getDn(),
-          new AttributeModification(
-            AttributeModificationType.ADD,
-            new LdapAttribute("title", "President"))));
+          new AttributeModification(AttributeModificationType.ADD, new LdapAttribute("title", "President"))));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     } finally {
       conn.close();
@@ -113,17 +112,16 @@ public class ConnectionTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
       Response<Void> response = modifyDn.execute(
         new ModifyDnRequest(
           testLdapEntry.getDn(),
-          "cn=James Buchanan Jr.," +
-            DnParser.substring(testLdapEntry.getDn(), 1)));
+          "cn=James Buchanan Jr.," + DnParser.substring(testLdapEntry.getDn(), 1)));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       response = modifyDn.execute(
         new ModifyDnRequest(
-          "cn=James Buchanan Jr.," +
-            DnParser.substring(testLdapEntry.getDn(), 1),
+          "cn=James Buchanan Jr.," + DnParser.substring(testLdapEntry.getDn(), 1),
           testLdapEntry.getDn()));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     } finally {
@@ -140,14 +138,11 @@ public class ConnectionTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final SearchOperation search = new SearchOperation(conn);
       final SearchResult lr = search.execute(
-        new SearchRequest(
-          DnParser.substring(testLdapEntry.getDn(), 1),
-          new SearchFilter("(uid=15)"))).getResult();
-      AssertJUnit.assertEquals(
-        testLdapEntry.getDn().toLowerCase(),
-        lr.getEntry().getDn().toLowerCase());
+        new SearchRequest(DnParser.substring(testLdapEntry.getDn(), 1), new SearchFilter("(uid=15)"))).getResult();
+      AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), lr.getEntry().getDn().toLowerCase());
     } finally {
       conn.close();
     }
@@ -159,12 +154,10 @@ public class ConnectionTest
   public void strategyConnect()
     throws Exception
   {
-    final ConnectionConfig cc = 
-      TestUtils.readConnectionConfig(
-        "classpath:/org/ldaptive/ldap.conn.properties");
+    final ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
     DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
-    connFactory.getProvider().getProviderConfig().setConnectionStrategy(
-      ConnectionStrategy.ROUND_ROBIN);
+    connFactory.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.ROUND_ROBIN);
+
     Connection conn = connFactory.getConnection();
 
     try {
@@ -184,8 +177,7 @@ public class ConnectionTest
     }
 
     connFactory = new DefaultConnectionFactory(cc);
-    connFactory.getProvider().getProviderConfig().setConnectionStrategy(
-      ConnectionStrategy.DEFAULT);
+    connFactory.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.DEFAULT);
     conn = connFactory.getConnection();
     try {
       conn.open();
@@ -204,8 +196,7 @@ public class ConnectionTest
     }
 
     connFactory = new DefaultConnectionFactory(cc);
-    connFactory.getProvider().getProviderConfig().setConnectionStrategy(
-      ConnectionStrategy.ACTIVE_PASSIVE);
+    connFactory.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.ACTIVE_PASSIVE);
     conn = connFactory.getConnection();
     try {
       conn.open();
@@ -224,8 +215,7 @@ public class ConnectionTest
     }
 
     connFactory = new DefaultConnectionFactory(cc);
-    connFactory.getProvider().getProviderConfig().setConnectionStrategy(
-      ConnectionStrategy.RANDOM);
+    connFactory.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.RANDOM);
     conn = connFactory.getConnection();
     try {
       conn.open();
@@ -266,8 +256,7 @@ public class ConnectionTest
      */
     final LdapURL ldapUrl = new LdapURL(host);
     final int openConns = TestUtils.countOpenConnections(
-      ldapUrl.getEntry().getHostname().substring(
-        0, ldapUrl.getEntry().getHostname().indexOf(".")));
+      ldapUrl.getEntry().getHostname().substring(0, ldapUrl.getEntry().getHostname().indexOf(".")));
     AssertJUnit.assertEquals(1, openConns);
   }
 }

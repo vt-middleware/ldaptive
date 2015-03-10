@@ -9,8 +9,7 @@ import org.ldaptive.schema.AttributeType;
  *
  * @author  Middleware Services
  */
-public class AttributeTypeValueTranscoder
-  extends AbstractSchemaElementValueTranscoder<AttributeType>
+public class AttributeTypeValueTranscoder extends AbstractSchemaElementValueTranscoder<AttributeType>
 {
 
 
@@ -20,9 +19,7 @@ public class AttributeTypeValueTranscoder
     try {
       return AttributeType.parse(value);
     } catch (ParseException e) {
-      throw new IllegalArgumentException(
-        "Could not transcode attribute type",
-        e);
+      throw new IllegalArgumentException("Could not transcode attribute type", e);
     }
   }
 

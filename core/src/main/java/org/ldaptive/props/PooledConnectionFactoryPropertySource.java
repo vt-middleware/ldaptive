@@ -12,13 +12,11 @@ import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SoftLimitConnectionPool;
 
 /**
- * Reads properties specific to {@link PooledConnectionFactory} and returns an
- * initialized object of that type.
+ * Reads properties specific to {@link PooledConnectionFactory} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class PooledConnectionFactoryPropertySource
-  extends AbstractPropertySource<PooledConnectionFactory>
+public final class PooledConnectionFactoryPropertySource extends AbstractPropertySource<PooledConnectionFactory>
 {
 
   /** Connection pool type. */
@@ -26,8 +24,7 @@ public final class PooledConnectionFactoryPropertySource
 
 
   /**
-   * Creates a new pooled connection factory property source using the default
-   * properties file.
+   * Creates a new pooled connection factory property source using the default properties file.
    *
    * @param  cf  connection factory to invoke properties on
    */
@@ -43,9 +40,7 @@ public final class PooledConnectionFactoryPropertySource
    * @param  cf  connection factory to invoke properties on
    * @param  paths  to read properties from
    */
-  public PooledConnectionFactoryPropertySource(
-    final PooledConnectionFactory cf,
-    final String... paths)
+  public PooledConnectionFactoryPropertySource(final PooledConnectionFactory cf, final String... paths)
   {
     this(cf, loadProperties(paths));
   }
@@ -57,9 +52,7 @@ public final class PooledConnectionFactoryPropertySource
    * @param  cf  connection factory to invoke properties on
    * @param  readers  to read properties from
    */
-  public PooledConnectionFactoryPropertySource(
-    final PooledConnectionFactory cf,
-    final Reader... readers)
+  public PooledConnectionFactoryPropertySource(final PooledConnectionFactory cf, final Reader... readers)
   {
     this(cf, loadProperties(readers));
   }
@@ -71,9 +64,7 @@ public final class PooledConnectionFactoryPropertySource
    * @param  cf  connection factory to invoke properties on
    * @param  props  to read properties from
    */
-  public PooledConnectionFactoryPropertySource(
-    final PooledConnectionFactory cf,
-    final Properties props)
+  public PooledConnectionFactoryPropertySource(final PooledConnectionFactory cf, final Properties props)
   {
     this(cf, PropertyDomain.POOL, props);
   }
@@ -120,20 +111,18 @@ public final class PooledConnectionFactoryPropertySource
     if (poolType == ConnectionPoolType.BLOCKING) {
       cp = new BlockingConnectionPool();
 
-      final BlockingConnectionPoolPropertySource cpPropSource =
-        new BlockingConnectionPoolPropertySource(
-          (BlockingConnectionPool) cp,
-          propertiesDomain,
-          properties);
+      final BlockingConnectionPoolPropertySource cpPropSource = new BlockingConnectionPoolPropertySource(
+        (BlockingConnectionPool) cp,
+        propertiesDomain,
+        properties);
       cpPropSource.initialize();
     } else if (poolType == ConnectionPoolType.SOFTLIMIT) {
       cp = new SoftLimitConnectionPool();
 
-      final BlockingConnectionPoolPropertySource cpPropSource =
-        new BlockingConnectionPoolPropertySource(
-          (SoftLimitConnectionPool) cp,
-          propertiesDomain,
-          properties);
+      final BlockingConnectionPoolPropertySource cpPropSource = new BlockingConnectionPoolPropertySource(
+        (SoftLimitConnectionPool) cp,
+        propertiesDomain,
+        properties);
       cpPropSource.initialize();
     } else {
       throw new IllegalStateException("Unknown pool type: " + poolType);

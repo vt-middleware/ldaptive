@@ -19,14 +19,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Uses {@link PooledConnectionFactory} and {@link SearchExecutor} to perform
- * search operations. These objects are configured from properties found in the
- * servlet configuration.
+ * Uses {@link PooledConnectionFactory} and {@link SearchExecutor} to perform search operations. These objects are
+ * configured from properties found in the servlet configuration.
  *
  * @author  Middleware Services
  */
-public abstract class AbstractServletSearchExecutor
-  implements ServletSearchExecutor
+public abstract class AbstractServletSearchExecutor implements ServletSearchExecutor
 {
 
   /** Type of pool used, value is {@value}. */
@@ -47,19 +45,18 @@ public abstract class AbstractServletSearchExecutor
   {
     searchExecutor = new SearchExecutor();
 
-    final SearchRequestPropertySource srSource =
-      new SearchRequestPropertySource(searchExecutor, createProperties(config));
+    final SearchRequestPropertySource srSource = new SearchRequestPropertySource(
+      searchExecutor,
+      createProperties(config));
     srSource.initialize();
     logger.debug("searchExecutor = {}", searchExecutor);
 
     connectionFactory = new PooledConnectionFactory();
 
-    final PooledConnectionFactoryPropertySource cfPropSource =
-      new PooledConnectionFactoryPropertySource(
-        connectionFactory,
-        createProperties(config));
-    cfPropSource.setPoolType(
-      ConnectionPoolType.valueOf(config.getInitParameter(POOL_TYPE)));
+    final PooledConnectionFactoryPropertySource cfPropSource = new PooledConnectionFactoryPropertySource(
+      connectionFactory,
+      createProperties(config));
+    cfPropSource.setPoolType(ConnectionPoolType.valueOf(config.getInitParameter(POOL_TYPE)));
     cfPropSource.initialize();
     logger.debug("connectionFactory = {}", connectionFactory);
   }
@@ -83,9 +80,7 @@ public abstract class AbstractServletSearchExecutor
       if (name.contains(".")) {
         p.setProperty(name, config.getInitParameter(name));
       } else {
-        p.setProperty(
-          PropertyDomain.LDAP.value() + name,
-          config.getInitParameter(name));
+        p.setProperty(PropertyDomain.LDAP.value() + name, config.getInitParameter(name));
       }
     }
     return p;
@@ -93,9 +88,7 @@ public abstract class AbstractServletSearchExecutor
 
 
   @Override
-  public void search(
-    final HttpServletRequest request,
-    final HttpServletResponse response)
+  public void search(final HttpServletRequest request, final HttpServletResponse response)
     throws LdapException, IOException
   {
     final String queryString = request.getParameter("query");
@@ -119,9 +112,7 @@ public abstract class AbstractServletSearchExecutor
    *
    * @throws  IOException  if an error occurs writing to the response
    */
-  protected abstract void writeResponse(
-    final SearchResult result,
-    final HttpServletResponse response)
+  protected abstract void writeResponse(final SearchResult result, final HttpServletResponse response)
     throws IOException;
 
 

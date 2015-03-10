@@ -99,12 +99,10 @@ public enum UniversalDERTag implements DERTag {
   public static final int TAG_CLASS = 0;
 
   /** Maps tag numbers to tags. */
-  private static final Map<Integer, UniversalDERTag> TAGNO_MAP =
-    new HashMap<>();
+  private static final Map<Integer, UniversalDERTag> TAGNO_MAP = new HashMap<>();
 
   /** Maps tag names to tags. */
-  private static final Map<String, UniversalDERTag> TAGNAME_MAP =
-    new HashMap<>();
+  private static final Map<String, UniversalDERTag> TAGNAME_MAP = new HashMap<>();
 
 
   /**
@@ -188,13 +186,12 @@ public enum UniversalDERTag implements DERTag {
 
 
   /**
-   * Looks up a universal tag from a tag name. This method differs from {@link
-   * #valueOf(String)} in that it does not throw for unknown names.
+   * Looks up a universal tag from a tag name. This method differs from {@link #valueOf(String)} in that it does not
+   * throw for unknown names.
    *
    * @param  name  tag name.
    *
-   * @return  tag object corresponding to given name or null if no tag of the
-   * given name is found.
+   * @return  tag object corresponding to given name or null if no tag of the given name is found.
    */
   public static UniversalDERTag fromTagName(final String name)
   {

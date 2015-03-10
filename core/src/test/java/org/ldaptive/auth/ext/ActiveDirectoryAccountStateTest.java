@@ -81,17 +81,10 @@ public class ActiveDirectoryAccountStateTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"auth-ext"},
-    dataProvider = "errors"
-  )
-  public void parseMessage(
-    final String message,
-    final ActiveDirectoryAccountState.Error err)
+  @Test(groups = {"auth-ext"}, dataProvider = "errors")
+  public void parseMessage(final String message, final ActiveDirectoryAccountState.Error err)
     throws Exception
   {
-    AssertJUnit.assertEquals(
-      err,
-      ActiveDirectoryAccountState.Error.parse(message));
+    AssertJUnit.assertEquals(err, ActiveDirectoryAccountState.Error.parse(message));
   }
 }

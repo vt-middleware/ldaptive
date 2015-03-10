@@ -33,8 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utility class that provides a bridge between JNDI naming exceptions and ldap
- * result codes. See
+ * Utility class that provides a bridge between JNDI naming exceptions and ldap result codes. See
  * http://docs.oracle.com/javase/tutorial/jndi/ldap/exceptions.html
  *
  * @author  Middleware Services
@@ -43,23 +42,19 @@ public final class NamingExceptionUtils
 {
 
   /** Map of naming exceptions to ldap result codes. */
-  private static final Map<Class<? extends NamingException>, ResultCode[]>
-  EXCEPTIONS_TO_RESULT_CODES;
+  private static final Map<Class<? extends NamingException>, ResultCode[]> EXCEPTIONS_TO_RESULT_CODES;
 
   /** Map of ldap result codes to naming exceptions. */
-  private static final Map<ResultCode, Class<? extends NamingException>>
-  RESULT_CODES_TO_EXCEPTION;
+  private static final Map<ResultCode, Class<? extends NamingException>> RESULT_CODES_TO_EXCEPTION;
 
   /** Pattern to find error code in exception messages. */
-  private static final Pattern PATTERN = Pattern.compile(
-    "LDAP: error code (\\d+)");
+  private static final Pattern PATTERN = Pattern.compile("LDAP: error code (\\d+)");
 
   /**
    * initialize map of exceptions to result codes.
    */
   static {
-    EXCEPTIONS_TO_RESULT_CODES =
-      new HashMap<>();
+    EXCEPTIONS_TO_RESULT_CODES = new HashMap<>();
     EXCEPTIONS_TO_RESULT_CODES.put(
       NamingException.class,
       new ResultCode[] {
@@ -70,9 +65,7 @@ public final class NamingExceptionUtils
         ResultCode.AFFECTS_MULTIPLE_DSAS,
         ResultCode.OTHER,
       });
-    EXCEPTIONS_TO_RESULT_CODES.put(
-      CommunicationException.class,
-      new ResultCode[] {ResultCode.PROTOCOL_ERROR, });
+    EXCEPTIONS_TO_RESULT_CODES.put(CommunicationException.class, new ResultCode[] {ResultCode.PROTOCOL_ERROR, });
     EXCEPTIONS_TO_RESULT_CODES.put(
       TimeLimitExceededException.class,
       new ResultCode[] {ResultCode.TIME_LIMIT_EXCEEDED, });
@@ -87,12 +80,8 @@ public final class NamingExceptionUtils
         ResultCode.CONFIDENTIALITY_REQUIRED,
         ResultCode.INAPPROPRIATE_AUTHENTICATION,
       });
-    EXCEPTIONS_TO_RESULT_CODES.put(
-      PartialResultException.class,
-      new ResultCode[] {ResultCode.PARTIAL_RESULTS, });
-    EXCEPTIONS_TO_RESULT_CODES.put(
-      ReferralException.class,
-      new ResultCode[] {ResultCode.REFERRAL, });
+    EXCEPTIONS_TO_RESULT_CODES.put(PartialResultException.class, new ResultCode[] {ResultCode.PARTIAL_RESULTS, });
+    EXCEPTIONS_TO_RESULT_CODES.put(ReferralException.class, new ResultCode[] {ResultCode.REFERRAL, });
     EXCEPTIONS_TO_RESULT_CODES.put(
       LimitExceededException.class,
       new ResultCode[] {
@@ -105,9 +94,7 @@ public final class NamingExceptionUtils
         ResultCode.UNAVAILABLE_CRITICAL_EXTENSION,
         ResultCode.UNWILLING_TO_PERFORM,
       });
-    EXCEPTIONS_TO_RESULT_CODES.put(
-      NoSuchAttributeException.class,
-      new ResultCode[] {ResultCode.NO_SUCH_ATTRIBUTE, });
+    EXCEPTIONS_TO_RESULT_CODES.put(NoSuchAttributeException.class, new ResultCode[] {ResultCode.NO_SUCH_ATTRIBUTE, });
     EXCEPTIONS_TO_RESULT_CODES.put(
       InvalidAttributeIdentifierException.class,
       new ResultCode[] {ResultCode.UNDEFINED_ATTRIBUTE_TYPE, });
@@ -123,18 +110,14 @@ public final class NamingExceptionUtils
     EXCEPTIONS_TO_RESULT_CODES.put(
       AttributeInUseException.class,
       new ResultCode[] {ResultCode.ATTRIBUTE_OR_VALUE_EXISTS, });
-    EXCEPTIONS_TO_RESULT_CODES.put(
-      NameNotFoundException.class,
-      new ResultCode[] {ResultCode.NO_SUCH_OBJECT, });
+    EXCEPTIONS_TO_RESULT_CODES.put(NameNotFoundException.class, new ResultCode[] {ResultCode.NO_SUCH_OBJECT, });
     EXCEPTIONS_TO_RESULT_CODES.put(
       InvalidNameException.class,
       new ResultCode[] {
         ResultCode.INVALID_DN_SYNTAX,
         ResultCode.NAMING_VIOLATION,
       });
-    EXCEPTIONS_TO_RESULT_CODES.put(
-      AuthenticationException.class,
-      new ResultCode[] {ResultCode.INVALID_CREDENTIALS, });
+    EXCEPTIONS_TO_RESULT_CODES.put(AuthenticationException.class, new ResultCode[] {ResultCode.INVALID_CREDENTIALS, });
     EXCEPTIONS_TO_RESULT_CODES.put(
       NoPermissionException.class,
       new ResultCode[] {ResultCode.INSUFFICIENT_ACCESS_RIGHTS, });
@@ -164,116 +147,47 @@ public final class NamingExceptionUtils
    * initialize map of result codes to exceptions.
    */
   static {
-    RESULT_CODES_TO_EXCEPTION =
-      new HashMap<>();
+    RESULT_CODES_TO_EXCEPTION = new HashMap<>();
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.SUCCESS, null);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.OPERATIONS_ERROR,
-      NamingException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.PROTOCOL_ERROR,
-      CommunicationException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.TIME_LIMIT_EXCEEDED,
-      TimeLimitExceededException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.SIZE_LIMIT_EXCEEDED,
-      SizeLimitExceededException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.OPERATIONS_ERROR, NamingException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.PROTOCOL_ERROR, CommunicationException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.TIME_LIMIT_EXCEEDED, TimeLimitExceededException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.SIZE_LIMIT_EXCEEDED, SizeLimitExceededException.class);
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.COMPARE_FALSE, null);
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.COMPARE_TRUE, null);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.AUTH_METHOD_NOT_SUPPORTED,
-      AuthenticationNotSupportedException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.STRONG_AUTH_REQUIRED,
-      AuthenticationNotSupportedException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.PARTIAL_RESULTS,
-      PartialResultException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.AUTH_METHOD_NOT_SUPPORTED, AuthenticationNotSupportedException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.STRONG_AUTH_REQUIRED, AuthenticationNotSupportedException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.PARTIAL_RESULTS, PartialResultException.class);
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.REFERRAL, ReferralException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.ADMIN_LIMIT_EXCEEDED,
-      LimitExceededException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.UNAVAILABLE_CRITICAL_EXTENSION,
-      OperationNotSupportedException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.CONFIDENTIALITY_REQUIRED,
-      AuthenticationNotSupportedException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.ADMIN_LIMIT_EXCEEDED, LimitExceededException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, OperationNotSupportedException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.CONFIDENTIALITY_REQUIRED, AuthenticationNotSupportedException.class);
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.SASL_BIND_IN_PROGRESS, null);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.NO_SUCH_ATTRIBUTE,
-      NoSuchAttributeException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.UNDEFINED_ATTRIBUTE_TYPE,
-      InvalidAttributeIdentifierException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.INAPPROPRIATE_MATCHING,
-      InvalidSearchFilterException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.CONSTRAINT_VIOLATION,
-      InvalidAttributeValueException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.ATTRIBUTE_OR_VALUE_EXISTS,
-      AttributeInUseException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.INVALID_ATTRIBUTE_SYNTAX,
-      InvalidAttributeValueException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.NO_SUCH_OBJECT,
-      NameNotFoundException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.ALIAS_PROBLEM,
-      NamingException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.INVALID_DN_SYNTAX,
-      InvalidNameException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.NO_SUCH_ATTRIBUTE, NoSuchAttributeException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.UNDEFINED_ATTRIBUTE_TYPE, InvalidAttributeIdentifierException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.INAPPROPRIATE_MATCHING, InvalidSearchFilterException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.CONSTRAINT_VIOLATION, InvalidAttributeValueException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.ATTRIBUTE_OR_VALUE_EXISTS, AttributeInUseException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.INVALID_ATTRIBUTE_SYNTAX, InvalidAttributeValueException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.NO_SUCH_OBJECT, NameNotFoundException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.ALIAS_PROBLEM, NamingException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.INVALID_DN_SYNTAX, InvalidNameException.class);
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.IS_LEAF, null);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.ALIAS_DEREFERENCING_PROBLEM,
-      NamingException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.INAPPROPRIATE_AUTHENTICATION,
-      AuthenticationNotSupportedException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.INVALID_CREDENTIALS,
-      AuthenticationException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.INSUFFICIENT_ACCESS_RIGHTS,
-      NoPermissionException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.BUSY,
-      ServiceUnavailableException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.UNAVAILABLE,
-      ServiceUnavailableException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.UNWILLING_TO_PERFORM,
-      OperationNotSupportedException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.LOOP_DETECT,
-      NamingException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.NAMING_VIOLATION,
-      InvalidNameException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.OBJECT_CLASS_VIOLATION,
-      SchemaViolationException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.NOT_ALLOWED_ON_NONLEAF,
-      ContextNotEmptyException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.NOT_ALLOWED_ON_RDN,
-      SchemaViolationException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.ENTRY_ALREADY_EXISTS,
-      NameAlreadyBoundException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.OBJECT_CLASS_MODS_PROHIBITED,
-      SchemaViolationException.class);
-    RESULT_CODES_TO_EXCEPTION.put(
-      ResultCode.AFFECTS_MULTIPLE_DSAS,
-      NamingException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.ALIAS_DEREFERENCING_PROBLEM, NamingException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.INAPPROPRIATE_AUTHENTICATION, AuthenticationNotSupportedException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.INVALID_CREDENTIALS, AuthenticationException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.INSUFFICIENT_ACCESS_RIGHTS, NoPermissionException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.BUSY, ServiceUnavailableException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.UNAVAILABLE, ServiceUnavailableException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.UNWILLING_TO_PERFORM, OperationNotSupportedException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.LOOP_DETECT, NamingException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.NAMING_VIOLATION, InvalidNameException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.OBJECT_CLASS_VIOLATION, SchemaViolationException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.NOT_ALLOWED_ON_NONLEAF, ContextNotEmptyException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.NOT_ALLOWED_ON_RDN, SchemaViolationException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.ENTRY_ALREADY_EXISTS, NameAlreadyBoundException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.OBJECT_CLASS_MODS_PROHIBITED, SchemaViolationException.class);
+    RESULT_CODES_TO_EXCEPTION.put(ResultCode.AFFECTS_MULTIPLE_DSAS, NamingException.class);
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.OTHER, NamingException.class);
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.SERVER_DOWN, null);
     RESULT_CODES_TO_EXCEPTION.put(ResultCode.LOCAL_ERROR, null);
@@ -309,8 +223,7 @@ public final class NamingExceptionUtils
    *
    * @return  ldap result codes
    */
-  public static ResultCode[] getResultCodes(
-    final Class<? extends NamingException> clazz)
+  public static ResultCode[] getResultCodes(final Class<? extends NamingException> clazz)
   {
     Class<?> c = clazz;
     do {
@@ -325,15 +238,14 @@ public final class NamingExceptionUtils
 
 
   /**
-   * Returns the result code that map to the supplied naming exception. If the
-   * exception maps to multiple result codes, null is returned.
+   * Returns the result code that map to the supplied naming exception. If the exception maps to multiple result codes,
+   * null is returned.
    *
    * @param  clazz  naming exception
    *
    * @return  ldap result code or null
    */
-  public static ResultCode getResultCode(
-    final Class<? extends NamingException> clazz)
+  public static ResultCode getResultCode(final Class<? extends NamingException> clazz)
   {
     final ResultCode[] codes = getResultCodes(clazz);
     if (codes != null) {
@@ -342,20 +254,15 @@ public final class NamingExceptionUtils
       }
 
       final Logger l = LoggerFactory.getLogger(NamingExceptionUtils.class);
-      l.debug(
-        "naming exception {} is ambiguous, maps to multiple result codes: {}",
-        clazz,
-        Arrays.toString(codes));
+      l.debug("naming exception {} is ambiguous, maps to multiple result codes: {}", clazz, Arrays.toString(codes));
     }
     return null;
   }
 
 
   /**
-   * Returns the result code contained in the supplied naming exception message.
-   * JNDI displays the error code in the form "[LDAP: error code {code} -
-   * {message}" and this method attempts to parse that numeric code from the
-   * message.
+   * Returns the result code contained in the supplied naming exception message. JNDI displays the error code in the
+   * form "[LDAP: error code {code} - {message}" and this method attempts to parse that numeric code from the message.
    *
    * @param  message  naming exception message
    *
@@ -388,17 +295,14 @@ public final class NamingExceptionUtils
 
 
   /**
-   * Returns whether the supplied naming exception maps to the supplied result
-   * code.
+   * Returns whether the supplied naming exception maps to the supplied result code.
    *
    * @param  clazz  naming exception
    * @param  code  ldap result code
    *
    * @return  whether the naming exception matches the result code
    */
-  public static boolean matches(
-    final Class<? extends NamingException> clazz,
-    final ResultCode code)
+  public static boolean matches(final Class<? extends NamingException> clazz, final ResultCode code)
   {
     boolean match = false;
     final ResultCode[] matchingCodes = getResultCodes(clazz);
@@ -415,15 +319,14 @@ public final class NamingExceptionUtils
 
 
   /**
-   * Returns the naming exception that maps to the supplied result code. If the
-   * result code does not map to an exception, null is returned
+   * Returns the naming exception that maps to the supplied result code. If the result code does not map to an
+   * exception, null is returned
    *
    * @param  code  ldap result code
    *
    * @return  array of naming exception classes
    */
-  public static Class<? extends NamingException> getNamingException(
-    final ResultCode code)
+  public static Class<? extends NamingException> getNamingException(final ResultCode code)
   {
     return RESULT_CODES_TO_EXCEPTION.get(code);
   }

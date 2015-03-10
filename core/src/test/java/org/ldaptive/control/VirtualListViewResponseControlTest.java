@@ -112,17 +112,11 @@ public class VirtualListViewResponseControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "response"
-  )
-  public void decode(
-    final byte[] berValue,
-    final VirtualListViewResponseControl expected)
+  @Test(groups = {"control"}, dataProvider = "response")
+  public void decode(final byte[] berValue, final VirtualListViewResponseControl expected)
     throws Exception
   {
-    final VirtualListViewResponseControl actual =
-      new VirtualListViewResponseControl(expected.getCriticality());
+    final VirtualListViewResponseControl actual = new VirtualListViewResponseControl(expected.getCriticality());
     actual.decode(berValue);
     Assert.assertEquals(actual, expected);
   }

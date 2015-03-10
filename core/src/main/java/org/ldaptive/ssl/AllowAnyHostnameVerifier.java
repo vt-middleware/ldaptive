@@ -10,8 +10,7 @@ import javax.net.ssl.SSLSession;
  *
  * @author  Middleware Services
  */
-public class AllowAnyHostnameVerifier
-  implements HostnameVerifier, CertificateHostnameVerifier
+public class AllowAnyHostnameVerifier implements HostnameVerifier, CertificateHostnameVerifier
 {
 
 

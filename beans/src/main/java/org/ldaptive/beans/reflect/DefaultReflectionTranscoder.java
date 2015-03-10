@@ -27,9 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation of a reflection transcoder. Determines the correct
- * underlying reflection transcoder by inspecting the class type
- * characteristics.
+ * Default implementation of a reflection transcoder. Determines the correct underlying reflection transcoder by
+ * inspecting the class type characteristics.
  *
  * @author  Middleware Services
  */
@@ -66,13 +65,10 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
    * @param  type  of object to transcode
    * @param  transcoder  custom transcoder for this type
    */
-  public DefaultReflectionTranscoder(
-    final Type type,
-    final ValueTranscoder<?> transcoder)
+  public DefaultReflectionTranscoder(final Type type, final ValueTranscoder<?> transcoder)
   {
     if (transcoder != null) {
-      customTranscoder = SingleValueReflectionTranscoder.newInstance(
-        transcoder);
+      customTranscoder = SingleValueReflectionTranscoder.newInstance(transcoder);
     } else {
       customTranscoder = null;
     }
@@ -83,8 +79,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
         if (byte[].class == c || char[].class == c) {
           valueTranscoder = getSingleValueReflectionTranscoder(c);
         } else {
-          valueTranscoder = new ArrayReflectionTranscoder(
-            getSingleValueReflectionTranscoder(c.getComponentType()));
+          valueTranscoder = new ArrayReflectionTranscoder(getSingleValueReflectionTranscoder(c.getComponentType()));
         }
       } else if (Collection.class.isAssignableFrom(c)) {
         valueTranscoder = getCollectionEncoder(c, Object.class);
@@ -96,8 +91,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
       final Type rawType = pt.getRawType();
       final Type[] typeArgs = pt.getActualTypeArguments();
       if (typeArgs.length != 1) {
-        throw new IllegalArgumentException(
-          "Unsupported type arguments: " + Arrays.toString(typeArgs));
+        throw new IllegalArgumentException("Unsupported type arguments: " + Arrays.toString(typeArgs));
       }
 
       final Class<?> rawClass = ReflectionUtils.classFromType(rawType);
@@ -128,49 +122,28 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
    *
    * @return  single value transcoders
    */
-  protected Set<SingleValueReflectionTranscoder<?>>
-  getDefaultSingleValueTranscoders()
+  protected Set<SingleValueReflectionTranscoder<?>> getDefaultSingleValueTranscoders()
   {
     final Set<SingleValueReflectionTranscoder<?>> transcoders = new HashSet<>();
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new ObjectValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new BooleanValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new BooleanValueTranscoder(true)));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new DoubleValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new DoubleValueTranscoder(true)));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new FloatValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new FloatValueTranscoder(true)));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new IntegerValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new IntegerValueTranscoder(true)));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new LongValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new LongValueTranscoder(true)));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new ShortValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new ShortValueTranscoder(true)));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new StringValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new ByteArrayValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new CharArrayValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new CertificateValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(
-        new GeneralizedTimeValueTranscoder()));
-    transcoders.add(
-      new SingleValueReflectionTranscoder<>(new UUIDValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new ObjectValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new BooleanValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new BooleanValueTranscoder(true)));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new DoubleValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new DoubleValueTranscoder(true)));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new FloatValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new FloatValueTranscoder(true)));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new IntegerValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new IntegerValueTranscoder(true)));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new LongValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new LongValueTranscoder(true)));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new ShortValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new ShortValueTranscoder(true)));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new StringValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new ByteArrayValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new CharArrayValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new CertificateValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new GeneralizedTimeValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new UUIDValueTranscoder()));
     return transcoders;
   }
 
@@ -182,8 +155,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
    *
    * @return  single value reflection transcoder
    */
-  protected SingleValueReflectionTranscoder getSingleValueReflectionTranscoder(
-    final Class<?> type)
+  protected SingleValueReflectionTranscoder getSingleValueReflectionTranscoder(final Class<?> type)
   {
     if (customTranscoder != null) {
       return customTranscoder;
@@ -207,15 +179,12 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
    *
    * @return  reflection transcoder for a collection
    */
-  protected ReflectionTranscoder getCollectionEncoder(
-    final Class<?> type,
-    final Type genericType)
+  protected ReflectionTranscoder getCollectionEncoder(final Class<?> type, final Type genericType)
   {
     Class<?> genericClass;
     boolean isGenericArray = false;
     if (genericType instanceof GenericArrayType) {
-      final Class<?> c = ReflectionUtils.classFromType(
-        ((GenericArrayType) genericType).getGenericComponentType());
+      final Class<?> c = ReflectionUtils.classFromType(((GenericArrayType) genericType).getGenericComponentType());
       if (Byte.TYPE == c) {
         genericClass = byte[].class;
       } else if (Character.TYPE == c) {
@@ -233,27 +202,20 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
       if (isGenericArray) {
         encoder = new ListReflectionTranscoder(
           type,
-          new ArrayReflectionTranscoder(
-            getSingleValueReflectionTranscoder(genericClass)));
+          new ArrayReflectionTranscoder(getSingleValueReflectionTranscoder(genericClass)));
       } else {
-        encoder = new ListReflectionTranscoder(
-          type,
-          getSingleValueReflectionTranscoder(genericClass));
+        encoder = new ListReflectionTranscoder(type, getSingleValueReflectionTranscoder(genericClass));
       }
     } else if (Set.class.isAssignableFrom(type)) {
       if (isGenericArray) {
         encoder = new SetReflectionTranscoder(
           type,
-          new ArrayReflectionTranscoder(
-            getSingleValueReflectionTranscoder(genericClass)));
+          new ArrayReflectionTranscoder(getSingleValueReflectionTranscoder(genericClass)));
       } else {
-        encoder = new SetReflectionTranscoder(
-          type,
-          getSingleValueReflectionTranscoder(genericClass));
+        encoder = new SetReflectionTranscoder(type, getSingleValueReflectionTranscoder(genericClass));
       }
     } else {
-      throw new IllegalArgumentException(
-        "Unsupported type: " + type + " with generic type: " + genericType);
+      throw new IllegalArgumentException("Unsupported type: " + type + " with generic type: " + genericType);
     }
     return encoder;
   }

@@ -37,27 +37,23 @@ public class DirSyncClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "createEntry27",
-    "createEntry28",
-    "createEntry29"
-  })
+  @Parameters(
+    {
+      "createEntry27",
+      "createEntry28",
+      "createEntry29"
+    }
+  )
   @BeforeClass(groups = {"control-util"})
-  public void createLdapEntry(
-    final String ldifFile1,
-    final String ldifFile2,
-    final String ldifFile3)
+  public void createLdapEntry(final String ldifFile1, final String ldifFile2, final String ldifFile3)
     throws Exception
   {
     testLdapEntries = new LdapEntry[3];
-    testLdapEntries[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile1)).getEntry();
+    testLdapEntries[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile1)).getEntry();
     super.createLdapEntry(testLdapEntries[0]);
-    testLdapEntries[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    testLdapEntries[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
     super.createLdapEntry(testLdapEntries[1]);
-    testLdapEntries[2] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    testLdapEntries[2] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
     super.createLdapEntry(testLdapEntries[2]);
   }
 
@@ -79,10 +75,12 @@ public class DirSyncClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "dsSearchDn",
-    "dsSearchFilter"
-  })
+  @Parameters(
+    {
+      "dsSearchDn",
+      "dsSearchFilter"
+    }
+  )
   @Test(groups = {"control-util"})
   public void execute(final String dn, final String filter)
     throws Exception
@@ -91,20 +89,19 @@ public class DirSyncClientTest extends AbstractTest
       return;
     }
 
-    Connection conn = TestUtils.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final DirSyncClient client = new DirSyncClient(
         conn,
-        new DirSyncControl.Flag[] {
-          DirSyncControl.Flag.ANCESTORS_FIRST_ORDER,
-        });
+        new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
 
       final SearchRequest request = new SearchRequest(
         dn.substring(dn.indexOf(",") + 1, dn.length()),
         new SearchFilter(filter),
         "uid");
-      Response<SearchResult> response = client.execute(request);
+      final Response<SearchResult> response = client.execute(request);
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertTrue(response.getResult().size() > 0);
       AssertJUnit.assertFalse(client.hasMore(response));
@@ -120,10 +117,12 @@ public class DirSyncClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "dsSearchDn",
-    "dsSearchFilter"
-  })
+  @Parameters(
+    {
+      "dsSearchDn",
+      "dsSearchFilter"
+    }
+  )
   @Test(groups = {"control-util"})
   public void executeToCompletion(final String dn, final String filter)
     throws Exception
@@ -132,20 +131,19 @@ public class DirSyncClientTest extends AbstractTest
       return;
     }
 
-    Connection conn = TestUtils.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final DirSyncClient client = new DirSyncClient(
         conn,
-        new DirSyncControl.Flag[] {
-          DirSyncControl.Flag.ANCESTORS_FIRST_ORDER,
-        });
+        new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
 
       final SearchRequest request = new SearchRequest(
         dn.substring(dn.indexOf(",") + 1, dn.length()),
         new SearchFilter(filter),
         "uid");
-      Response<SearchResult> response = client.executeToCompletion(request);
+      final Response<SearchResult> response = client.executeToCompletion(request);
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertTrue(response.getResult().size() > 0);
     } finally {

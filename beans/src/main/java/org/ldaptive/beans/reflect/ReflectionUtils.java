@@ -66,10 +66,7 @@ public final class ReflectionUtils
    *
    * @throws  IllegalArgumentException  if the field cannot be set
    */
-  public static void setField(
-    final Field field,
-    final Object object,
-    final Object value)
+  public static void setField(final Field field, final Object object, final Object value)
   {
     try {
       field.set(object, value);
@@ -89,9 +86,7 @@ public final class ReflectionUtils
    *
    * @throws  IllegalArgumentException  if the method cannot be invoked
    */
-  public static Object invokeGetterMethod(
-    final Method method,
-    final Object object)
+  public static Object invokeGetterMethod(final Method method, final Object object)
   {
     try {
       return method.invoke(object);
@@ -102,8 +97,7 @@ public final class ReflectionUtils
 
 
   /**
-   * Invokes the supplied method on the supplied object with the supplied value
-   * as a parameter.
+   * Invokes the supplied method on the supplied object with the supplied value as a parameter.
    *
    * @param  method  to invoke
    * @param  object  that has the method
@@ -111,10 +105,7 @@ public final class ReflectionUtils
    *
    * @throws  IllegalArgumentException  if the method cannot be invoked
    */
-  public static void invokeSetterMethod(
-    final Method method,
-    final Object object,
-    final Object value)
+  public static void invokeSetterMethod(final Method method, final Object object, final Object value)
   {
     try {
       method.invoke(object, value);

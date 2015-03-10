@@ -57,12 +57,10 @@ public class UuidType extends AbstractDERType implements DEREncoder
 
 
   /**
-   * Converts bytes in the buffer to a uuid by reading from the current position
-   * to the limit.
+   * Converts bytes in the buffer to a uuid by reading from the current position to the limit.
    *
-   * @param  encoded  buffer containing DER-encoded data where the buffer is
-   * positioned at the start of uuid bytes and the limit is set beyond the last
-   * byte of uuid data.
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the start of uuid bytes and
+   *                  the limit is set beyond the last byte of uuid data.
    *
    * @return  decoded bytes as a uuid.
    */

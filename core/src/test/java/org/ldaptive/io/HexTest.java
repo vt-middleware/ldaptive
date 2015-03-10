@@ -44,11 +44,8 @@ public class HexTest
         new Object[] {
           new Scanner(
             HexTest.class.getResourceAsStream(
-              "/org/ldaptive/io/plaintext.txt")).useDelimiter(
-                "\\Z").next().getBytes(UTF8_CHARSET),
-          new Scanner(
-            HexTest.class.getResourceAsStream(
-              "/org/ldaptive/io/hex.txt")).useDelimiter("\\Z").next(),
+              "/org/ldaptive/io/plaintext.txt")).useDelimiter("\\Z").next().getBytes(UTF8_CHARSET),
+          new Scanner(HexTest.class.getResourceAsStream("/org/ldaptive/io/hex.txt")).useDelimiter("\\Z").next(),
         },
       };
   }
@@ -100,10 +97,7 @@ public class HexTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"io"},
-    dataProvider = "encode-decode"
-  )
+  @Test(groups = {"io"}, dataProvider = "encode-decode")
   public void encodeAndDecode(final byte[] raw, final String encoded)
     throws Exception
   {
@@ -118,10 +112,7 @@ public class HexTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"io"},
-    dataProvider = "invalid-decode"
-  )
+  @Test(groups = {"io"}, dataProvider = "invalid-decode")
   public void decodeException(final char[] data)
     throws Exception
   {

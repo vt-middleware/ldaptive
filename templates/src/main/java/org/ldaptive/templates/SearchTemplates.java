@@ -9,8 +9,7 @@ import java.util.Map;
 import org.ldaptive.SearchFilter;
 
 /**
- * Contains a list of common search filter templates that can be formatted for
- * any given query.
+ * Contains a list of common search filter templates that can be formatted for any given query.
  *
  * @author  Middleware Services
  */
@@ -86,8 +85,7 @@ public class SearchTemplates
 
 
   /**
-   * Creates the search filters using configured templates and the supplied
-   * query.
+   * Creates the search filters using configured templates and the supplied query.
    *
    * @param  query  to create search filter with
    *
@@ -98,13 +96,9 @@ public class SearchTemplates
     final List<SearchFilter> filters = new ArrayList<>(filterTemplates.length);
     for (String template : filterTemplates) {
       final SearchFilter filter = new SearchFilter(
-        concatFilters(
-          template,
-          query.getSearchRestrictions(),
-          searchRestrictions));
+        concatFilters(template, query.getSearchRestrictions(), searchRestrictions));
       for (TermParser parser : termParsers) {
-        for (Map.Entry<String, String> e :
-             parser.parse(query.getTerms()).entrySet()) {
+        for (Map.Entry<String, String> e : parser.parse(query.getTerms()).entrySet()) {
           filter.setParameter(e.getKey(), e.getValue());
         }
       }
@@ -115,8 +109,8 @@ public class SearchTemplates
 
 
   /**
-   * Concatenates the supplied filters into a single filter will all arguments
-   * ANDED together. Null array values are ignored.
+   * Concatenates the supplied filters into a single filter will all arguments ANDED together. Null array values are
+   * ignored.
    *
    * @param  filters  to concatenate
    *
@@ -174,8 +168,8 @@ public class SearchTemplates
 
 
   /**
-   * Adds each term as a filter parameter using the name 'termX' where X is the
-   * index of the term. For the argument: {'fname', 'lname' }, produces:
+   * Adds each term as a filter parameter using the name 'termX' where X is the index of the term. For the argument:
+   * {'fname', 'lname' }, produces:
    *
    * <pre>
      {
@@ -201,9 +195,8 @@ public class SearchTemplates
 
 
   /**
-   * Adds the first letter of each term as a filter parameter using the name
-   * 'initialX' where X is the index of the term. For the argument: {'fname',
-   * 'lname' }, produces:
+   * Adds the first letter of each term as a filter parameter using the name 'initialX' where X is the index of the
+   * term. For the argument: {'fname', 'lname' }, produces:
    *
    * <pre>
      {

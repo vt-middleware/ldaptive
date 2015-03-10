@@ -14,9 +14,8 @@ import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 
 /**
- * Request/response control for active directory servers to return statistics
- * along with search results. This implementation supports the format for
- * Windows Server 2008, Windows Server 2008 R2, and Windows Server 2012 DCs. The
+ * Request/response control for active directory servers to return statistics along with search results. This
+ * implementation supports the format for Windows Server 2008, Windows Server 2008 R2, and Windows Server 2012 DCs. The
  * response control is defined as:
  *
  * <pre>
@@ -54,8 +53,7 @@ import org.ldaptive.control.ResponseControl;
  *
  * @author  Middleware Services
  */
-public class GetStatsControl extends AbstractControl
-  implements RequestControl, ResponseControl
+public class GetStatsControl extends AbstractControl implements RequestControl, ResponseControl
 {
 
   /** OID of this control. */
@@ -100,12 +98,7 @@ public class GetStatsControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        statistics);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), statistics);
   }
 
 
@@ -135,46 +128,25 @@ public class GetStatsControl extends AbstractControl
     logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
 
     final DERParser parser = new DERParser();
-    parser.registerHandler(
-      "/SEQ/INT[1]",
-      new IntegerHandler(this, "threadCount"));
+    parser.registerHandler("/SEQ/INT[1]", new IntegerHandler(this, "threadCount"));
     parser.registerHandler("/SEQ/INT[3]", new IntegerHandler(this, "callTime"));
-    parser.registerHandler(
-      "/SEQ/INT[5]",
-      new IntegerHandler(this, "entriesReturned"));
-    parser.registerHandler(
-      "/SEQ/INT[7]",
-      new IntegerHandler(this, "entriesVisited"));
+    parser.registerHandler("/SEQ/INT[5]", new IntegerHandler(this, "entriesReturned"));
+    parser.registerHandler("/SEQ/INT[7]", new IntegerHandler(this, "entriesVisited"));
     parser.registerHandler("/SEQ/OCTSTR[9]", new StringHandler(this, "filter"));
     parser.registerHandler("/SEQ/OCTSTR[11]", new StringHandler(this, "index"));
-    parser.registerHandler(
-      "/SEQ/INT[13]",
-      new IntegerHandler(this, "pagesReferenced"));
-    parser.registerHandler(
-      "/SEQ/INT[15]",
-      new IntegerHandler(this, "pagesRead"));
-    parser.registerHandler(
-      "/SEQ/INT[17]",
-      new IntegerHandler(this, "pagesPreread"));
-    parser.registerHandler(
-      "/SEQ/INT[19]",
-      new IntegerHandler(this, "pagesDirtied"));
-    parser.registerHandler(
-      "/SEQ/INT[21]",
-      new IntegerHandler(this, "pagesRedirtied"));
-    parser.registerHandler(
-      "/SEQ/INT[23]",
-      new IntegerHandler(this, "logRecordCount"));
-    parser.registerHandler(
-      "/SEQ/INT[25]",
-      new IntegerHandler(this, "logRecordBytes"));
+    parser.registerHandler("/SEQ/INT[13]", new IntegerHandler(this, "pagesReferenced"));
+    parser.registerHandler("/SEQ/INT[15]", new IntegerHandler(this, "pagesRead"));
+    parser.registerHandler("/SEQ/INT[17]", new IntegerHandler(this, "pagesPreread"));
+    parser.registerHandler("/SEQ/INT[19]", new IntegerHandler(this, "pagesDirtied"));
+    parser.registerHandler("/SEQ/INT[21]", new IntegerHandler(this, "pagesRedirtied"));
+    parser.registerHandler("/SEQ/INT[23]", new IntegerHandler(this, "logRecordCount"));
+    parser.registerHandler("/SEQ/INT[25]", new IntegerHandler(this, "logRecordBytes"));
     parser.parse(ByteBuffer.wrap(berValue));
   }
 
 
   /** Parse handler implementation for integer stats. */
-  private static class IntegerHandler
-    extends AbstractParseHandler<GetStatsControl>
+  private static class IntegerHandler extends AbstractParseHandler<GetStatsControl>
   {
 
     /** name of this statistic. */
@@ -197,16 +169,13 @@ public class GetStatsControl extends AbstractControl
     @Override
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
-      getObject().getStatistics().put(
-        statName,
-        IntegerType.decode(encoded).intValue());
+      getObject().getStatistics().put(statName, IntegerType.decode(encoded).intValue());
     }
   }
 
 
   /** Parse handler implementation for string stats. */
-  private static class StringHandler
-    extends AbstractParseHandler<GetStatsControl>
+  private static class StringHandler extends AbstractParseHandler<GetStatsControl>
   {
 
     /** name of this statistic. */
@@ -230,9 +199,7 @@ public class GetStatsControl extends AbstractControl
     public void handle(final DERParser parser, final ByteBuffer encoded)
     {
       // strings are terminated with 0x00(null), use trim to remove
-      getObject().getStatistics().put(
-        statName,
-        OctetStringType.decode(encoded).trim());
+      getObject().getStatistics().put(statName, OctetStringType.decode(encoded).trim());
     }
   }
 }

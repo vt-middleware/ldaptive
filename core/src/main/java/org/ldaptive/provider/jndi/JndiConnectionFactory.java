@@ -17,8 +17,7 @@ import org.ldaptive.ssl.ThreadLocalTLSSocketFactory;
  *
  * @author  Middleware Services
  */
-public class JndiConnectionFactory
-  extends AbstractProviderConnectionFactory<JndiProviderConfig>
+public class JndiConnectionFactory extends AbstractProviderConnectionFactory<JndiProviderConfig>
 {
 
   /** Environment properties. */
@@ -35,23 +34,18 @@ public class JndiConnectionFactory
    * @param  config  provider configuration
    * @param  env  jndi context environment
    */
-  public JndiConnectionFactory(
-    final String url,
-    final JndiProviderConfig config,
-    final Map<String, Object> env)
+  public JndiConnectionFactory(final String url, final JndiProviderConfig config, final Map<String, Object> env)
   {
     super(url, config);
     environment = Collections.unmodifiableMap(env);
-    if (ThreadLocalTLSSocketFactory.class.getName().equals(
-        environment.get(JndiProvider.SOCKET_FACTORY))) {
+    if (ThreadLocalTLSSocketFactory.class.getName().equals(environment.get(JndiProvider.SOCKET_FACTORY))) {
       threadLocalSslConfig = new ThreadLocalTLSSocketFactory().getSslConfig();
     }
   }
 
 
   /**
-   * Returns the JNDI environment for this connection factory. This map cannot
-   * be modified.
+   * Returns the JNDI environment for this connection factory. This map cannot be modified.
    *
    * @return  jndi environment
    */
@@ -65,9 +59,9 @@ public class JndiConnectionFactory
   protected JndiConnection createInternal(final String url)
     throws LdapException
   {
-    if (threadLocalSslConfig != null &&
-        ThreadLocalTLSSocketFactory.class.getName().equals(
-          environment.get(JndiProvider.SOCKET_FACTORY))) {
+    if (
+      threadLocalSslConfig != null &&
+        ThreadLocalTLSSocketFactory.class.getName().equals(environment.get(JndiProvider.SOCKET_FACTORY))) {
       final ThreadLocalTLSSocketFactory sf = new ThreadLocalTLSSocketFactory();
       if (sf.getSslConfig() == null) {
         sf.setSslConfig(threadLocalSslConfig);
@@ -76,20 +70,15 @@ public class JndiConnectionFactory
 
     // CheckStyle:IllegalType OFF
     // the JNDI API requires the Hashtable type
-    final Hashtable<String, Object> env = new Hashtable<>(
-      getEnvironment());
+    final Hashtable<String, Object> env = new Hashtable<>(getEnvironment());
     // CheckStyle:IllegalType ON
     env.put(JndiProvider.PROVIDER_URL, url);
 
     JndiConnection conn;
     try {
-      conn = new JndiConnection(
-        new InitialLdapContext(env, null),
-        getProviderConfig());
+      conn = new JndiConnection(new InitialLdapContext(env, null), getProviderConfig());
     } catch (NamingException e) {
-      throw new ConnectionException(
-        e,
-        NamingExceptionUtils.getResultCode(e.getClass()));
+      throw new ConnectionException(e, NamingExceptionUtils.getResultCode(e.getClass()));
     }
     return conn;
   }

@@ -14,10 +14,7 @@ import org.ldaptive.control.RequestControl;
 public class JLdapStartTLSConnection extends JLdapConnection
 {
 
-  /**
-   * Whether to call {@link LDAPConnection#stopTLS()} when {@link
-   * #close(RequestControl[])} is called.
-   */
+  /** Whether to call {@link LDAPConnection#stopTLS()} when {@link #close(RequestControl[])} is called. */
   private boolean stopTlsOnClose;
 
 
@@ -27,17 +24,14 @@ public class JLdapStartTLSConnection extends JLdapConnection
    * @param  conn  ldap connection
    * @param  pc  provider configuration
    */
-  public JLdapStartTLSConnection(
-    final LDAPConnection conn,
-    final JLdapProviderConfig pc)
+  public JLdapStartTLSConnection(final LDAPConnection conn, final JLdapProviderConfig pc)
   {
     super(conn, pc);
   }
 
 
   /**
-   * Returns whether to call {@link LDAPConnection#stopTLS()} when {@link
-   * #close(RequestControl[])} is called.
+   * Returns whether to call {@link LDAPConnection#stopTLS()} when {@link #close(RequestControl[])} is called.
    *
    * @return  stop TLS on close
    */
@@ -48,8 +42,7 @@ public class JLdapStartTLSConnection extends JLdapConnection
 
 
   /**
-   * Sets whether to call {@link LDAPConnection#stopTLS()} when {@link
-   * #close(RequestControl[])} is called.
+   * Sets whether to call {@link LDAPConnection#stopTLS()} when {@link #close(RequestControl[])} is called.
    *
    * @param  b  stop TLS on close
    */

@@ -6,8 +6,7 @@ import java.security.GeneralSecurityException;
 import org.ldaptive.LdapUtils;
 
 /**
- * Provides the properties necessary for creating an SSL context initializer
- * with an X.509 credential reader.
+ * Provides the properties necessary for creating an SSL context initializer with an X.509 credential reader.
  *
  * @author  Middleware Services
  */
@@ -18,16 +17,13 @@ public class X509CredentialConfig implements CredentialConfig
   private static final int HASH_CODE_SEED = 1009;
 
   /** Reads X.509 certificates credential. */
-  private final X509CertificatesCredentialReader certsReader =
-    new X509CertificatesCredentialReader();
+  private final X509CertificatesCredentialReader certsReader = new X509CertificatesCredentialReader();
 
   /** Reads X.509 certificate credential. */
-  private final X509CertificateCredentialReader certReader =
-    new X509CertificateCredentialReader();
+  private final X509CertificateCredentialReader certReader = new X509CertificateCredentialReader();
 
   /** Reads private key credential. */
-  private final PrivateKeyCredentialReader keyReader =
-    new PrivateKeyCredentialReader();
+  private final PrivateKeyCredentialReader keyReader = new PrivateKeyCredentialReader();
 
   /** Name of the trust certificates to use for the SSL connection. */
   private String trustCertificates;
@@ -115,8 +111,7 @@ public class X509CredentialConfig implements CredentialConfig
         sslInit.setTrustCertificates(certsReader.read(trustCertificates));
       }
       if (authenticationCertificate != null) {
-        sslInit.setAuthenticationCertificate(
-          certReader.read(authenticationCertificate));
+        sslInit.setAuthenticationCertificate(certReader.read(authenticationCertificate));
       }
       if (authenticationKey != null) {
         sslInit.setAuthenticationKey(keyReader.read(authenticationKey));
@@ -138,12 +133,7 @@ public class X509CredentialConfig implements CredentialConfig
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        trustCertificates,
-        authenticationCertificate,
-        authenticationKey);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, trustCertificates, authenticationCertificate, authenticationKey);
   }
 
 

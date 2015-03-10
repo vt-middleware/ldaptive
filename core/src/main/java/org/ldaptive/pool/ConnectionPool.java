@@ -71,10 +71,9 @@ public interface ConnectionPool
    * @return  pooled object
    *
    * @throws  PoolException  if this operation fails
-   * @throws  BlockingTimeoutException  if this pool is configured with a block
-   * time and it occurs
-   * @throws  PoolInterruptedException  if this pool is configured with a block
-   * time and the current thread is interrupted
+   * @throws  BlockingTimeoutException  if this pool is configured with a block time and it occurs
+   * @throws  PoolInterruptedException  if this pool is configured with a block time and the current thread is
+   *                                    interrupted
    */
   Connection getConnection()
     throws PoolException;

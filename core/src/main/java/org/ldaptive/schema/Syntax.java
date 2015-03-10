@@ -55,10 +55,7 @@ public class Syntax extends AbstractSchemaElement
    * @param  extensions  extensions
    */
   // CheckStyle:HiddenField OFF
-  public Syntax(
-    final String oid,
-    final String description,
-    final Extensions extensions)
+  public Syntax(final String oid, final String description, final Extensions extensions)
   {
     this(oid);
     setDescription(description);
@@ -79,8 +76,7 @@ public class Syntax extends AbstractSchemaElement
 
 
   /**
-   * Parses the supplied definition string and creates an initialized attribute
-   * syntax.
+   * Parses the supplied definition string and creates an initialized attribute syntax.
    *
    * @param  definition  to parse
    *
@@ -93,9 +89,7 @@ public class Syntax extends AbstractSchemaElement
   {
     final Matcher m = DEFINITION_PATTERN.matcher(definition);
     if (!m.matches()) {
-      throw new ParseException(
-        "Invalid attribute syntax definition: " + definition,
-        definition.length());
+      throw new ParseException("Invalid attribute syntax definition: " + definition, definition.length());
     }
 
     final Syntax asd = new Syntax(m.group(1).trim());
@@ -132,12 +126,7 @@ public class Syntax extends AbstractSchemaElement
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        oid,
-        getDescription(),
-        getExtensions());
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, oid, getDescription(), getExtensions());
   }
 
 

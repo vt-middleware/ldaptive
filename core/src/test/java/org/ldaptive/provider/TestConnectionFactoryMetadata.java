@@ -16,9 +16,7 @@ public class TestConnectionFactoryMetadata implements ConnectionFactoryMetadata
   private final int connectionCount;
 
 
-  /**
-   * Creates a new test connection factory metadata.
-   */
+  /** Creates a new test connection factory metadata. */
   public TestConnectionFactoryMetadata()
   {
     this(null, 0);

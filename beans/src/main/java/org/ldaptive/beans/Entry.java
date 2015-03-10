@@ -16,9 +16,13 @@ import java.lang.annotation.Target;
 public @interface Entry
 {
 
-  /** Entry DN. */
+  /**
+   * Entry DN.
+   */
   String dn();
 
-  /** Entry attributes. */
+  /**
+   * Entry attributes.
+   */
   Attribute[] attributes() default {};
 }

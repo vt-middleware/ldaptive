@@ -29,41 +29,30 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
 
 
   @Override
-  public ProviderConnectionFactory<ApacheLdapProviderConfig>
-  getConnectionFactory(final ConnectionConfig cc)
+  public ProviderConnectionFactory<ApacheLdapProviderConfig> getConnectionFactory(final ConnectionConfig cc)
   {
     LdapConnectionConfig lcc = config.getLdapConnectionConfig();
     if (lcc == null) {
       lcc = getDefaultLdapConnectionConfig(cc);
     }
-    return
-      new ApacheLdapConnectionFactory(
-        cc.getLdapUrl(),
-        config,
-        lcc,
-        cc.getUseStartTLS(),
-        cc.getResponseTimeout());
+    return new ApacheLdapConnectionFactory(cc.getLdapUrl(), config, lcc, cc.getUseStartTLS(), cc.getResponseTimeout());
   }
 
 
   /**
-   * Returns an SSLContextInitializer configured with a default hostname
-   * verifier. Uses a {@link DefaultHostnameVerifier} if no credential config
-   * has been configured.
+   * Returns an SSLContextInitializer configured with a default hostname verifier. Uses a {@link
+   * DefaultHostnameVerifier} if no credential config has been configured.
    *
    * @param  cc  connection configuration
    *
    * @return  SSL Context Initializer
    */
-  protected SSLContextInitializer getHostnameVerifierSSLContextInitializer(
-    final ConnectionConfig cc)
+  protected SSLContextInitializer getHostnameVerifierSSLContextInitializer(final ConnectionConfig cc)
   {
     SSLContextInitializer contextInit;
-    if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getCredentialConfig() != null) {
+    if (cc.getSslConfig() != null && cc.getSslConfig().getCredentialConfig() != null) {
       try {
-        final CredentialConfig credConfig =
-          cc.getSslConfig().getCredentialConfig();
+        final CredentialConfig credConfig = cc.getSslConfig().getCredentialConfig();
         contextInit = credConfig.createSSLContextInitializer();
       } catch (GeneralSecurityException e) {
         throw new IllegalArgumentException(e);
@@ -71,15 +60,12 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
     } else {
       contextInit = new DefaultSSLContextInitializer();
     }
-    if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getTrustManagers() != null) {
+    if (cc.getSslConfig() != null && cc.getSslConfig().getTrustManagers() != null) {
       contextInit.setTrustManagers(cc.getSslConfig().getTrustManagers());
     } else {
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       contextInit.setTrustManagers(
-        new HostnameVerifyingTrustManager(
-          new DefaultHostnameVerifier(),
-          ldapUrl.getHostnames()));
+        new HostnameVerifyingTrustManager(new DefaultHostnameVerifier(), ldapUrl.getHostnames()));
     }
     return contextInit;
   }
@@ -92,13 +78,11 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
    *
    * @return  ldap connection configuration
    */
-  protected LdapConnectionConfig getDefaultLdapConnectionConfig(
-    final ConnectionConfig cc)
+  protected LdapConnectionConfig getDefaultLdapConnectionConfig(final ConnectionConfig cc)
   {
     final LdapConnectionConfig lcc = new LdapConnectionConfig();
     if (cc.getUseSSL() || cc.getUseStartTLS()) {
-      final SSLContextInitializer contextInit =
-        getHostnameVerifierSSLContextInitializer(cc);
+      final SSLContextInitializer contextInit = getHostnameVerifierSSLContextInitializer(cc);
       TrustManager[] trustManagers;
       KeyManager[] keyManagers;
       try {
@@ -111,12 +95,10 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
       lcc.setUseSsl(cc.getUseSSL());
       lcc.setTrustManagers(trustManagers);
       lcc.setKeyManagers(keyManagers);
-      if (cc.getSslConfig() != null &&
-          cc.getSslConfig().getEnabledCipherSuites() != null) {
+      if (cc.getSslConfig() != null && cc.getSslConfig().getEnabledCipherSuites() != null) {
         lcc.setEnabledCipherSuites(cc.getSslConfig().getEnabledCipherSuites());
       }
-      if (cc.getSslConfig() != null &&
-          cc.getSslConfig().getEnabledProtocols() != null) {
+      if (cc.getSslConfig() != null && cc.getSslConfig().getEnabledProtocols() != null) {
         lcc.setSslProtocol(cc.getSslConfig().getEnabledProtocols()[0]);
       }
     }

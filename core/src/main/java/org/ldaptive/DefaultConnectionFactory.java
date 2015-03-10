@@ -62,9 +62,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
    * @param  cc  connection configuration
    * @param  p  provider
    */
-  public DefaultConnectionFactory(
-    final ConnectionConfig cc,
-    final Provider<?> p)
+  public DefaultConnectionFactory(final ConnectionConfig cc, final Provider<?> p)
   {
     setConnectionConfig(cc);
     setProvider(p);
@@ -83,8 +81,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Sets the connection config. Once invoked the supplied connection config is
-   * made immutable. See {@link ConnectionConfig#makeImmutable()}.
+   * Sets the connection config. Once invoked the supplied connection config is made immutable. See {@link
+   * ConnectionConfig#makeImmutable()}.
    *
    * @param  cc  connection config
    */
@@ -118,8 +116,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Creates a new connection. Connections returned from this method must be
-   * opened before they can perform ldap operations.
+   * Creates a new connection. Connections returned from this method must be opened before they can perform ldap
+   * operations.
    *
    * @return  connection
    */
@@ -131,8 +129,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Creates a new connection. Connections returned from this method must be
-   * opened before they can be used.
+   * Creates a new connection. Connections returned from this method must be opened before they can be used.
    *
    * @param  ldapUrl  to connect to
    *
@@ -148,8 +145,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Creates a new connection. Connections returned from this method must be
-   * opened before they can be used.
+   * Creates a new connection. Connections returned from this method must be opened before they can be used.
    *
    * @param  cc  connection configuration
    *
@@ -164,8 +160,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * The {@link #PROVIDER} property is checked and that class is loaded if
-   * provided. Otherwise the JNDI provider is returned.
+   * The {@link #PROVIDER} property is checked and that class is loaded if provided. Otherwise the JNDI provider is
+   * returned.
    *
    * @return  default provider
    */
@@ -193,13 +189,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::provider=%s, config=%s]",
-        getClass().getName(),
-        hashCode(),
-        provider,
-        config);
+    return String.format("[%s@%d::provider=%s, config=%s]", getClass().getName(), hashCode(), provider, config);
   }
 
 
@@ -226,9 +216,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
      * @param  cc  connection configuration
      * @param  cf  provider connection factory
      */
-    public DefaultConnection(
-      final ConnectionConfig cc,
-      final ProviderConnectionFactory<?> cf)
+    public DefaultConnection(final ConnectionConfig cc, final ProviderConnectionFactory<?> cf)
     {
       config = cc;
       providerConnectionFactory = cf;
@@ -243,8 +231,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
     /**
-     * Returns the provider specific connection. Must be called after a
-     * successful call to {@link #open()}.
+     * Returns the provider specific connection. Must be called after a successful call to {@link #open()}.
      *
      * @return  provider connection
      *
@@ -261,11 +248,11 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
     /**
-     * This will establish a connection if one does not already exist. This
-     * connection should be closed using {@link #close()}.
+     * This will establish a connection if one does not already exist. This connection should be closed using {@link
+     * #close()}.
      *
-     * @return  response associated with the {@link ConnectionInitializer} or an
-     * empty response if no connection initializer was configured
+     * @return  response associated with the {@link ConnectionInitializer} or an empty response if no connection
+     *          initializer was configured
      *
      * @throws  IllegalStateException  if the connection is already open
      * @throws  LdapException  if the LDAP cannot be reached
@@ -287,9 +274,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
     /**
-     * This will establish a connection if one does not already exist and bind
-     * to the LDAP using the supplied bind request. This connection should be
-     * closed using {@link #close()}.
+     * This will establish a connection if one does not already exist and bind to the LDAP using the supplied bind
+     * request. This connection should be closed using {@link #close()}.
      *
      * @param  request  bind request
      *

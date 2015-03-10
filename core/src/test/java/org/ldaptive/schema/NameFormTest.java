@@ -26,15 +26,7 @@ public class NameFormTest
     return
       new Object[][] {
         new Object[] {
-          new NameForm(
-            "1.3.6.1.1.10.15.1",
-            null,
-            null,
-            false,
-            null,
-            null,
-            null,
-            null),
+          new NameForm("1.3.6.1.1.10.15.1", null, null, false, null, null, null, null),
           "( 1.3.6.1.1.10.15.1 )",
         },
         new Object[] {
@@ -59,8 +51,7 @@ public class NameFormTest
             null,
             null,
             null),
-          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' " +
-            "OC uddiBusinessEntity )",
+          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' OC uddiBusinessEntity )",
         },
         new Object[] {
           new NameForm(
@@ -72,8 +63,7 @@ public class NameFormTest
             new String[] {"uddiBusinessKey"},
             null,
             null),
-          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' " +
-            "OC uddiBusinessEntity MUST uddiBusinessKey )",
+          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' OC uddiBusinessEntity MUST uddiBusinessKey )",
         },
         new Object[] {
           new NameForm(
@@ -85,8 +75,8 @@ public class NameFormTest
             new String[] {"uddiBusinessKey"},
             null,
             new Extensions("X-ORIGIN", Arrays.asList("RFC 4403"))),
-          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' " +
-            "OC uddiBusinessEntity MUST uddiBusinessKey X-ORIGIN 'RFC 4403' )",
+          "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' OC uddiBusinessEntity MUST uddiBusinessKey " +
+            "X-ORIGIN 'RFC 4403' )",
         },
       };
   }
@@ -98,10 +88,7 @@ public class NameFormTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"schema"},
-    dataProvider = "definitions"
-  )
+  @Test(groups = {"schema"}, dataProvider = "definitions")
   public void parse(final NameForm nameForm, final String definition)
     throws Exception
   {

@@ -52,8 +52,7 @@ public enum ReturnAttributes {
 
 
   /**
-   * Returns whether the supplied attributes matches the value of this return
-   * attributes.
+   * Returns whether the supplied attributes matches the value of this return attributes.
    *
    * @param  attrs  to compare
    *

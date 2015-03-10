@@ -117,14 +117,8 @@ public class IntegerTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "ints"
-  )
-  public void decode(
-    final byte[] bytes,
-    final BigInteger expected,
-    final BigInteger unsigned)
+  @Test(groups = {"asn1"}, dataProvider = "ints")
+  public void decode(final byte[] bytes, final BigInteger expected, final BigInteger unsigned)
     throws Exception
   {
     Assert.assertEquals(IntegerType.decode(ByteBuffer.wrap(bytes)), expected);
@@ -138,18 +132,11 @@ public class IntegerTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "ints"
-  )
-  public void decodeUnsigned(
-    final byte[] bytes,
-    final BigInteger expected,
-    final BigInteger unsigned)
+  @Test(groups = {"asn1"}, dataProvider = "ints")
+  public void decodeUnsigned(final byte[] bytes, final BigInteger expected, final BigInteger unsigned)
     throws Exception
   {
-    Assert.assertEquals(
-      IntegerType.decodeUnsigned(ByteBuffer.wrap(bytes)), unsigned);
+    Assert.assertEquals(IntegerType.decodeUnsigned(ByteBuffer.wrap(bytes)), unsigned);
   }
 
 
@@ -160,14 +147,8 @@ public class IntegerTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"asn1"},
-    dataProvider = "ints"
-  )
-  public void encode(
-    final byte[] expected,
-    final BigInteger integer,
-    final BigInteger unsigned)
+  @Test(groups = {"asn1"}, dataProvider = "ints")
+  public void encode(final byte[] expected, final BigInteger integer, final BigInteger unsigned)
     throws Exception
   {
     if (integer.intValue() == -1 && expected.length > 1) {

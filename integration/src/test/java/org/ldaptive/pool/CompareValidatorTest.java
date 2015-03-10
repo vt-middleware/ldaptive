@@ -19,9 +19,7 @@ public class CompareValidatorTest extends AbstractTest
 {
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"validator"})
   public void defaultSettings()
     throws Exception
@@ -50,9 +48,7 @@ public class CompareValidatorTest extends AbstractTest
   {
     final Connection c = TestUtils.createConnection();
     final CompareValidator cv = new CompareValidator(
-      new CompareRequest(
-        compareDn,
-        new LdapAttribute("objectClass", "inetOrgPerson")));
+      new CompareRequest(compareDn, new LdapAttribute("objectClass", "inetOrgPerson")));
     try {
       c.open();
       AssertJUnit.assertTrue(cv.validate(c));

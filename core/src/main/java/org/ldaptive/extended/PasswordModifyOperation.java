@@ -12,8 +12,7 @@ import org.ldaptive.Response;
  *
  * @author  Middleware Services
  */
-public class PasswordModifyOperation
-  extends AbstractOperation<PasswordModifyRequest, Credential>
+public class PasswordModifyOperation extends AbstractOperation<PasswordModifyRequest, Credential>
 {
 
 
@@ -32,9 +31,9 @@ public class PasswordModifyOperation
   protected Response<Credential> invoke(final PasswordModifyRequest request)
     throws LdapException
   {
-    @SuppressWarnings("unchecked") final Response<Credential> response =
-      (Response<Credential>)
-        getConnection().getProviderConnection().extendedOperation(request);
+    @SuppressWarnings("unchecked")
+    final Response<Credential> response =
+      (Response<Credential>) getConnection().getProviderConnection().extendedOperation(request);
     return response;
   }
 }

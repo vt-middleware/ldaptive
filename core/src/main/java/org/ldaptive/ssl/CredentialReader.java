@@ -20,8 +20,7 @@ public interface CredentialReader<T>
    * Reads a credential object from a path.
    *
    * @param  path  from which to read credential.
-   * @param  params  Arbitrary string parameters, e.g. password, needed to read
-   * the credential.
+   * @param  params  Arbitrary string parameters, e.g. password, needed to read the credential.
    *
    * @return  credential read from data at path.
    *
@@ -36,8 +35,7 @@ public interface CredentialReader<T>
    * Reads a credential object from an input stream.
    *
    * @param  is  input stream from which to read credential.
-   * @param  params  Arbitrary string parameters, e.g. password, needed to read
-   * the credential.
+   * @param  params  Arbitrary string parameters, e.g. password, needed to read the credential.
    *
    * @return  credential read from data in stream.
    *

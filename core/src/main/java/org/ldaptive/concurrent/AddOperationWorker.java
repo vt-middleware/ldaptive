@@ -10,8 +10,7 @@ import org.ldaptive.AddRequest;
  *
  * @author  Middleware Services
  */
-public class AddOperationWorker
-  extends AbstractOperationWorker<AddRequest, Void>
+public class AddOperationWorker extends AbstractOperationWorker<AddRequest, Void>
 {
 
 

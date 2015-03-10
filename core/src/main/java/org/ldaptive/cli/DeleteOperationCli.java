@@ -47,9 +47,7 @@ public class DeleteOperationCli extends AbstractCli
   {
     options.addOption(new Option(OPT_DN, true, "entry DN"));
 
-    final Map<String, String> desc = getArgDesc(
-      ConnectionConfig.class,
-      SslConfig.class);
+    final Map<String, String> desc = getArgDesc(ConnectionConfig.class, SslConfig.class);
     for (String s : ConnectionConfigPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }

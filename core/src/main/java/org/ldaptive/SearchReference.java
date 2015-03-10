@@ -36,10 +36,7 @@ public class SearchReference implements ResponseMessage
    * @param  c  response controls
    * @param  url  referral urls
    */
-  public SearchReference(
-    final int id,
-    final ResponseControl[] c,
-    final String... url)
+  public SearchReference(final int id, final ResponseControl[] c, final String... url)
   {
     messageId = id;
     responseControls = c;
@@ -54,10 +51,7 @@ public class SearchReference implements ResponseMessage
    * @param  c  response controls
    * @param  urls  referral urls
    */
-  public SearchReference(
-    final int id,
-    final ResponseControl[] c,
-    final Collection<String> urls)
+  public SearchReference(final int id, final ResponseControl[] c, final Collection<String> urls)
   {
     messageId = id;
     responseControls = c;
@@ -129,12 +123,7 @@ public class SearchReference implements ResponseMessage
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        referralUrls,
-        responseControls,
-        messageId);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, referralUrls, responseControls, messageId);
   }
 
 

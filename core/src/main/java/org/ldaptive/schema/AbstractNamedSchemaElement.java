@@ -53,8 +53,7 @@ public abstract class AbstractNamedSchemaElement extends AbstractSchemaElement
 
 
   /**
-   * Returns whether the supplied string matches, ignoring case, any of the
-   * names for this schema element.
+   * Returns whether the supplied string matches, ignoring case, any of the names for this schema element.
    *
    * @param  s  to match
    *

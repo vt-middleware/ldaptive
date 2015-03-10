@@ -10,13 +10,12 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import org.ldaptive.LdapUtils;
 
 /**
- * Reads private key credentials from classpath, filepath, or stream resource.
- * Supported private key formats include: PKCS8.
+ * Reads private key credentials from classpath, filepath, or stream resource. Supported private key formats include:
+ * PKCS8.
  *
  * @author  Middleware Services
  */
-public class PrivateKeyCredentialReader
-  extends AbstractCredentialReader<PrivateKey>
+public class PrivateKeyCredentialReader extends AbstractCredentialReader<PrivateKey>
 {
 
 
@@ -24,8 +23,7 @@ public class PrivateKeyCredentialReader
    * Reads a private key from an input stream.
    *
    * @param  is  Input stream from which to read private key.
-   * @param  params  A single optional parameter, algorithm, may be specified.
-   * The default is RSA.
+   * @param  params  A single optional parameter, algorithm, may be specified. The default is RSA.
    *
    * @return  Private key read from data in stream.
    *
@@ -42,8 +40,7 @@ public class PrivateKeyCredentialReader
     }
 
     final KeyFactory kf = KeyFactory.getInstance(algorithm);
-    final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(
-      LdapUtils.readInputStream(getBufferedInputStream(is)));
+    final PKCS8EncodedKeySpec spec = new PKCS8EncodedKeySpec(LdapUtils.readInputStream(getBufferedInputStream(is)));
     return kf.generatePrivate(spec);
   }
 }

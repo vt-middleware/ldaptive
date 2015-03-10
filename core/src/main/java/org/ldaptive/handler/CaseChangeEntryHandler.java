@@ -7,8 +7,7 @@ import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 
 /**
- * Provides the ability to modify the case of search entry DNs, attribute names,
- * and attribute values.
+ * Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.
  *
  * @author  Middleware Services
  */
@@ -130,40 +129,28 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected String handleDn(
-    final Connection conn,
-    final SearchRequest request,
-    final SearchEntry entry)
+  protected String handleDn(final Connection conn, final SearchRequest request, final SearchEntry entry)
   {
     return CaseChange.perform(dnCaseChange, entry.getDn());
   }
 
 
   @Override
-  protected String handleAttributeName(
-    final Connection conn,
-    final SearchRequest request,
-    final String name)
+  protected String handleAttributeName(final Connection conn, final SearchRequest request, final String name)
   {
     return CaseChange.perform(attributeNameCaseChange, name);
   }
 
 
   @Override
-  protected String handleAttributeValue(
-    final Connection conn,
-    final SearchRequest request,
-    final String value)
+  protected String handleAttributeValue(final Connection conn, final SearchRequest request, final String value)
   {
     return CaseChange.perform(attributeValueCaseChange, value);
   }
 
 
   @Override
-  protected byte[] handleAttributeValue(
-    final Connection conn,
-    final SearchRequest request,
-    final byte[] value)
+  protected byte[] handleAttributeValue(final Connection conn, final SearchRequest request, final byte[] value)
   {
     return value;
   }
@@ -172,12 +159,7 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        dnCaseChange,
-        attributeNameCaseChange,
-        attributeValueCaseChange);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, dnCaseChange, attributeNameCaseChange, attributeValueCaseChange);
   }
 
 

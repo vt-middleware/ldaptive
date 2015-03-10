@@ -56,9 +56,7 @@ public class AggregateTrustManager implements X509TrustManager
    * @param  strategy  for processing trust managers
    * @param  managers  to aggregate
    */
-  public AggregateTrustManager(
-    final Strategy strategy,
-    final X509TrustManager... managers)
+  public AggregateTrustManager(final Strategy strategy, final X509TrustManager... managers)
   {
     if (strategy == null) {
       throw new NullPointerException("Strategy cannot be null");
@@ -69,9 +67,7 @@ public class AggregateTrustManager implements X509TrustManager
 
 
   @Override
-  public void checkClientTrusted(
-    final X509Certificate[] chain,
-    final String authType)
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
     if (trustManagers != null) {
@@ -101,9 +97,7 @@ public class AggregateTrustManager implements X509TrustManager
 
 
   @Override
-  public void checkServerTrusted(
-    final X509Certificate[] chain,
-    final String authType)
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
     if (trustManagers != null) {

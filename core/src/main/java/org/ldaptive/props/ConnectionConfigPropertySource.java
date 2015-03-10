@@ -10,23 +10,20 @@ import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.ssl.SslConfig;
 
 /**
- * Reads properties specific to {@link ConnectionConfig} and returns an
- * initialized object of that type.
+ * Reads properties specific to {@link ConnectionConfig} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class ConnectionConfigPropertySource
-  extends AbstractPropertySource<ConnectionConfig>
+public final class ConnectionConfigPropertySource extends AbstractPropertySource<ConnectionConfig>
 {
 
   /** Invoker for connection config. */
-  private static final ConnectionConfigPropertyInvoker INVOKER =
-    new ConnectionConfigPropertyInvoker(ConnectionConfig.class);
+  private static final ConnectionConfigPropertyInvoker INVOKER = new ConnectionConfigPropertyInvoker(
+    ConnectionConfig.class);
 
 
   /**
-   * Creates a new connection config property source using the default
-   * properties file.
+   * Creates a new connection config property source using the default properties file.
    *
    * @param  cc  connection config to invoke properties on
    */
@@ -42,9 +39,7 @@ public final class ConnectionConfigPropertySource
    * @param  cc  connection config to invoke properties on
    * @param  paths  to read properties from
    */
-  public ConnectionConfigPropertySource(
-    final ConnectionConfig cc,
-    final String... paths)
+  public ConnectionConfigPropertySource(final ConnectionConfig cc, final String... paths)
   {
     this(cc, loadProperties(paths));
   }
@@ -56,9 +51,7 @@ public final class ConnectionConfigPropertySource
    * @param  cc  connection config to invoke properties on
    * @param  readers  to read properties from
    */
-  public ConnectionConfigPropertySource(
-    final ConnectionConfig cc,
-    final Reader... readers)
+  public ConnectionConfigPropertySource(final ConnectionConfig cc, final Reader... readers)
   {
     this(cc, loadProperties(readers));
   }
@@ -70,9 +63,7 @@ public final class ConnectionConfigPropertySource
    * @param  cc  connection config to invoke properties on
    * @param  props  to read properties from
    */
-  public ConnectionConfigPropertySource(
-    final ConnectionConfig cc,
-    final Properties props)
+  public ConnectionConfigPropertySource(final ConnectionConfig cc, final Properties props)
   {
     this(cc, PropertyDomain.LDAP, props);
   }
@@ -85,10 +76,7 @@ public final class ConnectionConfigPropertySource
    * @param  domain  that properties are in
    * @param  props  to read properties from
    */
-  public ConnectionConfigPropertySource(
-    final ConnectionConfig cc,
-    final PropertyDomain domain,
-    final Properties props)
+  public ConnectionConfigPropertySource(final ConnectionConfig cc, final PropertyDomain domain, final Properties props)
   {
     super(cc, domain, props);
   }
@@ -103,17 +91,13 @@ public final class ConnectionConfigPropertySource
     if (sc == null) {
       sc = new SslConfig();
 
-      final SslConfigPropertySource scSource = new SslConfigPropertySource(
-        sc,
-        propertiesDomain,
-        properties);
+      final SslConfigPropertySource scSource = new SslConfigPropertySource(sc, propertiesDomain, properties);
       scSource.initialize();
       if (!sc.isEmpty()) {
         object.setSslConfig(sc);
       }
     } else {
-      final SimplePropertySource<SslConfig> sPropSource =
-        new SimplePropertySource<>(sc, propertiesDomain, properties);
+      final SimplePropertySource<SslConfig> sPropSource = new SimplePropertySource<>(sc, propertiesDomain, properties);
       sPropSource.initialize();
     }
 
@@ -123,21 +107,19 @@ public final class ConnectionConfigPropertySource
     if (ci == null) {
       final BindConnectionInitializer bci = new BindConnectionInitializer();
 
-      final BindConnectionInitializerPropertySource bciSource =
-        new BindConnectionInitializerPropertySource(
-          bci,
-          propertiesDomain,
-          properties);
+      final BindConnectionInitializerPropertySource bciSource = new BindConnectionInitializerPropertySource(
+        bci,
+        propertiesDomain,
+        properties);
       bciSource.initialize();
       if (!bci.isEmpty()) {
         object.setConnectionInitializer(bci);
       }
     } else {
-      final SimplePropertySource<ConnectionInitializer> sPropSource =
-        new SimplePropertySource<>(
-          ci,
-          propertiesDomain,
-          properties);
+      final SimplePropertySource<ConnectionInitializer> sPropSource = new SimplePropertySource<>(
+        ci,
+        propertiesDomain,
+        properties);
       sPropSource.initialize();
     }
   }

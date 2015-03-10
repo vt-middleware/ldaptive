@@ -16,13 +16,11 @@ import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
- * Creates connections using the JNDI {@link InitialLdapContext} class with the
- * startTLS extended operation.
+ * Creates connections using the JNDI {@link InitialLdapContext} class with the startTLS extended operation.
  *
  * @author  Middleware Services
  */
-public class JndiStartTLSConnectionFactory
-  extends AbstractProviderConnectionFactory<JndiProviderConfig>
+public class JndiStartTLSConnectionFactory extends AbstractProviderConnectionFactory<JndiProviderConfig>
 {
 
   /** Environment properties. */
@@ -64,23 +62,18 @@ public class JndiStartTLSConnectionFactory
   {
     // CheckStyle:IllegalType OFF
     // the JNDI API requires the Hashtable type
-    final Hashtable<String, Object> env = new Hashtable<>(
-      environment);
+    final Hashtable<String, Object> env = new Hashtable<>(environment);
     // CheckStyle:IllegalType ON
     env.put(JndiProvider.PROVIDER_URL, url);
 
     JndiStartTLSConnection conn = null;
     boolean closeConn = false;
     try {
-      conn = new JndiStartTLSConnection(
-        new InitialLdapContext(env, null),
-        getProviderConfig());
+      conn = new JndiStartTLSConnection(new InitialLdapContext(env, null), getProviderConfig());
       conn.setStartTlsResponse(startTLS(conn.getLdapContext()));
     } catch (NamingException e) {
       closeConn = true;
-      throw new ConnectionException(
-        e,
-        NamingExceptionUtils.getResultCode(e.getClass()));
+      throw new ConnectionException(e, NamingExceptionUtils.getResultCode(e.getClass()));
     } catch (IOException e) {
       closeConn = true;
       throw new ConnectionException(e);
@@ -103,22 +96,19 @@ public class JndiStartTLSConnectionFactory
 
 
   /**
-   * This will attempt the startTLS extended operation on the supplied ldap
-   * context.
+   * This will attempt the startTLS extended operation on the supplied ldap context.
    *
    * @param  ctx  ldap context
    *
    * @return  start tls response
    *
-   * @throws  NamingException  if an error occurs while requesting an extended
-   * operation
+   * @throws  NamingException  if an error occurs while requesting an extended operation
    * @throws  IOException  if an error occurs while negotiating TLS
    */
   protected StartTlsResponse startTLS(final LdapContext ctx)
     throws NamingException, IOException
   {
-    final StartTlsResponse tls = (StartTlsResponse) ctx.extendedOperation(
-      new StartTlsRequest());
+    final StartTlsResponse tls = (StartTlsResponse) ctx.extendedOperation(new StartTlsRequest());
     if (hostnameVerifier != null) {
       logger.trace("startTLS hostnameVerifier = {}", hostnameVerifier);
       tls.setHostnameVerifier(hostnameVerifier);

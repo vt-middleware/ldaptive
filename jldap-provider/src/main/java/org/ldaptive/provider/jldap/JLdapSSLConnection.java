@@ -18,9 +18,7 @@ public class JLdapSSLConnection extends JLdapConnection
    * @param  conn  ldap connection
    * @param  pc  provider configuration
    */
-  public JLdapSSLConnection(
-    final LDAPConnection conn,
-    final JLdapProviderConfig pc)
+  public JLdapSSLConnection(final LDAPConnection conn, final JLdapProviderConfig pc)
   {
     super(conn, pc);
   }

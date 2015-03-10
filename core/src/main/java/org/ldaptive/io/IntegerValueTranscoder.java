@@ -6,8 +6,7 @@ package org.ldaptive.io;
  *
  * @author  Middleware Services
  */
-public class IntegerValueTranscoder
-  extends AbstractPrimitiveValueTranscoder<Integer>
+public class IntegerValueTranscoder extends AbstractPrimitiveValueTranscoder<Integer>
 {
 
 

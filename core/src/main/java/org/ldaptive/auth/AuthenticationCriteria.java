@@ -39,9 +39,7 @@ public class AuthenticationCriteria
    * @param  dn  to authenticate
    * @param  request  that initiated the authentication
    */
-  public AuthenticationCriteria(
-    final String dn,
-    final AuthenticationRequest request)
+  public AuthenticationCriteria(final String dn, final AuthenticationRequest request)
   {
     authenticationDn = dn;
     authenticationRequest = request;

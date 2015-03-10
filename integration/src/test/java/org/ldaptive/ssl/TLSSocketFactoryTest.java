@@ -59,14 +59,10 @@ public class TLSSocketFactoryTest
   };
 
   /** List of protocols. */
-  public static final String[] PROTOCOLS = new String[] {
-    "TLSv1",
-  };
+  public static final String[] PROTOCOLS = new String[] {"TLSv1", };
 
   /** List of protocols. */
-  public static final String[] FAIL_PROTOCOLS = new String[] {
-    "SSLv2Hello",
-  };
+  public static final String[] FAIL_PROTOCOLS = new String[] {"SSLv2Hello", };
 
   /** List of protocols. */
   public static final String[] UNKNOWN_PROTOCOLS = new String[] {
@@ -78,6 +74,8 @@ public class TLSSocketFactoryTest
 
   /**
    * @return  ssl config
+   *
+   * @throws  Exception  On configuration error.
    */
   public SslConfig createSslConfig()
     throws Exception
@@ -127,7 +125,7 @@ public class TLSSocketFactoryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "ldapTestHost" })
+  @Parameters("ldapTestHost")
   @Test(groups = {"ssl"})
   public void connectTLS(final String url)
     throws Exception
@@ -135,14 +133,15 @@ public class TLSSocketFactoryTest
     // with no trusted certificates, connection should fail
     final ConnectionConfig cc = createTLSConnectionConfig(url);
     cc.setSslConfig(null);
-    Connection conn = DefaultConnectionFactory.getConnection(cc);
+
+    final Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       // some providers won't report errors until an operation is
       // executed
       conn.open();
+
       final CompareOperation op = new CompareOperation(conn);
-      op.execute(
-        new CompareRequest("", new LdapAttribute("objectClass", "top")));
+      op.execute(new CompareRequest("", new LdapAttribute("objectClass", "top")));
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
       AssertJUnit.assertNotNull(e);
@@ -157,7 +156,7 @@ public class TLSSocketFactoryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "ldapSslTestHost" })
+  @Parameters("ldapSslTestHost")
   @Test(groups = {"ssl"})
   public void connectSSL(final String url)
     throws Exception
@@ -165,14 +164,15 @@ public class TLSSocketFactoryTest
     // with no trusted certificates, connection should fail
     final ConnectionConfig cc = createSSLConnectionConfig(url);
     cc.setSslConfig(null);
-    Connection conn = DefaultConnectionFactory.getConnection(cc);
+
+    final Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
+
       // some providers won't perform the handshake until an operation is
       // executed
       final CompareOperation op = new CompareOperation(conn);
-      op.execute(
-        new CompareRequest("", new LdapAttribute("objectClass", "top")));
+      op.execute(new CompareRequest("", new LdapAttribute("objectClass", "top")));
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
       AssertJUnit.assertNotNull(e);
@@ -187,7 +187,7 @@ public class TLSSocketFactoryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "ldapTestHost" })
+  @Parameters("ldapTestHost")
   @Test(groups = {"ssl"})
   public void setEnabledCipherSuites(final String url)
     throws Exception
@@ -200,11 +200,11 @@ public class TLSSocketFactoryTest
     AssertJUnit.assertEquals(
       Arrays.asList(((SSLSocket) sf.createSocket()).getEnabledCipherSuites()),
       Arrays.asList(sf.getDefaultCipherSuites()));
-    AssertJUnit.assertNotSame(
-      Arrays.asList(sf.getDefaultCipherSuites()), Arrays.asList(CIPHERS));
+    AssertJUnit.assertNotSame(Arrays.asList(sf.getDefaultCipherSuites()), Arrays.asList(CIPHERS));
 
     cc.getSslConfig().setEnabledCipherSuites(UNKNOWN_CIPHERS);
-    Connection conn = DefaultConnectionFactory.getConnection(cc);
+
+    final Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
@@ -225,20 +225,16 @@ public class TLSSocketFactoryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "ldapTestHost" })
+  @Parameters("ldapTestHost")
   @Test(groups = {"ssl"})
   public void setEnabledProtocols(final String url)
     throws Exception
   {
     final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
-    if (p.getClass().getName().equals(
-      "org.ldaptive.provider.opends.OpenDSProvider")) {
+    if ("org.ldaptive.provider.opendj.OpenDJProvider".equals(p.getClass().getName())) {
       throw new UnsupportedOperationException("Test causes hang");
     }
-    if (p.getClass().getName().equals(
-      "org.ldaptive.provider.opendj.OpenDJProvider")) {
-      throw new UnsupportedOperationException("Test causes hang");
-    }
+
     final ConnectionConfig cc = createTLSConnectionConfig(url);
     final TLSSocketFactory sf = new TLSSocketFactory();
     sf.setSslConfig(cc.getSslConfig());
@@ -249,6 +245,7 @@ public class TLSSocketFactoryTest
       Arrays.asList(PROTOCOLS));
 
     cc.getSslConfig().setEnabledProtocols(FAIL_PROTOCOLS);
+
     Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
@@ -279,7 +276,7 @@ public class TLSSocketFactoryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "ldapSslTestHost" })
+  @Parameters("ldapSslTestHost")
   @Test(groups = {"ssl"})
   public void setHostnameVerifier(final String url)
     throws Exception
@@ -289,18 +286,17 @@ public class TLSSocketFactoryTest
     sf.initialize();
 
     sf.setHostnameVerifier(new AnyHostnameVerifier());
+
     Socket s = null;
     try {
-      s = sf.createSocket(
-        ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
+      s = sf.createSocket(ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
     } finally {
       s.close();
     }
 
     sf.setHostnameVerifier(new NoHostnameVerifier());
     try {
-      s = sf.createSocket(
-        ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
+      s = sf.createSocket(ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
       AssertJUnit.fail("Should have thrown SSLPeerUnverifiedException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(SSLPeerUnverifiedException.class, e.getClass());
@@ -315,7 +311,7 @@ public class TLSSocketFactoryTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "ldapSslTestHost" })
+  @Parameters("ldapSslTestHost")
   @Test(groups = {"ssl"})
   public void setSocketConfig(final String url)
     throws Exception
@@ -329,6 +325,7 @@ public class TLSSocketFactoryTest
     sc.setSoLinger(100);
     sc.setSoTimeout(500);
     sc.setTrafficClass(0x10);
+
     final LdapURL ldapUrl = new LdapURL(url);
     final TLSSocketFactory sf = new TLSSocketFactory();
     sf.setSocketConfig(sc);
@@ -336,8 +333,7 @@ public class TLSSocketFactoryTest
 
     Socket s = null;
     try {
-      s = sf.createSocket(
-        ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
+      s = sf.createSocket(ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
     } finally {
       s.close();
     }

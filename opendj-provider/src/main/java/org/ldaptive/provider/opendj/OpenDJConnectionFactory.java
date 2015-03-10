@@ -15,8 +15,7 @@ import org.ldaptive.provider.ConnectionException;
  *
  * @author  Middleware Services
  */
-public class OpenDJConnectionFactory
-  extends AbstractProviderConnectionFactory<OpenDJProviderConfig>
+public class OpenDJConnectionFactory extends AbstractProviderConnectionFactory<OpenDJProviderConfig>
 {
 
   /** Ldap connection options. */
@@ -30,10 +29,7 @@ public class OpenDJConnectionFactory
    * @param  config  provider configuration
    * @param  options  connection options
    */
-  public OpenDJConnectionFactory(
-    final String url,
-    final OpenDJProviderConfig config,
-    final LDAPOptions options)
+  public OpenDJConnectionFactory(final String url, final OpenDJProviderConfig config, final LDAPOptions options)
   {
     super(url, config);
     ldapOptions = options;
@@ -56,10 +52,7 @@ public class OpenDJConnectionFactory
       conn = new OpenDJConnection(c, getProviderConfig());
     } catch (ErrorResultException e) {
       closeConn = true;
-      throw new ConnectionException(
-        e,
-        org.ldaptive.ResultCode.valueOf(
-          e.getResult().getResultCode().intValue()));
+      throw new ConnectionException(e, org.ldaptive.ResultCode.valueOf(e.getResult().getResultCode().intValue()));
     } finally {
       if (closeConn) {
         try {

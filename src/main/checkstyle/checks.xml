@@ -73,7 +73,7 @@
     <!-- sizes -->
     <module name="LineLength">
       <property name="ignorePattern" value="(^.*\$.*\$.*$)|(^import .*)"/>
-      <property name="max" value="80"/>
+      <property name="max" value="120"/>
     </module>
     <module name="MethodLength">
       <property name="max" value="300"/>
@@ -207,6 +207,7 @@
       <property name="basicOffset" value="2"/>
       <property name="caseIndent" value="0"/>
       <property name="throwsIndent" value="2"/>
+      <property name="arrayInitIndent" value="2"/>
     </module>
     <module name="TrailingComment"/>
 

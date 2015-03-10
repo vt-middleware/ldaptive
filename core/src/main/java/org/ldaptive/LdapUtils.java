@@ -39,8 +39,7 @@ public final class LdapUtils
     "(\\.(25[0-5]|2[0-4]\\d|[0-1]?\\d?\\d)){3}$");
 
   /** Pattern to match ipv6 addresses. */
-  private static final Pattern IPV6_STD_PATTERN = Pattern.compile(
-    "^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
+  private static final Pattern IPV6_STD_PATTERN = Pattern.compile("^(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}$");
 
   /** Pattern to match ipv6 hex compressed addresses. */
   private static final Pattern IPV6_HEX_COMPRESSED_PATTERN = Pattern.compile(
@@ -59,8 +58,7 @@ public final class LdapUtils
 
 
   /**
-   * This will convert the supplied value to a base64 encoded string. Returns
-   * null if the supplied byte array is null.
+   * This will convert the supplied value to a base64 encoded string. Returns null if the supplied byte array is null.
    *
    * @param  value  to base64 encode
    *
@@ -68,15 +66,12 @@ public final class LdapUtils
    */
   public static String base64Encode(final byte[] value)
   {
-    return
-      value != null ?
-        new String(Base64.encodeToByte(value, false), UTF8_CHARSET) : null;
+    return value != null ? new String(Base64.encodeToByte(value, false), UTF8_CHARSET) : null;
   }
 
 
   /**
-   * This will convert the supplied value to a base64 encoded string. Returns
-   * null if the supplied string is null.
+   * This will convert the supplied value to a base64 encoded string. Returns null if the supplied string is null.
    *
    * @param  value  to base64 encode
    *
@@ -89,8 +84,7 @@ public final class LdapUtils
 
 
   /**
-   * This will convert the supplied value to a UTF-8 encoded string. Returns
-   * null if the supplied byte array is null.
+   * This will convert the supplied value to a UTF-8 encoded string. Returns null if the supplied byte array is null.
    *
    * @param  value  to UTF-8 encode
    *
@@ -103,8 +97,7 @@ public final class LdapUtils
 
 
   /**
-   * This will convert the supplied value to a UTF-8 encoded byte array. Returns
-   * null if the supplied string is null.
+   * This will convert the supplied value to a UTF-8 encoded byte array. Returns null if the supplied string is null.
    *
    * @param  value  to UTF-8 encode
    *
@@ -117,8 +110,7 @@ public final class LdapUtils
 
 
   /**
-   * This will convert the supplied value to a hex encoded string. Returns null
-   * if the supplied byte array is null.
+   * This will convert the supplied value to a hex encoded string. Returns null if the supplied byte array is null.
    *
    * @param  value  to hex encode
    *
@@ -131,8 +123,7 @@ public final class LdapUtils
 
 
   /**
-   * This will convert the supplied value to a hex encoded string. Returns null
-   * if the supplied char array is null.
+   * This will convert the supplied value to a hex encoded string. Returns null if the supplied char array is null.
    *
    * @param  value  to hex encode
    *
@@ -156,6 +147,7 @@ public final class LdapUtils
     if (value == null) {
       return null;
     }
+
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < value.length(); i++) {
       final char ch = value.charAt(i);
@@ -207,8 +199,8 @@ public final class LdapUtils
 
 
   /**
-   * This will decode the supplied value as a base64 encoded string to a byte[].
-   * Returns null if the supplied string is null.
+   * This will decode the supplied value as a base64 encoded string to a byte[]. Returns null if the supplied string is
+   * null.
    *
    * @param  value  to base64 decode
    *
@@ -221,8 +213,8 @@ public final class LdapUtils
 
 
   /**
-   * This will decode the supplied value as a hex encoded string to a byte[].
-   * Returns null if the supplied character array is null.
+   * This will decode the supplied value as a hex encoded string to a byte[]. Returns null if the supplied character
+   * array is null.
    *
    * @param  value  to hex decode
    *
@@ -246,6 +238,7 @@ public final class LdapUtils
     if (value == null || value.indexOf("%") == -1) {
       return value;
     }
+
     final StringBuilder sb = new StringBuilder();
     int pos = 0;
     while (pos < value.length()) {
@@ -340,8 +333,7 @@ public final class LdapUtils
 
 
   /**
-   * Determines equality of the supplied objects by delegating to their hashCode
-   * methods.
+   * Determines equality of the supplied objects by delegating to their hashCode methods.
    *
    * @param  o1  to test equality of
    * @param  o2  to test equality of
@@ -353,16 +345,13 @@ public final class LdapUtils
     if (o1 == null) {
       return o2 == null;
     }
-    return
-      o2 != null &&
-      (o1 == o2 ||
-        o1.getClass() == o2.getClass() && o1.hashCode() == o2.hashCode());
+    return o2 != null && (o1 == o2 || o1.getClass() == o2.getClass() && o1.hashCode() == o2.hashCode());
   }
 
 
   /**
-   * Computes a hash code for the supplied objects using the supplied seed. If a
-   * Collection type is found it is iterated over.
+   * Computes a hash code for the supplied objects using the supplied seed. If a Collection type is found it is iterated
+   * over.
    *
    * @param  seed  odd/prime number
    * @param  objects  to calculate hashCode for
@@ -398,9 +387,8 @@ public final class LdapUtils
 
 
   /**
-   * Computes a hash code for the supplied object. Checks for arrays of
-   * primitives and Objects then delegates to the {@link Arrays} class.
-   * Otherwise {@link Object#hashCode()} is invoked.
+   * Computes a hash code for the supplied object. Checks for arrays of primitives and Objects then delegates to the
+   * {@link Arrays} class. Otherwise {@link Object#hashCode()} is invoked.
    *
    * @param  object  to calculate hash code for
    *
@@ -435,8 +423,7 @@ public final class LdapUtils
 
 
   /**
-   * Returns whether the supplied string represents an IP address. Matches both
-   * IPv4 and IPv6 addresses.
+   * Returns whether the supplied string represents an IP address. Matches both IPv4 and IPv6 addresses.
    *
    * @param  s  to match
    *
@@ -446,39 +433,34 @@ public final class LdapUtils
   {
     return
       s != null &&
-      (IPV4_PATTERN.matcher(s).matches() ||
-        IPV6_STD_PATTERN.matcher(s).matches() ||
+      (IPV4_PATTERN.matcher(s).matches() || IPV6_STD_PATTERN.matcher(s).matches() ||
         IPV6_HEX_COMPRESSED_PATTERN.matcher(s).matches());
   }
 
 
   /**
-   * Parses the supplied path and returns an input stream based on the prefix in
-   * the path. If a path is prefixed with the string "classpath:" it is
-   * interpreted as a classpath specification. If a path is prefixed with the
-   * string "file:" it is interpreted as a file path.
+   * Parses the supplied path and returns an input stream based on the prefix in the path. If a path is prefixed with
+   * the string "classpath:" it is interpreted as a classpath specification. If a path is prefixed with the string
+   * "file:" it is interpreted as a file path.
    *
    * @param  path  that designates a resource
    *
    * @return  input stream to read the resource
    *
    * @throws  IOException  if the resource cannot be read
-   * @throws  IllegalArgumentException  if path is not prefixed with either
-   * 'classpath:' or 'file:'
+   * @throws  IllegalArgumentException  if path is not prefixed with either 'classpath:' or 'file:'
    */
   public static InputStream getResource(final String path)
     throws IOException
   {
     InputStream is;
     if (path.startsWith(CLASSPATH_PREFIX)) {
-      is = LdapUtils.class.getResourceAsStream(
-        path.substring(CLASSPATH_PREFIX.length()));
+      is = LdapUtils.class.getResourceAsStream(path.substring(CLASSPATH_PREFIX.length()));
     } else if (path.startsWith(FILE_PREFIX)) {
       is = new FileInputStream(new File(path.substring(FILE_PREFIX.length())));
     } else {
       throw new IllegalArgumentException(
-        "path '" + path + "' must start with either " + CLASSPATH_PREFIX +
-        " or " + FILE_PREFIX);
+        "path '" + path + "' must start with either " + CLASSPATH_PREFIX + " or " + FILE_PREFIX);
     }
     return is;
   }

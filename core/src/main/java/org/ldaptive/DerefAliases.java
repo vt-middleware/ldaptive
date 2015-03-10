@@ -12,20 +12,15 @@ public enum DerefAliases {
   NEVER,
 
   /**
-   * dereference when searching the entries beneath the starting point but not
-   * when searching for the starting entry.
+   * dereference when searching the entries beneath the starting point but not when searching for the starting entry.
    */
   SEARCHING,
 
   /**
-   * dereference when searching for the starting entry but not when searching
-   * the entries beneath the starting point.
+   * dereference when searching for the starting entry but not when searching the entries beneath the starting point.
    */
   FINDING,
 
-  /**
-   * dereference when searching for the starting entry and when searching the
-   * entries beneath the starting point.
-   */
+  /** dereference when searching for the starting entry and when searching the entries beneath the starting point. */
   ALWAYS
 }

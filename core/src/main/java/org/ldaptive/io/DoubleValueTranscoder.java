@@ -6,8 +6,7 @@ package org.ldaptive.io;
  *
  * @author  Middleware Services
  */
-public class DoubleValueTranscoder
-  extends AbstractPrimitiveValueTranscoder<Double>
+public class DoubleValueTranscoder extends AbstractPrimitiveValueTranscoder<Double>
 {
 
 

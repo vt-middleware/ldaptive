@@ -25,23 +25,11 @@ public class MatchingRuleUseTest
     return
       new Object[][] {
         new Object[] {
-          new MatchingRuleUse(
-            "1.2.840.113556.1.4.804",
-            null,
-            null,
-            false,
-            null,
-            null),
+          new MatchingRuleUse("1.2.840.113556.1.4.804", null, null, false, null, null),
           "( 1.2.840.113556.1.4.804 )",
         },
         new Object[] {
-          new MatchingRuleUse(
-            "1.2.840.113556.1.4.804",
-            new String[] {"integerBitOrMatch"},
-            null,
-            false,
-            null,
-            null),
+          new MatchingRuleUse("1.2.840.113556.1.4.804", new String[] {"integerBitOrMatch"}, null, false, null, null),
           "( 1.2.840.113556.1.4.804 NAME 'integerBitOrMatch' )",
         },
         new Object[] {
@@ -84,19 +72,13 @@ public class MatchingRuleUseTest
               "mailPreferenceOption",
             },
             null),
-          "( 1.2.840.113556.1.4.804 NAME 'integerBitOrMatch' " +
-            "APPLIES ( supportedLDAPVersion $ entryTtl $ uidNumber $ " +
-            "gidNumber $ olcConcurrency $ olcConnMaxPending $ " +
-            "olcConnMaxPendingAuth $ olcIdleTimeout $ " +
-            "olcIndexSubstrIfMinLen $ olcIndexSubstrIfMaxLen $ " +
-            "olcIndexSubstrAnyLen $ olcIndexSubstrAnyStep $ olcIndexIntLen $ " +
-            "olcListenerThreads $ olcLocalSSF $ olcMaxDerefDepth $ " +
-            "olcReplicationInterval $ olcSockbufMaxIncoming $ " +
-            "olcSockbufMaxIncomingAuth $ olcThreads $ olcToolThreads $ " +
-            "olcWriteTimeout $ olcDbCacheFree $ olcDbCacheSize $ " +
-            "olcDbDNcacheSize $ olcDbIDLcacheSize $ olcDbSearchStack $ " +
-            "olcDbShmKey $ olcDbMaxReaders $ olcDbMaxSize $ " +
-            "mailPreferenceOption ) )",
+          "( 1.2.840.113556.1.4.804 NAME 'integerBitOrMatch' APPLIES ( supportedLDAPVersion $ entryTtl $ uidNumber $ " +
+            "gidNumber $ olcConcurrency $ olcConnMaxPending $ olcConnMaxPendingAuth $ olcIdleTimeout $ " +
+            "olcIndexSubstrIfMinLen $ olcIndexSubstrIfMaxLen $ olcIndexSubstrAnyLen $ olcIndexSubstrAnyStep $ " +
+            "olcIndexIntLen $ olcListenerThreads $ olcLocalSSF $ olcMaxDerefDepth $ olcReplicationInterval $ " +
+            "olcSockbufMaxIncoming $ olcSockbufMaxIncomingAuth $ olcThreads $ olcToolThreads $ olcWriteTimeout $ " +
+            "olcDbCacheFree $ olcDbCacheSize $ olcDbDNcacheSize $ olcDbIDLcacheSize $ olcDbSearchStack $ " +
+            "olcDbShmKey $ olcDbMaxReaders $ olcDbMaxSize $ mailPreferenceOption ) )",
         },
       };
   }
@@ -108,10 +90,7 @@ public class MatchingRuleUseTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"schema"},
-    dataProvider = "definitions"
-  )
+  @Test(groups = {"schema"}, dataProvider = "definitions")
   public void parse(final MatchingRuleUse matchingRule, final String definition)
     throws Exception
   {

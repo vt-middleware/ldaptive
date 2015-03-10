@@ -9,28 +9,25 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.provider.ProviderConfig;
 
 /**
- * Reads properties specific to {@link org.ldaptive.DefaultConnectionFactory}
- * and returns an initialized object of that type.
+ * Reads properties specific to {@link org.ldaptive.DefaultConnectionFactory} and returns an initialized object of that
+ * type.
  *
  * @author  Middleware Services
  */
-public final class DefaultConnectionFactoryPropertySource
-  extends AbstractPropertySource<DefaultConnectionFactory>
+public final class DefaultConnectionFactoryPropertySource extends AbstractPropertySource<DefaultConnectionFactory>
 {
 
   /** Invoker for connection factory. */
-  private static final DefaultConnectionFactoryPropertyInvoker INVOKER =
-    new DefaultConnectionFactoryPropertyInvoker(DefaultConnectionFactory.class);
+  private static final DefaultConnectionFactoryPropertyInvoker INVOKER = new DefaultConnectionFactoryPropertyInvoker(
+    DefaultConnectionFactory.class);
 
 
   /**
-   * Creates a new default connection factory property source using the default
-   * properties file.
+   * Creates a new default connection factory property source using the default properties file.
    *
    * @param  cf  connection factory to invoke properties on
    */
-  public DefaultConnectionFactoryPropertySource(
-    final DefaultConnectionFactory cf)
+  public DefaultConnectionFactoryPropertySource(final DefaultConnectionFactory cf)
   {
     this(cf, PROPERTIES_FILE);
   }
@@ -42,9 +39,7 @@ public final class DefaultConnectionFactoryPropertySource
    * @param  cf  connection factory to invoke properties on
    * @param  paths  to read properties from
    */
-  public DefaultConnectionFactoryPropertySource(
-    final DefaultConnectionFactory cf,
-    final String... paths)
+  public DefaultConnectionFactoryPropertySource(final DefaultConnectionFactory cf, final String... paths)
   {
     this(cf, loadProperties(paths));
   }
@@ -56,9 +51,7 @@ public final class DefaultConnectionFactoryPropertySource
    * @param  cf  connection factory to invoke properties on
    * @param  readers  to read properties from
    */
-  public DefaultConnectionFactoryPropertySource(
-    final DefaultConnectionFactory cf,
-    final Reader... readers)
+  public DefaultConnectionFactoryPropertySource(final DefaultConnectionFactory cf, final Reader... readers)
   {
     this(cf, loadProperties(readers));
   }
@@ -70,9 +63,7 @@ public final class DefaultConnectionFactoryPropertySource
    * @param  cf  connection factory to invoke properties on
    * @param  props  to read properties from
    */
-  public DefaultConnectionFactoryPropertySource(
-    final DefaultConnectionFactory cf,
-    final Properties props)
+  public DefaultConnectionFactoryPropertySource(final DefaultConnectionFactory cf, final Properties props)
   {
     this(cf, PropertyDomain.LDAP, props);
   }
@@ -101,24 +92,25 @@ public final class DefaultConnectionFactoryPropertySource
     initializeObject(INVOKER);
 
     final ConnectionConfig cc = new ConnectionConfig();
-    final ConnectionConfigPropertySource ccPropSource =
-      new ConnectionConfigPropertySource(cc, propertiesDomain, properties);
+    final ConnectionConfigPropertySource ccPropSource = new ConnectionConfigPropertySource(
+      cc,
+      propertiesDomain,
+      properties);
     ccPropSource.initialize();
     object.setConnectionConfig(cc);
 
     final ProviderConfig pc = new ProviderConfig();
-    final ProviderConfigPropertySource pcPropSource =
-      new ProviderConfigPropertySource(pc, propertiesDomain, properties);
+    final ProviderConfigPropertySource pcPropSource = new ProviderConfigPropertySource(
+      pc,
+      propertiesDomain,
+      properties);
     pcPropSource.initialize();
-    object.getProvider().getProviderConfig().setConnectionStrategy(
-      pc.getConnectionStrategy());
+    object.getProvider().getProviderConfig().setConnectionStrategy(pc.getConnectionStrategy());
     if (pc.getOperationExceptionResultCodes() != null) {
-      object.getProvider().getProviderConfig().setOperationExceptionResultCodes(
-        pc.getOperationExceptionResultCodes());
+      object.getProvider().getProviderConfig().setOperationExceptionResultCodes(pc.getOperationExceptionResultCodes());
     }
     if (pc.getControlProcessor() != null) {
-      object.getProvider().getProviderConfig().setControlProcessor(
-        pc.getControlProcessor());
+      object.getProvider().getProviderConfig().setControlProcessor(pc.getControlProcessor());
     }
     if (!extraProps.isEmpty()) {
       object.getProvider().getProviderConfig().setProperties(extraProps);

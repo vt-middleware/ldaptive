@@ -11,8 +11,8 @@ import org.springframework.expression.spel.SpelParseException;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
 /**
- * Spring implementation of a class descriptor. Uses an {@link
- * EvaluationContext} with SPEL expressions to find property values.
+ * Spring implementation of a class descriptor. Uses an {@link EvaluationContext} with SPEL expressions to find property
+ * values.
  *
  * @author  Middleware Services
  */
@@ -38,9 +38,7 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
   public void initialize(final Class<?> type)
   {
     // check for entry annotation
-    final Entry entryAnnotation = AnnotationUtils.findAnnotation(
-      type,
-      Entry.class);
+    final Entry entryAnnotation = AnnotationUtils.findAnnotation(type, Entry.class);
     if (entryAnnotation != null) {
       if (!"".equals(entryAnnotation.dn())) {
         setDnValueMutator(createDnValueMutator(entryAnnotation.dn()));
@@ -48,14 +46,9 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
       for (final Attribute attr : entryAnnotation.attributes()) {
         if ("".equals(attr.property()) && attr.values().length > 0) {
           addAttributeValueMutator(
-            new SimpleAttributeValueMutator(
-              attr.name(),
-              attr.values(),
-              attr.binary(),
-              attr.sortBehavior()));
+            new SimpleAttributeValueMutator(attr.name(), attr.values(), attr.binary(), attr.sortBehavior()));
         } else {
-          addAttributeValueMutator(
-            new SpelAttributeValueMutator(attr, evaluationContext));
+          addAttributeValueMutator(new SpelAttributeValueMutator(attr, evaluationContext));
         }
       }
     }
@@ -63,25 +56,19 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
 
 
   /**
-   * Creates a dn value mutator for the supplied SPEL dn property expression. If
-   * an expression cannot be created, a simple dn value mutator is returned.
+   * Creates a dn value mutator for the supplied SPEL dn property expression. If an expression cannot be created, a
+   * simple dn value mutator is returned.
    *
    * @param  dnProperty  SPEL expression
    *
-   * @return  {@link SpelDnValueMutator} if dnProperty can be parsed. Otherwise
-   * returns simple dn value mutator
+   * @return  {@link SpelDnValueMutator} if dnProperty can be parsed. Otherwise returns simple dn value mutator
    */
   protected DnValueMutator createDnValueMutator(final String dnProperty)
   {
     try {
-      return
-        new SpelDnValueMutator(
-          new SpelExpressionParser().parseExpression(dnProperty),
-          evaluationContext);
+      return new SpelDnValueMutator(new SpelExpressionParser().parseExpression(dnProperty), evaluationContext);
     } catch (SpelParseException e) {
-      logger.debug(
-        "Could not parse dn expression, using SimpleDnValueMutator",
-        e);
+      logger.debug("Could not parse dn expression, using SimpleDnValueMutator", e);
       return new SimpleDnValueMutator(dnProperty);
     }
   }

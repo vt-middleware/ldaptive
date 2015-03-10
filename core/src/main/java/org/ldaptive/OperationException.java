@@ -45,10 +45,7 @@ public class OperationException extends LdapException
    * @param  code  result code
    * @param  dn  matched dn
    */
-  public OperationException(
-    final String msg,
-    final ResultCode code,
-    final String dn)
+  public OperationException(final String msg, final ResultCode code, final String dn)
   {
     super(msg, code, dn);
   }
@@ -62,11 +59,7 @@ public class OperationException extends LdapException
    * @param  dn  matched dn
    * @param  c  response controls
    */
-  public OperationException(
-    final String msg,
-    final ResultCode code,
-    final String dn,
-    final ResponseControl[] c)
+  public OperationException(final String msg, final ResultCode code, final String dn, final ResponseControl[] c)
   {
     super(msg, code, dn, c);
   }
@@ -122,10 +115,7 @@ public class OperationException extends LdapException
    * @param  code  result code
    * @param  dn  matched dn
    */
-  public OperationException(
-    final Exception e,
-    final ResultCode code,
-    final String dn)
+  public OperationException(final Exception e, final ResultCode code, final String dn)
   {
     super(e, code, dn);
   }
@@ -139,11 +129,7 @@ public class OperationException extends LdapException
    * @param  dn  matched dn
    * @param  c  response controls
    */
-  public OperationException(
-    final Exception e,
-    final ResultCode code,
-    final String dn,
-    final ResponseControl[] c)
+  public OperationException(final Exception e, final ResultCode code, final String dn, final ResponseControl[] c)
   {
     super(e, code, dn, c);
   }
@@ -188,10 +174,7 @@ public class OperationException extends LdapException
    * @param  e  provider specific exception
    * @param  code  result code
    */
-  public OperationException(
-    final String msg,
-    final Exception e,
-    final ResultCode code)
+  public OperationException(final String msg, final Exception e, final ResultCode code)
   {
     super(msg, e, code);
   }
@@ -205,11 +188,7 @@ public class OperationException extends LdapException
    * @param  code  result code
    * @param  dn  matched dn
    */
-  public OperationException(
-    final String msg,
-    final Exception e,
-    final ResultCode code,
-    final String dn)
+  public OperationException(final String msg, final Exception e, final ResultCode code, final String dn)
   {
     super(msg, e, code, dn);
   }

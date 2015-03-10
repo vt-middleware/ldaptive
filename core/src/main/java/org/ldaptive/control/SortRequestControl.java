@@ -23,8 +23,7 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class SortRequestControl extends AbstractControl
-  implements RequestControl
+public class SortRequestControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -94,12 +93,7 @@ public class SortRequestControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        sortKeys);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), sortKeys);
   }
 
 
@@ -129,14 +123,10 @@ public class SortRequestControl extends AbstractControl
       if (sortKeys[i].getReverseOrder()) {
         l.add(new ContextType(1, sortKeys[i].getReverseOrder()));
       }
-      keyEncoders[i] = new ConstructedDEREncoder(
-        UniversalDERTag.SEQ,
-        l.toArray(new DEREncoder[l.size()]));
+      keyEncoders[i] = new ConstructedDEREncoder(UniversalDERTag.SEQ, l.toArray(new DEREncoder[l.size()]));
     }
 
-    final ConstructedDEREncoder se = new ConstructedDEREncoder(
-      UniversalDERTag.SEQ,
-      keyEncoders);
+    final ConstructedDEREncoder se = new ConstructedDEREncoder(UniversalDERTag.SEQ, keyEncoders);
     return se.encode();
   }
 }

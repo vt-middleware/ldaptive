@@ -12,8 +12,7 @@ import com.novell.ldap.LDAPJSSESecureSocketFactory;
  *
  * @author  Middleware Services
  */
-public class JLdapSSLConnectionFactory
-  extends AbstractJLdapConnectionFactory<JLdapSSLConnection>
+public class JLdapSSLConnectionFactory extends AbstractJLdapConnectionFactory<JLdapSSLConnection>
 {
 
   /** SSL socket factory to use for SSL. */
@@ -47,8 +46,7 @@ public class JLdapSSLConnectionFactory
   {
     LDAPConnection conn;
     if (sslSocketFactory != null) {
-      conn = new LDAPConnection(
-        new LDAPJSSESecureSocketFactory(sslSocketFactory));
+      conn = new LDAPConnection(new LDAPJSSESecureSocketFactory(sslSocketFactory));
     } else {
       conn = new LDAPConnection(new LDAPJSSESecureSocketFactory());
     }
@@ -57,9 +55,7 @@ public class JLdapSSLConnectionFactory
 
 
   @Override
-  protected JLdapSSLConnection createJLdapConnection(
-    final LDAPConnection conn,
-    final JLdapProviderConfig config)
+  protected JLdapSSLConnection createJLdapConnection(final LDAPConnection conn, final JLdapProviderConfig config)
   {
     return new JLdapSSLConnection(conn, config);
   }

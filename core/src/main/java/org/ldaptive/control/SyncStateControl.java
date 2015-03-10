@@ -12,8 +12,7 @@ import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UuidType;
 
 /**
- * Response control for ldap content synchronization. See RFC 4533. Control is
- * defined as:
+ * Response control for ldap content synchronization. See RFC 4533. Control is defined as:
  *
  * <pre>
      syncStateValue ::= SEQUENCE {
@@ -158,10 +157,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
    * @param  uuid  sync entry uuid
    * @param  critical  whether this control is critical
    */
-  public SyncStateControl(
-    final State state,
-    final UUID uuid,
-    final boolean critical)
+  public SyncStateControl(final State state, final UUID uuid, final boolean critical)
   {
     super(OID, critical);
     setSyncState(state);
@@ -177,11 +173,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
    * @param  value  sync state cookie
    * @param  critical  whether this control is critical
    */
-  public SyncStateControl(
-    final State state,
-    final UUID uuid,
-    final byte[] value,
-    final boolean critical)
+  public SyncStateControl(final State state, final UUID uuid, final byte[] value, final boolean critical)
   {
     super(OID, critical);
     setSyncState(state);
@@ -259,14 +251,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        syncState,
-        entryUuid,
-        cookie);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), syncState, entryUuid, cookie);
   }
 
 
@@ -299,8 +284,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
   /** Parse handler implementation for the sync state. */
-  private static class StateHandler
-    extends AbstractParseHandler<SyncStateControl>
+  private static class StateHandler extends AbstractParseHandler<SyncStateControl>
   {
 
     /** DER path to the state. */
@@ -332,8 +316,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
   /** Parse handler implementation for the entry uuid. */
-  private static class EntryUuidHandler
-    extends AbstractParseHandler<SyncStateControl>
+  private static class EntryUuidHandler extends AbstractParseHandler<SyncStateControl>
   {
 
     /** DER path to the uuid. */
@@ -362,8 +345,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
   /** Parse handler implementation for the cookie. */
-  private static class CookieHandler
-    extends AbstractParseHandler<SyncStateControl>
+  private static class CookieHandler extends AbstractParseHandler<SyncStateControl>
   {
 
     /** DER path to cookie value. */

@@ -2,8 +2,7 @@
 package org.ldaptive.pool;
 
 /**
- * Thrown when a blocking operation times out. See {@link
- * ConnectionPool#getConnection()}.
+ * Thrown when a blocking operation times out. See {@link ConnectionPool#getConnection()}.
  *
  * @author  Middleware Services
  */

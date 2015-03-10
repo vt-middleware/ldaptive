@@ -46,8 +46,8 @@ public abstract class AbstractCli
 
 
   /**
-   * Parses command line options and dispatches to the requested action, or the
-   * default action if no action is specified.
+   * Parses command line options and dispatches to the requested action, or the default action if no action is
+   * specified.
    *
    * @param  args  command line arguments
    *
@@ -67,8 +67,7 @@ public abstract class AbstractCli
         printExamples();
       }
     } catch (ParseException pex) {
-      System.err.println(
-        "Failed parsing command arguments: " + pex.getMessage());
+      System.err.println("Failed parsing command arguments: " + pex.getMessage());
     } catch (IllegalArgumentException iaex) {
       String msg = "Operation failed: " + iaex.getMessage();
       if (iaex.getCause() != null) {
@@ -95,11 +94,7 @@ public abstract class AbstractCli
   protected void initOptions()
   {
     options.addOption(new Option(OPT_HELP, false, "display all options"));
-    options.addOption(
-      new Option(
-        OPT_PROVIDER_PROPERTIES,
-        true,
-        "provider specific properties"));
+    options.addOption(new Option(OPT_PROVIDER_PROPERTIES, true, "provider specific properties"));
   }
 
 
@@ -113,21 +108,17 @@ public abstract class AbstractCli
   protected ConnectionFactory initConnectionFactory(final CommandLine line)
   {
     final DefaultConnectionFactory factory = new DefaultConnectionFactory();
-    final DefaultConnectionFactoryPropertySource cfSource =
-      new DefaultConnectionFactoryPropertySource(
-        factory,
-        getPropertiesFromOptions(PropertyDomain.LDAP.value(), line));
+    final DefaultConnectionFactoryPropertySource cfSource = new DefaultConnectionFactoryPropertySource(
+      factory,
+      getPropertiesFromOptions(PropertyDomain.LDAP.value(), line));
     cfSource.initialize();
 
-    final ConnectionInitializer ci =
-      factory.getConnectionConfig().getConnectionInitializer();
+    final ConnectionInitializer ci = factory.getConnectionConfig().getConnectionInitializer();
     if (ci instanceof BindConnectionInitializer) {
       final BindConnectionInitializer bci = (BindConnectionInitializer) ci;
       if (bci.getBindDn() != null && bci.getBindCredential() == null) {
         // prompt the user to enter a password
-        final char[] pass = System.console().readPassword(
-          "[Enter password for %s]: ",
-          bci.getBindDn());
+        final char[] pass = System.console().readPassword("[Enter password for %s]: ", bci.getBindDn());
         bci.setBindCredential(new Credential(pass));
       }
     }
@@ -136,8 +127,7 @@ public abstract class AbstractCli
 
 
   /**
-   * Returns the name of the command for which this class provides a CLI
-   * interface.
+   * Returns the name of the command for which this class provides a CLI interface.
    *
    * @return  name of CLI command
    */
@@ -145,8 +135,7 @@ public abstract class AbstractCli
 
 
   /**
-   * Dispatch command line data to the active that can perform the operation
-   * requested on the command line.
+   * Dispatch command line data to the active that can perform the operation requested on the command line.
    *
    * @param  line  parsed command line arguments
    *
@@ -172,8 +161,7 @@ public abstract class AbstractCli
     final String name = getClass().getSimpleName();
     final InputStream in = getClass().getResourceAsStream(name + ".examples");
     if (in != null) {
-      final BufferedReader reader = new BufferedReader(
-        new InputStreamReader(in));
+      final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
       try {
         System.out.println();
 
@@ -211,8 +199,7 @@ public abstract class AbstractCli
       final String name = c.getSimpleName();
       final InputStream in = getClass().getResourceAsStream(name + ".args");
       if (in != null) {
-        final BufferedReader reader = new BufferedReader(
-          new InputStreamReader(in));
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         try {
           String line;
           while ((line = reader.readLine()) != null) {
@@ -240,17 +227,14 @@ public abstract class AbstractCli
 
 
   /**
-   * Reads the options from the supplied command line and returns a properties
-   * containing those options.
+   * Reads the options from the supplied command line and returns a properties containing those options.
    *
    * @param  domain  to place property names in
    * @param  line  command line
    *
    * @return  properties for each option and value
    */
-  protected Properties getPropertiesFromOptions(
-    final String domain,
-    final CommandLine line)
+  protected Properties getPropertiesFromOptions(final String domain, final CommandLine line)
   {
     final Properties props = new Properties();
     for (Option o : line.getOptions()) {

@@ -193,9 +193,7 @@ public class NameForm extends AbstractNamedSchemaElement
   {
     final Matcher m = DEFINITION_PATTERN.matcher(definition);
     if (!m.matches()) {
-      throw new ParseException(
-        "Invalid name form definition: " + definition,
-        definition.length());
+      throw new ParseException("Invalid name form definition: " + definition, definition.length());
     }
 
     final NameForm nfd = new NameForm(m.group(1).trim());

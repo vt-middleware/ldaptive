@@ -33,8 +33,7 @@ public class UnsolicitedNotifications
    */
   public void addListener(final UnsolicitedNotificationListener listener)
   {
-    connection.getProviderConnection().addUnsolicitedNotificationListener(
-      listener);
+    connection.getProviderConnection().addUnsolicitedNotificationListener(listener);
   }
 
 
@@ -45,7 +44,6 @@ public class UnsolicitedNotifications
    */
   public void removeListener(final UnsolicitedNotificationListener listener)
   {
-    connection.getProviderConnection().removeUnsolicitedNotificationListener(
-      listener);
+    connection.getProviderConnection().removeUnsolicitedNotificationListener(listener);
   }
 }

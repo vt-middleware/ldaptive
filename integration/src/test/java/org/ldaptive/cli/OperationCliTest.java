@@ -37,13 +37,13 @@ public class OperationCliTest extends AbstractTest
     System.setSecurityManager(
       new SecurityManager() {
         @Override
-        public void checkPermission(Permission permission) {
+        public void checkPermission(final Permission permission)
+        {
           if (permission.getName().startsWith("exitVM")) {
             throw new SecurityException("System.exit blocked.");
           }
         }
-      }
-    );
+      });
 
     final PrintStream oldStdOut = System.out;
     try {
@@ -52,7 +52,7 @@ public class OperationCliTest extends AbstractTest
 
       AddOperationCli.main(args.split("\\|"));
     } catch (SecurityException e) {
-      // ignore
+      AssertJUnit.assertNotNull(e);
     } finally {
       // Restore STDOUT
       System.setOut(oldStdOut);
@@ -77,7 +77,7 @@ public class OperationCliTest extends AbstractTest
 
       DeleteOperationCli.main(args.split("\\|"));
     } catch (SecurityException e) {
-      // ignore
+      AssertJUnit.assertNotNull(e);
     } finally {
       // Restore STDOUT
       System.setOut(oldStdOut);
@@ -106,7 +106,9 @@ public class OperationCliTest extends AbstractTest
 
       try {
         SearchOperationCli.main(args.split("\\|"));
-      } catch (SecurityException e) {}
+      } catch (SecurityException e) {
+        AssertJUnit.assertNotNull(e);
+      }
       AssertJUnit.assertEquals(
         TestUtils.convertLdifToResult(ldif),
         TestUtils.convertLdifToResult(outStream.toString()));
@@ -134,10 +136,10 @@ public class OperationCliTest extends AbstractTest
 
       try {
         CompareOperationCli.main(args.split("\\|"));
-      } catch (SecurityException e) {}
-      AssertJUnit.assertEquals(
-        "true",
-        outStream.toString().trim());
+      } catch (SecurityException e) {
+        AssertJUnit.assertNotNull(e);
+      }
+      AssertJUnit.assertEquals("true", outStream.toString().trim());
     } finally {
       // Restore STDOUT
       System.setOut(oldStdOut);

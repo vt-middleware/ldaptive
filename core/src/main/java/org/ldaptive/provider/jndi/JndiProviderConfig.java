@@ -21,11 +21,10 @@ public class JndiProviderConfig extends ProviderConfig<Control>
 {
 
   /**
-   * Boolean property that indicates whether hostname verification should be
-   * disabled for StartTLS connections. The value of this constant is {@value}.
+   * Boolean property that indicates whether hostname verification should be disabled for StartTLS connections. The
+   * value of this constant is {@value}.
    */
-  protected static final String ALLOW_ANY_HOSTNAME =
-    "jndi.starttls.allowAnyHostname";
+  protected static final String ALLOW_ANY_HOSTNAME = "jndi.starttls.allowAnyHostname";
 
   /** Context environment. */
   private Map<String, Object> environment;
@@ -49,16 +48,13 @@ public class JndiProviderConfig extends ProviderConfig<Control>
   /** Default constructor. */
   public JndiProviderConfig()
   {
-    setOperationExceptionResultCodes(
-      ResultCode.PROTOCOL_ERROR,
-      ResultCode.SERVER_DOWN);
+    setOperationExceptionResultCodes(ResultCode.PROTOCOL_ERROR, ResultCode.SERVER_DOWN);
     searchIgnoreResultCodes = new ResultCode[] {
       ResultCode.TIME_LIMIT_EXCEEDED,
       ResultCode.SIZE_LIMIT_EXCEEDED,
       ResultCode.PARTIAL_RESULTS,
     };
-    setControlProcessor(
-      new ControlProcessor<>(new JndiControlHandler()));
+    setControlProcessor(new ControlProcessor<>(new JndiControlHandler()));
   }
 
 
@@ -111,8 +107,7 @@ public class JndiProviderConfig extends ProviderConfig<Control>
 
 
   /**
-   * Returns whether the URL will be removed from any DNs which are not
-   * relative. The default value is true.
+   * Returns whether the URL will be removed from any DNs which are not relative. The default value is true.
    *
    * @return  whether the URL will be removed from DNs
    */
@@ -123,8 +118,7 @@ public class JndiProviderConfig extends ProviderConfig<Control>
 
 
   /**
-   * Sets whether the URL will be removed from any DNs which are not relative
-   * The default value is true.
+   * Sets whether the URL will be removed from any DNs which are not relative The default value is true.
    *
    * @param  b  whether the URL will be removed from DNs
    */
@@ -213,8 +207,7 @@ public class JndiProviderConfig extends ProviderConfig<Control>
   {
     checkImmutable();
 
-    final boolean allowAnyHostname = Boolean.valueOf(
-      (String) props.get(ALLOW_ANY_HOSTNAME));
+    final boolean allowAnyHostname = Boolean.valueOf((String) props.get(ALLOW_ANY_HOSTNAME));
     if (allowAnyHostname) {
       setHostnameVerifier(new AllowAnyHostnameVerifier());
     }

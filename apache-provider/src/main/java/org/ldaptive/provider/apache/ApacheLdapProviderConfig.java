@@ -24,8 +24,7 @@ public class ApacheLdapProviderConfig extends ProviderConfig<Control>
   public ApacheLdapProviderConfig()
   {
     setOperationExceptionResultCodes(ResultCode.SERVER_DOWN);
-    setControlProcessor(
-      new ControlProcessor<>(new ApacheLdapControlHandler()));
+    setControlProcessor(new ControlProcessor<>(new ApacheLdapControlHandler()));
   }
 
 

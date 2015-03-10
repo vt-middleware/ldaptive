@@ -10,8 +10,8 @@ import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
 
 /**
- * Request control for active directory servers to use an extended form of an
- * object distinguished name. Control is defined as:
+ * Request control for active directory servers to use an extended form of an object distinguished name. Control is
+ * defined as:
  *
  * <pre>
    verifyNameValue ::= SEQUENCE {
@@ -94,12 +94,7 @@ public class VerifyNameControl extends AbstractControl implements RequestControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        serverName);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), serverName);
   }
 
 

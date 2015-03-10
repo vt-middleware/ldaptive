@@ -9,8 +9,7 @@ import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
- * Contains the response from an ldap password modify operation. See RFC 3062.
- * Response is defined as:
+ * Contains the response from an ldap password modify operation. See RFC 3062. Response is defined as:
  *
  * <pre>
    PasswdModifyResponseValue ::= SEQUENCE {
@@ -48,8 +47,7 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
 
 
   /** Parse handler implementation for the genPasswd. */
-  private static class GenPasswdHandler
-    extends AbstractParseHandler<PasswordModifyResponse>
+  private static class GenPasswdHandler extends AbstractParseHandler<PasswordModifyResponse>
   {
 
     /** DER path to generated password. */

@@ -6,12 +6,10 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Connection strategy that attempts each URL in the order they are configured.
- * The next attempt uses the next URL in the list. The class orders the URLs
- * by computing a modulus with the connection count. Since metadata is stored
- * per connection, computing the URL based on connection count may not give the
- * desired result when using a connection pool. Set {@link #useConnectionCount}
- * to false if using this strategy with a connection pool.
+ * Connection strategy that attempts each URL in the order they are configured. The next attempt uses the next URL in
+ * the list. The class orders the URLs by computing a modulus with the connection count. Since metadata is stored per
+ * connection, computing the URL based on connection count may not give the desired result when using a connection pool.
+ * Set {@link #useConnectionCount} to false if using this strategy with a connection pool.
  *
  * @author  Middleware Services
  */
@@ -22,8 +20,8 @@ public class RoundRobinConnectionStrategy implements ConnectionStrategy
   private int invocationCount;
 
   /**
-   * Whether {@link #getLdapUrls(ConnectionFactoryMetadata)} should use the
-   * connectionCount parameter or the {@link #invocationCount}.
+   * Whether {@link #getLdapUrls(ConnectionFactoryMetadata)} should use the connectionCount parameter or the {@link
+   * #invocationCount}.
    */
   private final boolean useConnectionCount;
 
@@ -38,8 +36,7 @@ public class RoundRobinConnectionStrategy implements ConnectionStrategy
   /**
    * Creates a new round robin connection strategy.
    *
-   * @param  b  whether {@link #getLdapUrls(ConnectionFactoryMetadata)} should
-   * use the connectionCount parameter
+   * @param  b  whether {@link #getLdapUrls(ConnectionFactoryMetadata)} should use the connectionCount parameter
    */
   public RoundRobinConnectionStrategy(final boolean b)
   {
@@ -48,8 +45,8 @@ public class RoundRobinConnectionStrategy implements ConnectionStrategy
 
 
   /**
-   * Return a list of URLs that cycles the list order. The first entry is
-   * moved to the end of the list for each invocation.
+   * Return a list of URLs that cycles the list order. The first entry is moved to the end of the list for each
+   * invocation.
    *
    * @param  metadata  which can be used to produce the URL list
    *
@@ -61,8 +58,8 @@ public class RoundRobinConnectionStrategy implements ConnectionStrategy
     if (metadata == null || metadata.getLdapUrl() == null) {
       return null;
     }
-    final List<String> l = new ArrayList<>(
-      Arrays.asList(metadata.getLdapUrl().split(" ")));
+
+    final List<String> l = new ArrayList<>(Arrays.asList(metadata.getLdapUrl().split(" ")));
     final int count = getCount(metadata.getConnectionCount());
     for (int i = 0; i < count % l.size(); i++) {
       l.add(l.remove(0));
@@ -72,8 +69,8 @@ public class RoundRobinConnectionStrategy implements ConnectionStrategy
 
 
   /**
-   * Returns the supplied connection count if {@link #useConnectionCount} is
-   * true. Otherwise returns {@link #invocationCount}.
+   * Returns the supplied connection count if {@link #useConnectionCount} is true. Otherwise returns {@link
+   * #invocationCount}.
    *
    * @param  connectionCount  as reported by the connection
    *

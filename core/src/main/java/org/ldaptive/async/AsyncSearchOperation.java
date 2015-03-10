@@ -24,13 +24,11 @@ import org.ldaptive.provider.SearchListener;
  *
  * @author  Middleware Services
  */
-public class AsyncSearchOperation
-  extends AbstractAsyncOperation<SearchRequest, SearchResult>
+public class AsyncSearchOperation extends AbstractAsyncOperation<SearchRequest, SearchResult>
 {
 
   /** Cached thread executor to submit async operations to. */
-  private final ExecutorService executorService =
-    Executors.newCachedThreadPool();
+  private final ExecutorService executorService = Executors.newCachedThreadPool();
 
   /** Whether the listener should spawn a new thread to process each result. */
   private boolean useMultiThreadedListener;
@@ -48,8 +46,7 @@ public class AsyncSearchOperation
 
 
   /**
-   * Returns whether the listener should spawn a new thread to process each
-   * result.
+   * Returns whether the listener should spawn a new thread to process each result.
    *
    * @return  whether the listener is multi-threaded
    */
@@ -109,10 +106,7 @@ public class AsyncSearchOperation
   }
 
 
-  /**
-   * Invokes {@link ExecutorService#shutdown()} on the underlying executor
-   * service.
-   */
+  /** Invokes {@link ExecutorService#shutdown()} on the underlying executor service. */
   public void shutdown()
   {
     executorService.shutdown();
@@ -131,10 +125,7 @@ public class AsyncSearchOperation
   }
 
 
-  /**
-   * Async search listener used to build a search result and invoke search
-   * request handlers.
-   */
+  /** Async search listener used to build a search result and invoke search request handlers. */
   protected class AsyncSearchListener implements SearchListener
   {
 
@@ -240,13 +231,11 @@ public class AsyncSearchOperation
 
 
     /**
-     * Returns the response data associated with this search, blocking until a
-     * response is available.
+     * Returns the response data associated with this search, blocking until a response is available.
      *
      * @return  response data
      *
-     * @throws  InterruptedException  if this thread is interrupted before a
-     * response is received
+     * @throws  InterruptedException  if this thread is interrupted before a response is received
      * @throws  LdapException  if the async search encountered an error
      */
     public Response<SearchResult> getResponse()
@@ -274,8 +263,8 @@ public class AsyncSearchOperation
 
 
     /**
-     * Invokes the handlers for the supplied async request. Calls {@link
-     * #responseReceived(Response)} if a handler aborts the operation.
+     * Invokes the handlers for the supplied async request. Calls {@link #responseReceived(Response)} if a handler
+     * aborts the operation.
      *
      * @param  request  to handle
      *
@@ -286,10 +275,7 @@ public class AsyncSearchOperation
     {
       logger.trace("processing async request={}", request);
 
-      final HandlerResult<AsyncRequest> hr = executeHandlers(
-        getAsyncRequestHandlers(),
-        searchRequest,
-        request);
+      final HandlerResult<AsyncRequest> hr = executeHandlers(getAsyncRequestHandlers(), searchRequest, request);
       if (hr.getAbort()) {
         logger.debug("Aborting search on async request=%s", request);
         responseReceived(new Response<Void>(null, null));
@@ -298,8 +284,8 @@ public class AsyncSearchOperation
 
 
     /**
-     * Invokes the handlers for the supplied search item. Calls {@link
-     * #responseReceived(Response)} if a handler aborts the operation.
+     * Invokes the handlers for the supplied search item. Calls {@link #responseReceived(Response)} if a handler aborts
+     * the operation.
      *
      * @param  item  to handle
      *

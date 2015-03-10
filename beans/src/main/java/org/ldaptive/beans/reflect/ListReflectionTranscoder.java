@@ -11,8 +11,7 @@ import java.util.List;
  *
  * @author  Middleware Services
  */
-public class ListReflectionTranscoder
-  extends AbstractCollectionReflectionTranscoder
+public class ListReflectionTranscoder extends AbstractCollectionReflectionTranscoder
 {
 
 
@@ -22,9 +21,7 @@ public class ListReflectionTranscoder
    * @param  c  class that is a list
    * @param  transcoder  to operate on elements of the list
    */
-  public ListReflectionTranscoder(
-    final Class<?> c,
-    final SingleValueReflectionTranscoder<?> transcoder)
+  public ListReflectionTranscoder(final Class<?> c, final SingleValueReflectionTranscoder<?> transcoder)
   {
     super(c, transcoder);
   }
@@ -36,9 +33,7 @@ public class ListReflectionTranscoder
    * @param  c  class that is a list
    * @param  transcoder  to operate on elements of the list
    */
-  public ListReflectionTranscoder(
-    final Class<?> c,
-    final ArrayReflectionTranscoder transcoder)
+  public ListReflectionTranscoder(final Class<?> c, final ArrayReflectionTranscoder transcoder)
   {
     super(c, transcoder);
   }

@@ -39,10 +39,7 @@ public class VirtualListViewParams
    * @param  before  before count
    * @param  after  after count
    */
-  public VirtualListViewParams(
-    final int offset,
-    final int before,
-    final int after)
+  public VirtualListViewParams(final int offset, final int before, final int after)
   {
     targetOffset = offset;
     beforeCount = before;
@@ -58,10 +55,7 @@ public class VirtualListViewParams
    * @param  before  before count
    * @param  after  after count
    */
-  public VirtualListViewParams(
-    final String assertion,
-    final int before,
-    final int after)
+  public VirtualListViewParams(final String assertion, final int before, final int after)
   {
     assertionValue = assertion;
     beforeCount = before;
@@ -115,39 +109,26 @@ public class VirtualListViewParams
 
 
   /**
-   * Creates a new virtual list view request control using the properties in
-   * this VLV params.
+   * Creates a new virtual list view request control using the properties in this VLV params.
    *
    * @param  critical  whether the returned control is critical
    *
    * @return  virtual list view request control
    */
-  public VirtualListViewRequestControl createRequestControl(
-    final boolean critical)
+  public VirtualListViewRequestControl createRequestControl(final boolean critical)
   {
     if (assertionValue != null) {
-      return
-        new VirtualListViewRequestControl(
-          assertionValue,
-          beforeCount,
-          afterCount,
-          critical);
+      return new VirtualListViewRequestControl(assertionValue, beforeCount, afterCount, critical);
     } else {
-      return
-        new VirtualListViewRequestControl(
-          targetOffset,
-          beforeCount,
-          afterCount,
-          critical);
+      return new VirtualListViewRequestControl(targetOffset, beforeCount, afterCount, critical);
     }
   }
 
 
   /**
-   * Creates a new virtual list view request control using the properties in
-   * this VLV params. The supplied response is inspected and if it contains a
-   * VLV response control, it's contextID and/or content count will be passed
-   * into the created request control.
+   * Creates a new virtual list view request control using the properties in this VLV params. The supplied response is
+   * inspected and if it contains a VLV response control, it's contextID and/or content count will be passed into the
+   * created request control.
    *
    * @param  response  response of a previous VLV operation
    * @param  critical  whether the returned control is critical
@@ -158,11 +139,9 @@ public class VirtualListViewParams
     final Response<SearchResult> response,
     final boolean critical)
   {
-    final VirtualListViewRequestControl control = createRequestControl(
-      critical);
-    final VirtualListViewResponseControl responseControl =
-      (VirtualListViewResponseControl) response.getControl(
-        VirtualListViewResponseControl.OID);
+    final VirtualListViewRequestControl control = createRequestControl(critical);
+    final VirtualListViewResponseControl responseControl = (VirtualListViewResponseControl) response.getControl(
+      VirtualListViewResponseControl.OID);
     if (responseControl != null) {
       if (assertionValue == null) {
         control.setContentCount(responseControl.getContentCount());

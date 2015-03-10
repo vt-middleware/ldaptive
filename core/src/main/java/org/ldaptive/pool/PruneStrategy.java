@@ -21,8 +21,7 @@ public interface PruneStrategy
 
 
   /**
-   * Returns the number of statistics to store for this prune strategy. See
-   * {@link PooledConnectionStatistics}.
+   * Returns the number of statistics to store for this prune strategy. See {@link PooledConnectionStatistics}.
    *
    * @return  number of statistics to store
    */

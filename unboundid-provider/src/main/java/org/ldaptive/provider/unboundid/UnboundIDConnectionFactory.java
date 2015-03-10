@@ -15,8 +15,7 @@ import org.ldaptive.provider.ConnectionException;
  *
  * @author  Middleware Services
  */
-public class UnboundIDConnectionFactory
-  extends AbstractProviderConnectionFactory<UnboundIDProviderConfig>
+public class UnboundIDConnectionFactory extends AbstractProviderConnectionFactory<UnboundIDProviderConfig>
 {
 
   /** Socket factory to use for LDAP and LDAPS connections. */
@@ -56,14 +55,10 @@ public class UnboundIDConnectionFactory
     try {
       final LDAPConnection lc = new LDAPConnection(socketFactory, ldapOptions);
       conn = new UnboundIDConnection(lc, getProviderConfig());
-      lc.connect(
-        ldapUrl.getLastEntry().getHostname(),
-        ldapUrl.getLastEntry().getPort());
+      lc.connect(ldapUrl.getLastEntry().getHostname(), ldapUrl.getLastEntry().getPort());
     } catch (LDAPException e) {
       closeConn = true;
-      throw new ConnectionException(
-        e,
-        org.ldaptive.ResultCode.valueOf(e.getResultCode().intValue()));
+      throw new ConnectionException(e, org.ldaptive.ResultCode.valueOf(e.getResultCode().intValue()));
     } finally {
       if (closeConn) {
         try {

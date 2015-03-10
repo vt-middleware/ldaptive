@@ -8,8 +8,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class AuthorizationIdentityRequestControl extends AbstractControl
-  implements RequestControl
+public class AuthorizationIdentityRequestControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -40,20 +39,14 @@ public class AuthorizationIdentityRequestControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality());
+    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
   }
 
 

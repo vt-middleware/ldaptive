@@ -6,10 +6,10 @@ import java.io.StringWriter;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchResult;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
@@ -62,10 +62,12 @@ public class DsmlTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
+  @Parameters(
+    {
       "dsmlSearchDn",
       "dsmlSearchFilter"
-    })
+    }
+  )
   @Test(groups = {"dsml"})
   public void searchAndCompareDsmlv1(final String dn, final String filter)
     throws Exception
@@ -73,15 +75,16 @@ public class DsmlTest extends AbstractTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final SearchOperation search = new SearchOperation(conn);
 
-      final SearchRequest request =
-        new SearchRequest(dn, new SearchFilter(filter));
+      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
       if (TestControl.isActiveDirectory()) {
         request.setBinaryAttributes("objectSid", "objectGUID", "jpegPhoto");
       } else {
         request.setBinaryAttributes("jpegPhoto");
       }
+
       final SearchResult result1 = search.execute(request).getResult();
 
       final StringWriter writer = new StringWriter();
@@ -105,14 +108,14 @@ public class DsmlTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
+  @Parameters(
+    {
       "dsmlv1Entry",
       "dsmlv1SortedEntry"
-    })
+    }
+  )
   @Test(groups = {"dsml"})
-  public void readAndCompareDsmlv1(
-    final String dsmlFile,
-    final String dsmlSortedFile)
+  public void readAndCompareDsmlv1(final String dsmlFile, final String dsmlSortedFile)
     throws Exception
   {
     final String dsmlStringSorted = TestUtils.readFileIntoString(dsmlSortedFile);

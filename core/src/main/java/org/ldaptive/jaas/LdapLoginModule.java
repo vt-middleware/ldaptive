@@ -65,11 +65,8 @@ public class LdapLoginModule extends AbstractLoginModule
         }
       } else if ("authenticatorFactory".equalsIgnoreCase(key)) {
         try {
-          authenticatorFactory =
-            (AuthenticatorFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException |
-                 IllegalAccessException |
-                 InstantiationException e) {
+          authenticatorFactory = (AuthenticatorFactory) Class.forName(value).newInstance();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
           throw new IllegalArgumentException(e);
         }
       }
@@ -89,16 +86,12 @@ public class LdapLoginModule extends AbstractLoginModule
 
     authRequest = authenticatorFactory.createAuthenticationRequest(options);
     authRequest.setReturnAttributes(userRoleAttribute);
-    logger.debug(
-      "Retrieved authentication request from factory: {}",
-      authRequest);
+    logger.debug("Retrieved authentication request from factory: {}", authRequest);
   }
 
 
   @Override
-  protected boolean login(
-    final NameCallback nameCb,
-    final PasswordCallback passCb)
+  protected boolean login(final NameCallback nameCb, final PasswordCallback passCb)
     throws LoginException
   {
     try {
@@ -160,8 +153,7 @@ public class LdapLoginModule extends AbstractLoginModule
     } catch (LdapException e) {
       logger.debug("Error occurred attempting authentication", e);
       loginSuccess = false;
-      throw new LoginException(
-        e != null ? e.getMessage() : "Authentication Error");
+      throw new LoginException(e != null ? e.getMessage() : "Authentication Error");
     }
     return true;
   }

@@ -15,13 +15,11 @@ import org.ldaptive.ad.SecurityIdentifier;
 import org.ldaptive.handler.AbstractSearchEntryHandler;
 
 /**
- * Constructs the primary group SID and then searches for that group and puts
- * it's DN in the 'memberOf' attribute of the original search entry. This
- * handler requires that entries contain both the 'objectSid' and
- * 'primaryGroupID' attributes. If those attributes are not found this handler
- * is a no-op. This handler should be used in conjunction with the {@link
- * ObjectSidHandler} to ensure the 'objectSid' attribute is in the proper form.
- * See http://support2.microsoft.com/kb/297951
+ * Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the
+ * original search entry. This handler requires that entries contain both the 'objectSid' and 'primaryGroupID'
+ * attributes. If those attributes are not found this handler is a no-op. This handler should be used in conjunction
+ * with the {@link ObjectSidHandler} to ensure the 'objectSid' attribute is in the proper form. See
+ * http://support2.microsoft.com/kb/297951
  *
  * @author  Middleware Services
  */
@@ -31,8 +29,7 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1831;
 
-  /** search filter used to find the primary group.
-      Default value is {@value}. */
+  /** search filter used to find the primary group. Default value is {@value}. */
   private String groupFilter = "(&(objectClass=group)(objectSid={0}))";
 
   /** base DN used for searching for the primary group. */
@@ -62,8 +59,8 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
 
 
   /**
-   * Returns the base DN to search for the primary group. If this is not set the
-   * base DN from the original search is used.
+   * Returns the base DN to search for the primary group. If this is not set the base DN from the original search is
+   * used.
    *
    * @return  base DN to search for the primary group
    */
@@ -74,8 +71,7 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
 
 
   /**
-   * Sets the base DN to search for the primary group. If this is not set the
-   * base DN from the original search is used.
+   * Sets the base DN to search for the primary group. If this is not set the base DN from the original search is used.
    *
    * @param  dn  base DN
    */
@@ -86,19 +82,13 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected void handleAttributes(
-    final Connection conn,
-    final SearchRequest request,
-    final SearchEntry entry)
+  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
     throws LdapException
   {
     final LdapAttribute objectSid = entry.getAttribute("objectSid");
     final LdapAttribute primaryGroupId = entry.getAttribute("primaryGroupID");
 
-    logger.debug(
-      "found objectSid {} and primaryGroupID {}",
-      objectSid,
-      primaryGroupId);
+    logger.debug("found objectSid {} and primaryGroupID {}", objectSid, primaryGroupId);
     if (objectSid != null && primaryGroupId != null) {
       String sid;
       if (objectSid.isBinary()) {
@@ -106,8 +96,8 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
       } else {
         sid = objectSid.getStringValue();
       }
-      final String groupSid = sid.substring(0, sid.lastIndexOf('-') + 1) +
-                              primaryGroupId.getStringValue();
+
+      final String groupSid = sid.substring(0, sid.lastIndexOf('-') + 1) + primaryGroupId.getStringValue();
       logger.debug(
         "created primary group SID {} from object SID {} and primaryGroupID {}",
         groupSid,
@@ -117,8 +107,8 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
       final SearchRequest sr = new SearchRequest();
       sr.setBaseDn(baseDn != null ? baseDn : request.getBaseDn());
       sr.setReturnAttributes(ReturnAttributes.NONE.value());
-      sr.setSearchFilter(
-        new SearchFilter(groupFilter, new Object[] {groupSid}));
+      sr.setSearchFilter(new SearchFilter(groupFilter, new Object[] {groupSid}));
+
       final SearchOperation search = new SearchOperation(conn);
       final SearchResult result = search.execute(sr).getResult();
       if (result.size() == 0) {

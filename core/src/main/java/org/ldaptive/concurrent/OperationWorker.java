@@ -7,8 +7,8 @@ import org.ldaptive.Request;
 import org.ldaptive.Response;
 
 /**
- * Interface for ldap operation workers. Operation workers leverage the
- * java.util.concurrent package to execute non-blocking operations.
+ * Interface for ldap operation workers. Operation workers leverage the java.util.concurrent package to execute
+ * non-blocking operations.
  *
  * @param  <Q>  type of ldap request
  * @param  <S>  type of ldap response
@@ -41,8 +41,7 @@ public interface OperationWorker<Q extends Request, S>
 
 
   /**
-   * Execute an ldap operation for each request on a separate thread and waits
-   * for each operation to complete.
+   * Execute an ldap operation for each request on a separate thread and waits for each operation to complete.
    *
    * @param  requests  containing the data required by this operation
    *

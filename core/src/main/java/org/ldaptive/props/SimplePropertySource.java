@@ -5,8 +5,7 @@ import java.io.Reader;
 import java.util.Properties;
 
 /**
- * Reads simple properties and returns an initialized object of the supplied
- * type.
+ * Reads simple properties and returns an initialized object of the supplied type.
  *
  * @param  <T>  type of object to invoke properties on
  *
@@ -73,10 +72,7 @@ public final class SimplePropertySource<T> extends AbstractPropertySource<T>
    * @param  domain  that properties are in
    * @param  props  to read properties from
    */
-  public SimplePropertySource(
-    final T t,
-    final PropertyDomain domain,
-    final Properties props)
+  public SimplePropertySource(final T t, final PropertyDomain domain, final Properties props)
   {
     super(t, domain, props);
     invoker = new SimplePropertyInvoker(t.getClass());

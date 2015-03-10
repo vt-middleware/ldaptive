@@ -9,20 +9,16 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.io.Dsmlv1Writer;
 
 /**
- * Writes search results as DSML version 1. See {@link
- * AbstractServletSearchTemplatesExecutor}.
+ * Writes search results as DSML version 1. See {@link AbstractServletSearchTemplatesExecutor}.
  *
  * @author  Middleware Services
  */
-public class Dsmlv1ServletSearchTemplatesExecutor
-  extends AbstractServletSearchTemplatesExecutor
+public class Dsmlv1ServletSearchTemplatesExecutor extends AbstractServletSearchTemplatesExecutor
 {
 
 
   @Override
-  protected void writeResponse(
-    final SearchResult result,
-    final HttpServletResponse response)
+  protected void writeResponse(final SearchResult result, final HttpServletResponse response)
     throws IOException
   {
     response.setContentType("text/xml");

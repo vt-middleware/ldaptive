@@ -12,8 +12,7 @@ import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UniversalDERTag;
 
 /**
- * Request/response control for PagedResults. See RFC 2696. Control is defined
- * as:
+ * Request/response control for PagedResults. See RFC 2696. Control is defined as:
  *
  * <pre>
    realSearchControlValue ::= SEQUENCE {
@@ -26,8 +25,7 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class PagedResultsControl extends AbstractControl
-  implements RequestControl, ResponseControl
+public class PagedResultsControl extends AbstractControl implements RequestControl, ResponseControl
 {
 
   /** OID of this control. */
@@ -96,10 +94,7 @@ public class PagedResultsControl extends AbstractControl
    * @param  value  paged results cookie
    * @param  critical  whether this control is critical
    */
-  public PagedResultsControl(
-    final int size,
-    final byte[] value,
-    final boolean critical)
+  public PagedResultsControl(final int size, final byte[] value, final boolean critical)
   {
     super(OID, critical);
     setSize(size);
@@ -108,8 +103,8 @@ public class PagedResultsControl extends AbstractControl
 
 
   /**
-   * Returns the paged results size. For requests this is the requested page
-   * size. For responses this is the result size estimate from the server.
+   * Returns the paged results size. For requests this is the requested page size. For responses this is the result size
+   * estimate from the server.
    *
    * @return  paged results size
    */
@@ -120,8 +115,8 @@ public class PagedResultsControl extends AbstractControl
 
 
   /**
-   * Sets the paged results size. For requests this is the requested page size.
-   * For responses this is the result size estimate from the server.
+   * Sets the paged results size. For requests this is the requested page size. For responses this is the result size
+   * estimate from the server.
    *
    * @param  size  paged results size
    */
@@ -156,13 +151,7 @@ public class PagedResultsControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        resultSize,
-        cookie);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), resultSize, cookie);
   }
 
 
@@ -204,8 +193,7 @@ public class PagedResultsControl extends AbstractControl
 
 
   /** Parse handler implementation for the size. */
-  private static class SizeHandler
-    extends AbstractParseHandler<PagedResultsControl>
+  private static class SizeHandler extends AbstractParseHandler<PagedResultsControl>
   {
 
     /** DER path to result size. */
@@ -232,8 +220,7 @@ public class PagedResultsControl extends AbstractControl
 
 
   /** Parse handler implementation for the cookie. */
-  private static class CookieHandler
-    extends AbstractParseHandler<PagedResultsControl>
+  private static class CookieHandler extends AbstractParseHandler<PagedResultsControl>
   {
 
     /** DER path to cookie value. */

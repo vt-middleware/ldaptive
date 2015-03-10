@@ -42,10 +42,7 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
    * @param  c  response controls
    * @param  sb  sort behavior
    */
-  public SearchEntry(
-    final int id,
-    final ResponseControl[] c,
-    final SortBehavior sb)
+  public SearchEntry(final int id, final ResponseControl[] c, final SortBehavior sb)
   {
     super(sb);
     messageId = id;

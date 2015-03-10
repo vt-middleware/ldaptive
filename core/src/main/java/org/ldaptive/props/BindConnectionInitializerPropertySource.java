@@ -7,29 +7,24 @@ import java.util.Set;
 import org.ldaptive.BindConnectionInitializer;
 
 /**
- * Reads properties specific to {@link BindConnectionInitializer} and returns an
- * initialized object of that type.
+ * Reads properties specific to {@link BindConnectionInitializer} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class BindConnectionInitializerPropertySource
-  extends AbstractPropertySource<BindConnectionInitializer>
+public final class BindConnectionInitializerPropertySource extends AbstractPropertySource<BindConnectionInitializer>
 {
 
   /** Invoker for bind connection initializer. */
-  private static final BindConnectionInitializerPropertyInvoker INVOKER =
-    new BindConnectionInitializerPropertyInvoker(
-      BindConnectionInitializer.class);
+  private static final BindConnectionInitializerPropertyInvoker INVOKER = new BindConnectionInitializerPropertyInvoker(
+    BindConnectionInitializer.class);
 
 
   /**
-   * Creates a new bind connection initializer property source using the default
-   * properties file.
+   * Creates a new bind connection initializer property source using the default properties file.
    *
    * @param  initializer  bind connection initializer to invoke properties on
    */
-  public BindConnectionInitializerPropertySource(
-    final BindConnectionInitializer initializer)
+  public BindConnectionInitializerPropertySource(final BindConnectionInitializer initializer)
   {
     this(initializer, PROPERTIES_FILE);
   }
@@ -41,9 +36,7 @@ public final class BindConnectionInitializerPropertySource
    * @param  initializer  bind connection initializer to invoke properties on
    * @param  paths  to read properties from
    */
-  public BindConnectionInitializerPropertySource(
-    final BindConnectionInitializer initializer,
-    final String... paths)
+  public BindConnectionInitializerPropertySource(final BindConnectionInitializer initializer, final String... paths)
   {
     this(initializer, loadProperties(paths));
   }
@@ -55,9 +48,7 @@ public final class BindConnectionInitializerPropertySource
    * @param  initializer  bind connection initializer to invoke properties on
    * @param  readers  to read properties from
    */
-  public BindConnectionInitializerPropertySource(
-    final BindConnectionInitializer initializer,
-    final Reader... readers)
+  public BindConnectionInitializerPropertySource(final BindConnectionInitializer initializer, final Reader... readers)
   {
     this(initializer, loadProperties(readers));
   }
@@ -69,9 +60,7 @@ public final class BindConnectionInitializerPropertySource
    * @param  initializer  bind connection initializer to invoke properties on
    * @param  props  to read properties from
    */
-  public BindConnectionInitializerPropertySource(
-    final BindConnectionInitializer initializer,
-    final Properties props)
+  public BindConnectionInitializerPropertySource(final BindConnectionInitializer initializer, final Properties props)
   {
     this(initializer, PropertyDomain.LDAP, props);
   }

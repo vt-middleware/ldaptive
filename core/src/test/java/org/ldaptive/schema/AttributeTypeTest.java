@@ -118,9 +118,7 @@ public class AttributeTypeTest
             false,
             null,
             null),
-          "( 2.5.4.0 NAME 'objectClass' " +
-            "EQUALITY objectIdentifierMatch " +
-            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 )",
+          "( 2.5.4.0 NAME 'objectClass' EQUALITY objectIdentifierMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 )",
         },
         new Object[] {
           new AttributeType(
@@ -138,9 +136,7 @@ public class AttributeTypeTest
             false,
             null,
             null),
-          "( 2.5.4.0 NAME 'objectClass' " +
-            "DESC 'RFC4512: object classes of the entity' " +
-            "EQUALITY objectIdentifierMatch " +
+          "( 2.5.4.0 NAME 'objectClass' DESC 'RFC4512: object classes of the entity' EQUALITY objectIdentifierMatch " +
             "SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 )",
         },
         new Object[] {
@@ -159,11 +155,9 @@ public class AttributeTypeTest
             true,
             AttributeUsage.DIRECTORY_OPERATION,
             null),
-          "( 2.5.21.9 NAME 'structuralObjectClass' " +
-            "DESC 'RFC4512: structural object class of entry' " +
-            "EQUALITY objectIdentifierMatch " +
-            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 SINGLE-VALUE " +
-            "NO-USER-MODIFICATION USAGE directoryOperation )",
+          "( 2.5.21.9 NAME 'structuralObjectClass' DESC 'RFC4512: structural object class of entry' " +
+            "EQUALITY objectIdentifierMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 SINGLE-VALUE NO-USER-MODIFICATION " +
+            "USAGE directoryOperation )",
         },
         new Object[] {
           new AttributeType(
@@ -181,12 +175,9 @@ public class AttributeTypeTest
             true,
             AttributeUsage.DIRECTORY_OPERATION,
             null),
-          "( 2.5.18.1 NAME 'createTimestamp' " +
-            "DESC 'RFC4512: time which object was created' " +
-            "EQUALITY generalizedTimeMatch " +
-            "ORDERING generalizedTimeOrderingMatch " +
-            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 SINGLE-VALUE " +
-            "NO-USER-MODIFICATION USAGE directoryOperation )",
+          "( 2.5.18.1 NAME 'createTimestamp' DESC 'RFC4512: time which object was created' " +
+            "EQUALITY generalizedTimeMatch ORDERING generalizedTimeOrderingMatch " +
+            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 SINGLE-VALUE NO-USER-MODIFICATION USAGE directoryOperation )",
         },
         new Object[] {
           new AttributeType(
@@ -222,10 +213,8 @@ public class AttributeTypeTest
             false,
             null,
             null),
-          "( 2.5.4.1 NAME ( 'aliasedObjectName' 'aliasedEntryName' ) " +
-            "DESC 'RFC4512: name of aliased object' " +
-            "EQUALITY distinguishedNameMatch " +
-            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 SINGLE-VALUE )",
+          "( 2.5.4.1 NAME ( 'aliasedObjectName' 'aliasedEntryName' ) DESC 'RFC4512: name of aliased object' " +
+            "EQUALITY distinguishedNameMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 SINGLE-VALUE )",
         },
         new Object[] {
           new AttributeType(
@@ -243,8 +232,7 @@ public class AttributeTypeTest
             false,
             null,
             new Extensions("X-ORIGIN", Arrays.asList("RFC 1274"))),
-          "( 0.9.2342.19200300.100.1.1 NAME 'uid' EQUALITY caseIgnoreMatch " +
-            "SUBSTR caseIgnoreSubstringsMatch " +
+          "( 0.9.2342.19200300.100.1.1 NAME 'uid' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch " +
             "SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} X-ORIGIN 'RFC 1274' )",
         },
         new Object[] {
@@ -263,10 +251,8 @@ public class AttributeTypeTest
             false,
             null,
             ext),
-          "( 2.5.4.1 NAME 'aliasedObjectName' " +
-            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 SINGLE-VALUE " +
-            "X-NDS_NAME 'Aliased Object Name' X-NDS_NONREMOVABLE '1' " +
-            "X-NDS_FILTERED_REQUIRED '1' )",
+          "( 2.5.4.1 NAME 'aliasedObjectName' SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 SINGLE-VALUE " +
+            "X-NDS_NAME 'Aliased Object Name' X-NDS_NONREMOVABLE '1' X-NDS_FILTERED_REQUIRED '1' )",
         },
       };
   }
@@ -278,10 +264,7 @@ public class AttributeTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"schema"},
-    dataProvider = "definitions"
-  )
+  @Test(groups = {"schema"}, dataProvider = "definitions")
   public void parse(final AttributeType type, final String definition)
     throws Exception
   {

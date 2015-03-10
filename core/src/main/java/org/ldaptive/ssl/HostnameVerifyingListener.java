@@ -10,8 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Handshake completed listener that invokes a hostname verifier. If hostname
- * verification fails, the socket is closed and the SSL session is invalidated.
+ * Handshake completed listener that invokes a hostname verifier. If hostname verification fails, the socket is closed
+ * and the SSL session is invalidated.
  *
  * @author  Middleware Services
  */
@@ -35,8 +35,7 @@ public class HostnameVerifyingListener implements HandshakeCompletedListener
 
 
   /**
-   * Creates a new verifying handshake completed listener. Hostname will be
-   * derived from the SSL session.
+   * Creates a new verifying handshake completed listener. Hostname will be derived from the SSL session.
    *
    * @param  verifier  hostname verifier
    */
@@ -52,9 +51,7 @@ public class HostnameVerifyingListener implements HandshakeCompletedListener
    * @param  verifier  hostname verifier
    * @param  name  hostname to verify
    */
-  public HostnameVerifyingListener(
-    final HostnameVerifier verifier,
-    final String name)
+  public HostnameVerifyingListener(final HostnameVerifier verifier, final String name)
   {
     hostnameVerifier = verifier;
     hostname = name;
@@ -95,10 +92,8 @@ public class HostnameVerifyingListener implements HandshakeCompletedListener
     }
     if (!verified) {
       throw new SSLPeerUnverifiedException(
-        String.format(
-          "Hostname '%s' does not match the hostname in the server's " +
-          "certificate",
-          hostname));
+        String.format("Hostname '%s' does not match the hostname in the server's " +
+          "certificate", hostname));
     }
   }
 }

@@ -11,13 +11,11 @@ import org.ldaptive.props.AuthenticationRequestPropertySource;
 import org.ldaptive.props.AuthenticatorPropertySource;
 
 /**
- * Provides a module authenticator factory implementation that uses the
- * properties package in this library.
+ * Provides a module authenticator factory implementation that uses the properties package in this library.
  *
  * @author  Middleware Services
  */
-public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory
-  implements AuthenticatorFactory
+public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory implements AuthenticatorFactory
 {
 
   /** Object CACHE. */
@@ -55,51 +53,41 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory
    *
    * @return  authenticator
    */
-  protected Authenticator createAuthenticatorInternal(
-    final Map<String, ?> options)
+  protected Authenticator createAuthenticatorInternal(final Map<String, ?> options)
   {
     final Authenticator a = new Authenticator();
-    final AuthenticatorPropertySource source = new AuthenticatorPropertySource(
-      a,
-      createProperties(options));
+    final AuthenticatorPropertySource source = new AuthenticatorPropertySource(a, createProperties(options));
     source.initialize();
     return a;
   }
 
 
   @Override
-  public AuthenticationRequest createAuthenticationRequest(
-    final Map<String, ?> jaasOptions)
+  public AuthenticationRequest createAuthenticationRequest(final Map<String, ?> jaasOptions)
   {
     final AuthenticationRequest ar = new AuthenticationRequest();
-    final AuthenticationRequestPropertySource source =
-      new AuthenticationRequestPropertySource(
-        ar,
-        createProperties(jaasOptions));
+    final AuthenticationRequestPropertySource source = new AuthenticationRequestPropertySource(
+      ar,
+      createProperties(jaasOptions));
     source.initialize();
     logger.trace("Created authentication request {} from {}", ar, jaasOptions);
     return ar;
   }
 
 
-  /**
-   * Iterates over the CACHE and closes any managed dn resolvers and managed
-   * authentication handlers.
-   */
+  /** Iterates over the CACHE and closes any managed dn resolvers and managed authentication handlers. */
   public static void close()
   {
     for (Map.Entry<String, Authenticator> e : CACHE.entrySet()) {
       final Authenticator a = e.getValue();
       if (a.getDnResolver() instanceof PooledConnectionFactoryManager) {
-        final PooledConnectionFactoryManager cfm =
-          (PooledConnectionFactoryManager) a.getDnResolver();
+        final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) a.getDnResolver();
         cfm.getConnectionFactory().getConnectionPool().close();
       }
 
       final AuthenticationHandler ah = a.getAuthenticationHandler();
       if (ah instanceof PooledConnectionFactoryManager) {
-        final PooledConnectionFactoryManager cfm =
-          (PooledConnectionFactoryManager) ah;
+        final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) ah;
         cfm.getConnectionFactory().getConnectionPool().close();
       }
     }

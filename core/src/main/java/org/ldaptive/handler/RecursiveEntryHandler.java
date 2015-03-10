@@ -17,8 +17,8 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 
 /**
- * This recursively searches based on a supplied attribute and merges those
- * results into the original entry. For the following LDIF:
+ * This recursively searches based on a supplied attribute and merges those results into the original entry. For the
+ * following LDIF:
  *
  * <pre>
    dn: uugid=group1,ou=groups,dc=ldaptive,dc=org
@@ -72,9 +72,7 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
    * @param  searchAttr  attribute to search on
    * @param  mergeAttrs  attribute names to merge
    */
-  public RecursiveEntryHandler(
-    final String searchAttr,
-    final String... mergeAttrs)
+  public RecursiveEntryHandler(final String searchAttr, final String... mergeAttrs)
   {
     searchAttribute = searchAttr;
     mergeAttributes = mergeAttrs;
@@ -129,8 +127,8 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
 
 
   /**
-   * Initializes the return attributes array. Must be called after both
-   * searchAttribute and mergeAttributes have been set.
+   * Initializes the return attributes array. Must be called after both searchAttribute and mergeAttributes have been
+   * set.
    */
   protected void initalizeReturnAttributes()
   {
@@ -144,10 +142,7 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  public HandlerResult<SearchEntry> handle(
-    final Connection conn,
-    final SearchRequest request,
-    final SearchEntry entry)
+  public HandlerResult<SearchEntry> handle(final Connection conn, final SearchRequest request, final SearchEntry entry)
     throws LdapException
   {
     // Recursively searches a list of attributes and merges those results with
@@ -164,8 +159,8 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
 
 
   /**
-   * Reads the values of {@link #searchAttribute} from the supplied attributes
-   * and calls {@link #recursiveSearch} for each.
+   * Reads the values of {@link #searchAttribute} from the supplied attributes and calls {@link #recursiveSearch} for
+   * each.
    *
    * @param  conn  to perform search operation on
    * @param  entry  to read
@@ -173,10 +168,7 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
    *
    * @throws  LdapException  if a search error occurs
    */
-  private void readSearchAttribute(
-    final Connection conn,
-    final LdapEntry entry,
-    final List<String> searchedDns)
+  private void readSearchAttribute(final Connection conn, final LdapEntry entry, final List<String> searchedDns)
     throws LdapException
   {
     if (entry != null) {
@@ -192,8 +184,8 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
 
 
   /**
-   * Recursively gets the attribute(s) {@link #mergeAttributes} for the supplied
-   * dn and adds the values to the supplied attributes.
+   * Recursively gets the attribute(s) {@link #mergeAttributes} for the supplied dn and adds the values to the supplied
+   * attributes.
    *
    * @param  conn  to perform search operation on
    * @param  dn  to get attribute(s) for
@@ -214,16 +206,11 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
       LdapEntry newEntry = null;
       try {
         final SearchOperation search = new SearchOperation(conn);
-        final SearchRequest sr = SearchRequest.newObjectScopeSearchRequest(
-          dn,
-          retAttrs);
+        final SearchRequest sr = SearchRequest.newObjectScopeSearchRequest(dn, retAttrs);
         final SearchResult result = search.execute(sr).getResult();
         newEntry = result.getEntry(dn);
       } catch (LdapException e) {
-        logger.warn(
-          "Error retrieving attribute(s): {}",
-          Arrays.toString(retAttrs),
-          e);
+        logger.warn("Error retrieving attribute(s): {}", Arrays.toString(retAttrs), e);
       }
       searchedDns.add(dn);
 
@@ -259,12 +246,7 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        mergeAttributes,
-        retAttrs,
-        searchAttribute);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, mergeAttributes, retAttrs, searchAttribute);
   }
 
 

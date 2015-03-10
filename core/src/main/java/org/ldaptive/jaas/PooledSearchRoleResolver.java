@@ -11,8 +11,7 @@ import org.ldaptive.pool.PooledConnectionFactoryManager;
  *
  * @author  Middleware Services
  */
-public class PooledSearchRoleResolver extends AbstractSearchRoleResolver
-  implements PooledConnectionFactoryManager
+public class PooledSearchRoleResolver extends AbstractSearchRoleResolver implements PooledConnectionFactoryManager
 {
 
   /** Connection factory. */
@@ -69,11 +68,6 @@ public class PooledSearchRoleResolver extends AbstractSearchRoleResolver
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::factory=%s]",
-        getClass().getName(),
-        hashCode(),
-        factory);
+    return String.format("[%s@%d::factory=%s]", getClass().getName(), hashCode(), factory);
   }
 }

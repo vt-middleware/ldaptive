@@ -6,8 +6,7 @@ import java.util.StringTokenizer;
 import org.ldaptive.LdapUtils;
 
 /**
- * Class to represent an active directory GUID. Provides conversion from binary
- * to string and vice versa.
+ * Class to represent an active directory GUID. Provides conversion from binary to string and vice versa.
  *
  * @author  Middleware Services
  */
@@ -73,9 +72,7 @@ public final class GlobalIdentifier
     // CheckStyle:MagicNumber OFF
 
     // remove the enclosing brackets {...}
-    final StringTokenizer st = new StringTokenizer(
-      guid.substring(1, guid.length() - 1),
-      "-");
+    final StringTokenizer st = new StringTokenizer(guid.substring(1, guid.length() - 1), "-");
     // first token is 4 bytes, big endian
     final String data1 = st.nextToken();
     // second token is 2 bytes, big endian
@@ -100,17 +97,14 @@ public final class GlobalIdentifier
 
 
   /**
-   * Reads bytes from the supplied byte buffer. The byte buffer limit must be
-   * set appropriately by the caller.
+   * Reads bytes from the supplied byte buffer. The byte buffer limit must be set appropriately by the caller.
    *
    * @param  buffer  to read bytes from
    * @param  bigEndian  whether to return the bytes as big endian
    *
    * @return  long value
    */
-  private static byte[] getBytes(
-    final ByteBuffer buffer,
-    final boolean bigEndian)
+  private static byte[] getBytes(final ByteBuffer buffer, final boolean bigEndian)
   {
     // CheckStyle:MagicNumber OFF
     final byte[] bytes = new byte[buffer.limit() - buffer.position()];
@@ -131,17 +125,13 @@ public final class GlobalIdentifier
 
 
   /**
-   * Writes a long into the supplied byte buffer. The byte buffer limit must be
-   * set appropriately by the caller.
+   * Writes a long into the supplied byte buffer. The byte buffer limit must be set appropriately by the caller.
    *
    * @param  buffer  to write long to
    * @param  bytes  to write
    * @param  bigEndian  whether to write the bytes as big endian
    */
-  private static void putBytes(
-    final ByteBuffer buffer,
-    final byte[] bytes,
-    final boolean bigEndian)
+  private static void putBytes(final ByteBuffer buffer, final byte[] bytes, final boolean bigEndian)
   {
     // CheckStyle:MagicNumber OFF
     if (bigEndian) {

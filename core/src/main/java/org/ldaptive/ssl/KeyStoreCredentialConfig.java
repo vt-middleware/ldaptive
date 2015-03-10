@@ -7,8 +7,7 @@ import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 
 /**
- * Provides the properties necessary for creating an SSL context initializer
- * with a keystore credential reader.
+ * Provides the properties necessary for creating an SSL context initializer with a keystore credential reader.
  *
  * @author  Middleware Services
  */
@@ -19,8 +18,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   private static final int HASH_CODE_SEED = 1013;
 
   /** Handles loading keystores. */
-  private final KeyStoreCredentialReader keyStoreReader =
-    new KeyStoreCredentialReader();
+  private final KeyStoreCredentialReader keyStoreReader = new KeyStoreCredentialReader();
 
   /** Name of the truststore to use for the SSL connection. */
   private String trustStore;
@@ -227,19 +225,15 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   public SSLContextInitializer createSSLContextInitializer()
     throws GeneralSecurityException
   {
-    final KeyStoreSSLContextInitializer sslInit =
-      new KeyStoreSSLContextInitializer();
+    final KeyStoreSSLContextInitializer sslInit = new KeyStoreSSLContextInitializer();
     try {
       if (trustStore != null) {
-        sslInit.setTrustKeystore(
-          keyStoreReader.read(trustStore, trustStorePassword, trustStoreType));
+        sslInit.setTrustKeystore(keyStoreReader.read(trustStore, trustStorePassword, trustStoreType));
         sslInit.setTrustAliases(trustStoreAliases);
       }
       if (keyStore != null) {
-        sslInit.setAuthenticationKeystore(
-          keyStoreReader.read(keyStore, keyStorePassword, keyStoreType));
-        sslInit.setAuthenticationPassword(
-          keyStorePassword != null ? keyStorePassword.toCharArray() : null);
+        sslInit.setAuthenticationKeystore(keyStoreReader.read(keyStore, keyStorePassword, keyStoreType));
+        sslInit.setAuthenticationPassword(keyStorePassword != null ? keyStorePassword.toCharArray() : null);
         sslInit.setAuthenticationAliases(keyStoreAliases);
       }
     } catch (IOException e) {

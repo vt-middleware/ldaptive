@@ -15,16 +15,12 @@ public class AllowAnyTrustManager implements X509TrustManager
 
 
   @Override
-  public void checkClientTrusted(
-    final X509Certificate[] chain,
-    final String authType)
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException {}
 
 
   @Override
-  public void checkServerTrusted(
-    final X509Certificate[] chain,
-    final String authType)
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException {}
 
 

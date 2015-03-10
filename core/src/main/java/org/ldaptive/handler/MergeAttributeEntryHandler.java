@@ -10,9 +10,8 @@ import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 
 /**
- * Merges the values of one or more attributes into a single attribute. The
- * merged attribute may or may not already exist on the entry. If it does exist
- * it's existing values will remain intact.
+ * Merges the values of one or more attributes into a single attribute. The merged attribute may or may not already
+ * exist on the entry. If it does exist it's existing values will remain intact.
  *
  * @author  Middleware Services
  */
@@ -74,10 +73,7 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected void handleAttributes(
-    final Connection conn,
-    final SearchRequest request,
-    final SearchEntry entry)
+  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
     throws LdapException
   {
     boolean newAttribute = false;
@@ -106,11 +102,7 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        attributeNames,
-        mergeAttributeName);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeNames, mergeAttributeName);
   }
 
 

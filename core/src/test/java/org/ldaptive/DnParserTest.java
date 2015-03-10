@@ -167,14 +167,8 @@ public class DnParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"dnParser"},
-    dataProvider = "DNs"
-  )
-  public void testParsing(
-    final String dn,
-    final String name,
-    final String value)
+  @Test(groups = {"dnParser"}, dataProvider = "DNs")
+  public void testParsing(final String dn, final String name, final String value)
     throws Exception
   {
     Assert.assertEquals(DnParser.getValue(dn, name), value);
@@ -186,10 +180,7 @@ public class DnParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"dnParser"},
-    dataProvider = "invalidDNs"
-  )
+  @Test(groups = {"dnParser"}, dataProvider = "invalidDNs")
   public void testInvalidParsing(final String dn)
     throws Exception
   {
@@ -214,12 +205,8 @@ public class DnParserTest
     } catch (Exception e) {
       Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
     }
-    Assert.assertEquals(
-      DnParser.substring(dn, 0),
-      "CN=Jim Smith,UID=jsmith,DC=ldaptive,DC=org");
-    Assert.assertEquals(
-      DnParser.substring(dn, 1),
-      "UID=jsmith,DC=ldaptive,DC=org");
+    Assert.assertEquals(DnParser.substring(dn, 0), "CN=Jim Smith,UID=jsmith,DC=ldaptive,DC=org");
+    Assert.assertEquals(DnParser.substring(dn, 1), "UID=jsmith,DC=ldaptive,DC=org");
     Assert.assertEquals(DnParser.substring(dn, 2), "DC=ldaptive,DC=org");
     Assert.assertEquals(DnParser.substring(dn, 3), "DC=org");
     try {

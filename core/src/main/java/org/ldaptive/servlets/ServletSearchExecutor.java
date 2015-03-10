@@ -25,8 +25,7 @@ public interface ServletSearchExecutor
 
 
   /**
-   * Reads parameters from the request, performs an ldap search, and writes the
-   * result to the response.
+   * Reads parameters from the request, performs an ldap search, and writes the result to the response.
    *
    * @param  request  servlet request to read search parameters from
    * @param  response  servlet response to write ldap search result to

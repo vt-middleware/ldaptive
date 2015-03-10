@@ -38,8 +38,7 @@ public class FutureResponse<T> extends Response<T>
    *
    * @return  response from the future
    *
-   * @throws  IllegalStateException  if the future is interrupted or throws an
-   * execution exception
+   * @throws  IllegalStateException  if the future is interrupted or throws an execution exception
    */
   protected Response<T> getResponse()
   {

@@ -7,13 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base implementation of a {@link AttributeValueMutator}. Uses a {@link
- * ReflectionTranscoder} for mutating values.
+ * Base implementation of a {@link AttributeValueMutator}. Uses a {@link ReflectionTranscoder} for mutating values.
  *
  * @author  Middleware Services
  */
-public abstract class AbstractAttributeValueMutator
-  implements AttributeValueMutator
+public abstract class AbstractAttributeValueMutator implements AttributeValueMutator
 {
 
   /** Logger for this class. */

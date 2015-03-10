@@ -40,13 +40,9 @@ public class BeanGeneratorPropertyInvoker extends AbstractPropertyInvoker
           if (s[1].endsWith(".class")) {
             ((Map) newValue).put(
               s[0],
-              createTypeFromPropertyValue(
-                Class.class,
-                s[1].substring(0, s[1].indexOf(".class"))));
+              createTypeFromPropertyValue(Class.class, s[1].substring(0, s[1].indexOf(".class"))));
           } else if (s[1].startsWith("[")) {
-            ((Map) newValue).put(
-              s[0],
-              createTypeFromPropertyValue(Class.class, s[1]));
+            ((Map) newValue).put(s[0], createTypeFromPropertyValue(Class.class, s[1]));
           } else {
             ((Map) newValue).put(s[0], s[1]);
           }

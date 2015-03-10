@@ -74,58 +74,48 @@ public class PasswordModifyOperationTest extends AbstractTest
     }
   )
   @Test(groups = {"extended"})
-  public void modify(
-    final String dn,
-    final String oldPass,
-    final String newPass)
+  public void modify(final String dn, final String oldPass, final String newPass)
     throws Exception
   {
     if (TestControl.isActiveDirectory()) {
       return;
     }
+
     final Authenticator auth = TestUtils.createSSLDnAuthenticator();
-    AuthenticationResponse response = auth.authenticate(
-      new AuthenticationRequest(dn, new Credential(oldPass)));
+    AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(oldPass)));
     AssertJUnit.assertTrue(response.getResult());
 
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final PasswordModifyOperation modify = new PasswordModifyOperation(conn);
       // invalid password
       try {
         final Response<Credential> res = modify.execute(
-          new PasswordModifyRequest(
-            dn, new Credential(INVALID_PASSWD), new Credential(newPass)));
-        AssertJUnit.assertEquals(
-          ResultCode.UNWILLING_TO_PERFORM, res.getResultCode());
+          new PasswordModifyRequest(dn, new Credential(INVALID_PASSWD), new Credential(newPass)));
+        AssertJUnit.assertEquals(ResultCode.UNWILLING_TO_PERFORM, res.getResultCode());
       } catch (LdapException e) {
-        AssertJUnit.assertEquals(
-          ResultCode.UNWILLING_TO_PERFORM, e.getResultCode());
+        AssertJUnit.assertEquals(ResultCode.UNWILLING_TO_PERFORM, e.getResultCode());
       }
 
       // change password
       Response<Credential> modifyResponse = modify.execute(
-        new PasswordModifyRequest(
-          dn, new Credential(oldPass), new Credential(newPass)));
+        new PasswordModifyRequest(dn, new Credential(oldPass), new Credential(newPass)));
       AssertJUnit.assertNotNull(modifyResponse);
       AssertJUnit.assertNull(modifyResponse.getResult());
-      response = auth.authenticate(
-        new AuthenticationRequest(dn, new Credential(oldPass)));
+      response = auth.authenticate(new AuthenticationRequest(dn, new Credential(oldPass)));
       AssertJUnit.assertFalse(response.getResult());
-      response = auth.authenticate(
-        new AuthenticationRequest(dn, new Credential(newPass)));
+      response = auth.authenticate(new AuthenticationRequest(dn, new Credential(newPass)));
       AssertJUnit.assertTrue(response.getResult());
 
       // generate password
       modifyResponse = modify.execute(new PasswordModifyRequest(dn));
       AssertJUnit.assertNotNull(modifyResponse);
       AssertJUnit.assertNotNull(modifyResponse.getResult());
-      response = auth.authenticate(
-        new AuthenticationRequest(dn, new Credential(newPass)));
+      response = auth.authenticate(new AuthenticationRequest(dn, new Credential(newPass)));
       AssertJUnit.assertFalse(response.getResult());
-      response = auth.authenticate(
-        new AuthenticationRequest(dn, modifyResponse.getResult()));
+      response = auth.authenticate(new AuthenticationRequest(dn, modifyResponse.getResult()));
       AssertJUnit.assertTrue(response.getResult());
     } finally {
       conn.close();

@@ -15,13 +15,11 @@ import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
 
 /**
- * Creates ldap connections using the UnboundID LDAPConnection class and
- * performs the startTLS extended operation.
+ * Creates ldap connections using the UnboundID LDAPConnection class and performs the startTLS extended operation.
  *
  * @author  Middleware Services
  */
-public class UnboundIDStartTLSConnectionFactory
-  extends AbstractProviderConnectionFactory<UnboundIDProviderConfig>
+public class UnboundIDStartTLSConnectionFactory extends AbstractProviderConnectionFactory<UnboundIDProviderConfig>
 {
 
   /** Socket factory to use for connections. */
@@ -67,12 +65,9 @@ public class UnboundIDStartTLSConnectionFactory
     try {
       final LDAPConnection lc = new LDAPConnection(socketFactory, ldapOptions);
       conn = new UnboundIDConnection(lc, getProviderConfig());
-      lc.connect(
-        ldapUrl.getLastEntry().getHostname(),
-        ldapUrl.getLastEntry().getPort());
+      lc.connect(ldapUrl.getLastEntry().getHostname(), ldapUrl.getLastEntry().getPort());
 
-      final ExtendedResult result = lc.processExtendedOperation(
-        new StartTLSExtendedRequest(sslContext));
+      final ExtendedResult result = lc.processExtendedOperation(new StartTLSExtendedRequest(sslContext));
       if (result.getResultCode() != ResultCode.SUCCESS) {
         closeConn = true;
         throw new ConnectionException(
@@ -81,9 +76,7 @@ public class UnboundIDStartTLSConnectionFactory
       }
     } catch (LDAPException e) {
       closeConn = true;
-      throw new ConnectionException(
-        e,
-        org.ldaptive.ResultCode.valueOf(e.getResultCode().intValue()));
+      throw new ConnectionException(e, org.ldaptive.ResultCode.valueOf(e.getResultCode().intValue()));
     } finally {
       if (closeConn) {
         try {

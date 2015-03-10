@@ -13,8 +13,7 @@ import org.ldaptive.auth.AbstractSearchOperationFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractSearchRoleResolver
-  extends AbstractSearchOperationFactory implements RoleResolver
+public abstract class AbstractSearchRoleResolver extends AbstractSearchOperationFactory implements RoleResolver
 {
 
 

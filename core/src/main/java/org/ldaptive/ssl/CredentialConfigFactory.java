@@ -11,8 +11,7 @@ import java.security.cert.X509Certificate;
 import org.ldaptive.LdapUtils;
 
 /**
- * Utility class for creating credential configs when the underlying credential
- * is already available for use.
+ * Utility class for creating credential configs when the underlying credential is already available for use.
  *
  * @author  Middleware Services
  */
@@ -31,8 +30,7 @@ public final class CredentialConfigFactory
    *
    * @return  credential config
    */
-  public static CredentialConfig createKeyStoreCredentialConfig(
-    final KeyStore trustStore)
+  public static CredentialConfig createKeyStoreCredentialConfig(final KeyStore trustStore)
   {
     return createKeyStoreCredentialConfig(trustStore, null, null);
   }
@@ -46,17 +44,14 @@ public final class CredentialConfigFactory
    *
    * @return  credential config
    */
-  public static CredentialConfig createKeyStoreCredentialConfig(
-    final KeyStore keyStore,
-    final String keyStorePassword)
+  public static CredentialConfig createKeyStoreCredentialConfig(final KeyStore keyStore, final String keyStorePassword)
   {
     return createKeyStoreCredentialConfig(null, keyStore, keyStorePassword);
   }
 
 
   /**
-   * Creates a KeyStoreCredentialConfig from the supplied truststore, keystore
-   * and password.
+   * Creates a KeyStoreCredentialConfig from the supplied truststore, keystore and password.
    *
    * @param  trustStore  to create credential config from
    * @param  keyStore  to create credential config from
@@ -75,15 +70,13 @@ public final class CredentialConfigFactory
       public SSLContextInitializer createSSLContextInitializer()
         throws GeneralSecurityException
       {
-        final KeyStoreSSLContextInitializer sslInit =
-          new KeyStoreSSLContextInitializer();
+        final KeyStoreSSLContextInitializer sslInit = new KeyStoreSSLContextInitializer();
         if (trustStore != null) {
           sslInit.setTrustKeystore(trustStore);
         }
         if (keyStore != null) {
           sslInit.setAuthenticationKeystore(keyStore);
-          sslInit.setAuthenticationPassword(
-            keyStorePassword != null ? keyStorePassword.toCharArray() : null);
+          sslInit.setAuthenticationPassword(keyStorePassword != null ? keyStorePassword.toCharArray() : null);
         }
         return sslInit;
       }
@@ -98,16 +91,14 @@ public final class CredentialConfigFactory
    *
    * @return  credential config
    */
-  public static CredentialConfig createX509CredentialConfig(
-    final X509Certificate[] trustCertificates)
+  public static CredentialConfig createX509CredentialConfig(final X509Certificate[] trustCertificates)
   {
     return createX509CredentialConfig(trustCertificates, null, null);
   }
 
 
   /**
-   * Creates a X509CredentialConfig from the supplied authentication certificate
-   * and private key.
+   * Creates a X509CredentialConfig from the supplied authentication certificate and private key.
    *
    * @param  authenticationCertificate  to create credential config from
    * @param  authenticationKey  that belongs to the certificate
@@ -118,17 +109,12 @@ public final class CredentialConfigFactory
     final X509Certificate authenticationCertificate,
     final PrivateKey authenticationKey)
   {
-    return
-      createX509CredentialConfig(
-        null,
-        authenticationCertificate,
-        authenticationKey);
+    return createX509CredentialConfig(null, authenticationCertificate, authenticationKey);
   }
 
 
   /**
-   * Creates a X509CredentialConfig from the supplied trust certificates,
-   * authentication certificate and private key.
+   * Creates a X509CredentialConfig from the supplied trust certificates, authentication certificate and private key.
    *
    * @param  trustCertificates  to create credential config from
    * @param  authenticationCertificate  to create credential config from
@@ -147,8 +133,7 @@ public final class CredentialConfigFactory
       public SSLContextInitializer createSSLContextInitializer()
         throws GeneralSecurityException
       {
-        final X509SSLContextInitializer sslInit =
-          new X509SSLContextInitializer();
+        final X509SSLContextInitializer sslInit = new X509SSLContextInitializer();
         if (trustCertificates != null) {
           sslInit.setTrustCertificates(trustCertificates);
         }
@@ -171,8 +156,7 @@ public final class CredentialConfigFactory
    *
    * @return  credential config
    */
-  public static CredentialConfig createX509CredentialConfig(
-    final String trustCertificates)
+  public static CredentialConfig createX509CredentialConfig(final String trustCertificates)
   {
     return
       new CredentialConfig() {
@@ -180,14 +164,11 @@ public final class CredentialConfigFactory
       public SSLContextInitializer createSSLContextInitializer()
         throws GeneralSecurityException
       {
-        final X509SSLContextInitializer sslInit =
-          new X509SSLContextInitializer();
+        final X509SSLContextInitializer sslInit = new X509SSLContextInitializer();
         try {
           if (trustCertificates != null) {
-            final X509CertificatesCredentialReader certsReader =
-              new X509CertificatesCredentialReader();
-            final InputStream trustCertStream = new ByteArrayInputStream(
-              LdapUtils.utf8Encode(trustCertificates));
+            final X509CertificatesCredentialReader certsReader = new X509CertificatesCredentialReader();
+            final InputStream trustCertStream = new ByteArrayInputStream(LdapUtils.utf8Encode(trustCertificates));
             sslInit.setTrustCertificates(certsReader.read(trustCertStream));
             trustCertStream.close();
           }

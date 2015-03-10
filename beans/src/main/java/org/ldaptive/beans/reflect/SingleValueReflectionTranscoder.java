@@ -7,8 +7,7 @@ import java.util.List;
 import org.ldaptive.io.ValueTranscoder;
 
 /**
- * Reflection transcoder which expects to operate on collections containing a
- * single value.
+ * Reflection transcoder which expects to operate on collections containing a single value.
  *
  * @param  <T>  type of object to transcode
  *
@@ -33,16 +32,14 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
 
 
   /**
-   * Creates a new single value reflection transcoder. Useful when the type of
-   * the value transcoder is unknown.
+   * Creates a new single value reflection transcoder. Useful when the type of the value transcoder is unknown.
    *
    * @param  <T>  type to transcode
    * @param  transcoder  for a single value
    *
    * @return  single value reflection transcoder
    */
-  public static <T> SingleValueReflectionTranscoder<T> newInstance(
-    final ValueTranscoder<T> transcoder)
+  public static <T> SingleValueReflectionTranscoder<T> newInstance(final ValueTranscoder<T> transcoder)
   {
     return new SingleValueReflectionTranscoder<>(transcoder);
   }
@@ -121,11 +118,6 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::valueTranscoder=%s]",
-        getClass().getName(),
-        hashCode(),
-        valueTranscoder);
+    return String.format("[%s@%d::valueTranscoder=%s]", getClass().getName(), hashCode(), valueTranscoder);
   }
 }

@@ -38,27 +38,23 @@ public class VirtualListViewClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "createEntry19",
-    "createEntry20",
-    "createEntry21"
-  })
+  @Parameters(
+    {
+      "createEntry19",
+      "createEntry20",
+      "createEntry21"
+    }
+  )
   @BeforeClass(groups = {"control-util"})
-  public void createLdapEntry(
-    final String ldifFile1,
-    final String ldifFile2,
-    final String ldifFile3)
+  public void createLdapEntry(final String ldifFile1, final String ldifFile2, final String ldifFile3)
     throws Exception
   {
     testLdapEntries = new LdapEntry[3];
-    testLdapEntries[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile1)).getEntry();
+    testLdapEntries[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile1)).getEntry();
     super.createLdapEntry(testLdapEntries[0]);
-    testLdapEntries[1] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    testLdapEntries[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
     super.createLdapEntry(testLdapEntries[1]);
-    testLdapEntries[2] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    testLdapEntries[2] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
     super.createLdapEntry(testLdapEntries[2]);
   }
 
@@ -80,10 +76,12 @@ public class VirtualListViewClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
-    "vlvSearchDn",
-    "vlvSearchFilter"
-  })
+  @Parameters(
+    {
+      "vlvSearchDn",
+      "vlvSearchFilter"
+    }
+  )
   @Test(groups = {"control-util"})
   public void execute(final String dn, final String filter)
     throws Exception
@@ -98,25 +96,25 @@ public class VirtualListViewClientTest extends AbstractTest
       return;
     }
 
-    Connection conn = TestUtils.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
-      final VirtualListViewClient client = new VirtualListViewClient(
-        conn, new SortKey[] {
-        new SortKey("uid", "caseExactMatch"),
-        new SortKey("givenName", "caseIgnoreMatch")});
 
-      final SearchRequest request = new SearchRequest(
-        dn, new SearchFilter(filter));
-      Response<SearchResult> response = client.execute(
-        request, new VirtualListViewParams(1, 0, 1));
+      final VirtualListViewClient client = new VirtualListViewClient(
+        conn,
+        new SortKey[] {
+          new SortKey("uid", "caseExactMatch"),
+          new SortKey("givenName", "caseIgnoreMatch"),
+        });
+
+      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
+      Response<SearchResult> response = client.execute(request, new VirtualListViewParams(1, 0, 1));
       Iterator<LdapEntry> i = response.getResult().getEntries().iterator();
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());
       AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
 
-      response = client.execute(
-        request, new VirtualListViewParams(2, 1, 1), response);
+      response = client.execute(request, new VirtualListViewParams(2, 1, 1), response);
       i = response.getResult().getEntries().iterator();
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());
@@ -134,20 +132,19 @@ public class VirtualListViewClientTest extends AbstractTest
     // list. Open a new connection.
     try {
       conn.open();
-      final VirtualListViewClient client = new VirtualListViewClient(
-        conn, new SortKey[] { new SortKey("uid", "caseExactMatch")});
 
-      final SearchRequest request = new SearchRequest(
-        dn, new SearchFilter(filter));
-      Response<SearchResult> response = client.execute(
-        request, new VirtualListViewParams("21", 1, 0));
+      final VirtualListViewClient client = new VirtualListViewClient(
+        conn,
+        new SortKey[] {new SortKey("uid", "caseExactMatch")});
+
+      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
+      Response<SearchResult> response = client.execute(request, new VirtualListViewParams("21", 1, 0));
       Iterator<LdapEntry> i = response.getResult().getEntries().iterator();
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
       AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
 
-      response = client.execute(
-        request, new VirtualListViewParams("19", 0, 2), response);
+      response = client.execute(request, new VirtualListViewParams("19", 0, 2), response);
       i = response.getResult().getEntries().iterator();
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());

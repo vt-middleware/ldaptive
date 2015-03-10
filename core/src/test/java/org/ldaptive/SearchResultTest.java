@@ -24,23 +24,18 @@ public class SearchResultTest
   @DataProvider(name = "entries")
   public Object[][] createSerializable()
   {
-    return
-      new Object[][] {
-        new Object[] {new LdapEntry("uid=1"), new LdapEntry("uid=2")},
-      };
+    return new Object[][] {
+      new Object[] {new LdapEntry("uid=1"), new LdapEntry("uid=2"), },
+    };
   }
 
 
-  /**
-   * Tests default sort behavior.
-   */
+  /** Tests default sort behavior. */
   @Test(groups = {"bean"})
   public void defaultSortBehavior()
   {
     final SearchResult sr = new SearchResult();
-    AssertJUnit.assertEquals(
-      SortBehavior.getDefaultSortBehavior(),
-      sr.getSortBehavior());
+    AssertJUnit.assertEquals(SortBehavior.getDefaultSortBehavior(), sr.getSortBehavior());
     AssertJUnit.assertEquals(0, sr.size());
     AssertJUnit.assertNull(sr.getEntry());
     sr.clear();
@@ -55,9 +50,7 @@ public class SearchResultTest
    * @param  entry2  ldap entry
    */
   @Test(groups = {"bean"}, dataProvider = "entries")
-  public void orderedSortBehavior(
-    final LdapEntry entry1,
-    final LdapEntry entry2)
+  public void orderedSortBehavior(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(SortBehavior.ORDERED);
     AssertJUnit.assertEquals(SortBehavior.ORDERED, sr.getSortBehavior());
@@ -78,13 +71,12 @@ public class SearchResultTest
    * @param  entry2  ldap entry
    */
   @Test(groups = {"bean"}, dataProvider = "entries")
-  public void sortedSortBehavior(
-    final LdapEntry entry1,
-    final LdapEntry entry2)
+  public void sortedSortBehavior(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(SortBehavior.SORTED);
     AssertJUnit.assertEquals(SortBehavior.SORTED, sr.getSortBehavior());
     sr.addEntry(entry2, entry1);
+
     final LdapEntry[] entries = sr.getEntries().toArray(new LdapEntry[2]);
     AssertJUnit.assertEquals(entry1, entries[0]);
     AssertJUnit.assertEquals(entry2, entries[1]);
@@ -100,9 +92,7 @@ public class SearchResultTest
    * @param  entry2  ldap entry
    */
   @Test(groups = {"bean"}, dataProvider = "entries")
-  public void createOne(
-    final LdapEntry entry1,
-    final LdapEntry entry2)
+  public void createOne(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(entry1);
     AssertJUnit.assertEquals(entry1, sr.getEntry());
@@ -123,9 +113,7 @@ public class SearchResultTest
    * @param  entry2  ldap entry
    */
   @Test(groups = {"bean"}, dataProvider = "entries")
-  public void createTwo(
-    final LdapEntry entry1,
-    final LdapEntry entry2)
+  public void createTwo(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(entry2, entry1);
     AssertJUnit.assertEquals(entry1, sr.getEntry("uid=1"));
@@ -147,12 +135,11 @@ public class SearchResultTest
    * @param  entry2  ldap entry
    */
   @Test(groups = {"bean"}, dataProvider = "entries")
-  public void createCollection(
-    final LdapEntry entry1,
-    final LdapEntry entry2)
+  public void createCollection(final LdapEntry entry1, final LdapEntry entry2)
   {
     final Set<LdapEntry> s = new HashSet<>();
     s.add(entry1);
+
     final SearchResult sr = new SearchResult(s);
     sr.addEntry(entry2);
     AssertJUnit.assertEquals(entry1, sr.getEntry("UID=1"));
@@ -174,9 +161,7 @@ public class SearchResultTest
    * @param  entry2  ldap entry
    */
   @Test(groups = {"bean"}, dataProvider = "entries")
-  public void subResult(
-    final LdapEntry entry1,
-    final LdapEntry entry2)
+  public void subResult(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(SortBehavior.SORTED);
     sr.addEntry(entry2, entry1);

@@ -39,8 +39,7 @@ public class PropertyValueParserTest
     final String p2 = "org.ldaptive.handler.MergeAttributeEntryHandler{ }";
     final MergeAttributeEntryHandler o2 = new MergeAttributeEntryHandler();
 
-    final String p3 =
-      "org.ldaptive.pool.IdlePruneStrategy{{prunePeriod=60}{idleTime=120}";
+    final String p3 = "org.ldaptive.pool.IdlePruneStrategy{{prunePeriod=60}{idleTime=120}";
     final IdlePruneStrategy o3 = new IdlePruneStrategy();
     o3.setPrunePeriod(60);
     o3.setIdleTime(120);
@@ -79,14 +78,8 @@ public class PropertyValueParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"props"},
-    dataProvider = "properties"
-  )
-  public void initializeType(
-    final String property,
-    final Class<?> type,
-    final Object initialized)
+  @Test(groups = {"props"}, dataProvider = "properties")
+  public void initializeType(final String property, final Class<?> type, final Object initialized)
     throws Exception
   {
     PropertyValueParser parser = null;
@@ -99,8 +92,6 @@ public class PropertyValueParserTest
     }
 
     final Object o = parser.initializeType();
-    Assert.assertEquals(
-      initialized.toString().split("::")[1],
-      o.toString().split("::")[1]);
+    Assert.assertEquals(initialized.toString().split("::")[1], o.toString().split("::")[1]);
   }
 }

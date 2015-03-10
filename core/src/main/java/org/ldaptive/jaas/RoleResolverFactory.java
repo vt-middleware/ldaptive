@@ -5,8 +5,7 @@ import java.util.Map;
 import org.ldaptive.SearchRequest;
 
 /**
- * Provides an interface for creating role resolver needed by various JAAS
- * modules.
+ * Provides an interface for creating role resolver needed by various JAAS modules.
  *
  * @author  Middleware Services
  */

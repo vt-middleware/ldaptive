@@ -16,8 +16,8 @@ public interface LdapEntryManager<T>
 
 
   /**
-   * Searches for the supplied annotated object in an LDAP and returns the
-   * object mapped with it's ldap attribute properties set.
+   * Searches for the supplied annotated object in an LDAP and returns the object mapped with it's ldap attribute
+   * properties set.
    *
    * @param  object  to find
    *
@@ -43,8 +43,7 @@ public interface LdapEntryManager<T>
 
 
   /**
-   * Merges the supplied annotated object in an LDAP. See {@link
-   * org.ldaptive.ext.MergeOperation}.
+   * Merges the supplied annotated object in an LDAP. See {@link org.ldaptive.ext.MergeOperation}.
    *
    * @param  object  to merge
    *

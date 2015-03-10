@@ -7,8 +7,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
- * Class to represent an active directory SID. Provides conversion from binary
- * to string and vice versa.
+ * Class to represent an active directory SID. Provides conversion from binary to string and vice versa.
  *
  * @author  Middleware Services
  */
@@ -118,8 +117,7 @@ public final class SecurityIdentifier
 
 
   /**
-   * Reads a long from the supplied byte buffer. The byte buffer limit must be
-   * set appropriately by the caller.
+   * Reads a long from the supplied byte buffer. The byte buffer limit must be set appropriately by the caller.
    *
    * @param  buffer  to read long from
    * @param  bigEndian  whether to read the bytes as big endian
@@ -150,17 +148,13 @@ public final class SecurityIdentifier
 
 
   /**
-   * Writes a long into the supplied byte buffer. The byte buffer limit must be
-   * set appropriately by the caller.
+   * Writes a long into the supplied byte buffer. The byte buffer limit must be set appropriately by the caller.
    *
    * @param  buffer  to write long to
    * @param  value  to write
    * @param  bigEndian  whether to write the bytes as big endian
    */
-  private static void putLong(
-    final ByteBuffer buffer,
-    final long value,
-    final boolean bigEndian)
+  private static void putLong(final ByteBuffer buffer, final long value, final boolean bigEndian)
   {
     // CheckStyle:MagicNumber OFF
     if (bigEndian) {

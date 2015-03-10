@@ -12,14 +12,11 @@ import org.ldaptive.Operation;
  *
  * @author  Middleware Services
  */
-public class ModifyDnReferralHandler
-  extends AbstractReferralHandler<ModifyDnRequest, Void>
+public class ModifyDnReferralHandler extends AbstractReferralHandler<ModifyDnRequest, Void>
 {
 
 
-  /**
-   * Creates a new modify dn referral handler.
-   */
+  /** Creates a new modify dn referral handler. */
   public ModifyDnReferralHandler()
   {
     this(DEFAULT_REFERRAL_LIMIT, 0, DEFAULT_CONNECTION_FACTORY);
@@ -54,9 +51,7 @@ public class ModifyDnReferralHandler
    * @param  limit  number of referrals to follow
    * @param  factory  referral connection factory
    */
-  public ModifyDnReferralHandler(
-    final int limit,
-    final ReferralConnectionFactory factory)
+  public ModifyDnReferralHandler(final int limit, final ReferralConnectionFactory factory)
   {
     this(limit, 0, factory);
   }
@@ -69,29 +64,20 @@ public class ModifyDnReferralHandler
    * @param  depth  number of referrals followed
    * @param  factory  referral connection factory
    */
-  private ModifyDnReferralHandler(
-    final int limit,
-    final int depth,
-    final ReferralConnectionFactory factory)
+  private ModifyDnReferralHandler(final int limit, final int depth, final ReferralConnectionFactory factory)
   {
     super(limit, depth, factory);
   }
 
 
   @Override
-  protected ModifyDnRequest createReferralRequest(
-    final ModifyDnRequest request,
-    final LdapURL url)
+  protected ModifyDnRequest createReferralRequest(final ModifyDnRequest request, final LdapURL url)
   {
     final ModifyDnRequest referralRequest = new ModifyDnRequest();
     referralRequest.setControls(request.getControls());
-    referralRequest.setIntermediateResponseHandlers(
-      request.getIntermediateResponseHandlers());
+    referralRequest.setIntermediateResponseHandlers(request.getIntermediateResponseHandlers());
     referralRequest.setReferralHandler(
-      new ModifyDnReferralHandler(
-        getReferralLimit(),
-        getReferralDepth() + 1,
-        getReferralConnectionFactory()));
+      new ModifyDnReferralHandler(getReferralLimit(), getReferralDepth() + 1, getReferralConnectionFactory()));
     if (!url.getEntry().isDefaultBaseDn()) {
       referralRequest.setDn(url.getEntry().getBaseDn());
     } else {
@@ -104,8 +90,7 @@ public class ModifyDnReferralHandler
 
 
   @Override
-  protected Operation<ModifyDnRequest, Void> createReferralOperation(
-    final Connection conn)
+  protected Operation<ModifyDnRequest, Void> createReferralOperation(final Connection conn)
   {
     return new ModifyDnOperation(conn);
   }

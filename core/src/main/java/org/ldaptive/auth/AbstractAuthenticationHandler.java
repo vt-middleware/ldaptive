@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractAuthenticationHandler
-  implements AuthenticationHandler
+public abstract class AbstractAuthenticationHandler implements AuthenticationHandler
 {
 
   /** Logger for this class. */
@@ -46,8 +45,7 @@ public abstract class AbstractAuthenticationHandler
 
 
   @Override
-  public AuthenticationHandlerResponse authenticate(
-    final AuthenticationCriteria ac)
+  public AuthenticationHandlerResponse authenticate(final AuthenticationCriteria ac)
     throws LdapException
   {
     logger.debug("authenticate criteria={}", ac);
@@ -71,8 +69,7 @@ public abstract class AbstractAuthenticationHandler
 
 
   /**
-   * Returns a connection that the authentication operation should be performed
-   * on.
+   * Returns a connection that the authentication operation should be performed on.
    *
    * @return  connection
    *

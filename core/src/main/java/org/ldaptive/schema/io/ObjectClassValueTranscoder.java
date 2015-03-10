@@ -9,8 +9,7 @@ import org.ldaptive.schema.ObjectClass;
  *
  * @author  Middleware Services
  */
-public class ObjectClassValueTranscoder
-  extends AbstractSchemaElementValueTranscoder<ObjectClass>
+public class ObjectClassValueTranscoder extends AbstractSchemaElementValueTranscoder<ObjectClass>
 {
 
 

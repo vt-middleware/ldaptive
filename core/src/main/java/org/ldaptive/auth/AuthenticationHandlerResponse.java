@@ -26,10 +26,7 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
    * @param  rc  result code from the underlying ldap operation
    * @param  conn  connection the authentication occurred on
    */
-  public AuthenticationHandlerResponse(
-    final boolean success,
-    final ResultCode rc,
-    final Connection conn)
+  public AuthenticationHandlerResponse(final boolean success, final ResultCode rc, final Connection conn)
   {
     super(success, rc);
     connection = conn;

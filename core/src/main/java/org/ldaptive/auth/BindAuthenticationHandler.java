@@ -11,13 +11,11 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 
 /**
- * Provides an LDAP authentication implementation that leverages the LDAP bind
- * operation.
+ * Provides an LDAP authentication implementation that leverages the LDAP bind operation.
  *
  * @author  Middleware Services
  */
-public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
-  implements ConnectionFactoryManager
+public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler implements ConnectionFactoryManager
 {
 
   /** Connection factory. */
@@ -68,9 +66,7 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
     throws LdapException
   {
     AuthenticationHandlerResponse response;
-    final BindRequest request = new BindRequest(
-      criteria.getDn(),
-      criteria.getCredential());
+    final BindRequest request = new BindRequest(criteria.getDn(), criteria.getCredential());
     request.setSaslConfig(getAuthenticationSaslConfig());
     request.setControls(getAuthenticationControls());
     try {

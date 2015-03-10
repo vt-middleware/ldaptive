@@ -12,8 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Parses DNs following the rules in <a
- * href="http://www.ietf.org/rfc/rfc4514.txt">RFC 4514</a>. Attempts to be as
+ * Parses DNs following the rules in <a href="http://www.ietf.org/rfc/rfc4514.txt">RFC 4514</a>. Attempts to be as
  * generous as possible in the format of allowed DNs.
  *
  * @author  Middleware Services
@@ -53,8 +52,8 @@ public final class DnParser
 
 
   /**
-   * Returns the RDN value for the attribute type with the supplied name. If the
-   * component has multiple values, the first one is returned.
+   * Returns the RDN value for the attribute type with the supplied name. If the component has multiple values, the
+   * first one is returned.
    *
    * @param  dn  to parse
    * @param  name  of the attribute to return value for
@@ -72,16 +71,15 @@ public final class DnParser
 
 
   /**
-   * Returns a string representation of the supplied DN beginning at the
-   * supplied index. The leftmost component begins at index 0.
+   * Returns a string representation of the supplied DN beginning at the supplied index. The leftmost component begins
+   * at index 0.
    *
    * @param  dn  to parse
    * @param  index  components included in the result
    *
    * @return  DN from the supplied index
    *
-   * @throws  IndexOutOfBoundsException  if index is less than 0 or greater than
-   * the number of RDNs
+   * @throws  IndexOutOfBoundsException  if index is less than 0 or greater than the number of RDNs
    */
   public static String substring(final String dn, final int index)
   {
@@ -91,16 +89,14 @@ public final class DnParser
 
     final List<LdapAttribute> attrs = convertDnToAttributes(dn);
     if (index >= attrs.size()) {
-      throw new IndexOutOfBoundsException(
-        "index cannot be larger than the number of RDNs");
+      throw new IndexOutOfBoundsException("index cannot be larger than the number of RDNs");
     }
 
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < attrs.size(); i++) {
       if (i >= index) {
         final LdapAttribute la = attrs.get(i);
-        sb.append(la.getName()).append("=").append(la.getStringValue()).append(
-          ",");
+        sb.append(la.getName()).append("=").append(la.getStringValue()).append(",");
       }
     }
     if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ',') {
@@ -152,11 +148,9 @@ public final class DnParser
 
         final String hexData = attrValue.substring(1, attrValue.length());
         parser.parse(ByteBuffer.wrap(decodeHexValue(hexData.toCharArray())));
-        attributes.add(
-          new LdapAttribute(attrName.trim(), handler.getDecodedValue()));
+        attributes.add(new LdapAttribute(attrName.trim(), handler.getDecodedValue()));
       } else {
-        attributes.add(
-          new LdapAttribute(attrName.trim(), decodeStringValue(attrValue)));
+        attributes.add(new LdapAttribute(attrName.trim(), decodeStringValue(attrValue)));
       }
       pos = endAttrValuePos + 1;
     }
@@ -175,16 +169,15 @@ public final class DnParser
   protected static byte[] decodeHexValue(final char[] value)
   {
     if (value == null || value.length == 0) {
-      throw new IllegalArgumentException(
-        "Invalid HEX value: value cannot be null or empty");
+      throw new IllegalArgumentException("Invalid HEX value: value cannot be null or empty");
     }
     return LdapUtils.hexDecode(value);
   }
 
 
   /**
-   * Decodes the supplied string attribute value. Unescapes escaped characters.
-   * If escaped character is a hex value, it is decoded.
+   * Decodes the supplied string attribute value. Unescapes escaped characters. If escaped character is a hex value, it
+   * is decoded.
    *
    * @param  value  to decode
    *
@@ -227,9 +220,7 @@ public final class DnParser
         break;
       }
       if (appendHex) {
-        sb.append(
-          LdapUtils.utf8Encode(
-            decodeHexValue(hexValue.toString().toCharArray())));
+        sb.append(LdapUtils.utf8Encode(decodeHexValue(hexValue.toString().toCharArray())));
         hexValue.setLength(0);
       }
       if (appendValue) {
@@ -243,20 +234,16 @@ public final class DnParser
 
 
   /**
-   * Reads the supplied string starting at the supplied position until one of
-   * the supplied characters is found. Characters escaped with '\' are ignored.
+   * Reads the supplied string starting at the supplied position until one of the supplied characters is found.
+   * Characters escaped with '\' are ignored.
    *
    * @param  s  to read
    * @param  chars  to match
    * @param  pos  to start reading at
    *
-   * @return  string index that matched a character or the last index in the
-   * string
+   * @return  string index that matched a character or the last index in the string
    */
-  private static int readToChar(
-    final String s,
-    final char[] chars,
-    final int pos)
+  private static int readToChar(final String s, final char[] chars, final int pos)
   {
     int i = pos;
     while (i < s.length()) {

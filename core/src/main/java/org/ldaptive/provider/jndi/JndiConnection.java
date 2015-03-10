@@ -59,86 +59,77 @@ public class JndiConnection implements ProviderConnection
 {
 
   /**
-   * The value of this property is a string that specifies the authentication
-   * mechanism(s) for the provider to use. The value of this constant is {@value
-   * }.
+   * The value of this property is a string that specifies the authentication mechanism(s) for the provider to use. The
+   * value of this constant is {@value}.
    */
-  public static final String AUTHENTICATION =
-    "java.naming.security.authentication";
+  public static final String AUTHENTICATION = "java.naming.security.authentication";
 
   /**
-   * The value of this property is an object that specifies the credentials of
-   * the principal to be authenticated. The value of this constant is {@value}.
+   * The value of this property is an object that specifies the credentials of the principal to be authenticated. The
+   * value of this constant is {@value}.
    */
   public static final String CREDENTIALS = "java.naming.security.credentials";
 
   /**
-   * The value of this property is a string that specifies the identity of the
-   * principal to be authenticated. The value of this constant is {@value}.
+   * The value of this property is a string that specifies the identity of the principal to be authenticated. The value
+   * of this constant is {@value}.
    */
   public static final String PRINCIPAL = "java.naming.security.principal";
 
   /**
-   * The value of this property is a string that specifies the sasl
-   * authorization id. The value of this constant is {@value}.
+   * The value of this property is a string that specifies the sasl authorization id. The value of this constant is
+   * {@value}.
    */
-  public static final String SASL_AUTHZ_ID =
-    "java.naming.security.sasl.authorizationId";
+  public static final String SASL_AUTHZ_ID = "java.naming.security.sasl.authorizationId";
 
   /**
-   * The value of this property is a string that specifies the sasl quality of
-   * protection. The value of this constant is {@value}.
+   * The value of this property is a string that specifies the sasl quality of protection. The value of this constant is
+   * {@value}.
    */
   public static final String SASL_QOP = "javax.security.sasl.qop";
 
   /**
-   * The value of this property is a string that specifies the sasl security
-   * strength. The value of this constant is {@value}.
+   * The value of this property is a string that specifies the sasl security strength. The value of this constant is
+   * {@value}.
    */
   public static final String SASL_STRENGTH = "javax.security.sasl.strength";
 
   /**
-   * The value of this property is a string that specifies the sasl mutual
-   * authentication flag. The value of this constant is {@value}.
+   * The value of this property is a string that specifies the sasl mutual authentication flag. The value of this
+   * constant is {@value}.
    */
-  public static final String SASL_MUTUAL_AUTH =
-    "javax.security.sasl.server.authentication";
+  public static final String SASL_MUTUAL_AUTH = "javax.security.sasl.server.authentication";
 
-  /**
-   * The value of this property is a string that specifies the sasl realm. The
-   * value of this constant is {@value}.
-   */
+  /** The value of this property is a string that specifies the sasl realm. The value of this constant is {@value}. */
   public static final String SASL_REALM = "java.naming.security.sasl.realm";
 
   /**
-   * The value of this property is a string that specifies whether the RDN
-   * attribute should be deleted for a modify dn operation. The value of this
-   * constant is {@value}.
+   * The value of this property is a string that specifies whether the RDN attribute should be deleted for a modify dn
+   * operation. The value of this constant is {@value}.
    */
   public static final String DELETE_RDN = "java.naming.ldap.deleteRDN";
 
   /**
-   * The value of this property is a string that specifies additional binary
-   * attributes. The value of this constant is {@value}.
+   * The value of this property is a string that specifies additional binary attributes. The value of this constant is
+   * {@value}.
    */
-  public static final String BINARY_ATTRIBUTES =
-    "java.naming.ldap.attributes.binary";
+  public static final String BINARY_ATTRIBUTES = "java.naming.ldap.attributes.binary";
 
   /**
-   * The value of this property is a string that specifies how aliases shall be
-   * handled by the provider. The value of this constant is {@value}.
+   * The value of this property is a string that specifies how aliases shall be handled by the provider. The value of
+   * this constant is {@value}.
    */
   public static final String DEREF_ALIASES = "java.naming.ldap.derefAliases";
 
   /**
-   * The value of this property is a string that specifies how referrals shall
-   * be handled by the provider. The value of this constant is {@value}.
+   * The value of this property is a string that specifies how referrals shall be handled by the provider. The value of
+   * this constant is {@value}.
    */
   public static final String REFERRAL = "java.naming.referral";
 
   /**
-   * The value of this property is a string that specifies to only return
-   * attribute type names, no values. The value of this constant is {@value}.
+   * The value of this property is a string that specifies to only return attribute type names, no values. The value of
+   * this constant is {@value}.
    */
   public static final String TYPES_ONLY = "java.naming.ldap.typesOnly";
 
@@ -181,8 +172,7 @@ public class JndiConnection implements ProviderConnection
     throws LdapException
   {
     if (controls != null) {
-      throw new UnsupportedOperationException(
-        "Provider does not support unbind with controls");
+      throw new UnsupportedOperationException("Provider does not support unbind with controls");
     }
     try {
       if (context != null) {
@@ -233,24 +223,11 @@ public class JndiConnection implements ProviderConnection
       context.addToEnvironment(AUTHENTICATION, "none");
       context.removeFromEnvironment(PRINCIPAL);
       context.removeFromEnvironment(CREDENTIALS);
-      context.reconnect(
-        config.getControlProcessor().processRequestControls(
-          request.getControls()));
-      response = createResponse(
-        request,
-        null,
-        ResultCode.SUCCESS,
-        null,
-        context);
+      context.reconnect(config.getControlProcessor().processRequestControls(request.getControls()));
+      response = createResponse(request, null, ResultCode.SUCCESS, null, context);
     } catch (ReferralException e) {
-      final String[] refUrls = e.getReferralInfo() != null ?
-        new String[] {(String) e.getReferralInfo()} : null;
-      response = createResponse(
-        request,
-        null,
-        ResultCode.REFERRAL,
-        refUrls,
-        context);
+      final String[] refUrls = e.getReferralInfo() != null ? new String[] {(String) e.getReferralInfo()} : null;
+      response = createResponse(request, null, ResultCode.REFERRAL, refUrls, context);
     } catch (NamingException e) {
       processNamingException(request, e, null, context);
     }
@@ -275,24 +252,11 @@ public class JndiConnection implements ProviderConnection
       context.addToEnvironment(AUTHENTICATION, "simple");
       context.addToEnvironment(PRINCIPAL, request.getDn());
       context.addToEnvironment(CREDENTIALS, request.getCredential().getBytes());
-      context.reconnect(
-        config.getControlProcessor().processRequestControls(
-          request.getControls()));
-      response = createResponse(
-        request,
-        null,
-        ResultCode.SUCCESS,
-        null,
-        context);
+      context.reconnect(config.getControlProcessor().processRequestControls(request.getControls()));
+      response = createResponse(request, null, ResultCode.SUCCESS, null, context);
     } catch (ReferralException e) {
-      final String[] refUrls = e.getReferralInfo() != null ?
-        new String[] {(String) e.getReferralInfo()} : null;
-      response = createResponse(
-        request,
-        null,
-        ResultCode.REFERRAL,
-        refUrls,
-        context);
+      final String[] refUrls = e.getReferralInfo() != null ? new String[] {(String) e.getReferralInfo()} : null;
+      response = createResponse(request, null, ResultCode.REFERRAL, refUrls, context);
     } catch (NamingException e) {
       processNamingException(request, e, null, context);
     }
@@ -314,40 +278,22 @@ public class JndiConnection implements ProviderConnection
   {
     Response<Void> response = null;
     try {
-      final String authenticationType = JndiUtils.getAuthenticationType(
-        request.getSaslConfig().getMechanism());
-      for (
-        Map.Entry<String, Object> entry :
-        getSaslProperties(request.getSaslConfig()).entrySet()) {
+      final String authenticationType = JndiUtils.getAuthenticationType(request.getSaslConfig().getMechanism());
+      for (Map.Entry<String, Object> entry : getSaslProperties(request.getSaslConfig()).entrySet()) {
         context.addToEnvironment(entry.getKey(), entry.getValue());
       }
       context.addToEnvironment(AUTHENTICATION, authenticationType);
       if (request.getDn() != null) {
         context.addToEnvironment(PRINCIPAL, request.getDn());
         if (request.getCredential() != null) {
-          context.addToEnvironment(
-            CREDENTIALS,
-            request.getCredential().getBytes());
+          context.addToEnvironment(CREDENTIALS, request.getCredential().getBytes());
         }
       }
-      context.reconnect(
-        config.getControlProcessor().processRequestControls(
-          request.getControls()));
-      response = createResponse(
-        request,
-        null,
-        ResultCode.SUCCESS,
-        null,
-        context);
+      context.reconnect(config.getControlProcessor().processRequestControls(request.getControls()));
+      response = createResponse(request, null, ResultCode.SUCCESS, null, context);
     } catch (ReferralException e) {
-      final String[] refUrls = e.getReferralInfo() != null ?
-        new String[] {(String) e.getReferralInfo()} : null;
-      response = createResponse(
-        request,
-        null,
-        ResultCode.REFERRAL,
-        refUrls,
-        context);
+      final String[] refUrls = e.getReferralInfo() != null ? new String[] {(String) e.getReferralInfo()} : null;
+      response = createResponse(request, null, ResultCode.REFERRAL, refUrls, context);
     } catch (NamingException e) {
       processNamingException(request, e, null, context);
     }
@@ -366,9 +312,7 @@ public class JndiConnection implements ProviderConnection
         ctx = initializeContext(request);
 
         final JndiUtils bu = new JndiUtils();
-        ctx.createSubcontext(
-          new LdapName(request.getDn()),
-          bu.fromLdapAttributes(request.getLdapAttributes())).close();
+        ctx.createSubcontext(new LdapName(request.getDn()), bu.fromLdapAttributes(request.getLdapAttributes())).close();
         response = createResponse(request, null, ResultCode.SUCCESS, null, ctx);
       } finally {
         if (ctx != null) {
@@ -376,14 +320,8 @@ public class JndiConnection implements ProviderConnection
         }
       }
     } catch (ReferralException e) {
-      final String[] refUrls = e.getReferralInfo() != null ?
-        new String[] {(String) e.getReferralInfo()} : null;
-      response = createResponse(
-        request,
-        null,
-        ResultCode.REFERRAL,
-        refUrls,
-        ctx);
+      final String[] refUrls = e.getReferralInfo() != null ? new String[] {(String) e.getReferralInfo()} : null;
+      response = createResponse(request, null, ResultCode.REFERRAL, refUrls, ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -404,9 +342,9 @@ public class JndiConnection implements ProviderConnection
         en = ctx.search(
           new LdapName(request.getDn()),
           String.format("(%s={0})", request.getAttribute().getName()),
-          request.getAttribute().isBinary() ?
-            new Object[] {request.getAttribute().getBinaryValue()} :
-            new Object[] {request.getAttribute().getStringValue()},
+          request.getAttribute().isBinary() ? new Object[] {request.getAttribute().getBinaryValue()} : new Object[] {
+            request.getAttribute().getStringValue(),
+          },
           getCompareSearchControls());
 
         final boolean success = en.hasMore();
@@ -425,14 +363,8 @@ public class JndiConnection implements ProviderConnection
         }
       }
     } catch (ReferralException e) {
-      final String[] refUrls = e.getReferralInfo() != null ?
-        new String[] {(String) e.getReferralInfo()} : null;
-      response = createResponse(
-        request,
-        null,
-        ResultCode.REFERRAL,
-        refUrls,
-        ctx);
+      final String[] refUrls = e.getReferralInfo() != null ? new String[] {(String) e.getReferralInfo()} : null;
+      response = createResponse(request, null, ResultCode.REFERRAL, refUrls, ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -457,14 +389,8 @@ public class JndiConnection implements ProviderConnection
         }
       }
     } catch (ReferralException e) {
-      final String[] refUrls = e.getReferralInfo() != null ?
-        new String[] {(String) e.getReferralInfo()} : null;
-      response = createResponse(
-        request,
-        null,
-        ResultCode.REFERRAL,
-        refUrls,
-        ctx);
+      final String[] refUrls = e.getReferralInfo() != null ? new String[] {(String) e.getReferralInfo()} : null;
+      response = createResponse(request, null, ResultCode.REFERRAL, refUrls, ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -493,14 +419,8 @@ public class JndiConnection implements ProviderConnection
         }
       }
     } catch (ReferralException e) {
-      final String[] refUrls = e.getReferralInfo() != null ?
-        new String[] {(String) e.getReferralInfo()} : null;
-      response = createResponse(
-        request,
-        null,
-        ResultCode.REFERRAL,
-        refUrls,
-        ctx);
+      final String[] refUrls = e.getReferralInfo() != null ? new String[] {(String) e.getReferralInfo()} : null;
+      response = createResponse(request, null, ResultCode.REFERRAL, refUrls, ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -517,12 +437,8 @@ public class JndiConnection implements ProviderConnection
     try {
       try {
         ctx = initializeContext(request);
-        ctx.addToEnvironment(
-          "java.naming.ldap.deleteRDN",
-          Boolean.valueOf(request.getDeleteOldRDn()).toString());
-        ctx.rename(
-          new LdapName(request.getDn()),
-          new LdapName(request.getNewDn()));
+        ctx.addToEnvironment("java.naming.ldap.deleteRDN", Boolean.valueOf(request.getDeleteOldRDn()).toString());
+        ctx.rename(new LdapName(request.getDn()), new LdapName(request.getNewDn()));
         response = createResponse(request, null, ResultCode.SUCCESS, null, ctx);
       } finally {
         if (ctx != null) {
@@ -530,14 +446,8 @@ public class JndiConnection implements ProviderConnection
         }
       }
     } catch (ReferralException e) {
-      final String[] refUrls = e.getReferralInfo() != null ?
-        new String[] {(String) e.getReferralInfo()} : null;
-      response = createResponse(
-        request,
-        null,
-        ResultCode.REFERRAL,
-        refUrls,
-        ctx);
+      final String[] refUrls = e.getReferralInfo() != null ? new String[] {(String) e.getReferralInfo()} : null;
+      response = createResponse(request, null, ResultCode.REFERRAL, refUrls, ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -556,13 +466,10 @@ public class JndiConnection implements ProviderConnection
 
 
   @Override
-  public void searchAsync(
-    final SearchRequest request,
-    final SearchListener listener)
+  public void searchAsync(final SearchRequest request, final SearchListener listener)
     throws LdapException
   {
-    throw new UnsupportedOperationException(
-      "Asynchronous searches not supported");
+    throw new UnsupportedOperationException("Asynchronous searches not supported");
   }
 
 
@@ -584,32 +491,21 @@ public class JndiConnection implements ProviderConnection
       try {
         ctx = initializeContext(request);
 
-        final JndiExtendedResponse jndiExtRes = (JndiExtendedResponse)
-          ctx.extendedOperation(
-            new JndiExtendedRequest(request.getOID(), request.encode()));
-        final ExtendedResponse<?> extRes =
-          ExtendedResponseFactory.createExtendedResponse(
-            request.getOID(), jndiExtRes.getID(), jndiExtRes.getEncodedValue());
-        response = createResponse(
-          request,
-          extRes.getValue(),
-          ResultCode.SUCCESS,
-          null,
-          ctx);
+        final JndiExtendedResponse jndiExtRes = (JndiExtendedResponse) ctx.extendedOperation(
+          new JndiExtendedRequest(request.getOID(), request.encode()));
+        final ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(
+          request.getOID(),
+          jndiExtRes.getID(),
+          jndiExtRes.getEncodedValue());
+        response = createResponse(request, extRes.getValue(), ResultCode.SUCCESS, null, ctx);
       } finally {
         if (ctx != null) {
           ctx.close();
         }
       }
     } catch (ReferralException e) {
-      final String[] refUrls = e.getReferralInfo() != null ?
-        new String[] {(String) e.getReferralInfo()} : null;
-      response = createResponse(
-        request,
-        null,
-        ResultCode.REFERRAL,
-        refUrls,
-        ctx);
+      final String[] refUrls = e.getReferralInfo() != null ? new String[] {(String) e.getReferralInfo()} : null;
+      response = createResponse(request, null, ResultCode.REFERRAL, refUrls, ctx);
     } catch (NamingException e) {
       processNamingException(request, e, null, ctx);
     }
@@ -618,26 +514,21 @@ public class JndiConnection implements ProviderConnection
 
 
   @Override
-  public void addUnsolicitedNotificationListener(
-    final UnsolicitedNotificationListener listener)
+  public void addUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
   {
-    throw new UnsupportedOperationException(
-      "Unsolicited notifications not supported");
+    throw new UnsupportedOperationException("Unsolicited notifications not supported");
   }
 
 
   @Override
-  public void removeUnsolicitedNotificationListener(
-    final UnsolicitedNotificationListener listener)
+  public void removeUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
   {
-    throw new UnsupportedOperationException(
-      "Unsolicited notifications not supported");
+    throw new UnsupportedOperationException("Unsolicited notifications not supported");
   }
 
 
   /**
-   * Returns a search controls object configured to perform an LDAP compare
-   * operation.
+   * Returns a search controls object configured to perform an LDAP compare operation.
    *
    * @return  search controls
    */
@@ -651,8 +542,7 @@ public class JndiConnection implements ProviderConnection
 
 
   /**
-   * Creates a new ldap context using {@link
-   * LdapContext#newInstance(Control[])}. Adds any additional environment
+   * Creates a new ldap context using {@link LdapContext#newInstance(Control[])}. Adds any additional environment
    * properties found in the supplied request to the context.
    *
    * @param  request  to read properties from
@@ -665,8 +555,7 @@ public class JndiConnection implements ProviderConnection
     throws NamingException
   {
     final LdapContext ctx = context.newInstance(
-      config.getControlProcessor().processRequestControls(
-        request.getControls()));
+      config.getControlProcessor().processRequestControls(request.getControls()));
 
     // by default set referral behavior to throw, otherwise jndi will send the
     // ManageDsaIT control
@@ -700,18 +589,14 @@ public class JndiConnection implements ProviderConnection
         code,
         null,
         null,
-        processResponseControls(
-          config.getControlProcessor(),
-          request.getControls(),
-          ctx),
+        processResponseControls(config.getControlProcessor(), request.getControls(), ctx),
         urls,
         -1);
   }
 
 
   /**
-   * Determines if the supplied naming exception should result in an operation
-   * retry.
+   * Determines if the supplied naming exception should result in an operation retry.
    *
    * @param  request  that produced the exception
    * @param  e  that was produced
@@ -736,19 +621,15 @@ public class JndiConnection implements ProviderConnection
       e,
       rc != null ? rc.value() : -1,
       null,
-      processResponseControls(
-        config.getControlProcessor(),
-        request.getControls(),
-        ctx),
+      processResponseControls(config.getControlProcessor(), request.getControls(), ctx),
       urls,
       true);
   }
 
 
   /**
-   * Retrieves the response controls from the supplied context and processes
-   * them with the supplied control processor. Logs a warning if controls cannot
-   * be retrieved.
+   * Retrieves the response controls from the supplied context and processes them with the supplied control processor.
+   * Logs a warning if controls cannot be retrieved.
    *
    * @param  processor  control processor
    * @param  requestControls  that produced this response
@@ -781,24 +662,17 @@ public class JndiConnection implements ProviderConnection
    *
    * @return  JNDI properties for use in a context environment
    */
-  protected static Map<String, Object> getSaslProperties(
-    final SaslConfig config)
+  protected static Map<String, Object> getSaslProperties(final SaslConfig config)
   {
     final Map<String, Object> env = new HashMap<>();
-    if (
-      config.getAuthorizationId() != null &&
-        !"".equals(config.getAuthorizationId())) {
+    if (config.getAuthorizationId() != null && !"".equals(config.getAuthorizationId())) {
       env.put(SASL_AUTHZ_ID, config.getAuthorizationId());
     }
     if (config.getQualityOfProtection() != null) {
-      env.put(
-        SASL_QOP,
-        JndiUtils.getQualityOfProtection(config.getQualityOfProtection()));
+      env.put(SASL_QOP, JndiUtils.getQualityOfProtection(config.getQualityOfProtection()));
     }
     if (config.getSecurityStrength() != null) {
-      env.put(
-        SASL_STRENGTH,
-        JndiUtils.getSecurityStrength(config.getSecurityStrength()));
+      env.put(SASL_STRENGTH, JndiUtils.getSecurityStrength(config.getSecurityStrength()));
     }
     if (config.getMutualAuthentication() != null) {
       env.put(SASL_MUTUAL_AUTH, config.getMutualAuthentication().toString());
@@ -856,19 +730,12 @@ public class JndiConnection implements ProviderConnection
     {
       boolean closeContext = false;
       try {
-        searchContext = context.newInstance(
-          config.getControlProcessor().processRequestControls(
-            request.getControls()));
+        searchContext = context.newInstance(config.getControlProcessor().processRequestControls(request.getControls()));
         initializeSearchContext(searchContext, request);
         results = search(searchContext, request);
       } catch (LdapReferralException e) {
         closeContext = true;
-        response = createResponse(
-          request,
-          null,
-          ResultCode.REFERRAL,
-          readReferralUrls(e),
-          searchContext);
+        response = createResponse(request, null, ResultCode.REFERRAL, readReferralUrls(e), searchContext);
       } catch (NamingException e) {
         closeContext = true;
         processNamingException(request, e, null, searchContext);
@@ -887,17 +754,14 @@ public class JndiConnection implements ProviderConnection
 
 
     /**
-     * Adds any additional environment properties found in the supplied request
-     * to the supplied context.
+     * Adds any additional environment properties found in the supplied request to the supplied context.
      *
      * @param  ctx  to initialize for searching
      * @param  sr  to read properties from
      *
      * @throws  NamingException  if a property cannot be added to the context
      */
-    protected void initializeSearchContext(
-      final LdapContext ctx,
-      final SearchRequest sr)
+    protected void initializeSearchContext(final LdapContext ctx, final SearchRequest sr)
       throws NamingException
     {
       // by default set referral behavior to throw, otherwise jndi will send the
@@ -905,13 +769,9 @@ public class JndiConnection implements ProviderConnection
       ctx.addToEnvironment(REFERRAL, "throw");
       // by default set dereferencing aliases to never, jndi default is always
       if (sr.getDerefAliases() != null) {
-        ctx.addToEnvironment(
-          DEREF_ALIASES,
-          sr.getDerefAliases().name().toLowerCase());
+        ctx.addToEnvironment(DEREF_ALIASES, sr.getDerefAliases().name().toLowerCase());
       } else {
-        ctx.addToEnvironment(
-          DEREF_ALIASES,
-          DerefAliases.NEVER.name().toLowerCase());
+        ctx.addToEnvironment(DEREF_ALIASES, DerefAliases.NEVER.name().toLowerCase());
       }
       if (sr.getBinaryAttributes() != null) {
         final String[] a = sr.getBinaryAttributes();
@@ -925,16 +785,13 @@ public class JndiConnection implements ProviderConnection
         ctx.addToEnvironment(BINARY_ATTRIBUTES, sb.toString());
       }
       if (sr.getTypesOnly()) {
-        ctx.addToEnvironment(
-          TYPES_ONLY,
-          Boolean.valueOf(sr.getTypesOnly()).toString());
+        ctx.addToEnvironment(TYPES_ONLY, Boolean.valueOf(sr.getTypesOnly()).toString());
       }
     }
 
 
     /**
-     * Executes {@link LdapContext#search( javax.naming.Name, String, Object[],
-     * SearchControls)}.
+     * Executes {@link LdapContext#search( javax.naming.Name, String, Object[], SearchControls)}.
      *
      * @param  ctx  to search
      * @param  sr  to read properties from
@@ -943,26 +800,21 @@ public class JndiConnection implements ProviderConnection
      *
      * @throws  NamingException  if an error occurs
      */
-    protected NamingEnumeration<SearchResult> search(
-      final LdapContext ctx,
-      final SearchRequest sr)
+    protected NamingEnumeration<SearchResult> search(final LdapContext ctx, final SearchRequest sr)
       throws NamingException
     {
       return
         ctx.search(
           sr.getBaseDn(),
-          sr.getSearchFilter() != null ? request.getSearchFilter().format()
-                                       : null,
+          sr.getSearchFilter() != null ? request.getSearchFilter().format() : null,
           getSearchControls(sr));
     }
 
 
     /**
-     * Returns a search controls object configured with the supplied search
-     * request.
+     * Returns a search controls object configured with the supplied search request.
      *
-     * @param  sr  search request containing configuration to create search
-     * controls
+     * @param  sr  search request containing configuration to create search controls
      *
      * @return  search controls
      */
@@ -1029,28 +881,19 @@ public class JndiConnection implements ProviderConnection
             response = createResponse(
               request,
               null,
-              responseResultCode != null ? responseResultCode
-                : ResultCode.SUCCESS,
+              responseResultCode != null ? responseResultCode : ResultCode.SUCCESS,
               null,
               searchContext);
           }
         } catch (LdapReferralException e) {
-          searchReferences = new ArrayList<>(
-            Arrays.asList(readReferralUrls(e)));
+          searchReferences = new ArrayList<>(Arrays.asList(readReferralUrls(e)));
           more = true;
         } catch (NamingException e) {
-          final ResultCode ignoreRc = ignoreSearchException(
-            config.getSearchIgnoreResultCodes(),
-            e);
+          final ResultCode ignoreRc = ignoreSearchException(config.getSearchIgnoreResultCodes(), e);
           if (ignoreRc == null) {
             processNamingException(request, e, null, searchContext);
           }
-          response = createResponse(
-            request,
-            null,
-            ignoreRc,
-            null,
-            searchContext);
+          response = createResponse(request, null, ignoreRc, null, searchContext);
         }
       }
       return more;
@@ -1064,16 +907,10 @@ public class JndiConnection implements ProviderConnection
       SearchItem item = null;
       if (searchReferences != null) {
         if (!searchReferences.isEmpty()) {
-          item = new SearchItem(
-            new SearchReference(-1, null, searchReferences.remove(0)));
+          item = new SearchItem(new SearchReference(-1, null, searchReferences.remove(0)));
         }
         if (searchReferences.isEmpty()) {
-          response = createResponse(
-            request,
-            null,
-            ResultCode.SUCCESS,
-            null,
-            searchContext);
+          response = createResponse(request, null, ResultCode.SUCCESS, null, searchContext);
         }
       } else {
         final JndiUtils bu = new JndiUtils(request.getSortBehavior());
@@ -1083,12 +920,9 @@ public class JndiConnection implements ProviderConnection
           result.setName(formatDn(result, getSearchDn(searchContext, request)));
           item = new SearchItem(bu.toSearchEntry(result));
         } catch (LdapReferralException e) {
-          item = new SearchItem(
-            new SearchReference(-1, null, readReferralUrls(e)));
+          item = new SearchItem(new SearchReference(-1, null, readReferralUrls(e)));
         } catch (NamingException e) {
-          final ResultCode ignoreRc = ignoreSearchException(
-            config.getSearchIgnoreResultCodes(),
-            e);
+          final ResultCode ignoreRc = ignoreSearchException(config.getSearchIgnoreResultCodes(), e);
           if (ignoreRc == null) {
             processNamingException(request, e, null, searchContext);
           }
@@ -1107,9 +941,7 @@ public class JndiConnection implements ProviderConnection
      *
      * @return  result code that should be ignored or null
      */
-    protected ResultCode ignoreSearchException(
-      final ResultCode[] ignoreResultCodes,
-      final NamingException e)
+    protected ResultCode ignoreSearchException(final ResultCode[] ignoreResultCodes, final NamingException e)
     {
       ResultCode ignore = null;
       if (ignoreResultCodes != null && ignoreResultCodes.length > 0) {
@@ -1126,10 +958,9 @@ public class JndiConnection implements ProviderConnection
 
 
     /**
-     * Reads all referral URLs associated with this exception by invoking the
-     * search operation on the referral context until all referrals have been
-     * read. JNDI does not distinguish the URLs contained in specific
-     * references. So each URL must be treated as a separate search reference.
+     * Reads all referral URLs associated with this exception by invoking the search operation on the referral context
+     * until all referrals have been read. JNDI does not distinguish the URLs contained in specific references. So each
+     * URL must be treated as a separate search reference.
      *
      * @param  refEx  to read URLs from
      *
@@ -1144,13 +975,10 @@ public class JndiConnection implements ProviderConnection
         try {
           final LdapContext ctx = (LdapContext) loopEx.getReferralContext(
             searchContext.getEnvironment(),
-            config.getControlProcessor().processRequestControls(
-              request.getControls()));
+            config.getControlProcessor().processRequestControls(request.getControls()));
           search(ctx, request);
         } catch (LdapReferralException e) {
-          if (
-            e.getReferralInfo() != null &&
-              e.getReferralInfo() instanceof String) {
+          if (e.getReferralInfo() != null && e.getReferralInfo() instanceof String) {
             urls.add((String) e.getReferralInfo());
           }
           loopEx = e;
@@ -1172,9 +1000,8 @@ public class JndiConnection implements ProviderConnection
 
 
     /**
-     * Determines the DN of the supplied search request. Returns {@link
-     * LdapContext#getNameInNamespace()} if it is available, otherwise returns
-     * {@link SearchRequest#getBaseDn()}.
+     * Determines the DN of the supplied search request. Returns {@link LdapContext#getNameInNamespace()} if it is
+     * available, otherwise returns {@link SearchRequest#getBaseDn()}.
      *
      * @param  ctx  ldap context the search was performed on
      * @param  sr  search request
@@ -1195,9 +1022,8 @@ public class JndiConnection implements ProviderConnection
 
 
     /**
-     * Returns a fully-qualified DN for the supplied search result. If search
-     * result is relative, the DN is created by concatenating the relative name
-     * with the base DN. Otherwise the behavior is controlled by {@link
+     * Returns a fully-qualified DN for the supplied search result. If search result is relative, the DN is created by
+     * concatenating the relative name with the base DN. Otherwise the behavior is controlled by {@link
      * JndiProviderConfig#getRemoveDnUrls()}.
      *
      * @param  sr  to determine DN for
@@ -1205,8 +1031,7 @@ public class JndiConnection implements ProviderConnection
      *
      * @return  fully qualified DN
      *
-     * @throws  NamingException  if search result name cannot be formatted as a
-     * DN
+     * @throws  NamingException  if search result name cannot be formatted as a DN
      */
     protected String formatDn(final SearchResult sr, final String baseDn)
       throws NamingException
@@ -1216,14 +1041,10 @@ public class JndiConnection implements ProviderConnection
       if (resultName != null) {
         StringBuilder fqName;
         if (sr.isRelative()) {
-          logger.trace(
-            "formatting relative dn '{}' with baseDn '{}'",
-            resultName,
-            baseDn);
+          logger.trace("formatting relative dn '{}' with baseDn '{}'", resultName, baseDn);
           if (baseDn != null && !"".equals(baseDn)) {
             if (!"".equals(resultName)) {
-              fqName = new StringBuilder(readCompositeName(resultName)).append(
-                ",").append(baseDn);
+              fqName = new StringBuilder(readCompositeName(resultName)).append(",").append(baseDn);
             } else {
               fqName = new StringBuilder(baseDn);
             }
@@ -1233,8 +1054,7 @@ public class JndiConnection implements ProviderConnection
         } else {
           logger.trace("formatting non-relative dn '{}'", resultName);
           if (config.getRemoveDnUrls()) {
-            fqName = new StringBuilder(
-              readCompositeName(URI.create(resultName).getPath().substring(1)));
+            fqName = new StringBuilder(readCompositeName(URI.create(resultName).getPath().substring(1)));
           } else {
             fqName = new StringBuilder(readCompositeName(resultName));
           }
@@ -1253,8 +1073,7 @@ public class JndiConnection implements ProviderConnection
      *
      * @return  ldap name
      *
-     * @throws  InvalidNameException  if the supplied string is not a valid
-     * composite name
+     * @throws  InvalidNameException  if the supplied string is not a valid composite name
      */
     protected String readCompositeName(final String s)
       throws InvalidNameException
@@ -1294,8 +1113,7 @@ public class JndiConnection implements ProviderConnection
 
 
   /** Class for exposing extended request properties. */
-  protected static class JndiExtendedRequest
-    implements javax.naming.ldap.ExtendedRequest
+  protected static class JndiExtendedRequest implements javax.naming.ldap.ExtendedRequest
   {
 
     /** OID of the extended request. */
@@ -1351,8 +1169,7 @@ public class JndiConnection implements ProviderConnection
 
 
   /** Class for exposing extended response properties. */
-  protected static class JndiExtendedResponse
-    implements javax.naming.ldap.ExtendedResponse
+  protected static class JndiExtendedResponse implements javax.naming.ldap.ExtendedResponse
   {
 
     /** OID of the extended response. */

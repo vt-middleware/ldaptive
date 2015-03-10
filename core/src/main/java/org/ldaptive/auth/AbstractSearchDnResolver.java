@@ -20,8 +20,7 @@ import org.ldaptive.referral.ReferralHandler;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractSearchDnResolver
-  extends AbstractSearchOperationFactory implements DnResolver
+public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFactory implements DnResolver
 {
 
   /** DN to search. */
@@ -110,9 +109,7 @@ public abstract class AbstractSearchDnResolver
    */
   public void setUserFilterParameters(final Object[] filterParams)
   {
-    logger.trace(
-      "setting userFilterParameters: {}",
-      Arrays.toString(filterParams));
+    logger.trace("setting userFilterParameters: {}", Arrays.toString(filterParams));
     userFilterParameters = filterParams;
   }
 
@@ -129,9 +126,8 @@ public abstract class AbstractSearchDnResolver
 
 
   /**
-   * Sets whether DN resolution should fail if multiple DNs are found. If false
-   * an exception will be thrown if {@link #resolve(String)} finds more than one
-   * DN matching it's filter. Otherwise the first DN found is returned.
+   * Sets whether DN resolution should fail if multiple DNs are found. If false an exception will be thrown if {@link
+   * #resolve(String)} finds more than one DN matching it's filter. Otherwise the first DN found is returned.
    *
    * @param  b  whether multiple DNs are allowed
    */
@@ -154,9 +150,8 @@ public abstract class AbstractSearchDnResolver
 
 
   /**
-   * Sets whether subtree searching will be used. If true, the DN used for
-   * authenticating will be searched for over the entire {@link #getBaseDn()}.
-   * Otherwise the DN will be searched for in the {@link #getBaseDn()} context.
+   * Sets whether subtree searching will be used. If true, the DN used for authenticating will be searched for over the
+   * entire {@link #getBaseDn()}. Otherwise the DN will be searched for in the {@link #getBaseDn()} context.
    *
    * @param  b  whether the DN will be searched for over the entire base
    */
@@ -214,9 +209,8 @@ public abstract class AbstractSearchDnResolver
 
 
   /**
-   * Attempts to find the DN for the supplied user. {@link #getUserFilter()} is
-   * used to look up the DN. The user is provided as the 'user' variable filter
-   * parameter. If more than one entry matches the search, the result is
+   * Attempts to find the DN for the supplied user. {@link #getUserFilter()} is used to look up the DN. The user is
+   * provided as the 'user' variable filter parameter. If more than one entry matches the search, the result is
    * controlled by {@link #setAllowMultipleDns(boolean)}.
    *
    * @param  user  to find DN for
@@ -244,19 +238,13 @@ public abstract class AbstractSearchDnResolver
         if (answer != null && answer.hasNext()) {
           dn = resolveDn(answer.next());
           if (answer.hasNext()) {
-            logger.debug(
-              "multiple results found for user={} using filter={}",
-              user,
-              filter);
+            logger.debug("multiple results found for user={} using filter={}", user, filter);
             if (!allowMultipleDns) {
               throw new LdapException("Found more than (1) DN for: " + user);
             }
           }
         } else {
-          logger.info(
-            "search for user={} failed using filter={}",
-            user,
-            filter);
+          logger.info("search for user={} failed using filter={}", user, filter);
         }
       } else {
         logger.error("DN search filter not found, no search performed");
@@ -283,9 +271,8 @@ public abstract class AbstractSearchDnResolver
 
 
   /**
-   * Returns a search filter using {@link #userFilter} and {@link
-   * #userFilterParameters}. The user parameter is injected as a named parameter
-   * of 'user'.
+   * Returns a search filter using {@link #userFilter} and {@link #userFilterParameters}. The user parameter is injected
+   * as a named parameter of 'user'.
    *
    * @param  user  identifier
    *
@@ -310,8 +297,7 @@ public abstract class AbstractSearchDnResolver
 
 
   /**
-   * Returns a search request for searching for a single entry in an LDAP,
-   * returning no attributes.
+   * Returns a search request for searching for a single entry in an LDAP, returning no attributes.
    *
    * @param  filter  to execute
    *

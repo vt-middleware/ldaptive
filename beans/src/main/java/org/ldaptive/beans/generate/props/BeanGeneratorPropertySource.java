@@ -13,23 +13,19 @@ import org.ldaptive.schema.Schema;
 import org.ldaptive.schema.SchemaFactory;
 
 /**
- * Reads properties specific to {@link BeanGenerator} and returns an initialized
- * object of that type.
+ * Reads properties specific to {@link BeanGenerator} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class BeanGeneratorPropertySource
-  extends AbstractPropertySource<BeanGenerator>
+public final class BeanGeneratorPropertySource extends AbstractPropertySource<BeanGenerator>
 {
 
   /** Invoker for bean generator. */
-  private static final BeanGeneratorPropertyInvoker INVOKER =
-    new BeanGeneratorPropertyInvoker(BeanGenerator.class);
+  private static final BeanGeneratorPropertyInvoker INVOKER = new BeanGeneratorPropertyInvoker(BeanGenerator.class);
 
 
   /**
-   * Creates a new bean generator property source using the default properties
-   * file.
+   * Creates a new bean generator property source using the default properties file.
    *
    * @param  bg  bean generator to invoke properties on
    */
@@ -45,9 +41,7 @@ public final class BeanGeneratorPropertySource
    * @param  pc  bean generator to invoke properties on
    * @param  paths  to read properties from
    */
-  public BeanGeneratorPropertySource(
-    final BeanGenerator pc,
-    final String... paths)
+  public BeanGeneratorPropertySource(final BeanGenerator pc, final String... paths)
   {
     this(pc, loadProperties(paths));
   }
@@ -59,9 +53,7 @@ public final class BeanGeneratorPropertySource
    * @param  pc  bean generator to invoke properties on
    * @param  readers  to read properties from
    */
-  public BeanGeneratorPropertySource(
-    final BeanGenerator pc,
-    final Reader... readers)
+  public BeanGeneratorPropertySource(final BeanGenerator pc, final Reader... readers)
   {
     this(pc, loadProperties(readers));
   }
@@ -73,9 +65,7 @@ public final class BeanGeneratorPropertySource
    * @param  pc  bean generator to invoke properties on
    * @param  props  to read properties from
    */
-  public BeanGeneratorPropertySource(
-    final BeanGenerator pc,
-    final Properties props)
+  public BeanGeneratorPropertySource(final BeanGenerator pc, final Properties props)
   {
     this(pc, PropertyDomain.LDAP, props);
   }
@@ -88,10 +78,7 @@ public final class BeanGeneratorPropertySource
    * @param  domain  that properties are in
    * @param  props  to read properties from
    */
-  public BeanGeneratorPropertySource(
-    final BeanGenerator pc,
-    final PropertyDomain domain,
-    final Properties props)
+  public BeanGeneratorPropertySource(final BeanGenerator pc, final PropertyDomain domain, final Properties props)
   {
     super(pc, domain, props);
   }
@@ -105,11 +92,10 @@ public final class BeanGeneratorPropertySource
     Schema schema = object.getSchema();
     if (schema == null) {
       final DefaultConnectionFactory cf = new DefaultConnectionFactory();
-      final DefaultConnectionFactoryPropertySource cfPropSource =
-        new DefaultConnectionFactoryPropertySource(
-          cf,
-          propertiesDomain,
-          properties);
+      final DefaultConnectionFactoryPropertySource cfPropSource = new DefaultConnectionFactoryPropertySource(
+        cf,
+        propertiesDomain,
+        properties);
       cfPropSource.initialize();
       try {
         schema = SchemaFactory.createSchema(cf);

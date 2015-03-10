@@ -58,9 +58,8 @@ public class CompareRequest extends AbstractRequest
 
 
   /**
-   * Returns the attribute containing the value to compare. If this attribute
-   * contains multiple values, only the first value as return by the underlying
-   * collection is used.
+   * Returns the attribute containing the value to compare. If this attribute contains multiple values, only the first
+   * value as return by the underlying collection is used.
    *
    * @return  attribute to compare
    */

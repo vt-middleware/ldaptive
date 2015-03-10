@@ -10,8 +10,7 @@ import java.util.List;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractCollectionReflectionTranscoder
-  implements ReflectionTranscoder
+public abstract class AbstractCollectionReflectionTranscoder implements ReflectionTranscoder
 {
 
   /** Type that is a collection. */
@@ -30,9 +29,7 @@ public abstract class AbstractCollectionReflectionTranscoder
    * @param  c  class that is a collection
    * @param  transcoder  to operate on elements of the collection
    */
-  public AbstractCollectionReflectionTranscoder(
-    final Class<?> c,
-    final SingleValueReflectionTranscoder<?> transcoder)
+  public AbstractCollectionReflectionTranscoder(final Class<?> c, final SingleValueReflectionTranscoder<?> transcoder)
   {
     type = c;
     singleValueTranscoder = transcoder;
@@ -46,9 +43,7 @@ public abstract class AbstractCollectionReflectionTranscoder
    * @param  c  class that is a collection
    * @param  transcoder  to operate on elements of the collection
    */
-  public AbstractCollectionReflectionTranscoder(
-    final Class<?> c,
-    final ArrayReflectionTranscoder transcoder)
+  public AbstractCollectionReflectionTranscoder(final Class<?> c, final ArrayReflectionTranscoder transcoder)
   {
     type = c;
     singleValueTranscoder = null;
@@ -125,8 +120,7 @@ public abstract class AbstractCollectionReflectionTranscoder
 
 
   /**
-   * Returns a collection implementation of the correct type for this
-   * transcoder.
+   * Returns a collection implementation of the correct type for this transcoder.
    *
    * @param  <T>  type of collection
    * @param  clazz  type of collection

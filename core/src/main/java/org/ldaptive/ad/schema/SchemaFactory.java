@@ -24,11 +24,10 @@ import org.ldaptive.schema.ObjectClassType;
 import org.ldaptive.schema.Schema;
 
 /**
- * Factory to create {@link Schema} from an active directory schema search
- * result. Active Directory does not adhere to RFC 4512 to represent it's
- * schema. Each schema element is represented with a separate LDAP entry. The
- * factory parses and sets the object classes and attribute types for the
- * schema. The other properties on the schema object are not available.
+ * Factory to create {@link Schema} from an active directory schema search result. Active Directory does not adhere to
+ * RFC 4512 to represent it's schema. Each schema element is represented with a separate LDAP entry. The factory parses
+ * and sets the object classes and attribute types for the schema. The other properties on the schema object are not
+ * available.
  *
  * @author  Middleware Services
  */
@@ -41,8 +40,7 @@ public final class SchemaFactory
 
 
   /**
-   * Creates a new schema. The input stream should contain the LDIF for the
-   * schema search results.
+   * Creates a new schema. The input stream should contain the LDIF for the schema search results.
    *
    * @param  is  containing the schema ldif
    *
@@ -68,24 +66,16 @@ public final class SchemaFactory
    *
    * @throws  LdapException  if the search fails
    */
-  public static Schema createSchema(
-    final ConnectionFactory factory,
-    final String entryDn)
+  public static Schema createSchema(final ConnectionFactory factory, final String entryDn)
     throws LdapException
   {
-    return
-      createSchema(
-        getSearchResult(
-          factory,
-          entryDn,
-          "(objectClass=*)",
-          ReturnAttributes.ALL.value()));
+    return createSchema(getSearchResult(factory, entryDn, "(objectClass=*)", ReturnAttributes.ALL.value()));
   }
 
 
   /**
-   * Creates a new schema. The schema result should contain entries with the
-   * 'attributeSchema' and 'classSchema' objectClasses.
+   * Creates a new schema. The schema result should contain entries with the 'attributeSchema' and 'classSchema'
+   * objectClasses.
    *
    * @param  schemaResult  containing the schema entries
    *
@@ -113,9 +103,8 @@ public final class SchemaFactory
 
 
   /**
-   * Searches for the supplied dn and returns its ldap entry. This methods uses
-   * the paged results search control as schema entries typically number beyond
-   * the server search size limit.
+   * Searches for the supplied dn and returns its ldap entry. This methods uses the paged results search control as
+   * schema entries typically number beyond the server search size limit.
    *
    * @param  factory  to obtain an LDAP connection from
    * @param  dn  to search for
@@ -138,18 +127,15 @@ public final class SchemaFactory
 
       final PagedResultsClient client = new PagedResultsClient(conn, 100);
       final SearchRequest request = new SearchRequest(dn, filter, retAttrs);
-      final Response<SearchResult> response = client.executeToCompletion(
-        request);
+      final Response<SearchResult> response = client.executeToCompletion(request);
       return response.getResult();
     }
   }
 
 
   /**
-   * Creates an attribute type from the supplied ldap entry. The entry must
-   * contain an objectClass of 'attributeSchema'. This method only populates the
-   * OID, names, description, syntax, and single valued properties of the
-   * attribute type.
+   * Creates an attribute type from the supplied ldap entry. The entry must contain an objectClass of 'attributeSchema'.
+   * This method only populates the OID, names, description, syntax, and single valued properties of the attribute type.
    *
    * @param  entry  containing an attribute schema
    *
@@ -164,11 +150,7 @@ public final class SchemaFactory
     return
       new AttributeType(
         getAttributeValue(entry, "attributeID"),
-        getAttributeValues(
-          entry,
-          "lDAPDisplayName",
-          "adminDisplayName",
-          "name"),
+        getAttributeValues(entry, "lDAPDisplayName", "adminDisplayName", "name"),
         getAttributeValue(entry, "adminDescription"),
         false,
         null,
@@ -185,10 +167,9 @@ public final class SchemaFactory
 
 
   /**
-   * Creates an object class from the supplied ldap entry. The entry must
-   * contain an objectClass of 'classSchema'. This method only populates the
-   * OID, names, description, superior classes, object class type, required
-   * attributes, and optional attributes of the object class.
+   * Creates an object class from the supplied ldap entry. The entry must contain an objectClass of 'classSchema'. This
+   * method only populates the OID, names, description, superior classes, object class type, required attributes, and
+   * optional attributes of the object class.
    *
    * @param  entry  containing a class schema
    *
@@ -214,11 +195,7 @@ public final class SchemaFactory
     return
       new ObjectClass(
         getAttributeValue(entry, "governsID"),
-        getAttributeValues(
-          entry,
-          "lDAPDisplayName",
-          "adminDisplayName",
-          "name"),
+        getAttributeValues(entry, "lDAPDisplayName", "adminDisplayName", "name"),
         getAttributeValue(entry, "adminDescription"),
         false,
         getAttributeValues(entry, "possSuperiors", "systemPossSuperiors"),
@@ -230,17 +207,14 @@ public final class SchemaFactory
 
 
   /**
-   * Returns a single value for the first attribute name found in the supplied
-   * entry.
+   * Returns a single value for the first attribute name found in the supplied entry.
    *
    * @param  entry  containing the attributes
    * @param  names  to search for in the entry
    *
    * @return  single attribute value
    */
-  private static String getAttributeValue(
-    final LdapEntry entry,
-    final String... names)
+  private static String getAttributeValue(final LdapEntry entry, final String... names)
   {
     String value = null;
     for (String name : names) {
@@ -255,17 +229,14 @@ public final class SchemaFactory
 
 
   /**
-   * Returns the values for the first attribute name found in the supplied
-   * entry.
+   * Returns the values for the first attribute name found in the supplied entry.
    *
    * @param  entry  containing the attributes
    * @param  names  to search for in the entry
    *
    * @return  attribute values
    */
-  private static String[] getAttributeValues(
-    final LdapEntry entry,
-    final String... names)
+  private static String[] getAttributeValues(final LdapEntry entry, final String... names)
   {
     Collection<String> values = null;
     for (String name : names) {

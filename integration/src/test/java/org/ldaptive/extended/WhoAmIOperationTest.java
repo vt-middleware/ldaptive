@@ -19,9 +19,7 @@ public class WhoAmIOperationTest extends AbstractTest
 {
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"extended"})
   public void whoami()
     throws Exception
@@ -34,11 +32,11 @@ public class WhoAmIOperationTest extends AbstractTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final WhoAmIOperation whoami = new WhoAmIOperation(conn);
       final Response<String> res = whoami.execute(new WhoAmIRequest());
       final BindConnectionInitializer ci =
-        (BindConnectionInitializer)
-          conn.getConnectionConfig().getConnectionInitializer();
+        (BindConnectionInitializer) conn.getConnectionConfig().getConnectionInitializer();
       AssertJUnit.assertEquals("dn:" + ci.getBindDn(), res.getResult());
     } finally {
       conn.close();

@@ -34,13 +34,9 @@ public class AuthenticatorPropertyInvoker extends AbstractPropertyInvoker
       if (DnResolver.class.isAssignableFrom(type)) {
         newValue = createTypeFromPropertyValue(DnResolver.class, value);
       } else if (AuthenticationHandler.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(
-          AuthenticationHandler.class,
-          value);
+        newValue = createTypeFromPropertyValue(AuthenticationHandler.class, value);
       } else if (AuthenticationResponseHandler[].class.isAssignableFrom(type)) {
-        newValue = createArrayTypeFromPropertyValue(
-          AuthenticationResponseHandler.class,
-          value);
+        newValue = createArrayTypeFromPropertyValue(AuthenticationResponseHandler.class, value);
       } else if (EntryResolver.class.isAssignableFrom(type)) {
         newValue = createTypeFromPropertyValue(EntryResolver.class, value);
       } else {

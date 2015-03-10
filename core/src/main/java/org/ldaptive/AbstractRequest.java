@@ -75,8 +75,7 @@ public abstract class AbstractRequest implements Request
    *
    * @param  handlers  intermediate response handlers
    */
-  public void setIntermediateResponseHandlers(
-    final IntermediateResponseHandler... handlers)
+  public void setIntermediateResponseHandlers(final IntermediateResponseHandler... handlers)
   {
     intermediateResponseHandlers = handlers;
   }

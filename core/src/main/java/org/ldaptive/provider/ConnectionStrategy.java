@@ -2,8 +2,8 @@
 package org.ldaptive.provider;
 
 /**
- * Interface to describe various connection strategies. Each strategy returns an
- * ordered list of URLs to attempt when opening a connection.
+ * Interface to describe various connection strategies. Each strategy returns an ordered list of URLs to attempt when
+ * opening a connection.
  *
  * @author  Middleware Services
  */

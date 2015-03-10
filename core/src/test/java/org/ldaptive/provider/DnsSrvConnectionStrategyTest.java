@@ -15,8 +15,7 @@ public class DnsSrvConnectionStrategyTest
 {
 
   /** Strategy to test. */
-  private final DnsSrvConnectionStrategy strategy =
-    new DnsSrvConnectionStrategy();
+  private final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy();
 
 
   /**
@@ -31,38 +30,26 @@ public class DnsSrvConnectionStrategyTest
       new Object[][] {
         new Object[] {
           new DnsSrvConnectionStrategy.SrvRecord[] {
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "0 0 389 larry.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "0 0 389 curly.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "0 0 389 moe.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 larry.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 curly.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 moe.ldaptive.org.", 0),
           },
           new DnsSrvConnectionStrategy.SrvRecord[] {
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "0 0 389 larry.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "0 0 389 curly.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "0 0 389 moe.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 larry.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 curly.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 moe.ldaptive.org.", 0),
           },
         },
         new Object[] {
           new DnsSrvConnectionStrategy.SrvRecord[] {
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "5 100 389 larry.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "1 0 389 curly.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "3 200 389 moe.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("5 100 389 larry.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("1 0 389 curly.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("3 200 389 moe.ldaptive.org.", 0),
           },
           new DnsSrvConnectionStrategy.SrvRecord[] {
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "1 0 389 curly.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "3 200 389 moe.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord(
-              "5 100 389 larry.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("1 0 389 curly.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("3 200 389 moe.ldaptive.org.", 0),
+            new DnsSrvConnectionStrategy.SrvRecord("5 100 389 larry.ldaptive.org.", 0),
           },
         },
       };
@@ -75,19 +62,14 @@ public class DnsSrvConnectionStrategyTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"provider"},
-    dataProvider = "records"
-  )
+  @Test(groups = {"provider"}, dataProvider = "records")
   public void sortSrvRecords(
     final DnsSrvConnectionStrategy.SrvRecord[] records,
     final DnsSrvConnectionStrategy.SrvRecord[] sorted)
     throws Exception
   {
     Assert.assertEquals(
-      strategy.sortSrvRecords(
-        Arrays.asList(records)).toArray(
-          new DnsSrvConnectionStrategy.SrvRecord[records.length]),
+      strategy.sortSrvRecords(Arrays.asList(records)).toArray(new DnsSrvConnectionStrategy.SrvRecord[records.length]),
       sorted);
   }
 }

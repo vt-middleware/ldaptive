@@ -16,8 +16,7 @@ import org.ldaptive.ssl.HostnameVerifyingTrustManager;
 import org.ldaptive.ssl.SSLContextInitializer;
 
 /**
- * OpenDJ provider implementation. Provides connection factories for clear, SSL,
- * and TLS connections.
+ * OpenDJ provider implementation. Provides connection factories for clear, SSL, and TLS connections.
  *
  * @author  Middleware Services
  */
@@ -29,8 +28,7 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
 
 
   @Override
-  public ProviderConnectionFactory<OpenDJProviderConfig> getConnectionFactory(
-    final ConnectionConfig cc)
+  public ProviderConnectionFactory<OpenDJProviderConfig> getConnectionFactory(final ConnectionConfig cc)
   {
     LDAPOptions options = config.getOptions();
     if (options == null) {
@@ -41,8 +39,8 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
 
 
   /**
-   * Returns an SSLContext configured with a default hostname verifier. Uses a
-   * {@link DefaultHostnameVerifier} if no trust managers have been configured.
+   * Returns an SSLContext configured with a default hostname verifier. Uses a {@link DefaultHostnameVerifier} if no
+   * trust managers have been configured.
    *
    * @param  cc  connection configuration
    *
@@ -52,11 +50,9 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
   {
     SSLContext sslContext;
     SSLContextInitializer contextInit;
-    if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getCredentialConfig() != null) {
+    if (cc.getSslConfig() != null && cc.getSslConfig().getCredentialConfig() != null) {
       try {
-        final CredentialConfig credConfig =
-          cc.getSslConfig().getCredentialConfig();
+        final CredentialConfig credConfig = cc.getSslConfig().getCredentialConfig();
         contextInit = credConfig.createSSLContextInitializer();
       } catch (GeneralSecurityException e) {
         throw new IllegalArgumentException(e);
@@ -64,15 +60,12 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
     } else {
       contextInit = new DefaultSSLContextInitializer();
     }
-    if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getTrustManagers() != null) {
+    if (cc.getSslConfig() != null && cc.getSslConfig().getTrustManagers() != null) {
       contextInit.setTrustManagers(cc.getSslConfig().getTrustManagers());
     } else {
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       contextInit.setTrustManagers(
-        new HostnameVerifyingTrustManager(
-          new DefaultHostnameVerifier(),
-          ldapUrl.getHostnames()));
+        new HostnameVerifyingTrustManager(new DefaultHostnameVerifier(), ldapUrl.getHostnames()));
     }
     try {
       sslContext = contextInit.initSSLContext("TLS");
@@ -103,12 +96,10 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
     } else if (cc.getUseSSL()) {
       options.setUseStartTLS(false);
     }
-    if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getEnabledCipherSuites() != null) {
+    if (cc.getSslConfig() != null && cc.getSslConfig().getEnabledCipherSuites() != null) {
       options.addEnabledCipherSuite(cc.getSslConfig().getEnabledCipherSuites());
     }
-    if (cc.getSslConfig() != null &&
-        cc.getSslConfig().getEnabledProtocols() != null) {
+    if (cc.getSslConfig() != null && cc.getSslConfig().getEnabledProtocols() != null) {
       options.addEnabledProtocol(cc.getSslConfig().getEnabledProtocols());
     }
     options.setTimeout(cc.getResponseTimeout(), TimeUnit.MILLISECONDS);

@@ -61,8 +61,7 @@ public class DN implements DEREncoder
   {
     final List<DEREncoder> typeEncoders = new ArrayList<>();
     for (final RDN rdn : rdns) {
-      typeEncoders.add(
-        new DEREncoder() {
+      typeEncoders.add(new DEREncoder() {
           @Override
           public byte[] encode()
           {
@@ -79,12 +78,10 @@ public class DN implements DEREncoder
 
 
   /**
-   * Converts bytes in the buffer to a DN by reading from the current position
-   * to the limit.
+   * Converts bytes in the buffer to a DN by reading from the current position to the limit.
    *
-   * @param  encoded  buffer containing DER-encoded data where the buffer is
-   * positioned at the tag of the DN and the limit is set beyond the last byte
-   * of DN data.
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the tag of the DN and the
+   *                  limit is set beyond the last byte of DN data.
    *
    * @return  decoded bytes as a DN
    */
@@ -111,11 +108,6 @@ public class DN implements DEREncoder
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::rdns=%s]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(rdns));
+    return String.format("[%s@%d::rdns=%s]", getClass().getName(), hashCode(), Arrays.toString(rdns));
   }
 }

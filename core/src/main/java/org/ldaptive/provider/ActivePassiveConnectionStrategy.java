@@ -2,9 +2,8 @@
 package org.ldaptive.provider;
 
 /**
- * Connection strategy that returns URLs ordered exactly the way they are
- * configured. This means that the first URL will always be attempted first,
- * followed by each URL in the list.
+ * Connection strategy that returns URLs ordered exactly the way they are configured. This means that the first URL will
+ * always be attempted first, followed by each URL in the list.
  *
  * @author  Middleware Services
  */
@@ -13,8 +12,8 @@ public class ActivePassiveConnectionStrategy implements ConnectionStrategy
 
 
   /**
-   * Return the URLs in the order they are provided, so that the first URL is
-   * always tried first, then the second, and so forth.
+   * Return the URLs in the order they are provided, so that the first URL is always tried first, then the second, and
+   * so forth.
    *
    * @param  metadata  which can be used to produce the URL list
    *
@@ -26,6 +25,7 @@ public class ActivePassiveConnectionStrategy implements ConnectionStrategy
     if (metadata == null || metadata.getLdapUrl() == null) {
       return null;
     }
+
     final String[] urls = metadata.getLdapUrl().split(" ");
     return urls;
   }

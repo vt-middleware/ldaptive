@@ -25,15 +25,13 @@ import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.pool.PooledConnectionFactory;
 
 /**
- * Executes a list of search filters in parallel over a list of connection
- * factories, each search is performed on a separate connection in the pool. If
- * you need to execute all searches on the same connection see {@link
+ * Executes a list of search filters in parallel over a list of connection factories, each search is performed on a
+ * separate connection in the pool. If you need to execute all searches on the same connection see {@link
  * AggregateSearchExecutor}. A cached thread pool is used by default.
  *
  * @author  Middleware Services
  */
-public class AggregatePooledSearchExecutor
-  extends AbstractAggregateSearchExecutor<PooledConnectionFactory>
+public class AggregatePooledSearchExecutor extends AbstractAggregateSearchExecutor<PooledConnectionFactory>
 {
 
 
@@ -63,10 +61,8 @@ public class AggregatePooledSearchExecutor
     final SearchEntryHandler... handlers)
     throws LdapException
   {
-    final CompletionService<Response<SearchResult>> searches =
-      new ExecutorCompletionService<>(getExecutorService());
-    final List<Future<Response<SearchResult>>> futures =
-      new ArrayList<>(factories.length * filters.length);
+    final CompletionService<Response<SearchResult>> searches = new ExecutorCompletionService<>(getExecutorService());
+    final List<Future<Response<SearchResult>>> futures = new ArrayList<>(factories.length * filters.length);
     for (ConnectionFactory factory : factories) {
       for (SearchFilter filter : filters) {
         final SearchRequest sr = newSearchRequest(this);
@@ -86,8 +82,7 @@ public class AggregatePooledSearchExecutor
       }
     }
 
-    final List<Response<SearchResult>> responses =
-      new ArrayList<>(factories.length * filters.length);
+    final List<Response<SearchResult>> responses = new ArrayList<>(factories.length * filters.length);
     for (Future<Response<SearchResult>> future : futures) {
       try {
         responses.add(future.get());
@@ -102,9 +97,8 @@ public class AggregatePooledSearchExecutor
 
 
   /**
-   * Returns a {@link Callable} that executes the supplied request with the
-   * supplied operation in a try-finally block that opens and closes the
-   * connection.
+   * Returns a {@link Callable} that executes the supplied request with the supplied operation in a try-finally block
+   * that opens and closes the connection.
    *
    * @param  <Q>  type of ldap request
    * @param  <S>  type of ldap response

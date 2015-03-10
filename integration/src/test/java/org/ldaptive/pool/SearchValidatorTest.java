@@ -19,9 +19,7 @@ public class SearchValidatorTest extends AbstractTest
 {
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"validator"})
   public void defaultSettings()
     throws Exception
@@ -49,8 +47,7 @@ public class SearchValidatorTest extends AbstractTest
     throws Exception
   {
     final Connection c = TestUtils.createConnection();
-    final SearchValidator sv = new SearchValidator(
-      new SearchRequest(searchDn, new SearchFilter("(cn=*)")));
+    final SearchValidator sv = new SearchValidator(new SearchRequest(searchDn, new SearchFilter("(cn=*)")));
     try {
       c.open();
       AssertJUnit.assertTrue(sv.validate(c));

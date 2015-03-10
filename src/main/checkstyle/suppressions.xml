@@ -5,6 +5,7 @@
 
 <suppressions>
   <!-- nothing magic about test data -->
-  <suppress checks="MagicNumber"
-            files=".*Test\.java" />
+  <suppress checks="MagicNumber" files=".*Test\.java" />
+  <suppress checks=".*" files="InetOrgPerson\.java" />
+  <suppress checks=".*" files="OrganizationalPerson\.java" />
 </suppressions>

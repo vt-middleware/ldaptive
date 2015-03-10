@@ -9,14 +9,12 @@ import org.ldaptive.sasl.SaslConfig;
  *
  * @author  Middleware Services
  */
-public class BindAuthenticationHandlerPropertyInvoker
-  extends AbstractPropertyInvoker
+public class BindAuthenticationHandlerPropertyInvoker extends AbstractPropertyInvoker
 {
 
 
   /**
-   * Creates a new bind authentication handler property invoker for the supplied
-   * class.
+   * Creates a new bind authentication handler property invoker for the supplied class.
    *
    * @param  c  class that has setter methods
    */
@@ -36,22 +34,17 @@ public class BindAuthenticationHandlerPropertyInvoker
           newValue = null;
         } else {
           if (PropertyValueParser.isParamsOnlyConfig(value)) {
-            final PropertyValueParser configParser = new PropertyValueParser(
-              value,
-              "org.ldaptive.sasl.SaslConfig");
+            final PropertyValueParser configParser = new PropertyValueParser(value, "org.ldaptive.sasl.SaslConfig");
             newValue = configParser.initializeType();
           } else if (PropertyValueParser.isConfig(value)) {
-            final PropertyValueParser configParser = new PropertyValueParser(
-              value);
+            final PropertyValueParser configParser = new PropertyValueParser(value);
             newValue = configParser.initializeType();
           } else {
             newValue = instantiateType(SaslConfig.class, value);
           }
         }
       } else if (RequestControl[].class.isAssignableFrom(type)) {
-        newValue = createArrayTypeFromPropertyValue(
-          RequestControl.class,
-          value);
+        newValue = createArrayTypeFromPropertyValue(RequestControl.class, value);
       } else {
         newValue = convertSimpleType(type, value);
       }

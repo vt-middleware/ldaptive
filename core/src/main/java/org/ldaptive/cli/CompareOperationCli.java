@@ -52,15 +52,9 @@ public class CompareOperationCli extends AbstractCli
   protected void initOptions()
   {
     options.addOption(new Option(OPT_DN, true, "entry DN"));
-    options.addOption(
-      new Option(
-        OPT_ATTR,
-        true,
-        "colon delimited name value pair (attr:value|attr::b64value)"));
+    options.addOption(new Option(OPT_ATTR, true, "colon delimited name value pair (attr:value|attr::b64value)"));
 
-    final Map<String, String> desc = getArgDesc(
-      ConnectionConfig.class,
-      SslConfig.class);
+    final Map<String, String> desc = getArgDesc(ConnectionConfig.class, SslConfig.class);
     for (String s : ConnectionConfigPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
@@ -84,14 +78,11 @@ public class CompareOperationCli extends AbstractCli
       LdapAttribute la;
       final String[] attr = line.getOptionValue(OPT_ATTR).split(":", 2);
       if (attr[1].startsWith(":")) {
-        la = new LdapAttribute(
-          attr[0],
-          LdapUtils.base64Decode(attr[1].substring(1)));
+        la = new LdapAttribute(attr[0], LdapUtils.base64Decode(attr[1].substring(1)));
       } else {
         la = new LdapAttribute(attr[0], attr[1]);
       }
-      return
-        compare(initConnectionFactory(line), line.getOptionValue(OPT_DN), la);
+      return compare(initConnectionFactory(line), line.getOptionValue(OPT_DN), la);
     }
     return -1;
   }
@@ -108,10 +99,7 @@ public class CompareOperationCli extends AbstractCli
    *
    * @throws  Exception  on any LDAP search error
    */
-  protected int compare(
-    final ConnectionFactory cf,
-    final String dn,
-    final LdapAttribute attr)
+  protected int compare(final ConnectionFactory cf, final String dn, final LdapAttribute attr)
     throws Exception
   {
     final Connection conn = cf.getConnection();

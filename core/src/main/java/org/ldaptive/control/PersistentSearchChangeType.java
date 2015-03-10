@@ -2,10 +2,8 @@
 package org.ldaptive.control;
 
 /**
- * The set of change types available for use with the {@link
- * PersistentSearchRequestControl} and returned by the {@link
- * EntryChangeNotificationControl}. See
- * http://tools.ietf.org/id/draft-ietf-ldapext-psearch-03.txt.
+ * The set of change types available for use with the {@link PersistentSearchRequestControl} and returned by the {@link
+ * EntryChangeNotificationControl}. See http://tools.ietf.org/id/draft-ietf-ldapext-psearch-03.txt.
  *
  * @author  Middleware Services
  */
@@ -50,8 +48,7 @@ public enum PersistentSearchChangeType {
 
 
   /**
-   * Returns the persistent search change type for the supplied integer
-   * constant.
+   * Returns the persistent search change type for the supplied integer constant.
    *
    * @param  i  to find change type for
    *

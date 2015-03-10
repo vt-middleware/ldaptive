@@ -10,8 +10,7 @@ import org.ldaptive.BindRequest;
  *
  * @author  Middleware Services
  */
-public class BindOperationWorker
-  extends AbstractOperationWorker<BindRequest, Void>
+public class BindOperationWorker extends AbstractOperationWorker<BindRequest, Void>
 {
 
 

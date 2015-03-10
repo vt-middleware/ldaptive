@@ -11,9 +11,8 @@ import org.newsclub.net.unix.AFUNIXSocket;
 import org.newsclub.net.unix.AFUNIXSocketAddress;
 
 /**
- * AFUnixSocketFactory is an extension of SocketFactory which utilizes {@link
- * AFUNIXSocket} to connect to a host, it is intended for local file-based
- * native socket connections only.
+ * AFUnixSocketFactory is an extension of SocketFactory which utilizes {@link AFUNIXSocket} to connect to a host, it is
+ * intended for local file-based native socket connections only.
  *
  * @author  Middleware Services
  */
@@ -24,10 +23,7 @@ public class AFUnixSocketFactory extends SocketFactory
   private final String socketFile;
 
 
-  /**
-   * Creates a new AFUnixSocketFactory configured with the system property
-   * 'org.ldaptive.ldapi.socketFile'.
-   */
+  /** Creates a new AFUnixSocketFactory configured with the system property 'org.ldaptive.ldapi.socketFile'. */
   public AFUnixSocketFactory()
   {
     this(System.getProperty("org.ldaptive.ldapi.socketFile"));
@@ -46,8 +42,7 @@ public class AFUnixSocketFactory extends SocketFactory
 
 
   /**
-   * This returns a new instance of AFUnixSocketFactory. See {@link
-   * #AFUnixSocketFactory()}.
+   * This returns a new instance of AFUnixSocketFactory. See {@link #AFUnixSocketFactory()}.
    *
    * @return  socket factory
    */
@@ -58,9 +53,8 @@ public class AFUnixSocketFactory extends SocketFactory
 
 
   /**
-   * Creates a new instance of AFUNIXSocket using the host as the file system
-   * location of the domain socket. The host parameter is ignored if {@link
-   * #socketFile} is set. The port parameter is always ignored.
+   * Creates a new instance of AFUNIXSocket using the host as the file system location of the domain socket. The host
+   * parameter is ignored if {@link #socketFile} is set. The port parameter is always ignored.
    *
    * @param  host  ignored if {@link #socketFile} is set
    * @param  port  Unsupported, will be ignored
@@ -100,11 +94,7 @@ public class AFUnixSocketFactory extends SocketFactory
    * @throws  IOException  Unsupported.
    */
   @Override
-  public Socket createSocket(
-    final String host,
-    final int port,
-    final InetAddress localHost,
-    final int localPort)
+  public Socket createSocket(final String host, final int port, final InetAddress localHost, final int localPort)
     throws IOException
   {
     throw new UnsupportedOperationException("This method is not supported.");

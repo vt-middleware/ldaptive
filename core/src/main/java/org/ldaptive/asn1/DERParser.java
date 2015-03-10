@@ -11,10 +11,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class provides a SAX-like parsing facility for DER-encoded data where
- * elements of interest in the parse tree may be registered to handlers via the
- * {@link #registerHandler} methods. {@link DERPath} strings are used to map
- * handlers to elements of interest.
+ * This class provides a SAX-like parsing facility for DER-encoded data where elements of interest in the parse tree may
+ * be registered to handlers via the {@link #registerHandler} methods. {@link DERPath} strings are used to map handlers
+ * to elements of interest.
  *
  * @author  Middleware Services
  * @see  DERPath
@@ -45,8 +44,7 @@ public class DERParser
 
 
   /**
-   * Registers the supplied handler to fire when the supplied path is
-   * encountered.
+   * Registers the supplied handler to fire when the supplied path is encountered.
    *
    * @param  path  to register
    * @param  handler  to associate with the path
@@ -58,8 +56,8 @@ public class DERParser
 
 
   /**
-   * Parse a DER-encoded data structure by calling registered handlers when
-   * points of interest are encountered in the parse tree.
+   * Parse a DER-encoded data structure by calling registered handlers when points of interest are encountered in the
+   * parse tree.
    *
    * @param  encoded  DER-encoded bytes.
    */
@@ -70,14 +68,12 @@ public class DERParser
 
 
   /**
-   * Reads a DER tag from a single byte at the current position of the given
-   * buffer. The buffer position is naturally advanced one byte in this
-   * operation.
+   * Reads a DER tag from a single byte at the current position of the given buffer. The buffer position is naturally
+   * advanced one byte in this operation.
    *
    * @param  encoded  Buffer containing DER-encoded bytes positioned at tag.
    *
-   * @return  Tag or null if no universal tag or application-specific tag is
-   * known that matches the byte read in.
+   * @return  Tag or null if no universal tag or application-specific tag is known that matches the byte read in.
    */
   public DERTag readTag(final ByteBuffer encoded)
   {
@@ -115,18 +111,16 @@ public class DERParser
 
 
   /**
-   * Reads the length of a DER-encoded value from the given byte buffer. The
-   * buffer is expected to be positioned at the byte immediately following the
-   * tag byte, which is where the length byte(s) begin(s). Invocation of this
-   * method has two generally beneficial side effects:
+   * Reads the length of a DER-encoded value from the given byte buffer. The buffer is expected to be positioned at the
+   * byte immediately following the tag byte, which is where the length byte(s) begin(s). Invocation of this method has
+   * two generally beneficial side effects:
    *
    * <ol>
    *   <li>Buffer is positioned at <em>start</em> of value bytes.</li>
    *   <li>Buffer limit is set to the <em>end</em> of value bytes.</li>
    * </ol>
    *
-   * @param  encoded  buffer containing DER-encoded bytes positioned at start of
-   * length byte(s).
+   * @param  encoded  buffer containing DER-encoded bytes positioned at start of length byte(s).
    *
    * @return  number of bytes occupied by tag value.
    */
@@ -146,13 +140,12 @@ public class DERParser
       length = b;
     }
     return length;
-    // CheckStyle:MagicNumber ON
+      // CheckStyle:MagicNumber ON
   }
 
 
   /**
-   * Reads the supplied DER encoded bytes and invokes handlers as configured
-   * paths are encountered.
+   * Reads the supplied DER encoded bytes and invokes handlers as configured paths are encountered.
    *
    * @param  encoded  to parse
    */
@@ -171,8 +164,7 @@ public class DERParser
 
 
   /**
-   * Invokes the parse handler for the current path and advances to the next
-   * position in the encoded bytes.
+   * Invokes the parse handler for the current path and advances to the next position in the encoded bytes.
    *
    * @param  tag  to inspect for internal tags
    * @param  encoded  to parse
@@ -200,9 +192,8 @@ public class DERParser
 
 
   /**
-   * Add the given tag at the specified index to all permutations of the current
-   * parser path and increases the number of permutations as necessary to
-   * satisfy the following relation:
+   * Add the given tag at the specified index to all permutations of the current parser path and increases the number of
+   * permutations as necessary to satisfy the following relation:
    *
    * <pre>size = 2^n</pre>
    *
@@ -217,8 +208,7 @@ public class DERParser
       permutations.add(new DERPath().pushNode(tag.name()));
       permutations.add(new DERPath().pushNode(tag.name(), index));
     } else {
-      final Collection<DERPath> generation = new ArrayDeque<>(
-        permutations.size());
+      final Collection<DERPath> generation = new ArrayDeque<>(permutations.size());
       for (DERPath p : permutations) {
         generation.add(new DERPath(p).pushNode(tag.name()));
         p.pushNode(tag.name(), index);
@@ -229,9 +219,8 @@ public class DERParser
 
 
   /**
-   * Removes the tag at the leaf position of all permutations of the current
-   * parser path, and reduces the number of permutations as necessary to satisfy
-   * the following relation:
+   * Removes the tag at the leaf position of all permutations of the current parser path, and reduces the number of
+   * permutations as necessary to satisfy the following relation:
    *
    * <pre>size = 2^n</pre>
    *

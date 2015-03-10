@@ -70,8 +70,7 @@ public class PersistentSearchClient
 
 
   /**
-   * Invokes {@link #execute(SearchRequest, int)} with a capacity of {@link
-   * Integer#MAX_VALUE}.
+   * Invokes {@link #execute(SearchRequest, int)} with a capacity of {@link Integer#MAX_VALUE}.
    *
    * @param  request  search request to execute
    *
@@ -79,8 +78,7 @@ public class PersistentSearchClient
    *
    * @throws  LdapException  if the search fails
    */
-  public BlockingQueue<PersistentSearchItem> execute(
-    final SearchRequest request)
+  public BlockingQueue<PersistentSearchItem> execute(final SearchRequest request)
     throws LdapException
   {
     return execute(request, Integer.MAX_VALUE);
@@ -88,24 +86,19 @@ public class PersistentSearchClient
 
 
   /**
-   * Performs an async search operation with the {@link
-   * PersistentSearchRequestControl}. The supplied request is modified in the
-   * following way:
+   * Performs an async search operation with the {@link PersistentSearchRequestControl}. The supplied request is
+   * modified in the following way:
    *
    * <ul>
-   *   <li>{@link SearchRequest#setControls(
-   *     org.ldaptive.control.RequestControl...)} is invoked with {@link
+   *   <li>{@link SearchRequest#setControls( org.ldaptive.control.RequestControl...)} is invoked with {@link
    *     PersistentSearchRequestControl}</li>
-   *   <li>{@link SearchRequest#setSearchEntryHandlers(SearchEntryHandler...)}
-   *     is invoked with a custom handler that places persistent search data in
-   *     a blocking queue.</li>
-   *   <li>{@link AsyncSearchOperation#setExceptionHandler(ExceptionHandler)} is
-   *     invoked with a custom handler that places the exception in a blocking
-   *     queue.</li>
+   *   <li>{@link SearchRequest#setSearchEntryHandlers(SearchEntryHandler...)} is invoked with a custom handler that
+   *     places persistent search data in a blocking queue.</li>
+   *   <li>{@link AsyncSearchOperation#setExceptionHandler(ExceptionHandler)} is invoked with a custom handler that
+   *     places the exception in a blocking queue.</li>
    * </ul>
    *
-   * <p>The search request object should not be reused for any other search
-   * operations.</p>
+   * <p>The search request object should not be reused for any other search operations.</p>
    *
    * @param  request  search request to execute
    * @param  capacity  of the returned blocking queue
@@ -115,13 +108,10 @@ public class PersistentSearchClient
    * @throws  LdapException  if the search fails
    */
   @SuppressWarnings("unchecked")
-  public BlockingQueue<PersistentSearchItem> execute(
-    final SearchRequest request,
-    final int capacity)
+  public BlockingQueue<PersistentSearchItem> execute(final SearchRequest request, final int capacity)
     throws LdapException
   {
-    final BlockingQueue<PersistentSearchItem> queue =
-      new LinkedBlockingQueue<>(capacity);
+    final BlockingQueue<PersistentSearchItem> queue = new LinkedBlockingQueue<>(capacity);
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
     search.setOperationResponseHandlers(
@@ -165,10 +155,7 @@ public class PersistentSearchClient
     search.setExceptionHandler(
       new ExceptionHandler() {
         @Override
-        public HandlerResult<Exception> handle(
-          final Connection conn,
-          final Request request,
-          final Exception exception)
+        public HandlerResult<Exception> handle(final Connection conn, final Request request, final Exception exception)
         {
           try {
             logger.debug("received exception:", exception);
@@ -181,12 +168,7 @@ public class PersistentSearchClient
         }
       });
 
-    request.setControls(
-      new PersistentSearchRequestControl(
-        changeTypes,
-        changesOnly,
-        returnEcs,
-        true));
+    request.setControls(new PersistentSearchRequestControl(changeTypes, changesOnly, returnEcs, true));
     request.setSearchEntryHandlers(
       new SearchEntryHandler() {
         @Override
@@ -199,8 +181,7 @@ public class PersistentSearchClient
           try {
             logger.debug("received {}", entry);
 
-            final PersistentSearchItem item = new PersistentSearchItem(
-              new PersistentSearchItem.Entry(entry));
+            final PersistentSearchItem item = new PersistentSearchItem(new PersistentSearchItem.Entry(entry));
             queue.put(item);
           } catch (Exception e) {
             logger.warn("Unable to enqueue entry {}", entry);
@@ -218,8 +199,8 @@ public class PersistentSearchClient
 
 
   /**
-   * Invokes an abandon operation on the supplied ldap message id. Convenience
-   * method supplied to abandon persistent search operations.
+   * Invokes an abandon operation on the supplied ldap message id. Convenience method supplied to abandon persistent
+   * search operations.
    *
    * @param  messageId  of the operation to abandon
    *

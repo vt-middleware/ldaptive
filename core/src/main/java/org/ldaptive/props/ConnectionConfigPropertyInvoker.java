@@ -29,9 +29,7 @@ public class ConnectionConfigPropertyInvoker extends AbstractPropertyInvoker
     Object newValue = value;
     if (type != String.class) {
       if (ConnectionInitializer.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(
-          ConnectionInitializer.class,
-          value);
+        newValue = createTypeFromPropertyValue(ConnectionInitializer.class, value);
       } else {
         newValue = convertSimpleType(type, value);
       }

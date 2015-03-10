@@ -20,9 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation of an ldap entry manager. Uses an {@link
- * LdapEntryMapper} to convert objects to entries, then invokes LDAP operations
- * with those objects.
+ * Default implementation of an ldap entry manager. Uses an {@link LdapEntryMapper} to convert objects to entries, then
+ * invokes LDAP operations with those objects.
  *
  * @param  <T>  type of object to manage
  *
@@ -47,9 +46,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
    * @param  mapper  for object conversion
    * @param  factory  for LDAP communication
    */
-  public DefaultLdapEntryManager(
-    final LdapEntryMapper<T> mapper,
-    final ConnectionFactory factory)
+  public DefaultLdapEntryManager(final LdapEntryMapper<T> mapper, final ConnectionFactory factory)
   {
     ldapEntryMapper = mapper;
     connectionFactory = factory;
@@ -91,17 +88,11 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
       final Response<SearchResult> response = search.execute(request);
       if (response.getResult().size() == 0) {
         throw new IllegalArgumentException(
-          String.format(
-            "Unable to find ldap entry %s, no entries returned: %s",
-            dn,
-            response));
+          String.format("Unable to find ldap entry %s, no entries returned: %s", dn, response));
       }
       if (response.getResult().size() > 1) {
         throw new IllegalArgumentException(
-          String.format(
-            "Unable to find ldap entry %s, multiple entries returned: %s",
-            dn,
-            response));
+          String.format("Unable to find ldap entry %s, multiple entries returned: %s", dn, response));
       }
       getLdapEntryMapper().map(object, response.getResult().getEntry());
     }
@@ -116,9 +107,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
     final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
 
-    final AddRequest request = new AddRequest(
-      entry.getDn(),
-      entry.getAttributes());
+    final AddRequest request = new AddRequest(entry.getDn(), entry.getAttributes());
     try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
 

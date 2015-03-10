@@ -23,8 +23,7 @@ public final class KeyStoreUtils
 
 
   /**
-   * Creates a new {@link KeyStore} with the default keystore type and
-   * initializes it.
+   * Creates a new {@link KeyStore} with the default keystore type and initializes it.
    *
    * @return  initialized keystore
    *
@@ -38,8 +37,7 @@ public final class KeyStoreUtils
 
 
   /**
-   * Creates a new {@link KeyStore} with the default keystore type and
-   * initializes it.
+   * Creates a new {@link KeyStore} with the default keystore type and initializes it.
    *
    * @param  password  to protect the keystore
    *
@@ -103,20 +101,13 @@ public final class KeyStoreUtils
    * @throws  GeneralSecurityException  if the keystore cannot be read
    * @throws  IllegalArgumentException  if the alias does not exist
    */
-  public static KeyStore.Entry getEntry(
-    final String alias,
-    final KeyStore keystore,
-    final char[] password)
+  public static KeyStore.Entry getEntry(final String alias, final KeyStore keystore, final char[] password)
     throws GeneralSecurityException
   {
     if (!keystore.containsAlias(alias)) {
-      throw new IllegalArgumentException(
-        "KeyStore does not contain alias " + alias);
+      throw new IllegalArgumentException("KeyStore does not contain alias " + alias);
     }
-    return
-      keystore.getEntry(
-        alias,
-        password != null ? new KeyStore.PasswordProtection(password) : null);
+    return keystore.getEntry(alias, password != null ? new KeyStore.PasswordProtection(password) : null);
   }
 
 
@@ -137,10 +128,7 @@ public final class KeyStoreUtils
     final char[] password)
     throws GeneralSecurityException
   {
-    keystore.setEntry(
-      alias,
-      entry,
-      password != null ? new KeyStore.PasswordProtection(password) : null);
+    keystore.setEntry(alias, entry, password != null ? new KeyStore.PasswordProtection(password) : null);
   }
 
 
@@ -168,8 +156,8 @@ public final class KeyStoreUtils
 
 
   /**
-   * Sets certificate entries on the supplied keystore. For certificate arrays
-   * of size greater than 1, the alias is appended with an index.
+   * Sets certificate entries on the supplied keystore. For certificate arrays of size greater than 1, the alias is
+   * appended with an index.
    *
    * @param  alias  of the supplied certificate(s)
    * @param  keystore  to set the cert(s) on
@@ -177,10 +165,7 @@ public final class KeyStoreUtils
    *
    * @throws  GeneralSecurityException  if the keystore cannot be modified
    */
-  public static void setCertificateEntry(
-    final String alias,
-    final KeyStore keystore,
-    final Certificate... certs)
+  public static void setCertificateEntry(final String alias, final KeyStore keystore, final Certificate... certs)
     throws GeneralSecurityException
   {
     if (certs != null && certs.length > 0) {
@@ -188,9 +173,7 @@ public final class KeyStoreUtils
         keystore.setCertificateEntry(alias, certs[0]);
       } else {
         for (int i = 0; i < certs.length; i++) {
-          keystore.setCertificateEntry(
-            String.format("%s%s", alias, i),
-            certs[i]);
+          keystore.setCertificateEntry(String.format("%s%s", alias, i), certs[i]);
         }
       }
     }

@@ -22,8 +22,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
 {
 
   /** Cache of properties. */
-  private static final Map<String, Map<String, Method[]>> PROPERTIES_CACHE =
-    new HashMap<>();
+  private static final Map<String, Map<String, Method[]>> PROPERTIES_CACHE = new HashMap<>();
 
   /** Class to invoke methods on. */
   private Class<?> clazz;
@@ -33,9 +32,8 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
 
 
   /**
-   * Initializes the properties cache with the supplied class. The cache
-   * contains a map of properties to an array of the setter and getter methods.
-   * If a method named 'initialize' is found, it is also cached.
+   * Initializes the properties cache with the supplied class. The cache contains a map of properties to an array of the
+   * setter and getter methods. If a method named 'initialize' is found, it is also cached.
    *
    * @param  c  to read methods from
    */
@@ -48,12 +46,9 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       properties = new HashMap<>();
       for (Method method : c.getMethods()) {
         if (!method.isBridge()) {
-          if (
-            method.getName().startsWith("set") &&
-              method.getParameterTypes().length == 1) {
+          if (method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
             final String mName = method.getName().substring(3);
-            final String pName = mName.substring(0, 1).toLowerCase() +
-              mName.substring(1, mName.length());
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1, mName.length());
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               m[1] = method;
@@ -61,12 +56,9 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             } else {
               properties.put(pName, new Method[] {null, method});
             }
-          } else if (
-            method.getName().startsWith("get") &&
-              method.getParameterTypes().length == 0) {
+          } else if (method.getName().startsWith("get") && method.getParameterTypes().length == 0) {
             final String mName = method.getName().substring(3);
-            final String pName = mName.substring(0, 1).toLowerCase() +
-              mName.substring(1, mName.length());
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1, mName.length());
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               m[0] = method;
@@ -74,12 +66,9 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             } else {
               properties.put(pName, new Method[] {method, null});
             }
-          } else if (
-            method.getName().startsWith("is") &&
-              method.getParameterTypes().length == 0) {
+          } else if (method.getName().startsWith("is") && method.getParameterTypes().length == 0) {
             final String mName = method.getName().substring(2);
-            final String pName = mName.substring(0, 1).toLowerCase() +
-              mName.substring(1, mName.length());
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1, mName.length());
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               // prefer any get method that may exist
@@ -90,9 +79,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             } else {
               properties.put(pName, new Method[] {method, null});
             }
-          } else if (
-            "initialize".equals(method.getName()) &&
-              method.getParameterTypes().length == 0) {
+          } else if ("initialize".equals(method.getName()) && method.getParameterTypes().length == 0) {
             final String pName = method.getName();
             properties.put(pName, new Method[] {method, method});
           }
@@ -115,8 +102,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
 
 
   /**
-   * This invokes the setter method for the supplied property name with the
-   * supplied value.
+   * This invokes the setter method for the supplied property name with the supplied value.
    *
    * @param  object  to invoke method on
    * @param  name  of the property
@@ -125,29 +111,22 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    * @throws  IllegalArgumentException  if an invocation exception occurs
    */
   @Override
-  public void setProperty(
-    final Object object,
-    final String name,
-    final String value)
+  public void setProperty(final Object object, final String name, final String value)
   {
     if (!clazz.isInstance(object)) {
       throw new IllegalArgumentException(
-        "Illegal attempt to set property for class " + clazz.getName() +
-        " on object of type " + object.getClass().getName());
+        "Illegal attempt to set property for class " + clazz.getName() + " on object of type " +
+        object.getClass().getName());
     }
 
-    final Method getter = properties.get(name) != null ? properties.get(name)[0]
-                                                       : null;
+    final Method getter = properties.get(name) != null ? properties.get(name)[0] : null;
     if (getter == null) {
-      throw new IllegalArgumentException(
-        "No getter method found for " + name + " on object " + clazz.getName());
+      throw new IllegalArgumentException("No getter method found for " + name + " on object " + clazz.getName());
     }
 
-    final Method setter = properties.get(name) != null ? properties.get(name)[1]
-                                                       : null;
+    final Method setter = properties.get(name) != null ? properties.get(name)[1] : null;
     if (setter == null) {
-      throw new IllegalArgumentException(
-        "No setter method found for " + name + " on object " + clazz.getName());
+      throw new IllegalArgumentException("No setter method found for " + name + " on object " + clazz.getName());
     }
 
     invokeMethod(setter, object, convertValue(getter.getReturnType(), value));
@@ -155,17 +134,15 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
 
 
   /**
-   * Converts the supplied string value into an Object of the supplied type. If
-   * value cannot be converted it is returned as is.
+   * Converts the supplied string value into an Object of the supplied type. If value cannot be converted it is returned
+   * as is.
    *
    * @param  type  of object to convert value into
    * @param  value  to parse
    *
    * @return  object of the supplied type
    */
-  protected abstract Object convertValue(
-    final Class<?> type,
-    final String value);
+  protected abstract Object convertValue(final Class<?> type, final String value);
 
 
   /**
@@ -203,8 +180,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    *
    * @return  class of type T
    *
-   * @throws  IllegalArgumentException  if the supplied class name cannot create
-   * a new instance of T
+   * @throws  IllegalArgumentException  if the supplied class name cannot create a new instance of T
    */
   public static <T> T instantiateType(final T type, final String className)
   {
@@ -212,12 +188,10 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       try {
         final Class<?> clazz = createClass(className);
         final Constructor<?> con = clazz.getDeclaredConstructor((Class[]) null);
-        @SuppressWarnings("unchecked") final T t = (T) con.newInstance();
+        @SuppressWarnings("unchecked")
+        final T t = (T) con.newInstance();
         return t;
-      } catch (NoSuchMethodException |
-               InvocationTargetException |
-               InstantiationException |
-               IllegalAccessException e) {
+      } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
         throw new IllegalArgumentException(e);
       }
     } catch (RuntimeException e) {
@@ -235,24 +209,20 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    *
    * @return  class
    *
-   * @throws  IllegalArgumentException  if the supplied class name cannot be
-   * created
+   * @throws  IllegalArgumentException  if the supplied class name cannot be created
    */
   public static Class<?> createClass(final String className)
   {
     try {
       return Class.forName(className);
     } catch (ClassNotFoundException e) {
-      throw new IllegalArgumentException(
-        String.format("Could not find class '%s'", className),
-        e);
+      throw new IllegalArgumentException(String.format("Could not find class '%s'", className), e);
     }
   }
 
 
   /**
-   * Converts simple types that are common to all property invokers. If value
-   * cannot be converted it is returned as is.
+   * Converts simple types that are common to all property invokers. If value cannot be converted it is returned as is.
    *
    * @param  type  of object to convert value into
    * @param  value  to parse
@@ -305,14 +275,12 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
         return e;
       }
     }
-    throw new IllegalArgumentException(
-      String.format("Unknown enum value %s for %s", value, clazz));
+    throw new IllegalArgumentException(String.format("Unknown enum value %s for %s", value, clazz));
   }
 
 
   /**
-   * Returns the object which represents the supplied class given the supplied
-   * string representation.
+   * Returns the object which represents the supplied class given the supplied string representation.
    *
    * @param  c  type to instantiate
    * @param  s  property value to parse
@@ -341,17 +309,14 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
 
 
   /**
-   * Returns the object which represents an array of the supplied class given
-   * the supplied string representation.
+   * Returns the object which represents an array of the supplied class given the supplied string representation.
    *
    * @param  c  type to instantiate
    * @param  s  property value to parse
    *
    * @return  an array or null
    */
-  protected Object createArrayTypeFromPropertyValue(
-    final Class<?> c,
-    final String s)
+  protected Object createArrayTypeFromPropertyValue(final Class<?> c, final String s)
   {
     Object newObject;
     if ("null".equals(s)) {
@@ -363,12 +328,10 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
         for (int i = 0; i < classes.length; i++) {
           classes[i] = classes[i] + "}";
           if (PropertyValueParser.isConfig(classes[i])) {
-            final PropertyValueParser configParser = new PropertyValueParser(
-              classes[i]);
+            final PropertyValueParser configParser = new PropertyValueParser(classes[i]);
             Array.set(newObject, i, configParser.initializeType());
           } else {
-            throw new IllegalArgumentException(
-              String.format("Could not parse property string: %s", classes[i]));
+            throw new IllegalArgumentException(String.format("Could not parse property string: %s", classes[i]));
           }
         }
       } else {
@@ -376,8 +339,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
         newObject = Array.newInstance(c, classes.length);
         for (int i = 0; i < classes.length; i++) {
           if (PropertyValueParser.isConfig(classes[i])) {
-            final PropertyValueParser configParser = new PropertyValueParser(
-              classes[i]);
+            final PropertyValueParser configParser = new PropertyValueParser(classes[i]);
             Array.set(newObject, i, configParser.initializeType());
           } else {
             if (Class.class == c) {
@@ -394,17 +356,14 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
 
 
   /**
-   * Returns the enum array which represents the supplied class given the
-   * supplied string representation.
+   * Returns the enum array which represents the supplied class given the supplied string representation.
    *
    * @param  c  type to instantiate
    * @param  s  property value to parse
    *
    * @return  Enum[] of the supplied type or null
    */
-  protected Object createArrayEnumFromPropertyValue(
-    final Class<?> c,
-    final String s)
+  protected Object createArrayEnumFromPropertyValue(final Class<?> c, final String s)
   {
     Object newObject;
     if ("null".equals(s)) {
@@ -421,8 +380,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
 
 
   /**
-   * Invokes the supplied method on the supplied object with the supplied
-   * argument.
+   * Invokes the supplied method on the supplied object with the supplied argument.
    *
    * @param  method  to invoke
    * @param  object  to invoke method on
@@ -432,10 +390,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    *
    * @throws  IllegalArgumentException  if an error occurs invoking the method
    */
-  public static Object invokeMethod(
-    final Method method,
-    final Object object,
-    final Object arg)
+  public static Object invokeMethod(final Method method, final Object object, final Object arg)
   {
     try {
       try {
@@ -449,9 +404,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       }
     } catch (RuntimeException e) {
       final Logger l = LoggerFactory.getLogger(AbstractPropertyInvoker.class);
-      l.error(
-        "Error invoking {}, on {}, with params {}",
-        new Object[] {method, object, arg});
+      l.error("Error invoking {}, on {}, with params {}", new Object[] {method, object, arg});
       throw e;
     }
   }

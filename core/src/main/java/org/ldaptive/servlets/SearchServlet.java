@@ -12,13 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Queries an LDAP and returns the result in the servlet response. The following
- * init params can be set for this servlet:
+ * Queries an LDAP and returns the result in the servlet response. The following init params can be set for this
+ * servlet:
  *
  * <ul>
  *   <li>poolType - BLOCKING or SOFTLIMIT</li>
- *   <li>searchExecutorClass - fully qualified class name that implements
- *     ServletSearchExecutor</li>
+ *   <li>searchExecutorClass - fully qualified class name that implements ServletSearchExecutor</li>
  * </ul>
  *
  * <p>All other init params will set properties on:</p>
@@ -29,12 +28,10 @@ import org.slf4j.LoggerFactory;
  *   <li>{@link org.ldaptive.pool.PoolConfig}</li>
  * </ul>
  *
- * <p>Example: http://www.server.com/Search?query=uid=dfisher If you need to
- * pass complex queries, such as (&(cn=daniel*)(surname=fisher)), then the query
- * must be form encoded. If you only want to receive a subset of attributes
- * those can be specified. Example:
- * http://www.server.com/Search?query=uid=dfisher&attrs=givenname&attrs=surname
- * </p>
+ * <p>Example: http://www.server.com/Search?query=uid=dfisher If you need to pass complex queries, such as
+ * (&(cn=daniel*)(surname=fisher)), then the query must be form encoded. If you only want to receive a subset of
+ * attributes those can be specified. Example:
+ * http://www.server.com/Search?query=uid=dfisher&attrs=givenname&attrs=surname</p>
  *
  * @author  Middleware Services
  */
@@ -60,13 +57,11 @@ public final class SearchServlet extends HttpServlet
   {
     super.init(config);
 
-    final String searchExecutorClass = config.getInitParameter(
-      SEARCH_EXECUTOR_CLASS);
+    final String searchExecutorClass = config.getInitParameter(SEARCH_EXECUTOR_CLASS);
     if (searchExecutorClass != null) {
       try {
         logger.debug("Creating search executor: {}", searchExecutorClass);
-        searchExecutor = (ServletSearchExecutor) Class.forName(
-          searchExecutorClass).newInstance();
+        searchExecutor = (ServletSearchExecutor) Class.forName(searchExecutorClass).newInstance();
       } catch (Exception e) {
         logger.error("Error instantiating {}", searchExecutorClass, e);
         throw new IllegalStateException(e);
@@ -79,9 +74,7 @@ public final class SearchServlet extends HttpServlet
 
 
   @Override
-  public void service(
-    final HttpServletRequest request,
-    final HttpServletResponse response)
+  public void service(final HttpServletRequest request, final HttpServletResponse response)
     throws ServletException, IOException
   {
     logger.info(

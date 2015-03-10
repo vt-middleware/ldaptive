@@ -47,10 +47,7 @@ public class ConnectionException extends LdapException
    * @param  code  result code
    * @param  dn  matched dn
    */
-  public ConnectionException(
-    final String msg,
-    final ResultCode code,
-    final String dn)
+  public ConnectionException(final String msg, final ResultCode code, final String dn)
   {
     super(msg, code, dn);
   }
@@ -64,11 +61,7 @@ public class ConnectionException extends LdapException
    * @param  dn  matched dn
    * @param  c  response controls
    */
-  public ConnectionException(
-    final String msg,
-    final ResultCode code,
-    final String dn,
-    final ResponseControl[] c)
+  public ConnectionException(final String msg, final ResultCode code, final String dn, final ResponseControl[] c)
   {
     super(msg, code, dn, c);
   }
@@ -124,10 +117,7 @@ public class ConnectionException extends LdapException
    * @param  code  result code
    * @param  dn  matched dn
    */
-  public ConnectionException(
-    final Exception e,
-    final ResultCode code,
-    final String dn)
+  public ConnectionException(final Exception e, final ResultCode code, final String dn)
   {
     super(e, code, dn);
   }
@@ -141,11 +131,7 @@ public class ConnectionException extends LdapException
    * @param  dn  matched dn
    * @param  c  response controls
    */
-  public ConnectionException(
-    final Exception e,
-    final ResultCode code,
-    final String dn,
-    final ResponseControl[] c)
+  public ConnectionException(final Exception e, final ResultCode code, final String dn, final ResponseControl[] c)
   {
     super(e, code, dn, c);
   }
@@ -190,10 +176,7 @@ public class ConnectionException extends LdapException
    * @param  e  provider specific exception
    * @param  code  result code
    */
-  public ConnectionException(
-    final String msg,
-    final Exception e,
-    final ResultCode code)
+  public ConnectionException(final String msg, final Exception e, final ResultCode code)
   {
     super(msg, e, code);
   }
@@ -207,11 +190,7 @@ public class ConnectionException extends LdapException
    * @param  code  result code
    * @param  dn  matched dn
    */
-  public ConnectionException(
-    final String msg,
-    final Exception e,
-    final ResultCode code,
-    final String dn)
+  public ConnectionException(final String msg, final Exception e, final ResultCode code, final String dn)
   {
     super(msg, e, code, dn);
   }

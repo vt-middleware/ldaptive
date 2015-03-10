@@ -15,9 +15,8 @@ import org.ldaptive.LdapException;
 import org.ldaptive.auth.Authenticator;
 
 /**
- * Provides a JAAS authentication hook into LDAP DNs. No authentication is
- * performed by this module. The LDAP entry DN can be stored and shared with
- * other JAAS modules.
+ * Provides a JAAS authentication hook into LDAP DNs. No authentication is performed by this module. The LDAP entry DN
+ * can be stored and shared with other JAAS modules.
  *
  * @author  Middleware Services
  */
@@ -49,11 +48,8 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
         noResultsIsError = Boolean.valueOf(value);
       } else if ("authenticatorFactory".equalsIgnoreCase(key)) {
         try {
-          authenticatorFactory =
-            (AuthenticatorFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException |
-                 IllegalAccessException |
-                 InstantiationException e) {
+          authenticatorFactory = (AuthenticatorFactory) Class.forName(value).newInstance();
+        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
           throw new IllegalArgumentException(e);
         }
       }
@@ -63,10 +59,7 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
       authenticatorFactory = new PropertiesAuthenticatorFactory();
     }
 
-    logger.trace(
-      "authenticatorFactory = {}, noResultsIsError = {}",
-      authenticatorFactory,
-      noResultsIsError);
+    logger.trace("authenticatorFactory = {}, noResultsIsError = {}", authenticatorFactory, noResultsIsError);
 
     auth = authenticatorFactory.createAuthenticator(options);
     logger.debug("Retrieved authenticator from factory: {}", auth);
@@ -74,9 +67,7 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
 
 
   @Override
-  protected boolean login(
-    final NameCallback nameCb,
-    final PasswordCallback passCb)
+  protected boolean login(final NameCallback nameCb, final PasswordCallback passCb)
     throws LoginException
   {
     try {
@@ -109,8 +100,7 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
     } catch (LdapException e) {
       logger.debug("Error occurred attempting DN lookup", e);
       loginSuccess = false;
-      throw new LoginException(
-        e != null ? e.getMessage() : "DN resolution error");
+      throw new LoginException(e != null ? e.getMessage() : "DN resolution error");
     }
     return true;
   }

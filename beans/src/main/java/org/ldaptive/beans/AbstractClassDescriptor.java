@@ -11,8 +11,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base implementation of a class descriptor. Stores a map of {@link
- * AttributeValueMutator} and a {@link DnValueMutator}.
+ * Base implementation of a class descriptor. Stores a map of {@link AttributeValueMutator} and a {@link
+ * DnValueMutator}.
  *
  * @author  Middleware Services
  */
@@ -23,8 +23,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Attribute value mutators for this class. */
-  private final Map<String, AttributeValueMutator> attributeMutators =
-    new HashMap<>();
+  private final Map<String, AttributeValueMutator> attributeMutators = new HashMap<>();
 
   /** Dn value mutator for this class. */
   private DnValueMutator dnMutator;
@@ -52,8 +51,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   protected void addAttributeValueMutator(final AttributeValueMutator mutator)
   {
     if (attributeMutators.containsKey(mutator.getName())) {
-      throw new IllegalStateException(
-        "Found duplicate attribute name '" + mutator.getName() + "'");
+      throw new IllegalStateException("Found duplicate attribute name '" + mutator.getName() + "'");
     }
     attributeMutators.put(mutator.getName(), mutator);
   }
@@ -64,8 +62,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
    *
    * @param  mutators  to add
    */
-  protected void addAttributeValueMutator(
-    final Collection<AttributeValueMutator> mutators)
+  protected void addAttributeValueMutator(final Collection<AttributeValueMutator> mutators)
   {
     for (AttributeValueMutator mutator : mutators) {
       addAttributeValueMutator(mutator);
@@ -107,10 +104,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   }
 
 
-  /**
-   * Stores the DN value from a {@link Entry} configuration. Setter method is a
-   * no-op.
-   */
+  /** Stores the DN value from a {@link Entry} configuration. Setter method is a no-op. */
   protected class SimpleDnValueMutator implements DnValueMutator
   {
 
@@ -141,10 +135,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   }
 
 
-  /**
-   * Stores an {@link Attribute} configuration in an {@link LdapAttribute}
-   * object. Setter methods are no-ops.
-   */
+  /** Stores an {@link Attribute} configuration in an {@link LdapAttribute} object. Setter methods are no-ops. */
   protected class SimpleAttributeValueMutator implements AttributeValueMutator
   {
 
@@ -214,26 +205,17 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
 
 
     @Override
-    public void setStringValues(
-      final Object object,
-      final Collection<String> values) {}
+    public void setStringValues(final Object object, final Collection<String> values) {}
 
 
     @Override
-    public void setBinaryValues(
-      final Object object,
-      final Collection<byte[]> values) {}
+    public void setBinaryValues(final Object object, final Collection<byte[]> values) {}
 
 
     @Override
     public String toString()
     {
-      return
-        String.format(
-          "[%s@%d::ldapAttribute=%s]",
-          getClass().getName(),
-          hashCode(),
-          la);
+      return String.format("[%s@%d::ldapAttribute=%s]", getClass().getName(), hashCode(), la);
     }
   }
 }

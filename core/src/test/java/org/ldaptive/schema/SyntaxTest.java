@@ -38,8 +38,7 @@ public class SyntaxTest
             "1.3.6.1.4.1.1466.115.121.1.5",
             "Binary",
             new Extensions("X-NOT-HUMAN-READABLE", Arrays.asList("TRUE"))),
-          "( 1.3.6.1.4.1.1466.115.121.1.5 DESC 'Binary' " +
-            "X-NOT-HUMAN-READABLE 'TRUE' )",
+          "( 1.3.6.1.4.1.1466.115.121.1.5 DESC 'Binary' X-NOT-HUMAN-READABLE 'TRUE' )",
         },
       };
   }
@@ -51,10 +50,7 @@ public class SyntaxTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"schema"},
-    dataProvider = "definitions"
-  )
+  @Test(groups = {"schema"}, dataProvider = "definitions")
   public void parse(final Syntax attributeSyntax, final String definition)
     throws Exception
   {

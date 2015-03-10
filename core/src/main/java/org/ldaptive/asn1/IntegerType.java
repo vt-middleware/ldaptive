@@ -84,13 +84,11 @@ public class IntegerType extends AbstractDERType implements DEREncoder
 
 
   /**
-   * Converts bytes in the buffer to an integer by reading from the current
-   * position to the limit, which assumes the bytes of the integer are in
-   * big-endian order.
+   * Converts bytes in the buffer to an integer by reading from the current position to the limit, which assumes the
+   * bytes of the integer are in big-endian order.
    *
-   * @param  encoded  buffer containing DER-encoded data where the buffer is
-   * positioned at the start of integer bytes and the limit is set beyond the
-   * last byte of integer data.
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the start of integer bytes
+   *                  and the limit is set beyond the last byte of integer data.
    *
    * @return  decoded bytes as an integer of arbitrary size.
    */
@@ -101,13 +99,11 @@ public class IntegerType extends AbstractDERType implements DEREncoder
 
 
   /**
-   * Converts bytes in the buffer to an unsigned integer by reading from the
-   * current position to the limit, which assumes the bytes of the integer are
-   * in big-endian order.
+   * Converts bytes in the buffer to an unsigned integer by reading from the current position to the limit, which
+   * assumes the bytes of the integer are in big-endian order.
    *
-   * @param  encoded  buffer containing DER-encoded data where the buffer is
-   * positioned at the start of integer bytes and the limit is set beyond the
-   * last byte of integer data.
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the start of integer bytes
+   *                  and the limit is set beyond the last byte of integer data.
    *
    * @return  decoded bytes as an unsigned integer of arbitrary size.
    */

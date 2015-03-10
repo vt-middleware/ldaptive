@@ -6,8 +6,7 @@ package org.ldaptive.io;
  *
  * @author  Middleware Services
  */
-public class ShortValueTranscoder
-  extends AbstractPrimitiveValueTranscoder<Short>
+public class ShortValueTranscoder extends AbstractPrimitiveValueTranscoder<Short>
 {
 
 

@@ -15,8 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Searches an LDAP using a defined set of search templates. For each term count
- * some number of templates are defined and used for searching.
+ * Searches an LDAP using a defined set of search templates. For each term count some number of templates are defined
+ * and used for searching.
  *
  * @author  Middleware Services
  */
@@ -125,8 +125,7 @@ public class SearchTemplatesExecutor
 
 
   /**
-   * Applies the supplied query to a search templates and aggregates all results
-   * into a single search result.
+   * Applies the supplied query to a search templates and aggregates all results into a single search result.
    *
    * @param  query  to execute
    *
@@ -154,14 +153,9 @@ public class SearchTemplatesExecutor
       if (termCount > 0) {
         templates = searchTemplates[termCount - 1];
         if (templates != null) {
-          logger.debug(
-            "Found search templates {} for term count of {}",
-            templates,
-            termCount);
+          logger.debug("Found search templates {} for term count of {}", templates, termCount);
         } else {
-          logger.debug(
-            "No search module found for term count of {}",
-            termCount);
+          logger.debug("No search module found for term count of {}", termCount);
         }
       } else {
         logger.debug("No terms found in query {}", query);
@@ -169,12 +163,7 @@ public class SearchTemplatesExecutor
     }
 
     if (templates != null) {
-      return
-        search(
-          templates.format(query),
-          query.getReturnAttributes(),
-          query.getFromResult(),
-          query.getToResult());
+      return search(templates.format(query), query.getReturnAttributes(), query.getFromResult(), query.getToResult());
     } else {
       return null;
     }
@@ -182,8 +171,7 @@ public class SearchTemplatesExecutor
 
 
   /**
-   * Performs an LDAP search with the supplied filters and aggregates all the
-   * search results together.
+   * Performs an LDAP search with the supplied filters and aggregates all the search results together.
    *
    * @param  filters  to execute
    * @param  returnAttrs  attributes to return from the search

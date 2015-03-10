@@ -42,8 +42,7 @@ public class Query
   {
     if (query != null) {
       final List<String> l = new ArrayList<>();
-      final StringTokenizer queryTokens = new StringTokenizer(
-        query.toLowerCase().trim());
+      final StringTokenizer queryTokens = new StringTokenizer(query.toLowerCase().trim());
       while (queryTokens.hasMoreTokens()) {
         l.add(queryTokens.nextToken());
       }

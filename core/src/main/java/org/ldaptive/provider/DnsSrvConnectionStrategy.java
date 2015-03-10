@@ -21,10 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * DNS SRV connection strategy. Queries a DNS server for SRV records and uses
- * those records to construct a list of URLs. A time to live can be set to
- * control how often the DNS server is consulted. See
- * http://www.ietf.org/rfc/rfc2782.txt.
+ * DNS SRV connection strategy. Queries a DNS server for SRV records and uses those records to construct a list of URLs.
+ * A time to live can be set to control how often the DNS server is consulted. See http://www.ietf.org/rfc/rfc2782.txt.
  *
  * @author  Middleware Services
  */
@@ -32,8 +30,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
 {
 
   /** JNDI context factory for DNS. */
-  private static final String DNS_CONTEXT_FACTORY =
-    "com.sun.jndi.dns.DnsContextFactory";
+  private static final String DNS_CONTEXT_FACTORY = "com.sun.jndi.dns.DnsContextFactory";
 
   /** JNDI context factory for DNS. */
   private static final String DNS_PROVIDER_URL = "dns:";
@@ -54,9 +51,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
   private List<SrvRecord> srvRecords;
 
 
-  /**
-   * Creates a new DNS SRV connection strategy.
-   */
+  /** Creates a new DNS SRV connection strategy. */
   public DnsSrvConnectionStrategy()
   {
     this(null, DEFAULT_TTL);
@@ -112,10 +107,9 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
 
 
   /**
-   * Sets the JNDI environment used for DNS lookups. If no {@link
-   * Context#INITIAL_CONTEXT_FACTORY} is set, it is defaulted to {@link
-   * #DNS_CONTEXT_FACTORY}. If no {@link Context#PROVIDER_URL} is set, it is
-   * defaulted to {@link #DNS_PROVIDER_URL}.
+   * Sets the JNDI environment used for DNS lookups. If no {@link Context#INITIAL_CONTEXT_FACTORY} is set, it is
+   * defaulted to {@link #DNS_CONTEXT_FACTORY}. If no {@link Context#PROVIDER_URL} is set, it is defaulted to {@link
+   * #DNS_PROVIDER_URL}.
    *
    * @param  env  jndi environment or null
    */
@@ -137,12 +131,12 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
 
 
   /**
-   * Returns a list of URLs retrieved from DNS SRV records. The LDAP URL in the
-   * supplied metadata can be a space delimited list of DNS servers, each will
-   * be tried in order.
+   * Returns a list of URLs retrieved from DNS SRV records. The LDAP URL in the supplied metadata can be a space
+   * delimited list of DNS servers, each will be tried in order.
    *
-   * @param metadata which can be used to produce the URL list
-   * @return list of URLs to attempt connections to
+   * @param  metadata  which can be used to produce the URL list
+   *
+   * @return  list of URLs to attempt connections to
    */
   @Override
   public String[] getLdapUrls(final ConnectionFactoryMetadata metadata)
@@ -154,20 +148,18 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
         srvRecords.isEmpty() ||
         System.currentTimeMillis() >= srvRecords.get(0).getExpirationTime()) {
       try {
-        srvRecords = sortSrvRecords(
-          retrieveDNSRecords(metadata.getLdapUrl(), jndiEnv, srvTtl));
+        srvRecords = sortSrvRecords(retrieveDNSRecords(metadata.getLdapUrl(), jndiEnv, srvTtl));
       } catch (NamingException e) {
-        throw new IllegalArgumentException(
-          "Could not retrieve DNS SRV record for " + metadata.getLdapUrl(), e);
+        throw new IllegalArgumentException("Could not retrieve DNS SRV record for " + metadata.getLdapUrl(), e);
       }
       if (srvRecords.isEmpty()) {
-        throw new IllegalArgumentException(
-          "No DNS SRV records found for " + metadata.getLdapUrl());
+        throw new IllegalArgumentException("No DNS SRV records found for " + metadata.getLdapUrl());
       }
       logger.debug("Retrieved SRV records from DNS: {}", srvRecords);
     } else {
       logger.debug("Using SRV records from internal cache: {}", srvRecords);
     }
+
     final String[] urls = new String[srvRecords.size()];
     for (int i = 0; i < srvRecords.size(); i++) {
       urls[i] = srvRecords.get(i).getLdapURL();
@@ -177,19 +169,18 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
 
 
   /**
-   * Uses JNDI to retrieve the DNS SRV record from the supplied url. The
-   * supplied properties are passed into the JNDI context.
+   * Uses JNDI to retrieve the DNS SRV record from the supplied url. The supplied properties are passed into the JNDI
+   * context.
    *
    * @param  name  of the SRV records
-   * @param  props for the JNDI context
+   * @param  props  for the JNDI context
    * @param  ttl  time to live for each SRV record
    *
    * @return  list of LDAP URLs
    *
-   * @throws NamingException if the DNS record cannot be retrieved
+   * @throws  NamingException  if the DNS record cannot be retrieved
    */
-  protected List<SrvRecord> retrieveDNSRecords(
-    final String name, final Map<String, Object> props, final long ttl)
+  protected List<SrvRecord> retrieveDNSRecords(final String name, final Map<String, Object> props, final long ttl)
     throws NamingException
   {
     final List<SrvRecord> records = new ArrayList<>();
@@ -206,13 +197,13 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
         env.put(Context.PROVIDER_URL, DNS_PROVIDER_URL);
       }
       context = new InitialDirContext(env);
-      final Attributes attrs = context.getAttributes(
-        name,
-        new String[]{"SRV", });
+
+      final Attributes attrs = context.getAttributes(name, new String[] {"SRV", });
       if (attrs != null) {
         final Attribute attr = attrs.get("SRV");
         if (attr != null) {
           en = attr.getAll();
+
           final long expTime = System.currentTimeMillis() + ttl;
           while (en.hasMore()) {
             records.add(new SrvRecord((String) en.next(), expTime));
@@ -232,9 +223,8 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
 
 
   /**
-   * Sorts the supplied SRV records according to RFC 2782. Records with the
-   * lowest priority are first. Records with the same priority are arranged by
-   * weight with higher weights having a greater chance to be ordered first.
+   * Sorts the supplied SRV records according to RFC 2782. Records with the lowest priority are first. Records with the
+   * same priority are arranged by weight with higher weights having a greater chance to be ordered first.
    *
    * @param  records  to sort
    *
@@ -274,8 +264,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
       while (!weighted.isEmpty()) {
         SrvRecord record = null;
         final Iterator<Long> i = weighted.keySet().iterator();
-        final long random = ThreadLocalRandom.current().nextLong(
-          totalWeight + 1);
+        final long random = ThreadLocalRandom.current().nextLong(totalWeight + 1);
         while (i.hasNext()) {
           final Long weight = i.next();
           if (weight >= random) {
@@ -299,19 +288,18 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::jndiEnv=%s, srvTtl=%s, srvRecords=%s]",
-      getClass().getName(),
-      hashCode(),
-      jndiEnv,
-      srvTtl,
-      srvRecords);
+    return
+      String.format(
+        "[%s@%d::jndiEnv=%s, srvTtl=%s, srvRecords=%s]",
+        getClass().getName(),
+        hashCode(),
+        jndiEnv,
+        srvTtl,
+        srvRecords);
   }
 
 
-  /**
-   * SRV record.
-   */
+  /** SRV record. */
   protected static class SrvRecord
   {
 
@@ -337,7 +325,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     /**
      * Creates a new SRV record.
      *
-     * @param record from DNS
+     * @param  record  from DNS
      * @param  time  that this record should expire
      */
     public SrvRecord(final String record, final long time)
@@ -347,8 +335,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
       priority = Long.parseLong(parts[i++]);
       weight = Long.parseLong(parts[i++]);
       port = Integer.parseInt(parts[i++]);
-      target = parts[i].endsWith(".") ?
-        parts[i].substring(0, parts[i].length() - 1) : parts[i];
+      target = parts[i].endsWith(".") ? parts[i].substring(0, parts[i].length() - 1) : parts[i];
       expirationTime = time;
     }
 
@@ -356,7 +343,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     /**
      * Returns the priority.
      *
-     * @return priority
+     * @return  priority
      */
     public long getPriority()
     {
@@ -367,7 +354,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     /**
      * Returns the weight.
      *
-     * @return weight
+     * @return  weight
      */
     public long getWeight()
     {
@@ -378,7 +365,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     /**
      * Returns the port.
      *
-     * @return port
+     * @return  port
      */
     public int getPort()
     {
@@ -389,7 +376,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     /**
      * Returns the target.
      *
-     * @return target
+     * @return  target
      */
     public String getTarget()
     {
@@ -400,7 +387,7 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     /**
      * Returns the target properly formatted as an LDAP URL.
      *
-     * @return LDAP URL
+     * @return  LDAP URL
      */
     public String getLdapURL()
     {
@@ -429,30 +416,24 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     @Override
     public int hashCode()
     {
-      return
-        LdapUtils.computeHashCode(
-          HASH_CODE_SEED,
-          priority,
-          weight,
-          port,
-          target,
-          expirationTime);
+      return LdapUtils.computeHashCode(HASH_CODE_SEED, priority, weight, port, target, expirationTime);
     }
 
 
     @Override
     public String toString()
     {
-      return String.format(
-        "[%s@%d::priority=%s, weight=%s, port=%s, target=%s, " +
-        "expirationTime=%s]",
-        getClass().getName(),
-        hashCode(),
-        priority,
-        weight,
-        port,
-        target,
-        expirationTime);
+      return
+        String.format(
+          "[%s@%d::priority=%s, weight=%s, port=%s, target=%s, " +
+          "expirationTime=%s]",
+          getClass().getName(),
+          hashCode(),
+          priority,
+          weight,
+          port,
+          target,
+          expirationTime);
     }
   }
 }

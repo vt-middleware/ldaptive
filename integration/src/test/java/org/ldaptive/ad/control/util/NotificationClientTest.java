@@ -49,26 +49,27 @@ public class NotificationClientTest extends AbstractTest
       return;
     }
 
-    Connection conn = TestUtils.createConnection();
+    final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final NotificationClient client = new NotificationClient(conn);
 
       final SearchRequest request = new SearchRequest(
         "ou=test,dc=middleware,dc=vt,dc=edu",
         new SearchFilter("(objectClass=*)"));
       request.setSearchScope(SearchScope.ONELEVEL);
-      final BlockingQueue<NotificationClient.NotificationItem> results =
-        client.execute(request);
 
-      NotificationClient.NotificationItem item = results.poll(
-        5, TimeUnit.SECONDS);
+      final BlockingQueue<NotificationClient.NotificationItem> results = client.execute(request);
+
+      NotificationClient.NotificationItem item = results.poll(5, TimeUnit.SECONDS);
       AssertJUnit.assertNotNull(item);
       if (item.isException()) {
         throw item.getException();
       }
       AssertJUnit.assertTrue(item.isAsyncRequest());
       AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
+
       final AsyncRequest asyncRequest = item.getAsyncRequest();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -77,9 +78,7 @@ public class NotificationClientTest extends AbstractTest
           dn,
           new AttributeModification(
             AttributeModificationType.REPLACE,
-            new LdapAttribute(
-              "sn",
-              Integer.toString(new Random().nextInt(1000000))))));
+            new LdapAttribute("sn", Integer.toString(new Random().nextInt(1000000))))));
 
       item = results.poll(5, TimeUnit.SECONDS);
       AssertJUnit.assertNotNull(item);
@@ -93,9 +92,7 @@ public class NotificationClientTest extends AbstractTest
       modify.execute(
         new ModifyRequest(
           dn,
-          new AttributeModification(
-            AttributeModificationType.REPLACE,
-            new LdapAttribute("sn", "Admin"))));
+          new AttributeModification(AttributeModificationType.REPLACE, new LdapAttribute("sn", "Admin"))));
 
       conn.close();
     }

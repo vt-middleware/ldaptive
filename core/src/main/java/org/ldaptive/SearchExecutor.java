@@ -7,11 +7,9 @@ import org.ldaptive.handler.OperationResponseHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 
 /**
- * Helper class which encapsulates the try, finally idiom used to execute a
- * {@link SearchOperation}. This is a convenience class for searching if you
- * don't need to manage individual connections. In addition, this class provides
- * a way to hold common search request properties constant while changing
- * properties that tend to be more dynamic.
+ * Helper class which encapsulates the try, finally idiom used to execute a {@link SearchOperation}. This is a
+ * convenience class for searching if you don't need to manage individual connections. In addition, this class provides
+ * a way to hold common search request properties constant while changing properties that tend to be more dynamic.
  *
  * @author  Middleware Services
  */
@@ -19,12 +17,10 @@ public class SearchExecutor extends SearchRequest
 {
 
   /** Handler to handle search exceptions. */
-  private OperationExceptionHandler<SearchRequest, SearchResult>
-  searchExceptionHandler;
+  private OperationExceptionHandler<SearchRequest, SearchResult> searchExceptionHandler;
 
   /** Handlers to handle search responses. */
-  private OperationResponseHandler<SearchRequest, SearchResult>[]
-  searchResponseHandlers;
+  private OperationResponseHandler<SearchRequest, SearchResult>[] searchResponseHandlers;
 
   /** Cache to use when performing searches. */
   private Cache<SearchRequest> searchCache;
@@ -35,8 +31,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @return  search exception handler
    */
-  public OperationExceptionHandler<SearchRequest, SearchResult>
-  getSearchExceptionHandler()
+  public OperationExceptionHandler<SearchRequest, SearchResult> getSearchExceptionHandler()
   {
     return searchExceptionHandler;
   }
@@ -47,8 +42,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @param  handler  search exception handler
    */
-  public void setSearchExceptionHandler(
-    final OperationExceptionHandler<SearchRequest, SearchResult> handler)
+  public void setSearchExceptionHandler(final OperationExceptionHandler<SearchRequest, SearchResult> handler)
   {
     searchExceptionHandler = handler;
   }
@@ -59,8 +53,7 @@ public class SearchExecutor extends SearchRequest
    *
    * @return  search response handlers
    */
-  public OperationResponseHandler<SearchRequest, SearchResult>[]
-  getSearchResponseHandlers()
+  public OperationResponseHandler<SearchRequest, SearchResult>[] getSearchResponseHandlers()
   {
     return searchResponseHandlers;
   }
@@ -72,8 +65,7 @@ public class SearchExecutor extends SearchRequest
    * @param  handlers  search response handlers
    */
   @SuppressWarnings("unchecked")
-  public void setSearchResponseHandlers(
-    final OperationResponseHandler<SearchRequest, SearchResult>... handlers)
+  public void setSearchResponseHandlers(final OperationResponseHandler<SearchRequest, SearchResult>... handlers)
   {
     searchResponseHandlers = handlers;
   }
@@ -127,17 +119,10 @@ public class SearchExecutor extends SearchRequest
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> search(
-    final ConnectionFactory factory,
-    final String filter)
+  public Response<SearchResult> search(final ConnectionFactory factory, final String filter)
     throws LdapException
   {
-    return
-      search(
-        factory,
-        new SearchFilter(filter),
-        null,
-        (SearchEntryHandler[]) null);
+    return search(factory, new SearchFilter(filter), null, (SearchEntryHandler[]) null);
   }
 
 
@@ -151,13 +136,10 @@ public class SearchExecutor extends SearchRequest
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> search(
-    final ConnectionFactory factory,
-    final SearchFilter filter)
+  public Response<SearchResult> search(final ConnectionFactory factory, final SearchFilter filter)
     throws LdapException
   {
-    return
-      search(factory, filter, null, (SearchEntryHandler[]) null);
+    return search(factory, filter, null, (SearchEntryHandler[]) null);
   }
 
 
@@ -172,18 +154,10 @@ public class SearchExecutor extends SearchRequest
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> search(
-    final ConnectionFactory factory,
-    final String filter,
-    final String... attrs)
+  public Response<SearchResult> search(final ConnectionFactory factory, final String filter, final String... attrs)
     throws LdapException
   {
-    return
-      search(
-        factory,
-        new SearchFilter(filter),
-        attrs,
-        (SearchEntryHandler[]) null);
+    return search(factory, new SearchFilter(filter), attrs, (SearchEntryHandler[]) null);
   }
 
 

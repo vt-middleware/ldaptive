@@ -61,11 +61,10 @@ public class SearchTemplatesExecutorTest extends AbstractTest
     throws Exception
   {
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
-    final AggregatePooledSearchExecutor se =
-      new AggregatePooledSearchExecutor();
+    final AggregatePooledSearchExecutor se = new AggregatePooledSearchExecutor();
     se.setBaseDn(baseDn);
-    final ConnectionPool cp = new BlockingConnectionPool(
-      new DefaultConnectionFactory(cc));
+
+    final ConnectionPool cp = new BlockingConnectionPool(new DefaultConnectionFactory(cc));
     cp.initialize();
     executor = new SearchTemplatesExecutor(
       se,
@@ -84,10 +83,10 @@ public class SearchTemplatesExecutorTest extends AbstractTest
         "(department=*{term1}* *{term2}*)"),
       new SearchTemplates(
         "(|(&(givenName={term1})(sn={term3}))" +
-          "(&(givenName={term2})(sn={term3})))",
+        "(&(givenName={term2})(sn={term3})))",
         "(|(cn={term1} {term2} {term3})(cn={term2} {term1} {term3}))",
         "(|(&(givenName={term1})(sn={term3}))" +
-          "(&(givenName={term2})(sn={term3})))"));
+        "(&(givenName={term2})(sn={term3})))"));
   }
 
 
@@ -109,18 +108,11 @@ public class SearchTemplatesExecutorTest extends AbstractTest
   @DataProvider(name = "search-data")
   public Object[][] createTestData()
   {
-    return
-      new Object[][] {
-        {
-          "troosevelt",
-        },
-        {
-          "0846",
-        },
-        {
-          "theodore roosevelt",
-        },
-      };
+    return new Object[][] {
+      {"troosevelt", },
+      {"0846", },
+      {"theodore roosevelt", },
+    };
   }
 
 
@@ -129,18 +121,13 @@ public class SearchTemplatesExecutorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"templates"},
-    dataProvider = "search-data",
-    threadPoolSize = 3,
-    invocationCount = 50,
-    timeOut = 60000
-  )
+  @Test(groups = {"templates"}, dataProvider = "search-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000)
   public void search(final String query)
     throws Exception
   {
     final Query q = new Query(query);
     q.setReturnAttributes(testLdapEntry.getAttributeNames());
+
     final SearchResult sr = executor.search(q);
     TestUtils.assertEquals(testLdapEntry, sr.getEntry());
   }

@@ -61,11 +61,6 @@ public class LdapCredential implements Serializable
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::%s]",
-        getClass().getName(),
-        hashCode(),
-        credential);
+    return String.format("[%s@%d::%s]", getClass().getName(), hashCode(), credential);
   }
 }

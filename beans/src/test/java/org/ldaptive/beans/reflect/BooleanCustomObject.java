@@ -131,8 +131,7 @@ public class BooleanCustomObject implements CustomObject
    *
    * @return  instance of boolean custom object
    */
-  public static <T extends BooleanCustomObject> T createCustomObject(
-    final Class<T> type)
+  public static <T extends BooleanCustomObject> T createCustomObject(final Class<T> type)
   {
     final Set<Boolean> s1 = new HashSet<>();
     s1.add(true);
@@ -219,111 +218,35 @@ public class BooleanCustomObject implements CustomObject
 
   /** Test class for the default ldap entry mapper. */
   @Entry(
-    dn = "cn=Boolean Entry,ou=people,dc=ldaptive,dc=org",
-    attributes = {
-      @Attribute(
-        name = "type1",
-        property = "type1"
-      ),
-      @Attribute(
-        name = "type2",
-        property = "type2"
-      ),
-      @Attribute(
-        name = "booleanthree",
-        property = "type3"
-      ),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeCol1",
-        property = "typeCol1"
-      ),
-      @Attribute(
-        name = "typeCol2",
-        property = "typeCol2"
-      ),
-      @Attribute(
-        name = "typeSet1",
-        property = "typeSet1"
-      ),
-      @Attribute(
-        name = "typeSet2",
-        property = "typeSet2"
-      ),
-      @Attribute(
-        name = "typeList1",
-        property = "typeList1"
-      ),
-      @Attribute(
-        name = "typeList2",
-        property = "typeList2"
-      )
-      }
-  )
+    dn = "cn=Boolean Entry,ou=people,dc=ldaptive,dc=org", attributes = {
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "booleanthree", property = "type3"),
+      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")})
   public static class Default extends BooleanCustomObject {}
 
 
   /** Test class for the spring ldap entry mapper. */
   @Entry(
-    dn = "cn=Boolean Entry,ou=people,dc=ldaptive,dc=org",
-    attributes = {
-      @Attribute(
-        name = "type1",
-        property = "type1"
-      ),
-      @Attribute(
-        name = "type2",
-        property = "type2"
-      ),
-      @Attribute(
-        name = "booleanthree",
-        property = "type3"
-      ),
-      @Attribute(
-        name = "typeArray1",
-        property = "typeArray1",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeArray2",
-        property = "typeArray2",
-        sortBehavior = SortBehavior.ORDERED
-      ),
-      @Attribute(
-        name = "typeCol1",
-        property = "typeCol1"
-      ),
-      @Attribute(
-        name = "typeCol2",
-        property = "typeCol2"
-      ),
-      @Attribute(
-        name = "typeSet1",
-        property = "typeSet1"
-      ),
-      @Attribute(
-        name = "typeSet2",
-        property = "typeSet2"
-      ),
-      @Attribute(
-        name = "typeList1",
-        property = "typeList1"
-      ),
-      @Attribute(
-        name = "typeList2",
-        property = "typeList2"
-      )
-      }
-  )
+    dn = "cn=Boolean Entry,ou=people,dc=ldaptive,dc=org", attributes = {
+      @Attribute(name = "type1", property = "type1"),
+      @Attribute(name = "type2", property = "type2"),
+      @Attribute(name = "booleanthree", property = "type3"),
+      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1"),
+      @Attribute(name = "typeCol2", property = "typeCol2"),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")})
   public static class Spring extends BooleanCustomObject
   {
     // CheckStyle:JavadocMethod OFF

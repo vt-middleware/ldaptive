@@ -12,7 +12,7 @@ public interface CustomObject
 {
 
 
-  /** Prepare this object for use; */
+  /** Prepare this object for use. */
   void initialize();
 
 

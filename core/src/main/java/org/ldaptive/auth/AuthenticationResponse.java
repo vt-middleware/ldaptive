@@ -32,14 +32,9 @@ public class AuthenticationResponse extends Response<Boolean>
    * @param  rc  result code from the underlying ldap operation
    * @param  entry  of the authenticated user
    */
-  public AuthenticationResponse(
-    final AuthenticationResultCode authRc,
-    final ResultCode rc,
-    final LdapEntry entry)
+  public AuthenticationResponse(final AuthenticationResultCode authRc, final ResultCode rc, final LdapEntry entry)
   {
-    super(
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc,
-      rc);
+    super(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc, rc);
     authenticationResultCode = authRc;
     ldapEntry = entry;
   }
@@ -59,14 +54,7 @@ public class AuthenticationResponse extends Response<Boolean>
     final LdapEntry entry,
     final String msg)
   {
-    super(
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc,
-      rc,
-      msg,
-      null,
-      null,
-      null,
-      -1);
+    super(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc, rc, msg, null, null, null, -1);
     authenticationResultCode = authRc;
     ldapEntry = entry;
   }
@@ -90,14 +78,7 @@ public class AuthenticationResponse extends Response<Boolean>
     final ResponseControl[] controls,
     final int msgId)
   {
-    super(
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc,
-      rc,
-      msg,
-      null,
-      controls,
-      null,
-      msgId);
+    super(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc, rc, msg, null, controls, null, msgId);
     authenticationResultCode = authRc;
     ldapEntry = entry;
   }

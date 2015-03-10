@@ -39,8 +39,7 @@ public class LdifWriter implements SearchResultWriter
   private static final int MAX_ASCII_CHAR = 127;
 
   /** Line separator. */
-  private static final String LINE_SEPARATOR = System.getProperty(
-    "line.separator");
+  private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
   /** Writer to write to. */
   private final Writer ldifWriter;
@@ -114,8 +113,7 @@ public class LdifWriter implements SearchResultWriter
     final String dn = entry.getDn();
     if (dn != null) {
       if (encodeData(dn)) {
-        entryLdif.append("dn:: ").append(LdapUtils.base64Encode(dn)).append(
-          LINE_SEPARATOR);
+        entryLdif.append("dn:: ").append(LdapUtils.base64Encode(dn)).append(LINE_SEPARATOR);
       } else {
         entryLdif.append("dn: ").append(dn).append(LINE_SEPARATOR);
       }
@@ -125,14 +123,11 @@ public class LdifWriter implements SearchResultWriter
       final String attrName = attr.getName();
       for (String attrValue : attr.getStringValues()) {
         if (attr.isBinary()) {
-          entryLdif.append(attrName).append(":: ").append(attrValue).append(
-            LINE_SEPARATOR);
+          entryLdif.append(attrName).append(":: ").append(attrValue).append(LINE_SEPARATOR);
         } else if (encodeData(attrValue)) {
-          entryLdif.append(attrName).append(":: ").append(
-            LdapUtils.base64Encode(attrValue)).append(LINE_SEPARATOR);
+          entryLdif.append(attrName).append(":: ").append(LdapUtils.base64Encode(attrValue)).append(LINE_SEPARATOR);
         } else {
-          entryLdif.append(attrName).append(": ").append(attrValue).append(
-            LINE_SEPARATOR);
+          entryLdif.append(attrName).append(": ").append(attrValue).append(LINE_SEPARATOR);
         }
       }
     }
@@ -160,8 +155,7 @@ public class LdifWriter implements SearchResultWriter
     final StringBuilder refLdif = new StringBuilder();
     for (String url : ref.getReferralUrls()) {
       if (encodeData(url)) {
-        refLdif.append("ref:: ").append(LdapUtils.base64Encode(url)).append(
-          LINE_SEPARATOR);
+        refLdif.append("ref:: ").append(LdapUtils.base64Encode(url)).append(LINE_SEPARATOR);
       } else {
         refLdif.append("ref: ").append(url).append(LINE_SEPARATOR);
       }
@@ -175,8 +169,8 @@ public class LdifWriter implements SearchResultWriter
 
 
   /**
-   * Determines whether the supplied data should be base64 encoded. See
-   * http://www.faqs.org/rfcs/rfc2849.html for more details.
+   * Determines whether the supplied data should be base64 encoded. See http://www.faqs.org/rfcs/rfc2849.html for more
+   * details.
    *
    * @param  data  to inspect
    *
@@ -198,9 +192,7 @@ public class LdifWriter implements SearchResultWriter
       } else if (charInt == CR_CHAR) {
         encode = true;
         // check for SP at beginning or end of string
-      } else if (
-        charInt == SP_CHAR &&
-          (i == 0 || i == dataCharArray.length - 1)) {
+      } else if (charInt == SP_CHAR && (i == 0 || i == dataCharArray.length - 1)) {
         encode = true;
         // check for colon(:) at beginning of string
       } else if (charInt == COLON_CHAR && i == 0) {

@@ -9,8 +9,8 @@ import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
 
 /**
- * Request control for active directory servers to use an extended form of an
- * object distinguished name. Control is defined as:
+ * Request control for active directory servers to use an extended form of an object distinguished name. Control is
+ * defined as:
  *
  * <pre>
     extendedDnValue ::= SEQUENCE {
@@ -102,25 +102,14 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        flag);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), flag);
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, flag=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        flag);
+    return String.format("[%s@%d::criticality=%s, flag=%s]", getClass().getName(), hashCode(), getCriticality(), flag);
   }
 
 

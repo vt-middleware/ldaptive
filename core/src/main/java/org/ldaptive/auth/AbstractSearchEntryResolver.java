@@ -14,15 +14,13 @@ import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.referral.ReferralHandler;
 
 /**
- * Base implementation for search entry resolvers. Uses an object level search
- * on the {@link AuthenticationCriteria#getDn()} if no {@link #userFilter} is
- * configured. If a {@link #userFilter} is configured, then a search is executed
- * using that filter.
+ * Base implementation for search entry resolvers. Uses an object level search on the {@link
+ * AuthenticationCriteria#getDn()} if no {@link #userFilter} is configured. If a {@link #userFilter} is configured, then
+ * a search is executed using that filter.
  *
  * @author  Middleware Services
  */
-public abstract class AbstractSearchEntryResolver
-  extends AbstractSearchOperationFactory implements EntryResolver
+public abstract class AbstractSearchEntryResolver extends AbstractSearchOperationFactory implements EntryResolver
 {
 
   /** DN to search. */
@@ -114,9 +112,7 @@ public abstract class AbstractSearchEntryResolver
    */
   public void setUserFilterParameters(final Object[] filterParams)
   {
-    logger.trace(
-      "setting userFilterParameters: {}",
-      Arrays.toString(filterParams));
+    logger.trace("setting userFilterParameters: {}", Arrays.toString(filterParams));
     userFilterParameters = filterParams;
   }
 
@@ -133,11 +129,9 @@ public abstract class AbstractSearchEntryResolver
 
 
   /**
-   * Sets whether entry resolution should fail if multiple entries are found. If
-   * false an exception will be thrown if {@link
-   * #resolve(AuthenticationCriteria, AuthenticationHandlerResponse)} finds more
-   * than one entry matching it's filter. Otherwise the first entry found is
-   * returned.
+   * Sets whether entry resolution should fail if multiple entries are found. If false an exception will be thrown if
+   * {@link #resolve(AuthenticationCriteria, AuthenticationHandlerResponse)} finds more than one entry matching it's
+   * filter. Otherwise the first entry found is returned.
    *
    * @param  b  whether multiple entries are allowed
    */
@@ -160,9 +154,8 @@ public abstract class AbstractSearchEntryResolver
 
 
   /**
-   * Sets whether subtree searching will be used. If true, the entry will be
-   * searched for over the entire {@link #getBaseDn()}. Otherwise the entry will
-   * be searched for in the {@link #getBaseDn()} context.
+   * Sets whether subtree searching will be used. If true, the entry will be searched for over the entire {@link
+   * #getBaseDn()}. Otherwise the entry will be searched for in the {@link #getBaseDn()} context.
    *
    * @param  b  whether the entry will be searched for over the entire base
    */
@@ -258,10 +251,9 @@ public abstract class AbstractSearchEntryResolver
 
 
   /**
-   * Returns a search filter using {@link #userFilter} and {@link
-   * #userFilterParameters}. {@link AuthenticationRequest#getUser()} is injected
-   * with a named parameter of 'user', {@link AuthenticationCriteria#getDn()} is
-   * injected with a named parameter of 'dn'.
+   * Returns a search filter using {@link #userFilter} and {@link #userFilterParameters}. {@link
+   * AuthenticationRequest#getUser()} is injected with a named parameter of 'user', {@link
+   * AuthenticationCriteria#getDn()} is injected with a named parameter of 'dn'.
    *
    * @param  ac  authentication criteria
    *
@@ -287,11 +279,9 @@ public abstract class AbstractSearchEntryResolver
 
 
   /**
-   * Returns a search request for the supplied authentication criteria. If no
-   * {@link #userFilter} is defined then an object level search on the
-   * authentication criteria DN is returned. Otherwise the {@link #userFilter},
-   * {@link #baseDn} and {@link #subtreeSearch} are used to create the search
-   * request.
+   * Returns a search request for the supplied authentication criteria. If no {@link #userFilter} is defined then an
+   * object level search on the authentication criteria DN is returned. Otherwise the {@link #userFilter}, {@link
+   * #baseDn} and {@link #subtreeSearch} are used to create the search request.
    *
    * @param  ac  authentication criteria containing a DN
    *
@@ -302,8 +292,7 @@ public abstract class AbstractSearchEntryResolver
     SearchRequest request;
     if (userFilter != null) {
       request = new SearchRequest(baseDn, createSearchFilter(ac));
-      request.setReturnAttributes(
-        ac.getAuthenticationRequest().getReturnAttributes());
+      request.setReturnAttributes(ac.getAuthenticationRequest().getReturnAttributes());
       if (subtreeSearch) {
         request.setSearchScope(SearchScope.SUBTREE);
       } else {
@@ -322,9 +311,7 @@ public abstract class AbstractSearchEntryResolver
 
 
   @Override
-  public LdapEntry resolve(
-    final AuthenticationCriteria criteria,
-    final AuthenticationHandlerResponse response)
+  public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response)
     throws LdapException
   {
     logger.debug("resolve criteria={}", criteria);
@@ -339,8 +326,7 @@ public abstract class AbstractSearchEntryResolver
       if (answer.hasNext()) {
         logger.debug("multiple results found for user={}", criteria.getDn());
         if (!allowMultipleEntries) {
-          throw new LdapException(
-            "Found more than (1) entry for: " + criteria.getDn());
+          throw new LdapException("Found more than (1) entry for: " + criteria.getDn());
         }
       }
     }

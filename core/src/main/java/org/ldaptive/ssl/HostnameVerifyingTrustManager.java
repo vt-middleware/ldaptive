@@ -7,8 +7,8 @@ import java.util.Arrays;
 import javax.net.ssl.X509TrustManager;
 
 /**
- * Trust manager that delegates to {@link CertificateHostnameVerifier}. Any name
- * that verifies passes this trust manager check.
+ * Trust manager that delegates to {@link CertificateHostnameVerifier}. Any name that verifies passes this trust manager
+ * check.
  *
  * @author  Middleware Services
  */
@@ -28,9 +28,7 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
    * @param  verifier  that establishes trust
    * @param  names  to match against a certificate
    */
-  public HostnameVerifyingTrustManager(
-    final CertificateHostnameVerifier verifier,
-    final String... names)
+  public HostnameVerifyingTrustManager(final CertificateHostnameVerifier verifier, final String... names)
   {
     hostnameVerifier = verifier;
     hostnames = names;
@@ -38,9 +36,7 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
 
 
   @Override
-  public void checkClientTrusted(
-    final X509Certificate[] chain,
-    final String authType)
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
     checkCertificateTrusted(chain[0]);
@@ -48,9 +44,7 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
 
 
   @Override
-  public void checkServerTrusted(
-    final X509Certificate[] chain,
-    final String authType)
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
     checkCertificateTrusted(chain[0]);
@@ -58,8 +52,7 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
 
 
   /**
-   * Verifies the supplied certificate using the hostname verifier with each
-   * hostname.
+   * Verifies the supplied certificate using the hostname verifier with each hostname.
    *
    * @param  cert  to verify
    *

@@ -17,8 +17,7 @@ public interface AuthenticationResponseHandler
    *
    * @param  response  produced from an authentication
    *
-   * @throws  LdapException  if an error occurs handling an authentication
-   * response
+   * @throws  LdapException  if an error occurs handling an authentication response
    */
   void handle(AuthenticationResponse response)
     throws LdapException;

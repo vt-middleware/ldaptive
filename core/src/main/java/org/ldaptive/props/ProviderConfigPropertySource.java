@@ -7,23 +7,19 @@ import java.util.Set;
 import org.ldaptive.provider.ProviderConfig;
 
 /**
- * Reads properties specific to {@link ProviderConfig} and returns an
- * initialized object of that type.
+ * Reads properties specific to {@link ProviderConfig} and returns an initialized object of that type.
  *
  * @author  Middleware Services
  */
-public final class ProviderConfigPropertySource
-  extends AbstractPropertySource<ProviderConfig<?>>
+public final class ProviderConfigPropertySource extends AbstractPropertySource<ProviderConfig<?>>
 {
 
   /** Invoker for provider config. */
-  private static final ProviderConfigPropertyInvoker INVOKER =
-    new ProviderConfigPropertyInvoker(ProviderConfig.class);
+  private static final ProviderConfigPropertyInvoker INVOKER = new ProviderConfigPropertyInvoker(ProviderConfig.class);
 
 
   /**
-   * Creates a new provider config property source using the default properties
-   * file.
+   * Creates a new provider config property source using the default properties file.
    *
    * @param  pc  provider config to invoke properties on
    */
@@ -39,9 +35,7 @@ public final class ProviderConfigPropertySource
    * @param  pc  provider config to invoke properties on
    * @param  paths  to read properties from
    */
-  public ProviderConfigPropertySource(
-    final ProviderConfig pc,
-    final String... paths)
+  public ProviderConfigPropertySource(final ProviderConfig pc, final String... paths)
   {
     this(pc, loadProperties(paths));
   }
@@ -53,9 +47,7 @@ public final class ProviderConfigPropertySource
    * @param  pc  provider config to invoke properties on
    * @param  readers  to read properties from
    */
-  public ProviderConfigPropertySource(
-    final ProviderConfig pc,
-    final Reader... readers)
+  public ProviderConfigPropertySource(final ProviderConfig pc, final Reader... readers)
   {
     this(pc, loadProperties(readers));
   }
@@ -67,9 +59,7 @@ public final class ProviderConfigPropertySource
    * @param  pc  provider config to invoke properties on
    * @param  props  to read properties from
    */
-  public ProviderConfigPropertySource(
-    final ProviderConfig pc,
-    final Properties props)
+  public ProviderConfigPropertySource(final ProviderConfig pc, final Properties props)
   {
     this(pc, PropertyDomain.LDAP, props);
   }
@@ -82,10 +72,7 @@ public final class ProviderConfigPropertySource
    * @param  domain  that properties are in
    * @param  props  to read properties from
    */
-  public ProviderConfigPropertySource(
-    final ProviderConfig pc,
-    final PropertyDomain domain,
-    final Properties props)
+  public ProviderConfigPropertySource(final ProviderConfig pc, final PropertyDomain domain, final Properties props)
   {
     super(pc, domain, props);
   }

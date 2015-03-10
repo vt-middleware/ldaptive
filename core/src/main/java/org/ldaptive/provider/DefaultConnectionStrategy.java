@@ -2,8 +2,7 @@
 package org.ldaptive.provider;
 
 /**
- * Connection strategy that returns the exact URL that is returned from {@link
- * ConnectionFactoryMetadata#getLdapUrl()}.
+ * Connection strategy that returns the exact URL that is returned from {@link ConnectionFactoryMetadata#getLdapUrl()}.
  *
  * @author  Middleware Services
  */
@@ -12,8 +11,7 @@ public class DefaultConnectionStrategy implements ConnectionStrategy
 
 
   /**
-   * Returns an array containing a single entry URL obtained from {@link
-   * ConnectionFactoryMetadata#getLdapUrl()}.
+   * Returns an array containing a single entry URL obtained from {@link ConnectionFactoryMetadata#getLdapUrl()}.
    *
    * @param  metadata  which can be used to produce the URL list
    *

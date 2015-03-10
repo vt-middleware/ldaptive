@@ -32,22 +32,14 @@ public class SerializableTest
   @DataProvider(name = "objects")
   public Object[][] createSerializable()
   {
-    final LdapAttribute attr1 = new LdapAttribute(
-      "string-name",
-      "string-value1",
-      "string-value2");
-    final LdapAttribute attr2 = new LdapAttribute(
-      "binary-name",
-      new byte[] {0x00, 0x01, },
-      new byte[] {0x02, 0x03, });
+    final LdapAttribute attr1 = new LdapAttribute("string-name", "string-value1", "string-value2");
+    final LdapAttribute attr2 = new LdapAttribute("binary-name", new byte[] {0x00, 0x01, }, new byte[] {0x02, 0x03, });
     final LdapEntry entry1 = new LdapEntry("entry-dn1", attr1, attr2);
     final LdapEntry entry2 = new LdapEntry("entry-dn2", attr1, attr2);
     final SearchResult result = new SearchResult(entry1, entry2);
 
     final LdapPrincipal prin = new LdapPrincipal("principal-name", entry1);
-    final LdapDnPrincipal dnPrin = new LdapDnPrincipal(
-      "dn-principal-name",
-      entry2);
+    final LdapDnPrincipal dnPrin = new LdapDnPrincipal("dn-principal-name", entry2);
     final LdapRole role = new LdapRole("role-name");
     final LdapCredential cred = new LdapCredential("credential");
     final LdapGroup group = new LdapGroup("principal-group-name");
@@ -75,10 +67,7 @@ public class SerializableTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"serialize"},
-    dataProvider = "objects"
-  )
+  @Test(groups = {"serialize"}, dataProvider = "objects")
   public void testSerialize(final Serializable s)
     throws Exception
   {
@@ -120,8 +109,7 @@ public class SerializableTest
   private Object deserialize(final byte[] b)
     throws Exception
   {
-    try (ObjectInputStream is = new ObjectInputStream(
-      new ByteArrayInputStream(b))) {
+    try (ObjectInputStream is = new ObjectInputStream(new ByteArrayInputStream(b))) {
       return is.readObject();
     }
   }

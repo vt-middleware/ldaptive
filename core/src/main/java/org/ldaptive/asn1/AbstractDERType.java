@@ -30,9 +30,8 @@ public abstract class AbstractDERType
 
 
   /**
-   * DER encode the supplied items with the tag associated with this type. If
-   * the length is greater than 127 bytes the long form is always expressed
-   * using 4 bytes.
+   * DER encode the supplied items with the tag associated with this type. If the length is greater than 127 bytes the
+   * long form is always expressed using 4 bytes.
    *
    * @param  items  to encode
    *
@@ -62,8 +61,7 @@ public abstract class AbstractDERType
     }
 
     // add 1 for the type tag, 1 or 5 for the length
-    final ByteBuffer encodedItem = ByteBuffer.allocate(
-      itemLength + 1 + lengthBytes.length);
+    final ByteBuffer encodedItem = ByteBuffer.allocate(itemLength + 1 + lengthBytes.length);
     encodedItem.put((byte) derTag);
     for (byte b : lengthBytes) {
       encodedItem.put(b);
@@ -76,8 +74,7 @@ public abstract class AbstractDERType
 
 
   /**
-   * Returns a byte array containing the bytes from {@link ByteBuffer#limit()}
-   * to {@link ByteBuffer#position()}.
+   * Returns a byte array containing the bytes from {@link ByteBuffer#limit()} to {@link ByteBuffer#position()}.
    *
    * @param  encoded  to read bytes from
    *

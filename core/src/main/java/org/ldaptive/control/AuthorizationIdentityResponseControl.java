@@ -6,13 +6,11 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
- * Response control for authorization identity. See RFC 3829. Control value
- * contains the authorizationId.
+ * Response control for authorization identity. See RFC 3829. Control value contains the authorizationId.
  *
  * @author  Middleware Services
  */
-public class AuthorizationIdentityResponseControl extends AbstractControl
-  implements ResponseControl
+public class AuthorizationIdentityResponseControl extends AbstractControl implements ResponseControl
 {
 
   /** OID of this control. */
@@ -60,9 +58,7 @@ public class AuthorizationIdentityResponseControl extends AbstractControl
    * @param  id  authorization id
    * @param  critical  whether this control is critical
    */
-  public AuthorizationIdentityResponseControl(
-    final String id,
-    final boolean critical)
+  public AuthorizationIdentityResponseControl(final String id, final boolean critical)
   {
     super(OID, critical);
     setAuthorizationId(id);
@@ -94,12 +90,7 @@ public class AuthorizationIdentityResponseControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        authorizationId);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), authorizationId);
   }
 
 

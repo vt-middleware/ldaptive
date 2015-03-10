@@ -24,15 +24,13 @@ import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.pool.PooledConnectionFactory;
 
 /**
- * Executes a list of search filters in parallel, each search is performed on a
- * separate connection in the pool. If you need to execute all searches on the
- * same connection see {@link ParallelSearchExecutor}. A cached thread pool is
- * used by default.
+ * Executes a list of search filters in parallel, each search is performed on a separate connection in the pool. If you
+ * need to execute all searches on the same connection see {@link ParallelSearchExecutor}. A cached thread pool is used
+ * by default.
  *
  * @author  Middleware Services
  */
-public class ParallelPooledSearchExecutor
-  extends AbstractParallelSearchExecutor<PooledConnectionFactory>
+public class ParallelPooledSearchExecutor extends AbstractParallelSearchExecutor<PooledConnectionFactory>
 {
 
 
@@ -62,10 +60,8 @@ public class ParallelPooledSearchExecutor
     final SearchEntryHandler... handlers)
     throws LdapException
   {
-    final CompletionService<Response<SearchResult>> searches =
-      new ExecutorCompletionService<>(getExecutorService());
-    final List<Future<Response<SearchResult>>> futures = new ArrayList<>(
-      filters.length);
+    final CompletionService<Response<SearchResult>> searches = new ExecutorCompletionService<>(getExecutorService());
+    final List<Future<Response<SearchResult>>> futures = new ArrayList<>(filters.length);
     for (SearchFilter filter : filters) {
       final SearchRequest sr = newSearchRequest(this);
       if (filter != null) {
@@ -83,8 +79,7 @@ public class ParallelPooledSearchExecutor
       futures.add(searches.submit(createCallable(conn, op, sr)));
     }
 
-    final List<Response<SearchResult>> responses = new ArrayList<>(
-      filters.length);
+    final List<Response<SearchResult>> responses = new ArrayList<>(filters.length);
     for (Future<Response<SearchResult>> future : futures) {
       try {
         responses.add(future.get());
@@ -99,9 +94,8 @@ public class ParallelPooledSearchExecutor
 
 
   /**
-   * Returns a {@link Callable} that executes the supplied request with the
-   * supplied operation in a try-finally block that opens and closes the
-   * connection.
+   * Returns a {@link Callable} that executes the supplied request with the supplied operation in a try-finally block
+   * that opens and closes the connection.
    *
    * @param  <Q>  type of ldap request
    * @param  <S>  type of ldap response

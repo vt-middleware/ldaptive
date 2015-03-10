@@ -7,18 +7,15 @@ import javax.net.ssl.TrustManager;
 import org.ldaptive.AbstractConfig;
 
 /**
- * Contains all the configuration data for SSL and startTLS. Providers are not
- * guaranteed to support all the options contained here.
+ * Contains all the configuration data for SSL and startTLS. Providers are not guaranteed to support all the options
+ * contained here.
  *
  * @author  Middleware Services
  */
 public class SslConfig extends AbstractConfig
 {
 
-  /**
-   * Configuration for the trust and authentication material to use for SSL and
-   * startTLS.
-   */
+  /** Configuration for the trust and authentication material to use for SSL and startTLS. */
   private CredentialConfig credentialConfig;
 
   /** Trust managers. */
@@ -66,9 +63,7 @@ public class SslConfig extends AbstractConfig
    * @param  config  credential config
    * @param  managers  trust managers
    */
-  public SslConfig(
-    final CredentialConfig config,
-    final TrustManager... managers)
+  public SslConfig(final CredentialConfig config, final TrustManager... managers)
   {
     credentialConfig = config;
     trustManagers = managers;
@@ -83,8 +78,7 @@ public class SslConfig extends AbstractConfig
   public boolean isEmpty()
   {
     return
-      credentialConfig == null && trustManagers == null &&
-      enabledCipherSuites == null && enabledProtocols == null &&
+      credentialConfig == null && trustManagers == null && enabledCipherSuites == null && enabledProtocols == null &&
       handshakeCompletedListeners == null;
   }
 
@@ -201,13 +195,10 @@ public class SslConfig extends AbstractConfig
    *
    * @param  listeners  for SSL handshake events
    */
-  public void setHandshakeCompletedListeners(
-    final HandshakeCompletedListener... listeners)
+  public void setHandshakeCompletedListeners(final HandshakeCompletedListener... listeners)
   {
     checkImmutable();
-    logger.trace(
-      "setting handshakeCompletedListeners: {}",
-      Arrays.toString(handshakeCompletedListeners));
+    logger.trace("setting handshakeCompletedListeners: {}", Arrays.toString(handshakeCompletedListeners));
     handshakeCompletedListeners = listeners;
   }
 

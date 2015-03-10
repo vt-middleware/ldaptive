@@ -15,8 +15,7 @@ public class UnicodePwdValueTranscoderTest
 {
 
   /** Transcoder to test. */
-  private final UnicodePwdValueTranscoder transcoder =
-    new UnicodePwdValueTranscoder();
+  private final UnicodePwdValueTranscoder transcoder = new UnicodePwdValueTranscoder();
 
 
   /**
@@ -71,13 +70,12 @@ public class UnicodePwdValueTranscoderTest
   public Object[][] createInvalidPasswords()
     throws Exception
   {
-    return
-      new Object[][] {
-        new Object[] {
-          null,
-          new byte[0],
-        },
-      };
+    return new Object[][] {
+      new Object[] {
+        null,
+        new byte[0],
+      },
+    };
   }
 
 
@@ -87,24 +85,15 @@ public class UnicodePwdValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"io"},
-    dataProvider = "passwords"
-  )
+  @Test(groups = {"io"}, dataProvider = "passwords")
   public void testTranscode(final String pwd, final byte[] unicodePwd)
     throws Exception
   {
     Assert.assertEquals(transcoder.encodeBinaryValue(pwd), unicodePwd);
     Assert.assertEquals(transcoder.decodeBinaryValue(unicodePwd), pwd);
-    Assert.assertEquals(
-      transcoder.decodeStringValue(transcoder.encodeStringValue(pwd)),
-      pwd);
-    Assert.assertEquals(
-      transcoder.encodeStringValue(pwd),
-      LdapUtils.utf8Encode(unicodePwd));
-    Assert.assertEquals(
-      transcoder.decodeStringValue(LdapUtils.utf8Encode(unicodePwd)),
-      pwd);
+    Assert.assertEquals(transcoder.decodeStringValue(transcoder.encodeStringValue(pwd)), pwd);
+    Assert.assertEquals(transcoder.encodeStringValue(pwd), LdapUtils.utf8Encode(unicodePwd));
+    Assert.assertEquals(transcoder.decodeStringValue(LdapUtils.utf8Encode(unicodePwd)), pwd);
   }
 
 
@@ -114,10 +103,7 @@ public class UnicodePwdValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"io"},
-    dataProvider = "invalid"
-  )
+  @Test(groups = {"io"}, dataProvider = "invalid")
   public void testInvalid(final String pwd, final byte[] unicodePwd)
     throws Exception
   {

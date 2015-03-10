@@ -12,14 +12,11 @@ import org.ldaptive.Operation;
  *
  * @author  Middleware Services
  */
-public class DeleteReferralHandler
-  extends AbstractReferralHandler<DeleteRequest, Void>
+public class DeleteReferralHandler extends AbstractReferralHandler<DeleteRequest, Void>
 {
 
 
-  /**
-   * Creates a new delete referral handler.
-   */
+  /** Creates a new delete referral handler. */
   public DeleteReferralHandler()
   {
     this(DEFAULT_REFERRAL_LIMIT, 0, DEFAULT_CONNECTION_FACTORY);
@@ -54,9 +51,7 @@ public class DeleteReferralHandler
    * @param  limit  number of referrals to follow
    * @param  factory  referral connection factory
    */
-  public DeleteReferralHandler(
-    final int limit,
-    final ReferralConnectionFactory factory)
+  public DeleteReferralHandler(final int limit, final ReferralConnectionFactory factory)
   {
     this(limit, 0, factory);
   }
@@ -69,29 +64,20 @@ public class DeleteReferralHandler
    * @param  depth  number of referrals followed
    * @param  factory  referral connection factory
    */
-  private DeleteReferralHandler(
-    final int limit,
-    final int depth,
-    final ReferralConnectionFactory factory)
+  private DeleteReferralHandler(final int limit, final int depth, final ReferralConnectionFactory factory)
   {
     super(limit, depth, factory);
   }
 
 
   @Override
-  protected DeleteRequest createReferralRequest(
-    final DeleteRequest request,
-    final LdapURL url)
+  protected DeleteRequest createReferralRequest(final DeleteRequest request, final LdapURL url)
   {
     final DeleteRequest referralRequest = new DeleteRequest();
     referralRequest.setControls(request.getControls());
-    referralRequest.setIntermediateResponseHandlers(
-      request.getIntermediateResponseHandlers());
+    referralRequest.setIntermediateResponseHandlers(request.getIntermediateResponseHandlers());
     referralRequest.setReferralHandler(
-      new DeleteReferralHandler(
-        getReferralLimit(),
-        getReferralDepth() + 1,
-        getReferralConnectionFactory()));
+      new DeleteReferralHandler(getReferralLimit(), getReferralDepth() + 1, getReferralConnectionFactory()));
     if (!url.getEntry().isDefaultBaseDn()) {
       referralRequest.setDn(url.getEntry().getBaseDn());
     } else {
@@ -102,8 +88,7 @@ public class DeleteReferralHandler
 
 
   @Override
-  protected Operation<DeleteRequest, Void> createReferralOperation(
-    final Connection conn)
+  protected Operation<DeleteRequest, Void> createReferralOperation(final Connection conn)
   {
     return new DeleteOperation(conn);
   }

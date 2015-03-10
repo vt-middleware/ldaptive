@@ -123,8 +123,7 @@ public class SearchFilter
 
 
   /**
-   * Returns this filter with it's parameters encoded and replaced. See {@link
-   * #encode(Object)}.
+   * Returns this filter with it's parameters encoded and replaced. See {@link #encode(Object)}.
    *
    * @return  formatted and encoded filter
    */
@@ -166,8 +165,7 @@ public class SearchFilter
 
 
   /**
-   * Encodes the supplied attribute value for use in a search filter. See {@link
-   * #escape(String)}.
+   * Encodes the supplied attribute value for use in a search filter. See {@link #escape(String)}.
    *
    * @param  value  to encode
    *
@@ -184,8 +182,8 @@ public class SearchFilter
 
 
   /**
-   * Hex encodes the supplied object if it is of type byte[], otherwise the
-   * string format of the object is escaped. See {@link #escape(String)}.
+   * Hex encodes the supplied object if it is of type byte[], otherwise the string format of the object is escaped. See
+   * {@link #escape(String)}.
    *
    * @param  obj  to encode
    *
@@ -271,11 +269,6 @@ public class SearchFilter
   public String toString()
   {
     return
-      String.format(
-        "[%s@%d::filter=%s, parameters=%s]",
-        getClass().getName(),
-        hashCode(),
-        searchFilter,
-        parameters);
+      String.format("[%s@%d::filter=%s, parameters=%s]", getClass().getName(), hashCode(), searchFilter, parameters);
   }
 }

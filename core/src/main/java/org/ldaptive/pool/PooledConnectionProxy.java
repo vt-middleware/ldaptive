@@ -5,8 +5,7 @@ import java.lang.reflect.InvocationHandler;
 import org.ldaptive.Connection;
 
 /**
- * Provides an interface for metadata surrounding a connection that is
- * participating in the connection pool.
+ * Provides an interface for metadata surrounding a connection that is participating in the connection pool.
  *
  * @author  Middleware Services
  */
@@ -39,8 +38,7 @@ public interface PooledConnectionProxy extends InvocationHandler
 
 
   /**
-   * Returns the statistics associated with this connection's activity in the
-   * pool.
+   * Returns the statistics associated with this connection's activity in the pool.
    *
    * @return  pooled connection statistics
    */

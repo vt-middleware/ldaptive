@@ -88,9 +88,7 @@ public class JLdapConnection implements ProviderConnection
    * @param  conn  ldap connection
    * @param  pc  provider configuration
    */
-  public JLdapConnection(
-    final LDAPConnection conn,
-    final JLdapProviderConfig pc)
+  public JLdapConnection(final LDAPConnection conn, final JLdapProviderConfig pc)
   {
     connection = conn;
     config = pc;
@@ -234,10 +232,7 @@ public class JLdapConnection implements ProviderConnection
           request.getDn(),
           new String[] {"DIGEST-MD5"},
           null,
-          new SaslCallbackHandler(
-            null,
-            request.getCredential() != null
-              ? request.getCredential().getString() : null));
+          new SaslCallbackHandler(null, request.getCredential() != null ? request.getCredential().getString() : null));
         break;
 
       case CRAM_MD5:
@@ -247,8 +242,7 @@ public class JLdapConnection implements ProviderConnection
         throw new UnsupportedOperationException("GSSAPI not supported");
 
       default:
-        throw new IllegalArgumentException(
-          "Unknown SASL authentication mechanism: " + sc.getMechanism());
+        throw new IllegalArgumentException("Unknown SASL authentication mechanism: " + sc.getMechanism());
       }
     } catch (LDAPException e) {
       processLDAPException(e);
@@ -265,9 +259,7 @@ public class JLdapConnection implements ProviderConnection
     try {
       final JLdapUtils bu = new JLdapUtils();
       final LDAPResponseQueue queue = connection.add(
-        new LDAPEntry(
-          request.getDn(),
-          bu.fromLdapAttributes(request.getLdapAttributes())),
+        new LDAPEntry(request.getDn(), bu.fromLdapAttributes(request.getLdapAttributes())),
         null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
@@ -292,10 +284,7 @@ public class JLdapConnection implements ProviderConnection
         null,
         getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
-      response = createResponse(
-        request,
-        lr.getResultCode() == ResultCode.COMPARE_TRUE.value(),
-        lr);
+      response = createResponse(request, lr.getResultCode() == ResultCode.COMPARE_TRUE.value(), lr);
     } catch (LDAPException e) {
       processLDAPException(e);
     }
@@ -309,10 +298,7 @@ public class JLdapConnection implements ProviderConnection
   {
     Response<Void> response = null;
     try {
-      final LDAPResponseQueue queue = connection.delete(
-        request.getDn(),
-        null,
-        getLDAPConstraints(request));
+      final LDAPResponseQueue queue = connection.delete(request.getDn(), null, getLDAPConstraints(request));
       final LDAPResponse lr = (LDAPResponse) queue.getResponse();
       response = createResponse(request, null, lr);
     } catch (LDAPException e) {
@@ -377,14 +363,10 @@ public class JLdapConnection implements ProviderConnection
 
 
   @Override
-  public void searchAsync(
-    final SearchRequest request,
-    final SearchListener listener)
+  public void searchAsync(final SearchRequest request, final SearchListener listener)
     throws LdapException
   {
-    final JLdapAsyncSearchListener l = new JLdapAsyncSearchListener(
-      request,
-      listener);
+    final JLdapAsyncSearchListener l = new JLdapAsyncSearchListener(request, listener);
     l.initialize();
   }
 
@@ -410,9 +392,10 @@ public class JLdapConnection implements ProviderConnection
       final LDAPExtendedResponse ldapExtRes = connection.extendedOperation(
         new LDAPExtendedOperation(request.getOID(), request.encode()),
         getLDAPConstraints(request));
-      final ExtendedResponse<?> extRes =
-        ExtendedResponseFactory.createExtendedResponse(
-          request.getOID(), ldapExtRes.getID(), ldapExtRes.getValue());
+      final ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(
+        request.getOID(),
+        ldapExtRes.getID(),
+        ldapExtRes.getValue());
       response = createResponse(request, extRes.getValue(), ldapExtRes);
     } catch (LDAPException e) {
       processLDAPException(e);
@@ -422,16 +405,14 @@ public class JLdapConnection implements ProviderConnection
 
 
   @Override
-  public void addUnsolicitedNotificationListener(
-    final UnsolicitedNotificationListener listener)
+  public void addUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
   {
     notificationListener.addUnsolicitedNotificationListener(listener);
   }
 
 
   @Override
-  public void removeUnsolicitedNotificationListener(
-    final UnsolicitedNotificationListener listener)
+  public void removeUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
   {
     notificationListener.removeUnsolicitedNotificationListener(listener);
   }
@@ -451,9 +432,7 @@ public class JLdapConnection implements ProviderConnection
       constraints = new LDAPConstraints();
     }
     if (request.getControls() != null) {
-      constraints.setControls(
-        config.getControlProcessor().processRequestControls(
-          request.getControls()));
+      constraints.setControls(config.getControlProcessor().processRequestControls(request.getControls()));
     }
     return constraints;
   }
@@ -473,8 +452,7 @@ public class JLdapConnection implements ProviderConnection
       constraints = new LDAPConstraints();
     }
     if (controls != null) {
-      constraints.setControls(
-        config.getControlProcessor().processRequestControls(controls));
+      constraints.setControls(config.getControlProcessor().processRequestControls(controls));
     }
     return constraints;
   }
@@ -488,20 +466,15 @@ public class JLdapConnection implements ProviderConnection
    *
    * @throws  LdapException  wrapping the ldap exception
    */
-  protected void throwOperationException(
-    final Request request,
-    final LDAPResponse ldapResponse)
+  protected void throwOperationException(final Request request, final LDAPResponse ldapResponse)
     throws LdapException
   {
     ProviderUtils.throwOperationException(
       config.getOperationExceptionResultCodes(),
-      String.format(
-        "Ldap returned result code: %s",
-        ldapResponse.getResultCode()),
+      String.format("Ldap returned result code: %s", ldapResponse.getResultCode()),
       ldapResponse.getResultCode(),
       ldapResponse.getMatchedDN(),
-      config.getControlProcessor().processResponseControls(
-        ldapResponse.getControls()),
+      config.getControlProcessor().processResponseControls(ldapResponse.getControls()),
       ldapResponse.getReferrals(),
       false);
   }
@@ -517,10 +490,7 @@ public class JLdapConnection implements ProviderConnection
    *
    * @return  operation response
    */
-  protected <T> Response<T> createResponse(
-    final Request request,
-    final T result,
-    final LDAPResponse ldapResponse)
+  protected <T> Response<T> createResponse(final Request request, final T result, final LDAPResponse ldapResponse)
   {
     return
       new Response<>(
@@ -528,16 +498,14 @@ public class JLdapConnection implements ProviderConnection
         ResultCode.valueOf(ldapResponse.getResultCode()),
         ldapResponse.getErrorMessage(),
         ldapResponse.getMatchedDN(),
-        config.getControlProcessor().processResponseControls(
-          ldapResponse.getControls()),
+        config.getControlProcessor().processResponseControls(ldapResponse.getControls()),
         ldapResponse.getReferrals(),
         ldapResponse.getMessageID());
   }
 
 
   /**
-   * Determines if the supplied ldap exception should result in an operation
-   * retry.
+   * Determines if the supplied ldap exception should result in an operation retry.
    *
    * @param  e  that was produced
    *
@@ -592,8 +560,7 @@ public class JLdapConnection implements ProviderConnection
       for (Callback cb : callbacks) {
         if (cb instanceof NameCallback) {
           // if user is null, the authzId will be used as it's the default name
-          ((NameCallback) cb).setName(
-            user != null ? user : ((NameCallback) cb).getDefaultName());
+          ((NameCallback) cb).setName(user != null ? user : ((NameCallback) cb).getDefaultName());
         } else if (cb instanceof PasswordCallback) {
           ((PasswordCallback) cb).setPassword(pass);
         } else if (cb instanceof RealmCallback) {
@@ -607,8 +574,7 @@ public class JLdapConnection implements ProviderConnection
 
 
   /** Search iterator for JLdap search results. */
-  protected class JLdapSearchIterator extends AbstractJLdapSearch
-    implements SearchIterator
+  protected class JLdapSearchIterator extends AbstractJLdapSearch implements SearchIterator
   {
 
     /** Response data. */
@@ -663,20 +629,11 @@ public class JLdapConnection implements ProviderConnection
           response = createResponse(request, null, res);
         }
       } catch (LDAPException e) {
-        final ResultCode rc = ignoreSearchException(
-          config.getSearchIgnoreResultCodes(),
-          e);
+        final ResultCode rc = ignoreSearchException(config.getSearchIgnoreResultCodes(), e);
         if (rc == null) {
           processLDAPException(e);
         }
-        response = new Response<>(
-          null,
-          rc,
-          e.getLDAPErrorMessage(),
-          null,
-          null,
-          null,
-          -1);
+        response = new Response<>(null, rc, e.getLDAPErrorMessage(), null, null, null, -1);
       }
       return more;
     }
@@ -691,11 +648,9 @@ public class JLdapConnection implements ProviderConnection
       if (message instanceof LDAPSearchResult) {
         si = processLDAPSearchResult((LDAPSearchResult) message);
       } else if (message instanceof LDAPSearchResultReference) {
-        si = processLDAPSearchResultReference(
-          (LDAPSearchResultReference) message);
+        si = processLDAPSearchResultReference((LDAPSearchResultReference) message);
       } else if (message instanceof LDAPIntermediateResponse) {
-        si = processLDAPIntermediateResponse(
-          (LDAPIntermediateResponse) message);
+        si = processLDAPIntermediateResponse((LDAPIntermediateResponse) message);
       } else {
         throw new IllegalStateException("Unknown message: " + message);
       }
@@ -730,9 +685,7 @@ public class JLdapConnection implements ProviderConnection
      * @param  sr  search request
      * @param  sl  search listener
      */
-    public JLdapAsyncSearchListener(
-      final SearchRequest sr,
-      final SearchListener sl)
+    public JLdapAsyncSearchListener(final SearchRequest sr, final SearchListener sl)
     {
       super(sr);
       listener = sl;
@@ -765,37 +718,25 @@ public class JLdapConnection implements ProviderConnection
      *
      * @throws  LDAPException  if an error occurs
      */
-    protected LDAPSearchQueue search(
-      final LDAPConnection conn,
-      final SearchRequest sr)
+    protected LDAPSearchQueue search(final LDAPConnection conn, final SearchRequest sr)
       throws LDAPException
     {
-      final SearchResultIterator i = new SearchResultIterator(
-        super.search(conn, sr));
-      listener.asyncRequestReceived(
-        new JLdapAsyncRequest(i.getLDAPSearchQueue()));
+      final SearchResultIterator i = new SearchResultIterator(super.search(conn, sr));
+      listener.asyncRequestReceived(new JLdapAsyncRequest(i.getLDAPSearchQueue()));
       while (i.hasNext()) {
         final LDAPMessage message = i.next();
         if (message instanceof LDAPSearchResult) {
-          listener.searchItemReceived(
-            processLDAPSearchResult((LDAPSearchResult) message));
+          listener.searchItemReceived(processLDAPSearchResult((LDAPSearchResult) message));
         } else if (message instanceof LDAPSearchResultReference) {
-          listener.searchItemReceived(
-            processLDAPSearchResultReference(
-              (LDAPSearchResultReference) message));
+          listener.searchItemReceived(processLDAPSearchResultReference((LDAPSearchResultReference) message));
         } else if (message instanceof LDAPIntermediateResponse) {
-          listener.searchItemReceived(
-            processLDAPIntermediateResponse(
-              (LDAPIntermediateResponse) message));
+          listener.searchItemReceived(processLDAPIntermediateResponse((LDAPIntermediateResponse) message));
         } else {
           throw new IllegalStateException("Unknown message: " + message);
         }
       }
 
-      final Response<Void> response = createResponse(
-        request,
-        null,
-        i.getResponse());
+      final Response<Void> response = createResponse(request, null, i.getResponse());
       listener.responseReceived(response);
       return null;
     }
@@ -836,14 +777,11 @@ public class JLdapConnection implements ProviderConnection
      *
      * @throws  LDAPException  if an error occurs
      */
-    protected LDAPSearchQueue search(
-      final LDAPConnection conn,
-      final SearchRequest sr)
+    protected LDAPSearchQueue search(final LDAPConnection conn, final SearchRequest sr)
       throws LDAPException
     {
       final LDAPSearchConstraints constraints = getLDAPSearchConstraints(sr);
-      final LDAPControl[] lc =
-        config.getControlProcessor().processRequestControls(sr.getControls());
+      final LDAPControl[] lc = config.getControlProcessor().processRequestControls(sr.getControls());
       if (lc != null) {
         constraints.setControls(lc);
       }
@@ -881,23 +819,19 @@ public class JLdapConnection implements ProviderConnection
 
 
     /**
-     * Returns an ldap search constraints object configured with the supplied
-     * search request.
+     * Returns an ldap search constraints object configured with the supplied search request.
      *
-     * @param  sr  search request containing configuration to create search
-     * constraints
+     * @param  sr  search request containing configuration to create search constraints
      *
      * @return  ldap search constraints
      */
-    protected LDAPSearchConstraints getLDAPSearchConstraints(
-      final SearchRequest sr)
+    protected LDAPSearchConstraints getLDAPSearchConstraints(final SearchRequest sr)
     {
       LDAPSearchConstraints constraints = connection.getSearchConstraints();
       if (constraints == null) {
         constraints = new LDAPSearchConstraints();
       }
-      constraints.setServerTimeLimit(
-        Long.valueOf(sr.getTimeLimit()).intValue());
+      constraints.setServerTimeLimit(Long.valueOf(sr.getTimeLimit()).intValue());
       constraints.setMaxResults(Long.valueOf(sr.getSizeLimit()).intValue());
       if (sr.getDerefAliases() != null) {
         if (sr.getDerefAliases() == DerefAliases.ALWAYS) {
@@ -922,9 +856,7 @@ public class JLdapConnection implements ProviderConnection
      *
      * @return  result code that should be ignored or null
      */
-    protected ResultCode ignoreSearchException(
-      final ResultCode[] ignoreResultCodes,
-      final LDAPException e)
+    protected ResultCode ignoreSearchException(final ResultCode[] ignoreResultCodes, final LDAPException e)
     {
       ResultCode ignore = null;
       if (ignoreResultCodes != null && ignoreResultCodes.length > 0) {
@@ -941,8 +873,7 @@ public class JLdapConnection implements ProviderConnection
 
 
     /**
-     * Processes the response controls on the supplied result and returns a
-     * corresponding search item.
+     * Processes the response controls on the supplied result and returns a corresponding search item.
      *
      * @param  res  to process
      *
@@ -954,70 +885,56 @@ public class JLdapConnection implements ProviderConnection
 
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
-        respControls = config.getControlProcessor().processResponseControls(
-          res.getControls());
+        respControls = config.getControlProcessor().processResponseControls(res.getControls());
       }
 
-      final SearchEntry se = util.toSearchEntry(
-        res.getEntry(),
-        respControls,
-        res.getMessageID());
+      final SearchEntry se = util.toSearchEntry(res.getEntry(), respControls, res.getMessageID());
       return new SearchItem(se);
     }
 
 
     /**
-     * Processes the response controls on the supplied reference and returns a
-     * corresponding search item.
+     * Processes the response controls on the supplied reference and returns a corresponding search item.
      *
      * @param  ref  to process
      *
      * @return  search item
      */
-    protected SearchItem processLDAPSearchResultReference(
-      final LDAPSearchResultReference ref)
+    protected SearchItem processLDAPSearchResultReference(final LDAPSearchResultReference ref)
     {
       logger.trace("reading search reference: {}", ref);
 
       ResponseControl[] respControls = null;
       if (ref.getControls() != null && ref.getControls().length > 0) {
-        respControls = config.getControlProcessor().processResponseControls(
-          ref.getControls());
+        respControls = config.getControlProcessor().processResponseControls(ref.getControls());
       }
 
-      final SearchReference sr = new SearchReference(
-        ref.getMessageID(),
-        respControls,
-        ref.getReferrals());
+      final SearchReference sr = new SearchReference(ref.getMessageID(), respControls, ref.getReferrals());
       return new SearchItem(sr);
     }
 
 
     /**
-     * Processes the response controls on the supplied response and returns a
-     * corresponding search item.
+     * Processes the response controls on the supplied response and returns a corresponding search item.
      *
      * @param  res  to process
      *
      * @return  search item
      */
-    protected SearchItem processLDAPIntermediateResponse(
-      final LDAPIntermediateResponse res)
+    protected SearchItem processLDAPIntermediateResponse(final LDAPIntermediateResponse res)
     {
       logger.trace("reading intermediate response: {}", res);
 
       ResponseControl[] respControls = null;
       if (res.getControls() != null && res.getControls().length > 0) {
-        respControls = config.getControlProcessor().processResponseControls(
-          res.getControls());
+        respControls = config.getControlProcessor().processResponseControls(res.getControls());
       }
 
-      final org.ldaptive.intermediate.IntermediateResponse ir =
-        IntermediateResponseFactory.createIntermediateResponse(
-          res.getID(),
-          res.getValue(),
-          respControls,
-          res.getMessageID());
+      final org.ldaptive.intermediate.IntermediateResponse ir = IntermediateResponseFactory.createIntermediateResponse(
+        res.getID(),
+        res.getValue(),
+        respControls,
+        res.getMessageID());
       return new SearchItem(ir);
     }
   }
@@ -1102,8 +1019,7 @@ public class JLdapConnection implements ProviderConnection
 
 
     /**
-     * Returns the search response. Available after all messages have been read
-     * from the queue.
+     * Returns the search response. Available after all messages have been read from the queue.
      *
      * @return  ldap search response
      */
@@ -1170,8 +1086,7 @@ public class JLdapConnection implements ProviderConnection
           constraints = new LDAPConstraints();
         }
         if (controls != null) {
-          constraints.setControls(
-            config.getControlProcessor().processRequestControls(controls));
+          constraints.setControls(config.getControlProcessor().processRequestControls(controls));
         }
         connection.abandon(messageQueue, constraints);
       } catch (LDAPException e) {
@@ -1181,17 +1096,12 @@ public class JLdapConnection implements ProviderConnection
   }
 
 
-  /**
-   * Allows the use of multiple unsolicited notification handlers per
-   * connection.
-   */
-  protected class AggregateUnsolicitedNotificationListener
-    implements LDAPUnsolicitedNotificationListener
+  /** Allows the use of multiple unsolicited notification handlers per connection. */
+  protected class AggregateUnsolicitedNotificationListener implements LDAPUnsolicitedNotificationListener
   {
 
     /** Listeners to receive unsolicited notifications. */
-    private final List<UnsolicitedNotificationListener> listeners =
-      new ArrayList<>();
+    private final List<UnsolicitedNotificationListener> listeners = new ArrayList<>();
 
 
     /**
@@ -1199,8 +1109,7 @@ public class JLdapConnection implements ProviderConnection
      *
      * @param  listener  to receive unsolicited notifications
      */
-    public void addUnsolicitedNotificationListener(
-      final UnsolicitedNotificationListener listener)
+    public void addUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
     {
       synchronized (listeners) {
         listeners.add(listener);
@@ -1213,8 +1122,7 @@ public class JLdapConnection implements ProviderConnection
      *
      * @param  listener  to stop receiving unsolicited notifications
      */
-    public void removeUnsolicitedNotificationListener(
-      final UnsolicitedNotificationListener listener)
+    public void removeUnsolicitedNotificationListener(final UnsolicitedNotificationListener listener)
     {
       synchronized (listeners) {
         listeners.remove(listener);
@@ -1227,10 +1135,7 @@ public class JLdapConnection implements ProviderConnection
     {
       logger.debug("Unsolicited notification received: {}", extendedResponse);
       synchronized (listeners) {
-        final Response<Void> response = createResponse(
-          null,
-          null,
-          extendedResponse);
+        final Response<Void> response = createResponse(null, null, extendedResponse);
         for (UnsolicitedNotificationListener listener : listeners) {
           listener.notificationReceived(extendedResponse.getID(), response);
         }

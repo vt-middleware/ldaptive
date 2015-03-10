@@ -8,8 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base implementation of an ldap entry mapper. Uses a {@link ClassDescriptor}
- * for decoding and encoding of objects.
+ * Base implementation of an ldap entry mapper. Uses a {@link ClassDescriptor} for decoding and encoding of objects.
  *
  * @param  <T>  type of object to map
  *
@@ -42,8 +41,7 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
 
 
   /**
-   * Injects data from the supplied source object into a new instance of ldap
-   * entry.
+   * Injects data from the supplied source object into a new instance of ldap entry.
    *
    * @param  source  to read from
    *
@@ -67,13 +65,10 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
     if (dnMutator != null) {
       dest.setDn(dnMutator.getValue(source));
     }
-    for (AttributeValueMutator mutator :
-         descriptor.getAttributeValueMutators()) {
+    for (AttributeValueMutator mutator : descriptor.getAttributeValueMutators()) {
       logger.debug("using mutator {}", mutator);
       if (mutator != null) {
-        final LdapAttribute attr = new LdapAttribute(
-          mutator.getSortBehavior(),
-          mutator.isBinary());
+        final LdapAttribute attr = new LdapAttribute(mutator.getSortBehavior(), mutator.isBinary());
         attr.setName(mutator.getName());
         if (attr.isBinary()) {
           final Collection<byte[]> c = mutator.getBinaryValues(source);
@@ -106,8 +101,7 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
     }
     for (LdapAttribute attr : source.getAttributes()) {
       if (attr.size() > 0) {
-        final AttributeValueMutator mutator =
-          descriptor.getAttributeValueMutator(attr.getName());
+        final AttributeValueMutator mutator = descriptor.getAttributeValueMutator(attr.getName());
         logger.debug("using mutator {} for attribute {}", mutator, attr);
         if (mutator != null) {
           if (attr.isBinary()) {

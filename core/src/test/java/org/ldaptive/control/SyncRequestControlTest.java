@@ -33,8 +33,8 @@ public class SyncRequestControlTest
         },
         // refresh and persist with cookie, reloadHint true
         // BER:30:30:3C:0A:01:03:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:
-        //     30:31:32:30:37:30:36:31:38:31:35:35:32:2E:33:33:37:37:31:38:5A:
-        //     23:30:30:30:30:30:30:23:30:30:30:23:30:30:30:30:30:30:01:01:FF:
+        // 30:31:32:30:37:30:36:31:38:31:35:35:32:2E:33:33:37:37:31:38:5A:
+        // 23:30:30:30:30:30:30:23:30:30:30:23:30:30:30:30:30:30:01:01:FF:
         new Object[] {
           LdapUtils.base64Decode(
             "MDwCAQMENHJpZD0wMDAsY3NuPTIwMTIwNzA2MTgxNTUyLjMzNzcxOFojMDAwMDAw" +
@@ -67,10 +67,7 @@ public class SyncRequestControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"control"},
-    dataProvider = "request"
-  )
+  @Test(groups = {"control"}, dataProvider = "request")
   public void decode(final byte[] berValue, final SyncRequestControl expected)
     throws Exception
   {

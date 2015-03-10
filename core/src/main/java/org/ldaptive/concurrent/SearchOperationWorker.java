@@ -11,8 +11,7 @@ import org.ldaptive.SearchResult;
  *
  * @author  Middleware Services
  */
-public class SearchOperationWorker
-  extends AbstractOperationWorker<SearchRequest, SearchResult>
+public class SearchOperationWorker extends AbstractOperationWorker<SearchRequest, SearchResult>
 {
 
 
@@ -33,9 +32,7 @@ public class SearchOperationWorker
    * @param  op  search operation to execute
    * @param  es  executor service
    */
-  public SearchOperationWorker(
-    final SearchOperation op,
-    final ExecutorService es)
+  public SearchOperationWorker(final SearchOperation op, final ExecutorService es)
   {
     super(op, es);
   }

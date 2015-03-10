@@ -8,13 +8,12 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 /**
- * Loads an X.509 certificate credential from a classpath, filepath, or stream
- * resource. Supported certificate formats include: PEM, DER, and PKCS7.
+ * Loads an X.509 certificate credential from a classpath, filepath, or stream resource. Supported certificate formats
+ * include: PEM, DER, and PKCS7.
  *
  * @author  Middleware Services
  */
-public class X509CertificateCredentialReader
-  extends AbstractCredentialReader<X509Certificate>
+public class X509CertificateCredentialReader extends AbstractCredentialReader<X509Certificate>
 {
 
 

@@ -13,8 +13,7 @@ import org.ldaptive.provider.ControlHandler;
  *
  * @author  Middleware Services
  */
-public class OpenDJControlHandler
-  implements ControlHandler<org.forgerock.opendj.ldap.controls.Control>
+public class OpenDJControlHandler implements ControlHandler<org.forgerock.opendj.ldap.controls.Control>
 {
 
 
@@ -26,30 +25,22 @@ public class OpenDJControlHandler
 
 
   @Override
-  public org.forgerock.opendj.ldap.controls.Control handleRequest(
-    final RequestControl requestControl)
+  public org.forgerock.opendj.ldap.controls.Control handleRequest(final RequestControl requestControl)
   {
     final byte[] value = requestControl.encode();
     if (value == null) {
-      return
-        GenericControl.newControl(
-          requestControl.getOID(),
-          requestControl.getCriticality());
+      return GenericControl.newControl(requestControl.getOID(), requestControl.getCriticality());
     } else {
       final ByteStringBuilder builder = new ByteStringBuilder(value.length);
       builder.append(value);
       return
-        GenericControl.newControl(
-          requestControl.getOID(),
-          requestControl.getCriticality(),
-          builder.toByteString());
+        GenericControl.newControl(requestControl.getOID(), requestControl.getCriticality(), builder.toByteString());
     }
   }
 
 
   @Override
-  public ResponseControl handleResponse(
-    final org.forgerock.opendj.ldap.controls.Control responseControl)
+  public ResponseControl handleResponse(final org.forgerock.opendj.ldap.controls.Control responseControl)
   {
     return
       ControlFactory.createResponseControl(

@@ -50,8 +50,7 @@ public class LdapEntry extends AbstractLdapBean
     } else if (SortBehavior.ORDERED == sb) {
       entryAttributes = new LinkedHashMap<>();
     } else if (SortBehavior.SORTED == sb) {
-      entryAttributes = new TreeMap<>(
-        String.CASE_INSENSITIVE_ORDER);
+      entryAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     } else {
       throw new IllegalArgumentException("Unknown sort behavior: " + sb);
     }
@@ -134,9 +133,8 @@ public class LdapEntry extends AbstractLdapBean
 
 
   /**
-   * Returns a single attribute of this attributes. If multiple attributes exist
-   * the first attribute returned by the underlying iterator is used. If no
-   * attributes exist null is returned.
+   * Returns a single attribute of this attributes. If multiple attributes exist the first attribute returned by the
+   * underlying iterator is used. If no attributes exist null is returned.
    *
    * @return  single attribute
    */
@@ -245,10 +243,9 @@ public class LdapEntry extends AbstractLdapBean
 
 
   /**
-   * Changes the name of an attribute in this entry. The old attribute is
-   * removed from this entry, the name is changed with {@link
-   * LdapAttribute#setName(String)}, and the attribute is added back to this
-   * entry. If oldName does not exist, this method does nothing.
+   * Changes the name of an attribute in this entry. The old attribute is removed from this entry, the name is changed
+   * with {@link LdapAttribute#setName(String)}, and the attribute is added back to this entry. If oldName does not
+   * exist, this method does nothing.
    *
    * @param  oldName  attribute name to change from
    * @param  newName  attribute name to change to
@@ -301,42 +298,31 @@ public class LdapEntry extends AbstractLdapBean
 
 
   /**
-   * Returns the list of attribute modifications needed to change the supplied
-   * target entry into the supplied source entry.
+   * Returns the list of attribute modifications needed to change the supplied target entry into the supplied source
+   * entry.
    *
    * @param  source  ldap entry containing new data
    * @param  target  ldap entry containing existing data
    *
-   * @return  attribute modifications needed to change target into source or an
-   * empty array
+   * @return  attribute modifications needed to change target into source or an empty array
    */
-  public static AttributeModification[] computeModifications(
-    final LdapEntry source,
-    final LdapEntry target)
+  public static AttributeModification[] computeModifications(final LdapEntry source, final LdapEntry target)
   {
     final List<AttributeModification> mods = new ArrayList<>();
     for (LdapAttribute sourceAttr : source.getAttributes()) {
-      final LdapAttribute targetAttr = target.getAttribute(
-        sourceAttr.getName());
+      final LdapAttribute targetAttr = target.getAttribute(sourceAttr.getName());
       if (targetAttr == null) {
-        final AttributeModification mod = new AttributeModification(
-          AttributeModificationType.ADD,
-          sourceAttr);
+        final AttributeModification mod = new AttributeModification(AttributeModificationType.ADD, sourceAttr);
         mods.add(mod);
       } else if (!targetAttr.equals(sourceAttr)) {
-        final AttributeModification mod = new AttributeModification(
-          AttributeModificationType.REPLACE,
-          sourceAttr);
+        final AttributeModification mod = new AttributeModification(AttributeModificationType.REPLACE, sourceAttr);
         mods.add(mod);
       }
     }
     for (LdapAttribute targetAttr : target.getAttributes()) {
-      final LdapAttribute sourceAttr = source.getAttribute(
-        targetAttr.getName());
+      final LdapAttribute sourceAttr = source.getAttribute(targetAttr.getName());
       if (sourceAttr == null) {
-        final AttributeModification mod = new AttributeModification(
-          AttributeModificationType.REMOVE,
-          targetAttr);
+        final AttributeModification mod = new AttributeModification(AttributeModificationType.REMOVE, targetAttr);
         mods.add(mod);
       }
     }

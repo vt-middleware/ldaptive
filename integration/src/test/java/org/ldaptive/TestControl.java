@@ -15,21 +15,19 @@ public class TestControl
 {
 
   /** Attribute to block on. */
-  public static final LdapAttribute ATTR_IDLE =
-    new LdapAttribute("mail", "test-idle@ldaptive.org");
+  public static final LdapAttribute ATTR_IDLE = new LdapAttribute("mail", "test-idle@ldaptive.org");
 
   /** Attribute to block on. */
-  public static final LdapAttribute ATTR_RUNNING =
-    new LdapAttribute("mail", "test-running@ldaptive.org");
+  public static final LdapAttribute ATTR_RUNNING = new LdapAttribute("mail", "test-running@ldaptive.org");
 
   /** Time to wait before checking if lock is available. */
   public static final int WAIT_TIME = 60000;
 
   /** Type of directory being tested. */
-  private static String DIRECTORY_TYPE;
+  private static String directoryType;
 
   /** Type of provider being tested. */
-  private static String PROVIDER_TYPE;
+  private static String providerType;
 
 
   /**
@@ -39,7 +37,7 @@ public class TestControl
    */
   public static boolean isActiveDirectory()
   {
-    return "ACTIVE_DIRECTORY".equals(DIRECTORY_TYPE);
+    return "ACTIVE_DIRECTORY".equals(directoryType);
   }
 
 
@@ -50,7 +48,7 @@ public class TestControl
    */
   public static boolean isOracleDirectory()
   {
-    return "ORACLE".equals(DIRECTORY_TYPE);
+    return "ORACLE".equals(directoryType);
   }
 
 
@@ -61,7 +59,7 @@ public class TestControl
    */
   public static boolean isApacheProvider()
   {
-    return "APACHE".equals(PROVIDER_TYPE);
+    return "APACHE".equals(providerType);
   }
 
 
@@ -71,28 +69,24 @@ public class TestControl
    * @param  ignoreLock  whether to check for the global test lock
    * @param  bindDn  to lock on
    *
-   * @throws Exception on test failure
+   * @throws  Exception  on test failure
    */
   @BeforeSuite(alwaysRun = true)
-  @Parameters({"ldapTestsIgnoreLock", "ldapBindDn"})
+  @Parameters({ "ldapTestsIgnoreLock", "ldapBindDn" })
   public void setup(final String ignoreLock, final String bindDn)
     throws Exception
   {
     final Provider<?> provider = DefaultConnectionFactory.getDefaultProvider();
     if (provider.getClass().getName().contains("Jndi")) {
-      PROVIDER_TYPE = "JNDI";
+      providerType = "JNDI";
     } else if (provider.getClass().getName().contains("Apache")) {
-      PROVIDER_TYPE = "APACHE";
+      providerType = "APACHE";
     } else if (provider.getClass().getName().contains("JLdap")) {
-      PROVIDER_TYPE = "JLDAP";
-    } else if (provider.getClass().getName().contains("Netscape")) {
-      PROVIDER_TYPE = "NETSCAPE";
+      providerType = "JLDAP";
     } else if (provider.getClass().getName().contains("OpenDJ")) {
-      PROVIDER_TYPE = "OPENDJ";
-    } else if (provider.getClass().getName().contains("OpenDS")) {
-      PROVIDER_TYPE = "OPENDS";
+      providerType = "OPENDJ";
     } else if (provider.getClass().getName().contains("UnboundID")) {
-      PROVIDER_TYPE = "UNBOUNDID";
+      providerType = "UNBOUNDID";
     } else {
       throw new IllegalStateException("Unknown provider: " + provider);
     }
@@ -105,9 +99,9 @@ public class TestControl
       while (isTestRunning) {
         try {
           conn.open();
+
           final CompareOperation compare = new CompareOperation(conn);
-          isTestRunning = !compare.execute(
-            new CompareRequest(bindDn, ATTR_IDLE)).getResult();
+          isTestRunning = !compare.execute(new CompareRequest(bindDn, ATTR_IDLE)).getResult();
         } finally {
           conn.close();
           if (isTestRunning) {
@@ -119,18 +113,16 @@ public class TestControl
     }
     try {
       conn.open();
+
       final ModifyOperation modify = new ModifyOperation(conn);
       modify.execute(
-        new ModifyRequest(
-          bindDn,
-          new AttributeModification(
-            AttributeModificationType.REPLACE, ATTR_RUNNING)));
+        new ModifyRequest(bindDn, new AttributeModification(AttributeModificationType.REPLACE, ATTR_RUNNING)));
       if (isAD(conn, bindDn)) {
-        DIRECTORY_TYPE = "ACTIVE_DIRECTORY";
+        directoryType = "ACTIVE_DIRECTORY";
       } else if (isOracle(conn)) {
-        DIRECTORY_TYPE = "ORACLE";
+        directoryType = "ORACLE";
       } else {
-        DIRECTORY_TYPE = "LDAP";
+        directoryType = "LDAP";
       }
     } finally {
       conn.close();
@@ -139,8 +131,7 @@ public class TestControl
 
 
   /**
-   * Performs an object level search for the sAMAccountName attribute used by
-   * Active Directory.
+   * Performs an object level search for the sAMAccountName attribute used by Active Directory.
    *
    * @param  conn  to perform compare with
    * @param  bindDn  to perform search on
@@ -160,8 +151,7 @@ public class TestControl
     try {
       return search.execute(request).getResult().size() == 1;
     } catch (LdapException e) {
-      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() ||
-          ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
+      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() || ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
         return false;
       }
       throw e;
@@ -170,13 +160,11 @@ public class TestControl
 
 
   /**
-   * Performs an object level search on the root DSE for the vendorName
-   * attribute used by Oracle DS.
+   * Performs an object level search on the root DSE for the vendorName attribute used by Oracle DS.
    *
    * @param  conn  to perform compare with
    *
-   * @return  whether the supplied entry contains a vendorName attribute
-   * identified by Oracle
+   * @return  whether the supplied entry contains a vendorName attribute identified by Oracle
    *
    * @throws  Exception  On failure.
    */
@@ -184,16 +172,14 @@ public class TestControl
     throws Exception
   {
     final SearchOperation search = new SearchOperation(conn);
-    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
-      "",
-      new String[] {"vendorName"});
+    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest("", new String[] {"vendorName"});
     try {
       final LdapEntry rootDSE = search.execute(request).getResult().getEntry();
-      return rootDSE.getAttribute("vendorName") != null &&
-             rootDSE.getAttribute("vendorName").getStringValue().contains("Oracle");
+      return
+        rootDSE.getAttribute("vendorName") != null &&
+        rootDSE.getAttribute("vendorName").getStringValue().contains("Oracle");
     } catch (LdapException e) {
-      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() ||
-        ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
+      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() || ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
         return false;
       }
       throw e;
@@ -206,7 +192,7 @@ public class TestControl
    *
    * @param  bindDn  to lock on
    *
-   * @throws Exception on test failure
+   * @throws  Exception  on test failure
    */
   @AfterSuite(alwaysRun = true)
   @Parameters("ldapBindDn")
@@ -216,13 +202,11 @@ public class TestControl
     final Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
+
       // set attribute when tests are finished
       final ModifyOperation modify = new ModifyOperation(conn);
       modify.execute(
-        new ModifyRequest(
-          bindDn,
-          new AttributeModification(
-            AttributeModificationType.REPLACE, ATTR_IDLE)));
+        new ModifyRequest(bindDn, new AttributeModification(AttributeModificationType.REPLACE, ATTR_IDLE)));
     } finally {
       conn.close();
     }

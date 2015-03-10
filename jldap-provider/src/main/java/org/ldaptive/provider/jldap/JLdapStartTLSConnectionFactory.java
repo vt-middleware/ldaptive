@@ -8,13 +8,11 @@ import com.novell.ldap.LDAPException;
 import com.novell.ldap.LDAPJSSEStartTLSFactory;
 
 /**
- * Creates ldap connections using the JLDAP LDAPConnection class with the
- * startTLS extended operation.
+ * Creates ldap connections using the JLDAP LDAPConnection class with the startTLS extended operation.
  *
  * @author  Middleware Services
  */
-public class JLdapStartTLSConnectionFactory
-  extends AbstractJLdapConnectionFactory<JLdapStartTLSConnection>
+public class JLdapStartTLSConnectionFactory extends AbstractJLdapConnectionFactory<JLdapStartTLSConnection>
 {
 
   /** SSL socket factory to use for startTLS. */
@@ -65,9 +63,7 @@ public class JLdapStartTLSConnectionFactory
 
 
   @Override
-  protected JLdapStartTLSConnection createJLdapConnection(
-    final LDAPConnection conn,
-    final JLdapProviderConfig config)
+  protected JLdapStartTLSConnection createJLdapConnection(final LDAPConnection conn, final JLdapProviderConfig config)
   {
     return new JLdapStartTLSConnection(conn, config);
   }

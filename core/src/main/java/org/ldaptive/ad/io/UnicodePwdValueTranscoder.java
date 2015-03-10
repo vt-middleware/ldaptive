@@ -5,13 +5,11 @@ import java.nio.charset.Charset;
 import org.ldaptive.io.AbstractBinaryValueTranscoder;
 
 /**
- * Decodes and encodes an active directory unicodePwd value for use in an ldap
- * attribute value.
+ * Decodes and encodes an active directory unicodePwd value for use in an ldap attribute value.
  *
  * @author  Middleware Services
  */
-public class UnicodePwdValueTranscoder
-  extends AbstractBinaryValueTranscoder<String>
+public class UnicodePwdValueTranscoder extends AbstractBinaryValueTranscoder<String>
 {
 
   /** UTF-16LE character set. */
@@ -23,8 +21,7 @@ public class UnicodePwdValueTranscoder
   {
     final String pwd = new String(value, UTF_16LE);
     if (pwd.length() < 2) {
-      throw new IllegalArgumentException(
-        "unicodePwd must be at least 2 characters long");
+      throw new IllegalArgumentException("unicodePwd must be at least 2 characters long");
     }
     return pwd.substring(1, pwd.length() - 1);
   }

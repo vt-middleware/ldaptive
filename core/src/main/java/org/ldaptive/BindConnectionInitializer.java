@@ -8,8 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Initializes a connection by performing a bind operation. Useful if you need
- * all connections to bind as the same principal.
+ * Initializes a connection by performing a bind operation. Useful if you need all connections to bind as the same
+ * principal.
  *
  * @author  Middleware Services
  */
@@ -158,16 +158,13 @@ public class BindConnectionInitializer implements ConnectionInitializer
 
 
   /**
-   * Returns whether this connection initializer contains any configuration
-   * data.
+   * Returns whether this connection initializer contains any configuration data.
    *
    * @return  whether all properties are null
    */
   public boolean isEmpty()
   {
-    return
-      bindDn == null && bindCredential == null && bindSaslConfig == null &&
-      bindControls == null;
+    return bindDn == null && bindCredential == null && bindSaslConfig == null && bindControls == null;
   }
 
 

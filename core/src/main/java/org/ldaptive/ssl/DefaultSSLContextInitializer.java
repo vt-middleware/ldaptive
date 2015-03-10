@@ -8,8 +8,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 /**
- * Provides a default implementation of SSL context initializer which allows the
- * setting of trust and key managers in order to create an SSL context.
+ * Provides a default implementation of SSL context initializer which allows the setting of trust and key managers in
+ * order to create an SSL context.
  *
  * @author  Middleware Services
  */
@@ -23,10 +23,7 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
   private final boolean createDefaultTrustManagers;
 
 
-  /**
-   * Creates a new default ssl context initializer. Default trust managers will
-   * be produced.
-   */
+  /** Creates a new default ssl context initializer. Default trust managers will be produced. */
   public DefaultSSLContextInitializer()
   {
     this(true);
@@ -36,8 +33,7 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
   /**
    * Creates a new default ssl context initializer.
    *
-   * @param  defaultTrustManagers  whether default trust managers should be
-   * created
+   * @param  defaultTrustManagers  whether default trust managers should be created
    */
   public DefaultSSLContextInitializer(final boolean defaultTrustManagers)
   {
@@ -50,8 +46,7 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
     throws GeneralSecurityException
   {
     if (createDefaultTrustManagers) {
-      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(
-        TrustManagerFactory.getDefaultAlgorithm());
+      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
       tmf.init((KeyStore) null);
       return tmf.getTrustManagers();
     }

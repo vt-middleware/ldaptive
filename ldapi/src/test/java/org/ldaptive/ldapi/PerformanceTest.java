@@ -52,11 +52,7 @@ public class PerformanceTest
       "ldapSearchFilter"
     }
   )
-  public void initialize(
-    final String socketFile,
-    final String host,
-    final String baseDn,
-    final String searchFilter)
+  public void initialize(final String socketFile, final String host, final String baseDn, final String searchFilter)
   {
     System.setProperty("org.ldaptive.ldapi.socketFile", socketFile);
     ldapHost = host;
@@ -77,25 +73,19 @@ public class PerformanceTest
     throws Exception
   {
     final Map<String, Object> props = new HashMap<>();
-    props.put(
-      JndiProvider.SOCKET_FACTORY,
-      "org.ldaptive.ldapi.AFUnixSocketFactory");
+    props.put(JndiProvider.SOCKET_FACTORY, "org.ldaptive.ldapi.AFUnixSocketFactory");
 
     final DefaultConnectionFactory nativeFactory = new DefaultConnectionFactory(
       new ConnectionConfig("ldap://domainsocket"));
     nativeFactory.getProvider().getProviderConfig().setProperties(props);
 
-    final DefaultConnectionFactory localFactory = new DefaultConnectionFactory(
-      new ConnectionConfig(ldapHost));
+    final DefaultConnectionFactory localFactory = new DefaultConnectionFactory(new ConnectionConfig(ldapHost));
 
-    final SearchRequest request = new SearchRequest(
-      ldapBaseDn,
-      ldapSearchFilter);
-    return
-      new Object[][] {
-        new Object[] {nativeFactory, request, },
-        new Object[] {localFactory, request, },
-      };
+    final SearchRequest request = new SearchRequest(ldapBaseDn, ldapSearchFilter);
+    return new Object[][] {
+      new Object[] {nativeFactory, request, },
+      new Object[] {localFactory, request, },
+    };
   }
 
 
@@ -107,13 +97,8 @@ public class PerformanceTest
    *
    * @throws  Exception  On test errors.
    */
-  @Test(
-    groups = {"ldapi"},
-    dataProvider = "factories"
-  )
-  public void search(
-    final ConnectionFactory connFactory,
-    final SearchRequest request)
+  @Test(groups = {"ldapi"}, dataProvider = "factories")
+  public void search(final ConnectionFactory connFactory, final SearchRequest request)
     throws Exception
   {
     final long beforeTS = System.currentTimeMillis();
@@ -132,10 +117,6 @@ public class PerformanceTest
     }
 
     final long afterTS = System.currentTimeMillis();
-    System.out.println(
-      String.format(
-        "Total Execution Time %s ms for %s",
-        afterTS - beforeTS,
-        connFactory));
+    System.out.println(String.format("Total Execution Time %s ms for %s", afterTS - beforeTS, connFactory));
   }
 }

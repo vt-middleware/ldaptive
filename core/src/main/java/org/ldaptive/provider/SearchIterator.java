@@ -36,8 +36,7 @@ public interface SearchIterator
 
 
   /**
-   * Returns the response data associated with this search or null if this
-   * iterator has more ldap entries to return.
+   * Returns the response data associated with this search or null if this iterator has more ldap entries to return.
    *
    * @return  response data
    */

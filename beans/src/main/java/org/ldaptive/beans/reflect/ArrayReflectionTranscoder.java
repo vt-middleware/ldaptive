@@ -8,8 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Reflection transcoder which expects to operate on collections containing an
- * array of values.
+ * Reflection transcoder which expects to operate on collections containing an array of values.
  *
  * @author  Middleware Services
  */
@@ -28,8 +27,7 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
    *
    * @param  transcoder  to operate on individual array elements
    */
-  public ArrayReflectionTranscoder(
-    final SingleValueReflectionTranscoder<?> transcoder)
+  public ArrayReflectionTranscoder(final SingleValueReflectionTranscoder<?> transcoder)
   {
     valueTranscoder = transcoder;
     type = Array.newInstance(valueTranscoder.getType(), 0).getClass();
@@ -39,9 +37,7 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   @Override
   public Object decodeStringValues(final Collection<String> values)
   {
-    final Object decoded = Array.newInstance(
-      valueTranscoder.getType(),
-      values.size());
+    final Object decoded = Array.newInstance(valueTranscoder.getType(), values.size());
     final Iterator<String> iter = values.iterator();
     for (int i = 0; i < values.size(); i++) {
       final List<String> l = new ArrayList<>(1);
@@ -55,9 +51,7 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   @Override
   public Object decodeBinaryValues(final Collection<byte[]> values)
   {
-    final Object decoded = Array.newInstance(
-      valueTranscoder.getType(),
-      values.size());
+    final Object decoded = Array.newInstance(valueTranscoder.getType(), values.size());
     final Iterator<byte[]> iter = values.iterator();
     for (int i = 0; i < values.size(); i++) {
       final List<byte[]> l = new ArrayList<>(1);
@@ -167,11 +161,6 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::valueTranscoder=%s]",
-        getClass().getName(),
-        hashCode(),
-        valueTranscoder);
+    return String.format("[%s@%d::valueTranscoder=%s]", getClass().getName(), hashCode(), valueTranscoder);
   }
 }

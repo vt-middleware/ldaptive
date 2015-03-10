@@ -24,8 +24,7 @@ import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SecurityStrength;
 
 /**
- * Provides methods for converting between JNDI specific objects and ldaptive
- * specific objects.
+ * Provides methods for converting between JNDI specific objects and ldaptive specific objects.
  *
  * @author  Middleware Services
  */
@@ -58,8 +57,7 @@ public class JndiUtils
 
 
   /**
-   * Returns a jndi attribute that represents the values in the supplied ldap
-   * attribute.
+   * Returns a jndi attribute that represents the values in the supplied ldap attribute.
    *
    * @param  attr  ldap attribute
    *
@@ -98,14 +96,12 @@ public class JndiUtils
     while (ne.hasMore()) {
       values.add(ne.next());
     }
-    return
-      LdapAttribute.createLdapAttribute(sortBehavior, attr.getID(), values);
+    return LdapAttribute.createLdapAttribute(sortBehavior, attr.getID(), values);
   }
 
 
   /**
-   * Returns a jndi attributes that represents the values in the supplied ldap
-   * attributes.
+   * Returns a jndi attributes that represents the values in the supplied ldap attributes.
    *
    * @param  attrs  ldap attributes
    *
@@ -130,11 +126,7 @@ public class JndiUtils
    */
   public SearchResult fromSearchEntry(final SearchEntry entry)
   {
-    return
-      new SearchResult(
-        entry.getDn(),
-        null,
-        fromLdapAttributes(entry.getAttributes()));
+    return new SearchResult(entry.getDn(), null, fromLdapAttributes(entry.getAttributes()));
   }
 
 
@@ -169,8 +161,7 @@ public class JndiUtils
    *
    * @return  jndi modification items
    */
-  public ModificationItem[] fromAttributeModification(
-    final AttributeModification[] mods)
+  public ModificationItem[] fromAttributeModification(final AttributeModification[] mods)
   {
     final ModificationItem[] mi = new ModificationItem[mods.length];
     for (int i = 0; i < mods.length; i++) {
@@ -206,15 +197,13 @@ public class JndiUtils
 
 
   /**
-   * Returns the jndi modification integer constant for the supplied attribute
-   * modification type.
+   * Returns the jndi modification integer constant for the supplied attribute modification type.
    *
    * @param  type  attribute modification type
    *
    * @return  integer constant
    */
-  protected static int getAttributeModification(
-    final AttributeModificationType type)
+  protected static int getAttributeModification(final AttributeModificationType type)
   {
     int op = -1;
     if (type == AttributeModificationType.ADD) {
@@ -253,8 +242,7 @@ public class JndiUtils
       break;
 
     default:
-      throw new IllegalArgumentException(
-        "Unknown SASL quality of protection: " + qop);
+      throw new IllegalArgumentException("Unknown SASL quality of protection: " + qop);
     }
     return s;
   }
@@ -285,16 +273,14 @@ public class JndiUtils
       break;
 
     default:
-      throw new IllegalArgumentException(
-        "Unknown SASL security strength: " + ss);
+      throw new IllegalArgumentException("Unknown SASL security strength: " + ss);
     }
     return s;
   }
 
 
   /**
-   * Returns the JNDI authentication string for the supplied authentication
-   * type.
+   * Returns the JNDI authentication string for the supplied authentication type.
    *
    * @param  m  sasl mechanism
    *
@@ -322,8 +308,7 @@ public class JndiUtils
       break;
 
     default:
-      throw new IllegalArgumentException(
-        "Unknown SASL authentication mechanism: " + m);
+      throw new IllegalArgumentException("Unknown SASL authentication mechanism: " + m);
     }
     return s;
   }

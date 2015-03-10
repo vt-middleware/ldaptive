@@ -12,8 +12,7 @@ import org.ldaptive.provider.SearchIterator;
  *
  * @author  Middleware Services
  */
-public class SearchOperation
-  extends AbstractOperation<SearchRequest, SearchResult>
+public class SearchOperation extends AbstractOperation<SearchRequest, SearchResult>
 {
 
   /** Cache to use when performing searches. */
@@ -45,9 +44,8 @@ public class SearchOperation
 
 
   /**
-   * Returns the cache to check when performing search operations. When a cache
-   * is provided it will be populated as new searches are performed and used
-   * when a search request hits the cache.
+   * Returns the cache to check when performing search operations. When a cache is provided it will be populated as new
+   * searches are performed and used when a search request hits the cache.
    *
    * @return  cache
    */
@@ -102,8 +100,7 @@ public class SearchOperation
   protected Response<SearchResult> executeSearch(final SearchRequest request)
     throws LdapException
   {
-    final SearchIterator si = getConnection().getProviderConnection().search(
-      request);
+    final SearchIterator si = getConnection().getProviderConnection().search(request);
     final SearchResult result = readResult(request, si);
     final Response<Void> response = si.getResponse();
     return
@@ -119,8 +116,8 @@ public class SearchOperation
 
 
   /**
-   * Invokes the provider search operation and iterates over the results.
-   * Invokes handlers as necessary for each result type.
+   * Invokes the provider search operation and iterates over the results. Invokes handlers as necessary for each result
+   * type.
    *
    * @param  request  used to create the search iterator
    * @param  si  search iterator
@@ -129,9 +126,7 @@ public class SearchOperation
    *
    * @throws  LdapException  if an error occurs
    */
-  protected SearchResult readResult(
-    final SearchRequest request,
-    final SearchIterator si)
+  protected SearchResult readResult(final SearchRequest request, final SearchIterator si)
     throws LdapException
   {
     final SearchResult result = new SearchResult(request.getSortBehavior());
@@ -142,10 +137,7 @@ public class SearchOperation
         if (item.isSearchEntry()) {
           final SearchEntry se = item.getSearchEntry();
           if (se != null) {
-            final HandlerResult<SearchEntry> hr = executeHandlers(
-              request.getSearchEntryHandlers(),
-              request,
-              se);
+            final HandlerResult<SearchEntry> hr = executeHandlers(request.getSearchEntryHandlers(), request, se);
             if (hr.getResult() != null) {
               result.addEntry(hr.getResult());
             }
@@ -163,8 +155,7 @@ public class SearchOperation
               sr);
             if (hr.getResult() != null) {
               final SearchReference reference = hr.getResult();
-              final Response<SearchResult> refResponse =
-                reference.getReferenceResponse();
+              final Response<SearchResult> refResponse = reference.getReferenceResponse();
               if (refResponse != null) {
                 if (refResponse.getResultCode() == ResultCode.SUCCESS) {
                   result.addEntries(refResponse.getResult().getEntries());

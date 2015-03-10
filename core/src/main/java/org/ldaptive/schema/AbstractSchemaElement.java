@@ -69,8 +69,7 @@ public abstract class AbstractSchemaElement implements SchemaElement
 
 
   /**
-   * Returns whether the supplied schema element has an extension name with a
-   * value of 'true'.
+   * Returns whether the supplied schema element has an extension name with a value of 'true'.
    *
    * @param  <T>  type of schema element
    * @param  schemaElement  to inspect
@@ -78,8 +77,9 @@ public abstract class AbstractSchemaElement implements SchemaElement
    *
    * @return  whether syntax has this boolean extension
    */
-  public static <T extends AbstractSchemaElement> boolean
-  containsBooleanExtension(final T schemaElement, final String extensionName)
+  public static <T extends AbstractSchemaElement> boolean containsBooleanExtension(
+    final T schemaElement,
+    final String extensionName)
   {
     if (schemaElement != null) {
       final Extensions exts = schemaElement.getExtensions();

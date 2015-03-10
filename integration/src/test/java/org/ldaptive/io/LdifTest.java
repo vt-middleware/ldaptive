@@ -62,10 +62,12 @@ public class LdifTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
+  @Parameters(
+    {
       "ldifSearchDn",
       "ldifSearchFilter"
-    })
+    }
+  )
   @Test(groups = {"ldif"})
   public void searchAndCompareLdif(final String dn, final String filter)
     throws Exception
@@ -73,15 +75,16 @@ public class LdifTest extends AbstractTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final SearchOperation search = new SearchOperation(conn);
 
-      final SearchRequest request =
-        new SearchRequest(dn, new SearchFilter(filter));
+      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
       if (TestControl.isActiveDirectory()) {
         request.setBinaryAttributes("objectSid", "objectGUID", "jpegPhoto");
       } else {
         request.setBinaryAttributes("jpegPhoto");
       }
+
       final SearchResult result1 = search.execute(request).getResult();
 
       final StringWriter writer = new StringWriter();
@@ -105,14 +108,14 @@ public class LdifTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
+  @Parameters(
+    {
       "ldifEntry",
       "ldifSortedEntry"
-    })
+    }
+  )
   @Test(groups = {"ldif"})
-  public void readAndCompareSortedLdif(
-    final String ldifFile,
-    final String ldifSortedFile)
+  public void readAndCompareSortedLdif(final String ldifFile, final String ldifSortedFile)
     throws Exception
   {
     final String ldifStringSorted = TestUtils.readFileIntoString(ldifSortedFile);
@@ -135,14 +138,14 @@ public class LdifTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({
+  @Parameters(
+    {
       "multipleLdifResultsIn",
       "multipleLdifResultsOut"
-    })
+    }
+  )
   @Test(groups = {"ldif"})
-  public void readAndCompareMultipleLdif(
-    final String ldifFileIn,
-    final String ldifFileOut)
+  public void readAndCompareMultipleLdif(final String ldifFileIn, final String ldifFileOut)
     throws Exception
   {
     final String ldifStringIn = TestUtils.readFileIntoString(ldifFileIn);
@@ -151,6 +154,7 @@ public class LdifTest extends AbstractTest
 
     final String ldifStringOut = TestUtils.readFileIntoString(ldifFileOut);
     ldifReader = new LdifReader(new StringReader(ldifStringOut));
+
     final SearchResult result2 = ldifReader.read();
 
     AssertJUnit.assertEquals(result1, result2);

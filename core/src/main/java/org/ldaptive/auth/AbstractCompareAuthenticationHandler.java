@@ -16,8 +16,7 @@ import org.ldaptive.Response;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractCompareAuthenticationHandler
-  extends AbstractAuthenticationHandler
+public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthenticationHandler
 {
 
   /** Default password scheme. Value is {@value}. */
@@ -66,10 +65,7 @@ public abstract class AbstractCompareAuthenticationHandler
 
     final LdapAttribute la = new LdapAttribute(
       "userPassword",
-      String.format(
-        "{%s}%s",
-        passwordScheme,
-        LdapUtils.base64Encode(hash)).getBytes());
+      String.format("{%s}%s", passwordScheme, LdapUtils.base64Encode(hash)).getBytes());
     final CompareOperation compare = new CompareOperation(c);
     final CompareRequest request = new CompareRequest(criteria.getDn(), la);
     request.setControls(getAuthenticationControls());

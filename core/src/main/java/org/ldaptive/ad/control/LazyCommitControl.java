@@ -6,9 +6,8 @@ import org.ldaptive.control.AbstractControl;
 import org.ldaptive.control.RequestControl;
 
 /**
- * Request control for active directory domain controllers to sacrifice
- * durability guarantees on updates to improve performance. See
- * http://msdn.microsoft.com/en-us/library/cc223351.aspx
+ * Request control for active directory domain controllers to sacrifice durability guarantees on updates to improve
+ * performance. See http://msdn.microsoft.com/en-us/library/cc223351.aspx
  *
  * @author  Middleware Services
  */
@@ -43,20 +42,14 @@ public class LazyCommitControl extends AbstractControl implements RequestControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality());
+    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
   }
 
 

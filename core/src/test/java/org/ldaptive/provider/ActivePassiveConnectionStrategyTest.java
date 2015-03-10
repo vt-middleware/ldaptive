@@ -14,8 +14,7 @@ public class ActivePassiveConnectionStrategyTest
 {
 
   /** Strategy to test. */
-  private final ActivePassiveConnectionStrategy strategy =
-    new ActivePassiveConnectionStrategy();
+  private final ActivePassiveConnectionStrategy strategy = new ActivePassiveConnectionStrategy();
 
 
   /**
@@ -37,8 +36,7 @@ public class ActivePassiveConnectionStrategyTest
           new String[] {"ldap://directory.ldaptive.org"},
         },
         new Object[] {
-          new TestConnectionFactoryMetadata(
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org"),
+          new TestConnectionFactoryMetadata("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org"),
           new String[] {
             "ldap://directory-1.ldaptive.org",
             "ldap://directory-2.ldaptive.org",
@@ -65,13 +63,8 @@ public class ActivePassiveConnectionStrategyTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(
-    groups = {"provider"},
-    dataProvider = "urls"
-  )
-  public void getLdapUrls(
-    final ConnectionFactoryMetadata metadata,
-    final String[] urls)
+  @Test(groups = {"provider"}, dataProvider = "urls")
+  public void getLdapUrls(final ConnectionFactoryMetadata metadata, final String[] urls)
     throws Exception
   {
     Assert.assertEquals(strategy.getLdapUrls(metadata), urls);

@@ -9,8 +9,7 @@ import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.UniversalDERTag;
 
 /**
- * Request control for persistent search. See
- * http://tools.ietf.org/id/draft-ietf-ldapext-psearch-03.txt. Control is
+ * Request control for persistent search. See http://tools.ietf.org/id/draft-ietf-ldapext-psearch-03.txt. Control is
  * defined as:
  *
  * <pre>
@@ -22,8 +21,7 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class PersistentSearchRequestControl extends AbstractControl
-  implements RequestControl
+public class PersistentSearchRequestControl extends AbstractControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -54,8 +52,7 @@ public class PersistentSearchRequestControl extends AbstractControl
    *
    * @param  types  persistent search change types
    */
-  public PersistentSearchRequestControl(
-    final EnumSet<PersistentSearchChangeType> types)
+  public PersistentSearchRequestControl(final EnumSet<PersistentSearchChangeType> types)
   {
     super(OID);
     setChangeTypes(types);
@@ -68,9 +65,7 @@ public class PersistentSearchRequestControl extends AbstractControl
    * @param  types  persistent search change types
    * @param  critical  whether this control is critical
    */
-  public PersistentSearchRequestControl(
-    final EnumSet<PersistentSearchChangeType> types,
-    final boolean critical)
+  public PersistentSearchRequestControl(final EnumSet<PersistentSearchChangeType> types, final boolean critical)
   {
     super(OID, critical);
     setChangeTypes(types);
@@ -186,14 +181,7 @@ public class PersistentSearchRequestControl extends AbstractControl
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getOID(),
-        getCriticality(),
-        changeTypes,
-        changesOnly,
-        returnEcs);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), changeTypes, changesOnly, returnEcs);
   }
 
 

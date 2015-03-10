@@ -43,14 +43,14 @@ public class LdapLoginModuleTest extends AbstractTest
   private static LdapEntry testLdapEntry;
 
   /** Entries for group tests. */
-  private static final Map<String, LdapEntry[]> groupEntries = new HashMap<>();
+  private static final Map<String, LdapEntry[]> GROUP_ENTRIES = new HashMap<>();
 
   /**
    * Initialize the map of group entries.
    */
   static {
     for (int i = 6; i <= 9; i++) {
-      groupEntries.put(String.valueOf(i), new LdapEntry[2]);
+      GROUP_ENTRIES.put(String.valueOf(i), new LdapEntry[2]);
     }
   }
 
@@ -69,9 +69,7 @@ public class LdapLoginModuleTest extends AbstractTest
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
 
-    System.setProperty(
-      "java.security.auth.login.config",
-      "target/test-classes/ldap_jaas.config");
+    System.setProperty("java.security.auth.login.config", "target/test-classes/ldap_jaas.config");
   }
 
 
@@ -100,17 +98,13 @@ public class LdapLoginModuleTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    groupEntries.get("6")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile6)).getEntry();
-    groupEntries.get("7")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile7)).getEntry();
-    groupEntries.get("8")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile8)).getEntry();
-    groupEntries.get("9")[0] = TestUtils.convertLdifToResult(
-      TestUtils.readFileIntoString(ldifFile9)).getEntry();
+    GROUP_ENTRIES.get("6")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile6)).getEntry();
+    GROUP_ENTRIES.get("7")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile7)).getEntry();
+    GROUP_ENTRIES.get("8")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile8)).getEntry();
+    GROUP_ENTRIES.get("9")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile9)).getEntry();
     // CheckStyle:Indentation ON
 
-    for (Map.Entry<String, LdapEntry[]> e : groupEntries.entrySet()) {
+    for (Map.Entry<String, LdapEntry[]> e : GROUP_ENTRIES.entrySet()) {
       super.createLdapEntry(e.getValue()[0]);
     }
 
@@ -118,17 +112,18 @@ public class LdapLoginModuleTest extends AbstractTest
     final Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
+
       final ModifyOperation modify = new ModifyOperation(conn);
       try {
-        modify.execute(new ModifyRequest(
-          groupEntries.get("6")[0].getDn(),
+        modify.execute(
+          new ModifyRequest(
+            GROUP_ENTRIES.get("6")[0].getDn(),
             new AttributeModification(
               AttributeModificationType.ADD,
               new LdapAttribute(
                 "member",
                 "cn=John Tyler," + DnParser.substring(testLdapEntry.getDn(), 1),
-                "cn=Group 7," +
-                  DnParser.substring(testLdapEntry.getDn(), 1)))));
+                "cn=Group 7," + DnParser.substring(testLdapEntry.getDn(), 1)))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -136,30 +131,28 @@ public class LdapLoginModuleTest extends AbstractTest
         }
       }
       try {
-        modify.execute(new ModifyRequest(
-          groupEntries.get("7")[0].getDn(),
-            new AttributeModification(
-              AttributeModificationType.ADD,
-              new LdapAttribute(
-                "member", "cn=Group 8," +
-                  DnParser.substring(testLdapEntry.getDn(), 1),
-                "cn=Group 9," +
-                  DnParser.substring(testLdapEntry.getDn(), 1)))));
-      } catch (LdapException e) {
-        // ignore attribute already exists
-        if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
-          throw e;
-        }
-      }
-      try {
-        modify.execute(new ModifyRequest(
-          groupEntries.get("8")[0].getDn(),
+        modify.execute(
+          new ModifyRequest(
+            GROUP_ENTRIES.get("7")[0].getDn(),
             new AttributeModification(
               AttributeModificationType.ADD,
               new LdapAttribute(
                 "member",
-                "cn=Group 7," +
-                  DnParser.substring(testLdapEntry.getDn(), 1)))));
+                "cn=Group 8," + DnParser.substring(testLdapEntry.getDn(), 1),
+                "cn=Group 9," + DnParser.substring(testLdapEntry.getDn(), 1)))));
+      } catch (LdapException e) {
+        // ignore attribute already exists
+        if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
+          throw e;
+        }
+      }
+      try {
+        modify.execute(
+          new ModifyRequest(
+            GROUP_ENTRIES.get("8")[0].getDn(),
+            new AttributeModification(
+              AttributeModificationType.ADD,
+              new LdapAttribute("member", "cn=Group 7," + DnParser.substring(testLdapEntry.getDn(), 1)))));
       } catch (LdapException e) {
         // ignore attribute already exists
         if (ResultCode.ATTRIBUTE_OR_VALUE_EXISTS != e.getResultCode()) {
@@ -180,10 +173,10 @@ public class LdapLoginModuleTest extends AbstractTest
     System.clearProperty("java.security.auth.login.config");
 
     super.deleteLdapEntry(testLdapEntry.getDn());
-    super.deleteLdapEntry(groupEntries.get("6")[0].getDn());
-    super.deleteLdapEntry(groupEntries.get("7")[0].getDn());
-    super.deleteLdapEntry(groupEntries.get("8")[0].getDn());
-    super.deleteLdapEntry(groupEntries.get("9")[0].getDn());
+    super.deleteLdapEntry(GROUP_ENTRIES.get("6")[0].getDn());
+    super.deleteLdapEntry(GROUP_ENTRIES.get("7")[0].getDn());
+    super.deleteLdapEntry(GROUP_ENTRIES.get("8")[0].getDn());
+    super.deleteLdapEntry(GROUP_ENTRIES.get("9")[0].getDn());
 
     try {
       PropertiesAuthenticatorFactory.close();
@@ -216,16 +209,10 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasUserRole", "jaasCredential" })
   @Test(
-    groups = {"jaas"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void contextTest(
-    final String dn,
-    final String user,
-    final String role,
-    final String credential)
+  public void contextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
     doContextTest("ldaptive", dn, user, role, credential, false);
@@ -242,16 +229,10 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasUserRole", "jaasCredential" })
   @Test(
-    groups = {"jaas"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void contextSslTest(
-    final String dn,
-    final String user,
-    final String role,
-    final String credential)
+  public void contextSslTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
     doContextTest("ldaptive-ssl", dn, user, role, credential, false);
@@ -268,16 +249,10 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasUserRole", "jaasCredential" })
   @Test(
-    groups = {"jaas"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void randomContextTest(
-    final String dn,
-    final String user,
-    final String role,
-    final String credential)
+  public void randomContextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
     doContextTest("ldaptive-random", dn, user, role, credential, true);
@@ -293,15 +268,10 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasCredential" })
   @Test(
-    groups = {"jaas"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void pooledDnResolverContextTest(
-    final String dn,
-    final String user,
-    final String credential)
+  public void pooledDnResolverContextTest(final String dn, final String user, final String credential)
     throws Exception
   {
     doContextTest("ldaptive-pooled-dnr", dn, user, "", credential, false);
@@ -317,15 +287,10 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasCredential" })
   @Test(
-    groups = {"jaas"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void springPooledDnResolverContextTest(
-    final String dn,
-    final String user,
-    final String credential)
+  public void springPooledDnResolverContextTest(final String dn, final String user, final String credential)
     throws Exception
   {
     doContextTest("ldaptive-pooled-dnr-spring", dn, user, "", credential, false);
@@ -342,16 +307,10 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombined", "jaasCredential" })
   @Test(
-    groups = {"jaas"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void rolesContextTest(
-    final String dn,
-    final String user,
-    final String role,
-    final String credential)
+  public void rolesContextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
     doContextTest("ldaptive-roles", dn, user, role, credential, false);
@@ -366,26 +325,12 @@ public class LdapLoginModuleTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "jaasDn", "jaasUser", "jaasRoleCombinedRecursive", "jaasCredential"
-    }
-  )
+  @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombinedRecursive", "jaasCredential" })
   @Test(groups = {"jaas"})
-  public void rolesRecursiveContextTest(
-    final String dn,
-    final String user,
-    final String role,
-    final String credential)
+  public void rolesRecursiveContextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
-    doContextTest(
-      "ldaptive-roles-recursive",
-      dn,
-      user,
-      role,
-      credential,
-      false);
+    doContextTest("ldaptive-roles-recursive", dn, user, role, credential, false);
   }
 
 
@@ -399,11 +344,7 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasUserRoleDefault", "jaasCredential" })
   @Test(groups = {"jaas"})
-  public void useFirstContextTest(
-    final String dn,
-    final String user,
-    final String role,
-    final String credential)
+  public void useFirstContextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
     doContextTest("ldaptive-use-first", dn, user, role, credential, false);
@@ -420,11 +361,7 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombined", "jaasCredential" })
   @Test(groups = {"jaas"})
-  public void tryFirstContextTest(
-    final String dn,
-    final String user,
-    final String role,
-    final String credential)
+  public void tryFirstContextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
     doContextTest("ldaptive-try-first", dn, user, role, credential, false);
@@ -441,11 +378,7 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasUserRole", "jaasCredential" })
   @Test(groups = {"jaas"})
-  public void sufficientContextTest(
-    final String dn,
-    final String user,
-    final String role,
-    final String credential)
+  public void sufficientContextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
     doContextTest("ldaptive-sufficient", dn, user, role, credential, false);
@@ -495,8 +428,7 @@ public class LdapLoginModuleTest extends AbstractTest
       AssertJUnit.fail(e.getMessage());
     }
 
-    final Set<LdapPrincipal> principals = lc.getSubject().getPrincipals(
-      LdapPrincipal.class);
+    final Set<LdapPrincipal> principals = lc.getSubject().getPrincipals(LdapPrincipal.class);
     AssertJUnit.assertEquals(1, principals.size());
 
     final LdapPrincipal p = principals.iterator().next();
@@ -505,8 +437,7 @@ public class LdapLoginModuleTest extends AbstractTest
       AssertJUnit.assertTrue(p.getLdapEntry().getAttributes().size() > 0);
     }
 
-    final Set<LdapDnPrincipal> dnPrincipals = lc.getSubject().getPrincipals(
-      LdapDnPrincipal.class);
+    final Set<LdapDnPrincipal> dnPrincipals = lc.getSubject().getPrincipals(LdapDnPrincipal.class);
     if (checkLdapDn) {
       AssertJUnit.assertEquals(1, dnPrincipals.size());
 
@@ -538,14 +469,11 @@ public class LdapLoginModuleTest extends AbstractTest
       AssertJUnit.assertTrue(match);
     }
 
-    final Set<LdapCredential> credentials = lc.getSubject()
-        .getPrivateCredentials(LdapCredential.class);
+    final Set<LdapCredential> credentials = lc.getSubject().getPrivateCredentials(LdapCredential.class);
     AssertJUnit.assertEquals(1, credentials.size());
 
     final LdapCredential c = credentials.iterator().next();
-    AssertJUnit.assertEquals(
-      new String((char[]) c.getCredential()),
-      credential);
+    AssertJUnit.assertEquals(new String((char[]) c.getCredential()), credential);
 
     try {
       lc.logout();
@@ -567,15 +495,10 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombined" })
   @Test(
-    groups = {"jaas"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void rolesOnlyContextTest(
-    final String dn,
-    final String user,
-    final String role)
+  public void rolesOnlyContextTest(final String dn, final String user, final String role)
     throws Exception
   {
     doRolesContextTest("ldaptive-roles-only", dn, user, role);
@@ -591,15 +514,10 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombined" })
   @Test(
-    groups = {"jaas"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void dnRolesOnlyContextTest(
-    final String dn,
-    final String user,
-    final String role)
+  public void dnRolesOnlyContextTest(final String dn, final String user, final String role)
     throws Exception
   {
     doRolesContextTest("ldaptive-dn-roles-only", dn, user, role);
@@ -615,15 +533,10 @@ public class LdapLoginModuleTest extends AbstractTest
    */
   @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombined" })
   @Test(
-    groups = {"jaas"},
-    threadPoolSize = TEST_THREAD_POOL_SIZE,
-    invocationCount = TEST_INVOCATION_COUNT,
+    groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT
   )
-  public void dnRolesOnlyPooledContextTest(
-    final String dn,
-    final String user,
-    final String role)
+  public void dnRolesOnlyPooledContextTest(final String dn, final String user, final String role)
     throws Exception
   {
     doRolesContextTest("ldaptive-roles-only-pooled", dn, user, role);
@@ -638,11 +551,7 @@ public class LdapLoginModuleTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  private void doRolesContextTest(
-    final String name,
-    final String dn,
-    final String user,
-    final String role)
+  private void doRolesContextTest(final String name, final String dn, final String user, final String role)
     throws Exception
   {
     final TestCallbackHandler callback = new TestCallbackHandler();
@@ -690,18 +599,14 @@ public class LdapLoginModuleTest extends AbstractTest
           AssertJUnit.assertTrue(match);
           count++;
         }
-        AssertJUnit.assertEquals(
-          count,
-          lc.getSubject().getPrincipals(LdapRole.class).size());
+        AssertJUnit.assertEquals(count, lc.getSubject().getPrincipals(LdapRole.class).size());
       } else if ("Principals".equals(g.getName())) {
         final Enumeration<? extends Principal> members = g.members();
         int count = 0;
         while (members.hasMoreElements()) {
           final Principal p = members.nextElement();
           boolean match = false;
-          for (
-            LdapPrincipal lp :
-              lc.getSubject().getPrincipals(LdapPrincipal.class)) {
+          for (LdapPrincipal lp : lc.getSubject().getPrincipals(LdapPrincipal.class)) {
             if (lp.getName().equals(p.getName())) {
               match = true;
             }
@@ -709,9 +614,7 @@ public class LdapLoginModuleTest extends AbstractTest
           AssertJUnit.assertTrue(match);
           count++;
         }
-        AssertJUnit.assertEquals(
-          count,
-          lc.getSubject().getPrincipals(LdapPrincipal.class).size());
+        AssertJUnit.assertEquals(count, lc.getSubject().getPrincipals(LdapPrincipal.class).size());
       } else {
         AssertJUnit.fail("Found invalid group");
       }

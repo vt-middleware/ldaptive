@@ -16,8 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents the state of an Active Directory account. Note that the warning
- * returned by this implementation always returns -1 for logins remaining.
+ * Represents the state of an Active Directory account. Note that the warning returned by this implementation always
+ * returns -1 for logins remaining.
  *
  * @author  Middleware Services
  */
@@ -26,8 +26,7 @@ public class ActiveDirectoryAccountState extends AccountState
 
 
   /**
-   * Enum to define active directory errors. See
-   * http://ldapwiki.willeke.com/wiki/
+   * Enum to define active directory errors. See http://ldapwiki.willeke.com/wiki/
    * Common%20Active%20Directory%20Bind%20Errors
    */
   public enum Error implements AccountState.Error {
@@ -128,8 +127,7 @@ public class ActiveDirectoryAccountState extends AccountState
         throw new AccountLockedException(name());
 
       default:
-        throw new IllegalStateException(
-          "Unknown active directory error: " + this);
+        throw new IllegalStateException("Unknown active directory error: " + this);
       }
     }
 
@@ -153,9 +151,8 @@ public class ActiveDirectoryAccountState extends AccountState
 
 
     /**
-     * Parses the supplied error messages and returns the corresponding error
-     * enum. Attempts to find {@link #PATTERN} and parses the first group match
-     * as a hexadecimal integer.
+     * Parses the supplied error messages and returns the corresponding error enum. Attempts to find {@link #PATTERN}
+     * and parses the first group match as a hexadecimal integer.
      *
      * @param  message  to parse
      *
@@ -167,9 +164,7 @@ public class ActiveDirectoryAccountState extends AccountState
         final Matcher matcher = PATTERN.matcher(message);
         if (matcher.find()) {
           try {
-            return
-              Error.valueOf(
-                Integer.parseInt(matcher.group(1).toUpperCase(), HEX_RADIX));
+            return Error.valueOf(Integer.parseInt(matcher.group(1).toUpperCase(), HEX_RADIX));
           } catch (NumberFormatException e) {
             final Logger l = LoggerFactory.getLogger(Error.class);
             l.warn("Error parsing active directory error", e);
@@ -201,8 +196,7 @@ public class ActiveDirectoryAccountState extends AccountState
    *
    * @param  error  containing authentication failure details
    */
-  public ActiveDirectoryAccountState(
-    final ActiveDirectoryAccountState.Error error)
+  public ActiveDirectoryAccountState(final ActiveDirectoryAccountState.Error error)
   {
     super(error);
     adError = error;

@@ -35,7 +35,7 @@ public class CancelOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters({ "cancelDn" })
+  @Parameters("cancelDn")
   @Test(groups = {"extended"})
   public void cancel(final String dn)
     throws Exception
@@ -43,38 +43,40 @@ public class CancelOperationTest extends AbstractTest
     if (TestControl.isActiveDirectory()) {
       return;
     }
+
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final AsyncSearchOperation search = new AsyncSearchOperation(conn);
       // needed to perform operations inside a handler
       search.setUseMultiThreadedListener(true);
-      search.setExceptionHandler(new ExceptionHandler() {
-        @Override
-        public HandlerResult<Exception> handle(
-          final Connection conn,
-          final Request request,
-          final Exception exception)
-        {
-          throw new UnsupportedOperationException(exception);
-        }
-      });
-      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
-        dn);
+      search.setExceptionHandler(
+        new ExceptionHandler() {
+          @Override
+          public HandlerResult<Exception> handle(
+            final Connection conn,
+            final Request request,
+            final Exception exception)
+          {
+            throw new UnsupportedOperationException(exception);
+          }
+        });
+
+      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn);
       request.setSearchEntryHandlers(
         new SearchEntryHandler() {
           @Override
           public HandlerResult<SearchEntry> handle(
             final Connection conn,
             final SearchRequest request,
-            final SearchEntry entry) throws LdapException
+            final SearchEntry entry)
+            throws LdapException
           {
             try {
               final CancelOperation cancel = new CancelOperation(conn);
-              final Response<Void> response = cancel.execute(
-                new CancelRequest(entry.getMessageId()));
-              AssertJUnit.assertEquals(
-                ResultCode.SUCCESS, response.getResultCode());
+              final Response<Void> response = cancel.execute(new CancelRequest(entry.getMessageId()));
+              AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
               return new HandlerResult<>(null);
             } catch (LdapException e) {
               return new HandlerResult<>(null, true);
@@ -83,11 +85,9 @@ public class CancelOperationTest extends AbstractTest
 
           @Override
           public void initializeRequest(final SearchRequest request) {}
-        }
-      );
-      request.setControls(
-        new SyncRequestControl(
-          SyncRequestControl.Mode.REFRESH_AND_PERSIST, true));
+        });
+      request.setControls(new SyncRequestControl(SyncRequestControl.Mode.REFRESH_AND_PERSIST, true));
+
       final Response<SearchResult> response = search.execute(request);
       AssertJUnit.assertEquals(ResultCode.CANCELED, response.getResultCode());
     } catch (IllegalStateException e) {

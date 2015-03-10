@@ -11,8 +11,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class LdapPrincipal
-  implements Principal, Serializable, Comparable<Principal>
+public class LdapPrincipal implements Principal, Serializable, Comparable<Principal>
 {
 
   /** hash code seed. */
@@ -77,12 +76,7 @@ public class LdapPrincipal
   public String toString()
   {
     return
-      String.format(
-        "[%s@%d::%s%s]",
-        getClass().getName(),
-        hashCode(),
-        ldapName,
-        ldapEntry != null ? ldapEntry : "");
+      String.format("[%s@%d::%s%s]", getClass().getName(), hashCode(), ldapName, ldapEntry != null ? ldapEntry : "");
   }
 
 

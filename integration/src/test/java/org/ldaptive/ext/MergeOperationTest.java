@@ -40,10 +40,12 @@ public class MergeOperationTest extends AbstractTest
   {
     final String ldif = TestUtils.readFileIntoString(ldifFile);
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
       AssertJUnit.assertFalse(super.entryExists(conn, testLdapEntry));
+
       final MergeOperation merge = new MergeOperation(conn);
       merge.execute(new MergeRequest(testLdapEntry));
       AssertJUnit.assertTrue(super.entryExists(conn, testLdapEntry));
@@ -62,6 +64,7 @@ public class MergeOperationTest extends AbstractTest
     try {
       conn.open();
       AssertJUnit.assertTrue(super.entryExists(conn, testLdapEntry));
+
       final MergeOperation merge = new MergeOperation(conn);
       merge.execute(new MergeRequest(testLdapEntry, true));
       AssertJUnit.assertFalse(super.entryExists(conn, testLdapEntry));
@@ -72,9 +75,7 @@ public class MergeOperationTest extends AbstractTest
   }
 
 
-  /**
-   * @throws  Exception  On test failure.
-   */
+  /** @throws  Exception  On test failure. */
   @Test(groups = {"merge"})
   public void merge()
     throws Exception
@@ -84,6 +85,7 @@ public class MergeOperationTest extends AbstractTest
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
+
       final MergeOperation merge = new MergeOperation(conn);
       final MergeRequest request = new MergeRequest(source);
       if (TestControl.isActiveDirectory()) {
@@ -96,14 +98,14 @@ public class MergeOperationTest extends AbstractTest
         request.setIncludeAttributes("uid");
       } else {
         source.addAttributes(testLdapEntry.getAttributes());
+
         final LdapAttribute gn = new LdapAttribute("givenName");
-        gn.addStringValues(
-          testLdapEntry.getAttribute("givenName").getStringValues());
+        gn.addStringValues(testLdapEntry.getAttribute("givenName").getStringValues());
         gn.addStringValue("John");
         source.addAttribute(gn);
+
         final LdapAttribute initials = new LdapAttribute("initials");
-        initials.addStringValues(
-          testLdapEntry.getAttribute("initials").getStringValues());
+        initials.addStringValues(testLdapEntry.getAttribute("initials").getStringValues());
         initials.addStringValue("JC");
         source.addAttribute(initials);
         request.setExcludeAttributes("givenName", "initials");
@@ -126,8 +128,7 @@ public class MergeOperationTest extends AbstractTest
       merge.execute(request);
 
       result = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(
-          source.getDn(), source.getAttributeNames())).getResult();
+        SearchRequest.newObjectScopeSearchRequest(source.getDn(), source.getAttributeNames())).getResult();
       TestUtils.assertEquals(source, result.getEntry());
     } finally {
       conn.close();

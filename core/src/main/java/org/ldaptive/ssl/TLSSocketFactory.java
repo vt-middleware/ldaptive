@@ -8,10 +8,9 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 
 /**
- * An extension of SSLSocketFactory that leverages an SSL context initializer.
- * Note that {@link #initialize()} must be called prior to using this socket
- * factory. This means that this class cannot be passed to implementations that
- * expect the socket factory to function immediately after construction.
+ * An extension of SSLSocketFactory that leverages an SSL context initializer. Note that {@link #initialize()} must be
+ * called prior to using this socket factory. This means that this class cannot be passed to implementations that expect
+ * the socket factory to function immediately after construction.
  *
  * @author  Middleware Services
  */
@@ -20,9 +19,8 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
 
 
   /**
-   * Creates the underlying SSLContext using truststore and keystore attributes
-   * and makes this factory ready for use. Must be called before factory can be
-   * used.
+   * Creates the underlying SSLContext using truststore and keystore attributes and makes this factory ready for use.
+   * Must be called before factory can be used.
    *
    * @throws  GeneralSecurityException  if the SSLContext cannot be created
    */
@@ -68,20 +66,16 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
     try {
       sf.initialize();
     } catch (GeneralSecurityException e) {
-      throw new IllegalArgumentException(
-        "Error initializing socket factory",
-        e);
+      throw new IllegalArgumentException("Error initializing socket factory", e);
     }
     return sf;
   }
 
 
   /**
-   * Returns an instance of this socket factory configured with a hostname
-   * verifying trust manager. If the supplied ssl config does not contain trust
-   * managers, {@link HostnameVerifyingTrustManager} with {@link
-   * DefaultHostnameVerifier} is set. See {@link
-   * #addHostnameVerifyingTrustManager(SslConfig, String[])}.
+   * Returns an instance of this socket factory configured with a hostname verifying trust manager. If the supplied ssl
+   * config does not contain trust managers, {@link HostnameVerifyingTrustManager} with {@link DefaultHostnameVerifier}
+   * is set. See {@link #addHostnameVerifyingTrustManager(SslConfig, String[])}.
    *
    * @param  config  to set on the socket factory
    * @param  names  to use for hostname verification
@@ -89,9 +83,7 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
    * @return  socket factory
    */
   @SuppressWarnings("RedundantArrayCreation")
-  public static SSLSocketFactory getHostnameVerifierFactory(
-    final SslConfig config,
-    final String[] names)
+  public static SSLSocketFactory getHostnameVerifierFactory(final SslConfig config, final String[] names)
   {
     final TLSSocketFactory sf = new TLSSocketFactory();
     if (config != null && !config.isEmpty()) {
@@ -110,29 +102,21 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
 
 
   /**
-   * Adds a {@link HostnameVerifyingTrustManager} to the supplied config if no
-   * trust managers have been configured. A {@link DefaultTrustManager} is also
-   * added in no {@link CredentialConfig} has been configured.
+   * Adds a {@link HostnameVerifyingTrustManager} to the supplied config if no trust managers have been configured. A
+   * {@link DefaultTrustManager} is also added in no {@link CredentialConfig} has been configured.
    *
    * @param  config  to modify
    * @param  names  of the hosts to verify
    */
-  protected static void addHostnameVerifyingTrustManager(
-    final SslConfig config,
-    final String[] names)
+  protected static void addHostnameVerifyingTrustManager(final SslConfig config, final String[] names)
   {
     if (config.getTrustManagers() == null) {
       if (config.getCredentialConfig() == null) {
         config.setTrustManagers(
           new DefaultTrustManager(),
-          new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(),
-            names));
+          new HostnameVerifyingTrustManager(new DefaultHostnameVerifier(), names));
       } else {
-        config.setTrustManagers(
-          new HostnameVerifyingTrustManager(
-            new DefaultHostnameVerifier(),
-            names));
+        config.setTrustManagers(new HostnameVerifyingTrustManager(new DefaultHostnameVerifier(), names));
       }
     }
   }

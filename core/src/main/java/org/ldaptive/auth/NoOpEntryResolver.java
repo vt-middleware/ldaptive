@@ -14,9 +14,7 @@ public class NoOpEntryResolver implements EntryResolver
 
 
   @Override
-  public LdapEntry resolve(
-    final AuthenticationCriteria criteria,
-    final AuthenticationHandlerResponse response)
+  public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response)
     throws LdapException
   {
     return new LdapEntry(criteria.getDn());

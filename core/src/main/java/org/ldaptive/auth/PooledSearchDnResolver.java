@@ -12,8 +12,7 @@ import org.ldaptive.pool.PooledConnectionFactoryManager;
  *
  * @author  Middleware Services
  */
-public class PooledSearchDnResolver extends AbstractSearchDnResolver
-  implements PooledConnectionFactoryManager
+public class PooledSearchDnResolver extends AbstractSearchDnResolver implements PooledConnectionFactoryManager
 {
 
   /** Connection factory. */

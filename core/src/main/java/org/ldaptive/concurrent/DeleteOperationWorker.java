@@ -10,8 +10,7 @@ import org.ldaptive.DeleteRequest;
  *
  * @author  Middleware Services
  */
-public class DeleteOperationWorker
-  extends AbstractOperationWorker<DeleteRequest, Void>
+public class DeleteOperationWorker extends AbstractOperationWorker<DeleteRequest, Void>
 {
 
 
@@ -32,9 +31,7 @@ public class DeleteOperationWorker
    * @param  op  delete operation to execute
    * @param  es  executor service
    */
-  public DeleteOperationWorker(
-    final DeleteOperation op,
-    final ExecutorService es)
+  public DeleteOperationWorker(final DeleteOperation op, final ExecutorService es)
   {
     super(op, es);
   }

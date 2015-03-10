@@ -11,31 +11,27 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Decodes and encodes a generalized time for use in an ldap attribute value.
- * See http://tools.ietf.org/html/rfc4517#section-3.3.13
+ * Decodes and encodes a generalized time for use in an ldap attribute value. See
+ * http://tools.ietf.org/html/rfc4517#section-3.3.13
  *
  * @author  Middleware Services
  */
-public class GeneralizedTimeValueTranscoder
-  extends AbstractStringValueTranscoder<Calendar>
+public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscoder<Calendar>
 {
 
   /** Pattern for capturing the year in generalized time. */
   private static final String YEAR_PATTERN = "(\\d{4})";
 
   /** Pattern for capturing the month in generalized time. */
-  private static final String MONTH_PATTERN =
-    "((?:\\x30[\\x31-\\x39])|(?:\\x31[\\x30-\\x32]))";
+  private static final String MONTH_PATTERN = "((?:\\x30[\\x31-\\x39])|(?:\\x31[\\x30-\\x32]))";
 
   /** Pattern for capturing the day in generalized time. */
-  private static final String DAY_PATTERN =
-    "((?:\\x30[\\x31-\\x39])" +
+  private static final String DAY_PATTERN = "((?:\\x30[\\x31-\\x39])" +
     "|(?:[\\x31-\\x32][\\x30-\\x39])" +
     "|(?:\\x33[\\x30-\\x31]))";
 
   /** Pattern for capturing hours in generalized time. */
-  private static final String HOUR_PATTERN =
-    "((?:[\\x30-\\x31][\\x30-\\x39])|(?:\\x32[\\x30-\\x33]))";
+  private static final String HOUR_PATTERN = "((?:[\\x30-\\x31][\\x30-\\x39])|(?:\\x32[\\x30-\\x33]))";
 
   /** Pattern for capturing optional minutes in generalized time. */
   private static final String MIN_PATTERN = "([\\x30-\\x35][\\x30-\\x39])?";
@@ -47,18 +43,11 @@ public class GeneralizedTimeValueTranscoder
   private static final String FRACTION_PATTERN = "([,.](\\d+))?";
 
   /** Pattern for capturing timezone in generalized time. */
-  private static final String TIMEZONE_PATTERN =
-    "(Z|(?:[+-]" + HOUR_PATTERN + MIN_PATTERN + "))";
+  private static final String TIMEZONE_PATTERN = "(Z|(?:[+-]" + HOUR_PATTERN + MIN_PATTERN + "))";
 
   /** Generalized time format regular expression. */
   private static final Pattern TIME_REGEX = Pattern.compile(
-    YEAR_PATTERN +
-    MONTH_PATTERN +
-    DAY_PATTERN +
-    HOUR_PATTERN +
-    MIN_PATTERN +
-    SECOND_PATTERN +
-    FRACTION_PATTERN +
+    YEAR_PATTERN + MONTH_PATTERN + DAY_PATTERN + HOUR_PATTERN + MIN_PATTERN + SECOND_PATTERN + FRACTION_PATTERN +
     TIMEZONE_PATTERN);
 
   /** UTC time zone. */
@@ -68,18 +57,16 @@ public class GeneralizedTimeValueTranscoder
   private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
   /** Thread local container holding date format which is not thread safe. */
-  private static final ThreadLocal<DateFormat> DATE_FORMAT =
-    new ThreadLocal<DateFormat>() {
+  private static final ThreadLocal<DateFormat> DATE_FORMAT = new ThreadLocal<DateFormat>() {
 
-      @Override
-      protected DateFormat initialValue()
-      {
-        final SimpleDateFormat format = new SimpleDateFormat(
-          "yyyyMMddHHmmss.SSS'Z'");
-        format.setTimeZone(UTC);
-        return format;
-      }
-    };
+    @Override
+    protected DateFormat initialValue()
+    {
+      final SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss.SSS'Z'");
+      format.setTimeZone(UTC);
+      return format;
+    }
+  };
 
   /** Describes the fractional part of a generalized time string. */
   private static enum FractionalPart {
@@ -155,8 +142,7 @@ public class GeneralizedTimeValueTranscoder
    *
    * @return  calendar initialized to the correct time
    *
-   * @throws  ParseException  if the value does not contain correct generalized
-   * time syntax
+   * @throws  ParseException  if the value does not contain correct generalized time syntax
    */
   protected Calendar parseGeneralizedTime(final String value)
     throws ParseException
@@ -167,9 +153,7 @@ public class GeneralizedTimeValueTranscoder
 
     final Matcher m = TIME_REGEX.matcher(value);
     if (!m.matches()) {
-      throw new ParseException(
-        "Invalid generalized time string.",
-        value.length());
+      throw new ParseException("Invalid generalized time string.", value.length());
     }
 
     // CheckStyle:MagicNumber OFF

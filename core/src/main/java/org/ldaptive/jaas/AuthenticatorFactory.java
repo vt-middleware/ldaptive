@@ -6,8 +6,7 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.Authenticator;
 
 /**
- * Provides an interface for creating authenticators needed by various JAAS
- * modules.
+ * Provides an interface for creating authenticators needed by various JAAS modules.
  *
  * @author  Middleware Services
  */

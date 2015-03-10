@@ -7,8 +7,8 @@ import org.ldaptive.beans.AttributeValueMutator;
 import org.ldaptive.beans.Entry;
 
 /**
- * Default implementation of a class descriptor. Reads the {@link Entry}
- * annotation and sets the appropriate DN and attribute value mutators.
+ * Default implementation of a class descriptor. Reads the {@link Entry} annotation and sets the appropriate DN and
+ * attribute value mutators.
  *
  * @author  Middleware Services
  */
@@ -24,8 +24,7 @@ public class DefaultClassDescriptor extends AbstractClassDescriptor
     if (entryAnnotation != null) {
 
       // add any method descriptors that match attributes
-      final MethodClassDescriptor methodDescriptor =
-        new MethodClassDescriptor();
+      final MethodClassDescriptor methodDescriptor = new MethodClassDescriptor();
       methodDescriptor.initialize(type);
       if (methodDescriptor.getDnValueMutator() != null) {
         setDnValueMutator(methodDescriptor.getDnValueMutator());
@@ -35,12 +34,10 @@ public class DefaultClassDescriptor extends AbstractClassDescriptor
       // add any field descriptors that aren't available as method mutators
       final FieldClassDescriptor fieldDescriptor = new FieldClassDescriptor();
       fieldDescriptor.initialize(type);
-      if (getDnValueMutator() == null &&
-          fieldDescriptor.getDnValueMutator() != null) {
+      if (getDnValueMutator() == null && fieldDescriptor.getDnValueMutator() != null) {
         setDnValueMutator(fieldDescriptor.getDnValueMutator());
       }
-      for (AttributeValueMutator mutator :
-           fieldDescriptor.getAttributeValueMutators()) {
+      for (AttributeValueMutator mutator : fieldDescriptor.getAttributeValueMutators()) {
         if (getAttributeValueMutator(mutator.getName()) == null) {
           addAttributeValueMutator(mutator);
         }
@@ -50,11 +47,7 @@ public class DefaultClassDescriptor extends AbstractClassDescriptor
       for (final Attribute attr : entryAnnotation.attributes()) {
         if ("".equals(attr.property()) && attr.values().length > 0) {
           addAttributeValueMutator(
-            new SimpleAttributeValueMutator(
-              attr.name(),
-              attr.values(),
-              attr.binary(),
-              attr.sortBehavior()));
+            new SimpleAttributeValueMutator(attr.name(), attr.values(), attr.binary(), attr.sortBehavior()));
         }
       }
 

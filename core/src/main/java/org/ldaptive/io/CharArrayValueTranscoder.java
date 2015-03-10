@@ -6,8 +6,7 @@ package org.ldaptive.io;
  *
  * @author  Middleware Services
  */
-public class CharArrayValueTranscoder
-  extends AbstractStringValueTranscoder<char[]>
+public class CharArrayValueTranscoder extends AbstractStringValueTranscoder<char[]>
 {
 
 

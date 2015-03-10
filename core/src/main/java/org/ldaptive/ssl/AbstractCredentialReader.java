@@ -10,11 +10,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for all credential readers. It provides support for loading files
- * from resources on the classpath or a filepath. If a path is prefixed with the
- * string "classpath:" it is interpreted as a classpath specification. If a path
- * is prefixed with the string "file:" it is interpreted as a file path. Any
- * other input throws IllegalArgumentException.
+ * Base class for all credential readers. It provides support for loading files from resources on the classpath or a
+ * filepath. If a path is prefixed with the string "classpath:" it is interpreted as a classpath specification. If a
+ * path is prefixed with the string "file:" it is interpreted as a file path. Any other input throws
+ * IllegalArgumentException.
  *
  * @param  <T>  Type of credential read by this instance.
  *
@@ -36,10 +35,7 @@ public abstract class AbstractCredentialReader<T> implements CredentialReader<T>
       logger.trace("Found resource at {}", path);
       try {
         final T credential = read(is, params);
-        logger.debug(
-          "Successfully loaded credential {} from path {}",
-          credential,
-          path);
+        logger.debug("Successfully loaded credential {} from path {}", credential, path);
         return credential;
       } finally {
         is.close();
@@ -52,13 +48,12 @@ public abstract class AbstractCredentialReader<T> implements CredentialReader<T>
 
 
   /**
-   * Gets a buffered input stream from the given input stream. If the given
-   * instance is already buffered, it is simply returned.
+   * Gets a buffered input stream from the given input stream. If the given instance is already buffered, it is simply
+   * returned.
    *
    * @param  is  input stream from which to create buffered instance.
    *
-   * @return  buffered input stream. If the given instance is already buffered,
-   * it is simply returned.
+   * @return  buffered input stream. If the given instance is already buffered, it is simply returned.
    */
   protected InputStream getBufferedInputStream(final InputStream is)
   {

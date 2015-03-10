@@ -8,8 +8,7 @@ import org.ldaptive.sasl.SaslConfig;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractBindAuthenticationHandler
-  extends AbstractAuthenticationHandler
+public abstract class AbstractBindAuthenticationHandler extends AbstractAuthenticationHandler
 {
 
   /** sasl configuration used by this handler. */
