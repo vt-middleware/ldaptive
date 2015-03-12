@@ -144,7 +144,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S> implements R
     Response<S> referralResponse = null;
     final List<String> urls = Arrays.asList(referralUrls);
     Collections.shuffle(urls);
-    logger.debug("Following referral with URLS: {}", urls);
+    logger.debug("Following referral with URLs: {}", urls);
     for (String url : urls) {
       final LdapURL ldapUrl = new LdapURL(url);
       if (ldapUrl.getEntry().getHostname() == null) {

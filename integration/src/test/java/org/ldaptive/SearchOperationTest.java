@@ -1537,7 +1537,7 @@ public class SearchOperationTest extends AbstractTest
           throws LdapException
         {
           refs.add(reference);
-          return new HandlerResult<>(null);
+          return new HandlerResult<>(reference);
         }
 
         @Override
@@ -1575,7 +1575,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     refs.clear();
-    request.setReferralHandler(new SearchReferralHandler());
+    request.setReferralHandler(new SearchReferralHandler(3));
     try {
       conn.open();
 
@@ -1648,7 +1648,7 @@ public class SearchOperationTest extends AbstractTest
           throws LdapException
         {
           refs.add(reference);
-          return new HandlerResult<>(null);
+          return new HandlerResult<>(reference);
         }
 
         @Override

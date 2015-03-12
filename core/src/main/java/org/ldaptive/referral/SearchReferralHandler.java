@@ -261,6 +261,9 @@ public class SearchReferralHandler extends AbstractReferralHandler<SearchRequest
       final SearchReference reference)
       throws LdapException
     {
+      if (reference == null) {
+        return new HandlerResult<>(null);
+      }
       final SearchReferralHandler handler = new SearchReferralHandler(referralLimit, referralDepth, connectionFactory);
       final HandlerResult<Response<SearchResult>> result = handler.handle(conn, request, reference.getReferralUrls());
       final Response<SearchResult> response = result.getResult();

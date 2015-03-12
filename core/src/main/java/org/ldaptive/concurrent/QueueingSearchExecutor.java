@@ -316,7 +316,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       throws LdapException
     {
       insert(new SearchItem(entry));
-      return new HandlerResult<>(null);
+      return new HandlerResult<>(entry);
     }
 
 
@@ -349,7 +349,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       throws LdapException
     {
       insert(new SearchItem(reference));
-      return new HandlerResult<>(null);
+      return new HandlerResult<>(reference);
     }
 
 
@@ -383,7 +383,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
       throws LdapException
     {
       insert(new SearchItem(response));
-      return new HandlerResult<>(null);
+      return new HandlerResult<>(response);
     }
   }
 
