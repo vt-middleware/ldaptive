@@ -136,15 +136,14 @@ public class LdapLoginModule extends AbstractLoginModule
         throw new LoginException("Authentication failed: " + response);
       } else {
         if (setLdapPrincipal) {
-          final LdapPrincipal lp = new LdapPrincipal(nameCb.getName(), entry);
-          principals.add(lp);
+          principals.add(new LdapPrincipal(nameCb.getName(), entry));
         }
 
-        final String loginDn = auth.resolveDn(nameCb.getName());
+        final String loginDn = response.getResolvedDn();
         if (loginDn != null && setLdapDnPrincipal) {
-          final LdapDnPrincipal lp = new LdapDnPrincipal(loginDn, entry);
-          principals.add(lp);
+          principals.add(new LdapDnPrincipal(loginDn, entry));
         }
+
         if (setLdapCredential) {
           credentials.add(new LdapCredential(passCb.getPassword()));
         }

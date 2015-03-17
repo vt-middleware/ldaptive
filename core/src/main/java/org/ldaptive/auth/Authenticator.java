@@ -242,6 +242,7 @@ public class Authenticator
       response.getResult() ? AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS
                            : AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
       response.getResultCode(),
+      dn,
       entry,
       response.getMessage(),
       response.getControls(),
@@ -275,6 +276,7 @@ public class Authenticator
       response = new AuthenticationResponse(
         AuthenticationResultCode.INVALID_CREDENTIAL,
         null,
+        dn,
         null,
         "Credential cannot be null",
         null,
@@ -283,6 +285,7 @@ public class Authenticator
       response = new AuthenticationResponse(
         AuthenticationResultCode.INVALID_CREDENTIAL,
         null,
+        dn,
         null,
         "Credential cannot be empty",
         null,
@@ -291,6 +294,7 @@ public class Authenticator
       response = new AuthenticationResponse(
         AuthenticationResultCode.DN_RESOLUTION_FAILURE,
         null,
+        dn,
         null,
         "DN cannot be null",
         null,
@@ -299,6 +303,7 @@ public class Authenticator
       response = new AuthenticationResponse(
         AuthenticationResultCode.DN_RESOLUTION_FAILURE,
         null,
+        dn,
         null,
         "DN cannot be empty",
         null,
