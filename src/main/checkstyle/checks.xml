@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE module PUBLIC
-    "-//Puppy Crawl//DTD Check Configuration 1.1//EN"
+    "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
     "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 
 <module name="Checker">
 
   <!-- limit source file size -->
   <module name="FileLength">
-    <property name="max" value="2000" />
+    <property name="max" value="2000"/>
+  </module>
+
+  <!-- require a header -->
+  <module name="RegexpHeader">
+    <property name="headerFile" value="${checkstyle.header.file}"/>
+    <property name="fileExtensions" value="java"/>
   </module>
 
   <!-- forbid tab characters in source files -->
@@ -18,7 +24,9 @@
     <property name="onCommentFormat" value="CheckStyle\:([\w\|]+) ON"/>
     <property name="checkFormat" value="$1"/>
   </module>
-  <module name="NewlineAtEndOfFile"/>
+  <module name="NewlineAtEndOfFile">
+    <property name="fileExtensions" value="java"/>
+  </module>
   <module name="TreeWalker">
     <property name="tabWidth" value="2"/>
 
@@ -68,6 +76,7 @@
     <module name="ImportOrder">
       <property name="groups" value="java,javax"/>
       <property name="ordered" value="true"/>
+      <property name="option" value="bottom"/>
     </module>
 
     <!-- sizes -->
