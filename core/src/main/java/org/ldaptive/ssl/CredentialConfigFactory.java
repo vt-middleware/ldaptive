@@ -32,7 +32,23 @@ public final class CredentialConfigFactory
    */
   public static CredentialConfig createKeyStoreCredentialConfig(final KeyStore trustStore)
   {
-    return createKeyStoreCredentialConfig(trustStore, null, null);
+    return createKeyStoreCredentialConfig(trustStore, null, null, null, null);
+  }
+
+
+  /**
+   * Creates a KeyStoreCredentialConfig from the supplied truststore.
+   *
+   * @param  trustStore  to create credential config from
+   * @param  trustStoreAliases  to use in the truststore
+   *
+   * @return  credential config
+   */
+  public static CredentialConfig createKeyStoreCredentialConfig(
+    final KeyStore trustStore,
+    final String[] trustStoreAliases)
+  {
+    return createKeyStoreCredentialConfig(trustStore, trustStoreAliases, null, null, null);
   }
 
 
@@ -46,7 +62,25 @@ public final class CredentialConfigFactory
    */
   public static CredentialConfig createKeyStoreCredentialConfig(final KeyStore keyStore, final String keyStorePassword)
   {
-    return createKeyStoreCredentialConfig(null, keyStore, keyStorePassword);
+    return createKeyStoreCredentialConfig(null, null, keyStore, keyStorePassword, null);
+  }
+
+
+  /**
+   * Creates a KeyStoreCredentialConfig from the supplied keystore and password.
+   *
+   * @param  keyStore  to create credential config from
+   * @param  keyStorePassword  to unlock the keystore
+   * @param  keyStoreAliases  to use in the keystore
+   *
+   * @return  credential config
+   */
+  public static CredentialConfig createKeyStoreCredentialConfig(
+    final KeyStore keyStore,
+    final String keyStorePassword,
+    final String[] keyStoreAliases)
+  {
+    return createKeyStoreCredentialConfig(null, null, keyStore, keyStorePassword, keyStoreAliases);
   }
 
 
@@ -64,6 +98,28 @@ public final class CredentialConfigFactory
     final KeyStore keyStore,
     final String keyStorePassword)
   {
+    return createKeyStoreCredentialConfig(trustStore, null, keyStore, keyStorePassword, null);
+  }
+
+
+  /**
+   * Creates a KeyStoreCredentialConfig from the supplied truststore, keystore and password.
+   *
+   * @param  trustStore  to create credential config from
+   * @param  trustStoreAliases  to use in the truststore
+   * @param  keyStore  to create credential config from
+   * @param  keyStorePassword  to unlock the keystore
+   * @param  keyStoreAliases  to use in the keystore
+   *
+   * @return  credential config
+   */
+  public static CredentialConfig createKeyStoreCredentialConfig(
+    final KeyStore trustStore,
+    final String[] trustStoreAliases,
+    final KeyStore keyStore,
+    final String keyStorePassword,
+    final String[] keyStoreAliases)
+  {
     return
       new CredentialConfig() {
       @Override
@@ -73,10 +129,12 @@ public final class CredentialConfigFactory
         final KeyStoreSSLContextInitializer sslInit = new KeyStoreSSLContextInitializer();
         if (trustStore != null) {
           sslInit.setTrustKeystore(trustStore);
+          sslInit.setTrustAliases(trustStoreAliases);
         }
         if (keyStore != null) {
           sslInit.setAuthenticationKeystore(keyStore);
           sslInit.setAuthenticationPassword(keyStorePassword != null ? keyStorePassword.toCharArray() : null);
+          sslInit.setAuthenticationAliases(keyStoreAliases);
         }
         return sslInit;
       }
