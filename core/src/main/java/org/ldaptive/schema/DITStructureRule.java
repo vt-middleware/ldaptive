@@ -34,7 +34,7 @@ public class DITStructureRule extends AbstractNamedSchemaElement
     WSP_REGEX + "\\(" +
       WSP_REGEX + "(\\p{Digit}+)" +
       WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']+)')?" +
+      WSP_REGEX + "(?:DESC '([^']*)')?" +
       WSP_REGEX + "(OBSOLETE)?" +
       WSP_REGEX + "(?:FORM (" + NO_WSP_REGEX + "))?" +
       WSP_REGEX + "(?:SUP (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +

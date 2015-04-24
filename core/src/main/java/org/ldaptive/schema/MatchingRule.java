@@ -33,7 +33,7 @@ public class MatchingRule extends AbstractNamedSchemaElement
     WSP_REGEX + "\\(" +
       WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
       WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']+)')?" +
+      WSP_REGEX + "(?:DESC '([^']*)')?" +
       WSP_REGEX + "(OBSOLETE)?" +
       WSP_REGEX + "(?:SYNTAX (" + NO_WSP_REGEX + "))?" +
       WSP_REGEX + "(?:(X-[^ ]+.*))?" +

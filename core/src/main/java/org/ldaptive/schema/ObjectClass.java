@@ -36,7 +36,7 @@ public class ObjectClass extends AbstractNamedSchemaElement
     WSP_REGEX + "\\(" +
       WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
       WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']+)')?" +
+      WSP_REGEX + "(?:DESC '([^']*)')?" +
       WSP_REGEX + "(OBSOLETE)?" +
       WSP_REGEX + "(?:SUP (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
       WSP_REGEX + "(\\p{Alpha}+)?" +

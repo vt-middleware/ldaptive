@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
+import java.util.Arrays;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -124,6 +125,40 @@ public class ObjectClassTest
             null,
             null),
           "( 2.5.17.0 NAME 'subentry' DESC 'RFC3672: subentry' SUP top STRUCTURAL MUST ( cn $ subtreeSpecification ) )",
+        },
+        new Object[] {
+          new ObjectClass(
+            "2.16.840.1.113730.3.2.3",
+            new String[] {"mailRecipient"},
+            "",
+            false,
+            new String[] {"top"},
+            ObjectClassType.AUXILIARY,
+            new String[] {"objectClass"},
+            new String[] {
+              "cn",
+              "mail",
+              "mailAlternateAddress",
+              "mailHost",
+              "mailRoutingAddress",
+              "mailAccessDomain",
+              "mailAutoReplyMode",
+              "mailAutoReplyText",
+              "mailDeliveryOption",
+              "mailForwardingAddress",
+              "mailMessageStore",
+              "mailProgramDeliveryInfo",
+              "mailQuota",
+              "multiLineDescription",
+              "uid",
+              "userPassword",
+            },
+            new Extensions("X-ORIGIN", Arrays.asList("Netscape Messaging Server 4.x"))),
+          "( 2.16.840.1.113730.3.2.3 NAME 'mailRecipient' DESC '' SUP top AUXILIARY MUST objectClass " +
+            "MAY ( cn $ mail $ mailAlternateAddress $ mailHost $ mailRoutingAddress $ mailAccessDomain $ " +
+            "mailAutoReplyMode $ mailAutoReplyText $ mailDeliveryOption $ mailForwardingAddress $ mailMessageStore $ " +
+            "mailProgramDeliveryInfo $ mailQuota $ multiLineDescription $ uid $ userPassword ) " +
+            "X-ORIGIN 'Netscape Messaging Server 4.x' )",
         },
         new Object[] {
           new ObjectClass(

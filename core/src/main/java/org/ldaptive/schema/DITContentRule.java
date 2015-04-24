@@ -36,7 +36,7 @@ public class DITContentRule extends AbstractNamedSchemaElement
     WSP_REGEX + "\\(" +
       WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
       WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']+)')?" +
+      WSP_REGEX + "(?:DESC '([^']*)')?" +
       WSP_REGEX + "(OBSOLETE)?" +
       WSP_REGEX + "(?:AUX (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
       WSP_REGEX + "(?:MUST (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
