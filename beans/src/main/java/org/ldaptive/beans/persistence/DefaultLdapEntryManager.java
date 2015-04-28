@@ -10,6 +10,7 @@ import org.ldaptive.DeleteRequest;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Response;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
@@ -80,7 +81,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
     throws LdapException
   {
     final String dn = getLdapEntryMapper().mapDn(object);
-    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn);
+    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn, ReturnAttributes.ALL.value());
     try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
 
@@ -94,7 +95,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
         throw new IllegalArgumentException(
           String.format("Unable to find ldap entry %s, multiple entries returned: %s", dn, response));
       }
-      getLdapEntryMapper().map(object, response.getResult().getEntry());
+      getLdapEntryMapper().map(response.getResult().getEntry(), object);
     }
     return object;
   }
