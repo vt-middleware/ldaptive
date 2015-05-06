@@ -661,6 +661,7 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
+    boolean addedAttribute = false;
     final Connection conn = TestUtils.createSetupConnection();
     try {
       conn.open();
@@ -699,6 +700,7 @@ public class SearchOperationTest extends AbstractTest
         new ModifyRequest(
           authzFrom,
           new AttributeModification(AttributeModificationType.ADD, new LdapAttribute("authzTo", "dn:" + authzTo))));
+      addedAttribute = true;
 
       response = search.execute(request);
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
@@ -711,15 +713,17 @@ public class SearchOperationTest extends AbstractTest
       // ignore this test if not supported by the provider
       AssertJUnit.assertNotNull(e);
     } finally {
-      try {
-        // remove authzTo
-        final ModifyOperation modify = new ModifyOperation(conn);
-        modify.execute(
-          new ModifyRequest(
-            authzFrom,
-            new AttributeModification(AttributeModificationType.REMOVE, new LdapAttribute("authzTo"))));
-      } catch (LdapException e) {
-        AssertJUnit.fail(e.getMessage());
+      if (addedAttribute) {
+        try {
+          // remove authzTo
+          final ModifyOperation modify = new ModifyOperation(conn);
+          modify.execute(
+            new ModifyRequest(
+              authzFrom,
+              new AttributeModification(AttributeModificationType.REMOVE, new LdapAttribute("authzTo"))));
+        } catch (LdapException e) {
+          AssertJUnit.fail(e.getMessage());
+        }
       }
       conn.close();
     }
