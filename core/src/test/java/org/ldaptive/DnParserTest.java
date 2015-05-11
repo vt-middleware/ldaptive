@@ -216,4 +216,44 @@ public class DnParserTest
       Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
     }
   }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = {"dnParser"})
+  public void testSubstringEndIndex()
+    throws Exception
+  {
+    final String s;
+    final String dn = "CN=Jim Smith,UID=jsmith,DC=ldaptive,DC=org";
+    try {
+      DnParser.substring(dn, -1, 0);
+      Assert.fail("Should have thrown IndexOutOfBoundsException");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
+    }
+    try {
+      DnParser.substring(dn, 2, 1);
+      Assert.fail("Should have thrown IndexOutOfBoundsException");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
+    }
+    Assert.assertEquals(DnParser.substring(dn, 0, 4), "CN=Jim Smith,UID=jsmith,DC=ldaptive,DC=org");
+    Assert.assertEquals(DnParser.substring(dn, 1, 4), "UID=jsmith,DC=ldaptive,DC=org");
+    Assert.assertEquals(DnParser.substring(dn, 2, 4), "DC=ldaptive,DC=org");
+    Assert.assertEquals(DnParser.substring(dn, 3, 4), "DC=org");
+
+    Assert.assertEquals(DnParser.substring(dn, 0, 1), "CN=Jim Smith");
+    Assert.assertEquals(DnParser.substring(dn, 1, 2), "UID=jsmith");
+    Assert.assertEquals(DnParser.substring(dn, 2, 3), "DC=ldaptive");
+    Assert.assertEquals(DnParser.substring(dn, 3, 4), "DC=org");
+
+    Assert.assertEquals(DnParser.substring(dn, 0, 2), "CN=Jim Smith,UID=jsmith");
+    Assert.assertEquals(DnParser.substring(dn, 2, 4), "DC=ldaptive,DC=org");
+    try {
+      DnParser.substring(dn, 1, 5);
+      Assert.fail("Should have thrown IndexOutOfBoundsException");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
+    }
+  }
 }
