@@ -71,13 +71,13 @@ public final class DnParser
 
 
   /**
-   * Returns a string representation of the supplied DN beginning at the supplied index. The leftmost component begins
-   * at index 0.
+   * Returns a string representation of the supplied DN beginning at the supplied index. The leftmost RDN component
+   * begins at index 0.
    *
    * @param  dn  to parse
-   * @param  beginIndex  components included in the result
+   * @param  beginIndex  first component to include in the result
    *
-   * @return  DN from the supplied index
+   * @return  DN from the supplied beginIndex
    *
    * @throws  IndexOutOfBoundsException  if beginIndex is less than 0 or greater than the number of RDNs
    */
@@ -108,13 +108,14 @@ public final class DnParser
 
   /**
    * Returns a string representation of the supplied DN beginning at beginIndex (inclusive) and ending at endIndex
-   * (exclusive). The leftmost component begins at index 0.
+   * (exclusive). The leftmost RDN component begins at index 0. Where n is the number of RDNs, both beginIndex and
+   * endIndex are on the range [0, n-1].
    *
    * @param  dn  to parse
-   * @param  beginIndex  components included in the result
-   * @param  endIndex  components excluded from the result
+   * @param  beginIndex  first RDN component to include in the result, inclusive
+   * @param  endIndex  last RDN component to include in the result, exclusive
    *
-   * @return  DN from beginIndex to endIndex
+   * @return  DN from beginIndex (inclusive) to endIndex (exclusive)
    *
    * @throws  IndexOutOfBoundsException  if beginIndex is less than 0, if beginIndex is greater than endIndex, or
    * endIndex is greater than the number of RDNs
