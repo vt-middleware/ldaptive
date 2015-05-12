@@ -75,7 +75,8 @@ public final class DnParser
    * begins at index 0.
    *
    * @param  dn  to parse
-   * @param  beginIndex  first component to include in the result
+   * @param  beginIndex  index of first RDN to include in the result in the range [0, N-1] where N is the number of
+   *                     elements in the DN
    *
    * @return  DN from the supplied beginIndex
    *
@@ -109,11 +110,13 @@ public final class DnParser
   /**
    * Returns a string representation of the supplied DN beginning at beginIndex (inclusive) and ending at endIndex
    * (exclusive). The leftmost RDN component begins at index 0. Where n is the number of RDNs, both beginIndex and
-   * endIndex are on the range [0, n-1].
+   * endIndex are on the range [0, N-1].
    *
    * @param  dn  to parse
-   * @param  beginIndex  first RDN component to include in the result, inclusive
-   * @param  endIndex  last RDN component to include in the result, exclusive
+   * @param  beginIndex  index of first RDN to include in the result in the range [0, N-2] where N is the number of
+   *                     elements in the DN
+   * @param  endIndex  index of last RDN to include in the result in the range [1, N-1] where N is the number of
+   *                   elements in the RDN
    *
    * @return  DN from beginIndex (inclusive) to endIndex (exclusive)
    *
