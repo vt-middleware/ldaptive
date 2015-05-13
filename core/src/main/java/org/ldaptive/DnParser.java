@@ -71,30 +71,75 @@ public final class DnParser
 
 
   /**
-   * Returns a string representation of the supplied DN beginning at the supplied index. The leftmost component begins
-   * at index 0.
+   * Returns a string representation of the supplied DN beginning at the supplied index. The leftmost RDN component
+   * begins at index 0.
    *
    * @param  dn  to parse
-   * @param  index  components included in the result
+   * @param  beginIndex  index of first RDN to include in the result in the range [0, N-1] where N is the number of
+   *                     elements in the DN
    *
-   * @return  DN from the supplied index
+   * @return  DN from the supplied beginIndex
    *
-   * @throws  IndexOutOfBoundsException  if index is less than 0 or greater than the number of RDNs
+   * @throws  IndexOutOfBoundsException  if beginIndex is less than 0 or greater than the number of RDNs
    */
-  public static String substring(final String dn, final int index)
+  public static String substring(final String dn, final int beginIndex)
   {
-    if (index < 0) {
-      throw new IndexOutOfBoundsException("index cannot be negative");
+    if (beginIndex < 0) {
+      throw new IndexOutOfBoundsException("beginIndex cannot be negative");
     }
 
     final List<LdapAttribute> attrs = convertDnToAttributes(dn);
-    if (index >= attrs.size()) {
-      throw new IndexOutOfBoundsException("index cannot be larger than the number of RDNs");
+    if (beginIndex >= attrs.size()) {
+      throw new IndexOutOfBoundsException("beginIndex cannot be larger than the number of RDNs");
     }
 
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < attrs.size(); i++) {
-      if (i >= index) {
+      if (i >= beginIndex) {
+        final LdapAttribute la = attrs.get(i);
+        sb.append(la.getName()).append("=").append(la.getStringValue()).append(",");
+      }
+    }
+    if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ',') {
+      sb.deleteCharAt(sb.length() - 1);
+    }
+    return sb.toString();
+  }
+
+
+  /**
+   * Returns a string representation of the supplied DN beginning at beginIndex (inclusive) and ending at endIndex
+   * (exclusive). The leftmost RDN component begins at index 0. Where n is the number of RDNs, both beginIndex and
+   * endIndex are on the range [0, N-1].
+   *
+   * @param  dn  to parse
+   * @param  beginIndex  index of first RDN to include in the result in the range [0, N-2] where N is the number of
+   *                     elements in the DN
+   * @param  endIndex  index of last RDN to include in the result in the range [1, N-1] where N is the number of
+   *                   elements in the RDN
+   *
+   * @return  DN from beginIndex (inclusive) to endIndex (exclusive)
+   *
+   * @throws  IndexOutOfBoundsException  if beginIndex is less than 0, if beginIndex is greater than endIndex, or
+   * endIndex is greater than the number of RDNs
+   */
+  public static String substring(final String dn, final int beginIndex, final int endIndex)
+  {
+    if (beginIndex < 0) {
+      throw new IndexOutOfBoundsException("beginIndex cannot be negative");
+    }
+    if (beginIndex > endIndex) {
+      throw new IndexOutOfBoundsException("beginIndex cannot be larger than endIndex");
+    }
+
+    final List<LdapAttribute> attrs = convertDnToAttributes(dn);
+    if (endIndex > attrs.size()) {
+      throw new IndexOutOfBoundsException("endIndex cannot be larger than the number of RDNs");
+    }
+
+    final StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < attrs.size(); i++) {
+      if (i >= beginIndex && i < endIndex) {
         final LdapAttribute la = attrs.get(i);
         sb.append(la.getName()).append("=").append(la.getStringValue()).append(",");
       }
