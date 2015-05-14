@@ -18,6 +18,9 @@ import java.util.regex.Pattern;
 public class LdapURL
 {
 
+  /** Do not split URL. */
+  public static final String NO_DELIMITER = "NO-DELIMITER";
+
   /** Default delimiter for ldap urls. */
   private static final String DEFAULT_DELIMITER = " ";
 
@@ -53,7 +56,12 @@ public class LdapURL
    */
   public LdapURL(final String url, final String delimiter)
   {
-    final String[] urls = url.split(delimiter);
+    final String[] urls;
+    if (NO_DELIMITER.equals(delimiter)) {
+      urls = new String[] {url};
+    } else {
+      urls = url.split(delimiter);
+    }
 
     for (String s : urls) {
       ldapEntries.add(parseEntry(s));
