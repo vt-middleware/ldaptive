@@ -329,6 +329,136 @@ public class SearchOperationTest extends AbstractTest
 
 
   /**
+   * @param  filter  to search with.
+   * @param  filterParameters  to replace parameters in filter with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "searchFilter",
+      "searchFilterParameters",
+      "searchReturnAttrs",
+      "searchResults"
+    }
+  )
+  @Test(groups = {"search"})
+  public void searchScopes(
+    final String filter,
+    final String filterParameters,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final SearchResult expectedResult = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile));
+    Connection conn = createLdapConnection(true);
+    try {
+      conn.open();
+      SearchOperation search = new SearchOperation(conn);
+
+      SearchRequest subtreeRequest = new SearchRequest(
+        DnParser.substring(expectedResult.getEntry().getDn(), 2),
+        new SearchFilter(filter, filterParameters.split("\\|")),
+        returnAttrs.split("\\|"));
+      subtreeRequest.setSearchScope(SearchScope.SUBTREE);
+      SearchResult result = search.execute(subtreeRequest).getResult();
+      TestUtils.assertEquals(expectedResult, result);
+
+      SearchRequest onelevelRequest = new SearchRequest(
+        DnParser.substring(expectedResult.getEntry().getDn(), 1),
+        new SearchFilter(filter, filterParameters.split("\\|")),
+        returnAttrs.split("\\|"));
+      onelevelRequest.setSearchScope(SearchScope.ONELEVEL);
+      result = search.execute(onelevelRequest).getResult();
+      TestUtils.assertEquals(expectedResult, result);
+
+      SearchRequest objectRequest = new SearchRequest(
+        expectedResult.getEntry().getDn(),
+        new SearchFilter("(objectClass=*)"),
+        returnAttrs.split("\\|"));
+      objectRequest.setSearchScope(SearchScope.OBJECT);
+      result = search.execute(objectRequest).getResult();
+      TestUtils.assertEquals(expectedResult, result);
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /**
+   * @param  filter  to search with.
+   * @param  filterParameters  to replace parameters in filter with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "searchFilter",
+      "searchFilterParameters",
+      "searchReturnAttrs",
+      "searchResults"
+    }
+  )
+  @Test(groups = {"search"})
+  public void jndiSearchScopes(
+    final String filter,
+    final String filterParameters,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    if (!TestControl.isJndiProvider()) {
+      return;
+    }
+    final SearchResult expectedResult = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile));
+
+    // test URL with baseDn included
+    for (int i = 0; i <= 2; i++) {
+      final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
+      cc.setLdapUrl(String.format("%s/%s", cc.getLdapUrl(),
+                                  LdapUtils.percentEncode(DnParser.substring(expectedResult.getEntry().getDn(), i))));
+      Connection conn = DefaultConnectionFactory.getConnection(cc);
+      try {
+        conn.open();
+        SearchOperation search = new SearchOperation(conn);
+
+        SearchRequest subtreeRequest = new SearchRequest(
+          i > 0 ? DnParser.substring(expectedResult.getEntry().getDn(), 0, i) : "",
+          new SearchFilter(filter, filterParameters.split("\\|")),
+          returnAttrs.split("\\|"));
+        subtreeRequest.setSearchScope(SearchScope.SUBTREE);
+        SearchResult result = search.execute(subtreeRequest).getResult();
+        AssertJUnit.assertEquals(1, result.size());
+        TestUtils.assertEquals(expectedResult, result);
+
+        SearchRequest onelevelRequest = new SearchRequest(
+          i > 0 ? DnParser.substring(expectedResult.getEntry().getDn(), 0, i) : "",
+          new SearchFilter(filter, filterParameters.split("\\|")),
+          returnAttrs.split("\\|"));
+        onelevelRequest.setSearchScope(SearchScope.ONELEVEL);
+        result = search.execute(onelevelRequest).getResult();
+        AssertJUnit.assertEquals(0, result.size());
+
+        SearchRequest objectRequest = new SearchRequest(
+          i > 0 ? DnParser.substring(expectedResult.getEntry().getDn(), 0, i) : "",
+          new SearchFilter("(objectClass=*)"),
+          returnAttrs.split("\\|"));
+        objectRequest.setSearchScope(SearchScope.OBJECT);
+        result = search.execute(objectRequest).getResult();
+        AssertJUnit.assertEquals(1, result.size());
+        TestUtils.assertEquals(expectedResult, result);
+      } finally {
+        conn.close();
+      }
+    }
+  }
+
+
+  /**
    * @param  dn  to search on.
    * @param  filter  to search with.
    * @param  filterParameters  to replace parameters in filter with.

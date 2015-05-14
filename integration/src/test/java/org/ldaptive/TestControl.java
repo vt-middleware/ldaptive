@@ -53,6 +53,17 @@ public class TestControl
 
 
   /**
+   * Used by tests to determine if the JNDI provider is being tested.
+   *
+   * @return  whether the jndi provider is being tested
+   */
+  public static boolean isJndiProvider()
+  {
+    return "JNDI".equals(providerType);
+  }
+
+
+  /**
    * Used by tests to determine if the Apache provider is being tested.
    *
    * @return  whether the apache provider is being tested

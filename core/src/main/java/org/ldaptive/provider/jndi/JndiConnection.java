@@ -1022,8 +1022,8 @@ public class JndiConnection implements ProviderConnection
 
 
     /**
-     * Returns a fully-qualified DN for the supplied search result. If search result is relative, the DN is created by
-     * concatenating the relative name with the base DN. Otherwise the behavior is controlled by {@link
+     * Returns a fully-qualified DN for the supplied search result. If search result is relative, the DN is created with
+     * {@link SearchResult#getNameInNamespace()}. Otherwise the behavior is controlled by {@link
      * JndiProviderConfig#getRemoveDnUrls()}.
      *
      * @param  sr  to determine DN for
@@ -1036,32 +1036,20 @@ public class JndiConnection implements ProviderConnection
     protected String formatDn(final SearchResult sr, final String baseDn)
       throws NamingException
     {
-      String newDn = null;
-      final String resultName = sr.getName();
-      if (resultName != null) {
-        StringBuilder fqName;
-        if (sr.isRelative()) {
-          logger.trace("formatting relative dn '{}' with baseDn '{}'", resultName, baseDn);
-          if (baseDn != null && !"".equals(baseDn)) {
-            if (!"".equals(resultName)) {
-              fqName = new StringBuilder(readCompositeName(resultName)).append(",").append(baseDn);
-            } else {
-              fqName = new StringBuilder(baseDn);
-            }
-          } else {
-            fqName = new StringBuilder(readCompositeName(resultName));
-          }
+      StringBuilder fqName;
+      if (sr.isRelative()) {
+        logger.trace("formatting relative dn '{}'", sr.getNameInNamespace());
+        fqName = new StringBuilder(readCompositeName(sr.getNameInNamespace()));
+      } else {
+        logger.trace("formatting non-relative dn '{}'", sr.getName());
+        if (config.getRemoveDnUrls()) {
+          fqName = new StringBuilder(readCompositeName(URI.create(sr.getName()).getPath().substring(1)));
         } else {
-          logger.trace("formatting non-relative dn '{}'", resultName);
-          if (config.getRemoveDnUrls()) {
-            fqName = new StringBuilder(readCompositeName(URI.create(resultName).getPath().substring(1)));
-          } else {
-            fqName = new StringBuilder(readCompositeName(resultName));
-          }
+          fqName = new StringBuilder(readCompositeName(sr.getName()));
         }
-        newDn = fqName.toString();
       }
-      logger.trace("formatted dn '{}' as '{}'", resultName, newDn);
+      final String newDn = fqName.toString();
+      logger.trace("formatted dn '{}'", newDn);
       return newDn;
     }
 

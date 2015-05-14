@@ -39,7 +39,7 @@ public final class TestUtils
   public static ConnectionConfig readConnectionConfig(final String path)
   {
     final ConnectionConfig cc = new ConnectionConfig();
-    ConnectionConfigPropertySource ccSource = null;
+    ConnectionConfigPropertySource ccSource;
     if (path != null) {
       ccSource = new ConnectionConfigPropertySource(cc, path);
     } else {
@@ -58,7 +58,7 @@ public final class TestUtils
   public static Authenticator readAuthenticator(final String path)
   {
     final Authenticator a = new Authenticator();
-    AuthenticatorPropertySource aSource = null;
+    AuthenticatorPropertySource aSource;
     if (path != null) {
       aSource = new AuthenticatorPropertySource(a, path);
     } else {
