@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.unboundid;
 
-import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocketFactory;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import com.unboundid.ldap.sdk.LDAPException;
@@ -18,8 +18,8 @@ import org.ldaptive.provider.ConnectionException;
 public class UnboundIDConnectionFactory extends AbstractProviderConnectionFactory<UnboundIDProviderConfig>
 {
 
-  /** Socket factory to use for LDAP and LDAPS connections. */
-  private final SocketFactory socketFactory;
+  /** Socket factory to use for LDAPS connections. */
+  private final SSLSocketFactory socketFactory;
 
   /** UnboundID connection options. */
   private final LDAPConnectionOptions ldapOptions;
@@ -36,7 +36,7 @@ public class UnboundIDConnectionFactory extends AbstractProviderConnectionFactor
   public UnboundIDConnectionFactory(
     final String url,
     final UnboundIDProviderConfig config,
-    final SocketFactory factory,
+    final SSLSocketFactory factory,
     final LDAPConnectionOptions options)
   {
     super(url, config);
@@ -53,7 +53,8 @@ public class UnboundIDConnectionFactory extends AbstractProviderConnectionFactor
     UnboundIDConnection conn = null;
     boolean closeConn = false;
     try {
-      final LDAPConnection lc = new LDAPConnection(socketFactory, ldapOptions);
+      final LDAPConnection lc = new LDAPConnection(
+        socketFactory != null ? socketFactory : getProviderConfig().getSocketFactory(), ldapOptions);
       conn = new UnboundIDConnection(lc, getProviderConfig());
       lc.connect(ldapUrl.getLastEntry().getHostname(), ldapUrl.getLastEntry().getPort());
     } catch (LDAPException e) {

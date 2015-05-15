@@ -3,6 +3,7 @@ package org.ldaptive.provider.unboundid;
 
 import java.util.Arrays;
 import javax.net.SocketFactory;
+import javax.net.ssl.SSLSocketFactory;
 import com.unboundid.ldap.sdk.Control;
 import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import org.ldaptive.ResultCode;
@@ -22,6 +23,9 @@ public class UnboundIDProviderConfig extends ProviderConfig<Control>
 
   /** socket factory for ldap connections. */
   private SocketFactory socketFactory;
+
+  /** socket factory for ldaps and startTLS connections. */
+  private SSLSocketFactory sslSocketFactory;
 
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
@@ -87,6 +91,30 @@ public class UnboundIDProviderConfig extends ProviderConfig<Control>
 
 
   /**
+   * Returns the SSL socket factory to use for LDAPS and startTLS connections.
+   *
+   * @return  SSL socket factory
+   */
+  public SSLSocketFactory getSSLSocketFactory()
+  {
+    return sslSocketFactory;
+  }
+
+
+  /**
+   * Sets the SSL socket factory to use for LDAPS and startTLS connections.
+   *
+   * @param  sf  socket factory
+   */
+  public void setSSLSocketFactory(final SSLSocketFactory sf)
+  {
+    checkImmutable();
+    logger.trace("setting sslSocketFactory: {}", sf);
+    sslSocketFactory = sf;
+  }
+
+
+  /**
    * Returns the search ignore result codes.
    *
    * @return  result codes to ignore
@@ -117,7 +145,7 @@ public class UnboundIDProviderConfig extends ProviderConfig<Control>
       String.format(
         "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
         "connectionStrategy=%s, controlProcessor=%s, connectionOptions=%s, " +
-        "socketFactory=%s, searchIgnoreResultCodes=%s]",
+        "socketFactory=%s, sslSocketFactory=%s, searchIgnoreResultCodes=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
@@ -126,6 +154,7 @@ public class UnboundIDProviderConfig extends ProviderConfig<Control>
         getControlProcessor(),
         connectionOptions,
         socketFactory,
+        sslSocketFactory,
         Arrays.toString(searchIgnoreResultCodes));
   }
 }

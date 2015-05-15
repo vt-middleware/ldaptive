@@ -1,8 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.unboundid;
 
-import javax.net.SocketFactory;
-import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import com.unboundid.ldap.sdk.ExtendedResult;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPConnectionOptions;
@@ -22,11 +21,8 @@ import org.ldaptive.provider.ConnectionException;
 public class UnboundIDStartTLSConnectionFactory extends AbstractProviderConnectionFactory<UnboundIDProviderConfig>
 {
 
-  /** Socket factory to use for connections. */
-  private final SocketFactory socketFactory;
-
-  /** SSL context to use for startTLS. */
-  private final SSLContext sslContext;
+  /** Socket factory to use for startTLS. */
+  private final SSLSocketFactory socketFactory;
 
   /** UnboundID connection options. */
   private final LDAPConnectionOptions ldapOptions;
@@ -37,20 +33,17 @@ public class UnboundIDStartTLSConnectionFactory extends AbstractProviderConnecti
    *
    * @param  url  of the ldap to connect to
    * @param  config  provider configuration
-   * @param  factory  SSL socket factory to use for LDAP and LDAPS
-   * @param  sslCtx  SSL context to use for startTLS
+   * @param  factory  SSL socket factory to use for startTLS
    * @param  options  connection options
    */
   public UnboundIDStartTLSConnectionFactory(
     final String url,
     final UnboundIDProviderConfig config,
-    final SocketFactory factory,
-    final SSLContext sslCtx,
+    final SSLSocketFactory factory,
     final LDAPConnectionOptions options)
   {
     super(url, config);
     socketFactory = factory;
-    sslContext = sslCtx;
     ldapOptions = options;
   }
 
@@ -63,11 +56,12 @@ public class UnboundIDStartTLSConnectionFactory extends AbstractProviderConnecti
     UnboundIDConnection conn = null;
     boolean closeConn = false;
     try {
-      final LDAPConnection lc = new LDAPConnection(socketFactory, ldapOptions);
+      final LDAPConnection lc = new LDAPConnection(getProviderConfig().getSocketFactory(), ldapOptions);
       conn = new UnboundIDConnection(lc, getProviderConfig());
       lc.connect(ldapUrl.getLastEntry().getHostname(), ldapUrl.getLastEntry().getPort());
 
-      final ExtendedResult result = lc.processExtendedOperation(new StartTLSExtendedRequest(sslContext));
+      final ExtendedResult result = lc.processExtendedOperation(
+        new StartTLSExtendedRequest(socketFactory != null ? socketFactory : getProviderConfig().getSSLSocketFactory()));
       if (result.getResultCode() != ResultCode.SUCCESS) {
         closeConn = true;
         throw new ConnectionException(
