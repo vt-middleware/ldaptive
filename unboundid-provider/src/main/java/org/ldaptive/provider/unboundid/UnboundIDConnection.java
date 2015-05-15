@@ -626,8 +626,6 @@ public class UnboundIDConnection implements ProviderConnection
             e.getReferenceCount(),
             e.getResponseControls()));
         logger.debug("created response from exception: {}", response);
-      } catch (LDAPException e) {
-        processLDAPException(sr, e);
       }
       return i;
     }
