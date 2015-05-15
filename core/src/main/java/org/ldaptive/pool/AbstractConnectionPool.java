@@ -169,11 +169,22 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
 
 
   /**
+   * Returns whether this pool has been initialized.
+   *
+   * @return  whether this pool has been initialized
+   */
+  public boolean isInitialized()
+  {
+    return initialized;
+  }
+
+
+  /**
    * Used to determine whether {@link #initialize()} has been invoked for this pool.
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
-  protected void isInitialized()
+  protected void throwIfNotInitialized()
   {
     if (!initialized) {
       throw new IllegalStateException("Pool has not been initialized");
@@ -358,7 +369,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   @Override
   public void close()
   {
-    isInitialized();
+    throwIfNotInitialized();
     logger.debug("closing connection pool of size {} for {}", available.size() + active.size(), this);
     poolLock.lock();
     try {
@@ -678,7 +689,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
    */
   public void prune()
   {
-    isInitialized();
+    throwIfNotInitialized();
     logger.trace("waiting for pool lock to prune {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
@@ -723,7 +734,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
    */
   public void validate()
   {
-    isInitialized();
+    throwIfNotInitialized();
     poolLock.lock();
     try {
       if (!available.isEmpty()) {
@@ -781,7 +792,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   @Override
   public Set<PooledConnectionStatistics> getPooledConnectionStatistics()
   {
-    isInitialized();
+    throwIfNotInitialized();
 
     final Set<PooledConnectionStatistics> stats = Collections.unmodifiableSet(
       new HashSet<PooledConnectionStatistics>());

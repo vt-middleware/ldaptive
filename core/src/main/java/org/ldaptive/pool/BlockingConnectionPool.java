@@ -80,7 +80,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   public Connection getConnection()
     throws PoolException
   {
-    isInitialized();
+    throwIfNotInitialized();
 
     PooledConnectionProxy pc = null;
     boolean create = false;
@@ -227,7 +227,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   @Override
   public void putConnection(final Connection c)
   {
-    isInitialized();
+    throwIfNotInitialized();
 
     final PooledConnectionProxy pc = retrieveConnectionProxy(c);
     final boolean valid = validateAndPassivateConnection(pc);

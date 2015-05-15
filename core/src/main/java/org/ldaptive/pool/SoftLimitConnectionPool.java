@@ -49,7 +49,7 @@ public class SoftLimitConnectionPool extends BlockingConnectionPool
   public Connection getConnection()
     throws PoolException
   {
-    isInitialized();
+    throwIfNotInitialized();
 
     PooledConnectionProxy pc = null;
     logger.trace("waiting on pool lock for check out {}", poolLock.getQueueLength());
