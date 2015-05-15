@@ -27,25 +27,31 @@ public class TLSSocketFactoryTest
 
   /** List of ciphers. */
   public static final String[] CIPHERS = new String[] {
-    "TLS_DH_anon_WITH_AES_128_CBC_SHA",
-    "TLS_DH_anon_WITH_AES_256_CBC_SHA",
-    "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA",
-    "SSL_DH_anon_WITH_RC4_128_MD5",
+    "SSL_RSA_WITH_3DES_EDE_CBC_SHA",
     "TLS_RSA_WITH_AES_128_CBC_SHA",
     "TLS_RSA_WITH_AES_256_CBC_SHA",
-    "SSL_RSA_WITH_3DES_EDE_CBC_SHA",
-    "TLS_DHE_DSS_WITH_AES_128_CBC_SHA",
-    "TLS_DHE_DSS_WITH_AES_256_CBC_SHA",
-    "TLS_DHE_RSA_WITH_AES_128_CBC_SHA",
-    "TLS_DHE_RSA_WITH_AES_256_CBC_SHA",
-    "SSL_DHE_DSS_WITH_3DES_EDE_CBC_SHA",
-    "SSL_DHE_RSA_WITH_3DES_EDE_CBC_SHA",
-    "SSL_RSA_WITH_RC4_128_MD5",
-    "SSL_RSA_WITH_RC4_128_SHA",
-  };
+    "TLS_ECDHE_RSA_WITH_3DES_EDE_CBC_SHA",
+    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA",
+    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA",
+    /* GCM ciphers only supported in Java 8
+    "TLS_RSA_WITH_AES_128_GCM_SHA256",
+    "TLS_RSA_WITH_AES_256_GCM_SHA384",
+    */
+    "TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256",
+    /* GCM ciphers only supported in Java 8
+    "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256",
+    */
+    "TLS_RSA_WITH_AES_128_CBC_SHA256",
+    "TLS_RSA_WITH_AES_256_CBC_SHA256",
+    "TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384",
+    /* GCM ciphers only supported in Java 8
+    "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
+    */
+};
 
   /** List of ciphers. */
   public static final String[] UNKNOWN_CIPHERS = new String[] {
+    /* one valid cipher, three invalid */
     "TLS_DH_anon_WITH_AES_128_CBC_SHA",
     "TLS_DH_anon_WITH_3DES_256_CBC_SHA",
     "SSL_DH_anon_WITH_3DES_EDE_CBC_SHA",
@@ -54,18 +60,22 @@ public class TLSSocketFactoryTest
 
   /** List of protocols. */
   public static final String[] ALL_PROTOCOLS = new String[] {
+    "SSLv2Hello",
     "SSLv3",
     "TLSv1",
+    "TLSv1.1",
+    "TLSv1.2",
   };
 
   /** List of protocols. */
-  public static final String[] PROTOCOLS = new String[] {"TLSv1", };
+  public static final String[] PROTOCOLS = new String[] {"TLSv1", "TLSv1.1", "TLSv1.2"};
 
   /** List of protocols. */
   public static final String[] FAIL_PROTOCOLS = new String[] {"SSLv2Hello", };
 
   /** List of protocols. */
   public static final String[] UNKNOWN_PROTOCOLS = new String[] {
+    /* one invalid protocol, two valid*/
     "SSLv3Hello",
     "SSLv2Hello",
     "TLSv1",
