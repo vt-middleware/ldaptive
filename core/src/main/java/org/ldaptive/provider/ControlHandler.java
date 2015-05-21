@@ -16,6 +16,14 @@ public interface ControlHandler<T>
 
 
   /**
+   * Returns the type of control that is handled.
+   *
+   * @return  type of control
+   */
+  Class<T> getControlType();
+
+
+  /**
    * Returns the OID of the supplied control.
    *
    * @param  control  to return oid for

@@ -62,7 +62,7 @@ public class ControlProcessor<T>
     logger.trace("produced provider request controls: {}", providerCtls);
     return
       !providerCtls.isEmpty()
-      ? providerCtls.toArray((T[]) Array.newInstance(providerCtls.iterator().next().getClass(), providerCtls.size()))
+      ? providerCtls.toArray((T[]) Array.newInstance(controlHandler.getControlType(), providerCtls.size()))
       : null;
   }
 

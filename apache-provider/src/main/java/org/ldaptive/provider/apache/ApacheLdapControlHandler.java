@@ -13,6 +13,8 @@ import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyRespo
 import org.apache.directory.api.ldap.extras.controls.syncrepl.syncDone.SyncDoneValue;
 import org.apache.directory.api.ldap.extras.controls.syncrepl.syncInfoValue.SyncRequestValueImpl;
 import org.apache.directory.api.ldap.extras.controls.syncrepl.syncState.SyncStateValue;
+import org.apache.directory.api.ldap.extras.controls.vlv.VirtualListViewRequestImpl;
+import org.apache.directory.api.ldap.extras.controls.vlv.VirtualListViewResponse;
 import org.apache.directory.api.ldap.model.message.Control;
 import org.apache.directory.api.ldap.model.message.controls.ChangeType;
 import org.apache.directory.api.ldap.model.message.controls.EntryChange;
@@ -20,6 +22,11 @@ import org.apache.directory.api.ldap.model.message.controls.ManageDsaITImpl;
 import org.apache.directory.api.ldap.model.message.controls.PagedResults;
 import org.apache.directory.api.ldap.model.message.controls.PagedResultsImpl;
 import org.apache.directory.api.ldap.model.message.controls.PersistentSearchImpl;
+import org.apache.directory.api.ldap.model.message.controls.SortKey;
+import org.apache.directory.api.ldap.model.message.controls.SortRequestControlImpl;
+import org.apache.directory.api.ldap.model.message.controls.SortResponse;
+import org.ldaptive.LdapUtils;
+import org.ldaptive.ResultCode;
 import org.ldaptive.ad.control.DirSyncControl;
 import org.ldaptive.asn1.UuidType;
 import org.ldaptive.control.EntryChangeNotificationControl;
@@ -28,9 +35,13 @@ import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.PersistentSearchChangeType;
 import org.ldaptive.control.PersistentSearchRequestControl;
+import org.ldaptive.control.SortRequestControl;
+import org.ldaptive.control.SortResponseControl;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.control.SyncStateControl;
+import org.ldaptive.control.VirtualListViewRequestControl;
+import org.ldaptive.control.VirtualListViewResponseControl;
 import org.ldaptive.provider.ControlHandler;
 
 /**
@@ -40,6 +51,13 @@ import org.ldaptive.provider.ControlHandler;
  */
 public class ApacheLdapControlHandler implements ControlHandler<Control>
 {
+
+
+  @Override
+  public Class<Control> getControlType()
+  {
+    return Control.class;
+  }
 
 
   @Override
@@ -55,6 +73,14 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
     Control ctl = null;
     if (ManageDsaITControl.OID.equals(requestControl.getOID())) {
       ctl = new ManageDsaITImpl(requestControl.getCriticality());
+    } else if (SortRequestControl.OID.equals(requestControl.getOID())) {
+      final SortRequestControl c = (SortRequestControl) requestControl;
+      ctl = new SortRequestControlImpl();
+      for (org.ldaptive.control.SortKey k : c.getSortKeys()) {
+        ((SortRequestControlImpl) ctl).addSortKey(
+          new SortKey(k.getAttributeDescription(), k.getMatchingRuleId(), k.getReverseOrder()));
+      }
+      ctl.setCritical(c.getCriticality());
     } else if (PagedResultsControl.OID.equals(requestControl.getOID())) {
       final PagedResultsControl c = (PagedResultsControl) requestControl;
       ctl = new PagedResultsImpl();
@@ -88,6 +114,16 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ((AdDirSyncImpl) ctl).setFlag(AdDirSyncFlag.getFlag((int) c.getFlags()));
       ((AdDirSyncImpl) ctl).setMaxReturnLength(c.getMaxAttributeCount());
       ctl.setCritical(c.getCriticality());
+    } else if (VirtualListViewRequestControl.OID.equals(requestControl.getOID())) {
+      final VirtualListViewRequestControl c = (VirtualListViewRequestControl) requestControl;
+      ctl = new VirtualListViewRequestImpl();
+      ((VirtualListViewRequestImpl) ctl).setBeforeCount(c.getBeforeCount());
+      ((VirtualListViewRequestImpl) ctl).setAfterCount(c.getAfterCount());
+      ((VirtualListViewRequestImpl) ctl).setContentCount(c.getContentCount());
+      ((VirtualListViewRequestImpl) ctl).setOffset(c.getTargetOffset());
+      ((VirtualListViewRequestImpl) ctl).setContextId(c.getContextID());
+      ((VirtualListViewRequestImpl) ctl).setAssertionValue(LdapUtils.utf8Encode(c.getAssertionValue()));
+      ctl.setCritical(c.getCriticality());
     }
     return ctl;
   }
@@ -97,7 +133,11 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
   public org.ldaptive.control.ResponseControl handleResponse(final Control responseControl)
   {
     org.ldaptive.control.ResponseControl ctl = null;
-    if (PagedResultsControl.OID.equals(responseControl.getOid())) {
+    if (SortResponseControl.OID.equals(responseControl.getOid())) {
+      final SortResponse c = (SortResponse) responseControl;
+      ctl = new SortResponseControl(
+        ResultCode.valueOf(c.getSortResult().getVal()), c.getAttributeName(), c.isCritical());
+    } else if (PagedResultsControl.OID.equals(responseControl.getOid())) {
       final PagedResults c = (PagedResults) responseControl;
       ctl = new PagedResultsControl(c.getSize(), c.getCookie(), c.isCritical());
     } else if (PasswordPolicyControl.OID.equals(responseControl.getOid())) {
@@ -137,6 +177,14 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
         new DirSyncControl.Flag[] {DirSyncControl.Flag.valueOf(c.getFlag().getValue()), },
         c.getCookie(),
         c.getMaxReturnLength(),
+        c.isCritical());
+    } else if (VirtualListViewResponseControl.OID.equals(responseControl.getOid())) {
+      final VirtualListViewResponse c  = (VirtualListViewResponse) responseControl;
+      ctl = new VirtualListViewResponseControl(
+        c.getTargetPosition(),
+        c.getContentCount(),
+        ResultCode.valueOf(c.getVirtualListViewResult().getVal()),
+        c.getContextId(),
         c.isCritical());
     }
     return ctl;

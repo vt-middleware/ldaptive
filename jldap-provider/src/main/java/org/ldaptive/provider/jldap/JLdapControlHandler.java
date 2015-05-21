@@ -16,6 +16,13 @@ public class JLdapControlHandler implements ControlHandler<com.novell.ldap.LDAPC
 
 
   @Override
+  public Class<com.novell.ldap.LDAPControl> getControlType()
+  {
+    return com.novell.ldap.LDAPControl.class;
+  }
+
+
+  @Override
   public String getOID(final com.novell.ldap.LDAPControl control)
   {
     return control.getID();

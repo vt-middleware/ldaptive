@@ -18,6 +18,13 @@ public class OpenDJControlHandler implements ControlHandler<org.forgerock.opendj
 
 
   @Override
+  public Class<org.forgerock.opendj.ldap.controls.Control> getControlType()
+  {
+    return org.forgerock.opendj.ldap.controls.Control.class;
+  }
+
+
+  @Override
   public String getOID(final org.forgerock.opendj.ldap.controls.Control control)
   {
     return control.getOID();

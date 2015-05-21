@@ -17,6 +17,13 @@ public class UnboundIDControlHandler implements ControlHandler<com.unboundid.lda
 
 
   @Override
+  public Class<com.unboundid.ldap.sdk.Control> getControlType()
+  {
+    return com.unboundid.ldap.sdk.Control.class;
+  }
+
+
+  @Override
   public String getOID(final com.unboundid.ldap.sdk.Control control)
   {
     return control.getOID();

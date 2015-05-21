@@ -91,11 +91,6 @@ public class VirtualListViewClientTest extends AbstractTest
       return;
     }
 
-    // provider doesn't support this control
-    if (TestControl.isApacheProvider()) {
-      return;
-    }
-
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();

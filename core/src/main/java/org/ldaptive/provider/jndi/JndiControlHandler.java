@@ -16,6 +16,13 @@ public class JndiControlHandler implements ControlHandler<javax.naming.ldap.Cont
 
 
   @Override
+  public Class<javax.naming.ldap.Control> getControlType()
+  {
+    return javax.naming.ldap.Control.class;
+  }
+
+
+  @Override
   public String getOID(final javax.naming.ldap.Control control)
   {
     return control.getID();

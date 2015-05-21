@@ -641,14 +641,9 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    // provider doesn't support this control
-    if (TestControl.isApacheProvider()) {
-      return;
-    }
-
     final SortRequestControl src = new SortRequestControl(new SortKey[] {new SortKey("uugid", "caseExactMatch")}, true);
     VirtualListViewRequestControl vlvrc = new VirtualListViewRequestControl(3, 1, 1, true);
-    byte[] contextID = null;
+    byte[] contextID;
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();
@@ -713,11 +708,6 @@ public class SearchOperationTest extends AbstractTest
   {
     // OracleDS returns protocol error
     if (TestControl.isOracleDirectory()) {
-      return;
-    }
-
-    // provider doesn't support this control
-    if (TestControl.isApacheProvider()) {
       return;
     }
 
