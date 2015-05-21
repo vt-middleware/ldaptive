@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Properties;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
@@ -60,7 +60,7 @@ public abstract class AbstractCli
     int status = -1;
     try {
       if (args.length > 0) {
-        final CommandLineParser parser = new GnuParser();
+        final CommandLineParser parser = new DefaultParser();
         final CommandLine line = parser.parse(options, args, false);
         status = dispatch(line);
       } else {
