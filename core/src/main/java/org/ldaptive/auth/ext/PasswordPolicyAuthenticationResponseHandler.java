@@ -21,16 +21,17 @@ public class PasswordPolicyAuthenticationResponseHandler implements Authenticati
   {
     final PasswordPolicyControl ppc = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
     if (ppc != null) {
-      Calendar exp = null;
-      if (ppc.getTimeBeforeExpiration() > 0) {
-        exp = Calendar.getInstance();
-        exp.add(Calendar.SECOND, ppc.getTimeBeforeExpiration());
-      }
-      if (exp != null || ppc.getGraceAuthNsRemaining() > 0) {
-        response.setAccountState(new PasswordPolicyAccountState(exp, ppc.getGraceAuthNsRemaining()));
-      }
-      if (response.getAccountState() == null && ppc.getError() != null) {
+      if (ppc.getError() != null) {
         response.setAccountState(new PasswordPolicyAccountState(ppc.getError()));
+      } else {
+        Calendar exp = null;
+        if (ppc.getTimeBeforeExpiration() > 0) {
+          exp = Calendar.getInstance();
+          exp.add(Calendar.SECOND, ppc.getTimeBeforeExpiration());
+        }
+        if (exp != null || ppc.getGraceAuthNsRemaining() > 0) {
+          response.setAccountState(new PasswordPolicyAccountState(exp, ppc.getGraceAuthNsRemaining()));
+        }
       }
     }
   }
