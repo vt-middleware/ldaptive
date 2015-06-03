@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive;
 
 /**
  * Interface to describe various connection strategies. Each strategy returns an ordered list of URLs to attempt when

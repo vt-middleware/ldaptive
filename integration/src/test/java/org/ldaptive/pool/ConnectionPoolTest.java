@@ -15,7 +15,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.TestUtils;
 import org.ldaptive.io.LdifWriter;
-import org.ldaptive.provider.ConnectionStrategy;
+import org.ldaptive.ConnectionStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
@@ -130,7 +130,7 @@ public class ConnectionPoolTest extends AbstractTest
     connStrategyCc.setLdapUrl(String.format("%s ldap://dne.middleware.vt.edu", host));
 
     final DefaultConnectionFactory connStrategyCf = new DefaultConnectionFactory(connStrategyCc);
-    connStrategyCf.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.ROUND_ROBIN);
+    connStrategyCf.getConnectionConfig().setConnectionStrategy(ConnectionStrategy.ROUND_ROBIN);
     connStrategyPool = new BlockingConnectionPool(new PoolConfig(), connStrategyCf);
   }
 

@@ -1,20 +1,20 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link ActivePassiveConnectionStrategy}.
+ * Unit test for {@link DefaultConnectionStrategy}.
  *
  * @author  Middleware Services
  */
-public class ActivePassiveConnectionStrategyTest
+public class DefaultConnectionStrategyTest
 {
 
   /** Strategy to test. */
-  private final ActivePassiveConnectionStrategy strategy = new ActivePassiveConnectionStrategy();
+  private final DefaultConnectionStrategy strategy = new DefaultConnectionStrategy();
 
 
   /**
@@ -37,10 +37,7 @@ public class ActivePassiveConnectionStrategyTest
         },
         new Object[] {
           new TestConnectionFactoryMetadata("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org"),
-          new String[] {
-            "ldap://directory-1.ldaptive.org",
-            "ldap://directory-2.ldaptive.org",
-          },
+          new String[] {"ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org", },
         },
         new Object[] {
           new TestConnectionFactoryMetadata(
@@ -48,9 +45,8 @@ public class ActivePassiveConnectionStrategyTest
             "ldap://directory-3.ldaptive.org",
             3),
           new String[] {
-            "ldap://directory-1.ldaptive.org",
-            "ldap://directory-2.ldaptive.org",
-            "ldap://directory-3.ldaptive.org",
+            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org " +
+              "ldap://directory-3.ldaptive.org",
           },
         },
       };

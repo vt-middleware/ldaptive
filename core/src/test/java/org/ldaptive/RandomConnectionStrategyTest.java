@@ -1,20 +1,20 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link DefaultConnectionStrategy}.
+ * Unit test for {@link RandomConnectionStrategy}.
  *
  * @author  Middleware Services
  */
-public class DefaultConnectionStrategyTest
+public class RandomConnectionStrategyTest
 {
 
   /** Strategy to test. */
-  private final DefaultConnectionStrategy strategy = new DefaultConnectionStrategy();
+  private final RandomConnectionStrategy strategy = new RandomConnectionStrategy();
 
 
   /**
@@ -37,7 +37,10 @@ public class DefaultConnectionStrategyTest
         },
         new Object[] {
           new TestConnectionFactoryMetadata("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org"),
-          new String[] {"ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org", },
+          new String[] {
+            "ldap://directory-1.ldaptive.org",
+            "ldap://directory-2.ldaptive.org",
+          },
         },
         new Object[] {
           new TestConnectionFactoryMetadata(
@@ -45,8 +48,9 @@ public class DefaultConnectionStrategyTest
             "ldap://directory-3.ldaptive.org",
             3),
           new String[] {
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org " +
-              "ldap://directory-3.ldaptive.org",
+            "ldap://directory-1.ldaptive.org",
+            "ldap://directory-2.ldaptive.org",
+            "ldap://directory-3.ldaptive.org",
           },
         },
       };
@@ -63,6 +67,10 @@ public class DefaultConnectionStrategyTest
   public void getLdapUrls(final ConnectionFactoryMetadata metadata, final String[] urls)
     throws Exception
   {
-    Assert.assertEquals(strategy.getLdapUrls(metadata), urls);
+    if (urls != null) {
+      Assert.assertEquals(strategy.getLdapUrls(metadata).length, urls.length);
+    } else {
+      Assert.assertEquals(strategy.getLdapUrls(metadata), urls);
+    }
   }
 }

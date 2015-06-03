@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import javax.naming.NamingException;
 import javax.naming.ldap.InitialLdapContext;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
@@ -31,12 +32,17 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
    * Creates a new jndi connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  env  jndi context environment
    */
-  public JndiConnectionFactory(final String url, final JndiProviderConfig config, final Map<String, Object> env)
+  public JndiConnectionFactory(
+    final String url,
+    final ConnectionStrategy strategy,
+    final JndiProviderConfig config,
+    final Map<String, Object> env)
   {
-    super(url, config);
+    super(url, strategy, config);
     environment = Collections.unmodifiableMap(env);
     if (ThreadLocalTLSSocketFactory.class.getName().equals(environment.get(JndiProvider.SOCKET_FACTORY))) {
       threadLocalSslConfig = new ThreadLocalTLSSocketFactory().getSslConfig();

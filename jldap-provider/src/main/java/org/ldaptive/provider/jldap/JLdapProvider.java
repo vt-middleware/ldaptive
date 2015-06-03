@@ -61,6 +61,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     return
       new JLdapStartTLSConnectionFactory(
         cc.getLdapUrl(),
+        cc.getConnectionStrategy(),
         config,
         constraints != null ? constraints : getDefaultLDAPConstraints(cc),
         (int) cc.getResponseTimeout(),
@@ -85,6 +86,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     return
       new JLdapSSLConnectionFactory(
         cc.getLdapUrl(),
+        cc.getConnectionStrategy(),
         config,
         constraints != null ? constraints : getDefaultLDAPConstraints(cc),
         (int) cc.getResponseTimeout(),
@@ -108,6 +110,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     return
       new JLdapConnectionFactory(
         cc.getLdapUrl(),
+        cc.getConnectionStrategy(),
         config,
         constraints != null ? constraints : getDefaultLDAPConstraints(cc),
         (int) cc.getResponseTimeout());

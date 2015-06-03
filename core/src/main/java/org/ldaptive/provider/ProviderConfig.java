@@ -28,9 +28,6 @@ public class ProviderConfig<C> extends AbstractConfig
   /** Additional provider properties. */
   private Map<String, Object> properties = new HashMap<>();
 
-  /** Connection strategy. */
-  private ConnectionStrategy connectionStrategy = ConnectionStrategy.DEFAULT;
-
   /** Control processor. */
   private ControlProcessor<C> controlProcessor;
 
@@ -84,30 +81,6 @@ public class ProviderConfig<C> extends AbstractConfig
 
 
   /**
-   * Returns the connection strategy.
-   *
-   * @return  strategy for making connections
-   */
-  public ConnectionStrategy getConnectionStrategy()
-  {
-    return connectionStrategy;
-  }
-
-
-  /**
-   * Sets the connection strategy.
-   *
-   * @param  strategy  for making connections
-   */
-  public void setConnectionStrategy(final ConnectionStrategy strategy)
-  {
-    checkImmutable();
-    logger.trace("setting connectionStrategy: {}", strategy);
-    connectionStrategy = strategy;
-  }
-
-
-  /**
    * Returns the control processor.
    *
    * @return  control processor
@@ -136,13 +109,11 @@ public class ProviderConfig<C> extends AbstractConfig
   {
     return
       String.format(
-        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, controlProcessor=%s]",
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, controlProcessor=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(operationExceptionResultCodes),
         properties,
-        connectionStrategy,
         controlProcessor);
   }
 }

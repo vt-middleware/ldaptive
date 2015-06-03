@@ -4,6 +4,7 @@ package org.ldaptive.provider.apache;
 import org.apache.directory.api.ldap.model.exception.LdapOperationException;
 import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.ResultCode;
@@ -32,6 +33,7 @@ public class ApacheLdapConnectionFactory extends AbstractProviderConnectionFacto
    * Creates a new Apache LDAP connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  lcc  connection configuration
    * @param  tls  whether to startTLS on connections
@@ -39,12 +41,13 @@ public class ApacheLdapConnectionFactory extends AbstractProviderConnectionFacto
    */
   public ApacheLdapConnectionFactory(
     final String url,
+    final ConnectionStrategy strategy,
     final ApacheLdapProviderConfig config,
     final LdapConnectionConfig lcc,
     final boolean tls,
     final long timeOut)
   {
-    super(url, config);
+    super(url, strategy, config);
     ldapConnectionConfig = lcc;
     useStartTLS = tls;
     responseTimeOut = timeOut;

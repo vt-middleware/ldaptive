@@ -105,7 +105,6 @@ public final class DefaultConnectionFactoryPropertySource extends AbstractProper
       propertiesDomain,
       properties);
     pcPropSource.initialize();
-    object.getProvider().getProviderConfig().setConnectionStrategy(pc.getConnectionStrategy());
     if (pc.getOperationExceptionResultCodes() != null) {
       object.getProvider().getProviderConfig().setOperationExceptionResultCodes(pc.getOperationExceptionResultCodes());
     }

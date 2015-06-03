@@ -32,6 +32,9 @@ public class ConnectionConfig extends AbstractConfig
   /** Connection initializer to execute on {@link Connection#open()}. */
   private ConnectionInitializer connectionInitializer;
 
+  /** Connection strategy. */
+  private ConnectionStrategy connectionStrategy = ConnectionStrategy.DEFAULT;
+
 
   /** Default constructor. */
   public ConnectionConfig() {}
@@ -218,6 +221,30 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
+   * Returns the connection strategy.
+   *
+   * @return  strategy for making connections
+   */
+  public ConnectionStrategy getConnectionStrategy()
+  {
+    return connectionStrategy;
+  }
+
+
+  /**
+   * Sets the connection strategy.
+   *
+   * @param  strategy  for making connections
+   */
+  public void setConnectionStrategy(final ConnectionStrategy strategy)
+  {
+    checkImmutable();
+    logger.trace("setting connectionStrategy: {}", strategy);
+    connectionStrategy = strategy;
+  }
+
+
+  /**
    * Returns a connection config initialized with the supplied config.
    *
    * @param  config  connection config to read properties from
@@ -234,6 +261,7 @@ public class ConnectionConfig extends AbstractConfig
     cc.setUseSSL(config.getUseSSL());
     cc.setUseStartTLS(config.getUseStartTLS());
     cc.setConnectionInitializer(config.getConnectionInitializer());
+    cc.setConnectionStrategy(config.getConnectionStrategy());
     return cc;
   }
 
@@ -244,7 +272,7 @@ public class ConnectionConfig extends AbstractConfig
     return
       String.format(
         "[%s@%d::ldapUrl=%s, connectTimeout=%s, responseTimeout=%s, " +
-        "sslConfig=%s, useSSL=%s, useStartTLS=%s, connectionInitializer=%s]",
+        "sslConfig=%s, useSSL=%s, useStartTLS=%s, connectionInitializer=%s, connectionStrategy=%s]",
         getClass().getName(),
         hashCode(),
         ldapUrl,
@@ -253,6 +281,7 @@ public class ConnectionConfig extends AbstractConfig
         sslConfig,
         useSSL,
         useStartTLS,
-        connectionInitializer);
+        connectionInitializer,
+        connectionStrategy);
   }
 }

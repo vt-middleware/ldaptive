@@ -3,6 +3,7 @@ bindCredential:password for the bindDn
 bindDn:fully qualified dn to bind as
 bindSaslConfig:SASL configuration data
 connectionInitializer:fully qualified class name that implements org.ldaptive.ConnectionInitializer
+connectionStrategy:fully qualified class name that implements org.ldaptive.ConnectionStrategy
 connectTimeout:milliseconds to wait for connections
 ldapUrl:URL that identifies the LDAP server to search
 responseTimeout:milliseconds to wait for LDAP operation responses

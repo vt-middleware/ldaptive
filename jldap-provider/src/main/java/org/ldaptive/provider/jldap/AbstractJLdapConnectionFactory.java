@@ -4,6 +4,7 @@ package org.ldaptive.provider.jldap;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.AbstractProviderConnectionFactory;
@@ -31,17 +32,19 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
    * Creates a new abstract jldap connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  constraints  connection constraints
    * @param  timeOut  time in milliseconds that operations will wait
    */
   public AbstractJLdapConnectionFactory(
     final String url,
+    final ConnectionStrategy strategy,
     final JLdapProviderConfig config,
     final LDAPConstraints constraints,
     final int timeOut)
   {
-    super(url, config);
+    super(url, strategy, config);
     ldapConstraints = constraints;
     socketTimeOut = timeOut;
   }

@@ -87,14 +87,12 @@ public class OpenDJProviderConfig extends ProviderConfig<Control>
   {
     return
       String.format(
-        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, controlProcessor=%s, options=%s, " +
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, controlProcessor=%s, options=%s, " +
         "searchIgnoreResultCodes=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
-        getConnectionStrategy(),
         getControlProcessor(),
         options,
         Arrays.toString(searchIgnoreResultCodes));

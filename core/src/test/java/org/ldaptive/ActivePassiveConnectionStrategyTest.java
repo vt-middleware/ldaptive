@@ -1,20 +1,20 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link RandomConnectionStrategy}.
+ * Unit test for {@link ActivePassiveConnectionStrategy}.
  *
  * @author  Middleware Services
  */
-public class RandomConnectionStrategyTest
+public class ActivePassiveConnectionStrategyTest
 {
 
   /** Strategy to test. */
-  private final RandomConnectionStrategy strategy = new RandomConnectionStrategy();
+  private final ActivePassiveConnectionStrategy strategy = new ActivePassiveConnectionStrategy();
 
 
   /**
@@ -67,10 +67,6 @@ public class RandomConnectionStrategyTest
   public void getLdapUrls(final ConnectionFactoryMetadata metadata, final String[] urls)
     throws Exception
   {
-    if (urls != null) {
-      Assert.assertEquals(strategy.getLdapUrls(metadata).length, urls.length);
-    } else {
-      Assert.assertEquals(strategy.getLdapUrls(metadata), urls);
-    }
+    Assert.assertEquals(strategy.getLdapUrls(metadata), urls);
   }
 }

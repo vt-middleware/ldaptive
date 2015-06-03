@@ -5,6 +5,7 @@ import org.forgerock.opendj.ldap.Connection;
 import org.forgerock.opendj.ldap.ErrorResultException;
 import org.forgerock.opendj.ldap.LDAPConnectionFactory;
 import org.forgerock.opendj.ldap.LDAPOptions;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.AbstractProviderConnectionFactory;
@@ -26,12 +27,17 @@ public class OpenDJConnectionFactory extends AbstractProviderConnectionFactory<O
    * Creates a new OpenDJ connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  options  connection options
    */
-  public OpenDJConnectionFactory(final String url, final OpenDJProviderConfig config, final LDAPOptions options)
+  public OpenDJConnectionFactory(
+    final String url,
+    final ConnectionStrategy strategy,
+    final OpenDJProviderConfig config,
+    final LDAPOptions options)
   {
-    super(url, config);
+    super(url, strategy, config);
     ldapOptions = options;
   }
 
