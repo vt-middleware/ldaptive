@@ -233,7 +233,7 @@
           <descriptors>
             <descriptor>src/main/assembly/ldaptive.xml</descriptor>
           </descriptors>
-          <finalName>ldaptive-${pom.version}</finalName>
+          <finalName>ldaptive-${project.version}</finalName>
           <archiverConfig>
             <defaultDirectoryMode>0755</defaultDirectoryMode>
           </archiverConfig>
