@@ -22,7 +22,12 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
   @Override
   public void handle(final AuthenticationResponse response)
   {
-    if (response.getResult()) {
+    if (response.getMessage() != null) {
+      final EDirectoryAccountState.Error edError = EDirectoryAccountState.Error.parse(response.getMessage());
+      if (edError != null) {
+        response.setAccountState(new EDirectoryAccountState(edError));
+      }
+    } else if (response.getResult()) {
       final LdapEntry entry = response.getLdapEntry();
       final LdapAttribute expTime = entry.getAttribute("passwordExpirationTime");
       final LdapAttribute loginRemaining = entry.getAttribute("loginGraceRemaining");
@@ -35,13 +40,6 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
           new EDirectoryAccountState(
             exp,
             loginRemaining != null ? Integer.parseInt(loginRemaining.getStringValue()) : 0));
-      }
-    } else {
-      if (response.getMessage() != null) {
-        final EDirectoryAccountState.Error edError = EDirectoryAccountState.Error.parse(response.getMessage());
-        if (edError != null) {
-          response.setAccountState(new EDirectoryAccountState(edError));
-        }
       }
     }
   }
