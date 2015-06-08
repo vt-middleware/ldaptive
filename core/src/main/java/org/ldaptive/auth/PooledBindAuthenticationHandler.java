@@ -84,7 +84,7 @@ public class PooledBindAuthenticationHandler extends AbstractBindAuthenticationH
         bindResponse.getControls(),
         bindResponse.getMessageId());
     } catch (LdapException e) {
-      if (ResultCode.INVALID_CREDENTIALS == e.getResultCode()) {
+      if (e.getResultCode() != null) {
         response = new AuthenticationHandlerResponse(
           false,
           e.getResultCode(),
