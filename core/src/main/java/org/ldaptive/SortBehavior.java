@@ -38,10 +38,15 @@ public enum SortBehavior {
     final String sb = System.getProperty(SORT_BEHAVIOR);
     if (sb != null) {
       try {
-        final SortBehavior sortBehavior = (SortBehavior) Class.forName(sb).newInstance();
-        LOGGER.info("Set default sort behavior to {}", sortBehavior);
+        final SortBehavior sortBehavior;
+        if (sb.startsWith(SortBehavior.class.getName())) {
+          sortBehavior = SortBehavior.valueOf(sb.substring(SortBehavior.class.getName().length() + 1, sb.length()));
+        } else {
+          sortBehavior = SortBehavior.valueOf(sb);
+        }
+        LOGGER.info("Setting default sort behavior to {}", sortBehavior);
         defaultSortBehavior = sortBehavior;
-      } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+      } catch (IllegalArgumentException e) {
         LOGGER.error("Error instantiating {}", sb, e);
       }
     }
