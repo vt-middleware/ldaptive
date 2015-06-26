@@ -10,6 +10,8 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides common implementation for TLSSocketFactory.
@@ -21,6 +23,9 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
   /** Default SSL protocol, value is {@value}. */
   public static final String DEFAULT_PROTOCOL = "TLS";
+
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** SSLSocketFactory used for creating SSL sockets. */
   protected SSLSocketFactory factory;
@@ -159,8 +164,7 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
         socket.close();
         socket.getSession().invalidate();
         throw new SSLPeerUnverifiedException(
-          String.format("Hostname '%s' does not match the hostname in the server's " +
-            "certificate", hostname));
+          String.format("Hostname '%s' does not match the hostname in the server's certificate", hostname));
       }
     }
     return socket;

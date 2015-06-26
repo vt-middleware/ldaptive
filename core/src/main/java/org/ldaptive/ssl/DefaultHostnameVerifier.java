@@ -105,7 +105,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
   @Override
   public boolean verify(final String hostname, final X509Certificate cert)
   {
-    logger.debug("verifying hostname={} against cert={}", hostname, cert.getSubjectX500Principal().toString());
+    logger.debug("verifying hostname={} against cert={}", hostname, cert.getSubjectX500Principal());
 
     boolean b;
     if (LdapUtils.isIPAddress(hostname)) {

@@ -5,6 +5,8 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import javax.net.ssl.X509TrustManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Trust manager that delegates to {@link CertificateHostnameVerifier}. Any name that verifies passes this trust manager
@@ -14,6 +16,9 @@ import javax.net.ssl.X509TrustManager;
  */
 public class HostnameVerifyingTrustManager implements X509TrustManager
 {
+
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Hostnames to allow. */
   private final String[] hostnames;
@@ -63,14 +68,19 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
   {
     for (String name : hostnames) {
       if (hostnameVerifier.verify(name, cert)) {
+        logger.debug(
+          "checkCertificateTrusted for {} succeeded against {}",
+          hostnameVerifier,
+          cert.getSubjectX500Principal());
         return;
       }
     }
     throw new CertificateException(
       String.format(
         "Hostname '%s' does not match the hostname in the server's " +
-        "certificate",
-        Arrays.toString(hostnames)));
+        "certificate '%s'",
+        Arrays.toString(hostnames),
+        cert.getSubjectX500Principal()));
   }
 
 

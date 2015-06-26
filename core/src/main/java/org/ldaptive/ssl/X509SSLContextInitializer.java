@@ -5,6 +5,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManager;
@@ -130,5 +131,19 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
       km = kmf.getKeyManagers();
     }
     return km;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::trustManagers=%s, trustCerts=%s, authenticationCert=%s]",
+        getClass().getName(),
+        hashCode(),
+        Arrays.toString(trustManagers),
+        trustCerts,
+        authenticationCert);
   }
 }

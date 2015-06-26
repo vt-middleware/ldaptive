@@ -3,6 +3,7 @@ package org.ldaptive.ssl;
 
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.util.Arrays;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.TrustManager;
@@ -130,5 +131,22 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
       km = kmf.getKeyManagers();
     }
     return km;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::trustManagers=%s, trustKeystore=%s, trustAliases=%s, authenticationKeystore=%s, " +
+        "authenticationAliases=%s]",
+        getClass().getName(),
+        hashCode(),
+        Arrays.toString(trustManagers),
+        trustKeystore,
+        Arrays.toString(trustAliases),
+        authenticationKeystore,
+        Arrays.toString(authenticationAliases));
   }
 }

@@ -92,8 +92,7 @@ public class HostnameVerifyingListener implements HandshakeCompletedListener
     }
     if (!verified) {
       throw new SSLPeerUnverifiedException(
-        String.format("Hostname '%s' does not match the hostname in the server's " +
-          "certificate", hostname));
+        String.format("Hostname '%s' does not match the hostname in the server's certificate", hostname));
     }
   }
 }

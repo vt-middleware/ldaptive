@@ -50,6 +50,7 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
       contextInitializer = new DefaultSSLContextInitializer();
     }
 
+    logger.trace("Using SSLContextInitializer={}", contextInitializer);
     final SSLContext ctx = contextInitializer.initSSLContext(DEFAULT_PROTOCOL);
     factory = ctx.getSocketFactory();
   }

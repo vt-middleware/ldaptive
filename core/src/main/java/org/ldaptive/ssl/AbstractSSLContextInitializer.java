@@ -2,10 +2,14 @@
 package org.ldaptive.ssl;
 
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.ldaptive.LdapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides common implementation for SSL context initializer.
@@ -15,8 +19,11 @@ import org.ldaptive.LdapUtils;
 public abstract class AbstractSSLContextInitializer implements SSLContextInitializer
 {
 
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
+
   /** Trust managers. */
-  private TrustManager[] trustManagers;
+  protected TrustManager[] trustManagers;
 
 
   @Override
@@ -61,8 +68,12 @@ public abstract class AbstractSSLContextInitializer implements SSLContextInitial
   public SSLContext initSSLContext(final String protocol)
     throws GeneralSecurityException
   {
+    final KeyManager[] km = getKeyManagers();
+    final TrustManager[] tm = getTrustManagers();
+    logger.trace(
+      "Initialize SSLContext with keyManagers={} and trustManagers={}", Arrays.toString(km), Arrays.toString(tm));
     final SSLContext ctx = SSLContext.getInstance(protocol);
-    ctx.init(getKeyManagers(), getTrustManagers(), null);
+    ctx.init(km, tm, null);
     return ctx;
   }
 
