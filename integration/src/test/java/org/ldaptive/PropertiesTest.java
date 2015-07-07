@@ -99,7 +99,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(bindDn, ci.getBindDn());
     AssertJUnit.assertEquals(8000, cc.getConnectTimeout());
     AssertJUnit.assertFalse(cc.getUseStartTLS());
-    AssertJUnit.assertEquals(ConnectionStrategy.ROUND_ROBIN, cc.getConnectionStrategy());
+    AssertJUnit.assertEquals(RoundRobinConnectionStrategy.class, cc.getConnectionStrategy().getClass());
     AssertJUnit.assertEquals(
       org.ldaptive.provider.TestControlProcessor.class,
       cf.getProvider().getProviderConfig().getControlProcessor().getClass());
@@ -165,7 +165,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(bindDn, authCi.getBindDn());
     AssertJUnit.assertEquals(8000, authCc.getConnectTimeout());
     AssertJUnit.assertTrue(authCc.getUseStartTLS());
-    AssertJUnit.assertEquals(ConnectionStrategy.ROUND_ROBIN, authCc.getConnectionStrategy());
+    AssertJUnit.assertEquals(RoundRobinConnectionStrategy.class, authCc.getConnectionStrategy().getClass());
     AssertJUnit.assertEquals(1, authCf.getProvider().getProviderConfig().getProperties().size());
     AssertJUnit.assertEquals(
       "true",
@@ -231,7 +231,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(bindDn, ci.getBindDn());
     AssertJUnit.assertEquals(8000, cc.getConnectTimeout());
     AssertJUnit.assertTrue(cc.getUseStartTLS());
-    AssertJUnit.assertEquals(ConnectionStrategy.ROUND_ROBIN, cc.getConnectionStrategy());
+    AssertJUnit.assertEquals(RoundRobinConnectionStrategy.class, cc.getConnectionStrategy().getClass());
     AssertJUnit.assertEquals(1, cf.getProvider().getProviderConfig().getProperties().size());
     AssertJUnit.assertEquals(
       "true",
@@ -278,7 +278,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(bindDn, authCi.getBindDn());
     AssertJUnit.assertEquals(8000, authCc.getConnectTimeout());
     AssertJUnit.assertTrue(authCc.getUseStartTLS());
-    AssertJUnit.assertEquals(ConnectionStrategy.ROUND_ROBIN, authCc.getConnectionStrategy());
+    AssertJUnit.assertEquals(RoundRobinConnectionStrategy.class, authCc.getConnectionStrategy().getClass());
     AssertJUnit.assertEquals(1, authP.getProviderConfig().getProperties().size());
     AssertJUnit.assertEquals("true", authP.getProviderConfig().getProperties().get("java.naming.authoritative"));
 

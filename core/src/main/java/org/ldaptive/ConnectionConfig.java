@@ -33,7 +33,7 @@ public class ConnectionConfig extends AbstractConfig
   private ConnectionInitializer connectionInitializer;
 
   /** Connection strategy. */
-  private ConnectionStrategy connectionStrategy = ConnectionStrategy.DEFAULT;
+  private ConnectionStrategy connectionStrategy = new DefaultConnectionStrategy();
 
 
   /** Default constructor. */

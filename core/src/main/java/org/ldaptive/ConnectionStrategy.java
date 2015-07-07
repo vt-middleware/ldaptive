@@ -10,18 +10,6 @@ package org.ldaptive;
 public interface ConnectionStrategy
 {
 
-  /** default strategy. */
-  ConnectionStrategy DEFAULT = new DefaultConnectionStrategy();
-
-  /** active-passive strategy. */
-  ConnectionStrategy ACTIVE_PASSIVE = new ActivePassiveConnectionStrategy();
-
-  /** round robin strategy. */
-  ConnectionStrategy ROUND_ROBIN = new RoundRobinConnectionStrategy();
-
-  /** random strategy. */
-  ConnectionStrategy RANDOM = new RandomConnectionStrategy();
-
 
   /**
    * Returns an ordered list of URLs to attempt to open.

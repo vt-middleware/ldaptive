@@ -154,7 +154,7 @@ public class ConnectionTest
     throws Exception
   {
     ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
-    cc.setConnectionStrategy(ConnectionStrategy.ROUND_ROBIN);
+    cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
     DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
 
     Connection conn = connFactory.getConnection();
@@ -176,7 +176,7 @@ public class ConnectionTest
     }
 
     cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
-    cc.setConnectionStrategy(ConnectionStrategy.DEFAULT);
+    cc.setConnectionStrategy(new DefaultConnectionStrategy());
     connFactory = new DefaultConnectionFactory(cc);
     conn = connFactory.getConnection();
     try {
@@ -196,7 +196,7 @@ public class ConnectionTest
     }
 
     cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
-    cc.setConnectionStrategy(ConnectionStrategy.ACTIVE_PASSIVE);
+    cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
     connFactory = new DefaultConnectionFactory(cc);
     conn = connFactory.getConnection();
     try {
@@ -216,7 +216,7 @@ public class ConnectionTest
     }
 
     cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
-    cc.setConnectionStrategy(ConnectionStrategy.RANDOM);
+    cc.setConnectionStrategy(new RandomConnectionStrategy());
     connFactory = new DefaultConnectionFactory(cc);
     conn = connFactory.getConnection();
     try {
