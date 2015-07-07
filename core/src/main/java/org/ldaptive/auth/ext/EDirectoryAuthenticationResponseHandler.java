@@ -18,6 +18,27 @@ import org.ldaptive.io.GeneralizedTimeValueTranscoder;
 public class EDirectoryAuthenticationResponseHandler implements AuthenticationResponseHandler
 {
 
+  /** Number of hours before expiration to produce a warning. */
+  private int warningHours;
+
+
+  /** Default constructor. */
+  public EDirectoryAuthenticationResponseHandler() {}
+
+
+  /**
+   * Creates a new edirectory authentication response handler.
+   *
+   * @param  hours  length of time before expiration that should produce a warning
+   */
+  public EDirectoryAuthenticationResponseHandler(final int hours)
+  {
+    if (hours <= 0) {
+      throw new IllegalArgumentException("Hours must be > 0");
+    }
+    warningHours = hours;
+  }
+
 
   @Override
   public void handle(final AuthenticationResponse response)
@@ -31,15 +52,22 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
       final LdapEntry entry = response.getLdapEntry();
       final LdapAttribute expTime = entry.getAttribute("passwordExpirationTime");
       final LdapAttribute loginRemaining = entry.getAttribute("loginGraceRemaining");
-      Calendar exp = null;
+      final int loginRemainingValue = loginRemaining != null ? Integer.parseInt(loginRemaining.getStringValue()) : 0;
+
       if (expTime != null) {
-        exp = expTime.getValue(new GeneralizedTimeValueTranscoder());
-      }
-      if (exp != null || loginRemaining != null) {
-        response.setAccountState(
-          new EDirectoryAccountState(
-            exp,
-            loginRemaining != null ? Integer.parseInt(loginRemaining.getStringValue()) : 0));
+        final Calendar exp = expTime.getValue(new GeneralizedTimeValueTranscoder());
+        if (warningHours > 0) {
+          final Calendar now = Calendar.getInstance();
+          final Calendar warn = (Calendar) exp.clone();
+          warn.add(Calendar.HOUR_OF_DAY, -warningHours);
+          if (now.after(warn)) {
+            response.setAccountState(new EDirectoryAccountState(exp, loginRemainingValue));
+          }
+        } else {
+          response.setAccountState(new EDirectoryAccountState(exp, loginRemainingValue));
+        }
+      } else if (loginRemaining != null) {
+        response.setAccountState(new EDirectoryAccountState(null, loginRemainingValue));
       }
     }
   }
