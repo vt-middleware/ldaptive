@@ -51,7 +51,7 @@ public class PerformanceTest
       "ldapBaseDn",
       "ldapSearchFilter"
     }
-  )
+    )
   public void initialize(final String socketFile, final String host, final String baseDn, final String searchFilter)
   {
     System.setProperty("org.ldaptive.ldapi.socketFile", socketFile);
