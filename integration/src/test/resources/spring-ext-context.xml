@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd">
+
+  <ldaptive:anonymous-search-authenticator
+    ldapUrl="${ldapTestHost}"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+    baseDn="${ldapBaseDn}"
+    userFilter="(mail={user})"
+  />
+
+  <ldaptive:bind-search-authenticator
+    ldapUrl="${ldapTestHost}"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+    baseDn="${ldapBaseDn}"
+    userFilter="(mail={user})"
+    bindDn="${ldapBindDn}"
+    bindCredential="${ldapBindCredential}"
+  />
+
+  <ldaptive:direct-authenticator
+    ldapUrl="${ldapTestHost}"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+    format="cn=%s,${ldapBaseDn}"
+  />
+
+  <ldaptive:ad-authenticator
+    ldapUrl="${ldapTestHost}"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+  />
+
+</beans>

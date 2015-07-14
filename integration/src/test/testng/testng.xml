@@ -491,6 +491,7 @@
         <include name="beans-generate" />
         <include name="beans-mapper" />
         <include name="beans-manager" />
+        <include name="beans-spring" />
         <include name="conn" />
       </define>
       <define name="core-sysprops">
