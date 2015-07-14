@@ -13,6 +13,7 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.Provider;
+import org.ldaptive.provider.opendj.OpenDJProvider;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -75,7 +76,7 @@ public class TLSSocketFactoryTest
 
   /** List of protocols. */
   public static final String[] UNKNOWN_PROTOCOLS = new String[] {
-    /* one invalid protocol, two valid*/
+    /* one invalid protocol, two valid */
     "SSLv3Hello",
     "SSLv2Hello",
     "TLSv1",
@@ -241,9 +242,6 @@ public class TLSSocketFactoryTest
     throws Exception
   {
     final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
-    if ("org.ldaptive.provider.opendj.OpenDJProvider".equals(p.getClass().getName())) {
-      throw new UnsupportedOperationException("Test causes hang");
-    }
 
     final ConnectionConfig cc = createTLSConnectionConfig(url);
     final TLSSocketFactory sf = new TLSSocketFactory();
@@ -264,13 +262,17 @@ public class TLSSocketFactoryTest
       AssertJUnit.assertNotNull(e);
     }
 
-    cc.getSslConfig().setEnabledProtocols(UNKNOWN_PROTOCOLS);
-    conn = DefaultConnectionFactory.getConnection(cc);
-    try {
-      conn.open();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
-    } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
+    if (OpenDJProvider.class.equals(p.getClass())) {
+      // grizzly ignores unknown protocols
+    } else {
+      cc.getSslConfig().setEnabledProtocols(UNKNOWN_PROTOCOLS);
+      conn = DefaultConnectionFactory.getConnection(cc);
+      try {
+        conn.open();
+        AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      } catch (Exception e) {
+        AssertJUnit.assertNotNull(e);
+      }
     }
 
     sf.getSslConfig().setEnabledProtocols(PROTOCOLS);
