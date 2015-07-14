@@ -183,7 +183,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ctl = new VirtualListViewResponseControl(
         c.getTargetPosition(),
         c.getContentCount(),
-        ResultCode.valueOf(c.getVirtualListViewResult().getVal()),
+        ResultCode.valueOf(c.getVirtualListViewResult().getValue()),
         c.getContextId(),
         c.isCritical());
     }
