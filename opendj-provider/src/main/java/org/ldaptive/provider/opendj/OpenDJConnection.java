@@ -17,6 +17,7 @@ import org.forgerock.opendj.ldap.ReferralException;
 import org.forgerock.opendj.ldap.SearchResultHandler;
 import org.forgerock.opendj.ldap.SearchScope;
 import org.forgerock.opendj.ldap.controls.Control;
+import org.forgerock.opendj.ldap.requests.DigestMD5SASLBindRequest;
 import org.forgerock.opendj.ldap.requests.ExternalSASLBindRequest;
 import org.forgerock.opendj.ldap.requests.GSSAPISASLBindRequest;
 import org.forgerock.opendj.ldap.requests.GenericExtendedRequest;
@@ -58,6 +59,7 @@ import org.ldaptive.provider.ProviderUtils;
 import org.ldaptive.provider.SearchItem;
 import org.ldaptive.provider.SearchIterator;
 import org.ldaptive.provider.SearchListener;
+import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
 import org.slf4j.Logger;
@@ -234,24 +236,17 @@ public class OpenDJConnection implements org.ldaptive.provider.ProviderConnectio
       break;
 
     case DIGEST_MD5:
-      throw new UnsupportedOperationException("DIGEST-MD5 not supported");
-      // returns a result code 82 (Local Error) when the server returns 49
-      /*
-       * sbr = Requests.newDigestMD5SASLBindRequest(
-       * request.getDn() != null ? request.getDn() : "",
-       * request.getCredential() != null ?
-       *  request.getCredential().getBytes() : null);
-       * String digestMd5Realm = sc instanceof DigestMd5Config
-       * ? ((DigestMd5Config) sc).getRealm() : null;
-       * if (digestMd5Realm == null && request.getDn().contains("@")) {
-       * digestMd5Realm = request.getDn().substring(
-       *  request.getDn().indexOf("@") + 1);
-       * }
-       * if (digestMd5Realm != null) {
-       * ((DigestMD5SASLBindRequest) sbr).setRealm(digestMd5Realm);
-       * }
-       * break;
-       */
+      sbr = Requests.newDigestMD5SASLBindRequest(
+        request.getDn() != null ?
+          request.getDn() : "", request.getCredential() != null ? request.getCredential().getBytes() : null);
+      String digestMd5Realm = sc instanceof DigestMd5Config ? ((DigestMd5Config) sc).getRealm() : null;
+      if (digestMd5Realm == null && request.getDn().contains("@")) {
+        digestMd5Realm = request.getDn().substring(request.getDn().indexOf("@") + 1);
+      }
+      if (digestMd5Realm != null) {
+        ((DigestMD5SASLBindRequest) sbr).setRealm(digestMd5Realm);
+      }
+      break;
 
     case CRAM_MD5:
       throw new UnsupportedOperationException("CRAM-MD5 not supported");
