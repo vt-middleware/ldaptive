@@ -2102,9 +2102,6 @@ public class SearchOperationTest extends AbstractTest
           dn,
           new SearchFilter(filter, filterParameters.split("\\|")), returnAttrs.split("\\|"))).getResult();
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
-    } catch (UnsupportedOperationException e) {
-      // ignore this test if not supported
-      AssertJUnit.assertNotNull(e);
     } finally {
       conn.close();
     }
