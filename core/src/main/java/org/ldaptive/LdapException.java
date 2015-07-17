@@ -478,7 +478,7 @@ public class LdapException extends Exception implements ResponseMessage
     return
       String.format(
         "[%s@%d::resultCode=%s, matchedDn=%s, responseControls=%s, " +
-        "referralURLs=%s, messageId=%s, providerException=%s]",
+        "referralURLs=%s, messageId=%s, message=%s, providerException=%s]",
         getClass().getName(),
         hashCode(),
         resultCode,
@@ -486,6 +486,7 @@ public class LdapException extends Exception implements ResponseMessage
         Arrays.toString(responseControls),
         Arrays.toString(referralURLs),
         messageId,
+        getMessage(),
         getCause());
   }
 }
