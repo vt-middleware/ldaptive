@@ -13,7 +13,6 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.Provider;
-import org.ldaptive.provider.opendj.OpenDJProvider;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -262,7 +261,7 @@ public class TLSSocketFactoryTest
       AssertJUnit.assertNotNull(e);
     }
 
-    if (OpenDJProvider.class.equals(p.getClass())) {
+    if ("org.ldaptive.provider.opendj.OpenDJProvider".equals(p.getClass().getName())) {
       // grizzly ignores unknown protocols
     } else {
       cc.getSslConfig().setEnabledProtocols(UNKNOWN_PROTOCOLS);
