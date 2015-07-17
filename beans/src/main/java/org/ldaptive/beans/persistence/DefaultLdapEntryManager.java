@@ -9,6 +9,7 @@ import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Response;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchOperation;
@@ -22,7 +23,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of an ldap entry manager. Uses an {@link LdapEntryMapper} to convert objects to entries, then
- * invokes LDAP operations with those objects.
+ * invokes LDAP operations with those objects. By default all attributes are requested using both the '*' and '+'
+ * syntaxes. For attributes that must be requested by name, use {@link #DefaultLdapEntryManager(LdapEntryMapper,
+ * ConnectionFactory, String[])}.
  *
  * @param  <T>  type of object to manage
  *
@@ -40,6 +43,9 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   /** Connection factory for LDAP communication. */
   private final ConnectionFactory connectionFactory;
 
+  /** Additional attributes to include in searches. */
+  private final String[] returnAttributes;
+
 
   /**
    * Creates a new default ldap entry manager.
@@ -49,8 +55,23 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
    */
   public DefaultLdapEntryManager(final LdapEntryMapper<T> mapper, final ConnectionFactory factory)
   {
+    this(mapper, factory, null);
+  }
+
+
+  /**
+   * Creates a new default ldap entry manager. Use of attrs is for cases where a directory does not support either the
+   * '*' or '+' syntaxes for returning all attributes of a given type.
+   *
+   * @param  mapper  for object conversion
+   * @param  factory  for LDAP communication
+   * @param  attrs  additional return attributes
+   */
+  public DefaultLdapEntryManager(final LdapEntryMapper<T> mapper, final ConnectionFactory factory, final String[] attrs)
+  {
     ldapEntryMapper = mapper;
     connectionFactory = factory;
+    returnAttributes = attrs;
   }
 
 
@@ -76,12 +97,27 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   }
 
 
+  /**
+   * Returns the return attributes.
+   *
+   * @return  additional attributes to include in searches.
+   */
+  public String[] getReturnAttributes()
+  {
+    return returnAttributes;
+  }
+
+
   @Override
   public T find(final T object)
     throws LdapException
   {
     final String dn = getLdapEntryMapper().mapDn(object);
-    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn, ReturnAttributes.ALL.value());
+    String[] attrs = ReturnAttributes.ALL.value();
+    if (returnAttributes != null) {
+      attrs = LdapUtils.concatArrays(attrs, returnAttributes);
+    }
+    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn, attrs);
     try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
 
