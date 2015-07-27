@@ -7,6 +7,7 @@ import java.util.Map;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.provider.ProviderConfig;
 import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.ssl.SocketConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
@@ -49,6 +50,7 @@ public class ConfigTest
         new Object[] {new ProviderConfig(), },
         new Object[] {new SaslConfig(), },
         new Object[] {new SslConfig(), },
+        new Object[] {new SocketConfig(), },
       };
   }
 
