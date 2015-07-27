@@ -109,7 +109,7 @@ public class EDirectoryAccountState extends AccountState
         throw new AccountLockedException(name());
 
       default:
-        throw new IllegalStateException("Unknown active directory error: " + this);
+        throw new IllegalStateException("Unknown edirectory error: " + this);
       }
     }
 
