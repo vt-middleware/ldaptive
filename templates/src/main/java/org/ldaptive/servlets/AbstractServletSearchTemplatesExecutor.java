@@ -38,8 +38,14 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
   /** Ignore pattern. */
   private static final String IGNORE_PATTERN = "ignorePattern";
 
+  /** Minimum query term length. */
+  private static final String MINIMUM_QUERY_TERM_LENGTH = "minimumQueryTermLength";
+
   /** Regex pattern to ignore a query. */
   private Pattern ignorePattern;
+
+  /** Minimum length for at least one query term. */
+  private int minimumQueryTermLength;
 
 
   @Override
@@ -64,6 +70,10 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
     ignorePattern = config.getInitParameter(IGNORE_PATTERN) != null
       ? Pattern.compile(config.getInitParameter(IGNORE_PATTERN)) : null;
     logger.debug("{} = {}", IGNORE_PATTERN, ignorePattern);
+
+    minimumQueryTermLength = config.getInitParameter(MINIMUM_QUERY_TERM_LENGTH) != null
+      ? Integer.parseInt(MINIMUM_QUERY_TERM_LENGTH) : 0;
+    logger.debug("{} = {}", MINIMUM_QUERY_TERM_LENGTH, minimumQueryTermLength);
   }
 
 
@@ -104,14 +114,29 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
     }
     if (doSearch) {
       final Query query = new Query(queryString);
-      query.setReturnAttributes(request.getParameterValues("attrs"));
-      query.setSearchRestrictions(request.getParameter("search-restrictions"));
-      query.setFromResult(fromResult);
-      query.setToResult(toResult);
-      logger.info("Performing query {}", query);
+      if (minimumQueryTermLength > 0) {
+        boolean hasMinimumLengthQueryTerm = false;
+        for (String term : query.getTerms()) {
+          if (term.length() >= minimumQueryTermLength) {
+            hasMinimumLengthQueryTerm = true;
+            break;
+          }
+        }
+        if (!hasMinimumLengthQueryTerm) {
+          logger.info("Does not meet minimum query term length {}", queryString);
+          doSearch = false;
+        }
+      }
+      if (doSearch) {
+        query.setReturnAttributes(request.getParameterValues("attrs"));
+        query.setSearchRestrictions(request.getParameter("search-restrictions"));
+        query.setFromResult(fromResult);
+        query.setToResult(toResult);
+        logger.info("Performing query {}", query);
 
-      final SearchResult result = search(query);
-      writeResponse(result, response);
+        final SearchResult result = search(query);
+        writeResponse(result, response);
+      }
     }
   }
 

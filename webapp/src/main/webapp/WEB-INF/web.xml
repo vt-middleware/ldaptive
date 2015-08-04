@@ -28,6 +28,11 @@
       <param-name>ignorePattern</param-name>
       <param-value>^\w{1,2}$</param-value>
     </init-param>
+    <!-- Minimum query term length -->
+    <init-param>
+      <param-name>minimumQueryTermLength</param-name>
+      <param-value>3</param-value>
+    </init-param>
     <load-on-startup>1</load-on-startup>
   </servlet>
 
