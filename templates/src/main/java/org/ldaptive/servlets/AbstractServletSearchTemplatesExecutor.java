@@ -72,7 +72,7 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
     logger.debug("{} = {}", IGNORE_PATTERN, ignorePattern);
 
     minimumQueryTermLength = config.getInitParameter(MINIMUM_QUERY_TERM_LENGTH) != null
-      ? Integer.parseInt(MINIMUM_QUERY_TERM_LENGTH) : 0;
+      ? Integer.parseInt(config.getInitParameter(MINIMUM_QUERY_TERM_LENGTH)) : 0;
     logger.debug("{} = {}", MINIMUM_QUERY_TERM_LENGTH, minimumQueryTermLength);
   }
 
