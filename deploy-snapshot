@@ -1,0 +1,11 @@
+#!/bin/sh
+
+LOCAL_REPO=${1}
+
+if [ -z "${LOCAL_REPO}" ]; then
+  echo "Usage: $0 <repo-directory>"
+  exit 1
+fi
+
+mvn -Papache,jldap,opendj,unboundid,ldapi clean deploy \
+    -DaltDeploymentRepository=snapshot::default::file://${LOCAL_REPO}
