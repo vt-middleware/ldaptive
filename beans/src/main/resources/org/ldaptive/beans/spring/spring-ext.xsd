@@ -15,7 +15,7 @@
   <xsd:complexType name="anonymousSearchAuthenticatorType">
     <xsd:complexContent>
       <xsd:extension base="baseSearchAuthenticatorType">
-        <xsd:attribute name="usePpolicy" type="xsd:boolean" use="optional" default="false"/>
+        <xsd:attribute name="usePpolicy" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -25,7 +25,7 @@
       <xsd:extension base="baseSearchAuthenticatorType">
         <xsd:attribute name="bindDn" type="xsd:string" use="required"/>
         <xsd:attribute name="bindCredential" type="xsd:string" use="required"/>
-        <xsd:attribute name="usePpolicy" type="xsd:boolean" use="optional" default="false"/>
+        <xsd:attribute name="usePpolicy" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -34,7 +34,7 @@
     <xsd:complexContent>
       <xsd:extension base="baseAuthenticatorType">
         <xsd:attribute name="format" type="xsd:string" use="required"/>
-        <xsd:attribute name="usePpolicy" type="xsd:boolean" use="optional" default="false"/>
+        <xsd:attribute name="usePpolicy" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -50,7 +50,7 @@
       <xsd:extension base="baseAuthenticatorType">
         <xsd:attribute name="baseDn" type="xsd:string" use="required"/>
         <xsd:attribute name="userFilter" type="xsd:string" use="required"/>
-        <xsd:attribute name="subtreeSearch" type="xsd:boolean" use="optional" default="false"/>
+        <xsd:attribute name="subtreeSearch" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -60,16 +60,16 @@
     <!-- connection config -->
     <xsd:attribute name="ldapUrl" type="xsd:string" use="required"/>
     <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="3000"/>
-    <xsd:attribute name="useSSL" type="xsd:boolean" use="optional" default="false"/>
-    <xsd:attribute name="useStartTLS" type="xsd:boolean" use="optional" default="true"/>
+    <xsd:attribute name="useSSL" type="xsd:string" use="optional" default="false"/>
+    <xsd:attribute name="useStartTLS" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="trustCertificates" type="xsd:string" use="optional" />
     <!-- pool config -->
     <xsd:attribute name="blockWaitTime" type="xsd:string" use="optional" default="3000"/>
-    <xsd:attribute name="failFastInitialize" type="xsd:boolean" use="optional" default="false"/>
+    <xsd:attribute name="failFastInitialize" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="minPoolSize" type="xsd:string" use="optional" default="3"/>
     <xsd:attribute name="maxPoolSize" type="xsd:string" use="optional" default="10"/>
-    <xsd:attribute name="validateOnCheckOut" type="xsd:boolean" use="optional" default="false"/>
-    <xsd:attribute name="validatePeriodically" type="xsd:boolean" use="optional" default="true"/>
+    <xsd:attribute name="validateOnCheckOut" type="xsd:string" use="optional" default="false"/>
+    <xsd:attribute name="validatePeriodically" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="validatePeriod" type="xsd:string" use="optional" default="300"/>
     <xsd:attribute name="prunePeriod" type="xsd:string" use="optional" default="300"/>
     <xsd:attribute name="idleTime" type="xsd:string" use="optional" default="600"/>
