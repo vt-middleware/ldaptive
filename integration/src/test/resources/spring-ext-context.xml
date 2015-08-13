@@ -2,35 +2,60 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
             http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd">
 
+  <context:property-placeholder location="classpath:/spring-ext.properties"/>
+
   <ldaptive:anonymous-search-authenticator
-    ldapUrl="${ldapTestHost}"
+    ldapUrl="${ldap.url}"
     trustCertificates="classpath:/ldaptive.trust.crt"
-    baseDn="${ldapBaseDn}"
+    baseDn="${ldap.baseDn}"
     userFilter="(mail={user})"
+    connectTimeout="${ldap.connectTimeout}"
+    useStartTLS="${ldap.useStartTLS}"
+    blockWaitTime="${ldap.pool.blockWaitTime}"
+    maxPoolSize="${ldap.pool.maxSize}"
+    minPoolSize="${ldap.pool.minSize}"
   />
 
   <ldaptive:bind-search-authenticator
-    ldapUrl="${ldapTestHost}"
+    ldapUrl="${ldap.url}"
     trustCertificates="classpath:/ldaptive.trust.crt"
-    baseDn="${ldapBaseDn}"
+    baseDn="${ldap.baseDn}"
     userFilter="(mail={user})"
-    bindDn="${ldapBindDn}"
-    bindCredential="${ldapBindCredential}"
+    bindDn="${ldap.bindDn}"
+    bindCredential="${ldap.bindCredential}"
+    connectTimeout="${ldap.connectTimeout}"
+    useStartTLS="${ldap.useStartTLS}"
+    usePpolicy="${ldap.ppolicy}"
+    blockWaitTime="${ldap.pool.blockWaitTime}"
+    maxPoolSize="${ldap.pool.maxSize}"
+    minPoolSize="${ldap.pool.minSize}"
   />
 
   <ldaptive:direct-authenticator
-    ldapUrl="${ldapTestHost}"
+    ldapUrl="${ldap.url}"
     trustCertificates="classpath:/ldaptive.trust.crt"
-    format="cn=%s,${ldapBaseDn}"
+    format="cn=%s,${ldap.baseDn}"
+    connectTimeout="${ldap.connectTimeout}"
+    useStartTLS="${ldap.useStartTLS}"
+    blockWaitTime="${ldap.pool.blockWaitTime}"
+    maxPoolSize="${ldap.pool.maxSize}"
+    minPoolSize="${ldap.pool.minSize}"
   />
 
   <ldaptive:ad-authenticator
-    ldapUrl="${ldapTestHost}"
+    ldapUrl="${ldap.url}"
     trustCertificates="classpath:/ldaptive.trust.crt"
+    connectTimeout="${ldap.connectTimeout}"
+    useStartTLS="${ldap.useStartTLS}"
+    blockWaitTime="${ldap.pool.blockWaitTime}"
+    maxPoolSize="${ldap.pool.maxSize}"
+    minPoolSize="${ldap.pool.minSize}"
   />
 
 </beans>

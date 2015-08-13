@@ -9,6 +9,7 @@ import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -38,7 +39,7 @@ public class NamespaceHandlerTest
   {
     final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
       new String[] {"/spring-ext-context.xml", });
-    AssertJUnit.assertEquals(4, context.getBeanDefinitionCount());
+    AssertJUnit.assertEquals(4, context.getBeansOfType(Authenticator.class).size());
 
     final Authenticator anonSearchAuthenticator = context.getBean(
       "anonymous-search-authenticator",
@@ -46,21 +47,28 @@ public class NamespaceHandlerTest
     AssertJUnit.assertNotNull(anonSearchAuthenticator);
     testBindConnectionPool(anonSearchAuthenticator);
     testSearchDnResolver(anonSearchAuthenticator);
+    AssertJUnit.assertNull(anonSearchAuthenticator.getAuthenticationResponseHandlers());
 
     final Authenticator bindSearchAuthenticator = context.getBean("bind-search-authenticator", Authenticator.class);
     AssertJUnit.assertNotNull(bindSearchAuthenticator);
     testBindConnectionPool(bindSearchAuthenticator);
     testSearchDnResolver(bindSearchAuthenticator);
+    AssertJUnit.assertNotNull(bindSearchAuthenticator.getAuthenticationResponseHandlers());
+    AssertJUnit.assertEquals(
+      PasswordPolicyAuthenticationResponseHandler.class,
+      bindSearchAuthenticator.getAuthenticationResponseHandlers()[0].getClass());
 
     final Authenticator directAuthenticator = context.getBean("direct-authenticator", Authenticator.class);
     AssertJUnit.assertNotNull(directAuthenticator);
     testBindConnectionPool(directAuthenticator);
     AssertJUnit.assertNotNull(((FormatDnResolver) directAuthenticator.getDnResolver()).getFormat());
+    AssertJUnit.assertNull(directAuthenticator.getAuthenticationResponseHandlers());
 
     final Authenticator adAuthenticator = context.getBean("ad-authenticator", Authenticator.class);
     AssertJUnit.assertNotNull(adAuthenticator);
     testBindConnectionPool(adAuthenticator);
     AssertJUnit.assertNotNull(((FormatDnResolver) adAuthenticator.getDnResolver()).getFormat());
+    AssertJUnit.assertNotNull(adAuthenticator.getAuthenticationResponseHandlers());
     AssertJUnit.assertEquals(
       ActiveDirectoryAuthenticationResponseHandler.class,
       adAuthenticator.getAuthenticationResponseHandlers()[0].getClass());
