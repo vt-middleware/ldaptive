@@ -58,4 +58,14 @@
     minPoolSize="${ldap.pool.minSize}"
   />
 
+  <ldaptive:pooled-connection-factory
+    ldapUrl="${ldap.url}"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+  />
+
+  <ldaptive:connection-factory
+    ldapUrl="${ldap.url}"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+  />
+
 </beans>

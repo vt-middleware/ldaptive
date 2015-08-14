@@ -3,6 +3,7 @@ package org.ldaptive.beans.spring;
 
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
@@ -49,6 +50,8 @@ public class NamespaceHandler extends NamespaceHandlerSupport
     registerBeanDefinitionParser("bind-search-authenticator", new BindSearchAuthenticatorBeanDefinitionParser());
     registerBeanDefinitionParser("direct-authenticator", new DirectAuthenticatorBeanDefinitionParser());
     registerBeanDefinitionParser("ad-authenticator", new ADAuthenticatorBeanDefinitionParser());
+    registerBeanDefinitionParser("pooled-connection-factory", new PooledConnectionFactoryBeanDefinitionParser());
+    registerBeanDefinitionParser("connection-factory", new ConnectionFactoryBeanDefinitionParser());
   }
 
 
@@ -170,6 +173,88 @@ public class NamespaceHandler extends NamespaceHandlerSupport
 
 
   /**
+   * Parser for <pre>pooled-connection-factory</pre> elements.
+   */
+  private static class PooledConnectionFactoryBeanDefinitionParser
+    extends AbstractPooledConnectionFactoryBeanDefinitionParser
+  {
+
+
+    @Override
+    protected String resolveId(
+      final Element element,
+      // CheckStyle:IllegalTypeCheck OFF
+      final AbstractBeanDefinition definition,
+      // CheckStyle:IllegalTypeCheck ON
+      final ParserContext parserContext)
+      throws BeanDefinitionStoreException
+    {
+      final String idAttrValue = element.getAttribute("id");
+      return StringUtils.hasText(idAttrValue) ? idAttrValue : "pooled-connection-factory";
+    }
+
+
+    @Override
+    protected Class<?> getBeanClass(final Element element)
+    {
+      return PooledConnectionFactory.class;
+    }
+
+
+    @Override
+    protected void doParse(
+      final Element element,
+      final ParserContext context,
+      final BeanDefinitionBuilder builder)
+    {
+      builder.addPropertyValue("connectionPool", parseConnectionPool("connection-pool", element));
+    }
+  }
+
+
+  /**
+   * Parser for <pre>pooled-connection-factory</pre> elements.
+   */
+  private static class ConnectionFactoryBeanDefinitionParser extends AbstractConnectionFactoryBeanDefinitionParser
+  {
+
+
+    @Override
+    protected String resolveId(
+      final Element element,
+      // CheckStyle:IllegalTypeCheck OFF
+      final AbstractBeanDefinition definition,
+      // CheckStyle:IllegalTypeCheck ON
+      final ParserContext parserContext)
+      throws BeanDefinitionStoreException
+    {
+      final String idAttrValue = element.getAttribute("id");
+      return StringUtils.hasText(idAttrValue) ? idAttrValue : "connection-factory";
+    }
+
+
+    @Override
+    protected Class<?> getBeanClass(final Element element)
+    {
+      return DefaultConnectionFactory.class;
+    }
+
+
+    @Override
+    protected void doParse(
+      final Element element,
+      final ParserContext context,
+      final BeanDefinitionBuilder builder)
+    {
+      builder.addPropertyValue("connectionConfig", parseConnectionConfig(element));
+      if (element.hasAttribute("provider")) {
+        builder.addPropertyValue("provider", parseProvider(element));
+      }
+    }
+  }
+
+
+  /**
    * Common implementation for search based authenticators.
    */
   private abstract static class AbstractSearchAuthenticatorBeanDefinitionParser
@@ -211,7 +296,8 @@ public class NamespaceHandler extends NamespaceHandlerSupport
   /**
    * Common implementation for all authenticators.
    */
-  private abstract static class AbstractAuthenticatorBeanDefinitionParser extends AbstractSingleBeanDefinitionParser
+  private abstract static class AbstractAuthenticatorBeanDefinitionParser
+    extends AbstractPooledConnectionFactoryBeanDefinitionParser
   {
 
 
@@ -249,6 +335,41 @@ public class NamespaceHandler extends NamespaceHandlerSupport
 
 
     /**
+     * Returns a {@link PasswordPolicyAuthenticationResponseHandler} if the supplied value is true.
+     *
+     * @param  value  of the usePpolicy attribute
+     *
+     * @return  {@link PasswordPolicyAuthenticationResponseHandler} or null
+     */
+    protected static AuthenticationResponseHandler parsePpolicyAuthenticationResponseHandler(final String value)
+    {
+      return Boolean.valueOf(value) ? new PasswordPolicyAuthenticationResponseHandler() : null;
+    }
+
+
+    /**
+     * Returns a {@link PasswordPolicyControl} if the supplied value is true.
+     *
+     * @param  value  of the usePpolicy attribute
+     *
+     * @return  {@link PasswordPolicyControl} or null
+     */
+    protected static RequestControl parsePpolicyControl(final String value)
+    {
+      return Boolean.valueOf(value) ? new PasswordPolicyControl() : null;
+    }
+  }
+
+
+  /**
+   * Common implementation for all pooled connection factories.
+   */
+  private abstract static class AbstractPooledConnectionFactoryBeanDefinitionParser
+    extends AbstractConnectionFactoryBeanDefinitionParser
+  {
+
+
+    /**
      * Creates a blocking connection pool.
      *
      * @param  element  containing configuration
@@ -261,6 +382,9 @@ public class NamespaceHandler extends NamespaceHandlerSupport
       pool.addPropertyValue("name", name);
       final BeanDefinitionBuilder factory = BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.class);
       factory.addPropertyValue("connectionConfig", parseConnectionConfig(element));
+      if (element.hasAttribute("provider")) {
+        factory.addPropertyValue("provider", parseProvider(element));
+      }
       pool.addPropertyValue("connectionFactory", factory.getBeanDefinition());
       pool.addPropertyValue("poolConfig", parsePoolConfig(element));
       pool.addPropertyValue("blockWaitTime", element.getAttribute("blockWaitTime"));
@@ -273,6 +397,33 @@ public class NamespaceHandler extends NamespaceHandlerSupport
       pool.setInitMethodName("initialize");
       return pool.getBeanDefinition();
     }
+
+
+    /**
+     * Creates a pool config.
+     *
+     * @param  element  containing configuration
+     *
+     * @return  pool config bean definition
+     */
+    protected BeanDefinition parsePoolConfig(final Element element)
+    {
+      final BeanDefinitionBuilder poolConfig = BeanDefinitionBuilder.genericBeanDefinition(PoolConfig.class);
+      poolConfig.addPropertyValue("minPoolSize", element.getAttribute("minPoolSize"));
+      poolConfig.addPropertyValue("maxPoolSize", element.getAttribute("maxPoolSize"));
+      poolConfig.addPropertyValue("validateOnCheckOut", element.getAttribute("validateOnCheckOut"));
+      poolConfig.addPropertyValue("validatePeriodically", element.getAttribute("validatePeriodically"));
+      poolConfig.addPropertyValue("validatePeriod", element.getAttribute("validatePeriod"));
+      return poolConfig.getBeanDefinition();
+    }
+  }
+
+
+  /**
+   * Common implementation for all connection factories.
+   */
+  private abstract static class AbstractConnectionFactoryBeanDefinitionParser extends AbstractSingleBeanDefinitionParser
+  {
 
 
     /**
@@ -313,47 +464,17 @@ public class NamespaceHandler extends NamespaceHandlerSupport
 
 
     /**
-     * Creates a pool config.
+     * Creates a provider.
      *
      * @param  element  containing configuration
      *
-     * @return  pool config bean definition
+     * @return  provider bean definition
      */
-    protected BeanDefinition parsePoolConfig(final Element element)
+    protected BeanDefinition parseProvider(final Element element)
     {
-      final BeanDefinitionBuilder poolConfig = BeanDefinitionBuilder.genericBeanDefinition(PoolConfig.class);
-      poolConfig.addPropertyValue("minPoolSize", element.getAttribute("minPoolSize"));
-      poolConfig.addPropertyValue("maxPoolSize", element.getAttribute("maxPoolSize"));
-      poolConfig.addPropertyValue("validateOnCheckOut", element.getAttribute("validateOnCheckOut"));
-      poolConfig.addPropertyValue("validatePeriodically", element.getAttribute("validatePeriodically"));
-      poolConfig.addPropertyValue("validatePeriod", element.getAttribute("validatePeriod"));
-      return poolConfig.getBeanDefinition();
-    }
-
-
-    /**
-     * Returns a {@link PasswordPolicyAuthenticationResponseHandler} if the supplied value is true.
-     *
-     * @param  value  of the usePpolicy attribute
-     *
-     * @return  {@link PasswordPolicyAuthenticationResponseHandler} or null
-     */
-    protected static AuthenticationResponseHandler parsePpolicyAuthenticationResponseHandler(final String value)
-    {
-      return Boolean.valueOf(value) ? new PasswordPolicyAuthenticationResponseHandler() : null;
-    }
-
-
-    /**
-     * Returns a {@link PasswordPolicyControl} if the supplied value is true.
-     *
-     * @param  value  of the usePpolicy attribute
-     *
-     * @return  {@link PasswordPolicyControl} or null
-     */
-    protected static RequestControl parsePpolicyControl(final String value)
-    {
-      return Boolean.valueOf(value) ? new PasswordPolicyControl() : null;
+      final BeanDefinitionBuilder provider = BeanDefinitionBuilder.genericBeanDefinition(
+        element.getAttribute("provider"));
+      return provider.getBeanDefinition();
     }
   }
 }

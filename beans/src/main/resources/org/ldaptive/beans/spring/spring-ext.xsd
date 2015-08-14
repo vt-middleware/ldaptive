@@ -11,6 +11,8 @@
   <xsd:element name="bind-search-authenticator" type="bindSearchAuthenticatorType"/>
   <xsd:element name="direct-authenticator" type="directAuthenticatorType"/>
   <xsd:element name="ad-authenticator" type="adAuthenticatorType"/>
+  <xsd:element name="pooled-connection-factory" type="pooledConnectionFactoryType"/>
+  <xsd:element name="connection-factory" type="connectionFactoryType"/>
 
   <xsd:complexType name="anonymousSearchAuthenticatorType">
     <xsd:complexContent>
@@ -32,7 +34,7 @@
 
   <xsd:complexType name="directAuthenticatorType">
     <xsd:complexContent>
-      <xsd:extension base="baseAuthenticatorType">
+      <xsd:extension base="pooledConnectionFactoryType">
         <xsd:attribute name="format" type="xsd:string" use="required"/>
         <xsd:attribute name="usePpolicy" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
@@ -41,13 +43,13 @@
 
   <xsd:complexType name="adAuthenticatorType">
     <xsd:complexContent>
-      <xsd:extension base="baseAuthenticatorType"/>
+      <xsd:extension base="pooledConnectionFactoryType"/>
     </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="baseSearchAuthenticatorType">
     <xsd:complexContent>
-      <xsd:extension base="baseAuthenticatorType">
+      <xsd:extension base="pooledConnectionFactoryType">
         <xsd:attribute name="baseDn" type="xsd:string" use="required"/>
         <xsd:attribute name="userFilter" type="xsd:string" use="required"/>
         <xsd:attribute name="subtreeSearch" type="xsd:string" use="optional" default="false"/>
@@ -55,24 +57,30 @@
     </xsd:complexContent>
   </xsd:complexType>
 
-  <xsd:complexType name="baseAuthenticatorType">
+  <xsd:complexType name="pooledConnectionFactoryType">
+    <xsd:complexContent>
+      <xsd:extension base="connectionFactoryType">
+        <xsd:attribute name="blockWaitTime" type="xsd:string" use="optional" default="3000"/>
+        <xsd:attribute name="failFastInitialize" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="minPoolSize" type="xsd:string" use="optional" default="3"/>
+        <xsd:attribute name="maxPoolSize" type="xsd:string" use="optional" default="10"/>
+        <xsd:attribute name="validateOnCheckOut" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="validatePeriodically" type="xsd:string" use="optional" default="true"/>
+        <xsd:attribute name="validatePeriod" type="xsd:string" use="optional" default="300"/>
+        <xsd:attribute name="prunePeriod" type="xsd:string" use="optional" default="300"/>
+        <xsd:attribute name="idleTime" type="xsd:string" use="optional" default="600"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="connectionFactoryType">
     <xsd:attribute name="id" type="xsd:ID" use="optional"/>
-    <!-- connection config -->
     <xsd:attribute name="ldapUrl" type="xsd:string" use="required"/>
     <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="3000"/>
     <xsd:attribute name="useSSL" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="useStartTLS" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="trustCertificates" type="xsd:string" use="optional" />
-    <!-- pool config -->
-    <xsd:attribute name="blockWaitTime" type="xsd:string" use="optional" default="3000"/>
-    <xsd:attribute name="failFastInitialize" type="xsd:string" use="optional" default="false"/>
-    <xsd:attribute name="minPoolSize" type="xsd:string" use="optional" default="3"/>
-    <xsd:attribute name="maxPoolSize" type="xsd:string" use="optional" default="10"/>
-    <xsd:attribute name="validateOnCheckOut" type="xsd:string" use="optional" default="false"/>
-    <xsd:attribute name="validatePeriodically" type="xsd:string" use="optional" default="true"/>
-    <xsd:attribute name="validatePeriod" type="xsd:string" use="optional" default="300"/>
-    <xsd:attribute name="prunePeriod" type="xsd:string" use="optional" default="300"/>
-    <xsd:attribute name="idleTime" type="xsd:string" use="optional" default="600"/>
+    <xsd:attribute name="provider" type="xsd:string" use="optional" default="org.ldaptive.provider.jndi.JndiProvider"/>
   </xsd:complexType>
 
 </xsd:schema>
