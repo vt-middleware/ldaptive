@@ -3,7 +3,6 @@ package org.ldaptive.beans.spring;
 
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
@@ -14,14 +13,17 @@ import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.RequestControl;
+import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -128,8 +130,12 @@ public class NamespaceHandler extends NamespaceHandlerSupport
     {
       builder.addConstructorArgValue(new FormatDnResolver(element.getAttribute("format")));
       builder.addConstructorArgValue(parseAuthHandler(element));
-      if (element.hasAttribute("usePpolicy") && Boolean.valueOf(element.getAttribute("usePpolicy"))) {
-        builder.addPropertyValue("authenticationResponseHandlers", new PasswordPolicyAuthenticationResponseHandler());
+      if (element.hasAttribute("usePasswordPolicy")) {
+        final BeanDefinitionBuilder responseHandler =  BeanDefinitionBuilder.rootBeanDefinition(
+          AbstractAuthenticatorBeanDefinitionParser.class,
+          "parsePasswordPolicyAuthenticationResponseHandler");
+        responseHandler.addConstructorArgValue(element.getAttribute("usePasswordPolicy"));
+        builder.addPropertyValue("authenticationResponseHandlers", responseHandler.getBeanDefinition());
       }
     }
   }
@@ -165,9 +171,15 @@ public class NamespaceHandler extends NamespaceHandlerSupport
       builder.addConstructorArgValue(new FormatDnResolver("%s@domain.com"));
       builder.addConstructorArgValue(parseAuthHandler(element));
       builder.addPropertyValue("authenticationResponseHandlers", new ActiveDirectoryAuthenticationResponseHandler());
-      final SearchEntryResolver entryResolver = new SearchEntryResolver();
-      entryResolver.setSearchEntryHandlers(new ObjectGuidHandler(), new ObjectSidHandler());
-      builder.addPropertyValue("entryResolver", entryResolver);
+
+      final BeanDefinitionBuilder resolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
+      resolver.addPropertyValue("baseDn", element.getAttribute("baseDn"));
+      resolver.addPropertyValue("userFilter", "(userPrincipalName={dn})");
+      resolver.addPropertyValue("subtreeSearch", element.getAttribute("subtreeSearch"));
+      resolver.addPropertyValue(
+        "searchEntryHandlers",
+        new SearchEntryHandler[]{new ObjectGuidHandler(), new ObjectSidHandler()});
+      builder.addPropertyValue("entryResolver", resolver.getBeanDefinition());
     }
   }
 
@@ -278,13 +290,14 @@ public class NamespaceHandler extends NamespaceHandlerSupport
       resolver.addPropertyValue("baseDn", element.getAttribute("baseDn"));
       resolver.addPropertyValue("subtreeSearch", element.getAttribute("subtreeSearch"));
       resolver.addPropertyValue("userFilter", element.getAttribute("userFilter"));
+      resolver.addPropertyValue("allowMultipleDns", element.getAttribute("allowMultipleDns"));
       resolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
 
-      if (element.hasAttribute("usePpolicy")) {
+      if (element.hasAttribute("usePasswordPolicy")) {
         final BeanDefinitionBuilder responseHandler =  BeanDefinitionBuilder.rootBeanDefinition(
           AbstractAuthenticatorBeanDefinitionParser.class,
-          "parsePpolicyAuthenticationResponseHandler");
-        responseHandler.addConstructorArgValue(element.getAttribute("usePpolicy"));
+          "parsePasswordPolicyAuthenticationResponseHandler");
+        responseHandler.addConstructorArgValue(element.getAttribute("usePasswordPolicy"));
         builder.addPropertyValue("authenticationResponseHandlers", responseHandler.getBeanDefinition());
       }
       builder.addConstructorArgValue(resolver.getBeanDefinition());
@@ -323,11 +336,11 @@ public class NamespaceHandler extends NamespaceHandlerSupport
         PooledConnectionFactory.class);
       connectionFactory.addPropertyValue("connectionPool", parseConnectionPool("bind-pool", element));
       authHandler.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
-      if (element.hasAttribute("usePpolicy")) {
+      if (element.hasAttribute("usePasswordPolicy")) {
         final BeanDefinitionBuilder control =  BeanDefinitionBuilder.rootBeanDefinition(
           AbstractAuthenticatorBeanDefinitionParser.class,
-          "parsePpolicyControl");
-        control.addConstructorArgValue(element.getAttribute("usePpolicy"));
+          "parsePasswordPolicyControl");
+        control.addConstructorArgValue(element.getAttribute("usePasswordPolicy"));
         authHandler.addPropertyValue("authenticationControls", control.getBeanDefinition());
       }
       return authHandler.getBeanDefinition();
@@ -337,26 +350,30 @@ public class NamespaceHandler extends NamespaceHandlerSupport
     /**
      * Returns a {@link PasswordPolicyAuthenticationResponseHandler} if the supplied value is true.
      *
-     * @param  value  of the usePpolicy attribute
+     * @param  value  of the usePasswordPolicy attribute
      *
      * @return  {@link PasswordPolicyAuthenticationResponseHandler} or null
      */
-    protected static AuthenticationResponseHandler parsePpolicyAuthenticationResponseHandler(final String value)
+    protected static AuthenticationResponseHandler[] parsePasswordPolicyAuthenticationResponseHandler(
+      final String value)
     {
-      return Boolean.valueOf(value) ? new PasswordPolicyAuthenticationResponseHandler() : null;
+      return Boolean.valueOf(value) ?
+        new AuthenticationResponseHandler[] {
+          new PasswordPolicyAuthenticationResponseHandler(), new PasswordExpirationAuthenticationResponseHandler()} :
+        null;
     }
 
 
     /**
      * Returns a {@link PasswordPolicyControl} if the supplied value is true.
      *
-     * @param  value  of the usePpolicy attribute
+     * @param  value  of the usePasswordPolicy attribute
      *
      * @return  {@link PasswordPolicyControl} or null
      */
-    protected static RequestControl parsePpolicyControl(final String value)
+    protected static RequestControl[] parsePasswordPolicyControl(final String value)
     {
-      return Boolean.valueOf(value) ? new PasswordPolicyControl() : null;
+      return Boolean.valueOf(value) ? new RequestControl[] {new PasswordPolicyControl()} : null;
     }
   }
 
@@ -447,6 +464,15 @@ public class NamespaceHandler extends NamespaceHandlerSupport
         final BeanDefinitionBuilder credentialConfig = BeanDefinitionBuilder.genericBeanDefinition(
           X509CredentialConfig.class);
         credentialConfig.addPropertyValue("trustCertificates", element.getAttribute("trustCertificates"));
+        final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
+        sslConfig.addPropertyValue("credentialConfig", credentialConfig.getBeanDefinition());
+        connectionConfig.addPropertyValue("sslConfig", sslConfig.getBeanDefinition());
+      } else if (element.hasAttribute("trustStore")) {
+        final BeanDefinitionBuilder credentialConfig = BeanDefinitionBuilder.genericBeanDefinition(
+          KeyStoreCredentialConfig.class);
+        credentialConfig.addPropertyValue("trustStore", element.getAttribute("trustStore"));
+        credentialConfig.addPropertyValue("trustStorePassword", element.getAttribute("trustStorePassword"));
+        credentialConfig.addPropertyValue("trustStoreType", element.getAttribute("trustStoreType"));
         final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
         sslConfig.addPropertyValue("credentialConfig", credentialConfig.getBeanDefinition());
         connectionConfig.addPropertyValue("sslConfig", sslConfig.getBeanDefinition());

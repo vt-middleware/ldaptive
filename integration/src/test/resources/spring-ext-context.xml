@@ -24,14 +24,16 @@
 
   <ldaptive:bind-search-authenticator
     ldapUrl="${ldap.url}"
-    trustCertificates="classpath:/ldaptive.trust.crt"
+    trustStore="classpath:/ldaptive.truststore"
+    trustStorePassword="changeit"
+    trustStoreType="BKS"
     baseDn="${ldap.baseDn}"
     userFilter="(mail={user})"
     bindDn="${ldap.bindDn}"
     bindCredential="${ldap.bindCredential}"
     connectTimeout="${ldap.connectTimeout}"
     useStartTLS="${ldap.useStartTLS}"
-    usePpolicy="${ldap.ppolicy}"
+    usePasswordPolicy="${ldap.ppolicy}"
     blockWaitTime="${ldap.pool.blockWaitTime}"
     maxPoolSize="${ldap.pool.maxSize}"
     minPoolSize="${ldap.pool.minSize}"
@@ -39,7 +41,7 @@
 
   <ldaptive:direct-authenticator
     ldapUrl="${ldap.url}"
-    trustCertificates="classpath:/ldaptive.trust.crt"
+    trustCertificates="${ldap.trustCertificates}"
     format="cn=%s,${ldap.baseDn}"
     connectTimeout="${ldap.connectTimeout}"
     useStartTLS="${ldap.useStartTLS}"
@@ -50,6 +52,7 @@
 
   <ldaptive:ad-authenticator
     ldapUrl="${ldap.url}"
+    baseDn="${ldap.baseDn}"
     trustCertificates="classpath:/ldaptive.trust.crt"
     connectTimeout="${ldap.connectTimeout}"
     useStartTLS="${ldap.useStartTLS}"
@@ -60,7 +63,8 @@
 
   <ldaptive:pooled-connection-factory
     ldapUrl="${ldap.url}"
-    trustCertificates="classpath:/ldaptive.trust.crt"
+    trustStore="${ldap.trustStore}"
+    trustStoreType="${ldap.trustStoreType}"
   />
 
   <ldaptive:connection-factory

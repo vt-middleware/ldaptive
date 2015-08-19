@@ -17,7 +17,7 @@
   <xsd:complexType name="anonymousSearchAuthenticatorType">
     <xsd:complexContent>
       <xsd:extension base="baseSearchAuthenticatorType">
-        <xsd:attribute name="usePpolicy" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="usePasswordPolicy" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -27,7 +27,7 @@
       <xsd:extension base="baseSearchAuthenticatorType">
         <xsd:attribute name="bindDn" type="xsd:string" use="required"/>
         <xsd:attribute name="bindCredential" type="xsd:string" use="required"/>
-        <xsd:attribute name="usePpolicy" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="usePasswordPolicy" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -36,14 +36,17 @@
     <xsd:complexContent>
       <xsd:extension base="pooledConnectionFactoryType">
         <xsd:attribute name="format" type="xsd:string" use="required"/>
-        <xsd:attribute name="usePpolicy" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="usePasswordPolicy" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
   <xsd:complexType name="adAuthenticatorType">
     <xsd:complexContent>
-      <xsd:extension base="pooledConnectionFactoryType"/>
+      <xsd:extension base="pooledConnectionFactoryType">
+        <xsd:attribute name="baseDn" type="xsd:string" use="required"/>
+        <xsd:attribute name="subtreeSearch" type="xsd:string" use="optional" default="false"/>
+      </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
@@ -53,6 +56,7 @@
         <xsd:attribute name="baseDn" type="xsd:string" use="required"/>
         <xsd:attribute name="userFilter" type="xsd:string" use="required"/>
         <xsd:attribute name="subtreeSearch" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="allowMultipleDns" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -79,7 +83,10 @@
     <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="3000"/>
     <xsd:attribute name="useSSL" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="useStartTLS" type="xsd:string" use="optional" default="true"/>
-    <xsd:attribute name="trustCertificates" type="xsd:string" use="optional" />
+    <xsd:attribute name="trustCertificates" type="xsd:string" use="optional"/>
+    <xsd:attribute name="trustStore" type="xsd:string" use="optional"/>
+    <xsd:attribute name="trustStorePassword" type="xsd:string" use="optional" default="changeit"/>
+    <xsd:attribute name="trustStoreType" type="xsd:string" use="optional" default="JKS"/>
     <xsd:attribute name="provider" type="xsd:string" use="optional" default="org.ldaptive.provider.jndi.JndiProvider"/>
   </xsd:complexType>
 

@@ -16,6 +16,8 @@ import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.ssl.CredentialConfig;
+import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.AssertJUnit;
@@ -163,8 +165,11 @@ public class NamespaceHandlerTest
     AssertJUnit.assertTrue(connectionConfig.getUseStartTLS());
     AssertJUnit.assertFalse(connectionConfig.getUseSSL());
     AssertJUnit.assertEquals(3000, connectionConfig.getConnectTimeout());
-    final X509CredentialConfig credentialConfig =
-      (X509CredentialConfig) connectionConfig.getSslConfig().getCredentialConfig();
-    AssertJUnit.assertNotNull(credentialConfig.getTrustCertificates());
+    final CredentialConfig credentialConfig =  connectionConfig.getSslConfig().getCredentialConfig();
+    if (credentialConfig instanceof X509CredentialConfig) {
+      AssertJUnit.assertNotNull(((X509CredentialConfig) credentialConfig).getTrustCertificates());
+    } else if (credentialConfig instanceof KeyStoreCredentialConfig) {
+      AssertJUnit.assertNotNull(((KeyStoreCredentialConfig) credentialConfig).getTrustStore());
+    }
   }
 }
