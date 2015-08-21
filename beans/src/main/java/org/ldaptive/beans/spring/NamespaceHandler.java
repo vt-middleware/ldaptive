@@ -144,7 +144,7 @@ public class NamespaceHandler extends NamespaceHandlerSupport
   /**
    * Parser for <pre>ad-authenticator</pre> elements.
    */
-  private static class ADAuthenticatorBeanDefinitionParser extends AbstractAuthenticatorBeanDefinitionParser
+  private static class ADAuthenticatorBeanDefinitionParser extends AbstractSearchAuthenticatorBeanDefinitionParser
   {
 
 
@@ -168,14 +168,9 @@ public class NamespaceHandler extends NamespaceHandlerSupport
       final ParserContext context,
       final BeanDefinitionBuilder builder)
     {
-      builder.addConstructorArgValue(new FormatDnResolver("%s@domain.com"));
-      builder.addConstructorArgValue(parseAuthHandler(element));
+      super.doParse(element, context, builder);
       builder.addPropertyValue("authenticationResponseHandlers", new ActiveDirectoryAuthenticationResponseHandler());
-
       final BeanDefinitionBuilder resolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
-      resolver.addPropertyValue("baseDn", element.getAttribute("baseDn"));
-      resolver.addPropertyValue("userFilter", "(userPrincipalName={dn})");
-      resolver.addPropertyValue("subtreeSearch", element.getAttribute("subtreeSearch"));
       resolver.addPropertyValue(
         "searchEntryHandlers",
         new SearchEntryHandler[]{new ObjectGuidHandler(), new ObjectSidHandler()});

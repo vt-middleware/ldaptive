@@ -53,6 +53,9 @@
   <ldaptive:ad-authenticator
     ldapUrl="${ldap.url}"
     baseDn="${ldap.baseDn}"
+    userFilter="(mail={user})"
+    bindDn="${ldap.bindDn}"
+    bindCredential="${ldap.bindCredential}"
     trustCertificates="classpath:/ldaptive.trust.crt"
     connectTimeout="${ldap.connectTimeout}"
     useStartTLS="${ldap.useStartTLS}"

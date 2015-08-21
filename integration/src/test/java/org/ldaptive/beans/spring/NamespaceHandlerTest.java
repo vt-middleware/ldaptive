@@ -71,7 +71,7 @@ public class NamespaceHandlerTest
     final Authenticator adAuthenticator = context.getBean("ad-authenticator", Authenticator.class);
     AssertJUnit.assertNotNull(adAuthenticator);
     testBindConnectionPool(adAuthenticator);
-    AssertJUnit.assertNotNull(((FormatDnResolver) adAuthenticator.getDnResolver()).getFormat());
+    testSearchDnResolver(adAuthenticator);
     AssertJUnit.assertNotNull(adAuthenticator.getAuthenticationResponseHandlers());
     AssertJUnit.assertEquals(
       ActiveDirectoryAuthenticationResponseHandler.class,

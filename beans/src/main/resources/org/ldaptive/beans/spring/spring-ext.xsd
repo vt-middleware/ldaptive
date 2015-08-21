@@ -24,9 +24,7 @@
 
   <xsd:complexType name="bindSearchAuthenticatorType">
     <xsd:complexContent>
-      <xsd:extension base="baseSearchAuthenticatorType">
-        <xsd:attribute name="bindDn" type="xsd:string" use="required"/>
-        <xsd:attribute name="bindCredential" type="xsd:string" use="required"/>
+      <xsd:extension base="baseBindSearchAuthenticatorType">
         <xsd:attribute name="usePasswordPolicy" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
@@ -43,9 +41,15 @@
 
   <xsd:complexType name="adAuthenticatorType">
     <xsd:complexContent>
-      <xsd:extension base="pooledConnectionFactoryType">
-        <xsd:attribute name="baseDn" type="xsd:string" use="required"/>
-        <xsd:attribute name="subtreeSearch" type="xsd:string" use="optional" default="false"/>
+      <xsd:extension base="baseBindSearchAuthenticatorType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="baseBindSearchAuthenticatorType">
+    <xsd:complexContent>
+      <xsd:extension base="baseSearchAuthenticatorType">
+        <xsd:attribute name="bindDn" type="xsd:string" use="required"/>
+        <xsd:attribute name="bindCredential" type="xsd:string" use="required"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
