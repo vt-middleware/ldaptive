@@ -5,7 +5,9 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
+import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.DnResolver;
 import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
@@ -15,12 +17,14 @@ import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.pool.PooledConnectionFactoryManager;
 import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.AssertJUnit;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 /**
@@ -30,6 +34,42 @@ import org.testng.annotations.Test;
  */
 public class NamespaceHandlerTest
 {
+
+  /** Spring context to test. */
+  private ClassPathXmlApplicationContext context =
+    new ClassPathXmlApplicationContext(new String[] {"/spring-ext-context.xml", });
+
+
+  /** @throws  Exception  On test failure. */
+  @AfterClass(groups = {"beans-spring"})
+  public void closePools()
+    throws Exception
+  {
+    closeConnectionPools(context.getBean("anonymous-search-authenticator", Authenticator.class));
+    closeConnectionPools(context.getBean("bind-search-authenticator", Authenticator.class));
+    closeConnectionPools(context.getBean("direct-authenticator", Authenticator.class));
+    closeConnectionPools(context.getBean("ad-authenticator", Authenticator.class));
+
+    context.getBean("pooled-connection-factory", PooledConnectionFactory.class).getConnectionPool().close();
+  }
+
+
+  /**
+   * Closing any authentication handler and DN resolver connection pools.
+   *
+   * @param  auth  to inspect for connection pools
+   */
+  private void closeConnectionPools(final Authenticator auth)
+  {
+    final AuthenticationHandler authHandler = auth.getAuthenticationHandler();
+    if (authHandler instanceof PooledConnectionFactoryManager) {
+      ((PooledConnectionFactoryManager) authHandler).getConnectionFactory().getConnectionPool().close();
+    }
+    final DnResolver dnResolver = auth.getDnResolver();
+    if (dnResolver instanceof PooledConnectionFactoryManager) {
+      ((PooledConnectionFactoryManager) dnResolver).getConnectionFactory().getConnectionPool().close();
+    }
+  }
 
 
   /**
@@ -41,8 +81,6 @@ public class NamespaceHandlerTest
   public void testSpringWiring()
     throws Exception
   {
-    final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
-      new String[] {"/spring-ext-context.xml", });
     AssertJUnit.assertEquals(4, context.getBeansOfType(Authenticator.class).size());
 
     final Authenticator anonSearchAuthenticator = context.getBean(
