@@ -6,8 +6,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.security.GeneralSecurityException;
 import javax.net.ssl.HandshakeCompletedListener;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import org.slf4j.Logger;
@@ -32,9 +30,6 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
 
   /** SSL configuration options. */
   private SslConfig sslConfig;
-
-  /** Hostname verifier. */
-  private HostnameVerifier hostnameVerifier;
 
   /** Socket configuration options. */
   private SocketConfig socketConfig;
@@ -79,28 +74,6 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
   public void setSslConfig(final SslConfig config)
   {
     sslConfig = config;
-  }
-
-
-  /**
-   * Returns the hostname verifier.
-   *
-   * @return  trust managers
-   */
-  public HostnameVerifier getHostnameVerifier()
-  {
-    return hostnameVerifier;
-  }
-
-
-  /**
-   * Sets the hostname verifier.
-   *
-   * @param  verifier  hostname verifier
-   */
-  public void setHostnameVerifier(final HostnameVerifier verifier)
-  {
-    hostnameVerifier = verifier;
   }
 
 
@@ -155,16 +128,6 @@ public abstract class AbstractTLSSocketFactory extends SSLSocketFactory
         for (HandshakeCompletedListener listener : sslC.getHandshakeCompletedListeners()) {
           socket.addHandshakeCompletedListener(listener);
         }
-      }
-    }
-    if (hostnameVerifier != null) {
-      // calling getSession() will initiate the handshake if necessary
-      final String hostname = socket.getSession().getPeerHost();
-      if (!hostnameVerifier.verify(hostname, socket.getSession())) {
-        socket.close();
-        socket.getSession().invalidate();
-        throw new SSLPeerUnverifiedException(
-          String.format("Hostname '%s' does not match the hostname in the server's certificate", hostname));
       }
     }
     return socket;

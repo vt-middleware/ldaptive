@@ -2,14 +2,12 @@
 package org.ldaptive.ssl;
 
 import java.nio.ByteBuffer;
-import java.security.GeneralSecurityException;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import javax.net.SocketFactory;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -270,35 +268,5 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
       logger.trace("match={} for {} == {}", new Object[] {match, certName, hostname});
     }
     return match;
-  }
-
-
-  /** Socket factory that uses {@link DefaultHostnameVerifier}. */
-  public static class SSLSocketFactory extends TLSSocketFactory
-  {
-
-
-    /** Creates a new socket factory that uses this hostname verifier. */
-    public SSLSocketFactory()
-    {
-      setHostnameVerifier(new DefaultHostnameVerifier());
-    }
-
-
-    /**
-     * Returns the default SSL socket factory.
-     *
-     * @return  socket factory
-     */
-    public static SocketFactory getDefault()
-    {
-      final SSLSocketFactory sf = new SSLSocketFactory();
-      try {
-        sf.initialize();
-      } catch (GeneralSecurityException e) {
-        LoggerFactory.getLogger(SSLSocketFactory.class).error("Error initializing socket factory", e);
-      }
-      return sf;
-    }
   }
 }

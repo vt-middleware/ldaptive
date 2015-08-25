@@ -289,41 +289,6 @@ public class TLSSocketFactoryTest
    */
   @Parameters("ldapSslTestHost")
   @Test(groups = {"ssl"})
-  public void setHostnameVerifier(final String url)
-    throws Exception
-  {
-    final LdapURL ldapUrl = new LdapURL(url);
-    final TLSSocketFactory sf = new TLSSocketFactory();
-    sf.initialize();
-
-    sf.setHostnameVerifier(new AnyHostnameVerifier());
-
-    Socket s = null;
-    try {
-      s = sf.createSocket(ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
-    } finally {
-      s.close();
-    }
-
-    sf.setHostnameVerifier(new NoHostnameVerifier());
-    try {
-      s = sf.createSocket(ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
-      AssertJUnit.fail("Should have thrown SSLPeerUnverifiedException");
-    } catch (Exception e) {
-      AssertJUnit.assertEquals(SSLPeerUnverifiedException.class, e.getClass());
-    } finally {
-      s.close();
-    }
-  }
-
-
-  /**
-   * @param  url  to connect to
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Parameters("ldapSslTestHost")
-  @Test(groups = {"ssl"})
   public void setSocketConfig(final String url)
     throws Exception
   {
