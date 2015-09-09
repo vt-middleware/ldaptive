@@ -493,7 +493,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
       try {
         available.add(pc);
         pc.getPooledConnectionStatistics().addAvailableStat();
-        logger.trace("added available connection: {}", pc);
+        logger.info("added available connection: {}", pc);
       } finally {
         poolLock.unlock();
       }
@@ -532,7 +532,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
       try {
         active.add(pc);
         pc.getPooledConnectionStatistics().addActiveStat();
-        logger.trace("added active connection: {}", pc);
+        logger.info("added active connection: {}", pc);
       } finally {
         poolLock.unlock();
       }
@@ -563,7 +563,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     }
     if (destroy) {
       pc.getConnection().close();
-      logger.trace("destroyed connection: {}", pc);
+      logger.info("destroyed connection: {}", pc);
     }
   }
 
@@ -588,7 +588,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     }
     if (destroy) {
       pc.getConnection().close();
-      logger.trace("destroyed connection: {}", pc);
+      logger.info("destroyed connection: {}", pc);
     }
   }
 
@@ -618,7 +618,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     }
     if (destroy) {
       pc.getConnection().close();
-      logger.trace("destroyed connection: {}", pc);
+      logger.info("destroyed connection: {}", pc);
     }
   }
 
@@ -713,7 +713,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
           if (numConnToPrune == available.size()) {
             logger.debug("prune strategy did not remove any connections");
           } else {
-            logger.debug("available pool size pruned to {}", available.size());
+            logger.info("available pool size pruned to {}", available.size());
           }
         } else {
           logger.debug("pool size is {}, no connections pruned for {}", currentPoolSize, this);
