@@ -71,7 +71,7 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
         logger.debug(
           "checkCertificateTrusted for {} succeeded against {}",
           hostnameVerifier,
-          cert.getSubjectX500Principal());
+          cert != null ? cert.getSubjectX500Principal() : null);
         return;
       }
     }
@@ -80,7 +80,7 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
         "Hostname '%s' does not match the hostname in the server's " +
         "certificate '%s'",
         Arrays.toString(hostnames),
-        cert.getSubjectX500Principal()));
+        cert != null ? cert.getSubjectX500Principal() : null));
   }
 
 
