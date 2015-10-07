@@ -200,8 +200,8 @@ public class Authenticator
 
 
   /**
-   * Performs authentication by opening a new connection to the LDAP and binding as the supplied DN. If return
-   * attributes have been request, the user entry will be searched on the same connection.
+   * Validates input and performs authentication using an {@link AuthenticationHandler}. Executes any configured {@link
+   * AuthenticationResponseHandler}.
    *
    * @param  dn  to authenticate as
    * @param  request  containing authentication parameters
