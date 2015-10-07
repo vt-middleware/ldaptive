@@ -184,7 +184,7 @@
         <executions>
           <execution>
             <id>copy-src</id>
-            <phase>package</phase>
+            <phase>process-resources</phase>
             <goals>
               <goal>unpack-dependencies</goal>
             </goals>
@@ -194,33 +194,16 @@
               <outputDirectory>${project.build.directory}/sources</outputDirectory>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-javadoc-plugin</artifactId>
-        <configuration>
-          <links>
-            <link>http://download.oracle.com/javase/7/docs/api</link>
-            <link>http://www.slf4j.org/apidocs/</link>
-          </links>
-          <quiet>true</quiet>
-          <author>false</author>
-          <show>private</show>
-          <version>true</version>
-          <doctitle>Ldaptive ${project.version} API</doctitle>
-          <windowtitle>Ldaptive ${project.version} API</windowtitle>
-          <bottom><![CDATA[<i>Copyright &#169; 2003-2015 Virginia Tech. All Rights Reserved.</i>]]></bottom>
-        </configuration>
-        <executions>
           <execution>
-            <id>javadoc</id>
+            <id>copy-depends</id>
             <phase>package</phase>
             <goals>
-              <goal>jar</goal>
+              <goal>copy-dependencies</goal>
             </goals>
             <configuration>
-              <sourcepath>${project.build.directory}/sources</sourcepath>
+              <includeScope>runtime</includeScope>
+              <excludeArtifactIds>${project.artifactId}</excludeArtifactIds>
+              <outputDirectory>${basedir}/target/lib</outputDirectory>
             </configuration>
           </execution>
         </executions>

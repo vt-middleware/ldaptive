@@ -372,6 +372,9 @@
             <goals>
               <goal>jar</goal>
             </goals>
+            <configuration>
+              <sourcepath>${project.build.sourceDirectory}:${project.build.directory}/sources</sourcepath>
+            </configuration>
           </execution>
         </executions>
       </plugin>
@@ -417,24 +420,6 @@
             <goals>
               <goal>manifest</goal>
             </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-depends</id>
-            <phase>package</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <includeScope>runtime</includeScope>
-              <excludeArtifactIds>${project.artifactId}</excludeArtifactIds>
-              <outputDirectory>${basedir}/target/lib</outputDirectory>
-            </configuration>
           </execution>
         </executions>
       </plugin>
