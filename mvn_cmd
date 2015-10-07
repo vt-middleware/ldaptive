@@ -1,0 +1,42 @@
+#!/bin/sh
+
+MVN=mvn
+
+function run_mvn() {
+  PROFILES=$1
+  PHASES=$2
+  SWITCH=$3
+  if [ -z "${SWITCH}" ]; then
+    ${MVN} -P${PROFILES} ${PHASES}
+  else
+    ${MVN} -P${PROFILES} ${PHASES} -D${SWITCH}
+  fi
+}
+
+case "$1" in
+  clean)
+    run_mvn integration,distribution,apache,jldap,opendj,unboundid,ldapi clean
+    ;;
+  package)
+    run_mvn distribution,apache,jldap,opendj,unboundid,ldapi package
+    ;;
+  install)
+    run_mvn distribution,apache,jldap,opendj,unboundid,ldapi install
+    ;;
+  deploy)
+    LOCAL_REPO=${1}
+    if [ -z "${LOCAL_REPO}" ]; then
+      echo "USAGE: `basename $0` deploy <repo-directory>"
+      exit 1
+    fi
+    run_mvn apache,jldap,opendj,unboundid,ldapi clean deploy "altDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
+    ;;
+  bundle-create)
+    run_mvn distribution,apache,jldap,opendj,unboundid,ldapi repository:bundle-create sign=true
+    ;;
+  *)
+    if [ -n "$1" ]; then
+      echo "Invalid command"
+    fi
+    echo "USAGE: `basename $0` clean|package|install|deploy|bundle-create"
+esac

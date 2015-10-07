@@ -1,3 +1,0 @@
-#!/bin/sh
-
-mvn -Pintegration,distribution,apache,jldap,opendj,unboundid,ldapi clean
