@@ -69,6 +69,7 @@ public class PerformanceTest
    * @throws  Exception  on test failure
    */
   @DataProvider(name = "factories")
+  @SuppressWarnings("unchecked")
   public Object[][] connectionFactories()
     throws Exception
   {
