@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
+  {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Ldaptive: LDAP library for Java." />
+    <link rel="shortcut icon" href="{{ relative }}assets/images/favicon.ico" />
+    <link rel="stylesheet" type="text/css"
+          href='http://fonts.googleapis.com/css?family=Source+Code+Pro:400,700'>
+    <link rel="stylesheet" type="text/css"
+          href='http://fonts.googleapis.com/css?family=Rosario:400,700,400italic,700italic'>
+    <link rel="stylesheet" type="text/css" media="screen"
+          href="{{ relative }}assets/css/screen.css">
+    <title>{{ page.title }}</title>
+  </head>
+
+  <body>
+    <div id="page-wrapper">
+      <div id="header"></div>
+      <div id="menu">
+        <a href="{{ relative }}about.html">About</a>
+        <a href="{{ relative }}reference/">Reference</a>
+        <a href="{{ relative }}javadocs/">Javadocs</a>
+        <a href="http://github.com/vt-middleware/cryptacular">Source</a>
+        <a href="{{ relative }}download.html">Download</a>
+      </div>
+      <div id="content">

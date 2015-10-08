@@ -1,7 +1,9 @@
 ---
 layout: default
 title: Ldaptive
+permalink: /
 ---
+
 #LDAP library for Java.
 Ldaptive is a simple, extensible Java API for interacting with LDAP servers. It was designed to provide easy LDAP integration for application developers.
 
@@ -29,6 +31,7 @@ Developers need LDAP integration for their products, but the JNDI API is cumbers
 * Password policy (draft-behera-ldap-password-policy-10)
 
 ##Quick Start Guide
+
 ###Searching
 {% highlight java %}
 ConnectionFactory cf = new DefaultConnectionFactory("ldap://directory.ldaptive.org");
