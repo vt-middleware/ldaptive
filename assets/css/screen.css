@@ -15,7 +15,7 @@
  * General elements
  ******************************************/
 body {
-  background-color: #cec6d4;
+  background-color: #eceef6;
   margin: 0;
   padding: 0;
 }
@@ -75,7 +75,7 @@ code {
 }
 
 #header {
-  background: #fff url('../images/cryptacular.png') no-repeat 50% -15px;
+  background: #fff url('../images/ldaptive.png') no-repeat 50% -15px;
   height: 150px;
 }
 
