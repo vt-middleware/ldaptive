@@ -5,13 +5,13 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ldaptive-beans</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.0</version>
+  <version>1.1.1-SNAPSHOT</version>
   <name>LDAPTIVE BEANS</name>
   <description>Mapping, persistence, and code generation API for reading and writing POJOs to an LDAP directory</description>
   <parent>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-parent</artifactId>
-    <version>1.1.0</version>
+    <version>1.1.1-SNAPSHOT</version>
   </parent>
 
   <dependencies>
