@@ -63,9 +63,13 @@
       </excludes>
     </fileSet>
     <fileSet>
-      <directory>../core/target/lib</directory>
+      <directory>target/lib</directory>
       <outputDirectory>lib</outputDirectory>
       <useDefaultExcludes>true</useDefaultExcludes>
+      <includes>
+        <include>commons-cli-*</include>
+        <include>slf4j-api-*</include>
+      </includes>
     </fileSet>
   </fileSets>
 </assembly>
