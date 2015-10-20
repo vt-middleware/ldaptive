@@ -13,17 +13,110 @@
           href='http://fonts.googleapis.com/css?family=Rosario:400,700,400italic,700italic'>
     <link rel="stylesheet" type="text/css" media="screen"
           href="{{ relative }}assets/css/screen.css">
+    <link rel='stylesheet' type='text/css'
+          href='{{ relative }}assets/css/sm-core-css.css' />
+    <link rel='stylesheet' type='text/css'
+          href="{{ relative }}assets/css/sm-mint/sm-mint.css"/>
+    <script src="{{ relative }}assets/js/jquery.js" type="text/javascript"></script>
+    <script src="{{ relative }}assets/js/jquery.smartmenus.js" type="text/javascript"></script>
+    <script type="text/javascript">
+	$(function() {
+		$('#main-menu').smartmenus({
+			mainMenuSubOffsetX: -1,
+			mainMenuSubOffsetY: 4,
+			subMenusSubOffsetX: 6,
+			subMenusSubOffsetY: -6
+		});
+	});
+    </script>
     <title>{{ page.title }}</title>
   </head>
 
   <body>
     <div id="page-wrapper">
       <div id="header"></div>
-      <div id="menu">
-        <a href="{{ relative }}about.html">About</a>
-        <a href="{{ relative }}reference/">Reference</a>
-        <a href="{{ relative }}javadocs/">Javadocs</a>
-        <a href="http://github.com/vt-middleware/cryptacular">Source</a>
-        <a href="{{ relative }}download.html">Download</a>
-      </div>
+      <ul id="main-menu" class="sm sm-mint">
+        <li><a href="{{ relative }}about.html">About</a></li>
+        <li><a href="{{ relative }}download.html">Download</a></li>
+        <li><a href="#">User Guide</a>
+          <ul>
+            <li><a href="docs/guide/connections.html">Connections</a>
+              <ul>
+                <li><a href="docs/guide/connections/pooling.html">Pooling</a>
+              </ul>
+            </li>
+            <li><a href="docs/guide/operations.html">Operations</a>
+              <ul>
+                <li><a href="docs/guide/operations/search.html">Search</a>
+                  <ul>
+                    <li><a href="docs/guide/operations/search/entryhandlers.html">Entry Handlers</a></li>
+                    <li><a href="docs/guide/operations/search/valuetranscoders.html">Value Transcoders</a></li>
+                    <li><a href="docs/guide/operations/search/async.html">Async Searches</a></li>
+                  </ul>
+                </li>
+                <li><a href="docs/guide/operations/compare.html">Compare</a></li>
+                <li><a href="docs/guide/operations/bind.html">Bind</a></li>
+                <li><a href="docs/guide/operations/add.html">Add</a></li>
+                <li><a href="docs/guide/operations/modify.html">Modify</a></li>
+                <li><a href="docs/guide/operations/modifydn.html">Modify DN</a></li>
+                <li><a href="docs/guide/operations/delete.html">Delete</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Extended Operations</a>
+              <ul>
+                <li><a href="docs/guide/operations/extended/passwordmodify.html">Password Modify</a></li>
+                <li><a href="docs/guide/operations/extended/whoami.html">Who Am I</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Controls</a>
+              <ul>
+                <li><a href="docs/guide/controls/managedsait.html">ManageDsaIT</a></li>
+                <li><a href="docs/guide/controls/serversidesort.html">Server Side Sorting</a></li>
+                <li><a href="docs/guide/controls/pagedresults.html">Paged Results</a></li>
+                <li><a href="docs/guide/controls/virtuallistview.html">Virtual List View</a></li>
+                <li><a href="docs/guide/controls/syncrepl.html">Content Synchronization</a></li>
+                <li><a href="docs/guide/controls/psearch.html">Persistent Search</a></li>
+                <li><a href="docs/guide/controls/proxyauthz.html">Proxy Authorization</a></li>
+              </ul>
+            </li>
+            <li><a href="docs/guide/authentication.html">Authentication</a>
+              <ul>
+                <li><a href="docs/guide/authentication/accountstate.html">Account State</a></li>
+              </ul>
+            </li>
+            <li><a href="docs/guide/concurrency.html">Concurrent Operations</a></li>
+            <li><a href="docs/guide/formatting.html">LDIF / DSML / JSON</a></li>
+            <li><a href="docs/guide/jaas.html">JAAS</a></li>
+            <li><a href="docs/guide/properties.html">Properties</a></li>
+            <li><a href="docs/guide/providers.html">Providers</a></li>
+            <li><a href="docs/guide/ad.html">Active Directory</a>
+              <ul>
+                <li><a href="docs/guide/ad/rangeresults.html">Range Results</a></li>
+                <li><a href="docs/guide/ad/dirsync.html">Directory Synchronization</a></li>
+                <li><a href="docs/guide/ad/notification.html">Directory Notification</a></li>
+                <li><a href="docs/guide/ad/fastbind.html">Fast Bind</a></li>
+              </ul>
+            </li>
+            <li><a href="#">Java Beans</a>
+              <ul>
+                <li><a href="docs/guide/beans/mapping.html">Mapping</a></li>
+                <li><a href="docs/guide/beans/generation.html">Generation</a></li>
+                <li><a href="docs/guide/beans/persistence.html">Persistence</a></li>
+              </ul>
+            </li>
+            <li><a href="docs/guide/spring.html">Spring Integration</a></li>
+            <li><a href="docs/guide/cas.html">CAS</a></li>
+            <li><a href="docs/guide/templates.html">Templates</a></li>
+            <li><a href="docs/guide/ldapi.html">LDAPI</a></li>
+          </ul>
+        </li>
+        <li><a href="{{ relative }}javadocs/">Javadocs</a></li>
+        <li><a href="#">Support</a>
+          <ul>
+            <li><a href="https://groups.google.com/forum/#!forum/ldaptive">Discussion</a></li>
+            <li><a href="https://github.com/vt-middleware/ldaptive">Source</a></li>
+            <li><a href="https://github.com/vt-middleware/ldaptive/issues">Bug Reports</a></li>
+          </ul>
+        </li>
+      </ul>
       <div id="content">
