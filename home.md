@@ -2,15 +2,16 @@
 layout: default
 title: Ldaptive
 permalink: /
+redirect_from: "/home/"
 ---
 
-#LDAP library for Java.
+# LDAP library for Java.
 Ldaptive is a simple, extensible Java API for interacting with LDAP servers. It was designed to provide easy LDAP integration for application developers.
 
-##Rationale
+## Rationale
 Developers need LDAP integration for their products, but the JNDI API is cumbersome and takes a great deal of resources to learn and use. In addition, most applications only require a subset of LDAP functionality: search and authentication.
 
-##Features
+## Features
 * Search result caching
 * Connection pooling
 * Authentication API with support for password policy
@@ -30,9 +31,9 @@ Developers need LDAP integration for their products, but the JNDI API is cumbers
 * Server side sorting (RFC 2891)
 * Password policy (draft-behera-ldap-password-policy-10)
 
-##Quick Start Guide
+## Quick Start Guide
 
-###Searching
+### Searching
 {% highlight java %}
 ConnectionFactory cf = new DefaultConnectionFactory("ldap://directory.ldaptive.org");
 SearchExecutor executor = new SearchExecutor();
@@ -42,7 +43,7 @@ LdapEntry entry = result.getEntry();
 // do something useful with the entry
 {% endhighlight %}
 
-###StartTLS
+### StartTLS
 {% highlight java %}
 ConnectionConfig connConfig = new ConnectionConfig("ldap://directory.ldaptive.org");
 connConfig.setUseStartTLS(true);
@@ -55,7 +56,7 @@ for (LdapEntry entry : result.getEntries()) {
 }
 {% endhighlight %}
 
-###Binding
+### Binding
 {% highlight java %}
 ConnectionConfig connConfig = new ConnectionConfig("ldap://directory.ldaptive.org");
 connConfig.setUseStartTLS(true);
@@ -71,9 +72,9 @@ for (LdapEntry entry : result.getEntries()) {
 }
 {% endhighlight %}
 
-These search examples all leverage the SearchExecutor class. For more details on searching and more control over the search operation in general, see the [search operation documentation](docs/guide/operations/search).
+These search examples all leverage the SearchExecutor class. For more details on searching and more control over the search operation in general, see the [search operation documentation](docs/guide/operations/search.html).
 
-###Authentication
+### Authentication
 {% highlight java %}
 ConnectionConfig connConfig = new ConnectionConfig("ldap://directory.ldaptive.org");
 connConfig.setUseStartTLS(true);
@@ -90,5 +91,5 @@ if (response.getResult()) {
 }
 {% endhighlight %}
 
-For more details on authentication, see the [authentication documentation](docs/guide/authentication).
+For more details on authentication, see the [authentication documentation](docs/guide/authentication.html).
 

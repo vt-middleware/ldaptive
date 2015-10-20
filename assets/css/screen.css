@@ -59,6 +59,19 @@ code {
   padding: 0;
 }
 
+table {
+  border: 1px solid black;
+  width: 90%;
+  border-spacing: 0px 0px;
+  border-collapse: separate;
+  empty-cells: show;
+}
+
+td,th {
+  border: 1px solid black;
+  padding: 10px;
+}
+
 /******************************************
  * Specific page elements
  ******************************************/
@@ -76,12 +89,10 @@ code {
 
 #header {
   background: #fff url('../images/ldaptive.png') no-repeat 50% -15px;
-  height: 150px;
+  height: 110px;
 }
 
 #menu {
-  margin: -40px 0 30px 0;
-  border-top: 1px solid #cec6d4;
   font-family: Nauman, Verdana, Sans-Serif;
   font-size: 18px;
   text-align: center;
@@ -108,5 +119,5 @@ code {
 }
 
 #footer p {
-  margin:2px 0;
+  margin: 2px 0;
 }
