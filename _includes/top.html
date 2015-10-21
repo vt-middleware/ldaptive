@@ -37,10 +37,10 @@
       <div id="header"></div>
       <ul id="main-menu" class="sm sm-mint">
         <li><a href="/">Home</a></li>
-        <li><a href="/download.html">Download</a>
+        <li><a href="{{ relative }}download.html">Download</a>
           <ul>
-            <li><a href="/license.html">License</a></li>
-            <li><a href="/changelog.html">Release Notes</a></li>
+            <li><a href="{{ relative }}license.html">License</a></li>
+            <li><a href="{{ relative }}changelog.html">Release Notes</a></li>
           </ul>
         </li>
         <li><a href="#">User Guide</a>
@@ -115,7 +115,7 @@
             <li><a href="docs/guide/ldapi.html">LDAPI</a></li>
           </ul>
         </li>
-        <li><a href="/javadocs/">Javadocs</a></li>
+        <li><a href="{{ relative }}javadocs/">Javadocs</a></li>
         <li><a href="#">Support</a>
           <ul>
             <li><a href="https://groups.google.com/forum/#!forum/ldaptive">Discussion</a></li>
