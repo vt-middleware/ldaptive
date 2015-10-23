@@ -22,13 +22,38 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: Nauman, Verdana, Sans-Serif;
-  font-size: 110%;
-  font-weight: normal;
+  font-weight: bold;
   font-style: normal;
+  color: #445AA9;
 }
 
 h1 {
   font-size: 130%;
+}
+
+h2 {
+  font-size: 120%;
+}
+
+h2:after {
+  content: "";
+  display: block;
+  height: 1px;
+  width: 100%;
+  margin: 0px;
+  background: #9c9c9c;
+}
+
+h3 {
+  font-size: 110%;
+  border: 1px dotted #9c9c9c;
+  background: #eceef6;
+  padding: 3px;
+}
+
+h4 {
+  font-size: 100%;
+  text-decoration: underline #9c9c9c;
 }
 
 pre, code {
@@ -88,26 +113,14 @@ td,th {
 }
 
 #header {
-  background: #fff url('../images/ldaptive.png') no-repeat 50% -15px;
+  background: #fff;
   height: 110px;
-}
-
-#menu {
-  font-family: Nauman, Verdana, Sans-Serif;
-  font-size: 18px;
-  text-align: center;
-}
-
-#menu a {
-  color: #6e6881;
-  text-decoration: none;
-  padding: 5px 18px;
 }
 
 #content {
   line-height: 125%;
   font-family: Rosario, Helvetica, Sans-Serif;
-  font-size: 20px;
+  font-size: 18px;
 }
 
 #footer {

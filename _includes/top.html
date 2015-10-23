@@ -34,9 +34,11 @@
 
   <body>
     <div id="page-wrapper">
-      <div id="header"></div>
+      <div id="header">
+        <a href="{{ relative }}index.html"><img src="{{ relative }}assets/images/ldaptive.png"></a>
+      </div>
       <ul id="main-menu" class="sm sm-mint">
-        <li><a href="/">Home</a></li>
+        <li><a href="{{ relative }}index.html">Home</a></li>
         <li><a href="{{ relative }}download.html">Download</a>
           <ul>
             <li><a href="{{ relative }}license.html">License</a></li>
@@ -121,6 +123,16 @@
             <li><a href="https://groups.google.com/forum/#!forum/ldaptive">Discussion</a></li>
             <li><a href="https://github.com/vt-middleware/ldaptive">Source</a></li>
             <li><a href="https://github.com/vt-middleware/ldaptive/issues">Bug Reports</a></li>
+          </ul>
+        </li>
+        <li><a href="#">Search</a>
+          <ul class="mega-menu">
+            <li style="text-align: center">
+              <form action="http://google.com/search" method="get">
+                <input type="hidden" name="q" value="site:vt-middleware.github.io/ldaptive" />
+                <input type="text" placeholder="Search" name="q" results="0"/>
+              </form>
+            </li>
           </ul>
         </li>
       </ul>
