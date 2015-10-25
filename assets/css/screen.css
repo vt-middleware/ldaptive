@@ -58,7 +58,7 @@ h4 {
 
 pre, code {
   font-family: Source Code Pro, monospace;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 140%;
 }
 
@@ -73,7 +73,7 @@ fieldset, pre {
 
 pre code {
   color: black;
-  font-size: 15px;
+  font-size: 14px;
   display: block;
 }
 
@@ -95,6 +95,7 @@ table {
 td,th {
   border: 1px solid black;
   padding: 10px;
+  font-size: 14px;
 }
 
 /******************************************
@@ -119,7 +120,7 @@ td,th {
 
 #content {
   line-height: 125%;
-  font-family: Rosario, Helvetica, Sans-Serif;
+  font-family: Alegreya Sans, Helvetica, Sans-Serif;
   font-size: 18px;
 }
 
