@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
-  {% capture lvl %}{{ page.url | append:'index.html' | split:'/' | size }}{% endcapture %}
-  {% capture relative %}{% for i in (3..lvl) %}../{% endfor %}{% endcapture %}
+  {% include relative %}
   <head>
     <meta charset='utf-8' />
     <meta http-equiv="X-UA-Compatible" content="chrome=1" />
