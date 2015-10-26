@@ -27,7 +27,7 @@ Ldaptive provides the following value transcoder implementations:
 
 ## CertificateValueTranscoder
 
-Provides the ability to read a PEM encoded certificate from an LDAP attribute in order to create a _java.security.cert.Certificate_ object. Conversely, a _java.security.cert.Certificate_ can also be written to the directory as a PEM encoded certificate.
+Provides the ability to read a PEM encoded certificate from an LDAP attribute in order to create a `java.security.cert.Certificate` object. Conversely, a `java.security.cert.Certificate` can also be written to the directory as a PEM encoded certificate.
 
 {% highlight java %}
 {% include source/operations/search/valuetranscoders/1.java %}
@@ -35,7 +35,7 @@ Provides the ability to read a PEM encoded certificate from an LDAP attribute in
 
 ## GeneralizedTimeValueTranscoder
 
-Provides the ability to read a generalized time from an LDAP attribute in order to create a _java.util.Calendar_ object. Conversely, a _java.util.Calendar_ can also be written to the directory in generalized time format.
+Provides the ability to read a generalized time from an LDAP attribute in order to create a `java.util.Calendar` object. Conversely, a `java.util.Calendar` can also be written to the directory in generalized time format.
 
 {% highlight java %}
 {% include source/operations/search/valuetranscoders/2.java %}

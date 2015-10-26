@@ -14,7 +14,7 @@ If your goal is to execute non-blocking searches, also consider using one of the
 {% include source/operations/search/async/1.java %}
 {% endhighlight %}
 
-Various handlers provide the hooks for receiving asynchronous events if you want to operate on results before the response is received. Of particular importance is the _AsyncRequest_ object. If you wish to abandon or cancel the async operation you will need to obtain a reference to it. This reference is obtained by setting an _AsyncRequestHandler_. A single _AsyncRequest_ is produced for each search execution.
+Various handlers provide the hooks for receiving asynchronous events if you want to operate on results before the response is received. Of particular importance is the `AsyncRequest` object. If you wish to abandon or cancel the async operation you will need to obtain a reference to it. This reference is obtained by setting an `AsyncRequestHandler`. A single `AsyncRequest` is produced for each search execution.
 
 {% highlight java %}
 {% include source/operations/search/async/2.java %}

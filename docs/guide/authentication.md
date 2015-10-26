@@ -42,7 +42,7 @@ subtreeSearch | false | whether a subtree search should be performed; by default
 
 The {user} search filter argument is always assigned the user value from AuthenticationRequest#getUser(), so the userFilterArgs property only needs to be set when you specify custom arguments. Note that the SearchDnResolver will open and close a connection for every authentication.
 
-If your directory does not allow anonymous access to the attribute used for DN resolution then you can configure a _BindConnectionInitializer_:
+If your directory does not allow anonymous access to the attribute used for DN resolution then you can configure a `BindConnectionInitializer`:
 
 {% highlight java %}
 {% include source/authentication/2.java %}
