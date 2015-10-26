@@ -1,0 +1,60 @@
+---
+layout: default
+title: Ldaptive - account state
+redirect_from: "/docs/guide/authentication/accountstate/"
+---
+
+# Account State
+
+No standard for exposing account state data has been universally adopted by LDAP vendors. This leaves clients with vendor specific solutions that typically fall into the following categories:
+
+- use a request/response control
+- read directory attributes
+- parse custom error messages/exceptions
+
+The AuthenticationResponseHandler can be leveraged to solve this type of problem by populating the AccountState object of the AuthenticationResponse. AccountState contains Warning and Error types that are common to the most popular policy implementations. AccountState contains the following properties:
+
+#### Warnings
+
+expiration | date this account will expire
+loginsRemaining | number of logins allowed until the account will start failing
+
+#### Errors
+
+code | integer code for this error
+message | text for this error
+
+Ldaptive provides several implementations for well-known directories:
+
+## Password Policy
+
+This request/response control is defined in the following draft: [http://tools.ietf.org/html/draft-behera-ldap-password-policy-10](http://tools.ietf.org/html/draft-behera-ldap-password-policy-10) and is most commonly used with OpenLDAP.
+
+{% highlight java %}
+{% include source/authentication/accountstate/1.java %}
+{% endhighlight %}
+
+## Active Directory
+
+Active Directory returns account state as part of the ldap result message when a bind fails (error 49). Warnings are not supported as messages are not supplied on bind success. A list of common bind errors can be found at [http://ldapwiki.willeke.com/wiki/Common%20Active%20Directory%20Bind%20Errors](http://ldapwiki.willeke.com/wiki/Common%20Active%20Directory%20Bind%20Errors)
+
+{% highlight java %}
+{% include source/authentication/accountstate/2.java %}
+{% endhighlight %}
+
+If you need to inspect the user account password attributes in Active Directory, you can request they be added to the response entry after a successful bind:
+
+{% highlight java %}
+new AuthenticationRequest("dfisher", new Credential("password"), new String[] {"pwdLastSet", "userAccountControl"});
+{% endhighlight %}
+
+See [Reading User Account Password Attributes](http://technet.microsoft.com/en-us/library/ee198831.aspx).
+
+## eDirectory
+
+eDirectory uses a combination of result messages and attributes to convey account state. In order to parse warnings the required attributes must be requested from the Authenticator. See [http://support.novell.com/docs/Tids/Solutions/10067240.html](http://support.novell.com/docs/Tids/Solutions/10067240.html) for more discussion and an explanation of error codes.
+
+{% highlight java %}
+{% include source/authentication/accountstate/3.java %}
+{% endhighlight %}
+
