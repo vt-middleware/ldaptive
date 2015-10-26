@@ -17,6 +17,7 @@ Searches for entries matching: _(&(givenName=daniel)(sn=fisher))_ over the _dc=l
 ### SearchRequest Properties
 
 The following properties can be configured on a per request basis:
+
 Name | Default Value | Description
 baseDn | "" | DN to search; An empty value searches the rootDSE;
 searchFilter | null | LDAP filter to execute
