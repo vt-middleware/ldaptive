@@ -13,20 +13,22 @@ Active Directory provides an LDAPv3 compliant interface for performing operation
 The following controls have concrete implementations in Ldaptive. A matrix of control to supported provider is shown here:
 
 |                    | JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-|--------------------|------|-------|-------------|-----------|-------
-|DirSync             | ✗    | ✓     | ✗           | ✓         | ✗
-|ExtendedDn          | ✓    | ✓     | ✗           | ✓         | ✓
-|ForceUpdate         | ✓    | ✓     | ✗           | ✓         | ✓
-|GetStats            | ✓    | ✓     | ✗           | ✓         | ✓
-|LazyCommit          | ✓    | ✓     | ✗           | ✓         | ✓
-|Notification        | ✗    | ✓     | ✗           | ✓         | ✓
-|PermissiveModify    | ✓    | ✓     | ✗           | ✓         | ✓
-|RangeRetrievalNoerr | ✓    | ✓     | ✗           | ✓         | ✓
-|SearchOptions       | ✓    | ✓     | ✗           | ✓         | ✓
-|ShowDeactivatedLink | ✓    | ✓     | ✗           | ✓         | ✓
-|ShowDeleted         | ✓    | ✓     | ✗           | ✓         | ✓
-|ShowRecycled        | ✓    | ✓     | ✗           | ✓         | ✓
-|VerifyName          | ✓    | ✓     | ✗           | ✓         | ✓
+|--------------------|:----:|:-----:|:-----------:|:---------:|:-----:
+|DirSync             | <font color="#cc0000">✗</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#cc0000">✗</font>
+|ExtendedDn          | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|ForceUpdate         | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|GetStats            | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|LazyCommit          | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|Notification        | <font color="#cc0000">✗</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|PermissiveModify    | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|RangeRetrievalNoerr | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|SearchOptions       | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|ShowDeactivatedLink | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|ShowDeleted         | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|ShowRecycled        | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+|VerifyName          | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
+
+{% include provider-support-legend.md %}
 
 ## Global Catalog
 

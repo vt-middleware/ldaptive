@@ -16,8 +16,8 @@ Request that the server return a subset of the full search results. Unlike the [
 
 ## Provider Support
 
-JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-✓    | ✓     | ✓           | ✓         | ✓
+| JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
+| <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font>
 
 {% include provider-support-legend.md %}
 

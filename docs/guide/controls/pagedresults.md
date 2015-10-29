@@ -34,8 +34,8 @@ If you need fine grain control over this operation, this sample code illustrates
 
 ## Provider Support
 
-JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-✓    | ✓     | ✓           | ✓         | ✓
+| JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
+| <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font>
 
 {% include provider-support-legend.md %}
 

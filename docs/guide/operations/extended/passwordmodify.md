@@ -20,8 +20,8 @@ This operation can also be used to generate passwords:
 
 ## Provider Support
 
-JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-✓    | ✓     | ✶           | ✓         | ✓
+| JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
+| <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#f1c232">✶</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font>
 
 {% include provider-support-legend.md %}
 
