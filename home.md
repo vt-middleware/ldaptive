@@ -26,10 +26,12 @@ Developers need LDAP integration for their products, but the JNDI API is cumbers
   * JLdap
   * OpenDJ
 * Supported controls (no external dependencies required):
-* ManageDsaIT (RFC 3296)
-* Paged results (RFC 2696)
-* Server side sorting (RFC 2891)
-* Password policy (draft-behera-ldap-password-policy-10)
+  * ManageDsaIT (RFC 3296)
+  * Paged results (RFC 2696)
+  * Virtual List View (draft-ietf-ldapext-ldapv3-vlv-09)
+  * Server side sorting (RFC 2891)
+  * Proxy Authorization (RFC 4370)
+  * Password policy (draft-behera-ldap-password-policy-10)
 
 ## Quick Start Guide
 
