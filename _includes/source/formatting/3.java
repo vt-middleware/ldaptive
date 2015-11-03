@@ -1,6 +1,6 @@
 StringWriter writer = new StringWriter();
 Dsmlv1Writer dsmlWriter = new Dsmlv1Writer(writer);
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
 try {
   conn.open();
   SearchOperation search = new SearchOperation(conn);
