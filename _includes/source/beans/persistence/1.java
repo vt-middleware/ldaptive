@@ -1,5 +1,5 @@
 DefaultLdapEntryManager<MyObject> manager = new DefaultLdapEntryManager<MyObject>(
-  new DefaultLdapEntryMapper(), new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
+  new DefaultLdapEntryMapper<MyObject>(), new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
 
 // add a new entry to the LDAP
 MyObject addObject = new MyObject("uid=dfisher,ou=people,dc=ldaptive,dc=org");

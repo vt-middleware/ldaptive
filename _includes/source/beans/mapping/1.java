@@ -4,7 +4,7 @@ executor.setBaseDn("dc=ldaptive,dc=org");
 SearchResult result = executor.search(cf, "(uid=dfisher)").getResult();
 LdapEntry entry = result.getEntry();
 
-DefaultLdapEntryMapper mapper = new DefaultLdapEntryMapper();
+DefaultLdapEntryMapper<MyObject> mapper = new DefaultLdapEntryMapper<>();
 MyObject object = new MyObject();
 mapper.map(entry, object); // object is now populated with the values from the ldap entry
 
