@@ -1,6 +1,6 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
 try {
-  conn.open(); 
+  conn.open();
   CompareOperation compare = new CompareOperation(conn);
   boolean success = compare.execute(
     new CompareRequest(

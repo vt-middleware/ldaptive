@@ -1,10 +1,10 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
-try { 
-  conn.open(); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
+try {
+  conn.open();
   SyncReplClient client = new SyncReplClient(conn, false); // false indicates do not persist
   SearchRequest request = SearchRequest.newObjectScopeSearchRequest("dc=ldaptive,dc=org");
   BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
-  while (true) { 
+  while (true) {
     SyncReplItem item = results.take(); // blocks until result is received
     if (item.isEntry()) {
       SyncStateControl ssc = item.getEntry().getSyncStateControl();

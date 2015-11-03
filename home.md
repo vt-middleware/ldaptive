@@ -37,24 +37,24 @@ Developers need LDAP integration for their products, but the JNDI API is cumbers
 
 ### Searching
 {% highlight java %}
-{% include source/1.java %}
+{% include source/home/1.java %}
 {% endhighlight %}
 
 ### StartTLS
 {% highlight java %}
-{% include source/2.java %}
+{% include source/home/2.java %}
 {% endhighlight %}
 
 ### Binding
 {% highlight java %}
-{% include source/3.java %}
+{% include source/home/3.java %}
 {% endhighlight %}
 
 These search examples all leverage the SearchExecutor class. For more details on searching and more control over the search operation in general, see the [search operation documentation](docs/guide/operations/search.html).
 
 ### Authentication
 {% highlight java %}
-{% include source/4.java %}
+{% include source/home/4.java %}
 {% endhighlight %}
 
 For more details on authentication, see the [authentication documentation](docs/guide/authentication.html).

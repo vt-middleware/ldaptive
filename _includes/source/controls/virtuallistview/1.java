@@ -1,6 +1,6 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
-try { 
-  conn.open(); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
+try {
+  conn.open();
   VirtualListViewClient client = new VirtualListViewClient(
     conn, new SortKey[] {
       new SortKey("uid", "caseExactMatch"),

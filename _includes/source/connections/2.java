@@ -5,7 +5,6 @@ try {
   conn.open();
 
   // perform an operation on the connection
-  ...
 } finally {
   // close the connection to the ldap
   conn.close();

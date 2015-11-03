@@ -14,7 +14,7 @@ Authenticator auth = new Authenticator(dnResolver, authHandler);
 AuthenticationResponse response = auth.authenticate(
   new AuthenticationRequest("dfisher", new Credential("password")));
 if (response.getResult()) { // authentication succeeded
-  ...
+
 } else { // authentication failed
   String msg = response.getMessage(); // read the failure message
 }

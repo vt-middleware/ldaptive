@@ -1,11 +1,11 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
-try { 
-  conn.open(); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
+try {
+  conn.open();
   // only return changed entries, return the entry change control
   PersistentSearchClient client = new PersistentSearchClient(conn, EnumSet.allOf(PersistentSearchChangeType.class), true, true);
   SearchRequest request = SearchRequest.newObjectScopeSearchRequest("dc=ldaptive,dc=org");
   BlockingQueue<PersistentSearchItem> results = client.execute(request);
-  while (true) { 
+  while (true) {
     PersistentSearchItem item = results.take(); // blocks until result is received
     if (item.isEntry()) {
       EntryChangeNotificationControl nc = item.getEntry().getEntryChangeNotificationControl();

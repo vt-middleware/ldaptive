@@ -5,7 +5,7 @@ PooledConnectionFactory connFactory = new PooledConnectionFactory(pool);
 Connection conn = connFactory.getConnection();
 try {
   // connection is already open, perform an operation
-  ...
+
 } finally {
   // closing a connection returns it to the pool
   conn.close();

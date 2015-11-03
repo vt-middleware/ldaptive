@@ -3,9 +3,9 @@ LdapEntry entry = new LdapEntry(
   new LdapAttribute("uid", "dfisher"),
   new LdapAttribute("mail", "dfisher@ldaptive.org"));
 
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
-try { 
-  conn.open(); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
+try {
+  conn.open();
   AddOperation add = new AddOperation(conn);
   add.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
 } finally {

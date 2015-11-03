@@ -1,4 +1,4 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
 try {
   conn.open();
   ModifyOperation modify = new ModifyOperation(conn);

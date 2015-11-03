@@ -1,16 +1,16 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
-try { 
-  conn.open(); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
+try {
+  conn.open();
   SyncReplClient client = new SyncReplClient(conn, true); // true indicates persist
   SearchRequest request = SearchRequest.newObjectScopeSearchRequest("dc=ldaptive,dc=org");
   BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
-  while (true) { 
+  while (true) {
     SyncReplItem item = results.take(); // blocks until result is received
     if (item.isEntry()) {
       SyncStateControl ssc = item.getEntry().getSyncStateControl();
       LdapEntry entry = item.getEntry().getSearchEntry();
       // process this entry with the sync state control data
-      if (....) {
+      if (entry.size() > 0) { // arbitrary condition
         // stop receiving updates
         client.cancel(item.getEntry().getSearchEntry().getMessageId());
       }

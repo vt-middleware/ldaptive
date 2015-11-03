@@ -1,6 +1,6 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
-try { 
-  conn.open(); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
+try {
+  conn.open();
   AsyncSearchOperation search = new AsyncSearchOperation(conn);
   final BlockingQueue<AsyncRequest> queue = new LinkedBlockingQueue<AsyncRequest>();
 
