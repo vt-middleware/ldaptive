@@ -1,4 +1,4 @@
-Properties props = new Properties();
+java.util.Properties props = new java.util.Properties();
 props.load(new FileInputStream("/path/to/ldap.properties"));
 
 SearchExecutor searchExecutor = new SearchExecutor();
