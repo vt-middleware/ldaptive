@@ -9,6 +9,6 @@ try {
       new AttributeModification(AttributeModificationType.ADD, new LdapAttribute("mail", "dfisher@ldaptive.org")),
       new AttributeModification(AttributeModificationType.REMOVE, new LdapAttribute("sn")),
       new AttributeModification(AttributeModificationType.REPLACE, new LdapAttribute("displayName", "Daniel Fisher"))));
-} finally { 
+} finally {
   conn.close();
 }

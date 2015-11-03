@@ -1,6 +1,6 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
-try { 
-  conn.open(); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
+try {
+  conn.open();
   SearchRequest request1 = new SearchRequest("dc=ldaptive,dc=org","(givenName=daniel)");
   SearchRequest request2 = new SearchRequest("dc=ldaptive,dc=org","(sn=fisher)");
   SearchOperationWorker search = new SearchOperationWorker(new SearchOperation(conn));
@@ -16,6 +16,6 @@ try { 
 
   // cleanup the underlying executor service
   search.shutdown();
-} finally { 
+} finally {
   conn.close();
 }

@@ -8,6 +8,6 @@ try {
   LdapEntry entry = result.getEntry();
   Calendar modifyTimestamp = entry.getAttribute("modifyTimestamp").getValue(new GeneralizedTimeValueTranscoder());
 
-} finally { 
+} finally {
   conn.close();
 }

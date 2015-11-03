@@ -7,4 +7,4 @@ try {
   SearchResult result = search.execute(new SearchRequest("dc=ldaptive,dc=org", "(uid=dfisher)")).getResult();
 } finally {
   conn.close();
- }
+}

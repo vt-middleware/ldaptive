@@ -9,6 +9,6 @@ try {
     // do something useful with the entry
   }
 
-} finally { 
+} finally {
   conn.close();
 }

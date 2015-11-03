@@ -4,6 +4,6 @@ try {
   BindOperation bind = new BindOperation(conn);
   bind.execute(new BindRequest("uid=dfisher,ou=people,dc=ldaptive,dc=org", new Credential("password")));
   // perform another operation as this principal
-} finally { 
+} finally {
   conn.close();
- }
+}

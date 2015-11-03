@@ -3,6 +3,6 @@ try {
   conn.open();
   DeleteOperation delete = new DeleteOperation(conn);
   delete.execute(new DeleteRequest("uid=dfisher,ou=people,dc=ldaptive,dc=org"));
-} finally { 
+} finally {
   conn.close();
- }
+}

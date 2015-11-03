@@ -6,6 +6,6 @@ try {
     new CompareRequest(
     "uid=dfisher,ou=people,dc=ldaptive,dc=org", new LdapAttribute("mail", "dfisher@ldaptive.org"))).getResult();
   // do something useful with the result
-} finally { 
+} finally {
  conn.close();
- }
+}

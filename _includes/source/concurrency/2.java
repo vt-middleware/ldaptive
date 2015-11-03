@@ -1,4 +1,4 @@
-ConnectionFactory cf = new DefaultConnectionFactory("ldap://directory.ldaptive.org"); 
+ConnectionFactory cf = new DefaultConnectionFactory("ldap://directory.ldaptive.org");
 ParallelSearchExecutor executor = new ParallelSearchExecutor();
 SearchFilter sf1 = new SearchFilter("(givenName=daniel)");
 SearchFilter sf2 = new SearchFilter("(sn=fisher)");

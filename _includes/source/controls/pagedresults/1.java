@@ -8,6 +8,6 @@ try {
   for (LdapEntry entry : result.getEntries()) {
     // do something useful with the entry
   }
-} finally { 
+} finally {
   conn.close();
 }

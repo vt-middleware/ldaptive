@@ -1,5 +1,5 @@
-ConnectionFactory cf1 = new DefaultConnectionFactory("ldap://directory-1.ldaptive.org"); 
-ConnectionFactory cf2 = new DefaultConnectionFactory("ldap://directory-2.ldaptive.org"); 
+ConnectionFactory cf1 = new DefaultConnectionFactory("ldap://directory-1.ldaptive.org");
+ConnectionFactory cf2 = new DefaultConnectionFactory("ldap://directory-2.ldaptive.org");
 AggregateSearchExecutor executor = new AggregateSearchExecutor();
 SearchFilter sf1 = new SearchFilter("(givenName=daniel)");
 SearchFilter sf2 = new SearchFilter("(sn=fisher)");

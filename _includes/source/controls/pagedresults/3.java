@@ -19,6 +19,6 @@ try {
       }
     }
   } while (cookie != null);
-} finally { 
+} finally {
   conn.close();
 }

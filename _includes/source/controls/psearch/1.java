@@ -22,6 +22,6 @@ try {
       throw item.getException();
     }
   }
-} finally { 
+} finally {
   conn.close();
 }

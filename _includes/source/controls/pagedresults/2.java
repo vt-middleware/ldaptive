@@ -8,6 +8,6 @@ try {
     response = client.execute(request, response);
     // inspect the response and break out of the loop if necessary
   }
-} finally { 
+} finally {
   conn.close();
 }

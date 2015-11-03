@@ -41,6 +41,6 @@ try {
       results = client.execute(request, new DefaultCookieManager());
     }
   }
-} finally { 
+} finally {
   conn.close();
 }

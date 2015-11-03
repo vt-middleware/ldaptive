@@ -1,6 +1,6 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
-try { 
-  conn.open(); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
+try {
+  conn.open();
   SearchOperation search = new SearchOperation(conn);
   SearchRequest request = new SearchRequest("dc=ldaptive,dc=org", "(uid=dfisher)");
   request.setSearchEntryHandlers(new ObjectSidHandler(), new ObjectGuidHandler());
@@ -9,6 +9,6 @@ try { 
     // do something useful with the entry
   }
 
-} finally { 
+} finally {
   conn.close();
 }

@@ -9,6 +9,6 @@ try {
   Response<SearchResult> response = client.execute(request, new VirtualListViewParams(0, 0, 4)); // get the first 5 entries
   // examine the response and then execute another search
   response = client.execute(request, new VirtualListViewParams(5, 0, 4), response); // get the next 5 entries
-} finally { 
+} finally {
   conn.close();
 }

@@ -8,6 +8,6 @@ try {
   LdapEntry entry = result.getEntry();
   Certificate cert = entry.getAttribute("userCertificate;binary").getValue(new CertificateValueTranscoder());
 
-} finally { 
+} finally {
   conn.close();
 }

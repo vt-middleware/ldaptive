@@ -1,6 +1,6 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org"); 
-try { 
-  conn.open(new BindRequest("cn=manager,ou=people,dc=ldaptive,dc=org", new Credential("manager_password"))); 
+Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
+try {
+  conn.open(new BindRequest("cn=manager,ou=people,dc=ldaptive,dc=org", new Credential("manager_password")));
   NotificationClient client = new NotificationClient(conn);
   SearchRequest request = new SearchRequest("ou=people,dc=ldaptive,dc=edu", new SearchFilter("(objectClass=*)"));
   request.setSearchScope(SearchScope.ONELEVEL);
@@ -13,6 +13,6 @@ try { 
       break;
     }
   }
-} finally { 
+} finally {
   conn.close();
 }

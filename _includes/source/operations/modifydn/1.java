@@ -3,6 +3,6 @@ try {
   conn.open();
   ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
   modifyDn.execute(new ModifyDnRequest("uid=dfisher,ou=people,dc=ldaptive,dc=org", "uid=dfisher,ou=robots,dc=ldaptive,dc=org"));
-} finally { 
+} finally {
   conn.close();
- }
+}
