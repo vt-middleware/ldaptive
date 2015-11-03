@@ -153,7 +153,7 @@
               <goal>copy-resources</goal>
             </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/test-classes</outputDirectory>
+              <outputDirectory>${project.build.directory}/test-classes</outputDirectory>
               <resources>
                 <resource>
                   <directory>${basedir}/src/test/testng</directory>
@@ -170,7 +170,7 @@
         <configuration>
           <argLine>-Dorg.ldaptive.provider=${ldapTestProvider} -Xms1g -Xmx2g -XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
           <suiteXmlFiles>
-            <suiteXmlFile>target/test-classes/testng.xml</suiteXmlFile>
+            <suiteXmlFile>${project.build.directory}/test-classes/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
           <!-- sometimes useful if testng runs out of memory
           <disableXmlReport>true</disableXmlReport>
@@ -185,6 +185,27 @@
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.4.0</version>
+        <executions>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+            <configuration>
+              <classpathScope>test</classpathScope>
+              <mainClass>org.ldaptive.doc.ClassGenerator</mainClass>
+              <arguments>
+                <argument>https://github.com/vt-middleware/ldaptive/blob/gh-pages/_includes/source/source.zip?raw=true</argument>
+                <argument>${project.build.directory}</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
           <execution>
@@ -196,6 +217,7 @@
             <configuration>
               <sources>
                 <source>${project.build.directory}/generated-test-sources/ldaptive</source>
+                <source>${project.build.directory}/generated-test-sources/ldaptive-docs</source>
               </sources>
             </configuration>
           </execution>
