@@ -64,6 +64,13 @@ The %1$s format argument is always assigned the user value from AuthenticationRe
 
 Does not perform any resolution. The user value from AuthenticationRequest#getUser() is returned as the DN. Used by authentication mechanisms that do not leverage an entry DN, such as DIGEST-MD5.
 
+### AggregateDnResolver
+Uses multiple DN resolvers to look up a user's DN. Each DN resolver is invoked on a separate thread. If multiple DNs are allowed then the first one retrieved is returned. Note that you must use the AggregateDnResolver#AuthenticationHandler inner class with this implementation. The labels provided must link a single DN resolver to a single authentication handler.
+
+{% highlight java %}
+{% include source/authentication/3.java %}
+{% endhighlight %}
+
 ## Password Validation
 
 Password validation is done by an AuthenticationHandler. It's purpose is to use the entry DN and the credential to determine if authentication should succeed. The interface for authentication handlers looks like:
