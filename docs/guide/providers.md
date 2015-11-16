@@ -53,8 +53,6 @@ JndiProviderConfig.setHostnameVerifier(HostnameVerifier verifier)
 {% endhighlight %}
 
 {% highlight java %}
-
-{% highlight java %}
 /**
  * JNDI may set an LDAP entry's DN to be a URL if the entry was ultimately found at a different baseDN than was searched on,
  * which is often the case when using referrals. This property controls whether to remove that URL from the DN.
