@@ -4,9 +4,11 @@ title: Ldaptive - persistence
 redirect_from: "/docs/guide/beans/persistence/"
 ---
 
+{% include relative %}
+
 # Bean Persistence
 
-Ldaptive provides an API similar to the J2EE entity manager to facilitate reading and writing LDAP data with Java beans. This support is provided in a separate library that is available in the _jars_ directory of the [latest download](download.md).
+Ldaptive provides an API similar to the J2EE entity manager to facilitate reading and writing LDAP data with Java beans. This support is provided in a separate library that is available in the _jars_ directory of the [latest download]({{ relative }}download.html).
 
 Or included as a maven dependency:
 

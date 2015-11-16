@@ -26,7 +26,7 @@ Some named parameters are defined by the templates in order to write search filt
 {% include source/templates/1.java %}
 {% endhighlight %}
 
-Templates support is provided in a separate library that is available in the _jars_ directory of the [latest download](download.md).
+Templates support is provided in a separate library that is available in the _jars_ directory of the [latest download]({{ relative }}download.html).
 
 Or included as a maven dependency:
 

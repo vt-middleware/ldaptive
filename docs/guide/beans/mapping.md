@@ -4,9 +4,11 @@ title: Ldaptive - bean mapping
 redirect_from: "/docs/guide/beans/mapping/"
 ---
 
+{% include relative %}
+
 # Bean Mapping
 
-Creating custom domain objects from LDAP entries and vice versa is a common pattern. Ldaptive provides an API for mapping an `LdapEntry` to any `Object` provided that object is properly annotated. This support is provided in a separate library that is available in the _jars_ directory of the [latest download](download.md).
+Creating custom domain objects from LDAP entries and vice versa is a common pattern. Ldaptive provides an API for mapping an `LdapEntry` to any `Object` provided that object is properly annotated. This support is provided in a separate library that is available in the _jars_ directory of the [latest download]({{ relative }}download.html).
 
 Or included as a maven dependency:
 

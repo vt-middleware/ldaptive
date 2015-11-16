@@ -4,9 +4,11 @@ title: Ldaptive - generation
 redirect_from: "/docs/guide/beans/generation/"
 ---
 
+{% include relative %}
+
 # Bean Generation
 
-Ldaptive supports generating Java beans from an LDAP schema. The [Sun codemodel](https://codemodel.java.net/) library is used for java source generation. This support is provided in a separate library that is available in the _jars_ directory of the [latest download](download.md).
+Ldaptive supports generating Java beans from an LDAP schema. The [Sun codemodel](https://codemodel.java.net/) library is used for java source generation. This support is provided in a separate library that is available in the _jars_ directory of the [latest download]({{ relative }}download.html).
 
 Or included as a maven dependency:
 

@@ -4,6 +4,8 @@ title: Ldaptive - formatting
 redirect_from: "/docs/guide/formatting/"
 ---
 
+{% include relative %}
+
 # Reading and Writing LDAP Results
 
 Ldaptive provides implementations for formatting LDAP results in LDIF, DSML version 1, and JSON.
@@ -60,7 +62,7 @@ DSML can be read using any java.io.Reader using a Dsmlv1Reader.
 
 ## JSON
 
-JSON support is provided in a separate library that uses [json-simple](https://github.com/fangyidong/json-simple). This support is provided in a separate library that is available in the _jars_ directory of the [latest download](download.md).
+JSON support is provided in a separate library that uses [json-simple](https://github.com/fangyidong/json-simple). This support is provided in a separate library that is available in the _jars_ directory of the [latest download]({{ relative }}download.html).
 
 Or included as a maven dependency:
 
