@@ -1,5 +1,5 @@
 // create a cache with size=50, timeToLive=600 (seconds), interval=300 (seconds)
-LRUCache<SearchRequest> cache = new LRUCache<SearchRequest>(5, 60, 3);
+LRUCache<SearchRequest> cache = new LRUCache<SearchRequest>(50, 600, 300);
 Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
 try {
   conn.open();

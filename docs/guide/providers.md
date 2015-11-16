@@ -42,15 +42,17 @@ This provider is included in the core library as it has no dependencies outside 
 /**
  * Overrides the context environment produced by ldaptive with the supplied environment.
  */
-JndiProviderConfig.setEnvironment(Map<String, Object>)
+JndiProviderConfig.setEnvironment(Map<String, Object> env)
 {% endhighlight %}
 
 {% highlight java %}
 /**
  * Sets the hostname verifier to use for startTLS connections.
  */
-JndiProviderConfig.setHostnameVerifier(HostnameVerifier)
+JndiProviderConfig.setHostnameVerifier(HostnameVerifier verifier)
 {% endhighlight %}
+
+{% highlight java %}
 
 {% highlight java %}
 /**
@@ -58,7 +60,7 @@ JndiProviderConfig.setHostnameVerifier(HostnameVerifier)
  * which is often the case when using referrals. This property controls whether to remove that URL from the DN.
  * The default value is true and in most cases this is the desired behavior.
  */
-JndiProviderConfig.setRemoveDnUrls(boolean)
+JndiProviderConfig.setRemoveDnUrls(boolean b)
 {% endhighlight %}
 
 {% highlight java %}
@@ -66,21 +68,14 @@ JndiProviderConfig.setRemoveDnUrls(boolean)
  * Sets the SSL socket factory to use for SSL and startTLS connections. Setting this property will override any configuration
  * data provided in ConnectionConfig.setSslConfig(SslConfig).
  */
-JndiProviderConfig.setSslSocketFactory(SSLSocketFactory)
+JndiProviderConfig.setSslSocketFactory(SSLSocketFactory sf)
 {% endhighlight %}
 
 {% highlight java %}
 /**
  * Writes a hexadecimal dump of the incoming and outgoing LDAP ASN.1 BER packets to the supplied OutputStream.
  */
-JndiProviderConfig.setTracePackets(OutputStream)
-{% endhighlight %}
-
-{% highlight java %}
-/**
- * Sets the hostname verifier to use for startTLS connections.
- */
-JndiProviderConfig.setHostnameVerifier(HostnameVerifier)
+JndiProviderConfig.setTracePackets(OutputStream stream)
 {% endhighlight %}
 
 #### Other Links
@@ -94,17 +89,17 @@ This provider uses the JLDAP library created by Novell and often used with their
 
 {% highlight java %}
 /**
- * Sets the SSL socket factory to use for SSL and startTLS connections. Setting this property will override any configuration
- * data provided in ConnectionConfig.setSslConfig(SslConfig).
+ * Overrides the LDAPConstraints produced by ldaptive with the supplied constraints.
  */
-JLdapProviderConfig.setSslSocketFactory(SSLSocketFactory)
+JLdapProviderConfig.setLDAPConstraints(LDAPConstraints constraints)
 {% endhighlight %}
 
 {% highlight java %}
 /**
- * Overrides the LDAPConstraints produced by ldaptive with the supplied constraints.
+ * Sets the SSL socket factory to use for SSL and startTLS connections. Setting this property will override any configuration
+ * data provided in ConnectionConfig.setSslConfig(SslConfig).
  */
-JLdapProviderConfig.setLDAPConstraints(LDAPConstraints)
+JLdapProviderConfig.setSslSocketFactory(SSLSocketFactory sf)
 {% endhighlight %}
 
 #### Other Links 
@@ -121,7 +116,7 @@ This provider uses the Apache LDAP API library created in conjunction with the A
  * Sets the LdapConnectionConfig object used by this API. Setting this property will override any configuration
  * data provided in ConnectionConfig.
  */
-ApacheLdapProviderConfig.setLdapConnectionConfig(LdapConnectionConfig)
+ApacheLdapProviderConfig.setLdapConnectionConfig(LdapConnectionConfig config)
 {% endhighlight %}
 
 #### Other Links
@@ -137,14 +132,21 @@ This provider uses the UnboundID LDAP SDK created by UnboundID for use with thei
  * Sets the LDAPConnectionOptions object used by this API. Setting this property will override any configuration
  * data provided in ConnectionConfig.
  */
-UnboundIDProviderConfig.setConnectionOptions(LDAPConnectionOptions)
+UnboundIDProviderConfig.setConnectionOptions(LDAPConnectionOptions options)
 {% endhighlight %}
 
 {% highlight java %}
 /**
- * Sets the SocketFactory to use for all LDAP connections.
+ * Sets the SocketFactory to use for LDAP connections.
  */
-UnboundIDProviderConfig.setSocketFactory(SocketFactory)
+UnboundIDProviderConfig.setSocketFactory(SocketFactory sf)
+{% endhighlight %}
+
+{% highlight java %}
+/**
+ * Sets the SocketFactory to use for LDAPS and startTLS connections.
+ */
+UnboundIDProviderConfig.setSSLSocketFactory(SSLSocketFactory sf)
 {% endhighlight %}
 
 #### Other Links
@@ -161,6 +163,6 @@ This provider uses the OpenDJ LDAP SDK created in conjunction with the OpenDJ pr
  * Sets the LDAPOptions object used by this API. Setting this property will override any configuration
  * data provided in ConnectionConfig.
  */
-OpenDJProviderConfig.setOptions(LDAPOptions)
+OpenDJProviderConfig.setOptions(LDAPOptions o)
 {% endhighlight %}
 

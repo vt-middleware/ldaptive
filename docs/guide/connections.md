@@ -4,6 +4,8 @@ title: Ldaptive - connections
 redirect_from: "/docs/guide/connections/"
 ---
 
+{% include relative %}
+
 # Connections
 
 LDAP connections are stateful and persistent, which means they must be opened before operations are performed and then closed when no longer needed. Connections are created using a ConnectionFactory. Ldaptive provides two implementations of ConnectionFactory: DefaultConnectionFactory and PooledConnectionFactory.
@@ -18,7 +20,7 @@ A DefaultConnectionFactory can be used statically or as an instance variable:
 {% include source/connections/2.java %}
 {% endhighlight %}
 
-See the [pooling guide](docs/guide/connections/pooling.html) for details on how to use a PooledConnectionFactory.
+See the [pooling guide]({{ relative }}docs/guide/connections/pooling.html) for details on how to use a PooledConnectionFactory.
 
 ## startTLS / SSL
 
@@ -134,22 +136,25 @@ So what causes an operation to be retried? Each provider has a default list of r
 *JNDI Provider*
 
 - ResultCode.PROTOCOL_ERROR (2)  (javax.naming.CommunicationException)
-- ResultCode.BUSY (51)                     (javax.naming.ServiceUnavailableException)
-- ResultCode.UNAVAILABLE (52)        (javax.naming.ServiceUnavailableException)
+- ResultCode.SERVER_DOWN (81)  (any exception message containing 'socket closed')
 
-See How LDAP Error Codes Map to JNDI Exceptions for details on which naming exceptions map to which result codes.
+[See How LDAP Error Codes Map to JNDI Exceptions](http://docs.oracle.com/javase/tutorial/jndi/ldap/exceptions.html) for details on which naming exceptions map to which result codes.
 
 *JLDAP Provider*
 
-- ResultCode.LDAP_TIMEOUT (85)
 - ResultCode.CONNECT_ERROR (91)
 
 *Apache LDAP Provider*
-None set
+
+- ResultCode.SERVER_DOWN (81)
 
 *UnboundID Provider*
-- ResultCode.LDAP_TIMEOUT (85)
-- ResultCode.CONNECT_ERROR (91)
+
+- ResultCode.SERVER_DOWN (81)
+
+*OpenDJ Provider*
+
+- ResultCode.SERVER_DOWN (81)
 
 If you need to modify the default setting you can do so by changing the provider configuration:
 
@@ -189,5 +194,5 @@ Some providers support arbitrary string based properties to control certain conn
 {% include source/connections/10.java %}
 {% endhighlight %}
 
-See the [providers guide](docs/guide/providers.html) for more information.
+See the [providers guide]({{ relative }}docs/guide/providers.html) for more information.
 

@@ -4,9 +4,11 @@ title: Ldaptive - virtual list view
 redirect_from: "/docs/guide/controls/virtuallistview/"
 ---
 
+{% include relative %}
+
 # Virtual List View
 
-Request that the server return a subset of the full search results. Unlike the [PagedResultControl](docs/guide/controls/pagedresults), this control allows for moving forward and backward in the result set. See [LDAP Extensions for Scrolling View Browsing of Search Results](http://tools.ietf.org/html/draft-ietf-ldapext-ldapv3-vlv-09).
+Request that the server return a subset of the full search results. Unlike the [PagedResultControl]({{ relative }}docs/guide/controls/pagedresults), this control allows for moving forward and backward in the result set. See [LDAP Extensions for Scrolling View Browsing of Search Results](http://tools.ietf.org/html/draft-ietf-ldapext-ldapv3-vlv-09).
 
 ## Using the Virtual List View Client
 

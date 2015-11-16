@@ -4,6 +4,8 @@ title: Ldaptive - authentication
 redirect_from: "/docs/guide/authentication/"
 ---
 
+{% include relative %}
+
 # Authentication
 
 Authentication against an LDAP follows this multi-step process:
@@ -128,5 +130,5 @@ Potential use cases for authentication response handlers include:
 - sending notifications after a number of authentication failures
 - storing authentication statistics
 
-See the [account state](docs/guide/authentication/accountstate) documentation for examples on how response handlers can be leveraged with various password policy implementations.
+See the [account state]({{ relative }}docs/guide/authentication/accountstate) documentation for examples on how response handlers can be leveraged with various password policy implementations.
 

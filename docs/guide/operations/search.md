@@ -26,7 +26,6 @@ searchScope | SUBTREE | scope of the search; Valid values include: OBJECT, ONELE
 timeLimit | 0 | length of time in milliseconds that a search operation should execute; A value of 0 means execute indefinitely; When time limit arrives result will contain any result returned up to that point
 sizeLimit | 0 | maximum number of entries to include in the search result; A value of 0 means includes all entries
 derefAliases | null | how aliases are dereferences; Valid values include: NEVER, SEARCHING, FINDING, ALWAYS; A null value means use the provider default
-followReferrals | false | whether to attempt to follow referrals
 typesOnly | false | whether to return attribute types only
 binaryAttributes | null | attribute names that should be considered binary regardless of how they are stored
 sortBehavior | UNORDERED | how result data should be sorted; Valid values include: UNORDERED, ORDERED, SORTED
