@@ -8,7 +8,7 @@ redirect_from: "/docs/guide/operations/bind/"
 
 # Bind Operation
 
-Authenticates to the LDAP and if successful, changes the authentication context of the connection. Further LDAP operations will be performed as the authenticated principal. Typically it's desirable to configure bind properties for all connections rather than on a connection-by-connection basis. The ConnectionConfig object contains properties such that the appropriate bind operation is automatically performed when a connection is opened. See the [connection documentation]({{ relative }}docs/guide/connections). If you need to support changing the authenticated principal after a connection has been opened, the following operations are available:
+Authenticates to the LDAP and if successful, changes the authentication context of the connection. Further LDAP operations will be performed as the authenticated principal. Typically it's desirable to configure bind properties for all connections rather than on a connection-by-connection basis. The ConnectionConfig object contains properties such that the appropriate bind operation is automatically performed when a connection is opened. See the [connection documentation]({{ relative }}docs/guide/connections.html). If you need to support changing the authenticated principal after a connection has been opened, the following operations are available:
 
 ## Simple Bind
 

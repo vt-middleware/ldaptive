@@ -130,5 +130,5 @@ Potential use cases for authentication response handlers include:
 - sending notifications after a number of authentication failures
 - storing authentication statistics
 
-See the [account state]({{ relative }}docs/guide/authentication/accountstate) documentation for examples on how response handlers can be leveraged with various password policy implementations.
+See the [account state]({{ relative }}docs/guide/authentication/accountstate.html) documentation for examples on how response handlers can be leveraged with various password policy implementations.
 

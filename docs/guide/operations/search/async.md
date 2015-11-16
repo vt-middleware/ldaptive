@@ -10,7 +10,7 @@ redirect_from: "/docs/guide/operations/search/async/"
 
 Ldaptive provides support for executing asynchronous searches, although some providers do not support all the LDAP features. It is recommended to use either the UnboundID, Apache, or JLDAP providers. JNDI does not support any asynchronous operations. 
 
-If your goal is to execute non-blocking searches, also consider using one of the implementations in the [concurrent]({{ relative }}docs/guide/concurrency) package.
+If your goal is to execute non-blocking searches, also consider using one of the implementations in the [concurrent]({{ relative }}docs/guide/concurrency.html) package.
 
 {% highlight java %}
 {% include source/operations/search/async/1.java %}
