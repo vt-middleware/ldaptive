@@ -40,7 +40,7 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
   /** The format used to calculate attribute IDs for subsequent searches. */
   private static final String RANGE_FORMAT = "%1$s;Range=%2$s-%3$s";
 
-  /** The expression matching the range attribute ID "<id>;range=<X>-<Y>". */
+  /** The expression matching the range attribute ID "&lt;id&gt;range=&lt;X&gt;-&lt;Y&gt;". */
   private static final String RANGE_PATTERN_STRING = "^(.*?);Range=([\\d\\*]+)-([\\d\\*]+)";
 
   /** The pattern matching the range attribute ID. */

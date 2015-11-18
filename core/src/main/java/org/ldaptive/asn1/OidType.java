@@ -160,7 +160,7 @@ public class OidType extends AbstractDERType implements DEREncoder
    *   <li>must not be null and must have at least 2 elements</li>
    *   <li>components must not be negative</li>
    *   <li>first component must be 0, 1, or 2</li>
-   *   <li>if first component 0 or 1, second component must be <= 38</li>
+   *   <li>if first component 0 or 1, second component must be &lt;= 38</li>
    * </ul>
    *
    * @param  oid  to check

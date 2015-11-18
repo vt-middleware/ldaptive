@@ -161,7 +161,7 @@ public class Dsmlv1Writer implements SearchResultWriter
 
 
   /**
-   * Returns a list of <dsml:attr/> elements for the supplied attributes.
+   * Returns a list of &lt;dsml:attr/&gt; elements for the supplied attributes.
    *
    * @param  doc  to source elements from
    * @param  attrs  to iterate over
@@ -191,7 +191,7 @@ public class Dsmlv1Writer implements SearchResultWriter
 
 
   /**
-   * Returns a <dsml:attr/> element for the supplied ldap attribute.
+   * Returns a &lt;dsml:attr/&gt; element for the supplied ldap attribute.
    *
    * @param  doc  to source elements from
    * @param  attr  ldap attribute to add
@@ -212,7 +212,7 @@ public class Dsmlv1Writer implements SearchResultWriter
 
 
   /**
-   * Returns a <dsml:objectclass/> element for the supplied ldap attribute.
+   * Returns a &lt;dsml:objectclass/&gt; element for the supplied ldap attribute.
    *
    * @param  doc  to source elements from
    * @param  attr  ldap attribute to add

@@ -9,9 +9,9 @@ import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.FormatDnResolver;
-import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
+import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
@@ -354,7 +354,7 @@ public class NamespaceHandler extends NamespaceHandlerSupport
     {
       return Boolean.valueOf(value) ?
         new AuthenticationResponseHandler[] {
-          new PasswordPolicyAuthenticationResponseHandler(), new PasswordExpirationAuthenticationResponseHandler()} :
+          new PasswordPolicyAuthenticationResponseHandler(), new PasswordExpirationAuthenticationResponseHandler(), } :
         null;
     }
 
@@ -384,6 +384,7 @@ public class NamespaceHandler extends NamespaceHandlerSupport
     /**
      * Creates a blocking connection pool.
      *
+     * @param  name  of the connection pool
      * @param  element  containing configuration
      *
      * @return  blocking connection pool bean definition

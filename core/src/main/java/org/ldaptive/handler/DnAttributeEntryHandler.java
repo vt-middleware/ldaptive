@@ -19,12 +19,11 @@ public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 823;
 
-  /** Attribute name for the entry dn. The default value of this variable is {@value}. */
+  /** Attribute name for the entry dn. */
   private String dnAttributeName = "entryDN";
 
   /**
-   * Whether to add the entry dn if an attribute of the same name exists. The default value of this variable is
-   * {@value}.
+   * Whether to add the entry dn if an attribute of the same name exists.
    */
   private boolean addIfExists;
 

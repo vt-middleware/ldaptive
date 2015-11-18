@@ -19,31 +19,43 @@ public @interface Attribute
 
   /**
    * Attribute name.
+   *
+   * @return  name of this attribute
    */
   String name() default "";
 
   /**
    * Attribute values. Mutually exclusive with {@link #property()}.
+   *
+   * @return  concrete values for this attribute
    */
   String[] values() default {};
 
   /**
    * Name of the method or field that maps to this attribute. Mutually exclusive with {@link #values()}.
+   *
+   * @return  property that contains attribute values
    */
   String property() default "";
 
   /**
    * Whether this attribute is binary.
+   *
+   * @return  whether this attribute is binary
    */
   boolean binary() default false;
 
   /**
    * Sort behavior for this attribute.
+   *
+   * @return  sort behavior
    */
   SortBehavior sortBehavior() default SortBehavior.UNORDERED;
 
   /**
    * Transcoder for this attribute.
+   *
+   * @return  transcoder class name
    */
   String transcoder() default "";
 }

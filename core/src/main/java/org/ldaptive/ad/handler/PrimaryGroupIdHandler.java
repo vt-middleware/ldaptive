@@ -29,7 +29,7 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1831;
 
-  /** search filter used to find the primary group. Default value is {@value}. */
+  /** search filter used to find the primary group. */
   private String groupFilter = "(&(objectClass=group)(objectSid={0}))";
 
   /** base DN used for searching for the primary group. */

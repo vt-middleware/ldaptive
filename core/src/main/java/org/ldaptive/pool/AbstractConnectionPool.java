@@ -56,10 +56,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   /** Connection factory to create connections with. */
   private DefaultConnectionFactory connectionFactory;
 
-  /** Whether to connect to the ldap on connection creation. Default value is {@value}. */
+  /** Whether to connect to the ldap on connection creation. */
   private boolean connectOnCreate = true;
 
-  /** Type of queue. LIFO or FIFO. Default value is {@value}. */
+  /** Type of queue. LIFO or FIFO. */
   private QueueType queueType = QueueType.LIFO;
 
   /** Executor for scheduling pool tasks. */
@@ -69,8 +69,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   private boolean initialized;
 
   /**
-   * Whether {@link #initialize()} should throw if pooling configuration requirements are not met. Default value is
-   * {@value}.
+   * Whether {@link #initialize()} should throw if pooling configuration requirements are not met.
    */
   private boolean failFastInitialize = true;
 

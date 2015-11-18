@@ -70,7 +70,7 @@ public abstract class AbstractRetryOperationExceptionHandler<Q extends Request, 
 
 
   /**
-   * Sets the retry wait. Time must be >= 0.
+   * Sets the retry wait. Time must be &gt;= 0.
    *
    * @param  time  in seconds
    */

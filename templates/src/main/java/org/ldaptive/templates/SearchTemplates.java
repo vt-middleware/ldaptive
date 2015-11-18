@@ -173,8 +173,8 @@ public class SearchTemplates
    *
    * <pre>
      {
-       'term1' => 'fname',
-       'term2' => 'lname',
+       'term1' =&gt; 'fname',
+       'term2' =&gt; 'lname',
      }
    * </pre>
    */
@@ -200,8 +200,8 @@ public class SearchTemplates
    *
    * <pre>
      {
-       'initial1' => 'f',
-       'initial2' => 'l',
+       'initial1' =&gt; 'f',
+       'initial2' =&gt; 'l',
      }
    * </pre>
    */

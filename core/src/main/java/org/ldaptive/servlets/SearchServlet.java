@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
  * </ul>
  *
  * <p>Example: http://www.server.com/Search?query=uid=dfisher If you need to pass complex queries, such as
- * (&(cn=daniel*)(surname=fisher)), then the query must be form encoded. If you only want to receive a subset of
+ * (&amp;(cn=daniel*)(surname=fisher)), then the query must be form encoded. If you only want to receive a subset of
  * attributes those can be specified. Example:
- * http://www.server.com/Search?query=uid=dfisher&attrs=givenname&attrs=surname</p>
+ * http://www.server.com/Search?query=uid=dfisher&amp;attrs=givenname&amp;attrs=surname</p>
  *
  * @author  Middleware Services
  */

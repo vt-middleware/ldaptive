@@ -18,11 +18,15 @@ public @interface Entry
 
   /**
    * Entry DN.
+   *
+   * @return  dn of this entry
    */
   String dn();
 
   /**
    * Entry attributes.
+   *
+   * @return  attributes
    */
   Attribute[] attributes() default {};
 }

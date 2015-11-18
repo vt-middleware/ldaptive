@@ -74,7 +74,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the connect timeout. If this value is <= 0, then connects will wait indefinitely.
+   * Returns the connect timeout. If this value is &lt;= 0, then connects will wait indefinitely.
    *
    * @return  timeout
    */
@@ -98,7 +98,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the response timeout. If this value is <= 0, then operations will wait indefinitely for a response.
+   * Returns the response timeout. If this value is &lt;= 0, then operations will wait indefinitely for a response.
    *
    * @return  timeout
    */

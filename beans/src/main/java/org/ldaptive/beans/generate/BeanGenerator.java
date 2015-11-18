@@ -63,10 +63,10 @@ public class BeanGenerator
   /** Object classes to build beans for. */
   private String[] objectClasses;
 
-  /** Whether to include optional attributes. Default value is {@value}. */
+  /** Whether to include optional attributes. */
   private boolean useOptionalAttributes = true;
 
-  /** Whether to include operational attributes. Default value is {@value}. */
+  /** Whether to include operational attributes. */
   private boolean useOperationalAttributes;
 
   /** Whether to include superior classes for each object class. */
@@ -259,7 +259,7 @@ public class BeanGenerator
 
   /**
    * Returns the mapping of directory attribute name to bean property. This property is used to override the default
-   * schema name. For instance, you may prefer using 'countryName' to 'c', which would be set as 'c'=>'countryName'.
+   * schema name. For instance, you may prefer using 'countryName' to 'c', which would be set as 'c'=&gt;'countryName'.
    *
    * @return  attribute name to bean property mapping
    */
