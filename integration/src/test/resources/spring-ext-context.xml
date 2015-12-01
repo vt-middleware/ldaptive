@@ -75,4 +75,15 @@
     trustCertificates="classpath:/ldaptive.trust.crt"
   />
 
+  <ldaptive:search-executor
+    baseDn="${ldap.baseDn}"
+    searchFilter="(mail=*)"
+    returnAttributes="cn,givenName,sn"
+    searchScope="ONELEVEL"
+    timeLimit="${ldap.timeLimit}"
+    sizeLimit="${ldap.sizeLimit}"
+    binaryAttributes="jpegPhoto,userCertificate"
+    sortBehavior="ORDERED"
+  />
+
 </beans>

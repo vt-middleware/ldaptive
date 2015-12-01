@@ -13,6 +13,7 @@
   <xsd:element name="ad-authenticator" type="adAuthenticatorType"/>
   <xsd:element name="pooled-connection-factory" type="pooledConnectionFactoryType"/>
   <xsd:element name="connection-factory" type="connectionFactoryType"/>
+  <xsd:element name="search-executor" type="searchExecutorType"/>
 
   <xsd:complexType name="anonymousSearchAuthenticatorType">
     <xsd:complexContent>
@@ -92,6 +93,18 @@
     <xsd:attribute name="trustStorePassword" type="xsd:string" use="optional" default="changeit"/>
     <xsd:attribute name="trustStoreType" type="xsd:string" use="optional" default="JKS"/>
     <xsd:attribute name="provider" type="xsd:string" use="optional" default="org.ldaptive.provider.jndi.JndiProvider"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="searchExecutorType">
+    <xsd:attribute name="id" type="xsd:ID" use="optional"/>
+    <xsd:attribute name="baseDn" type="xsd:string" use="optional" default=""/>
+    <xsd:attribute name="searchFilter" type="xsd:string" use="optional"/>
+    <xsd:attribute name="returnAttributes" type="xsd:string" use="optional"/>
+    <xsd:attribute name="searchScope" type="xsd:string" use="optional" default="SUBTREE"/>
+    <xsd:attribute name="timeLimit" type="xsd:string" use="optional" default="0"/>
+    <xsd:attribute name="sizeLimit" type="xsd:string" use="optional" default="0"/>
+    <xsd:attribute name="binaryAttributes" type="xsd:string" use="optional"/>
+    <xsd:attribute name="sortBehavior" type="xsd:string" use="optional" default="UNORDERED"/>
   </xsd:complexType>
 
 </xsd:schema>

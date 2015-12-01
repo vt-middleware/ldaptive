@@ -5,6 +5,9 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
+import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchScope;
+import org.ldaptive.SortBehavior;
 import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.DnResolver;
@@ -126,6 +129,10 @@ public class NamespaceHandlerTest
       DefaultConnectionFactory.class);
     AssertJUnit.assertNotNull(connectionFactory);
     testConnectionConfig(connectionFactory.getConnectionConfig());
+
+    final SearchExecutor executor = context.getBean("search-executor", SearchExecutor.class);
+    AssertJUnit.assertNotNull(executor);
+    testSearchExecutor(executor);
   }
 
 
@@ -209,5 +216,23 @@ public class NamespaceHandlerTest
     } else if (credentialConfig instanceof KeyStoreCredentialConfig) {
       AssertJUnit.assertNotNull(((KeyStoreCredentialConfig) credentialConfig).getTrustStore());
     }
+  }
+
+
+  /**
+   * Runs asserts against the search executor.
+   *
+   * @param  executor  to test
+   */
+  private void testSearchExecutor(final SearchExecutor executor)
+  {
+    AssertJUnit.assertTrue(executor.getBaseDn().length() > 0);
+    AssertJUnit.assertNotNull(executor.getSearchFilter());
+    AssertJUnit.assertTrue(executor.getReturnAttributes().length > 0);
+    AssertJUnit.assertEquals(SearchScope.ONELEVEL, executor.getSearchScope());
+    AssertJUnit.assertEquals(5000, executor.getTimeLimit());
+    AssertJUnit.assertEquals(10, executor.getSizeLimit());
+    AssertJUnit.assertTrue(executor.getBinaryAttributes().length > 0);
+    AssertJUnit.assertEquals(SortBehavior.ORDERED, executor.getSortBehavior());
   }
 }

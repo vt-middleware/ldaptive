@@ -4,6 +4,8 @@ package org.ldaptive.beans.spring;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchFilter;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.auth.AuthenticationResponseHandler;
@@ -54,6 +56,7 @@ public class NamespaceHandler extends NamespaceHandlerSupport
     registerBeanDefinitionParser("ad-authenticator", new ADAuthenticatorBeanDefinitionParser());
     registerBeanDefinitionParser("pooled-connection-factory", new PooledConnectionFactoryBeanDefinitionParser());
     registerBeanDefinitionParser("connection-factory", new ConnectionFactoryBeanDefinitionParser());
+    registerBeanDefinitionParser("search-executor", new SearchExecutorBeanDefinitionParser());
   }
 
 
@@ -220,7 +223,7 @@ public class NamespaceHandler extends NamespaceHandlerSupport
 
 
   /**
-   * Parser for <pre>pooled-connection-factory</pre> elements.
+   * Parser for <pre>connection-factory</pre> elements.
    */
   private static class ConnectionFactoryBeanDefinitionParser extends AbstractConnectionFactoryBeanDefinitionParser
   {
@@ -497,6 +500,60 @@ public class NamespaceHandler extends NamespaceHandlerSupport
       final BeanDefinitionBuilder provider = BeanDefinitionBuilder.genericBeanDefinition(
         element.getAttribute("provider"));
       return provider.getBeanDefinition();
+    }
+  }
+
+
+  /**
+   * Parser for <pre>search-executor</pre> elements.
+   */
+  private static class SearchExecutorBeanDefinitionParser extends AbstractSingleBeanDefinitionParser
+  {
+
+
+    @Override
+    protected String resolveId(
+      final Element element,
+      // CheckStyle:IllegalTypeCheck OFF
+      final AbstractBeanDefinition definition,
+      // CheckStyle:IllegalTypeCheck ON
+      final ParserContext parserContext)
+      throws BeanDefinitionStoreException
+    {
+      final String idAttrValue = element.getAttribute("id");
+      return StringUtils.hasText(idAttrValue) ? idAttrValue : "search-executor";
+    }
+
+
+    @Override
+    protected Class<?> getBeanClass(final Element element)
+    {
+      return SearchExecutor.class;
+    }
+
+
+    @Override
+    protected void doParse(
+      final Element element,
+      final ParserContext context,
+      final BeanDefinitionBuilder builder)
+    {
+      builder.addPropertyValue("baseDn", element.getAttribute("baseDn"));
+      if (element.hasAttribute("searchFilter")) {
+        final BeanDefinitionBuilder filter = BeanDefinitionBuilder.genericBeanDefinition(SearchFilter.class);
+        filter.addPropertyValue("filter", element.getAttribute("searchFilter"));
+        builder.addPropertyValue("searchFilter", filter.getBeanDefinition());
+      }
+      if (element.hasAttribute("returnAttributes")) {
+        builder.addPropertyValue("returnAttributes", element.getAttribute("returnAttributes"));
+      }
+      builder.addPropertyValue("searchScope", element.getAttribute("searchScope"));
+      builder.addPropertyValue("timeLimit", element.getAttribute("timeLimit"));
+      builder.addPropertyValue("sizeLimit", element.getAttribute("sizeLimit"));
+      if (element.hasAttribute("binaryAttributes")) {
+        builder.addPropertyValue("binaryAttributes", element.getAttribute("binaryAttributes"));
+      }
+      builder.addPropertyValue("sortBehavior", element.getAttribute("sortBehavior"));
     }
   }
 }
