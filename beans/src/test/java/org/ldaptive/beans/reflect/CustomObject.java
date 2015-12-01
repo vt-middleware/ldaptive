@@ -17,7 +17,7 @@ public interface CustomObject
 
 
   /** Transcoder that adds 'prefix-' to string values. */
-  static class PrefixStringValueTranscoder implements ValueTranscoder<String>
+  class PrefixStringValueTranscoder implements ValueTranscoder<String>
   {
 
     /** Default constructor. */

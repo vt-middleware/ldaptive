@@ -159,7 +159,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
      * @param  control  to configure
      * @param  name  of the statistic
      */
-    public IntegerHandler(final GetStatsControl control, final String name)
+    IntegerHandler(final GetStatsControl control, final String name)
     {
       super(control);
       statName = name;
@@ -188,7 +188,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
      * @param  control  to configure
      * @param  name  of the statistic
      */
-    public StringHandler(final GetStatsControl control, final String name)
+    StringHandler(final GetStatsControl control, final String name)
     {
       super(control);
       statName = name;

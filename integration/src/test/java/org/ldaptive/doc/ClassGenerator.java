@@ -119,7 +119,8 @@ public class ClassGenerator
     Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
-        throws IOException {
+        throws IOException
+      {
         if (attrs.isRegularFile()) {
           final String content = new Scanner(file.toFile()).useDelimiter("\\Z").next();
           final String name = file.getName(file.getNameCount() - 2).toString();
@@ -185,7 +186,7 @@ public class ClassGenerator
         // create the directories of the zip directory
         if (entry.isDirectory()) {
           final File newDir = new File(f.getAbsolutePath());
-          if(!newDir.exists()) {
+          if (!newDir.exists()) {
             newDir.mkdirs();
           }
         } else {
@@ -215,7 +216,8 @@ public class ClassGenerator
   /**
    * Generates a class for each doc section.
    */
-  public void generate() {
+  public void generate()
+  {
     for (Map.Entry<String, List<String>> entry : sections.entrySet()) {
       final JDefinedClass definedClass = createClass(PACKAGE_TO_CREATE, entry.getKey());
       final JDocComment jDocComment = definedClass.javadoc();
@@ -264,6 +266,7 @@ public class ClassGenerator
    *
    * @param  clazz  to put getter and setter methods on
    * @param  name  of the property
+   * @param  body  content of the method
    */
   protected void createMethod(final JDefinedClass clazz,  final String name, final String body)
   {
@@ -294,7 +297,8 @@ public class ClassGenerator
     Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
       @Override
       public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
-        throws IOException {
+        throws IOException
+      {
         if (attrs.isRegularFile()) {
           String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
           content = content.replaceFirst(

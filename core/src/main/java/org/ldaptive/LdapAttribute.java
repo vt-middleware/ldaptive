@@ -664,7 +664,7 @@ public class LdapAttribute extends AbstractLdapBean
      *
      * @throws  IllegalArgumentException  if t is not a String or byte[]
      */
-    public LdapAttributeValues(final Class<T> t)
+    LdapAttributeValues(final Class<T> t)
     {
       if (!(t.isAssignableFrom(String.class) || t.isAssignableFrom(byte[].class))) {
         throw new IllegalArgumentException("Only String and byte[] values are supported");

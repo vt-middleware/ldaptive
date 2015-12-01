@@ -29,68 +29,68 @@ public class JsonTest
   public Object[][] createTestData()
   {
     final SearchResult result1 = new SearchResult(SortBehavior.ORDERED);
-    final LdapEntry entry1_1 = new LdapEntry(SortBehavior.ORDERED);
-    entry1_1.setDn("uid=818037,ou=people,dc=ldaptive,dc=org");
-    final LdapAttribute attr1_2 = new LdapAttribute(SortBehavior.ORDERED);
-    attr1_2.setName("givenName");
-    attr1_2.addStringValue("Daniel", "Dan");
-    entry1_1.addAttribute(
+    final LdapEntry entry11 = new LdapEntry(SortBehavior.ORDERED);
+    entry11.setDn("uid=818037,ou=people,dc=ldaptive,dc=org");
+    final LdapAttribute attr12 = new LdapAttribute(SortBehavior.ORDERED);
+    attr12.setName("givenName");
+    attr12.addStringValue("Daniel", "Dan");
+    entry11.addAttribute(
       new LdapAttribute("departmentNumber", "066103"),
-      attr1_2,
+      attr12,
       new LdapAttribute("sn", "Fisher"));
-    result1.addEntry(entry1_1);
+    result1.addEntry(entry11);
 
     final SearchResult result2 = new SearchResult(SortBehavior.ORDERED);
-    final LdapEntry entry2_1 = new LdapEntry(SortBehavior.ORDERED);
-    entry2_1.setDn("uid=1095747,ou=people,dc=ldaptive,dc=org");
-    final LdapAttribute attr2_1_2 = new LdapAttribute(SortBehavior.ORDERED);
-    attr2_1_2.setName("givenName");
-    attr2_1_2.addStringValue("Robert", "Bob");
-    entry2_1.addAttribute(
+    final LdapEntry entry21 = new LdapEntry(SortBehavior.ORDERED);
+    entry21.setDn("uid=1095747,ou=people,dc=ldaptive,dc=org");
+    final LdapAttribute attr212 = new LdapAttribute(SortBehavior.ORDERED);
+    attr212.setName("givenName");
+    attr212.addStringValue("Robert", "Bob");
+    entry21.addAttribute(
       new LdapAttribute("uid", "1095747"),
-      attr2_1_2,
+      attr212,
       new LdapAttribute("sn", "Jones"));
-    final LdapEntry entry2_2 = new LdapEntry(SortBehavior.ORDERED);
-    entry2_2.setDn("uid=1141837,ou=people,dc=ldaptive,dc=org");
-    final LdapAttribute attr2_2_2 = new LdapAttribute(SortBehavior.ORDERED);
-    attr2_2_2.setName("givenName");
-    attr2_2_2.addStringValue("William", "Bill");
-    entry2_2.addAttribute(
+    final LdapEntry entry22 = new LdapEntry(SortBehavior.ORDERED);
+    entry22.setDn("uid=1141837,ou=people,dc=ldaptive,dc=org");
+    final LdapAttribute attr222 = new LdapAttribute(SortBehavior.ORDERED);
+    attr222.setName("givenName");
+    attr222.addStringValue("William", "Bill");
+    entry22.addAttribute(
       new LdapAttribute("uid", "1141837"),
-      attr2_2_2,
+      attr222,
       new LdapAttribute("sn", "Smith"));
-    final LdapEntry entry2_3 = new LdapEntry(SortBehavior.ORDERED);
-    entry2_3.setDn("uid=1145718,ou=people,dc=ldaptive,dc=org");
-    final LdapAttribute attr2_3_2 = new LdapAttribute(SortBehavior.ORDERED);
-    attr2_3_2.setName("givenName");
-    attr2_3_2.addStringValue("Thomas", "Tom");
-    entry2_3.addAttribute(
+    final LdapEntry entry23 = new LdapEntry(SortBehavior.ORDERED);
+    entry23.setDn("uid=1145718,ou=people,dc=ldaptive,dc=org");
+    final LdapAttribute attr232 = new LdapAttribute(SortBehavior.ORDERED);
+    attr232.setName("givenName");
+    attr232.addStringValue("Thomas", "Tom");
+    entry23.addAttribute(
       new LdapAttribute("uid", "1145718"),
-      attr2_3_2,
+      attr232,
       new LdapAttribute("sn", "Johnson"));
-    final LdapEntry entry2_4 = new LdapEntry(SortBehavior.ORDERED);
-    entry2_4.setDn("uid=1152120,ou=people,dc=ldaptive,dc=org");
-    final LdapAttribute attr2_4_2 = new LdapAttribute(SortBehavior.ORDERED);
-    attr2_4_2.setName("givenName");
-    attr2_4_2.addStringValue("David", "Dave");
-    entry2_4.addAttribute(
+    final LdapEntry entry24 = new LdapEntry(SortBehavior.ORDERED);
+    entry24.setDn("uid=1152120,ou=people,dc=ldaptive,dc=org");
+    final LdapAttribute attr242 = new LdapAttribute(SortBehavior.ORDERED);
+    attr242.setName("givenName");
+    attr242.addStringValue("David", "Dave");
+    entry24.addAttribute(
       new LdapAttribute("uid", "1152120"),
-      attr2_4_2,
+      attr242,
       new LdapAttribute("sn", "Brown"));
-    final LdapEntry entry2_5 = new LdapEntry(SortBehavior.ORDERED);
-    entry2_5.setDn("uid=818037,ou=people,dc=ldaptive,dc=org");
-    final LdapAttribute attr2_5_2 = new LdapAttribute(SortBehavior.ORDERED);
-    attr2_5_2.setName("givenName");
-    attr2_5_2.addStringValue("Joseph", "Joe");
-    entry2_5.addAttribute(
+    final LdapEntry entry25 = new LdapEntry(SortBehavior.ORDERED);
+    entry25.setDn("uid=818037,ou=people,dc=ldaptive,dc=org");
+    final LdapAttribute attr252 = new LdapAttribute(SortBehavior.ORDERED);
+    attr252.setName("givenName");
+    attr252.addStringValue("Joseph", "Joe");
+    entry25.addAttribute(
       new LdapAttribute("uid", "818037"),
-      attr2_5_2,
+      attr252,
       new LdapAttribute("sn", "Anderson"));
-    result2.addEntry(entry2_1);
-    result2.addEntry(entry2_2);
-    result2.addEntry(entry2_3);
-    result2.addEntry(entry2_4);
-    result2.addEntry(entry2_5);
+    result2.addEntry(entry21);
+    result2.addEntry(entry22);
+    result2.addEntry(entry23);
+    result2.addEntry(entry24);
+    result2.addEntry(entry25);
 
     return
       new Object[][] {
@@ -104,6 +104,7 @@ public class JsonTest
         },
         {
           result2,
+          // CheckStyle:Indentation OFF
           "[{\"dn\":\"uid=1095747,ou=people,dc=ldaptive,dc=org\"," +
               "\"uid\":[\"1095747\"]," +
               "\"givenName\":[\"Robert\",\"Bob\"]," +
@@ -124,6 +125,7 @@ public class JsonTest
               "\"uid\":[\"818037\"]," +
               "\"givenName\":[\"Joseph\",\"Joe\"]," +
               "\"sn\":[\"Anderson\"]}]",
+          // CheckStyle:Indentation ON
         },
       };
   }

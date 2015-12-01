@@ -12,7 +12,7 @@ public interface PropertySource<T>
 {
 
   /** Enum to define the domain for properties. */
-  public enum PropertyDomain {
+  enum PropertyDomain {
 
     /** ldap property domain. */
     LDAP("org.ldaptive."),

@@ -72,8 +72,7 @@ public class SyncReplClientTest extends AbstractTest
       "syncReplSearchDn",
       "syncReplSearchReturnAttrs",
       "syncReplSearchResults"
-    }
-  )
+    })
   @Test(groups = {"control-util"})
   public void syncReplRefreshOnly(final String dn, final String returnAttrs, final String ldifFile)
     throws Exception
@@ -129,8 +128,7 @@ public class SyncReplClientTest extends AbstractTest
       "syncReplSearchDn",
       "syncReplSearchReturnAttrs",
       "syncReplSearchResults"
-    }
-  )
+    })
   @Test(groups = {"control-util"})
   public void syncReplRefreshAndPersist(final String dn, final String returnAttrs, final String ldifFile)
     throws Exception

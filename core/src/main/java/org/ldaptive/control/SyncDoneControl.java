@@ -185,7 +185,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
      *
      * @param  control  to configure
      */
-    public CookieHandler(final SyncDoneControl control)
+    CookieHandler(final SyncDoneControl control)
     {
       super(control);
     }
@@ -215,7 +215,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
      *
      * @param  control  to configure
      */
-    public RefreshDeletesHandler(final SyncDoneControl control)
+    RefreshDeletesHandler(final SyncDoneControl control)
     {
       super(control);
     }

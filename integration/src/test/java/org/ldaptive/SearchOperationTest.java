@@ -126,8 +126,7 @@ public class SearchOperationTest extends AbstractTest
       "createGroup3",
       "createGroup4",
       "createGroup5"
-    }
-  )
+    })
   @BeforeClass(groups = {"search"}, dependsOnGroups = {"searchInit"})
   public void createGroupEntry(
     final String ldifFile2,
@@ -262,12 +261,10 @@ public class SearchOperationTest extends AbstractTest
       "searchFilterParameters",
       "searchReturnAttrs",
       "searchResults"
-    }
-  )
+    })
   @Test(
     groups = {"search"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void search(
     final String dn,
     final String filter,
@@ -342,8 +339,7 @@ public class SearchOperationTest extends AbstractTest
       "searchFilterParameters",
       "searchReturnAttrs",
       "searchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void searchScopes(
     final String filter,
@@ -353,12 +349,12 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     final SearchResult expectedResult = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile));
-    Connection conn = createLdapConnection(true);
+    final Connection conn = createLdapConnection(true);
     try {
       conn.open();
-      SearchOperation search = new SearchOperation(conn);
+      final SearchOperation search = new SearchOperation(conn);
 
-      SearchRequest subtreeRequest = new SearchRequest(
+      final SearchRequest subtreeRequest = new SearchRequest(
         DnParser.substring(expectedResult.getEntry().getDn(), 2),
         new SearchFilter(filter, filterParameters.split("\\|")),
         returnAttrs.split("\\|"));
@@ -366,7 +362,7 @@ public class SearchOperationTest extends AbstractTest
       SearchResult result = search.execute(subtreeRequest).getResult();
       TestUtils.assertEquals(expectedResult, result);
 
-      SearchRequest onelevelRequest = new SearchRequest(
+      final SearchRequest onelevelRequest = new SearchRequest(
         DnParser.substring(expectedResult.getEntry().getDn(), 1),
         new SearchFilter(filter, filterParameters.split("\\|")),
         returnAttrs.split("\\|"));
@@ -374,7 +370,7 @@ public class SearchOperationTest extends AbstractTest
       result = search.execute(onelevelRequest).getResult();
       TestUtils.assertEquals(expectedResult, result);
 
-      SearchRequest objectRequest = new SearchRequest(
+      final SearchRequest objectRequest = new SearchRequest(
         expectedResult.getEntry().getDn(),
         new SearchFilter("(objectClass=*)"),
         returnAttrs.split("\\|"));
@@ -401,8 +397,7 @@ public class SearchOperationTest extends AbstractTest
       "searchFilterParameters",
       "searchReturnAttrs",
       "searchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void jndiSearchScopes(
     final String filter,
@@ -421,12 +416,12 @@ public class SearchOperationTest extends AbstractTest
       final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
       cc.setLdapUrl(String.format("%s/%s", cc.getLdapUrl(),
                                   LdapUtils.percentEncode(DnParser.substring(expectedResult.getEntry().getDn(), i))));
-      Connection conn = DefaultConnectionFactory.getConnection(cc);
+      final Connection conn = DefaultConnectionFactory.getConnection(cc);
       try {
         conn.open();
-        SearchOperation search = new SearchOperation(conn);
+        final SearchOperation search = new SearchOperation(conn);
 
-        SearchRequest subtreeRequest = new SearchRequest(
+        final SearchRequest subtreeRequest = new SearchRequest(
           i > 0 ? DnParser.substring(expectedResult.getEntry().getDn(), 0, i) : "",
           new SearchFilter(filter, filterParameters.split("\\|")),
           returnAttrs.split("\\|"));
@@ -435,7 +430,7 @@ public class SearchOperationTest extends AbstractTest
         AssertJUnit.assertEquals(1, result.size());
         TestUtils.assertEquals(expectedResult, result);
 
-        SearchRequest onelevelRequest = new SearchRequest(
+        final SearchRequest onelevelRequest = new SearchRequest(
           i > 0 ? DnParser.substring(expectedResult.getEntry().getDn(), 0, i) : "",
           new SearchFilter(filter, filterParameters.split("\\|")),
           returnAttrs.split("\\|"));
@@ -443,7 +438,7 @@ public class SearchOperationTest extends AbstractTest
         result = search.execute(onelevelRequest).getResult();
         AssertJUnit.assertEquals(0, result.size());
 
-        SearchRequest objectRequest = new SearchRequest(
+        final SearchRequest objectRequest = new SearchRequest(
           i > 0 ? DnParser.substring(expectedResult.getEntry().getDn(), 0, i) : "",
           new SearchFilter("(objectClass=*)"),
           returnAttrs.split("\\|"));
@@ -472,8 +467,7 @@ public class SearchOperationTest extends AbstractTest
       "searchFilter",
       "searchFilterParameters",
       "searchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void returnAttributesSearch(
     final String dn,
@@ -558,8 +552,7 @@ public class SearchOperationTest extends AbstractTest
       "pagedSearchFilter",
       "pagedSearchReturnAttrs",
       "pagedSearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void pagedSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
@@ -625,8 +618,7 @@ public class SearchOperationTest extends AbstractTest
       "virtualListViewSearchFilter",
       "virtualListViewSearchReturnAttrs",
       "virtualListViewSearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void virtualListViewSearch(
     final String dn,
@@ -700,8 +692,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "sortSearchDn",
       "sortSearchFilter"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void sortedSearch(final String dn, final String filter)
     throws Exception
@@ -770,8 +761,7 @@ public class SearchOperationTest extends AbstractTest
       "proxyAuthzTo",
       "proxyAuthzSearchDn",
       "proxyAuthzSearchFilter"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void proxyAuthzSearch(final String authzFrom, final String authzTo, final String dn, final String filter)
     throws Exception
@@ -866,8 +856,7 @@ public class SearchOperationTest extends AbstractTest
       "recursiveSearchFilterParameters",
       "recursiveSearchReturnAttrs",
       "recursiveHandlerResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void recursiveHandlerSearch(
     final String dn,
@@ -915,8 +904,7 @@ public class SearchOperationTest extends AbstractTest
       "recursiveSearch2Filter",
       "recursiveSearch2ReturnAttrs",
       "recursiveHandlerResults2"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void recursiveHandlerSearch2(
     final String dn,
@@ -960,8 +948,7 @@ public class SearchOperationTest extends AbstractTest
       "mergeSearchFilter",
       "mergeSearchReturnAttrs",
       "mergeSearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void mergeSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
@@ -1006,8 +993,7 @@ public class SearchOperationTest extends AbstractTest
       "mergeDuplicateSearchFilter",
       "mergeDuplicateReturnAttrs",
       "mergeDuplicateSearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void mergeDuplicateSearch(
     final String dn,
@@ -1056,8 +1042,7 @@ public class SearchOperationTest extends AbstractTest
       "mergeAttributeSearchFilter",
       "mergeAttributeReturnAttrs",
       "mergeAttributeSearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void mergeAttributeSearch(
     final String dn,
@@ -1105,8 +1090,7 @@ public class SearchOperationTest extends AbstractTest
       "binarySearchFilter",
       "binarySearchReturnAttr",
       "binarySearchResult"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void binarySearch(final String dn, final String filter, final String returnAttr, final String base64Value)
     throws Exception
@@ -1155,8 +1139,7 @@ public class SearchOperationTest extends AbstractTest
       "searchFilterParameters",
       "searchReturnAttrs",
       "searchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void caseChangeSearch(
     final String dn,
@@ -1256,8 +1239,7 @@ public class SearchOperationTest extends AbstractTest
       "rangeSearchFilter",
       "rangeSearchReturnAttrs",
       "rangeHandlerResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void rangeHandlerSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
@@ -1301,8 +1283,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "statsSearchDn",
       "statsSearchFilter"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void getStatsSearch(final String dn, final String filter)
     throws Exception
@@ -1355,8 +1336,7 @@ public class SearchOperationTest extends AbstractTest
       "miscADControlsHost",
       "miscADControlsDn",
       "miscADControlsFilter"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void miscADControlsSearch(final String host, final String dn, final String filter)
     throws Exception
@@ -1420,8 +1400,7 @@ public class SearchOperationTest extends AbstractTest
       "specialCharBinarySearchFilterParameters",
       "specialCharReturnAttrs",
       "specialCharSearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void specialCharsSearch(
     final String dn,
@@ -1470,8 +1449,7 @@ public class SearchOperationTest extends AbstractTest
       "rewriteSearchDn",
       "rewriteSearchFilter",
       "rewriteSearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void rewriteSearch(final String dn, final String filter, final String ldifFile)
     throws Exception
@@ -1515,8 +1493,7 @@ public class SearchOperationTest extends AbstractTest
       "searchExceededDn",
       "searchExceededFilter",
       "searchExceededResultsSize"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void searchExceeded(final String dn, final String filter, final int resultsSize)
     throws Exception
@@ -1556,8 +1533,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "searchReferralDn",
       "searchReferralFilter"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void searchReferral(final String dn, final String filter)
     throws Exception
@@ -1631,8 +1607,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "searchReferenceDn",
       "searchReferenceFilter"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void searchReference(final String dn, final String filter)
     throws Exception
@@ -1741,8 +1716,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "searchActiveDirectoryDn",
       "searchActiveDirectoryFilter"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void searchActiveDirectory(final String dn, final String filter)
     throws Exception
@@ -1848,8 +1822,7 @@ public class SearchOperationTest extends AbstractTest
     {
       "searchRetryDn",
       "searchRetryResultCode"
-    }
-  )
+    })
   @Test(groups = {"search-with-retry"}, dependsOnGroups = {"search"})
   public void searchWithRetry(final String dn, final String resultCode)
     throws Exception
@@ -1968,12 +1941,10 @@ public class SearchOperationTest extends AbstractTest
       "getAttributesDn",
       "getAttributesReturnAttrs",
       "getAttributesResults"
-    }
-  )
+    })
   @Test(
     groups = {"search"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void getAttributes(final String dn, final String returnAttrs, final String results)
     throws Exception
   {
@@ -1997,8 +1968,7 @@ public class SearchOperationTest extends AbstractTest
       "getAttributesBase64Dn",
       "getAttributesBase64ReturnAttrs",
       "getAttributesBase64Results"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void getAttributesBase64(final String dn, final String returnAttrs, final String results)
     throws Exception
@@ -2075,8 +2045,7 @@ public class SearchOperationTest extends AbstractTest
       "digestMd5SearchFilterParameters",
       "digestMd5SearchReturnAttrs",
       "digestMd5SearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void digestMd5Search(
     final String dn,
@@ -2124,8 +2093,7 @@ public class SearchOperationTest extends AbstractTest
       "cramMd5SearchFilterParameters",
       "cramMd5SearchReturnAttrs",
       "cramMd5SearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void cramMd5Search(
     final String dn,
@@ -2179,8 +2147,7 @@ public class SearchOperationTest extends AbstractTest
       "saslExternalSearchFilterParameters",
       "saslExternalSearchReturnAttrs",
       "saslExternalSearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void saslExternalSearch(
     final String dn,
@@ -2238,8 +2205,7 @@ public class SearchOperationTest extends AbstractTest
       "gssApiSearchFilterParameters",
       "gssApiSearchReturnAttrs",
       "gssApiSearchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void gssApiSearch(
     final String krb5Realm,
@@ -2303,8 +2269,7 @@ public class SearchOperationTest extends AbstractTest
       "searchFilterParameters",
       "searchReturnAttrs",
       "searchResults"
-    }
-  )
+    })
   @Test(groups = {"search"})
   public void executorSearch(
     final String dn,

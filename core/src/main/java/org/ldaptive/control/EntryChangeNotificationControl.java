@@ -238,7 +238,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
      *
      * @param  control  to configure
      */
-    public ChangeTypeHandler(final EntryChangeNotificationControl control)
+    ChangeTypeHandler(final EntryChangeNotificationControl control)
     {
       super(control);
     }
@@ -270,7 +270,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
      *
      * @param  control  to configure
      */
-    public PreviousDnHandler(final EntryChangeNotificationControl control)
+    PreviousDnHandler(final EntryChangeNotificationControl control)
     {
       super(control);
     }
@@ -297,7 +297,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
      *
      * @param  control  to configure
      */
-    public ChangeNumberHandler(final EntryChangeNotificationControl control)
+    ChangeNumberHandler(final EntryChangeNotificationControl control)
     {
       super(control);
     }

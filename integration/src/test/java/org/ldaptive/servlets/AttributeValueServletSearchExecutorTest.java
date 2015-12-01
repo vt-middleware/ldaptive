@@ -75,8 +75,7 @@ public class AttributeValueServletSearchExecutorTest extends AbstractTest
       "attributeServletQuery",
       "attributeServletAttr",
       "attributeServletValue"
-    }
-  )
+    })
   @Test(groups = {"servlet"})
   public void attributeServlet(final String query, final String attr, final String attributeValue)
     throws Exception

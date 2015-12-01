@@ -542,7 +542,7 @@ public class JLdapConnection implements ProviderConnection
      * @param  u  username to bind with
      * @param  p  password to bind with
      */
-    public SaslCallbackHandler(final String u, final String p)
+    SaslCallbackHandler(final String u, final String p)
     {
       user = u;
       if (p != null) {

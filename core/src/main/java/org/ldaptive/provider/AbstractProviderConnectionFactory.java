@@ -142,7 +142,7 @@ public abstract class AbstractProviderConnectionFactory<T extends ProviderConfig
      *
      * @param  s  ldap url
      */
-    public DefaultConnectionFactoryMetadata(final String s)
+    DefaultConnectionFactoryMetadata(final String s)
     {
       ldapUrl = s;
     }

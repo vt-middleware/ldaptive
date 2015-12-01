@@ -296,7 +296,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
      *
      * @param  control  to configure
      */
-    public StateHandler(final SyncStateControl control)
+    StateHandler(final SyncStateControl control)
     {
       super(control);
     }
@@ -328,7 +328,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
      *
      * @param  control  to configure
      */
-    public EntryUuidHandler(final SyncStateControl control)
+    EntryUuidHandler(final SyncStateControl control)
     {
       super(control);
     }
@@ -357,7 +357,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
      *
      * @param  control  to configure
      */
-    public CookieHandler(final SyncStateControl control)
+    CookieHandler(final SyncStateControl control)
     {
       super(control);
     }

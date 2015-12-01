@@ -319,7 +319,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
      *
      * @param  control  to configure
      */
-    public TimeBeforeExpirationHandler(final PasswordPolicyControl control)
+    TimeBeforeExpirationHandler(final PasswordPolicyControl control)
     {
       super(control);
     }
@@ -346,7 +346,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
      *
      * @param  control  to configure
      */
-    public GraceAuthnsRemainingHandler(final PasswordPolicyControl control)
+    GraceAuthnsRemainingHandler(final PasswordPolicyControl control)
     {
       super(control);
     }
@@ -373,7 +373,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
      *
      * @param  control  to configure
      */
-    public ErrorHandler(final PasswordPolicyControl control)
+    ErrorHandler(final PasswordPolicyControl control)
     {
       super(control);
     }

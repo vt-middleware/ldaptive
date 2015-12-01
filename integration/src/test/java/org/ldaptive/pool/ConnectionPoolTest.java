@@ -83,8 +83,7 @@ public class ConnectionPoolTest extends AbstractTest
     {
       "ldapTestHost",
       "ldapBaseDn"
-    }
-  )
+    })
   @BeforeClass(
     groups = {
       "softlimitpool",
@@ -159,8 +158,7 @@ public class ConnectionPoolTest extends AbstractTest
       "createEntry8",
       "createEntry9",
       "createEntry10"
-    }
-  )
+    })
   @BeforeClass(
     groups = {
       "softlimitpool",
@@ -230,8 +228,7 @@ public class ConnectionPoolTest extends AbstractTest
       "searchResults8",
       "searchResults9",
       "searchResults10"
-    }
-  )
+    })
   @BeforeClass(
     groups = {
       "softlimitpool",
@@ -425,8 +422,7 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"softlimitpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000
-  )
+    groups = {"softlimitpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000)
   public void softLimitSmallSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -442,8 +438,7 @@ public class ConnectionPoolTest extends AbstractTest
    */
   @Test(
     groups = {"softlimitpool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100, timeOut = 60000,
-    dependsOnMethods = {"softLimitSmallSearch"}
-  )
+    dependsOnMethods = {"softLimitSmallSearch"})
   public void softLimitMediumSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -490,8 +485,7 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000
-  )
+    groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000)
   public void blockingSmallSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -507,8 +501,7 @@ public class ConnectionPoolTest extends AbstractTest
    */
   @Test(
     groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100, timeOut = 60000,
-    dependsOnMethods = {"blockingSmallSearch"}
-  )
+    dependsOnMethods = {"blockingSmallSearch"})
   public void blockingMediumSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -524,8 +517,7 @@ public class ConnectionPoolTest extends AbstractTest
    */
   @Test(
     groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 50, invocationCount = 1000, timeOut = 60000,
-    dependsOnMethods = {"blockingMediumSearch"}
-  )
+    dependsOnMethods = {"blockingMediumSearch"})
   public void blockingLargeSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -552,8 +544,7 @@ public class ConnectionPoolTest extends AbstractTest
    */
   @Test(
     groups = {"blockingtimeoutpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50,
-    timeOut = 60000
-  )
+    timeOut = 60000)
   public void blockingTimeoutSmallSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -573,8 +564,7 @@ public class ConnectionPoolTest extends AbstractTest
    */
   @Test(
     groups = {"blockingtimeoutpool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100,
-    timeOut = 60000, dependsOnMethods = {"blockingTimeoutSmallSearch"}
-  )
+    timeOut = 60000, dependsOnMethods = {"blockingTimeoutSmallSearch"})
   public void blockingTimeoutMediumSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -594,8 +584,7 @@ public class ConnectionPoolTest extends AbstractTest
    */
   @Test(
     groups = {"blockingtimeoutpool"}, dataProvider = "pool-data", threadPoolSize = 50, invocationCount = 1000,
-    timeOut = 60000, dependsOnMethods = {"blockingTimeoutMediumSearch"}
-  )
+    timeOut = 60000, dependsOnMethods = {"blockingTimeoutMediumSearch"})
   public void blockingTimeoutLargeSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -626,8 +615,7 @@ public class ConnectionPoolTest extends AbstractTest
    */
   @Test(
     groups = {"connstrategypool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100,
-    timeOut = 60000
-  )
+    timeOut = 60000)
   public void connStrategySearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {

@@ -57,8 +57,7 @@ public class SearchResultTest extends AbstractTest
       "toSearchResultsFilter",
       "toSearchResultsAttrs",
       "toSearchResultsResults"
-    }
-  )
+    })
   @Test(groups = {"bean"})
   public void toSearchResults(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception

@@ -100,8 +100,7 @@ public class AuthenticatorLoadTest extends AbstractTest
       "createEntry8",
       "createEntry9",
       "createEntry10"
-    }
-  )
+    })
   @BeforeClass(groups = {"authload"})
   // CheckStyle:ParameterNumber OFF
   public void createAuthEntry(

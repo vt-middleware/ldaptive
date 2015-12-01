@@ -279,7 +279,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
      *
      * @param  control  to configure
      */
-    public TargetPositionHandler(final VirtualListViewResponseControl control)
+    TargetPositionHandler(final VirtualListViewResponseControl control)
     {
       super(control);
     }
@@ -306,7 +306,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
      *
      * @param  control  to configure
      */
-    public ContentCountHandler(final VirtualListViewResponseControl control)
+    ContentCountHandler(final VirtualListViewResponseControl control)
     {
       super(control);
     }
@@ -333,7 +333,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
      *
      * @param  control  to configure
      */
-    public ViewResultHandler(final VirtualListViewResponseControl control)
+    ViewResultHandler(final VirtualListViewResponseControl control)
     {
       super(control);
     }
@@ -365,7 +365,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
      *
      * @param  control  to configure
      */
-    public ContextIDHandler(final VirtualListViewResponseControl control)
+    ContextIDHandler(final VirtualListViewResponseControl control)
     {
       super(control);
     }

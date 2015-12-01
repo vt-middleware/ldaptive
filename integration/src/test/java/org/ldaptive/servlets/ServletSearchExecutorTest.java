@@ -76,8 +76,7 @@ public class ServletSearchExecutorTest extends AbstractTest
       "ldifSearchServletQuery",
       "ldifSearchServletAttrs",
       "ldifSearchServletLdif"
-    }
-  )
+    })
   @Test(groups = {"servlet"})
   public void ldifSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
@@ -111,8 +110,7 @@ public class ServletSearchExecutorTest extends AbstractTest
       "dsmlSearchServletQuery",
       "dsmlSearchServletAttrs",
       "dsmlSearchServletLdif"
-    }
-  )
+    })
   @Test(groups = {"servlet"})
   public void dsmlSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
@@ -155,8 +153,7 @@ public class ServletSearchExecutorTest extends AbstractTest
       "ldifTemplateSearchQuery",
       "ldifTemplateSearchAttrs",
       "ldifTemplateSearchLdif"
-    }
-  )
+    })
   @Test(groups = {"servlet"})
   public void templatesLdifSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
@@ -190,8 +187,7 @@ public class ServletSearchExecutorTest extends AbstractTest
       "dsmlTemplateSearchQuery",
       "dsmlTemplateSearchAttrs",
       "dsmlTemplateSearchLdif"
-    }
-  )
+    })
   @Test(groups = {"servlet"})
   public void templatesDsmlSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
@@ -233,8 +229,7 @@ public class ServletSearchExecutorTest extends AbstractTest
       "jsonTemplateSearchQuery",
       "jsonTemplateSearchAttrs",
       "jsonTemplateSearchLdif"
-    }
-  )
+    })
   @Test(groups = {"servlet"})
   public void templatesJsonSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception
@@ -276,8 +271,7 @@ public class ServletSearchExecutorTest extends AbstractTest
       "ldifTemplateSearchQuery",
       "ldifTemplateSearchAttrs",
       "ldifTemplateSearchLdif"
-    }
-  )
+    })
   @Test(groups = {"servlet"})
   public void templatesLdifIgnoreSearchServlet(final String query, final String attrs, final String ldifFile)
     throws Exception

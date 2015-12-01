@@ -67,8 +67,7 @@ public class AsyncSearchOperationTest extends AbstractTest
       "searchAsyncFilter",
       "searchAsyncReturnAttrs",
       "searchAsyncResults"
-    }
-  )
+    })
   @Test(groups = {"async"})
   public void search(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception

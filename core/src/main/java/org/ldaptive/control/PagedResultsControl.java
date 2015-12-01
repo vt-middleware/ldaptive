@@ -205,7 +205,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
      *
      * @param  control  to configure
      */
-    public SizeHandler(final PagedResultsControl control)
+    SizeHandler(final PagedResultsControl control)
     {
       super(control);
     }
@@ -232,7 +232,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
      *
      * @param  control  to configure
      */
-    public CookieHandler(final PagedResultsControl control)
+    CookieHandler(final PagedResultsControl control)
     {
       super(control);
     }

@@ -69,7 +69,7 @@ public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscode
   };
 
   /** Describes the fractional part of a generalized time string. */
-  private static enum FractionalPart {
+  private enum FractionalPart {
 
     /** Fractional hours. */
     Hours(3600000),

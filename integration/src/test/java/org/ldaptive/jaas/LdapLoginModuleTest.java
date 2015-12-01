@@ -87,8 +87,7 @@ public class LdapLoginModuleTest extends AbstractTest
       "createGroup7",
       "createGroup8",
       "createGroup9"
-    }
-  )
+    })
   @BeforeClass(groups = {"jaas"}, dependsOnGroups = {"jaasInit"})
   public void createGroupEntry(
     final String ldifFile6,
@@ -210,8 +209,7 @@ public class LdapLoginModuleTest extends AbstractTest
   @Parameters({ "jaasDn", "jaasUser", "jaasUserRole", "jaasCredential" })
   @Test(
     groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void contextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
@@ -230,8 +228,7 @@ public class LdapLoginModuleTest extends AbstractTest
   @Parameters({ "jaasDn", "jaasUser", "jaasUserRole", "jaasCredential" })
   @Test(
     groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void contextSslTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
@@ -250,8 +247,7 @@ public class LdapLoginModuleTest extends AbstractTest
   @Parameters({ "jaasDn", "jaasUser", "jaasUserRole", "jaasCredential" })
   @Test(
     groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void randomContextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
@@ -269,8 +265,7 @@ public class LdapLoginModuleTest extends AbstractTest
   @Parameters({ "jaasDn", "jaasUser", "jaasCredential" })
   @Test(
     groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void pooledDnResolverContextTest(final String dn, final String user, final String credential)
     throws Exception
   {
@@ -288,8 +283,7 @@ public class LdapLoginModuleTest extends AbstractTest
   @Parameters({ "jaasDn", "jaasUser", "jaasCredential" })
   @Test(
     groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void springPooledDnResolverContextTest(final String dn, final String user, final String credential)
     throws Exception
   {
@@ -308,8 +302,7 @@ public class LdapLoginModuleTest extends AbstractTest
   @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombined", "jaasCredential" })
   @Test(
     groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void rolesContextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
@@ -496,8 +489,7 @@ public class LdapLoginModuleTest extends AbstractTest
   @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombined" })
   @Test(
     groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void rolesOnlyContextTest(final String dn, final String user, final String role)
     throws Exception
   {
@@ -515,8 +507,7 @@ public class LdapLoginModuleTest extends AbstractTest
   @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombined" })
   @Test(
     groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void dnRolesOnlyContextTest(final String dn, final String user, final String role)
     throws Exception
   {
@@ -534,8 +525,7 @@ public class LdapLoginModuleTest extends AbstractTest
   @Parameters({ "jaasDn", "jaasUser", "jaasRoleCombined" })
   @Test(
     groups = {"jaas"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void dnRolesOnlyPooledContextTest(final String dn, final String user, final String role)
     throws Exception
   {

@@ -66,8 +66,7 @@ public class DsmlTest extends AbstractTest
     {
       "dsmlSearchDn",
       "dsmlSearchFilter"
-    }
-  )
+    })
   @Test(groups = {"dsml"})
   public void searchAndCompareDsmlv1(final String dn, final String filter)
     throws Exception
@@ -112,8 +111,7 @@ public class DsmlTest extends AbstractTest
     {
       "dsmlv1Entry",
       "dsmlv1SortedEntry"
-    }
-  )
+    })
   @Test(groups = {"dsml"})
   public void readAndCompareDsmlv1(final String dsmlFile, final String dsmlSortedFile)
     throws Exception

@@ -66,8 +66,7 @@ public class LdifTest extends AbstractTest
     {
       "ldifSearchDn",
       "ldifSearchFilter"
-    }
-  )
+    })
   @Test(groups = {"ldif"})
   public void searchAndCompareLdif(final String dn, final String filter)
     throws Exception
@@ -112,8 +111,7 @@ public class LdifTest extends AbstractTest
     {
       "ldifEntry",
       "ldifSortedEntry"
-    }
-  )
+    })
   @Test(groups = {"ldif"})
   public void readAndCompareSortedLdif(final String ldifFile, final String ldifSortedFile)
     throws Exception
@@ -142,8 +140,7 @@ public class LdifTest extends AbstractTest
     {
       "multipleLdifResultsIn",
       "multipleLdifResultsOut"
-    }
-  )
+    })
   @Test(groups = {"ldif"})
   public void readAndCompareMultipleLdif(final String ldifFileIn, final String ldifFileOut)
     throws Exception

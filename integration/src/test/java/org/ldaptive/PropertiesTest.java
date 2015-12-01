@@ -80,8 +80,7 @@ public class PropertiesTest
     {
       "ldapBindDn",
       "ldapTestHost"
-    }
-  )
+    })
   @Test(groups = {"props"})
   public void parserProperties(final String bindDn, final String host)
     throws Exception
@@ -192,8 +191,7 @@ public class PropertiesTest
     {
       "ldapBindDn",
       "ldapTestHost"
-    }
-  )
+    })
   @Test(groups = {"props"})
   public void jaasProperties(final String bindDn, final String host)
     throws Exception

@@ -269,7 +269,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public NewCookieHandler(final SyncInfoMessage message)
+    NewCookieHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -301,7 +301,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public RefreshDeleteHandler(final SyncInfoMessage message)
+    RefreshDeleteHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -328,7 +328,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public RefreshDeleteCookieHandler(final SyncInfoMessage message)
+    RefreshDeleteCookieHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -358,7 +358,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public RefreshDeleteDoneHandler(final SyncInfoMessage message)
+    RefreshDeleteDoneHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -385,7 +385,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public RefreshPresentHandler(final SyncInfoMessage message)
+    RefreshPresentHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -412,7 +412,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public RefreshPresentCookieHandler(final SyncInfoMessage message)
+    RefreshPresentCookieHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -442,7 +442,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public RefreshPresentDoneHandler(final SyncInfoMessage message)
+    RefreshPresentDoneHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -469,7 +469,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public SyncIdSetHandler(final SyncInfoMessage message)
+    SyncIdSetHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -496,7 +496,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public SyncIdSetCookieHandler(final SyncInfoMessage message)
+    SyncIdSetCookieHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -526,7 +526,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public SyncIdSetDeletesHandler(final SyncInfoMessage message)
+    SyncIdSetDeletesHandler(final SyncInfoMessage message)
     {
       super(message);
     }
@@ -553,7 +553,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
      *
      * @param  message  to configure
      */
-    public SyncIdSetUuidsHandler(final SyncInfoMessage message)
+    SyncIdSetUuidsHandler(final SyncInfoMessage message)
     {
       super(message);
     }

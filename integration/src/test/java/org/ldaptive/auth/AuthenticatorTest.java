@@ -345,12 +345,10 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateDnCredential",
       "authenticateDnReturnAttrs",
       "authenticateDnResults"
-    }
-  )
+    })
   @Test(
     groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void authenticateDn(final String dn, final String credential, final String returnAttrs, final String ldifFile)
     throws Exception
   {
@@ -383,12 +381,10 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateDnCredential",
       "authenticateDnReturnAttrs",
       "authenticateDnResults"
-    }
-  )
+    })
   @Test(
     groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void authenticateDnSsl(
     final String dn,
     final String credential,
@@ -425,8 +421,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateDnCredential",
       "authenticateDnFilter",
       "authenticateDnFilterParameters"
-    }
-  )
+    })
   @Test(groups = {"auth"})
   public void authenticateDnHandler(
     final String dn,
@@ -534,12 +529,10 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateCredential",
       "authenticateReturnAttrs",
       "authenticateResults"
-    }
-  )
+    })
   @Test(
     groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void authenticate(final String user, final String credential, final String returnAttrs, final String ldifFile)
     throws Exception
   {
@@ -595,12 +588,10 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateCredential",
       "authenticateReturnAttrs",
       "authenticateResults"
-    }
-  )
+    })
   @Test(
     groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void authenticateSsl(
     final String user,
     final String credential,
@@ -641,12 +632,10 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateFilter",
       "authenticateReturnAttrs",
       "authenticateResults"
-    }
-  )
+    })
   @Test(
     groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void authenticatePooled(
     final String user,
     final String credential,
@@ -685,8 +674,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateCredential",
       "authenticateReturnAttrs",
       "authenticateResults"
-    }
-  )
+    })
   @Test(groups = {"auth"})
   public void authenticateAggregate(
     final String user,
@@ -777,8 +765,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateUser",
       "authenticateCredential",
       "authenticateReturnAttrs"
-    }
-  )
+    })
   @Test(groups = {"auth"})
   public void authenticateInvalidInput(final String user, final String credential, final String returnAttrs)
     throws Exception
@@ -824,8 +811,7 @@ public class AuthenticatorTest extends AbstractTest
     {
       "authenticateSpecialCharsUser",
       "authenticateSpecialCharsCredential"
-    }
-  )
+    })
   @Test(groups = {"auth"})
   public void authenticateSpecialChars(final String user, final String credential)
     throws Exception
@@ -870,12 +856,10 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateCredential",
       "authenticateReturnAttrs",
       "authenticateResults"
-    }
-  )
+    })
   @Test(
     groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void authenticateSearchEntry(
     final String user,
     final String credential,
@@ -917,8 +901,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateCredential",
       "authenticateReturnAttrs",
       "authenticateResults"
-    }
-  )
+    })
   @Test(groups = {"auth"})
   public void authenticateWhoAmI(
     final String user,
@@ -960,8 +943,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateCredential",
       "authenticateReturnAttrs",
       "authenticateResults"
-    }
-  )
+    })
   @Test(groups = {"auth"})
   public void authenticateAuthorizationIdentity(
     final String user,
@@ -1006,8 +988,7 @@ public class AuthenticatorTest extends AbstractTest
     {
       "authenticateUser",
       "authenticateCredential"
-    }
-  )
+    })
   @AfterClass(groups = {"auth", "authAccountState"})
   public void authenticatePasswordPolicy(final String user, final String credential)
     throws Exception
@@ -1080,8 +1061,7 @@ public class AuthenticatorTest extends AbstractTest
     {
       "authenticateUser",
       "authenticateCredential"
-    }
-  )
+    })
   @AfterClass(groups = {"auth", "authAccountState"})
   public void authenticateActiveDirectory(final String user, final String credential)
     throws Exception

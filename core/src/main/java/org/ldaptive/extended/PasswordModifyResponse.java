@@ -59,7 +59,7 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
      *
      * @param  response  to configure
      */
-    public GenPasswdHandler(final PasswordModifyResponse response)
+    GenPasswdHandler(final PasswordModifyResponse response)
     {
       super(response);
     }

@@ -341,7 +341,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
      *
      * @param  control  to configure
      */
-    public FlagHandler(final DirSyncControl control)
+    FlagHandler(final DirSyncControl control)
     {
       super(control);
     }
@@ -368,7 +368,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
      *
      * @param  control  to configure
      */
-    public MaxAttrCountHandler(final DirSyncControl control)
+    MaxAttrCountHandler(final DirSyncControl control)
     {
       super(control);
     }
@@ -395,7 +395,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
      *
      * @param  control  to configure
      */
-    public CookieHandler(final DirSyncControl control)
+    CookieHandler(final DirSyncControl control)
     {
       super(control);
     }

@@ -269,7 +269,7 @@ public class DERPath
      *
      * @param  n  name of this node
      */
-    public Node(final String n)
+    Node(final String n)
     {
       name = n;
       childIndex = -1;
@@ -282,7 +282,7 @@ public class DERPath
      * @param  n  name of this node
      * @param  i  child index location of this node in the path
      */
-    public Node(final String n, final int i)
+    Node(final String n, final int i)
     {
       if (i < 0) {
         throw new IllegalArgumentException("Child index cannot be negative.");

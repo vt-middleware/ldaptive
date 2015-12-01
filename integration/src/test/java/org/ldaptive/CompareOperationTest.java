@@ -55,8 +55,7 @@ public class CompareOperationTest extends AbstractTest
   @Parameters({ "compareDn", "compareAttrName", "compareAttrValue" })
   @Test(
     groups = {"compare"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
-    timeOut = TEST_TIME_OUT
-  )
+    timeOut = TEST_TIME_OUT)
   public void compare(final String dn, final String attrName, final String attrValue)
     throws Exception
   {
@@ -92,8 +91,7 @@ public class CompareOperationTest extends AbstractTest
       "compareReferralDn",
       "compareReferralAttrName",
       "compareReferralAttrValue"
-    }
-  )
+    })
   @Test(groups = {"compare"})
   public void compareReferral(final String dn, final String attrName, final String attrValue)
     throws Exception

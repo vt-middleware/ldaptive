@@ -153,7 +153,7 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
      *
      * @param  sr  search result
      */
-    public Item(final SearchResult sr)
+    Item(final SearchResult sr)
     {
       result = sr;
       creationTime = System.currentTimeMillis();

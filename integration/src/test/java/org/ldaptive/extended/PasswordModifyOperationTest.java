@@ -71,8 +71,7 @@ public class PasswordModifyOperationTest extends AbstractTest
       "passwordModifyDn",
       "passwordModifyOldPass",
       "passwordModifyNewPass"
-    }
-  )
+    })
   @Test(groups = {"extended"})
   public void modify(final String dn, final String oldPass, final String newPass)
     throws Exception

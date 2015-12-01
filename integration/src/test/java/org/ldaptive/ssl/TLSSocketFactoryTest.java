@@ -3,7 +3,6 @@ package org.ldaptive.ssl;
 
 import java.net.Socket;
 import java.util.Arrays;
-import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSocket;
 import org.ldaptive.CompareOperation;
 import org.ldaptive.CompareRequest;
@@ -47,7 +46,7 @@ public class TLSSocketFactoryTest
     /* GCM ciphers only supported in Java 8
     "TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384",
     */
-};
+  };
 
   /** List of ciphers. */
   public static final String[] UNKNOWN_CIPHERS = new String[] {
@@ -263,6 +262,7 @@ public class TLSSocketFactoryTest
 
     if ("org.ldaptive.provider.opendj.OpenDJProvider".equals(p.getClass().getName())) {
       // grizzly ignores unknown protocols
+      AssertJUnit.assertTrue(true);
     } else {
       cc.getSslConfig().setEnabledProtocols(UNKNOWN_PROTOCOLS);
       conn = DefaultConnectionFactory.getConnection(cc);

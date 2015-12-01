@@ -193,7 +193,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
      *
      * @param  control  to configure
      */
-    public SortResultHandler(final SortResponseControl control)
+    SortResultHandler(final SortResponseControl control)
     {
       super(control);
     }
@@ -225,7 +225,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
      *
      * @param  control  to configure
      */
-    public AttributeTypeHandler(final SortResponseControl control)
+    AttributeTypeHandler(final SortResponseControl control)
     {
       super(control);
     }
