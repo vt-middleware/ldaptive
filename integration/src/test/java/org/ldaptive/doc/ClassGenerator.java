@@ -71,6 +71,7 @@ public class ClassGenerator
     "org.ldaptive.pool",
     "org.ldaptive.props",
     "org.ldaptive.provider",
+    "org.ldaptive.referral",
     "org.ldaptive.sasl",
     "org.ldaptive.schema",
     "org.ldaptive.ssl",
