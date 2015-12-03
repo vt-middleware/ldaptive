@@ -30,7 +30,7 @@ public class SpringLdapEntryMapper<T> extends AbstractLdapEntryMapper<T>
   /** Default constructor. */
   public SpringLdapEntryMapper()
   {
-    this(null);
+    this((Converter<?, ?>) null);
   }
 
 
