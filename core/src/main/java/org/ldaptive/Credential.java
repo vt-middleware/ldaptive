@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Provides convenience methods for converting the various types of passwords into a byte array.
@@ -10,9 +10,6 @@ import java.nio.charset.Charset;
  */
 public class Credential
 {
-
-  /** UTF-8 character set. */
-  private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
   /** Credential stored as a byte array. */
   private final byte[] bytes;
@@ -25,7 +22,7 @@ public class Credential
    */
   public Credential(final String password)
   {
-    bytes = password.getBytes(UTF8_CHARSET);
+    bytes = password.getBytes(StandardCharsets.UTF_8);
   }
 
 
@@ -36,7 +33,7 @@ public class Credential
    */
   public Credential(final char[] password)
   {
-    bytes = new String(password).getBytes(UTF8_CHARSET);
+    bytes = new String(password).getBytes(StandardCharsets.UTF_8);
   }
 
 
@@ -69,7 +66,7 @@ public class Credential
    */
   public String getString()
   {
-    return new String(bytes, UTF8_CHARSET);
+    return new String(bytes, StandardCharsets.UTF_8);
   }
 
 
@@ -87,6 +84,10 @@ public class Credential
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::bytes=%s]", getClass().getName(), hashCode(), new String(bytes, UTF8_CHARSET));
+    return String.format(
+      "[%s@%d::bytes=%s]",
+      getClass().getName(),
+      hashCode(),
+      new String(bytes, StandardCharsets.UTF_8));
   }
 }

@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -15,9 +15,6 @@ import org.testng.annotations.Test;
  */
 public class LdapAttributeTest
 {
-
-  /** UTF-8 charset. */
-  private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
 
   /** Tests default sort behavior. */
@@ -118,7 +115,7 @@ public class LdapAttributeTest
   {
     final LdapAttribute la = new LdapAttribute("cn", "William Wallace");
     AssertJUnit.assertEquals("William Wallace", la.getStringValue());
-    AssertJUnit.assertEquals("William Wallace".getBytes(UTF8_CHARSET), la.getBinaryValue());
+    AssertJUnit.assertEquals("William Wallace".getBytes(StandardCharsets.UTF_8), la.getBinaryValue());
     AssertJUnit.assertEquals(1, la.getStringValues().size());
     AssertJUnit.assertEquals(1, la.getBinaryValues().size());
     AssertJUnit.assertEquals(la, new LdapAttribute("cn", "William Wallace"));
@@ -148,8 +145,8 @@ public class LdapAttributeTest
     commonNames.add("William Wallace");
 
     final List<byte[]> binaryCommonNames = new ArrayList<>();
-    binaryCommonNames.add("Bill Wallace".getBytes(UTF8_CHARSET));
-    binaryCommonNames.add("William Wallace".getBytes(UTF8_CHARSET));
+    binaryCommonNames.add("Bill Wallace".getBytes(StandardCharsets.UTF_8));
+    binaryCommonNames.add("William Wallace".getBytes(StandardCharsets.UTF_8));
 
     LdapAttribute la = new LdapAttribute(SortBehavior.UNORDERED);
     la.setName("cn");
@@ -171,7 +168,7 @@ public class LdapAttributeTest
     AssertJUnit.assertEquals("Bill Wallace", la.getStringValue());
     AssertJUnit.assertArrayEquals(commonNames.toArray(new String[2]), la.getStringValues().toArray(new String[2]));
     AssertJUnit.assertEquals(2, la.getStringValues().size());
-    AssertJUnit.assertEquals("Bill Wallace".getBytes(UTF8_CHARSET), la.getBinaryValue());
+    AssertJUnit.assertEquals("Bill Wallace".getBytes(StandardCharsets.UTF_8), la.getBinaryValue());
     AssertJUnit.assertArrayEquals(
       binaryCommonNames.toArray(new byte[2][0]),
       la.getBinaryValues().toArray(new byte[2][0]));
@@ -186,7 +183,7 @@ public class LdapAttributeTest
     AssertJUnit.assertEquals("Bill Wallace", la.getStringValue());
     AssertJUnit.assertArrayEquals(commonNames.toArray(new String[2]), la.getStringValues().toArray(new String[2]));
     AssertJUnit.assertEquals(2, la.getStringValues().size());
-    AssertJUnit.assertEquals("Bill Wallace".getBytes(UTF8_CHARSET), la.getBinaryValue());
+    AssertJUnit.assertEquals("Bill Wallace".getBytes(StandardCharsets.UTF_8), la.getBinaryValue());
     AssertJUnit.assertArrayEquals(
       binaryCommonNames.toArray(new byte[2][0]),
       la.getBinaryValues().toArray(new byte[2][0]));

@@ -1,7 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.io;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Scanner;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -15,9 +16,6 @@ import org.testng.annotations.Test;
 public class Base64Test
 {
 
-  /** UTF-8 character set. */
-  private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
-
 
   /**
    * Base64 test data.
@@ -30,21 +28,21 @@ public class Base64Test
     return
       new Object[][] {
         new Object[] {
-          "".getBytes(UTF8_CHARSET),
+          "".getBytes(StandardCharsets.UTF_8),
           "",
         },
         new Object[] {
-          "Hello World".getBytes(UTF8_CHARSET),
+          "Hello World".getBytes(StandardCharsets.UTF_8),
           "SGVsbG8gV29ybGQ=",
         },
         new Object[] {
-          "Base64 Encode".getBytes(UTF8_CHARSET),
+          "Base64 Encode".getBytes(StandardCharsets.UTF_8),
           "QmFzZTY0IEVuY29kZQ==",
         },
         new Object[] {
           new Scanner(
             Base64Test.class.getResourceAsStream(
-              "/org/ldaptive/io/plaintext.txt")).useDelimiter("\\Z").next().getBytes(UTF8_CHARSET),
+              "/org/ldaptive/io/plaintext.txt")).useDelimiter("\\Z").next().getBytes(StandardCharsets.UTF_8),
           new Scanner(
             Base64Test.class.getResourceAsStream("/org/ldaptive/io/base64-0.txt")).useDelimiter("\\Z").next(),
         },
@@ -57,22 +55,22 @@ public class Base64Test
    *
    * @return  base64 test data
    */
-  @DataProvider(name = "decode")
-  public Object[][] createDecodeData()
+  @DataProvider(name = "decode-mime")
+  public Object[][] createDecodeMimeData()
   {
     return
       new Object[][] {
         new Object[] {
           new Scanner(
             Base64Test.class.getResourceAsStream(
-              "/org/ldaptive/io/plaintext.txt")).useDelimiter("\\Z").next().getBytes(UTF8_CHARSET),
+              "/org/ldaptive/io/plaintext.txt")).useDelimiter("\\Z").next().getBytes(StandardCharsets.UTF_8),
           new Scanner(
             Base64Test.class.getResourceAsStream("/org/ldaptive/io/base64-76.txt")).useDelimiter("\\Z").next(),
         },
         new Object[] {
           new Scanner(
             Base64Test.class.getResourceAsStream(
-              "/org/ldaptive/io/plaintext.txt")).useDelimiter("\\Z").next().getBytes(UTF8_CHARSET),
+              "/org/ldaptive/io/plaintext.txt")).useDelimiter("\\Z").next().getBytes(StandardCharsets.UTF_8),
           new Scanner(
             Base64Test.class.getResourceAsStream("/org/ldaptive/io/base64-64.txt")).useDelimiter("\\Z").next(),
         },
@@ -89,8 +87,8 @@ public class Base64Test
   public Object[][] createInvalidDecode()
   {
     return new Object[][] {
-      new Object[] {"QmFzZTY0IEVuY29kZQ=", },
-      new Object[] {"QmFzZTY0IEVuY29kZQ", },
+      new Object[] {"QmFzZTY0IEVuY29kZQå", },
+      new Object[] {"QmFzZTY0IEVuY29kZQç", },
     };
   }
 
@@ -105,9 +103,9 @@ public class Base64Test
   public void encodeAndDecode(final byte[] raw, final String encoded)
     throws Exception
   {
-    final String s = new String(Base64.encodeToByte(raw, false), UTF8_CHARSET);
+    final String s = new String(Base64.getEncoder().encode(raw), StandardCharsets.UTF_8);
     Assert.assertEquals(encoded, s);
-    Assert.assertEquals(raw, Base64.decode(s));
+    Assert.assertEquals(raw, Base64.getDecoder().decode(s));
   }
 
 
@@ -117,11 +115,11 @@ public class Base64Test
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "decode")
-  public void decode(final byte[] raw, final String encoded)
+  @Test(groups = {"io"}, dataProvider = "decode-mime")
+  public void decodeMime(final byte[] raw, final String encoded)
     throws Exception
   {
-    Assert.assertEquals(raw, Base64.decode(encoded));
+    Assert.assertEquals(raw, Base64.getMimeDecoder().decode(encoded));
   }
 
 
@@ -135,7 +133,7 @@ public class Base64Test
     throws Exception
   {
     try {
-      Base64.decode(data);
+      Base64.getDecoder().decode(data);
       Assert.fail("Should have thrown exception");
     } catch (Exception e) {
       Assert.assertEquals(IllegalArgumentException.class, e.getClass());

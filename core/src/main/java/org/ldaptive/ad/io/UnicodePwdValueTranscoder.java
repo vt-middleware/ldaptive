@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.io;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import org.ldaptive.io.AbstractBinaryValueTranscoder;
 
 /**
@@ -12,14 +12,11 @@ import org.ldaptive.io.AbstractBinaryValueTranscoder;
 public class UnicodePwdValueTranscoder extends AbstractBinaryValueTranscoder<String>
 {
 
-  /** UTF-16LE character set. */
-  private static final Charset UTF_16LE = Charset.forName("UTF-16LE");
-
 
   @Override
   public String decodeBinaryValue(final byte[] value)
   {
-    final String pwd = new String(value, UTF_16LE);
+    final String pwd = new String(value, StandardCharsets.UTF_16LE);
     if (pwd.length() < 2) {
       throw new IllegalArgumentException("unicodePwd must be at least 2 characters long");
     }
@@ -35,7 +32,7 @@ public class UnicodePwdValueTranscoder extends AbstractBinaryValueTranscoder<Str
     }
 
     final String pwd = String.format("\"%s\"", value);
-    return pwd.getBytes(UTF_16LE);
+    return pwd.getBytes(StandardCharsets.UTF_16LE);
   }
 
 

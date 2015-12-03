@@ -7,13 +7,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.regex.Pattern;
-import org.ldaptive.io.Base64;
 import org.ldaptive.io.Hex;
 
 /**
@@ -23,9 +23,6 @@ import org.ldaptive.io.Hex;
  */
 public final class LdapUtils
 {
-
-  /** UTF-8 character set. */
-  private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
   /** Size of buffer in bytes to use when reading files. */
   private static final int READ_BUFFER_SIZE = 128;
@@ -66,7 +63,7 @@ public final class LdapUtils
    */
   public static String base64Encode(final byte[] value)
   {
-    return value != null ? new String(Base64.encodeToByte(value, false), UTF8_CHARSET) : null;
+    return value != null ? new String(Base64.getEncoder().encode(value), StandardCharsets.UTF_8) : null;
   }
 
 
@@ -79,7 +76,7 @@ public final class LdapUtils
    */
   public static String base64Encode(final String value)
   {
-    return value != null ? base64Encode(value.getBytes(UTF8_CHARSET)) : null;
+    return value != null ? base64Encode(value.getBytes(StandardCharsets.UTF_8)) : null;
   }
 
 
@@ -92,7 +89,7 @@ public final class LdapUtils
    */
   public static String utf8Encode(final byte[] value)
   {
-    return value != null ? new String(value, UTF8_CHARSET) : null;
+    return value != null ? new String(value, StandardCharsets.UTF_8) : null;
   }
 
 
@@ -105,7 +102,7 @@ public final class LdapUtils
    */
   public static byte[] utf8Encode(final String value)
   {
-    return value != null ? value.getBytes(UTF8_CHARSET) : null;
+    return value != null ? value.getBytes(StandardCharsets.UTF_8) : null;
   }
 
 
@@ -208,7 +205,7 @@ public final class LdapUtils
    */
   public static byte[] base64Decode(final String value)
   {
-    return value != null ? Base64.decode(value.getBytes()) : null;
+    return value != null ? Base64.getDecoder().decode(value.getBytes()) : null;
   }
 
 

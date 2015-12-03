@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.io;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -15,9 +15,6 @@ import org.testng.annotations.Test;
 public class HexTest
 {
 
-  /** UTF-8 character set. */
-  private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
-
 
   /**
    * Hex test data.
@@ -30,21 +27,21 @@ public class HexTest
     return
       new Object[][] {
         new Object[] {
-          "".getBytes(UTF8_CHARSET),
+          "".getBytes(StandardCharsets.UTF_8),
           "",
         },
         new Object[] {
-          "Hello World".getBytes(UTF8_CHARSET),
+          "Hello World".getBytes(StandardCharsets.UTF_8),
           "48656C6C6F20576F726C64",
         },
         new Object[] {
-          "Hexadecimal Encode".getBytes(UTF8_CHARSET),
+          "Hexadecimal Encode".getBytes(StandardCharsets.UTF_8),
           "48657861646563696D616C20456E636F6465",
         },
         new Object[] {
           new Scanner(
             HexTest.class.getResourceAsStream(
-              "/org/ldaptive/io/plaintext.txt")).useDelimiter("\\Z").next().getBytes(UTF8_CHARSET),
+              "/org/ldaptive/io/plaintext.txt")).useDelimiter("\\Z").next().getBytes(StandardCharsets.UTF_8),
           new Scanner(HexTest.class.getResourceAsStream("/org/ldaptive/io/hex.txt")).useDelimiter("\\Z").next(),
         },
       };

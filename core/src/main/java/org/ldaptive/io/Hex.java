@@ -90,11 +90,11 @@ public final class Hex
 
 
   /**
-   * This will convert the supplied value to a hex encoded string. Returns null if the supplied value is null.
+   * This will convert the supplied value from a hex encoded string. Returns null if the supplied value is null.
    *
-   * @param  value  to hex encode
+   * @param  value  to hex decode
    *
-   * @return  hex encoded value
+   * @return  hex decoded value
    *
    * @throws  IllegalArgumentException  if value is not valid hexidecimal
    */
