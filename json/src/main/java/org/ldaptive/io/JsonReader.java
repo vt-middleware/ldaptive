@@ -3,11 +3,15 @@ package org.ldaptive.io;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.List;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import java.lang.reflect.Type;
+import java.util.Map;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResult;
@@ -24,8 +28,8 @@ public class JsonReader implements SearchResultReader
   /** Reader to read from. */
   private final Reader jsonReader;
 
-  /** Sort behavior. */
-  private final SortBehavior sortBehavior;
+  /** To convert JSON to a search result. */
+  private final Gson gson;
 
 
   /**
@@ -51,7 +55,9 @@ public class JsonReader implements SearchResultReader
     if (sb == null) {
       throw new IllegalArgumentException("Sort behavior cannot be null");
     }
-    sortBehavior = sb;
+    final GsonBuilder builder = new GsonBuilder();
+    builder.registerTypeAdapter(SearchResult.class, new SearchResultDeserializer(sb));
+    gson = builder.disableHtmlEscaping().create();
   }
 
 
@@ -63,33 +69,59 @@ public class JsonReader implements SearchResultReader
    * @throws  IOException  if an error occurs using the reader
    */
   @Override
-  @SuppressWarnings("unchecked")
   public SearchResult read()
     throws IOException
   {
-    final SearchResult result = new SearchResult(sortBehavior);
     try {
-      final JSONParser parser = new JSONParser();
-      final JSONArray jsonArray = (JSONArray) parser.parse(jsonReader);
-      for (Object o : jsonArray) {
+      return gson.fromJson(jsonReader, SearchResult.class);
+    } catch (JsonParseException e) {
+      throw new IOException(e);
+    }
+  }
+
+
+  /**
+   * Deserializes a {@link SearchResult} by iterating over the json elements.
+   */
+  private static class SearchResultDeserializer implements JsonDeserializer<SearchResult>
+  {
+
+    /** Sort behavior. */
+    private final SortBehavior sortBehavior;
+
+
+    /**
+     * Creates a new search result deserializer.
+     *
+     * @param  sb  sort behavior of the search result
+     */
+    public SearchResultDeserializer(final SortBehavior sb)
+    {
+      sortBehavior = sb;
+    }
+
+
+    @Override
+    public SearchResult deserialize(final JsonElement json, final Type type, final JsonDeserializationContext context)
+      throws JsonParseException
+    {
+      final SearchResult result = new SearchResult(sortBehavior);
+      final JsonArray jsonResult = json.getAsJsonArray();
+      for (JsonElement jsonEntry : jsonResult) {
         final LdapEntry entry = new LdapEntry(sortBehavior);
-        final JSONObject jsonObject = (JSONObject) o;
-        for (Object k : jsonObject.keySet()) {
-          final String attrName = (String) k;
-          if ("dn".equalsIgnoreCase(attrName)) {
-            entry.setDn((String) jsonObject.get(k));
+        for (Map.Entry<String, JsonElement> jsonAttr : jsonEntry.getAsJsonObject().entrySet()) {
+          if ("dn".equals(jsonAttr.getKey())) {
+            entry.setDn(jsonAttr.getValue().getAsString());
           } else {
             final LdapAttribute attr = new LdapAttribute(sortBehavior);
-            attr.setName(attrName);
-            attr.addStringValues((List<String>) jsonObject.get(k));
+            attr.setName(jsonAttr.getKey());
+            jsonAttr.getValue().getAsJsonArray().forEach(i -> attr.addStringValue(i.getAsString()));
             entry.addAttribute(attr);
           }
         }
         result.addEntry(entry);
       }
-    } catch (ParseException e) {
-      throw new IOException(e);
+      return result;
     }
-    return result;
   }
 }

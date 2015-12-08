@@ -150,6 +150,49 @@ public class ServletSearchExecutorTest extends AbstractTest
    */
   @Parameters(
     {
+      "jsonSearchServletQuery",
+      "jsonSearchServletAttrs",
+      "jsonSearchServletLdif"
+    })
+  @Test(groups = {"servlet"})
+  public void jsonSearchServlet(final String query, final String attrs, final String ldifFile)
+    throws Exception
+  {
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    final SearchResult result = TestUtils.convertLdifToResult(ldif);
+    // convert ldif into json
+    final StringWriter s1w = new StringWriter();
+    final JsonWriter j1w = new JsonWriter(s1w);
+    j1w.write(result);
+
+    final String json = s1w.toString();
+
+    final ServletUnitClient sc = servletRunner.newClient();
+    // test basic json query
+    final WebRequest request = new PostMethodWebRequest("http://servlets.ldaptive.org/JsonSearch");
+    request.setParameter("query", query);
+    request.setParameter("attrs", attrs.split("\\|"));
+
+    final WebResponse response = sc.getResponse(request);
+
+    AssertJUnit.assertNotNull(response);
+    AssertJUnit.assertEquals("application/json", response.getContentType());
+    // active directory uppercases CN in the DN
+    AssertJUnit.assertEquals(
+      json,
+      response.getText().replaceAll("CN=", "cn=").replaceAll("OU=Test", "ou=test").replaceAll("DC=", "dc="));
+  }
+
+
+  /**
+   * @param  query  to search for.
+   * @param  attrs  attributes to return from search
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
       "ldifTemplateSearchQuery",
       "ldifTemplateSearchAttrs",
       "ldifTemplateSearchLdif"

@@ -69,6 +69,38 @@
     </init-param>
   </servlet>
   <servlet>
+    <servlet-name>JsonSearch</servlet-name>
+    <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
+    <init-param>
+      <param-name>searchExecutorClass</param-name>
+      <param-value>org.ldaptive.servlets.JsonServletSearchExecutor</param-value>
+    </init-param>
+    <init-param>
+      <param-name>ldapUrl</param-name>
+      <param-value>${ldapTestHost}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>baseDn</param-name>
+      <param-value>${ldapBaseDn}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>bindDn</param-name>
+      <param-value>${ldapBindDn}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>bindCredential</param-name>
+      <param-value>${ldapBindCredential}</param-value>
+    </init-param>
+    <init-param>
+      <param-name>binaryAttributes</param-name>
+      <param-value>jpegPhoto</param-value>
+    </init-param>
+    <init-param>
+      <param-name>poolType</param-name>
+      <param-value>SOFTLIMIT</param-value>
+    </init-param>
+  </servlet>
+  <servlet>
     <servlet-name>AttributeSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
@@ -159,6 +191,10 @@
   <servlet-mapping>
     <servlet-name>DsmlSearch</servlet-name>
     <url-pattern>/DsmlSearch</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>JsonSearch</servlet-name>
+    <url-pattern>/JsonSearch</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>AttributeSearch</servlet-name>

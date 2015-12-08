@@ -138,13 +138,25 @@ public class JsonTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"jsontest"}, dataProvider = "search-data")
-  public void search(final SearchResult result, final String json)
+  public void writer(final SearchResult result, final String json)
     throws Exception
   {
     final StringWriter writer = new StringWriter();
     (new JsonWriter(writer)).write(result);
     AssertJUnit.assertEquals(json, writer.toString());
+  }
 
+
+  /**
+   * @param  result  to convert to json.
+   * @param  json  to expect from the writer.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"jsontest"}, dataProvider = "search-data")
+  public void reader(final SearchResult result, final String json)
+    throws Exception
+  {
     final StringReader reader = new StringReader(json);
     AssertJUnit.assertEquals(result, (new JsonReader(reader)).read());
   }
