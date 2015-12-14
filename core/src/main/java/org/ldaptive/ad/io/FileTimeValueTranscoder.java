@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.io;
 
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import org.ldaptive.io.AbstractStringValueTranscoder;
 
 /**
@@ -11,14 +11,8 @@ import org.ldaptive.io.AbstractStringValueTranscoder;
  *
  * @author  Middleware Services
  */
-public class FileTimeValueTranscoder extends AbstractStringValueTranscoder<Calendar>
+public class FileTimeValueTranscoder extends AbstractStringValueTranscoder<ZonedDateTime>
 {
-
-  /** UTC time zone. */
-  private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
-
-  /** Default locale. */
-  private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
   /** Number of milliseconds between standard Unix era (1/1/1970) and filetime start (1/1/1601). */
   private static final long ERA_OFFSET = 11644473600000L;
@@ -28,24 +22,23 @@ public class FileTimeValueTranscoder extends AbstractStringValueTranscoder<Calen
 
 
   @Override
-  public Calendar decodeStringValue(final String value)
+  public ZonedDateTime decodeStringValue(final String value)
   {
-    final Calendar calendar = Calendar.getInstance(UTC, DEFAULT_LOCALE);
-    calendar.setTimeInMillis(Long.parseLong(value) / ONE_HUNDRED_NANOSECOND_INTERVAL - ERA_OFFSET);
-    return calendar;
+    final Instant i = Instant.ofEpochMilli(Long.parseLong(value) / ONE_HUNDRED_NANOSECOND_INTERVAL - ERA_OFFSET);
+    return ZonedDateTime.ofInstant(i, ZoneId.of("Z"));
   }
 
 
   @Override
-  public String encodeStringValue(final Calendar value)
+  public String encodeStringValue(final ZonedDateTime value)
   {
-    return String.valueOf((value.getTimeInMillis() + ERA_OFFSET) * ONE_HUNDRED_NANOSECOND_INTERVAL);
+    return String.valueOf((value.toInstant().toEpochMilli() + ERA_OFFSET) * ONE_HUNDRED_NANOSECOND_INTERVAL);
   }
 
 
   @Override
-  public Class<Calendar> getType()
+  public Class<ZonedDateTime> getType()
   {
-    return Calendar.class;
+    return ZonedDateTime.class;
   }
 }

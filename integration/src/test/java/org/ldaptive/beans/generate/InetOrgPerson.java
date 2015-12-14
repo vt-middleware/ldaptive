@@ -2,7 +2,7 @@
 package org.ldaptive.beans.generate;
 
 import java.security.cert.Certificate;
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.UUID;
 import org.ldaptive.LdapUtils;
@@ -97,7 +97,7 @@ public class InetOrgPerson {
     private Collection<String> businessCategory;
     private Collection<String> carLicense;
     private Collection<String> cn;
-    private Calendar createTimestamp;
+    private ZonedDateTime createTimestamp;
     private String creatorsName;
     private Collection<String> departmentNumber;
     private Collection<String> description;
@@ -124,7 +124,7 @@ public class InetOrgPerson {
     private Collection<String> matchingRules;
     private Collection<String> mobile;
     private String modifiersName;
-    private Calendar modifyTimestamp;
+    private ZonedDateTime modifyTimestamp;
     private Collection<String> o;
     private Collection<String> objectClasses;
     private Collection<String> ou;
@@ -136,10 +136,10 @@ public class InetOrgPerson {
     private Collection<String> postalCode;
     private String preferredDeliveryMethod;
     private String preferredLanguage;
-    private Calendar pwdAccountLockedTime;
-    private Calendar pwdChangedTime;
-    private Collection<Calendar> pwdFailureTime;
-    private Collection<Calendar> pwdGraceUseTime;
+    private ZonedDateTime pwdAccountLockedTime;
+    private ZonedDateTime pwdChangedTime;
+    private Collection<ZonedDateTime> pwdFailureTime;
+    private Collection<ZonedDateTime> pwdGraceUseTime;
     private Collection<String> pwdHistory;
     private String pwdPolicySubentry;
     private Boolean pwdReset;
@@ -212,11 +212,11 @@ public class InetOrgPerson {
         this.cn = c;
     }
 
-    public Calendar getCreateTimestamp() {
+    public ZonedDateTime getCreateTimestamp() {
         return createTimestamp;
     }
 
-    public void setCreateTimestamp(Calendar s) {
+    public void setCreateTimestamp(ZonedDateTime s) {
         this.createTimestamp = s;
     }
 
@@ -428,11 +428,11 @@ public class InetOrgPerson {
         this.modifiersName = s;
     }
 
-    public Calendar getModifyTimestamp() {
+    public ZonedDateTime getModifyTimestamp() {
         return modifyTimestamp;
     }
 
-    public void setModifyTimestamp(Calendar s) {
+    public void setModifyTimestamp(ZonedDateTime s) {
         this.modifyTimestamp = s;
     }
 
@@ -524,35 +524,35 @@ public class InetOrgPerson {
         this.preferredLanguage = s;
     }
 
-    public Calendar getPwdAccountLockedTime() {
+    public ZonedDateTime getPwdAccountLockedTime() {
         return pwdAccountLockedTime;
     }
 
-    public void setPwdAccountLockedTime(Calendar s) {
+    public void setPwdAccountLockedTime(ZonedDateTime s) {
         this.pwdAccountLockedTime = s;
     }
 
-    public Calendar getPwdChangedTime() {
+    public ZonedDateTime getPwdChangedTime() {
         return pwdChangedTime;
     }
 
-    public void setPwdChangedTime(Calendar s) {
+    public void setPwdChangedTime(ZonedDateTime s) {
         this.pwdChangedTime = s;
     }
 
-    public Collection<Calendar> getPwdFailureTime() {
+    public Collection<ZonedDateTime> getPwdFailureTime() {
         return pwdFailureTime;
     }
 
-    public void setPwdFailureTime(Collection<Calendar> c) {
+    public void setPwdFailureTime(Collection<ZonedDateTime> c) {
         this.pwdFailureTime = c;
     }
 
-    public Collection<Calendar> getPwdGraceUseTime() {
+    public Collection<ZonedDateTime> getPwdGraceUseTime() {
         return pwdGraceUseTime;
     }
 
-    public void setPwdGraceUseTime(Collection<Calendar> c) {
+    public void setPwdGraceUseTime(Collection<ZonedDateTime> c) {
         this.pwdGraceUseTime = c;
     }
 

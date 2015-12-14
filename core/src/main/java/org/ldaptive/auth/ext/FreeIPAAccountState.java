@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -190,7 +190,7 @@ public class FreeIPAAccountState extends AccountState
    * @param  exp  account expiration
    * @param  remaining  number of logins available
    */
-  public FreeIPAAccountState(final Calendar exp, final int remaining)
+  public FreeIPAAccountState(final ZonedDateTime exp, final int remaining)
   {
     super(new AccountState.DefaultWarning(exp, remaining));
     fError = null;

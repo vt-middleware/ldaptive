@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import org.ldaptive.beans.AbstractLdapEntryMapper;
 import org.ldaptive.beans.ClassDescriptor;
 import org.ldaptive.io.GeneralizedTimeValueTranscoder;
@@ -99,22 +99,22 @@ public class SpringLdapEntryMapper<T> extends AbstractLdapEntryMapper<T>
    */
   protected void addDefaultConverters(final GenericConversionService service)
   {
-    if (!service.canConvert(String.class, Calendar.class)) {
+    if (!service.canConvert(String.class, ZonedDateTime.class)) {
       service.addConverter(
-        new Converter<String, Calendar>() {
+        new Converter<String, ZonedDateTime>() {
           @Override
-          public Calendar convert(final String s)
+          public ZonedDateTime convert(final String s)
           {
             final GeneralizedTimeValueTranscoder transcoder = new GeneralizedTimeValueTranscoder();
             return transcoder.decodeStringValue(s);
           }
         });
     }
-    if (!service.canConvert(Calendar.class, String.class)) {
+    if (!service.canConvert(ZonedDateTime.class, String.class)) {
       service.addConverter(
-        new Converter<Calendar, String>() {
+        new Converter<ZonedDateTime, String>() {
           @Override
-          public String convert(final Calendar c)
+          public String convert(final ZonedDateTime c)
           {
             final GeneralizedTimeValueTranscoder transcoder = new GeneralizedTimeValueTranscoder();
             return transcoder.encodeStringValue(c);

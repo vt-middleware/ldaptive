@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
@@ -24,10 +24,9 @@ public class PasswordPolicyAuthenticationResponseHandler implements Authenticati
       if (ppc.getError() != null) {
         response.setAccountState(new PasswordPolicyAccountState(ppc.getError()));
       } else {
-        Calendar exp = null;
+        ZonedDateTime exp = null;
         if (ppc.getTimeBeforeExpiration() > 0) {
-          exp = Calendar.getInstance();
-          exp.add(Calendar.SECOND, ppc.getTimeBeforeExpiration());
+          exp = ZonedDateTime.now().plusSeconds(ppc.getTimeBeforeExpiration());
         }
         if (exp != null || ppc.getGraceAuthNsRemaining() > 0) {
           response.setAccountState(new PasswordPolicyAccountState(exp, ppc.getGraceAuthNsRemaining()));

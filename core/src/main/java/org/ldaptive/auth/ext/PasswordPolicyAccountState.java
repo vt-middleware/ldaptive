@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.control.PasswordPolicyControl;
 
@@ -23,7 +23,7 @@ public class PasswordPolicyAccountState extends AccountState
    * @param  exp  account expiration
    * @param  remaining  number of logins available
    */
-  public PasswordPolicyAccountState(final Calendar exp, final int remaining)
+  public PasswordPolicyAccountState(final ZonedDateTime exp, final int remaining)
   {
     super(new AccountState.DefaultWarning(exp, remaining));
     ppError = null;

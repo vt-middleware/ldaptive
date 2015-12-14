@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.security.auth.login.AccountExpiredException;
@@ -167,7 +167,7 @@ public class EDirectoryAccountState extends AccountState
    * @param  exp  account expiration
    * @param  remaining  number of logins available
    */
-  public EDirectoryAccountState(final Calendar exp, final int remaining)
+  public EDirectoryAccountState(final ZonedDateTime exp, final int remaining)
   {
     super(new AccountState.DefaultWarning(exp, remaining));
     edError = null;

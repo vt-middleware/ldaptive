@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
-import java.util.Calendar;
-import java.util.concurrent.TimeUnit;
+import java.time.Period;
+import java.time.ZonedDateTime;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
@@ -26,14 +26,14 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Maximum password age. */
-  private int maxPasswordAge;
+  /** Amount of time since a password was set that it will expire. Used if krbPasswordExpiration cannot be read. */
+  private Period expirationPeriod;
 
-  /** Maximum password age. */
+  /** Amount of time before expiration to produce a warning. */
+  private Period warningPeriod;
+
+  /** Maximum number of login failures to allow. */
   private int maxLoginFailures;
-
-  /** Number of hours before expiration to produce a warning. */
-  private int warningHours;
 
 
   /** Default constructor. */
@@ -43,20 +43,39 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
   /**
    * Creates a new freeipa authentication response handler.
    *
-   * @param  hours  length of time before expiration that should produce a warning
-   * @param  passwordAge  length of time in days that a password is valid
+   * @param  warning  length of time before expiration that should produce a warning
    * @param  loginFailures  number of login failures to allow
    */
-  public FreeIPAAuthenticationResponseHandler(final int hours, final int passwordAge, final int loginFailures)
+  public FreeIPAAuthenticationResponseHandler(final Period warning, final int loginFailures)
   {
-    if (hours < 0) {
-      throw new IllegalArgumentException("Hours must be >= 0");
+    if (warning == null) {
+      throw new IllegalArgumentException("Warning cannot be null");
     }
-    warningHours = hours;
-    if (passwordAge < 0) {
-      throw new IllegalArgumentException("Password age must be >= 0");
+    warningPeriod = warning;
+    if (loginFailures < 0) {
+      throw new IllegalArgumentException("Login failures must be >= 0");
     }
-    maxPasswordAge = passwordAge;
+    maxLoginFailures = loginFailures;
+  }
+
+
+  /**
+   * Creates a new freeipa authentication response handler.
+   *
+   * @param  expiration  length of time that a password is valid
+   * @param  warning  length of time before expiration that should produce a warning
+   * @param  loginFailures  number of login failures to allow
+   */
+  public FreeIPAAuthenticationResponseHandler(final Period expiration, final Period warning, final int loginFailures)
+  {
+    if (expiration == null) {
+      throw new IllegalArgumentException("Expiration cannot be null");
+    }
+    expirationPeriod = expiration;
+    if (warning == null) {
+      throw new IllegalArgumentException("Warning cannot be null");
+    }
+    warningPeriod = warning;
     if (loginFailures < 0) {
       throw new IllegalArgumentException("Login failures must be >= 0");
     }
@@ -79,25 +98,22 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
       final LdapAttribute expTime = entry.getAttribute("krbPasswordExpiration");
       final LdapAttribute failedLogins = entry.getAttribute("krbLoginFailedCount");
       final LdapAttribute lastPwdChange = entry.getAttribute("krbLastPwdChange");
-      Calendar exp = null;
+      ZonedDateTime exp = null;
 
       Integer loginRemaining = null;
       if (failedLogins != null && maxLoginFailures > 0) {
         loginRemaining = maxLoginFailures - Integer.parseInt(failedLogins.getStringValue());
       }
 
-      final Calendar now = Calendar.getInstance();
       if (expTime != null) {
         exp = expTime.getValue(new GeneralizedTimeValueTranscoder());
-      } else if (maxPasswordAge > 0 && lastPwdChange != null) {
-        exp = lastPwdChange.getValue(new GeneralizedTimeValueTranscoder());
-        exp.setTimeInMillis(exp.getTimeInMillis() + TimeUnit.DAYS.toMillis(maxPasswordAge));
+      } else if (expirationPeriod != null && lastPwdChange != null) {
+        exp = lastPwdChange.getValue(new GeneralizedTimeValueTranscoder()).plus(expirationPeriod);
       }
       if (exp != null) {
-        if (warningHours > 0) {
-          final Calendar warn = (Calendar) exp.clone();
-          warn.add(Calendar.HOUR_OF_DAY, -warningHours);
-          if (now.after(warn)) {
+        if (warningPeriod != null) {
+          final ZonedDateTime warn = exp.minus(warningPeriod);
+          if (ZonedDateTime.now().isAfter(warn)) {
             response.setAccountState(
               new FreeIPAAccountState(exp, loginRemaining != null ? loginRemaining.intValue() : 0));
           }

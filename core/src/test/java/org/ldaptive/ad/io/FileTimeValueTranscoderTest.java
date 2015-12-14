@@ -1,8 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.io;
 
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -32,7 +34,7 @@ public class FileTimeValueTranscoderTest
   {
     return new Object[][] {
       new Object[] {
-        createCalendar("UTC", 2014, 1, 28, 21, 54, 27, 711),
+        createDateTime("Z", 2014, 1, 28, 21, 54, 27, 711),
         "130354196677110000",
       },
     };
@@ -46,63 +48,45 @@ public class FileTimeValueTranscoderTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"io"}, dataProvider = "times")
-  public void testTranscode(final Calendar date, final String fileTime)
+  public void decodeStringValue(final ZonedDateTime date, final String fileTime)
     throws Exception
   {
     Assert.assertEquals(transcoder.decodeStringValue(fileTime), date);
+  }
+
+
+  /**
+   * @param  date  to compare
+   * @param  fileTime  ldap attribute string value
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"io"}, dataProvider = "times")
+  public void encodeStringValue(final ZonedDateTime date, final String fileTime)
+    throws Exception
+  {
     Assert.assertEquals(transcoder.encodeStringValue(date), fileTime);
   }
 
 
   /**
-   * Creates a calendar for testing.
+   * Creates a date time for testing.
    *
-   * @param  timezone  of the calendar
-   * @param  values  corresponding to calendar fields
+   * @param  timezone  of the date time
+   * @param  values  corresponding to date time fields
    *
-   * @return  calendar
+   * @return  date time
    */
-  protected Calendar createCalendar(final String timezone, final int... values)
+  protected ZonedDateTime createDateTime(final String timezone, final int... values)
   {
-    final Calendar calendar = Calendar.getInstance();
-    calendar.setTimeInMillis(0);
-    calendar.setTimeZone(TimeZone.getTimeZone(timezone));
-    for (int i = 0; i < values.length; i++) {
-      switch (i) {
-
-      case 0:
-        calendar.set(Calendar.YEAR, values[i]);
-        break;
-
-      case 1:
-        calendar.set(Calendar.MONTH, values[i] - 1);
-        break;
-
-      case 2:
-        calendar.set(Calendar.DATE, values[i]);
-        break;
-
-      case 3:
-        calendar.set(Calendar.HOUR_OF_DAY, values[i]);
-        break;
-
-      case 4:
-        calendar.set(Calendar.MINUTE, values[i]);
-        break;
-
-      case 5:
-        calendar.set(Calendar.SECOND, values[i]);
-        break;
-
-      case 6:
-        calendar.set(Calendar.MILLISECOND, values[i]);
-        break;
-
-      default:
-        throw new IllegalArgumentException("Too many values");
-      }
-    }
-    calendar.getTimeInMillis();
-    return calendar;
+    return ZonedDateTime.of(
+      LocalDateTime.of(
+        values[0],
+        values[1],
+        values[2],
+        values[3],
+        values.length > 4 ? values[4] : 0,
+        values.length > 5 ? values[5] : 0).plus(values.length > 6 ? values[6] : 0, ChronoUnit.MILLIS),
+      ZoneId.of(timezone));
   }
 }

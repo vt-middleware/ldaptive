@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Calendar;
 import javax.security.auth.login.LoginException;
 
 /**
@@ -143,7 +143,7 @@ public class AccountState
      *
      * @return  expiration
      */
-    Calendar getExpiration();
+    ZonedDateTime getExpiration();
 
 
     /**
@@ -160,7 +160,7 @@ public class AccountState
   {
 
     /** expiration. */
-    private final Calendar expiration;
+    private final ZonedDateTime expiration;
 
     /** number of logins remaining before the account locks. */
     private final int loginsRemaining;
@@ -172,7 +172,7 @@ public class AccountState
      * @param  exp  date of expiration
      * @param  remaining  number of logins
      */
-    public DefaultWarning(final Calendar exp, final int remaining)
+    public DefaultWarning(final ZonedDateTime exp, final int remaining)
     {
       expiration = exp;
       loginsRemaining = remaining;
@@ -180,7 +180,7 @@ public class AccountState
 
 
     @Override
-    public Calendar getExpiration()
+    public ZonedDateTime getExpiration()
     {
       return expiration;
     }

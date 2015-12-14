@@ -1,12 +1,14 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.io;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,7 +18,7 @@ import java.util.regex.Pattern;
  *
  * @author  Middleware Services
  */
-public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscoder<Calendar>
+public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscoder<ZonedDateTime>
 {
 
   /** Pattern for capturing the year in generalized time. */
@@ -50,23 +52,8 @@ public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscode
     YEAR_PATTERN + MONTH_PATTERN + DAY_PATTERN + HOUR_PATTERN + MIN_PATTERN + SECOND_PATTERN + FRACTION_PATTERN +
     TIMEZONE_PATTERN);
 
-  /** UTC time zone. */
-  private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
-
-  /** Default locale. */
-  private static final Locale DEFAULT_LOCALE = Locale.getDefault();
-
-  /** Thread local container holding date format which is not thread safe. */
-  private static final ThreadLocal<DateFormat> DATE_FORMAT = new ThreadLocal<DateFormat>() {
-
-    @Override
-    protected DateFormat initialValue()
-    {
-      final SimpleDateFormat format = new SimpleDateFormat("yyyyMMddHHmmss.SSS'Z'");
-      format.setTimeZone(UTC);
-      return format;
-    }
-  };
+  /** Date format. */
+  private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyyMMddHHmmss.SSS'Z'");
 
   /** Describes the fractional part of a generalized time string. */
   private enum FractionalPart {
@@ -110,41 +97,44 @@ public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscode
 
 
   @Override
-  public Calendar decodeStringValue(final String value)
+  public ZonedDateTime decodeStringValue(final String value)
   {
     try {
       return parseGeneralizedTime(value);
-    } catch (ParseException e) {
+    } catch (ParseException | DateTimeException e) {
       throw new IllegalArgumentException(e);
     }
   }
 
 
   @Override
-  public String encodeStringValue(final Calendar value)
+  public String encodeStringValue(final ZonedDateTime value)
   {
-    final DateFormat format = DATE_FORMAT.get();
-    return format.format(value.getTime());
+    if (value.getZone().normalized().equals(ZoneOffset.UTC)) {
+      return value.format(DATE_FORMAT);
+    } else {
+      return value.withZoneSameInstant(ZoneOffset.UTC).format(DATE_FORMAT);
+    }
   }
 
 
   @Override
-  public Class<Calendar> getType()
+  public Class<ZonedDateTime> getType()
   {
-    return Calendar.class;
+    return ZonedDateTime.class;
   }
 
 
   /**
-   * Parses the supplied value and sets a calendar with the appropriate fields.
+   * Parses the supplied value and returns a date time.
    *
    * @param  value  of generalized time to parse
    *
-   * @return  calendar initialized to the correct time
+   * @return  date time initialized to the correct time
    *
    * @throws  ParseException  if the value does not contain correct generalized time syntax
    */
-  protected Calendar parseGeneralizedTime(final String value)
+  protected ZonedDateTime parseGeneralizedTime(final String value)
     throws ParseException
   {
     if (value == null) {
@@ -157,26 +147,19 @@ public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscode
     }
 
     // CheckStyle:MagicNumber OFF
-    // Get calendar in correct time zone
+    final ZoneId zoneId;
     final String tzString = m.group(9);
-    final TimeZone tz;
     if ("Z".equals(tzString)) {
-      tz = UTC;
+      zoneId = ZoneOffset.UTC;
     } else {
-      tz = TimeZone.getTimeZone("GMT" + tzString);
+      zoneId = ZoneId.of("GMT" + tzString);
     }
 
-    final Calendar calendar = Calendar.getInstance(tz, DEFAULT_LOCALE);
-
-    // Initialize calendar and impose strict calendrical field constraints
-    calendar.setTimeInMillis(0);
-    calendar.setLenient(false);
-
     // Set required time fields
-    calendar.set(Calendar.YEAR, Integer.parseInt(m.group(1)));
-    calendar.set(Calendar.MONTH, Integer.parseInt(m.group(2)) - 1);
-    calendar.set(Calendar.DATE, Integer.parseInt(m.group(3)));
-    calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(m.group(4)));
+    final int year = Integer.parseInt(m.group(1));
+    final int month = Integer.parseInt(m.group(2));
+    final int dayOfMonth = Integer.parseInt(m.group(3));
+    final int hour = Integer.parseInt(m.group(4));
 
     FractionalPart fraction = FractionalPart.Hours;
 
@@ -186,7 +169,6 @@ public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscode
       fraction = FractionalPart.Minutes;
       minutes = Integer.parseInt(m.group(5));
     }
-    calendar.set(Calendar.MINUTE, minutes);
 
     // Set optional seconds
     int seconds = 0;
@@ -194,21 +176,15 @@ public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscode
       fraction = FractionalPart.Seconds;
       seconds = Integer.parseInt(m.group(6));
     }
-    calendar.set(Calendar.SECOND, seconds);
 
     // Set optional fractional part
-    calendar.add(Calendar.MILLISECOND, 0);
+    int millis = 0;
     if (m.group(7) != null) {
-      calendar.add(Calendar.MILLISECOND, fraction.toMillis(m.group(8)));
+      millis = fraction.toMillis(m.group(8));
     }
     // CheckStyle:MagicNumber ON
 
-    // Force calendar to calculate
-    calendar.getTimeInMillis();
-
-    // Relax calendrical field constraints
-    calendar.setLenient(true);
-
-    return calendar;
+    return ZonedDateTime.of(
+      LocalDateTime.of(year, month, dayOfMonth, hour, minutes, seconds).plus(millis, ChronoUnit.MILLIS), zoneId);
   }
 }

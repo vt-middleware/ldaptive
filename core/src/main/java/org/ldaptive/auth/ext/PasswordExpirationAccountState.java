@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
 import org.ldaptive.auth.AccountState;
@@ -55,7 +55,7 @@ public class PasswordExpirationAccountState extends AccountState
    *
    * @param  exp  account expiration
    */
-  public PasswordExpirationAccountState(final Calendar exp)
+  public PasswordExpirationAccountState(final ZonedDateTime exp)
   {
     super(new AccountState.DefaultWarning(exp, -1));
     nError = null;

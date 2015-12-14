@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
-import java.util.Calendar;
+import java.time.ZonedDateTime;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.control.PasswordExpiredControl;
@@ -29,8 +29,7 @@ public class PasswordExpirationAuthenticationResponseHandler implements Authenti
       PasswordExpiringControl.OID);
     if (expiringControl != null) {
       if (expiringControl.getTimeBeforeExpiration() > 0) {
-        final Calendar exp = Calendar.getInstance();
-        exp.add(Calendar.SECOND, expiringControl.getTimeBeforeExpiration());
+        final ZonedDateTime exp = ZonedDateTime.now().plusSeconds(expiringControl.getTimeBeforeExpiration());
         response.setAccountState(new PasswordExpirationAccountState(exp));
       } else {
         logger.warn("Received password expiring control with non-positive value: %s", expiringControl);
