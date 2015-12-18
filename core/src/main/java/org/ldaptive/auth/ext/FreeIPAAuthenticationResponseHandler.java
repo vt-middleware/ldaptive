@@ -126,4 +126,58 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
       }
     }
   }
+
+  /**
+   * Get maximum login attempts.
+   * @return Maximum login attempts before lockout.
+   */
+  public int getMaxLoginFailures()
+  {
+    return maxLoginFailures;
+  }
+
+  /**
+   * Set maximum login attempts.
+   * @param loginFailures  Maximum login attempts before lockout.
+   */
+  public void setMaxLoginFailures(final int loginFailures)
+  {
+    this.maxLoginFailures = loginFailures;
+  }
+
+  /**
+   * Get amount of time since a password was set until it will expire. Used if krbPasswordExpiration cannot be read.
+   * @return expiration period
+   */
+  public Period getExpirationPeriod()
+  {
+    return expirationPeriod;
+  }
+
+  /**
+   * Set amount of time since a password was set until it will expire. Used if krbPasswordExpiration cannot be read..
+   * @param period expiration period
+   */
+  public void setExpirationPeriod(final Period period)
+  {
+    this.expirationPeriod = expirationPeriod;
+  }
+
+  /**
+   * Get amount of time before expiration to produce a warning.
+   * @return warning period
+   */
+  public Period getWarningPeriod()
+  {
+    return warningPeriod;
+  }
+
+  /**
+   * Set amount of time before expiration to produce a warning.
+   * @param period warning period
+   */
+  public void setWarningPeriod(final Period period)
+  {
+    this.warningPeriod = period;
+  }
 }

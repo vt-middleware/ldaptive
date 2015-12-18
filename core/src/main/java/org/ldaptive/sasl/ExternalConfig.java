@@ -16,6 +16,15 @@ public class ExternalConfig extends SaslConfig
     setMechanism(Mechanism.EXTERNAL);
   }
 
+  /**
+   * Copy constructor.
+   * @param config Configuration to copy
+   */
+  public ExternalConfig(final ExternalConfig config)
+  {
+    super(config);
+    setMechanism(Mechanism.EXTERNAL);
+  }
 
   @Override
   public String toString()

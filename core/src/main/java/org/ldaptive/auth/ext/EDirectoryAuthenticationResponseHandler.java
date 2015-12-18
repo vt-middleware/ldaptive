@@ -72,4 +72,22 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
       }
     }
   }
+
+  /**
+   * Get amount of time before expiration to produce a warning.
+   * @return warning period
+   */
+  public Period getWarningPeriod()
+  {
+    return warningPeriod;
+  }
+
+  /**
+   * Set amount of time before expiration to produce a warning.
+   * @param period warning period
+   */
+  public void setWarningPeriod(final Period period)
+  {
+    this.warningPeriod = period;
+  }
 }

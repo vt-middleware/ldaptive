@@ -22,6 +22,35 @@
     minPoolSize="${ldap.pool.minSize}"
   />
 
+  <ldaptive:gssapi-search-authenticator id="authenticator"
+      ldapUrl="${ldap.url}"
+      baseDn="${ldap.baseDn}"
+      userFilter="${ldap.authn.searchFilter}"
+      bindDn="${ldap.managerDn}"
+      connectTimeout="${ldap.connectTimeout}"
+      useStartTLS="${ldap.useStartTLS:false}"
+      blockWaitTime="${ldap.pool.blockWaitTime}"
+      maxPoolSize="${ldap.pool.maxSize}"
+      allowMultipleDns="${ldap.allowMultipleDns:false}"
+      minPoolSize="${ldap.pool.minSize}"
+      validateOnCheckOut="${ldap.pool.validateOnCheckout}"
+      validatePeriodically="${ldap.pool.validatePeriodically}"
+      validatePeriod="${ldap.pool.validatePeriod}"
+      idleTime="${ldap.pool.idleTime}"
+      prunePeriod="${ldap.pool.prunePeriod}"
+      failFastInitialize="true"
+      subtreeSearch="${ldap.subtree.search:true}"
+      useSSL="${ldap.use.ssl:true}"
+      authenticationResponseHandlers="freeIpaAuthenticationResponseHandlers"
+      saslRealm="${ldap.authn.bindSaslRealm}"
+      />
+
+  <bean id="freeIpaAuthenticationResponseHandlers">
+      <util:list>
+          <ldaptive:free-ipa-handler warningPeriod="P15D" expirationPeriod="P90D" maxLoginFailures="4" />
+      </util:list>
+  </bean>
+
   <ldaptive:bind-search-authenticator
     ldapUrl="${ldap.url}"
     trustStore="classpath:/ldaptive.truststore"

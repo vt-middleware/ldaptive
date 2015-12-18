@@ -19,6 +19,16 @@ public class DigestMd5Config extends SaslConfig
     setMechanism(Mechanism.DIGEST_MD5);
   }
 
+  /**
+   * Copy constructor.
+   * @param config Configuration to copy
+   */
+  public DigestMd5Config(final DigestMd5Config config)
+  {
+    super(config);
+    setRealm(((DigestMd5Config) config).getRealm());
+    setMechanism(Mechanism.DIGEST_MD5);
+  }
 
   /**
    * Returns the sasl realm.

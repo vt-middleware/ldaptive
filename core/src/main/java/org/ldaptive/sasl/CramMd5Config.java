@@ -16,6 +16,15 @@ public class CramMd5Config extends SaslConfig
     setMechanism(Mechanism.CRAM_MD5);
   }
 
+  /**
+   * Copy constructor.
+   * @param config Configuration to copy
+   */
+  public CramMd5Config(final CramMd5Config config)
+  {
+    super(config);
+    setMechanism(Mechanism.CRAM_MD5);
+  }
 
   @Override
   public String toString()

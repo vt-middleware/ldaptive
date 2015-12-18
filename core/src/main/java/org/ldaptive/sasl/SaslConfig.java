@@ -26,6 +26,24 @@ public class SaslConfig extends AbstractConfig
   /** sasl security strength. */
   private SecurityStrength securityStrength;
 
+  /**
+   * Copy constructor.
+   * @param config Configuration to copy
+   */
+  public SaslConfig(final SaslConfig config)
+  {
+    setAuthorizationId(config.getAuthorizationId());
+    setMutualAuthentication(config.getMutualAuthentication());
+    setQualityOfProtection(config.getQualityOfProtection());
+    setSecurityStrength(config.getSecurityStrength());
+    setMechanism(config.getMechanism());
+  }
+
+  /** default constructor */
+  public SaslConfig()
+  {
+  }
+
 
   /**
    * Returns the sasl mechanism.

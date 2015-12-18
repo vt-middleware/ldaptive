@@ -52,6 +52,7 @@ public class NamespaceHandlerTest
     closeConnectionPools(context.getBean("bind-search-authenticator", Authenticator.class));
     closeConnectionPools(context.getBean("direct-authenticator", Authenticator.class));
     closeConnectionPools(context.getBean("ad-authenticator", Authenticator.class));
+    closeConnectionPools(context.getBean("gssapi-search-authenticator", Authenticator.class))
 
     context.getBean("pooled-connection-factory", PooledConnectionFactory.class).getConnectionPool().close();
   }

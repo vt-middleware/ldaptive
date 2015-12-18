@@ -16,9 +16,20 @@ public class GssApiConfig extends SaslConfig
   /** Default constructor. */
   public GssApiConfig()
   {
+    super();
     setMechanism(Mechanism.GSSAPI);
   }
 
+  /**
+   * Copy constructor.
+   * @param config Configuration to copy
+   */
+  public GssApiConfig(final GssApiConfig config)
+  {
+    super(config);
+    setRealm(((GssApiConfig) config).getRealm());
+    setMechanism(Mechanism.GSSAPI);
+  }
 
   /**
    * Returns the sasl realm.
