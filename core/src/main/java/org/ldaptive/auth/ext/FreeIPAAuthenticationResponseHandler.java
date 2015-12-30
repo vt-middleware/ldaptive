@@ -26,7 +26,7 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Amount of time since a password was set that it will expire. Used if krbPasswordExpiration cannot be read. */
+  /** Amount of time since a password was set until it will expire. Used if krbPasswordExpiration cannot be read. */
   private Period expirationPeriod;
 
   /** Amount of time before expiration to produce a warning. */

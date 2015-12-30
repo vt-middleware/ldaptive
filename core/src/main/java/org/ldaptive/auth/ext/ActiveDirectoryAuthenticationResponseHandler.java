@@ -14,7 +14,7 @@ import org.ldaptive.auth.AuthenticationResponseHandler;
  * directory. If this handler is assigned a {@link #expirationPeriod}, then the {@link org.ldaptive.auth.Authenticator}
  * should be configured to return the 'pwdLastSet' attribute so it can be consumed by this handler. This will cause the
  * handler to emit a warning for the pwdLastSet value plus the expiration amount. The scope of that warning can be
- * further narrow by providing a {@link #warningPeriod}.
+ * further narrowed by providing a {@link #warningPeriod}.
  *
  * @author  Middleware Services
  */
@@ -22,7 +22,7 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
 {
 
 
-  /** Amount of time since a password was set that it will expire. */
+  /** Amount of time since a password was set until it will expire. */
   private Period expirationPeriod;
 
   /** Amount of time before expiration to produce a warning. */

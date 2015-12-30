@@ -6,8 +6,8 @@ import java.util.Arrays;
 import javax.security.auth.login.LoginException;
 
 /**
- * Represents the state of an LDAP account based account policies for that LDAP. Note that only warning(s) or error(s)
- * may be set, not both.
+ * Represents the state of an LDAP account based on account policies for that LDAP. Note that only warning(s) or
+ * error(s) may be set, not both.
  *
  * @author  Middleware Services
  */
