@@ -247,30 +247,30 @@ public class AuthenticatorTest extends AbstractTest
 
     // test input
     AssertJUnit.assertNull(auth.resolveDn(null));
-    AssertJUnit.assertNull(auth.resolveDn(""));
+    AssertJUnit.assertNull(auth.resolveDn(new User("")));
 
     final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
 
     // test format dn
     auth.setDnResolver(new FormatDnResolver("cn=%s,%s", new Object[] {resolver.getBaseDn()}));
-    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(cn));
+    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(new User(cn)));
     auth.setDnResolver(resolver);
 
     // test one level searching
-    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase());
+    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(new User(user)).toLowerCase());
 
     // test duplicate DNs
     final String filter = resolver.getUserFilter();
     resolver.setUserFilter(duplicateFilter);
     try {
-      auth.resolveDn(user);
+      auth.resolveDn(new User(user));
       AssertJUnit.fail("Should have thrown LdapException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(LdapException.class, e.getClass());
     }
 
     resolver.setAllowMultipleDns(true);
-    auth.resolveDn(user);
+    auth.resolveDn(new User(user));
     resolver.setUserFilter(filter);
     resolver.setAllowMultipleDns(false);
 
@@ -279,7 +279,7 @@ public class AuthenticatorTest extends AbstractTest
 
     final String baseDn = resolver.getBaseDn();
     resolver.setBaseDn(baseDn.substring(baseDn.indexOf(",") + 1));
-    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase());
+    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(new User(user)).toLowerCase());
   }
 
 
@@ -312,12 +312,12 @@ public class AuthenticatorTest extends AbstractTest
 
     // test input
     AssertJUnit.assertNull(auth.resolveDn(null));
-    AssertJUnit.assertNull(auth.resolveDn(""));
+    AssertJUnit.assertNull(auth.resolveDn(new User("")));
 
     // test duplicate DNs
     resolver.setAllowMultipleDns(false);
     try {
-      auth.resolveDn(user);
+      auth.resolveDn(new User(user));
       AssertJUnit.fail("Should have thrown LdapException");
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the provider
@@ -327,7 +327,8 @@ public class AuthenticatorTest extends AbstractTest
     }
 
     resolver.setAllowMultipleDns(true);
-    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase().split(":")[1]);
+    AssertJUnit.assertEquals(
+      testLdapEntry.getDn().toLowerCase(), auth.resolveDn(new User(user)).toLowerCase().split(":")[1]);
   }
 
 
@@ -789,7 +790,8 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertNull(response.getResultCode());
     AssertJUnit.assertNotNull(response.getMessage());
 
-    response = auth.authenticate(new AuthenticationRequest(null, new Credential(credential), returnAttrs.split("\\|")));
+    response = auth.authenticate(
+      new AuthenticationRequest((String) null, new Credential(credential), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(AuthenticationResultCode.DN_RESOLUTION_FAILURE, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
     AssertJUnit.assertNotNull(response.getMessage());

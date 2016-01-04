@@ -13,8 +13,8 @@ import org.ldaptive.ReturnAttributes;
 public class AuthenticationRequest
 {
 
-  /** User identifier. */
-  private String user;
+  /** User. */
+  private User user;
 
   /** User credential. */
   private Credential credential;
@@ -35,7 +35,7 @@ public class AuthenticationRequest
    */
   public AuthenticationRequest(final String id, final Credential c)
   {
-    setUser(id);
+    setUser(new User(id));
     setCredential(c);
   }
 
@@ -49,7 +49,35 @@ public class AuthenticationRequest
    */
   public AuthenticationRequest(final String id, final Credential c, final String... attrs)
   {
-    setUser(id);
+    setUser(new User(id));
+    setCredential(c);
+    setReturnAttributes(attrs);
+  }
+
+
+  /**
+   * Creates a new authentication request.
+   *
+   * @param  u  that identifies the user
+   * @param  c  credential to authenticate the user
+   */
+  public AuthenticationRequest(final User u, final Credential c)
+  {
+    setUser(u);
+    setCredential(c);
+  }
+
+
+  /**
+   * Creates a new authentication request.
+   *
+   * @param  u  that identifies the user
+   * @param  c  credential to authenticate the user
+   * @param  attrs  attributes to return
+   */
+  public AuthenticationRequest(final User u, final Credential c, final String... attrs)
+  {
+    setUser(u);
     setCredential(c);
     setReturnAttributes(attrs);
   }
@@ -60,7 +88,7 @@ public class AuthenticationRequest
    *
    * @return  user identifier
    */
-  public String getUser()
+  public User getUser()
   {
     return user;
   }
@@ -69,11 +97,11 @@ public class AuthenticationRequest
   /**
    * Sets the user.
    *
-   * @param  id  of the user
+   * @param  u  user
    */
-  public void setUser(final String id)
+  public void setUser(final User u)
   {
-    user = id;
+    user = u;
   }
 
 

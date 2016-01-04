@@ -19,6 +19,7 @@ import org.ldaptive.ReturnAttributes;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.User;
 
 /**
  * Provides a JAAS authentication hook for LDAP authentication.
@@ -96,7 +97,7 @@ public class LdapLoginModule extends AbstractLoginModule
   {
     try {
       getCredentials(nameCb, passCb, false);
-      authRequest.setUser(nameCb.getName());
+      authRequest.setUser(new User(nameCb.getName()));
       authRequest.setCredential(new Credential(passCb.getPassword()));
 
       AuthenticationResponse response = auth.authenticate(authRequest);

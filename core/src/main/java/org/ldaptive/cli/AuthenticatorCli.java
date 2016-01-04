@@ -15,6 +15,7 @@ import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.SearchDnResolver;
+import org.ldaptive.auth.User;
 import org.ldaptive.io.Dsmlv1Writer;
 import org.ldaptive.io.LdifWriter;
 import org.ldaptive.io.SearchResultWriter;
@@ -120,7 +121,7 @@ public class AuthenticatorCli extends AbstractCli
     if (request.getUser() == null) {
       // prompt for a user name
       final String user = System.console().readLine("[Enter user name]: ");
-      request.setUser(user);
+      request.setUser(new User(user));
     }
 
     if (request.getCredential() == null) {

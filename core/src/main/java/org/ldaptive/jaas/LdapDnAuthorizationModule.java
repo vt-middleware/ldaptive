@@ -13,6 +13,7 @@ import javax.security.auth.login.LoginException;
 import com.sun.security.auth.callback.TextCallbackHandler;
 import org.ldaptive.LdapException;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.User;
 
 /**
  * Provides a JAAS authentication hook into LDAP DNs. No authentication is performed by this module. The LDAP entry DN
@@ -83,7 +84,7 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
         loginSuccess = true;
       }
 
-      final String loginDn = auth.resolveDn(nameCb.getName());
+      final String loginDn = auth.resolveDn(new User(nameCb.getName()));
       if (loginDn == null && noResultsIsError) {
         loginSuccess = false;
         throw new LoginException("Could not find DN for " + nameCb.getName());
