@@ -1,8 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
-import java.util.Arrays;
-import java.util.Iterator;
 import org.ldaptive.Connection;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
@@ -14,6 +12,10 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.SearchScope;
 import org.ldaptive.referral.ReferralHandler;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.stream.Collectors;
 
 /**
  * Base implementation for search dn resolvers.
@@ -240,7 +242,7 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
           if (answer.hasNext()) {
             logger.debug("multiple results found for user={} using filter={}", user, filter);
             if (!allowMultipleDns) {
-              throw new LdapException("Found more than (1) DN for: " + user);
+              throw new LdapException("Found more than (" + result.getEntries().size() + ") DN for " + user + ": " + result.getEntries().stream().map(LdapEntry::getDn).collect(Collectors.joining(" | ")));
             }
           }
         } else {
