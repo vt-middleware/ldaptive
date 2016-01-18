@@ -167,7 +167,7 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <argLine>-Dorg.ldaptive.provider=${ldapTestProvider} -Xms1g -Xmx2g -XX:PermSize=256m -XX:MaxPermSize=256m</argLine>
+          <argLine>-Dorg.ldaptive.provider=${ldapTestProvider} -Xms1g -Xmx2g</argLine>
           <suiteXmlFiles>
             <suiteXmlFile>${project.build.directory}/test-classes/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
