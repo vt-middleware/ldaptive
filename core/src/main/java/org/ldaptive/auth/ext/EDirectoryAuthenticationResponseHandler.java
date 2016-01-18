@@ -36,10 +36,7 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
    */
   public EDirectoryAuthenticationResponseHandler(final Period warning)
   {
-    if (warning == null) {
-      throw new IllegalArgumentException("Warning cannot be null");
-    }
-    warningPeriod = warning;
+    setWarningPeriod(warning);
   }
 
 
@@ -71,5 +68,37 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
         response.setAccountState(new EDirectoryAccountState(null, loginRemainingValue));
       }
     }
+  }
+
+
+  /**
+   * Returns the amount of time before expiration to produce a warning.
+   *
+   * @return  warning period
+   */
+  public Period getWarningPeriod()
+  {
+    return warningPeriod;
+  }
+
+
+  /**
+   * Sets the amount of time before expiration to produce a warning.
+   *
+   * @param  period  warning period
+   */
+  public void setWarningPeriod(final Period period)
+  {
+    if (period == null) {
+      throw new IllegalArgumentException("Warning cannot be null");
+    }
+    warningPeriod = period;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return String.format("[%s@%d::warningPeriod=%s]", getClass().getName(), hashCode(), warningPeriod);
   }
 }

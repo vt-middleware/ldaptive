@@ -33,11 +33,41 @@
     bindCredential="${ldap.bindCredential}"
     connectTimeout="${ldap.connectTimeout}"
     useStartTLS="${ldap.useStartTLS}"
-    usePasswordPolicy="${ldap.ppolicy}"
     blockWaitTime="${ldap.pool.blockWaitTime}"
     maxPoolSize="${ldap.pool.maxSize}"
+    minPoolSize="${ldap.pool.minSize}">
+    <ldaptive:authentication-response-handler>
+      <ldaptive:password-policy-handler/>
+    </ldaptive:authentication-response-handler>
+  </ldaptive:bind-search-authenticator>
+
+  <ldaptive:sasl-bind-search-authenticator
+    id="sasl-auth"
+    mechanism="DIGEST_MD5"
+    ldapUrl="${ldap.url}"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+    baseDn="${ldap.baseDn}"
+    userFilter="(mail={user})"
+    bindDn="test3@vt.edu"
+    bindCredential="password"
+    connectTimeout="${ldap.connectTimeout}"
+    useStartTLS="${ldap.useStartTLS}"
+    blockWaitTime="${ldap.pool.blockWaitTime}"
+    maxPoolSize="${ldap.pool.maxSize}"
+    allowMultipleDns="${ldap.allowMultipleDns:false}"
     minPoolSize="${ldap.pool.minSize}"
-  />
+    validateOnCheckOut="${ldap.pool.validateOnCheckout:false}"
+    validatePeriodically="${ldap.pool.validatePeriodically:true}"
+    validatePeriod="${ldap.pool.validatePeriod:300}"
+    idleTime="${ldap.pool.idleTime:600}"
+    prunePeriod="${ldap.pool.prunePeriod:300}"
+    failFastInitialize="false"
+    subtreeSearch="${ldap.subtreeSearch:true}"
+    useSSL="false">
+    <ldaptive:authentication-response-handler>
+      <ldaptive:password-expiration-handler/>
+    </ldaptive:authentication-response-handler>
+  </ldaptive:sasl-bind-search-authenticator>
 
   <ldaptive:direct-authenticator
     ldapUrl="${ldap.url}"
@@ -47,8 +77,11 @@
     useStartTLS="${ldap.useStartTLS}"
     blockWaitTime="${ldap.pool.blockWaitTime}"
     maxPoolSize="${ldap.pool.maxSize}"
-    minPoolSize="${ldap.pool.minSize}"
-  />
+    minPoolSize="${ldap.pool.minSize}">
+    <ldaptive:authentication-response-handler>
+      <ldaptive:free-ipa-handler expirationPeriod="${ldap.auth.expirationPeriod}" warningPeriod="${ldap.auth.warningPeriod}" maxLoginFailures="4"/>
+    </ldaptive:authentication-response-handler>
+  </ldaptive:direct-authenticator>
 
   <ldaptive:ad-authenticator
     ldapUrl="${ldap.url}"

@@ -48,14 +48,8 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
    */
   public FreeIPAAuthenticationResponseHandler(final Period warning, final int loginFailures)
   {
-    if (warning == null) {
-      throw new IllegalArgumentException("Warning cannot be null");
-    }
-    warningPeriod = warning;
-    if (loginFailures < 0) {
-      throw new IllegalArgumentException("Login failures must be >= 0");
-    }
-    maxLoginFailures = loginFailures;
+    setWarningPeriod(warning);
+    setMaxLoginFailures(loginFailures);
   }
 
 
@@ -68,18 +62,9 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
    */
   public FreeIPAAuthenticationResponseHandler(final Period expiration, final Period warning, final int loginFailures)
   {
-    if (expiration == null) {
-      throw new IllegalArgumentException("Expiration cannot be null");
-    }
-    expirationPeriod = expiration;
-    if (warning == null) {
-      throw new IllegalArgumentException("Warning cannot be null");
-    }
-    warningPeriod = warning;
-    if (loginFailures < 0) {
-      throw new IllegalArgumentException("Login failures must be >= 0");
-    }
-    maxLoginFailures = loginFailures;
+    setExpirationPeriod(expiration);
+    setWarningPeriod(warning);
+    setMaxLoginFailures(loginFailures);
   }
 
 
@@ -125,5 +110,95 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
         response.setAccountState(new FreeIPAAccountState(null, loginRemaining));
       }
     }
+  }
+
+
+  /**
+   * Returns the maximum login failures.
+   *
+   * @return  maximum login failures before lockout.
+   */
+  public int getMaxLoginFailures()
+  {
+    return maxLoginFailures;
+  }
+
+
+  /**
+   * Sets the maximum login failures.
+   *
+   * @param  loginFailures  before lockout.
+   */
+  public void setMaxLoginFailures(final int loginFailures)
+  {
+    if (loginFailures < 0) {
+      throw new IllegalArgumentException("Login failures must be >= 0");
+    }
+    maxLoginFailures = loginFailures;
+  }
+
+
+  /**
+   * Returns the amount of time since a password was set until it will expire. Only used if the krbPasswordExpiration
+   * attribute cannot be read from the directory.
+   *
+   * @return  expiration period
+   */
+  public Period getExpirationPeriod()
+  {
+    return expirationPeriod;
+  }
+
+
+  /**
+   * Sets the amount of time since a password was set until it will expire. Only used if the krbPasswordExpiration
+   * attribute cannot be read from the directory.
+   *
+   * @param  period  expiration period
+   */
+  public void setExpirationPeriod(final Period period)
+  {
+    if (period == null) {
+      throw new IllegalArgumentException("Expiration cannot be null");
+    }
+    expirationPeriod = period;
+  }
+
+
+  /**
+   * Returns the amount of time before expiration to produce a warning.
+   *
+   * @return  warning period
+   */
+  public Period getWarningPeriod()
+  {
+    return warningPeriod;
+  }
+
+
+  /**
+   * Sets the amount of time before expiration to produce a warning.
+   *
+   * @param  period  warning period
+   */
+  public void setWarningPeriod(final Period period)
+  {
+    if (period == null) {
+      throw new IllegalArgumentException("Warning cannot be null");
+    }
+    warningPeriod = period;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return String.format(
+      "[%s@%d::expirationPeriod=%s, warningPeriod=%s, maxLoginFailures=%s]",
+      getClass().getName(),
+      hashCode(),
+      expirationPeriod,
+      warningPeriod,
+      maxLoginFailures);
   }
 }
