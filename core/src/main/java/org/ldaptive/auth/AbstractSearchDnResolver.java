@@ -289,7 +289,9 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
           filter.setParameters(userFilterParameters);
         }
         // assign user as a named parameter
-        filter.setParameter("user", user);
+        filter.setParameter("user", user.getIdentifier());
+        // assign context as a named parameter
+        filter.setParameter("context", user.getContext());
       } else {
         logger.error("Invalid userFilter, cannot be null or empty.");
       }
