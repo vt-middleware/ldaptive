@@ -67,7 +67,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <checkstyle.dir>${project.parent.basedir}/src/main/checkstyle</checkstyle.dir>
+    <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>1.7.13</org.slf4j.version>
     <org.springframework.version>4.2.3.RELEASE</org.springframework.version>
   </properties>
@@ -355,8 +355,9 @@
           <headerLocation>${checkstyle.dir}/header.txt</headerLocation>
           <suppressionsLocation>${checkstyle.dir}/suppressions.xml</suppressionsLocation>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <failsOnError>false</failsOnError>
+          <failsOnError>true</failsOnError>
           <outputFileFormat>plain</outputFileFormat>
+          <outputFile>${project.build.directory}/checkstyle-result.txt</outputFile>
         </configuration>
         <executions>
           <execution>
