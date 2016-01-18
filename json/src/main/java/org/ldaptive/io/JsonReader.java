@@ -95,7 +95,7 @@ public class JsonReader implements SearchResultReader
      *
      * @param  sb  sort behavior of the search result
      */
-    public SearchResultDeserializer(final SortBehavior sb)
+    SearchResultDeserializer(final SortBehavior sb)
     {
       sortBehavior = sb;
     }
