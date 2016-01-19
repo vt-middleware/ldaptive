@@ -34,6 +34,7 @@ public class Template
    * @throws  VelocityException  if velocity is not configured properly or the filter template is invalid
    */
   public Template(final VelocityEngine engine, final String template)
+    throws VelocityException
   {
     // generate a template name and register it
     final StringResourceRepository repository = StringResourceLoader.getRepository();

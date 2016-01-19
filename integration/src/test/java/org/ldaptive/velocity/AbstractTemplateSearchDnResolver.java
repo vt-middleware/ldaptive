@@ -5,6 +5,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.event.EventCartridge;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
+import org.apache.velocity.exception.VelocityException;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.auth.AbstractSearchDnResolver;
 import org.ldaptive.auth.User;
@@ -33,6 +34,7 @@ public abstract class AbstractTemplateSearchDnResolver extends AbstractSearchDnR
    * @throws  VelocityException  if velocity is not configured properly or the filter template is invalid
    */
   public AbstractTemplateSearchDnResolver(final VelocityEngine engine, final String filter)
+    throws VelocityException
   {
     template = new Template(engine, filter);
     setUserFilter(filter);

@@ -3,6 +3,7 @@ package org.ldaptive.velocity;
 
 import java.util.Arrays;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.VelocityException;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
 import org.ldaptive.pool.PooledConnectionFactory;
@@ -30,6 +31,7 @@ public class PooledTemplateSearchDnResolver extends AbstractTemplateSearchDnReso
    * @throws  VelocityException  if velocity is not configured properly or the filter template is invalid
    */
   public PooledTemplateSearchDnResolver(final VelocityEngine engine, final String filter)
+    throws VelocityException
   {
     super(engine, filter);
   }
@@ -48,6 +50,7 @@ public class PooledTemplateSearchDnResolver extends AbstractTemplateSearchDnReso
     final PooledConnectionFactory cf,
     final VelocityEngine engine,
     final String filter)
+    throws VelocityException
   {
     super(engine, filter);
     setConnectionFactory(cf);
