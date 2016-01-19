@@ -44,6 +44,7 @@ public class ClassGenerator
   private static final String[] PACKAGES_TO_IMPORT = new String[] {
     "java.io",
     "java.security.cert",
+    "java.time",
     "java.util",
     "java.util.concurrent",
     "org.ldaptive",
