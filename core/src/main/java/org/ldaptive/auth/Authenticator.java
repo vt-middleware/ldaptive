@@ -167,8 +167,8 @@ public class Authenticator
 
 
   /**
-   * This will attempt to find the DN for the supplied user. {@link DnResolver#resolve(String)} is invoked to perform
-   * this operation.
+   * This will attempt to find the DN for the supplied user. {@link DnResolver#resolve(User)} is invoked to perform this
+   * operation.
    *
    * @param  user  to find DN for
    *
@@ -176,7 +176,7 @@ public class Authenticator
    *
    * @throws  LdapException  if an LDAP error occurs during resolution
    */
-  public String resolveDn(final String user)
+  public String resolveDn(final User user)
     throws LdapException
   {
     return dnResolver.resolve(user);

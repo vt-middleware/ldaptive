@@ -252,8 +252,9 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
 
   /**
    * Returns a search filter using {@link #userFilter} and {@link #userFilterParameters}. {@link
-   * AuthenticationRequest#getUser()} is injected with a named parameter of 'user', {@link
-   * AuthenticationCriteria#getDn()} is injected with a named parameter of 'dn'.
+   * User#getIdentifier()} is injected with a named parameter of 'user', {@link User#getContext()} is injected with a
+   * named parameter of 'context', and {@link AuthenticationCriteria#getDn()} is injected with a named parameter of
+   * 'dn'.
    *
    * @param  ac  authentication criteria
    *
@@ -269,7 +270,8 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
         filter.setParameters(userFilterParameters);
       }
       // assign named parameters
-      filter.setParameter("user", ac.getAuthenticationRequest().getUser());
+      filter.setParameter("user", ac.getAuthenticationRequest().getUser().getIdentifier());
+      filter.setParameter("context", ac.getAuthenticationRequest().getUser().getContext());
       filter.setParameter("dn", ac.getDn());
     } else {
       logger.error("Invalid userFilter, cannot be null or empty.");

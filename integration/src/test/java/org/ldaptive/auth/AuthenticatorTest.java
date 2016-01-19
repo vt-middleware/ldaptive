@@ -3,6 +3,8 @@ package org.ldaptive.auth;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
@@ -28,6 +30,8 @@ import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
+import org.ldaptive.velocity.TemplateSearchDnResolver;
+import org.ldaptive.velocity.UserContext;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -247,30 +251,25 @@ public class AuthenticatorTest extends AbstractTest
 
     // test input
     AssertJUnit.assertNull(auth.resolveDn(null));
-    AssertJUnit.assertNull(auth.resolveDn(""));
+    AssertJUnit.assertNull(auth.resolveDn(new User("")));
 
     final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
 
-    // test format dn
-    auth.setDnResolver(new FormatDnResolver("cn=%s,%s", new Object[] {resolver.getBaseDn()}));
-    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(cn));
-    auth.setDnResolver(resolver);
-
     // test one level searching
-    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase());
+    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(new User(user)).toLowerCase());
 
     // test duplicate DNs
     final String filter = resolver.getUserFilter();
     resolver.setUserFilter(duplicateFilter);
     try {
-      auth.resolveDn(user);
+      auth.resolveDn(new User(user));
       AssertJUnit.fail("Should have thrown LdapException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(LdapException.class, e.getClass());
     }
 
     resolver.setAllowMultipleDns(true);
-    auth.resolveDn(user);
+    auth.resolveDn(new User(user));
     resolver.setUserFilter(filter);
     resolver.setAllowMultipleDns(false);
 
@@ -279,7 +278,61 @@ public class AuthenticatorTest extends AbstractTest
 
     final String baseDn = resolver.getBaseDn();
     resolver.setBaseDn(baseDn.substring(baseDn.indexOf(",") + 1));
-    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase());
+    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(new User(user)).toLowerCase());
+  }
+
+
+  /**
+   * @param  cn  to get dn for.
+   * @param  user  to get dn for.
+   * @param  duplicateFilter  for user lookups
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "getDnCn", "getDnUser", "getDnDuplicateFilter" })
+  @Test(groups = {"auth"})
+  public void resolveDnFormat(final String cn, final String user, final String duplicateFilter)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(true);
+    final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
+
+    auth.setDnResolver(new FormatDnResolver("cn=%s,%s", new Object[] {resolver.getBaseDn()}));
+    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(new User(cn)));
+  }
+
+
+  /**
+   * @param  cn  to get dn for.
+   * @param  user  to get dn for.
+   * @param  duplicateFilter  for user lookups
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "getDnCn", "getDnUser", "getDnDuplicateFilter" })
+  @Test(groups = {"auth"})
+  public void resolveDnVelocity(final String cn, final String user, final String duplicateFilter)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(true);
+    final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
+
+    final VelocityEngine engine = new VelocityEngine();
+    engine.addProperty("string.resource.loader.class",
+      "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
+    engine.addProperty("resource.loader", "string");
+    engine.addProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
+    engine.init();
+
+    final VelocityContext context = new VelocityContext();
+    context.put("context", new UserContext(user));
+    final TemplateSearchDnResolver velocityResolver = new TemplateSearchDnResolver(
+      resolver.getConnectionFactory(),
+      engine,
+      "(|(uid=$context.principal)(mail=$context.principal))");
+    velocityResolver.setBaseDn(resolver.getBaseDn());
+    auth.setDnResolver(velocityResolver);
+    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(new User(null, context)));
   }
 
 
@@ -312,12 +365,12 @@ public class AuthenticatorTest extends AbstractTest
 
     // test input
     AssertJUnit.assertNull(auth.resolveDn(null));
-    AssertJUnit.assertNull(auth.resolveDn(""));
+    AssertJUnit.assertNull(auth.resolveDn(new User("")));
 
     // test duplicate DNs
     resolver.setAllowMultipleDns(false);
     try {
-      auth.resolveDn(user);
+      auth.resolveDn(new User(user));
       AssertJUnit.fail("Should have thrown LdapException");
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the provider
@@ -327,7 +380,8 @@ public class AuthenticatorTest extends AbstractTest
     }
 
     resolver.setAllowMultipleDns(true);
-    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase().split(":")[1]);
+    AssertJUnit.assertEquals(
+      testLdapEntry.getDn().toLowerCase(), auth.resolveDn(new User(user)).toLowerCase().split(":")[1]);
   }
 
 
@@ -789,7 +843,8 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertNull(response.getResultCode());
     AssertJUnit.assertNotNull(response.getMessage());
 
-    response = auth.authenticate(new AuthenticationRequest(null, new Credential(credential), returnAttrs.split("\\|")));
+    response = auth.authenticate(
+      new AuthenticationRequest((String) null, new Credential(credential), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(AuthenticationResultCode.DN_RESOLUTION_FAILURE, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
     AssertJUnit.assertNotNull(response.getMessage());

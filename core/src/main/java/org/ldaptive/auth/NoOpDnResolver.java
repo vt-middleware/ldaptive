@@ -22,10 +22,10 @@ public class NoOpDnResolver implements DnResolver
    * @throws  LdapException  never
    */
   @Override
-  public String resolve(final String user)
+  public String resolve(final User user)
     throws LdapException
   {
-    return user;
+    return user != null ? user.getIdentifier() : null;
   }
 
 

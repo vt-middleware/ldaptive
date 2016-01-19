@@ -127,7 +127,7 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
 
   /**
    * Sets whether DN resolution should fail if multiple DNs are found. If false an exception will be thrown if {@link
-   * #resolve(String)} finds more than one DN matching it's filter. Otherwise the first DN found is returned.
+   * #resolve(User)} finds more than one DN matching it's filter. Otherwise the first DN found is returned.
    *
    * @param  b  whether multiple DNs are allowed
    */
@@ -209,9 +209,9 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
 
 
   /**
-   * Attempts to find the DN for the supplied user. {@link #getUserFilter()} is used to look up the DN. The user is
-   * provided as the 'user' variable filter parameter. If more than one entry matches the search, the result is
-   * controlled by {@link #setAllowMultipleDns(boolean)}.
+   * Attempts to find the DN for the supplied user. {@link #createSearchFilter(User)} ()} is used to create the search
+   * filter. If more than one entry matches the search, the result is controlled by {@link
+   * #setAllowMultipleDns(boolean)}.
    *
    * @param  user  to find DN for
    *
@@ -220,17 +220,17 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
    * @throws  LdapException  if the entry resolution fails
    */
   @Override
-  public String resolve(final String user)
+  public String resolve(final User user)
     throws LdapException
   {
     logger.debug("resolve user={}", user);
 
     String dn = null;
-    if (user != null && !"".equals(user)) {
+    if (user != null) {
       // create the search filter
       final SearchFilter filter = createSearchFilter(user);
 
-      if (filter.getFilter() != null) {
+      if (filter != null && filter.getFilter() != null) {
         final SearchResult result = performLdapSearch(filter);
         final Iterator<LdapEntry> answer = result.getEntries().iterator();
 
@@ -250,7 +250,7 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
         logger.error("DN search filter not found, no search performed");
       }
     } else {
-      logger.warn("DN resolution cannot occur, user input was empty or null");
+      logger.warn("DN resolution cannot occur, user is null");
     }
     logger.debug("resolved dn={} for user={}", dn, user);
     return dn;
@@ -274,23 +274,29 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
    * Returns a search filter using {@link #userFilter} and {@link #userFilterParameters}. The user parameter is injected
    * as a named parameter of 'user'.
    *
-   * @param  user  identifier
+   * @param  user  to resolve DN
    *
    * @return  search filter
    */
-  protected SearchFilter createSearchFilter(final String user)
+  protected SearchFilter createSearchFilter(final User user)
   {
     final SearchFilter filter = new SearchFilter();
-    if (userFilter != null) {
-      logger.debug("searching for DN using userFilter");
-      filter.setFilter(userFilter);
-      if (userFilterParameters != null) {
-        filter.setParameters(userFilterParameters);
+    if (user != null && user.getIdentifier() != null && !"".equals(user.getIdentifier())) {
+      if (userFilter != null) {
+        logger.debug("searching for DN using userFilter");
+        filter.setFilter(userFilter);
+        if (userFilterParameters != null) {
+          filter.setParameters(userFilterParameters);
+        }
+        // assign user as a named parameter
+        filter.setParameter("user", user.getIdentifier());
+        // assign context as a named parameter
+        filter.setParameter("context", user.getContext());
+      } else {
+        logger.error("Invalid userFilter, cannot be null or empty.");
       }
-      // assign user as a named parameter
-      filter.setParameter("user", user);
     } else {
-      logger.error("Invalid userFilter, cannot be null or empty.");
+      logger.warn("Search filter cannot be created, user input was empty or null");
     }
     return filter;
   }
