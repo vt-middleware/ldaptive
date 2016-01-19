@@ -101,7 +101,7 @@ Ldaptive provides a default implementation of the the LdapEntryMapper that suppo
 - byte[]
 - char[]
 - Certificate
-- Calendar
+- Calendar (ZonedDateTime in v1.2)
 - UUID
 
 Collections and arrays are supported, but property nesting is not. Only simple Java beans should be used with this ldap entry mapper.

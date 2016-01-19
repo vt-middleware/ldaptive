@@ -53,7 +53,7 @@ public class InetOrgPerson {
 
     private String dn;
     private Collection<String> cn;
-    private Calendar createTimestamp;
+    private ZonedDateTime createTimestamp;
     private String creatorsName;
     private Collection<String> description;
     private String entryDN;
@@ -78,12 +78,12 @@ public class InetOrgPerson {
         this.cn = c;
     }
 
-    public Calendar getCreateTimestamp() {
+    public ZonedDateTime getCreateTimestamp() {
         return createTimestamp;
     }
 
-    public void setCreateTimestamp(Calendar s) {
-        this.createTimestamp = s;
+    public void setCreateTimestamp(ZonedDateTime t) {
+        this.createTimestamp = t;
     }
 
     public String getCreatorsName() {
