@@ -131,7 +131,9 @@ public class NamespaceHandler extends NamespaceHandlerSupport
     protected void doParse(
       final Element element, final ParserContext context, final BeanDefinitionBuilder builder)
     {
-      builder.addConstructorArgValue(new FormatDnResolver(element.getAttribute("format")));
+      final BeanDefinitionBuilder dnResolver = BeanDefinitionBuilder.genericBeanDefinition(FormatDnResolver.class);
+      dnResolver.addConstructorArgValue(element.getAttribute("format"));
+      builder.addConstructorArgValue(dnResolver.getBeanDefinition());
       builder.addConstructorArgValue(parseAuthHandler(element));
       if (element.hasAttribute("usePasswordPolicy")) {
         final BeanDefinitionBuilder responseHandler =  BeanDefinitionBuilder.rootBeanDefinition(
