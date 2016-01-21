@@ -41,7 +41,9 @@ public class DirectAuthenticatorBeanDefinitionParser extends AbstractAuthenticat
     if (authResponseHandler != null) {
       builder.addPropertyValue("authenticationResponseHandlers", authResponseHandler.getBeanDefinition());
     }
-    builder.addConstructorArgValue(new FormatDnResolver(element.getAttribute("format")));
+    final BeanDefinitionBuilder dnResolver = BeanDefinitionBuilder.genericBeanDefinition(FormatDnResolver.class);
+    dnResolver.addConstructorArgValue(element.getAttribute("format"));
+    builder.addConstructorArgValue(dnResolver.getBeanDefinition());
     builder.addConstructorArgValue(authHandler.getBeanDefinition());
   }
 }

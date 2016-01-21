@@ -178,6 +178,8 @@ public class NamespaceHandlerTest
     AssertJUnit.assertNotNull(directAuthenticator);
     testBindConnectionPool(directAuthenticator);
     AssertJUnit.assertNotNull(((FormatDnResolver) directAuthenticator.getDnResolver()).getFormat());
+    AssertJUnit.assertTrue(
+      ((FormatDnResolver) directAuthenticator.getDnResolver()).getFormat().startsWith("cn=%1$s"));
     AssertJUnit.assertNotNull(directAuthenticator.getAuthenticationResponseHandlers());
     final FreeIPAAuthenticationResponseHandler handler =
       (FreeIPAAuthenticationResponseHandler) directAuthenticator.getAuthenticationResponseHandlers()[0];
@@ -350,6 +352,7 @@ public class NamespaceHandlerTest
    */
   private void testSearchExecutor(final SearchExecutor executor)
   {
+    AssertJUnit.assertNotNull(executor.getBaseDn());
     AssertJUnit.assertTrue(executor.getBaseDn().length() > 0);
     AssertJUnit.assertNotNull(executor.getSearchFilter());
     AssertJUnit.assertTrue(executor.getReturnAttributes().length > 0);

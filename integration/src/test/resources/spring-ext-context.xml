@@ -72,7 +72,7 @@
   <ldaptive:direct-authenticator
     ldapUrl="${ldap.url}"
     trustCertificates="${ldap.trustCertificates}"
-    format="cn=%s,${ldap.baseDn}"
+    format="${ldap.dnFormat}"
     connectTimeout="${ldap.connectTimeout}"
     useStartTLS="${ldap.useStartTLS}"
     blockWaitTime="${ldap.pool.blockWaitTime}"
