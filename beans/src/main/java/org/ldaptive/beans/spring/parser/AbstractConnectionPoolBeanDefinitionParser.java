@@ -14,14 +14,14 @@ import org.w3c.dom.Element;
  *
  * @author Middleware Services
  */
-public abstract class AbstractPooledConnectionFactoryBeanDefinitionParser extends
-  AbstractConnectionFactoryBeanDefinitionParser
+public abstract class AbstractConnectionPoolBeanDefinitionParser extends AbstractConnectionFactoryBeanDefinitionParser
 {
 
 
   /**
    * Creates a blocking connection pool.
    *
+   * @param  builder  bean definition builder to set properties on, may be null
    * @param  name  of the connection pool
    * @param  element  containing configuration
    * @param  includeConnectionInitializer  whether to include a connection initializer
@@ -29,21 +29,25 @@ public abstract class AbstractPooledConnectionFactoryBeanDefinitionParser extend
    * @return  blocking connection pool bean definition builder
    */
   protected BeanDefinitionBuilder parseConnectionPool(
+    final BeanDefinitionBuilder builder,
     final String name,
     final Element element,
     final boolean includeConnectionInitializer)
   {
-    final BeanDefinitionBuilder pool = BeanDefinitionBuilder.genericBeanDefinition(BlockingConnectionPool.class);
+    BeanDefinitionBuilder pool = builder;
+    if (pool == null) {
+      pool = BeanDefinitionBuilder.genericBeanDefinition(BlockingConnectionPool.class);
+    }
     pool.addPropertyValue("name", name);
     final BeanDefinitionBuilder factory = BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.class);
     factory.addPropertyValue(
       "connectionConfig",
-      parseConnectionConfig(element, includeConnectionInitializer).getBeanDefinition());
+      parseConnectionConfig(null, element, includeConnectionInitializer).getBeanDefinition());
     if (element.hasAttribute("provider")) {
       factory.addPropertyValue("provider", parseProvider(element).getBeanDefinition());
     }
     pool.addPropertyValue("connectionFactory", factory.getBeanDefinition());
-    pool.addPropertyValue("poolConfig", parsePoolConfig(element).getBeanDefinition());
+    pool.addPropertyValue("poolConfig", parsePoolConfig(null, element).getBeanDefinition());
     pool.addPropertyValue("blockWaitTime", element.getAttribute("blockWaitTime"));
     pool.addPropertyValue("failFastInitialize", element.getAttribute("failFastInitialize"));
     final BeanDefinitionBuilder pruneStrategy = BeanDefinitionBuilder.genericBeanDefinition(IdlePruneStrategy.class);
@@ -59,13 +63,17 @@ public abstract class AbstractPooledConnectionFactoryBeanDefinitionParser extend
   /**
    * Creates a pool config.
    *
+   * @param  builder  bean definition builder to set properties on, may be null
    * @param  element  containing configuration
    *
    * @return  pool config bean definition
    */
-  protected BeanDefinitionBuilder parsePoolConfig(final Element element)
+  protected BeanDefinitionBuilder parsePoolConfig(final BeanDefinitionBuilder builder, final Element element)
   {
-    final BeanDefinitionBuilder poolConfig = BeanDefinitionBuilder.genericBeanDefinition(PoolConfig.class);
+    BeanDefinitionBuilder poolConfig = builder;
+    if (poolConfig == null) {
+      poolConfig = BeanDefinitionBuilder.genericBeanDefinition(PoolConfig.class);
+    }
     poolConfig.addPropertyValue("minPoolSize", element.getAttribute("minPoolSize"));
     poolConfig.addPropertyValue("maxPoolSize", element.getAttribute("maxPoolSize"));
     poolConfig.addPropertyValue("validateOnCheckOut", element.getAttribute("validateOnCheckOut"));

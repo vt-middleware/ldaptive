@@ -59,6 +59,7 @@ public class NamespaceHandlerTest
     closeConnectionPools(context.getBean("sasl-auth", Authenticator.class));
 
     context.getBean("pooled-connection-factory", PooledConnectionFactory.class).getConnectionPool().close();
+    context.getBean("connection-pool", BlockingConnectionPool.class).close();
   }
 
 
@@ -93,6 +94,8 @@ public class NamespaceHandlerTest
     AssertJUnit.assertEquals(1, context.getBeansOfType(PooledConnectionFactory.class).size());
     AssertJUnit.assertEquals(1, context.getBeansOfType(DefaultConnectionFactory.class).size());
     AssertJUnit.assertEquals(1, context.getBeansOfType(SearchExecutor.class).size());
+    AssertJUnit.assertEquals(1, context.getBeansOfType(BlockingConnectionPool.class).size());
+    AssertJUnit.assertEquals(1, context.getBeansOfType(ConnectionConfig.class).size());
   }
 
 
@@ -259,6 +262,36 @@ public class NamespaceHandlerTest
     final SearchExecutor executor = context.getBean("search-executor", SearchExecutor.class);
     AssertJUnit.assertNotNull(executor);
     testSearchExecutor(executor);
+  }
+
+
+  /**
+   * Test connection pool.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"beans-spring"})
+  public void testConnectionPool()
+    throws Exception
+  {
+    final BlockingConnectionPool connectionPool = context.getBean("connection-pool", BlockingConnectionPool.class);
+    AssertJUnit.assertNotNull(connectionPool);
+    testConnectionPool(connectionPool);
+  }
+
+
+  /**
+   * Test connection config.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"beans-spring"})
+  public void testConnectionConfig()
+    throws Exception
+  {
+    final ConnectionConfig config = context.getBean("connection-config", ConnectionConfig.class);
+    AssertJUnit.assertNotNull(config);
+    testConnectionConfig(config);
   }
 
 

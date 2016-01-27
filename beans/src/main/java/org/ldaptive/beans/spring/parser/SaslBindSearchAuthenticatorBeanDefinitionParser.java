@@ -38,14 +38,15 @@ public class SaslBindSearchAuthenticatorBeanDefinitionParser extends AbstractSea
   /**
    * Creates a bind connection initializer.
    *
+   * @param  builder  bean definition builder to set properties on, may be null
    * @param  element  containing configuration
    *
    * @return  bind connection initializer bean definition
    */
   @Override
-  protected BeanDefinitionBuilder parseConnectionInitializer(final Element element)
+  protected BeanDefinitionBuilder parseConnectionInitializer(final BeanDefinitionBuilder builder, final Element element)
   {
-    final BeanDefinitionBuilder initializer = super.parseConnectionInitializer(element);
+    final BeanDefinitionBuilder initializer = super.parseConnectionInitializer(builder, element);
     initializer.addPropertyValue("bindSaslConfig", parseSaslConfig(element).getBeanDefinition());
     return initializer;
   }

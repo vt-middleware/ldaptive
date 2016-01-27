@@ -17,8 +17,7 @@ import org.w3c.dom.Element;
  *
  * @author Middleware Services
  */
-public abstract class AbstractAuthenticatorBeanDefinitionParser
-  extends AbstractPooledConnectionFactoryBeanDefinitionParser
+public abstract class AbstractAuthenticatorBeanDefinitionParser extends AbstractConnectionPoolBeanDefinitionParser
 {
 
 
@@ -46,7 +45,9 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser
       PooledBindAuthenticationHandler.class);
     final BeanDefinitionBuilder connectionFactory = BeanDefinitionBuilder.genericBeanDefinition(
       PooledConnectionFactory.class);
-    connectionFactory.addPropertyValue("connectionPool", parseConnectionPool(name, element, false).getBeanDefinition());
+    connectionFactory.addPropertyValue(
+      "connectionPool",
+      parseConnectionPool(null, name, element, false).getBeanDefinition());
     authHandler.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
     return authHandler;
   }

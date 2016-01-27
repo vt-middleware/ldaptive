@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
-import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.ConnectionConfig;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -10,11 +10,11 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 /**
- * Parser for <pre>pooled-connection-factory</pre> elements.
+ * Parser for <pre>connection-config</pre> elements.
  *
  * @author Middleware Services
  */
-public class PooledConnectionFactoryBeanDefinitionParser extends AbstractConnectionPoolBeanDefinitionParser
+public class ConnectionConfigBeanDefinitionParser extends AbstractConnectionConfigBeanDefinitionParser
 {
 
 
@@ -28,14 +28,14 @@ public class PooledConnectionFactoryBeanDefinitionParser extends AbstractConnect
     throws BeanDefinitionStoreException
   {
     final String idAttrValue = element.getAttribute("id");
-    return StringUtils.hasText(idAttrValue) ? idAttrValue : "pooled-connection-factory";
+    return StringUtils.hasText(idAttrValue) ? idAttrValue : "connection-config";
   }
 
 
   @Override
   protected Class<?> getBeanClass(final Element element)
   {
-    return PooledConnectionFactory.class;
+    return ConnectionConfig.class;
   }
 
 
@@ -45,10 +45,6 @@ public class PooledConnectionFactoryBeanDefinitionParser extends AbstractConnect
     final ParserContext context,
     final BeanDefinitionBuilder builder)
   {
-    String name = "connection-pool";
-    if (element.hasAttribute("id")) {
-      name = element.getAttribute("id") + "-connection-pool";
-    }
-    builder.addPropertyValue("connectionPool", parseConnectionPool(null, name, element, true).getBeanDefinition());
+    parseConnectionConfig(builder, element, true);
   }
 }

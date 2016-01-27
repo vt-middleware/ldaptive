@@ -108,6 +108,11 @@
     trustCertificates="classpath:/ldaptive.trust.crt"
   />
 
+  <ldaptive:connection-pool
+    ldapUrl="${ldap.url}"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+  />
+
   <ldaptive:search-executor
     baseDn="${ldap.baseDn}"
     searchFilter="(mail=*)"
@@ -117,6 +122,14 @@
     sizeLimit="${ldap.sizeLimit}"
     binaryAttributes="jpegPhoto,userCertificate"
     sortBehavior="ORDERED"
+  />
+
+  <ldaptive:connection-config
+    ldapUrl="${ldap.url}"
+    connectTimeout="3000"
+    trustStore="classpath:/ldaptive.truststore"
+    trustStorePassword="changeit"
+    trustStoreType="BKS"
   />
 
 </beans>

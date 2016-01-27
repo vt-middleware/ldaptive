@@ -27,7 +27,7 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
       PooledConnectionFactory.class);
     connectionFactory.addPropertyValue(
       "connectionPool",
-      parseConnectionPool(name, element, true).getBeanDefinition());
+      parseConnectionPool(null, name, element, true).getBeanDefinition());
 
     final BeanDefinitionBuilder resolver = BeanDefinitionBuilder.genericBeanDefinition(PooledSearchDnResolver.class);
     resolver.addPropertyValue("baseDn", element.getAttribute("baseDn"));
