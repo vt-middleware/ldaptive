@@ -508,10 +508,10 @@
         <include name="blockingtimeoutpool" />
         <include name="connstrategypool" />
       </define>
+      <run>
+        <include name="${ldapTestGroup}"/>
+      </run>
     </groups>
-    <run>
-      <include name="${ldapTestGroup}"/>
-    </run>
     <packages>
       <package name="org.ldaptive.*" />
     </packages>
