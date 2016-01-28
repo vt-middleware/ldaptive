@@ -21,6 +21,9 @@ public interface ConnectionStrategy
 
   /** random strategy. */
   ConnectionStrategy RANDOM = new RandomConnectionStrategy();
+  
+  /** DNS SRV strategy. */
+  ConnectionStrategy DNS_SRV = new DnsSrvConnectionStrategy();
 
 
   /**
