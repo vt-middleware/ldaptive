@@ -127,7 +127,7 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
 
   /**
    * Sets whether DN resolution should fail if multiple DNs are found. If false an exception will be thrown if {@link
-   * #resolve(String)} finds more than one DN matching it's filter. Otherwise the first DN found is returned.
+   * #resolve(Object)} finds more than one DN matching it's filter. Otherwise the first DN found is returned.
    *
    * @param  b  whether multiple DNs are allowed
    */
@@ -220,17 +220,17 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
    * @throws  LdapException  if the entry resolution fails
    */
   @Override
-  public String resolve(final String user)
+  public String resolve(final Object user)
     throws LdapException
   {
     logger.debug("resolve user={}", user);
 
     String dn = null;
-    if (user != null && !"".equals(user)) {
+    if (user != null && !"".equals(user.toString())) {
       // create the search filter
       final SearchFilter filter = createSearchFilter(user);
 
-      if (filter.getFilter() != null) {
+      if (filter != null && filter.getFilter() != null) {
         final SearchResult result = performLdapSearch(filter);
         final Iterator<LdapEntry> answer = result.getEntries().iterator();
 
@@ -278,7 +278,7 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
    *
    * @return  search filter
    */
-  protected SearchFilter createSearchFilter(final String user)
+  protected SearchFilter createSearchFilter(final Object user)
   {
     final SearchFilter filter = new SearchFilter();
     if (userFilter != null) {

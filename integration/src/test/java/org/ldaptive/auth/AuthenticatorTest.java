@@ -3,6 +3,8 @@ package org.ldaptive.auth;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
@@ -28,6 +30,8 @@ import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
+import org.ldaptive.velocity.TemplateSearchDnResolver;
+import org.ldaptive.velocity.UserContext;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -280,6 +284,40 @@ public class AuthenticatorTest extends AbstractTest
     final String baseDn = resolver.getBaseDn();
     resolver.setBaseDn(baseDn.substring(baseDn.indexOf(",") + 1));
     AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), auth.resolveDn(user).toLowerCase());
+  }
+
+
+  /**
+   * @param  cn  to get dn for.
+   * @param  user  to get dn for.
+   * @param  duplicateFilter  for user lookups
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "getDnCn", "getDnUser", "getDnDuplicateFilter" })
+  @Test(groups = {"auth"})
+  public void resolveDnVelocity(final String cn, final String user, final String duplicateFilter)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(true);
+    final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
+
+    final VelocityEngine engine = new VelocityEngine();
+    engine.addProperty("string.resource.loader.class",
+      "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
+    engine.addProperty("resource.loader", "string");
+    engine.addProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
+    engine.init();
+
+    final VelocityContext context = new VelocityContext();
+    context.put("context", new UserContext(user));
+    final TemplateSearchDnResolver velocityResolver = new TemplateSearchDnResolver(
+      resolver.getConnectionFactory(),
+      engine,
+      "(|(uid=$context.principal)(mail=$context.principal))");
+    velocityResolver.setBaseDn(resolver.getBaseDn());
+    auth.setDnResolver(velocityResolver);
+    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(context));
   }
 
 

@@ -104,7 +104,7 @@ public class AggregateDnResolver implements DnResolver
 
   /**
    * Sets whether DN resolution should fail if multiple DNs are found If false an exception will be thrown if {@link
-   * #resolve(String)} finds that more than one DN resolver returns a DN. Otherwise the first DN found is returned.
+   * #resolve(Object)} finds that more than one DN resolver returns a DN. Otherwise the first DN found is returned.
    *
    * @param  b  whether multiple DNs are allowed
    */
@@ -116,7 +116,7 @@ public class AggregateDnResolver implements DnResolver
 
 
   @Override
-  public String resolve(final String user)
+  public String resolve(final Object user)
     throws LdapException
   {
     final CompletionService<String> cs = new ExecutorCompletionService<>(service);

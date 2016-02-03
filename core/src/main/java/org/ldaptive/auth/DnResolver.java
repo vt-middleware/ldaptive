@@ -21,6 +21,6 @@ public interface DnResolver
    *
    * @throws  LdapException  if an LDAP error occurs
    */
-  String resolve(String user)
+  String resolve(Object user)
     throws LdapException;
 }

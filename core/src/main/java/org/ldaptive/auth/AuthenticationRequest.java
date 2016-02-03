@@ -14,7 +14,7 @@ public class AuthenticationRequest
 {
 
   /** User identifier. */
-  private String user;
+  private Object user;
 
   /** User credential. */
   private Credential credential;
@@ -33,7 +33,7 @@ public class AuthenticationRequest
    * @param  id  that identifies the user
    * @param  c  credential to authenticate the user
    */
-  public AuthenticationRequest(final String id, final Credential c)
+  public AuthenticationRequest(final Object id, final Credential c)
   {
     setUser(id);
     setCredential(c);
@@ -47,7 +47,7 @@ public class AuthenticationRequest
    * @param  c  credential to authenticate the user
    * @param  attrs  attributes to return
    */
-  public AuthenticationRequest(final String id, final Credential c, final String... attrs)
+  public AuthenticationRequest(final Object id, final Credential c, final String... attrs)
   {
     setUser(id);
     setCredential(c);
@@ -60,7 +60,7 @@ public class AuthenticationRequest
    *
    * @return  user identifier
    */
-  public String getUser()
+  public Object getUser()
   {
     return user;
   }
@@ -71,7 +71,7 @@ public class AuthenticationRequest
    *
    * @param  id  of the user
    */
-  public void setUser(final String id)
+  public void setUser(final Object id)
   {
     user = id;
   }
