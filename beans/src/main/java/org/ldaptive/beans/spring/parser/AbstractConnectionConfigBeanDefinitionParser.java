@@ -37,7 +37,7 @@ public abstract class AbstractConnectionConfigBeanDefinitionParser extends Abstr
     if (connectionConfig == null) {
       connectionConfig = BeanDefinitionBuilder.genericBeanDefinition(ConnectionConfig.class);
     }
-    connectionConfig.addPropertyValue("ldapUrl", element.getAttribute("ldapUrl"));
+    setIfPresent(element, "ldapUrl", connectionConfig);
     connectionConfig.addPropertyValue("useStartTLS", element.getAttribute("useStartTLS"));
     connectionConfig.addPropertyValue("useSSL", element.getAttribute("useSSL"));
     connectionConfig.addPropertyValue("connectTimeout", element.getAttribute("connectTimeout"));

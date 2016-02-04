@@ -2,6 +2,8 @@
 package org.ldaptive.beans.spring.parser;
 
 import java.time.Period;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
 import org.w3c.dom.Element;
@@ -14,6 +16,9 @@ import org.w3c.dom.Node;
  */
 public abstract class AbstractBeanDefinitionParser extends AbstractSingleBeanDefinitionParser
 {
+
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 
   /**

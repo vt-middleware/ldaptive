@@ -55,7 +55,11 @@ public abstract class AbstractConnectionPoolBeanDefinitionParser extends Abstrac
     pruneStrategy.addConstructorArgValue(element.getAttribute("idleTime"));
     pool.addPropertyValue("pruneStrategy", pruneStrategy.getBeanDefinition());
     pool.addPropertyValue("validator", new SearchValidator());
-    pool.setInitMethodName("initialize");
+    if (element.hasAttribute("ldapUrl")) {
+      pool.setInitMethodName("initialize");
+    } else {
+      logger.info("No ldapUrl attribute found for element {}, pool not initialized.", name);
+    }
     return pool;
   }
 
