@@ -40,10 +40,7 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
    */
   public ActiveDirectoryAuthenticationResponseHandler(final Period expiration)
   {
-    if (expiration == null) {
-      throw new IllegalArgumentException("Expiration cannot be null");
-    }
-    expirationPeriod = expiration;
+    setExpirationPeriod(expiration);
   }
 
 
@@ -55,14 +52,8 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
    */
   public ActiveDirectoryAuthenticationResponseHandler(final Period expiration, final Period warning)
   {
-    if (expiration == null) {
-      throw new IllegalArgumentException("Expiration cannot be null");
-    }
-    expirationPeriod = expiration;
-    if (warning == null) {
-      throw new IllegalArgumentException("Warning cannot be null");
-    }
-    warningPeriod = warning;
+    setExpirationPeriod(expiration);
+    setWarningPeriod(warning);
   }
 
 
@@ -94,5 +85,67 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
         }
       }
     }
+  }
+
+
+  /**
+   * Returns the amount of time since a password was set until it will expire.
+   *
+   * @return  expiration period
+   */
+  public Period getExpirationPeriod()
+  {
+    return expirationPeriod;
+  }
+
+
+  /**
+   * Sets amount of time since a password was set until it will expire.
+   *
+   * @param  period  expiration period
+   */
+  public void setExpirationPeriod(final Period period)
+  {
+    if (period == null) {
+      throw new IllegalArgumentException("Expiration cannot be null");
+    }
+    expirationPeriod = period;
+  }
+
+
+  /**
+   * Returns the amount of time before expiration to produce a warning.
+   *
+   * @return  warning period
+   */
+  public Period getWarningPeriod()
+  {
+    return warningPeriod;
+  }
+
+
+  /**
+   * Sets the amount of time before expiration to produce a warning.
+   *
+   * @param  period  warning period
+   */
+  public void setWarningPeriod(final Period period)
+  {
+    if (period == null) {
+      throw new IllegalArgumentException("Warning cannot be null");
+    }
+    warningPeriod = period;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return String.format(
+      "[%s@%d::expirationPeriod=%s, warningPeriod=%s]",
+      getClass().getName(),
+      hashCode(),
+      expirationPeriod,
+      warningPeriod);
   }
 }
