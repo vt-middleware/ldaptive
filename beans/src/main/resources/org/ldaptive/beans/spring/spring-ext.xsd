@@ -93,6 +93,7 @@
   </xsd:complexType>
 
   <xsd:complexType name="baseAuthenticatorType">
+    <xsd:attribute name="provider" type="xsd:string" use="optional" default="org.ldaptive.provider.jndi.JndiProvider"/>
     <xsd:attribute name="ldapUrl" type="xsd:string" use="required"/>
     <xsd:attributeGroup ref="connectionPoolGroup"/>
     <xsd:attributeGroup ref="connectionConfigGroup"/>

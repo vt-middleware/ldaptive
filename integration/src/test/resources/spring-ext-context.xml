@@ -88,6 +88,7 @@
     baseDn="${ldap.baseDn}"
     userFilter="(mail={user})"
     bindDn="${ldap.bindDn}"
+    provider="org.ldaptive.provider.unboundid.UnboundIDProvider"
     bindCredential="${ldap.bindCredential}"
     trustCertificates="classpath:/ldaptive.trust.crt"
     connectTimeout="${ldap.connectTimeout}"
