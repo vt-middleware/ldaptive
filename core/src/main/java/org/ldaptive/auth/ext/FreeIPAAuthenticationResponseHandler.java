@@ -106,7 +106,7 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
           response.setAccountState(
             new FreeIPAAccountState(exp, loginRemaining != null ? loginRemaining.intValue() : 0));
         }
-      } else if (loginRemaining != null) {
+      } else if (loginRemaining != null && loginRemaining < maxLoginFailures) {
         response.setAccountState(new FreeIPAAccountState(null, loginRemaining));
       }
     }
