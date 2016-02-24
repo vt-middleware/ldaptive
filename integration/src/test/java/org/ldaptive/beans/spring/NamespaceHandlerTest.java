@@ -12,6 +12,7 @@ import org.ldaptive.SortBehavior;
 import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.DnResolver;
+import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.PooledSearchDnResolver;
@@ -32,6 +33,7 @@ import org.ldaptive.ssl.X509CredentialConfig;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 /**
@@ -43,8 +45,16 @@ public class NamespaceHandlerTest
 {
 
   /** Spring context to test. */
-  private ClassPathXmlApplicationContext context =
-    new ClassPathXmlApplicationContext(new String[] {"/spring-ext-context.xml", });
+  private ClassPathXmlApplicationContext context;
+
+
+  /** @throws  Exception  On test failure. */
+  @BeforeClass(groups = {"beans-spring"})
+  public void loadContext()
+    throws Exception
+  {
+    context = new ClassPathXmlApplicationContext(new String[] {"/spring-ext-context.xml", });
+  }
 
 
   /** @throws  Exception  On test failure. */
@@ -77,6 +87,10 @@ public class NamespaceHandlerTest
     final DnResolver dnResolver = auth.getDnResolver();
     if (dnResolver instanceof PooledConnectionFactoryManager) {
       ((PooledConnectionFactoryManager) dnResolver).getConnectionFactory().getConnectionPool().close();
+    }
+    final EntryResolver entryResolver = auth.getEntryResolver();
+    if (entryResolver instanceof PooledConnectionFactoryManager) {
+      ((PooledConnectionFactoryManager) entryResolver).getConnectionFactory().getConnectionPool().close();
     }
   }
 

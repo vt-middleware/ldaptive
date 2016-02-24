@@ -77,6 +77,7 @@
       <xsd:extension base="baseSearchAuthenticatorType">
         <xsd:attribute name="bindDn" type="xsd:string" use="required"/>
         <xsd:attribute name="bindCredential" type="xsd:string" use="optional"/>
+        <xsd:attribute name="resolveEntryWithBindCredentials" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
@@ -93,7 +94,7 @@
   </xsd:complexType>
 
   <xsd:complexType name="baseAuthenticatorType">
-    <xsd:attribute name="provider" type="xsd:string" use="optional" default="org.ldaptive.provider.jndi.JndiProvider"/>
+    <xsd:attribute name="provider" type="xsd:string" use="optional"/>
     <xsd:attribute name="ldapUrl" type="xsd:string" use="required"/>
     <xsd:attributeGroup ref="connectionPoolGroup"/>
     <xsd:attributeGroup ref="connectionConfigGroup"/>
@@ -162,7 +163,7 @@
   <xsd:complexType name="connectionFactoryType">
     <xsd:complexContent>
       <xsd:extension base="connectionConfigType">
-        <xsd:attribute name="provider" type="xsd:string" use="optional" default="org.ldaptive.provider.jndi.JndiProvider"/>
+        <xsd:attribute name="provider" type="xsd:string" use="optional"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

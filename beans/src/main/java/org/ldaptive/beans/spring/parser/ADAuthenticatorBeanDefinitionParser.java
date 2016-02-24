@@ -3,7 +3,7 @@ package org.ldaptive.beans.spring.parser;
 
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
-import org.ldaptive.auth.SearchEntryResolver;
+import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
@@ -44,10 +44,25 @@ public class ADAuthenticatorBeanDefinitionParser extends AbstractSearchAuthentic
   {
     super.doParse(element, context, builder);
     builder.addPropertyValue("authenticationResponseHandlers", new ActiveDirectoryAuthenticationResponseHandler());
-    final BeanDefinitionBuilder resolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
-    resolver.addPropertyValue(
+  }
+
+
+  @Override
+  protected BeanDefinitionBuilder parseEntryResolver(
+    final Element element,
+    final BeanDefinitionBuilder connectionFactory)
+  {
+    BeanDefinitionBuilder entryResolver;
+    if (element.hasAttribute("resolveEntryWithBindCredentials") &&
+        Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials"))) {
+      entryResolver = BeanDefinitionBuilder.genericBeanDefinition(PooledSearchEntryResolver.class);
+      entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
+    } else {
+      entryResolver = super.parseEntryResolver(element, connectionFactory);
+    }
+    entryResolver.addPropertyValue(
       "searchEntryHandlers",
       new SearchEntryHandler[]{new ObjectGuidHandler(), new ObjectSidHandler()});
-    builder.addPropertyValue("entryResolver", resolver.getBeanDefinition());
+    return entryResolver;
   }
 }
