@@ -96,8 +96,11 @@
     useStartTLS="${ldap.useStartTLS}"
     blockWaitTime="${ldap.pool.blockWaitTime}"
     maxPoolSize="${ldap.pool.maxSize}"
-    minPoolSize="${ldap.pool.minSize}"
-  />
+    minPoolSize="${ldap.pool.minSize}">
+    <ldaptive:authentication-response-handler>
+      <ldaptive:active-directory-handler expirationPeriod="${ldap.auth.expirationPeriod}" warningPeriod="${ldap.auth.warningPeriod}"/>
+    </ldaptive:authentication-response-handler>
+  </ldaptive:ad-authenticator>
 
   <ldaptive:pooled-connection-factory
     ldapUrl="${ldap.url}"

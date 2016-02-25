@@ -4,7 +4,6 @@ package org.ldaptive.beans.spring.parser;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.auth.PooledSearchEntryResolver;
-import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -33,17 +32,6 @@ public class ADAuthenticatorBeanDefinitionParser extends AbstractSearchAuthentic
   {
     final String idAttrValue = element.getAttribute("id");
     return StringUtils.hasText(idAttrValue) ? idAttrValue : "ad-authenticator";
-  }
-
-
-  @Override
-  protected void doParse(
-    final Element element,
-    final ParserContext context,
-    final BeanDefinitionBuilder builder)
-  {
-    super.doParse(element, context, builder);
-    builder.addPropertyValue("authenticationResponseHandlers", new ActiveDirectoryAuthenticationResponseHandler());
   }
 
 

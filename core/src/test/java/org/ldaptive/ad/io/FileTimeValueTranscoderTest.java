@@ -37,6 +37,10 @@ public class FileTimeValueTranscoderTest
         createDateTime("Z", 2014, 1, 28, 21, 54, 27, 711),
         "130354196677110000",
       },
+      new Object[] {
+        createDateTime("Z", 2016, 2, 18, 15, 31, 32, 327),
+        "131002830923270000",
+      },
     };
   }
 

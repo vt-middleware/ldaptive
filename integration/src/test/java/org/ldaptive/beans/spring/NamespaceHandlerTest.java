@@ -9,6 +9,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchScope;
 import org.ldaptive.SortBehavior;
+import org.ldaptive.TestControl;
 import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.DnResolver;
@@ -168,6 +169,9 @@ public class NamespaceHandlerTest
   public void testSaslBindSearchAuthenticator()
     throws Exception
   {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
     final Authenticator saslBindSearchAuthenticator = context.getBean("sasl-auth", Authenticator.class);
     AssertJUnit.assertNotNull(saslBindSearchAuthenticator);
     testBindConnectionPool(saslBindSearchAuthenticator);
@@ -224,9 +228,14 @@ public class NamespaceHandlerTest
     testBindConnectionPool(adAuthenticator);
     testSearchDnResolver(adAuthenticator);
     AssertJUnit.assertNotNull(adAuthenticator.getAuthenticationResponseHandlers());
-    AssertJUnit.assertEquals(
-      ActiveDirectoryAuthenticationResponseHandler.class,
-      adAuthenticator.getAuthenticationResponseHandlers()[0].getClass());
+    final ActiveDirectoryAuthenticationResponseHandler handler =
+      (ActiveDirectoryAuthenticationResponseHandler) adAuthenticator.getAuthenticationResponseHandlers()[0];
+    AssertJUnit.assertNotNull(handler);
+    AssertJUnit.assertEquals(Period.ofDays(90), handler.getExpirationPeriod());
+    AssertJUnit.assertEquals(Period.ofDays(15), handler.getWarningPeriod());
+    AssertJUnit.assertNull(
+      ((PooledBindAuthenticationHandler)
+        adAuthenticator.getAuthenticationHandler()).getAuthenticationControls());
   }
 
 

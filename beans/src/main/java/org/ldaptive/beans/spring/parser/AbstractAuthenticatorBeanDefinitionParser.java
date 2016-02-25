@@ -3,6 +3,7 @@ package org.ldaptive.beans.spring.parser;
 
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
+import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
@@ -74,7 +75,8 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
       "password-policy-handler",
       "password-expiration-handler",
       "e-directory-handler",
-      "free-ipa-handler");
+      "free-ipa-handler",
+      "active-directory-handler");
     if (handlerElement != null) {
       switch (handlerElement.getLocalName()) {
 
@@ -119,6 +121,25 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
         }
         if (handlerElement.hasAttribute("maxLoginFailures")) {
           responseHandler.addPropertyValue("maxLoginFailures", handlerElement.getAttribute("maxLoginFailures"));
+        }
+        break;
+
+      case "active-directory-handler":
+        responseHandler = BeanDefinitionBuilder.genericBeanDefinition(
+          ActiveDirectoryAuthenticationResponseHandler.class);
+        if (handlerElement.hasAttribute("expirationPeriod")) {
+          final BeanDefinitionBuilder period =  BeanDefinitionBuilder.rootBeanDefinition(
+            AbstractAuthenticatorBeanDefinitionParser.class,
+            "parsePeriod");
+          period.addConstructorArgValue(handlerElement.getAttribute("expirationPeriod"));
+          responseHandler.addPropertyValue("expirationPeriod", period.getBeanDefinition());
+        }
+        if (handlerElement.hasAttribute("warningPeriod")) {
+          final BeanDefinitionBuilder period =  BeanDefinitionBuilder.rootBeanDefinition(
+            AbstractAuthenticatorBeanDefinitionParser.class,
+            "parsePeriod");
+          period.addConstructorArgValue(handlerElement.getAttribute("warningPeriod"));
+          responseHandler.addPropertyValue("warningPeriod", period.getBeanDefinition());
         }
         break;
 

@@ -14,7 +14,8 @@ import org.ldaptive.auth.AuthenticationResponseHandler;
  * directory. If this handler is assigned a {@link #expirationPeriod}, then the {@link org.ldaptive.auth.Authenticator}
  * should be configured to return the 'pwdLastSet' attribute so it can be consumed by this handler. This will cause the
  * handler to emit a warning for the pwdLastSet value plus the expiration amount. The scope of that warning can be
- * further narrowed by providing a {@link #warningPeriod}.
+ * further narrowed by providing a {@link #warningPeriod}. By default if the msDS-UserPasswordExpiryTimeComputed
+ * attribute is found, expirationPeriod is ignored.
  *
  * @author  Middleware Services
  */
@@ -22,7 +23,8 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
 {
 
 
-  /** Amount of time since a password was set until it will expire. */
+  /** Amount of time since a password was set until it will expire. Used if msDS-UserPasswordExpiryTimeComputed cannot
+   * be read. */
   private Period expirationPeriod;
 
   /** Amount of time before expiration to produce a warning. */
@@ -36,11 +38,11 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
   /**
    * Creates a new active directory authentication response handler.
    *
-   * @param  expiration  length of time that a password is valid
+   * @param  warning  length of time before expiration that should produce a warning
    */
-  public ActiveDirectoryAuthenticationResponseHandler(final Period expiration)
+  public ActiveDirectoryAuthenticationResponseHandler(final Period warning)
   {
-    setExpirationPeriod(expiration);
+    setWarningPeriod(warning);
   }
 
 
@@ -61,19 +63,26 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
   public void handle(final AuthenticationResponse response)
   {
     if (response.getResult()) {
-      if (expirationPeriod != null) {
-        final LdapEntry entry = response.getLdapEntry();
-        final LdapAttribute pwdLastSet = entry.getAttribute("pwdLastSet");
-        if (pwdLastSet != null) {
-          final ZonedDateTime exp = pwdLastSet.getValue(new FileTimeValueTranscoder()).plus(expirationPeriod);
-          if (warningPeriod != null) {
-            final ZonedDateTime warn = exp.minus(warningPeriod);
-            if (ZonedDateTime.now().isAfter(warn)) {
-              response.setAccountState(new ActiveDirectoryAccountState(exp));
-            }
-          } else {
+      final LdapEntry entry = response.getLdapEntry();
+      final LdapAttribute expTime = entry.getAttribute("msDS-UserPasswordExpiryTimeComputed");
+      final LdapAttribute pwdLastSet = entry.getAttribute("pwdLastSet");
+
+      ZonedDateTime exp = null;
+      // ignore expTime if account is set to never expire
+      if (expTime != null && !"9223372036854775807".equals(expTime.getStringValue())) {
+        exp = expTime.getValue(new FileTimeValueTranscoder());
+      } else if (expirationPeriod != null && pwdLastSet != null) {
+        exp = pwdLastSet.getValue(new FileTimeValueTranscoder()).plus(expirationPeriod);
+      }
+
+      if (exp != null) {
+        if (warningPeriod != null) {
+          final ZonedDateTime warn = exp.minus(warningPeriod);
+          if (ZonedDateTime.now().isAfter(warn)) {
             response.setAccountState(new ActiveDirectoryAccountState(exp));
           }
+        } else {
+          response.setAccountState(new ActiveDirectoryAccountState(exp));
         }
       }
     } else {
