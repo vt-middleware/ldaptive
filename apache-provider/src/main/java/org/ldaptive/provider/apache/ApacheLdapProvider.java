@@ -35,7 +35,13 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
     if (lcc == null) {
       lcc = getDefaultLdapConnectionConfig(cc);
     }
-    return new ApacheLdapConnectionFactory(cc.getLdapUrl(), config, lcc, cc.getUseStartTLS(), cc.getResponseTimeout());
+    return new ApacheLdapConnectionFactory(
+      cc.getLdapUrl(),
+      cc.getConnectionStrategy(),
+      config,
+      lcc,
+      cc.getUseStartTLS(),
+      cc.getResponseTimeout());
   }
 
 

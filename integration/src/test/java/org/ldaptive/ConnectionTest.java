@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.ldaptive.provider.ConnectionStrategy;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
@@ -154,9 +153,9 @@ public class ConnectionTest
   public void strategyConnect()
     throws Exception
   {
-    final ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionStrategy(new RoundRobinConnectionStrategy());
     DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
-    connFactory.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.ROUND_ROBIN);
 
     Connection conn = connFactory.getConnection();
 
@@ -176,8 +175,9 @@ public class ConnectionTest
       conn.close();
     }
 
+    cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionStrategy(new DefaultConnectionStrategy());
     connFactory = new DefaultConnectionFactory(cc);
-    connFactory.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.DEFAULT);
     conn = connFactory.getConnection();
     try {
       conn.open();
@@ -195,8 +195,9 @@ public class ConnectionTest
       conn.close();
     }
 
+    cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
     connFactory = new DefaultConnectionFactory(cc);
-    connFactory.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.ACTIVE_PASSIVE);
     conn = connFactory.getConnection();
     try {
       conn.open();
@@ -214,8 +215,9 @@ public class ConnectionTest
       conn.close();
     }
 
+    cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionStrategy(new RandomConnectionStrategy());
     connFactory = new DefaultConnectionFactory(cc);
-    connFactory.getProvider().getProviderConfig().setConnectionStrategy(ConnectionStrategy.RANDOM);
     conn = connFactory.getConnection();
     try {
       conn.open();

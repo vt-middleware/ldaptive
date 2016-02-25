@@ -38,11 +38,16 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
 
     ProviderConnectionFactory<UnboundIDProviderConfig> cf;
     if (cc.getUseStartTLS()) {
-      cf = new UnboundIDStartTLSConnectionFactory(cc.getLdapUrl(), config, factory, options);
+      cf = new UnboundIDStartTLSConnectionFactory(
+        cc.getLdapUrl(),
+        cc.getConnectionStrategy(),
+        config,
+        factory,
+        options);
     } else if (cc.getUseSSL()) {
-      cf = new UnboundIDConnectionFactory(cc.getLdapUrl(), config, factory, options);
+      cf = new UnboundIDConnectionFactory(cc.getLdapUrl(), cc.getConnectionStrategy(), config, factory, options);
     } else {
-      cf = new UnboundIDConnectionFactory(cc.getLdapUrl(), config, null, options);
+      cf = new UnboundIDConnectionFactory(cc.getLdapUrl(), cc.getConnectionStrategy(), config, null, options);
     }
     return cf;
   }

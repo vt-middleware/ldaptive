@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider;
 
+import org.ldaptive.ConnectionFactoryMetadata;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,20 +27,22 @@ public abstract class AbstractProviderConnectionFactory<T extends ProviderConfig
   /** Factory metadata. */
   private final DefaultConnectionFactoryMetadata metadata;
 
+  /** Connection strategy. */
+  private final ConnectionStrategy connectionStrategy;
+
 
   /**
    * Creates a new abstract connection factory. Once invoked the supplied provider config is made immutable. See {@link
    * ProviderConfig#makeImmutable()}.
    *
    * @param  url  of the ldap to connect to
+   * @param  strategy  connection strategy
    * @param  config  provider configuration
    */
-  public AbstractProviderConnectionFactory(final String url, final T config)
+  public AbstractProviderConnectionFactory(final String url, final ConnectionStrategy strategy, final T config)
   {
-    if (url == null) {
-      throw new IllegalArgumentException("LDAP URL cannot be null");
-    }
     metadata = new DefaultConnectionFactoryMetadata(url);
+    connectionStrategy = strategy;
     providerConfig = config;
     providerConfig.makeImmutable();
   }
@@ -67,11 +71,10 @@ public abstract class AbstractProviderConnectionFactory<T extends ProviderConfig
     throws LdapException
   {
     LdapException lastThrown = null;
-    final String[] urls = providerConfig.getConnectionStrategy().getLdapUrls(metadata);
+    final String[] urls = connectionStrategy.getLdapUrls(metadata);
     if (urls == null || urls.length == 0) {
       throw new ConnectionException(
-        "Connection strategy " + providerConfig.getConnectionStrategy() + " did not produce any LDAP URLs for " +
-        metadata);
+        "Connection strategy " + connectionStrategy + " did not produce any LDAP URLs for " + metadata);
     }
 
     ProviderConnection conn = null;
@@ -79,11 +82,7 @@ public abstract class AbstractProviderConnectionFactory<T extends ProviderConfig
       try {
         logger.trace(
           "[{}] Attempting connection to {} for strategy {}",
-          new Object[] {
-            metadata,
-            url,
-            providerConfig.getConnectionStrategy(),
-          });
+          new Object[] {metadata, url, connectionStrategy, });
         conn = createInternal(url);
         metadata.incrementCount();
         lastThrown = null;

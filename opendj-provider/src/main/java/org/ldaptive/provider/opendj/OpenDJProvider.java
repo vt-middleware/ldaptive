@@ -34,7 +34,7 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
     if (options == null) {
       options = getDefaultLDAPOptions(cc);
     }
-    return new OpenDJConnectionFactory(cc.getLdapUrl(), config, options);
+    return new OpenDJConnectionFactory(cc.getLdapUrl(), cc.getConnectionStrategy(), config, options);
   }
 
 

@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive;
 
 /**
  * Connection strategy that returns URLs ordered exactly the way they are configured. This means that the first URL will

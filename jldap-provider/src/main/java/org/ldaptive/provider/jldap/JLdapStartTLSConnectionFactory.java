@@ -6,6 +6,7 @@ import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
 import com.novell.ldap.LDAPJSSEStartTLSFactory;
+import org.ldaptive.ConnectionStrategy;
 
 /**
  * Creates ldap connections using the JLDAP LDAPConnection class with the startTLS extended operation.
@@ -23,6 +24,7 @@ public class JLdapStartTLSConnectionFactory extends AbstractJLdapConnectionFacto
    * Creates a new jldap tls connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  constraints  connection constraints
    * @param  timeOut  time in milliseconds that operations will wait
@@ -30,12 +32,13 @@ public class JLdapStartTLSConnectionFactory extends AbstractJLdapConnectionFacto
    */
   public JLdapStartTLSConnectionFactory(
     final String url,
+    final ConnectionStrategy strategy,
     final JLdapProviderConfig config,
     final LDAPConstraints constraints,
     final int timeOut,
     final SSLSocketFactory factory)
   {
-    super(url, config, constraints, timeOut);
+    super(url, strategy, config, constraints, timeOut);
     sslSocketFactory = factory;
   }
 

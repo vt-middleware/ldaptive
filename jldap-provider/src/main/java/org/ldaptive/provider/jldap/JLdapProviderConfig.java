@@ -116,14 +116,12 @@ public class JLdapProviderConfig extends ProviderConfig<LDAPControl>
   {
     return
       String.format(
-        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, controlProcessor=%s, ldapConstraints=%s, " +
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, controlProcessor=%s, ldapConstraints=%s, " +
         "searchIgnoreResultCodes=%s, sslSocketFactory=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
-        getConnectionStrategy(),
         getControlProcessor(),
         ldapConstraints,
         Arrays.toString(searchIgnoreResultCodes),

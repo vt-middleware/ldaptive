@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive;
 
 /**
  * Interface to describe the state of the connection factory. Used by {@link ConnectionStrategy} to produce LDAP URLs.

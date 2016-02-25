@@ -139,6 +139,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     return
       new JndiStartTLSConnectionFactory(
         cc.getLdapUrl(),
+        cc.getConnectionStrategy(),
         config,
         env != null ? env : getDefaultEnvironment(cc, null),
         factory,
@@ -167,6 +168,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     return
       new JndiConnectionFactory(
         cc.getLdapUrl(),
+        cc.getConnectionStrategy(),
         config,
         env != null ? env : getDefaultEnvironment(cc, factory != null ? factory.getClass().getName() : null));
   }

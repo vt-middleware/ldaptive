@@ -143,14 +143,12 @@ public class UnboundIDProviderConfig extends ProviderConfig<Control>
   {
     return
       String.format(
-        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, controlProcessor=%s, connectionOptions=%s, " +
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, controlProcessor=%s, connectionOptions=%s, " +
         "socketFactory=%s, sslSocketFactory=%s, searchIgnoreResultCodes=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
-        getConnectionStrategy(),
         getControlProcessor(),
         connectionOptions,
         socketFactory,

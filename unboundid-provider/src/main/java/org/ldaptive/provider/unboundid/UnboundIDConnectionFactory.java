@@ -5,6 +5,7 @@ import javax.net.ssl.SSLSocketFactory;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import com.unboundid.ldap.sdk.LDAPException;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.AbstractProviderConnectionFactory;
@@ -29,17 +30,19 @@ public class UnboundIDConnectionFactory extends AbstractProviderConnectionFactor
    * Creates a new Unbound ID connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  factory  SSL socket factory to use for LDAP and LDAPS
    * @param  options  connection options
    */
   public UnboundIDConnectionFactory(
     final String url,
+    final ConnectionStrategy strategy,
     final UnboundIDProviderConfig config,
     final SSLSocketFactory factory,
     final LDAPConnectionOptions options)
   {
-    super(url, config);
+    super(url, strategy, config);
     socketFactory = factory;
     ldapOptions = options;
   }

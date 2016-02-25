@@ -8,6 +8,7 @@ import com.unboundid.ldap.sdk.LDAPConnectionOptions;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldap.sdk.ResultCode;
 import com.unboundid.ldap.sdk.extensions.StartTLSExtendedRequest;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.AbstractProviderConnectionFactory;
@@ -32,17 +33,19 @@ public class UnboundIDStartTLSConnectionFactory extends AbstractProviderConnecti
    * Creates a new Unbound ID connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  factory  SSL socket factory to use for startTLS
    * @param  options  connection options
    */
   public UnboundIDStartTLSConnectionFactory(
     final String url,
+    final ConnectionStrategy strategy,
     final UnboundIDProviderConfig config,
     final SSLSocketFactory factory,
     final LDAPConnectionOptions options)
   {
-    super(url, config);
+    super(url, strategy, config);
     socketFactory = factory;
     ldapOptions = options;
   }

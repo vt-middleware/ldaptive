@@ -1,7 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
+import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.ConnectionInitializer;
+import org.ldaptive.ConnectionStrategy;
+import org.ldaptive.DefaultConnectionStrategy;
+import org.ldaptive.RandomConnectionStrategy;
+import org.ldaptive.RoundRobinConnectionStrategy;
 
 /**
  * Handles properties for {@link org.ldaptive.ConnectionConfig}.
@@ -30,6 +35,18 @@ public class ConnectionConfigPropertyInvoker extends AbstractPropertyInvoker
     if (type != String.class) {
       if (ConnectionInitializer.class.isAssignableFrom(type)) {
         newValue = createTypeFromPropertyValue(ConnectionInitializer.class, value);
+      } else if (ConnectionStrategy.class.isAssignableFrom(type)) {
+        if ("DEFAULT".equals(value)) {
+          newValue = new DefaultConnectionStrategy();
+        } else if ("ACTIVE_PASSIVE".equals(value)) {
+          newValue = new ActivePassiveConnectionStrategy();
+        } else if ("ROUND_ROBIN".equals(value)) {
+          newValue = new RoundRobinConnectionStrategy();
+        } else if ("RANDOM".equals(value)) {
+          newValue = new RandomConnectionStrategy();
+        } else {
+          newValue = createTypeFromPropertyValue(ConnectionStrategy.class, value);
+        }
       } else {
         newValue = convertSimpleType(type, value);
       }

@@ -11,6 +11,7 @@ import javax.naming.ldap.StartTlsRequest;
 import javax.naming.ldap.StartTlsResponse;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
+import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.provider.AbstractProviderConnectionFactory;
 import org.ldaptive.provider.ConnectionException;
@@ -37,6 +38,7 @@ public class JndiStartTLSConnectionFactory extends AbstractProviderConnectionFac
    * Creates a new jndi startTLS connection factory.
    *
    * @param  url  of the ldap to connect to
+   * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  env  jndi context environment
    * @param  factory  SSL socket factory
@@ -44,12 +46,13 @@ public class JndiStartTLSConnectionFactory extends AbstractProviderConnectionFac
    */
   public JndiStartTLSConnectionFactory(
     final String url,
+    final ConnectionStrategy strategy,
     final JndiProviderConfig config,
     final Map<String, Object> env,
     final SSLSocketFactory factory,
     final HostnameVerifier verifier)
   {
-    super(url, config);
+    super(url, strategy, config);
     environment = env;
     sslSocketFactory = factory;
     hostnameVerifier = verifier;

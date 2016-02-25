@@ -220,15 +220,12 @@ public class JndiProviderConfig extends ProviderConfig<Control>
   {
     return
       String.format(
-        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, " +
-        "connectionStrategy=%s, controlProcessor=%s, environment=%s, " +
-        "tracePackets=%s, removeDnUrls=%s, searchIgnoreResultCodes=%s, " +
-        "sslSocketFactory=%s, hostnameVerifier=%s]",
+        "[%s@%d::operationExceptionResultCodes=%s, properties=%s, controlProcessor=%s, environment=%s, " +
+        "tracePackets=%s, removeDnUrls=%s, searchIgnoreResultCodes=%s, sslSocketFactory=%s, hostnameVerifier=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
         getProperties(),
-        getConnectionStrategy(),
         getControlProcessor(),
         environment,
         tracePackets,

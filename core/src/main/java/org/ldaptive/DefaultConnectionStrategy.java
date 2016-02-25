@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive;
 
 /**
  * Connection strategy that returns the exact URL that is returned from {@link ConnectionFactoryMetadata#getLdapUrl()}.
