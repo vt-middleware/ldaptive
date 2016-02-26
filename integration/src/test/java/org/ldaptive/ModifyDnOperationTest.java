@@ -61,8 +61,7 @@ public class ModifyDnOperationTest extends AbstractTest
   public void modifyDnLdapEntry(final String oldDn, final String newDn)
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -92,8 +91,6 @@ public class ModifyDnOperationTest extends AbstractTest
       } catch (Exception e) {
         AssertJUnit.fail("Should have thrown LdapException, threw " + e);
       }
-    } finally {
-      conn.close();
     }
   }
 }

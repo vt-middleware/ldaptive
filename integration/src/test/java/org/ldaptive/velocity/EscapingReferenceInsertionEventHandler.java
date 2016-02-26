@@ -4,6 +4,7 @@ package org.ldaptive.velocity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
 import org.ldaptive.SearchFilter;
 
@@ -29,11 +30,7 @@ public class EscapingReferenceInsertionEventHandler implements ReferenceInsertio
         }
         output = encodedValues.toArray();
       } else if (value instanceof Collection<?>) {
-        final List<Object> encodedValues = new ArrayList<>();
-        for (Object o : (Collection<?>) value) {
-          encodedValues.add(encode(o));
-        }
-        output = encodedValues;
+        output = ((Collection<?>) value).stream().map(this::encode).collect(Collectors.toList());
       } else {
         output = encode(value);
       }

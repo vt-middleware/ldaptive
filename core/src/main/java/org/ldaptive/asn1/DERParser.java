@@ -232,8 +232,6 @@ public class DERParser
     while (permutations.size() > half) {
       permutations.remove();
     }
-    for (DERPath p : permutations) {
-      p.popNode();
-    }
+    permutations.forEach(DERPath::popNode);
   }
 }

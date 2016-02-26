@@ -83,8 +83,7 @@ public class SyncReplClientTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final SyncReplClient client = new SyncReplClient(conn, false);
@@ -110,8 +109,6 @@ public class SyncReplClientTest extends AbstractTest
       AssertJUnit.assertTrue(item.isResponse());
       AssertJUnit.assertEquals(true, item.getResponse().getSyncDoneControl().getRefreshDeletes());
       AssertJUnit.assertNotNull(item.getResponse().getSyncDoneControl().getCookie());
-    } finally {
-      conn.close();
     }
   }
 
@@ -139,8 +136,7 @@ public class SyncReplClientTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final SyncReplClient client = new SyncReplClient(conn, true);
@@ -214,8 +210,6 @@ public class SyncReplClientTest extends AbstractTest
       AssertJUnit.assertTrue(item.isResponse());
       AssertJUnit.assertTrue(results.isEmpty());
       AssertJUnit.assertEquals(ResultCode.CANCELED, item.getResponse().getResponse().getResultCode());
-    } finally {
-      conn.close();
     }
   }
 }

@@ -90,8 +90,7 @@ public class PersistentSearchClientTest extends AbstractTest
     final String expected = TestUtils.readFileIntoString(ldifFile);
     final SearchResult expectedResult = TestUtils.convertLdifToResult(expected);
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final PersistentSearchClient client = new PersistentSearchClient(
@@ -173,8 +172,6 @@ public class PersistentSearchClientTest extends AbstractTest
         }
       }
       AssertJUnit.assertTrue(results.isEmpty());
-    } finally {
-      conn.close();
     }
   }
 

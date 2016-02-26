@@ -438,7 +438,7 @@ public class LdapURL
       final String hostname = getHostname();
       if (hostname != null) {
         // ipv6 address
-        if (hostname.indexOf(":") != -1) {
+        if (hostname.contains(":")) {
           sb.append("[").append(hostname).append("]");
         } else {
           sb.append(hostname);

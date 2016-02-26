@@ -252,7 +252,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
   {
     // must start with '*' and contain two domain components
     final boolean isWildcard = certName.startsWith("*.") && certName.indexOf('.') < certName.lastIndexOf('.');
-    logger.trace("matching for hostname={}, certName={}, isWildcard={}", new Object[] {hostname, certName, isWildcard});
+    logger.trace("matching for hostname={}, certName={}, isWildcard={}", hostname, certName, isWildcard);
 
     boolean match;
     if (isWildcard) {
@@ -262,10 +262,10 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
       final String hostnameDomain = hostname.substring(hostnameIdx);
 
       match = certNameDomain.equalsIgnoreCase(hostnameDomain);
-      logger.trace("match={} for {} == {}", new Object[] {match, certNameDomain, hostnameDomain});
+      logger.trace("match={} for {} == {}", match, certNameDomain, hostnameDomain);
     } else {
       match = certName.equalsIgnoreCase(hostname);
-      logger.trace("match={} for {} == {}", new Object[] {match, certName, hostname});
+      logger.trace("match={} for {} == {}", match, certName, hostname);
     }
     return match;
   }

@@ -29,8 +29,7 @@ public class WhoAmIOperationTest extends AbstractTest
       return;
     }
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final WhoAmIOperation whoami = new WhoAmIOperation(conn);
@@ -38,8 +37,6 @@ public class WhoAmIOperationTest extends AbstractTest
       final BindConnectionInitializer ci =
         (BindConnectionInitializer) conn.getConnectionConfig().getConnectionInitializer();
       AssertJUnit.assertEquals("dn:" + ci.getBindDn(), res.getResult());
-    } finally {
-      conn.close();
     }
   }
 }

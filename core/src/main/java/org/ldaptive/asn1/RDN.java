@@ -139,13 +139,7 @@ public class RDN implements DEREncoder
   {
     final List<DEREncoder> typeEncoders = new ArrayList<>();
     for (final AttributeValueAssertion types : attributeValueAssertions) {
-      typeEncoders.add(new DEREncoder() {
-          @Override
-          public byte[] encode()
-          {
-            return types.encode();
-          }
-        });
+      typeEncoders.add(types::encode);
     }
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
@@ -169,13 +163,9 @@ public class RDN implements DEREncoder
     final DERParser parser = new DERParser();
     parser.registerHandler(
       "/SEQ/SET",
-      new ParseHandler() {
-        @Override
-        public void handle(final DERParser parser, final ByteBuffer encoded)
-        {
-          rdns.add(new RDN(AttributeValueAssertion.decode(encoded.slice())));
-          encoded.position(encoded.limit());
-        }
+      (parser1, encoded1) -> {
+        rdns.add(new RDN(AttributeValueAssertion.decode(encoded1.slice())));
+        encoded1.position(encoded1.limit());
       });
     parser.parse(encoded);
     return rdns.toArray(new RDN[rdns.size()]);

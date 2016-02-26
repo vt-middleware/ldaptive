@@ -13,7 +13,6 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.async.AsyncSearchOperation;
 import org.ldaptive.async.handler.AsyncRequestHandler;
-import org.ldaptive.async.handler.ExceptionHandler;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.extended.CancelOperation;
 import org.ldaptive.extended.CancelRequest;
@@ -104,8 +103,8 @@ public class SyncReplClient
    *     custom handler that places sync repl data in a blocking queue.</li>
    *   <li>{@link AsyncSearchOperation#setOperationResponseHandlers( OperationResponseHandler[])} is invoked with a
    *     custom handler that places the sync repl response in a blocking queue.</li>
-   *   <li>{@link AsyncSearchOperation#setExceptionHandler(ExceptionHandler)} is invoked with a custom handler that
-   *     places the exception in a blocking queue.</li>
+   *   <li>{@link AsyncSearchOperation#setExceptionHandler(org.ldaptive.async.handler.ExceptionHandler)} is invoked with
+   *     a custom handler that places the exception in a blocking queue.</li>
    * </ul>
    *
    * <p>The search request object should not be reused for any other search operations.</p>
@@ -174,19 +173,15 @@ public class SyncReplClient
         }
       });
     search.setExceptionHandler(
-      new ExceptionHandler() {
-        @Override
-        public HandlerResult<Exception> handle(final Connection conn, final Request request, final Exception exception)
-        {
-          try {
-            logger.debug("received exception:", exception);
-            search.shutdown();
-            queue.put(new SyncReplItem(exception));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue exception:", exception);
-          }
-          return new HandlerResult<>(null);
+      (conn, request1, exception) -> {
+        try {
+          logger.debug("received exception:", exception);
+          search.shutdown();
+          queue.put(new SyncReplItem(exception));
+        } catch (Exception e) {
+          logger.warn("Unable to enqueue exception:", exception);
         }
+        return new HandlerResult<>(null);
       });
 
     request.setControls(

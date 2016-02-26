@@ -108,8 +108,7 @@ public class LdapLoginModuleTest extends AbstractTest
     }
 
     // setup group relationships
-    final Connection conn = TestUtils.createSetupConnection();
-    try {
+    try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -158,8 +157,6 @@ public class LdapLoginModuleTest extends AbstractTest
           throw e;
         }
       }
-    } finally {
-      conn.close();
     }
   }
 

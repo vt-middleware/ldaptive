@@ -143,7 +143,7 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
         getClass().getName(),
         hashCode(),
         Arrays.toString(trustManagers),
-        trustCerts,
+        Arrays.toString(trustCerts),
         authenticationCert);
   }
 }

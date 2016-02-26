@@ -61,13 +61,7 @@ public class DN implements DEREncoder
   {
     final List<DEREncoder> typeEncoders = new ArrayList<>();
     for (final RDN rdn : rdns) {
-      typeEncoders.add(new DEREncoder() {
-          @Override
-          public byte[] encode()
-          {
-            return rdn.encode();
-          }
-        });
+      typeEncoders.add(rdn::encode);
     }
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(

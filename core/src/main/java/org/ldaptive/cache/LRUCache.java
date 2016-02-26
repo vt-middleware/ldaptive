@@ -6,7 +6,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
@@ -32,14 +31,10 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
 
   /** Executor for performing eviction. */
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
-    new ThreadFactory() {
-      @Override
-      public Thread newThread(final Runnable r)
-      {
-        final Thread t = new Thread(r);
-        t.setDaemon(true);
-        return t;
-      }
+    r -> {
+      final Thread t = new Thread(r);
+      t.setDaemon(true);
+      return t;
     });
 
 
@@ -65,18 +60,14 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
       }
     };
 
-    final Runnable expire = new Runnable() {
-      @Override
-      public void run()
-      {
-        synchronized (cache) {
-          final Iterator<Item> i = cache.values().iterator();
-          final long t = System.currentTimeMillis();
-          while (i.hasNext()) {
-            final Item item = i.next();
-            if (t - item.creationTime > TimeUnit.SECONDS.toMillis(timeToLive)) {
-              i.remove();
-            }
+    final Runnable expire = () -> {
+      synchronized (cache) {
+        final Iterator<Item> i = cache.values().iterator();
+        final long t = System.currentTimeMillis();
+        while (i.hasNext()) {
+          final Item item = i.next();
+          if (t - item.creationTime > TimeUnit.SECONDS.toMillis(timeToLive)) {
+            i.remove();
           }
         }
       }

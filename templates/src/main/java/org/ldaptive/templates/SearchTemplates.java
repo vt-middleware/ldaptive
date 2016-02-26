@@ -126,9 +126,7 @@ public class SearchTemplates
     }
     if (nonNullFilters.size() > 1) {
       final StringBuilder sb = new StringBuilder("(&");
-      for (String filter : nonNullFilters) {
-        sb.append(filter);
-      }
+      nonNullFilters.forEach(sb::append);
       sb.append(")");
       return sb.toString();
     } else {

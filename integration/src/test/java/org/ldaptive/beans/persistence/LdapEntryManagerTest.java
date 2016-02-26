@@ -43,8 +43,7 @@ public class LdapEntryManagerTest extends AbstractTest
     final ConnectionFactory cf = new DefaultConnectionFactory(
       TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
     LdapEntry entry = null;
-    final Connection conn = cf.getConnection();
-    try {
+    try (Connection conn = cf.getConnection()) {
       conn.open();
 
       final BindConnectionInitializer ci =
@@ -53,14 +52,12 @@ public class LdapEntryManagerTest extends AbstractTest
       final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(ci.getBindDn());
       request.setReturnAttributes(ReturnAttributes.ALL.value());
       entry = op.execute(request).getResult().getEntry();
-    } finally {
-      conn.close();
     }
 
     return
       new Object[][] {
         new Object[] {
-          new DefaultLdapEntryManager<>(new DefaultLdapEntryMapper<InetOrgPerson>(), cf), entry,
+          new DefaultLdapEntryManager<>(new DefaultLdapEntryMapper<>(), cf), entry,
         },
       };
   }

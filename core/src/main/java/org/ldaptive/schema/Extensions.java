@@ -106,7 +106,7 @@ public class Extensions
    */
   public void addExtension(final String name)
   {
-    extensions.put(name, new ArrayList<String>(0));
+    extensions.put(name, new ArrayList<>(0));
   }
 
 

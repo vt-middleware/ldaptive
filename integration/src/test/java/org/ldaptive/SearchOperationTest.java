@@ -3,10 +3,10 @@ package org.ldaptive;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.ldaptive.ad.control.ForceUpdateControl;
 import org.ldaptive.ad.control.GetStatsControl;
 import org.ldaptive.ad.control.LazyCommitControl;
@@ -148,8 +148,7 @@ public class SearchOperationTest extends AbstractTest
 
     final String baseDn = DnParser.substring(GROUP_ENTRIES.get("2")[0].getDn(), 1);
     // setup group relationships
-    final Connection conn = TestUtils.createSetupConnection();
-    try {
+    try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -192,8 +191,6 @@ public class SearchOperationTest extends AbstractTest
           throw e;
         }
       }
-    } finally {
-      conn.close();
     }
   }
 
@@ -349,8 +346,7 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     final SearchResult expectedResult = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile));
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
       final SearchOperation search = new SearchOperation(conn);
 
@@ -377,8 +373,6 @@ public class SearchOperationTest extends AbstractTest
       objectRequest.setSearchScope(SearchScope.OBJECT);
       result = search.execute(objectRequest).getResult();
       TestUtils.assertEquals(expectedResult, result);
-    } finally {
-      conn.close();
     }
   }
 
@@ -416,8 +410,7 @@ public class SearchOperationTest extends AbstractTest
       final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
       cc.setLdapUrl(String.format("%s/%s", cc.getLdapUrl(),
                                   LdapUtils.percentEncode(DnParser.substring(expectedResult.getEntry().getDn(), i))));
-      final Connection conn = DefaultConnectionFactory.getConnection(cc);
-      try {
+      try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
         conn.open();
         final SearchOperation search = new SearchOperation(conn);
 
@@ -446,8 +439,6 @@ public class SearchOperationTest extends AbstractTest
         result = search.execute(objectRequest).getResult();
         AssertJUnit.assertEquals(1, result.size());
         TestUtils.assertEquals(expectedResult, result);
-      } finally {
-        conn.close();
       }
     }
   }
@@ -558,8 +549,7 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     final PagedResultsControl prc = new PagedResultsControl(1, true);
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -598,8 +588,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
   }
 
@@ -636,8 +624,7 @@ public class SearchOperationTest extends AbstractTest
     final SortRequestControl src = new SortRequestControl(new SortKey[] {new SortKey("uugid", "caseExactMatch")}, true);
     VirtualListViewRequestControl vlvrc = new VirtualListViewRequestControl(3, 1, 1, true);
     byte[] contextID;
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -676,8 +663,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
   }
 
@@ -702,8 +687,7 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -741,8 +725,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the provider
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
   }
 
@@ -953,8 +935,7 @@ public class SearchOperationTest extends AbstractTest
   public void mergeSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -973,8 +954,6 @@ public class SearchOperationTest extends AbstractTest
         (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
           TestUtils.convertLdifToResult(expected).getEntry(),
           SearchResult.mergeEntries(result).getEntry()));
-    } finally {
-      conn.close();
     }
   }
 
@@ -1002,8 +981,7 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -1022,8 +1000,6 @@ public class SearchOperationTest extends AbstractTest
         (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
           TestUtils.convertLdifToResult(expected).getEntry(),
           SearchResult.mergeEntries(result).getEntry()));
-    } finally {
-      conn.close();
     }
   }
 
@@ -1051,8 +1027,7 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -1070,8 +1045,6 @@ public class SearchOperationTest extends AbstractTest
 
       final SearchResult result = search.execute(sr).getResult();
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
-    } finally {
-      conn.close();
     }
   }
 
@@ -1149,8 +1122,7 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -1173,10 +1145,7 @@ public class SearchOperationTest extends AbstractTest
 
       final SearchResult lcValuesChangeResult = TestUtils.convertLdifToResult(expected);
       for (LdapAttribute la : lcValuesChangeResult.getEntry().getAttributes()) {
-        final Set<String> s = new HashSet<>();
-        for (String value : la.getStringValues()) {
-          s.add(value.toLowerCase());
-        }
+        final Set<String> s = la.getStringValues().stream().map(String::toLowerCase).collect(Collectors.toSet());
         la.clear();
         la.addStringValues(s);
       }
@@ -1208,10 +1177,7 @@ public class SearchOperationTest extends AbstractTest
         lcAllChangeResult.getEntry().setDn(lcAllChangeResult.getEntry().getDn().toLowerCase());
         la.setName(la.getName().toLowerCase());
 
-        final Set<String> s = new HashSet<>();
-        for (String value : la.getStringValues()) {
-          s.add(value.toLowerCase());
-        }
+        final Set<String> s = la.getStringValues().stream().map(String::toLowerCase).collect(Collectors.toSet());
         la.clear();
         la.addStringValues(s);
       }
@@ -1219,8 +1185,6 @@ public class SearchOperationTest extends AbstractTest
       sr.setSearchEntryHandlers(srh);
       result = search.execute(sr).getResult();
       TestUtils.assertEquals(ucNamesChangeResult, result);
-    } finally {
-      conn.close();
     }
   }
 
@@ -1249,8 +1213,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -1267,8 +1230,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (LdapException e) {
       // some providers don't support this DN syntax
       AssertJUnit.assertEquals(ResultCode.DECODING_ERROR, e.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -1297,8 +1258,7 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -1318,8 +1278,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the provider
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
   }
 
@@ -1350,8 +1308,7 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -1374,8 +1331,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the provider
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
   }
 
@@ -1458,12 +1413,11 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final Connection conn = createLdapConnection(true);
     final String expected = TestUtils.readFileIntoString(ldifFile);
     final SearchResult specialCharsResult = TestUtils.convertLdifToResult(expected);
     specialCharsResult.getEntry().setDn(specialCharsResult.getEntry().getDn().replaceAll("\\\\", ""));
 
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -1475,8 +1429,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (LdapException e) {
       // ignore this test if not supported by the server
       AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, e.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -1498,8 +1450,7 @@ public class SearchOperationTest extends AbstractTest
   public void searchExceeded(final String dn, final String filter, final int resultsSize)
     throws Exception
   {
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -1517,8 +1468,6 @@ public class SearchOperationTest extends AbstractTest
       response = search.execute(request);
       AssertJUnit.assertEquals(resultsSize, response.getResult().size());
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -1973,8 +1922,7 @@ public class SearchOperationTest extends AbstractTest
   public void getAttributesBase64(final String dn, final String returnAttrs, final String results)
     throws Exception
   {
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -1985,8 +1933,6 @@ public class SearchOperationTest extends AbstractTest
       AssertJUnit.assertEquals(
         TestUtils.convertStringToEntry(dn, results).getAttribute("jpegPhoto").getStringValue(),
         result.getEntry().getAttribute("jpegPhoto").getStringValue());
-    } finally {
-      conn.close();
     }
   }
 
@@ -1996,16 +1942,13 @@ public class SearchOperationTest extends AbstractTest
   public void getSaslMechanisms()
     throws Exception
   {
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest("", new String[] {"supportedSASLMechanisms"})).getResult();
       AssertJUnit.assertTrue(result.getEntry().getAttributes().size() > 0);
-    } finally {
-      conn.close();
     }
   }
 
@@ -2015,16 +1958,13 @@ public class SearchOperationTest extends AbstractTest
   public void getSupportedControls()
     throws Exception
   {
-    final Connection conn = createLdapConnection(true);
-    try {
+    try (Connection conn = createLdapConnection(true)) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest("", new String[] {"supportedcontrol"})).getResult();
       AssertJUnit.assertTrue(result.getEntry().getAttributes().size() > 0);
-    } finally {
-      conn.close();
     }
   }
 
@@ -2061,8 +2001,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
-    final Connection conn = TestUtils.createDigestMd5Connection();
-    try {
+    try (Connection conn = TestUtils.createDigestMd5Connection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -2071,8 +2010,6 @@ public class SearchOperationTest extends AbstractTest
           dn,
           new SearchFilter(filter, filterParameters.split("\\|")), returnAttrs.split("\\|"))).getResult();
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
-    } finally {
-      conn.close();
     }
   }
 
@@ -2109,8 +2046,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
-    final Connection conn = TestUtils.createCramMd5Connection();
-    try {
+    try (Connection conn = TestUtils.createCramMd5Connection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -2125,8 +2061,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the provider
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
   }
 
@@ -2230,8 +2164,7 @@ public class SearchOperationTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    final Connection conn = TestUtils.createGssApiConnection();
-    try {
+    try (Connection conn = TestUtils.createGssApiConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -2248,7 +2181,7 @@ public class SearchOperationTest extends AbstractTest
       System.clearProperty("javax.security.auth.useSubjectCredsOnly");
       System.clearProperty("java.security.krb5.realm");
       System.clearProperty("java.security.krb5.kdc");
-      conn.close();
+
     }
   }
 

@@ -1055,12 +1055,11 @@ public class AuthenticatorTest extends AbstractTest
     }
 
     final PasswordPolicyControl ppc = new PasswordPolicyControl();
-    final Connection conn = TestUtils.createSetupConnection();
     AuthenticationResponse response = null;
     PasswordPolicyControl ppcResponse = null;
     final Authenticator auth = createTLSAuthenticator(true);
     auth.setAuthenticationResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
-    try {
+    try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
 
       final BindAuthenticationHandler ah = (BindAuthenticationHandler) auth.getAuthenticationHandler();
@@ -1102,8 +1101,6 @@ public class AuthenticatorTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
   }
 
@@ -1173,8 +1170,7 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertNotNull(entry.getAttribute("userAccountControl"));
     auth.setEntryResolver(null);
 
-    final Connection conn = TestUtils.createSetupConnection();
-    try {
+    try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -1212,8 +1208,6 @@ public class AuthenticatorTest extends AbstractTest
       AssertJUnit.assertEquals(
         ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE,
         response.getAccountState().getError());
-    } finally {
-      conn.close();
     }
   }
 }

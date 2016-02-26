@@ -96,10 +96,8 @@ public class VirtualListViewClientTest extends AbstractTest
 
       final VirtualListViewClient client = new VirtualListViewClient(
         conn,
-        new SortKey[] {
-          new SortKey("uid", "caseExactMatch"),
-          new SortKey("givenName", "caseIgnoreMatch"),
-        });
+        new SortKey("uid", "caseExactMatch"),
+        new SortKey("givenName", "caseIgnoreMatch"));
 
       final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
       request.setSortBehavior(SortBehavior.ORDERED);
@@ -128,9 +126,7 @@ public class VirtualListViewClientTest extends AbstractTest
     try {
       conn.open();
 
-      final VirtualListViewClient client = new VirtualListViewClient(
-        conn,
-        new SortKey[] {new SortKey("uid", "caseExactMatch")});
+      final VirtualListViewClient client = new VirtualListViewClient(conn, new SortKey("uid", "caseExactMatch"));
 
       final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
       request.setSortBehavior(SortBehavior.ORDERED);

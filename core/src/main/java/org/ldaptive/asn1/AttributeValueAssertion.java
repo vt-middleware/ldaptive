@@ -65,21 +65,11 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
   {
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      new DEREncoder() {
-        @Override
-        public byte[] encode()
-        {
-          final OidType type = new OidType(attributeOid);
-          return type.encode();
-        }
+      () -> {
+        final OidType type = new OidType(attributeOid);
+        return type.encode();
       },
-      new DEREncoder() {
-        @Override
-        public byte[] encode()
-        {
-          return AttributeValueAssertion.this.encode(attributeValue.getBytes());
-        }
-      });
+      () -> AttributeValueAssertion.this.encode(attributeValue.getBytes()));
 
     return se.encode();
   }
@@ -99,25 +89,21 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
     final DERParser parser = new DERParser();
     parser.registerHandler(
       "/SEQ",
-      new ParseHandler() {
-        @Override
-        public void handle(final DERParser parser, final ByteBuffer encoded)
-        {
-          if (UniversalDERTag.OID.getTagNo() != parser.readTag(encoded).getTagNo()) {
-            throw new IllegalArgumentException("Expected OID tag");
-          }
-
-          final int seqLimit = encoded.limit();
-          final int oidLength = parser.readLength(encoded);
-          encoded.limit(encoded.position() + oidLength);
-
-          final String oid = OidType.decode(encoded);
-          encoded.limit(seqLimit);
-
-          final DERTag tag = parser.readTag(encoded);
-          parser.readLength(encoded);
-          assertions.add(new AttributeValueAssertion(oid, new Value(tag, readBuffer(encoded))));
+      (parser1, encoded1) -> {
+        if (UniversalDERTag.OID.getTagNo() != parser1.readTag(encoded1).getTagNo()) {
+          throw new IllegalArgumentException("Expected OID tag");
         }
+
+        final int seqLimit = encoded1.limit();
+        final int oidLength = parser1.readLength(encoded1);
+        encoded1.limit(encoded1.position() + oidLength);
+
+        final String oid = OidType.decode(encoded1);
+        encoded1.limit(seqLimit);
+
+        final DERTag tag = parser1.readTag(encoded1);
+        parser1.readLength(encoded1);
+        assertions.add(new AttributeValueAssertion(oid, new Value(tag, readBuffer(encoded1))));
       });
     parser.parse(encoded);
     return assertions.toArray(new AttributeValueAssertion[assertions.size()]);

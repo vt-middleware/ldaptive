@@ -40,8 +40,7 @@ public abstract class AbstractTest
   public void createLdapEntry(final LdapEntry entry)
     throws Exception
   {
-    final Connection conn = TestUtils.createSetupConnection();
-    try {
+    try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
 
       final AddOperation create = new AddOperation(conn);
@@ -66,8 +65,6 @@ public abstract class AbstractTest
       if (ResultCode.ENTRY_ALREADY_EXISTS != e.getResultCode()) {
         throw e;
       }
-    } finally {
-      conn.close();
     }
   }
 
@@ -82,15 +79,12 @@ public abstract class AbstractTest
   public void deleteLdapEntry(final String dn)
     throws Exception
   {
-    final Connection conn = TestUtils.createSetupConnection();
-    try {
+    try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
       if (entryExists(conn, new LdapEntry(dn))) {
         final DeleteOperation delete = new DeleteOperation(conn);
         delete.execute(new DeleteRequest(dn));
       }
-    } finally {
-      conn.close();
     }
   }
 

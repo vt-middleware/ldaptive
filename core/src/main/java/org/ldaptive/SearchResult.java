@@ -4,7 +4,6 @@ package org.ldaptive;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -58,12 +57,8 @@ public class SearchResult extends AbstractLdapBean
     } else if (SortBehavior.SORTED == sb) {
       resultEntries = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
       searchReferences = new TreeSet<>(
-        new Comparator<SearchReference>() {
-          @Override
-          public int compare(final SearchReference ref1, final SearchReference ref2)
-          {
-            return Arrays.toString(ref1.getReferralUrls()).compareTo(Arrays.toString(ref2.getReferralUrls()));
-          }
+        (ref1, ref2) -> {
+          return Arrays.toString(ref1.getReferralUrls()).compareTo(Arrays.toString(ref2.getReferralUrls()));
         });
     } else {
       throw new IllegalArgumentException("Unknown sort behavior: " + sb);
@@ -167,9 +162,7 @@ public class SearchResult extends AbstractLdapBean
    */
   public void addEntries(final Collection<LdapEntry> entries)
   {
-    for (LdapEntry e : entries) {
-      addEntry(e);
-    }
+    entries.forEach(this::addEntry);
   }
 
 
@@ -204,9 +197,7 @@ public class SearchResult extends AbstractLdapBean
    */
   public void removeEntries(final Collection<LdapEntry> entries)
   {
-    for (LdapEntry le : entries) {
-      removeEntry(le);
-    }
+    entries.forEach(this::removeEntry);
   }
 
 
@@ -254,9 +245,7 @@ public class SearchResult extends AbstractLdapBean
    */
   public void addReferences(final Collection<SearchReference> references)
   {
-    for (SearchReference r : references) {
-      addReference(r);
-    }
+    references.forEach(this::addReference);
   }
 
 
@@ -280,9 +269,7 @@ public class SearchResult extends AbstractLdapBean
    */
   public void removeReferences(final Collection<SearchReference> references)
   {
-    for (SearchReference r : references) {
-      removeReference(r);
-    }
+    references.forEach(this::removeReference);
   }
 
 

@@ -84,8 +84,7 @@ public class PagedResultsClientTest extends AbstractTest
   public void execute(final String dn, final String filter)
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final PagedResultsClient client = new PagedResultsClient(conn, 1);
@@ -117,8 +116,6 @@ public class PagedResultsClientTest extends AbstractTest
     } catch (LdapException e) {
       // ignore this test if not supported by the server
       AssertJUnit.assertEquals(ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -138,8 +135,7 @@ public class PagedResultsClientTest extends AbstractTest
   public void executeToCompletion(final String dn, final String filter)
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final PagedResultsClient client = new PagedResultsClient(conn, 1);
@@ -159,8 +155,6 @@ public class PagedResultsClientTest extends AbstractTest
     } catch (LdapException e) {
       // ignore this test if not supported by the server
       AssertJUnit.assertEquals(ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 }

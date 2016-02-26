@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.util.Arrays;
+import java.util.Collections;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -37,7 +37,7 @@ public class SyntaxTest
           new Syntax(
             "1.3.6.1.4.1.1466.115.121.1.5",
             "Binary",
-            new Extensions("X-NOT-HUMAN-READABLE", Arrays.asList("TRUE"))),
+            new Extensions("X-NOT-HUMAN-READABLE", Collections.singletonList("TRUE"))),
           "( 1.3.6.1.4.1.1466.115.121.1.5 DESC 'Binary' X-NOT-HUMAN-READABLE 'TRUE' )",
         },
       };

@@ -33,15 +33,12 @@ public class ConnectionTest
     final String ldif = TestUtils.readFileIntoString(ldifFile);
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final AddOperation add = new AddOperation(conn);
       final Response<Void> response = add.execute(new AddRequest(testLdapEntry.getDn(), testLdapEntry.getAttributes()));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -51,15 +48,12 @@ public class ConnectionTest
   public void compare()
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final CompareOperation compare = new CompareOperation(conn);
       AssertJUnit.assertTrue(
         compare.execute(new CompareRequest(testLdapEntry.getDn(), testLdapEntry.getAttribute("mail"))).getResult());
-    } finally {
-      conn.close();
     }
   }
 
@@ -69,15 +63,12 @@ public class ConnectionTest
   public void delete()
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final DeleteOperation delete = new DeleteOperation(conn);
       final Response<Void> response = delete.execute(new DeleteRequest(testLdapEntry.getDn()));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -87,8 +78,7 @@ public class ConnectionTest
   public void modify()
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -97,8 +87,6 @@ public class ConnectionTest
           testLdapEntry.getDn(),
           new AttributeModification(AttributeModificationType.ADD, new LdapAttribute("title", "President"))));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -108,8 +96,7 @@ public class ConnectionTest
   public void modifyDn()
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
@@ -123,8 +110,6 @@ public class ConnectionTest
           "cn=James Buchanan Jr.," + DnParser.substring(testLdapEntry.getDn(), 1),
           testLdapEntry.getDn()));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -134,16 +119,13 @@ public class ConnectionTest
   public void search()
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
       final SearchResult lr = search.execute(
         new SearchRequest(DnParser.substring(testLdapEntry.getDn(), 1), new SearchFilter("(uid=15)"))).getResult();
       AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), lr.getEntry().getDn().toLowerCase());
-    } finally {
-      conn.close();
     }
   }
 

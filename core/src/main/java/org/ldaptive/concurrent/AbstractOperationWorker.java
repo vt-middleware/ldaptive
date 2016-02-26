@@ -11,7 +11,6 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import org.ldaptive.LdapException;
 import org.ldaptive.Operation;
 import org.ldaptive.Request;
 import org.ldaptive.Response;
@@ -142,14 +141,7 @@ public abstract class AbstractOperationWorker<Q extends Request, S> implements O
     final Q request)
   {
     return
-      new Callable<Response<S>>() {
-      @Override
-      public Response<S> call()
-        throws LdapException
-      {
-        return operation.execute(request);
-      }
-    };
+      () -> operation.execute(request);
   }
 
 

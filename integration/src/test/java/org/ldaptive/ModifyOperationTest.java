@@ -56,8 +56,7 @@ public class ModifyOperationTest extends AbstractTest
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -68,8 +67,6 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()})).getResult();
       AssertJUnit.assertEquals(expected.getAttribute(), result.getEntry().getAttribute());
-    } finally {
-      conn.close();
     }
   }
 
@@ -86,8 +83,7 @@ public class ModifyOperationTest extends AbstractTest
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -103,8 +99,6 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(dn, expected.getAttributeNames())).getResult();
       TestUtils.assertEquals(expected, result.getEntry());
-    } finally {
-      conn.close();
     }
   }
 
@@ -121,8 +115,7 @@ public class ModifyOperationTest extends AbstractTest
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -133,8 +126,6 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()})).getResult();
       TestUtils.assertEquals(expected, result.getEntry());
-    } finally {
-      conn.close();
     }
   }
 
@@ -151,8 +142,7 @@ public class ModifyOperationTest extends AbstractTest
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -168,8 +158,6 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(dn, expected.getAttributeNames())).getResult();
       TestUtils.assertEquals(expected, result.getEntry());
-    } finally {
-      conn.close();
     }
   }
 
@@ -187,8 +175,7 @@ public class ModifyOperationTest extends AbstractTest
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -199,8 +186,6 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()})).getResult();
       AssertJUnit.assertEquals(0, result.getEntry().getAttributes().size());
-    } finally {
-      conn.close();
     }
   }
 
@@ -223,8 +208,7 @@ public class ModifyOperationTest extends AbstractTest
     remove.getAttributes().remove(remove.getAttribute(attrsName[0]));
     expected.getAttributes().remove(expected.getAttribute(attrsName[1]));
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -239,8 +223,6 @@ public class ModifyOperationTest extends AbstractTest
       final SearchResult result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(dn, expected.getAttributeNames())).getResult();
       TestUtils.assertEquals(expected, result.getEntry());
-    } finally {
-      conn.close();
     }
   }
 }

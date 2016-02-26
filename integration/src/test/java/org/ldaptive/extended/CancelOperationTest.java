@@ -4,7 +4,6 @@ package org.ldaptive.extended;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
-import org.ldaptive.Request;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
@@ -13,7 +12,6 @@ import org.ldaptive.SearchResult;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.async.AsyncSearchOperation;
-import org.ldaptive.async.handler.ExceptionHandler;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.handler.HandlerResult;
 import org.ldaptive.handler.SearchEntryHandler;
@@ -44,23 +42,15 @@ public class CancelOperationTest extends AbstractTest
       return;
     }
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final AsyncSearchOperation search = new AsyncSearchOperation(conn);
       // needed to perform operations inside a handler
       search.setUseMultiThreadedListener(true);
       search.setExceptionHandler(
-        new ExceptionHandler() {
-          @Override
-          public HandlerResult<Exception> handle(
-            final Connection conn,
-            final Request request,
-            final Exception exception)
-          {
-            throw new UnsupportedOperationException(exception);
-          }
+        (conn1, request, exception) -> {
+          throw new UnsupportedOperationException(exception);
         });
 
       final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn);
@@ -92,8 +82,6 @@ public class CancelOperationTest extends AbstractTest
       AssertJUnit.assertEquals(ResultCode.CANCELED, response.getResultCode());
     } catch (IllegalStateException e) {
       throw (Exception) e.getCause();
-    } finally {
-      conn.close();
     }
   }
 }

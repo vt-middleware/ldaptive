@@ -41,16 +41,13 @@ public class MergeOperationTest extends AbstractTest
     final String ldif = TestUtils.readFileIntoString(ldifFile);
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
       AssertJUnit.assertFalse(super.entryExists(conn, testLdapEntry));
 
       final MergeOperation merge = new MergeOperation(conn);
       merge.execute(new MergeRequest(testLdapEntry));
       AssertJUnit.assertTrue(super.entryExists(conn, testLdapEntry));
-    } finally {
-      conn.close();
     }
   }
 
@@ -60,8 +57,7 @@ public class MergeOperationTest extends AbstractTest
   public void deleteLdapEntry()
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
       AssertJUnit.assertTrue(super.entryExists(conn, testLdapEntry));
 
@@ -69,8 +65,6 @@ public class MergeOperationTest extends AbstractTest
       merge.execute(new MergeRequest(testLdapEntry, true));
       AssertJUnit.assertFalse(super.entryExists(conn, testLdapEntry));
       merge.execute(new MergeRequest(testLdapEntry, true));
-    } finally {
-      conn.close();
     }
   }
 
@@ -82,8 +76,7 @@ public class MergeOperationTest extends AbstractTest
   {
     final LdapEntry source = new LdapEntry(testLdapEntry.getDn());
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final MergeOperation merge = new MergeOperation(conn);
@@ -130,8 +123,6 @@ public class MergeOperationTest extends AbstractTest
       result = search.execute(
         SearchRequest.newObjectScopeSearchRequest(source.getDn(), source.getAttributeNames())).getResult();
       TestUtils.assertEquals(source, result.getEntry());
-    } finally {
-      conn.close();
     }
   }
 }

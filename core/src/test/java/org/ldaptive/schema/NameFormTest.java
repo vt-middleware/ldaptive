@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.util.Arrays;
+import java.util.Collections;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -74,7 +74,7 @@ public class NameFormTest
             "uddiBusinessEntity",
             new String[] {"uddiBusinessKey"},
             null,
-            new Extensions("X-ORIGIN", Arrays.asList("RFC 4403"))),
+            new Extensions("X-ORIGIN", Collections.singletonList("RFC 4403"))),
           "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' OC uddiBusinessEntity MUST uddiBusinessKey " +
             "X-ORIGIN 'RFC 4403' )",
         },

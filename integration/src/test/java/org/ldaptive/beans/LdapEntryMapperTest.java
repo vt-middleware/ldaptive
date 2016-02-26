@@ -41,8 +41,7 @@ public class LdapEntryMapperTest extends AbstractTest
     throws Exception
   {
     LdapEntry entry = null;
-    final Connection conn = TestUtils.createSetupConnection();
-    try {
+    try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
 
       final BindConnectionInitializer ci =
@@ -51,8 +50,6 @@ public class LdapEntryMapperTest extends AbstractTest
       final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(ci.getBindDn());
       request.setReturnAttributes(ReturnAttributes.ALL.value());
       entry = op.execute(request).getResult().getEntry();
-    } finally {
-      conn.close();
     }
 
     return

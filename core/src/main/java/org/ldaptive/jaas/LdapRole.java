@@ -116,11 +116,8 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   {
     final Set<LdapRole> r = new HashSet<>();
     if (attributes != null) {
-      for (LdapAttribute ldapAttr : attributes) {
-        for (String attrValue : ldapAttr.getStringValues()) {
-          r.add(new LdapRole(attrValue));
-        }
-      }
+      attributes.stream().map(
+        ldapAttr -> ldapAttr.getStringValues().stream().map(LdapRole::new).map(role -> r.add(role)));
     }
     return r;
   }

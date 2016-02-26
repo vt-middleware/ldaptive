@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.util.Arrays;
+import java.util.Collections;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -63,7 +63,7 @@ public class DITStructureRuleTest
             false,
             "uddiContactNameForm",
             new int[] {1},
-            new Extensions("X-ORIGIN", Arrays.asList("RFC 4403"))),
+            new Extensions("X-ORIGIN", Collections.singletonList("RFC 4403"))),
           "( 2 NAME 'uddiContactStructureRule' FORM uddiContactNameForm SUP 1 X-ORIGIN 'RFC 4403' )",
         },
         new Object[] {

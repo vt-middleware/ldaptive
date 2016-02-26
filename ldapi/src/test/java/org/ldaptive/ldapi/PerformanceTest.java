@@ -7,7 +7,6 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
@@ -103,18 +102,13 @@ public class PerformanceTest
     throws Exception
   {
     final long beforeTS = System.currentTimeMillis();
-    final Connection conn = connFactory.getConnection();
-    try {
+    try (Connection conn = connFactory.getConnection()) {
       conn.open();
       for (int i = 0; i < 10000; i++) {
         final SearchOperation search = new SearchOperation(conn);
         final SearchResult result = search.execute(request).getResult();
-        for (final LdapEntry entry : result.getEntries()) {
-          entry.toString();
-        }
+        result.getEntries().forEach(org.ldaptive.LdapEntry::toString);
       }
-    } finally {
-      conn.close();
     }
 
     final long afterTS = System.currentTimeMillis();

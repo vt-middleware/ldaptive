@@ -4,6 +4,7 @@ package org.ldaptive.provider.jldap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 import com.novell.ldap.LDAPAttribute;
 import com.novell.ldap.LDAPAttributeSet;
 import com.novell.ldap.LDAPEntry;
@@ -86,13 +87,9 @@ public class JLdapUtils
   {
     final LDAPAttribute attr = new LDAPAttribute(la.getName());
     if (la.isBinary()) {
-      for (byte[] value : la.getBinaryValues()) {
-        attr.addValue(value);
-      }
+      la.getBinaryValues().forEach(attr::addValue);
     } else {
-      for (String value : la.getStringValues()) {
-        attr.addValue(value);
-      }
+      la.getStringValues().forEach(attr::addValue);
     }
     return attr;
   }
@@ -138,11 +135,7 @@ public class JLdapUtils
    */
   public LDAPAttributeSet fromLdapAttributes(final Collection<LdapAttribute> c)
   {
-    final LDAPAttributeSet attributes = new LDAPAttributeSet();
-    for (LdapAttribute a : c) {
-      attributes.add(fromLdapAttribute(a));
-    }
-    return attributes;
+    return c.stream().map(this::fromLdapAttribute).collect(Collectors.toCollection(LDAPAttributeSet::new));
   }
 
 

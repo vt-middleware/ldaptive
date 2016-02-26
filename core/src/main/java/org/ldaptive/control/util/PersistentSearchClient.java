@@ -15,7 +15,6 @@ import org.ldaptive.async.AbandonOperation;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.async.AsyncSearchOperation;
 import org.ldaptive.async.handler.AsyncRequestHandler;
-import org.ldaptive.async.handler.ExceptionHandler;
 import org.ldaptive.control.PersistentSearchChangeType;
 import org.ldaptive.control.PersistentSearchRequestControl;
 import org.ldaptive.handler.HandlerResult;
@@ -94,8 +93,8 @@ public class PersistentSearchClient
    *     PersistentSearchRequestControl}</li>
    *   <li>{@link SearchRequest#setSearchEntryHandlers(SearchEntryHandler...)} is invoked with a custom handler that
    *     places persistent search data in a blocking queue.</li>
-   *   <li>{@link AsyncSearchOperation#setExceptionHandler(ExceptionHandler)} is invoked with a custom handler that
-   *     places the exception in a blocking queue.</li>
+   *   <li>{@link AsyncSearchOperation#setExceptionHandler(org.ldaptive.async.handler.ExceptionHandler)} is invoked with
+   *     a custom handler that places the exception in a blocking queue.</li>
    * </ul>
    *
    * <p>The search request object should not be reused for any other search operations.</p>
@@ -153,19 +152,15 @@ public class PersistentSearchClient
         }
       });
     search.setExceptionHandler(
-      new ExceptionHandler() {
-        @Override
-        public HandlerResult<Exception> handle(final Connection conn, final Request request, final Exception exception)
-        {
-          try {
-            logger.debug("received exception:", exception);
-            search.shutdown();
-            queue.put(new PersistentSearchItem(exception));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue exception:", exception);
-          }
-          return new HandlerResult<>(null);
+      (conn, request1, exception) -> {
+        try {
+          logger.debug("received exception:", exception);
+          search.shutdown();
+          queue.put(new PersistentSearchItem(exception));
+        } catch (Exception e) {
+          logger.warn("Unable to enqueue exception:", exception);
         }
+        return new HandlerResult<>(null);
       });
 
     request.setControls(new PersistentSearchRequestControl(changeTypes, changesOnly, returnEcs, true));

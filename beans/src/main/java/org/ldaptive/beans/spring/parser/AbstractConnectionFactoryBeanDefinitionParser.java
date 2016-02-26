@@ -22,8 +22,6 @@ public abstract class AbstractConnectionFactoryBeanDefinitionParser extends Abst
    */
   protected BeanDefinitionBuilder parseProvider(final Element element)
   {
-    final BeanDefinitionBuilder provider = BeanDefinitionBuilder.genericBeanDefinition(
-      element.getAttribute("provider"));
-    return provider;
+    return BeanDefinitionBuilder.genericBeanDefinition(element.getAttribute("provider"));
   }
 }

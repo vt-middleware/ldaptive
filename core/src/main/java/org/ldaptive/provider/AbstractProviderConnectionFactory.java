@@ -80,9 +80,7 @@ public abstract class AbstractProviderConnectionFactory<T extends ProviderConfig
     ProviderConnection conn = null;
     for (String url : urls) {
       try {
-        logger.trace(
-          "[{}] Attempting connection to {} for strategy {}",
-          new Object[] {metadata, url, connectionStrategy, });
+        logger.trace("[{}] Attempting connection to {} for strategy {}", metadata, url, connectionStrategy);
         conn = createInternal(url);
         metadata.incrementCount();
         lastThrown = null;
