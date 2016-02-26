@@ -31,11 +31,13 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
 
   /** Executor for performing eviction. */
   private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor(
+    // CheckStyle:JavadocVariable OFF
     r -> {
       final Thread t = new Thread(r);
       t.setDaemon(true);
       return t;
     });
+  // CheckStyle:JavadocVariable ON
 
 
   /**

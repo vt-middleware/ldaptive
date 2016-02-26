@@ -302,6 +302,7 @@ public class TLSSocketFactoryTest
     sf.initialize();
 
     try (Socket s = sf.createSocket(ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort())) {
+      AssertJUnit.assertNotNull(s);
     }
   }
 }

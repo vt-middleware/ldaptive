@@ -34,11 +34,13 @@ public abstract class AbstractReferralHandler<Q extends Request, S> implements R
 
 
   /** Default referral connection factory. Uses {@link DefaultConnectionFactory}. */
+  // CheckStyle:JavadocVariable OFF
   protected static final ReferralConnectionFactory DEFAULT_CONNECTION_FACTORY = (config, ldapUrl) -> {
     final ConnectionConfig cc = ConnectionConfig.newConnectionConfig(config);
     cc.setLdapUrl(ldapUrl);
     return new DefaultConnectionFactory(cc);
   };
+  // CheckStyle:JavadocVariable ON
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
