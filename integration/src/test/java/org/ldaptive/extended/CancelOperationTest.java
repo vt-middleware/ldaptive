@@ -38,8 +38,9 @@ public class CancelOperationTest extends AbstractTest
   public void cancel(final String dn)
     throws Exception
   {
-    if (TestControl.isActiveDirectory()) {
-      return;
+    // provider doesn't support cancel
+    if (TestControl.isOpenDJProvider()) {
+      throw new UnsupportedOperationException("OpenDJ does not support cancel");
     }
 
     try (Connection conn = TestUtils.createConnection()) {

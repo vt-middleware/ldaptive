@@ -27,6 +27,10 @@ public class BeanGeneratorTest extends AbstractTest
       return;
     }
 
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP has a dead lock bug");
+    }
+
     final DefaultConnectionFactory factory = new DefaultConnectionFactory(
       TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
     final Schema schema = SchemaFactory.createSchema(factory);
@@ -50,6 +54,10 @@ public class BeanGeneratorTest extends AbstractTest
   {
     if (!TestControl.isActiveDirectory()) {
       return;
+    }
+
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP has a dead lock bug");
     }
 
     final DefaultConnectionFactory factory = new DefaultConnectionFactory(

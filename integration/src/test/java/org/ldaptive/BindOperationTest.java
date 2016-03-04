@@ -102,7 +102,7 @@ public class BindOperationTest extends AbstractTest
   {
     // provider doesn't support this control
     if (TestControl.isApacheProvider()) {
-      return;
+      throw new UnsupportedOperationException("Apache LDAP does not support this control");
     }
 
     try (Connection conn = TestUtils.createConnection()) {

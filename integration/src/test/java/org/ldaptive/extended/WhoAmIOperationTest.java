@@ -29,6 +29,11 @@ public class WhoAmIOperationTest extends AbstractTest
       return;
     }
 
+    // provider doesn't support this operation
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP does not support this operation");
+    }
+
     try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 

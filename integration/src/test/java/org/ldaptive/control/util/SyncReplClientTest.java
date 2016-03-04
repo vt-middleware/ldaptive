@@ -134,6 +134,14 @@ public class SyncReplClientTest extends AbstractTest
       return;
     }
 
+    // provider doesn't support cancel
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP does not support cancel");
+    }
+    if (TestControl.isOpenDJProvider()) {
+      throw new UnsupportedOperationException("OpenDJ does not support cancel");
+    }
+
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
     try (Connection conn = TestUtils.createConnection()) {
