@@ -99,18 +99,16 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
     if (dnMutator != null) {
       dnMutator.setValue(dest, source.getDn());
     }
-    for (LdapAttribute attr : source.getAttributes()) {
-      if (attr.size() > 0) {
-        final AttributeValueMutator mutator = descriptor.getAttributeValueMutator(attr.getName());
-        logger.debug("using mutator {} for attribute {}", mutator, attr);
-        if (mutator != null) {
-          if (attr.isBinary()) {
-            mutator.setBinaryValues(dest, attr.getBinaryValues());
-          } else {
-            mutator.setStringValues(dest, attr.getStringValues());
-          }
+    source.getAttributes().stream().filter(attr -> attr.size() > 0).forEach(attr -> {
+      final AttributeValueMutator mutator = descriptor.getAttributeValueMutator(attr.getName());
+      logger.debug("using mutator {} for attribute {}", mutator, attr);
+      if (mutator != null) {
+        if (attr.isBinary()) {
+          mutator.setBinaryValues(dest, attr.getBinaryValues());
+        } else {
+          mutator.setStringValues(dest, attr.getStringValues());
         }
       }
-    }
+    });
   }
 }

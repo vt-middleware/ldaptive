@@ -404,7 +404,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       }
     } catch (RuntimeException e) {
       final Logger l = LoggerFactory.getLogger(AbstractPropertyInvoker.class);
-      l.error("Error invoking {}, on {}, with params {}", new Object[] {method, object, arg});
+      l.error("Error invoking {}, on {}, with params {}", method, object, arg);
       throw e;
     }
   }

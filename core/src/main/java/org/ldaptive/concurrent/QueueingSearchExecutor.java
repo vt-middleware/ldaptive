@@ -226,11 +226,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     final BlockingQueue<SearchItem> queue)
   {
     return
-      new Callable<Response<SearchResult>>() {
-      @Override
-      public Response<SearchResult> call()
-        throws LdapException
-      {
+      () -> {
         try {
           conn.open();
 
@@ -251,8 +247,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
         } finally {
           conn.close();
         }
-      }
-    };
+      };
   }
 
 

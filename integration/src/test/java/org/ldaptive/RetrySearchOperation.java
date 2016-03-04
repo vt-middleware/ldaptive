@@ -2,7 +2,7 @@
 package org.ldaptive;
 
 /**
- * Provides a wrapper class for testing {@link OperationExceptionHandler}.
+ * Provides a wrapper class for testing {@link org.ldaptive.handler.OperationExceptionHandler}.
  *
  * @author  Middleware Services
  */

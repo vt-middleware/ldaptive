@@ -6,6 +6,7 @@ import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
@@ -117,9 +118,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
     final Set<LdapRole> r = new HashSet<>();
     if (attributes != null) {
       for (LdapAttribute ldapAttr : attributes) {
-        for (String attrValue : ldapAttr.getStringValues()) {
-          r.add(new LdapRole(attrValue));
-        }
+        r.addAll(ldapAttr.getStringValues().stream().map(LdapRole::new).collect(Collectors.toList()));
       }
     }
     return r;

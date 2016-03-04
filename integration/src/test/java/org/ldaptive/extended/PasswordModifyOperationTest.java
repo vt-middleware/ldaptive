@@ -84,8 +84,7 @@ public class PasswordModifyOperationTest extends AbstractTest
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(oldPass)));
     AssertJUnit.assertTrue(response.getResult());
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final PasswordModifyOperation modify = new PasswordModifyOperation(conn);
@@ -116,8 +115,6 @@ public class PasswordModifyOperationTest extends AbstractTest
       AssertJUnit.assertFalse(response.getResult());
       response = auth.authenticate(new AuthenticationRequest(dn, modifyResponse.getResult()));
       AssertJUnit.assertTrue(response.getResult());
-    } finally {
-      conn.close();
     }
   }
 }

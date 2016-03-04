@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.apache;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -161,11 +160,7 @@ public class ApacheLdapUtils
    */
   public Attribute[] fromLdapAttributes(final Collection<LdapAttribute> c)
   {
-    final List<Attribute> attributes = new ArrayList<>();
-    for (LdapAttribute a : c) {
-      attributes.add(fromLdapAttribute(a));
-    }
-    return attributes.toArray(new Attribute[attributes.size()]);
+    return c.stream().map(this::fromLdapAttribute).toArray(Attribute[]::new);
   }
 
 

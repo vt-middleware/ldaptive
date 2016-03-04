@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.handler;
 
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapException;
@@ -84,17 +84,13 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
     if (attr != null) {
       attr.setName(handleAttributeName(conn, request, attr.getName()));
       if (attr.isBinary()) {
-        final Set<byte[]> newValues = new HashSet<>(attr.size());
-        for (byte[] b : attr.getBinaryValues()) {
-          newValues.add(handleAttributeValue(conn, request, b));
-        }
+        final Set<byte[]> newValues = attr.getBinaryValues().stream().map(
+          b -> handleAttributeValue(conn, request, b)).collect(Collectors.toSet());
         attr.clear();
         attr.addBinaryValues(newValues);
       } else {
-        final Set<String> newValues = new HashSet<>(attr.size());
-        for (String s : attr.getStringValues()) {
-          newValues.add(handleAttributeValue(conn, request, s));
-        }
+        final Set<String> newValues = attr.getStringValues().stream().map(
+          s -> handleAttributeValue(conn, request, s)).collect(Collectors.toSet());
         attr.clear();
         attr.addStringValues(newValues);
       }

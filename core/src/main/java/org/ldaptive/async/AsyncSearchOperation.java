@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.async;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -72,20 +71,15 @@ public class AsyncSearchOperation extends AbstractAsyncOperation<SearchRequest, 
     throws LdapException
   {
     final Future<Response<SearchResult>> future = executorService.submit(
-      new Callable<Response<SearchResult>>() {
-        @Override
-        public Response<SearchResult> call()
-          throws LdapException
-        {
-          final ExceptionHandler handler = getExceptionHandler();
-          try {
-            return AsyncSearchOperation.super.execute(request);
-          } catch (LdapException | RuntimeException e) {
-            if (handler != null) {
-              handler.handle(getConnection(), request, e);
-            }
-            throw e;
+      () -> {
+        final ExceptionHandler handler = getExceptionHandler();
+        try {
+          return AsyncSearchOperation.super.execute(request);
+        } catch (LdapException | RuntimeException e) {
+          if (handler != null) {
+            handler.handle(getConnection(), request, e);
           }
+          throw e;
         }
       });
     return new FutureResponse<>(future);
@@ -163,18 +157,13 @@ public class AsyncSearchOperation extends AbstractAsyncOperation<SearchRequest, 
       logger.trace("received async request={}", request);
       if (useMultiThreadedListener) {
         executorService.submit(
-          new Callable<Void>() {
-            @Override
-            public Void call()
-              throws LdapException
-            {
-              try {
-                processAsyncRequest(request);
-              } catch (LdapException e) {
-                logger.warn("Handler exception ignored", e);
-              }
-              return null;
+          () -> {
+            try {
+              processAsyncRequest(request);
+            } catch (LdapException e) {
+              logger.warn("Handler exception ignored", e);
             }
+            return null;
           });
       } else {
         try {
@@ -192,18 +181,13 @@ public class AsyncSearchOperation extends AbstractAsyncOperation<SearchRequest, 
       logger.trace("received search item={}", item);
       if (useMultiThreadedListener) {
         executorService.submit(
-          new Callable<Void>() {
-            @Override
-            public Void call()
-              throws LdapException
-            {
-              try {
-                processSearchItem(item);
-              } catch (LdapException e) {
-                logger.warn("Handler exception ignored", e);
-              }
-              return null;
+          () -> {
+            try {
+              processSearchItem(item);
+            } catch (LdapException e) {
+              logger.warn("Handler exception ignored", e);
             }
+            return null;
           });
       } else {
         try {
@@ -278,7 +262,7 @@ public class AsyncSearchOperation extends AbstractAsyncOperation<SearchRequest, 
       final HandlerResult<AsyncRequest> hr = executeHandlers(getAsyncRequestHandlers(), searchRequest, request);
       if (hr.getAbort()) {
         logger.debug("Aborting search on async request=%s", request);
-        responseReceived(new Response<Void>(null, null));
+        responseReceived(new Response<>(null, null));
       }
     }
 
@@ -307,7 +291,7 @@ public class AsyncSearchOperation extends AbstractAsyncOperation<SearchRequest, 
           }
           if (hr.getAbort()) {
             logger.debug("Aborting search on entry=%s", se);
-            responseReceived(new Response<Void>(null, null));
+            responseReceived(new Response<>(null, null));
           }
         }
       } else if (item.isSearchReference()) {
@@ -322,7 +306,7 @@ public class AsyncSearchOperation extends AbstractAsyncOperation<SearchRequest, 
           }
           if (hr.getAbort()) {
             logger.debug("Aborting search on reference=%s", sr);
-            responseReceived(new Response<Void>(null, null));
+            responseReceived(new Response<>(null, null));
           }
         }
       } else if (item.isIntermediateResponse()) {
@@ -334,7 +318,7 @@ public class AsyncSearchOperation extends AbstractAsyncOperation<SearchRequest, 
             ir);
           if (hr.getAbort()) {
             logger.debug("Aborting search on intermediate response=%s", ir);
-            responseReceived(new Response<Void>(null, null));
+            responseReceived(new Response<>(null, null));
           }
         }
       }

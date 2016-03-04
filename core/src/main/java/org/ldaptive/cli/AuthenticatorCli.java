@@ -73,12 +73,9 @@ public class AuthenticatorCli extends AbstractCli
     for (String s : AuthenticatorPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }
-    for (String s : SearchDnResolverPropertySource.getProperties()) {
-      // ignore core search related properties
-      if (!s.startsWith("search")) {
-        options.addOption(new Option(s, true, desc.get(s)));
-      }
-    }
+    // ignore core search related properties
+    SearchDnResolverPropertySource.getProperties().stream().filter(
+      s -> !s.startsWith("search")).forEach(s -> options.addOption(new Option(s, true, desc.get(s))));
     for (String s : AuthenticationRequestPropertySource.getProperties()) {
       options.addOption(new Option(s, true, desc.get(s)));
     }

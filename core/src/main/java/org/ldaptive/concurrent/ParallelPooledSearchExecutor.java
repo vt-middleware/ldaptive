@@ -111,18 +111,13 @@ public class ParallelPooledSearchExecutor extends AbstractParallelSearchExecutor
     final Q request)
   {
     return
-      new Callable<Response<S>>() {
-      @Override
-      public Response<S> call()
-        throws LdapException
-      {
+      () -> {
         try {
           conn.open();
           return operation.execute(request);
         } finally {
           conn.close();
         }
-      }
-    };
+      };
   }
 }

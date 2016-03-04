@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.reflect;
 
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import org.ldaptive.beans.AttributeValueMutator;
 import org.ldaptive.beans.DnValueMutator;
 import org.slf4j.Logger;
@@ -48,7 +48,7 @@ public class DefaultDnValueMutator implements DnValueMutator
   @Override
   public void setValue(final Object object, final String value)
   {
-    dnMutator.setStringValues(object, Arrays.asList(value));
+    dnMutator.setStringValues(object, Collections.singletonList(value));
   }
 
 

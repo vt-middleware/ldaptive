@@ -116,18 +116,13 @@ public class AggregateSearchExecutor extends AbstractAggregateSearchExecutor<Con
     final Q[] requests)
   {
     return
-      new Callable<Collection<Response<S>>>() {
-      @Override
-      public Collection<Response<S>> call()
-        throws LdapException
-      {
+      () -> {
         try {
           conn.open();
           return worker.executeToCompletion(requests);
         } finally {
           conn.close();
         }
-      }
-    };
+      };
   }
 }

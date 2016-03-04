@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.util.Arrays;
+import java.util.Collections;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -24,9 +24,9 @@ public class AttributeTypeTest
   public Object[][] createDefinitions()
   {
     final Extensions ext = new Extensions();
-    ext.addExtension("X-NDS_NAME", Arrays.asList("Aliased Object Name"));
-    ext.addExtension("X-NDS_NONREMOVABLE", Arrays.asList("1"));
-    ext.addExtension("X-NDS_FILTERED_REQUIRED", Arrays.asList("1"));
+    ext.addExtension("X-NDS_NAME", Collections.singletonList("Aliased Object Name"));
+    ext.addExtension("X-NDS_NONREMOVABLE", Collections.singletonList("1"));
+    ext.addExtension("X-NDS_FILTERED_REQUIRED", Collections.singletonList("1"));
 
     return
       new Object[][] {
@@ -231,7 +231,7 @@ public class AttributeTypeTest
             false,
             false,
             null,
-            new Extensions("X-ORIGIN", Arrays.asList("RFC 1274"))),
+            new Extensions("X-ORIGIN", Collections.singletonList("RFC 1274"))),
           "( 0.9.2342.19200300.100.1.1 NAME 'uid' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch " +
             "SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} X-ORIGIN 'RFC 1274' )",
         },

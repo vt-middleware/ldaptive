@@ -87,8 +87,7 @@ public class DirSyncClientTest extends AbstractTest
       return;
     }
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final DirSyncClient client = new DirSyncClient(
@@ -103,8 +102,6 @@ public class DirSyncClientTest extends AbstractTest
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertTrue(response.getResult().size() > 0);
       AssertJUnit.assertFalse(client.hasMore(response));
-    } finally {
-      conn.close();
     }
   }
 
@@ -128,8 +125,7 @@ public class DirSyncClientTest extends AbstractTest
       return;
     }
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final DirSyncClient client = new DirSyncClient(
@@ -143,8 +139,6 @@ public class DirSyncClientTest extends AbstractTest
       final Response<SearchResult> response = client.executeToCompletion(request);
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
       AssertJUnit.assertTrue(response.getResult().size() > 0);
-    } finally {
-      conn.close();
     }
   }
 }

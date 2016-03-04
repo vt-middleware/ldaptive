@@ -227,13 +227,9 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
               entry.addAttribute(newAttr);
             } else {
               if (newAttr.isBinary()) {
-                for (byte[] value : newAttr.getBinaryValues()) {
-                  oldAttr.addBinaryValue(value);
-                }
+                newAttr.getBinaryValues().forEach(oldAttr::addBinaryValue);
               } else {
-                for (String value : newAttr.getStringValues()) {
-                  oldAttr.addStringValue(value);
-                }
+                newAttr.getStringValues().forEach(oldAttr::addStringValue);
               }
             }
           }

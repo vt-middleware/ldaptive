@@ -121,11 +121,7 @@ public final class CredentialConfigFactory
     final String[] keyStoreAliases)
   {
     return
-      new CredentialConfig() {
-      @Override
-      public SSLContextInitializer createSSLContextInitializer()
-        throws GeneralSecurityException
-      {
+      () -> {
         final KeyStoreSSLContextInitializer sslInit = new KeyStoreSSLContextInitializer();
         if (trustStore != null) {
           sslInit.setTrustKeystore(trustStore);
@@ -137,8 +133,7 @@ public final class CredentialConfigFactory
           sslInit.setAuthenticationAliases(keyStoreAliases);
         }
         return sslInit;
-      }
-    };
+      };
   }
 
 
@@ -186,11 +181,7 @@ public final class CredentialConfigFactory
     final PrivateKey authenticationKey)
   {
     return
-      new CredentialConfig() {
-      @Override
-      public SSLContextInitializer createSSLContextInitializer()
-        throws GeneralSecurityException
-      {
+      () -> {
         final X509SSLContextInitializer sslInit = new X509SSLContextInitializer();
         if (trustCertificates != null) {
           sslInit.setTrustCertificates(trustCertificates);
@@ -202,8 +193,7 @@ public final class CredentialConfigFactory
           sslInit.setAuthenticationKey(authenticationKey);
         }
         return sslInit;
-      }
-    };
+      };
   }
 
 
@@ -217,11 +207,7 @@ public final class CredentialConfigFactory
   public static CredentialConfig createX509CredentialConfig(final String trustCertificates)
   {
     return
-      new CredentialConfig() {
-      @Override
-      public SSLContextInitializer createSSLContextInitializer()
-        throws GeneralSecurityException
-      {
+      () -> {
         final X509SSLContextInitializer sslInit = new X509SSLContextInitializer();
         try {
           if (trustCertificates != null) {
@@ -234,7 +220,6 @@ public final class CredentialConfigFactory
           throw new GeneralSecurityException(e);
         }
         return sslInit;
-      }
-    };
+      };
   }
 }

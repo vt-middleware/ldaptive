@@ -71,8 +71,7 @@ public class LdifTest extends AbstractTest
   public void searchAndCompareLdif(final String dn, final String filter)
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -95,8 +94,6 @@ public class LdifTest extends AbstractTest
       final SearchResult result2 = ldifReader.read();
 
       TestUtils.assertEquals(result2, result1);
-    } finally {
-      conn.close();
     }
   }
 

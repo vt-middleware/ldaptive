@@ -26,7 +26,6 @@ public class ActivePassiveConnectionStrategy implements ConnectionStrategy
       return null;
     }
 
-    final String[] urls = metadata.getLdapUrl().split(" ");
-    return urls;
+    return metadata.getLdapUrl().split(" ");
   }
 }

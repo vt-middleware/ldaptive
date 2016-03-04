@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 import org.ldaptive.io.ValueTranscoder;
 
 /**
@@ -255,13 +256,9 @@ public class LdapAttribute extends AbstractLdapBean
   {
     final Collection<T> values = createSortBehaviorCollection(transcoder.getType());
     if (isBinary()) {
-      for (byte[] b : getBinaryValues()) {
-        values.add(transcoder.decodeBinaryValue(b));
-      }
+      values.addAll(getBinaryValues().stream().map(transcoder::decodeBinaryValue).collect(Collectors.toList()));
     } else {
-      for (String s : getStringValues()) {
-        values.add(transcoder.decodeStringValue(s));
-      }
+      values.addAll(getStringValues().stream().map(transcoder::decodeStringValue).collect(Collectors.toList()));
     }
     return values;
   }
@@ -308,9 +305,7 @@ public class LdapAttribute extends AbstractLdapBean
    */
   public void addStringValues(final Collection<String> values)
   {
-    for (String value : values) {
-      addStringValue(value);
-    }
+    values.forEach(this::addStringValue);
   }
 
 
@@ -337,9 +332,7 @@ public class LdapAttribute extends AbstractLdapBean
    */
   public void addBinaryValues(final Collection<byte[]> values)
   {
-    for (byte[] value : values) {
-      addBinaryValue(value);
-    }
+    values.forEach(this::addBinaryValue);
   }
 
 
@@ -402,9 +395,7 @@ public class LdapAttribute extends AbstractLdapBean
    */
   public void removeStringValues(final Collection<String> values)
   {
-    for (String value : values) {
-      removeStringValue(value);
-    }
+    values.forEach(this::removeStringValue);
   }
 
 
@@ -428,9 +419,7 @@ public class LdapAttribute extends AbstractLdapBean
    */
   public void removeBinaryValues(final Collection<byte[]> values)
   {
-    for (byte[] value : values) {
-      removeBinaryValue(value);
-    }
+    values.forEach(this::removeBinaryValue);
   }
 
 
@@ -511,24 +500,14 @@ public class LdapAttribute extends AbstractLdapBean
   {
     if (c.isAssignableFrom(byte[].class)) {
       return
-        new Comparator<E>() {
-        @Override
-        public int compare(final E o1, final E o2)
-        {
+        (o1, o2) -> {
           final ByteBuffer bb1 = ByteBuffer.wrap((byte[]) o1);
           final ByteBuffer bb2 = ByteBuffer.wrap((byte[]) o2);
           return bb1.compareTo(bb2);
-        }
-      };
+        };
     } else {
       return
-        new Comparator<E>() {
-        @Override
-        public int compare(final E o1, final E o2)
-        {
-          return o1.toString().compareTo(o2.toString());
-        }
-      };
+        (o1, o2) -> o1.toString().compareTo(o2.toString());
     }
   }
 
@@ -811,9 +790,7 @@ public class LdapAttribute extends AbstractLdapBean
     protected Collection<String> convertValuesToString(final Collection<byte[]> v)
     {
       final Collection<String> c = createSortBehaviorCollection(String.class);
-      for (byte[] value : v) {
-        c.add(LdapUtils.base64Encode(value));
-      }
+      c.addAll(v.stream().map(LdapUtils::base64Encode).collect(Collectors.toList()));
       return c;
     }
 
@@ -828,9 +805,7 @@ public class LdapAttribute extends AbstractLdapBean
     protected Collection<byte[]> convertValuesToByteArray(final Collection<String> v)
     {
       final Collection<byte[]> c = createSortBehaviorCollection(byte[].class);
-      for (String value : v) {
-        c.add(LdapUtils.utf8Encode(value));
-      }
+      c.addAll(v.stream().map(LdapUtils::utf8Encode).collect(Collectors.toList()));
       return c;
     }
   }

@@ -59,8 +59,7 @@ public class CompareOperationTest extends AbstractTest
   public void compare(final String dn, final String attrName, final String attrValue)
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final CompareOperation compare = new CompareOperation(conn);
@@ -73,8 +72,6 @@ public class CompareOperationTest extends AbstractTest
       la.setName(attrName);
       la.addStringValue(attrValue);
       AssertJUnit.assertTrue(compare.execute(new CompareRequest(dn, la)).getResult());
-    } finally {
-      conn.close();
     }
   }
 

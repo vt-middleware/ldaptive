@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.util.Arrays;
+import java.util.Collections;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -153,7 +153,7 @@ public class ObjectClassTest
               "uid",
               "userPassword",
             },
-            new Extensions("X-ORIGIN", Arrays.asList("Netscape Messaging Server 4.x"))),
+            new Extensions("X-ORIGIN", Collections.singletonList("Netscape Messaging Server 4.x"))),
           "( 2.16.840.1.113730.3.2.3 NAME 'mailRecipient' DESC '' SUP top AUXILIARY MUST objectClass " +
             "MAY ( cn $ mail $ mailAlternateAddress $ mailHost $ mailRoutingAddress $ mailAccessDomain $ " +
             "mailAutoReplyMode $ mailAutoReplyText $ mailDeliveryOption $ mailForwardingAddress $ mailMessageStore $ " +

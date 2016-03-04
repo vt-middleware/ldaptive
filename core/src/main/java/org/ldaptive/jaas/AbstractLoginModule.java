@@ -139,18 +139,16 @@ public abstract class AbstractLoginModule implements LoginModule
       "setLdapPrincipal = {}, setLdapDnPrincipal = {}, " +
       "setLdapCredential = {}, defaultRole = {}, principalGroupName = {}, " +
       "roleGroupName = {}",
-      new Object[] {
-        Boolean.toString(useFirstPass),
-        Boolean.toString(tryFirstPass),
-        Boolean.toString(storePass),
-        Boolean.toString(clearPass),
-        Boolean.toString(setLdapPrincipal),
-        Boolean.toString(setLdapDnPrincipal),
-        Boolean.toString(setLdapCredential),
-        defaultRole,
-        principalGroupName,
-        roleGroupName,
-      });
+      Boolean.toString(useFirstPass),
+      Boolean.toString(tryFirstPass),
+      Boolean.toString(storePass),
+      Boolean.toString(clearPass),
+      Boolean.toString(setLdapPrincipal),
+      Boolean.toString(setLdapDnPrincipal),
+      Boolean.toString(setLdapCredential),
+      defaultRole,
+      principalGroupName,
+      roleGroupName);
 
     principals = new TreeSet<>();
     credentials = new HashSet<>();
@@ -203,17 +201,13 @@ public abstract class AbstractLoginModule implements LoginModule
     logger.debug("Committed the following roles: {}", roles);
     if (principalGroupName != null) {
       final LdapGroup group = new LdapGroup(principalGroupName);
-      for (Principal principal : principals) {
-        group.addMember(principal);
-      }
+      principals.forEach(group::addMember);
       subject.getPrincipals().add(group);
       logger.debug("Committed the following principal group: {}", group);
     }
     if (roleGroupName != null) {
       final LdapGroup group = new LdapGroup(roleGroupName);
-      for (Principal role : roles) {
-        group.addMember(role);
-      }
+      roles.forEach(group::addMember);
       subject.getPrincipals().add(group);
       logger.debug("Committed the following role group: {}", group);
     }
@@ -312,14 +306,12 @@ public abstract class AbstractLoginModule implements LoginModule
       "Begin getCredentials: useFistPass = {}, tryFistPass = {}, " +
       "useCallback = {}, callbackhandler class = {}, " +
       "name callback class = {}, password callback class = {}",
-      new Object[] {
-        Boolean.toString(useFirstPass),
-        Boolean.toString(tryFirstPass),
-        Boolean.toString(useCallback),
-        callbackHandler.getClass().getName(),
-        nameCb.getClass().getName(),
-        passCb.getClass().getName(),
-      });
+      Boolean.toString(useFirstPass),
+      Boolean.toString(tryFirstPass),
+      Boolean.toString(useCallback),
+      callbackHandler.getClass().getName(),
+      nameCb.getClass().getName(),
+      passCb.getClass().getName());
     try {
       if ((useFirstPass || tryFirstPass) && !useCallback) {
         nameCb.setName((String) sharedState.get(LOGIN_NAME));

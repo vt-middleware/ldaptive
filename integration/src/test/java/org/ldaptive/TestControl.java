@@ -210,16 +210,13 @@ public class TestControl
   public void teardown(final String bindDn)
     throws Exception
   {
-    final Connection conn = TestUtils.createSetupConnection();
-    try {
+    try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
 
       // set attribute when tests are finished
       final ModifyOperation modify = new ModifyOperation(conn);
       modify.execute(
         new ModifyRequest(bindDn, new AttributeModification(AttributeModificationType.REPLACE, ATTR_IDLE)));
-    } finally {
-      conn.close();
     }
   }
 }

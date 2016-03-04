@@ -3,7 +3,6 @@ package org.ldaptive.beans.reflect;
 
 import org.ldaptive.beans.AbstractClassDescriptor;
 import org.ldaptive.beans.Attribute;
-import org.ldaptive.beans.AttributeValueMutator;
 import org.ldaptive.beans.Entry;
 
 /**
@@ -37,11 +36,8 @@ public class DefaultClassDescriptor extends AbstractClassDescriptor
       if (getDnValueMutator() == null && fieldDescriptor.getDnValueMutator() != null) {
         setDnValueMutator(fieldDescriptor.getDnValueMutator());
       }
-      for (AttributeValueMutator mutator : fieldDescriptor.getAttributeValueMutators()) {
-        if (getAttributeValueMutator(mutator.getName()) == null) {
-          addAttributeValueMutator(mutator);
-        }
-      }
+      fieldDescriptor.getAttributeValueMutators().stream().filter(
+        mutator -> getAttributeValueMutator(mutator.getName()) == null).forEach(this::addAttributeValueMutator);
 
       // add any hard coded attributes that have a values declaration
       for (final Attribute attr : entryAnnotation.attributes()) {

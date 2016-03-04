@@ -56,8 +56,7 @@ public class BindOperationTest extends AbstractTest
   public void bindFailure(final String dn)
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final BindOperation bind = new BindOperation(conn);
@@ -65,8 +64,6 @@ public class BindOperationTest extends AbstractTest
       AssertJUnit.assertEquals(ResultCode.INVALID_CREDENTIALS, response.getResultCode());
     } catch (LdapException e) {
       AssertJUnit.assertEquals(ResultCode.INVALID_CREDENTIALS, e.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -82,15 +79,12 @@ public class BindOperationTest extends AbstractTest
   public void bindSuccess(final String dn, final String passwd)
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final BindOperation bind = new BindOperation(conn);
       final Response<Void> response = bind.execute(new BindRequest(dn, new Credential(passwd)));
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    } finally {
-      conn.close();
     }
   }
 
@@ -111,8 +105,7 @@ public class BindOperationTest extends AbstractTest
       return;
     }
 
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final BindOperation bind = new BindOperation(conn);
@@ -128,8 +121,6 @@ public class BindOperationTest extends AbstractTest
         throw new UnsupportedOperationException("Authorization Identity Control not supported");
       }
       AssertJUnit.assertEquals("dn:" + dn.toLowerCase(), ctrl.getAuthorizationId().toLowerCase());
-    } finally {
-      conn.close();
     }
   }
 }

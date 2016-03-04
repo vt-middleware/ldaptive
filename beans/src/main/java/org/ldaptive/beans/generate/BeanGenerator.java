@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import com.sun.codemodel.JAnnotationArrayMember;
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JClass;
@@ -373,11 +374,10 @@ public class BeanGenerator
       final ObjectClass oc = schema.getObjectClass(objectClass);
       final Set<String> attributeNames = getAttributeNames(oc);
       if (useOperationalAttributes) {
-        for (AttributeType type : schema.getAttributeTypes()) {
-          if (AttributeUsage.DIRECTORY_OPERATION.equals(type.getUsage())) {
-            attributeNames.add(type.getName());
-          }
-        }
+        attributeNames.addAll(
+          schema.getAttributeTypes().stream().filter(
+            type -> AttributeUsage.DIRECTORY_OPERATION.equals(type.getUsage())).map(
+            AttributeType::getName).collect(Collectors.toList()));
       }
 
       final Map<String, AttributeType> mutators = new TreeMap<>();
@@ -440,7 +440,7 @@ public class BeanGenerator
    */
   private Set<String> getAttributeNames(final ObjectClass objectClass)
   {
-    return getAttributeNames(objectClass, new HashSet<ObjectClass>());
+    return getAttributeNames(objectClass, new HashSet<>());
   }
 
 

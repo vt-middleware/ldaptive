@@ -62,8 +62,7 @@ public class SearchResultTest extends AbstractTest
   public void toSearchResults(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -72,8 +71,6 @@ public class SearchResultTest extends AbstractTest
         new SearchRequest(dn, new SearchFilter(filter), returnAttrs.split("\\|"))).getResult();
       final String expected = TestUtils.readFileIntoString(ldifFile);
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
-    } finally {
-      conn.close();
     }
   }
 }

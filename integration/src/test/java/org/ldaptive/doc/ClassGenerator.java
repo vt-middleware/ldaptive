@@ -191,15 +191,12 @@ public class ClassGenerator
             newDir.mkdirs();
           }
         } else {
-          final FileOutputStream fOutput = new FileOutputStream(f);
-          try {
+          try (FileOutputStream fOutput = new FileOutputStream(f)) {
             int count;
             while ((count = zipInput.read(buffer)) > 0) {
               // write 'count' bytes to the file output stream
               fOutput.write(buffer, 0, count);
             }
-          } finally {
-            fOutput.close();
           }
         }
         // close ZipEntry and take the next one

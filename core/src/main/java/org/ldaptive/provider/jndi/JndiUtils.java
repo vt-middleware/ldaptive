@@ -67,13 +67,9 @@ public class JndiUtils
   {
     final Attribute attribute = new BasicAttribute(attr.getName());
     if (attr.isBinary()) {
-      for (byte[] value : attr.getBinaryValues()) {
-        attribute.add(value);
-      }
+      attr.getBinaryValues().forEach(attribute::add);
     } else {
-      for (String value : attr.getStringValues()) {
-        attribute.add(value);
-      }
+      attr.getStringValues().forEach(attribute::add);
     }
     return attribute;
   }

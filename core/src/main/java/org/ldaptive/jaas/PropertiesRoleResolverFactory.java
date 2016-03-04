@@ -110,11 +110,9 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory imp
   /** Iterates over the CACHE and closes all role resolvers. */
   public static void close()
   {
-    for (RoleResolver rr : CACHE.values()) {
-      if (rr instanceof PooledConnectionFactoryManager) {
-        final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) rr;
-        cfm.getConnectionFactory().getConnectionPool().close();
-      }
-    }
+    CACHE.values().stream().filter(rr -> rr instanceof PooledConnectionFactoryManager).forEach(rr -> {
+      final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) rr;
+      cfm.getConnectionFactory().getConnectionPool().close();
+    });
   }
 }

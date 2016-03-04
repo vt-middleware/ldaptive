@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -123,17 +122,12 @@ public class AggregateDnResolver implements DnResolver
     final List<String> results = new ArrayList<>(dnResolvers.size());
     for (final Map.Entry<String, DnResolver> entry : dnResolvers.entrySet()) {
       cs.submit(
-        new Callable<String>() {
-          @Override
-          public String call()
-            throws Exception
-          {
-            final String dn = entry.getValue().resolve(user);
-            if (dn != null && !dn.isEmpty()) {
-              return String.format("%s:%s", entry.getKey(), dn);
-            }
-            return null;
+        () -> {
+          final String dn = entry.getValue().resolve(user);
+          if (dn != null && !dn.isEmpty()) {
+            return String.format("%s:%s", entry.getKey(), dn);
           }
+          return null;
         });
       logger.debug("submitted DN resolver {}", entry.getValue());
     }

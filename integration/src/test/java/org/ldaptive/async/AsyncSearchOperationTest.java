@@ -72,11 +72,10 @@ public class AsyncSearchOperationTest extends AbstractTest
   public void search(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    final Connection conn = TestUtils.createConnection();
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    try {
+    try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
       final AsyncSearchOperation search = new AsyncSearchOperation(conn);
@@ -87,8 +86,6 @@ public class AsyncSearchOperationTest extends AbstractTest
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), response.getResult());
     } catch (ExecutionException | IllegalStateException e) {
       throw (Exception) e.getCause();
-    } finally {
-      conn.close();
     }
   }
 }

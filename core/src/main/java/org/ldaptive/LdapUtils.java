@@ -232,7 +232,7 @@ public final class LdapUtils
    */
   public static String percentDecode(final String value)
   {
-    if (value == null || value.indexOf("%") == -1) {
+    if (value == null || !value.contains("%")) {
       return value;
     }
 

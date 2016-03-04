@@ -149,9 +149,7 @@ public class Dsmlv1Writer implements SearchResultWriter
         if (le.getDn() != null) {
           entryElement.setAttribute("dn", le.getDn());
         }
-        for (Element e : createDsmlAttributes(doc, le.getAttributes())) {
-          entryElement.appendChild(e);
-        }
+        createDsmlAttributes(doc, le.getAttributes()).forEach(entryElement::appendChild);
         entriesElement.appendChild(entryElement);
       }
     }

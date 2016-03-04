@@ -82,14 +82,11 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
     }
 
     logger.trace(
-      "roleResolverFactory = {}, roleFilter = {}, roleAttribute = {}, " +
-      "noResultsIsError = {}",
-      new Object[] {
-        roleResolverFactory,
-        roleFilter,
-        Arrays.toString(roleAttribute),
-        noResultsIsError,
-      });
+      "roleResolverFactory = {}, roleFilter = {}, roleAttribute = {}, noResultsIsError = {}",
+      roleResolverFactory,
+      roleFilter,
+      Arrays.toString(roleAttribute),
+      noResultsIsError);
 
     roleResolver = roleResolverFactory.createRoleResolver(options);
     logger.debug("Retrieved role resolver from factory: {}", roleResolver);

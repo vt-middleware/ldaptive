@@ -199,9 +199,7 @@ public class LdapEntry extends AbstractLdapBean
    */
   public void addAttributes(final Collection<LdapAttribute> attrs)
   {
-    for (LdapAttribute la : attrs) {
-      addAttribute(la);
-    }
+    attrs.forEach(this::addAttribute);
   }
 
 
@@ -236,9 +234,7 @@ public class LdapEntry extends AbstractLdapBean
    */
   public void removeAttributes(final Collection<LdapAttribute> attrs)
   {
-    for (LdapAttribute la : attrs) {
-      removeAttribute(la);
-    }
+    attrs.forEach(this::removeAttribute);
   }
 
 

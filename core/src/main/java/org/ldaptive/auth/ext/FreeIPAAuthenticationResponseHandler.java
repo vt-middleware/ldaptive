@@ -100,11 +100,11 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
           final ZonedDateTime warn = exp.minus(warningPeriod);
           if (ZonedDateTime.now().isAfter(warn)) {
             response.setAccountState(
-              new FreeIPAAccountState(exp, loginRemaining != null ? loginRemaining.intValue() : 0));
+              new FreeIPAAccountState(exp, loginRemaining != null ? loginRemaining : 0));
           }
         } else {
           response.setAccountState(
-            new FreeIPAAccountState(exp, loginRemaining != null ? loginRemaining.intValue() : 0));
+            new FreeIPAAccountState(exp, loginRemaining != null ? loginRemaining : 0));
         }
       } else if (loginRemaining != null && loginRemaining < maxLoginFailures) {
         response.setAccountState(new FreeIPAAccountState(null, loginRemaining));

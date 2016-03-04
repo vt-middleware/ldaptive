@@ -143,8 +143,7 @@ public class TLSSocketFactoryTest
     final ConnectionConfig cc = createTLSConnectionConfig(url);
     cc.setSslConfig(null);
 
-    final Connection conn = DefaultConnectionFactory.getConnection(cc);
-    try {
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
       // some providers won't report errors until an operation is
       // executed
       conn.open();
@@ -154,8 +153,6 @@ public class TLSSocketFactoryTest
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
   }
 
@@ -174,8 +171,7 @@ public class TLSSocketFactoryTest
     final ConnectionConfig cc = createSSLConnectionConfig(url);
     cc.setSslConfig(null);
 
-    final Connection conn = DefaultConnectionFactory.getConnection(cc);
-    try {
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
       conn.open();
 
       // some providers won't perform the handshake until an operation is
@@ -185,8 +181,6 @@ public class TLSSocketFactoryTest
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
   }
 
@@ -307,11 +301,8 @@ public class TLSSocketFactoryTest
     sf.setSocketConfig(sc);
     sf.initialize();
 
-    Socket s = null;
-    try {
-      s = sf.createSocket(ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort());
-    } finally {
-      s.close();
+    try (Socket s = sf.createSocket(ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort())) {
+      AssertJUnit.assertNotNull(s);
     }
   }
 }

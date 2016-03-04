@@ -151,9 +151,7 @@ public abstract class AbstractOperation<Q extends Request, S> implements Operati
     // execute response handlers
     final HandlerResult<Response<S>> hr = executeHandlers(getOperationResponseHandlers(), request, response);
 
-    logger.debug(
-      "execute response={} for request={} with connection={}",
-      new Object[] {hr.getResult(), request, connection});
+    logger.debug("execute response={} for request={} with connection={}", hr.getResult(), request, connection);
     return hr.getResult();
   }
 

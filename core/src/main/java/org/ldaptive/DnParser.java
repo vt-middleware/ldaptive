@@ -42,11 +42,8 @@ public final class DnParser
   public static Collection<String> getValues(final String dn, final String name)
   {
     final Collection<String> values = new ArrayList<>();
-    for (LdapAttribute la : convertDnToAttributes(dn)) {
-      if (la.getName().equalsIgnoreCase(name)) {
-        values.addAll(la.getStringValues());
-      }
-    }
+    convertDnToAttributes(dn).stream().filter(
+      la -> la.getName().equalsIgnoreCase(name)).forEach(la -> values.addAll(la.getStringValues()));
     return values;
   }
 

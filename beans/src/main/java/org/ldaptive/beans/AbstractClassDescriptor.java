@@ -64,9 +64,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
    */
   protected void addAttributeValueMutator(final Collection<AttributeValueMutator> mutators)
   {
-    for (AttributeValueMutator mutator : mutators) {
-      addAttributeValueMutator(mutator);
-    }
+    mutators.forEach(this::addAttributeValueMutator);
   }
 
 

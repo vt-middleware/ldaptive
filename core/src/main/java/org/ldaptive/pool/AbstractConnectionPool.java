@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -249,29 +248,21 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     logger.debug("initialized available queue: {}", available);
 
     poolExecutor = Executors.newSingleThreadScheduledExecutor(
-      new ThreadFactory() {
-        @Override
-        public Thread newThread(final Runnable r)
-        {
-          final Thread t = new Thread(r);
-          t.setDaemon(true);
-          return t;
-        }
+      r -> {
+        final Thread t = new Thread(r);
+        t.setDaemon(true);
+        return t;
       });
 
     poolExecutor.scheduleAtFixedRate(
-      new Runnable() {
-        @Override
-        public void run()
-        {
-          logger.debug("begin prune task for {}", AbstractConnectionPool.this);
-          try {
-            prune();
-          } catch (Exception e) {
-            logger.error("prune task failed for {}", AbstractConnectionPool.this);
-          }
-          logger.debug("end prune task for {}", AbstractConnectionPool.this);
+      () -> {
+        logger.debug("begin prune task for {}", AbstractConnectionPool.this);
+        try {
+          prune();
+        } catch (Exception e) {
+          logger.error("prune task failed for {}", AbstractConnectionPool.this);
         }
+        logger.debug("end prune task for {}", AbstractConnectionPool.this);
       },
       getPruneStrategy().getPrunePeriod(),
       getPruneStrategy().getPrunePeriod(),
@@ -279,18 +270,14 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     logger.debug("prune pool task scheduled for {}", this);
 
     poolExecutor.scheduleAtFixedRate(
-      new Runnable() {
-        @Override
-        public void run()
-        {
-          logger.debug("begin validate task for {}", AbstractConnectionPool.this);
-          try {
-            validate();
-          } catch (Exception e) {
-            logger.error("validation task failed for {}", AbstractConnectionPool.this);
-          }
-          logger.debug("end validate task for {}", AbstractConnectionPool.this);
+      () -> {
+        logger.debug("begin validate task for {}", AbstractConnectionPool.this);
+        try {
+          validate();
+        } catch (Exception e) {
+          logger.error("validation task failed for {}", AbstractConnectionPool.this);
         }
+        logger.debug("end validate task for {}", AbstractConnectionPool.this);
       },
       getPoolConfig().getValidatePeriod(),
       getPoolConfig().getValidatePeriod(),
@@ -794,7 +781,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     throwIfNotInitialized();
 
     final Set<PooledConnectionStatistics> stats = Collections.unmodifiableSet(
-      new HashSet<PooledConnectionStatistics>());
+      new HashSet<>());
     poolLock.lock();
     try {
       for (PooledConnectionProxy cp : available) {
