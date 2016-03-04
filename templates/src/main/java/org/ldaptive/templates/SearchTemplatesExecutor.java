@@ -225,8 +225,10 @@ public class SearchTemplatesExecutor
   /** Closes any resources associated with this object. */
   public void close()
   {
-    for (PooledConnectionFactory factory : connectionFactories) {
-      factory.getConnectionPool().close();
+    if (connectionFactories != null) {
+      for (PooledConnectionFactory factory : connectionFactories) {
+        factory.getConnectionPool().close();
+      }
     }
   }
 
