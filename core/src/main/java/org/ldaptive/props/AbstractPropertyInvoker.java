@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -254,6 +255,8 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       newValue = Double.parseDouble(value);
     } else if (boolean.class == type) {
       newValue = Boolean.valueOf(value);
+    } else if (Duration.class == type) {
+      newValue = Duration.parse(value);
     }
     return newValue;
   }

@@ -59,9 +59,9 @@
     minPoolSize="${ldap.pool.minSize}"
     validateOnCheckOut="${ldap.pool.validateOnCheckout:false}"
     validatePeriodically="${ldap.pool.validatePeriodically:true}"
-    validatePeriod="${ldap.pool.validatePeriod:300}"
-    idleTime="${ldap.pool.idleTime:600}"
-    prunePeriod="${ldap.pool.prunePeriod:300}"
+    validatePeriod="${ldap.pool.validatePeriod:PT5M}"
+    idleTime="${ldap.pool.idleTime:PT10M}"
+    prunePeriod="${ldap.pool.prunePeriod:PT5M}"
     failFastInitialize="false"
     subtreeSearch="${ldap.subtreeSearch:true}"
     useSSL="false">
@@ -131,7 +131,7 @@
 
   <ldaptive:connection-config
     ldapUrl="${ldap.url}"
-    connectTimeout="3000"
+    connectTimeout="PT3S"
     trustStore="classpath:/ldaptive.truststore"
     trustStorePassword="changeit"
     trustStoreType="BKS"

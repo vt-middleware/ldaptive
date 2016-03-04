@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
+import java.time.Duration;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import org.ldaptive.Connection;
@@ -19,8 +20,8 @@ import org.ldaptive.DefaultConnectionFactory;
 public class BlockingConnectionPool extends AbstractConnectionPool
 {
 
-  /** Time in milliseconds to wait for an available connection. */
-  private long blockWaitTime;
+  /** Duration to wait for an available connection. */
+  private Duration blockWaitTime;
 
 
   /** Creates a new blocking pool. */
@@ -52,25 +53,25 @@ public class BlockingConnectionPool extends AbstractConnectionPool
 
 
   /**
-   * Returns the block wait time. Default time is 0, which will wait indefinitely.
+   * Returns the block wait time. Default time is null, which will wait indefinitely.
    *
-   * @return  time in milliseconds to wait for available connections
+   * @return  time to wait for available connections
    */
-  public long getBlockWaitTime()
+  public Duration getBlockWaitTime()
   {
     return blockWaitTime;
   }
 
 
   /**
-   * Sets the block wait time. Default time is 0, which will wait indefinitely.
+   * Sets the block wait time. Default time is null, which will wait indefinitely.
    *
-   * @param  time  in milliseconds to wait for available connections
+   * @param  time  to wait for available connections
    */
-  public void setBlockWaitTime(final long time)
+  public void setBlockWaitTime(final Duration time)
   {
-    if (time < 0) {
-      throw new IllegalArgumentException("Block wait time must be greater than or equal to zero");
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Block wait time cannot be null or negative");
     }
     blockWaitTime = time;
   }
@@ -199,8 +200,8 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     try {
       while (pc == null) {
         logger.trace("available pool is empty, waiting...");
-        if (blockWaitTime > 0) {
-          if (!poolNotEmpty.await(blockWaitTime, TimeUnit.MILLISECONDS)) {
+        if (blockWaitTime != null) {
+          if (!poolNotEmpty.await(blockWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
             logger.debug("block time exceeded, throwing exception");
             throw new BlockingTimeoutException("Block time exceeded");
           }

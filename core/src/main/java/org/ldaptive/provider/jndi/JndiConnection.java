@@ -831,7 +831,7 @@ public class JndiConnection implements ProviderConnection
       if (searchScope != -1) {
         ctls.setSearchScope(searchScope);
       }
-      ctls.setTimeLimit(Long.valueOf(sr.getTimeLimit()).intValue());
+      ctls.setTimeLimit((int) sr.getTimeLimit().toMillis());
       ctls.setCountLimit(sr.getSizeLimit());
       ctls.setDerefLinkFlag(false);
       // note that if returning obj flag is set to true, object contexts on the

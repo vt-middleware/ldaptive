@@ -889,7 +889,7 @@ public class UnboundIDConnection implements ProviderConnection
           getSearchScope(sr.getSearchScope()),
           getDereferencePolicy(sr.getDerefAliases()),
           (int) sr.getSizeLimit(),
-          (int) sr.getTimeLimit(),
+          (int) sr.getTimeLimit().getSeconds(),
           sr.getTypesOnly(),
           sr.getSearchFilter() != null ? sr.getSearchFilter().format() : null,
           sr.getReturnAttributes());

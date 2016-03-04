@@ -4,7 +4,8 @@ package org.ldaptive.beans.spring;
 import java.time.ZonedDateTime;
 import org.ldaptive.beans.AbstractLdapEntryMapper;
 import org.ldaptive.beans.ClassDescriptor;
-import org.ldaptive.io.GeneralizedTimeValueTranscoder;
+import org.ldaptive.beans.spring.convert.StringToZonedDateTimeConverter;
+import org.ldaptive.beans.spring.convert.ZonedDateTimeToStringConverter;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.convert.support.GenericConversionService;
@@ -100,26 +101,10 @@ public class SpringLdapEntryMapper<T> extends AbstractLdapEntryMapper<T>
   protected void addDefaultConverters(final GenericConversionService service)
   {
     if (!service.canConvert(String.class, ZonedDateTime.class)) {
-      service.addConverter(
-        new Converter<String, ZonedDateTime>() {
-          @Override
-          public ZonedDateTime convert(final String s)
-          {
-            final GeneralizedTimeValueTranscoder transcoder = new GeneralizedTimeValueTranscoder();
-            return transcoder.decodeStringValue(s);
-          }
-        });
+      service.addConverter(new StringToZonedDateTimeConverter());
     }
     if (!service.canConvert(ZonedDateTime.class, String.class)) {
-      service.addConverter(
-        new Converter<ZonedDateTime, String>() {
-          @Override
-          public String convert(final ZonedDateTime c)
-          {
-            final GeneralizedTimeValueTranscoder transcoder = new GeneralizedTimeValueTranscoder();
-            return transcoder.encodeStringValue(c);
-          }
-        });
+      service.addConverter(new ZonedDateTimeToStringConverter());
     }
   }
 }

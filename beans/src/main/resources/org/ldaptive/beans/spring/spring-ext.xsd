@@ -200,28 +200,28 @@
     <xsd:attribute name="searchFilter" type="xsd:string" use="optional"/>
     <xsd:attribute name="returnAttributes" type="xsd:string" use="optional"/>
     <xsd:attribute name="searchScope" type="xsd:string" use="optional" default="SUBTREE"/>
-    <xsd:attribute name="timeLimit" type="xsd:string" use="optional" default="0"/>
-    <xsd:attribute name="sizeLimit" type="xsd:string" use="optional" default="0"/>
+    <xsd:attribute name="timeLimit" type="xsd:string" use="optional"/>
+    <xsd:attribute name="sizeLimit" type="xsd:string" use="optional"/>
     <xsd:attribute name="binaryAttributes" type="xsd:string" use="optional"/>
     <xsd:attribute name="sortBehavior" type="xsd:string" use="optional" default="UNORDERED"/>
   </xsd:complexType>
 
   <xsd:attributeGroup name="connectionPoolGroup">
-    <xsd:attribute name="blockWaitTime" type="xsd:string" use="optional" default="3000"/>
+    <xsd:attribute name="blockWaitTime" type="xsd:string" use="optional" default="PT3S"/>
     <xsd:attribute name="failFastInitialize" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="minPoolSize" type="xsd:string" use="optional" default="3"/>
     <xsd:attribute name="maxPoolSize" type="xsd:string" use="optional" default="10"/>
     <xsd:attribute name="validateOnCheckOut" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="validatePeriodically" type="xsd:string" use="optional" default="true"/>
-    <xsd:attribute name="validatePeriod" type="xsd:string" use="optional" default="300"/>
-    <xsd:attribute name="prunePeriod" type="xsd:string" use="optional" default="300"/>
-    <xsd:attribute name="idleTime" type="xsd:string" use="optional" default="600"/>
+    <xsd:attribute name="validatePeriod" type="xsd:string" use="optional" default="PT5M"/>
+    <xsd:attribute name="prunePeriod" type="xsd:string" use="optional" default="PT5M"/>
+    <xsd:attribute name="idleTime" type="xsd:string" use="optional" default="PT10M"/>
   </xsd:attributeGroup>
 
   <!-- Since ldapUrl is optional in some circumstances, it must be specified in the parent type -->
   <xsd:attributeGroup name="connectionConfigGroup">
     <xsd:attribute name="id" type="xsd:ID" use="optional"/>
-    <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="3000"/>
+    <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="PT3S"/>
     <xsd:attribute name="useSSL" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="useStartTLS" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="trustCertificates" type="xsd:string" use="optional"/>

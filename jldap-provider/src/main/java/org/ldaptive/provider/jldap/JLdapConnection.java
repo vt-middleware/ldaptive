@@ -831,7 +831,7 @@ public class JLdapConnection implements ProviderConnection
       if (constraints == null) {
         constraints = new LDAPSearchConstraints();
       }
-      constraints.setServerTimeLimit(Long.valueOf(sr.getTimeLimit()).intValue());
+      constraints.setServerTimeLimit((int) sr.getTimeLimit().getSeconds());
       constraints.setMaxResults(Long.valueOf(sr.getSizeLimit()).intValue());
       if (sr.getDerefAliases() != null) {
         if (sr.getDerefAliases() == DerefAliases.ALWAYS) {

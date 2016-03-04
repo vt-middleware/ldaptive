@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring;
 
+import java.time.Duration;
 import java.time.Period;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
@@ -354,16 +355,16 @@ public class NamespaceHandlerTest
    */
   private void testConnectionPool(final BlockingConnectionPool pool)
   {
-    AssertJUnit.assertEquals(3000, pool.getBlockWaitTime());
+    AssertJUnit.assertEquals(Duration.ofSeconds(3), pool.getBlockWaitTime());
     AssertJUnit.assertFalse(pool.getFailFastInitialize());
-    AssertJUnit.assertEquals(300, pool.getPruneStrategy().getPrunePeriod());
-    AssertJUnit.assertEquals(600, ((IdlePruneStrategy) pool.getPruneStrategy()).getIdleTime());
+    AssertJUnit.assertEquals(Duration.ofMinutes(5), pool.getPruneStrategy().getPrunePeriod());
+    AssertJUnit.assertEquals(Duration.ofMinutes(10), ((IdlePruneStrategy) pool.getPruneStrategy()).getIdleTime());
     AssertJUnit.assertEquals(SearchValidator.class, pool.getValidator().getClass());
 
     final PoolConfig poolConfig = pool.getPoolConfig();
     AssertJUnit.assertEquals(3, poolConfig.getMinPoolSize());
     AssertJUnit.assertEquals(10, poolConfig.getMaxPoolSize());
-    AssertJUnit.assertEquals(300, poolConfig.getValidatePeriod());
+    AssertJUnit.assertEquals(Duration.ofMinutes(5), poolConfig.getValidatePeriod());
     AssertJUnit.assertFalse(poolConfig.isValidateOnCheckOut());
     AssertJUnit.assertTrue(poolConfig.isValidatePeriodically());
 
@@ -391,7 +392,7 @@ public class NamespaceHandlerTest
     AssertJUnit.assertNotNull(connectionConfig.getLdapUrl());
     AssertJUnit.assertTrue(connectionConfig.getUseStartTLS());
     AssertJUnit.assertFalse(connectionConfig.getUseSSL());
-    AssertJUnit.assertEquals(3000, connectionConfig.getConnectTimeout());
+    AssertJUnit.assertEquals(Duration.ofSeconds(3), connectionConfig.getConnectTimeout());
     final CredentialConfig credentialConfig =  connectionConfig.getSslConfig().getCredentialConfig();
     if (credentialConfig instanceof X509CredentialConfig) {
       AssertJUnit.assertNotNull(((X509CredentialConfig) credentialConfig).getTrustCertificates());
@@ -413,7 +414,7 @@ public class NamespaceHandlerTest
     AssertJUnit.assertNotNull(executor.getSearchFilter());
     AssertJUnit.assertTrue(executor.getReturnAttributes().length > 0);
     AssertJUnit.assertEquals(SearchScope.ONELEVEL, executor.getSearchScope());
-    AssertJUnit.assertEquals(5000, executor.getTimeLimit());
+    AssertJUnit.assertEquals(Duration.ofSeconds(5), executor.getTimeLimit());
     AssertJUnit.assertEquals(10, executor.getSizeLimit());
     AssertJUnit.assertTrue(executor.getBinaryAttributes().length > 0);
     AssertJUnit.assertEquals(SortBehavior.ORDERED, executor.getSortBehavior());

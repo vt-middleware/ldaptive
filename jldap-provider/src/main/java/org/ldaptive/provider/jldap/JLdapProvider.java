@@ -64,7 +64,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
         cc.getConnectionStrategy(),
         config,
         constraints != null ? constraints : getDefaultLDAPConstraints(cc),
-        (int) cc.getResponseTimeout(),
+        cc.getResponseTimeout(),
         config.getSslSocketFactory() != null ? config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
   }
 
@@ -89,7 +89,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
         cc.getConnectionStrategy(),
         config,
         constraints != null ? constraints : getDefaultLDAPConstraints(cc),
-        (int) cc.getResponseTimeout(),
+        cc.getResponseTimeout(),
         config.getSslSocketFactory() != null ? config.getSslSocketFactory() : getHostnameVerifierSocketFactory(cc));
   }
 
@@ -113,7 +113,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
         cc.getConnectionStrategy(),
         config,
         constraints != null ? constraints : getDefaultLDAPConstraints(cc),
-        (int) cc.getResponseTimeout());
+        cc.getResponseTimeout());
   }
 
 

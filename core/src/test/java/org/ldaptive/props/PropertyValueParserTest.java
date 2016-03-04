@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
+import java.time.Duration;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.RecursiveEntryHandler;
 import org.ldaptive.pool.IdlePruneStrategy;
@@ -39,10 +40,10 @@ public class PropertyValueParserTest
     final String p2 = "org.ldaptive.handler.MergeAttributeEntryHandler{ }";
     final MergeAttributeEntryHandler o2 = new MergeAttributeEntryHandler();
 
-    final String p3 = "org.ldaptive.pool.IdlePruneStrategy{{prunePeriod=60}{idleTime=120}";
+    final String p3 = "org.ldaptive.pool.IdlePruneStrategy{{prunePeriod=PT1M}{idleTime=PT2M}";
     final IdlePruneStrategy o3 = new IdlePruneStrategy();
-    o3.setPrunePeriod(60);
-    o3.setIdleTime(120);
+    o3.setPrunePeriod(Duration.ofMinutes(1));
+    o3.setIdleTime(Duration.ofMinutes(2));
 
     final String p4 = "org.ldaptive.sasl.CramMd5Config" +
       "{{securityStrength=LOW}{qualityOfProtection=AUTH}}";

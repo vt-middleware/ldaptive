@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.jldap;
 
+import java.time.Duration;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
@@ -29,7 +30,7 @@ public class JLdapConnectionFactory extends AbstractJLdapConnectionFactory<JLdap
     final ConnectionStrategy strategy,
     final JLdapProviderConfig config,
     final LDAPConstraints constraints,
-    final int timeOut)
+    final Duration timeOut)
   {
     super(url, strategy, config, constraints, timeOut);
   }
