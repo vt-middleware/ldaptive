@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
+import java.time.Duration;
 import java.time.Period;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,19 @@ public abstract class AbstractBeanDefinitionParser extends AbstractSingleBeanDef
   protected static Period parsePeriod(final String value)
   {
     return Period.parse(value);
+  }
+
+
+  /**
+   * Returns a {@link Duration} for the supplied value.
+   *
+   * @param  value  to parse
+   *
+   * @return  duration
+   */
+  protected static Duration parseDuration(final String value)
+  {
+    return Duration.parse(value);
   }
 
 

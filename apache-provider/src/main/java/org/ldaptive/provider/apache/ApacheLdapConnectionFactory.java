@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.apache;
 
+import java.time.Duration;
 import org.apache.directory.api.ldap.model.exception.LdapOperationException;
 import org.apache.directory.ldap.client.api.LdapConnectionConfig;
 import org.apache.directory.ldap.client.api.LdapNetworkConnection;
@@ -26,7 +27,7 @@ public class ApacheLdapConnectionFactory extends AbstractProviderConnectionFacto
   private final boolean useStartTLS;
 
   /** Timeout for responses. */
-  private final long responseTimeOut;
+  private final Duration responseTimeOut;
 
 
   /**
@@ -45,7 +46,7 @@ public class ApacheLdapConnectionFactory extends AbstractProviderConnectionFacto
     final ApacheLdapProviderConfig config,
     final LdapConnectionConfig lcc,
     final boolean tls,
-    final long timeOut)
+    final Duration timeOut)
   {
     super(url, strategy, config);
     ldapConnectionConfig = lcc;
@@ -71,8 +72,8 @@ public class ApacheLdapConnectionFactory extends AbstractProviderConnectionFacto
       if (useStartTLS) {
         lc.startTls();
       }
-      if (responseTimeOut > 0) {
-        lc.setTimeOut(responseTimeOut);
+      if (responseTimeOut != null) {
+        lc.setTimeOut(responseTimeOut.toMillis());
       }
     } catch (LdapOperationException e) {
       closeConn = true;

@@ -37,7 +37,7 @@
     </init-param>
     <init-param>
       <param-name>blockWaitTime</param-name>
-      <param-value>5000</param-value>
+      <param-value>PT5S</param-value>
     </init-param>
   </servlet>
   <servlet>

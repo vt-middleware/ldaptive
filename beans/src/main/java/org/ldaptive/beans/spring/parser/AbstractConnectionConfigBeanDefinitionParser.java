@@ -40,7 +40,11 @@ public abstract class AbstractConnectionConfigBeanDefinitionParser extends Abstr
     setIfPresent(element, "ldapUrl", connectionConfig);
     connectionConfig.addPropertyValue("useStartTLS", element.getAttribute("useStartTLS"));
     connectionConfig.addPropertyValue("useSSL", element.getAttribute("useSSL"));
-    connectionConfig.addPropertyValue("connectTimeout", element.getAttribute("connectTimeout"));
+    final BeanDefinitionBuilder connectTimeout =  BeanDefinitionBuilder.rootBeanDefinition(
+      AbstractAuthenticatorBeanDefinitionParser.class,
+      "parseDuration");
+    connectTimeout.addConstructorArgValue(element.getAttribute("connectTimeout"));
+    connectionConfig.addPropertyValue("connectTimeout", connectTimeout.getBeanDefinition());
 
     if (element.hasAttribute("trustCertificates")) {
       final BeanDefinitionBuilder credentialConfig = BeanDefinitionBuilder.genericBeanDefinition(

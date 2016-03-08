@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.jldap;
 
+import java.time.Duration;
 import javax.net.ssl.SSLSocketFactory;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPConstraints;
@@ -35,7 +36,7 @@ public class JLdapSSLConnectionFactory extends AbstractJLdapConnectionFactory<JL
     final ConnectionStrategy strategy,
     final JLdapProviderConfig config,
     final LDAPConstraints constraints,
-    final int timeOut,
+    final Duration timeOut,
     final SSLSocketFactory factory)
   {
     super(url, strategy, config, constraints, timeOut);

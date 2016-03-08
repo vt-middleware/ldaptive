@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.time.Duration;
 import java.util.Arrays;
 import javax.security.auth.login.LoginContext;
 import org.ldaptive.auth.AuthenticationHandler;
@@ -96,7 +97,7 @@ public class PropertiesTest
 
     AssertJUnit.assertEquals(host, cc.getLdapUrl());
     AssertJUnit.assertEquals(bindDn, ci.getBindDn());
-    AssertJUnit.assertEquals(8000, cc.getConnectTimeout());
+    AssertJUnit.assertEquals(Duration.ofSeconds(8), cc.getConnectTimeout());
     AssertJUnit.assertFalse(cc.getUseStartTLS());
     AssertJUnit.assertEquals(RoundRobinConnectionStrategy.class, cc.getConnectionStrategy().getClass());
     AssertJUnit.assertEquals(
@@ -115,7 +116,7 @@ public class PropertiesTest
 
     AssertJUnit.assertEquals(DnParser.substring(bindDn, 1).toLowerCase(), sr.getBaseDn().toLowerCase());
     AssertJUnit.assertEquals(SearchScope.OBJECT, sr.getSearchScope());
-    AssertJUnit.assertEquals(5000, sr.getTimeLimit());
+    AssertJUnit.assertEquals(Duration.ofSeconds(5), sr.getTimeLimit());
     AssertJUnit.assertEquals("jpegPhoto", sr.getBinaryAttributes()[0]);
     AssertJUnit.assertEquals(5, ((PagedResultsControl) sr.getControls()[0]).getSize());
 
@@ -152,8 +153,8 @@ public class PropertiesTest
     AssertJUnit.assertNotNull(authCp.getValidator());
 
     final IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) authCp.getPruneStrategy();
-    AssertJUnit.assertEquals(60, pruneStrategy.getPrunePeriod());
-    AssertJUnit.assertEquals(120, pruneStrategy.getIdleTime());
+    AssertJUnit.assertEquals(Duration.ofMinutes(1), pruneStrategy.getPrunePeriod());
+    AssertJUnit.assertEquals(Duration.ofMinutes(2), pruneStrategy.getIdleTime());
     AssertJUnit.assertNotNull(authCp.getActivator());
     AssertJUnit.assertNotNull(authCp.getPassivator());
 
@@ -162,7 +163,7 @@ public class PropertiesTest
     final BindConnectionInitializer authCi = (BindConnectionInitializer) authCc.getConnectionInitializer();
     AssertJUnit.assertEquals("ldap://ed-auth.middleware.vt.edu:14389", authCc.getLdapUrl());
     AssertJUnit.assertEquals(bindDn, authCi.getBindDn());
-    AssertJUnit.assertEquals(8000, authCc.getConnectTimeout());
+    AssertJUnit.assertEquals(Duration.ofSeconds(8), authCc.getConnectTimeout());
     AssertJUnit.assertTrue(authCc.getUseStartTLS());
     AssertJUnit.assertEquals(RoundRobinConnectionStrategy.class, authCc.getConnectionStrategy().getClass());
     AssertJUnit.assertEquals(1, authCf.getProvider().getProviderConfig().getProperties().size());
@@ -227,7 +228,7 @@ public class PropertiesTest
     AssertJUnit.assertNotNull(cf.getProvider().getClass());
     AssertJUnit.assertEquals(host, cc.getLdapUrl());
     AssertJUnit.assertEquals(bindDn, ci.getBindDn());
-    AssertJUnit.assertEquals(8000, cc.getConnectTimeout());
+    AssertJUnit.assertEquals(Duration.ofSeconds(8), cc.getConnectTimeout());
     AssertJUnit.assertTrue(cc.getUseStartTLS());
     AssertJUnit.assertEquals(RoundRobinConnectionStrategy.class, cc.getConnectionStrategy().getClass());
     AssertJUnit.assertEquals(1, cf.getProvider().getProviderConfig().getProperties().size());
@@ -237,7 +238,7 @@ public class PropertiesTest
 
     AssertJUnit.assertEquals(DnParser.substring(bindDn, 1).toLowerCase(), searchRequest.getBaseDn().toLowerCase());
     AssertJUnit.assertEquals(SearchScope.OBJECT, searchRequest.getSearchScope());
-    AssertJUnit.assertEquals(5000, searchRequest.getTimeLimit());
+    AssertJUnit.assertEquals(Duration.ofSeconds(5), searchRequest.getTimeLimit());
     AssertJUnit.assertEquals("jpegPhoto", searchRequest.getBinaryAttributes()[0]);
 
     for (SearchEntryHandler srh : searchRequest.getSearchEntryHandlers()) {
@@ -266,15 +267,15 @@ public class PropertiesTest
     AssertJUnit.assertNotNull(authCp.getValidator());
 
     final IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) authCp.getPruneStrategy();
-    AssertJUnit.assertEquals(60, pruneStrategy.getPrunePeriod());
-    AssertJUnit.assertEquals(120, pruneStrategy.getIdleTime());
+    AssertJUnit.assertEquals(Duration.ofMinutes(1), pruneStrategy.getPrunePeriod());
+    AssertJUnit.assertEquals(Duration.ofMinutes(2), pruneStrategy.getIdleTime());
 
     final ConnectionConfig authCc = authCp.getConnectionFactory().getConnectionConfig();
     final BindConnectionInitializer authCi = (BindConnectionInitializer) authCc.getConnectionInitializer();
     final Provider<?> authP = authCp.getConnectionFactory().getProvider();
     AssertJUnit.assertEquals(host, authCc.getLdapUrl());
     AssertJUnit.assertEquals(bindDn, authCi.getBindDn());
-    AssertJUnit.assertEquals(8000, authCc.getConnectTimeout());
+    AssertJUnit.assertEquals(Duration.ofSeconds(8), authCc.getConnectTimeout());
     AssertJUnit.assertTrue(authCc.getUseStartTLS());
     AssertJUnit.assertEquals(RoundRobinConnectionStrategy.class, authCc.getConnectionStrategy().getClass());
     AssertJUnit.assertEquals(1, authP.getProviderConfig().getProperties().size());

@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
+import java.time.Duration;
 import org.ldaptive.AbstractConfig;
 
 /**
@@ -26,8 +27,8 @@ public class PoolConfig extends AbstractConfig
   /** Default validate periodically, value is {@value}. */
   public static final boolean DEFAULT_VALIDATE_PERIODICALLY = false;
 
-  /** Default validate period, value is {@value}. */
-  public static final long DEFAULT_VALIDATE_PERIOD = 1800;
+  /** Default validate period, value is 30 minutes. */
+  public static final Duration DEFAULT_VALIDATE_PERIOD = Duration.ofMinutes(30);
 
   /** Minimum pool size. */
   private int minPoolSize = DEFAULT_MIN_POOL_SIZE;
@@ -44,8 +45,8 @@ public class PoolConfig extends AbstractConfig
   /** Whether the pool should be validated periodically. */
   private boolean validatePeriodically = DEFAULT_VALIDATE_PERIODICALLY;
 
-  /** Time in seconds that the validate pool should repeat. */
-  private long validatePeriod = DEFAULT_VALIDATE_PERIOD;
+  /** Time that the pool validation should repeat. */
+  private Duration validatePeriod = DEFAULT_VALIDATE_PERIOD;
 
 
   /**
@@ -177,9 +178,9 @@ public class PoolConfig extends AbstractConfig
   /**
    * Returns the validate period. Default value is {@link #DEFAULT_VALIDATE_PERIOD}.
    *
-   * @return  validate period in seconds
+   * @return  validate period
    */
-  public long getValidatePeriod()
+  public Duration getValidatePeriod()
   {
     return validatePeriod;
   }
@@ -190,13 +191,14 @@ public class PoolConfig extends AbstractConfig
    *
    * @param  time  in seconds
    */
-  public void setValidatePeriod(final long time)
+  public void setValidatePeriod(final Duration time)
   {
     checkImmutable();
-    if (time >= 0) {
-      logger.trace("setting validatePeriod: {}", time);
-      validatePeriod = time;
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Validate period cannot be null or negative");
     }
+    logger.trace("setting validatePeriod: {}", time);
+    validatePeriod = time;
   }
 
 

@@ -48,11 +48,26 @@ public abstract class AbstractConnectionPoolBeanDefinitionParser extends Abstrac
     }
     pool.addPropertyValue("connectionFactory", factory.getBeanDefinition());
     pool.addPropertyValue("poolConfig", parsePoolConfig(null, element).getBeanDefinition());
-    pool.addPropertyValue("blockWaitTime", element.getAttribute("blockWaitTime"));
+
+    final BeanDefinitionBuilder blockWaitTime =  BeanDefinitionBuilder.rootBeanDefinition(
+      AbstractAuthenticatorBeanDefinitionParser.class,
+      "parseDuration");
+    blockWaitTime.addConstructorArgValue(element.getAttribute("blockWaitTime"));
+    pool.addPropertyValue("blockWaitTime", blockWaitTime.getBeanDefinition());
+
+
     pool.addPropertyValue("failFastInitialize", element.getAttribute("failFastInitialize"));
     final BeanDefinitionBuilder pruneStrategy = BeanDefinitionBuilder.genericBeanDefinition(IdlePruneStrategy.class);
-    pruneStrategy.addConstructorArgValue(element.getAttribute("prunePeriod"));
-    pruneStrategy.addConstructorArgValue(element.getAttribute("idleTime"));
+    final BeanDefinitionBuilder prunePeriod =  BeanDefinitionBuilder.rootBeanDefinition(
+      AbstractAuthenticatorBeanDefinitionParser.class,
+      "parseDuration");
+    prunePeriod.addConstructorArgValue(element.getAttribute("prunePeriod"));
+    final BeanDefinitionBuilder idleTime =  BeanDefinitionBuilder.rootBeanDefinition(
+      AbstractAuthenticatorBeanDefinitionParser.class,
+      "parseDuration");
+    idleTime.addConstructorArgValue(element.getAttribute("idleTime"));
+    pruneStrategy.addPropertyValue("prunePeriod", prunePeriod.getBeanDefinition());
+    pruneStrategy.addPropertyValue("idleTime", idleTime.getBeanDefinition());
     pool.addPropertyValue("pruneStrategy", pruneStrategy.getBeanDefinition());
     pool.addPropertyValue("validator", new SearchValidator());
     if (element.hasAttribute("ldapUrl")) {
@@ -82,7 +97,11 @@ public abstract class AbstractConnectionPoolBeanDefinitionParser extends Abstrac
     poolConfig.addPropertyValue("maxPoolSize", element.getAttribute("maxPoolSize"));
     poolConfig.addPropertyValue("validateOnCheckOut", element.getAttribute("validateOnCheckOut"));
     poolConfig.addPropertyValue("validatePeriodically", element.getAttribute("validatePeriodically"));
-    poolConfig.addPropertyValue("validatePeriod", element.getAttribute("validatePeriod"));
+    final BeanDefinitionBuilder validatePeriod =  BeanDefinitionBuilder.rootBeanDefinition(
+      AbstractAuthenticatorBeanDefinitionParser.class,
+      "parseDuration");
+    validatePeriod.addConstructorArgValue(element.getAttribute("validatePeriod"));
+    poolConfig.addPropertyValue("validatePeriod", validatePeriod.getBeanDefinition());
     return poolConfig;
   }
 }

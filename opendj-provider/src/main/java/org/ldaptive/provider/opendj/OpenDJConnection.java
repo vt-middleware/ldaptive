@@ -936,7 +936,7 @@ public class OpenDJConnection implements org.ldaptive.provider.ProviderConnectio
         sr.getReturnAttributes());
       opendjSr.setDereferenceAliasesPolicy(getDereferencePolicy(sr.getDerefAliases()));
       opendjSr.setSizeLimit((int) sr.getSizeLimit());
-      opendjSr.setTimeLimit((int) sr.getTimeLimit());
+      opendjSr.setTimeLimit((int) sr.getTimeLimit().getSeconds());
       opendjSr.setTypesOnly(sr.getTypesOnly());
       return opendjSr;
     }

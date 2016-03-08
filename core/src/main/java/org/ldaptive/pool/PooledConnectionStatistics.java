@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
+import java.time.Instant;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -17,10 +18,10 @@ public class PooledConnectionStatistics
   private final int size;
 
   /** Available stats. */
-  private final Deque<Long> availableStats;
+  private final Deque<Instant> availableStats;
 
   /** Active stats. */
-  private final Deque<Long> activeStats;
+  private final Deque<Instant> activeStats;
 
 
   /**
@@ -31,11 +32,11 @@ public class PooledConnectionStatistics
   public PooledConnectionStatistics(final int i)
   {
     size = i;
-    availableStats = new LinkedList<Long>() {
+    availableStats = new LinkedList<Instant>() {
 
 
       @Override
-      public boolean add(final Long e)
+      public boolean add(final Instant e)
       {
         if (size < 1) {
           return false;
@@ -48,11 +49,11 @@ public class PooledConnectionStatistics
         return b;
       }
     };
-    activeStats = new LinkedList<Long>() {
+    activeStats = new LinkedList<Instant>() {
 
 
       @Override
-      public boolean add(final Long e)
+      public boolean add(final Instant e)
       {
         if (size < 1) {
           return false;
@@ -73,7 +74,7 @@ public class PooledConnectionStatistics
    *
    * @return  available timestamp statistics
    */
-  public Deque<Long> getAvailableStats()
+  public Deque<Instant> getAvailableStats()
   {
     return availableStats;
   }
@@ -84,7 +85,7 @@ public class PooledConnectionStatistics
    *
    * @return  millisecond timestamp
    */
-  public Long getLastAvailableState()
+  public Instant getLastAvailableState()
   {
     return availableStats.peekLast();
   }
@@ -93,7 +94,7 @@ public class PooledConnectionStatistics
   /** Inserts the current timestamp into the available statistics. */
   public synchronized void addAvailableStat()
   {
-    availableStats.add(System.currentTimeMillis());
+    availableStats.add(Instant.now());
   }
 
 
@@ -102,7 +103,7 @@ public class PooledConnectionStatistics
    *
    * @return  active timestamp statistics
    */
-  public Deque<Long> getActiveStats()
+  public Deque<Instant> getActiveStats()
   {
     return activeStats;
   }
@@ -113,7 +114,7 @@ public class PooledConnectionStatistics
    *
    * @return  millisecond timestamp
    */
-  public Long getLastActiveStat()
+  public Instant getLastActiveStat()
   {
     return activeStats.peekLast();
   }
@@ -122,7 +123,7 @@ public class PooledConnectionStatistics
   /** Inserts the current timestamp into the active statistics. */
   public synchronized void addActiveStat()
   {
-    activeStats.add(System.currentTimeMillis());
+    activeStats.add(Instant.now());
   }
 
 

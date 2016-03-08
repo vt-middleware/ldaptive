@@ -194,11 +194,11 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     if (factory != null && (cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
       env.put(JndiProvider.SOCKET_FACTORY, factory);
     }
-    if (cc.getConnectTimeout() > 0) {
-      env.put(CONNECT_TIMEOUT, Long.toString(cc.getConnectTimeout()));
+    if (cc.getConnectTimeout() != null) {
+      env.put(CONNECT_TIMEOUT, Long.toString(cc.getConnectTimeout().toMillis()));
     }
-    if (cc.getResponseTimeout() > 0) {
-      env.put(READ_TIMEOUT, Long.toString(cc.getResponseTimeout()));
+    if (cc.getResponseTimeout() != null) {
+      env.put(READ_TIMEOUT, Long.toString(cc.getResponseTimeout().toMillis()));
     }
     if (config.getTracePackets() != null) {
       env.put(JndiProvider.TRACE, config.getTracePackets());

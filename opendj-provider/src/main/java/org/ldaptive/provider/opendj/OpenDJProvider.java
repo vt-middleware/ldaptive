@@ -102,7 +102,9 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
     if (cc.getSslConfig() != null && cc.getSslConfig().getEnabledProtocols() != null) {
       options.addEnabledProtocol(cc.getSslConfig().getEnabledProtocols());
     }
-    options.setTimeout(cc.getResponseTimeout(), TimeUnit.MILLISECONDS);
+    if (cc.getResponseTimeout() != null) {
+      options.setTimeout(cc.getResponseTimeout().toMillis(), TimeUnit.MILLISECONDS);
+    }
     return options;
   }
 

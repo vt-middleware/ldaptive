@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.time.Duration;
 import java.util.Arrays;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.ldaptive.handler.SearchReferenceHandler;
@@ -29,7 +30,7 @@ public class SearchRequest extends AbstractRequest
   private SearchScope searchScope = SearchScope.SUBTREE;
 
   /** Time search operation will block. */
-  private long timeLimit;
+  private Duration timeLimit = Duration.ZERO;
 
   /** Number of entries to return. */
   private long sizeLimit;
@@ -206,7 +207,7 @@ public class SearchRequest extends AbstractRequest
    *
    * @return  time limit
    */
-  public long getTimeLimit()
+  public Duration getTimeLimit()
   {
     return timeLimit;
   }
@@ -217,8 +218,11 @@ public class SearchRequest extends AbstractRequest
    *
    * @param  limit  time limit
    */
-  public void setTimeLimit(final long limit)
+  public void setTimeLimit(final Duration limit)
   {
+    if (limit == null || limit.isNegative()) {
+      throw new IllegalArgumentException("Time limit cannot be null or negative");
+    }
     timeLimit = limit;
   }
 

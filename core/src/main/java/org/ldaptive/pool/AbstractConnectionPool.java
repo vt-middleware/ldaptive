@@ -264,8 +264,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
         }
         logger.debug("end prune task for {}", AbstractConnectionPool.this);
       },
-      getPruneStrategy().getPrunePeriod(),
-      getPruneStrategy().getPrunePeriod(),
+      getPruneStrategy().getPrunePeriod().getSeconds(),
+      getPruneStrategy().getPrunePeriod().getSeconds(),
       TimeUnit.SECONDS);
     logger.debug("prune pool task scheduled for {}", this);
 
@@ -279,8 +279,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
         }
         logger.debug("end validate task for {}", AbstractConnectionPool.this);
       },
-      getPoolConfig().getValidatePeriod(),
-      getPoolConfig().getValidatePeriod(),
+      getPoolConfig().getValidatePeriod().getSeconds(),
+      getPoolConfig().getValidatePeriod().getSeconds(),
       TimeUnit.SECONDS);
     logger.debug("validate pool task scheduled for {}", this);
 

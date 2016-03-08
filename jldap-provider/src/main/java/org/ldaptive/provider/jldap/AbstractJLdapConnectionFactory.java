@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.jldap;
 
+import java.time.Duration;
 import com.novell.ldap.LDAPConnection;
 import com.novell.ldap.LDAPConstraints;
 import com.novell.ldap.LDAPException;
@@ -25,7 +26,7 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
   private final LDAPConstraints ldapConstraints;
 
   /** Amount of time in milliseconds that operations will wait. */
-  private final int socketTimeOut;
+  private final Duration socketTimeOut;
 
 
   /**
@@ -42,7 +43,7 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
     final ConnectionStrategy strategy,
     final JLdapProviderConfig config,
     final LDAPConstraints constraints,
-    final int timeOut)
+    final Duration timeOut)
   {
     super(url, strategy, config);
     ldapConstraints = constraints;
@@ -63,8 +64,8 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
       if (ldapConstraints != null) {
         conn.setConstraints(ldapConstraints);
       }
-      if (socketTimeOut > 0) {
-        conn.setSocketTimeOut(socketTimeOut);
+      if (socketTimeOut != null) {
+        conn.setSocketTimeOut((int) socketTimeOut.toMillis());
       }
       conn.connect(ldapUrl.getLastEntry().getHostnameWithPort(), LDAPConnection.DEFAULT_PORT);
       initializeConnection(conn);

@@ -18,7 +18,7 @@
     <constructor-arg index="0">
       <bean class="org.ldaptive.pool.BlockingConnectionPool"
             init-method="initialize"
-            p:blockWaitTime="5000">
+            p:blockWaitTime="PT5S">
         <constructor-arg index="0">
           <bean class="org.ldaptive.pool.PoolConfig"
                 p:minPoolSize="5"

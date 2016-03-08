@@ -54,8 +54,14 @@ public class SearchExecutorBeanDefinitionParser extends AbstractBeanDefinitionPa
     }
     setIfPresent(element, "returnAttributes", builder);
     builder.addPropertyValue("searchScope", element.getAttribute("searchScope"));
-    builder.addPropertyValue("timeLimit", element.getAttribute("timeLimit"));
-    builder.addPropertyValue("sizeLimit", element.getAttribute("sizeLimit"));
+    if (element.hasAttribute("timeLimit")) {
+      final BeanDefinitionBuilder timeLimit =  BeanDefinitionBuilder.rootBeanDefinition(
+        AbstractAuthenticatorBeanDefinitionParser.class,
+        "parseDuration");
+      timeLimit.addConstructorArgValue(element.getAttribute("timeLimit"));
+      builder.addPropertyValue("timeLimit", timeLimit.getBeanDefinition());
+    }
+    setIfPresent(element, "sizeLimit", builder);
     setIfPresent(element, "binaryAttributes", builder);
     builder.addPropertyValue("sortBehavior", element.getAttribute("sortBehavior"));
   }

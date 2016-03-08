@@ -77,8 +77,12 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
   protected LDAPConnectionOptions getDefaultLDAPConnectionOptions(final ConnectionConfig cc)
   {
     final LDAPConnectionOptions options = new LDAPConnectionOptions();
-    options.setConnectTimeoutMillis(cc.getConnectTimeout() > 0 ? (int) cc.getConnectTimeout() : 0);
-    options.setResponseTimeoutMillis(cc.getResponseTimeout());
+    if (cc.getConnectTimeout() != null) {
+      options.setConnectTimeoutMillis((int) cc.getConnectTimeout().toMillis());
+    }
+    if (cc.getResponseTimeout() != null) {
+      options.setResponseTimeoutMillis(cc.getResponseTimeout().toMillis());
+    }
     return options;
   }
 

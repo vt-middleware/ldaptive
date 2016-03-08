@@ -903,7 +903,7 @@ public class ApacheLdapConnection implements ProviderConnection
         apacheSr.setScope(searchScope);
       }
       apacheSr.setSizeLimit(sr.getSizeLimit());
-      apacheSr.setTimeLimit(Long.valueOf(sr.getTimeLimit()).intValue());
+      apacheSr.setTimeLimit((int) sr.getTimeLimit().getSeconds());
       apacheSr.setTypesOnly(sr.getTypesOnly());
       return apacheSr;
     }

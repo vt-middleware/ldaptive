@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.time.Duration;
 import org.ldaptive.ssl.SslConfig;
 
 /**
@@ -14,11 +15,11 @@ public class ConnectionConfig extends AbstractConfig
   /** URL to the LDAP(s). */
   private String ldapUrl;
 
-  /** Amount of time in milliseconds that connects will block. */
-  private long connectTimeout = -1;
+  /** Duration of time that connects will block. */
+  private Duration connectTimeout;
 
-  /** Amount of time in milliseconds to wait for responses. */
-  private long responseTimeout = -1;
+  /** Duration of time to wait for responses. */
+  private Duration responseTimeout;
 
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
@@ -77,48 +78,54 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the connect timeout. If this value is &lt;= 0, then connects will wait indefinitely.
+   * Returns the connect timeout. If this value is null, then the provider default will be used.
    *
    * @return  timeout
    */
-  public long getConnectTimeout()
+  public Duration getConnectTimeout()
   {
     return connectTimeout;
   }
 
 
   /**
-   * Sets the maximum amount of time in milliseconds that connects will block.
+   * Sets the maximum amount of time that connects will block.
    *
    * @param  time  timeout for connects
    */
-  public void setConnectTimeout(final long time)
+  public void setConnectTimeout(final Duration time)
   {
     checkImmutable();
+    if (time != null && time.isNegative()) {
+      throw new IllegalArgumentException("Connect timeout cannot be negative");
+    }
     logger.trace("setting connectTimeout: {}", time);
     connectTimeout = time;
   }
 
 
   /**
-   * Returns the response timeout. If this value is &lt;= 0, then operations will wait indefinitely for a response.
+   * Returns the response timeout. If this value is null, then the provider default will be used.
    *
    * @return  timeout
    */
-  public long getResponseTimeout()
+  public Duration getResponseTimeout()
   {
     return responseTimeout;
   }
 
 
   /**
-   * Sets the maximum amount of time in milliseconds that operations will wait for a response.
+   * Sets the maximum amount of time that operations will wait for a response.
    *
    * @param  time  timeout for responses
    */
-  public void setResponseTimeout(final long time)
+  public void setResponseTimeout(final Duration time)
   {
     checkImmutable();
+    if (time != null && time.isNegative()) {
+      throw new IllegalArgumentException("Connect timeout cannot be negative");
+    }
     logger.trace("setting responseTimeout: {}", time);
     responseTimeout = time;
   }

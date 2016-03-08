@@ -2,6 +2,7 @@
 package org.ldaptive.pool;
 
 import java.io.StringWriter;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.AbstractTest;
@@ -101,28 +102,28 @@ public class ConnectionPoolTest extends AbstractTest
     softLimitPc.setValidateOnCheckIn(true);
     softLimitPc.setValidateOnCheckOut(true);
     softLimitPc.setValidatePeriodically(true);
-    softLimitPc.setValidatePeriod(5L);
+    softLimitPc.setValidatePeriod(Duration.ofSeconds(5));
     softLimitPool = new SoftLimitConnectionPool(softLimitPc, new DefaultConnectionFactory(cc));
-    softLimitPool.setPruneStrategy(new IdlePruneStrategy(5L, 1L));
+    softLimitPool.setPruneStrategy(new IdlePruneStrategy(Duration.ofSeconds(5), Duration.ofSeconds(1)));
     softLimitPool.setValidator(new SearchValidator());
 
     final PoolConfig blockingPc = new PoolConfig();
     blockingPc.setValidateOnCheckIn(true);
     blockingPc.setValidateOnCheckOut(true);
     blockingPc.setValidatePeriodically(true);
-    blockingPc.setValidatePeriod(5L);
+    blockingPc.setValidatePeriod(Duration.ofSeconds(5));
     blockingPool = new BlockingConnectionPool(blockingPc, new DefaultConnectionFactory(cc));
-    blockingPool.setPruneStrategy(new IdlePruneStrategy(5L, 1L));
+    blockingPool.setPruneStrategy(new IdlePruneStrategy(Duration.ofSeconds(5), Duration.ofSeconds(1)));
     blockingPool.setValidator(new SearchValidator());
 
     final PoolConfig blockingTimeoutPc = new PoolConfig();
     blockingTimeoutPc.setValidateOnCheckIn(true);
     blockingTimeoutPc.setValidateOnCheckOut(true);
     blockingTimeoutPc.setValidatePeriodically(true);
-    blockingTimeoutPc.setValidatePeriod(5L);
+    blockingTimeoutPc.setValidatePeriod(Duration.ofSeconds(5));
     blockingTimeoutPool = new BlockingConnectionPool(blockingTimeoutPc, new DefaultConnectionFactory(cc));
-    blockingTimeoutPool.setPruneStrategy(new IdlePruneStrategy(5L, 1L));
-    blockingTimeoutPool.setBlockWaitTime(1000L);
+    blockingTimeoutPool.setPruneStrategy(new IdlePruneStrategy(Duration.ofSeconds(5), Duration.ofSeconds(1)));
+    blockingTimeoutPool.setBlockWaitTime(Duration.ofSeconds(1));
     blockingTimeoutPool.setValidator(new SearchValidator());
 
     final ConnectionConfig connStrategyCc = TestUtils.readConnectionConfig(null);
@@ -407,7 +408,7 @@ public class ConnectionPoolTest extends AbstractTest
     }
 
     try {
-      softLimitPool.getConnectionFactory().getConnectionConfig().setConnectTimeout(10000);
+      softLimitPool.getConnectionFactory().getConnectionConfig().setConnectTimeout(Duration.ofSeconds(10));
       AssertJUnit.fail("Expected illegalstateexception to be thrown");
     } catch (IllegalStateException e) {
       AssertJUnit.assertEquals(IllegalStateException.class, e.getClass());
@@ -470,7 +471,7 @@ public class ConnectionPoolTest extends AbstractTest
     }
 
     try {
-      blockingPool.getConnectionFactory().getConnectionConfig().setConnectTimeout(10000);
+      blockingPool.getConnectionFactory().getConnectionConfig().setConnectTimeout(Duration.ofSeconds(10));
       AssertJUnit.fail("Expected illegalstateexception to be thrown");
     } catch (IllegalStateException e) {
       AssertJUnit.assertEquals(IllegalStateException.class, e.getClass());

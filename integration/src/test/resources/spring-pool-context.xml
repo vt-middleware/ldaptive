@@ -2,22 +2,29 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xmlns:p="http://www.springframework.org/schema/p"
-  xmlns:util="http://www.springframework.org/schema/util"
-  xsi:schemaLocation="
-http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+
+  <bean id="conversionService"
+        class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <property name="converters">
+      <set>
+        <bean class="org.ldaptive.beans.spring.convert.StringToDurationConverter"/>
+        <bean class="org.ldaptive.beans.spring.convert.DurationToStringConverter"/>
+      </set>
+    </property>
+  </bean>
 
   <bean id="pool"
     class="org.ldaptive.pool.BlockingConnectionPool"
     init-method="initialize"
-    p:blockWaitTime="5000"
+    p:blockWaitTime="PT5S"
     p:validator-ref="compareValidator">
     <constructor-arg index="0">
       <bean class="org.ldaptive.pool.PoolConfig"
         p:minPoolSize="5"
         p:maxPoolSize="20"
         p:validatePeriodically="true"
-        p:validatePeriod="30"
+        p:validatePeriod="PT30S"
       />
     </constructor-arg>
     <constructor-arg index="1" ref="connectionFactory"/>

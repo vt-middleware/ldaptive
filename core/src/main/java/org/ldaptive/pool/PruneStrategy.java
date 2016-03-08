@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
+import java.time.Duration;
+
 /**
  * Provides an interface for pruning connections from the pool.
  *
@@ -29,9 +31,9 @@ public interface PruneStrategy
 
 
   /**
-   * Returns the interval at which the prune task will be executed in seconds.
+   * Returns the interval at which the prune task will be executed.
    *
-   * @return  prune period in seconds
+   * @return  prune period
    */
-  long getPrunePeriod();
+  Duration getPrunePeriod();
 }

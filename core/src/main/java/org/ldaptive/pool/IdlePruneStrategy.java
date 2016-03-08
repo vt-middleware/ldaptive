@@ -1,7 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
+import java.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,20 +18,20 @@ public class IdlePruneStrategy implements PruneStrategy
   /** Default number of statistics to store. Value is {@value}. */
   private static final int DEFAULT_STATISTICS_SIZE = 1;
 
-  /** Default prune period in seconds. Value is {@value}. */
-  private static final long DEFAULT_PRUNE_PERIOD = 300;
+  /** Default prune period in seconds. Value is 5 minutes. */
+  private static final Duration DEFAULT_PRUNE_PERIOD = Duration.ofMinutes(5);
 
-  /** Default idle time in seconds. Value is {@value}. */
-  private static final long DEFAULT_IDLE_TIME = 600;
+  /** Default idle time. Value is 10 minutes. */
+  private static final Duration DEFAULT_IDLE_TIME = Duration.ofMinutes(10);
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Prune period in seconds. */
-  private long prunePeriod;
+  /** Prune period. */
+  private Duration prunePeriod;
 
-  /** Idle time in seconds. */
-  private long idleTime;
+  /** Idle time. */
+  private Duration idleTime;
 
 
   /** Creates a new idle prune strategy. */
@@ -46,19 +47,19 @@ public class IdlePruneStrategy implements PruneStrategy
    * @param  period  to execute the prune task
    * @param  idle  time at which a connection should be pruned
    */
-  public IdlePruneStrategy(final long period, final long idle)
+  public IdlePruneStrategy(final Duration period, final Duration idle)
   {
-    prunePeriod = period;
-    idleTime = idle;
+    setPrunePeriod(period);
+    setIdleTime(idle);
   }
 
 
   @Override
   public boolean prune(final PooledConnectionProxy conn)
   {
-    final long timeAvailable = conn.getPooledConnectionStatistics().getLastAvailableState();
+    final Instant timeAvailable = conn.getPooledConnectionStatistics().getLastAvailableState();
     logger.trace("evaluating timestamp {} for connection {}", timeAvailable, conn);
-    return System.currentTimeMillis() - timeAvailable > TimeUnit.SECONDS.toMillis(idleTime);
+    return timeAvailable.plus(idleTime).isBefore(Instant.now());
   }
 
 
@@ -70,7 +71,7 @@ public class IdlePruneStrategy implements PruneStrategy
 
 
   @Override
-  public long getPrunePeriod()
+  public Duration getPrunePeriod()
   {
     return prunePeriod;
   }
@@ -81,8 +82,11 @@ public class IdlePruneStrategy implements PruneStrategy
    *
    * @param  period  to set
    */
-  public void setPrunePeriod(final long period)
+  public void setPrunePeriod(final Duration period)
   {
+    if (period == null || period.isNegative()) {
+      throw new IllegalArgumentException("Prune period cannot be null or negative");
+    }
     prunePeriod = period;
   }
 
@@ -92,7 +96,7 @@ public class IdlePruneStrategy implements PruneStrategy
    *
    * @return  idle time
    */
-  public long getIdleTime()
+  public Duration getIdleTime()
   {
     return idleTime;
   }
@@ -103,8 +107,11 @@ public class IdlePruneStrategy implements PruneStrategy
    *
    * @param  time  that a connection has been idle and should be pruned
    */
-  public void setIdleTime(final long time)
+  public void setIdleTime(final Duration time)
   {
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Idle time cannot be null or negative");
+    }
     idleTime = time;
   }
 
