@@ -201,7 +201,7 @@ public class SearchExecutor extends SearchRequest
     final SearchEntryHandler... handlers)
     throws LdapException
   {
-    Response<SearchResult> response = null;
+    Response<SearchResult> response;
     try (Connection conn = factory.getConnection()) {
       conn.open();
 

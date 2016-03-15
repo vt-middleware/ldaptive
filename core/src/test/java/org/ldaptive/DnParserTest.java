@@ -223,7 +223,6 @@ public class DnParserTest
   public void testSubstringEndIndex()
     throws Exception
   {
-    final String s;
     final String dn = "CN=Jim Smith,UID=jsmith,DC=ldaptive,DC=org";
     try {
       DnParser.substring(dn, -1, 0);

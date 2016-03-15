@@ -83,7 +83,7 @@ public class PropertyValueParserTest
   public void initializeType(final String property, final Class<?> type, final Object initialized)
     throws Exception
   {
-    PropertyValueParser parser = null;
+    PropertyValueParser parser;
     if (type != null) {
       parser = new PropertyValueParser(property, type.getName());
       Assert.assertTrue(PropertyValueParser.isParamsOnlyConfig(property));
