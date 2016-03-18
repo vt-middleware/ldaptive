@@ -84,7 +84,9 @@ public class SpringLdapEntryMapper<T> extends AbstractLdapEntryMapper<T>
     DefaultConversionService.addDefaultConverters(conversionService);
     if (converters != null) {
       for (Converter<?, ?> converter : converters) {
-        conversionService.addConverter(converter);
+        if (converter != null) {
+          conversionService.addConverter(converter);
+        }
       }
     }
     addDefaultConverters(conversionService);
