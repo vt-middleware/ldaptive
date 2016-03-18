@@ -75,9 +75,9 @@ public class TestControl
 
 
   /**
-   * Used by tests to determine if the Apache provider is being tested.
+   * Used by tests to determine if the OpenDJ provider is being tested.
    *
-   * @return  whether the apache provider is being tested
+   * @return  whether the opendj provider is being tested
    */
   public static boolean isOpenDJProvider()
   {
