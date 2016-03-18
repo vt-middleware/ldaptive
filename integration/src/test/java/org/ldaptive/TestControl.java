@@ -75,6 +75,17 @@ public class TestControl
 
 
   /**
+   * Used by tests to determine if the OpenDJ provider is being tested.
+   *
+   * @return  whether the opendj provider is being tested
+   */
+  public static boolean isOpenDJProvider()
+  {
+    return "OPENDJ".equals(providerType);
+  }
+
+
+  /**
    * Obtains the lock before running all tests.
    *
    * @param  ignoreLock  whether to check for the global test lock

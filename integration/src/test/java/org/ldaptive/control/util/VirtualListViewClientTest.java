@@ -90,6 +90,11 @@ public class VirtualListViewClientTest extends AbstractTest
       return;
     }
 
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP does not support this control");
+    }
+
     final Connection conn = TestUtils.createConnection();
     try {
       conn.open();

@@ -633,6 +633,11 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP does not support this control");
+    }
+
     final SortRequestControl src = new SortRequestControl(new SortKey[] {new SortKey("uugid", "caseExactMatch")}, true);
     VirtualListViewRequestControl vlvrc = new VirtualListViewRequestControl(3, 1, 1, true);
     byte[] contextID;
@@ -768,7 +773,7 @@ public class SearchOperationTest extends AbstractTest
   {
     // provider doesn't support this control
     if (TestControl.isApacheProvider()) {
-      return;
+      throw new UnsupportedOperationException("Apache LDAP does not support this control");
     }
 
     boolean addedAttribute = false;
@@ -1294,7 +1299,7 @@ public class SearchOperationTest extends AbstractTest
 
     // provider doesn't support this control
     if (TestControl.isApacheProvider()) {
-      return;
+      throw new UnsupportedOperationException("Apache LDAP does not support this control");
     }
 
     final Connection conn = createLdapConnection(true);
@@ -1347,7 +1352,7 @@ public class SearchOperationTest extends AbstractTest
 
     // provider doesn't support this control
     if (TestControl.isApacheProvider()) {
-      return;
+      throw new UnsupportedOperationException("Apache LDAP does not support this control");
     }
 
     final Connection conn = createLdapConnection(true);

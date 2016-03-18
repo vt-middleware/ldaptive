@@ -952,6 +952,11 @@ public class AuthenticatorTest extends AbstractTest
       return;
     }
 
+    // provider doesn't support this operation
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP does not support this operation");
+    }
+
     final Authenticator auth = createTLSAuthenticator(true);
     auth.setEntryResolver(new WhoAmIEntryResolver());
 
@@ -992,7 +997,7 @@ public class AuthenticatorTest extends AbstractTest
   {
     // provider doesn't support this control
     if (TestControl.isApacheProvider()) {
-      return;
+      throw new UnsupportedOperationException("Apache LDAP does not support this control");
     }
 
     final Authenticator auth = createTLSAuthenticator(true);
