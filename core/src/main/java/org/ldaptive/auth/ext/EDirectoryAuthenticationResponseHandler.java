@@ -71,4 +71,11 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
       }
     }
   }
+
+
+  @Override
+  public String toString()
+  {
+    return String.format("[%s@%d::warningHours=%s]", getClass().getName(), hashCode(), warningHours);
+  }
 }

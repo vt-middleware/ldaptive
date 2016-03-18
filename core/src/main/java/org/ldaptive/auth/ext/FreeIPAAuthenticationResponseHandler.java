@@ -110,4 +110,17 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
       }
     }
   }
+
+
+  @Override
+  public String toString()
+  {
+    return String.format(
+      "[%s@%d::maxPasswordAge=%s, maxLoginFailures=%s, warningHours=%s]",
+      getClass().getName(),
+      hashCode(),
+      maxPasswordAge,
+      maxLoginFailures,
+      warningHours);
+  }
 }
