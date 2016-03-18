@@ -68,8 +68,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>${project.parent.basedir}/src/main/checkstyle</checkstyle.dir>
-    <org.slf4j.version>1.7.14</org.slf4j.version>
-    <org.springframework.version>4.2.4.RELEASE</org.springframework.version>
+    <org.slf4j.version>1.7.19</org.slf4j.version>
+    <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
   </properties>
 
   <modules>
@@ -193,7 +193,7 @@
       <dependency>
         <groupId>org.apache.directory.api</groupId>
         <artifactId>api-all</artifactId>
-        <version>1.0.0-M32</version>
+        <version>1.0.0-M33</version>
       </dependency>
       <dependency>
         <groupId>com.novell.ldap</groupId>
@@ -203,7 +203,7 @@
       <dependency>
         <groupId>org.forgerock.opendj</groupId>
         <artifactId>opendj-ldap-sdk</artifactId>
-        <version>2.6.10</version>
+        <version>2.6.11</version>
       </dependency>
       <dependency>
         <groupId>com.unboundid</groupId>
@@ -275,7 +275,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.4</version>
+          <version>3.5</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -300,7 +300,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.5</version>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -325,7 +325,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>2.4</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
