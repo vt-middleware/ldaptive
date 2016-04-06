@@ -1,46 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:p="http://www.springframework.org/schema/p"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd">
 
-  <bean id="searchExecutor"
-        class="org.ldaptive.concurrent.AggregatePooledSearchExecutor"
-        p:baseDn="${baseDn}">
-    <constructor-arg index="0">
-      <bean class="java.util.concurrent.Executors"
-            factory-method="newCachedThreadPool"/>
-    </constructor-arg>
+  <bean id="conversionService"
+        class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <property name="converters">
+      <set>
+        <bean class="org.ldaptive.beans.spring.convert.StringToDurationConverter"/>
+        <bean class="org.ldaptive.beans.spring.convert.DurationToStringConverter"/>
+      </set>
+    </property>
   </bean>
 
-  <bean id="connectionFactory"
-        class="org.ldaptive.pool.PooledConnectionFactory">
-    <constructor-arg index="0">
-      <bean class="org.ldaptive.pool.BlockingConnectionPool"
-            init-method="initialize"
-            p:blockWaitTime="PT5S">
-        <constructor-arg index="0">
-          <bean class="org.ldaptive.pool.PoolConfig"
-                p:minPoolSize="5"
-                p:maxPoolSize="10"
-                p:validatePeriodically="true"
-          />
-        </constructor-arg>
-        <constructor-arg index="1">
-          <bean class="org.ldaptive.DefaultConnectionFactory">
-            <constructor-arg index="0">
-              <bean class="org.ldaptive.ConnectionConfig"
-                    p:ldapUrl="${ldapUrl}"
-              />
-            </constructor-arg>
-          </bean>
-        </constructor-arg>
-        <property name="validator">
-          <bean class="org.ldaptive.pool.SearchValidator"/>
-        </property>
-      </bean>
-    </constructor-arg>
-  </bean>
+  <ldaptive:aggregate-pooled-search-executor baseDn="${baseDn}" />
+
+  <ldaptive:pooled-connection-factory
+    ldapUrl="${ldapUrl}"
+    blockWaitTime="PT5S"
+    minPoolSize="5"
+    maxPoolSize="10"
+    validatePeriodically="true"
+  />
 
   <!-- SEARCH CONFIG -->
 

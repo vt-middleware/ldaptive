@@ -17,6 +17,10 @@
   <xsd:element name="connection-pool" type="connectionPoolType"/>
   <xsd:element name="connection-config" type="connectionConfigType"/>
   <xsd:element name="search-executor" type="searchExecutorType"/>
+  <xsd:element name="parallel-search-executor" type="searchExecutorType"/>
+  <xsd:element name="parallel-pooled-search-executor" type="searchExecutorType"/>
+  <xsd:element name="aggregate-search-executor" type="searchExecutorType"/>
+  <xsd:element name="aggregate-pooled-search-executor" type="searchExecutorType"/>
 
   <!-- Authenticator configuration -->
   <xsd:complexType name="anonymousSearchAuthenticatorType">
