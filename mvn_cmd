@@ -24,12 +24,13 @@ case "$1" in
     run_mvn distribution,apache,jldap,opendj,unboundid,ldapi install
     ;;
   deploy)
-    LOCAL_REPO=${1}
+    LOCAL_REPO=${2}
     if [ -z "${LOCAL_REPO}" ]; then
       echo "USAGE: `basename $0` deploy <repo-directory>"
       exit 1
     fi
-    run_mvn apache,jldap,opendj,unboundid,ldapi clean deploy "altDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
+    run_mvn apache,jldap,opendj,unboundid,ldapi clean
+    run_mvn apache,jldap,opendj,unboundid,ldapi deploy "altDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
     ;;
   bundle-create)
     run_mvn distribution,apache,jldap,opendj,unboundid,ldapi repository:bundle-create sign=true
