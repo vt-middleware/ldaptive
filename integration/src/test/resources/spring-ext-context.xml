@@ -122,11 +122,11 @@
     baseDn="${ldap.baseDn}"
     searchFilter="(mail=*)"
     returnAttributes="cn,givenName,sn"
-    searchScope="ONELEVEL"
+    searchScope="${ldap.searchScope}"
     timeLimit="${ldap.timeLimit}"
     sizeLimit="${ldap.sizeLimit}"
     binaryAttributes="jpegPhoto,userCertificate"
-    sortBehavior="ORDERED"
+    sortBehavior="${ldap.sortBehavior}"
   />
 
   <ldaptive:connection-config
