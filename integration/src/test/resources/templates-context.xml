@@ -20,14 +20,13 @@
 
   <ldaptive:pooled-connection-factory
     ldapUrl="${ldapTestHost}"
+    useStartTLS="false"
     bindDn="${ldapBindDn}"
     bindCredential="${ldapBindCredential}"
     blockWaitTime="PT5S"
     minPoolSize="3"
     maxPoolSize="10"
-    validatePeriodically="true"
-    trustStore="classpath:/ldaptive.truststore"
-    trustStoreType="BKS" />
+    validatePeriodically="true" />
 
   <bean id="oneTermSearch" class="org.ldaptive.templates.SearchTemplates">
     <constructor-arg>

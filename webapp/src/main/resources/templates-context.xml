@@ -20,6 +20,7 @@
 
   <ldaptive:pooled-connection-factory
     ldapUrl="${ldapUrl}"
+    useStartTLS="false"
     blockWaitTime="PT5S"
     minPoolSize="5"
     maxPoolSize="10"
