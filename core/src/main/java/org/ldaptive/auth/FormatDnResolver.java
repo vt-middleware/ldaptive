@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class FormatDnResolver implements DnResolver
+public class FormatDnResolver implements DnResolver, DnResolverEx
 {
 
   /** log for this class. */
@@ -123,7 +123,7 @@ public class FormatDnResolver implements DnResolver
 
 
   /**
-   * Returns a DN for the supplied user by applying it to a format string.
+   * See {@link #resolve(User)}.
    *
    * @param  user  to format dn for
    *
@@ -135,9 +135,26 @@ public class FormatDnResolver implements DnResolver
   public String resolve(final String user)
     throws LdapException
   {
+    return resolve(new User(user));
+  }
+
+
+  /**
+   * Returns a DN for the supplied user by applying it to a format string.
+   *
+   * @param  user  to format dn for
+   *
+   * @return  user DN
+   *
+   * @throws  LdapException  never
+   */
+  @Override
+  public String resolve(final User user)
+    throws LdapException
+  {
     String dn = null;
-    if (user != null && !"".equals(user)) {
-      final String escapedUser = escapeUser ? LdapAttribute.escapeValue(user) : user;
+    if (user != null && user.getIdentifier() != null && !"".equals(user.getIdentifier())) {
+      final String escapedUser = escapeUser ? LdapAttribute.escapeValue(user.getIdentifier()) : user.getIdentifier();
       logger.debug("Formatting DN for {} with {}", escapedUser, formatString);
       if (formatArgs != null && formatArgs.length > 0) {
         final Object[] args = new Object[formatArgs.length + 1];
