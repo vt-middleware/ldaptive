@@ -167,7 +167,7 @@ public class Authenticator
 
 
   /**
-   * This will attempt to find the DN for the supplied user. {@link DnResolver#resolve(Object)} is invoked to perform
+   * This will attempt to find the DN for the supplied user. {@link DnResolver#resolve(String)} is invoked to perform
    * this operation.
    *
    * @param  user  to find DN for
@@ -176,10 +176,30 @@ public class Authenticator
    *
    * @throws  LdapException  if an LDAP error occurs during resolution
    */
-  public String resolveDn(final Object user)
+  public String resolveDn(final String user)
     throws LdapException
   {
     return dnResolver.resolve(user);
+  }
+
+
+  /**
+   * This will attempt to find the DN for the supplied user. {@link DnResolverEx#resolve(User)} is invoked to
+   * perform this operation.
+   *
+   * @param  user  to find DN for
+   *
+   * @return  user DN
+   *
+   * @throws  LdapException  if an LDAP error occurs during resolution
+   */
+  public String resolveDn(final User user)
+    throws LdapException
+  {
+    if (dnResolver instanceof DnResolverEx) {
+      return ((DnResolverEx) dnResolver).resolve(user);
+    }
+    return dnResolver.resolve(user.getIdentifier());
   }
 
 
@@ -195,6 +215,9 @@ public class Authenticator
   public AuthenticationResponse authenticate(final AuthenticationRequest request)
     throws LdapException
   {
+    if (dnResolver instanceof DnResolverEx) {
+      return authenticate(resolveDn(request.getUserEx()), request);
+    }
     return authenticate(resolveDn(request.getUser()), request);
   }
 

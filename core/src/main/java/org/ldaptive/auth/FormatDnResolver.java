@@ -132,12 +132,12 @@ public class FormatDnResolver implements DnResolver
    * @throws  LdapException  never
    */
   @Override
-  public String resolve(final Object user)
+  public String resolve(final String user)
     throws LdapException
   {
     String dn = null;
-    if (user != null && !"".equals(user.toString())) {
-      final String escapedUser = escapeUser ? LdapAttribute.escapeValue(user.toString()) : user.toString();
+    if (user != null && !"".equals(user)) {
+      final String escapedUser = escapeUser ? LdapAttribute.escapeValue(user) : user;
       logger.debug("Formatting DN for {} with {}", escapedUser, formatString);
       if (formatArgs != null && formatArgs.length > 0) {
         final Object[] args = new Object[formatArgs.length + 1];

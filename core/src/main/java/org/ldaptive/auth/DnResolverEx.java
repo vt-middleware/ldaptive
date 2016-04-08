@@ -4,11 +4,11 @@ package org.ldaptive.auth;
 import org.ldaptive.LdapException;
 
 /**
- * Provides an interface for finding LDAP DNs with a user identifier.
+ * Transitional interface to support resolving arbitrary user types.
  *
  * @author  Middleware Services
  */
-public interface DnResolver
+public interface DnResolverEx
 {
 
 
@@ -21,6 +21,6 @@ public interface DnResolver
    *
    * @throws  LdapException  if an LDAP error occurs
    */
-  String resolve(String user)
+  String resolve(User user)
     throws LdapException;
 }

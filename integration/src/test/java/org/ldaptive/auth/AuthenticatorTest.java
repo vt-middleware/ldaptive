@@ -250,7 +250,7 @@ public class AuthenticatorTest extends AbstractTest
     final Authenticator auth = createTLSAuthenticator(true);
 
     // test input
-    AssertJUnit.assertNull(auth.resolveDn(null));
+    AssertJUnit.assertNull(auth.resolveDn((String) null));
     AssertJUnit.assertNull(auth.resolveDn(""));
 
     final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
@@ -317,7 +317,7 @@ public class AuthenticatorTest extends AbstractTest
       "(|(uid=$context.principal)(mail=$context.principal))");
     velocityResolver.setBaseDn(resolver.getBaseDn());
     auth.setDnResolver(velocityResolver);
-    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(context));
+    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(new User(null, context)));
   }
 
 
@@ -349,7 +349,7 @@ public class AuthenticatorTest extends AbstractTest
     auth.setDnResolver(resolver);
 
     // test input
-    AssertJUnit.assertNull(auth.resolveDn(null));
+    AssertJUnit.assertNull(auth.resolveDn((String) null));
     AssertJUnit.assertNull(auth.resolveDn(""));
 
     // test duplicate DNs
@@ -701,6 +701,67 @@ public class AuthenticatorTest extends AbstractTest
   /**
    * @param  user  to authenticate.
    * @param  credential  to authenticate with.
+   * @param  filter  to authorize with.
+   * @param  returnAttrs  to search for.
+   * @param  ldifFile  to expect from the search.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "authenticateUser",
+      "authenticateCredential",
+      "authenticateFilter",
+      "authenticateReturnAttrs",
+      "authenticateResults"
+    })
+  @Test(groups = {"auth"})
+  public void authenticateVelocity(
+      final String user,
+      final String credential,
+      final String filter,
+      final String returnAttrs,
+      final String ldifFile)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(true);
+    final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
+
+    final VelocityEngine engine = new VelocityEngine();
+    engine.addProperty("string.resource.loader.class",
+      "org.apache.velocity.runtime.resource.loader.StringResourceLoader");
+    engine.addProperty("resource.loader", "string");
+    engine.addProperty("runtime.log.logsystem.class", "org.apache.velocity.runtime.log.NullLogChute");
+    engine.init();
+
+    final VelocityContext context = new VelocityContext();
+    context.put("context", new UserContext(user));
+    final TemplateSearchDnResolver velocityResolver = new TemplateSearchDnResolver(
+      resolver.getConnectionFactory(),
+      engine,
+      "(|(uid=$context.principal)(mail=$context.principal))");
+    velocityResolver.setBaseDn(resolver.getBaseDn());
+    auth.setDnResolver(velocityResolver);
+
+    // test plain auth
+    AuthenticationResponse response = auth.authenticate(
+      new AuthenticationRequest(new User(null, context), new Credential(INVALID_PASSWD)));
+    AssertJUnit.assertFalse(response.getResult());
+
+    response = auth.authenticate(new AuthenticationRequest(new User(null, context), new Credential(credential)));
+    AssertJUnit.assertTrue(response.getResult());
+
+    // test auth with return attributes
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    response = auth.authenticate(
+      new AuthenticationRequest(new User(null, context), new Credential(credential), returnAttrs.split("\\|")));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
    * @param  returnAttrs  to search for.
    * @param  ldifFile  to expect from the search.
    *
@@ -827,7 +888,8 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertNull(response.getResultCode());
     AssertJUnit.assertNotNull(response.getMessage());
 
-    response = auth.authenticate(new AuthenticationRequest(null, new Credential(credential), returnAttrs.split("\\|")));
+    response = auth.authenticate(
+      new AuthenticationRequest((String) null, new Credential(credential), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(AuthenticationResultCode.DN_RESOLUTION_FAILURE, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
     AssertJUnit.assertNotNull(response.getMessage());
