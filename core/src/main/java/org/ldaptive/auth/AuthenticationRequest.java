@@ -108,7 +108,7 @@ public class AuthenticationRequest
   /**
    * Sets the user.
    *
-   * @param  id  of the user
+   * @param  id  of the user to authenticate
    */
   public void setUser(final String id)
   {
@@ -119,7 +119,7 @@ public class AuthenticationRequest
   /**
    * Sets the user.
    *
-   * @param  u  of the user
+   * @param  u  user to authenticate
    */
   public void setUserEx(final User u)
   {
