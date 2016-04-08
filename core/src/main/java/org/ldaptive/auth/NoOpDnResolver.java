@@ -8,7 +8,7 @@ import org.ldaptive.LdapException;
  *
  * @author  Middleware Services
  */
-public class NoOpDnResolver implements DnResolver
+public class NoOpDnResolver implements DnResolver, DnResolverEx
 {
 
 
@@ -22,10 +22,27 @@ public class NoOpDnResolver implements DnResolver
    * @throws  LdapException  never
    */
   @Override
-  public String resolve(final Object user)
+  public String resolve(final String user)
     throws LdapException
   {
-    return user != null ? user.toString() : null;
+    return resolve(new User(user));
+  }
+
+
+  /**
+   * Returns the user as the DN.
+   *
+   * @param  user  to set as DN
+   *
+   * @return  user as DN
+   *
+   * @throws  LdapException  never
+   */
+  @Override
+  public String resolve(final User user)
+    throws LdapException
+  {
+    return user != null ? user.getIdentifier() : null;
   }
 
 

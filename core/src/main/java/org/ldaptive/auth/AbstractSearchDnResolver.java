@@ -20,7 +20,8 @@ import org.ldaptive.referral.ReferralHandler;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFactory implements DnResolver
+public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFactory
+  implements DnResolver, DnResolverEx
 {
 
   /** DN to search. */
@@ -127,7 +128,7 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
 
   /**
    * Sets whether DN resolution should fail if multiple DNs are found. If false an exception will be thrown if {@link
-   * #resolve(Object)} finds more than one DN matching it's filter. Otherwise the first DN found is returned.
+   * #resolve(User)} finds more than one DN matching it's filter. Otherwise the first DN found is returned.
    *
    * @param  b  whether multiple DNs are allowed
    */
@@ -209,6 +210,23 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
 
 
   /**
+   * See {@link #resolve(User)}.
+   *
+   * @param  user  to find DN for
+   *
+   * @return  user DN
+   *
+   * @throws  LdapException  if the entry resolution fails
+   */
+  @Override
+  public String resolve(final String user)
+    throws LdapException
+  {
+    return resolve(new User(user));
+  }
+
+
+  /**
    * Attempts to find the DN for the supplied user. {@link #getUserFilter()} is used to look up the DN. The user is
    * provided as the 'user' variable filter parameter. If more than one entry matches the search, the result is
    * controlled by {@link #setAllowMultipleDns(boolean)}.
@@ -220,13 +238,13 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
    * @throws  LdapException  if the entry resolution fails
    */
   @Override
-  public String resolve(final Object user)
+  public String resolve(final User user)
     throws LdapException
   {
     logger.debug("resolve user={}", user);
 
     String dn = null;
-    if (user != null && !"".equals(user.toString())) {
+    if (user != null) {
       // create the search filter
       final SearchFilter filter = createSearchFilter(user);
 
@@ -250,7 +268,7 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
         logger.error("DN search filter not found, no search performed");
       }
     } else {
-      logger.warn("DN resolution cannot occur, user input was empty or null");
+      logger.warn("DN resolution cannot occur, user input is null");
     }
     logger.debug("resolved dn={} for user={}", dn, user);
     return dn;
@@ -271,6 +289,19 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
 
 
   /**
+   * See {@link #createSearchFilter(User)}.
+   *
+   * @param  user  identifier
+   *
+   * @return  search filter
+   */
+  protected SearchFilter createSearchFilter(final String user)
+  {
+    return createSearchFilter(new User(user));
+  }
+
+
+  /**
    * Returns a search filter using {@link #userFilter} and {@link #userFilterParameters}. The user parameter is injected
    * as a named parameter of 'user'.
    *
@@ -278,19 +309,25 @@ public abstract class AbstractSearchDnResolver extends AbstractSearchOperationFa
    *
    * @return  search filter
    */
-  protected SearchFilter createSearchFilter(final Object user)
+  protected SearchFilter createSearchFilter(final User user)
   {
     final SearchFilter filter = new SearchFilter();
-    if (userFilter != null) {
-      logger.debug("searching for DN using userFilter");
-      filter.setFilter(userFilter);
-      if (userFilterParameters != null) {
-        filter.setParameters(userFilterParameters);
+    if (user != null && user.getIdentifier() != null && !"".equals(user.getIdentifier())) {
+      if (userFilter != null) {
+        logger.debug("searching for DN using userFilter");
+        filter.setFilter(userFilter);
+        if (userFilterParameters != null) {
+          filter.setParameters(userFilterParameters);
+        }
+        // assign user as a named parameter
+        filter.setParameter("user", user.getIdentifier());
+        // assign context as a named parameter
+        filter.setParameter("context", user.getContext());
+      } else {
+        logger.error("Invalid userFilter, cannot be null or empty.");
       }
-      // assign user as a named parameter
-      filter.setParameter("user", user);
     } else {
-      logger.error("Invalid userFilter, cannot be null or empty.");
+      logger.warn("Search filter cannot be created, user input was empty or null");
     }
     return filter;
   }

@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class AggregateDnResolver implements DnResolver
+public class AggregateDnResolver implements DnResolver, DnResolverEx
 {
 
   /** Logger for this class. */
@@ -104,7 +104,7 @@ public class AggregateDnResolver implements DnResolver
 
   /**
    * Sets whether DN resolution should fail if multiple DNs are found If false an exception will be thrown if {@link
-   * #resolve(Object)} finds that more than one DN resolver returns a DN. Otherwise the first DN found is returned.
+   * #resolve(User)} finds that more than one DN resolver returns a DN. Otherwise the first DN found is returned.
    *
    * @param  b  whether multiple DNs are allowed
    */
@@ -116,7 +116,15 @@ public class AggregateDnResolver implements DnResolver
 
 
   @Override
-  public String resolve(final Object user)
+  public String resolve(final String user)
+    throws LdapException
+  {
+    return resolve(new User(user));
+  }
+
+
+  @Override
+  public String resolve(final User user)
     throws LdapException
   {
     final CompletionService<String> cs = new ExecutorCompletionService<>(service);
@@ -128,7 +136,12 @@ public class AggregateDnResolver implements DnResolver
           public String call()
             throws Exception
           {
-            final String dn = entry.getValue().resolve(user);
+            String dn;
+            if (entry.getValue() instanceof DnResolverEx) {
+              dn = ((DnResolverEx) entry.getValue()).resolve(user);
+            } else {
+              dn = entry.getValue().resolve(user.getIdentifier());
+            }
             if (dn != null && !dn.isEmpty()) {
               return String.format("%s:%s", entry.getKey(), dn);
             }

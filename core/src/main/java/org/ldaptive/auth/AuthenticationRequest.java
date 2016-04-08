@@ -14,7 +14,7 @@ public class AuthenticationRequest
 {
 
   /** User identifier. */
-  private Object user;
+  private User user;
 
   /** User credential. */
   private Credential credential;
@@ -33,9 +33,22 @@ public class AuthenticationRequest
    * @param  id  that identifies the user
    * @param  c  credential to authenticate the user
    */
-  public AuthenticationRequest(final Object id, final Credential c)
+  public AuthenticationRequest(final String id, final Credential c)
   {
     setUser(id);
+    setCredential(c);
+  }
+
+
+  /**
+   * Creates a new authentication request.
+   *
+   * @param  u  that identifies the user
+   * @param  c  credential to authenticate the user
+   */
+  public AuthenticationRequest(final User u, final Credential c)
+  {
+    setUserEx(u);
     setCredential(c);
   }
 
@@ -47,9 +60,24 @@ public class AuthenticationRequest
    * @param  c  credential to authenticate the user
    * @param  attrs  attributes to return
    */
-  public AuthenticationRequest(final Object id, final Credential c, final String... attrs)
+  public AuthenticationRequest(final String id, final Credential c, final String... attrs)
   {
     setUser(id);
+    setCredential(c);
+    setReturnAttributes(attrs);
+  }
+
+
+  /**
+   * Creates a new authentication request.
+   *
+   * @param  u  that identifies the user
+   * @param  c  credential to authenticate the user
+   * @param  attrs  attributes to return
+   */
+  public AuthenticationRequest(final User u, final Credential c, final String... attrs)
+  {
+    setUserEx(u);
     setCredential(c);
     setReturnAttributes(attrs);
   }
@@ -60,7 +88,18 @@ public class AuthenticationRequest
    *
    * @return  user identifier
    */
-  public Object getUser()
+  public String getUser()
+  {
+    return user != null ? user.getIdentifier() : null;
+  }
+
+
+  /**
+   * Returns the user.
+   *
+   * @return  user identifier
+   */
+  public User getUserEx()
   {
     return user;
   }
@@ -69,11 +108,22 @@ public class AuthenticationRequest
   /**
    * Sets the user.
    *
-   * @param  id  of the user
+   * @param  id  of the user to authenticate
    */
-  public void setUser(final Object id)
+  public void setUser(final String id)
   {
-    user = id;
+    user = new User(id);
+  }
+
+
+  /**
+   * Sets the user.
+   *
+   * @param  u  user to authenticate
+   */
+  public void setUserEx(final User u)
+  {
+    user = u;
   }
 
 
