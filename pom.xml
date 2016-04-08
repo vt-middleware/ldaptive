@@ -70,6 +70,7 @@
     <checkstyle.dir>${project.parent.basedir}/src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>1.7.19</org.slf4j.version>
     <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
+    <org.ldaptive.oldVersion>1.1.0</org.ldaptive.oldVersion>
   </properties>
 
   <modules>
@@ -342,6 +343,11 @@
           <artifactId>maven-assembly-plugin</artifactId>
           <version>2.6</version>
         </plugin>
+        <plugin>
+          <groupId>com.github.siom79.japicmp</groupId>
+          <artifactId>japicmp-maven-plugin</artifactId>
+          <version>0.7.2</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -450,6 +456,53 @@
             <phase>process-classes</phase>
             <goals>
               <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.siom79.japicmp</groupId>
+        <artifactId>japicmp-maven-plugin</artifactId>
+        <configuration>
+          <oldVersion>
+            <dependency>
+              <groupId>${project.groupId}</groupId>
+              <artifactId>${project.artifactId}</artifactId>
+              <version>${org.ldaptive.oldVersion}</version>
+              <type>jar</type>
+            </dependency>
+          </oldVersion>
+          <newVersion>
+            <file>
+              <path>${project.build.directory}/${project.artifactId}-${project.version}.${project.packaging}</path>
+            </file>
+          </newVersion>
+          <parameter>
+            <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
+            <breakBuildOnBinaryIncompatibleModifications>true</breakBuildOnBinaryIncompatibleModifications>
+            <packagingSupporteds>
+              <packagingSupported>jar</packagingSupported>
+            </packagingSupporteds>
+          </parameter>
+          <dependencies>
+            <!-- include optional dependencies -->
+            <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-beans</artifactId>
+              <version>${org.springframework.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>spring-expression</artifactId>
+              <version>${org.springframework.version}</version>
+            </dependency>
+          </dependencies>
+        </configuration>
+        <executions>
+          <execution>
+            <phase>verify</phase>
+            <goals>
+              <goal>cmp</goal>
             </goals>
           </execution>
         </executions>
