@@ -20,6 +20,9 @@ case "$1" in
   package)
     run_mvn distribution,apache,jldap,opendj,unboundid,ldapi package
     ;;
+  verify)
+    run_mvn distribution,apache,jldap,opendj,unboundid,ldapi verify
+    ;;
   install)
     run_mvn distribution,apache,jldap,opendj,unboundid,ldapi install
     ;;
@@ -38,5 +41,5 @@ case "$1" in
     if [ -n "$1" ]; then
       echo "Invalid command"
     fi
-    echo "USAGE: `basename $0` clean|package|install|deploy|bundle-create"
+    echo "USAGE: `basename $0` clean|package|verify|install|deploy|bundle-create"
 esac
