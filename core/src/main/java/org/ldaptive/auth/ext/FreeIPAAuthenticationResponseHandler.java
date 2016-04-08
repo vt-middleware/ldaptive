@@ -43,16 +43,16 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
   /**
    * Creates a new freeipa authentication response handler.
    *
-   * @param  hours  length of time before expiration that should produce a warning
+   * @param  warning  length of time before expiration that should produce a warning
    * @param  passwordAge  length of time in days that a password is valid
    * @param  loginFailures  number of login failures to allow
    */
-  public FreeIPAAuthenticationResponseHandler(final int hours, final int passwordAge, final int loginFailures)
+  public FreeIPAAuthenticationResponseHandler(final int warning, final int passwordAge, final int loginFailures)
   {
-    if (hours < 0) {
-      throw new IllegalArgumentException("Hours must be >= 0");
+    if (warning < 0) {
+      throw new IllegalArgumentException("Warning hours must be >= 0");
     }
-    warningHours = hours;
+    warningHours = warning;
     if (passwordAge < 0) {
       throw new IllegalArgumentException("Password age must be >= 0");
     }

@@ -29,14 +29,14 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
   /**
    * Creates a new edirectory authentication response handler.
    *
-   * @param  hours  length of time before expiration that should produce a warning
+   * @param  warning  length of time before expiration that should produce a warning
    */
-  public EDirectoryAuthenticationResponseHandler(final int hours)
+  public EDirectoryAuthenticationResponseHandler(final int warning)
   {
-    if (hours <= 0) {
-      throw new IllegalArgumentException("Hours must be > 0");
+    if (warning <= 0) {
+      throw new IllegalArgumentException("Warning hours must be > 0");
     }
-    warningHours = hours;
+    warningHours = warning;
   }
 
 

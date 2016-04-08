@@ -47,29 +47,29 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
   /**
    * Creates a new active directory authentication response handler.
    *
-   * @param  hours  length of time before expiration that should produce a warning
+   * @param  warning  length of time before expiration that should produce a warning
    */
-  public ActiveDirectoryAuthenticationResponseHandler(final int hours)
+  public ActiveDirectoryAuthenticationResponseHandler(final int warning)
   {
-    if (hours <= 0) {
-      throw new IllegalArgumentException("Hours must be > 0");
+    if (warning <= 0) {
+      throw new IllegalArgumentException("Warning hours must be > 0");
     }
-    warningHours = hours;
+    warningHours = warning;
   }
 
 
   /**
    * Creates a new active directory authentication response handler.
    *
-   * @param  hours  length of time before expiration that should produce a warning
+   * @param  warning  length of time before expiration that should produce a warning
    * @param  passwordAge  length of time in milliseconds that a password is valid
    */
-  public ActiveDirectoryAuthenticationResponseHandler(final int hours, final long passwordAge)
+  public ActiveDirectoryAuthenticationResponseHandler(final int warning, final long passwordAge)
   {
-    if (hours <= 0) {
-      throw new IllegalArgumentException("Hours must be > 0");
+    if (warning <= 0) {
+      throw new IllegalArgumentException("Warning hours must be > 0");
     }
-    warningHours = hours;
+    warningHours = warning;
     if (passwordAge < 0) {
       throw new IllegalArgumentException("Password age must be >= 0");
     }
