@@ -8,6 +8,7 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchExecutor;
+import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.SortBehavior;
 import org.ldaptive.TestControl;
@@ -22,6 +23,10 @@ import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
+import org.ldaptive.concurrent.AggregatePooledSearchExecutor;
+import org.ldaptive.concurrent.AggregateSearchExecutor;
+import org.ldaptive.concurrent.ParallelPooledSearchExecutor;
+import org.ldaptive.concurrent.ParallelSearchExecutor;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
@@ -285,7 +290,73 @@ public class NamespaceHandlerTest
   {
     final SearchExecutor executor = context.getBean("search-executor", SearchExecutor.class);
     AssertJUnit.assertNotNull(executor);
-    testSearchExecutor(executor);
+    testSearchRequest(executor);
+  }
+
+
+  /**
+   * Test parallel search executor.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"beans-spring"})
+  public void testParallelSearchExecutor()
+    throws Exception
+  {
+    final ParallelSearchExecutor executor = context.getBean("parallel-search-executor", ParallelSearchExecutor.class);
+    AssertJUnit.assertNotNull(executor);
+    testSearchRequest(executor);
+  }
+
+
+  /**
+   * Test parallel pooled search executor.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"beans-spring"})
+  public void testParallelPooledSearchExecutor()
+    throws Exception
+  {
+    final ParallelPooledSearchExecutor executor = context.getBean(
+      "parallel-pooled-search-executor",
+      ParallelPooledSearchExecutor.class);
+    AssertJUnit.assertNotNull(executor);
+    testSearchRequest(executor);
+  }
+
+
+  /**
+   * Test aggregate search executor.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"beans-spring"})
+  public void testAggregateSearchExecutor()
+    throws Exception
+  {
+    final AggregateSearchExecutor executor = context.getBean(
+      "aggregate-search-executor",
+      AggregateSearchExecutor.class);
+    AssertJUnit.assertNotNull(executor);
+    testSearchRequest(executor);
+  }
+
+
+  /**
+   * Test aggregate pooled search executor.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"beans-spring"})
+  public void testAggregatePooledSearchExecutor()
+    throws Exception
+  {
+    final AggregatePooledSearchExecutor executor = context.getBean(
+      "aggregate-pooled-search-executor",
+      AggregatePooledSearchExecutor.class);
+    AssertJUnit.assertNotNull(executor);
+    testSearchRequest(executor);
   }
 
 
@@ -403,20 +474,20 @@ public class NamespaceHandlerTest
 
 
   /**
-   * Runs asserts against the search executor.
+   * Runs asserts against the search request.
    *
-   * @param  executor  to test
+   * @param  request  to test
    */
-  private void testSearchExecutor(final SearchExecutor executor)
+  private void testSearchRequest(final SearchRequest request)
   {
-    AssertJUnit.assertNotNull(executor.getBaseDn());
-    AssertJUnit.assertTrue(executor.getBaseDn().length() > 0);
-    AssertJUnit.assertNotNull(executor.getSearchFilter());
-    AssertJUnit.assertTrue(executor.getReturnAttributes().length > 0);
-    AssertJUnit.assertEquals(SearchScope.ONELEVEL, executor.getSearchScope());
-    AssertJUnit.assertEquals(Duration.ofSeconds(5), executor.getTimeLimit());
-    AssertJUnit.assertEquals(10, executor.getSizeLimit());
-    AssertJUnit.assertTrue(executor.getBinaryAttributes().length > 0);
-    AssertJUnit.assertEquals(SortBehavior.ORDERED, executor.getSortBehavior());
+    AssertJUnit.assertNotNull(request.getBaseDn());
+    AssertJUnit.assertTrue(request.getBaseDn().length() > 0);
+    AssertJUnit.assertNotNull(request.getSearchFilter());
+    AssertJUnit.assertTrue(request.getReturnAttributes().length > 0);
+    AssertJUnit.assertEquals(SearchScope.ONELEVEL, request.getSearchScope());
+    AssertJUnit.assertEquals(Duration.ofSeconds(5), request.getTimeLimit());
+    AssertJUnit.assertEquals(10, request.getSizeLimit());
+    AssertJUnit.assertTrue(request.getBinaryAttributes().length > 0);
+    AssertJUnit.assertEquals(SortBehavior.ORDERED, request.getSortBehavior());
   }
 }

@@ -129,6 +129,50 @@
     sortBehavior="${ldap.sortBehavior}"
   />
 
+  <ldaptive:parallel-search-executor
+    baseDn="${ldap.baseDn}"
+    searchFilter="(mail=*)"
+    returnAttributes="cn,givenName,sn"
+    searchScope="${ldap.searchScope}"
+    timeLimit="${ldap.timeLimit}"
+    sizeLimit="${ldap.sizeLimit}"
+    binaryAttributes="jpegPhoto,userCertificate"
+    sortBehavior="${ldap.sortBehavior}"
+  />
+
+  <ldaptive:parallel-pooled-search-executor
+    baseDn="${ldap.baseDn}"
+    searchFilter="(mail=*)"
+    returnAttributes="cn,givenName,sn"
+    searchScope="${ldap.searchScope}"
+    timeLimit="${ldap.timeLimit}"
+    sizeLimit="${ldap.sizeLimit}"
+    binaryAttributes="jpegPhoto,userCertificate"
+    sortBehavior="${ldap.sortBehavior}"
+  />
+
+  <ldaptive:aggregate-search-executor
+    baseDn="${ldap.baseDn}"
+    searchFilter="(mail=*)"
+    returnAttributes="cn,givenName,sn"
+    searchScope="${ldap.searchScope}"
+    timeLimit="${ldap.timeLimit}"
+    sizeLimit="${ldap.sizeLimit}"
+    binaryAttributes="jpegPhoto,userCertificate"
+    sortBehavior="${ldap.sortBehavior}"
+  />
+
+  <ldaptive:aggregate-pooled-search-executor
+    baseDn="${ldap.baseDn}"
+    searchFilter="(mail=*)"
+    returnAttributes="cn,givenName,sn"
+    searchScope="${ldap.searchScope}"
+    timeLimit="${ldap.timeLimit}"
+    sizeLimit="${ldap.sizeLimit}"
+    binaryAttributes="jpegPhoto,userCertificate"
+    sortBehavior="${ldap.sortBehavior}"
+  />
+
   <ldaptive:connection-config
     ldapUrl="${ldap.url}"
     connectTimeout="PT3S"
