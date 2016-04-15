@@ -229,9 +229,16 @@
     <xsd:attribute name="useSSL" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="useStartTLS" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="trustCertificates" type="xsd:string" use="optional"/>
+    <xsd:attribute name="authenticationCertificate" type="xsd:string" use="optional"/>
+    <xsd:attribute name="authenticationKey" type="xsd:string" use="optional"/>
     <xsd:attribute name="trustStore" type="xsd:string" use="optional"/>
     <xsd:attribute name="trustStorePassword" type="xsd:string" use="optional" default="changeit"/>
     <xsd:attribute name="trustStoreType" type="xsd:string" use="optional" default="JKS"/>
+    <xsd:attribute name="trustStoreAliases" type="xsd:string" use="optional"/>
+    <xsd:attribute name="keyStore" type="xsd:string" use="optional"/>
+    <xsd:attribute name="keyStorePassword" type="xsd:string" use="optional" default="changeit"/>
+    <xsd:attribute name="keyStoreType" type="xsd:string" use="optional" default="JKS"/>
+    <xsd:attribute name="keyStoreAliases" type="xsd:string" use="optional"/>
   </xsd:attributeGroup>
 
   <xsd:simpleType name="saslMechanismType">

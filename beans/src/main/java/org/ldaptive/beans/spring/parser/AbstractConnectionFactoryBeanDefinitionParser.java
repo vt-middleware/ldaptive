@@ -18,7 +18,7 @@ public abstract class AbstractConnectionFactoryBeanDefinitionParser extends Abst
    *
    * @param  element  containing configuration
    *
-   * @return  provider bean definition
+   * @return  provider bean definition builder
    */
   protected BeanDefinitionBuilder parseProvider(final Element element)
   {

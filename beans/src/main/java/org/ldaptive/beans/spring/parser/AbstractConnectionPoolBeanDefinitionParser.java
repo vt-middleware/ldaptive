@@ -85,7 +85,7 @@ public abstract class AbstractConnectionPoolBeanDefinitionParser extends Abstrac
    * @param  builder  bean definition builder to set properties on, may be null
    * @param  element  containing configuration
    *
-   * @return  pool config bean definition
+   * @return  pool config bean definition builder
    */
   protected BeanDefinitionBuilder parsePoolConfig(final BeanDefinitionBuilder builder, final Element element)
   {

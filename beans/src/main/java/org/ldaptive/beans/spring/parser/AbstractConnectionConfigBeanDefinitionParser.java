@@ -26,7 +26,7 @@ public abstract class AbstractConnectionConfigBeanDefinitionParser extends Abstr
    * @param  element  containing configuration
    * @param  includeConnectionInitializer  whether to include a connection initializer
    *
-   * @return  connection config bean definition
+   * @return  connection config bean definition builder
    */
   protected BeanDefinitionBuilder parseConnectionConfig(
     final BeanDefinitionBuilder builder,
@@ -46,21 +46,13 @@ public abstract class AbstractConnectionConfigBeanDefinitionParser extends Abstr
     connectTimeout.addConstructorArgValue(element.getAttribute("connectTimeout"));
     connectionConfig.addPropertyValue("connectTimeout", connectTimeout.getBeanDefinition());
 
-    if (element.hasAttribute("trustCertificates")) {
-      final BeanDefinitionBuilder credentialConfig = BeanDefinitionBuilder.genericBeanDefinition(
-        X509CredentialConfig.class);
-      credentialConfig.addPropertyValue("trustCertificates", element.getAttribute("trustCertificates"));
+    if (element.hasAttribute("trustCertificates") || element.hasAttribute("authenticationCertificate")) {
       final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
-      sslConfig.addPropertyValue("credentialConfig", credentialConfig.getBeanDefinition());
+      sslConfig.addPropertyValue("credentialConfig", parseX509CredentialConfig(null, element).getBeanDefinition());
       connectionConfig.addPropertyValue("sslConfig", sslConfig.getBeanDefinition());
-    } else if (element.hasAttribute("trustStore")) {
-      final BeanDefinitionBuilder credentialConfig = BeanDefinitionBuilder.genericBeanDefinition(
-        KeyStoreCredentialConfig.class);
-      credentialConfig.addPropertyValue("trustStore", element.getAttribute("trustStore"));
-      credentialConfig.addPropertyValue("trustStorePassword", element.getAttribute("trustStorePassword"));
-      credentialConfig.addPropertyValue("trustStoreType", element.getAttribute("trustStoreType"));
+    } else if (element.hasAttribute("trustStore") || element.hasAttribute("keyStore")) {
       final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
-      sslConfig.addPropertyValue("credentialConfig", credentialConfig.getBeanDefinition());
+      sslConfig.addPropertyValue("credentialConfig", parseKeyStoreCredentialConfig(null, element).getBeanDefinition());
       connectionConfig.addPropertyValue("sslConfig", sslConfig.getBeanDefinition());
     }
 
@@ -79,7 +71,7 @@ public abstract class AbstractConnectionConfigBeanDefinitionParser extends Abstr
    * @param  builder  bean definition builder to set properties on, may be null
    * @param  element  containing configuration
    *
-   * @return  bind connection initializer bean definition
+   * @return  bind connection initializer bean definition builder
    */
   protected BeanDefinitionBuilder parseConnectionInitializer(final BeanDefinitionBuilder builder, final Element element)
   {
@@ -90,5 +82,54 @@ public abstract class AbstractConnectionConfigBeanDefinitionParser extends Abstr
     initializer.addPropertyValue("bindDn", element.getAttribute("bindDn"));
     setIfPresent(element, "bindCredential", initializer);
     return initializer;
+  }
+
+
+  /**
+   * Creates a X509 credential config.
+   *
+   * @param  builder  bean definition builder to set properties on, may be null
+   * @param  element  containing configuration
+   *
+   * @return  x509 credential config bean definition builder
+   */
+  protected BeanDefinitionBuilder parseX509CredentialConfig(final BeanDefinitionBuilder builder, final Element element)
+  {
+    BeanDefinitionBuilder credentialConfig = builder;
+    if (credentialConfig == null) {
+      credentialConfig = BeanDefinitionBuilder.genericBeanDefinition(X509CredentialConfig.class);
+    }
+    setIfPresent(element, "trustCertificates", credentialConfig);
+    setIfPresent(element, "authenticationCertificate", credentialConfig);
+    setIfPresent(element, "authenticationKey", credentialConfig);
+    return credentialConfig;
+  }
+
+
+  /**
+   * Creates a keystore credential config.
+   *
+   * @param  builder  bean definition builder to set properties on, may be null
+   * @param  element  containing configuration
+   *
+   * @return  keystore credential config bean definition builder
+   */
+  protected BeanDefinitionBuilder parseKeyStoreCredentialConfig(
+    final BeanDefinitionBuilder builder,
+    final Element element)
+  {
+    BeanDefinitionBuilder credentialConfig = builder;
+    if (credentialConfig == null) {
+      credentialConfig = BeanDefinitionBuilder.genericBeanDefinition(KeyStoreCredentialConfig.class);
+    }
+    setIfPresent(element, "trustStore", credentialConfig);
+    setIfPresent(element, "trustStorePassword", credentialConfig);
+    setIfPresent(element, "trustStoreType", credentialConfig);
+    setIfPresent(element, "trustStoreAliases", credentialConfig);
+    setIfPresent(element, "keyStore", credentialConfig);
+    setIfPresent(element, "keyStorePassword", credentialConfig);
+    setIfPresent(element, "keyStoreType", credentialConfig);
+    setIfPresent(element, "keyStoreAliases", credentialConfig);
+    return credentialConfig;
   }
 }
