@@ -22,6 +22,8 @@ import org.ldaptive.auth.AuthenticationResponseHandler;
 public class ActiveDirectoryAuthenticationResponseHandler implements AuthenticationResponseHandler
 {
 
+  /** Attributes needed to enforce password policy. */
+  public static final String[] ATTRIBUTES = new String[] {"msDS-UserPasswordExpiryTimeComputed", "pwdLastSet", };
 
   /** Amount of time since a password was set until it will expire. Used if msDS-UserPasswordExpiryTimeComputed cannot
    * be read. */
@@ -115,9 +117,6 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
    */
   public void setExpirationPeriod(final Period period)
   {
-    if (period == null) {
-      throw new IllegalArgumentException("Expiration cannot be null");
-    }
     expirationPeriod = period;
   }
 
@@ -140,9 +139,6 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
    */
   public void setWarningPeriod(final Period period)
   {
-    if (period == null) {
-      throw new IllegalArgumentException("Warning cannot be null");
-    }
     warningPeriod = period;
   }
 

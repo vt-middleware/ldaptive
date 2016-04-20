@@ -23,6 +23,13 @@ import org.slf4j.LoggerFactory;
 public class FreeIPAAuthenticationResponseHandler implements AuthenticationResponseHandler
 {
 
+  /** Attributes needed to enforce password policy. */
+  public static final String[] ATTRIBUTES = new String[] {
+    "krbPasswordExpiration",
+    "krbLoginFailedCount",
+    "krbLastPwdChange",
+  };
+
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -158,9 +165,6 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
    */
   public void setExpirationPeriod(final Period period)
   {
-    if (period == null) {
-      throw new IllegalArgumentException("Expiration cannot be null");
-    }
     expirationPeriod = period;
   }
 
@@ -183,9 +187,6 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
    */
   public void setWarningPeriod(final Period period)
   {
-    if (period == null) {
-      throw new IllegalArgumentException("Warning cannot be null");
-    }
     warningPeriod = period;
   }
 

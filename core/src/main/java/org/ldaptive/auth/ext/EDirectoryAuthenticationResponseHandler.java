@@ -21,6 +21,9 @@ import org.ldaptive.io.GeneralizedTimeValueTranscoder;
 public class EDirectoryAuthenticationResponseHandler implements AuthenticationResponseHandler
 {
 
+  /** Attributes needed to enforce password policy. */
+  public static final String[] ATTRIBUTES = new String[] {"passwordExpirationTime", "loginGraceRemaining", };
+
   /** Amount of time before expiration to produce a warning. */
   private Period warningPeriod;
 
@@ -89,9 +92,6 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
    */
   public void setWarningPeriod(final Period period)
   {
-    if (period == null) {
-      throw new IllegalArgumentException("Warning cannot be null");
-    }
     warningPeriod = period;
   }
 

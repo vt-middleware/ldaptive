@@ -58,12 +58,14 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
    * Creates an authentication response handler bean definition builder. The supplied authentication handler will be
    * updated with any necessary request controls that the response handler may require.
    *
+   * @param  authenticator  bean definition builder for the authenticator
    * @param  authHandler  bean definition builder for the authentication handler
    * @param  element  containing authentication response handler
    *
    * @return  authentication response handler bean definition builder
    */
   protected BeanDefinitionBuilder parseAuthResponseHandler(
+    final BeanDefinitionBuilder authenticator,
     final BeanDefinitionBuilder authHandler,
     final Element element)
   {
@@ -101,6 +103,7 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
           period.addConstructorArgValue(handlerElement.getAttribute("warningPeriod"));
           responseHandler.addPropertyValue("warningPeriod", period.getBeanDefinition());
         }
+        authenticator.addPropertyValue("returnAttributes", EDirectoryAuthenticationResponseHandler.ATTRIBUTES);
         break;
 
       case "free-ipa-handler":
@@ -122,6 +125,7 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
         if (handlerElement.hasAttribute("maxLoginFailures")) {
           responseHandler.addPropertyValue("maxLoginFailures", handlerElement.getAttribute("maxLoginFailures"));
         }
+        authenticator.addPropertyValue("returnAttributes", FreeIPAAuthenticationResponseHandler.ATTRIBUTES);
         break;
 
       case "active-directory-handler":
@@ -141,6 +145,7 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
           period.addConstructorArgValue(handlerElement.getAttribute("warningPeriod"));
           responseHandler.addPropertyValue("warningPeriod", period.getBeanDefinition());
         }
+        authenticator.addPropertyValue("returnAttributes", ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES);
         break;
 
       default:

@@ -922,6 +922,81 @@ public class AuthenticatorTest extends AbstractTest
   /**
    * @param  user  to authenticate.
    * @param  credential  to authenticate with.
+   * @param  returnAttrs  to search for.
+   * @param  ldifFile  to expect from the search.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "authenticateUser",
+      "authenticateCredential",
+      "authenticateReturnAttrs",
+      "authenticateResults"
+    })
+  @Test(groups = {"auth"})
+  public void authenticateReturnAttributes(
+    final String user,
+    final String credential,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final Authenticator auth = createTLSAuthenticator(true);
+
+    // no attributes
+    AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertEquals(0, response.getLdapEntry().getAttributes().size());
+
+    // attributes on the request
+    response = auth.authenticate(
+      new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+
+    // attributes on the authenticator
+    auth.setReturnAttributes(returnAttrs.split("\\|"));
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    auth.setReturnAttributes((String) null);
+
+    // NONE attributes on the authenticator
+    auth.setReturnAttributes(ReturnAttributes.NONE.value());
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    auth.setReturnAttributes((String) null);
+
+    // NONE attributes on the authenticator and request
+    auth.setReturnAttributes(ReturnAttributes.NONE.value());
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+    AssertJUnit.assertEquals(
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+      response.getAuthenticationResultCode());
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertEquals(0, response.getLdapEntry().getAttributes().size());
+    auth.setReturnAttributes((String) null);
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
    *
    * @throws  Exception  On test failure.
    */

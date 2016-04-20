@@ -234,6 +234,7 @@ public class NamespaceHandlerTest
     testBindConnectionPool(adAuthenticator);
     testSearchDnResolver(adAuthenticator);
     AssertJUnit.assertNotNull(adAuthenticator.getAuthenticationResponseHandlers());
+    AssertJUnit.assertNotNull(adAuthenticator.getReturnAttributes());
     final ActiveDirectoryAuthenticationResponseHandler handler =
       (ActiveDirectoryAuthenticationResponseHandler) adAuthenticator.getAuthenticationResponseHandlers()[0];
     AssertJUnit.assertNotNull(handler);
