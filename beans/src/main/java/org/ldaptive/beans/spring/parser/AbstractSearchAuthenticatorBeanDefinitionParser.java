@@ -29,7 +29,7 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
     final BeanDefinitionBuilder dnResolver = parseDnResolver(null, element, connectionFactory);
 
     final BeanDefinitionBuilder authHandler = parseAuthHandler(element);
-    final BeanDefinitionBuilder authResponseHandler = parseAuthResponseHandler(authHandler, element);
+    final BeanDefinitionBuilder authResponseHandler = parseAuthResponseHandler(builder, authHandler, element);
     if (authResponseHandler != null) {
       builder.addPropertyValue("authenticationResponseHandlers", authResponseHandler.getBeanDefinition());
     }

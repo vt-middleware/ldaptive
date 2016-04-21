@@ -20,7 +20,7 @@ public class AuthenticationRequest
   private Credential credential;
 
   /** User attributes to return. */
-  private String[] retAttrs = ReturnAttributes.NONE.value();
+  private String[] returnAttributes = ReturnAttributes.NONE.value();
 
 
   /** Default constructor. */
@@ -134,7 +134,7 @@ public class AuthenticationRequest
    */
   public String[] getReturnAttributes()
   {
-    return retAttrs;
+    return returnAttributes;
   }
 
 
@@ -145,7 +145,24 @@ public class AuthenticationRequest
    */
   public void setReturnAttributes(final String... attrs)
   {
-    retAttrs = ReturnAttributes.parse(attrs);
+    returnAttributes = ReturnAttributes.parse(attrs);
+  }
+
+
+  /**
+   * Returns an authentication request initialized with the supplied request.
+   *
+   * @param  request  authentication request to read properties from
+   *
+   * @return  authentication request
+   */
+  public static AuthenticationRequest newAuthenticationRequest(final AuthenticationRequest request)
+  {
+    final AuthenticationRequest r = new AuthenticationRequest();
+    r.setUser(request.getUser());
+    r.setCredential(request.getCredential());
+    r.setReturnAttributes(request.getReturnAttributes());
+    return r;
   }
 
 
@@ -153,6 +170,11 @@ public class AuthenticationRequest
   public String toString()
   {
     return
-      String.format("[%s@%d::user=%s, retAttrs=%s]", getClass().getName(), hashCode(), user, Arrays.toString(retAttrs));
+      String.format(
+        "[%s@%d::user=%s, returnAttributes=%s]",
+        getClass().getName(),
+        hashCode(),
+        user,
+        Arrays.toString(returnAttributes));
   }
 }

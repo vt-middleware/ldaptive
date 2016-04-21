@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ReturnAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,9 @@ public class Authenticator
 
   /** For finding user entries. */
   private EntryResolver entryResolver;
+
+  /** User attributes to return. Concatenated to {@link AuthenticationRequest#getReturnAttributes()}. */
+  private String[] returnAttributes;
 
   /** Handlers to handle authentication responses. */
   private AuthenticationResponseHandler[] authenticationResponseHandlers;
@@ -145,6 +149,28 @@ public class Authenticator
 
 
   /**
+   * Returns the return attributes.
+   *
+   * @return  attributes to return
+   */
+  public String[] getReturnAttributes()
+  {
+    return returnAttributes;
+  }
+
+
+  /**
+   * Sets the return attributes.
+   *
+   * @param  attrs  return attributes
+   */
+  public void setReturnAttributes(final String... attrs)
+  {
+    returnAttributes = attrs;
+  }
+
+
+  /**
    * Returns the authentication response handlers.
    *
    * @return  authentication response handlers
@@ -222,14 +248,15 @@ public class Authenticator
 
     LdapEntry entry = null;
 
+    final AuthenticationRequest processedRequest = processRequest(dn, request);
     AuthenticationHandlerResponse response = null;
     try {
-      final AuthenticationCriteria ac = new AuthenticationCriteria(dn, request);
+      final AuthenticationCriteria ac = new AuthenticationCriteria(dn, processedRequest);
 
       // attempt to authenticate as this dn
       response = getAuthenticationHandler().authenticate(ac);
       // resolve the entry
-      entry = resolveEntry(request, response, ac);
+      entry = resolveEntry(ac, response);
     } finally {
       if (response != null && response.getConnection() != null) {
         response.getConnection().close();
@@ -255,7 +282,7 @@ public class Authenticator
       }
     }
 
-    logger.debug("authenticate response={} for dn={} with request={}", response, dn, request);
+    logger.debug("authenticate response={} for dn={} with request={}", response, dn, processedRequest);
     return authResponse;
   }
 
@@ -314,22 +341,38 @@ public class Authenticator
 
 
   /**
+   * Creates a new authentication request applying any applicable configuration on this authenticator. Returns the
+   * supplied request if no configuration is applied.
+   *
+   * @param  dn  to process
+   * @param  request  to process
+   *
+   * @return  authentication request
+   */
+  protected AuthenticationRequest processRequest(final String dn, final AuthenticationRequest request)
+  {
+    if (returnAttributes == null) {
+      return request;
+    }
+    final AuthenticationRequest newRequest = AuthenticationRequest.newAuthenticationRequest(request);
+    newRequest.setReturnAttributes(LdapUtils.concatArrays(newRequest.getReturnAttributes(), returnAttributes));
+    return newRequest;
+  }
+
+
+  /**
    * Attempts to find the ldap entry for the supplied DN. If an entry resolver has been configured it is used. A {@link
    * SearchEntryResolver} is used if return attributes have been requested. If none of these criteria is met, a {@link
    * NoOpDnResolver} is used.
    *
-   * @param  request  authentication request
-   * @param  response  from the authentication handler
    * @param  criteria  needed by the entry resolver
+   * @param  response  from the authentication handler
    *
    * @return  ldap entry
    *
    * @throws  LdapException  if an error occurs resolving the entry
    */
-  protected LdapEntry resolveEntry(
-    final AuthenticationRequest request,
-    final AuthenticationHandlerResponse response,
-    final AuthenticationCriteria criteria)
+  protected LdapEntry resolveEntry(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response)
     throws LdapException
   {
     LdapEntry entry = null;
@@ -337,7 +380,7 @@ public class Authenticator
     if (resolveEntryOnFailure || response.getResult()) {
       if (entryResolver != null) {
         er = entryResolver;
-      } else if (!ReturnAttributes.NONE.equalsAttributes(request.getReturnAttributes())) {
+      } else if (!ReturnAttributes.NONE.equalsAttributes(criteria.getAuthenticationRequest().getReturnAttributes())) {
         er = new SearchEntryResolver();
       } else {
         er = NOOP_RESOLVER;
@@ -362,13 +405,14 @@ public class Authenticator
   {
     return
       String.format(
-        "[%s@%d::dnResolver=%s, authenticationHandler=%s, " +
-        "entryResolver=%s, authenticationResponseHandlers=%s]",
+        "[%s@%d::dnResolver=%s, authenticationHandler=%s, entryResolver=%s, returnAttributes=%s, " +
+        "authenticationResponseHandlers=%s]",
         getClass().getName(),
         hashCode(),
         getDnResolver(),
         getAuthenticationHandler(),
         getEntryResolver(),
+        Arrays.toString(getReturnAttributes()),
         Arrays.toString(getAuthenticationResponseHandlers()));
   }
 }
