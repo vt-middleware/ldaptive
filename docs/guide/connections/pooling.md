@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Ldaptive - pooling
-redirect_from: "/docs/guide/connections/pooling"
+redirect_from: "/docs/guide/connections/pooling/"
 ---
 
 # Pooling
