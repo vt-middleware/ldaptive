@@ -42,6 +42,25 @@
     </ldaptive:authentication-response-handler>
   </ldaptive:bind-search-authenticator>
 
+  <ldaptive:bind-search-authenticator
+    id="bind-search-disable-pool"
+    ldapUrl="${ldap.url}"
+    trustStore="classpath:/ldaptive.truststore"
+    trustStorePassword="changeit"
+    trustStoreType="BKS"
+    baseDn="${ldap.baseDn}"
+    userFilter="(mail={user})"
+    bindDn="${ldap.bindDn}"
+    bindCredential="${ldap.bindCredential}"
+    resolveEntryWithBindCredentials="true"
+    disablePooling="true"
+    connectTimeout="${ldap.connectTimeout}"
+    useStartTLS="${ldap.useStartTLS}">
+    <ldaptive:authentication-response-handler>
+      <ldaptive:password-policy-handler/>
+    </ldaptive:authentication-response-handler>
+  </ldaptive:bind-search-authenticator>
+
   <ldaptive:sasl-bind-search-authenticator
     id="sasl-auth"
     mechanism="DIGEST_MD5"

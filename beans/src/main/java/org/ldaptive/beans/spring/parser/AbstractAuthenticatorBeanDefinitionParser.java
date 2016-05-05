@@ -2,6 +2,7 @@
 package org.ldaptive.beans.spring.parser;
 
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.BindAuthenticationHandler;
 import org.ldaptive.auth.PooledBindAuthenticationHandler;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
@@ -38,18 +39,25 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
    */
   protected BeanDefinitionBuilder parseAuthHandler(final Element element)
   {
-    String name = "bind-pool";
-    if (element.hasAttribute("id")) {
-      name = element.getAttribute("id") + "-bind-pool";
+    BeanDefinitionBuilder authHandler;
+    if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
+      authHandler = BeanDefinitionBuilder.genericBeanDefinition(BindAuthenticationHandler.class);
+      authHandler.addPropertyValue(
+        "connectionFactory",
+        parseDefaultConnectionFactory(null, element, false).getBeanDefinition());
+    } else {
+      String name = "bind-pool";
+      if (element.hasAttribute("id")) {
+        name = element.getAttribute("id") + "-bind-pool";
+      }
+      authHandler = BeanDefinitionBuilder.genericBeanDefinition(PooledBindAuthenticationHandler.class);
+      final BeanDefinitionBuilder connectionFactory = BeanDefinitionBuilder.genericBeanDefinition(
+        PooledConnectionFactory.class);
+      connectionFactory.addPropertyValue(
+        "connectionPool",
+        parseConnectionPool(null, name, element, false).getBeanDefinition());
+      authHandler.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
     }
-    final BeanDefinitionBuilder authHandler = BeanDefinitionBuilder.genericBeanDefinition(
-      PooledBindAuthenticationHandler.class);
-    final BeanDefinitionBuilder connectionFactory = BeanDefinitionBuilder.genericBeanDefinition(
-      PooledConnectionFactory.class);
-    connectionFactory.addPropertyValue(
-      "connectionPool",
-      parseConnectionPool(null, name, element, false).getBeanDefinition());
-    authHandler.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
     return authHandler;
   }
 
