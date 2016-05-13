@@ -15,8 +15,8 @@ if [ ! -z "$TRAVIS_TAG" ]; then
   exit 0
 fi
 
-# Only run this script against master and v1.1
-if [ "$TRAVIS_BRANCH" != "master" -a "$TRAVIS_BRANCH" != "v1.1" ]; then
+# Only run this script against master
+if [ "$TRAVIS_BRANCH" != "master" ]; then
   echo "Skipping snapshot deploy for BRANCH=${TRAVIS_BRANCH}."
   exit 0
 fi
