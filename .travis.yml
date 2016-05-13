@@ -1,0 +1,13 @@
+language: java
+jdk:
+- oraclejdk8
+before_install:
+- wget https://archive.apache.org/dist/maven/maven-3/3.3.9/binaries/apache-maven-3.3.9-bin.zip
+- unzip -qq apache-maven-3.3.9-bin.zip
+- export M2_HOME=$PWD/apache-maven-3.3.9
+- export PATH=$M2_HOME/bin:$PATH
+after_success:
+- bash .travis/deploy-snapshot
+env:
+  global:
+    secure: qfwhWA1zqbfrepSL+k1Aw82w98hqEtUEwog/90Bi04tfd8N9FIIi7/+qD0x1iDJZhfHJ5zHx4fRBncMHjiQjSxSMN3nUbBsQ47jtwlmZFybYuCNrFHDWThW4DglfLLzaoO2zGAWjMZeSRzr/ERNhOl2a1E/NKmpcorrLf/IWpXPdLi5VlXJ9hCbsBTIAYhXMjCWhRKzfMs9FqCkriS7OrfDqr6FahqUH9cxuGOGdl2Aad8nfaZu9yNKLcDbxQf2s6cwrFx9ewU/BgdaJBY4qBX3eEfykzoen1icdbuaI7bpCXMguEPDSiuwY/ezpPwsBmghyV7r4hjfx33cvQK/LLN3URkX4rfsNlKpRkthjxW5jpsVZ9OmEykaxKnws8W7wX8wkbVRhFB51j0uMusHsASwwGo+Whie1w9mAeB0/10vvSfQAMnQJu1/1a120lzxeMu31y1IdpnGI3Sqy7vwPOwmY0wZ81rTTOEj7niH3B6beG09fnB/srZ/6+FVeuim8i8HKLU32LDZk5T0PNjYo8J3ASiw6r8w9i5R/5ekHsKwVWbj0/dPNAgYrGjzd9TKLioMrhM1picGuOqYOeEwp2RvdvJsmwA8nnaLFuKbkOTb9pjJxebwgvQ6ZtC6XM4sItwaL+aclAeeQXRu7SCTMF+z22e6XltZJFXXkG7bg5yA=
