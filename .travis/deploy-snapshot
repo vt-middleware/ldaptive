@@ -22,7 +22,7 @@ if [ "$TRAVIS_BRANCH" != "master" ]; then
 fi
 
 # Only run this script for snapshots
-VERSION=`cat target/maven-archiver/pom.properties |grep version`
+VERSION=`cat core/target/maven-archiver/pom.properties |grep version`
 if [[ "$VERSION" != *-SNAPSHOT ]]; then
   echo "Skipping non-snapshot version for VERSION=${VERSION}."
   exit 0
