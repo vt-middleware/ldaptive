@@ -68,8 +68,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
-    <org.slf4j.version>1.7.18</org.slf4j.version>
-    <org.springframework.version>4.2.5.RELEASE</org.springframework.version>
+    <org.slf4j.version>1.7.21</org.slf4j.version>
+    <org.springframework.version>4.2.6.RELEASE</org.springframework.version>
     <org.ldaptive.oldVersion>1.1.0</org.ldaptive.oldVersion>
   </properties>
 
@@ -170,7 +170,7 @@
       <dependency>
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
-        <version>2.10.1</version>
+        <version>2.10.2</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -209,7 +209,7 @@
       <dependency>
         <groupId>com.unboundid</groupId>
         <artifactId>unboundid-ldapsdk</artifactId>
-        <version>3.1.0</version>
+        <version>3.1.1</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
@@ -239,7 +239,7 @@
       <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
-        <version>2.6.1</version>
+        <version>2.6.2</version>
       </dependency>
       <dependency>
         <groupId>org.newsclub.net</groupId>
@@ -270,7 +270,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.5</version>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -290,7 +290,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>2.7</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -325,7 +325,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>2.6</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.felix</groupId>
@@ -340,7 +340,7 @@
         <plugin>
           <groupId>com.github.siom79.japicmp</groupId>
           <artifactId>japicmp-maven-plugin</artifactId>
-          <version>0.7.2</version>
+          <version>0.8.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
