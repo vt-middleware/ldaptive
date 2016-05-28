@@ -80,7 +80,14 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
 
     JndiConnection conn;
     try {
-      conn = new JndiConnection(new InitialLdapContext(env, null), getProviderConfig());
+        ClassLoader old = Thread.currentThread().getContextClassLoader();
+        try {
+          Thread.currentThread().setContextClassLoader(ThreadLocalTLSSocketFactory.class.getClassLoader());
+          InitialLdapContext initialLdapContext = new InitialLdapContext(env, null);
+          conn = new JndiConnection(initialLdapContext, getProviderConfig());
+        } finally {
+          Thread.currentThread().setContextClassLoader(old);
+        }
     } catch (NamingException e) {
       throw new ConnectionException(e, NamingExceptionUtils.getResultCode(e.getClass()));
     }
