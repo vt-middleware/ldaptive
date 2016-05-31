@@ -220,6 +220,7 @@
     <xsd:attribute name="validatePeriod" type="xsd:string" use="optional" default="PT5M"/>
     <xsd:attribute name="prunePeriod" type="xsd:string" use="optional" default="PT5M"/>
     <xsd:attribute name="idleTime" type="xsd:string" use="optional" default="PT10M"/>
+    <xsd:attribute name="disablePooling" type="xsd:string" use="optional" default="false"/>
   </xsd:attributeGroup>
 
   <!-- Since ldapUrl is optional in some circumstances, it must be specified in the parent type -->

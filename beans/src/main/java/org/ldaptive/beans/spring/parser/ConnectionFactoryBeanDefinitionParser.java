@@ -42,9 +42,6 @@ public class ConnectionFactoryBeanDefinitionParser extends AbstractConnectionFac
   @Override
   protected void doParse(final Element element, final ParserContext context, final BeanDefinitionBuilder builder)
   {
-    builder.addPropertyValue("connectionConfig", parseConnectionConfig(null, element, true).getBeanDefinition());
-    if (element.hasAttribute("provider")) {
-      builder.addPropertyValue("provider", parseProvider(element).getBeanDefinition());
-    }
+    parseDefaultConnectionFactory(builder, element, true);
   }
 }

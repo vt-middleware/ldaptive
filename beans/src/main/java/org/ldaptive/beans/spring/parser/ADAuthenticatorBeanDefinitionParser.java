@@ -4,6 +4,7 @@ package org.ldaptive.beans.spring.parser;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.auth.PooledSearchEntryResolver;
+import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -43,7 +44,11 @@ public class ADAuthenticatorBeanDefinitionParser extends AbstractSearchAuthentic
     BeanDefinitionBuilder entryResolver;
     if (element.hasAttribute("resolveEntryWithBindCredentials") &&
         Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials"))) {
-      entryResolver = BeanDefinitionBuilder.genericBeanDefinition(PooledSearchEntryResolver.class);
+      if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
+        entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
+      } else {
+        entryResolver = BeanDefinitionBuilder.genericBeanDefinition(PooledSearchEntryResolver.class);
+      }
       entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
     } else {
       entryResolver = super.parseEntryResolver(element, connectionFactory);

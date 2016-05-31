@@ -2,6 +2,7 @@
 package org.ldaptive.beans.spring.parser;
 
 import org.ldaptive.auth.PooledSearchDnResolver;
+import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -25,8 +26,18 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
       name = element.getAttribute("id") + "-search-pool";
     }
 
-    final BeanDefinitionBuilder connectionFactory = parseConnectionFactory(null, name, element, true);
-    final BeanDefinitionBuilder dnResolver = parseDnResolver(null, element, connectionFactory);
+    BeanDefinitionBuilder connectionFactory;
+    BeanDefinitionBuilder dnResolver;
+    if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
+      connectionFactory = parseDefaultConnectionFactory(null, element, true);
+      dnResolver = parseDnResolver(
+        BeanDefinitionBuilder.genericBeanDefinition(SearchDnResolver.class),
+        element,
+        connectionFactory);
+    } else {
+      connectionFactory = parsePooledConnectionFactory(null, name, element, true);
+      dnResolver = parseDnResolver(null, element, connectionFactory);
+    }
 
     final BeanDefinitionBuilder authHandler = parseAuthHandler(element);
     final BeanDefinitionBuilder authResponseHandler = parseAuthResponseHandler(builder, authHandler, element);
@@ -95,7 +106,7 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
    *
    * @return  pooled connection factory bean definition builder
    */
-  protected BeanDefinitionBuilder parseConnectionFactory(
+  protected BeanDefinitionBuilder parsePooledConnectionFactory(
     final BeanDefinitionBuilder builder,
     final String name,
     final Element element,

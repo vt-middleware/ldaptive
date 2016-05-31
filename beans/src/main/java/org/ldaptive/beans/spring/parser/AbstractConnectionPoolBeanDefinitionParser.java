@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
-import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -39,14 +38,9 @@ public abstract class AbstractConnectionPoolBeanDefinitionParser extends Abstrac
       pool = BeanDefinitionBuilder.genericBeanDefinition(BlockingConnectionPool.class);
     }
     pool.addPropertyValue("name", name);
-    final BeanDefinitionBuilder factory = BeanDefinitionBuilder.genericBeanDefinition(DefaultConnectionFactory.class);
-    factory.addPropertyValue(
-      "connectionConfig",
-      parseConnectionConfig(null, element, includeConnectionInitializer).getBeanDefinition());
-    if (element.hasAttribute("provider")) {
-      factory.addPropertyValue("provider", parseProvider(element).getBeanDefinition());
-    }
-    pool.addPropertyValue("connectionFactory", factory.getBeanDefinition());
+    pool.addPropertyValue(
+      "connectionFactory",
+      parseDefaultConnectionFactory(null, element, includeConnectionInitializer).getBeanDefinition());
     pool.addPropertyValue("poolConfig", parsePoolConfig(null, element).getBeanDefinition());
 
     final BeanDefinitionBuilder blockWaitTime =  BeanDefinitionBuilder.rootBeanDefinition(
