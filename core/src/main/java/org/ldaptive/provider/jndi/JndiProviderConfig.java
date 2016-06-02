@@ -38,6 +38,9 @@ public class JndiProviderConfig extends ProviderConfig<Control>
   /** Search result codes to ignore. */
   private ResultCode[] searchIgnoreResultCodes;
 
+  /** Context class loader. */
+  private ClassLoader classLoader;
+
   /** ldap socket factory used for SSL and startTLS. */
   private SSLSocketFactory sslSocketFactory;
 
@@ -155,6 +158,30 @@ public class JndiProviderConfig extends ProviderConfig<Control>
 
 
   /**
+   * Returns the class loader to use when creating JNDI contexts.
+   *
+   * @return  class loader
+   */
+  public ClassLoader getClassLoader()
+  {
+    return classLoader;
+  }
+
+
+  /**
+   * Sets the class loader to use when creating JNDI contexts.
+   *
+   * @param  cl  class loader
+   */
+  public void setClassLoader(final ClassLoader cl)
+  {
+    checkImmutable();
+    logger.trace("setting classLoader: {}", cl);
+    classLoader = cl;
+  }
+
+
+  /**
    * Returns the SSL socket factory to use for SSL and startTLS connections.
    *
    * @return  SSL socket factory
@@ -221,7 +248,8 @@ public class JndiProviderConfig extends ProviderConfig<Control>
     return
       String.format(
         "[%s@%d::operationExceptionResultCodes=%s, properties=%s, controlProcessor=%s, environment=%s, " +
-        "tracePackets=%s, removeDnUrls=%s, searchIgnoreResultCodes=%s, sslSocketFactory=%s, hostnameVerifier=%s]",
+        "tracePackets=%s, removeDnUrls=%s, searchIgnoreResultCodes=%s, classLoader=%s, sslSocketFactory=%s, " +
+        "hostnameVerifier=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(getOperationExceptionResultCodes()),
@@ -231,6 +259,7 @@ public class JndiProviderConfig extends ProviderConfig<Control>
         tracePackets,
         removeDnUrls,
         Arrays.toString(searchIgnoreResultCodes),
+        classLoader,
         sslSocketFactory,
         hostnameVerifier);
   }

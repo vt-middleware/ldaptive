@@ -142,6 +142,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
         cc.getConnectionStrategy(),
         config,
         env != null ? env : getDefaultEnvironment(cc, null),
+        config.getClassLoader(),
         factory,
         config.getHostnameVerifier());
   }
@@ -170,7 +171,8 @@ public class JndiProvider implements Provider<JndiProviderConfig>
         cc.getLdapUrl(),
         cc.getConnectionStrategy(),
         config,
-        env != null ? env : getDefaultEnvironment(cc, factory != null ? factory.getClass().getName() : null));
+        env != null ? env : getDefaultEnvironment(cc, factory != null ? factory.getClass().getName() : null),
+        config.getClassLoader());
   }
 
 
