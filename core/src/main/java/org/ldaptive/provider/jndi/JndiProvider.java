@@ -166,13 +166,22 @@ public class JndiProvider implements Provider<JndiProviderConfig>
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       factory = ThreadLocalTLSSocketFactory.getHostnameVerifierFactory(cc.getSslConfig(), ldapUrl.getHostnames());
     }
+    ClassLoader classLoader = config.getClassLoader();
+    if (classLoader == null && factory != null) {
+      try {
+        Thread.currentThread().getContextClassLoader().loadClass(factory.getClass().getName());
+      } catch (ClassNotFoundException e) {
+        classLoader = factory.getClass().getClassLoader();
+        logger.debug("Could not find {}, using class loader {}", factory.getClass(), classLoader);
+      }
+    }
     return
       new JndiConnectionFactory(
         cc.getLdapUrl(),
         cc.getConnectionStrategy(),
         config,
         env != null ? env : getDefaultEnvironment(cc, factory != null ? factory.getClass().getName() : null),
-        config.getClassLoader());
+        classLoader);
   }
 
 
