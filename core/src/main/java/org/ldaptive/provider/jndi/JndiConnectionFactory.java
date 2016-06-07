@@ -24,6 +24,9 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
   /** Environment properties. */
   private final Map<String, Object> environment;
 
+  /** Context class loader to use when instantiating {@link InitialLdapContext}. */
+  private final ClassLoader classLoader;
+
   /** Thread local SslConfig, if one exists. */
   private SslConfig threadLocalSslConfig;
 
@@ -35,29 +38,21 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
    * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  env  jndi context environment
+   * @param  cl  class loader
    */
   public JndiConnectionFactory(
     final String url,
     final ConnectionStrategy strategy,
     final JndiProviderConfig config,
-    final Map<String, Object> env)
+    final Map<String, Object> env,
+    final ClassLoader cl)
   {
     super(url, strategy, config);
     environment = Collections.unmodifiableMap(env);
+    classLoader = cl;
     if (ThreadLocalTLSSocketFactory.class.getName().equals(environment.get(JndiProvider.SOCKET_FACTORY))) {
       threadLocalSslConfig = new ThreadLocalTLSSocketFactory().getSslConfig();
     }
-  }
-
-
-  /**
-   * Returns the JNDI environment for this connection factory. This map cannot be modified.
-   *
-   * @return  jndi environment
-   */
-  protected Map<String, Object> getEnvironment()
-  {
-    return environment;
   }
 
 
@@ -74,13 +69,23 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
 
     // CheckStyle:IllegalType OFF
     // the JNDI API requires the Hashtable type
-    final Hashtable<String, Object> env = new Hashtable<>(getEnvironment());
+    final Hashtable<String, Object> env = new Hashtable<>(environment);
     // CheckStyle:IllegalType ON
     env.put(JndiProvider.PROVIDER_URL, url);
 
     JndiConnection conn;
     try {
-      conn = new JndiConnection(new InitialLdapContext(env, null), getProviderConfig());
+      if (classLoader != null) {
+        final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+          Thread.currentThread().setContextClassLoader(classLoader);
+          conn = new JndiConnection(new InitialLdapContext(env, null), getProviderConfig());
+        } finally {
+          Thread.currentThread().setContextClassLoader(currentClassLoader);
+        }
+      } else {
+        conn = new JndiConnection(new InitialLdapContext(env, null), getProviderConfig());
+      }
     } catch (NamingException e) {
       throw new ConnectionException(e, NamingExceptionUtils.getResultCode(e.getClass()));
     }
@@ -93,11 +98,12 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
   {
     return
       String.format(
-        "[%s@%d::metadata=%s, environment=%s, providerConfig=%s]",
+        "[%s@%d::metadata=%s, environment=%s, classLoader=%s, providerConfig=%s]",
         getClass().getName(),
         hashCode(),
         getMetadata(),
         environment,
+        classLoader,
         getProviderConfig());
   }
 }

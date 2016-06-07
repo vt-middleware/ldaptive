@@ -2,6 +2,7 @@
 package org.ldaptive.provider.jndi;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Map;
 import javax.naming.NamingException;
@@ -27,6 +28,9 @@ public class JndiStartTLSConnectionFactory extends AbstractProviderConnectionFac
   /** Environment properties. */
   private final Map<String, Object> environment;
 
+  /** Context class loader to use when instantiating {@link InitialLdapContext}. */
+  private final ClassLoader classLoader;
+
   /** SSL socket factory to use for startTLS negotiation. */
   private final SSLSocketFactory sslSocketFactory;
 
@@ -41,6 +45,7 @@ public class JndiStartTLSConnectionFactory extends AbstractProviderConnectionFac
    * @param  strategy  connection strategy
    * @param  config  provider configuration
    * @param  env  jndi context environment
+   * @param  cl  class loader
    * @param  factory  SSL socket factory
    * @param  verifier  hostname verifier
    */
@@ -49,11 +54,13 @@ public class JndiStartTLSConnectionFactory extends AbstractProviderConnectionFac
     final ConnectionStrategy strategy,
     final JndiProviderConfig config,
     final Map<String, Object> env,
+    final ClassLoader cl,
     final SSLSocketFactory factory,
     final HostnameVerifier verifier)
   {
     super(url, strategy, config);
-    environment = env;
+    environment = Collections.unmodifiableMap(env);
+    classLoader = cl;
     sslSocketFactory = factory;
     hostnameVerifier = verifier;
   }
@@ -72,7 +79,17 @@ public class JndiStartTLSConnectionFactory extends AbstractProviderConnectionFac
     JndiStartTLSConnection conn = null;
     boolean closeConn = false;
     try {
-      conn = new JndiStartTLSConnection(new InitialLdapContext(env, null), getProviderConfig());
+      if (classLoader != null) {
+        final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
+        try {
+          Thread.currentThread().setContextClassLoader(classLoader);
+          conn = new JndiStartTLSConnection(new InitialLdapContext(env, null), getProviderConfig());
+        } finally {
+          Thread.currentThread().setContextClassLoader(currentClassLoader);
+        }
+      } else {
+        conn = new JndiStartTLSConnection(new InitialLdapContext(env, null), getProviderConfig());
+      }
       conn.setStartTlsResponse(startTLS(conn.getLdapContext()));
     } catch (NamingException e) {
       closeConn = true;
@@ -131,12 +148,13 @@ public class JndiStartTLSConnectionFactory extends AbstractProviderConnectionFac
   {
     return
       String.format(
-        "[%s@%d::metadata=%s, environment=%s, providerConfig=%s, " +
-        "sslSocketFactory=%s, hostnameVerifier=%s]",
+        "[%s@%d::metadata=%s, environment=%s, classLoader=%s, providerConfig=%s, sslSocketFactory=%s, " +
+        "hostnameVerifier=%s]",
         getClass().getName(),
         hashCode(),
         getMetadata(),
         environment,
+        classLoader,
         getProviderConfig(),
         sslSocketFactory,
         hostnameVerifier);
