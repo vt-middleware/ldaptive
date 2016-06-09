@@ -1,13 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
-import org.ldaptive.CompareOperation;
-import org.ldaptive.CompareRequest;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.Response;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResult;
 import org.ldaptive.TestControl;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
@@ -60,9 +60,9 @@ public class ClassLoaderTest
     final Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
       conn.open();
-      final CompareOperation op = new CompareOperation(conn);
-      final Response<Boolean> response = op.execute(new CompareRequest("", new LdapAttribute("objectClass", "top")));
-      AssertJUnit.assertTrue(response.getResult());
+      final SearchOperation op = new SearchOperation(conn);
+      final Response<SearchResult> response = op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.assertFalse(response.getResult().getEntries().isEmpty());
     } finally {
       conn.close();
     }
