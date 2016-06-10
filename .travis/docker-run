@@ -14,22 +14,6 @@ DOCKER_ENV="$DOCKER_ENV -e GH_TOKEN"
 # run an interactive docker instance
 docker run -it ${DOCKER_ENV} \
   -v $(pwd):${DOCKER_VOLUME} -w ${DOCKER_VOLUME} \
-  ${DOCKER_IMAGE} /bin/bash
-
-# execute maven in docker
-mvn install -Dmaven.javadoc.skip=true -B -V
-ret_code=$?
-if [ $ret_code != 0 ]; then
-  echo "Maven install failed with error code ${ret_code}"
-  exit $ret_code
-fi
-
-# execute snapshot deploy in docker
-bash .travis/deploy-snapshot
-ret_code=$?
-if [ $ret_code != 0 ]; then
-  echo "Deploy snapshot failed with error code ${ret_code}"
-  exit $ret_code
-fi
+  ${DOCKER_IMAGE} .travis/docker-cmds
 
 exit
