@@ -2,6 +2,7 @@
 package org.ldaptive.beans.spring;
 
 import org.ldaptive.beans.spring.parser.ADAuthenticatorBeanDefinitionParser;
+import org.ldaptive.beans.spring.parser.AggregateAuthenticatorBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.AggregatePooledSearchExecutorBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.AggregateSearchExecutorBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.AnonSearchAuthenticatorBeanDefinitionParser;
@@ -36,6 +37,7 @@ public class NamespaceHandler extends NamespaceHandlerSupport
       new SaslBindSearchAuthenticatorBeanDefinitionParser());
     registerBeanDefinitionParser("direct-authenticator", new DirectAuthenticatorBeanDefinitionParser());
     registerBeanDefinitionParser("ad-authenticator", new ADAuthenticatorBeanDefinitionParser());
+    registerBeanDefinitionParser("aggregate-authenticator", new AggregateAuthenticatorBeanDefinitionParser());
     registerBeanDefinitionParser("pooled-connection-factory", new PooledConnectionFactoryBeanDefinitionParser());
     registerBeanDefinitionParser("connection-factory", new ConnectionFactoryBeanDefinitionParser());
     registerBeanDefinitionParser("connection-pool", new ConnectionPoolBeanDefinitionParser());

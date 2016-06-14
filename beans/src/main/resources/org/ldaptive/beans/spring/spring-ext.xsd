@@ -12,6 +12,7 @@
   <xsd:element name="sasl-bind-search-authenticator" type="saslBindSearchAuthenticatorType"/>
   <xsd:element name="direct-authenticator" type="directAuthenticatorType"/>
   <xsd:element name="ad-authenticator" type="adAuthenticatorType"/>
+  <xsd:element name="aggregate-authenticator" type="aggregateAuthenticatorType"/>
   <xsd:element name="pooled-connection-factory" type="pooledConnectionFactoryType"/>
   <xsd:element name="connection-factory" type="connectionFactoryType"/>
   <xsd:element name="connection-pool" type="connectionPoolType"/>
@@ -80,6 +81,19 @@
     </xsd:complexContent>
   </xsd:complexType>
 
+  <xsd:complexType name="aggregateAuthenticatorType">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="anonymous-search-authenticator" type="anonymousSearchAuthenticatorType"/>
+      <xsd:element name="bind-search-authenticator" type="bindSearchAuthenticatorType"/>
+      <xsd:element name="sasl-bind-search-authenticator" type="saslBindSearchAuthenticatorType"/>
+      <xsd:element name="direct-authenticator" type="directAuthenticatorType"/>
+      <xsd:element name="ad-authenticator" type="adAuthenticatorType"/>
+    </xsd:choice>
+    <xsd:attribute name="returnAttributes" type="xsd:string" use="optional"/>
+    <xsd:attribute name="allowMultipleDns" type="xsd:string" use="optional" default="false"/>
+    <xsd:attribute name="resolveEntryOnFailure" type="xsd:string" use="optional" default="false"/>
+  </xsd:complexType>
+
   <xsd:complexType name="baseBindSearchAuthenticatorType">
     <xsd:complexContent>
       <xsd:extension base="baseSearchAuthenticatorType">
@@ -96,7 +110,9 @@
         <xsd:attribute name="baseDn" type="xsd:string" use="required"/>
         <xsd:attribute name="userFilter" type="xsd:string" use="required"/>
         <xsd:attribute name="subtreeSearch" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="returnAttributes" type="xsd:string" use="optional"/>
         <xsd:attribute name="allowMultipleDns" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="resolveEntryOnFailure" type="xsd:string" use="optional" default="false"/>
       </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>

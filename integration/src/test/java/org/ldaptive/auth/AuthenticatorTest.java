@@ -810,20 +810,20 @@ public class AuthenticatorTest extends AbstractTest
     sr2.setUserFilter(sr1.getUserFilter());
     sr2.setUserFilterParameters(sr1.getUserFilterParameters());
 
-    final Map<String, DnResolver> resolvers = new HashMap<>();
-    resolvers.put("system1", sr1);
-    resolvers.put("system2", sr2);
+    final Map<String, DnResolver> dnResolvers = new HashMap<>();
+    dnResolvers.put("system1", sr1);
+    dnResolvers.put("system2", sr2);
 
-    final AggregateDnResolver resolver = new AggregateDnResolver(resolvers);
-    auth.setDnResolver(resolver);
+    final AggregateDnResolver dnResolver = new AggregateDnResolver(dnResolvers);
+    auth.setDnResolver(dnResolver);
 
-    final Map<String, AuthenticationHandler> handlers = new HashMap<>();
-    handlers.put("system1", auth.getAuthenticationHandler());
-    handlers.put("system2", auth.getAuthenticationHandler());
+    final Map<String, AuthenticationHandler> authHandlers = new HashMap<>();
+    authHandlers.put("system1", auth.getAuthenticationHandler());
+    authHandlers.put("system2", auth.getAuthenticationHandler());
 
-    final AggregateDnResolver.AuthenticationHandler handler = new AggregateDnResolver.AuthenticationHandler();
-    handler.setAuthenticationHandlers(handlers);
-    auth.setAuthenticationHandler(handler);
+    final AggregateDnResolver.AuthenticationHandler authHandler = new AggregateDnResolver.AuthenticationHandler();
+    authHandler.setAuthenticationHandlers(authHandlers);
+    auth.setAuthenticationHandler(authHandler);
 
     // test invalid user
     AuthenticationResponse response = auth.authenticate(
@@ -840,7 +840,7 @@ public class AuthenticatorTest extends AbstractTest
     } catch (Exception e) {
       AssertJUnit.assertEquals(LdapException.class, e.getClass());
     }
-    resolver.setAllowMultipleDns(true);
+    dnResolver.setAllowMultipleDns(true);
 
     // test failed auth with return attributes
     response = auth.authenticate(

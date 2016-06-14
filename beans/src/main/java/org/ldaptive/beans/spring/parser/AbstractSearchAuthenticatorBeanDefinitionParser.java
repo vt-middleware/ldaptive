@@ -50,6 +50,9 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
 
     final BeanDefinitionBuilder entryResolver = parseEntryResolver(element, connectionFactory);
     builder.addPropertyValue("entryResolver", entryResolver.getBeanDefinition());
+
+    setIfPresent(element, "returnAttributes", builder);
+    builder.addPropertyValue("resolveEntryOnFailure", element.getAttribute("resolveEntryOnFailure"));
   }
 
 

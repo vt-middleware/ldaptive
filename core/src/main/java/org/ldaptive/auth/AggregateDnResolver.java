@@ -3,6 +3,7 @@ package org.ldaptive.auth;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletionService;
@@ -10,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,6 +113,23 @@ public class AggregateDnResolver implements DnResolver
   {
     logger.trace("setting allowMultipleDns: {}", b);
     allowMultipleDns = b;
+  }
+
+
+  /**
+   * Creates an aggregate entry resolver using the labels from the DN resolver and the supplied entry resolver.
+   *
+   * @param  resolver  used for every label
+   *
+   * @return  aggregate entry resolver
+   */
+  public EntryResolver createEntryResolver(final org.ldaptive.auth.EntryResolver resolver)
+  {
+    final Map<String, org.ldaptive.auth.EntryResolver> resolvers = new HashMap(dnResolvers.size());
+    for (String label : dnResolvers.keySet()) {
+      resolvers.put(label, resolver);
+    }
+    return new EntryResolver(resolvers);
   }
 
 
@@ -240,8 +259,145 @@ public class AggregateDnResolver implements DnResolver
       if (ah == null) {
         throw new LdapException("Could not find authentication handler for label: " + labeledDn[0]);
       }
-      criteria.setDn(labeledDn[1]);
-      return ah.authenticate(criteria);
+      return ah.authenticate(new AuthenticationCriteria(labeledDn[1], criteria.getAuthenticationRequest()));
+    }
+  }
+
+
+  /**
+   * Used in conjunction with an {@link AggregateDnResolver} to resolve an entry. In particular, the resolved DN is
+   * expected to be of the form: label:DN where the label indicates the entry resolver to use. This class only invokes
+   * one entry resolver that matches the label found on the DN.
+   */
+  public static class EntryResolver implements org.ldaptive.auth.EntryResolver
+  {
+
+    /** Logger for this class. */
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /** Labeled entry resolvers. */
+    private Map<String, org.ldaptive.auth.EntryResolver> entryResolvers;
+
+
+    /** Default constructor. */
+    public EntryResolver() {}
+
+
+    /**
+     * Creates a new aggregate entry resolver.
+     *
+     * @param  resolvers  entry resolvers
+     */
+    public EntryResolver(final Map<String, org.ldaptive.auth.EntryResolver> resolvers)
+    {
+      setEntryResolvers(resolvers);
+    }
+
+
+    /**
+     * Returns the entry resolvers to aggregate over.
+     *
+     * @return  map of label to entry resolver
+     */
+    public Map<String, org.ldaptive.auth.EntryResolver> getEntryResolvers()
+    {
+      return Collections.unmodifiableMap(entryResolvers);
+    }
+
+
+    /**
+     * Sets the entry resolvers to aggregate over.
+     *
+     * @param  resolvers  to set
+     */
+    public void setEntryResolvers(final Map<String, org.ldaptive.auth.EntryResolver> resolvers)
+    {
+      logger.trace("setting entryResolvers: {}", resolvers);
+      entryResolvers = resolvers;
+    }
+
+
+    @Override
+    public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response)
+      throws LdapException
+    {
+      final String[] labeledDn = criteria.getDn().split(":", 2);
+      final org.ldaptive.auth.EntryResolver er = entryResolvers.get(labeledDn[0]);
+      if (er == null) {
+        throw new LdapException("Could not find entry resolver for label: " + labeledDn[0]);
+      }
+      return er.resolve(new AuthenticationCriteria(labeledDn[1], criteria.getAuthenticationRequest()), response);
+    }
+  }
+
+
+  /**
+   * Used in conjunction with an {@link AggregateDnResolver} to execute a list of response handlers. In particular, the
+   * resolved DN is expected to be of the form: label:DN where the label indicates the response handler to use. This
+   * class only invokes the response handlers that matches the label found on the DN.
+   */
+  public static class AuthenticationResponseHandler implements org.ldaptive.auth.AuthenticationResponseHandler
+  {
+
+    /** Logger for this class. */
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    /** Labeled entry resolvers. */
+    private Map<String, org.ldaptive.auth.AuthenticationResponseHandler[]> responseHandlers;
+
+
+    /** Default constructor. */
+    public AuthenticationResponseHandler() {}
+
+
+    /**
+     * Creates a new aggregate authentication response handler.
+     *
+     * @param  handlers  authentication response handlers
+     */
+    public AuthenticationResponseHandler(final Map<String, org.ldaptive.auth.AuthenticationResponseHandler[]> handlers)
+    {
+      setAuthenticationResponseHandlers(handlers);
+    }
+
+
+    /**
+     * Returns the response handlers to aggregate over.
+     *
+     * @return  map of label to response handlers
+     */
+    public Map<String, org.ldaptive.auth.AuthenticationResponseHandler[]> getAuthenticationResponseHandlers()
+    {
+      return Collections.unmodifiableMap(responseHandlers);
+    }
+
+
+    /**
+     * Sets the response handlers to aggregate over.
+     *
+     * @param  handlers  to set
+     */
+    public void setAuthenticationResponseHandlers(
+      final Map<String, org.ldaptive.auth.AuthenticationResponseHandler[]> handlers)
+    {
+      logger.trace("setting authenticationResponseHandlers: {}", handlers);
+      responseHandlers = handlers;
+    }
+
+
+    @Override
+    public void handle(final AuthenticationResponse response) throws LdapException
+    {
+      final String[] labeledDn = response.getResolvedDn().split(":", 2);
+      final org.ldaptive.auth.AuthenticationResponseHandler[] handlers = responseHandlers.get(labeledDn[0]);
+      if (handlers == null) {
+        throw new LdapException("Could not find response handlers for label: " + labeledDn[0]);
+      }
+      if (handlers.length > 0) {
+        for (org.ldaptive.auth.AuthenticationResponseHandler ah : handlers) {
+          ah.handle(response);
+        }
+      }
     }
   }
 }
