@@ -381,7 +381,11 @@ public class Authenticator
       if (entryResolver != null) {
         er = entryResolver;
       } else if (!ReturnAttributes.NONE.equalsAttributes(criteria.getAuthenticationRequest().getReturnAttributes())) {
-        er = new SearchEntryResolver();
+        if (dnResolver instanceof AggregateDnResolver) {
+          er = ((AggregateDnResolver) dnResolver).createEntryResolver(new SearchEntryResolver());
+        } else {
+          er = new SearchEntryResolver();
+        }
       } else {
         er = NOOP_RESOLVER;
       }
