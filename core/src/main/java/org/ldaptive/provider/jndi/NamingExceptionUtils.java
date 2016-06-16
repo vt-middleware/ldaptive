@@ -283,6 +283,9 @@ public final class NamingExceptionUtils
       } else if (message.contains("socket closed")) {
         // jndi does not return an error code for a closed socket
         code = ResultCode.SERVER_DOWN;
+      } else if (message.contains("LDAP response read timed out")) {
+        // jndi does not return an error code for a response timeout
+        code = ResultCode.LDAP_TIMEOUT;
       }
 
       if (code == null) {
