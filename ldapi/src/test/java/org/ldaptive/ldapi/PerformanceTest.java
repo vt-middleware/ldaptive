@@ -11,6 +11,8 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.provider.jndi.JndiProvider;
+import org.newsclub.net.unix.AFUNIXSocket;
+import org.testng.AssertJUnit;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
@@ -72,6 +74,9 @@ public class PerformanceTest
   public Object[][] connectionFactories()
     throws Exception
   {
+    //Make sure native libraries are loaded and supported for the current unix based operating system.
+    AssertJUnit.assertTrue(AFUNIXSocket.isSupported());
+
     final Map<String, Object> props = new HashMap<>();
     props.put(JndiProvider.SOCKET_FACTORY, "org.ldaptive.ldapi.AFUnixSocketFactory");
 

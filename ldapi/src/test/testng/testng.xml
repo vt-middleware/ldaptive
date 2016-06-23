@@ -3,7 +3,7 @@
 
 <suite name="ldaptive-ldapi" verbose="1" parallel="tests" thread-count="1">
 
-  <parameter name="ldapSocketFile" value="${ldapSocketFile}"/>
+  <parameter name="ldapSocketFile" value="${org.ldaptive.ldapi.socketFile}"/>
   <parameter name="ldapTestHost" value="${ldapTestHost}"/>
   <parameter name="ldapBaseDn" value="${ldapBaseDn}"/>
   <parameter name="ldapSearchFilter" value="${ldapSearchFilter}"/>
