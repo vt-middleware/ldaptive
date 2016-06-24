@@ -13,6 +13,10 @@
     <version>1.2.0-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <testng.dir>${basedir}/src/test/testng</testng.dir>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.ldaptive</groupId>
@@ -37,7 +41,7 @@
           <!-- tests require local ldap instance -->
           <skip>true</skip>
           <suiteXmlFiles>
-            <suiteXmlFile>target/test-classes/testng.xml</suiteXmlFile>
+            <suiteXmlFile>${testng.dir}/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
       </plugin>
