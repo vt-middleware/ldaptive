@@ -13,10 +13,6 @@
     <version>1.2.0-SNAPSHOT</version>
   </parent>
 
-  <properties>
-    <testng.location>${basedir}/src/test/testng/testng.xml</testng.location>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>org.ldaptive</groupId>
@@ -38,87 +34,11 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <suiteXmlFiles>
-            <suiteXmlFile>${testng.location}</suiteXmlFile>
-          </suiteXmlFiles>
+          <!-- tests require local ldap instance -->
           <skip>true</skip>
-        </configuration>
-      </plugin>
-      <plugin>                                                         
-        <groupId>org.codehaus.gmaven</groupId>                       
-        <artifactId>groovy-maven-plugin</artifactId>                 
-        <version>2.0</version>                                       
-        <executions>                                                 
-          <execution>                                              
-            <phase>test</phase>                              
-            <goals>                                              
-              <goal>execute</goal>                             
-            </goals>                                             
-            <configuration>                                      
-              <source>
-                log.info('------------------------------------------------------------------------')
-                log.info('NOTICE:')
-                log.info('Use mvn verify goal to execute performance tests (requires local ldap instance)')
-                log.info('------------------------------------------------------------------------')
-              </source>                                        
-            </configuration>                                     
-          </execution>                                             
-        </executions>                                                
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <version>1.4.1</version>
-        <executions>
-          <execution>
-            <id>enforce-has-test-properties</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireProperty>
-                  <property>org.ldaptive.ldapi.socketFile</property>
-                </requireProperty>
-                <requireProperty>
-                  <property>ldapTestHost</property>
-                </requireProperty>
-                <requireProperty>
-                  <property>ldapBaseDn</property>
-                </requireProperty>
-                <requireProperty>
-                  <property>ldapSearchFilter</property>
-                </requireProperty>
-              </rules>
-              <fail>true</fail>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>2.19.1</version>
-        <configuration>
           <suiteXmlFiles>
-            <suiteXmlFile>${testng.location}</suiteXmlFile>
+            <suiteXmlFile>target/test-classes/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <groupId>com.github.siom79.japicmp</groupId>
-        <artifactId>japicmp-maven-plugin</artifactId>
-        <configuration>
-          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>
