@@ -125,7 +125,7 @@ public class AggregateDnResolver implements DnResolver
    */
   public EntryResolver createEntryResolver(final org.ldaptive.auth.EntryResolver resolver)
   {
-    final Map<String, org.ldaptive.auth.EntryResolver> resolvers = new HashMap(dnResolvers.size());
+    final Map<String, org.ldaptive.auth.EntryResolver> resolvers = new HashMap<>(dnResolvers.size());
     for (String label : dnResolvers.keySet()) {
       resolvers.put(label, resolver);
     }
