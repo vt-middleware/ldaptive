@@ -89,6 +89,7 @@
     <module>json</module>
     <module>templates</module>
     <module>webapp</module>
+    <module>ldapi</module>
   </modules>
 
   <dependencyManagement>
@@ -548,22 +549,6 @@
       <modules>
         <module>unboundid-provider</module>
       </modules>
-    </profile>
-    <profile>
-      <id>ldapi</id>
-      <modules>
-        <module>ldapi</module>
-      </modules>
-      <repositories>
-        <repository>
-          <id>vt-middleware</id>
-          <name>VT Middleware GitHub Repository</name>
-          <url>https://raw.github.com/vt-middleware/maven-repo/master</url>
-          <snapshots>
-            <enabled>false</enabled>
-          </snapshots>
-        </repository>
-      </repositories>
     </profile>
     <profile>
       <id>integration</id>

@@ -15,16 +15,16 @@ function run_mvn() {
 
 case "$1" in
   clean)
-    run_mvn integration,distribution,apache,jldap,opendj,unboundid,ldapi clean
+    run_mvn integration,distribution,apache,jldap,opendj,unboundid clean
     ;;
   package)
-    run_mvn distribution,apache,jldap,opendj,unboundid,ldapi package
+    run_mvn distribution,apache,jldap,opendj,unboundid package
     ;;
   verify)
-    run_mvn distribution,apache,jldap,opendj,unboundid,ldapi verify
+    run_mvn distribution,apache,jldap,opendj,unboundid verify
     ;;
   install)
-    run_mvn distribution,apache,jldap,opendj,unboundid,ldapi install
+    run_mvn distribution,apache,jldap,opendj,unboundid install
     ;;
   deploy)
     LOCAL_REPO=${2}
@@ -32,11 +32,11 @@ case "$1" in
       echo "USAGE: `basename $0` deploy <repo-directory>"
       exit 1
     fi
-    run_mvn apache,jldap,opendj,unboundid,ldapi clean
-    run_mvn apache,jldap,opendj,unboundid,ldapi deploy "altDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
+    run_mvn apache,jldap,opendj,unboundid clean
+    run_mvn apache,jldap,opendj,unboundid deploy "altDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
     ;;
   bundle-create)
-    run_mvn distribution,apache,jldap,opendj,unboundid,ldapi repository:bundle-create sign=true
+    run_mvn distribution,apache,jldap,opendj,unboundid repository:bundle-create sign=true
     ;;
   *)
     if [ -n "$1" ]; then
