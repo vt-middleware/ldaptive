@@ -5,7 +5,7 @@ import org.ldaptive.sasl.CramMd5Config;
 import org.ldaptive.sasl.DigestMd5Config;
 import org.ldaptive.sasl.ExternalConfig;
 import org.ldaptive.sasl.GssApiConfig;
-import org.ldaptive.sasl.Mechanism;
+import org.ldaptive.sasl.SaslConfig;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -61,36 +61,50 @@ public class SaslBindSearchAuthenticatorBeanDefinitionParser extends AbstractSea
    */
   protected BeanDefinitionBuilder parseSaslConfig(final Element element)
   {
-    final Mechanism mechanism = Mechanism.valueOf(element.getAttribute("mechanism"));
-    BeanDefinitionBuilder saslConfig;
-    switch (mechanism) {
-
-    case DIGEST_MD5:
-      saslConfig = BeanDefinitionBuilder.genericBeanDefinition(DigestMd5Config.class);
-      setIfPresent(element, "realm", saslConfig);
-      break;
-
-    case CRAM_MD5:
-      saslConfig = BeanDefinitionBuilder.genericBeanDefinition(CramMd5Config.class);
-      break;
-
-    case EXTERNAL:
-      saslConfig = BeanDefinitionBuilder.genericBeanDefinition(ExternalConfig.class);
-      break;
-
-    case GSSAPI:
-      saslConfig = BeanDefinitionBuilder.genericBeanDefinition(GssApiConfig.class);
-      setIfPresent(element, "realm", saslConfig);
-      break;
-
-    default:
-      throw new IllegalArgumentException("Unknown SASL mechanism " + mechanism);
-    }
-
+    final BeanDefinitionBuilder saslConfig =  BeanDefinitionBuilder.rootBeanDefinition(
+      SaslBindSearchAuthenticatorBeanDefinitionParser.class,
+      "parseSaslConfig");
+    saslConfig.addConstructorArgValue(element.getAttribute("mechanism"));
+    setIfPresent(element, "realm", saslConfig);
     setIfPresent(element, "authorizationId", saslConfig);
     setIfPresent(element, "mutualAuthentication", saslConfig);
     setIfPresent(element, "qualityOfProtection", saslConfig);
     setIfPresent(element, "securityStrength", saslConfig);
+    return saslConfig;
+  }
+
+
+  /**
+   * Returns a {@link SaslConfig} for the supplied value.
+   *
+   * @param  value  to parse
+   *
+   * @return  mechanism
+   */
+  protected static SaslConfig parseSaslConfig(final String value)
+  {
+    SaslConfig saslConfig;
+    switch (value) {
+
+    case "DIGEST_MD5":
+      saslConfig = new DigestMd5Config();
+      break;
+
+    case "CRAM_MD5":
+      saslConfig = new CramMd5Config();
+      break;
+
+    case "EXTERNAL":
+      saslConfig = new ExternalConfig();
+      break;
+
+    case "GSSAPI":
+      saslConfig = new GssApiConfig();
+      break;
+
+    default:
+      throw new IllegalArgumentException("Unknown SASL mechanism " + value);
+    }
     return saslConfig;
   }
 }

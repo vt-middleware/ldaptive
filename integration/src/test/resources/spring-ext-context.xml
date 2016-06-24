@@ -6,7 +6,7 @@
        xsi:schemaLocation="
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd">
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-${project.version}.xsd">
 
   <context:property-placeholder location="classpath:/spring-ext.properties"/>
 
@@ -63,7 +63,9 @@
 
   <ldaptive:sasl-bind-search-authenticator
     id="sasl-auth"
-    mechanism="DIGEST_MD5"
+    mechanism="${ldap.sasl.mechanism}"
+    qualityOfProtection="${ldap.sasl.qualityOfProtection}"
+    securityStrength="${ldap.sasl.securityStrength}"
     ldapUrl="${ldap.url}"
     trustCertificates="classpath:/ldaptive.trust.crt"
     baseDn="${ldap.baseDn}"

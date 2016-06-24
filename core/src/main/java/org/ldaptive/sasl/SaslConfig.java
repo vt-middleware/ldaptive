@@ -152,8 +152,8 @@ public class SaslConfig extends AbstractConfig
   {
     return
       String.format(
-        "[%s@%d::mechanism=%s, authorizationId=%s, mutualAuthentication=%s, " +
-        "qualityOfProtection=%s, securityStrength=%s]",
+        "[%s@%d::mechanism=%s, authorizationId=%s, mutualAuthentication=%s, qualityOfProtection=%s, " +
+        "securityStrength=%s]",
         getClass().getName(),
         hashCode(),
         mechanism,

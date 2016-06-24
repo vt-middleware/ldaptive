@@ -3,6 +3,7 @@ package org.ldaptive.beans.spring;
 
 import java.time.Duration;
 import java.time.Period;
+import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactoryManager;
@@ -40,6 +41,10 @@ import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
 import org.ldaptive.pool.SearchValidator;
+import org.ldaptive.sasl.Mechanism;
+import org.ldaptive.sasl.QualityOfProtection;
+import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.sasl.SecurityStrength;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
@@ -56,6 +61,25 @@ import org.testng.annotations.Test;
  */
 public class NamespaceHandlerTest
 {
+
+  /** Enum to aid in testing authenticator types. */
+  public enum AuthenticatorType {
+
+    /** anonymous search. */
+    ANON_SEARCH,
+
+    /** bind search. */
+    BIND_SEARCH,
+
+    /** sasl search. */
+    SASL_SEARCH,
+
+    /** direct. */
+    DIRECT,
+
+    /** active directory. */
+    AD
+  }
 
   /** Spring context to test. */
   private ClassPathXmlApplicationContext context;
@@ -153,7 +177,7 @@ public class NamespaceHandlerTest
       Authenticator.class);
     AssertJUnit.assertNotNull(anonSearchAuthenticator);
     testBindConnectionPool(anonSearchAuthenticator);
-    testSearchDnResolver(anonSearchAuthenticator);
+    testSearchDnResolver(anonSearchAuthenticator, AuthenticatorType.ANON_SEARCH);
     AssertJUnit.assertNotNull(anonSearchAuthenticator.getEntryResolver());
     AssertJUnit.assertNull(anonSearchAuthenticator.getAuthenticationResponseHandlers());
     AssertJUnit.assertNull(
@@ -174,7 +198,7 @@ public class NamespaceHandlerTest
     final Authenticator bindSearchAuthenticator = context.getBean("bind-search-authenticator", Authenticator.class);
     AssertJUnit.assertNotNull(bindSearchAuthenticator);
     testBindConnectionPool(bindSearchAuthenticator);
-    testSearchDnResolver(bindSearchAuthenticator);
+    testSearchDnResolver(bindSearchAuthenticator, AuthenticatorType.BIND_SEARCH);
     AssertJUnit.assertNotNull(bindSearchAuthenticator.getEntryResolver());
     AssertJUnit.assertNotNull(bindSearchAuthenticator.getAuthenticationResponseHandlers());
     AssertJUnit.assertEquals(
@@ -199,7 +223,7 @@ public class NamespaceHandlerTest
     final Authenticator bindSearchAuthenticator = context.getBean("bind-search-disable-pool", Authenticator.class);
     AssertJUnit.assertNotNull(bindSearchAuthenticator);
     testBindConnectionPool(bindSearchAuthenticator);
-    testSearchDnResolver(bindSearchAuthenticator);
+    testSearchDnResolver(bindSearchAuthenticator, AuthenticatorType.BIND_SEARCH);
     AssertJUnit.assertNotNull(bindSearchAuthenticator.getEntryResolver());
     AssertJUnit.assertNotNull(bindSearchAuthenticator.getAuthenticationResponseHandlers());
     AssertJUnit.assertEquals(
@@ -227,7 +251,7 @@ public class NamespaceHandlerTest
     final Authenticator saslBindSearchAuthenticator = context.getBean("sasl-auth", Authenticator.class);
     AssertJUnit.assertNotNull(saslBindSearchAuthenticator);
     testBindConnectionPool(saslBindSearchAuthenticator);
-    testSearchDnResolver(saslBindSearchAuthenticator);
+    testSearchDnResolver(saslBindSearchAuthenticator, AuthenticatorType.SASL_SEARCH);
     AssertJUnit.assertNotNull(saslBindSearchAuthenticator.getEntryResolver());
     AssertJUnit.assertNotNull(saslBindSearchAuthenticator.getAuthenticationResponseHandlers());
     AssertJUnit.assertEquals(
@@ -279,7 +303,7 @@ public class NamespaceHandlerTest
     final Authenticator adAuthenticator = context.getBean("ad-authenticator", Authenticator.class);
     AssertJUnit.assertNotNull(adAuthenticator);
     testBindConnectionPool(adAuthenticator);
-    testSearchDnResolver(adAuthenticator);
+    testSearchDnResolver(adAuthenticator, AuthenticatorType.AD);
     AssertJUnit.assertNotNull(adAuthenticator.getEntryResolver());
     AssertJUnit.assertNotNull(adAuthenticator.getAuthenticationResponseHandlers());
     AssertJUnit.assertNotNull(adAuthenticator.getReturnAttributes());
@@ -310,7 +334,7 @@ public class NamespaceHandlerTest
     AssertJUnit.assertTrue(aggregateAuthenticator.getDnResolver() instanceof AggregateDnResolver);
     final AggregateDnResolver dnResolvers = (AggregateDnResolver) aggregateAuthenticator.getDnResolver();
     for (DnResolver dnResolver : dnResolvers.getDnResolvers().values()) {
-      testSearchDnResolver((AbstractSearchDnResolver) dnResolver);
+      testSearchDnResolver((AbstractSearchDnResolver) dnResolver, null);
     }
 
     AssertJUnit.assertNotNull(aggregateAuthenticator.getEntryResolver());
@@ -350,7 +374,7 @@ public class NamespaceHandlerTest
       "pooled-connection-factory",
       PooledConnectionFactory.class);
     AssertJUnit.assertNotNull(pooledConnectionFactory);
-    testConnectionPool((BlockingConnectionPool) pooledConnectionFactory.getConnectionPool());
+    testConnectionPool((BlockingConnectionPool) pooledConnectionFactory.getConnectionPool(), null);
   }
 
 
@@ -367,7 +391,7 @@ public class NamespaceHandlerTest
       "connection-factory",
       DefaultConnectionFactory.class);
     AssertJUnit.assertNotNull(connectionFactory);
-    testConnectionConfig(connectionFactory.getConnectionConfig());
+    testConnectionConfig(connectionFactory.getConnectionConfig(), null);
   }
 
 
@@ -463,7 +487,7 @@ public class NamespaceHandlerTest
   {
     final BlockingConnectionPool connectionPool = context.getBean("connection-pool", BlockingConnectionPool.class);
     AssertJUnit.assertNotNull(connectionPool);
-    testConnectionPool(connectionPool);
+    testConnectionPool(connectionPool, null);
   }
 
 
@@ -478,7 +502,7 @@ public class NamespaceHandlerTest
   {
     final ConnectionConfig config = context.getBean("connection-config", ConnectionConfig.class);
     AssertJUnit.assertNotNull(config);
-    testConnectionConfig(config);
+    testConnectionConfig(config, null);
   }
 
 
@@ -504,13 +528,18 @@ public class NamespaceHandlerTest
       final BlockingConnectionPool pool =
         (BlockingConnectionPool)
           ((PooledConnectionFactoryManager) authHandler).getConnectionFactory().getConnectionPool();
-      testConnectionPool(pool);
+      testConnectionPool(pool, null);
     } else {
+      Connection conn = null;
       try {
-        final Connection conn = ((ConnectionFactoryManager) authHandler).getConnectionFactory().getConnection();
-        testConnectionConfig(conn.getConnectionConfig());
+        conn = ((ConnectionFactoryManager) authHandler).getConnectionFactory().getConnection();
+        testConnectionConfig(conn.getConnectionConfig(), null);
       } catch (LdapException e) {
         AssertJUnit.fail("Error getting connection: " + e.getMessage());
+      } finally {
+        if (conn != null) {
+          conn.close();
+        }
       }
     }
   }
@@ -520,10 +549,11 @@ public class NamespaceHandlerTest
    * Runs asserts against the DN resolver.
    *
    * @param  auth  authenticator
+   * @param  authType  authenticator type
    */
-  private void testSearchDnResolver(final Authenticator auth)
+  private void testSearchDnResolver(final Authenticator auth, final AuthenticatorType authType)
   {
-    testSearchDnResolver((AbstractSearchDnResolver) auth.getDnResolver());
+    testSearchDnResolver((AbstractSearchDnResolver) auth.getDnResolver(), authType);
   }
 
 
@@ -531,8 +561,9 @@ public class NamespaceHandlerTest
    * Runs asserts against the DN resolver.
    *
    * @param  dnResolver  dn resolver
+   * @param  authType  authenticator type
    */
-  private void testSearchDnResolver(final AbstractSearchDnResolver dnResolver)
+  private void testSearchDnResolver(final AbstractSearchDnResolver dnResolver, final AuthenticatorType authType)
   {
     AssertJUnit.assertNotNull(dnResolver.getBaseDn());
     AssertJUnit.assertEquals("(mail={user})", dnResolver.getUserFilter());
@@ -540,13 +571,18 @@ public class NamespaceHandlerTest
       final BlockingConnectionPool pool =
         (BlockingConnectionPool)
           ((PooledConnectionFactoryManager) dnResolver).getConnectionFactory().getConnectionPool();
-      testConnectionPool(pool);
+      testConnectionPool(pool, authType);
     } else {
+      Connection conn = null;
       try {
-        final Connection conn = ((ConnectionFactoryManager) dnResolver).getConnectionFactory().getConnection();
-        testConnectionConfig(conn.getConnectionConfig());
+        conn = ((ConnectionFactoryManager) dnResolver).getConnectionFactory().getConnection();
+        testConnectionConfig(conn.getConnectionConfig(), authType);
       } catch (LdapException e) {
         AssertJUnit.fail("Error getting connection: " + e.getMessage());
+      } finally {
+        if (conn != null) {
+          conn.close();
+        }
       }
     }
   }
@@ -556,8 +592,9 @@ public class NamespaceHandlerTest
    * Runs asserts against the connection pool.
    *
    * @param  pool  to test
+   * @param  authType  authenticator type or null
    */
-  private void testConnectionPool(final BlockingConnectionPool pool)
+  private void testConnectionPool(final BlockingConnectionPool pool, final AuthenticatorType authType)
   {
     AssertJUnit.assertEquals(Duration.ofSeconds(3), pool.getBlockWaitTime());
     AssertJUnit.assertFalse(pool.getFailFastInitialize());
@@ -575,7 +612,7 @@ public class NamespaceHandlerTest
     Connection conn = null;
     try {
       conn = pool.getConnection();
-      testConnectionConfig(conn.getConnectionConfig());
+      testConnectionConfig(conn.getConnectionConfig(), authType);
     } catch (LdapException e) {
       AssertJUnit.fail("Error getting connection from pool: " + e.getMessage());
     } finally {
@@ -590,8 +627,9 @@ public class NamespaceHandlerTest
    * Runs asserts against the connection config.
    *
    * @param  connectionConfig  to test
+   * @param  authType  authenticator type or null
    */
-  private void testConnectionConfig(final ConnectionConfig connectionConfig)
+  private void testConnectionConfig(final ConnectionConfig connectionConfig, final AuthenticatorType authType)
   {
     AssertJUnit.assertNotNull(connectionConfig.getLdapUrl());
     AssertJUnit.assertTrue(connectionConfig.getUseStartTLS());
@@ -602,6 +640,38 @@ public class NamespaceHandlerTest
       AssertJUnit.assertNotNull(((X509CredentialConfig) credentialConfig).getTrustCertificates());
     } else if (credentialConfig instanceof KeyStoreCredentialConfig) {
       AssertJUnit.assertNotNull(((KeyStoreCredentialConfig) credentialConfig).getTrustStore());
+    }
+
+    if (authType != null) {
+      final BindConnectionInitializer ci = (BindConnectionInitializer) connectionConfig.getConnectionInitializer();
+      switch(authType) {
+      case ANON_SEARCH:
+        AssertJUnit.assertNull(ci);
+        break;
+      case BIND_SEARCH:
+        AssertJUnit.assertNotNull(ci);
+        AssertJUnit.assertNotNull(ci.getBindDn());
+        AssertJUnit.assertNotNull(ci.getBindCredential());
+        break;
+      case SASL_SEARCH:
+        AssertJUnit.assertNotNull(ci);
+        final SaslConfig sc = ci.getBindSaslConfig();
+        AssertJUnit.assertNotNull(sc);
+        AssertJUnit.assertEquals(Mechanism.DIGEST_MD5, sc.getMechanism());
+        AssertJUnit.assertEquals(QualityOfProtection.AUTH_INT, sc.getQualityOfProtection());
+        AssertJUnit.assertEquals(SecurityStrength.MEDIUM, sc.getSecurityStrength());
+        break;
+      case DIRECT:
+        AssertJUnit.assertNull(ci);
+        break;
+      case AD:
+        AssertJUnit.assertNotNull(ci);
+        AssertJUnit.assertNotNull(ci.getBindDn());
+        AssertJUnit.assertNotNull(ci.getBindCredential());
+        break;
+      default:
+        throw new IllegalStateException("Unknown type");
+      }
     }
   }
 
