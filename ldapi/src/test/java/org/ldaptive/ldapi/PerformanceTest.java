@@ -55,7 +55,7 @@ public class PerformanceTest
     )
   public void initialize(final String socketFile, final String host, final String baseDn, final String searchFilter)
   {
-    System.setProperty("org.ldaptive.ldapi.socketFile", socketFile);
+    System.setProperty(AFUnixSocketFactory.SOCKET_FILE_PROPERTY, socketFile);
     ldapHost = host;
     ldapBaseDn = baseDn;
     ldapSearchFilter = searchFilter;

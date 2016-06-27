@@ -19,19 +19,22 @@ import org.newsclub.net.unix.AFUNIXSocketAddress;
 public class AFUnixSocketFactory extends SocketFactory
 {
 
-  /** File system location of the domain socket. */
+  /** System parameter name specifying location of the socket file. */
+  public static final String SOCKET_FILE_PROPERTY = "org.ldaptive.ldapi.socketFile";
+
+  /** File system location of the domain socket.  Supplied either via constructor, or {@link #SOCKET_FILE_PROPERTY} */
   private final String socketFile;
 
 
-  /** Creates a new AFUnixSocketFactory configured with the system property 'org.ldaptive.ldapi.socketFile'. */
+  /** Creates a new AFUnixSocketFactory configured with the system property {@link #SOCKET_FILE_PROPERTY}. */
   public AFUnixSocketFactory()
   {
-    this(System.getProperty("org.ldaptive.ldapi.socketFile"));
+    this(System.getProperty(SOCKET_FILE_PROPERTY));
   }
 
 
   /**
-   * Creates a new AFUnixSocketFactory.
+   * Creates a new AFUnixSocketFactory with a given file path.
    *
    * @param  socket  file system location of the domain socket
    */
@@ -53,10 +56,10 @@ public class AFUnixSocketFactory extends SocketFactory
 
 
   /**
-   * Creates a new instance of AFUNIXSocket using the host as the file system location of the domain socket. The host
-   * parameter is ignored if {@link #socketFile} is set. The port parameter is always ignored.
+   * Uses the {@link #socketFile} property as the path to initiate a file socket ignoring all parameters of this
+   * method.
    *
-   * @param  host  ignored if {@link #socketFile} is set
+   * @param  host  Unsupported, will be ignored
    * @param  port  Unsupported, will be ignored
    *
    * @return  unix socket
@@ -73,7 +76,6 @@ public class AFUnixSocketFactory extends SocketFactory
               " or passed through factory constructor) MUST be specified to call this method.");
     }
     file = new File(URLDecoder.decode(socketFile, "UTF-8"));
-
     final AFUNIXSocketAddress localAddress = new AFUNIXSocketAddress(file);
     final AFUNIXSocket sock = AFUNIXSocket.newInstance();
     sock.connect(localAddress);
@@ -82,12 +84,13 @@ public class AFUnixSocketFactory extends SocketFactory
 
 
   /**
-   * Uses the org.ldaptive.ldapi.socketFile system property to initiate a file socket ignoring all parameters.
+   * Uses the {@link #socketFile} property as the path to initiate a file socket ignoring all parameters of this
+   * method.
    *
-   * @param  host  Unsupported.
-   * @param  port  Unsupported.
-   * @param  localHost  Unsupported.
-   * @param  localPort  Unsupported.
+   * @param  host  Unsupported, will be ignored
+   * @param  port  Unsupported, will be ignored
+   * @param  localHost  Unsupported, will be ignored
+   * @param  localPort  Unsupported, will be ignored
    *
    * @return  unix socket
    *
@@ -102,10 +105,11 @@ public class AFUnixSocketFactory extends SocketFactory
 
 
   /**
-   * Uses the org.ldaptive.ldapi.socketFile system property to initiate a file socket ignoring all parameters.
+   * Uses the {@link #socketFile} property as the path to initiate a file socket ignoring all parameters of this
+   * method.
    *
-   * @param  host  Unsupported.
-   * @param  port  Unsupported.
+   * @param  host  Unsupported, will be ignored
+   * @param  port  Unsupported, will be ignored
    *
    * @return  unix socket
    *
@@ -120,12 +124,12 @@ public class AFUnixSocketFactory extends SocketFactory
 
 
   /**
-   * Uses the org.ldaptive.ldapi.socketFile system property to initiate a file socket ignoring all parameters.
-   *
-   * @param  address  Unsupported.
-   * @param  port  Unsupported.
-   * @param  localAddress  Unsupported.
-   * @param  localPort  Unsupported.
+   * Uses the {@link #socketFile} property as the path to initiate a file socket ignoring all parameters of this
+   * method.
+   * @param  address  Unsupported, will be ignored
+   * @param  port  Unsupported, will be ignored
+   * @param  localAddress  Unsupported, will be ignored
+   * @param  localPort  Unsupported, will be ignored
    *
    * @return  unix socket
    *
