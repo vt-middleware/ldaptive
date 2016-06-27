@@ -15,6 +15,7 @@
 
   <properties>
     <testng.dir>${basedir}/src/test/testng</testng.dir>
+    <ldapi.skipTests>true</ldapi.skipTests>
   </properties>
 
   <dependencies>
@@ -39,7 +40,7 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <!-- tests require local ldap instance -->
-          <skip>true</skip>
+          <skip>${ldapi.skipTests}</skip>
           <suiteXmlFiles>
             <suiteXmlFile>${testng.dir}/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
