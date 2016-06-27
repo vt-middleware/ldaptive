@@ -484,6 +484,7 @@
             </file>
           </newVersion>
           <parameter>
+            <ignoreNonResolvableArtifacts>true</ignoreNonResolvableArtifacts>
             <onlyBinaryIncompatible>true</onlyBinaryIncompatible>
             <breakBuildOnBinaryIncompatibleModifications>false</breakBuildOnBinaryIncompatibleModifications>
             <packagingSupporteds>
