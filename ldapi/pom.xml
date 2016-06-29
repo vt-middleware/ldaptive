@@ -13,14 +13,25 @@
     <version>1.2.0-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <testng.dir>${basedir}/src/test/testng</testng.dir>
+    <ldapi.skipTests>true</ldapi.skipTests>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.newsclub.net</groupId>
-      <artifactId>junixsocket</artifactId>
+      <groupId>com.kohlschutter.junixsocket</groupId>
+      <artifactId>junixsocket-native-common</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>log4j</groupId>
+          <artifactId>log4j</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.testng</groupId>
@@ -35,10 +46,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <!-- tests require local ldap instance -->
-          <skipTests>true</skipTests>
-          <argLine>-Djava.library.path=${basedir}/src/test/resources</argLine>
+          <skip>${ldapi.skipTests}</skip>
           <suiteXmlFiles>
-            <suiteXmlFile>target/test-classes/testng.xml</suiteXmlFile>
+            <suiteXmlFile>${testng.dir}/testng.xml</suiteXmlFile>
           </suiteXmlFiles>
         </configuration>
       </plugin>
