@@ -30,10 +30,6 @@
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
     </dependency>
-    <dependency>
-      <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
-    </dependency>
   </dependencies>
 
 </project>
