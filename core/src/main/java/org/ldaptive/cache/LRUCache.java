@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.cache;
 
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -37,17 +38,17 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
       t.setDaemon(true);
       return t;
     });
-  // CheckStyle:JavadocVariable ON
+    // CheckStyle:JavadocVariable ON
 
 
   /**
    * Creates a new LRU cache.
    *
    * @param  size  number of results to cache
-   * @param  timeToLive  in seconds that results should stay in the cache
-   * @param  interval  in seconds to enforce timeToLive
+   * @param  timeToLive  that results should stay in the cache
+   * @param  interval  to enforce timeToLive
    */
-  public LRUCache(final int size, final long timeToLive, final long interval)
+  public LRUCache(final int size, final Duration timeToLive, final Duration interval)
   {
     cache = new LinkedHashMap<Q, Item>(INITIAL_CAPACITY, LOAD_FACTOR, true) {
 
@@ -68,13 +69,13 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
         final long t = System.currentTimeMillis();
         while (i.hasNext()) {
           final Item item = i.next();
-          if (t - item.creationTime > TimeUnit.SECONDS.toMillis(timeToLive)) {
+          if (t - item.creationTime > timeToLive.toMillis()) {
             i.remove();
           }
         }
       }
     };
-    executor.scheduleAtFixedRate(expire, interval, interval, TimeUnit.SECONDS);
+    executor.scheduleAtFixedRate(expire, interval.getSeconds(), interval.getSeconds(), TimeUnit.SECONDS);
   }
 
 

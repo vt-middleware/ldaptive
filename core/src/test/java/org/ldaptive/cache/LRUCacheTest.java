@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.cache;
 
+import java.time.Duration;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
@@ -19,7 +20,7 @@ public class LRUCacheTest
 {
 
   /** Cache for testing. */
-  private final LRUCache<SearchRequest> cache = new LRUCache<>(5, 60, 3);
+  private final LRUCache<SearchRequest> cache = new LRUCache<>(5, Duration.ofSeconds(60), Duration.ofSeconds(3));
 
 
   /** @throws  Exception  On test failure. */
