@@ -133,6 +133,7 @@ public class JLdapUtils
    *
    * @return  jldap attributes
    */
+  @SuppressWarnings("unchecked")
   public LDAPAttributeSet fromLdapAttributes(final Collection<LdapAttribute> c)
   {
     return c.stream().map(this::fromLdapAttribute).collect(Collectors.toCollection(LDAPAttributeSet::new));
