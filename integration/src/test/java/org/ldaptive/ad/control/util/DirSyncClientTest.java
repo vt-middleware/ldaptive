@@ -86,6 +86,9 @@ public class DirSyncClientTest extends AbstractTest
     if (!TestControl.isActiveDirectory()) {
       return;
     }
+    if (TestControl.isOpenDJProvider()) {
+      throw new UnsupportedOperationException("OpenDJ will not parse DNs used by this control");
+    }
 
     try (Connection conn = TestUtils.createConnection()) {
       conn.open();
@@ -123,6 +126,9 @@ public class DirSyncClientTest extends AbstractTest
   {
     if (!TestControl.isActiveDirectory()) {
       return;
+    }
+    if (TestControl.isOpenDJProvider()) {
+      throw new UnsupportedOperationException("OpenDJ will not parse DNs used by this control");
     }
 
     try (Connection conn = TestUtils.createConnection()) {

@@ -1237,6 +1237,10 @@ public class SearchOperationTest extends AbstractTest
     if (!TestControl.isActiveDirectory()) {
       return;
     }
+    // OpenDJ will not parse DNs used by this entry handler
+    if (TestControl.isOpenDJProvider()) {
+      return;
+    }
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
     try (Connection conn = createLdapConnection(true)) {
