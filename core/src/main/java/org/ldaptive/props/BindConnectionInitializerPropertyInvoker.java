@@ -1,7 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
+import java.io.IOException;
 import org.ldaptive.Credential;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.sasl.SaslConfig;
 
@@ -47,7 +49,15 @@ public class BindConnectionInitializerPropertyInvoker extends AbstractPropertyIn
       } else if (RequestControl[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(RequestControl.class, value);
       } else if (Credential.class.isAssignableFrom(type)) {
-        newValue = new Credential(value);
+        if (LdapUtils.isResource(value)) {
+          try {
+            newValue = new Credential(LdapUtils.readInputStream(LdapUtils.getResource(value)));
+          } catch (IOException e) {
+            throw new IllegalArgumentException("Could not read resource: " + value, e);
+          }
+        } else {
+          newValue = new Credential(value);
+        }
       } else {
         newValue = convertSimpleType(type, value);
       }
