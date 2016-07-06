@@ -142,6 +142,7 @@ public class AggregateDnResolver implements DnResolver, DnResolverEx
             } else {
               dn = entry.getValue().resolve(user.getIdentifier());
             }
+            logger.debug("DN resolver {} resolved dn {} for user {}", entry.getValue(), dn, user);
             if (dn != null && !dn.isEmpty()) {
               return String.format("%s:%s", entry.getKey(), dn);
             }
@@ -150,12 +151,10 @@ public class AggregateDnResolver implements DnResolver, DnResolverEx
         });
       logger.debug("submitted DN resolver {}", entry.getValue());
     }
-    for (DnResolver resolver : dnResolvers.values()) {
+    for (int i = 1; i <= dnResolvers.size(); i++) {
       try {
-        logger.debug("waiting on DN resolver {}", resolver);
-
+        logger.trace("waiting on DN resolver {} of {}", i, dnResolvers.size());
         final String dn = cs.take().get();
-        logger.debug("DN resolver {} resolved dn {}", resolver, dn);
         if (dn != null) {
           results.add(dn);
         }
@@ -174,6 +173,7 @@ public class AggregateDnResolver implements DnResolver, DnResolverEx
     if (results.size() > 1 && !allowMultipleDns) {
       throw new LdapException("Found more than (1) DN for: " + user);
     }
+    logger.debug("resolved aggregate DN {}", results);
     return results.isEmpty() ? null : results.get(0);
   }
 
