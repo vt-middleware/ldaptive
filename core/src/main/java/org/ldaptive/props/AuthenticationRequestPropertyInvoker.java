@@ -1,7 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
+import java.io.IOException;
 import org.ldaptive.Credential;
+import org.ldaptive.LdapUtils;
 
 /**
  * Handles properties for {@link org.ldaptive.auth.AuthenticationRequest}.
@@ -29,7 +31,15 @@ public class AuthenticationRequestPropertyInvoker extends AbstractPropertyInvoke
     Object newValue = value;
     if (type != String.class) {
       if (Credential.class.isAssignableFrom(type)) {
-        newValue = new Credential(value);
+        if (LdapUtils.isResource(value)) {
+          try {
+            newValue = new Credential(LdapUtils.readInputStream(LdapUtils.getResource(value)));
+          } catch (IOException e) {
+            throw new IllegalArgumentException("Could not read resource: " + value, e);
+          }
+        } else {
+          newValue = new Credential(value);
+        }
       } else {
         newValue = convertSimpleType(type, value);
       }

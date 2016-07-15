@@ -436,6 +436,19 @@ public final class LdapUtils
 
 
   /**
+   * Returns whether the supplied string starts with {@link #CLASSPATH_PREFIX} or {@link #FILE_PREFIX}.
+   *
+   * @param  s  to inspect
+   *
+   * @return  whether the supplied string represents a resource
+   */
+  public static boolean isResource(final String s)
+  {
+    return s != null && (s.startsWith(CLASSPATH_PREFIX) || s.startsWith(FILE_PREFIX));
+  }
+
+
+  /**
    * Parses the supplied path and returns an input stream based on the prefix in the path. If a path is prefixed with
    * the string "classpath:" it is interpreted as a classpath specification. If a path is prefixed with the string
    * "file:" it is interpreted as a file path.
