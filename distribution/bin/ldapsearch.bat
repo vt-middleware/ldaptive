@@ -9,7 +9,7 @@ set JAVA=%JAVA_HOME%\bin\java
 set LDAP_JAR=%LDAPTIVE_HOME%\jars\ldaptive-${project.version}.jar
 set LIBDIR=%LDAPTIVE_HOME%\lib
 
-set CLASSPATH=%LIBDIR%\commons-cli-1.3.1.jar;%LIBDIR%\slf4j-api-1.7.12.jar;%LDAP_JAR%
+set CLASSPATH=%LIBDIR%\commons-cli-1.3.1.jar;%LIBDIR%\slf4j-api-1.7.21.jar;%LDAP_JAR%
 
 call "%JAVA%" -cp "%CLASSPATH%" org.ldaptive.cli.SearchOperationCli %*
 goto end
