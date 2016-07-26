@@ -6,6 +6,25 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 1.2.0 - 26Jul2016
+[ldaptive-111]({{ site.issueURL }}111) | Add passwordAttribute property to CompareAuthenticationHandler
+[ldaptive-107]({{ site.issueURL }}107) | Support resolving Credential property from a resource
+[ldaptive-106]({{ site.issueURL }}106) | Fix incorrect logging in AggregateDnResolver
+[ldaptive-101]({{ site.issueURL }}101) | Update CaseChangeEntryHandler to support specific attributes
+[ldaptive-99]({{ site.issueURL }}99) | Fix potential ClassNotFoundException in JNDI provider with SSLSocketFactory
+[ldaptive-96]({{ site.issueURL }}96) | Update LDAPI package, now available in maven central
+[ldaptive-89]({{ site.issueURL }}89) | Allow configuration of return attributes on the Authenticator
+[ldaptive-75]({{ site.issueURL }}75) | ConnectionStrategy interface moved to the base package
+[ldaptive-74]({{ site.issueURL }}74) | ActiveDirectoryAuthenticationHandler updated to use msDS-UserPasswordExpiryTimeComputed
+[ldaptive-71]({{ site.issueURL }}71) | Snapshots are published to [maven-repo](https://github.com/vt-middleware/maven-repo)
+[ldaptive-64]({{ site.issueURL }}64) | Refactor DnResolver to use User object
+[ldaptive-61]({{ site.issueURL }}61) | Refactor JSON package to use GSON
+[ldaptive-60]({{ site.issueURL }}60) | Use new java.time API instead of Calendar
+[ldaptive-59]({{ site.issueURL }}59) | Use Java 8 base64 implementation
+[ldaptive-58]({{ site.issueURL }}58) | Use Duration instead of int or long
+[ldaptive-57]({{ site.issueURL }}57) | Add FreeIPA authentication response handler
+[ldaptive-56]({{ site.issueURL }}56) | Add support for Spring extensible namespaces to the beans package
+
 ## Version 1.1.0 - 09Oct2015
 
 Issue | Description
