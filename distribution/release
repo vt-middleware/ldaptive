@@ -1,0 +1,112 @@
+#!/bin/sh
+
+function extract_from_pom {
+  cat pom.xml | xpath $1 2>/dev/null
+}
+
+function read_pom() {
+  GROUP=$(extract_from_pom '/project/groupId/text()')
+  PROJECT=$(extract_from_pom '/project/artifactId/text()')
+  VERSION=$(extract_from_pom '/project/version/text()')
+}
+
+function user_continue() {
+  read -p "Do you want to continue? [y/n]" -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
+}
+
+function update_pom() {
+  OLD_V="${1}"
+  NEW_V="${2}"
+  POMS=$(find ./ -type f -name "pom.xml")
+  for POM in ${POMS}
+  do  
+    sed -i '' -e "s/<version>${OLD_V}<\/version>/<version>${NEW_V}<\/version>/g" ${POM}
+    echo "Set version in ${POM} from ${OLD_V} to ${NEW_V}"
+  done
+}
+
+if [ "$#" -ne 2 ]; then
+  echo "USAGE: `basename $0` <release-version> <next-version>"
+  exit
+fi
+ 
+RELEASE_VERSION="${1}"
+NEXT_VERSION="${2}"
+read_pom
+echo "================================================================="
+echo "BEGIN RELEASE for artifact ${PROJECT} in group ${GROUP}"
+echo "CURRENT VERSION: ${VERSION}"
+echo "RELEASE VERSION: ${RELEASE_VERSION}"
+echo "NEXT VERSION:    ${NEXT_VERSION}"
+echo "================================================================="
+user_continue
+
+# update pom to release version
+./mvn_cmd clean
+update_pom ${VERSION} ${RELEASE_VERSION}
+echo "Updated pom to release version ${RELEASE_VERSION}"
+user_continue
+
+# commit pom changes
+git commit -a -m "Update version for ${RELEASE_VERSION} release."
+git push origin master
+
+# tag the release version
+git tag -a v${RELEASE_VERSION} -m "Tagging ${RELEASE_VERSION} release."
+git push origin v${RELEASE_VERSION}
+echo "Tagged release ${RELEASE_VERSION}"
+
+# update pom to the next version
+update_pom ${RELEASE_VERSION} ${NEXT_VERSION}
+echo "Updated pom to next version ${NEXT_VERSION}"
+user_continue
+
+# commit pom changes
+git commit -a -m "Bump version to ${NEXT_VERSION}."
+git push origin master
+
+# checkout the release tag
+git checkout v${RELEASE_VERSION}
+echo "Switched to the tag version ${RELEASE_VERSION}"
+
+# build the release distribution
+./mvn_cmd install
+./mvn_cmd bundle-create
+gpg --armor --detach-sign distribution/target/ldaptive-${RELEASE_VERSION}-dist.tar.gz
+gpg --armor --detach-sign distribution/target/ldaptive-${RELEASE_VERSION}-dist.zip
+
+# update the javadocs
+echo "Updating javadocs"
+user_continue
+
+git checkout gh-pages
+git pull origin gh-pages
+# remove root directory javadocs
+git rm -r javadocs/org javadocs/resources javadocs/*.html javadocs/*.css javadocs/package-list
+# add new javadocs to root directory
+cp -Rp distribution/target/apidocs/ javadocs
+# add new javadocs to release version directory
+cp -Rp distribution/target/apidocs/ javadocs/${RELEASE_VERSION}
+git add javadocs
+git commit -a -m "Updated javadocs for ${RELEASE_VERSION} release."
+echo "Committed new javadocs"
+
+# add new binaries
+echo "Adding release binaries"
+user_continue
+
+mkdir downloads/${RELEASE_VERSION}
+cp distribution/target/ldaptive-${RELEASE_VERSION}-dist* downloads/${RELEASE_VERSION}
+git add downloads/${RELEASE_VERSION}
+git commit -a -m "Added binaries for ${RELEASE_VERSION} release."
+echo "Committed new release binaries"
+
+# push changes to the server
+git push origin gh-pages
+
+echo "Finished release ${RELEASE_VERSION} for ${PROJECT}"
+
