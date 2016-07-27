@@ -5,8 +5,8 @@ dnResolver.setBaseDn("ou=people,dc=ldaptive,dc=org");
 dnResolver.setUserFilter("uid={user}");
 BindAuthenticationHandler authHandler = new BindAuthenticationHandler(new DefaultConnectionFactory(connConfig));
 Authenticator auth = new Authenticator(dnResolver, authHandler);
-auth.setAuthenticationResponseHandlers(new EDirectoryAuthenticationResponseHandler());
-auth.setReturnAttributes(EDirectoryAuthenticationResponseHandler.ATTRIBUTES);
+auth.setAuthenticationResponseHandlers(new FreeIPAAuthenticationResponseHandler());
+auth.setReturnAttributes(FreeIPAAuthenticationResponseHandler.ATTRIBUTES);
 AuthenticationResponse response = auth.authenticate(new AuthenticationRequest("dfisher", new Credential("password")));
 if (response.getResult()) {
   // authentication succeeded, check account state
