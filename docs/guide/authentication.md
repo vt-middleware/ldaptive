@@ -25,7 +25,7 @@ Authentication typically begins by gathering an identifier from the user that ma
 {% highlight java %}
 public interface DnResolver
 {
-  String resolve(String user) throws LdapException;
+  String resolve(User user) throws LdapException;
 }
 {% endhighlight %}
 
@@ -71,6 +71,11 @@ Uses multiple DN resolvers to look up a user's DN. Each DN resolver is invoked o
 {% include source/authentication/3.java %}
 {% endhighlight %}
 
+#### Use cases
+
+* Multiple directories where each user existing only in one directory.
+* Multiple directories with synchronized passwords. Users may exist in more than one directory, but their passwords are the same.
+
 ## Password Validation
 
 Password validation is done by an AuthenticationHandler. It's purpose is to use the entry DN and the credential to determine if authentication should succeed. The interface for authentication handlers looks like:
@@ -78,7 +83,7 @@ Password validation is done by an AuthenticationHandler. It's purpose is to use 
 {% highlight java %}
 public interface AuthenticationHandler
 {
-  Connection authenticate(AuthenticationCriteria criteria) throws LdapException;
+  AuthenticationHandlerResponse authenticate(AuthenticationCriteria criteria) throws LdapException;
 }
 {% endhighlight %}
 
@@ -102,7 +107,7 @@ The authentication process always returns an LDAP entry for the DN that attempte
 {% highlight java %}
 public interface EntryResolver
 {
-  LdapEntry resolve(Connection conn, AuthenticationCriteria criteria) throws LdapException;
+  LdapEntry resolve(AuthenticationCriteria criteria, AuthenticationHandlerResponse response) throws LdapException;
 }
 {% endhighlight %}
 
@@ -131,6 +136,7 @@ public interface AuthenticationResponseHandler
 {% endhighlight %}
 
 Potential use cases for authentication response handlers include:
+
 - injecting custom attributes into the response ldap entry
 - processing the response message
 - updating a database on success or failure
