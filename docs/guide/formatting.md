@@ -62,7 +62,7 @@ DSML can be read using any java.io.Reader using a Dsmlv1Reader.
 
 ## JSON
 
-JSON support is provided in a separate library that uses [json-simple](https://github.com/fangyidong/json-simple). This support is provided in a separate library that is available in the _jars_ directory of the [latest download]({{ relative }}download.html).
+JSON support is provided in a separate library that uses [GSON](https://github.com/google/gson). This support is provided in a separate library that is available in the _jars_ directory of the [latest download]({{ relative }}download.html).
 
 Or included as a maven dependency:
 
