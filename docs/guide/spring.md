@@ -6,9 +6,11 @@ redirect_from: "/docs/guide/spring/"
 
 # Spring Integration
 
+## Spring Beans
+
 Ldaptive objects are candidates for configuration via Spring XML context files. The following Spring context XML provides a basic example of wiring up a ConnectionFactory object for use in a Spring application.
 
-## Connection Factory Configuration
+### Connection Factory Configuration
 
 {% highlight xml %}
 <?xml version="1.0" encoding="UTF-8"?>
@@ -61,7 +63,7 @@ ConnectionFactory cf = context.getBean("connectionFactory", ConnectionFactory.cl
 Connection conn = cf.getConnection();
 {% endhighlight %}
 
-## Pooling Configuration
+### Pooling Configuration
 
 {% highlight xml %}
 <?xml version="1.0" encoding="UTF-8"?>
@@ -129,5 +131,144 @@ To access your pool:
 ClassPathXmlApplicationContext poolContext = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-pool-context.xml", });
 BlockingConnectionPool pool = poolContext.getBean("pool", BlockingConnectionFactory.class);
 Connection conn = pool.getConnection();
+{% endhighlight %}
+
+## Spring Extensible XML
+
+Ldaptive provides a [schema extension](http://www.ldaptive.org/schema/spring-ext.xsd) that can simplify configuration.
+
+### Connection Factory
+{% highlight xml %}
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
+
+  <context:property-placeholder location="classpath:/spring-ext.properties"/>
+
+  <ldaptive:connection-factory
+    ldapUrl="ldap://directory.ldaptive.org"
+    bindDn="cn=manager,ou=people,dc=ldaptive,dc=org"
+    bindCredential="not-a-real-password"
+    useStartTLS="true"
+    trustCertificates="file:/path/to/ldaptive.trust.crt"
+  />
+
+</beans>
+{% endhighlight %}
+
+{% highlight java %}
+ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-ext-context.xml", });
+DefaultConnectionFactory connectionFactory = context.getBean("connection-factory", DefaultConnectionFactory.class);
+{% endhighlight %}
+
+### Pooled Connection Factory
+
+{% highlight xml %}
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
+
+  <context:property-placeholder location="classpath:/spring-ext.properties"/>
+
+  <ldaptive:pooled-connection-factory
+    ldapUrl="ldap://directory.ldaptive.org"
+    bindDn="cn=manager,ou=people,dc=ldaptive,dc=org"
+    bindCredential="not-a-real-password"
+    useStartTLS="true"
+    trustCertificates="file:/path/to/ldaptive.trust.crt"
+    minPoolSize="5"
+    maxPoolSize="10"
+  />
+
+</beans>
+{% endhighlight %}
+
+{% highlight java %}
+ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-ext-context.xml", });
+PooledConnectionFactory pooledConnectionFactory = context.getBean("pooled-connection-factory", PooledConnectionFactory.class);
+{% endhighlight %}
+
+### Search Executor
+
+{% highlight xml %}
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
+
+  <context:property-placeholder location="classpath:/spring-ext.properties"/>
+
+  <ldaptive:search-executor
+    baseDn="ou=people,dc=ldaptive,dc=org"
+    searchFilter="(mail=*)"
+    returnAttributes="cn,givenName,sn"
+    timeLimit="PT5S"
+    sizeLimit="100"
+    binaryAttributes="jpegPhoto,userCertificate"
+    sortBehavior="ORDERED"
+  />
+
+</beans>
+{% endhighlight %}
+
+{% highlight java %}
+ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-ext-context.xml", });
+SearchExecutor executor = context.getBean("search-executor", SearchExecutor.class);
+{% endhighlight %}
+
+### Authenticator
+
+{% highlight xml %}
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
+
+  <context:property-placeholder location="classpath:/spring-ext.properties"/>
+
+  <ldaptive:bind-search-authenticator
+    id="bind-search-disable-pool"
+    ldapUrl="ldap://directory.ldaptive.org"
+    trustStore="classpath:/ldaptive.truststore"
+    trustStorePassword="changeit"
+    baseDn="ou=people,dc=ldaptive,dc=org"
+    userFilter="(mail={user})"
+    bindDn="cn=manager,ou=people,dc=ldaptive,dc=org"
+    bindCredential="file:/path/to/credential"
+    connectTimeout="PT2S"
+    useStartTLS="true">
+    <ldaptive:authentication-response-handler>
+      <ldaptive:password-policy-handler/>
+    </ldaptive:authentication-response-handler>
+  </ldaptive:bind-search-authenticator>
+
+</beans>
+{% endhighlight %}
+
+{% highlight java %}
+ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-ext-context.xml", });
+Authenticator bindSearchAuthenticator = context.getBean("bind-search-authenticator", Authenticator.class);
 {% endhighlight %}
 
