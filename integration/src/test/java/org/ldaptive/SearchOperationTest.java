@@ -1174,7 +1174,9 @@ public class SearchOperationTest extends AbstractTest
       TestUtils.assertEquals(noChangeResult, result);
 
       // test lower case attribute values
+      srh.setAttributeNameCaseChange(CaseChange.NONE);
       srh.setAttributeValueCaseChange(CaseChange.LOWER);
+      srh.setDnCaseChange(CaseChange.NONE);
 
       final SearchResult lcValuesChangeResult = TestUtils.convertLdifToResult(expected);
       for (LdapAttribute la : lcValuesChangeResult.getEntry().getAttributes()) {
@@ -1191,8 +1193,9 @@ public class SearchOperationTest extends AbstractTest
       TestUtils.assertEquals(lcValuesChangeResult, result);
 
       // test upper case attribute names
-      srh.setAttributeValueCaseChange(CaseChange.NONE);
       srh.setAttributeNameCaseChange(CaseChange.UPPER);
+      srh.setAttributeValueCaseChange(CaseChange.NONE);
+      srh.setDnCaseChange(CaseChange.NONE);
 
       final SearchResult ucNamesChangeResult = TestUtils.convertLdifToResult(expected);
       for (LdapAttribute la : ucNamesChangeResult.getEntry().getAttributes()) {
@@ -1204,8 +1207,8 @@ public class SearchOperationTest extends AbstractTest
       TestUtils.assertEquals(ucNamesChangeResult, result);
 
       // test lower case everything
-      srh.setAttributeValueCaseChange(CaseChange.LOWER);
       srh.setAttributeNameCaseChange(CaseChange.LOWER);
+      srh.setAttributeValueCaseChange(CaseChange.LOWER);
       srh.setDnCaseChange(CaseChange.LOWER);
 
       final SearchResult lcAllChangeResult = TestUtils.convertLdifToResult(expected);
@@ -1224,6 +1227,28 @@ public class SearchOperationTest extends AbstractTest
       sr.setSearchEntryHandlers(srh);
       result = search.execute(sr).getResult();
       TestUtils.assertEquals(ucNamesChangeResult, result);
+
+      // test lower case specific attributes
+      srh.setAttributeNames("givenName");
+      srh.setAttributeNameCaseChange(CaseChange.NONE);
+      srh.setAttributeValueCaseChange(CaseChange.LOWER);
+      srh.setDnCaseChange(CaseChange.NONE);
+
+      final SearchResult lcgivenNameChangeResult = TestUtils.convertLdifToResult(expected);
+      for (LdapAttribute la : lcgivenNameChangeResult.getEntry().getAttributes()) {
+        if (la.getName().equals("givenName")) {
+          final Set<String> s = new HashSet<>();
+          for (String value : la.getStringValues()) {
+            s.add(value.toLowerCase());
+          }
+          la.clear();
+          la.addStringValues(s);
+        }
+      }
+      sr = new SearchRequest(dn, new SearchFilter(filter, filterParameters.split("\\|")), returnAttrs.split("\\|"));
+      sr.setSearchEntryHandlers(srh);
+      result = search.execute(sr).getResult();
+      TestUtils.assertEquals(lcgivenNameChangeResult, result);
     } finally {
       conn.close();
     }

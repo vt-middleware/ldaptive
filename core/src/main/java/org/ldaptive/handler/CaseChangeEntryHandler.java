@@ -1,7 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.handler;
 
+import java.util.Arrays;
 import org.ldaptive.Connection;
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
@@ -60,6 +63,9 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 
   /** Type of case modification to make to the attributes values. */
   private CaseChange attributeValueCaseChange = CaseChange.NONE;
+
+  /** Attribute names to modify. */
+  private String[] attributeNames;
 
 
   /**
@@ -128,10 +134,49 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   }
 
 
+  /**
+   * Returns the attribute names.
+   *
+   * @return  attribute names
+   */
+  public String[] getAttributeNames()
+  {
+    return attributeNames;
+  }
+
+
+  /**
+   * Sets the attribute names.
+   *
+   * @param  names  of the attributes
+   */
+  public void setAttributeNames(final String... names)
+  {
+    attributeNames = names;
+  }
+
+
   @Override
   protected String handleDn(final Connection conn, final SearchRequest request, final SearchEntry entry)
   {
     return CaseChange.perform(dnCaseChange, entry.getDn());
+  }
+
+
+  @Override
+  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
+    throws LdapException
+  {
+    if (attributeNames == null) {
+      super.handleAttributes(conn, request, entry);
+    } else {
+      for (String s : attributeNames) {
+        final LdapAttribute la = entry.getAttribute(s);
+        if (la != null) {
+          handleAttribute(conn, request, la);
+        }
+      }
+    }
   }
 
 
@@ -168,12 +213,12 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   {
     return
       String.format(
-        "[%s@%d::dnCaseChange=%s, attributeNameCaseChange=%s, " +
-        "attributeValueCaseChange=%s]",
+        "[%s@%d::dnCaseChange=%s, attributeNameCaseChange=%s, attributeValueCaseChange=%s, attributeNames=%s]",
         getClass().getName(),
         hashCode(),
         dnCaseChange,
         attributeNameCaseChange,
-        attributeValueCaseChange);
+        attributeValueCaseChange,
+        Arrays.toString(attributeNames));
   }
 }
