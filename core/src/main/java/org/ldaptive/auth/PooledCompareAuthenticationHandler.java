@@ -63,10 +63,11 @@ public class PooledCompareAuthenticationHandler extends AbstractCompareAuthentic
   {
     return
       String.format(
-        "[%s@%d::factory=%s, passwordScheme=%s, controls=%s]",
+        "[%s@%d::factory=%s, passwordAttribute=%s, passwordScheme=%s, controls=%s]",
         getClass().getName(),
         hashCode(),
         factory,
+        getPasswordAttribute(),
         getPasswordScheme(),
         Arrays.toString(getAuthenticationControls()));
   }

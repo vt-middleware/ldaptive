@@ -22,9 +22,14 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
   /** Default password scheme. Value is {@value}. */
   protected static final String DEFAULT_SCHEME = "SHA";
 
+  /** Default password attribute. Value is {@value}. */
+  protected static final String DEFAULT_ATTRIBUTE = "userPassword";
+
   /** Password scheme. */
   private String passwordScheme = DEFAULT_SCHEME;
 
+  /** Password attribute. */
+  private String passwordAttribute = DEFAULT_ATTRIBUTE;
 
   /**
    * Returns the password scheme.
@@ -48,6 +53,28 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
   }
 
 
+  /**
+   * Returns the password attribute.
+   *
+   * @return  password attribute
+   */
+  public String getPasswordAttribute()
+  {
+    return passwordAttribute;
+  }
+
+
+  /**
+   * Sets the password attribute. Must equal a readable attribute in LDAP scheme.
+   *
+   * @param  s  password attribute
+   */
+  public void setPasswordAttribute(final String s)
+  {
+    passwordAttribute = s;
+  }
+
+
   @Override
   protected AuthenticationHandlerResponse authenticateInternal(
     final Connection c,
@@ -64,7 +91,7 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
     }
 
     final LdapAttribute la = new LdapAttribute(
-      "userPassword",
+      passwordAttribute,
       String.format("{%s}%s", passwordScheme, LdapUtils.base64Encode(hash)).getBytes());
     final CompareOperation compare = new CompareOperation(c);
     final CompareRequest request = new CompareRequest(criteria.getDn(), la);
