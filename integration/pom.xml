@@ -97,6 +97,7 @@
           <include>**/*.dsmlv1</include>
           <include>**/*.xml</include>
           <include>**/*.properties</include>
+          <include>**/*.credential</include>
         </includes>
       </testResource>
       <testResource>
