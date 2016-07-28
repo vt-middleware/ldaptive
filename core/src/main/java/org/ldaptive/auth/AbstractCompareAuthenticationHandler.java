@@ -31,6 +31,7 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
   /** Password attribute. */
   private String passwordAttribute = DEFAULT_ATTRIBUTE;
 
+
   /**
    * Returns the password scheme.
    *
