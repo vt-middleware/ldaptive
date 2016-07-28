@@ -6,6 +6,7 @@ dnResolver.setUserFilter("uid={user}");
 BindAuthenticationHandler authHandler = new BindAuthenticationHandler(new DefaultConnectionFactory(connConfig));
 Authenticator auth = new Authenticator(dnResolver, authHandler);
 auth.setAuthenticationResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler());
+auth.setReturnAttributes(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES);
 AuthenticationResponse response = auth.authenticate(new AuthenticationRequest("dfisher", new Credential("password")));
 if (response.getResult()) {
   // authentication succeeded, AD does not support warnings

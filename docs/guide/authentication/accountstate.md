@@ -42,11 +42,7 @@ Active Directory returns account state as part of the ldap result message when a
 {% include source/authentication/accountstate/2.java %}
 {% endhighlight %}
 
-If you need to inspect the user account password attributes in Active Directory, you can request they be added to the response entry after a successful bind:
-
-{% highlight java %}
-new AuthenticationRequest("dfisher", new Credential("password"), new String[] {"pwdLastSet", "userAccountControl"});
-{% endhighlight %}
+If this handler is assigned an expirationPeriod, then the 'pwdLastSet' attribute will cause the handler to emit a warning for the pwdLastSet value plus the expiration amount. The scope of that warning can be further narrowed by providing a warningPeriod. By default if the 'msDS-UserPasswordExpiryTimeComputed' attribute is found, expirationPeriod is ignored.
 
 See [Reading User Account Password Attributes](http://technet.microsoft.com/en-us/library/ee198831.aspx).
 
@@ -56,5 +52,15 @@ eDirectory uses a combination of result messages and attributes to convey accoun
 
 {% highlight java %}
 {% include source/authentication/accountstate/3.java %}
+{% endhighlight %}
+
+If this handler is assigned a warningPeriod, this handler will only emit warnings during that window before password expiration. Otherwise, a warning is always emitted if the 'passwordExpirationTime' attribute is found.
+
+## FreeIPA
+
+FreeIPA also uses a combination of result messages and attributes to convey account state.
+
+{% highlight java %}
+{% include source/authentication/accountstate/4.java %}
 {% endhighlight %}
 
