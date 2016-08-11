@@ -18,7 +18,7 @@ Individual artifacts are available in the [Maven Central Repository](http://repo
     <artifactId>ldaptive</artifactId>
     <version>{{ site.version }}</version>
   </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 
 ## Providers
@@ -32,7 +32,7 @@ By default the core library uses JNDI for LDAP operations. You can replace JNDI 
     <artifactId>ldaptive-unboundid</artifactId>
     <version>{{ site.version }}</version>
   </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 
 ### Apache
@@ -43,7 +43,7 @@ By default the core library uses JNDI for LDAP operations. You can replace JNDI 
     <artifactId>ldaptive-apache</artifactId>
     <version>{{ site.version }}</version>
   </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 
 ### JLDAP
@@ -54,7 +54,7 @@ By default the core library uses JNDI for LDAP operations. You can replace JNDI 
     <artifactId>ldaptive-jldap</artifactId>
     <version>{{ site.version }}</version>
   </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 
 ### OpenDJ
@@ -70,5 +70,5 @@ This provider has not released a library to maven central and therefore must be 
     <artifactId>ldaptive-json</artifactId>
     <version>{{ site.version }}</version>
   </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}

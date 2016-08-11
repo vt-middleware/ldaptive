@@ -19,7 +19,7 @@ Or included as a maven dependency:
     <artifactId>ldaptive-beans</artifactId>
     <version>{{ site.version }}</version>
   </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 
 The interface for ldap entry mapper looks like:

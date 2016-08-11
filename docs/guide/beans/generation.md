@@ -19,7 +19,7 @@ Or included as a maven dependency:
     <artifactId>ldaptive-beans</artifactId>
     <version>{{ site.version }}</version>
   </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 
 ## Using Java to generate beans
@@ -161,7 +161,7 @@ Add the dependencies to your pom.xml:
     <version>2.6</version>
     <optional>true</optional>
   </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 
 Create a properties file for your configuration: src/main/resources/ldaptive-gen.properties

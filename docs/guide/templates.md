@@ -37,7 +37,7 @@ Or included as a maven dependency:
      <artifactId>ldaptive-templates</artifactId>
      <version>{{ site.version }}</version>
    </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 
 ## Web Application
@@ -233,6 +233,6 @@ This webapp can be used with the maven war overlay to customize it's configurati
      <artifactId>ldaptive-webapp</artifactId>
      <version>{{ site.version }}</version>
    </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 

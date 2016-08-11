@@ -73,7 +73,7 @@ Or included as a maven dependency:
     <artifactId>ldaptive-json</artifactId>
     <version>{{ site.version }}</version>
   </dependency>
-<dependencies>
+</dependencies>
 {% endhighlight %}
 
 JSON can be written to any java.io.Writer using a JsonWriter.
