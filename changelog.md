@@ -8,6 +8,8 @@ redirect_from: "/changelog/"
 
 ## Version 1.2.0 - 26Jul2016
 
+Issue | Description
+:---- | :----------
 [ldaptive-111]({{ site.issueURL }}111) | Add passwordAttribute property to CompareAuthenticationHandler
 [ldaptive-107]({{ site.issueURL }}107) | Support resolving Credential property from a resource
 [ldaptive-106]({{ site.issueURL }}106) | Fix incorrect logging in AggregateDnResolver
