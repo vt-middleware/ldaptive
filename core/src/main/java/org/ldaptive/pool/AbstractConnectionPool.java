@@ -210,14 +210,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     if ((getPoolConfig().isValidatePeriodically() ||
          getPoolConfig().isValidateOnCheckIn() ||
          getPoolConfig().isValidateOnCheckOut()) && getValidator() == null) {
-      throw new IllegalStateException(
-        "Validation is enabled, but no validator has been configured");
+      throw new IllegalStateException("Validation is enabled, but no validator has been configured");
     }
     if ((!getPoolConfig().isValidatePeriodically() &&
          !getPoolConfig().isValidateOnCheckIn() &&
          !getPoolConfig().isValidateOnCheckOut()) && getValidator() != null) {
-      throw new IllegalStateException(
-        "Validator configured, but no validate flag has been set");
+      throw new IllegalStateException("Validator configured, but no validate flag has been set");
     }
 
     getPoolConfig().makeImmutable();
@@ -225,6 +223,16 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     if (getPruneStrategy() == null) {
       setPruneStrategy(new IdlePruneStrategy());
       logger.debug("no prune strategy configured, using default prune strategy: {}", getPruneStrategy());
+    }
+
+    // sanity check the scheduler periods
+    if (getPruneStrategy().getPrunePeriod().toMillis() <= 0) {
+      throw new IllegalStateException(
+        "Prune period " + getPruneStrategy().getPrunePeriod() + " must be greater than zero");
+    }
+    if (getPoolConfig().getValidatePeriod().toMillis() <= 0) {
+      throw new IllegalStateException(
+        "Validate period " + getPoolConfig().getValidatePeriod() + " must be greater than zero");
     }
 
     available = new Queue<>(queueType);
@@ -264,9 +272,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
         }
         logger.debug("end prune task for {}", AbstractConnectionPool.this);
       },
-      getPruneStrategy().getPrunePeriod().getSeconds(),
-      getPruneStrategy().getPrunePeriod().getSeconds(),
-      TimeUnit.SECONDS);
+      getPruneStrategy().getPrunePeriod().toMillis(),
+      getPruneStrategy().getPrunePeriod().toMillis(),
+      TimeUnit.MILLISECONDS);
     logger.debug("prune pool task scheduled for {}", this);
 
     poolExecutor.scheduleAtFixedRate(
@@ -279,9 +287,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
         }
         logger.debug("end validate task for {}", AbstractConnectionPool.this);
       },
-      getPoolConfig().getValidatePeriod().getSeconds(),
-      getPoolConfig().getValidatePeriod().getSeconds(),
-      TimeUnit.SECONDS);
+      getPoolConfig().getValidatePeriod().toMillis(),
+      getPoolConfig().getValidatePeriod().toMillis(),
+      TimeUnit.MILLISECONDS);
     logger.debug("validate pool task scheduled for {}", this);
 
     initialized = true;

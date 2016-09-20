@@ -75,7 +75,7 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
         }
       }
     };
-    executor.scheduleAtFixedRate(expire, interval.getSeconds(), interval.getSeconds(), TimeUnit.SECONDS);
+    executor.scheduleAtFixedRate(expire, interval.toMillis(), interval.toMillis(), TimeUnit.MILLISECONDS);
   }
 
 
