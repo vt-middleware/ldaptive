@@ -30,6 +30,9 @@ public class PoolConfig extends AbstractConfig
   /** Default validate period, value is 30 minutes. */
   public static final Duration DEFAULT_VALIDATE_PERIOD = Duration.ofMinutes(30);
 
+  /** Default per connection validate timeout, value is 5 seconds. */
+  public static final Duration DEFAULT_VALIDATE_TIMEOUT = Duration.ofSeconds(5);
+
   /** Minimum pool size. */
   private int minPoolSize = DEFAULT_MIN_POOL_SIZE;
 
@@ -47,6 +50,9 @@ public class PoolConfig extends AbstractConfig
 
   /** Time that the pool validation should repeat. */
   private Duration validatePeriod = DEFAULT_VALIDATE_PERIOD;
+
+  /** Maximum length of time a connection validation should block. */
+  private Duration validateTimeout = DEFAULT_VALIDATE_TIMEOUT;
 
 
   /**
@@ -202,13 +208,39 @@ public class PoolConfig extends AbstractConfig
   }
 
 
+  /**
+   * Returns the timeout imposed when validating a single connection.
+   *
+   * @return  validate timeout
+   */
+  public Duration getValidateTimeout()
+  {
+    return validateTimeout;
+  }
+
+
+  /**
+   * Sets the timeout imposed when validating a single connection.
+   *
+   * @param  timeout  for a connection validation
+   */
+  public void setValidateTimeout(final Duration timeout)
+  {
+    checkImmutable();
+    if (timeout == null || timeout.isNegative()) {
+      throw new IllegalArgumentException("Validate timeout cannot be null or negative");
+    }
+    validateTimeout = timeout;
+  }
+
+
   @Override
   public String toString()
   {
     return
       String.format(
-        "[%s@%d::minPoolSize=%s, maxPoolSize=%s, validateOnCheckIn=%s, " +
-        "validateOnCheckOut=%s, validatePeriodically=%s, validatePeriod=%s]",
+        "[%s@%d::minPoolSize=%s, maxPoolSize=%s, validateOnCheckIn=%s, validateOnCheckOut=%s, " +
+        "validatePeriodically=%s, validatePeriod=%s, validateTimeout=%s]",
         getClass().getName(),
         hashCode(),
         minPoolSize,
@@ -216,6 +248,7 @@ public class PoolConfig extends AbstractConfig
         validateOnCheckIn,
         validateOnCheckOut,
         validatePeriodically,
-        validatePeriod);
+        validatePeriod,
+        validateTimeout);
   }
 }

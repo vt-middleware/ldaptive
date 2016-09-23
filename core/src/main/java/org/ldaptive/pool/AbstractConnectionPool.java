@@ -10,9 +10,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import org.ldaptive.Connection;
@@ -233,6 +236,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     if (getPoolConfig().getValidatePeriod().toMillis() <= 0) {
       throw new IllegalStateException(
         "Validate period " + getPoolConfig().getValidatePeriod() + " must be greater than zero");
+    }
+    if (getPoolConfig().getValidateTimeout().toMillis() <= 0) {
+      throw new IllegalStateException(
+        "Validate timeout " + getPoolConfig().getValidateTimeout() + " must be greater than zero");
     }
 
     available = new Queue<>(queueType);
@@ -738,10 +745,24 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
           final List<PooledConnectionProxy> remove = new ArrayList<>();
           for (PooledConnectionProxy pc : available) {
             logger.trace("validating {}", pc);
-            if (validate(pc.getConnection())) {
-              logger.trace("connection passed validation: {}", pc);
+            boolean validateResult = false;
+            final Future<Boolean> future = poolExecutor.submit(() -> validate(pc.getConnection()));
+            try {
+              validateResult = future.get(getPoolConfig().getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+              logger.debug("validating {} interrupted", pc, e);
+            } catch (ExecutionException e) {
+              logger.debug("validating {} threw unexpected exception", pc, e);
+            } catch (TimeoutException e) {
+              logger.debug("validating {} timed out", pc, e);
+            } finally {
+              future.cancel(true);
+            }
+
+            if (validateResult) {
+              logger.trace("{} passed validation", pc);
             } else {
-              logger.warn("connection failed validation: {}", pc);
+              logger.warn("{} failed validation", pc);
               remove.add(pc);
             }
           }
