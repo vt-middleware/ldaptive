@@ -128,9 +128,9 @@ public class ConnectionPoolTest extends AbstractTest
 
     final ConnectionConfig connStrategyCc = TestUtils.readConnectionConfig(null);
     connStrategyCc.setLdapUrl(String.format("%s ldap://dne.middleware.vt.edu", host));
-
+    connStrategyCc.setConnectionStrategy(new RoundRobinConnectionStrategy());
     final DefaultConnectionFactory connStrategyCf = new DefaultConnectionFactory(connStrategyCc);
-    connStrategyCf.getConnectionConfig().setConnectionStrategy(new RoundRobinConnectionStrategy());
+
     connStrategyPool = new BlockingConnectionPool(new PoolConfig(), connStrategyCf);
   }
 
