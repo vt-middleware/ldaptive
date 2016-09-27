@@ -237,7 +237,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
       throw new IllegalStateException(
         "Validate period " + getPoolConfig().getValidatePeriod() + " must be greater than zero");
     }
-    if (getPoolConfig().getValidateTimeout().toMillis() <= 0) {
+    if (getPoolConfig().getValidateTimeout() != null && getPoolConfig().getValidateTimeout().toMillis() <= 0) {
       throw new IllegalStateException(
         "Validate timeout " + getPoolConfig().getValidateTimeout() + " must be greater than zero");
     }
@@ -746,17 +746,22 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
           for (PooledConnectionProxy pc : available) {
             logger.trace("validating {}", pc);
             boolean validateResult = false;
-            final Future<Boolean> future = poolExecutor.submit(() -> validate(pc.getConnection()));
-            try {
-              validateResult = future.get(getPoolConfig().getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
-            } catch (InterruptedException e) {
-              logger.debug("validating {} interrupted", pc, e);
-            } catch (ExecutionException e) {
-              logger.debug("validating {} threw unexpected exception", pc, e);
-            } catch (TimeoutException e) {
-              logger.debug("validating {} timed out", pc, e);
-            } finally {
-              future.cancel(true);
+            if (getPoolConfig().getValidateTimeout() == null) {
+              validateResult = validate(pc.getConnection());
+            } else {
+              final Future<Boolean> future = poolExecutor.submit(() -> validate(pc.getConnection()));
+              try {
+                validateResult = future.get(getPoolConfig().getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
+              } catch (InterruptedException e) {
+                logger.debug("validating {} interrupted", pc, e);
+                future.cancel(true);
+              } catch (ExecutionException e) {
+                logger.debug("validating {} threw unexpected exception", pc, e);
+                future.cancel(true);
+              } catch (TimeoutException e) {
+                logger.debug("validating {} timed out", pc, e);
+                future.cancel(true);
+              }
             }
 
             if (validateResult) {

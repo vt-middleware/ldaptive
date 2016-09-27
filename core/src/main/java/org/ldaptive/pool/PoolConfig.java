@@ -222,15 +222,16 @@ public class PoolConfig extends AbstractConfig
   /**
    * Sets the timeout imposed when validating a single connection.
    *
-   * @param  timeout  for a connection validation
+   * @param  time  for a connection validation
    */
-  public void setValidateTimeout(final Duration timeout)
+  public void setValidateTimeout(final Duration time)
   {
     checkImmutable();
-    if (timeout == null || timeout.isNegative()) {
-      throw new IllegalArgumentException("Validate timeout cannot be null or negative");
+    if (time != null && time.isNegative()) {
+      throw new IllegalArgumentException("Validate timeout cannot be negative");
     }
-    validateTimeout = timeout;
+    logger.trace("setting validateTimeout: {}", time);
+    validateTimeout = time;
   }
 
 
