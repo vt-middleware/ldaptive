@@ -89,4 +89,17 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
   {
     return new X509Certificate[0];
   }
+
+
+  @Override
+  public String toString()
+  {
+    return
+      String.format(
+        "[%s@%d::hostnameVerifier=%s, hostnames=%s]",
+        getClass().getName(),
+        hashCode(),
+        hostnameVerifier,
+        Arrays.toString(hostnames));
+  }
 }

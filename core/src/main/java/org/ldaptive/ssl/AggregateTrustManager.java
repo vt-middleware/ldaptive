@@ -132,7 +132,7 @@ public class AggregateTrustManager implements X509TrustManager
     final List<X509Certificate> issuers = new ArrayList<>();
     if (trustManagers != null) {
       for (X509TrustManager tm : trustManagers) {
-        logger.debug("invoking getAcceptedIssuers invoked for {}", tm);
+        logger.debug("invoking getAcceptedIssuers for {}", tm);
         Collections.addAll(issuers, tm.getAcceptedIssuers());
       }
     }
