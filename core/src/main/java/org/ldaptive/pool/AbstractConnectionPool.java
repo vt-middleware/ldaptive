@@ -37,6 +37,9 @@ import org.ldaptive.Response;
 public abstract class AbstractConnectionPool extends AbstractPool<Connection> implements ConnectionPool
 {
 
+  /** Number of threads to maintain in the pool executor. */
+  private static final int EXECUTOR_THREAD_COUNT = 5;
+
   /** Lock for the entire pool. */
   protected final ReentrantLock poolLock = new ReentrantLock();
 
@@ -262,7 +265,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     }
     logger.debug("initialized available queue: {}", available);
 
-    poolExecutor = Executors.newSingleThreadScheduledExecutor(
+    poolExecutor = Executors.newScheduledThreadPool(
+      EXECUTOR_THREAD_COUNT,
       r -> {
         final Thread t = new Thread(r);
         t.setDaemon(true);
