@@ -759,7 +759,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
           } else {
             final ExecutorService es = Executors.newCachedThreadPool();
             try {
-              final Map<PooledConnectionProxy, Future<Boolean>> results = new HashMap<>();
+              final Map<PooledConnectionProxy, Future<Boolean>> results = new HashMap<>(available.size());
               for (PooledConnectionProxy pc : available) {
                 logger.trace("validating {}", pc);
                 results.put(pc, es.submit(() -> validate(pc.getConnection())));
