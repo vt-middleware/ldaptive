@@ -6,11 +6,14 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
@@ -36,9 +39,6 @@ import org.ldaptive.Response;
  */
 public abstract class AbstractConnectionPool extends AbstractPool<Connection> implements ConnectionPool
 {
-
-  /** Number of threads to maintain in the pool executor. */
-  private static final int EXECUTOR_THREAD_COUNT = 5;
 
   /** Lock for the entire pool. */
   protected final ReentrantLock poolLock = new ReentrantLock();
@@ -265,8 +265,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     }
     logger.debug("initialized available queue: {}", available);
 
-    poolExecutor = Executors.newScheduledThreadPool(
-      EXECUTOR_THREAD_COUNT,
+    poolExecutor = Executors.newSingleThreadScheduledExecutor(
       r -> {
         final Thread t = new Thread(r);
         t.setDaemon(true);
@@ -747,32 +746,49 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
           logger.debug("validate available pool of size {} for {}", available.size(), this);
 
           final List<PooledConnectionProxy> remove = new ArrayList<>();
-          for (PooledConnectionProxy pc : available) {
-            logger.trace("validating {}", pc);
-            boolean validateResult = false;
-            if (getPoolConfig().getValidateTimeout() == null) {
-              validateResult = validate(pc.getConnection());
-            } else {
-              final Future<Boolean> future = poolExecutor.submit(() -> validate(pc.getConnection()));
-              try {
-                validateResult = future.get(getPoolConfig().getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
-              } catch (InterruptedException e) {
-                logger.debug("validating {} interrupted", pc, e);
-                future.cancel(true);
-              } catch (ExecutionException e) {
-                logger.debug("validating {} threw unexpected exception", pc, e);
-                future.cancel(true);
-              } catch (TimeoutException e) {
-                logger.debug("validating {} timed out", pc, e);
-                future.cancel(true);
+          if (getPoolConfig().getValidateTimeout() == null) {
+            for (PooledConnectionProxy pc : available) {
+              logger.trace("validating {}", pc);
+              if (validate(pc.getConnection())) {
+                logger.trace("{} passed validation", pc);
+              } else {
+                logger.warn("{} failed validation", pc);
+                remove.add(pc);
               }
             }
+          } else {
+            final ExecutorService es = Executors.newCachedThreadPool();
+            try {
+              final Map<PooledConnectionProxy, Future<Boolean>> results = new HashMap<>();
+              for (PooledConnectionProxy pc : available) {
+                logger.trace("validating {}", pc);
+                results.put(pc, es.submit(() -> validate(pc.getConnection())));
+              }
+              for (Map.Entry<PooledConnectionProxy, Future<Boolean>> entry : results.entrySet()) {
+                final Future<Boolean> future = entry.getValue();
+                boolean validateResult = false;
+                try {
+                  validateResult = future.get(getPoolConfig().getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
+                } catch (InterruptedException e) {
+                  logger.debug("validating {} interrupted", entry.getKey(), e);
+                  future.cancel(true);
+                } catch (ExecutionException e) {
+                  logger.debug("validating {} threw unexpected exception", entry.getKey(), e);
+                  future.cancel(true);
+                } catch (TimeoutException e) {
+                  logger.debug("validating {} timed out", entry.getKey(), e);
+                  future.cancel(true);
+                }
 
-            if (validateResult) {
-              logger.trace("{} passed validation", pc);
-            } else {
-              logger.warn("{} failed validation", pc);
-              remove.add(pc);
+                if (validateResult) {
+                  logger.trace("{} passed validation", entry.getKey());
+                } else {
+                  logger.warn("{} failed validation", entry.getKey());
+                  remove.add(entry.getKey());
+                }
+              }
+            } finally {
+              es.shutdownNow();
             }
           }
           for (PooledConnectionProxy pc : remove) {
