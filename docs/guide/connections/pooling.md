@@ -14,7 +14,7 @@ maxPoolSize | 10 | maximum size the pool can grow to
 validateOnCheckIn | false | whether connections should be validated when returned to the pool
 validateOnCheckOut | false | whether connections should be validated when loaned out from the pool
 validatePeriodically | false | whether connections should be validated periodically when the pool is idle
-validateTimerPeriod | 1800 (30 min) | period in seconds at which pool should be validated
+validateTimerPeriod | PT30M | period at which pool should be validated
 
 Ldaptive provides two pooling implementations: BlockingConnectionPool and SoftLimitConnectionPool. A blocking connection pool will block requests for a connection until one is available for use. A soft limit connection pool will grow beyond the maxPoolSize as needed. Our testing has shown that a properly tuned blocking pool will generally out perform a soft limit pool because it will take longer to provision a new connection than to wait for an existing connection to become available. However there may be circumstances where a soft limit pool is the best solution.
 
@@ -89,7 +89,7 @@ public interface PruneStrategy
   int getStatisticsSize();
 
   /** Returns the prune period for this prune strategy. */
-  long getPrunePeriod();
+  Duration getPrunePeriod();
 }
 {% endhighlight %}
 
@@ -98,8 +98,8 @@ public interface PruneStrategy
 Prunes connections from the pool based on how long they have been idle. This is the default prune strategy and it has the following properties:
 
 Name | Default Value | Description
-prunePeriod | 300 (5 min) | period in seconds at which pool should be pruned
-idleTime | 600 (10 min) | time in seconds at which a connection should be considered idle and become a candidate for removal from the pool
+prunePeriod | PT5M | period at which pool should be pruned
+idleTime | PT10M | time at which a connection should be considered idle and become a candidate for removal from the pool
 
 A custom idle prune strategy can be configured by setting the prune strategy on the connection pool.
 
