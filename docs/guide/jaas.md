@@ -45,6 +45,12 @@ ldaptive {
 };
 {% endhighlight %}
 
+bindCredential also supports reading from a resource so your password isn't exposed in the JAAS configuration. Be careful not to include any trailing whitespace in the file, every byte is considered part of the credential.
+
+{% highlight text %}
+    bindCredential="file:/path/to/bind.credential"
+{% endhighlight %}
+
 ### Module Options
 
 Name | Description
