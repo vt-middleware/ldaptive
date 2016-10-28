@@ -84,7 +84,7 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
     if (o == this) {
       return true;
     }
-    if (o instanceof SearchEntry && super.equals(o)) {
+    if (super.equals(o)) {
       final SearchEntry v = (SearchEntry) o;
       return LdapUtils.areEqual(messageId, v.messageId) &&
              LdapUtils.areEqual(responseControls, v.responseControls);

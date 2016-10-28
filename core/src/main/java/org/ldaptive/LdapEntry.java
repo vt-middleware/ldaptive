@@ -281,7 +281,7 @@ public class LdapEntry extends AbstractLdapBean
     if (o == this) {
       return true;
     }
-    if (o instanceof LdapEntry) {
+    if (o != null && getClass() == o.getClass())  {
       final LdapEntry v = (LdapEntry) o;
       return LdapUtils.areEqual(
                entryDn != null ? entryDn.toLowerCase() : null,
