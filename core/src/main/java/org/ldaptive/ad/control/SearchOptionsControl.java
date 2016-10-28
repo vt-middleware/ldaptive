@@ -99,6 +99,20 @@ public class SearchOptionsControl extends AbstractControl implements RequestCont
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SearchOptionsControl && super.equals(o)) {
+      final SearchOptionsControl v = (SearchOptionsControl) o;
+      return LdapUtils.areEqual(flag, v.flag);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), flag);

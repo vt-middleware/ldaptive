@@ -126,6 +126,21 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof PrimaryGroupIdHandler) {
+      final PrimaryGroupIdHandler v = (PrimaryGroupIdHandler) o;
+      return LdapUtils.areEqual(groupFilter, v.groupFilter) &&
+             LdapUtils.areEqual(baseDn, v.baseDn);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, groupFilter, baseDn);

@@ -246,7 +246,21 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof KeyStoreCredentialConfig) {
+      final KeyStoreCredentialConfig v = (KeyStoreCredentialConfig) o;
+      return LdapUtils.areEqual(trustStore, v.trustStore) &&
+             LdapUtils.areEqual(trustStoreType, v.trustStoreType) &&
+             LdapUtils.areEqual(trustStorePassword, v.trustStorePassword) &&
+             LdapUtils.areEqual(trustStoreAliases, v.trustStoreAliases) &&
+             LdapUtils.areEqual(keyStore, v.keyStore) &&
+             LdapUtils.areEqual(keyStoreType, v.keyStoreType) &&
+             LdapUtils.areEqual(keyStorePassword, v.keyStorePassword) &&
+             LdapUtils.areEqual(keyStoreAliases, v.keyStoreAliases);
+    }
+    return false;
   }
 
 

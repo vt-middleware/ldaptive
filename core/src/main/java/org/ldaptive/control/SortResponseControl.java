@@ -148,6 +148,21 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SortResponseControl && super.equals(o)) {
+      final SortResponseControl v = (SortResponseControl) o;
+      return LdapUtils.areEqual(sortResult, v.sortResult) &&
+             LdapUtils.areEqual(attributeName, v.attributeName);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), sortResult, attributeName);

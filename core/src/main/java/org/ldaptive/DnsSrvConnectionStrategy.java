@@ -408,7 +408,18 @@ public class DnsSrvConnectionStrategy implements ConnectionStrategy
     @Override
     public boolean equals(final Object o)
     {
-      return LdapUtils.areEqual(this, o);
+      if (o == this) {
+        return true;
+      }
+      if (o instanceof SrvRecord) {
+        final SrvRecord v = (SrvRecord) o;
+        return LdapUtils.areEqual(priority, v.priority) &&
+               LdapUtils.areEqual(weight, v.weight) &&
+               LdapUtils.areEqual(port, v.port) &&
+               LdapUtils.areEqual(target, v.target) &&
+               LdapUtils.areEqual(expirationTime, v.expirationTime);
+      }
+      return false;
     }
 
 

@@ -137,7 +137,16 @@ public class SortKey
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SortKey) {
+      final SortKey v = (SortKey) o;
+      return LdapUtils.areEqual(attributeDescription, v.attributeDescription) &&
+             LdapUtils.areEqual(matchingRuleId, v.matchingRuleId) &&
+             LdapUtils.areEqual(reverseOrder, v.reverseOrder);
+    }
+    return false;
   }
 
 

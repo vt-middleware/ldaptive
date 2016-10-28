@@ -221,6 +221,23 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof VirtualListViewResponseControl && super.equals(o)) {
+      final VirtualListViewResponseControl v = (VirtualListViewResponseControl) o;
+      return LdapUtils.areEqual(targetPosition, v.targetPosition) &&
+             LdapUtils.areEqual(contentCount, v.contentCount) &&
+             LdapUtils.areEqual(viewResult, v.viewResult) &&
+             LdapUtils.areEqual(contextID, v.contextID);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return

@@ -229,6 +229,22 @@ public class SyncRequestControl extends AbstractControl implements RequestContro
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SyncRequestControl && super.equals(o)) {
+      final SyncRequestControl v = (SyncRequestControl) o;
+      return LdapUtils.areEqual(requestMode, v.requestMode) &&
+             LdapUtils.areEqual(cookie, v.cookie) &&
+             LdapUtils.areEqual(reloadHint, v.reloadHint);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), requestMode, cookie, reloadHint);

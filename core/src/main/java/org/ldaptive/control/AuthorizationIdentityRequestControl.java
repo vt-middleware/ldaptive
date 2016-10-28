@@ -37,6 +37,16 @@ public class AuthorizationIdentityRequestControl extends AbstractControl impleme
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    return o instanceof AuthorizationIdentityRequestControl && super.equals(o);
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());

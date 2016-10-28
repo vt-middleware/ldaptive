@@ -230,10 +230,38 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SyncInfoMessage) {
+      final SyncInfoMessage v = (SyncInfoMessage) o;
+      return LdapUtils.areEqual(getOID(), v.getOID()) &&
+             LdapUtils.areEqual(messageType, v.messageType) &&
+             LdapUtils.areEqual(cookie, v.cookie) &&
+             LdapUtils.areEqual(refreshDone, v.refreshDone) &&
+             LdapUtils.areEqual(refreshDeletes, v.refreshDeletes) &&
+             LdapUtils.areEqual(entryUuids, v.entryUuids);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return
-      LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), messageType, cookie, refreshDone, refreshDeletes, entryUuids);
+      LdapUtils.computeHashCode(
+        HASH_CODE_SEED,
+        getOID(),
+        messageType,
+        cookie,
+        refreshDone,
+        refreshDeletes,
+        entryUuids,
+        getControls(),
+        getMessageId());
   }
 
 

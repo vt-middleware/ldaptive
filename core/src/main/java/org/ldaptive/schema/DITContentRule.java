@@ -317,6 +317,28 @@ public class DITContentRule extends AbstractNamedSchemaElement
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof DITContentRule) {
+      final DITContentRule v = (DITContentRule) o;
+      return LdapUtils.areEqual(oid, v.oid) &&
+        LdapUtils.areEqual(getNames(), v.getNames()) &&
+        LdapUtils.areEqual(getDescription(), v.getDescription()) &&
+        LdapUtils.areEqual(isObsolete(), v.isObsolete()) &&
+        LdapUtils.areEqual(auxiliaryClasses, v.auxiliaryClasses) &&
+        LdapUtils.areEqual(requiredAttributes, v.requiredAttributes) &&
+        LdapUtils.areEqual(optionalAttributes, v.optionalAttributes) &&
+        LdapUtils.areEqual(restrictedAttributes, v.restrictedAttributes) &&
+        LdapUtils.areEqual(getExtensions(), v.getExtensions());
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return
