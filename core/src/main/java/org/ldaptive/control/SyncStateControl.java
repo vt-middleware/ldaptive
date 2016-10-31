@@ -249,6 +249,22 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SyncStateControl && super.equals(o)) {
+      final SyncStateControl v = (SyncStateControl) o;
+      return LdapUtils.areEqual(syncState, v.syncState) &&
+             LdapUtils.areEqual(entryUuid, v.entryUuid) &&
+             LdapUtils.areEqual(cookie, v.cookie);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), syncState, entryUuid, cookie);

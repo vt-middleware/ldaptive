@@ -313,6 +313,28 @@ public class ObjectClass extends AbstractNamedSchemaElement
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof ObjectClass) {
+      final ObjectClass v = (ObjectClass) o;
+      return LdapUtils.areEqual(oid, v.oid) &&
+             LdapUtils.areEqual(getNames(), v.getNames()) &&
+             LdapUtils.areEqual(getDescription(), v.getDescription()) &&
+             LdapUtils.areEqual(isObsolete(), v.isObsolete()) &&
+             LdapUtils.areEqual(superiorClasses, v.superiorClasses) &&
+             LdapUtils.areEqual(objectClassType, v.objectClassType) &&
+             LdapUtils.areEqual(requiredAttributes, v.requiredAttributes) &&
+             LdapUtils.areEqual(optionalAttributes, v.optionalAttributes) &&
+             LdapUtils.areEqual(getExtensions(), v.getExtensions());
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return

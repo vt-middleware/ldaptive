@@ -170,6 +170,20 @@ public class Extensions
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof Extensions) {
+      final Extensions v = (Extensions) o;
+      return LdapUtils.areEqual(extensions, v.extensions);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, extensions);

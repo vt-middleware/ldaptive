@@ -179,6 +179,22 @@ public class PersistentSearchRequestControl extends AbstractControl implements R
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof PersistentSearchRequestControl && super.equals(o)) {
+      final PersistentSearchRequestControl v = (PersistentSearchRequestControl) o;
+      return LdapUtils.areEqual(changeTypes, v.changeTypes) &&
+             LdapUtils.areEqual(changesOnly, v.changesOnly) &&
+             LdapUtils.areEqual(returnEcs, v.returnEcs);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), changeTypes, changesOnly, returnEcs);

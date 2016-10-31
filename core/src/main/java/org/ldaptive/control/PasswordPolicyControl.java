@@ -257,6 +257,22 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof PasswordPolicyControl && super.equals(o)) {
+      final PasswordPolicyControl v = (PasswordPolicyControl) o;
+      return LdapUtils.areEqual(timeBeforeExpiration, v.timeBeforeExpiration) &&
+             LdapUtils.areEqual(graceAuthNsRemaining, v.graceAuthNsRemaining) &&
+             LdapUtils.areEqual(error, v.error);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return

@@ -330,7 +330,7 @@ public final class LdapUtils
 
 
   /**
-   * Determines equality of the supplied objects by delegating to their hashCode methods.
+   * Determines equality of the supplied objects. Array types are automatically detected.
    *
    * @param  o1  to test equality of
    * @param  o2  to test equality of
@@ -339,10 +339,32 @@ public final class LdapUtils
    */
   public static boolean areEqual(final Object o1, final Object o2)
   {
-    if (o1 == null) {
-      return o2 == null;
+    if (o1 == o2) {
+      return true;
     }
-    return o2 != null && (o1 == o2 || o1.getClass() == o2.getClass() && o1.hashCode() == o2.hashCode());
+    boolean areEqual;
+    if (o1 instanceof boolean[] && o2 instanceof boolean[]) {
+      areEqual = Arrays.equals((boolean[]) o1, (boolean[]) o2);
+    } else if (o1 instanceof byte[] && o2 instanceof byte[]) {
+      areEqual = Arrays.equals((byte[]) o1, (byte[]) o2);
+    } else if (o1 instanceof char[] && o2 instanceof char[]) {
+      areEqual = Arrays.equals((char[]) o1, (char[]) o2);
+    } else if (o1 instanceof double[] && o2 instanceof double[]) {
+      areEqual = Arrays.equals((double[]) o1, (double[]) o2);
+    } else if (o1 instanceof float[] && o2 instanceof float[]) {
+      areEqual = Arrays.equals((float[]) o1, (float[]) o2);
+    } else if (o1 instanceof int[] && o2 instanceof int[]) {
+      areEqual = Arrays.equals((int[]) o1, (int[]) o2);
+    } else if (o1 instanceof long[] && o2 instanceof long[]) {
+      areEqual = Arrays.equals((long[]) o1, (long[]) o2);
+    } else if (o1 instanceof short[] && o2 instanceof short[]) {
+      areEqual = Arrays.equals((short[]) o1, (short[]) o2);
+    } else if (o1 instanceof Object[] && o2 instanceof Object[]) {
+      areEqual = Arrays.deepEquals((Object[]) o1, (Object[]) o2);
+    } else {
+      areEqual = o1 != null && o1.equals(o2);
+    }
+    return areEqual;
   }
 
 

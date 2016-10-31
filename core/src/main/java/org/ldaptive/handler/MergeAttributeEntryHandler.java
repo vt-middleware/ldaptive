@@ -100,6 +100,21 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof MergeAttributeEntryHandler) {
+      final MergeAttributeEntryHandler v = (MergeAttributeEntryHandler) o;
+      return LdapUtils.areEqual(attributeNames, v.attributeNames) &&
+             LdapUtils.areEqual(mergeAttributeName, v.mergeAttributeName);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeNames, mergeAttributeName);

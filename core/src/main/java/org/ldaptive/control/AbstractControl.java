@@ -65,7 +65,15 @@ public abstract class AbstractControl implements Control
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof AbstractControl) {
+      final AbstractControl v = (AbstractControl) o;
+      return LdapUtils.areEqual(getOID(), v.getOID()) &&
+             LdapUtils.areEqual(getCriticality(), v.getCriticality());
+    }
+    return false;
   }
 
 

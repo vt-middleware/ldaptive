@@ -1,8 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import org.ldaptive.LdapUtils;
-
 /**
  * Base class for schema elements.
  *
@@ -93,11 +91,4 @@ public abstract class AbstractSchemaElement implements SchemaElement
 
   @Override
   public abstract int hashCode();
-
-
-  @Override
-  public boolean equals(final Object o)
-  {
-    return LdapUtils.areEqual(this, o);
-  }
 }

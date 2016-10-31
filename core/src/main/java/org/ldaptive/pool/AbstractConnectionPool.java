@@ -988,7 +988,14 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     @Override
     public boolean equals(final Object o)
     {
-      return LdapUtils.areEqual(this, o);
+      if (o == this) {
+        return true;
+      }
+      if (o instanceof DefaultPooledConnectionProxy) {
+        final DefaultPooledConnectionProxy v = (DefaultPooledConnectionProxy) o;
+        return LdapUtils.areEqual(conn, v.conn);
+      }
+      return false;
     }
 
 

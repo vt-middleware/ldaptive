@@ -47,7 +47,14 @@ public class LdapCredential implements Serializable
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof LdapCredential) {
+      final LdapCredential v = (LdapCredential) o;
+      return LdapUtils.areEqual(credential, v.credential);
+    }
+    return false;
   }
 
 

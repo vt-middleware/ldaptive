@@ -140,6 +140,21 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SyncDoneControl && super.equals(o)) {
+      final SyncDoneControl v = (SyncDoneControl) o;
+      return LdapUtils.areEqual(cookie, v.cookie) &&
+             LdapUtils.areEqual(refreshDeletes, v.refreshDeletes);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), cookie, refreshDeletes);

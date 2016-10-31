@@ -449,6 +449,27 @@ public class Schema
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof Schema) {
+      final Schema v = (Schema) o;
+      return LdapUtils.areEqual(attributeTypes, v.attributeTypes) &&
+             LdapUtils.areEqual(ditContentRules, v.ditContentRules) &&
+             LdapUtils.areEqual(ditStructureRules, v.ditStructureRules) &&
+             LdapUtils.areEqual(syntaxes, v.syntaxes) &&
+             LdapUtils.areEqual(matchingRules, v.matchingRules) &&
+             LdapUtils.areEqual(matchingRuleUses, v.matchingRuleUses) &&
+             LdapUtils.areEqual(nameForms, v.nameForms) &&
+             LdapUtils.areEqual(objectClasses, v.objectClasses);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return
@@ -462,13 +483,6 @@ public class Schema
         matchingRuleUses,
         nameForms,
         objectClasses);
-  }
-
-
-  @Override
-  public boolean equals(final Object o)
-  {
-    return LdapUtils.areEqual(this, o);
   }
 
 

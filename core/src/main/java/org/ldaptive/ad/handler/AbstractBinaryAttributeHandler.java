@@ -17,6 +17,9 @@ import org.ldaptive.handler.AbstractSearchEntryHandler;
 public abstract class AbstractBinaryAttributeHandler extends AbstractSearchEntryHandler
 {
 
+  /** hash code seed. */
+  private static final int HASH_CODE_SEED = 1847;
+
   /** attribute name. */
   private String attributeName;
 
@@ -97,5 +100,26 @@ public abstract class AbstractBinaryAttributeHandler extends AbstractSearchEntry
     } else {
       request.setBinaryAttributes(attributeName);
     }
+  }
+
+
+  @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof AbstractBinaryAttributeHandler) {
+      final AbstractBinaryAttributeHandler v = (AbstractBinaryAttributeHandler) o;
+      return LdapUtils.areEqual(attributeName, v.attributeName);
+    }
+    return false;
+  }
+
+
+  @Override
+  public int hashCode()
+  {
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeName);
   }
 }

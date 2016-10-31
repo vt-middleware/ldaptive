@@ -40,6 +40,16 @@ public class RangeRetrievalNoerrControl extends AbstractControl implements Reque
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    return o instanceof RangeRetrievalNoerrControl && super.equals(o);
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());

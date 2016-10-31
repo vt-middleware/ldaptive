@@ -100,6 +100,20 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof ExtendedDnControl && super.equals(o)) {
+      final ExtendedDnControl v = (ExtendedDnControl) o;
+      return LdapUtils.areEqual(flag, v.flag);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), flag);

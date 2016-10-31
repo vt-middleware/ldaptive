@@ -474,7 +474,28 @@ public class SearchRequest extends AbstractRequest
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SearchRequest) {
+      final SearchRequest v = (SearchRequest) o;
+      return LdapUtils.areEqual(baseDn, v.baseDn) &&
+             LdapUtils.areEqual(binaryAttrs, v.binaryAttrs) &&
+             LdapUtils.areEqual(derefAliases, v.derefAliases) &&
+             LdapUtils.areEqual(entryHandlers, v.entryHandlers) &&
+             LdapUtils.areEqual(referenceHandlers, v.referenceHandlers) &&
+             LdapUtils.areEqual(retAttrs, v.retAttrs) &&
+             LdapUtils.areEqual(searchFilter, v.searchFilter) &&
+             LdapUtils.areEqual(searchScope, v.searchScope) &&
+             LdapUtils.areEqual(sizeLimit, v.sizeLimit) &&
+             LdapUtils.areEqual(sortBehavior, v.sortBehavior) &&
+             LdapUtils.areEqual(timeLimit, v.timeLimit) &&
+             LdapUtils.areEqual(typesOnly, v.typesOnly) &&
+             LdapUtils.areEqual(getControls(), v.getControls()) &&
+             LdapUtils.areEqual(getReferralHandler(), v.getReferralHandler()) &&
+             LdapUtils.areEqual(getIntermediateResponseHandlers(), v.getIntermediateResponseHandlers());
+    }
+    return false;
   }
 
 

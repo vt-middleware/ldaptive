@@ -88,7 +88,14 @@ public class DN implements DEREncoder
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof DN) {
+      final DN v = (DN) o;
+      return LdapUtils.areEqual(rdns, v.rdns);
+    }
+    return false;
   }
 
 

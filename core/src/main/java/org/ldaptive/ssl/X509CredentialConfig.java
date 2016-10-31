@@ -126,7 +126,16 @@ public class X509CredentialConfig implements CredentialConfig
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof X509CredentialConfig) {
+      final X509CredentialConfig v = (X509CredentialConfig) o;
+      return LdapUtils.areEqual(trustCertificates, v.trustCertificates) &&
+             LdapUtils.areEqual(authenticationCertificate, v.authenticationCertificate) &&
+             LdapUtils.areEqual(authenticationKey, v.authenticationKey);
+    }
+    return false;
   }
 
 

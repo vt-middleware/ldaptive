@@ -190,6 +190,22 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof EntryChangeNotificationControl && super.equals(o)) {
+      final EntryChangeNotificationControl v = (EntryChangeNotificationControl) o;
+      return LdapUtils.areEqual(changeType, v.changeType) &&
+             LdapUtils.areEqual(previousDn, v.previousDn) &&
+             LdapUtils.areEqual(changeNumber, v.changeNumber);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), changeType, previousDn, changeNumber);

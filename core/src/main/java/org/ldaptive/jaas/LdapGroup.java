@@ -96,7 +96,15 @@ public class LdapGroup implements Group, Serializable
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof LdapGroup) {
+      final LdapGroup v = (LdapGroup) o;
+      return LdapUtils.areEqual(roleName, v.roleName) &&
+             LdapUtils.areEqual(members, v.members);
+    }
+    return false;
   }
 
 

@@ -228,6 +228,25 @@ public class DITStructureRule extends AbstractNamedSchemaElement
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof DITStructureRule) {
+      final DITStructureRule v = (DITStructureRule) o;
+      return LdapUtils.areEqual(id, v.id) &&
+             LdapUtils.areEqual(getNames(), v.getNames()) &&
+             LdapUtils.areEqual(getDescription(), v.getDescription()) &&
+             LdapUtils.areEqual(isObsolete(), v.isObsolete()) &&
+             LdapUtils.areEqual(nameForm, v.nameForm) &&
+             LdapUtils.areEqual(superiorRules, v.superiorRules) &&
+             LdapUtils.areEqual(getExtensions(), v.getExtensions());
+    }
+    return false;
+  }
+
+  @Override
   public int hashCode()
   {
     return

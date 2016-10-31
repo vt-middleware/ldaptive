@@ -61,7 +61,14 @@ public class LdapDnPrincipal implements Principal, Serializable, Comparable<Prin
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof LdapDnPrincipal) {
+      final LdapDnPrincipal v = (LdapDnPrincipal) o;
+      return LdapUtils.areEqual(ldapDn, v.ldapDn);
+    }
+    return false;
   }
 
 
