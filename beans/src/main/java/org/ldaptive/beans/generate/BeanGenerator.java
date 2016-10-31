@@ -19,13 +19,16 @@ import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JClass;
 import com.sun.codemodel.JClassAlreadyExistsException;
 import com.sun.codemodel.JCodeModel;
+import com.sun.codemodel.JConditional;
 import com.sun.codemodel.JDefinedClass;
 import com.sun.codemodel.JDocComment;
 import com.sun.codemodel.JExpr;
+import com.sun.codemodel.JExpression;
 import com.sun.codemodel.JFieldVar;
 import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
+import com.sun.codemodel.JVar;
 import org.ldaptive.beans.generate.props.BeanGeneratorPropertySource;
 import org.ldaptive.schema.AttributeType;
 import org.ldaptive.schema.AttributeUsage;
@@ -614,13 +617,30 @@ public class BeanGenerator
    */
   private void createEquals(final JDefinedClass clazz)
   {
-    final JClass ldapUtilsClass = codeModel.ref(org.ldaptive.LdapUtils.class);
-    final JInvocation areEqual = ldapUtilsClass.staticInvoke("areEqual");
     final JMethod equals = clazz.method(JMod.PUBLIC, boolean.class, "equals");
     equals.annotate(java.lang.Override.class);
-    areEqual.arg(JExpr._this());
-    areEqual.arg(equals.param(Object.class, "o"));
-    equals.body()._return(areEqual);
+    final JVar o = equals.param(Object.class, "o");
+
+    final JConditional ifSame = equals.body()._if(o.eq(JExpr._this()));
+    ifSame._then()._return(JExpr.TRUE);
+
+    final JConditional ifInstance = equals.body()._if(o._instanceof(clazz));
+    final JVar v = ifInstance._then().decl(clazz, "v", JExpr.cast(clazz, o));
+    JExpression propertyComparison = null;
+    for (Map.Entry<String, JFieldVar> entry : clazz.fields().entrySet()) {
+      final JClass ldapUtilsClass = codeModel.ref(org.ldaptive.LdapUtils.class);
+      final JInvocation areEqual = ldapUtilsClass.staticInvoke("areEqual");
+      areEqual.arg(entry.getValue());
+      areEqual.arg(v.ref(entry.getValue()));
+      if (propertyComparison == null) {
+        propertyComparison = areEqual;
+      } else {
+        propertyComparison = propertyComparison.cand(areEqual);
+      }
+    }
+    ifInstance._then()._return(propertyComparison);
+
+    equals.body()._return(JExpr.FALSE);
   }
 
 
