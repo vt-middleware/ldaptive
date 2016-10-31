@@ -242,7 +242,9 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
              LdapUtils.areEqual(cookie, v.cookie) &&
              LdapUtils.areEqual(refreshDone, v.refreshDone) &&
              LdapUtils.areEqual(refreshDeletes, v.refreshDeletes) &&
-             LdapUtils.areEqual(entryUuids, v.entryUuids);
+             LdapUtils.areEqual(entryUuids, v.entryUuids) &&
+             LdapUtils.areEqual(getControls(), v.getControls()) &&
+             LdapUtils.areEqual(getMessageId(), v.getMessageId());
     }
     return false;
   }
