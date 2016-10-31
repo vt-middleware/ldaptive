@@ -29,6 +29,9 @@ public class PoolConfig extends AbstractConfig
   /** Default validate period, value is {@value}. */
   public static final long DEFAULT_VALIDATE_PERIOD = 1800;
 
+  /** Default per connection validate timeout, value is {@value}. */
+  public static final long DEFAULT_VALIDATE_TIMEOUT = 5000;
+
   /** Minimum pool size. */
   private int minPoolSize = DEFAULT_MIN_POOL_SIZE;
 
@@ -46,6 +49,9 @@ public class PoolConfig extends AbstractConfig
 
   /** Time in seconds that the validate pool should repeat. */
   private long validatePeriod = DEFAULT_VALIDATE_PERIOD;
+
+  /** Maximum time in milliseconds a connection validation should block. */
+  private long validateTimeout = DEFAULT_VALIDATE_TIMEOUT;
 
 
   /**
@@ -200,13 +206,41 @@ public class PoolConfig extends AbstractConfig
   }
 
 
+  /**
+   * Returns the timeout in milliseconds imposed when validating a single
+   * connection.
+   *
+   * @return  validate timeout
+   */
+  public long getValidateTimeout()
+  {
+    return validateTimeout;
+  }
+
+
+  /**
+   * Sets the timeout imposed when validating a single connection.
+   *
+   * @param  time  in milliseconds for a connection validation
+   */
+  public void setValidateTimeout(final long time)
+  {
+    checkImmutable();
+    if (time >= -1) {
+      logger.trace("setting validateTimeout: {}", time);
+      validateTimeout = time;
+    }
+  }
+
+
   @Override
   public String toString()
   {
     return
       String.format(
         "[%s@%d::minPoolSize=%s, maxPoolSize=%s, validateOnCheckIn=%s, " +
-        "validateOnCheckOut=%s, validatePeriodically=%s, validatePeriod=%s]",
+        "validateOnCheckOut=%s, validatePeriodically=%s, validatePeriod=%s, " +
+        "validateTimeout=%s]",
         getClass().getName(),
         hashCode(),
         minPoolSize,
@@ -214,6 +248,7 @@ public class PoolConfig extends AbstractConfig
         validateOnCheckIn,
         validateOnCheckOut,
         validatePeriodically,
-        validatePeriod);
+        validatePeriod,
+        validateTimeout);
   }
 }
