@@ -45,7 +45,7 @@ public class ForceUpdateControl extends AbstractControl implements RequestContro
     if (o == this) {
       return true;
     }
-    return o instanceof ForceUpdateControl && super.equals(0);
+    return o instanceof ForceUpdateControl && super.equals(o);
   }
 
 
