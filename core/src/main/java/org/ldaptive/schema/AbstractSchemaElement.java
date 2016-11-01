@@ -90,5 +90,12 @@ public abstract class AbstractSchemaElement implements SchemaElement
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    return super.equals(o);
+  }
+
+
+  @Override
   public abstract int hashCode();
 }
