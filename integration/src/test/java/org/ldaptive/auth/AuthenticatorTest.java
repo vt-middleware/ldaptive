@@ -317,7 +317,9 @@ public class AuthenticatorTest extends AbstractTest
       "(|(uid=$context.principal)(mail=$context.principal))");
     velocityResolver.setBaseDn(resolver.getBaseDn());
     auth.setDnResolver(velocityResolver);
-    AssertJUnit.assertEquals(testLdapEntry.getDn(), auth.resolveDn(new User(null, context)));
+    AssertJUnit.assertEquals(
+      testLdapEntry.getDn().toLowerCase(),
+      auth.resolveDn(new User(null, context)).toLowerCase());
   }
 
 
