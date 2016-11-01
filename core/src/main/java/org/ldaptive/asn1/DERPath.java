@@ -198,7 +198,14 @@ public class DERPath
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof DERPath) {
+      final DERPath v = (DERPath) o;
+      return LdapUtils.areEqual(nodeStack.toArray(), v.nodeStack.toArray());
+    }
+    return false;
   }
 
 
@@ -317,7 +324,15 @@ public class DERPath
     @Override
     public boolean equals(final Object o)
     {
-      return LdapUtils.areEqual(this, o);
+      if (o == this) {
+        return true;
+      }
+      if (o instanceof Node) {
+        final Node v = (Node) o;
+        return LdapUtils.areEqual(name, v.name) &&
+               LdapUtils.areEqual(childIndex, v.childIndex);
+      }
+      return false;
     }
 
 

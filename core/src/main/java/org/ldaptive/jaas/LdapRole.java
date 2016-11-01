@@ -50,7 +50,14 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof LdapRole) {
+      final LdapRole v = (LdapRole) o;
+      return LdapUtils.areEqual(roleName, v.roleName);
+    }
+    return false;
   }
 
 

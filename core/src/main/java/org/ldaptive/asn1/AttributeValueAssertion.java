@@ -127,7 +127,15 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof AttributeValueAssertion) {
+      final AttributeValueAssertion v = (AttributeValueAssertion) o;
+      return LdapUtils.areEqual(attributeOid, v.attributeOid) &&
+             LdapUtils.areEqual(attributeValue, v.attributeValue);
+    }
+    return false;
   }
 
 
@@ -203,7 +211,15 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
     @Override
     public boolean equals(final Object o)
     {
-      return LdapUtils.areEqual(this, o);
+      if (o == this) {
+        return true;
+      }
+      if (o instanceof Value) {
+        final Value v = (Value) o;
+        return LdapUtils.areEqual(attributeValueTag, v.attributeValueTag) &&
+               LdapUtils.areEqual(attributeValueBytes, v.attributeValueBytes);
+      }
+      return false;
     }
 
 

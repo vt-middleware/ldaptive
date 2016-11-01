@@ -244,6 +244,22 @@ public class RecursiveEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof RecursiveEntryHandler) {
+      final RecursiveEntryHandler v = (RecursiveEntryHandler) o;
+      return LdapUtils.areEqual(mergeAttributes, v.mergeAttributes) &&
+             LdapUtils.areEqual(retAttrs, v.retAttrs) &&
+             LdapUtils.areEqual(searchAttribute, v.searchAttribute);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, mergeAttributes, retAttrs, searchAttribute);

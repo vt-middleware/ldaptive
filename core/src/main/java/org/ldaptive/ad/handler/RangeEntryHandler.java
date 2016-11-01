@@ -8,7 +8,6 @@ import java.util.regex.Pattern;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -30,9 +29,6 @@ import org.ldaptive.handler.AbstractSearchEntryHandler;
  */
 public class RangeEntryHandler extends AbstractSearchEntryHandler
 {
-
-  /** hash code seed. */
-  private static final int HASH_CODE_SEED = 839;
 
   /** The character indicating that the end of the range has been reached. */
   private static final String END_OF_RANGE = "*";
@@ -124,6 +120,6 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, (Object[]) null);
+    return super.hashCode();
   }
 }

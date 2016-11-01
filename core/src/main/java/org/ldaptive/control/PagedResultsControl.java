@@ -149,6 +149,21 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof PagedResultsControl && super.equals(o)) {
+      final PagedResultsControl v = (PagedResultsControl) o;
+      return LdapUtils.areEqual(resultSize, v.resultSize) &&
+             LdapUtils.areEqual(cookie, v.cookie);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), resultSize, cookie);

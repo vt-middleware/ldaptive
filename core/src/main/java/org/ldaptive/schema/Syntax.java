@@ -124,6 +124,22 @@ public class Syntax extends AbstractSchemaElement
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof Syntax) {
+      final Syntax v = (Syntax) o;
+      return LdapUtils.areEqual(oid, v.oid) &&
+             LdapUtils.areEqual(getDescription(), v.getDescription()) &&
+             LdapUtils.areEqual(getExtensions(), v.getExtensions());
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, oid, getDescription(), getExtensions());

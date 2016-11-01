@@ -89,7 +89,7 @@ public class StringCustomObject implements CustomObject
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    return o != null && hashCode() == o.hashCode();
   }
 
 

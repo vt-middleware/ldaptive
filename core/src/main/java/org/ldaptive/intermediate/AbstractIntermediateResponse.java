@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.intermediate;
 
-import org.ldaptive.LdapUtils;
 import org.ldaptive.control.ResponseControl;
 
 /**
@@ -70,20 +69,4 @@ public abstract class AbstractIntermediateResponse implements IntermediateRespon
   {
     return messageId;
   }
-
-
-  @Override
-  public boolean equals(final Object o)
-  {
-    return LdapUtils.areEqual(this, o);
-  }
-
-
-  /**
-   * Returns the hash code for this object.
-   *
-   * @return  hash code
-   */
-  @Override
-  public abstract int hashCode();
 }

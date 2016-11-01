@@ -496,6 +496,33 @@ public class AttributeType extends AbstractNamedSchemaElement
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof AttributeType) {
+      final AttributeType v = (AttributeType) o;
+      return LdapUtils.areEqual(oid, v.oid) &&
+             LdapUtils.areEqual(getNames(), v.getNames()) &&
+             LdapUtils.areEqual(getDescription(), v.getDescription()) &&
+             LdapUtils.areEqual(isObsolete(), v.isObsolete()) &&
+             LdapUtils.areEqual(superiorType, v.superiorType) &&
+             LdapUtils.areEqual(equalityMatchingRule, v.equalityMatchingRule) &&
+             LdapUtils.areEqual(orderingMatchingRule, v.orderingMatchingRule) &&
+             LdapUtils.areEqual(substringMatchingRule, v.substringMatchingRule) &&
+             LdapUtils.areEqual(syntaxOID, v.syntaxOID) &&
+             LdapUtils.areEqual(singleValued, v.singleValued) &&
+             LdapUtils.areEqual(collective, v.collective) &&
+             LdapUtils.areEqual(noUserModification, v.noUserModification) &&
+             LdapUtils.areEqual(usage, v.usage) &&
+             LdapUtils.areEqual(getExtensions(), v.getExtensions());
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return

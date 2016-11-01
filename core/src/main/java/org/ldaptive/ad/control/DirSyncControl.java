@@ -282,6 +282,22 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof DirSyncControl && super.equals(o)) {
+      final DirSyncControl v = (DirSyncControl) o;
+      return LdapUtils.areEqual(flags, v.flags) &&
+             LdapUtils.areEqual(maxAttributeCount, v.maxAttributeCount) &&
+             LdapUtils.areEqual(cookie, v.cookie);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), flags, maxAttributeCount, cookie);

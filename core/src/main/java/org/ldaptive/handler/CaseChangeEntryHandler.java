@@ -202,9 +202,32 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof CaseChangeEntryHandler) {
+      final CaseChangeEntryHandler v = (CaseChangeEntryHandler) o;
+      return LdapUtils.areEqual(dnCaseChange, v.dnCaseChange) &&
+             LdapUtils.areEqual(attributeNameCaseChange, v.attributeNameCaseChange) &&
+             LdapUtils.areEqual(attributeValueCaseChange, v.attributeValueCaseChange) &&
+             LdapUtils.areEqual(attributeNames, v.attributeNames);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, dnCaseChange, attributeNameCaseChange, attributeValueCaseChange);
+    return
+      LdapUtils.computeHashCode(
+        HASH_CODE_SEED,
+        dnCaseChange,
+        attributeNameCaseChange,
+        attributeValueCaseChange,
+        attributeNames);
   }
 
 

@@ -71,6 +71,20 @@ public class ProxyAuthorizationControl extends AbstractControl implements Reques
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof ProxyAuthorizationControl && super.equals(o)) {
+      final ProxyAuthorizationControl v = (ProxyAuthorizationControl) o;
+      return LdapUtils.areEqual(authorizationId, v.authorizationId);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), authorizationId);

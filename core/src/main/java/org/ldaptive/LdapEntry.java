@@ -280,6 +280,23 @@ public class LdapEntry extends AbstractLdapBean
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o != null && getClass() == o.getClass())  {
+      final LdapEntry v = (LdapEntry) o;
+      return LdapUtils.areEqual(
+               entryDn != null ? entryDn.toLowerCase() : null,
+               v.entryDn != null ? v.entryDn.toLowerCase() : null) &&
+             LdapUtils.areEqual(entryAttributes, v.entryAttributes);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return

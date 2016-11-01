@@ -187,6 +187,25 @@ public class MatchingRule extends AbstractNamedSchemaElement
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof MatchingRule) {
+      final MatchingRule v = (MatchingRule) o;
+      return LdapUtils.areEqual(oid, v.oid) &&
+        LdapUtils.areEqual(getNames(), v.getNames()) &&
+        LdapUtils.areEqual(getDescription(), v.getDescription()) &&
+        LdapUtils.areEqual(isObsolete(), v.isObsolete()) &&
+        LdapUtils.areEqual(syntaxOID, v.syntaxOID) &&
+        LdapUtils.areEqual(getExtensions(), v.getExtensions());
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return

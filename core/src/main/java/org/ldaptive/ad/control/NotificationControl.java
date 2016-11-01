@@ -40,6 +40,16 @@ public class NotificationControl extends AbstractControl implements RequestContr
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    return o instanceof NotificationControl && super.equals(o);
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());

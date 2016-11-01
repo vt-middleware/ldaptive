@@ -361,6 +361,25 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof VirtualListViewRequestControl && super.equals(o)) {
+      final VirtualListViewRequestControl v = (VirtualListViewRequestControl) o;
+      return LdapUtils.areEqual(beforeCount, v.beforeCount) &&
+             LdapUtils.areEqual(afterCount, v.afterCount) &&
+             LdapUtils.areEqual(targetOffset, v.targetOffset) &&
+             LdapUtils.areEqual(contentCount, v.contentCount) &&
+             LdapUtils.areEqual(assertionValue, v.assertionValue) &&
+             LdapUtils.areEqual(contextID, v.contextID);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return

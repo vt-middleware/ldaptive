@@ -6,7 +6,6 @@ import java.util.Set;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapException;
-import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
 import org.slf4j.Logger;
@@ -149,15 +148,4 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
 
   @Override
   public void initializeRequest(final SearchRequest request) {}
-
-
-  @Override
-  public boolean equals(final Object o)
-  {
-    return LdapUtils.areEqual(this, o);
-  }
-
-
-  @Override
-  public abstract int hashCode();
 }

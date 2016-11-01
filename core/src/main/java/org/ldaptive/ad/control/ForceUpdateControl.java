@@ -40,6 +40,16 @@ public class ForceUpdateControl extends AbstractControl implements RequestContro
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    return o instanceof ForceUpdateControl && super.equals(o);
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());

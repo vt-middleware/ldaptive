@@ -338,6 +338,21 @@ public class SearchResult extends AbstractLdapBean
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SearchResult) {
+      final SearchResult v = (SearchResult) o;
+      return LdapUtils.areEqual(resultEntries, v.resultEntries) &&
+             LdapUtils.areEqual(searchReferences, v.searchReferences);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, resultEntries.values(), searchReferences);

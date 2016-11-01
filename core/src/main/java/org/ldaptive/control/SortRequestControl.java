@@ -91,6 +91,20 @@ public class SortRequestControl extends AbstractControl implements RequestContro
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SortRequestControl && super.equals(o)) {
+      final SortRequestControl v = (SortRequestControl) o;
+      return LdapUtils.areEqual(sortKeys, v.sortKeys);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), sortKeys);

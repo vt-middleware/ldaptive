@@ -254,7 +254,15 @@ public class SearchFilter
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SearchFilter) {
+      final SearchFilter v = (SearchFilter) o;
+      return LdapUtils.areEqual(searchFilter, v.searchFilter) &&
+             LdapUtils.areEqual(parameters, v.parameters);
+    }
+    return false;
   }
 
 

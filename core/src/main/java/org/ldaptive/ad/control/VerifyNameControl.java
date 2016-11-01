@@ -92,6 +92,20 @@ public class VerifyNameControl extends AbstractControl implements RequestControl
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof VerifyNameControl && super.equals(o)) {
+      final VerifyNameControl v = (VerifyNameControl) o;
+      return LdapUtils.areEqual(serverName, v.serverName);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), serverName);

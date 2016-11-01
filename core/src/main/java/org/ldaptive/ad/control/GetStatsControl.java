@@ -96,6 +96,20 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof GetStatsControl && super.equals(o)) {
+      final GetStatsControl v = (GetStatsControl) o;
+      return LdapUtils.areEqual(statistics, v.statistics);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), statistics);

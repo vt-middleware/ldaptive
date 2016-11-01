@@ -453,6 +453,23 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof LdapAttribute) {
+      final LdapAttribute v = (LdapAttribute) o;
+      return LdapUtils.areEqual(
+               attributeName != null ? attributeName.toLowerCase() : null,
+               v.attributeName != null ? v.attributeName.toLowerCase() : null) &&
+             LdapUtils.areEqual(attributeValues, v.attributeValues);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return
@@ -784,6 +801,30 @@ public class LdapAttribute extends AbstractLdapBean
     public void clear()
     {
       values.clear();
+    }
+
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public boolean equals(final Object o)
+    {
+      if (o == this) {
+        return true;
+      }
+      if (o instanceof LdapAttributeValues) {
+        final LdapAttributeValues v = (LdapAttributeValues) o;
+        if (type != v.type) {
+          return false;
+        }
+        if (isType(byte[].class)) {
+          return LdapUtils.areEqual(
+            convertValuesToString((Collection<byte[]>) values),
+            convertValuesToString((Collection<byte[]>) v.values));
+        } else {
+          return LdapUtils.areEqual(values, v.values);
+        }
+      }
+      return false;
     }
 
 

@@ -185,7 +185,14 @@ public class RDN implements DEREncoder
   @Override
   public boolean equals(final Object o)
   {
-    return LdapUtils.areEqual(this, o);
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof RDN) {
+      final RDN v = (RDN) o;
+      return LdapUtils.areEqual(attributeValueAssertions, v.attributeValueAssertions);
+    }
+    return false;
   }
 
 

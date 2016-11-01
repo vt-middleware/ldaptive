@@ -41,15 +41,4 @@ public abstract class AbstractLdapBean implements Serializable
   {
     return sortBehavior;
   }
-
-
-  @Override
-  public boolean equals(final Object o)
-  {
-    return LdapUtils.areEqual(this, o);
-  }
-
-
-  @Override
-  public abstract int hashCode();
 }

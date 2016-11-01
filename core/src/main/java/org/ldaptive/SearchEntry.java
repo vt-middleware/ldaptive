@@ -79,6 +79,21 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (super.equals(o)) {
+      final SearchEntry v = (SearchEntry) o;
+      return LdapUtils.areEqual(messageId, v.messageId) &&
+             LdapUtils.areEqual(responseControls, v.responseControls);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return
