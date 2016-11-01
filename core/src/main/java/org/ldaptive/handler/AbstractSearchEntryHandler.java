@@ -148,4 +148,15 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
 
   @Override
   public void initializeRequest(final SearchRequest request) {}
+
+
+  @Override
+  public boolean equals(final Object o)
+  {
+    return super.equals(o);
+  }
+
+
+  @Override
+  public abstract int hashCode();
 }
