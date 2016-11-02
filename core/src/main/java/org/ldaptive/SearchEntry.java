@@ -15,6 +15,9 @@ public class SearchEntry extends LdapEntry implements ResponseMessage
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 347;
 
+  /** serial version uid. */
+  private static final long serialVersionUID = 3016288847468612093L;
+
   /** response controls. */
   private final ResponseControl[] responseControls;
 
