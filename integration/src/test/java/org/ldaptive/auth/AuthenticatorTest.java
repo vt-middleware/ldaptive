@@ -56,7 +56,10 @@ public class AuthenticatorTest extends AbstractTest
   private static LdapEntry testLdapEntry;
 
   /** Entry created for auth tests. */
-  private static LdapEntry specialCharsLdapEntry;
+  private static LdapEntry specialCharsLdapEntry2;
+
+  /** Entry created for auth tests. */
+  private static LdapEntry specialCharsLdapEntry3;
 
   /** Authenticator instance for concurrency testing. */
   private Authenticator singleTLSAuth;
@@ -125,12 +128,28 @@ public class AuthenticatorTest extends AbstractTest
    */
   @Parameters("createSpecialCharsEntry2")
   @BeforeClass(groups = {"auth"})
-  public void createSpecialCharsEntry(final String ldifFile)
+  public void createSpecialCharsEntry2(final String ldifFile)
     throws Exception
   {
     final String ldif = TestUtils.readFileIntoString(ldifFile);
-    specialCharsLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
-    super.createLdapEntry(specialCharsLdapEntry);
+    specialCharsLdapEntry2 = TestUtils.convertLdifToResult(ldif).getEntry();
+    super.createLdapEntry(specialCharsLdapEntry2);
+  }
+
+
+  /**
+   * @param  ldifFile  to create.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters("createSpecialCharsEntry3")
+  @BeforeClass(groups = {"auth"})
+  public void createSpecialCharsEntry3(final String ldifFile)
+    throws Exception
+  {
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    specialCharsLdapEntry3 = TestUtils.convertLdifToResult(ldif).getEntry();
+    super.createLdapEntry(specialCharsLdapEntry3);
   }
 
 
@@ -140,7 +159,8 @@ public class AuthenticatorTest extends AbstractTest
     throws Exception
   {
     super.deleteLdapEntry(testLdapEntry.getDn());
-    super.deleteLdapEntry(specialCharsLdapEntry.getDn());
+    super.deleteLdapEntry(specialCharsLdapEntry2.getDn());
+    super.deleteLdapEntry(specialCharsLdapEntry3.getDn());
 
     final AuthenticationHandler ah = pooledTLSAuth.getAuthenticationHandler();
     try {
@@ -1002,18 +1022,13 @@ public class AuthenticatorTest extends AbstractTest
    */
   @Parameters(
     {
-      "authenticateSpecialCharsUser",
-      "authenticateSpecialCharsCredential"
+      "authenticateSpecialCharsUser2",
+      "authenticateSpecialCharsCredential2"
     })
   @Test(groups = {"auth"})
-  public void authenticateSpecialChars(final String user, final String credential)
+  public void authenticateSpecialChars2(final String user, final String credential)
     throws Exception
   {
-    // TODO ignore active directory until it's configured
-    if (TestControl.isActiveDirectory()) {
-      return;
-    }
-
     final Authenticator auth = createTLSAuthenticator(true);
 
     // test without rewrite
@@ -1025,9 +1040,41 @@ public class AuthenticatorTest extends AbstractTest
     AssertJUnit.assertTrue(response.getResult());
 
     // test with rewrite
+
+    // TODO ignore active directory until it's configured
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
     ((SearchDnResolver) auth.getDnResolver()).setBaseDn("dc=blah");
     ((SearchDnResolver) auth.getDnResolver()).setSubtreeSearch(true);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
+    AssertJUnit.assertFalse(response.getResult());
+
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+    AssertJUnit.assertTrue(response.getResult());
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "authenticateSpecialCharsUser3",
+      "authenticateSpecialCharsCredential3"
+    })
+  @Test(groups = {"auth"})
+  public void authenticateSpecialChars3(final String user, final String credential)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(true);
+
+    AuthenticationResponse response = auth.authenticate(
+      new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
     AssertJUnit.assertFalse(response.getResult());
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));

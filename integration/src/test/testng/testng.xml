@@ -93,6 +93,8 @@
              value="/org/ldaptive/specialChars.ldif"/>
   <parameter name="createSpecialCharsEntry2"
              value="/org/ldaptive/specialChars-2.ldif"/>
+  <parameter name="createSpecialCharsEntry3"
+             value="/org/ldaptive/specialChars-3.ldif"/>
 
   <parameter name="multipleLdifResultsIn"
              value="/org/ldaptive/multipleEntriesIn.ldif"/>
@@ -374,8 +376,10 @@
   <parameter name="authenticateResults"
              value="/org/ldaptive/searchResults-6.ldif"/>
 
-  <parameter name="authenticateSpecialCharsUser" value="17894"/>
-  <parameter name="authenticateSpecialCharsCredential" value="password17894"/>
+  <parameter name="authenticateSpecialCharsUser2" value="17894"/>
+  <parameter name="authenticateSpecialCharsCredential2" value="password17894"/>
+  <parameter name="authenticateSpecialCharsUser3" value="17895"/>
+  <parameter name="authenticateSpecialCharsCredential3" value="password17895"/>
 
   <parameter name="digestMd5User" value="test3@vt.edu"/>
   <parameter name="digestMd5Credential" value="password"/>
