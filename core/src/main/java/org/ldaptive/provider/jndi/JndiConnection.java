@@ -1036,21 +1036,21 @@ public class JndiConnection implements ProviderConnection
     protected String formatDn(final SearchResult sr, final String baseDn)
       throws NamingException
     {
-      StringBuilder fqName;
+      String fqName;
       if (sr.isRelative()) {
         logger.trace("formatting relative dn '{}'", sr.getNameInNamespace());
-        fqName = new StringBuilder(readCompositeName(sr.getNameInNamespace()));
+        final LdapName lname = new LdapName(sr.getNameInNamespace());
+        fqName = lname.toString();
       } else {
         logger.trace("formatting non-relative dn '{}'", sr.getName());
         if (config.getRemoveDnUrls()) {
-          fqName = new StringBuilder(readCompositeName(URI.create(sr.getName()).getPath().substring(1)));
+          fqName = readCompositeName(URI.create(sr.getName()).getPath().substring(1));
         } else {
-          fqName = new StringBuilder(readCompositeName(sr.getName()));
+          fqName = readCompositeName(sr.getName());
         }
       }
-      final String newDn = fqName.toString();
-      logger.trace("formatted dn '{}'", newDn);
-      return newDn;
+      logger.trace("formatted dn '{}'", fqName);
+      return fqName;
     }
 
 
