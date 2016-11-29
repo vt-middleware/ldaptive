@@ -6,6 +6,13 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 1.2.1 - 22Nov2016
+
+Issue | Description
+:---- | :----------
+[ldaptive-119]({{ site.issueURL }}119) | Incorrect DN backslash escaping in JNDI provider
+[ldaptive-117]({{ site.issueURL }}117) | Incorrect equals implementation
+
 ## Version 1.2.0 - 26Jul2016
 
 Issue | Description
