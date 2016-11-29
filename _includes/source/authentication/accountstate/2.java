@@ -9,7 +9,10 @@ auth.setAuthenticationResponseHandlers(new ActiveDirectoryAuthenticationResponse
 auth.setReturnAttributes(ActiveDirectoryAuthenticationResponseHandler.ATTRIBUTES);
 AuthenticationResponse response = auth.authenticate(new AuthenticationRequest("dfisher", new Credential("password")));
 if (response.getResult()) {
-  // authentication succeeded, AD does not support warnings
+  // authentication succeeded, check account state
+  AccountState state = response.getAccountState();
+  // authentication succeeded, only a warning should exist
+  AccountState.Warning warning = state.getWarning();
 } else {
   // authentication failed, check account state
   AccountState state = response.getAccountState();
