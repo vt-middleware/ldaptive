@@ -86,7 +86,7 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
     final byte[] hash = digestCredential(criteria.getCredential(), passwordScheme.getAlgorithm());
     final LdapAttribute la = new LdapAttribute(
       passwordAttribute,
-      String.format("{%s}%s", passwordScheme.getName(), LdapUtils.base64Encode(hash)).getBytes());
+      String.format("{%s}%s", passwordScheme.getLabel(), LdapUtils.base64Encode(hash)).getBytes());
     final CompareOperation compare = new CompareOperation(c);
     final CompareRequest request = new CompareRequest(criteria.getDn(), la);
     request.setControls(getAuthenticationControls());
@@ -144,8 +144,8 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
   public static class Scheme
   {
 
-    /** Name of the scheme. */
-    private final String name;
+    /** Label of the scheme. */
+    private final String label;
 
     /** Algorithm used by this scheme. */
     private final String algorithm;
@@ -154,12 +154,12 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
     /**
      * Creates a new scheme.
      *
-     * @param  nameAndAlgorithm  colon delimited name:algorithm
+     * @param  labelAndAlgorithm  colon delimited label:algorithm
      */
-    public Scheme(final String nameAndAlgorithm)
+    public Scheme(final String labelAndAlgorithm)
     {
-      final String[] s = nameAndAlgorithm.split(":", 2);
-      name = s[0];
+      final String[] s = labelAndAlgorithm.split(":", 2);
+      label = s[0];
       algorithm = s.length == 2 ? s[1] : s[0];
     }
 
@@ -167,24 +167,24 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
     /**
      * Creates a new scheme.
      *
-     * @param  n  name
+     * @param  l  label
      * @param  a  algorithm
      */
-    public Scheme(final String n, final String a)
+    public Scheme(final String l, final String a)
     {
-      name = n;
+      label = l;
       algorithm = a;
     }
 
 
     /**
-     * Returns the scheme name.
+     * Returns the scheme label.
      *
-     * @return  name
+     * @return  label
      */
-    public String getName()
+    public String getLabel()
     {
-      return name;
+      return label;
     }
 
 
@@ -202,7 +202,7 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
     @Override
     public String toString()
     {
-      return String.format("%s:%s", name, algorithm);
+      return String.format("%s:%s", label, algorithm);
     }
   }
 }
