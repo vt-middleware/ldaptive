@@ -90,7 +90,7 @@ public class CompareRequest extends AbstractRequest
         getClass().getName(),
         hashCode(),
         compareDn,
-        attribute,
+        attribute != null ? "userPassword".equals(attribute.getName()) ? "<suppressed>" : attribute : null,
         Arrays.toString(getControls()),
         getReferralHandler(),
         Arrays.toString(getIntermediateResponseHandlers()));
