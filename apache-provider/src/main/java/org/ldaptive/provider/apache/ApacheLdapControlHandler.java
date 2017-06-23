@@ -111,7 +111,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       final DirSyncControl c = (DirSyncControl) requestControl;
       ctl = new AdDirSyncImpl();
       ((AdDirSyncImpl) ctl).setCookie(c.getCookie());
-      ((AdDirSyncImpl) ctl).setFlag(AdDirSyncFlag.getFlag((int) c.getFlags()));
+      ((AdDirSyncImpl) ctl).setFlags(AdDirSyncFlag.getFlags((int) c.getFlags()));
       ((AdDirSyncImpl) ctl).setMaxReturnLength(c.getMaxAttributeCount());
       ctl.setCritical(c.getCriticality());
     } else if (VirtualListViewRequestControl.OID.equals(requestControl.getOID())) {
@@ -174,7 +174,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
     } else if (DirSyncControl.OID.equals(responseControl.getOid())) {
       final AdDirSync c = (AdDirSync) responseControl;
       ctl = new DirSyncControl(
-        new DirSyncControl.Flag[] {DirSyncControl.Flag.valueOf(c.getFlag().getValue()), },
+        new DirSyncControl.Flag[] {DirSyncControl.Flag.valueOf(AdDirSyncFlag.getBitmask(c.getFlags())), },
         c.getCookie(),
         c.getMaxReturnLength(),
         c.isCritical());
