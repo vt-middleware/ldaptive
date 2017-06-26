@@ -80,11 +80,6 @@ public class PasswordModifyOperationTest extends AbstractTest
       return;
     }
 
-    // provider doesn't support this operation
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP does not support this operation");
-    }
-
     final Authenticator auth = TestUtils.createSSLDnAuthenticator();
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(oldPass)));
     AssertJUnit.assertTrue(response.getResult());

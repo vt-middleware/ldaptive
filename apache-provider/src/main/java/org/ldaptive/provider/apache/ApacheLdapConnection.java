@@ -3,6 +3,7 @@ package org.ldaptive.provider.apache;
 
 import java.io.IOException;
 import java.util.Map;
+import org.apache.directory.api.ldap.codec.api.ExtendedResponseDecorator;
 import org.apache.directory.api.ldap.model.cursor.CursorException;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -459,11 +460,15 @@ public class ApacheLdapConnection implements ProviderConnection
       final ExtendedResponse apacheExtRes = connection.extended(request.getOID(), request.encode());
       throwOperationException(request, apacheExtRes);
 
-      // only supports response without any value
+      byte[] responseValue = null;
+      if (apacheExtRes instanceof ExtendedResponseDecorator) {
+        responseValue = ((ExtendedResponseDecorator) apacheExtRes).getResponseValue();
+      }
+
       final org.ldaptive.extended.ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(
         request.getOID(),
         apacheExtRes.getResponseName(),
-        null);
+        responseValue);
       response = createResponse(request, extRes.getValue(), apacheExtRes);
     } catch (LdapOperationException e) {
       processLdapOperationException(e);
