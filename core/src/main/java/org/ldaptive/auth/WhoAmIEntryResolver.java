@@ -30,8 +30,8 @@ public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
     logger.debug("whoami operation returned {}", res);
 
     final String authzId = res.getResult();
-    if (authzId == null) {
-      throw new IllegalStateException("WhoAmI operation did not return an authorization ID");
+    if (authzId == null || !authzId.contains(":")) {
+      throw new IllegalStateException("WhoAmI operation returned illegal authorization ID: '" + authzId + "'");
     }
 
     final String dn = authzId.split(":", 2)[1].trim();
