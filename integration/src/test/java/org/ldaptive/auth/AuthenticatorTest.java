@@ -1243,8 +1243,8 @@ public class AuthenticatorTest extends AbstractTest
     }
 
     final PasswordPolicyControl ppc = new PasswordPolicyControl();
-    AuthenticationResponse response = null;
-    PasswordPolicyControl ppcResponse = null;
+    AuthenticationResponse response;
+    PasswordPolicyControl ppcResponse;
     final Authenticator auth = createTLSAuthenticator(true);
     auth.setAuthenticationResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
     try (Connection conn = TestUtils.createSetupConnection()) {
