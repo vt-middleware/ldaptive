@@ -217,8 +217,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
   {
     return
       String.format(
-        "[%s@%d::criticality=%s, changeType=%s, previousDn=%s, " +
-        "changeNumber=%s]",
+        "[%s@%d::criticality=%s, changeType=%s, previousDn=%s, changeNumber=%s]",
         getClass().getName(),
         hashCode(),
         getCriticality(),

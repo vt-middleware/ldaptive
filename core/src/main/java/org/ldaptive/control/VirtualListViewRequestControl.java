@@ -401,8 +401,8 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
   {
     return
       String.format(
-        "[%s@%d::criticality=%s, beforeCount=%s, afterCount=%s, " +
-        "targetOffset=%s, contentCount=%s, assertionValue=%s, contextID=%s]",
+        "[%s@%d::criticality=%s, beforeCount=%s, afterCount=%s, targetOffset=%s, contentCount=%s, assertionValue=%s, " +
+        "contextID=%s]",
         getClass().getName(),
         hashCode(),
         getCriticality(),

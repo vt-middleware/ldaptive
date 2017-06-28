@@ -291,8 +291,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   {
     return
       String.format(
-        "[%s@%d::criticality=%s, timeBeforeExpiration=%s, " +
-        "graceAuthNsRemaining=%s, error=%s]",
+        "[%s@%d::criticality=%s, timeBeforeExpiration=%s, graceAuthNsRemaining=%s, error=%s]",
         getClass().getName(),
         hashCode(),
         getCriticality(),

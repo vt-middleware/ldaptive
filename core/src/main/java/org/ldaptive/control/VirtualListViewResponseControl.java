@@ -257,8 +257,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   {
     return
       String.format(
-        "[%s@%d::criticality=%s, targetPosition=%s, contentCount=%s, " +
-        "viewResult=%s, contextID=%s]",
+        "[%s@%d::criticality=%s, targetPosition=%s, contentCount=%s, viewResult=%s, contextID=%s]",
         getClass().getName(),
         hashCode(),
         getCriticality(),
