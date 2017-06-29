@@ -21,6 +21,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
+import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -248,6 +249,10 @@ public class LdapLoginModuleTest extends AbstractTest
   public void randomContextTest(final String dn, final String user, final String role, final String credential)
     throws Exception
   {
+    // provider times out on this test
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP times out");
+    }
     doContextTest("ldaptive-random", dn, user, role, credential, true);
   }
 
