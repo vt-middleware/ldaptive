@@ -71,7 +71,7 @@ public class PooledBindAuthenticationHandler extends AbstractBindAuthenticationH
     AuthenticationHandlerResponse response;
     final BindRequest request = new BindRequest(criteria.getDn(), criteria.getCredential());
     request.setSaslConfig(getAuthenticationSaslConfig());
-    request.setControls(getAuthenticationControls());
+    request.setControls(processRequestControls(criteria));
 
     final BindOperation op = new BindOperation(c);
     try {

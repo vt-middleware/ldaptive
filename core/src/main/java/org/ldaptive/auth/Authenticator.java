@@ -36,6 +36,9 @@ public class Authenticator
   /** User attributes to return. Concatenated to {@link AuthenticationRequest#getReturnAttributes()}. */
   private String[] returnAttributes;
 
+  /** Handlers to handle authentication requests. */
+  private AuthenticationRequestHandler[] authenticationRequestHandlers;
+
   /** Handlers to handle authentication responses. */
   private AuthenticationResponseHandler[] authenticationResponseHandlers;
 
@@ -167,6 +170,28 @@ public class Authenticator
   public void setReturnAttributes(final String... attrs)
   {
     returnAttributes = attrs;
+  }
+
+
+  /**
+   * Returns the authentication request handlers.
+   *
+   * @return  authentication request handlers
+   */
+  public AuthenticationRequestHandler[] getAuthenticationRequestHandlers()
+  {
+    return authenticationRequestHandlers;
+  }
+
+
+  /**
+   * Sets the authentication request handlers.
+   *
+   * @param  handlers  authentication request handlers
+   */
+  public void setAuthenticationRequestHandlers(final AuthenticationRequestHandler... handlers)
+  {
+    authenticationRequestHandlers = handlers;
   }
 
 
@@ -348,14 +373,33 @@ public class Authenticator
    * @param  request  to process
    *
    * @return  authentication request
+   *
+   * @throws  LdapException  if an error occurs with a request handler
    */
   protected AuthenticationRequest processRequest(final String dn, final AuthenticationRequest request)
+    throws LdapException
   {
-    if (returnAttributes == null) {
+    if (returnAttributes == null &&
+        (getAuthenticationRequestHandlers() == null || getAuthenticationRequestHandlers().length == 0)) {
       return request;
     }
+
     final AuthenticationRequest newRequest = AuthenticationRequest.newAuthenticationRequest(request);
-    newRequest.setReturnAttributes(LdapUtils.concatArrays(newRequest.getReturnAttributes(), returnAttributes));
+    if (returnAttributes != null) {
+      if (newRequest.getReturnAttributes() == null ||
+        ReturnAttributes.NONE.equalsAttributes(newRequest.getReturnAttributes())) {
+        newRequest.setReturnAttributes(returnAttributes);
+      } else {
+        newRequest.setReturnAttributes(LdapUtils.concatArrays(newRequest.getReturnAttributes(), returnAttributes));
+      }
+    }
+
+    // execute authentication request handlers
+    if (getAuthenticationRequestHandlers() != null && getAuthenticationRequestHandlers().length > 0) {
+      for (AuthenticationRequestHandler ah : getAuthenticationRequestHandlers()) {
+        ah.handle(dn, newRequest);
+      }
+    }
     return newRequest;
   }
 

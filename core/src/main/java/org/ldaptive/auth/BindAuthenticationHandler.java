@@ -68,7 +68,7 @@ public class BindAuthenticationHandler extends AbstractBindAuthenticationHandler
     AuthenticationHandlerResponse response;
     final BindRequest request = new BindRequest(criteria.getDn(), criteria.getCredential());
     request.setSaslConfig(getAuthenticationSaslConfig());
-    request.setControls(getAuthenticationControls());
+    request.setControls(processRequestControls(criteria));
     try {
       final Response<Void> connResponse = c.open(request);
       response = new AuthenticationHandlerResponse(
