@@ -4,6 +4,7 @@ package org.ldaptive.auth;
 import java.util.Arrays;
 import org.ldaptive.Credential;
 import org.ldaptive.ReturnAttributes;
+import org.ldaptive.control.RequestControl;
 
 /**
  * Contains the data required to perform an ldap authentication.
@@ -21,6 +22,9 @@ public class AuthenticationRequest
 
   /** User attributes to return. */
   private String[] returnAttributes = ReturnAttributes.NONE.value();
+
+  /** Request controls. */
+  private RequestControl[] controls;
 
 
   /** Default constructor. */
@@ -150,6 +154,28 @@ public class AuthenticationRequest
 
 
   /**
+   * Returns the controls.
+   *
+   * @return  controls
+   */
+  public RequestControl[] getControls()
+  {
+    return controls;
+  }
+
+
+  /**
+   * Sets the controls.
+   *
+   * @param  c  controls to set
+   */
+  public void setControls(final RequestControl... c)
+  {
+    controls = c;
+  }
+
+
+  /**
    * Returns an authentication request initialized with the supplied request.
    *
    * @param  request  authentication request to read properties from
@@ -162,6 +188,7 @@ public class AuthenticationRequest
     r.setUser(request.getUser());
     r.setCredential(request.getCredential());
     r.setReturnAttributes(request.getReturnAttributes());
+    r.setControls(request.getControls());
     return r;
   }
 
@@ -171,10 +198,11 @@ public class AuthenticationRequest
   {
     return
       String.format(
-        "[%s@%d::user=%s, returnAttributes=%s]",
+        "[%s@%d::user=%s, returnAttributes=%s, controls=%s]",
         getClass().getName(),
         hashCode(),
         user,
-        Arrays.toString(returnAttributes));
+        Arrays.toString(returnAttributes),
+        Arrays.toString(controls));
   }
 }
