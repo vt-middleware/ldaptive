@@ -51,16 +51,16 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 7027;
 
-  /** Session source ip. Default value is an empty string. */
+  /** Session source ip. */
   private String sessionSourceIp;
 
-  /** Session source name. Default value is an empty string. */
+  /** Session source name. */
   private String sessionSourceName;
 
-  /** Format OID. Default value is {@link #USERNAME_ACCT_OID}. */
+  /** Format OID. */
   private String formatOID;
 
-  /** Session tracking identifier. Default value is an empty string. */
+  /** Session tracking identifier. */
   private String sessionTrackingIdentifier;
 
 
