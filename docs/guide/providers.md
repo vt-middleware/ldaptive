@@ -26,7 +26,7 @@ or it can be specified with a JVM system property:
 | JLDAP | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#f1c232">✶</font> | <font color="#6aa84f">✓</font> | <font color="#cc0000">✗</font> | <font color="#cc0000">✗</font> | <font color="#6aa84f">✓</font>
 | Apache LDAP | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#cc0000">✗</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#cc0000">✗</font>
 | UnboundID | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font>
-| OpenDJ | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#f1c232">✶</font> | <font color="#f1c232">✶</font> | <font color="#f1c232">✶</font> | <font color="#cc0000">✗</font>
+| OpenDJ | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#f1c232">✶</font> | <font color="#f1c232">✶</font> | <font color="#cc0000">✗</font>
 
 {% include provider-support-legend.md %}
 

@@ -2,7 +2,7 @@ gems:
   - jekyll-redirect-from
 
 version:
-  - 1.2.1
+  - 1.2.2
 
 issueURL:
   - "https://github.com/vt-middleware/ldaptive/issues/"

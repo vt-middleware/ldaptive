@@ -6,6 +6,14 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 1.2.2 - 21Jul2017
+
+Issue | Description
+:---- | :----------
+[ldaptive-125]({{ site.issueURL }}125) | Add support for authentication request handling
+[ldaptive-123]({{ site.issueURL }}123) | Add support for SessionTrackingControl
+[ldaptive-121]({{ site.issueURL }}121) | Fix algorithm handling for CompareAuthenticationHandler
+
 ## Version 1.2.1 - 22Nov2016
 
 Issue | Description
