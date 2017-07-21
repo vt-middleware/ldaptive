@@ -23,22 +23,26 @@ function update_pom() {
   NEW_V="${2}"
   POMS=$(find ./ -type f -name "pom.xml")
   for POM in ${POMS}
-  do  
-    sed -i '' -e "s/<version>${OLD_V}<\/version>/<version>${NEW_V}<\/version>/g" ${POM}
+  do
+    # this works on OSX to replace the first occurance
+    # may or may not work on linux
+    sed -i '' -e "1,/<version>${OLD_V}<\/version>/s/<version>${OLD_V}<\/version>/<version>${NEW_V}<\/version>/g" ${POM}
     echo "Set version in ${POM} from ${OLD_V} to ${NEW_V}"
   done
 }
 
-if [ "$#" -ne 2 ]; then
-  echo "USAGE: `basename $0` <release-version> <next-version>"
+if [ "$#" -ne 3 ]; then
+  echo "USAGE: `basename $0` <branch> <release-version> <next-version>"
   exit
 fi
- 
-RELEASE_VERSION="${1}"
-NEXT_VERSION="${2}"
+
+BRANCH="${1}"
+RELEASE_VERSION="${2}"
+NEXT_VERSION="${3}"
 read_pom
 echo "================================================================="
 echo "BEGIN RELEASE for artifact ${PROJECT} in group ${GROUP}"
+echo "BRANCH TO TAG:   ${BRANCH}"
 echo "CURRENT VERSION: ${VERSION}"
 echo "RELEASE VERSION: ${RELEASE_VERSION}"
 echo "NEXT VERSION:    ${NEXT_VERSION}"
@@ -53,7 +57,7 @@ user_continue
 
 # commit pom changes
 git commit -a -m "Update version for ${RELEASE_VERSION} release."
-git push origin master
+git push origin ${BRANCH}
 
 # tag the release version
 git tag -a v${RELEASE_VERSION} -m "Tagging ${RELEASE_VERSION} release."
@@ -67,7 +71,7 @@ user_continue
 
 # commit pom changes
 git commit -a -m "Bump version to ${NEXT_VERSION}."
-git push origin master
+git push origin ${BRANCH}
 
 # checkout the release tag
 git checkout v${RELEASE_VERSION}
@@ -86,11 +90,20 @@ user_continue
 git checkout gh-pages
 git pull origin gh-pages
 # remove root directory javadocs
-git rm -r javadocs/org javadocs/resources javadocs/*.html javadocs/*.css javadocs/package-list
+git rm -r javadocs/org javadocs/*.html javadocs/*.css javadocs/*.js javadocs/package-list
 # add new javadocs to root directory
-cp -Rp distribution/target/apidocs/ javadocs
+cp distribution/target/ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar javadocs
+pushd javadocs
+jar xf ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar
+rm -rf META-INF ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar
+popd
 # add new javadocs to release version directory
-cp -Rp distribution/target/apidocs/ javadocs/${RELEASE_VERSION}
+mkdir javadocs/${RELEASE_VERSION}
+cp distribution/target/ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar javadocs/${RELEASE_VERSION}
+pushd javadocs/${RELEASE_VERSION}
+jar xf ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar
+rm -rf META-INF ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar
+popd
 git add javadocs
 git commit -a -m "Updated javadocs for ${RELEASE_VERSION} release."
 echo "Committed new javadocs"
