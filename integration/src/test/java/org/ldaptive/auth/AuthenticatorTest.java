@@ -1239,7 +1239,7 @@ public class AuthenticatorTest extends AbstractTest
         new AddControlAuthenticationRequestHandler.ControlFactory()
         {
           @Override
-          public RequestControl[] getControls(String dn, User user)
+          public RequestControl[] getControls(final String dn, final User user)
           {
             return new RequestControl[] {
               new SessionTrackingControl("151.101.32.133", "", SessionTrackingControl.USERNAME_ACCT_OID, ""), };
