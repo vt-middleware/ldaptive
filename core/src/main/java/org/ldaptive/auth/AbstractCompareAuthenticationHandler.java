@@ -89,7 +89,7 @@ public abstract class AbstractCompareAuthenticationHandler extends AbstractAuthe
       String.format("{%s}%s", passwordScheme.getLabel(), LdapUtils.base64Encode(hash)).getBytes());
     final CompareOperation compare = new CompareOperation(c);
     final CompareRequest request = new CompareRequest(criteria.getDn(), la);
-    request.setControls(getAuthenticationControls());
+    request.setControls(processRequestControls(criteria));
 
     final Response<Boolean> compareResponse = compare.execute(request);
     return

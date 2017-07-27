@@ -24,9 +24,12 @@ import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.PasswordPolicyAuthenticationRequestHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.PasswordPolicyControl;
+import org.ldaptive.control.RequestControl;
+import org.ldaptive.control.SessionTrackingControl;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
@@ -1151,17 +1154,14 @@ public class AuthenticatorTest extends AbstractTest
       return;
     }
 
-    final PasswordPolicyControl ppc = new PasswordPolicyControl();
     final Connection conn = TestUtils.createSetupConnection();
     AuthenticationResponse response;
     PasswordPolicyControl ppcResponse;
     final Authenticator auth = createTLSAuthenticator(true);
+    auth.setAuthenticationRequestHandlers(new PasswordPolicyAuthenticationRequestHandler());
     auth.setAuthenticationResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
     try {
       conn.open();
-
-      final BindAuthenticationHandler ah = (BindAuthenticationHandler) auth.getAuthenticationHandler();
-      ah.setAuthenticationControls(ppc);
 
       // test bind sending ppolicy control
       response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
@@ -1201,6 +1201,67 @@ public class AuthenticatorTest extends AbstractTest
       AssertJUnit.assertNotNull(e);
     } finally {
       conn.close();
+    }
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
+   * @param  returnAttrs  to search for.
+   * @param  ldifFile  to expect from the search.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "authenticateUser",
+      "authenticateCredential",
+      "authenticateReturnAttrs",
+      "authenticateResults"
+    })
+  @Test(groups = {"auth"})
+  public void authenticateSessionTracking(
+    final String user,
+    final String credential,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP does not support this control");
+    }
+
+    final Authenticator auth = createTLSAuthenticator(true);
+    auth.setAuthenticationRequestHandlers(
+      new AddControlAuthenticationRequestHandler(
+        new AddControlAuthenticationRequestHandler.ControlFactory()
+        {
+          @Override
+          public RequestControl[] getControls(String dn, User user)
+          {
+            return new RequestControl[] {
+              new SessionTrackingControl("151.101.32.133", "", SessionTrackingControl.USERNAME_ACCT_OID, ""), };
+          }
+        }
+      )
+    );
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    try {
+      final AuthenticationRequest request = new AuthenticationRequest(
+        user,
+        new Credential(credential),
+        returnAttrs.split("\\|"));
+      final AuthenticationResponse response = auth.authenticate(request);
+      AssertJUnit.assertTrue(response.getResult());
+      AssertJUnit.assertEquals(
+        AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
+        response.getAuthenticationResultCode());
+      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    } catch (IllegalStateException e) {
+      throw new UnsupportedOperationException("LDAP server does not support this control");
     }
   }
 

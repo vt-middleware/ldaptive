@@ -32,6 +32,9 @@ public class Authenticator
   /** For finding user entries. */
   private EntryResolver entryResolver;
 
+  /** Handlers to handle authentication requests. */
+  private AuthenticationRequestHandler[] authenticationRequestHandlers;
+
   /** Handlers to handle authentication responses. */
   private AuthenticationResponseHandler[] authenticationResponseHandlers;
 
@@ -145,6 +148,28 @@ public class Authenticator
 
 
   /**
+   * Returns the authentication request handlers.
+   *
+   * @return  authentication request handlers
+   */
+  public AuthenticationRequestHandler[] getAuthenticationRequestHandlers()
+  {
+    return authenticationRequestHandlers;
+  }
+
+
+  /**
+   * Sets the authentication request handlers.
+   *
+   * @param  handlers  authentication request handlers
+   */
+  public void setAuthenticationRequestHandlers(final AuthenticationRequestHandler... handlers)
+  {
+    authenticationRequestHandlers = handlers;
+  }
+
+
+  /**
    * Returns the authentication response handlers.
    *
    * @return  authentication response handlers
@@ -243,8 +268,9 @@ public class Authenticator
       return invalidInput;
     }
 
-    LdapEntry entry = null;
+    LdapEntry entry;
 
+    final AuthenticationRequest processedRequest = processRequest(dn, request);
     AuthenticationHandlerResponse response = null;
     try {
       final AuthenticationCriteria ac = new AuthenticationCriteria(dn, request);
@@ -333,6 +359,35 @@ public class Authenticator
         -1);
     }
     return response;
+  }
+
+
+  /**
+   * Creates a new authentication request applying any applicable configuration on this authenticator. Returns the
+   * supplied request if no configuration is applied.
+   *
+   * @param  dn  to process
+   * @param  request  to process
+   *
+   * @return  authentication request
+   *
+   * @throws  LdapException  if an error occurs with a request handler
+   */
+  protected AuthenticationRequest processRequest(final String dn, final AuthenticationRequest request)
+    throws LdapException
+  {
+    if (getAuthenticationRequestHandlers() == null || getAuthenticationRequestHandlers().length == 0) {
+      return request;
+    }
+
+    final AuthenticationRequest newRequest = AuthenticationRequest.newAuthenticationRequest(request);
+    // execute authentication request handlers
+    if (getAuthenticationRequestHandlers() != null && getAuthenticationRequestHandlers().length > 0) {
+      for (AuthenticationRequestHandler ah : getAuthenticationRequestHandlers()) {
+        ah.handle(dn, newRequest);
+      }
+    }
+    return newRequest;
   }
 
 

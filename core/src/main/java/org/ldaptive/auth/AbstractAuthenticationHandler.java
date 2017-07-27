@@ -3,6 +3,7 @@ package org.ldaptive.auth;
 
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.control.RequestControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,4 +94,27 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     final Connection c,
     final AuthenticationCriteria criteria)
     throws LdapException;
+
+
+  /**
+   * Combines request controls in the {@link AuthenticationRequest} with {@link #authenticationControls}.
+   *
+   * @param  criteria  containing request controls
+   *
+   * @return  combined request controls or null
+   */
+  protected RequestControl[] processRequestControls(final AuthenticationCriteria criteria)
+  {
+    RequestControl[] ctls;
+    if (criteria.getAuthenticationRequest().getControls() != null) {
+      if (getAuthenticationControls() != null) {
+        ctls = LdapUtils.concatArrays(criteria.getAuthenticationRequest().getControls(), getAuthenticationControls());
+      } else {
+        ctls = criteria.getAuthenticationRequest().getControls();
+      }
+    } else {
+      ctls = getAuthenticationControls();
+    }
+    return ctls;
+  }
 }
