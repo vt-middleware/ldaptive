@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.AuthorizationIdentityResponseControl;
+import org.ldaptive.control.SessionTrackingControl;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -130,6 +131,40 @@ public class BindOperationTest extends AbstractTest
       AssertJUnit.assertEquals("dn:" + dn.toLowerCase(), ctrl.getAuthorizationId().toLowerCase());
     } finally {
       conn.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to bind as.
+   * @param  passwd  to bind with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({ "bindDn", "bindPasswd" })
+  @Test(groups = {"bind"})
+  public void bindSessionTrackingControl(final String dn, final String passwd)
+    throws Exception
+  {
+    // provider doesn't support this control
+    if (TestControl.isApacheProvider()) {
+      throw new UnsupportedOperationException("Apache LDAP does not support this control");
+    }
+
+    try (Connection conn = TestUtils.createConnection()) {
+      conn.open();
+
+      final BindOperation bind = new BindOperation(conn);
+      final BindRequest request = new BindRequest(dn, new Credential(passwd));
+      request.setControls(
+        new SessionTrackingControl(
+          "151.101.32.133",
+          "www.ldaptive.org",
+          SessionTrackingControl.USERNAME_ACCT_OID,
+          ""));
+
+      final Response<Void> response = bind.execute(request);
+      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     }
   }
 }
