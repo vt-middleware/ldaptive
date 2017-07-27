@@ -18,7 +18,7 @@ public class VirtualListViewRequestControlTest
   /**
    * Virtual list view request control test data.
    *
-   * @return  response test data
+   * @return  request test data
    */
   @DataProvider(name = "request")
   public Object[][] createData()
