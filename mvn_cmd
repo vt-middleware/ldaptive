@@ -17,6 +17,9 @@ case "$1" in
   clean)
     run_mvn integration,distribution,apache,jldap,opendj,unboundid,ldapi clean
     ;;
+  javadoc)
+    run_mvn apache,jldap,opendj,unboundid javadoc:javadoc
+    ;;
   package)
     run_mvn distribution,apache,jldap,opendj,unboundid,ldapi package
     ;;
@@ -41,5 +44,5 @@ case "$1" in
     if [ -n "$1" ]; then
       echo "Invalid command"
     fi
-    echo "USAGE: `basename $0` clean|package|verify|install|deploy|bundle-create"
+    echo "USAGE: `basename $0` clean|javadoc|package|verify|install|deploy|bundle-create"
 esac
