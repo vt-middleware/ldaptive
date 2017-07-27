@@ -9,7 +9,7 @@ try {
       "151.101.32.133", // client IP address
       "hostname.domain.com", // client host name, empty string if unknown
       SessionTrackingControl.USERNAME_ACCT_OID, // must assign an OID even if using an empty identifier
-      "" // empty tracking identifier));
+      "")); // empty tracking identifier
   boolean result = bind.execute(request).getResult();
 } finally {
   conn.close();
