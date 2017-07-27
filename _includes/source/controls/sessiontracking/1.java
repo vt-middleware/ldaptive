@@ -10,7 +10,7 @@ try {
       "hostname.domain.com", // client host name, empty string if unknown
       SessionTrackingControl.USERNAME_ACCT_OID, // must assign an OID even if using an empty identifier
       "")); // empty tracking identifier
-  boolean result = bind.execute(request).getResult();
+  bind.execute(request);
 } finally {
   conn.close();
 }
