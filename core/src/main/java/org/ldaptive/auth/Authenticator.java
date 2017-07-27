@@ -273,7 +273,7 @@ public class Authenticator
     final AuthenticationRequest processedRequest = processRequest(dn, request);
     AuthenticationHandlerResponse response = null;
     try {
-      final AuthenticationCriteria ac = new AuthenticationCriteria(dn, request);
+      final AuthenticationCriteria ac = new AuthenticationCriteria(dn, processedRequest);
 
       // attempt to authenticate as this dn
       response = getAuthenticationHandler().authenticate(ac);
@@ -304,7 +304,7 @@ public class Authenticator
       }
     }
 
-    logger.debug("authenticate response={} for dn={} with request={}", response, dn, request);
+    logger.debug("authenticate response={} for dn={} with request={}", response, dn, processedRequest);
     return authResponse;
   }
 
