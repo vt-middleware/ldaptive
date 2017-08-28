@@ -28,11 +28,29 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
   public void initialize()
     throws GeneralSecurityException
   {
+    final SSLContextInitializer contextInitializer = createSSLContextInitializer();
+    logger.trace("Using SSLContextInitializer={}", contextInitializer);
+    final SSLContext ctx = contextInitializer.initSSLContext(DEFAULT_PROTOCOL);
+    factory = ctx.getSocketFactory();
+  }
+
+
+  /**
+   * Creates a {@link SSLContextInitializer} for use with this socket factory.
+   *
+   * @return  SSL context initializer
+   *
+   * @throws GeneralSecurityException  if the SSL context initializer cannot be created
+   */
+  protected SSLContextInitializer createSSLContextInitializer()
+    throws GeneralSecurityException
+  {
     SSLContextInitializer contextInitializer;
     final SslConfig sslConfig = getSslConfig();
     if (sslConfig != null) {
       final CredentialConfig credConfig = sslConfig.getCredentialConfig();
       final TrustManager[] managers = sslConfig.getTrustManagers();
+      final HostnameVerifierConfig verifierConfig = sslConfig.getHostnameVerifierConfig();
       if (credConfig != null) {
         contextInitializer = credConfig.createSSLContextInitializer();
       } else {
@@ -46,13 +64,13 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
       if (managers != null) {
         contextInitializer.setTrustManagers(managers);
       }
+      if (verifierConfig != null) {
+        contextInitializer.setHostnameVerifierConfig(verifierConfig);
+      }
     } else {
       contextInitializer = new DefaultSSLContextInitializer();
     }
-
-    logger.trace("Using SSLContextInitializer={}", contextInitializer);
-    final SSLContext ctx = contextInitializer.initSSLContext(DEFAULT_PROTOCOL);
-    factory = ctx.getSocketFactory();
+    return contextInitializer;
   }
 
 
@@ -92,7 +110,9 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
     } else {
       sf.setSslConfig(new SslConfig());
     }
-    addHostnameVerifyingTrustManager(sf.getSslConfig(), names);
+    if (sf.getSslConfig().getHostnameVerifierConfig() == null) {
+      sf.getSslConfig().setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), names));
+    }
     try {
       sf.initialize();
     } catch (GeneralSecurityException e) {
@@ -106,9 +126,12 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
    * Adds a {@link HostnameVerifyingTrustManager} to the supplied config if no trust managers have been configured. A
    * {@link DefaultTrustManager} is also added in no {@link CredentialConfig} has been configured.
    *
+   * @deprecated  {@link HostnameVerifierConfig} should be used for hostname verification
+   *
    * @param  config  to modify
    * @param  names  of the hosts to verify
    */
+  @Deprecated
   protected static void addHostnameVerifyingTrustManager(final SslConfig config, final String[] names)
   {
     if (config.getTrustManagers() == null) {

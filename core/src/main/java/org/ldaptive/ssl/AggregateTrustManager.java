@@ -66,6 +66,28 @@ public class AggregateTrustManager implements X509TrustManager
   }
 
 
+  /**
+   * Returns the trust managers that are aggregated.
+   *
+   * @return  trust managers
+   */
+  public X509TrustManager[] getTrustManagers()
+  {
+    return trustManagers;
+  }
+
+
+  /**
+   * Returns the trust strategy.
+   *
+   * @return  trust strategy
+   */
+  public Strategy getTrustStrategy()
+  {
+    return trustStrategy;
+  }
+
+
   @Override
   public void checkClientTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
