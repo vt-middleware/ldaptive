@@ -70,7 +70,9 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
     } else {
       sf.setSslConfig(new SslConfig());
     }
-    addHostnameVerifyingTrustManager(sf.getSslConfig(), names);
+    if (sf.getSslConfig().getHostnameVerifierConfig() == null) {
+      sf.getSslConfig().setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), names));
+    }
     try {
       sf.initialize();
     } catch (GeneralSecurityException e) {

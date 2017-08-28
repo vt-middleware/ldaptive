@@ -4,6 +4,7 @@ package org.ldaptive.ssl;
 import java.net.Socket;
 import java.util.Arrays;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.TrustManager;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
@@ -303,5 +304,164 @@ public class TLSSocketFactoryTest
     try (Socket s = sf.createSocket(ldapUrl.getEntry().getHostname(), ldapUrl.getEntry().getPort())) {
       AssertJUnit.assertNotNull(s);
     }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = {"ssl"})
+  public void createSSLContextInitializer()
+    throws Exception
+  {
+    // no ssl config
+    TLSSocketFactory factory = new TLSSocketFactory();
+    SSLContextInitializer init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    TrustManager[] tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(1, tm.length);
+    AssertJUnit.assertEquals("sun.security.ssl.X509TrustManagerImpl", tm[0].getClass().getName());
+
+    // empty ssl config
+    factory = new TLSSocketFactory();
+    factory.setSslConfig(new SslConfig());
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(1, tm.length);
+    AssertJUnit.assertEquals("sun.security.ssl.X509TrustManagerImpl", tm[0].getClass().getName());
+
+    // trust managers
+    factory = new TLSSocketFactory();
+    factory.setSslConfig(new SslConfig(new AllowAnyTrustManager()));
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(1, tm.length);
+    AssertJUnit.assertEquals("org.ldaptive.ssl.AllowAnyTrustManager", tm[0].getClass().getName());
+
+    // hostname verifier
+    factory = new TLSSocketFactory();
+    SslConfig sslConfig = new SslConfig();
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    factory.setSslConfig(sslConfig);
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(2, tm.length);
+    AssertJUnit.assertEquals("sun.security.ssl.X509TrustManagerImpl", tm[0].getClass().getName());
+    AssertJUnit.assertEquals("org.ldaptive.ssl.HostnameVerifyingTrustManager", tm[1].getClass().getName());
+
+    // trust managers and hostname verifier
+    factory = new TLSSocketFactory();
+    sslConfig = new SslConfig();
+    sslConfig.setTrustManagers(new AllowAnyTrustManager());
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    factory.setSslConfig(sslConfig);
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(2, tm.length);
+    AssertJUnit.assertEquals("org.ldaptive.ssl.AllowAnyTrustManager", tm[0].getClass().getName());
+    AssertJUnit.assertEquals("org.ldaptive.ssl.HostnameVerifyingTrustManager", tm[1].getClass().getName());
+
+    // empty credential config
+    factory = new TLSSocketFactory();
+    factory.setSslConfig(new SslConfig(new X509CredentialConfig()));
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertNull(init.getTrustManagers());
+
+    // empty credential config with trust
+    factory = new TLSSocketFactory();
+    factory.setSslConfig(new SslConfig(new X509CredentialConfig(), new AllowAnyTrustManager()));
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(1, tm.length);
+    AssertJUnit.assertEquals("org.ldaptive.ssl.AllowAnyTrustManager", tm[0].getClass().getName());
+
+    // empty credential config with hostname verifier
+    factory = new TLSSocketFactory();
+    sslConfig = new SslConfig();
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    factory.setSslConfig(sslConfig);
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(2, tm.length);
+    AssertJUnit.assertEquals("sun.security.ssl.X509TrustManagerImpl", tm[0].getClass().getName());
+    AssertJUnit.assertEquals("org.ldaptive.ssl.HostnameVerifyingTrustManager", tm[1].getClass().getName());
+
+    // empty credential config with trust and hostname verifier
+    factory = new TLSSocketFactory();
+    sslConfig = new SslConfig();
+    sslConfig.setTrustManagers(new AllowAnyTrustManager());
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    factory.setSslConfig(sslConfig);
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(2, tm.length);
+    AssertJUnit.assertEquals("org.ldaptive.ssl.AllowAnyTrustManager", tm[0].getClass().getName());
+    AssertJUnit.assertEquals("org.ldaptive.ssl.HostnameVerifyingTrustManager", tm[1].getClass().getName());
+
+    // credential config
+    factory = new TLSSocketFactory();
+    factory.setSslConfig(createSslConfig());
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(1, tm.length);
+    AssertJUnit.assertEquals("sun.security.ssl.X509TrustManagerImpl", tm[0].getClass().getName());
+
+    // credential config with trust
+    factory = new TLSSocketFactory();
+    sslConfig = createSslConfig();
+    sslConfig.setTrustManagers(new AllowAnyTrustManager());
+    factory.setSslConfig(sslConfig);
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(2, tm.length);
+    AssertJUnit.assertEquals("sun.security.ssl.X509TrustManagerImpl", tm[0].getClass().getName());
+    AssertJUnit.assertEquals("org.ldaptive.ssl.AllowAnyTrustManager", tm[1].getClass().getName());
+
+    // credential config with hostname verifier
+    factory = new TLSSocketFactory();
+    sslConfig = createSslConfig();
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    factory.setSslConfig(sslConfig);
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(init.getTrustManagers().length, 1);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(tm.length, 2);
+    AssertJUnit.assertEquals("sun.security.ssl.X509TrustManagerImpl", tm[0].getClass().getName());
+    AssertJUnit.assertEquals("org.ldaptive.ssl.HostnameVerifyingTrustManager", tm[1].getClass().getName());
+
+    // credential config with trust and hostname verifier
+    factory = new TLSSocketFactory();
+    sslConfig = createSslConfig();
+    sslConfig.setTrustManagers(new AllowAnyTrustManager());
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    factory.setSslConfig(sslConfig);
+    init = factory.createSSLContextInitializer();
+    AssertJUnit.assertEquals(1, init.getTrustManagers().length);
+    AssertJUnit.assertTrue(init.getTrustManagers()[0] instanceof AggregateTrustManager);
+    tm = ((AggregateTrustManager) init.getTrustManagers()[0]).getTrustManagers();
+    AssertJUnit.assertEquals(3, tm.length);
+    AssertJUnit.assertEquals("sun.security.ssl.X509TrustManagerImpl", tm[0].getClass().getName());
+    AssertJUnit.assertEquals("org.ldaptive.ssl.AllowAnyTrustManager", tm[1].getClass().getName());
+    AssertJUnit.assertEquals("org.ldaptive.ssl.HostnameVerifyingTrustManager", tm[2].getClass().getName());
   }
 }
