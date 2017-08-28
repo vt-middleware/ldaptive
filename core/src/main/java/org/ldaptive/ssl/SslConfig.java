@@ -21,6 +21,9 @@ public class SslConfig extends AbstractConfig
   /** Trust managers. */
   private TrustManager[] trustManagers;
 
+  /** Hostname verifier config. */
+  private HostnameVerifierConfig hostnameVerifierConfig;
+
   /** Enabled cipher suites. */
   private String[] enabledCipherSuites;
 
@@ -78,8 +81,8 @@ public class SslConfig extends AbstractConfig
   public boolean isEmpty()
   {
     return
-      credentialConfig == null && trustManagers == null && enabledCipherSuites == null && enabledProtocols == null &&
-      handshakeCompletedListeners == null;
+      credentialConfig == null && trustManagers == null && hostnameVerifierConfig == null &&
+        enabledCipherSuites == null && enabledProtocols == null && handshakeCompletedListeners == null;
   }
 
 
@@ -128,6 +131,30 @@ public class SslConfig extends AbstractConfig
     checkImmutable();
     logger.trace("setting trustManagers: {}", Arrays.toString(managers));
     trustManagers = managers;
+  }
+
+
+  /**
+   * Returns the hostname verifier config.
+   *
+   * @return  hostname verifier config
+   */
+  public HostnameVerifierConfig getHostnameVerifierConfig()
+  {
+    return hostnameVerifierConfig;
+  }
+
+
+  /**
+   * Sets the hostname verifier config.
+   *
+   * @param  config  hostname verifier config
+   */
+  public void setHostnameVerifierConfig(final HostnameVerifierConfig config)
+  {
+    checkImmutable();
+    logger.trace("setting hostnameVerifierConfig: {}", config);
+    hostnameVerifierConfig = config;
   }
 
 
@@ -215,6 +242,7 @@ public class SslConfig extends AbstractConfig
     final SslConfig sc = new SslConfig();
     sc.setCredentialConfig(config.getCredentialConfig());
     sc.setTrustManagers(config.getTrustManagers());
+    sc.setHostnameVerifierConfig(config.getHostnameVerifierConfig());
     sc.setEnabledCipherSuites(config.getEnabledCipherSuites());
     sc.setEnabledProtocols(config.getEnabledProtocols());
     sc.setHandshakeCompletedListeners(config.getHandshakeCompletedListeners());
@@ -227,13 +255,13 @@ public class SslConfig extends AbstractConfig
   {
     return
       String.format(
-        "[%s@%d::credentialConfig=%s, trustManagers=%s, " +
-        "enabledCipherSuites=%s, enabledProtocols=%s, " +
-        "handshakeCompletedListeners=%s]",
+        "[%s@%d::credentialConfig=%s, trustManagers=%s, hostnameVerifierConfig=%s, enabledCipherSuites=%s, " +
+        "enabledProtocols=%s, handshakeCompletedListeners=%s]",
         getClass().getName(),
         hashCode(),
         credentialConfig,
         Arrays.toString(trustManagers),
+        hostnameVerifierConfig,
         Arrays.toString(enabledCipherSuites),
         Arrays.toString(enabledProtocols),
         Arrays.toString(handshakeCompletedListeners));
