@@ -3,6 +3,7 @@ package org.ldaptive.props;
 
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.TrustManager;
+import org.ldaptive.ssl.CertificateHostnameVerifier;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 
@@ -47,6 +48,8 @@ public class SslConfigPropertyInvoker extends AbstractPropertyInvoker
         }
       } else if (TrustManager[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(TrustManager.class, value);
+      } else if (CertificateHostnameVerifier.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(CertificateHostnameVerifier.class, value);
       } else if (HandshakeCompletedListener[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(HandshakeCompletedListener.class, value);
       } else {

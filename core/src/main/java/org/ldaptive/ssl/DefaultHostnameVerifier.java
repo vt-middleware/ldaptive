@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.DN;
@@ -68,26 +67,14 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Hostname verifier delegate. */
+  private final HostnameVerifier verifier = new HostnameVerifierAdapter(this);
+
 
   @Override
   public boolean verify(final String hostname, final SSLSession session)
   {
-    boolean b = false;
-    try {
-      String name = null;
-      if (hostname != null) {
-        // if IPv6 strip off the "[]"
-        if (hostname.startsWith("[") && hostname.endsWith("]")) {
-          name = hostname.substring(1, hostname.length() - 1).trim();
-        } else {
-          name = hostname.trim();
-        }
-      }
-      b = verify(name, (X509Certificate) session.getPeerCertificates()[0]);
-    } catch (SSLPeerUnverifiedException e) {
-      logger.warn("Could not get certificate from the SSL session", e);
-    }
-    return b;
+    return verifier.verify(hostname, session);
   }
 
 
