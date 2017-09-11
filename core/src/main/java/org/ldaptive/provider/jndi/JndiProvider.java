@@ -4,11 +4,14 @@ package org.ldaptive.provider.jndi;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSocketFactory;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.Provider;
 import org.ldaptive.provider.ProviderConnectionFactory;
+import org.ldaptive.ssl.HostnameVerifierAdapter;
+import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.TLSSocketFactory;
 import org.ldaptive.ssl.ThreadLocalTLSSocketFactory;
 import org.slf4j.Logger;
@@ -128,7 +131,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
     SSLSocketFactory factory = config.getSslSocketFactory();
     if (factory == null && cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
       final TLSSocketFactory sf = new TLSSocketFactory();
-      sf.setSslConfig(cc.getSslConfig());
+      sf.setSslConfig(SslConfig.newSslConfig(cc.getSslConfig()));
       try {
         sf.initialize();
       } catch (GeneralSecurityException e) {
@@ -136,13 +139,19 @@ public class JndiProvider implements Provider<JndiProviderConfig>
       }
       factory = sf;
     }
+    HostnameVerifier verifier = config.getHostnameVerifier();
+    if (verifier == null && cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
+      if (cc.getSslConfig().getHostnameVerifier() != null) {
+        verifier = new HostnameVerifierAdapter(cc.getSslConfig().getHostnameVerifier());
+      }
+    }
     return
       new JndiStartTLSConnectionFactory(
         cc.getLdapUrl(),
         config,
         env != null ? env : getDefaultEnvironment(cc, null),
         factory,
-        config.getHostnameVerifier());
+        verifier);
   }
 
 

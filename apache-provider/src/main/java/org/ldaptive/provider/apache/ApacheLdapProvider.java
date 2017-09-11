@@ -9,9 +9,11 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
 import org.ldaptive.provider.Provider;
 import org.ldaptive.provider.ProviderConnectionFactory;
+import org.ldaptive.ssl.CertificateHostnameVerifier;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.DefaultHostnameVerifier;
 import org.ldaptive.ssl.DefaultSSLContextInitializer;
+import org.ldaptive.ssl.HostnameVerifierConfig;
 import org.ldaptive.ssl.HostnameVerifyingTrustManager;
 import org.ldaptive.ssl.SSLContextInitializer;
 
@@ -40,8 +42,8 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
 
 
   /**
-   * Returns an SSLContextInitializer configured with a default hostname verifier. Uses a {@link
-   * DefaultHostnameVerifier} if no credential config has been configured.
+   * Returns an SSLContextInitializer configured with a hostname verifier. Uses a {@link DefaultHostnameVerifier} if no
+   * SSL config has been configured.
    *
    * @param  cc  connection configuration
    *
@@ -49,21 +51,37 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
    */
   protected SSLContextInitializer getHostnameVerifierSSLContextInitializer(final ConnectionConfig cc)
   {
+    final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
     SSLContextInitializer contextInit;
-    if (cc.getSslConfig() != null && cc.getSslConfig().getCredentialConfig() != null) {
-      try {
-        final CredentialConfig credConfig = cc.getSslConfig().getCredentialConfig();
-        contextInit = credConfig.createSSLContextInitializer();
-      } catch (GeneralSecurityException e) {
-        throw new IllegalArgumentException(e);
+    if (cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
+      final CredentialConfig credConfig = cc.getSslConfig().getCredentialConfig();
+      final TrustManager[] managers = cc.getSslConfig().getTrustManagers();
+      final CertificateHostnameVerifier verifier = cc.getSslConfig().getHostnameVerifier();
+      if (credConfig != null) {
+        try {
+          contextInit = credConfig.createSSLContextInitializer();
+        } catch (GeneralSecurityException e) {
+          throw new IllegalArgumentException(e);
+        }
+      } else {
+        if (managers != null) {
+          contextInit = new DefaultSSLContextInitializer(false);
+        } else {
+          contextInit = new DefaultSSLContextInitializer(true);
+        }
+      }
+
+      if (managers != null) {
+        contextInit.setTrustManagers(managers);
+      }
+      if (verifier != null) {
+        contextInit.setHostnameVerifierConfig(new HostnameVerifierConfig(verifier, ldapUrl.getHostnames()));
+      } else {
+        contextInit.setHostnameVerifierConfig(
+          new HostnameVerifierConfig(new DefaultHostnameVerifier(), ldapUrl.getHostnames()));
       }
     } else {
-      contextInit = new DefaultSSLContextInitializer();
-    }
-    if (cc.getSslConfig() != null && cc.getSslConfig().getTrustManagers() != null) {
-      contextInit.setTrustManagers(cc.getSslConfig().getTrustManagers());
-    } else {
-      final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
+      contextInit = new DefaultSSLContextInitializer(true);
       contextInit.setTrustManagers(
         new HostnameVerifyingTrustManager(new DefaultHostnameVerifier(), ldapUrl.getHostnames()));
     }

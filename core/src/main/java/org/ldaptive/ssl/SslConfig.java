@@ -21,6 +21,9 @@ public class SslConfig extends AbstractConfig
   /** Trust managers. */
   private TrustManager[] trustManagers;
 
+  /** Certificate hostname verifier. */
+  private CertificateHostnameVerifier hostnameVerifier;
+
   /** Hostname verifier config. */
   private HostnameVerifierConfig hostnameVerifierConfig;
 
@@ -81,7 +84,7 @@ public class SslConfig extends AbstractConfig
   public boolean isEmpty()
   {
     return
-      credentialConfig == null && trustManagers == null && hostnameVerifierConfig == null &&
+      credentialConfig == null && trustManagers == null && hostnameVerifier == null && hostnameVerifierConfig == null &&
         enabledCipherSuites == null && enabledProtocols == null && handshakeCompletedListeners == null;
   }
 
@@ -135,11 +138,35 @@ public class SslConfig extends AbstractConfig
 
 
   /**
+   * Returns the hostname verifier.
+   *
+   * @return  hostname verifier
+   */
+  public CertificateHostnameVerifier getHostnameVerifier()
+  {
+    return hostnameVerifier;
+  }
+
+
+  /**
+   * Sets the hostname verifier.
+   *
+   * @param  verifier  hostname verifier
+   */
+  public void setHostnameVerifier(final CertificateHostnameVerifier verifier)
+  {
+    checkImmutable();
+    logger.trace("setting hostnameVerifier: {}", verifier);
+    hostnameVerifier = verifier;
+  }
+
+
+  /**
    * Returns the hostname verifier config.
    *
    * @return  hostname verifier config
    */
-  public HostnameVerifierConfig getHostnameVerifierConfig()
+  protected HostnameVerifierConfig getHostnameVerifierConfig()
   {
     return hostnameVerifierConfig;
   }
@@ -150,7 +177,7 @@ public class SslConfig extends AbstractConfig
    *
    * @param  config  hostname verifier config
    */
-  public void setHostnameVerifierConfig(final HostnameVerifierConfig config)
+  protected void setHostnameVerifierConfig(final HostnameVerifierConfig config)
   {
     checkImmutable();
     logger.trace("setting hostnameVerifierConfig: {}", config);
@@ -242,6 +269,7 @@ public class SslConfig extends AbstractConfig
     final SslConfig sc = new SslConfig();
     sc.setCredentialConfig(config.getCredentialConfig());
     sc.setTrustManagers(config.getTrustManagers());
+    sc.setHostnameVerifier(config.getHostnameVerifier());
     sc.setHostnameVerifierConfig(config.getHostnameVerifierConfig());
     sc.setEnabledCipherSuites(config.getEnabledCipherSuites());
     sc.setEnabledProtocols(config.getEnabledProtocols());
@@ -255,12 +283,13 @@ public class SslConfig extends AbstractConfig
   {
     return
       String.format(
-        "[%s@%d::credentialConfig=%s, trustManagers=%s, hostnameVerifierConfig=%s, enabledCipherSuites=%s, " +
-        "enabledProtocols=%s, handshakeCompletedListeners=%s]",
+        "[%s@%d::credentialConfig=%s, trustManagers=%s, hostnameVerifier=%s, hostnameVerifierConfig=%s, " +
+        "enabledCipherSuites=%s, enabledProtocols=%s, handshakeCompletedListeners=%s]",
         getClass().getName(),
         hashCode(),
         credentialConfig,
         Arrays.toString(trustManagers),
+        hostnameVerifier,
         hostnameVerifierConfig,
         Arrays.toString(enabledCipherSuites),
         Arrays.toString(enabledProtocols),
