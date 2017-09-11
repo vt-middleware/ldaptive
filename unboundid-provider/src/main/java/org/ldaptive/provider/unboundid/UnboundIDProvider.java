@@ -1,9 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.unboundid;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import com.unboundid.ldap.sdk.LDAPConnectionOptions;
@@ -136,14 +138,20 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
         throws LDAPException
       {
         logger.trace("Verifying SSLSocket {} for host {} with verifier {}", sslSocket, host, verifier);
+        final SSLSession session = sslSocket.getSession();
         try {
-          sslSocket.getSession().getPeerCertificates();
+          // confirm that the trust manager succeeded
+          session.getPeerCertificates();
+          if (!verifier.verify(host, session)) {
+            try {
+              sslSocket.close();
+            } catch (IOException e) {
+              logger.debug("Error closing SSL socket", e);
+            }
+            throw new LDAPException(ResultCode.CONNECT_ERROR, "Hostname verification failed for " + host);
+          }
         } catch (SSLPeerUnverifiedException e) {
-          // handshake failed, don't perform hostname verification
-          return;
-        }
-        if (!verifier.verify(host, sslSocket.getSession())) {
-          throw new LDAPException(ResultCode.CONNECT_ERROR, "Hostname verification failed for " + host);
+          throw new LDAPException(ResultCode.CONNECT_ERROR, "Trust verification failed for " + host, e);
         }
       }
     });
