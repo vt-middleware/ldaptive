@@ -139,11 +139,12 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
   {
     return
       String.format(
-        "[%s@%d::trustManagers=%s, trustKeystore=%s, trustAliases=%s, authenticationKeystore=%s, " +
-        "authenticationAliases=%s]",
+        "[%s@%d::trustManagers=%s, hostnameVerifierConfig=%s, trustKeystore=%s, trustAliases=%s, " +
+        "authenticationKeystore=%s, authenticationAliases=%s]",
         getClass().getName(),
         hashCode(),
         Arrays.toString(trustManagers),
+        hostnameVerifierConfig,
         trustKeystore,
         Arrays.toString(trustAliases),
         authenticationKeystore,

@@ -139,20 +139,84 @@ public class TLSSocketFactoryTest
   public void connectTLS(final String url)
     throws Exception
   {
-    // with no trusted certificates, connection should fail
-    final ConnectionConfig cc = createTLSConnectionConfig(url);
+    final Provider<?> p = DefaultConnectionFactory.getDefaultProvider();
+
+    // no trusted certificates
+    ConnectionConfig cc = createTLSConnectionConfig(url);
     cc.setSslConfig(null);
-
     try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
-      // some providers won't report errors until an operation is
-      // executed
       conn.open();
-
       final SearchOperation op = new SearchOperation(conn);
       op.execute(SearchRequest.newObjectScopeSearchRequest(""));
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
       AssertJUnit.assertNotNull(e);
+    }
+
+    // no trusted certificates
+    cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    }
+
+    // no trusted certificates with hostname verification
+    cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    }
+
+    // trust any
+    cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+    }
+
+    // trust any with hostname verification failure
+    if ("org.ldaptive.provider.jndi.JndiProvider".equals(p.getClass().getName())) {
+      // JNDI startTLS always executes default hostname verification
+      AssertJUnit.assertTrue(true);
+    } else {
+      cc = createTLSConnectionConfig(url);
+      cc.setSslConfig(new SslConfig());
+      cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+      cc.getSslConfig().setHostnameVerifier(new NoHostnameVerifier());
+      try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+        conn.open();
+        final SearchOperation op = new SearchOperation(conn);
+        op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+        AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      } catch (Exception e) {
+        AssertJUnit.assertNotNull(e);
+      }
+    }
+
+    // trust any with hostname verification
+    cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    // note that this verifier does not run with JNDI startTLS
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
     }
   }
 
@@ -167,20 +231,161 @@ public class TLSSocketFactoryTest
   public void connectSSL(final String url)
     throws Exception
   {
-    // with no trusted certificates, connection should fail
-    final ConnectionConfig cc = createSSLConnectionConfig(url);
+    // no trusted certificates
+    ConnectionConfig cc = createSSLConnectionConfig(url);
     cc.setSslConfig(null);
-
     try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
       conn.open();
-
-      // some providers won't perform the handshake until an operation is
-      // executed
       final SearchOperation op = new SearchOperation(conn);
       op.execute(SearchRequest.newObjectScopeSearchRequest(""));
       AssertJUnit.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
       AssertJUnit.assertNotNull(e);
+    }
+
+    // no trusted certificates
+    cc = createSSLConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    }
+
+    // no trusted certificates with hostname verification
+    cc = createSSLConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    }
+
+    // trust any
+    cc = createSSLConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+    }
+
+    // trust any with hostname verification failure
+    cc = createSSLConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new NoHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    }
+
+    // trust any with hostname verification
+    cc = createSSLConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+    }
+  }
+
+
+  /**
+   * @param  url  to connect to
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters("ldapSslTestHost")
+  @Test(groups = {"ssl"})
+  public void connectLDAPS(final String url)
+    throws Exception
+  {
+    final String ldapsUrl = url.replace("ldap://", "ldaps://");
+    // no trusted certificates
+    ConnectionConfig cc = createSSLConnectionConfig(ldapsUrl);
+    cc.setSslConfig(null);
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    }
+
+    // no trusted certificates
+    cc = createSSLConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    }
+
+    // no trusted certificates with hostname verification
+    cc = createSSLConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    }
+
+    // trust any
+    cc = createSSLConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+    }
+
+    // trust any with hostname verification failure
+    cc = createSSLConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new NoHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
+      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      AssertJUnit.assertNotNull(e);
+    }
+
+    // trust any with hostname verification
+    cc = createSSLConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
+      conn.open();
+      final SearchOperation op = new SearchOperation(conn);
+      op.execute(SearchRequest.newObjectScopeSearchRequest(""));
     }
   }
 
@@ -346,7 +551,7 @@ public class TLSSocketFactoryTest
     // hostname verifier
     factory = new TLSSocketFactory();
     SslConfig sslConfig = new SslConfig();
-    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier()));
     factory.setSslConfig(sslConfig);
     init = factory.createSSLContextInitializer();
     AssertJUnit.assertEquals(1, init.getTrustManagers().length);
@@ -360,7 +565,7 @@ public class TLSSocketFactoryTest
     factory = new TLSSocketFactory();
     sslConfig = new SslConfig();
     sslConfig.setTrustManagers(new AllowAnyTrustManager());
-    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier()));
     factory.setSslConfig(sslConfig);
     init = factory.createSSLContextInitializer();
     AssertJUnit.assertEquals(1, init.getTrustManagers().length);
@@ -389,7 +594,7 @@ public class TLSSocketFactoryTest
     // empty credential config with hostname verifier
     factory = new TLSSocketFactory();
     sslConfig = new SslConfig();
-    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier()));
     factory.setSslConfig(sslConfig);
     init = factory.createSSLContextInitializer();
     AssertJUnit.assertEquals(1, init.getTrustManagers().length);
@@ -403,7 +608,7 @@ public class TLSSocketFactoryTest
     factory = new TLSSocketFactory();
     sslConfig = new SslConfig();
     sslConfig.setTrustManagers(new AllowAnyTrustManager());
-    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier()));
     factory.setSslConfig(sslConfig);
     init = factory.createSSLContextInitializer();
     AssertJUnit.assertEquals(1, init.getTrustManagers().length);
@@ -439,7 +644,7 @@ public class TLSSocketFactoryTest
     // credential config with hostname verifier
     factory = new TLSSocketFactory();
     sslConfig = createSslConfig();
-    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier()));
     factory.setSslConfig(sslConfig);
     init = factory.createSSLContextInitializer();
     AssertJUnit.assertEquals(init.getTrustManagers().length, 1);
@@ -453,7 +658,7 @@ public class TLSSocketFactoryTest
     factory = new TLSSocketFactory();
     sslConfig = createSslConfig();
     sslConfig.setTrustManagers(new AllowAnyTrustManager());
-    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
+    sslConfig.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier()));
     factory.setSslConfig(sslConfig);
     init = factory.createSSLContextInitializer();
     AssertJUnit.assertEquals(1, init.getTrustManagers().length);
