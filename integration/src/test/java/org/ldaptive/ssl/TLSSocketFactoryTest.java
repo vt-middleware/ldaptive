@@ -317,7 +317,7 @@ public class TLSSocketFactoryTest
   {
     final String ldapsUrl = url.replace("ldap://", "ldaps://");
     // no trusted certificates
-    ConnectionConfig cc = createSSLConnectionConfig(ldapsUrl);
+    ConnectionConfig cc = new ConnectionConfig(ldapsUrl);
     cc.setSslConfig(null);
     try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
       conn.open();
@@ -329,7 +329,7 @@ public class TLSSocketFactoryTest
     }
 
     // no trusted certificates
-    cc = createSSLConnectionConfig(ldapsUrl);
+    cc = new ConnectionConfig(ldapsUrl);
     cc.setSslConfig(new SslConfig());
     try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
       conn.open();
@@ -341,7 +341,7 @@ public class TLSSocketFactoryTest
     }
 
     // no trusted certificates with hostname verification
-    cc = createSSLConnectionConfig(ldapsUrl);
+    cc = new ConnectionConfig(ldapsUrl);
     cc.setSslConfig(new SslConfig());
     cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
     try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
@@ -354,7 +354,7 @@ public class TLSSocketFactoryTest
     }
 
     // trust any
-    cc = createSSLConnectionConfig(ldapsUrl);
+    cc = new ConnectionConfig(ldapsUrl);
     cc.setSslConfig(new SslConfig());
     cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
     try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
@@ -364,7 +364,7 @@ public class TLSSocketFactoryTest
     }
 
     // trust any with hostname verification failure
-    cc = createSSLConnectionConfig(ldapsUrl);
+    cc = new ConnectionConfig(ldapsUrl);
     cc.setSslConfig(new SslConfig());
     cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
     cc.getSslConfig().setHostnameVerifier(new NoHostnameVerifier());
@@ -378,7 +378,7 @@ public class TLSSocketFactoryTest
     }
 
     // trust any with hostname verification
-    cc = createSSLConnectionConfig(ldapsUrl);
+    cc = new ConnectionConfig(ldapsUrl);
     cc.setSslConfig(new SslConfig());
     cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
     cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());

@@ -99,7 +99,7 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   protected LdapConnectionConfig getDefaultLdapConnectionConfig(final ConnectionConfig cc)
   {
     final LdapConnectionConfig lcc = new LdapConnectionConfig();
-    if (cc.getUseSSL() || cc.getUseStartTLS()) {
+    if (cc.getUseStartTLS() || cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://")) {
       final SSLContextInitializer contextInit = getHostnameVerifierSSLContextInitializer(cc);
       TrustManager[] trustManagers;
       KeyManager[] keyManagers;
@@ -110,7 +110,7 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
         throw new IllegalArgumentException(e);
       }
 
-      lcc.setUseSsl(cc.getUseSSL());
+      lcc.setUseSsl(cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://"));
       lcc.setTrustManagers(trustManagers);
       lcc.setKeyManagers(keyManagers);
       if (cc.getSslConfig() != null && cc.getSslConfig().getEnabledCipherSuites() != null) {

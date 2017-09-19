@@ -35,7 +35,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
     ProviderConnectionFactory<JLdapProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = getJLdapStartTLSConnectionFactory(cc, config.getLDAPConstraints());
-    } else if (cc.getUseSSL()) {
+    } else if (cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://")) {
       cf = getJLdapSSLConnectionFactory(cc, config.getLDAPConstraints());
     } else {
       cf = getJLdapConnectionFactory(cc, config.getLDAPConstraints());

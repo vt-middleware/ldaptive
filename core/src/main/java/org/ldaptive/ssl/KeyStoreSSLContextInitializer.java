@@ -34,6 +34,17 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
 
 
   /**
+   * Returns the keystore to use for creating the trust managers.
+   *
+   * @return  keystore
+   */
+  public KeyStore getTrustKeystore()
+  {
+    return trustKeystore;
+  }
+
+
+  /**
    * Sets the keystore to use for creating the trust managers.
    *
    * @param  keystore  to set
@@ -41,6 +52,17 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
   public void setTrustKeystore(final KeyStore keystore)
   {
     trustKeystore = keystore;
+  }
+
+
+  /**
+   * Returns the aliases of the entries to use in the trust keystore
+   *
+   * @return  trust aliases
+   */
+  public String[] getTrustAliases()
+  {
+    return trustAliases;
   }
 
 
@@ -56,6 +78,17 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
 
 
   /**
+   * Returns the keystore to use for creating the key managers.
+   *
+   * @return  keystore
+   */
+  public KeyStore getAuthenticationKeystore()
+  {
+    return authenticationKeystore;
+  }
+
+
+  /**
    * Sets the keystore to use for creating the key managers.
    *
    * @param  keystore  to set
@@ -67,6 +100,17 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
 
 
   /**
+   * Returns the aliases of the entries to use in the authentication keystore
+   *
+   * @return  authentication aliases
+   */
+  public String[] getAuthenticationAliases()
+  {
+    return authenticationAliases;
+  }
+
+
+  /**
    * Sets the aliases of the entries to use in the authentication keystore.
    *
    * @param  aliases  to use
@@ -74,6 +118,17 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
   public void setAuthenticationAliases(final String... aliases)
   {
     authenticationAliases = aliases;
+  }
+
+
+  /**
+   * Returns the password used for accessing the authentication keystore.
+   *
+   * @return  authentication password
+   */
+  public char[] getAuthenticationPassword()
+  {
+    return authenticationPassword;
   }
 
 
