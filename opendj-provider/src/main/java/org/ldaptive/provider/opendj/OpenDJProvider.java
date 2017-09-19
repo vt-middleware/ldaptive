@@ -105,13 +105,13 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
   {
     final LDAPOptions options = new LDAPOptions();
     SSLContext sslContext;
-    if (cc.getUseStartTLS() || cc.getUseSSL()) {
+    if (cc.getUseStartTLS() || cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://")) {
       sslContext = getHostnameVerifierSSLContext(cc);
       options.setSSLContext(sslContext);
     }
     if (cc.getUseStartTLS()) {
       options.setUseStartTLS(true);
-    } else if (cc.getUseSSL()) {
+    } else if (cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://")) {
       options.setUseStartTLS(false);
     }
     if (cc.getSslConfig() != null && cc.getSslConfig().getEnabledCipherSuites() != null) {
