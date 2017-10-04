@@ -5,7 +5,6 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ldaptive-opendj</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.2-SNAPSHOT</version>
   <name>LDAPTIVE OPENDJ PROVIDER</name>
   <description>Ldaptive opendj provider</description>
   <parent>

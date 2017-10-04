@@ -5,7 +5,6 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ldaptive-json</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.2-SNAPSHOT</version>
   <name>LDAPTIVE JSON</name>
   <description>Provides JSON reader and writer</description>
   <parent>

@@ -5,7 +5,6 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ldaptive-apache</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.2-SNAPSHOT</version>
   <name>LDAPTIVE APACHE PROVIDER</name>
   <description>Ldaptive apache provider</description>
   <parent>

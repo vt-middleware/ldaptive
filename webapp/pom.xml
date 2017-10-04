@@ -5,7 +5,6 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ldaptive-webapp</artifactId>
   <packaging>war</packaging>
-  <version>1.1.2-SNAPSHOT</version>
   <name>LDAPTIVE WEB APPLICATION</name>
   <description>Web interface to demonstrate templating functionality</description>
   <parent>

@@ -5,7 +5,6 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ldaptive-integration</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.2-SNAPSHOT</version>
   <name>LDAPTIVE INTEGRATION TESTS</name>
   <description>Ldaptive server integration tests</description>
   <parent>

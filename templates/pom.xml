@@ -5,7 +5,6 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ldaptive-templates</artifactId>
   <packaging>jar</packaging>
-  <version>1.1.2-SNAPSHOT</version>
   <name>LDAPTIVE TEMPLATES</name>
   <description>Templating functionality for aggregating LDAP searches</description>
   <parent>
