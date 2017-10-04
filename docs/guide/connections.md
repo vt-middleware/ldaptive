@@ -106,6 +106,8 @@ Supported private key formats include:
 - hostname must match the first CN
 - if certificate begins with a wildcard, domains are used for matching
 
+As of version 1.2.3, hostname validation can be controlled via the `CertificateHostnameVerifier` interface which is a property of `SslConfig`. One important caveat is that the JNDI provider *always* performs it's own hostname check when using startTLS. Any custom hostname checks will only be performed if their check fails.
+
 ## Operation Retry
 
 Since LDAP connections are persistent they can be disrupted in a variety of ways: server restarts, miss-behaving load balancers, network blips, etc. Because of the myriad number of ways in which an LDAP connection may suddenly stop working ldaptive provides operation retry functionality. This means that for certain LDAP error codes the library will simply attempt to close, reopen the connection, and then try the operation again. This behavior is controlled by the following properties on the ReopenOperationExceptionHandler:

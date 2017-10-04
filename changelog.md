@@ -6,6 +6,12 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 1.2.3 - 04Oct2017
+
+Issue | Description
+:---- | :----------
+[ldaptive-127]({{ site.issueURL }}127) | Add CertificateHostnameVerifier property to SslConfig.
+
 ## Version 1.2.2 - 21Jul2017
 
 Issue | Description
