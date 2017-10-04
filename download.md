@@ -58,7 +58,15 @@ By default the core library uses JNDI for LDAP operations. You can replace JNDI 
 {% endhighlight %}
 
 ### OpenDJ
-This provider has not released a library to maven central and therefore must be installed locally to be used in maven builds.
+{% highlight xml %}
+<dependencies>
+  <dependency>
+    <groupId>org.ldaptive</groupId>
+    <artifactId>ldaptive-opendj</artifactId>
+    <version>{{ site.version }}</version>
+  </dependency>
+</dependencies>
+{% endhighlight %}
 
 ## Additional Libraries
 
