@@ -423,7 +423,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
-  public abstract void putConnection(final Connection c);
+  public abstract void putConnection(Connection c);
 
 
   /**

@@ -137,7 +137,7 @@ public class OpenDJConnection implements org.ldaptive.provider.ProviderConnectio
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response;
+    final Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -226,7 +226,7 @@ public class OpenDJConnection implements org.ldaptive.provider.ProviderConnectio
     throws LdapException
   {
     Response<Void> response = null;
-    SASLBindRequest sbr;
+    final SASLBindRequest sbr;
     final SaslConfig sc = request.getSaslConfig();
     switch (sc.getMechanism()) {
 
@@ -311,7 +311,7 @@ public class OpenDJConnection implements org.ldaptive.provider.ProviderConnectio
    */
   protected static String getQualityOfProtection(final QualityOfProtection qop)
   {
-    String name;
+    final String name;
     switch (qop) {
 
     case AUTH:
@@ -366,7 +366,7 @@ public class OpenDJConnection implements org.ldaptive.provider.ProviderConnectio
     Response<Boolean> response = null;
     try {
       final OpenDJUtils util = new OpenDJUtils();
-      org.forgerock.opendj.ldap.requests.CompareRequest cr;
+      final org.forgerock.opendj.ldap.requests.CompareRequest cr;
       if (request.getAttribute().isBinary()) {
         cr = Requests.newCompareRequest(
           request.getDn(),
@@ -514,7 +514,7 @@ public class OpenDJConnection implements org.ldaptive.provider.ProviderConnectio
   {
     Response<?> response = null;
     try {
-      GenericExtendedRequest er;
+      final GenericExtendedRequest er;
       final byte[] requestBerValue = request.encode();
       if (requestBerValue == null) {
         er = Requests.newGenericExtendedRequest(request.getOID());

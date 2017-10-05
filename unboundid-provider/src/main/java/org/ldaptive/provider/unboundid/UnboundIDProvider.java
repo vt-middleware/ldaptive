@@ -67,7 +67,7 @@ public class UnboundIDProvider implements Provider<UnboundIDProviderConfig>
       options = getDefaultLDAPConnectionOptions(cc);
     }
 
-    ProviderConnectionFactory<UnboundIDProviderConfig> cf;
+    final ProviderConnectionFactory<UnboundIDProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = new UnboundIDStartTLSConnectionFactory(
         cc.getLdapUrl(),

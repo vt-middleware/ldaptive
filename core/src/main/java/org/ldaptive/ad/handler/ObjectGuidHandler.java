@@ -45,6 +45,16 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    return o instanceof ObjectGuidHandler && super.equals(o);
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getAttributeName());

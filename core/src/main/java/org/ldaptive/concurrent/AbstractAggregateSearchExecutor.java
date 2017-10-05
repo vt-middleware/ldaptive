@@ -125,9 +125,9 @@ public abstract class AbstractAggregateSearchExecutor<T extends ConnectionFactor
    * @throws  LdapException  if the search fails
    */
   public abstract Collection<Response<SearchResult>> search(
-    final T[] factories,
-    final SearchFilter[] filters,
-    final String[] attrs,
-    final SearchEntryHandler... handlers)
+    T[] factories,
+    SearchFilter[] filters,
+    String[] attrs,
+    SearchEntryHandler... handlers)
     throws LdapException;
 }

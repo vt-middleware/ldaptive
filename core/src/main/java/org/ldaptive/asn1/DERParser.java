@@ -81,7 +81,7 @@ public class DERParser
       return null;
     }
 
-    DERTag tag;
+    final DERTag tag;
     final byte b = encoded.get();
     // CheckStyle:MagicNumber OFF
     final int tagNo = b & 0x1F;

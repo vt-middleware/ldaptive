@@ -167,7 +167,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
    */
   public static Provider<?> getDefaultProvider()
   {
-    Provider<?> p;
+    final Provider<?> p;
     final String providerClass = System.getProperty(PROVIDER);
     if (providerClass != null) {
       final Logger l = LoggerFactory.getLogger(DefaultConnectionFactory.class);

@@ -25,7 +25,7 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory im
   @Override
   public Authenticator createAuthenticator(final Map<String, ?> jaasOptions)
   {
-    Authenticator a;
+    final Authenticator a;
     if (jaasOptions.containsKey(CACHE_ID)) {
       final String cacheId = (String) jaasOptions.get(CACHE_ID);
       synchronized (CACHE) {

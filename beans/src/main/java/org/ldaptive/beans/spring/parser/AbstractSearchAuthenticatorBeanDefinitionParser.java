@@ -26,8 +26,8 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
       name = element.getAttribute("id") + "-search-pool";
     }
 
-    BeanDefinitionBuilder connectionFactory;
-    BeanDefinitionBuilder dnResolver;
+    final BeanDefinitionBuilder connectionFactory;
+    final BeanDefinitionBuilder dnResolver;
     if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
       connectionFactory = parseDefaultConnectionFactory(null, element, true);
       dnResolver = parseDnResolver(

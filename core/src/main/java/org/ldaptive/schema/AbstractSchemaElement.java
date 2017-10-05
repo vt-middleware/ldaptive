@@ -89,11 +89,13 @@ public abstract class AbstractSchemaElement implements SchemaElement
   }
 
 
+  // CheckStyle:EqualsHashCode OFF
   @Override
   public boolean equals(final Object o)
   {
     return super.equals(o);
   }
+  // CheckStyle:EqualsHashCode ON
 
 
   @Override

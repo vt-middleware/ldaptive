@@ -45,7 +45,7 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
   protected SSLContextInitializer createSSLContextInitializer()
     throws GeneralSecurityException
   {
-    SSLContextInitializer contextInitializer;
+    final SSLContextInitializer contextInitializer;
     final SslConfig sslConfig = getSslConfig();
     if (sslConfig != null) {
       final CredentialConfig credConfig = sslConfig.getCredentialConfig();

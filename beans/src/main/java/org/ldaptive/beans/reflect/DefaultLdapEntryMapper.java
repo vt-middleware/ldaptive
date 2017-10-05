@@ -23,7 +23,7 @@ public class DefaultLdapEntryMapper<T> extends AbstractLdapEntryMapper<T>
   @Override
   protected ClassDescriptor getClassDescriptor(final Object object)
   {
-    ClassDescriptor descriptor;
+    final ClassDescriptor descriptor;
     final Class<?> type = object.getClass();
     synchronized (CLASS_DESCRIPTORS) {
       if (!CLASS_DESCRIPTORS.containsKey(type)) {

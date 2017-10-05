@@ -175,7 +175,7 @@ public final class ApacheLdapSaslUtils
    */
   protected static SaslQoP getQualityOfProtection(final QualityOfProtection qop)
   {
-    SaslQoP e;
+    final SaslQoP e;
     switch (qop) {
 
     case AUTH:
@@ -206,7 +206,7 @@ public final class ApacheLdapSaslUtils
    */
   protected static SaslSecurityStrength getSecurityStrength(final SecurityStrength ss)
   {
-    SaslSecurityStrength e;
+    final SaslSecurityStrength e;
     switch (ss) {
 
     case HIGH:

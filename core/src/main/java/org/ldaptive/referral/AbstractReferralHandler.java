@@ -111,7 +111,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S> implements R
    *
    * @return  new request
    */
-  protected abstract Q createReferralRequest(final Q request, final LdapURL url);
+  protected abstract Q createReferralRequest(Q request, LdapURL url);
 
 
   /**
@@ -121,7 +121,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S> implements R
    *
    * @return  new operation
    */
-  protected abstract Operation<Q, S> createReferralOperation(final Connection conn);
+  protected abstract Operation<Q, S> createReferralOperation(Connection conn);
 
 
   /**
@@ -176,7 +176,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S> implements R
   public HandlerResult<Response<S>> handle(final Connection conn, final Q request, final Response<S> response)
     throws LdapException
   {
-    HandlerResult<Response<S>> result;
+    final HandlerResult<Response<S>> result;
     if (referralDepth > referralLimit) {
       result = new HandlerResult<>(
         new Response<>(
@@ -213,7 +213,7 @@ public abstract class AbstractReferralHandler<Q extends Request, S> implements R
   public HandlerResult<Response<S>> handle(final Connection conn, final Q request, final String[] referralUrls)
     throws LdapException
   {
-    HandlerResult<Response<S>> result;
+    final HandlerResult<Response<S>> result;
     if (referralDepth > referralLimit) {
       result = new HandlerResult<>(
         new Response<>((S) null, ResultCode.REFERRAL_LIMIT_EXCEEDED, null, null, null, null, -1));

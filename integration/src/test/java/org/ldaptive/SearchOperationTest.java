@@ -628,7 +628,7 @@ public class SearchOperationTest extends AbstractTest
 
     final SortRequestControl src = new SortRequestControl(new SortKey[] {new SortKey("uugid", "caseExactMatch")}, true);
     VirtualListViewRequestControl vlvrc = new VirtualListViewRequestControl(3, 1, 1, true);
-    byte[] contextID;
+    final byte[] contextID;
     try (Connection conn = TestUtils.createConnection()) {
       conn.open();
 
@@ -1234,11 +1234,8 @@ public class SearchOperationTest extends AbstractTest
   public void rangeHandlerSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    if (!TestControl.isActiveDirectory()) {
-      return;
-    }
     // OpenDJ will not parse DNs used by this entry handler
-    if (TestControl.isOpenDJProvider()) {
+    if (!TestControl.isActiveDirectory() || TestControl.isOpenDJProvider()) {
       return;
     }
 

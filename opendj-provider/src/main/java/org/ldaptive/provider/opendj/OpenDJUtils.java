@@ -162,7 +162,7 @@ public class OpenDJUtils
    */
   public Attribute fromLdapAttribute(final LdapAttribute la)
   {
-    Attribute attribute;
+    final Attribute attribute;
     if (la.isBinary()) {
       attribute = new LinkedAttribute(la.getName(), (Object[]) fromBinaryValues(la.getBinaryValues()));
     } else {

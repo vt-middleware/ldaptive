@@ -142,7 +142,7 @@ public class UnboundIDConnection implements ProviderConnection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response;
+    final Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -168,7 +168,7 @@ public class UnboundIDConnection implements ProviderConnection
   {
     Response<Void> response = null;
     try {
-      SimpleBindRequest sbr;
+      final SimpleBindRequest sbr;
       if (request.getControls() != null) {
         sbr = new SimpleBindRequest(
           "",
@@ -205,7 +205,7 @@ public class UnboundIDConnection implements ProviderConnection
   {
     Response<Void> response = null;
     try {
-      SimpleBindRequest sbr;
+      final SimpleBindRequest sbr;
       if (request.getControls() != null) {
         sbr = new SimpleBindRequest(
           new DN(request.getDn()),
@@ -242,7 +242,7 @@ public class UnboundIDConnection implements ProviderConnection
   {
     Response<Void> response = null;
     try {
-      SASLBindRequest sbr;
+      final SASLBindRequest sbr;
       final SaslConfig sc = request.getSaslConfig();
       switch (sc.getMechanism()) {
 
@@ -327,7 +327,7 @@ public class UnboundIDConnection implements ProviderConnection
   {
     Response<Boolean> response = null;
     try {
-      com.unboundid.ldap.sdk.CompareRequest cr;
+      final com.unboundid.ldap.sdk.CompareRequest cr;
       if (request.getAttribute().isBinary()) {
         cr = new com.unboundid.ldap.sdk.CompareRequest(
           new DN(request.getDn()),
@@ -464,7 +464,7 @@ public class UnboundIDConnection implements ProviderConnection
   {
     Response<?> response = null;
     try {
-      com.unboundid.ldap.sdk.ExtendedRequest er;
+      final com.unboundid.ldap.sdk.ExtendedRequest er;
       final byte[] requestBerValue = request.encode();
       if (requestBerValue == null) {
         er = new com.unboundid.ldap.sdk.ExtendedRequest(

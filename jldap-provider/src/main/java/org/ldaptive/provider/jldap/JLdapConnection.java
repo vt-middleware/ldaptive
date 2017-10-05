@@ -127,7 +127,7 @@ public class JLdapConnection implements ProviderConnection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response;
+    final Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -643,7 +643,7 @@ public class JLdapConnection implements ProviderConnection
     public SearchItem next()
       throws LdapException
     {
-      SearchItem si;
+      final SearchItem si;
       final LDAPMessage message = resultIterator.next();
       if (message instanceof LDAPSearchResult) {
         si = processLDAPSearchResult((LDAPSearchResult) message);

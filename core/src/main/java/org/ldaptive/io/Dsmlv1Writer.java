@@ -171,7 +171,7 @@ public class Dsmlv1Writer implements SearchResultWriter
     final List<Element> attrElements = new ArrayList<>();
     for (LdapAttribute attr : attrs) {
       final String attrName = attr.getName();
-      Element attrElement;
+      final Element attrElement;
       if ("objectclass".equalsIgnoreCase(attrName)) {
         attrElement = createObjectclassElement(doc, attr);
         if (attrElement.hasChildNodes()) {

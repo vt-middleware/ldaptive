@@ -195,7 +195,7 @@ public class SearchFilter
       return null;
     }
 
-    String str;
+    final String str;
     if (obj instanceof String) {
       str = encodeValue((String) obj);
     } else if (obj instanceof byte[]) {

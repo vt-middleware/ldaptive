@@ -90,9 +90,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
    *
    * @throws  LdapException  if the authentication fails
    */
-  protected abstract AuthenticationHandlerResponse authenticateInternal(
-    final Connection c,
-    final AuthenticationCriteria criteria)
+  protected abstract AuthenticationHandlerResponse authenticateInternal(Connection c, AuthenticationCriteria criteria)
     throws LdapException;
 
 
@@ -105,7 +103,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
    */
   protected RequestControl[] processRequestControls(final AuthenticationCriteria criteria)
   {
-    RequestControl[] ctls;
+    final RequestControl[] ctls;
     if (criteria.getAuthenticationRequest().getControls() != null) {
       if (getAuthenticationControls() != null) {
         ctls = LdapUtils.concatArrays(criteria.getAuthenticationRequest().getControls(), getAuthenticationControls());

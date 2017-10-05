@@ -52,7 +52,7 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
   protected SSLContext getHostnameVerifierSSLContext(final ConnectionConfig cc)
   {
     final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
-    SSLContextInitializer contextInit;
+    final SSLContextInitializer contextInit;
     if (cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
       final CredentialConfig credConfig = cc.getSslConfig().getCredentialConfig();
       final TrustManager[] managers = cc.getSslConfig().getTrustManagers();
@@ -104,7 +104,7 @@ public class OpenDJProvider implements Provider<OpenDJProviderConfig>
   protected LDAPOptions getDefaultLDAPOptions(final ConnectionConfig cc)
   {
     final LDAPOptions options = new LDAPOptions();
-    SSLContext sslContext;
+    final SSLContext sslContext;
     if (cc.getUseStartTLS() || cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://")) {
       sslContext = getHostnameVerifierSSLContext(cc);
       options.setSSLContext(sslContext);

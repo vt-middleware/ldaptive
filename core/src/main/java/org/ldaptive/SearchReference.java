@@ -121,6 +121,22 @@ public class SearchReference implements ResponseMessage
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SearchReference)  {
+      final SearchReference v = (SearchReference) o;
+      return LdapUtils.areEqual(referralUrls, v.referralUrls) &&
+             LdapUtils.areEqual(responseControls, v.responseControls) &&
+             LdapUtils.areEqual(messageId, v.messageId);
+    }
+    return false;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, referralUrls, responseControls, messageId);

@@ -222,7 +222,7 @@ public class JndiUtils
    */
   public static String getQualityOfProtection(final QualityOfProtection qop)
   {
-    String s;
+    final String s;
     switch (qop) {
 
     case AUTH:
@@ -253,7 +253,7 @@ public class JndiUtils
    */
   public static String getSecurityStrength(final SecurityStrength ss)
   {
-    String s;
+    final String s;
     switch (ss) {
 
     case HIGH:
@@ -284,7 +284,7 @@ public class JndiUtils
    */
   public static String getAuthenticationType(final Mechanism m)
   {
-    String s;
+    final String s;
     switch (m) {
 
     case EXTERNAL:

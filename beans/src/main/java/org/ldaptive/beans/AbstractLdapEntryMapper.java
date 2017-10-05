@@ -28,7 +28,7 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
    *
    * @return  class descriptor
    */
-  protected abstract ClassDescriptor getClassDescriptor(final T object);
+  protected abstract ClassDescriptor getClassDescriptor(T object);
 
 
   @Override

@@ -106,7 +106,7 @@ public abstract class AbstractProviderConnectionFactory<T extends ProviderConfig
    *
    * @throws  LdapException  if a connection cannot be established
    */
-  protected abstract ProviderConnection createInternal(final String url)
+  protected abstract ProviderConnection createInternal(String url)
     throws LdapException;
 
 

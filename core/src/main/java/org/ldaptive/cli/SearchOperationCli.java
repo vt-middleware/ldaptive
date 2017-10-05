@@ -126,7 +126,7 @@ public class SearchOperationCli extends AbstractCli
     final SearchOperation op = new SearchOperation(conn);
     final Response<SearchResult> response = op.execute(request);
     final SearchResult result = response.getResult();
-    SearchResultWriter writer;
+    final SearchResultWriter writer;
     if (outputDsmlv1) {
       writer = new Dsmlv1Writer(new BufferedWriter(new OutputStreamWriter(System.out)));
     } else {

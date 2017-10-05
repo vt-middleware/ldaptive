@@ -181,7 +181,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
    */
   protected ReflectionTranscoder getCollectionEncoder(final Class<?> type, final Type genericType)
   {
-    Class<?> genericClass;
+    final Class<?> genericClass;
     boolean isGenericArray = false;
     if (genericType instanceof GenericArrayType) {
       final Class<?> c = ReflectionUtils.classFromType(((GenericArrayType) genericType).getGenericComponentType());
@@ -197,7 +197,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
       genericClass = ReflectionUtils.classFromType(genericType);
     }
 
-    ReflectionTranscoder encoder;
+    final ReflectionTranscoder encoder;
     if (type == Collection.class || List.class.isAssignableFrom(type)) {
       if (isGenericArray) {
         encoder = new ListReflectionTranscoder(

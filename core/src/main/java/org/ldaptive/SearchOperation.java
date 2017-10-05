@@ -70,7 +70,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResu
   protected Response<SearchResult> invoke(final SearchRequest request)
     throws LdapException
   {
-    Response<SearchResult> response;
+    final Response<SearchResult> response;
     if (cache != null) {
       final SearchResult sr = cache.get(request);
       if (sr == null) {

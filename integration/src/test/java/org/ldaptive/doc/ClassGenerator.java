@@ -240,7 +240,7 @@ public class ClassGenerator
    */
   protected JDefinedClass createClass(final String classPackage, final String className)
   {
-    String fqClassName;
+    final String fqClassName;
     if (!Character.isUpperCase(className.charAt(0))) {
       fqClassName = String.format(
         "%s.%s",

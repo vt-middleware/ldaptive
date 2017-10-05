@@ -206,7 +206,7 @@ public class SearchTemplatesExecutor
       }
     }
 
-    SearchResult subResult;
+    final SearchResult subResult;
     if (fromResult != null) {
       if (toResult != null) {
         subResult = result.subResult(fromResult, toResult);

@@ -43,7 +43,7 @@ public class ListReflectionTranscoder extends AbstractCollectionReflectionTransc
   protected <T> Collection<T> createCollection(final Class<T> clazz)
   {
     final Class<?> type = getType();
-    List<T> l;
+    final List<T> l;
     if (LinkedList.class.isAssignableFrom(type)) {
       l = new LinkedList<>();
     } else {

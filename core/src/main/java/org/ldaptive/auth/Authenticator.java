@@ -420,7 +420,7 @@ public class Authenticator
     throws LdapException
   {
     LdapEntry entry = null;
-    EntryResolver er;
+    final EntryResolver er;
     if (resolveEntryOnFailure || response.getResult()) {
       if (entryResolver != null) {
         er = entryResolver;

@@ -169,7 +169,7 @@ public class AuthenticatorCli extends AbstractCli
     final LdapEntry entry = response.getLdapEntry();
     if (response.getResult()) {
       if (entry != null) {
-        SearchResultWriter writer;
+        final SearchResultWriter writer;
         if (outputDsmlv1) {
           writer = new Dsmlv1Writer(new BufferedWriter(new OutputStreamWriter(System.out)));
         } else {

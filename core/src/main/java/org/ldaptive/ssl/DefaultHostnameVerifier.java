@@ -92,7 +92,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
   {
     logger.debug("verifying hostname={} against cert={}", hostname, cert.getSubjectX500Principal());
 
-    boolean b;
+    final boolean b;
     if (LdapUtils.isIPAddress(hostname)) {
       b = verifyIP(hostname, cert);
     } else {
@@ -241,7 +241,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
     final boolean isWildcard = certName.startsWith("*.") && certName.indexOf('.') < certName.lastIndexOf('.');
     logger.trace("matching for hostname={}, certName={}, isWildcard={}", hostname, certName, isWildcard);
 
-    boolean match;
+    final boolean match;
     if (isWildcard) {
       final String certNameDomain = certName.substring(certName.indexOf("."));
 

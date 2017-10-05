@@ -220,7 +220,7 @@ public class SyncReplItem
   @Override
   public String toString()
   {
-    String s;
+    final String s;
     if (isAsyncRequest()) {
       s = String.format("[%s@%d::asyncRequest=%s]", getClass().getName(), hashCode(), asyncRequest);
     } else if (isEntry()) {

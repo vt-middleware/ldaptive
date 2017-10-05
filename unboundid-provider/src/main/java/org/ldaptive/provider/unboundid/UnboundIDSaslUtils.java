@@ -98,7 +98,7 @@ public final class UnboundIDSaslUtils
    */
   protected static SASLQualityOfProtection getQualityOfProtection(final QualityOfProtection qop)
   {
-    SASLQualityOfProtection e;
+    final SASLQualityOfProtection e;
     switch (qop) {
 
     case AUTH:

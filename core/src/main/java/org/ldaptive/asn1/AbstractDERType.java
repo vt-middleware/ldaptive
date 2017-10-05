@@ -44,7 +44,7 @@ public abstract class AbstractDERType
       itemLength += b.length;
     }
 
-    byte[] lengthBytes;
+    final byte[] lengthBytes;
     if (itemLength <= SHORT_FORM_INT_LENGTH) {
       lengthBytes = new byte[] {(byte) itemLength};
     } else {

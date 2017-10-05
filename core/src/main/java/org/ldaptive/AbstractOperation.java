@@ -111,7 +111,7 @@ public abstract class AbstractOperation<Q extends Request, S> implements Operati
    *
    * @throws  LdapException  if the invocation fails
    */
-  protected abstract Response<S> invoke(final Q request)
+  protected abstract Response<S> invoke(Q request)
     throws LdapException;
 
 

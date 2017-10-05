@@ -31,7 +31,7 @@ public final class ExtendedResponseFactory
     final String responseOID,
     final byte[] encoded)
   {
-    ExtendedResponse<?> res;
+    final ExtendedResponse<?> res;
     switch (requestOID) {
 
     case PasswordModifyRequest.OID:

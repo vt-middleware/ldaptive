@@ -132,7 +132,7 @@ public class SearchItem
   @Override
   public String toString()
   {
-    String s;
+    final String s;
     if (isSearchEntry()) {
       s = String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
     } else if (isSearchReference()) {

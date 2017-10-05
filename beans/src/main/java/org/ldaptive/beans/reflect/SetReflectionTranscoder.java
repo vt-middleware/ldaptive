@@ -44,7 +44,7 @@ public class SetReflectionTranscoder extends AbstractCollectionReflectionTransco
   protected <T> Collection<T> createCollection(final Class<T> clazz)
   {
     final Class<?> type = getType();
-    Set<T> s;
+    final Set<T> s;
     if (LinkedHashSet.class.isAssignableFrom(type)) {
       s = new LinkedHashSet<>();
     } else if (TreeSet.class.isAssignableFrom(type)) {

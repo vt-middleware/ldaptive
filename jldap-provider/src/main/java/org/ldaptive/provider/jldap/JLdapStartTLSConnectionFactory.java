@@ -48,7 +48,7 @@ public class JLdapStartTLSConnectionFactory extends AbstractJLdapConnectionFacto
   protected LDAPConnection createLDAPConnection()
     throws LDAPException
   {
-    LDAPConnection conn;
+    final LDAPConnection conn;
     if (sslSocketFactory != null) {
       conn = new LDAPConnection(new LDAPJSSEStartTLSFactory(sslSocketFactory));
     } else {

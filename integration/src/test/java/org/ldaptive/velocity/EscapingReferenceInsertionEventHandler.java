@@ -52,7 +52,7 @@ public class EscapingReferenceInsertionEventHandler implements ReferenceInsertio
       return null;
     }
 
-    String s;
+    final String s;
     if (value instanceof String){
       s = SearchFilter.encodeValue((String) value);
     } else if (value instanceof byte[]) {

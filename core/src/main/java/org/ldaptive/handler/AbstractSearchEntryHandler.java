@@ -146,11 +146,13 @@ public abstract class AbstractSearchEntryHandler implements SearchEntryHandler
   public void initializeRequest(final SearchRequest request) {}
 
 
+  // CheckStyle:EqualsHashCode OFF
   @Override
   public boolean equals(final Object o)
   {
     return super.equals(o);
   }
+  // CheckStyle:EqualsHashCode ON
 
 
   @Override

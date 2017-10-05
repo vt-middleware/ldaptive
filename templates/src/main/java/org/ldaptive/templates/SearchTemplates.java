@@ -161,7 +161,7 @@ public class SearchTemplates
      *
      * @return  search filter parameters
      */
-    Map<String, String> parse(final String[] terms);
+    Map<String, String> parse(String[] terms);
   }
 
 

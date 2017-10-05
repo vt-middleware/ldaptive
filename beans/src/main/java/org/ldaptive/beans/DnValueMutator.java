@@ -16,7 +16,7 @@ public interface DnValueMutator
    *
    * @return  DN value
    */
-  String getValue(final Object object);
+  String getValue(Object object);
 
 
   /**
@@ -25,5 +25,5 @@ public interface DnValueMutator
    * @param  object  to set the DN on
    * @param  value  of the DN
    */
-  void setValue(final Object object, final String value);
+  void setValue(Object object, String value);
 }

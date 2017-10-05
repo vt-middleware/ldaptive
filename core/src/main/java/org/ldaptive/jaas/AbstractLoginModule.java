@@ -176,7 +176,7 @@ public abstract class AbstractLoginModule implements LoginModule
    *
    * @throws  LoginException  if the authentication fails
    */
-  protected abstract boolean login(final NameCallback nameCb, final PasswordCallback passCb)
+  protected abstract boolean login(NameCallback nameCb, PasswordCallback passCb)
     throws LoginException;
 
 

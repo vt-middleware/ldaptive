@@ -122,6 +122,16 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    return o instanceof RangeEntryHandler;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, (Object[]) null);

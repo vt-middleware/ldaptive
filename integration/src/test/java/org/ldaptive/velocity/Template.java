@@ -84,7 +84,7 @@ public class Template
     String name;
     do {
       name = UUID.randomUUID().toString();
-    } while(repository.getStringResource(name) != null);
+    } while (repository.getStringResource(name) != null);
     return name;
   }
 

@@ -174,7 +174,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   @SuppressWarnings("unchecked")
   protected <T> T convertValue(final Object value, final Class<?> sourceType, final Class<T> targetType)
   {
-    T converted;
+    final T converted;
     if (transcoder != null) {
       if (byte[].class == targetType) {
         converted = (T) transcoder.encodeBinaryValue(value);
@@ -267,7 +267,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
    */
   protected static <T> Collection<T> createCollection(final Class<?> type, final int size)
   {
-    Collection<T> c;
+    final Collection<T> c;
     if (List.class.isAssignableFrom(type)) {
       if (LinkedList.class.isAssignableFrom(type)) {
         c = new LinkedList<>();

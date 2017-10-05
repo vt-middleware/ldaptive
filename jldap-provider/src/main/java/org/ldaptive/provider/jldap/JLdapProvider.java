@@ -32,7 +32,7 @@ public class JLdapProvider implements Provider<JLdapProviderConfig>
   @Override
   public ProviderConnectionFactory<JLdapProviderConfig> getConnectionFactory(final ConnectionConfig cc)
   {
-    ProviderConnectionFactory<JLdapProviderConfig> cf;
+    final ProviderConnectionFactory<JLdapProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = getJLdapStartTLSConnectionFactory(cc, config.getLDAPConstraints());
     } else if (cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://")) {

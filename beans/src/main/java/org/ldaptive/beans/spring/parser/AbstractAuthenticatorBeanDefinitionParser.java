@@ -39,7 +39,7 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
    */
   protected BeanDefinitionBuilder parseAuthHandler(final Element element)
   {
-    BeanDefinitionBuilder authHandler;
+    final BeanDefinitionBuilder authHandler;
     if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
       authHandler = BeanDefinitionBuilder.genericBeanDefinition(BindAuthenticationHandler.class);
       authHandler.addPropertyValue(

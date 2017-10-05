@@ -83,7 +83,7 @@ public class JndiProvider implements Provider<JndiProviderConfig>
   @Override
   public ProviderConnectionFactory<JndiProviderConfig> getConnectionFactory(final ConnectionConfig cc)
   {
-    ProviderConnectionFactory<JndiProviderConfig> cf;
+    final ProviderConnectionFactory<JndiProviderConfig> cf;
     if (cc.getUseStartTLS()) {
       cf = getJndiStartTLSConnectionFactory(cc, config.getEnvironment());
     } else {

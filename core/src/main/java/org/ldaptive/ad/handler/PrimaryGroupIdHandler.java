@@ -90,7 +90,7 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
 
     logger.debug("found objectSid {} and primaryGroupID {}", objectSid, primaryGroupId);
     if (objectSid != null && primaryGroupId != null) {
-      String sid;
+      final String sid;
       if (objectSid.isBinary()) {
         sid = SecurityIdentifier.toString(objectSid.getBinaryValue());
       } else {

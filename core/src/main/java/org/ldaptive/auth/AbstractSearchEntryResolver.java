@@ -245,8 +245,8 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    * @throws  LdapException  if an error occurs attempting the search
    */
   protected abstract SearchResult performLdapSearch(
-    final AuthenticationCriteria criteria,
-    final AuthenticationHandlerResponse response)
+    AuthenticationCriteria criteria,
+    AuthenticationHandlerResponse response)
     throws LdapException;
 
 
@@ -291,7 +291,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    */
   protected SearchRequest createSearchRequest(final AuthenticationCriteria ac)
   {
-    SearchRequest request;
+    final SearchRequest request;
     if (userFilter != null) {
       request = new SearchRequest(baseDn, createSearchFilter(ac));
       request.setReturnAttributes(ac.getAuthenticationRequest().getReturnAttributes());

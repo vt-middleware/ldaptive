@@ -342,7 +342,7 @@ public final class LdapUtils
     if (o1 == o2) {
       return true;
     }
-    boolean areEqual;
+    final boolean areEqual;
     if (o1 instanceof boolean[] && o2 instanceof boolean[]) {
       areEqual = Arrays.equals((boolean[]) o1, (boolean[]) o2);
     } else if (o1 instanceof byte[] && o2 instanceof byte[]) {
@@ -485,7 +485,7 @@ public final class LdapUtils
   public static InputStream getResource(final String path)
     throws IOException
   {
-    InputStream is;
+    final InputStream is;
     if (path.startsWith(CLASSPATH_PREFIX)) {
       is = LdapUtils.class.getResourceAsStream(path.substring(CLASSPATH_PREFIX.length()));
     } else if (path.startsWith(FILE_PREFIX)) {

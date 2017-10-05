@@ -41,7 +41,7 @@ public class ADAuthenticatorBeanDefinitionParser extends AbstractSearchAuthentic
     final Element element,
     final BeanDefinitionBuilder connectionFactory)
   {
-    BeanDefinitionBuilder entryResolver;
+    final BeanDefinitionBuilder entryResolver;
     if (element.hasAttribute("resolveEntryWithBindCredentials") &&
         Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials"))) {
       if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {

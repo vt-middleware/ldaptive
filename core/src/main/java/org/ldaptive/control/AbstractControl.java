@@ -62,6 +62,7 @@ public abstract class AbstractControl implements Control
   }
 
 
+  // CheckStyle:EqualsHashCode OFF
   @Override
   public boolean equals(final Object o)
   {
@@ -75,6 +76,7 @@ public abstract class AbstractControl implements Control
     }
     return false;
   }
+  // CheckStyle:EqualsHashCode ON
 
 
   /**

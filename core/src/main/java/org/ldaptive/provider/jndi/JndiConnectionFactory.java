@@ -73,7 +73,7 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
     // CheckStyle:IllegalType ON
     env.put(JndiProvider.PROVIDER_URL, url);
 
-    JndiConnection conn;
+    final JndiConnection conn;
     try {
       if (classLoader != null) {
         final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();

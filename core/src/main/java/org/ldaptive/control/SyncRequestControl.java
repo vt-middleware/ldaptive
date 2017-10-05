@@ -269,7 +269,7 @@ public class SyncRequestControl extends AbstractControl implements RequestContro
   @Override
   public byte[] encode()
   {
-    ConstructedDEREncoder se;
+    final ConstructedDEREncoder se;
     if (getCookie() != null) {
       se = new ConstructedDEREncoder(
         UniversalDERTag.SEQ,

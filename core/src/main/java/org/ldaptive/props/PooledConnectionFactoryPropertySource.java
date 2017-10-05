@@ -107,7 +107,7 @@ public final class PooledConnectionFactoryPropertySource extends AbstractPropert
   @Override
   public void initialize()
   {
-    ConnectionPool cp;
+    final ConnectionPool cp;
     if (poolType == ConnectionPoolType.BLOCKING) {
       cp = new BlockingConnectionPool();
 

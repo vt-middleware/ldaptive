@@ -628,7 +628,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
     @Override
     public String toString()
     {
-      String s;
+      final String s;
       if (isEntry()) {
         s = String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
       } else if (isReference()) {

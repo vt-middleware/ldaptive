@@ -155,7 +155,7 @@ public class VirtualListViewParams
   @Override
   public String toString()
   {
-    String s;
+    final String s;
     if (assertionValue != null) {
       s = String.format(
         "[%s@%d::assertionValue=%s, beforeCount=%s, afterCount=%s]",

@@ -28,7 +28,7 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory imp
   @Override
   public RoleResolver createRoleResolver(final Map<String, ?> jaasOptions)
   {
-    RoleResolver rr;
+    final RoleResolver rr;
     if (jaasOptions.containsKey(CACHE_ID)) {
       final String cacheId = (String) jaasOptions.get(CACHE_ID);
       synchronized (CACHE) {
@@ -58,7 +58,7 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory imp
    */
   protected RoleResolver createRoleResolverInternal(final Map<String, ?> options)
   {
-    RoleResolver rr;
+    final RoleResolver rr;
     if (options.containsKey("roleResolver")) {
       try {
         final String className = (String) options.get("roleResolver");

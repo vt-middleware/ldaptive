@@ -143,7 +143,7 @@ public class ApacheLdapConnection implements ProviderConnection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response;
+    final Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -235,7 +235,7 @@ public class ApacheLdapConnection implements ProviderConnection
   {
     Response<Void> response = null;
     try {
-      BindResponse br;
+      final BindResponse br;
       switch (request.getSaslConfig().getMechanism()) {
 
       case EXTERNAL:

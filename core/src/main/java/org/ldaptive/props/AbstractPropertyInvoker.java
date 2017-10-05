@@ -143,7 +143,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    *
    * @return  object of the supplied type
    */
-  protected abstract Object convertValue(final Class<?> type, final String value);
+  protected abstract Object convertValue(Class<?> type, String value);
 
 
   /**
@@ -292,7 +292,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    */
   protected Object createTypeFromPropertyValue(final Class<?> c, final String s)
   {
-    Object newObject;
+    final Object newObject;
     if ("null".equals(s)) {
       newObject = null;
     } else {
@@ -321,7 +321,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    */
   protected Object createArrayTypeFromPropertyValue(final Class<?> c, final String s)
   {
-    Object newObject;
+    final Object newObject;
     if ("null".equals(s)) {
       newObject = null;
     } else {
@@ -368,7 +368,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
    */
   protected Object createArrayEnumFromPropertyValue(final Class<?> c, final String s)
   {
-    Object newObject;
+    final Object newObject;
     if ("null".equals(s)) {
       newObject = null;
     } else {

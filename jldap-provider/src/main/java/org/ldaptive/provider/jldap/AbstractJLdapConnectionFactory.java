@@ -121,5 +121,5 @@ public abstract class AbstractJLdapConnectionFactory<T extends JLdapConnection>
    *
    * @return  jldap connection
    */
-  protected abstract T createJLdapConnection(final LDAPConnection conn, final JLdapProviderConfig config);
+  protected abstract T createJLdapConnection(LDAPConnection conn, JLdapProviderConfig config);
 }

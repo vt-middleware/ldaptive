@@ -32,7 +32,7 @@ public final class IntermediateResponseFactory
     final ResponseControl[] responseControls,
     final int msgId)
   {
-    IntermediateResponse res;
+    final IntermediateResponse res;
     if (SyncInfoMessage.OID.equals(oid)) {
       res = new SyncInfoMessage(responseControls, msgId);
       res.decode(encoded);

@@ -58,7 +58,7 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
   protected SSLContextInitializer getHostnameVerifierSSLContextInitializer(final ConnectionConfig cc)
   {
     final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
-    SSLContextInitializer contextInit;
+    final SSLContextInitializer contextInit;
     if (cc.getSslConfig() != null && !cc.getSslConfig().isEmpty()) {
       final CredentialConfig credConfig = cc.getSslConfig().getCredentialConfig();
       final TrustManager[] managers = cc.getSslConfig().getTrustManagers();
@@ -107,8 +107,8 @@ public class ApacheLdapProvider implements Provider<ApacheLdapProviderConfig>
     final LdapConnectionConfig lcc = new LdapConnectionConfig();
     if (cc.getUseStartTLS() || cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://")) {
       final SSLContextInitializer contextInit = getHostnameVerifierSSLContextInitializer(cc);
-      TrustManager[] trustManagers;
-      KeyManager[] keyManagers;
+      final TrustManager[] trustManagers;
+      final KeyManager[] keyManagers;
       try {
         trustManagers = contextInit.getTrustManagers();
         keyManagers = contextInit.getKeyManagers();

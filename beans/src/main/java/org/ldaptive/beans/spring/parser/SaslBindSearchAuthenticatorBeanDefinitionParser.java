@@ -83,7 +83,7 @@ public class SaslBindSearchAuthenticatorBeanDefinitionParser extends AbstractSea
    */
   protected static SaslConfig parseSaslConfig(final String value)
   {
-    SaslConfig saslConfig;
+    final SaslConfig saslConfig;
     switch (value) {
 
     case "DIGEST_MD5":

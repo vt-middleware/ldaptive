@@ -35,7 +35,7 @@ public final class TranscoderFactory
       return null;
     }
 
-    ValueTranscoder<?> transcoder;
+    final ValueTranscoder<?> transcoder;
     synchronized (TRANSCODERS) {
       if (!TRANSCODERS.containsKey(type)) {
         transcoder = createValueTranscoder(type);

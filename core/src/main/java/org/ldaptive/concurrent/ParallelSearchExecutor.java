@@ -50,7 +50,7 @@ public class ParallelSearchExecutor extends AbstractParallelSearchExecutor<Conne
     final SearchEntryHandler... handlers)
     throws LdapException
   {
-    Collection<Response<SearchResult>> response;
+    final Collection<Response<SearchResult>> response;
     try (Connection conn = factory.getConnection()) {
       conn.open();
 

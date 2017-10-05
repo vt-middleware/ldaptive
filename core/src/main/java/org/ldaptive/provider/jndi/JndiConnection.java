@@ -194,7 +194,7 @@ public class JndiConnection implements ProviderConnection
   public Response<Void> bind(final BindRequest request)
     throws LdapException
   {
-    Response<Void> response;
+    final Response<Void> response;
     if (request.getSaslConfig() != null) {
       response = saslBind(request);
     } else if (request.getDn() == null && request.getCredential() == null) {
@@ -1036,7 +1036,7 @@ public class JndiConnection implements ProviderConnection
     protected String formatDn(final SearchResult sr, final String baseDn)
       throws NamingException
     {
-      String fqName;
+      final String fqName;
       if (sr.isRelative()) {
         logger.trace("formatting relative dn '{}'", sr.getNameInNamespace());
         final LdapName lname = new LdapName(sr.getNameInNamespace());

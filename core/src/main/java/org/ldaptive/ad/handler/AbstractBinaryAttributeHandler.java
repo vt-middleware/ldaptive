@@ -79,7 +79,7 @@ public abstract class AbstractBinaryAttributeHandler extends AbstractSearchEntry
    *
    * @return  string form of the value
    */
-  protected abstract String convertValue(final byte[] value);
+  protected abstract String convertValue(byte[] value);
 
 
   @Override

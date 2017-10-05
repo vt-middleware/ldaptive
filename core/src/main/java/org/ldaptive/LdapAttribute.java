@@ -558,7 +558,7 @@ public class LdapAttribute extends AbstractLdapBean
       }
     }
 
-    LdapAttribute la;
+    final LdapAttribute la;
     if (!binaryValues.isEmpty()) {
       la = new LdapAttribute(sb, true);
       la.setName(name);

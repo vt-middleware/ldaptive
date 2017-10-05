@@ -143,7 +143,7 @@ public abstract class AbstractCli
    *
    * @throws  Exception  on errors thrown by action
    */
-  protected abstract int dispatch(final CommandLine line)
+  protected abstract int dispatch(CommandLine line)
     throws Exception;
 
 

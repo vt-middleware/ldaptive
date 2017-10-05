@@ -136,7 +136,7 @@ public abstract class AbstractRetryOperationExceptionHandler<Q extends Request, 
    *
    * @throws  LdapException  if the retry fails
    */
-  protected abstract void handleInternal(final Connection conn, final Q request, final Response<S> response)
+  protected abstract void handleInternal(Connection conn, Q request, Response<S> response)
     throws LdapException;
 
 
@@ -151,10 +151,7 @@ public abstract class AbstractRetryOperationExceptionHandler<Q extends Request, 
    *
    * @throws  LdapException  if the operation fails
    */
-  protected abstract HandlerResult<Response<S>> createResult(
-    final Connection conn,
-    final Q request,
-    final Response<S> response)
+  protected abstract HandlerResult<Response<S>> createResult(Connection conn, Q request, Response<S> response)
     throws LdapException;
 
 

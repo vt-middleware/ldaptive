@@ -112,7 +112,7 @@ public abstract class AbstractServletSearchExecutor implements ServletSearchExec
    *
    * @throws  IOException  if an error occurs writing to the response
    */
-  protected abstract void writeResponse(final SearchResult result, final HttpServletResponse response)
+  protected abstract void writeResponse(SearchResult result, HttpServletResponse response)
     throws IOException;
 
 

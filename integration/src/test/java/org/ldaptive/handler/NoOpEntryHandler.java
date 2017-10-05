@@ -16,6 +16,16 @@ public class NoOpEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    return o instanceof NoOpEntryHandler;
+  }
+
+
+  @Override
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, (Object) null);
