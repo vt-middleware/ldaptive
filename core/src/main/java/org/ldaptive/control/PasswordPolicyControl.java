@@ -163,10 +163,10 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   }
 
   /** Ppolicy warning. */
-  private int timeBeforeExpiration;
+  private int timeBeforeExpiration = -1;
 
   /** Ppolicy warning. */
-  private int graceAuthNsRemaining;
+  private int graceAuthNsRemaining = -1;
 
   /** Ppolicy error. */
   private Error error;

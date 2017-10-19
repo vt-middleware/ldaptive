@@ -30,6 +30,8 @@ import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.SessionTrackingControl;
+import org.ldaptive.extended.PasswordModifyOperation;
+import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.PooledConnectionFactoryManager;
@@ -1305,39 +1307,121 @@ public class AuthenticatorTest extends AbstractTest
     try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
 
+      // get the entry DN
+      final String entryDn = auth.resolveDn(new User(user));
+
       // test bind sending ppolicy control
       response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+      AssertJUnit.assertTrue(response.getResult());
+      ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+      AssertJUnit.assertNotNull(ppcResponse);
 
-      final LdapEntry entry = response.getLdapEntry();
+      AssertJUnit.assertNull(ppcResponse.getError());
+      AssertJUnit.assertNull(response.getAccountState());
+      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+      AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
 
-      // test bind on locked account
       final ModifyOperation modify = new ModifyOperation(conn);
       modify.execute(
         new ModifyRequest(
-          entry.getDn(),
+          entryDn,
+          new AttributeModification(
+            AttributeModificationType.ADD,
+            new LdapAttribute("pwdPolicySubentry", "cn=default,ou=policies,dc=vt,dc=edu"))));
+      Thread.sleep(2000);
+
+      // test bind with zero expiration time
+      response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+      AssertJUnit.assertTrue(response.getResult());
+      ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+      AssertJUnit.assertEquals(0, ppcResponse.getTimeBeforeExpiration());
+      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+      AssertJUnit.assertNotNull(response.getAccountState().getWarning().getExpiration());
+      AssertJUnit.assertNull(response.getAccountState().getError());
+
+      // test bind with expiration time
+      final String newCredential = credential + "-new";
+      final PasswordModifyOperation passwordModify = new PasswordModifyOperation(conn);
+      passwordModify.execute(
+        new PasswordModifyRequest(entryDn, new Credential(credential), new Credential(newCredential)));
+      Thread.sleep(2000);
+
+      response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
+      AssertJUnit.assertTrue(response.getResult());
+      ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+      AssertJUnit.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
+      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+      AssertJUnit.assertNotNull(response.getAccountState().getWarning().getExpiration());
+      AssertJUnit.assertNull(response.getAccountState().getError());
+
+      // test bind on locked account
+      modify.execute(
+        new ModifyRequest(
+          entryDn,
           new AttributeModification(
             AttributeModificationType.ADD,
             new LdapAttribute("pwdAccountLockedTime", "000001010000Z"))));
 
-      response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+      response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
       AssertJUnit.assertFalse(response.getResult());
       ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
       AssertJUnit.assertEquals(PasswordPolicyControl.Error.ACCOUNT_LOCKED, ppcResponse.getError());
       AssertJUnit.assertEquals(
         PasswordPolicyControl.Error.ACCOUNT_LOCKED.getCode(),
         response.getAccountState().getError().getCode());
+      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+      AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
 
-      // test bind with expiration time
       modify.execute(
         new ModifyRequest(
-          entry.getDn(),
+          entryDn,
           new AttributeModification(AttributeModificationType.REMOVE, new LdapAttribute("pwdAccountLockedTime"))));
 
-      response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-      ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-      AssertJUnit.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
-      AssertJUnit.assertNotNull(response.getAccountState().getWarning().getExpiration());
+      // test bind with grace login
+      modify.execute(
+        new ModifyRequest(
+          entryDn,
+          new AttributeModification(
+            AttributeModificationType.REPLACE,
+            new LdapAttribute("pwdPolicySubentry", "cn=1s-expire,ou=policies,dc=vt,dc=edu"))));
+      Thread.sleep(2000);
 
+      // note that OpenLDAP never sends back 0 grace logins
+      int graceLogins = 2;
+      response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
+      do {
+        ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+        AssertJUnit.assertTrue(response.getResult());
+        AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
+        AssertJUnit.assertEquals(graceLogins, ppcResponse.getGraceAuthNsRemaining());
+        AssertJUnit.assertEquals(graceLogins, response.getAccountState().getWarning().getLoginsRemaining());
+        AssertJUnit.assertNull(response.getAccountState().getWarning().getExpiration());
+        AssertJUnit.assertNull(response.getAccountState().getError());
+        graceLogins--;
+        Thread.sleep(2000);
+        response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
+      } while (response.getResult());
+
+      // password expired
+      ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+      AssertJUnit.assertFalse(response.getResult());
+      AssertJUnit.assertEquals(PasswordPolicyControl.Error.PASSWORD_EXPIRED, ppcResponse.getError());
+      AssertJUnit.assertEquals(
+        PasswordPolicyControl.Error.PASSWORD_EXPIRED.getCode(),
+        response.getAccountState().getError().getCode());
+      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+      AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
+
+      modify.execute(
+        new ModifyRequest(
+          entryDn,
+          new AttributeModification(
+            AttributeModificationType.REMOVE, new LdapAttribute("pwdPolicySubentry"))));
+      modify.execute(
+        new ModifyRequest(
+          entryDn,
+          new AttributeModification(
+            AttributeModificationType.REPLACE, new LdapAttribute("userPassword", credential))));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       AssertJUnit.assertNotNull(e);
