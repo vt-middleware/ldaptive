@@ -32,6 +32,9 @@ public class PasswordPolicyControlTest
     final PasswordPolicyControl graceAuthns = new PasswordPolicyControl();
     graceAuthns.setGraceAuthNsRemaining(4);
 
+    final PasswordPolicyControl graceAuthnsZero = new PasswordPolicyControl();
+    graceAuthnsZero.setGraceAuthNsRemaining(0);
+
     final PasswordPolicyControl passExpired = new PasswordPolicyControl();
     passExpired.setError(PasswordPolicyControl.Error.PASSWORD_EXPIRED);
 
@@ -40,23 +43,29 @@ public class PasswordPolicyControlTest
 
     return
       new Object[][] {
-        // only timeBeforeExpiration is set
+        // timeBeforeExpiration is set
         // BER: 30:07:A0:05:80:03:26:58:AB
         new Object[] {
           LdapUtils.base64Decode("MAegBYADJlir"),
           timeBeforeExp,
         },
-        // only timeBeforeExpiration is zero
+        // timeBeforeExpiration is zero
         // BER: 30:05:A0:03:80:01:00
         new Object[] {
           LdapUtils.base64Decode("MAWgA4ABAA=="),
           timeBeforeExpZero,
         },
-        // only graceAuthNsRemaining is set
+        // graceAuthNsRemaining is set to 4
         // BER: 30:05:A0:03:81:01:04
         new Object[] {
           LdapUtils.base64Decode("MAWgA4EBBA=="),
           graceAuthns,
+        },
+        // graceAuthNsRemaining is zero
+        // BER: 30:05:A0:03:81:01:00
+        new Object[] {
+          LdapUtils.base64Decode("MAWgA4EBAA=="),
+          graceAuthnsZero,
         },
         // error=passwordExpired
         // BER: 30:03:81:01:00
