@@ -1,12 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
+// CheckStyle:IllegalImport OFF
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
-// CheckStyle:IllegalImport OFF
 import sun.security.util.HostnameChecker;
 // CheckStyle:IllegalImport ON
 
