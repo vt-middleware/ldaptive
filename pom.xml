@@ -79,7 +79,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>1.7.25</org.slf4j.version>
-    <org.springframework.version>4.3.11.RELEASE</org.springframework.version>
+    <org.springframework.version>4.3.13.RELEASE</org.springframework.version>
     <commons-cli.version>1.4</commons-cli.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>1.2.0</japicmp.oldVersion>
@@ -177,7 +177,7 @@
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>6.11</version>
+        <version>6.13.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -216,7 +216,7 @@
       <dependency>
         <groupId>com.unboundid</groupId>
         <artifactId>unboundid-ldapsdk</artifactId>
-        <version>4.0.1</version>
+        <version>4.0.3</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>
@@ -312,7 +312,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.4</version>
+              <version>8.5</version>
             </dependency>
           </dependencies>
         </plugin>
