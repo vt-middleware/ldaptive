@@ -414,7 +414,7 @@
           <version>true</version>
           <doctitle>Ldaptive ${project.version} API</doctitle>
           <windowtitle>Ldaptive ${project.version} API</windowtitle>
-          <bottom><![CDATA[<i>Copyright &#169; 2003-2017 Virginia Tech. All Rights Reserved.</i>]]></bottom>
+          <bottom><![CDATA[<i>Copyright &#169; 2003-2018 Virginia Tech. All Rights Reserved.</i>]]></bottom>
           <additionalDependencies>
             <additionalDependency>
               <groupId>commons-cli</groupId>
