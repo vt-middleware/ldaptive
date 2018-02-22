@@ -9,7 +9,7 @@ function run_mvn() {
   if [ -z "${SWITCH}" ]; then
     ${MVN} -U -P${PROFILES} ${PHASES}
   else
-    ${MVN} -U -P${PROFILES} ${PHASES} -D${SWITCH}
+    ${MVN} -U -P${PROFILES} ${PHASES} ${SWITCH}
   fi
 }
 
@@ -29,6 +29,14 @@ case "$1" in
   install)
     run_mvn distribution,apache,jldap,opendj,unboundid install
     ;;
+  versions-set)
+    VERSION=${2}
+    if [ -z "${VERSION}" ]; then
+      echo "USAGE: `basename $0` versions-set <version>"
+      exit 1
+    fi
+    run_mvn distribution,apache,jldap,opendj,unboundid versions:set "-DnewVersion=${VERSION} -DgenerateBackupPoms=false"
+    ;;
   deploy)
     LOCAL_REPO=${2}
     if [ -z "${LOCAL_REPO}" ]; then
@@ -36,14 +44,14 @@ case "$1" in
       exit 1
     fi
     run_mvn apache,jldap,opendj,unboundid clean
-    run_mvn apache,jldap,opendj,unboundid deploy "altDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
+    run_mvn apache,jldap,opendj,unboundid deploy "-DaltDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
     ;;
   bundle-create)
-    run_mvn distribution,apache,jldap,opendj,unboundid repository:bundle-create sign=true
+    run_mvn distribution,apache,jldap,opendj,unboundid repository:bundle-create -Dsign=true
     ;;
   *)
     if [ -n "$1" ]; then
       echo "Invalid command"
     fi
-    echo "USAGE: `basename $0` clean|javadoc|package|verify|install|deploy|bundle-create"
+    echo "USAGE: `basename $0` clean|javadoc|package|verify|install|versions-set|deploy|bundle-create"
 esac
