@@ -351,6 +351,11 @@
           <artifactId>japicmp-maven-plugin</artifactId>
           <version>0.11.0</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>2.5</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -470,6 +475,14 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <inherited>false</inherited>
+        <configuration>
+          <rulesUri>file:src/main/versions/maven-version-rules.xml</rulesUri>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>com.github.siom79.japicmp</groupId>

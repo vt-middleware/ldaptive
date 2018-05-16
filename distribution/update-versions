@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Note that this script does not update plugin versions
+
+mvn -U versions:use-latest-releases -DgenerateBackupPoms=false && \
+  mvn -U versions:update-properties -DgenerateBackupPoms=false
