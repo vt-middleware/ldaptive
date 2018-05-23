@@ -51,19 +51,22 @@ public class ClassLoaderTest
     }
 
     // remove ldaptive classes from the classloader
-    final TestClassLoader cl = new TestClassLoader(Thread.currentThread().getContextClassLoader());
-    Thread.currentThread().setContextClassLoader(cl);
+    final ClassLoader cl = Thread.currentThread().getContextClassLoader();
 
     final ConnectionConfig cc = new ConnectionConfig(host);
     cc.setUseSSL(true);
     cc.setSslConfig(createSslConfig());
     final Connection conn = DefaultConnectionFactory.getConnection(cc);
     try {
+      Thread.currentThread().setContextClassLoader(new TestClassLoader(cl));
       conn.open();
       final SearchOperation op = new SearchOperation(conn);
       final Response<SearchResult> response = op.execute(SearchRequest.newObjectScopeSearchRequest(""));
-      AssertJUnit.assertFalse(response.getResult().getEntries().isEmpty());
+      AssertJUnit.fail("Should have thrown ClassNotFoundException");
+    } catch (Exception e) {
+      AssertJUnit.assertEquals(ClassNotFoundException.class, e.getCause().getCause().getClass());
     } finally {
+      Thread.currentThread().setContextClassLoader(cl);
       conn.close();
     }
   }
@@ -92,7 +95,7 @@ public class ClassLoaderTest
       throws ClassNotFoundException
     {
       if (name.startsWith("org.ldaptive")) {
-        throw new ClassNotFoundException("Use a different class loader for ldaptive");
+        throw new ClassNotFoundException("Use a different class loader for ldaptive: " + name);
       }
       return loadClass(name, false);
     }
