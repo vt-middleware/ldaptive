@@ -51,10 +51,11 @@ public class PropertyValueParserTest
     o4.setSecurityStrength(SecurityStrength.LOW);
     o4.setQualityOfProtection(QualityOfProtection.AUTH);
 
-    final String p5 = "{{mechanism=DIGEST_MD5}{authorizationId=test1}}";
+    final String p5 = "{{mechanism=DIGEST_MD5}{authorizationId=test1}{mutualAuthentication=true}}";
     final SaslConfig o5 = new SaslConfig();
     o5.setMechanism(Mechanism.DIGEST_MD5);
     o5.setAuthorizationId("test1");
+    o5.setMutualAuthentication(true);
 
     final String p6 = "{mechanism=EXTERNAL}";
     final SaslConfig o6 = new SaslConfig();

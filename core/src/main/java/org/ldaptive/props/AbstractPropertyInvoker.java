@@ -243,17 +243,17 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       newValue = value.split(",");
     } else if (Object[].class == type) {
       newValue = value.split(",");
-    } else if (float.class == type) {
+    } else if (float.class == type || Float.class == type) {
       newValue = Float.parseFloat(value);
-    } else if (int.class == type) {
+    } else if (int.class == type || Integer.class == type) {
       newValue = Integer.parseInt(value);
-    } else if (long.class == type) {
+    } else if (long.class == type || Long.class == type) {
       newValue = Long.parseLong(value);
-    } else if (short.class == type) {
+    } else if (short.class == type || Short.class == type) {
       newValue = Short.parseShort(value);
-    } else if (double.class == type) {
+    } else if (double.class == type || Double.class == type) {
       newValue = Double.parseDouble(value);
-    } else if (boolean.class == type) {
+    } else if (boolean.class == type || Boolean.class == type) {
       newValue = Boolean.valueOf(value);
     } else if (Duration.class == type) {
       newValue = Duration.parse(value);
