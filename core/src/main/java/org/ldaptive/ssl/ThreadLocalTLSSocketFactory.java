@@ -33,6 +33,15 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
 
 
   /**
+   * Removes the ssl config from the current thread-local value.
+   */
+  public void removeSslConfig()
+  {
+    THREAD_LOCAL_SSL_CONFIG.remove();
+  }
+
+
+  /**
    * This returns the default SSL socket factory.
    *
    * @return  socket factory

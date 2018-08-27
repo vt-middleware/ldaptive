@@ -51,7 +51,9 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
     environment = Collections.unmodifiableMap(env);
     classLoader = cl;
     if (ThreadLocalTLSSocketFactory.class.getName().equals(environment.get(JndiProvider.SOCKET_FACTORY))) {
-      threadLocalSslConfig = new ThreadLocalTLSSocketFactory().getSslConfig();
+      final ThreadLocalTLSSocketFactory sf = new ThreadLocalTLSSocketFactory();
+      threadLocalSslConfig = sf.getSslConfig();
+      sf.removeSslConfig();
     }
   }
 
@@ -60,11 +62,12 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
   protected JndiConnection createInternal(final String url)
     throws LdapException
   {
+    ThreadLocalTLSSocketFactory threadLocalTLSSocketFactory = null;
     if (
       threadLocalSslConfig != null &&
         ThreadLocalTLSSocketFactory.class.getName().equals(environment.get(JndiProvider.SOCKET_FACTORY))) {
-      final ThreadLocalTLSSocketFactory sf = new ThreadLocalTLSSocketFactory();
-      sf.setSslConfig(threadLocalSslConfig);
+      threadLocalTLSSocketFactory = new ThreadLocalTLSSocketFactory();
+      threadLocalTLSSocketFactory.setSslConfig(threadLocalSslConfig);
     }
 
     // CheckStyle:IllegalType OFF
@@ -88,6 +91,10 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
       }
     } catch (NamingException e) {
       throw new ConnectionException(e, NamingExceptionUtils.getResultCode(e.getClass()));
+    } finally {
+      if (threadLocalTLSSocketFactory != null) {
+        threadLocalTLSSocketFactory.removeSslConfig();
+      }
     }
     return conn;
   }
