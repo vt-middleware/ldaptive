@@ -53,7 +53,6 @@ public class JndiConnectionFactory extends AbstractProviderConnectionFactory<Jnd
     if (ThreadLocalTLSSocketFactory.class.getName().equals(environment.get(JndiProvider.SOCKET_FACTORY))) {
       final ThreadLocalTLSSocketFactory sf = new ThreadLocalTLSSocketFactory();
       threadLocalSslConfig = sf.getSslConfig();
-      sf.removeSslConfig();
     }
   }
 
