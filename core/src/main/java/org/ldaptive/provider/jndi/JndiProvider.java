@@ -169,11 +169,13 @@ public class JndiProvider implements Provider<JndiProviderConfig>
   protected JndiConnectionFactory getJndiConnectionFactory(final ConnectionConfig cc, final Map<String, Object> env)
   {
     SSLSocketFactory factory = config.getSslSocketFactory();
+    boolean threadLocal = false;
     if (factory == null && (cc.getUseSSL() || cc.getLdapUrl().toLowerCase().contains("ldaps://"))) {
       // LDAPS hostname verification does not occur by default
       // set a default hostname verifier
       final LdapURL ldapUrl = new LdapURL(cc.getLdapUrl());
       factory = ThreadLocalTLSSocketFactory.getHostnameVerifierFactory(cc.getSslConfig(), ldapUrl.getHostnames());
+      threadLocal = true;
     }
     ClassLoader classLoader = config.getClassLoader();
     if (classLoader == null && factory != null) {
@@ -184,13 +186,19 @@ public class JndiProvider implements Provider<JndiProviderConfig>
         logger.debug("Could not find {}, using class loader {}", factory.getClass(), classLoader);
       }
     }
-    return
-      new JndiConnectionFactory(
-        cc.getLdapUrl(),
-        cc.getConnectionStrategy(),
-        config,
-        env != null ? env : getDefaultEnvironment(cc, factory != null ? factory.getClass().getName() : null),
-        classLoader);
+    try {
+      return
+        new JndiConnectionFactory(
+          cc.getLdapUrl(),
+          cc.getConnectionStrategy(),
+          config,
+          env != null ? env : getDefaultEnvironment(cc, factory != null ? factory.getClass().getName() : null),
+          classLoader);
+    } finally {
+      if (threadLocal) {
+        ((ThreadLocalTLSSocketFactory) factory).removeSslConfig();
+      }
+    }
   }
 
 
