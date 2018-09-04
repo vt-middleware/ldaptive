@@ -12,6 +12,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.io.Base64;
 import org.ldaptive.io.Hex;
@@ -45,6 +46,9 @@ public final class LdapUtils
   private static final Pattern IPV6_HEX_COMPRESSED_PATTERN = Pattern.compile(
     "^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::" +
     "((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
+
+  /** Pattern that matches control characters. */
+  private static final Pattern CNTRL_PATTERN = Pattern.compile("\\p{Cntrl}");
 
   /** Prefix used to indicate a classpath resource. */
   private static final String CLASSPATH_PREFIX = "classpath:";
@@ -195,6 +199,37 @@ public final class LdapUtils
       }
     }
     return sb.toString();
+  }
+
+
+  /**
+   * Converts all characters <= 0x1F and 0x7F to percent encoded hex.
+   *
+   * @param  value  to encode control characters in
+   *
+   * @return  string with percent encoded hex characters
+   */
+  public static String percentEncodeControlChars(final String value)
+  {
+    if (value != null) {
+      final Matcher m = CNTRL_PATTERN.matcher(value);
+      if (m.find()) {
+        final StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < value.length(); i++) {
+          final char ch = value.charAt(i);
+          // CheckStyle:MagicNumber OFF
+          if (ch <= 0x1F || ch == 0x7F) {
+            sb.append("%");
+            sb.append(hexEncode(new byte[] {(byte) (ch & 0x7F)}));
+          } else {
+            sb.append(ch);
+          }
+          // CheckStyle:MagicNumber ON
+        }
+        return sb.toString();
+      }
+    }
+    return value;
   }
 
 
