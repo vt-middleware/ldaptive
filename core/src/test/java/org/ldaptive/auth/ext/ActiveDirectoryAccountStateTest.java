@@ -35,6 +35,11 @@ public class ActiveDirectoryAccountStateTest
           ActiveDirectoryAccountState.Error.LOGON_FAILURE,
         },
         new Object[] {
+          "80090308: LdapErr: DSID-0C09042F, comment: " +
+            "AcceptSecurityContext error, data 52e, v2580\u0000",
+          ActiveDirectoryAccountState.Error.LOGON_FAILURE,
+        },
+        new Object[] {
           "80090308: LdapErr: DSID-0C09030B, comment: " +
             "AcceptSecurityContext error, data 530, v893",
           ActiveDirectoryAccountState.Error.INVALID_LOGON_HOURS,

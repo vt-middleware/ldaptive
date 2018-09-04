@@ -14,6 +14,22 @@ import org.ldaptive.control.ResponseControl;
 public class Response<T> implements ResponseMessage
 {
 
+  /** Property to configure the encoding of control characters in the response message. */
+  public static final String ENCODE_CNTRL_CHARS = "org.ldaptive.response.encodeCntrlChars";
+
+  /** Whether to encode control characters. */
+  protected static boolean encodeCntrlChars;
+
+  /**
+   * statically initialize encoding of control characters.
+   */
+  static {
+    final String ecc = System.getProperty(ENCODE_CNTRL_CHARS);
+    if (ecc != null) {
+      encodeCntrlChars = Boolean.valueOf(ecc);
+    }
+  }
+
   /** Operation response. */
   private final T result;
 
@@ -178,7 +194,7 @@ public class Response<T> implements ResponseMessage
         hashCode(),
         result,
         resultCode,
-        message,
+        encodeCntrlChars ? LdapUtils.percentEncodeControlChars(message) : message,
         matchedDn,
         Arrays.toString(responseControls),
         Arrays.toString(referralURLs),

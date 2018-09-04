@@ -3,6 +3,7 @@ package org.ldaptive.auth;
 
 import java.util.Arrays;
 import org.ldaptive.Connection;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.control.ResponseControl;
@@ -91,14 +92,13 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
   {
     return
       String.format(
-        "[%s@%d::connection=%s, result=%s, resultCode=%s, message=%s, " +
-        "controls=%s]",
+        "[%s@%d::connection=%s, result=%s, resultCode=%s, message=%s, controls=%s]",
         getClass().getName(),
         hashCode(),
         connection,
         getResult(),
         getResultCode(),
-        getMessage(),
+        encodeCntrlChars ? LdapUtils.percentEncodeControlChars(getMessage()) : getMessage(),
         Arrays.toString(getControls()));
   }
 }
