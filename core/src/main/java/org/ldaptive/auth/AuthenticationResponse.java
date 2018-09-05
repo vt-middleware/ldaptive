@@ -3,6 +3,7 @@ package org.ldaptive.auth;
 
 import java.util.Arrays;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.control.ResponseControl;
@@ -169,7 +170,7 @@ public class AuthenticationResponse extends Response<Boolean>
         accountState,
         getResult(),
         getResultCode(),
-        getMessage(),
+        encodeCntrlChars ? LdapUtils.percentEncodeControlChars(getMessage()) : getMessage(),
         Arrays.toString(getControls()));
   }
 }
