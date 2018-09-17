@@ -167,7 +167,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    */
   protected PooledConnectionProxy retrieveAvailableConnection()
   {
-    PooledConnectionProxy pc = null;
+    PooledConnectionProxy pc;
     logger.trace("waiting on pool lock for retrieve available {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
@@ -235,13 +235,13 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     logger.trace("waiting on pool lock for check in {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
-      if (active.remove(pc)) {
-        if (valid) {
-          available.add(pc);
-          pc.getPooledConnectionStatistics().addAvailableStat();
-          logger.trace("returned active connection: {}", pc);
-          poolNotEmpty.signal();
-        }
+      if (!valid) {
+        removeAvailableAndActiveConnection(pc);
+      } else if (active.remove(pc)) {
+        available.add(pc);
+        pc.getPooledConnectionStatistics().addAvailableStat();
+        logger.trace("returned active connection: {}", pc);
+        poolNotEmpty.signal();
       } else if (available.contains(pc)) {
         logger.warn("returned available connection: {}", pc);
       } else {
