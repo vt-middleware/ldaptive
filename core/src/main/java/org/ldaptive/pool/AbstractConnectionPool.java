@@ -610,12 +610,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
       if (available.remove(pc)) {
         destroy = true;
       } else {
-        logger.debug("attempt to remove unknown available connection: {}", pc);
+        logger.trace("attempt to remove unknown available connection: {}", pc);
       }
       if (active.remove(pc)) {
         destroy = true;
       } else {
-        logger.debug("attempt to remove unknown active connection: {}", pc);
+        logger.trace("attempt to remove unknown active connection: {}", pc);
       }
     } finally {
       poolLock.unlock();
@@ -834,8 +834,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   {
     throwIfNotInitialized();
 
-    final Set<PooledConnectionStatistics> stats = Collections.unmodifiableSet(
-      new HashSet<>());
+    final Set<PooledConnectionStatistics> stats = new HashSet<>();
     poolLock.lock();
     try {
       for (PooledConnectionProxy cp : available) {
@@ -847,7 +846,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     } finally {
       poolLock.unlock();
     }
-    return stats;
+    return Collections.unmodifiableSet(stats);
   }
 
 
