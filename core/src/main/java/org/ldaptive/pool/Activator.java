@@ -2,7 +2,7 @@
 package org.ldaptive.pool;
 
 /**
- * Provides an interface for activating objects when they enter the pool.
+ * Provides an interface for activating objects when they are checked out from the pool.
  *
  * @param  <T>  type of object being pooled
  *
