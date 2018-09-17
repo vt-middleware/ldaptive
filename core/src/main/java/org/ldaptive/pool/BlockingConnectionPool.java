@@ -167,7 +167,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    */
   protected PooledConnectionProxy retrieveAvailableConnection()
   {
-    PooledConnectionProxy pc;
+    final PooledConnectionProxy pc;
     logger.trace("waiting on pool lock for retrieve available {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
