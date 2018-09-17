@@ -200,7 +200,7 @@ public final class LdapUtils
 
 
   /**
-   * Converts all characters <= 0x1F and 0x7F to percent encoded hex.
+   * Converts all characters &lt;= 0x1F and 0x7F to percent encoded hex.
    *
    * @param  value  to encode control characters in
    *
