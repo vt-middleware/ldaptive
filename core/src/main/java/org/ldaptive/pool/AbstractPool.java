@@ -114,12 +114,16 @@ public abstract class AbstractPool<T>
    */
   public boolean activate(final T t)
   {
-    final boolean success;
+    boolean success = false;
     if (activator == null) {
       success = true;
       logger.trace("no activator configured");
     } else {
-      success = activator.activate(t);
+      try {
+        success = activator.activate(t);
+      } catch (Exception e) {
+        logger.warn("activate threw exception", e);
+      }
       logger.trace("activation for {} = {}", t, success);
     }
     return success;
@@ -158,12 +162,16 @@ public abstract class AbstractPool<T>
    */
   public boolean passivate(final T t)
   {
-    final boolean success;
+    boolean success = false;
     if (passivator == null) {
       success = true;
       logger.trace("no passivator configured");
     } else {
-      success = passivator.passivate(t);
+      try {
+        success = passivator.passivate(t);
+      } catch (Exception e) {
+        logger.warn("passivate threw exception", e);
+      }
       logger.trace("passivation for {} = {}", t, success);
     }
     return success;
@@ -202,12 +210,16 @@ public abstract class AbstractPool<T>
    */
   public boolean validate(final T t)
   {
-    final boolean success;
+    boolean success = false;
     if (validator == null) {
       success = true;
       logger.warn("validate called, but no validator configured");
     } else {
-      success = validator.validate(t);
+      try {
+        success = validator.validate(t);
+      } catch (Exception e) {
+        logger.warn("validate threw exception", e);
+      }
       logger.trace("validation for {} = {}", t, success);
     }
     return success;
