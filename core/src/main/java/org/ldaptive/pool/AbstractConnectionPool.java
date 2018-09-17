@@ -664,7 +664,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   protected boolean validateAndPassivateConnection(final PooledConnectionProxy pc)
   {
     if (!pc.getConnection().isOpen()) {
-      logger.debug("connection not open: {}", pc);
+      logger.warn("connection not open: {}", pc);
       return false;
     }
 
