@@ -239,8 +239,10 @@ public class ConnectionTest
      * SearchOperationTest: 1
      */
     final LdapURL ldapUrl = new LdapURL(host);
-    final int openConns = TestUtils.countOpenConnections(
-      ldapUrl.getEntry().getHostname().substring(0, ldapUrl.getEntry().getHostname().indexOf(".")));
+    final String hostPrefix = ldapUrl.getEntry().getHostname().indexOf(".") != -1 ?
+      ldapUrl.getEntry().getHostname().substring(0, ldapUrl.getEntry().getHostname().indexOf(".")) :
+      ldapUrl.getEntry().getHostname();
+    final int openConns = TestUtils.countOpenConnections(hostPrefix);
     AssertJUnit.assertEquals(1, openConns);
   }
 }

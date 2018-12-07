@@ -3,7 +3,6 @@
 
 <suite name="ldaptive" verbose="1" parallel="tests" thread-count="1">
 
-  <parameter name="ldapTestsIgnoreLock" value="${ldapTestsIgnoreLock}"/>
   <parameter name="ldapTestHost" value="${ldapTestHost}"/>
   <parameter name="ldapSslTestHost" value="${ldapSslTestHost}"/>
   <parameter name="ldapBaseDn" value="${ldapBaseDn}"/>

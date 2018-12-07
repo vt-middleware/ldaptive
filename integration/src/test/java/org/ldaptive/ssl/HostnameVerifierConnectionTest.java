@@ -29,7 +29,7 @@ public class HostnameVerifierConnectionTest
     throws Exception
   {
     System.setProperty("javax.net.ssl.trustStore", "target/test-classes/ldaptive.truststore");
-    System.setProperty("javax.net.ssl.trustStoreType", "BKS");
+    System.setProperty("javax.net.ssl.trustStoreType", "JKS");
     System.setProperty("javax.net.ssl.trustStorePassword", "changeit");
   }
 

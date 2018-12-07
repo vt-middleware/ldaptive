@@ -88,14 +88,13 @@ public class TestControl
   /**
    * Obtains the lock before running all tests.
    *
-   * @param  ignoreLock  whether to check for the global test lock
    * @param  bindDn  to lock on
    *
    * @throws  Exception  on test failure
    */
   @BeforeSuite(alwaysRun = true)
-  @Parameters({ "ldapTestsIgnoreLock", "ldapBindDn" })
-  public void setup(final String ignoreLock, final String bindDn)
+  @Parameters("ldapBindDn")
+  public void setup(final String bindDn)
     throws Exception
   {
     final Provider<?> provider = DefaultConnectionFactory.getDefaultProvider();
@@ -114,25 +113,6 @@ public class TestControl
     }
 
     final Connection conn = TestUtils.createSetupConnection();
-    if (!Boolean.valueOf(ignoreLock)) {
-      boolean isTestRunning = true;
-      // wait for other tests to finish
-      int i = 1;
-      while (isTestRunning) {
-        try {
-          conn.open();
-
-          final CompareOperation compare = new CompareOperation(conn);
-          isTestRunning = !compare.execute(new CompareRequest(bindDn, ATTR_IDLE)).getResult();
-        } finally {
-          conn.close();
-          if (isTestRunning) {
-            System.err.println("Waiting for test lock...");
-            Thread.sleep(WAIT_TIME * i++);
-          }
-        }
-      }
-    }
     try {
       conn.open();
 

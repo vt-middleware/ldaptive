@@ -96,7 +96,7 @@
   <bean id="credentialConfig"
     class="org.ldaptive.ssl.KeyStoreCredentialConfig"
     p:trustStore="classpath:/ldaptive.truststore"
-    p:trustStoreType="BKS"
+    p:trustStoreType="JKS"
     p:trustStorePassword="changeit"
   />
 

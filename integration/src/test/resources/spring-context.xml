@@ -30,11 +30,11 @@
   
   <bean id="credentialConfig"
     class="org.ldaptive.ssl.KeyStoreCredentialConfig"
-    p:keyStore="classpath:/ldaptive.keystore"
-    p:keyStoreType="BKS"
+    p:keyStore="classpath:/ldaptive.p12"
+    p:keyStoreType="PKCS12"
     p:keyStorePassword="changeit"
     p:trustStore="classpath:/ldaptive.truststore"
-    p:trustStoreType="BKS"
+    p:trustStoreType="JKS"
     p:trustStorePassword="changeit"
   />
   

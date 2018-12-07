@@ -2,6 +2,7 @@ dn: cn=Group 4,${ldapBaseDn}
 cn: Group 4
 contactPerson: cn=John Adams,${ldapBaseDn}
 creationDate: 2010-06-06T12:00:00
+gidNumber: 2004
 objectClass: virginiaTechGroup
 objectClass: top
 uid: 2004

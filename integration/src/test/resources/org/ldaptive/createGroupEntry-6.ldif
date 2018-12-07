@@ -2,6 +2,7 @@ dn: cn=Group 6,${ldapBaseDn}
 cn: Group 6
 contactPerson: cn=John Tyler,${ldapBaseDn}
 creationDate: 2010-06-06T12:00:00
+gidNumber: 2006
 objectClass: virginiaTechGroup
 objectClass: top
 uid: 2006
