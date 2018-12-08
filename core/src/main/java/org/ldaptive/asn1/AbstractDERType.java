@@ -40,8 +40,12 @@ public abstract class AbstractDERType
   protected byte[] encode(final byte[]... items)
   {
     int itemLength = 0;
-    for (byte[] b : items) {
-      itemLength += b.length;
+    if (items != null) {
+      for (byte[] b : items) {
+        if (b != null) {
+          itemLength += b.length;
+        }
+      }
     }
 
     final byte[] lengthBytes;
@@ -66,8 +70,12 @@ public abstract class AbstractDERType
     for (byte b : lengthBytes) {
       encodedItem.put(b);
     }
-    for (byte[] b : items) {
-      encodedItem.put(b);
+    if (items != null) {
+      for (byte[] b : items) {
+        if (b != null) {
+          encodedItem.put(b);
+        }
+      }
     }
     return encodedItem.array();
   }
