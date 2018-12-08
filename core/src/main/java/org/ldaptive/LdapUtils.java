@@ -468,7 +468,7 @@ public final class LdapUtils
     } else if (object instanceof short[]) {
       hc += Arrays.hashCode((short[]) object);
     } else if (object instanceof Object[]) {
-      hc += Arrays.hashCode((Object[]) object);
+      hc += Arrays.deepHashCode((Object[]) object);
     } else {
       hc += object.hashCode();
     }
