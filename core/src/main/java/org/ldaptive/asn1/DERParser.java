@@ -132,15 +132,16 @@ public class DERParser
     if ((b & 0x80) == 0x80) {
       final int len = b & 0x7F;
       if (len > 0) {
+        final int limit = encoded.limit();
         encoded.limit(encoded.position() + len);
         length = IntegerType.decodeUnsigned(encoded).intValue();
-        encoded.limit(encoded.capacity());
+        encoded.limit(limit);
       }
     } else {
       length = b;
     }
+    // CheckStyle:MagicNumber ON
     return length;
-      // CheckStyle:MagicNumber ON
   }
 
 
@@ -171,6 +172,7 @@ public class DERParser
    */
   private void parseTag(final DERTag tag, final ByteBuffer encoded)
   {
+    final int limit = encoded.limit();
     final int end = readLength(encoded) + encoded.position();
     final int start = encoded.position();
 
@@ -187,7 +189,7 @@ public class DERParser
     if (tag.isConstructed()) {
       parseTags(encoded);
     }
-    encoded.position(end).limit(encoded.capacity());
+    encoded.limit(limit).position(end);
   }
 
 
