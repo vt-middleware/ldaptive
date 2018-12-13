@@ -149,20 +149,38 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
   {
     TrustManager[] tm = null;
     if (trustKeystore != null) {
-      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-      if (trustAliases != null) {
-        final KeyStore ks = KeyStoreUtils.newInstance();
-        for (String alias : trustAliases) {
-          final KeyStore.Entry entry = KeyStoreUtils.getEntry(alias, trustKeystore, null);
-          KeyStoreUtils.setEntry(alias, entry, ks, null);
-        }
-        tmf.init(ks);
-      } else {
-        tmf.init(trustKeystore);
-      }
+      final TrustManagerFactory tmf = getTrustManagerFactory(trustKeystore, trustAliases);
       tm = tmf.getTrustManagers();
     }
     return tm;
+  }
+
+
+  /**
+   * Creates a new trust manager factory.
+   *
+   * @param  keystore  to initialize the trust manager factory
+   * @param  aliases  to include from the supplied keystore or null to include all entries
+   *
+   * @return  trust manager factory
+   *
+   * @throws  GeneralSecurityException  if the trust manager factory cannot be initialized
+   */
+  protected TrustManagerFactory getTrustManagerFactory(final KeyStore keystore, final String... aliases)
+    throws GeneralSecurityException
+  {
+    final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+    if (aliases != null && aliases.length > 0) {
+      final KeyStore ks = KeyStoreUtils.newInstance();
+      for (String alias : aliases) {
+        final KeyStore.Entry entry = KeyStoreUtils.getEntry(alias, keystore, null);
+        KeyStoreUtils.setEntry(alias, entry, ks, null);
+      }
+      tmf.init(ks);
+    } else {
+      tmf.init(keystore);
+    }
+    return tmf;
   }
 
 
@@ -172,20 +190,45 @@ public class KeyStoreSSLContextInitializer extends AbstractSSLContextInitializer
   {
     KeyManager[] km = null;
     if (authenticationKeystore != null && authenticationPassword != null) {
-      final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-      if (authenticationAliases != null) {
-        final KeyStore ks = KeyStoreUtils.newInstance(authenticationPassword);
-        for (String alias : authenticationAliases) {
-          final KeyStore.Entry entry = KeyStoreUtils.getEntry(alias, authenticationKeystore, authenticationPassword);
-          KeyStoreUtils.setEntry(alias, entry, ks, authenticationPassword);
-        }
-        kmf.init(ks, authenticationPassword);
-      } else {
-        kmf.init(authenticationKeystore, authenticationPassword);
-      }
+      final KeyManagerFactory kmf = getKeyManagerFactory(
+        authenticationKeystore,
+        authenticationPassword,
+        authenticationAliases);
       km = kmf.getKeyManagers();
     }
     return km;
+  }
+
+
+  /**
+   * Creates a new key manager factory.
+   *
+   * @param  keystore  to initialize the key manager factory
+   * @param  password  to unlock the supplied keystore
+   * @param  aliases  to include from the supplied keystore or null to include all entries
+   *
+   * @return  key manager factory
+   *
+   * @throws  GeneralSecurityException  if the key manager factory cannot be initialized
+   */
+  protected KeyManagerFactory getKeyManagerFactory(
+    final KeyStore keystore,
+    final char[] password,
+    final String... aliases)
+    throws GeneralSecurityException
+  {
+    final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+    if (aliases != null && aliases.length > 0) {
+      final KeyStore ks = KeyStoreUtils.newInstance(password);
+      for (String alias : aliases) {
+        final KeyStore.Entry entry = KeyStoreUtils.getEntry(alias, keystore, password);
+        KeyStoreUtils.setEntry(alias, entry, ks, password);
+      }
+      kmf.init(ks, password);
+    } else {
+      kmf.init(keystore, password);
+    }
+    return kmf;
   }
 
 

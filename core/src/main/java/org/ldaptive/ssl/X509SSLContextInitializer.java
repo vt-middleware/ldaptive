@@ -101,14 +101,31 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
   {
     TrustManager[] tm = null;
     if (trustCerts != null && trustCerts.length > 0) {
-      final KeyStore ks = KeyStoreUtils.newInstance();
-      KeyStoreUtils.setCertificateEntry("ldap_trust_", ks, trustCerts);
-
-      final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-      tmf.init(ks);
+      final TrustManagerFactory tmf = getTrustManagerFactory(trustCerts);
       tm = tmf.getTrustManagers();
     }
     return tm;
+  }
+
+
+  /**
+   * Creates a new trust manager factory.
+   *
+   * @param  certs  to add as trusted material
+   *
+   * @return  trust manager factory
+   *
+   * @throws  GeneralSecurityException  if the trust manager factory cannot be initialized
+   */
+  protected TrustManagerFactory getTrustManagerFactory(final X509Certificate[] certs)
+    throws GeneralSecurityException
+  {
+    final KeyStore ks = KeyStoreUtils.newInstance();
+    KeyStoreUtils.setCertificateEntry("ldap_trust_", ks, certs);
+
+    final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+    tmf.init(ks);
+    return tmf;
   }
 
 
@@ -118,19 +135,32 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
   {
     KeyManager[] km = null;
     if (authenticationCert != null && authenticationKey != null) {
-      final KeyStore ks = KeyStoreUtils.newInstance();
-      KeyStoreUtils.setKeyEntry(
-        "ldap_client_auth",
-        ks,
-        "changeit".toCharArray(),
-        authenticationKey,
-        authenticationCert);
-
-      final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
-      kmf.init(ks, "changeit".toCharArray());
+      final KeyManagerFactory kmf = getKeyManagerFactory(authenticationCert, authenticationKey);
       km = kmf.getKeyManagers();
     }
     return km;
+  }
+
+
+  /**
+   * Creates a new key manager factory.
+   *
+   * @param  cert  to initialize the key manager factory
+   * @param  key  to initialize the key manager factory
+   *
+   * @return  key manager factory
+   *
+   * @throws  GeneralSecurityException  if the key manager factory cannot be initialized
+   */
+  protected KeyManagerFactory getKeyManagerFactory(final X509Certificate cert, final PrivateKey key)
+    throws GeneralSecurityException
+  {
+    final KeyStore ks = KeyStoreUtils.newInstance();
+    KeyStoreUtils.setKeyEntry("ldap_client_auth", ks, "changeit".toCharArray(), key, cert);
+
+    final KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+    kmf.init(ks, "changeit".toCharArray());
+    return kmf;
   }
 
 
