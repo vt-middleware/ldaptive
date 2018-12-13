@@ -239,6 +239,8 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       newValue = createArrayTypeFromPropertyValue(Class.class, value);
     } else if (type.isEnum()) {
       newValue = getEnum(type, value);
+    } else if (type.isArray() && type.getComponentType().isEnum()) {
+      newValue = createArrayEnumFromPropertyValue(type.getComponentType(), value);
     } else if (String[].class == type) {
       newValue = value.split(",");
     } else if (Object[].class == type) {
