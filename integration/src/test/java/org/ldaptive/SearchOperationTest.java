@@ -1535,16 +1535,12 @@ public class SearchOperationTest extends AbstractTest
       try {
         final Response<SearchResult> response = search.execute(request);
         AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
-        AssertJUnit.assertTrue(response.getReferralURLs().length > 0);
-        for (String s : response.getReferralURLs()) {
-          AssertJUnit.assertTrue(response.getReferralURLs()[0].startsWith(conn.getConnectionConfig().getLdapUrl()));
-        }
+        AssertJUnit.assertEquals(1, response.getReferralURLs().length);
+        AssertJUnit.assertEquals("ldap://localhost:389/ou=people,dc=vt,dc=edu??one", response.getReferralURLs()[0]);
       } catch (LdapException e) {
         AssertJUnit.assertEquals(ResultCode.REFERRAL, e.getResultCode());
-        AssertJUnit.assertTrue(e.getReferralURLs().length > 0);
-        for (String s : e.getReferralURLs()) {
-          AssertJUnit.assertTrue(e.getReferralURLs()[0].startsWith(conn.getConnectionConfig().getLdapUrl()));
-        }
+        AssertJUnit.assertEquals(1, e.getReferralURLs().length);
+        AssertJUnit.assertEquals("ldap://localhost:389/ou=people,dc=vt,dc=edu", e.getReferralURLs()[0]);
       }
     } finally {
       conn.close();
