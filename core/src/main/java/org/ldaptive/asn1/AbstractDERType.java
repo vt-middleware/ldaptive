@@ -90,7 +90,7 @@ public abstract class AbstractDERType
    */
   public static byte[] readBuffer(final ByteBuffer encoded)
   {
-    final byte[] bytes = new byte[encoded.limit() - encoded.position()];
+    final byte[] bytes = new byte[encoded.remaining()];
     encoded.get(bytes);
     return bytes;
   }
