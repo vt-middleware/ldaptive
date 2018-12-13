@@ -188,7 +188,7 @@ public final class DnParser
         final OctetStringHandler handler = new OctetStringHandler();
         parser.registerHandler("/OCTSTR", handler);
 
-        final String hexData = attrValue.substring(1, attrValue.length());
+        final String hexData = attrValue.substring(1);
         parser.parse(ByteBuffer.wrap(decodeHexValue(hexData.toCharArray())));
         attributes.add(new LdapAttribute(attrName.trim(), handler.getDecodedValue()));
       } else {
