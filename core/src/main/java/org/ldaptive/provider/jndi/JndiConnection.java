@@ -805,7 +805,7 @@ public class JndiConnection implements ProviderConnection
     {
       return
         ctx.search(
-          sr.getBaseDn(),
+          new LdapName(sr.getBaseDn()),
           sr.getSearchFilter() != null ? request.getSearchFilter().format() : null,
           getSearchControls(sr));
     }

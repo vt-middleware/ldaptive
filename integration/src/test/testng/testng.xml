@@ -208,6 +208,10 @@
   <parameter name="specialCharSearchResults"
              value="/org/ldaptive/specialCharsResults.ldif"/>
 
+  <parameter name="quotedBaseDn" value='ou=test \"quote\",dc=vt,dc=edu'/>
+  <parameter name="quotedBaseDnSearchResults"
+             value="/org/ldaptive/quotedBaseDnResults.ldif"/>
+
   <parameter name="rewriteSearchDn" value="dc=blah"/>
   <parameter name="rewriteSearchFilter" value="(uid=17893)"/>
   <parameter name="rewriteSearchResults"

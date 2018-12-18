@@ -1,0 +1,6 @@
+dn: ou=test \22quote\22,dc=vt,dc=edu
+ou: test "quote"
+dc: vt
+objectClass: dcObject
+objectClass: organizationalUnit
+objectClass: top

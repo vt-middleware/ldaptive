@@ -1421,6 +1421,30 @@ public class SearchOperationTest extends AbstractTest
 
   /**
    * @param  dn  to search on.
+   * @param  ldifFile  to compare with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "quotedBaseDn",
+      "quotedBaseDnSearchResults"
+    })
+  @Test(groups = {"search"})
+  public void quoteInBaseDn(final String dn, final String ldifFile)
+    throws Exception
+  {
+    final SearchOperation search = new SearchOperation(createLdapConnection(false));
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final SearchResult quotedResult = TestUtils.convertLdifToResult(expected);
+
+    final SearchResult result = search.execute(SearchRequest.newObjectScopeSearchRequest(dn)).getResult();
+    TestUtils.assertEquals(quotedResult, result);
+  }
+
+
+  /**
+   * @param  dn  to search on.
    * @param  filter  to search with.
    * @param  ldifFile  to compare with
    *
