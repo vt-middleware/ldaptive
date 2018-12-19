@@ -71,7 +71,7 @@ public final class Hex
    *
    * @return  hex encoded value
    */
-  public static char[] encode(final byte[] value)
+  public static char[] encode(final byte... value)
   {
     if (value == null) {
       return null;
@@ -98,7 +98,7 @@ public final class Hex
    *
    * @throws  IllegalArgumentException  if value is not valid hexidecimal
    */
-  public static byte[] decode(final char[] value)
+  public static byte[] decode(final char... value)
   {
     if (value == null) {
       return null;
