@@ -162,6 +162,13 @@ public class SyncRequestControl extends AbstractControl implements RequestContro
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the request mode.
    *

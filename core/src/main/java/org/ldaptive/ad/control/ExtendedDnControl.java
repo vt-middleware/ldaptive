@@ -77,6 +77,13 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the flag.
    *

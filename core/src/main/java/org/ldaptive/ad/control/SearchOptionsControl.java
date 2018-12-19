@@ -76,6 +76,13 @@ public class SearchOptionsControl extends AbstractControl implements RequestCont
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the flag.
    *

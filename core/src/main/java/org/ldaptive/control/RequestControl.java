@@ -16,4 +16,12 @@ public interface RequestControl extends Control
    * @return  BER encoded request control
    */
   byte[] encode();
+
+
+  /**
+   * Returns whether the control has a value associated with it.
+   *
+   * @return  whether the control has a value
+   */
+  boolean hasValue();
 }

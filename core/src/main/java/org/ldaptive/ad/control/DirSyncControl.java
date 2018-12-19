@@ -215,6 +215,13 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the flags value.
    *

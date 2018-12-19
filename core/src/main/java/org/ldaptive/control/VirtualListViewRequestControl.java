@@ -210,6 +210,13 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the before count. This indicates how many entries before the target entry the client wants the server to
    * send.

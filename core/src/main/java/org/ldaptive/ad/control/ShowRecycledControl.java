@@ -40,6 +40,13 @@ public class ShowRecycledControl extends AbstractControl implements RequestContr
 
 
   @Override
+  public boolean hasValue()
+  {
+    return false;
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {

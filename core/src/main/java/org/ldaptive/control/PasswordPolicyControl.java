@@ -190,6 +190,13 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return false;
+  }
+
+
   /**
    * Returns the time before expiration in seconds.
    *

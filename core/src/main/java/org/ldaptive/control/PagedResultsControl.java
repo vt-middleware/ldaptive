@@ -102,6 +102,13 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the paged results size. For requests this is the requested page size. For responses this is the result size
    * estimate from the server.

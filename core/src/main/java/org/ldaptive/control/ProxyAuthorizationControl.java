@@ -48,6 +48,13 @@ public class ProxyAuthorizationControl extends AbstractControl implements Reques
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the authorization identity.
    *

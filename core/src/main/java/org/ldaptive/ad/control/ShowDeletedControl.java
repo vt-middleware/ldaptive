@@ -40,6 +40,13 @@ public class ShowDeletedControl extends AbstractControl implements RequestContro
 
 
   @Override
+  public boolean hasValue()
+  {
+    return false;
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {
