@@ -17,27 +17,6 @@ import org.ldaptive.SearchResult;
 public class LdifWriter implements SearchResultWriter
 {
 
-  /** ASCII decimal value of nul. */
-  private static final int NUL_CHAR = 0;
-
-  /** ASCII decimal value of line feed. */
-  private static final int LF_CHAR = 10;
-
-  /** ASCII decimal value of carriage return. */
-  private static final int CR_CHAR = 13;
-
-  /** ASCII decimal value of space. */
-  private static final int SP_CHAR = 32;
-
-  /** ASCII decimal value of colon. */
-  private static final int COLON_CHAR = 58;
-
-  /** ASCII decimal value of left arrow. */
-  private static final int LA_CHAR = 60;
-
-  /** ASCII decimal value of highest character. */
-  private static final int MAX_ASCII_CHAR = 127;
-
   /** Line separator. */
   private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
@@ -112,7 +91,7 @@ public class LdifWriter implements SearchResultWriter
     final StringBuilder entryLdif = new StringBuilder();
     final String dn = entry.getDn();
     if (dn != null) {
-      if (encodeData(dn)) {
+      if (LdapUtils.shouldBase64Encode(dn)) {
         entryLdif.append("dn:: ").append(LdapUtils.base64Encode(dn)).append(LINE_SEPARATOR);
       } else {
         entryLdif.append("dn: ").append(dn).append(LINE_SEPARATOR);
@@ -124,7 +103,7 @@ public class LdifWriter implements SearchResultWriter
       for (String attrValue : attr.getStringValues()) {
         if (attr.isBinary()) {
           entryLdif.append(attrName).append(":: ").append(attrValue).append(LINE_SEPARATOR);
-        } else if (encodeData(attrValue)) {
+        } else if (LdapUtils.shouldBase64Encode(attrValue)) {
           entryLdif.append(attrName).append(":: ").append(LdapUtils.base64Encode(attrValue)).append(LINE_SEPARATOR);
         } else {
           entryLdif.append(attrName).append(": ").append(attrValue).append(LINE_SEPARATOR);
@@ -154,7 +133,7 @@ public class LdifWriter implements SearchResultWriter
 
     final StringBuilder refLdif = new StringBuilder();
     for (String url : ref.getReferralUrls()) {
-      if (encodeData(url)) {
+      if (LdapUtils.shouldBase64Encode(url)) {
         refLdif.append("ref:: ").append(LdapUtils.base64Encode(url)).append(LINE_SEPARATOR);
       } else {
         refLdif.append("ref: ").append(url).append(LINE_SEPARATOR);
@@ -165,46 +144,5 @@ public class LdifWriter implements SearchResultWriter
       refLdif.append(LINE_SEPARATOR);
     }
     return refLdif.toString();
-  }
-
-
-  /**
-   * Determines whether the supplied data should be base64 encoded. See http://www.faqs.org/rfcs/rfc2849.html for more
-   * details.
-   *
-   * @param  data  to inspect
-   *
-   * @return  whether the data should be base64 encoded
-   */
-  private boolean encodeData(final String data)
-  {
-    boolean encode = false;
-    final char[] dataCharArray = data.toCharArray();
-    for (int i = 0; i < dataCharArray.length; i++) {
-      final int charInt = (int) dataCharArray[i];
-      // check for NUL
-      if (charInt == NUL_CHAR) {
-        encode = true;
-        // check for LF
-      } else if (charInt == LF_CHAR) {
-        encode = true;
-        // check for CR
-      } else if (charInt == CR_CHAR) {
-        encode = true;
-        // check for SP at beginning or end of string
-      } else if (charInt == SP_CHAR && (i == 0 || i == dataCharArray.length - 1)) {
-        encode = true;
-        // check for colon(:) at beginning of string
-      } else if (charInt == COLON_CHAR && i == 0) {
-        encode = true;
-        // check for left arrow(<) at beginning of string
-      } else if (charInt == LA_CHAR && i == 0) {
-        encode = true;
-        // check for any character above 127
-      } else if (charInt > MAX_ASCII_CHAR) {
-        encode = true;
-      }
-    }
-    return encode;
   }
 }

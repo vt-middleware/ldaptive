@@ -65,7 +65,7 @@ public final class LdapUtils
    *
    * @return  base64 encoded value
    */
-  public static String base64Encode(final byte[] value)
+  public static String base64Encode(final byte... value)
   {
     return value != null ? new String(Base64.getEncoder().encode(value), StandardCharsets.UTF_8) : null;
   }
@@ -117,7 +117,7 @@ public final class LdapUtils
    *
    * @return  hex encoded value
    */
-  public static char[] hexEncode(final byte[] value)
+  public static char[] hexEncode(final byte... value)
   {
     return value != null ? Hex.encode(value) : null;
   }
@@ -286,6 +286,86 @@ public final class LdapUtils
       }
     }
     return sb.toString();
+  }
+
+
+  /**
+   * See {@link #shouldBase64Encode(byte[])}.
+   *
+   * @param  value  to inspect
+   *
+   * @return  whether the value should be base64 encoded
+   */
+  public static boolean shouldBase64Encode(final String value)
+  {
+    return shouldBase64Encode(value.getBytes(StandardCharsets.UTF_8));
+  }
+
+
+  /**
+   * Determines whether the supplied value should be base64 encoded. See http://www.faqs.org/rfcs/rfc2849.html for more
+   * details.
+   *
+   * @param  value  to inspect
+   *
+   * @return  whether the value should be base64 encoded
+   */
+  public static boolean shouldBase64Encode(final byte[] value)
+  {
+    if (value == null || value.length == 0) {
+      return false;
+    }
+
+    boolean encode = false;
+
+    // CheckStyle:MagicNumber OFF
+    // check first byte in value
+    switch (value[0] & 0xFF) {
+    // check for SP
+    case 0x20:
+    // check for colon(:)
+    case 0x3A:
+    // check for left arrow(<)
+    case 0x3C:
+      encode = true;
+      break;
+    default:
+      break;
+    }
+
+    if (!encode) {
+      // check for SP at last byte in value
+      if ((value[value.length - 1] & 0xFF) == 0x20) {
+        encode = true;
+      } else {
+        // check remaining bytes in the value
+        for (final byte b : value) {
+          switch (b & 0xFF) {
+          // check for NUL
+          case 0x00:
+            // check for LF
+          case 0x0A:
+            // check for CR
+          case 0x0D:
+            encode = true;
+            break;
+
+          default:
+            // check for any character above 127
+            if ((b & 0x80) != 0x00) {
+              encode = true;
+            }
+            break;
+          }
+          if (encode) {
+            break;
+          }
+        }
+      }
+    }
+    // CheckStyle:MagicNumber ON
+
+    return encode;
   }
 
 
