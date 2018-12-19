@@ -93,6 +93,13 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the session source ip.
    *

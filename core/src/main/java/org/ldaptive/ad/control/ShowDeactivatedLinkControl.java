@@ -40,6 +40,13 @@ public class ShowDeactivatedLinkControl extends AbstractControl implements Reque
 
 
   @Override
+  public boolean hasValue()
+  {
+    return false;
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {

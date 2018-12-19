@@ -112,6 +112,13 @@ public class PersistentSearchRequestControl extends AbstractControl implements R
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the persistent search change types.
    *

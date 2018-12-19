@@ -68,6 +68,13 @@ public class SortRequestControl extends AbstractControl implements RequestContro
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the sort keys.
    *

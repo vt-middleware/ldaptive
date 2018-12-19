@@ -37,6 +37,13 @@ public class AuthorizationIdentityRequestControl extends AbstractControl impleme
 
 
   @Override
+  public boolean hasValue()
+  {
+    return false;
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {

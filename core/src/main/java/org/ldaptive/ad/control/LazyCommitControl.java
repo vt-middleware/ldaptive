@@ -40,6 +40,13 @@ public class LazyCommitControl extends AbstractControl implements RequestControl
 
 
   @Override
+  public boolean hasValue()
+  {
+    return false;
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {

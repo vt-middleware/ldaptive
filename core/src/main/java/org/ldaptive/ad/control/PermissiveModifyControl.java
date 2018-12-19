@@ -40,6 +40,13 @@ public class PermissiveModifyControl extends AbstractControl implements RequestC
 
 
   @Override
+  public boolean hasValue()
+  {
+    return false;
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {
