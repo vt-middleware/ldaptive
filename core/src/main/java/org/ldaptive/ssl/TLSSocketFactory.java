@@ -5,7 +5,6 @@ import java.security.GeneralSecurityException;
 import javax.net.SocketFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManager;
 
 /**
  * An extension of SSLSocketFactory that leverages an SSL context initializer. Note that {@link #initialize()} must be
@@ -48,25 +47,7 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
     final SSLContextInitializer contextInitializer;
     final SslConfig sslConfig = getSslConfig();
     if (sslConfig != null) {
-      final CredentialConfig credConfig = sslConfig.getCredentialConfig();
-      final TrustManager[] managers = sslConfig.getTrustManagers();
-      final HostnameVerifierConfig verifierConfig = sslConfig.getHostnameVerifierConfig();
-      if (credConfig != null) {
-        contextInitializer = credConfig.createSSLContextInitializer();
-      } else {
-        if (managers != null) {
-          contextInitializer = new DefaultSSLContextInitializer(false);
-        } else {
-          contextInitializer = new DefaultSSLContextInitializer(true);
-        }
-      }
-
-      if (managers != null) {
-        contextInitializer.setTrustManagers(managers);
-      }
-      if (verifierConfig != null) {
-        contextInitializer.setHostnameVerifierConfig(verifierConfig);
-      }
+      contextInitializer = sslConfig.createSSLContextInitializer();
     } else {
       contextInitializer = new DefaultSSLContextInitializer();
     }
