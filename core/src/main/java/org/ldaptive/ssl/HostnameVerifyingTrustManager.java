@@ -1,10 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
+import java.net.Socket;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import javax.net.ssl.X509TrustManager;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.X509ExtendedTrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class HostnameVerifyingTrustManager implements X509TrustManager
+public class HostnameVerifyingTrustManager extends X509ExtendedTrustManager
 {
 
   /** Logger for this class. */
@@ -36,7 +39,35 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
   public HostnameVerifyingTrustManager(final CertificateHostnameVerifier verifier, final String... names)
   {
     hostnameVerifier = verifier;
-    hostnames = names;
+    if (names != null && names.length == 0) {
+      hostnames = null;
+    } else {
+      hostnames = names;
+    }
+  }
+
+
+  @Override
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType, final Socket socket)
+    throws CertificateException
+  {
+    if (hostnames != null) {
+      checkCertificateTrusted(chain[0], hostnames);
+    } else {
+      checkCertificateTrusted(chain[0], ((SSLSocket) socket).getSession().getPeerHost());
+    }
+  }
+
+
+  @Override
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType, final SSLEngine engine)
+    throws CertificateException
+  {
+    if (hostnames != null) {
+      checkCertificateTrusted(chain[0], hostnames);
+    } else {
+      checkCertificateTrusted(chain[0], engine.getSession().getPeerHost());
+    }
   }
 
 
@@ -44,7 +75,31 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
   public void checkClientTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
-    checkCertificateTrusted(chain[0]);
+    checkCertificateTrusted(chain[0], hostnames);
+  }
+
+
+  @Override
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType, final Socket socket)
+    throws CertificateException
+  {
+    if (hostnames != null) {
+      checkCertificateTrusted(chain[0], hostnames);
+    } else {
+      checkCertificateTrusted(chain[0], ((SSLSocket) socket).getSession().getPeerHost());
+    }
+  }
+
+
+  @Override
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType, final SSLEngine engine)
+    throws CertificateException
+  {
+    if (hostnames != null) {
+      checkCertificateTrusted(chain[0], hostnames);
+    } else {
+      checkCertificateTrusted(chain[0], engine.getSession().getPeerHost());
+    }
   }
 
 
@@ -52,7 +107,7 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
   public void checkServerTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
-    checkCertificateTrusted(chain[0]);
+    checkCertificateTrusted(chain[0], hostnames);
   }
 
 
@@ -60,13 +115,14 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
    * Verifies the supplied certificate using the hostname verifier with each hostname.
    *
    * @param  cert  to verify
+   * @param  names  to match against cert
    *
    * @throws  CertificateException  if none of the hostnames verify
    */
-  private void checkCertificateTrusted(final X509Certificate cert)
+  private void checkCertificateTrusted(final X509Certificate cert, final String... names)
     throws CertificateException
   {
-    for (String name : hostnames) {
+    for (String name : names) {
       if (hostnameVerifier.verify(name, cert)) {
         logger.debug(
           "checkCertificateTrusted for {} succeeded against {}",
@@ -79,7 +135,7 @@ public class HostnameVerifyingTrustManager implements X509TrustManager
       String.format(
         "Hostname '%s' does not match the hostname in the server's " +
         "certificate '%s'",
-        Arrays.toString(hostnames),
+        Arrays.toString(names),
         cert != null ? cert.getSubjectX500Principal() : null));
   }
 
