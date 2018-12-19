@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.TrustManager;
@@ -275,6 +276,38 @@ public class SslConfig extends AbstractConfig
     sc.setEnabledProtocols(config.getEnabledProtocols());
     sc.setHandshakeCompletedListeners(config.getHandshakeCompletedListeners());
     return sc;
+  }
+
+
+  /**
+   * Creates an {@link SSLContextInitializer} from this configuration. If a {@link CredentialConfig} is provided it is
+   * used, otherwise a {@link DefaultSSLContextInitializer} is created.
+   *
+   * @return  SSL context initializer
+   *
+   * @throws  GeneralSecurityException  if the SSL context initializer cannot be created
+   */
+  public SSLContextInitializer createSSLContextInitializer()
+    throws GeneralSecurityException
+  {
+    final SSLContextInitializer initializer;
+    if (credentialConfig != null) {
+      initializer = credentialConfig.createSSLContextInitializer();
+    } else {
+      if (trustManagers != null) {
+        initializer = new DefaultSSLContextInitializer(false);
+      } else {
+        initializer = new DefaultSSLContextInitializer(true);
+      }
+    }
+
+    if (trustManagers != null) {
+      initializer.setTrustManagers(trustManagers);
+    }
+    if (hostnameVerifierConfig != null) {
+      initializer.setHostnameVerifierConfig(hostnameVerifierConfig);
+    }
+    return initializer;
   }
 
 
