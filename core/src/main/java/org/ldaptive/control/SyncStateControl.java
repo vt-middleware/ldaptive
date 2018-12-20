@@ -304,7 +304,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   {
 
     /** DER path to the state. */
-    public static final DERPath PATH = new DERPath("/SEQ/ENUM");
+    public static final DERPath PATH = new DERPath("/SEQ/ENUM[0]");
 
 
     /**

@@ -373,7 +373,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   {
 
     /** DER path to context value. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[3]");
 
 
     /**

@@ -410,7 +410,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
   {
 
     /** DER path to cookie value. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[2]");
 
 
     /**

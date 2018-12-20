@@ -200,7 +200,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
   {
 
     /** DER path to result code. */
-    public static final DERPath PATH = new DERPath("/SEQ/ENUM");
+    public static final DERPath PATH = new DERPath("/SEQ/ENUM[0]");
 
 
     /**

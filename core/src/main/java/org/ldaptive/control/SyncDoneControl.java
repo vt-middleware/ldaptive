@@ -192,7 +192,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   {
 
     /** DER path to cookie value. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[0]");
 
 
     /**
@@ -222,7 +222,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   {
 
     /** DER path to the boolean. */
-    public static final DERPath PATH = new DERPath("/SEQ/BOOL");
+    public static final DERPath PATH = new DERPath("/SEQ/BOOL[1]");
 
 
     /**
