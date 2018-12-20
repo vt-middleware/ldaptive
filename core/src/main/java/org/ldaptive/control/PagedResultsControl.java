@@ -219,7 +219,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   {
 
     /** DER path to result size. */
-    public static final DERPath PATH = new DERPath("/SEQ/INT");
+    public static final DERPath PATH = new DERPath("/SEQ/INT[0]");
 
 
     /**
@@ -246,7 +246,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   {
 
     /** DER path to cookie value. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[1]");
 
 
     /**

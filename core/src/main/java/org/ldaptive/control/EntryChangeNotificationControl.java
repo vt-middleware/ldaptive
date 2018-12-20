@@ -245,7 +245,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
   {
 
     /** DER path to change type. */
-    public static final DERPath PATH = new DERPath("/SEQ/ENUM");
+    public static final DERPath PATH = new DERPath("/SEQ/ENUM[0]");
 
 
     /**

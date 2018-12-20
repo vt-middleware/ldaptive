@@ -186,7 +186,7 @@ public final class DnParser
       if (attrValue.startsWith("#")) {
         final DERParser parser = new DERParser();
         final OctetStringHandler handler = new OctetStringHandler();
-        parser.registerHandler("/OCTSTR", handler);
+        parser.registerHandler("/OCTSTR[0]", handler);
 
         final String hexData = attrValue.substring(1);
         parser.parse(ByteBuffer.wrap(decodeHexValue(hexData.toCharArray())));
