@@ -77,6 +77,7 @@
 
   <modules>
     <module>core</module>
+    <module>ldaptive-protocol</module>
     <module>beans</module>
     <module>json</module>
     <module>templates</module>
@@ -104,6 +105,11 @@
       <dependency>
         <groupId>org.ldaptive</groupId>
         <artifactId>ldaptive</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ldaptive</groupId>
+        <artifactId>ldaptive-protocol</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

@@ -26,8 +26,8 @@
     <property name="tabWidth" value="2"/>
 
     <module name="SuppressionCommentFilter">
-      <property name="offCommentFormat" value="CheckStyle\:([\w\|]+) OFF"/>
-      <property name="onCommentFormat" value="CheckStyle\:([\w\|]+) ON"/>
+      <property name="offCommentFormat" value="CheckStyle\:([\w\|]*)([ ]?)OFF"/>
+      <property name="onCommentFormat" value="CheckStyle\:([\w\|]*)([ ]?)ON"/>
       <property name="checkFormat" value="$1"/>
     </module>
 
@@ -44,6 +44,7 @@
     <module name="JavadocMethod">
       <property name="allowThrowsTagsForSubclasses" value="true"/>
       <property name="allowUndeclaredRTE" value="true"/>
+      <property name="allowMissingPropertyJavadoc" value="true"/>
     </module>
     <module name="JavadocVariable"/>
     <module name="JavadocStyle">
@@ -166,7 +167,10 @@
     <module name="SuperClone"/>
     <module name="SuperFinalize"/>
     <module name="PackageDeclaration"/>
-    <module name="ReturnCount"/>
+    <module name="ReturnCount">
+      <property name="max" value="3"/>
+      <property name="maxForVoid" value="3"/>
+    </module>
     <module name="IllegalType">
       <property name="illegalClassNames"
                 value="java.util.GregorianCalendar, java.util.Hashtable,
