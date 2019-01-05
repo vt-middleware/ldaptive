@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -157,15 +156,15 @@ public class RDN implements DEREncoder
    *
    * @return  decoded bytes as RDNs
    */
-  public static RDN[] decode(final ByteBuffer encoded)
+  public static RDN[] decode(final DERBuffer encoded)
   {
     final List<RDN> rdns = new ArrayList<>();
     final DERParser parser = new DERParser();
     parser.registerHandler(
       "/SEQ/SET",
-      (parser1, encoded1) -> {
-        rdns.add(new RDN(AttributeValueAssertion.decode(encoded1.slice())));
-        encoded1.position(encoded1.limit());
+      (p, e) -> {
+        rdns.add(new RDN(AttributeValueAssertion.decode(e)));
+        e.position(e.limit());
       });
     parser.parse(encoded);
     return rdns.toArray(new RDN[rdns.size()]);

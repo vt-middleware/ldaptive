@@ -1,12 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
@@ -143,9 +143,9 @@ public abstract class AbstractResult extends AbstractMessage implements Result
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setResultCode(ResultCode.valueOf(IntegerType.decode(encoded).intValue()));
+      getObject().setResultCode(ResultCode.valueOf(IntegerType.decodeUnsignedPrimitive(encoded)));
     }
   }
 
@@ -167,7 +167,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setMatchedDN(OctetStringType.decode(encoded));
     }
@@ -191,7 +191,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setDiagnosticMessage(OctetStringType.decode(encoded));
     }
@@ -215,7 +215,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().addReferralURLs(OctetStringType.decode(encoded));
     }

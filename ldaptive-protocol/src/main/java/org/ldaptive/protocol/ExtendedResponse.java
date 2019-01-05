@@ -1,10 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.OctetStringType;
 
@@ -47,7 +47,7 @@ public class ExtendedResponse extends AbstractResult
    *
    * @param  buffer  to decode
    */
-  public ExtendedResponse(final ByteBuffer buffer)
+  public ExtendedResponse(final DERBuffer buffer)
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
@@ -124,8 +124,7 @@ public class ExtendedResponse extends AbstractResult
     return new StringBuilder(
       super.toString()).append(", ")
       .append("responseName=").append(responseName).append(", ")
-      .append("responseValue=").append(responseValue != null ? new String(responseValue, StandardCharsets.UTF_8) : null)
-      .toString();
+      .append("responseValue=").append(Arrays.toString(responseValue)).toString();
   }
 
 
@@ -146,7 +145,7 @@ public class ExtendedResponse extends AbstractResult
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setResponseName(OctetStringType.decode(encoded));
     }
@@ -170,9 +169,9 @@ public class ExtendedResponse extends AbstractResult
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setResponseValue(OctetStringType.readBuffer(encoded));
+      getObject().setResponseValue(encoded.getRemainingBytes());
     }
   }
 

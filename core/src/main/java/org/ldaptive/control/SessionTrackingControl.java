@@ -1,12 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.ConstructedDEREncoder;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DEREncoder;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
@@ -253,16 +253,14 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(SourceIpHandler.PATH, new SourceIpHandler(this));
     parser.registerHandler(SourceNameHandler.PATH, new SourceNameHandler(this));
     parser.registerHandler(FormatOIDHandler.PATH, new FormatOIDHandler(this));
     parser.registerHandler(TrackingIdentifierHandler.PATH, new TrackingIdentifierHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -286,7 +284,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setSessionSourceIp(OctetStringType.decode(encoded));
     }
@@ -313,7 +311,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setSessionSourceName(OctetStringType.decode(encoded));
     }
@@ -340,7 +338,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setFormatOID(OctetStringType.decode(encoded));
     }
@@ -367,7 +365,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setSessionTrackingIdentifier(OctetStringType.decode(encoded));
     }

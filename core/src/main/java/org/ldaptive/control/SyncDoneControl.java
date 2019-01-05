@@ -1,13 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.BooleanType;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
-import org.ldaptive.asn1.OctetStringType;
 
 /**
  * Response control for ldap content synchronization. See RFC 4533. Control is defined as:
@@ -176,14 +175,12 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
     parser.registerHandler(RefreshDeletesHandler.PATH, new RefreshDeletesHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -207,9 +204,9 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);
       }
@@ -237,7 +234,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setRefreshDeletes(BooleanType.decode(encoded));
     }

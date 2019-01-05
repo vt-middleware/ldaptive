@@ -1,10 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.OctetStringType;
 
@@ -46,7 +46,7 @@ public class IntermediateResponse extends AbstractMessage
    *
    * @param  buffer  to decode
    */
-  public IntermediateResponse(final ByteBuffer buffer)
+  public IntermediateResponse(final DERBuffer buffer)
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
@@ -136,7 +136,7 @@ public class IntermediateResponse extends AbstractMessage
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       if (encoded.remaining() > 0) {
         getObject().setResponseName(OctetStringType.decode(encoded));
@@ -162,13 +162,13 @@ public class IntermediateResponse extends AbstractMessage
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       if (encoded.remaining() > 0) {
         final DERParser p = new DERParser();
         p.readTag(encoded).getTagNo();
         p.readLength(encoded);
-        getObject().setResponseValue(OctetStringType.readBuffer(encoded));
+        getObject().setResponseValue(encoded.getRemainingBytes());
       }
     }
   }

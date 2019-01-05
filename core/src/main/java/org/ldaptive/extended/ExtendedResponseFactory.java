@@ -3,6 +3,7 @@ package org.ldaptive.extended;
 
 import org.ldaptive.ad.extended.FastBindRequest;
 import org.ldaptive.ad.extended.FastBindResponse;
+import org.ldaptive.asn1.DERBuffer;
 
 /**
  * Utility class for creating extended responses.
@@ -29,7 +30,7 @@ public final class ExtendedResponseFactory
   public static ExtendedResponse<?> createExtendedResponse(
     final String requestOID,
     final String responseOID,
-    final byte[] encoded)
+    final DERBuffer encoded)
   {
     final ExtendedResponse<?> res;
     switch (requestOID) {

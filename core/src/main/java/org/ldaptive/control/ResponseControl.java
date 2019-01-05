@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
+import org.ldaptive.asn1.DERBuffer;
+
 /**
  * Marker interface for ldap response controls.
  *
@@ -15,5 +17,5 @@ public interface ResponseControl extends Control
    *
    * @param  encoded  BER encoded response control
    */
-  void decode(byte[] encoded);
+  void decode(DERBuffer encoded);
 }

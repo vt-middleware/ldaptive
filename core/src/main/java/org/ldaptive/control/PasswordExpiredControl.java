@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
@@ -68,11 +68,9 @@ public class PasswordExpiredControl extends AbstractControl implements ResponseC
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
-    final String value = OctetStringType.decode(ByteBuffer.wrap(berValue));
+    final String value = OctetStringType.decode(encoded);
     if (!"0".equals(value)) {
       throw new IllegalArgumentException("Response control value should always be '0'");
     }

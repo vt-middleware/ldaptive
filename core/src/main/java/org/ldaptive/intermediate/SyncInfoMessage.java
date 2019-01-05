@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.intermediate;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,9 +8,9 @@ import java.util.UUID;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.BooleanType;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
-import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UuidType;
 import org.ldaptive.control.ResponseControl;
 
@@ -211,7 +210,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(NewCookieHandler.PATH, new NewCookieHandler(this));
@@ -225,7 +224,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
     parser.registerHandler(SyncIdSetCookieHandler.PATH, new SyncIdSetCookieHandler(this));
     parser.registerHandler(SyncIdSetDeletesHandler.PATH, new SyncIdSetDeletesHandler(this));
     parser.registerHandler(SyncIdSetUuidsHandler.PATH, new SyncIdSetUuidsHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -306,11 +305,11 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setMessageType(Type.NEW_COOKIE);
 
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);
       }
@@ -338,7 +337,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setMessageType(Type.REFRESH_DELETE);
     }
@@ -365,9 +364,9 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);
       }
@@ -395,7 +394,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setRefreshDone(BooleanType.decode(encoded));
     }
@@ -422,7 +421,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setMessageType(Type.REFRESH_PRESENT);
     }
@@ -449,9 +448,9 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);
       }
@@ -479,7 +478,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setRefreshDone(BooleanType.decode(encoded));
     }
@@ -506,7 +505,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setMessageType(Type.SYNC_ID_SET);
     }
@@ -533,9 +532,9 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);
       }
@@ -563,7 +562,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setRefreshDeletes(BooleanType.decode(encoded));
     }
@@ -590,7 +589,7 @@ public class SyncInfoMessage extends AbstractIntermediateResponse
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().getEntryUuids().add(UuidType.decode(encoded));
     }

@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
+import org.ldaptive.asn1.DERBuffer;
+
 /**
  * Marker interface for ldap extended responses.
  *
@@ -25,7 +27,7 @@ public interface ExtendedResponse<T>
    *
    * @param  encoded  BER encoded response
    */
-  void decode(byte[] encoded);
+  void decode(DERBuffer encoded);
 
 
   /**

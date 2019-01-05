@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -79,7 +78,7 @@ public class DN implements DEREncoder
    *
    * @return  decoded bytes as a DN
    */
-  public static DN decode(final ByteBuffer encoded)
+  public static DN decode(final DERBuffer encoded)
   {
     return new DN(RDN.decode(encoded));
   }

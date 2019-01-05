@@ -2,7 +2,6 @@
 package org.ldaptive.asn1;
 
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -150,7 +149,7 @@ public class IntegerTypeTest
   public void decode(final byte[] bytes, final BigInteger expected, final BigInteger unsigned, final int unsignedPrim)
     throws Exception
   {
-    Assert.assertEquals(IntegerType.decode(ByteBuffer.wrap(bytes)), expected);
+    Assert.assertEquals(IntegerType.decode(new DefaultDERBuffer(bytes)), expected);
   }
 
 
@@ -167,7 +166,7 @@ public class IntegerTypeTest
     final byte[] bytes, final BigInteger expected, final BigInteger unsigned, final int unsignedPrim)
     throws Exception
   {
-    Assert.assertEquals(IntegerType.decodeUnsigned(ByteBuffer.wrap(bytes)), unsigned);
+    Assert.assertEquals(IntegerType.decodeUnsigned(new DefaultDERBuffer(bytes)), unsigned);
   }
 
 
@@ -184,7 +183,7 @@ public class IntegerTypeTest
     final byte[] bytes, final BigInteger expected, final BigInteger unsigned, final int unsignedPrim)
     throws Exception
   {
-    Assert.assertEquals(IntegerType.decodeUnsignedPrimitive(ByteBuffer.wrap(bytes)), unsignedPrim);
+    Assert.assertEquals(IntegerType.decodeUnsignedPrimitive(new DefaultDERBuffer(bytes)), unsignedPrim);
   }
 
 

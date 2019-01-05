@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.jldap;
 
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.ControlFactory;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -47,6 +48,6 @@ public class JLdapControlHandler implements ControlHandler<com.novell.ldap.LDAPC
       ControlFactory.createResponseControl(
         responseControl.getID(),
         responseControl.isCritical(),
-        responseControl.getValue());
+        responseControl.getValue() != null ? new DefaultDERBuffer(responseControl.getValue()) : null);
   }
 }

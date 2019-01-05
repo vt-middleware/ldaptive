@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
-import java.nio.ByteBuffer;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
@@ -22,9 +22,9 @@ public class WhoAmIResponse extends AbstractExtendedResponse<String>
 
 
   @Override
-  public void decode(final byte[] encoded)
+  public void decode(final DERBuffer encoded)
   {
-    setValue(OctetStringType.decode(ByteBuffer.wrap(encoded)));
+    setValue(OctetStringType.decode(encoded));
   }
 
 

@@ -1,11 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.OctetStringType;
 
@@ -42,7 +42,7 @@ public class SearchResultReference extends AbstractMessage
    *
    * @param  buffer  to decode
    */
-  public SearchResultReference(final ByteBuffer buffer)
+  public SearchResultReference(final DERBuffer buffer)
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
@@ -123,7 +123,7 @@ public class SearchResultReference extends AbstractMessage
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().addUris(OctetStringType.decode(encoded));
     }

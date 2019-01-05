@@ -1,7 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -44,45 +45,38 @@ public class PasswordPolicyControlTest
     return
       new Object[][] {
         // timeBeforeExpiration is set
-        // BER: 30:07:A0:05:80:03:26:58:AB
         new Object[] {
-          LdapUtils.base64Decode("MAegBYADJlir"),
+          new DefaultDERBuffer(new byte[] {0x30, 0x07, (byte) 0xA0, 0x05, (byte) 0x80, 0x03, 0x26, 0x58, (byte) 0xAB}),
           timeBeforeExp,
         },
         // timeBeforeExpiration is zero
-        // BER: 30:05:A0:03:80:01:00
         new Object[] {
-          LdapUtils.base64Decode("MAWgA4ABAA=="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x05, (byte) 0xA0, 0x03, (byte) 0x80, 0x01, 0x00}),
           timeBeforeExpZero,
         },
         // graceAuthNsRemaining is set to 4
-        // BER: 30:05:A0:03:81:01:04
         new Object[] {
-          LdapUtils.base64Decode("MAWgA4EBBA=="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x05, (byte) 0xA0, 0x03, (byte) 0x81, 0x01, 0x04}),
           graceAuthns,
         },
         // graceAuthNsRemaining is zero
-        // BER: 30:05:A0:03:81:01:00
         new Object[] {
-          LdapUtils.base64Decode("MAWgA4EBAA=="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x05, (byte) 0xA0, 0x03, (byte) 0x81, 0x01, 0x00}),
           graceAuthnsZero,
         },
         // error=passwordExpired
-        // BER: 30:03:81:01:00
         new Object[] {
-          LdapUtils.base64Decode("MAOBAQA="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x03, (byte) 0x81, 0x01, 0x00}),
           passExpired,
         },
         // error=accountLocked
-        // BER: 30:03:81:01:01
         new Object[] {
-          LdapUtils.base64Decode("MAOBAQE="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x03, (byte) 0x81, 0x01, 0x01}),
           accountLocked,
         },
         // empty control
-        // BER: 30:00
         new Object[] {
-          LdapUtils.base64Decode("MAA="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x00}),
           new PasswordPolicyControl(),
         },
       };
@@ -96,7 +90,7 @@ public class PasswordPolicyControlTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"control"}, dataProvider = "response")
-  public void decode(final byte[] berValue, final PasswordPolicyControl expected)
+  public void decode(final DERBuffer berValue, final PasswordPolicyControl expected)
     throws Exception
   {
     final PasswordPolicyControl actual = new PasswordPolicyControl(expected.getCriticality());

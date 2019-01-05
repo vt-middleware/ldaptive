@@ -2,6 +2,7 @@
 package org.ldaptive.control;
 
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
 
 /**
  * LDAP control defined as:
@@ -41,6 +42,18 @@ public class GenericControl extends AbstractControl implements RequestControl, R
    * Creates a new generic control.
    *
    * @param  oid  control OID
+   * @param  encoded  control value
+   */
+  public GenericControl(final String oid, final DERBuffer encoded)
+  {
+    this(oid, false, encoded);
+  }
+
+
+  /**
+   * Creates a new generic control.
+   *
+   * @param  oid  control OID
    * @param  critical  whether this control is critical
    * @param  encoded  control value
    */
@@ -48,6 +61,20 @@ public class GenericControl extends AbstractControl implements RequestControl, R
   {
     super(oid, critical);
     value = encoded;
+  }
+
+
+  /**
+   * Creates a new generic control.
+   *
+   * @param  oid  control OID
+   * @param  critical  whether this control is critical
+   * @param  encoded  control value
+   */
+  public GenericControl(final String oid, final boolean critical, final DERBuffer encoded)
+  {
+    super(oid, critical);
+    decode(encoded);
   }
 
 
@@ -101,8 +128,8 @@ public class GenericControl extends AbstractControl implements RequestControl, R
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    value = berValue;
+    value = encoded.getRemainingBytes();
   }
 }

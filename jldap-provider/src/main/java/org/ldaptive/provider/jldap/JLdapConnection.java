@@ -43,6 +43,7 @@ import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -395,7 +396,7 @@ public class JLdapConnection implements ProviderConnection
       final ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(
         request.getOID(),
         ldapExtRes.getID(),
-        ldapExtRes.getValue());
+        ldapExtRes.getValue() != null ? new DefaultDERBuffer(ldapExtRes.getValue()) : null);
       response = createResponse(request, extRes.getValue(), ldapExtRes);
     } catch (LDAPException e) {
       processLDAPException(e);
@@ -932,7 +933,7 @@ public class JLdapConnection implements ProviderConnection
 
       final org.ldaptive.intermediate.IntermediateResponse ir = IntermediateResponseFactory.createIntermediateResponse(
         res.getID(),
-        res.getValue(),
+        res.getValue() != null ? new DefaultDERBuffer(res.getValue()) : null,
         respControls,
         res.getMessageID());
       return new SearchItem(ir);

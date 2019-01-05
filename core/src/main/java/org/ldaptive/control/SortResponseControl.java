@@ -1,10 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
@@ -184,14 +184,12 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(SortResultHandler.PATH, new SortResultHandler(this));
     parser.registerHandler(AttributeTypeHandler.PATH, new AttributeTypeHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -215,7 +213,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       final int resultValue = IntegerType.decode(encoded).intValue();
       final ResultCode rc = ResultCode.valueOf(resultValue);
@@ -247,7 +245,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setAttributeName(OctetStringType.decode(encoded));
     }

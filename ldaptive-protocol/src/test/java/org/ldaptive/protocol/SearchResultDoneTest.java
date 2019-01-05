@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.ResultCode;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.PagedResultsControl;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -112,6 +112,6 @@ public class SearchResultDoneTest
   public void encode(final byte[] berValue, final SearchResultDone response)
     throws Exception
   {
-    Assert.assertEquals(new SearchResultDone(ByteBuffer.wrap(berValue)), response);
+    Assert.assertEquals(new SearchResultDone(new DefaultDERBuffer(berValue)), response);
   }
 }

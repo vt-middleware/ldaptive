@@ -2,6 +2,8 @@
 package org.ldaptive.control;
 
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -26,15 +28,16 @@ public class PagedResultsControlTest
     return
       new Object[][] {
         // request size 0, no cookie
-        // BER: 30:05:02:01:00:04:00
         new Object[] {
-          LdapUtils.base64Decode("MAUCAQAEAA=="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x05, 0x02, 0x01, 0x00, 0x04, 0x00}),
           new PagedResultsControl(0, null, true),
         },
         // request size 0, cookie
-        // BER: 30:0D:02:01:00:04:08:FF:FF:FF:FF:FF:FF:FF:FF
         new Object[] {
-          LdapUtils.base64Decode("MA0CAQAECP//////////"),
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x0D, 0x02, 0x01, 0x00, 0x04, 0x08, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
+              (byte) 0xFF, (byte) 0xFF, (byte) 0xFF}),
           new PagedResultsControl(
             0,
             new byte[] {
@@ -50,15 +53,15 @@ public class PagedResultsControlTest
             true),
         },
         // request size 1, no cookie
-        // BER: 30:05:02:01:01:04:00
         new Object[] {
-          LdapUtils.base64Decode("MAUCAQEEAA=="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x05, 0x02, 0x01, 0x01, 0x04, 0x00}),
           new PagedResultsControl(1, null, true),
         },
         // request size 1, cookie
-        // BER: 30:0D:02:01:01:04:08:EF:5C:15:00:00:00:00:00
         new Object[] {
-          LdapUtils.base64Decode("MA0CAQEECO9cFQAAAAAA"),
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x0D, 0x02, 0x01, 0x01, 0x04, 0x08, (byte) 0xEF, 0x5C, 0x15, 0x00, 0x00, 0x00, 0x00, 0x00}),
           new PagedResultsControl(
             1,
             new byte[] {
@@ -74,15 +77,15 @@ public class PagedResultsControlTest
             true),
         },
         // request size 20, no cookie
-        // BER: 30:05:02:01:14:04:00
         new Object[] {
-          LdapUtils.base64Decode("MAUCARQEAA=="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x05, 0x02, 0x01, 0x14, 0x04, 0x00}),
           new PagedResultsControl(20, null, true),
         },
         // request size 20, cookie
-        // BER: 30:0D:02:01:14:04:08:A7:C7:18:00:00:00:00:00
         new Object[] {
-          LdapUtils.base64Decode("MA0CARQECKfHGAAAAAAA"),
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x0D, 0x02, 0x01, 0x14, 0x04, 0x08, (byte) 0xA7, (byte) 0xC7, 0x18, 0x00, 0x00, 0x00, 0x00, 0x00}),
           new PagedResultsControl(
             20,
             new byte[] {
@@ -100,16 +103,17 @@ public class PagedResultsControlTest
         // request size 0, 388 byte length cookie
         // both the sequence and octet string use long form length
         new Object[] {
-          LdapUtils.base64Decode(
-            "MIQAAAGNAgEABIQAAAGEAQAAAIQBAAD/////7E9EoNm4ztLWBSblnuyp1iZhZ/XM" +
-            "5IJk6DcibuopiDZU4AofIdRQT4hfyECUBna7AAAAAAEAAAAAAAAAfQ8AABwAAAAF" +
-            "AAAAAgAAAAAAAAAAAAAABAAAAAUAAQCpDgAA/QYAAP0GAAAAAAAAtBxsfUgmpECD" +
-            "Z+XSv7zT1gAAAAAEAAAAAQAAAAAAAAAAAAAAAQAAAAQAAAABAAAAAAAAAAAAAAAA" +
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAD/////AeNCb8/LArdUnvG/1PsdLkQipKip" +
-            "SVvzz/kAtrc1mcsAAAAAfwIAAAD7BgAACfwGAAD9BgAACakOAAB9DwAACH+AAA99" +
-            "AAAAAAAAAAAAAAD/////AAAAAAAAAAD/////DwAAABwAAAAdAAAAQW5jZXN0b3Jz" +
-            "X2luZGV4fwIAAAD7BgAACfwGAAD9BgAACakOAAAAAAAABH8CAAAA+wYAAAn8BgAA" +
-            "/QYAAAmpDgAA////////AAAAAA=="),
+          new DefaultDERBuffer(
+            LdapUtils.base64Decode(
+              "MIQAAAGNAgEABIQAAAGEAQAAAIQBAAD/////7E9EoNm4ztLWBSblnuyp1iZhZ/XM" +
+              "5IJk6DcibuopiDZU4AofIdRQT4hfyECUBna7AAAAAAEAAAAAAAAAfQ8AABwAAAAF" +
+              "AAAAAgAAAAAAAAAAAAAABAAAAAUAAQCpDgAA/QYAAP0GAAAAAAAAtBxsfUgmpECD" +
+              "Z+XSv7zT1gAAAAAEAAAAAQAAAAAAAAAAAAAAAQAAAAQAAAABAAAAAAAAAAAAAAAA" +
+              "AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAD/////AeNCb8/LArdUnvG/1PsdLkQipKip" +
+              "SVvzz/kAtrc1mcsAAAAAfwIAAAD7BgAACfwGAAD9BgAACakOAAB9DwAACH+AAA99" +
+              "AAAAAAAAAAAAAAD/////AAAAAAAAAAD/////DwAAABwAAAAdAAAAQW5jZXN0b3Jz" +
+              "X2luZGV4fwIAAAD7BgAACfwGAAD9BgAACakOAAAAAAAABH8CAAAA+wYAAAn8BgAA" +
+              "/QYAAAmpDgAA////////AAAAAA==")),
           new PagedResultsControl(
             0,
             new byte[] {
@@ -205,10 +209,10 @@ public class PagedResultsControlTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"control"}, dataProvider = "request-response")
-  public void encode(final byte[] berValue, final PagedResultsControl expected)
+  public void encode(final DERBuffer berValue, final PagedResultsControl expected)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue);
+    Assert.assertEquals(expected.encode(), berValue.getRemainingBytes());
   }
 
 
@@ -219,7 +223,7 @@ public class PagedResultsControlTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"control"}, dataProvider = "request-response")
-  public void decode(final byte[] berValue, final PagedResultsControl expected)
+  public void decode(final DERBuffer berValue, final PagedResultsControl expected)
     throws Exception
   {
     final PagedResultsControl actual = new PagedResultsControl(expected.getCriticality());

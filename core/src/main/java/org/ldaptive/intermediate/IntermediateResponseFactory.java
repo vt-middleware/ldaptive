@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.intermediate;
 
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.control.ResponseControl;
 
 /**
@@ -28,7 +29,7 @@ public final class IntermediateResponseFactory
    */
   public static IntermediateResponse createIntermediateResponse(
     final String oid,
-    final byte[] encoded,
+    final DERBuffer encoded,
     final ResponseControl[] responseControls,
     final int msgId)
   {

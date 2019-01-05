@@ -3,6 +3,7 @@ package org.ldaptive.control;
 
 import org.ldaptive.ad.control.DirSyncControl;
 import org.ldaptive.ad.control.GetStatsControl;
+import org.ldaptive.asn1.DERBuffer;
 
 /**
  * Utility class for creating controls.
@@ -26,7 +27,7 @@ public final class ControlFactory
    *
    * @return  response control
    */
-  public static ResponseControl createResponseControl(final String oid, final boolean critical, final byte[] encoded)
+  public static ResponseControl createResponseControl(final String oid, final boolean critical, final DERBuffer encoded)
   {
     final ResponseControl ctl;
     switch (oid) {

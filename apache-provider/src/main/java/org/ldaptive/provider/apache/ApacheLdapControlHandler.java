@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.apache;
 
-import java.nio.ByteBuffer;
 import org.apache.directory.api.ldap.extras.controls.SynchronizationModeEnum;
 import org.apache.directory.api.ldap.extras.controls.ad.AdDirSync;
 import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncFlag;
@@ -28,6 +27,7 @@ import org.apache.directory.api.ldap.model.message.controls.SortResponse;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.ad.control.DirSyncControl;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.asn1.UuidType;
 import org.ldaptive.control.EntryChangeNotificationControl;
 import org.ldaptive.control.ManageDsaITControl;
@@ -158,7 +158,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       final SyncStateValue c = (SyncStateValue) responseControl;
       ctl = new SyncStateControl(
         SyncStateControl.State.valueOf(c.getSyncStateType().getValue()),
-        UuidType.decode(ByteBuffer.wrap(c.getEntryUUID())),
+        UuidType.decode(new DefaultDERBuffer(c.getEntryUUID())),
         c.getCookie(),
         c.isCritical());
     } else if (SyncDoneControl.OID.equals(responseControl.getOid())) {

@@ -3,7 +3,6 @@ package org.ldaptive.asn1;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.StringTokenizer;
 
 /**
@@ -94,11 +93,10 @@ public class OidType extends AbstractDERType implements DEREncoder
    *
    * @return  decoded bytes as an OID.
    */
-  public static String decode(final ByteBuffer encoded)
+  public static String decode(final DERBuffer encoded)
   {
-    final ByteBuffer buffer = ByteBuffer.wrap(readBuffer(encoded));
     final StringBuilder sb = new StringBuilder();
-    final int firstId = buffer.get();
+    final int firstId = encoded.get();
     // CheckStyle:MagicNumber OFF
     if (firstId < 40) {
       sb.append("0").append(".").append(firstId).append(".");
@@ -108,8 +106,8 @@ public class OidType extends AbstractDERType implements DEREncoder
       sb.append("2").append(".").append(firstId - 80).append(".");
     }
     // CheckStyle:MagicNumber ON
-    while (buffer.hasRemaining()) {
-      sb.append(readInt(buffer)).append(".");
+    while (encoded.hasRemaining()) {
+      sb.append(readInt(encoded)).append(".");
     }
     sb.setLength(sb.length() - 1);
     return sb.toString();
@@ -227,7 +225,7 @@ public class OidType extends AbstractDERType implements DEREncoder
    *
    * @return  OID component integer
    */
-  protected static int readInt(final ByteBuffer buffer)
+  protected static int readInt(final DERBuffer buffer)
   {
     // CheckStyle:MagicNumber OFF
     int val = 0;

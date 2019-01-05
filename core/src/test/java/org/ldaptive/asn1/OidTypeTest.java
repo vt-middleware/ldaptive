@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import org.testng.Assert;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
@@ -140,7 +139,7 @@ public class OidTypeTest
   public void decode(final byte[] bytes, final String expected)
     throws Exception
   {
-    Assert.assertEquals(OidType.decode(ByteBuffer.wrap(bytes)), expected);
+    Assert.assertEquals(OidType.decode(new DefaultDERBuffer(bytes)), expected);
   }
 
 

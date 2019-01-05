@@ -50,6 +50,7 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -478,11 +479,10 @@ public class UnboundIDConnection implements ProviderConnection
       }
 
       final ExtendedResult result = connection.processExtendedOperation(er);
-      final byte[] responseBerValue = result.getValue() != null ? result.getValue().getValue() : null;
       final ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(
         request.getOID(),
         result.getOID(),
-        responseBerValue);
+        result.getValue() != null ? new DefaultDERBuffer(result.getValue().getValue()) : null);
       response = createResponse(request, extRes.getValue(), result);
     } catch (LDAPException e) {
       processLDAPException(request, e);
@@ -1032,7 +1032,7 @@ public class UnboundIDConnection implements ProviderConnection
 
       final org.ldaptive.intermediate.IntermediateResponse ir = IntermediateResponseFactory.createIntermediateResponse(
         res.getOID(),
-        res.getValue().getValue(),
+        new DefaultDERBuffer(res.getValue().getValue()),
         respControls,
         res.getMessageID());
       return new SearchItem(ir);

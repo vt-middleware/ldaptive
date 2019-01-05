@@ -1,14 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import java.util.UUID;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
-import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UuidType;
 
 /**
@@ -287,15 +286,13 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(StateHandler.PATH, new StateHandler(this));
     parser.registerHandler(EntryUuidHandler.PATH, new EntryUuidHandler(this));
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -319,7 +316,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       final int stateValue = IntegerType.decode(encoded).intValue();
       final State s = State.valueOf(stateValue);
@@ -351,7 +348,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       if (encoded.hasRemaining()) {
         getObject().setEntryUuid(UuidType.decode(encoded));
@@ -380,9 +377,9 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);
       }
