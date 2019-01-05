@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -87,9 +86,9 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    *
    * @return  decoded bytes as an string
    */
-  public static String decode(final ByteBuffer encoded)
+  public static String decode(final DERBuffer encoded)
   {
-    return new String(readBuffer(encoded), StandardCharsets.UTF_8);
+    return new String(encoded.getRemainingBytes(), StandardCharsets.UTF_8);
   }
 
 

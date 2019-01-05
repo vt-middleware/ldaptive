@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import org.ldaptive.ResultCode;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -123,6 +123,6 @@ public class ExtendedResponseTest
   public void encode(final byte[] berValue, final ExtendedResponse response)
     throws Exception
   {
-    Assert.assertEquals(new ExtendedResponse(ByteBuffer.wrap(berValue)), response);
+    Assert.assertEquals(new ExtendedResponse(new DefaultDERBuffer(berValue)), response);
   }
 }

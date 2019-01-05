@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.extended;
 
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.extended.AbstractExtendedResponse;
 
 /**
@@ -20,7 +21,7 @@ public class FastBindResponse extends AbstractExtendedResponse<Void>
 
 
   @Override
-  public void decode(final byte[] encoded) {}
+  public void decode(final DERBuffer encoded) {}
 
 
   @Override

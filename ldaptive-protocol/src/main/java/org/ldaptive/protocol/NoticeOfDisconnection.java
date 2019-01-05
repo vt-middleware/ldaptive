@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
 
 /**
  * LDAP notice of disconnection defined as:
@@ -42,7 +42,7 @@ public class NoticeOfDisconnection extends UnsolicitedNotification
    *
    * @param  buffer  to decode
    */
-  public NoticeOfDisconnection(final ByteBuffer buffer)
+  public NoticeOfDisconnection(final DERBuffer buffer)
   {
     super(buffer);
   }

@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -337,7 +336,7 @@ public class DNTest
   public void decode(final byte[] bytes, final DN expected)
     throws Exception
   {
-    Assert.assertEquals(DN.decode(ByteBuffer.wrap(bytes)), expected);
+    Assert.assertEquals(DN.decode(new DefaultDERBuffer(bytes)), expected);
   }
 
 

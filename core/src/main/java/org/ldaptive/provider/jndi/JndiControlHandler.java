@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.jndi;
 
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.ControlFactory;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -47,6 +48,6 @@ public class JndiControlHandler implements ControlHandler<javax.naming.ldap.Cont
       ControlFactory.createResponseControl(
         responseControl.getID(),
         responseControl.isCritical(),
-        responseControl.getEncodedValue());
+        responseControl.getEncodedValue() != null ? new DefaultDERBuffer(responseControl.getEncodedValue()) : null);
   }
 }

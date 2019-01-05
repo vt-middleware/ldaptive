@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.ResultCode;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -57,6 +57,6 @@ public class DeleteResponseTest
   public void encode(final byte[] berValue, final DeleteResponse response)
     throws Exception
   {
-    Assert.assertEquals(new DeleteResponse(ByteBuffer.wrap(berValue)), response);
+    Assert.assertEquals(new DeleteResponse(new DefaultDERBuffer(berValue)), response);
   }
 }

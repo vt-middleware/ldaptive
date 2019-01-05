@@ -3,6 +3,7 @@ package org.ldaptive.provider.opendj;
 
 import org.forgerock.opendj.ldap.ByteStringBuilder;
 import org.forgerock.opendj.ldap.controls.GenericControl;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.ControlFactory;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -53,6 +54,6 @@ public class OpenDJControlHandler implements ControlHandler<org.forgerock.opendj
       ControlFactory.createResponseControl(
         responseControl.getOID(),
         responseControl.isCritical(),
-        responseControl.getValue().toByteArray());
+        responseControl.getValue() != null ? new DefaultDERBuffer(responseControl.getValue().toByteArray()) : null);
   }
 }

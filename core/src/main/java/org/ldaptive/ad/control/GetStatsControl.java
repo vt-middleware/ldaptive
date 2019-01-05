@@ -1,11 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.control;
 
-import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
@@ -144,10 +144,8 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler("/SEQ/INT[1]", new IntegerHandler(this, "threadCount"));
     parser.registerHandler("/SEQ/INT[3]", new IntegerHandler(this, "callTime"));
@@ -162,7 +160,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
     parser.registerHandler("/SEQ/INT[21]", new IntegerHandler(this, "pagesRedirtied"));
     parser.registerHandler("/SEQ/INT[23]", new IntegerHandler(this, "logRecordCount"));
     parser.registerHandler("/SEQ/INT[25]", new IntegerHandler(this, "logRecordBytes"));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -188,7 +186,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().getStatistics().put(statName, IntegerType.decode(encoded).intValue());
     }
@@ -217,7 +215,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       // strings are terminated with 0x00(null), use trim to remove
       getObject().getStatistics().put(statName, OctetStringType.decode(encoded).trim());

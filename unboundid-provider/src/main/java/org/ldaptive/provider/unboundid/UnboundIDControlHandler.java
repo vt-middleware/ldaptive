@@ -2,6 +2,7 @@
 package org.ldaptive.provider.unboundid;
 
 import com.unboundid.asn1.ASN1OctetString;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.ControlFactory;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -53,6 +54,6 @@ public class UnboundIDControlHandler implements ControlHandler<com.unboundid.lda
       ControlFactory.createResponseControl(
         responseControl.getOID(),
         responseControl.isCritical(),
-        responseControl.getValue().getValue());
+        new DefaultDERBuffer(responseControl.getValue().getValue()));
   }
 }

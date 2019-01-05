@@ -1,8 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -27,9 +28,8 @@ public class SortResponseControlTest
     return
       new Object[][] {
         // result code success
-        // BER: 30:03:0A:01:00
         new Object[] {
-          LdapUtils.base64Decode("MAMKAQA="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x03, 0x0A, 0x01, 0x00}),
           new SortResponseControl(ResultCode.SUCCESS, true),
         },
       };
@@ -43,7 +43,7 @@ public class SortResponseControlTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"control"}, dataProvider = "response")
-  public void decode(final byte[] berValue, final SortResponseControl expected)
+  public void decode(final DERBuffer berValue, final SortResponseControl expected)
     throws Exception
   {
     final SortResponseControl actual = new SortResponseControl(expected.getCriticality());

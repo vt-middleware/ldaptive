@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import java.util.UUID;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -61,7 +60,7 @@ public class UuidTypeTest
   public void decode(final byte[] bytes, final UUID expected)
     throws Exception
   {
-    Assert.assertEquals(UuidType.decode(ByteBuffer.wrap(bytes)), expected);
+    Assert.assertEquals(UuidType.decode(new DefaultDERBuffer(bytes)), expected);
   }
 
 

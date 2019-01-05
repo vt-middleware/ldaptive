@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.ResultCode;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -81,6 +81,6 @@ public class BindResponseTest
   public void encode(final byte[] berValue, final BindResponse response)
     throws Exception
   {
-    Assert.assertEquals(new BindResponse(ByteBuffer.wrap(berValue)), response);
+    Assert.assertEquals(new BindResponse(new DefaultDERBuffer(berValue)), response);
   }
 }

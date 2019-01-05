@@ -2,6 +2,7 @@
 package org.ldaptive.intermediate;
 
 import org.ldaptive.ResponseMessage;
+import org.ldaptive.asn1.DERBuffer;
 
 /**
  * Interface for ldap intermediate responses.
@@ -25,5 +26,5 @@ public interface IntermediateResponse extends ResponseMessage
    *
    * @param  encoded  BER encoded response value
    */
-  void decode(byte[] encoded);
+  void decode(DERBuffer encoded);
 }

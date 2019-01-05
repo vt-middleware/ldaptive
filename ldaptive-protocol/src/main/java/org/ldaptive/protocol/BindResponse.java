@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.OctetStringType;
 
@@ -42,7 +42,7 @@ public class BindResponse extends AbstractResult
    *
    * @param  buffer  to decode
    */
-  public BindResponse(final ByteBuffer buffer)
+  public BindResponse(final DERBuffer buffer)
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
@@ -123,7 +123,7 @@ public class BindResponse extends AbstractResult
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setServerSaslCreds(OctetStringType.decode(encoded));
     }

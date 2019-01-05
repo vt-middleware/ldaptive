@@ -33,6 +33,7 @@ import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchReference;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.ExtendedRequest;
@@ -496,7 +497,7 @@ public class JndiConnection implements ProviderConnection
         final ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(
           request.getOID(),
           jndiExtRes.getID(),
-          jndiExtRes.getEncodedValue());
+          jndiExtRes.getEncodedValue() != null ? new DefaultDERBuffer(jndiExtRes.getEncodedValue()) : null);
         response = createResponse(request, extRes.getValue(), ResultCode.SUCCESS, null, ctx);
       } finally {
         if (ctx != null) {

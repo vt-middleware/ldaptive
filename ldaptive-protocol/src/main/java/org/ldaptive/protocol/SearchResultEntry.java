@@ -1,13 +1,14 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.OctetStringType;
 
@@ -56,7 +57,7 @@ public class SearchResultEntry extends AbstractMessage
    *
    * @param  buffer  to decode
    */
-  public SearchResultEntry(final ByteBuffer buffer)
+  public SearchResultEntry(final DERBuffer buffer)
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
@@ -152,7 +153,7 @@ public class SearchResultEntry extends AbstractMessage
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setLdapDN(OctetStringType.decode(encoded));
     }
@@ -176,22 +177,79 @@ public class SearchResultEntry extends AbstractMessage
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final String[] name = {null};
-      final List<byte[]> vals = new ArrayList<>();
-      final DERParser p = new DERParser();
-      p.registerHandler("/OCTSTR", (p1, e1) -> name[0] = OctetStringType.decode(e1));
-      p.registerHandler("/SET/OCTSTR", (p1, e1) -> vals.add(OctetStringType.readBuffer(e1)));
+      final AttributeParser p = new AttributeParser();
       p.parse(encoded);
-      if (name[0] == null) {
+
+      if (!p.getName().isPresent()) {
         throw new IllegalArgumentException("Could not parse attribute");
       }
-      if (vals.isEmpty()) {
-        getObject().addAttributes(new Attribute(name[0]));
+      if (!p.getValues().isPresent()) {
+        getObject().addAttributes(new Attribute(p.getName().get()));
       } else {
-        getObject().addAttributes(new Attribute(name[0], vals.toArray(new byte[vals.size()][])));
+        getObject().addAttributes(new Attribute(p.getName().get(), p.getValues().get()));
       }
+    }
+  }
+
+
+  /**
+   * Parses a buffer containing an attribute name and it's values.
+   */
+  protected static class AttributeParser
+  {
+
+    /** Parser for decoding LDAP attributes. */
+    private final DERParser parser = new DERParser();
+
+    /** Attribute name. */
+    private String name;
+
+    /** Attribute values. */
+    private List<byte[]> values = new ArrayList<>();
+
+
+    /**
+     * Creates a new attribute parser.
+     */
+    public AttributeParser()
+    {
+      parser.registerHandler("/OCTSTR", (p, e) -> name = OctetStringType.decode(e));
+      parser.registerHandler("/SET/OCTSTR", (p, e) -> values.add(e.getRemainingBytes()));
+    }
+
+
+    /**
+     * Examines the supplied buffer and parses an LDAP attribute if one is found.
+     *
+     * @param  buffer  to parse
+     */
+    public void parse(final DERBuffer buffer)
+    {
+      parser.parse(buffer);
+    }
+
+
+    /**
+     * Returns the attribute name.
+     *
+     * @return  attribute name or empty
+     */
+    public Optional<String> getName()
+    {
+      return Optional.ofNullable(name);
+    }
+
+
+    /**
+     * Returns the attribute values.
+     *
+     * @return  attribute values or empty
+     */
+    public Optional<byte[][]> getValues()
+    {
+      return values.isEmpty() ? Optional.empty() : Optional.of(values.stream().toArray(byte[][]::new));
     }
   }
 

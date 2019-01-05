@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.Credential;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.OctetStringType;
@@ -31,11 +31,11 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
 
 
   @Override
-  public void decode(final byte[] encoded)
+  public void decode(final DERBuffer encoded)
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(GenPasswdHandler.PATH, new GenPasswdHandler(this));
-    parser.parse(ByteBuffer.wrap(encoded));
+    parser.parse(encoded);
   }
 
 
@@ -66,7 +66,7 @@ public class PasswordModifyResponse extends AbstractExtendedResponse<Credential>
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setValue(new Credential(OctetStringType.decode(encoded)));
     }

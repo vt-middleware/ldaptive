@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 
 /**
@@ -35,7 +35,7 @@ public class ModifyDnResponse extends AbstractResult
    *
    * @param  buffer  to decode
    */
-  public ModifyDnResponse(final ByteBuffer buffer)
+  public ModifyDnResponse(final DERBuffer buffer)
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));

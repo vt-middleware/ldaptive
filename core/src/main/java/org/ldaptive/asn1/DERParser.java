@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashMap;
@@ -61,7 +60,7 @@ public class DERParser
    *
    * @param  encoded  DER-encoded bytes.
    */
-  public void parse(final ByteBuffer encoded)
+  public void parse(final DERBuffer encoded)
   {
     parseTags(encoded);
   }
@@ -75,7 +74,7 @@ public class DERParser
    *
    * @return  Tag or null if no universal tag or application-specific tag is known that matches the byte read in.
    */
-  public DERTag readTag(final ByteBuffer encoded)
+  public DERTag readTag(final DERBuffer encoded)
   {
     if (encoded.position() >= encoded.limit()) {
       return null;
@@ -124,7 +123,7 @@ public class DERParser
    *
    * @return  number of bytes occupied by tag value.
    */
-  public int readLength(final ByteBuffer encoded)
+  public int readLength(final DERBuffer encoded)
   {
     int length = 0;
     final byte b = encoded.get();
@@ -134,7 +133,7 @@ public class DERParser
       if (len > 0) {
         final int limit = encoded.limit();
         encoded.limit(encoded.position() + len);
-        length = IntegerType.decodeUnsigned(encoded).intValue();
+        length = IntegerType.decodeUnsignedPrimitive(encoded);
         encoded.limit(limit);
       }
     } else {
@@ -150,7 +149,7 @@ public class DERParser
    *
    * @param  encoded  to parse
    */
-  private void parseTags(final ByteBuffer encoded)
+  private void parseTags(final DERBuffer encoded)
   {
     int index = 0;
     while (encoded.position() < encoded.limit()) {
@@ -170,7 +169,7 @@ public class DERParser
    * @param  tag  to inspect for internal tags
    * @param  encoded  to parse
    */
-  private void parseTag(final DERTag tag, final ByteBuffer encoded)
+  private void parseTag(final DERTag tag, final DERBuffer encoded)
   {
     final int limit = encoded.limit();
     final int end = readLength(encoded) + encoded.position();
@@ -181,7 +180,7 @@ public class DERParser
     for (DERPath p : permutations) {
       handler = handlerMap.get(p);
       if (handler != null) {
-        encoded.position(start).limit(end);
+        encoded.limit(end).position(start);
         handler.handle(this, encoded);
       }
     }

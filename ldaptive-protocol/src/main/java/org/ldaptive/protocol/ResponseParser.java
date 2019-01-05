@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import java.util.Optional;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
@@ -89,7 +88,7 @@ public class ResponseParser
    *
    * @return  optional LDAP message
    */
-  public Optional<Message> parse(final ByteBuffer buffer)
+  public Optional<Message> parse(final DERBuffer buffer)
   {
     parser.parse(buffer);
     return Optional.ofNullable(message);

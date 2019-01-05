@@ -1,11 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.ParseHandler;
 import org.slf4j.Logger;
@@ -189,7 +190,7 @@ public final class DnParser
         parser.registerHandler("/OCTSTR[0]", handler);
 
         final String hexData = attrValue.substring(1);
-        parser.parse(ByteBuffer.wrap(decodeHexValue(hexData.toCharArray())));
+        parser.parse(new DefaultDERBuffer(decodeHexValue(hexData.toCharArray())));
         attributes.add(new LdapAttribute(attrName.trim(), handler.getDecodedValue()));
       } else {
         attributes.add(new LdapAttribute(attrName.trim(), decodeStringValue(attrValue)));
@@ -319,7 +320,7 @@ public final class DnParser
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       decoded = OctetStringType.decode(encoded);
     }

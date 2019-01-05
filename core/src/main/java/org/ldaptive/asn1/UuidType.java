@@ -64,12 +64,34 @@ public class UuidType extends AbstractDERType implements DEREncoder
    *
    * @return  decoded bytes as a uuid.
    */
-  public static UUID decode(final ByteBuffer encoded)
+  public static UUID decode(final DERBuffer encoded)
   {
-    final ByteBuffer buffer = ByteBuffer.wrap(readBuffer(encoded));
-    final long mostSig = buffer.getLong();
-    final long leastSig = buffer.getLong();
+    final long mostSig = readLong(encoded);
+    final long leastSig = readLong(encoded);
     return new UUID(mostSig, leastSig);
+  }
+
+
+  /**
+   * Reads the next 8 bytes from the supplied buffer to create a long.
+   *
+   * @param  buffer  to read
+   *
+   * @return  UUID component integer
+   */
+  protected static long readLong(final DERBuffer buffer)
+  {
+    // CheckStyle:MagicNumber OFF
+    return
+      (((long) buffer.get()) << 56) |
+      (((long) buffer.get() & 0xff) << 48) |
+      (((long) buffer.get() & 0xff) << 40) |
+      (((long) buffer.get() & 0xff) << 32) |
+      (((long) buffer.get() & 0xff) << 24) |
+      (((long) buffer.get() & 0xff) << 16) |
+      (((long) buffer.get() & 0xff) <<  8) |
+      (((long) buffer.get() & 0xff));
+    // CheckStyle:MagicNumber ON
   }
 
 

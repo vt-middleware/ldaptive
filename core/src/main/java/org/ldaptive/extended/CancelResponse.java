@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
+import org.ldaptive.asn1.DERBuffer;
+
 /**
  * Contains the response from an ldap cancel operation. See RFC 3909.
  *
@@ -18,7 +20,7 @@ public class CancelResponse extends AbstractExtendedResponse<Void>
 
 
   @Override
-  public void decode(final byte[] encoded) {}
+  public void decode(final DERBuffer encoded) {}
 
 
   @Override

@@ -1,20 +1,19 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.BooleanType;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.control.ControlFactory;
 import org.ldaptive.control.ResponseControl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * LDAP message envelope defined as:
@@ -36,9 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class AbstractMessage implements Message
 {
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Protocol message ID. */
   private int messageID;
@@ -136,9 +132,9 @@ public abstract class AbstractMessage implements Message
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setMessageID(IntegerType.decode(encoded).intValue());
+      getObject().setMessageID(IntegerType.decodeUnsignedPrimitive(encoded));
     }
   }
 
@@ -163,17 +159,90 @@ public abstract class AbstractMessage implements Message
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final boolean[] critical = new boolean[1];
-      final String[] oid = new String[1];
-      final byte[][] value = {null};
-      final DERParser p = new DERParser();
-      p.registerHandler("/SEQ/BOOL", (p1, e1) -> critical[0] = BooleanType.decode(e1));
-      p.registerHandler("/SEQ/OCTSTR[0]", (p1, e1) -> oid[0] = OctetStringType.decode(e1));
-      p.registerHandler("/SEQ/OCTSTR[1]", (p1, e1) -> value[0] = OctetStringType.readBuffer(e1));
+      final ControlParser p = new ControlParser();
       p.parse(encoded);
-      getObject().addControls(ControlFactory.createResponseControl(oid[0], critical[0], value[0]));
+      getObject().addControls(
+        ControlFactory.createResponseControl(
+          p.getOid().isPresent() ? p.getOid().get() : null,
+          p.getCritical().isPresent() ? p.getCritical().get() : false,
+          p.getValue().isPresent() ? p.getValue().get() : null));
+    }
+  }
+
+
+  /**
+   * Parses a buffer containing an LDAP control.
+   */
+  protected static class ControlParser
+  {
+
+    /** Parser for decoding LDAP controls. */
+    private final DERParser parser = new DERParser();
+
+    /** Control criticality. */
+    private boolean critical;
+
+    /** Control oid. */
+    private String oid;
+
+    /** Control value. */
+    private DERBuffer value;
+
+
+    /**
+     * Creates a new control parser.
+     */
+    public ControlParser()
+    {
+      parser.registerHandler("/SEQ/BOOL", (p, e) -> critical = BooleanType.decode(e));
+      parser.registerHandler("/SEQ/OCTSTR[0]", (p, e) -> oid = OctetStringType.decode(e));
+      parser.registerHandler("/SEQ/OCTSTR[1]", (p, e) -> value = e.slice());
+    }
+
+
+    /**
+     * Examines the supplied buffer and parses an LDAP control if one is found.
+     *
+     * @param  buffer  to parse
+     */
+    public void parse(final DERBuffer buffer)
+    {
+      parser.parse(buffer);
+    }
+
+
+    /**
+     * Returns the control criticality.
+     *
+     * @return  criticality or empty
+     */
+    public Optional<Boolean> getCritical()
+    {
+      return Optional.ofNullable(critical);
+    }
+
+
+    /**
+     * Returns the control oid.
+     *
+     * @return  control oid or empty
+     */
+    public Optional<String> getOid()
+    {
+      return Optional.ofNullable(oid);
+    }
+
+
+    /**
+     * Returns the control value.
+     *
+     * @return  control value or empty
+     */
+    public Optional<DERBuffer> getValue()
+    {
+      return Optional.ofNullable(value);
     }
   }
 

@@ -47,6 +47,7 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchReference;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.ResponseControl;
@@ -528,11 +529,10 @@ public class OpenDJConnection implements org.ldaptive.provider.ProviderConnectio
       }
 
       final GenericExtendedResult result = connection.extendedRequest(er);
-      final byte[] responseBerValue = result.getValue() != null ? result.getValue().toByteArray() : null;
       final ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(
         request.getOID(),
         result.getOID(),
-        responseBerValue);
+        result.getValue() != null ? new DefaultDERBuffer(result.getValue().toByteArray()) : null);
       response = createResponse(request, extRes.getValue(), result);
     } catch (ErrorResultException e) {
       processErrorResultException(request, e);
@@ -1073,7 +1073,7 @@ public class OpenDJConnection implements org.ldaptive.provider.ProviderConnectio
 
       final org.ldaptive.intermediate.IntermediateResponse ir = IntermediateResponseFactory.createIntermediateResponse(
         res.getOID(),
-        res.getValue().toByteArray(),
+        res.getValue() != null ? new DefaultDERBuffer(res.getValue().toByteArray()) : null,
         respControls,
         -1);
       return new SearchItem(ir);

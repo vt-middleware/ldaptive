@@ -1,7 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.control;
 
-import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -39,18 +40,16 @@ public class GetStatsControlTest
     ctrl.getStatistics().put("filter", "(uid=2)");
     return
       new Object[][] {
-        // BER:
-        // 30:84:00:00:00:6E:02:01:01:02:01:01:02:01:03:02:01:0F:02:01:05:02:
-        // 01:01:02:01:06:02:02:13:92:02:01:07:04:0A:20:28:75:69:64:3D:32:29:
-        // 20:00:02:01:08:04:15:41:6E:63:65:73:74:6F:72:73:5F:69:6E:64:65:78:
-        // 3A:30:3A:4E:3B:00:02:01:09:02:03:00:B0:26:02:01:0A:02:01:00:02:01:
-        // 0B:02:01:00:02:01:0C:02:01:00:02:01:0D:02:01:02:02:01:0E:02:01:00:
-        // 02:01:0F:02:01:00:
         new Object[] {
-          LdapUtils.base64Decode(
-            "MIQAAABuAgEBAgEBAgEDAgEPAgEFAgEBAgEGAgITkgIBBwQKICh1aWQ9MikgAAIB" +
-            "CAQVQW5jZXN0b3JzX2luZGV4OjA6TjsAAgEJAgMAsCYCAQoCAQACAQsCAQACAQwC" +
-            "AQACAQ0CAQICAQ4CAQACAQ8CAQA="),
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, (byte) 0x84, 0x00, 0x00, 0x00, 0x6E, 0x02, 0x01, 0x01, 0x02, 0x01, 0x01, 0x02, 0x01, 0x03, 0x02,
+              0x01, 0x0F, 0x02, 0x01, 0x05, 0x02, 0x01, 0x01, 0x02, 0x01, 0x06, 0x02, 0x02, 0x13, (byte) 0x92, 0x02,
+              0x01, 0x07, 0x04, 0x0A, 0x20, 0x28, 0x75, 0x69, 0x64, 0x3D, 0x32, 0x29, 0x20, 0x00, 0x02, 0x01, 0x08,
+              0x04, 0x15, 0x41, 0x6E, 0x63, 0x65, 0x73, 0x74, 0x6F, 0x72, 0x73, 0x5F, 0x69, 0x6E, 0x64, 0x65, 0x78,
+              0x3A, 0x30, 0x3A, 0x4E, 0x3B, 0x00, 0x02, 0x01, 0x09, 0x02, 0x03, 0x00, (byte) 0xB0, 0x26, 0x02, 0x01,
+              0x0A, 0x02, 0x01, 0x00, 0x02, 0x01, 0x0B, 0x02, 0x01, 0x00, 0x02, 0x01, 0x0C, 0x02, 0x01, 0x00, 0x02,
+              0x01, 0x0D, 0x02, 0x01, 0x02, 0x02, 0x01, 0x0E, 0x02, 0x01, 0x00, 0x02, 0x01, 0x0F, 0x02, 0x01, 0x00}),
           ctrl,
         },
       };
@@ -64,7 +63,7 @@ public class GetStatsControlTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = {"control"}, dataProvider = "response")
-  public void decode(final byte[] berValue, final GetStatsControl expected)
+  public void decode(final DERBuffer berValue, final GetStatsControl expected)
     throws Exception
   {
     final GetStatsControl actual = new GetStatsControl(expected.getCriticality());

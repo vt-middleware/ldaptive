@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
 
 /**
  * LDAP unsolicited notification defined as:
@@ -42,7 +42,7 @@ public class UnsolicitedNotification extends ExtendedResponse
    *
    * @param  buffer  to decode
    */
-  public UnsolicitedNotification(final ByteBuffer buffer)
+  public UnsolicitedNotification(final DERBuffer buffer)
   {
     super(buffer);
   }

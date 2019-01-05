@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -55,6 +55,6 @@ public class IntermediateResponseTest
   public void encode(final byte[] berValue, final IntermediateResponse response)
     throws Exception
   {
-    Assert.assertEquals(new IntermediateResponse(ByteBuffer.wrap(berValue)), response);
+    Assert.assertEquals(new IntermediateResponse(new DefaultDERBuffer(berValue)), response);
   }
 }

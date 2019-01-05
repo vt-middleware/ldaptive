@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.ResultCode;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -62,6 +62,6 @@ public class NoticeOfDisconnectionTest
   public void encode(final byte[] berValue, final NoticeOfDisconnection notification)
     throws Exception
   {
-    Assert.assertEquals(new NoticeOfDisconnection(ByteBuffer.wrap(berValue)), notification);
+    Assert.assertEquals(new NoticeOfDisconnection(new DefaultDERBuffer(berValue)), notification);
   }
 }
