@@ -6,7 +6,7 @@
   <groupId>org.ldaptive</groupId>
   <artifactId>ldaptive-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.2.4</version>
+  <version>1.2.5-SNAPSHOT</version>
   <name>LDAPTIVE PARENT</name>
   <description>Java LDAP API</description>
   <url>http://www.ldaptive.org</url>
