@@ -31,7 +31,7 @@ echo "Updated pom to release version ${RELEASE_VERSION}"
 user_continue
 
 # commit pom changes
-git commit pom.xml -m "Update version for ${RELEASE_VERSION} release."
+git commit -a -m "Update version for ${RELEASE_VERSION} release."
 
 # tag the release version
 git tag -a v${RELEASE_VERSION} -m "Tagging ${RELEASE_VERSION} release."
@@ -42,7 +42,7 @@ echo "Tagged release ${RELEASE_VERSION}"
 echo "Updated pom to next version ${NEXT_VERSION}"
 
 # commit pom changes
-git commit pom.xml -m "Bump version to ${NEXT_VERSION}."
+git commit -a -m "Bump version to ${NEXT_VERSION}."
 
 # push commits
 git push origin ${BRANCH}
