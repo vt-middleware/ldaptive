@@ -4,7 +4,6 @@ package org.ldaptive.provider.jldap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 import com.novell.ldap.LDAPAttribute;
 import com.novell.ldap.LDAPAttributeSet;
 import com.novell.ldap.LDAPEntry;
@@ -133,10 +132,13 @@ public class JLdapUtils
    *
    * @return  jldap attributes
    */
-  @SuppressWarnings("unchecked")
   public LDAPAttributeSet fromLdapAttributes(final Collection<LdapAttribute> c)
   {
-    return c.stream().map(this::fromLdapAttribute).collect(Collectors.toCollection(LDAPAttributeSet::new));
+    final LDAPAttributeSet attrs = new LDAPAttributeSet();
+    for (LdapAttribute la : c) {
+      attrs.add(fromLdapAttribute(la));
+    }
+    return attrs;
   }
 
 
