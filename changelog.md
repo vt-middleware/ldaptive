@@ -6,6 +6,17 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 1.2.4 - 18Jan2019
+
+Issue | Description
+:---- | :----------
+[ldaptive-144]({{ site.issueURL }}144) | Incorrect JNDI base DN escaping.
+[ldaptive-140]({{ site.issueURL }}140) | Passivator orphans connections.
+[ldaptive-138]({{ site.issueURL }}138) | Escape control characters in auth logs.
+[ldaptive-136]({{ site.issueURL }}136) | Clean up thread-local used in ThreadLocalTLSSocketFactory.
+[ldaptive-135]({{ site.issueURL }}135) | Simple type conversion does not support Object wrappers.
+[ldaptive-131]({{ site.issueURL }}131) | PasswordPolicyControl ambiguous graceAuthNsRemaining.
+
 ## Version 1.2.3 - 04Oct2017
 
 Issue | Description
