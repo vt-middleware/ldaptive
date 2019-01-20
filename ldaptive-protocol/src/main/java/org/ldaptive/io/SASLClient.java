@@ -77,8 +77,7 @@ public class SASLClient
         request);
 
       byte[] bytes = client.hasInitialResponse() ? client.evaluateChallenge(new byte[0]) : null;
-      OperationHandle handle = conn.operation(request.createBindRequest(bytes)).execute();
-      response = (BindResponse) handle.await().get();
+      response = (BindResponse) conn.operation(request.createBindRequest(bytes));
       while (!client.isComplete() &&
         (ResultCode.SASL_BIND_IN_PROGRESS == response.getResultCode() ||
           ResultCode.SUCCESS == response.getResultCode())) {
@@ -89,8 +88,7 @@ public class SASLClient
           }
           break;
         }
-        handle = conn.operation(request.createBindRequest(bytes)).execute();
-        response = (BindResponse) handle.await().get();
+        response = (BindResponse) conn.operation(request.createBindRequest(bytes));
       }
       return response;
     } catch (Throwable e) {
