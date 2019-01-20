@@ -3,8 +3,10 @@ package org.ldaptive.io;
 
 import java.time.Duration;
 import java.util.function.Consumer;
+import org.ldaptive.ResultCode;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.protocol.CompareRequest;
+import org.ldaptive.protocol.CompareResponse;
 import org.ldaptive.protocol.IntermediateResponse;
 import org.ldaptive.protocol.Result;
 import org.ldaptive.protocol.UnsolicitedNotification;
@@ -35,10 +37,26 @@ public class CompareOperationHandle extends OperationHandle
 
 
   @Override
-  public CompareOperationHandle execute()
+  public CompareOperationHandle send()
   {
-    super.execute();
+    super.send();
     return this;
+  }
+
+
+  @Override
+  public CompareResponse await()
+    throws LdapException
+  {
+    return (CompareResponse) super.await();
+  }
+
+
+  @Override
+  public CompareResponse execute()
+    throws LdapException
+  {
+    return send().await();
   }
 
 
@@ -75,7 +93,7 @@ public class CompareOperationHandle extends OperationHandle
 
 
   @Override
-  public CompareOperationHandle onException(final Consumer<Exception> function)
+  public CompareOperationHandle onException(final Consumer<LdapException> function)
   {
     super.onException(function);
     return this;
@@ -99,12 +117,16 @@ public class CompareOperationHandle extends OperationHandle
   /**
    * Invokes {@link #onCompare}.
    *
-   * @param  b  compare result
+   * @param  response  compare response
    */
-  void compare(final Boolean b)
+  void compare(final CompareResponse response)
   {
     if (onCompare != null) {
-      onCompare.accept(b);
+      if (response.getResultCode() == ResultCode.COMPARE_TRUE) {
+        onCompare.accept(Boolean.TRUE);
+      } else if (response.getResultCode() == ResultCode.COMPARE_FALSE) {
+        onCompare.accept(Boolean.FALSE);
+      }
     }
   }
 }

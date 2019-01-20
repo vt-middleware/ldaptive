@@ -7,6 +7,8 @@ import org.ldaptive.control.ResponseControl;
 import org.ldaptive.protocol.IntermediateResponse;
 import org.ldaptive.protocol.Result;
 import org.ldaptive.protocol.SearchRequest;
+import org.ldaptive.protocol.SearchResult;
+import org.ldaptive.protocol.SearchResultDone;
 import org.ldaptive.protocol.SearchResultEntry;
 import org.ldaptive.protocol.SearchResultReference;
 import org.ldaptive.protocol.UnsolicitedNotification;
@@ -25,6 +27,9 @@ public class SearchOperationHandle extends OperationHandle
   /** Function to handle response references. */
   private Consumer<SearchResultReference> onReference;
 
+  /** Synthetic result that is built as entries and references are received. */
+  private SearchResult result = new SearchResult();
+
 
   /**
    * Creates a new search operation handle.
@@ -40,10 +45,28 @@ public class SearchOperationHandle extends OperationHandle
 
 
   @Override
-  public SearchOperationHandle execute()
+  public SearchOperationHandle send()
   {
-    super.execute();
+    super.send();
     return this;
+  }
+
+
+  @Override
+  public SearchResult await()
+    throws LdapException
+  {
+    final SearchResultDone done = (SearchResultDone) super.await();
+    result.initialize(done);
+    return result;
+  }
+
+
+  @Override
+  public SearchResult execute()
+    throws LdapException
+  {
+    return send().await();
   }
 
 
@@ -80,7 +103,7 @@ public class SearchOperationHandle extends OperationHandle
 
 
   @Override
-  public SearchOperationHandle onException(final Consumer<Exception> function)
+  public SearchOperationHandle onException(final Consumer<LdapException> function)
   {
     super.onException(function);
     return this;
@@ -124,7 +147,9 @@ public class SearchOperationHandle extends OperationHandle
   {
     if (onEntry != null) {
       onEntry.accept(r);
+      consumedMessage();
     }
+    result.addEntry(r);
   }
 
 
@@ -137,6 +162,8 @@ public class SearchOperationHandle extends OperationHandle
   {
     if (onReference != null) {
       onReference.accept(r);
+      consumedMessage();
     }
+    result.addReference(r);
   }
 }

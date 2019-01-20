@@ -6,6 +6,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.protocol.ExtendedRequest;
+import org.ldaptive.protocol.ExtendedResponse;
 import org.ldaptive.protocol.IntermediateResponse;
 import org.ldaptive.protocol.Result;
 import org.ldaptive.protocol.UnsolicitedNotification;
@@ -36,10 +37,26 @@ public class ExtendedOperationHandle extends OperationHandle
 
 
   @Override
-  public ExtendedOperationHandle execute()
+  public ExtendedOperationHandle send()
   {
-    super.execute();
+    super.send();
     return this;
+  }
+
+
+  @Override
+  public ExtendedResponse await()
+    throws LdapException
+  {
+    return (ExtendedResponse) super.await();
+  }
+
+
+  @Override
+  public ExtendedResponse execute()
+    throws LdapException
+  {
+    return send().await();
   }
 
 
@@ -76,7 +93,7 @@ public class ExtendedOperationHandle extends OperationHandle
 
 
   @Override
-  public ExtendedOperationHandle onException(final Consumer<Exception> function)
+  public ExtendedOperationHandle onException(final Consumer<LdapException> function)
   {
     super.onException(function);
     return this;
@@ -100,13 +117,12 @@ public class ExtendedOperationHandle extends OperationHandle
   /**
    * Invokes {@link #onExtended}.
    *
-   * @param  name  of the extended response
-   * @param  value  of the extended response
+   * @param  response  extended response
    */
-  void extended(final String name, final byte[] value)
+  void extended(final ExtendedResponse response)
   {
     if (onExtended != null) {
-      onExtended.accept(name, value);
+      onExtended.accept(response.getResponseName(), response.getResponseValue());
     }
   }
 }

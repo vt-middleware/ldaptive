@@ -2,7 +2,7 @@
 package org.ldaptive.io;
 
 import java.time.Duration;
-import java.util.Optional;
+import java.time.Instant;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -44,7 +44,7 @@ public class OperationHandle
   private Consumer<IntermediateResponse> onIntermediate;
 
   /** Function to handle exceptions. */
-  private Consumer<Exception> onException;
+  private Consumer<LdapException> onException;
 
   /** Function to handle unsolicited notifications. */
   private Consumer<UnsolicitedNotification> onUnsolicitedNotification;
@@ -52,17 +52,20 @@ public class OperationHandle
   /** Latch to determine when a response has been received. */
   private CountDownLatch responseDone = new CountDownLatch(1);
 
-  /** Whether the request has been sent. See {@link Connection#write(OperationHandle)}. */
-  private boolean sentRequest;
+  /** Timestamp when the request was sent. See {@link Connection#write(OperationHandle)}. */
+  private Instant sentTime;
 
-  /** Whether a response has been received. */
-  private boolean receivedResponse;
+  /** Timestamp when the result was received or an exception occurred. */
+  private Instant receivedTime;
+
+  /** Whether this handle has consumed any messages. */
+  private boolean consumedMessage;
 
   /** Protocol response result. */
   private Result result;
 
   /** Exception encountered attempting to process the request. */
-  private Exception exception;
+  private LdapException exception;
 
 
   /**
@@ -90,13 +93,15 @@ public class OperationHandle
 
 
   /**
-   * Executes this operation. See {@link Connection#write(OperationHandle)}.
+   * Sends this request to the server. See {@link Connection#write(OperationHandle)}.
    *
    * @return  this handle
+   *
+   * @throws  IllegalStateException  if this request has already been sent
    */
-  public OperationHandle execute()
+  public OperationHandle send()
   {
-    if (sentRequest) {
+    if (sentTime != null) {
       throw new IllegalStateException("Request has already been sent");
     }
     if (connection == null) {
@@ -105,9 +110,54 @@ public class OperationHandle
     try {
       connection.write(this);
     } finally {
-      sentRequest = true;
+      sentTime = Instant.now();
     }
     return this;
+  }
+
+
+  /**
+   * Waits for a result or reports a timeout exception.
+   *
+   * @return  result of the operation or empty if the operation is abandoned
+   *
+   * @throws  IllegalStateException  if {@link #send()} has not been invoked
+   * @throws  LdapException  if an error occurs executing the request
+   */
+  public Result await()
+    throws LdapException
+  {
+    if (sentTime == null) {
+      throw new IllegalStateException("Request has not been sent. Invoke execute before calling this method.");
+    }
+    try {
+      if (!responseDone.await(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
+        abandon(new TimeoutException("No response received in " + responseTimeout.toMillis() + "ms"));
+      } else if (result != null && exception == null) {
+        return result;
+      }
+    } catch (InterruptedException e) {
+      exception(e);
+    }
+    if (exception == null) {
+      throw new IllegalStateException("Response completed without a result or exception");
+    }
+    throw exception;
+  }
+
+
+  /**
+   * Convenience method that invokes {@link #send()} followed by {@link #await()}. Provides a single method to make a
+   * synchronous request.
+   *
+   * @return  result of the operation or empty if the operation is abandoned
+   *
+   * @throws  LdapException  if an error occurs executing the request
+   */
+  public Result execute()
+    throws LdapException
+  {
+    return send().await();
   }
 
 
@@ -174,7 +224,7 @@ public class OperationHandle
    *
    * @return  this handle
    */
-  public OperationHandle onException(final Consumer<Exception> function)
+  public OperationHandle onException(final Consumer<LdapException> function)
   {
     onException = function;
     return this;
@@ -182,52 +232,69 @@ public class OperationHandle
 
 
   /**
-   * Waits for a result or reports a timeout exception.
+   * Abandons this operation. See {@link #abandon(Throwable)}.
    *
-   * @return  result of the operation or empty if the operation is abandoned
-   *
-   * @throws  IllegalStateException  if {@link #execute()} has not been invoked
-   * @throws  Exception  if an error occurs executing the request
+   * @throws  IllegalStateException  if the request has not been sent to the server
    */
-  public Optional<Result> await()
-    throws Exception
+  public void abandon()
   {
-    if (!sentRequest) {
-      throw new IllegalStateException("Request has not been sent. Invoke execute before calling this method.");
-    }
-    try {
-      if (!responseDone.await(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
-        abandon();
-        exception(new TimeoutException("No response received in " + responseTimeout.toMillis() + "ms"));
-      } else if (exception == null) {
-        return Optional.of(result);
-      }
-    } catch (InterruptedException e) {
-      exception(e);
-    }
-    if (exception == null) {
-      return Optional.empty();
-    }
-    throw exception;
+    abandon(new LdapException("Request abandoned"));
   }
 
 
   /**
    * Abandons this operation. Any threads waiting on the result will receive an empty result. See {@link
    * Connection#operation(AbandonRequest)}.
+   *
+   * @param  cause  the reason this request was abandoned
+   *
+   * @throws  IllegalStateException  if the request has not been sent to the server
    */
-  public void abandon()
+  public void abandon(final Throwable cause)
   {
-    if (!sentRequest) {
+    if (sentTime == null) {
       throw new IllegalStateException("Request has not been sent. Invoke execute before calling this method.");
     }
-    if (!receivedResponse) {
+    if (receivedTime == null) {
       try {
         connection.operation(new AbandonRequest(messageID));
       } finally {
-        complete();
+        exception(cause);
       }
     }
+  }
+
+
+  /**
+   * Returns the time this operation sent a request.
+   *
+   * @return  sent time
+   */
+  public Instant getSentTime()
+  {
+    return sentTime;
+  }
+
+
+  /**
+   * Returns the time this operation received a result or encountered an exception.
+   *
+   * @return  received time
+   */
+  public Instant getReceivedTime()
+  {
+    return receivedTime;
+  }
+
+
+  /**
+   * Returns whether this handle has consumed any messages.
+   *
+   * @return  whether this handle has consumed any messages
+   */
+  public boolean hasConsumedMessage()
+  {
+    return consumedMessage;
   }
 
 
@@ -260,8 +327,12 @@ public class OperationHandle
    */
   void result(final Result r)
   {
+    if (r == null) {
+      throw new IllegalArgumentException("Result cannot be null");
+    }
     if (onResult != null) {
       onResult.accept(r);
+      consumedMessage();
     }
     result = r;
     complete();
@@ -290,6 +361,7 @@ public class OperationHandle
   {
     if (onIntermediate != null) {
       onIntermediate.accept(r);
+      consumedMessage();
     }
   }
 
@@ -303,6 +375,7 @@ public class OperationHandle
   {
     if (onUnsolicitedNotification != null) {
       onUnsolicitedNotification.accept(u);
+      consumedMessage();
     }
   }
 
@@ -312,13 +385,31 @@ public class OperationHandle
    *
    * @param  e  exception
    */
-  void exception(final Exception e)
+  void exception(final Throwable e)
   {
-    if (onException != null) {
-      onException.accept(e);
+    if (e == null) {
+      throw new IllegalArgumentException("Exception cannot be null");
     }
-    exception = e;
+    final LdapException ldapEx;
+    if (e instanceof LdapException) {
+      ldapEx = (LdapException) e;
+    } else {
+      ldapEx = new LdapException(e);
+    }
+    if (onException != null) {
+      onException.accept(ldapEx);
+    }
+    exception = ldapEx;
     complete();
+  }
+
+
+  /**
+   * Indicates that a protocol message was consumed by a supplied consumer.
+   */
+  void consumedMessage()
+  {
+    consumedMessage = true;
   }
 
 
@@ -330,7 +421,7 @@ public class OperationHandle
     try {
       responseDone.countDown();
     } finally {
-      receivedResponse = true;
+      receivedTime = Instant.now();
       connection = null;
     }
   }
