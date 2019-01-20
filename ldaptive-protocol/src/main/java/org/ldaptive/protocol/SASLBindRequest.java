@@ -24,10 +24,16 @@ public class SASLBindRequest extends AbstractRequestMessage implements BindReque
 {
 
   /** */
-  private final String saslMechanism;
+  private String saslMechanism;
 
   /** */
-  private final byte[] saslCredentials;
+  private byte[] saslCredentials;
+
+
+  /**
+   * Default constructor.
+   */
+  private SASLBindRequest() {}
 
 
   /**
@@ -100,5 +106,56 @@ public class SASLBindRequest extends AbstractRequestMessage implements BindReque
     return new StringBuilder(super.toString()).append(", ")
       .append("saslMechanism=").append(saslMechanism).append(", ")
       .append("saslCredentials=").append(saslCredentials).toString();
+  }
+
+
+  /** SASL bind request builder. */
+  public static class Builder extends
+    AbstractRequestMessage.AbstractBuilder<SASLBindRequest.Builder, SASLBindRequest>
+  {
+
+
+    /**
+     * Default constructor.
+     */
+    public Builder()
+    {
+      super(new SASLBindRequest());
+    }
+
+
+    @Override
+    protected Builder self()
+    {
+      return this;
+    }
+
+
+    /**
+     * Sets the SASL mechanism.
+     *
+     * @param  mechanism  SASL mechanism
+     *
+     * @return  this builder
+     */
+    public Builder mechanism(final String mechanism)
+    {
+      object.saslMechanism = mechanism;
+      return self();
+    }
+
+
+    /**
+     * Sets the SASL credentials.
+     *
+     * @param  credentials  SASL credentials
+     *
+     * @return  this builder
+     */
+    public Builder credentials(final byte[] credentials)
+    {
+      object.saslCredentials = credentials;
+      return self();
+    }
   }
 }

@@ -21,7 +21,13 @@ public class AbandonRequest extends AbstractRequestMessage
   public static final int PROTOCOL_OP = 16;
 
   /** Protocol message ID. */
-  private final int messageID;
+  private int messageID;
+
+
+  /**
+   * Default constructor.
+   */
+  private AbandonRequest() {}
 
 
   /**
@@ -32,6 +38,12 @@ public class AbandonRequest extends AbstractRequestMessage
   public AbandonRequest(final int id)
   {
     messageID = id;
+  }
+
+
+  public int getMessageID()
+  {
+    return messageID;
   }
 
 
@@ -50,5 +62,41 @@ public class AbandonRequest extends AbstractRequestMessage
   {
     return new StringBuilder(super.toString()).append(", ")
       .append("messageID=").append(messageID).toString();
+  }
+
+
+  /** Abandon request builder. */
+  public static class Builder extends AbstractRequestMessage.AbstractBuilder<AbandonRequest.Builder, AbandonRequest>
+  {
+
+
+    /**
+     * Default constructor.
+     */
+    public Builder()
+    {
+      super(new AbandonRequest());
+    }
+
+
+    @Override
+    protected Builder self()
+    {
+      return this;
+    }
+
+
+    /**
+     * Sets the message ID.
+     *
+     * @param  id  message ID
+     *
+     * @return  this builder
+     */
+    public Builder id(final int id)
+    {
+      object.messageID = id;
+      return self();
+    }
   }
 }
