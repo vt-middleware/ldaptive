@@ -40,7 +40,7 @@ public class SearchResult extends AbstractResult
     setResultCode(result.getResultCode());
     setMatchedDN(result.getMatchedDN());
     setDiagnosticMessage(result.getDiagnosticMessage());
-    addReferralURLs(getReferralURLs());
+    addReferralURLs(result.getReferralURLs());
   }
 
 
