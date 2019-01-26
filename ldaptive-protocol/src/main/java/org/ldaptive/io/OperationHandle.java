@@ -32,7 +32,7 @@ public class OperationHandle
   private Duration responseTimeout;
 
   /** Protocol message ID. */
-  private int messageID;
+  private Integer messageID;
 
   /** Function to handle response results. */
   private Consumer<Result> onResult;
@@ -51,6 +51,9 @@ public class OperationHandle
 
   /** Latch to determine when a response has been received. */
   private CountDownLatch responseDone = new CountDownLatch(1);
+
+  /** Timestamp when the handle was created. */
+  private Instant creationTime = Instant.now();
 
   /** Timestamp when the request was sent. See {@link Connection#write(OperationHandle)}. */
   private Instant sentTime;
@@ -107,11 +110,7 @@ public class OperationHandle
     if (connection == null) {
       throw new IllegalStateException("Cannot execute request, connection is null");
     }
-    try {
-      connection.write(this);
-    } finally {
-      sentTime = Instant.now();
-    }
+    connection.write(this);
     return this;
   }
 
@@ -121,15 +120,11 @@ public class OperationHandle
    *
    * @return  result of the operation or empty if the operation is abandoned
    *
-   * @throws  IllegalStateException  if {@link #send()} has not been invoked
    * @throws  LdapException  if an error occurs executing the request
    */
   public Result await()
     throws LdapException
   {
-    if (sentTime == null) {
-      throw new IllegalStateException("Request has not been sent. Invoke execute before calling this method.");
-    }
     try {
       if (!responseDone.await(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
         abandon(new TimeoutException("No response received in " + responseTimeout.toMillis() + "ms"));
@@ -266,6 +261,17 @@ public class OperationHandle
 
 
   /**
+   * Returns the time this operation handle was created.
+   *
+   * @return  creation time
+   */
+  public Instant getCreationTime()
+  {
+    return creationTime;
+  }
+
+
+  /**
    * Returns the time this operation sent a request.
    *
    * @return  sent time
@@ -317,6 +323,15 @@ public class OperationHandle
   void messageID(final int id)
   {
     messageID = id;
+  }
+
+
+  /**
+   * Sets the sent time to now.
+   */
+  void sent()
+  {
+    sentTime = Instant.now();
   }
 
 
@@ -424,5 +439,23 @@ public class OperationHandle
       receivedTime = Instant.now();
       connection = null;
     }
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("messageID=").append(messageID).append(", ")
+      .append("request=").append(request).append(", ")
+      .append("connection=").append(connection).append(", ")
+      .append("responseTimeout=").append(responseTimeout).append(", ")
+      .append("creationTime=").append(creationTime).append(", ")
+      .append("sentTime=").append(sentTime).append(", ")
+      .append("receivedTime=").append(receivedTime).append(", ")
+      .append("consumedMessage=").append(consumedMessage).append(", ")
+      .append("result=").append(result).append(", ")
+      .append("exception=").append(exception).toString();
   }
 }
