@@ -71,13 +71,14 @@
     <org.slf4j.version>1.7.25</org.slf4j.version>
     <org.springframework.version>4.3.18.RELEASE</org.springframework.version>
     <commons-cli.version>1.4</commons-cli.version>
-    <japicmp.enabled>true</japicmp.enabled>
+    <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>1.2.0</japicmp.oldVersion>
   </properties>
 
   <modules>
     <module>core</module>
     <module>ldaptive-protocol</module>
+    <module>ldaptive-netty</module>
     <module>beans</module>
     <module>json</module>
     <module>templates</module>
@@ -110,6 +111,11 @@
       <dependency>
         <groupId>org.ldaptive</groupId>
         <artifactId>ldaptive-protocol</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ldaptive</groupId>
+        <artifactId>ldaptive-netty</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -248,6 +254,11 @@
         <groupId>com.kohlschutter.junixsocket</groupId>
         <artifactId>junixsocket-native-common</artifactId>
         <version>2.0.4</version>
+      </dependency>
+      <dependency>
+        <groupId>io.netty</groupId>
+        <artifactId>netty-all</artifactId>
+        <version>4.1.33.Final</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
