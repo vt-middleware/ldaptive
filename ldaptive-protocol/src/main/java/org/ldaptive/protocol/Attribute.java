@@ -96,18 +96,26 @@ public class Attribute
   /**
    * Converts the supplied array of byte arrays into an array of string. Strings are encoded in UTF-8.
    *
+   * @param  encodeBinary  whether to base64 encode binary values
    * @param  vals  to convert
    *
    * @return  array of strings
    */
-  private static String[] bytestoStrings(final byte[]... vals)
+  private static String[] bytestoStrings(final boolean encodeBinary, final byte[]... vals)
   {
     if (vals == null) {
       return null;
     } else if (vals.length == 0) {
       return EMPTY_STRING_ARRAY;
     }
-    return Stream.of(vals).map(v -> v != null ? new String(v, StandardCharsets.UTF_8) : null).toArray(String[]::new);
+    return Stream.of(vals).map(v -> {
+      if (v == null) {
+        return null;
+      } else if (encodeBinary && LdapUtils.shouldBase64Encode(v)) {
+        return LdapUtils.base64Encode(v);
+      }
+      return new String(v, StandardCharsets.UTF_8);
+    }).toArray(String[]::new);
   }
 
 
@@ -173,7 +181,7 @@ public class Attribute
 
   public String[] getStringValues()
   {
-    return bytestoStrings(values);
+    return bytestoStrings(false, values);
   }
 
 
@@ -204,6 +212,6 @@ public class Attribute
     return new StringBuilder(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("name=").append(name).append(", ")
-      .append("values=").append(Arrays.toString(bytestoStrings(values))).toString();
+      .append("values=").append(Arrays.toString(bytestoStrings(true, values))).toString();
   }
 }
