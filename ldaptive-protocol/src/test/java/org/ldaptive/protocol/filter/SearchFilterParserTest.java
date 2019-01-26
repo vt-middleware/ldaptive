@@ -212,6 +212,26 @@ public class SearchFilterParserTest
           new EqualityFilter("sn", "Lučić"),
           false,
         },
+        new Object[] {
+          "((objectClass=*)&(uid=*))",
+          null,
+          true,
+        },
+        new Object[] {
+          "&(objectClass=*)(uid=*)",
+          null,
+          true,
+        },
+        new Object[] {
+          "((objectCategory=person)(objectClass=user)(!(cn=user1*)))",
+          null,
+          true,
+        },
+        new Object[] {
+          "((&(objectClass=user)(cn=andy*)(cn=steve*)(cn=margaret*)))",
+          null,
+          true,
+        },
       };
   }
 
