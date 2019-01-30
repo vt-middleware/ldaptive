@@ -26,7 +26,7 @@ public class DeleteRequestTest
     return
       new Object[][] {
         new Object[] {
-          new DeleteRequest.Builder().dn("uid=jdoe,ou=People,dc=example,dc=com").build(),
+          DeleteRequest.builder().dn("uid=jdoe,ou=People,dc=example,dc=com").build(),
           new byte[] {
             // preamble
             0x30, 0x29, 0x02, 0x01, 0x02,
@@ -36,7 +36,7 @@ public class DeleteRequestTest
             0x6f, 0x6d},
         },
         new Object[] {
-          new DeleteRequest.Builder().dn("dc=example,dc=com").controls(new TreeDeleteControl(true)).build(),
+          DeleteRequest.builder().dn("dc=example,dc=com").controls(new TreeDeleteControl(true)).build(),
           new byte[] {
             // preamble
             0x30, 0x35, 0x02, 0x01, 0x02,

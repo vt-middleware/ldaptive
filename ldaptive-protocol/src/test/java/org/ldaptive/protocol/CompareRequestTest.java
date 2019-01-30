@@ -25,7 +25,7 @@ public class CompareRequestTest
     return
       new Object[][] {
         new Object[] {
-          new CompareRequest.Builder()
+          CompareRequest.builder()
             .dn("uid=jdoe,ou=People,dc=example,dc=com")
             .name("employeeType")
             .value("salaried").build(),

@@ -102,6 +102,17 @@ public class ExtendedRequest extends AbstractRequestMessage
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   /** Extended request builder. */
   public static class Builder extends AbstractRequestMessage.AbstractBuilder<ExtendedRequest.Builder, ExtendedRequest>
   {
@@ -110,9 +121,20 @@ public class ExtendedRequest extends AbstractRequestMessage
     /**
      * Default constructor.
      */
-    public Builder()
+    protected Builder()
     {
       super(new ExtendedRequest());
+    }
+
+
+    /**
+     * Creates a new builder.
+     *
+     * @param  r  extended request to build
+     */
+    protected Builder(final ExtendedRequest r)
+    {
+      super(r);
     }
 
 

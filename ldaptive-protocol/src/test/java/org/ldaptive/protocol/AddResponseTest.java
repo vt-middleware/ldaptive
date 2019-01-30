@@ -38,7 +38,7 @@ public class AddResponseTest
             0x04, 0x00,
             // no diagnostic message
             0x04, 0x00},
-          new AddResponse.Builder().messageID(2)
+          AddResponse.builder().messageID(2)
             .resultCode(ResultCode.SUCCESS)
             .matchedDN("")
             .diagnosticMessage("").build(),

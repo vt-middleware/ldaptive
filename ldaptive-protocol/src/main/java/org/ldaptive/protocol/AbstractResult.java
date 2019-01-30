@@ -228,7 +228,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
   {
 
 
-    AbstractBuilder(final T t)
+    protected AbstractBuilder(final T t)
     {
       super(t);
     }

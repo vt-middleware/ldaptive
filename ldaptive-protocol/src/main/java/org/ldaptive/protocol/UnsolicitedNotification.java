@@ -85,14 +85,31 @@ public class UnsolicitedNotification extends ExtendedResponse
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  protected static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   // CheckStyle:OFF
-  protected static class Builder extends AbstractResult.AbstractBuilder<Builder, UnsolicitedNotification>
+  protected static class Builder extends ExtendedResponse.Builder
   {
 
 
-    public Builder()
+    protected Builder()
     {
       super(new UnsolicitedNotification());
+    }
+
+
+    protected Builder(final UnsolicitedNotification n)
+    {
+      super(n);
     }
 
 

@@ -25,7 +25,7 @@ public class AddRequestTest
     return
       new Object[][] {
         new Object[] {
-          new AddRequest.Builder()
+          AddRequest.builder()
             .dn("dc=example,dc=com")
             .attributes(new Attribute("objectClass", "top", "domain"), new Attribute("dc", "example")).build(),
           new byte[] {

@@ -73,12 +73,23 @@ public class AddResponse extends AbstractResult
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  protected static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   // CheckStyle:OFF
   protected static class Builder extends AbstractResult.AbstractBuilder<Builder, AddResponse>
   {
 
 
-    public Builder()
+    protected Builder()
     {
       super(new AddResponse());
     }

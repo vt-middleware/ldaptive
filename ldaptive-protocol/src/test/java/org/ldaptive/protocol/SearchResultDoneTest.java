@@ -40,7 +40,7 @@ public class SearchResultDoneTest
             0x04, 0x00,
             // no diagnostic message
             0x04, 0x00},
-          new SearchResultDone.Builder().messageID(2)
+          SearchResultDone.builder().messageID(2)
             .resultCode(ResultCode.SUCCESS)
             .matchedDN("")
             .diagnosticMessage("").build(),
@@ -65,7 +65,7 @@ public class SearchResultDoneTest
             0x74, 0x2e, 0x65, 0x64, 0x75, 0x3a, 0x31, 0x30, 0x33, 0x38, 0x39, 0x2f, 0x6f, 0x75, 0x3d, 0x70, 0x65, 0x6f,
             0x70, 0x6c, 0x65, 0x2c, 0x64, 0x63, 0x3d, 0x76, 0x74, 0x2c, 0x64, 0x63, 0x3d, 0x65, 0x64, 0x75, 0x3f, 0x3f,
             0x6f, 0x6e, 0x65},
-          new SearchResultDone.Builder().messageID(2)
+          SearchResultDone.builder().messageID(2)
             .resultCode(ResultCode.REFERRAL)
             .matchedDN("ou=referrals,dc=vt,dc=edu")
             .diagnosticMessage("")
@@ -91,7 +91,7 @@ public class SearchResultDoneTest
             0x2e, 0x34, 0x2e, 0x33, 0x31, 0x39,
             // paged results value
             0x04, 0x0f, 0x30, 0x0d, 0x02, 0x01, 0x00, 0x04, 0x08, 0x5a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
-          new SearchResultDone.Builder().messageID(2)
+          SearchResultDone.builder().messageID(2)
             .resultCode(ResultCode.SUCCESS)
             .matchedDN("")
             .diagnosticMessage("")

@@ -25,7 +25,7 @@ public class AbandonRequestTest
     return
       new Object[][] {
         new Object[] {
-          new AbandonRequest(1),
+          AbandonRequest.builder().id(1).build(),
           new byte[] {
             // preamble
             0x30, 0x06, 0x02, 0x01, 0x02,

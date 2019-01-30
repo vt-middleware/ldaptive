@@ -60,6 +60,17 @@ public class DeleteRequest extends AbstractRequestMessage
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   /** Delete request builder. */
   public static class Builder extends AbstractRequestMessage.AbstractBuilder<DeleteRequest.Builder, DeleteRequest>
   {
@@ -68,7 +79,7 @@ public class DeleteRequest extends AbstractRequestMessage
     /**
      * Default constructor.
      */
-    public Builder()
+    protected Builder()
     {
       super(new DeleteRequest());
     }

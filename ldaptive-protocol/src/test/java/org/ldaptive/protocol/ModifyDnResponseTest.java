@@ -38,7 +38,7 @@ public class ModifyDnResponseTest
             0x04, 0x00,
             // no diagnostic message
             0x04, 0x00},
-          new ModifyDnResponse.Builder().messageID(2)
+          ModifyDnResponse.builder().messageID(2)
             .resultCode(ResultCode.SUCCESS)
             .matchedDN("")
             .diagnosticMessage("").build(),

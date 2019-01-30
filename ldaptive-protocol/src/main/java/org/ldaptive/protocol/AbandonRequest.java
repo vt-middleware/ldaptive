@@ -65,6 +65,17 @@ public class AbandonRequest extends AbstractRequestMessage
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   /** Abandon request builder. */
   public static class Builder extends AbstractRequestMessage.AbstractBuilder<AbandonRequest.Builder, AbandonRequest>
   {
@@ -73,7 +84,7 @@ public class AbandonRequest extends AbstractRequestMessage
     /**
      * Default constructor.
      */
-    public Builder()
+    protected Builder()
     {
       super(new AbandonRequest());
     }

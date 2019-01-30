@@ -71,6 +71,17 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   /** Simple bind request builder. */
   public static class Builder extends
     AbstractRequestMessage.AbstractBuilder<SimpleBindRequest.Builder, SimpleBindRequest>
@@ -80,7 +91,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
     /**
      * Default constructor.
      */
-    public Builder()
+    protected Builder()
     {
       super(new SimpleBindRequest());
     }

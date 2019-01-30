@@ -82,6 +82,17 @@ public class CompareRequest extends AbstractRequestMessage
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   /** Compare request builder. */
   public static class Builder extends AbstractRequestMessage.AbstractBuilder<CompareRequest.Builder, CompareRequest>
   {
@@ -90,7 +101,7 @@ public class CompareRequest extends AbstractRequestMessage
     /**
      * Default constructor.
      */
-    public Builder()
+    protected Builder()
     {
       super(new CompareRequest());
     }
