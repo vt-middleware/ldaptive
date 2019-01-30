@@ -120,6 +120,17 @@ public class ModifyRequest extends AbstractRequestMessage
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   /** Modify request builder. */
   public static class Builder extends AbstractRequestMessage.AbstractBuilder<ModifyRequest.Builder, ModifyRequest>
   {
@@ -128,7 +139,7 @@ public class ModifyRequest extends AbstractRequestMessage
     /**
      * Default constructor.
      */
-    public Builder()
+    protected Builder()
     {
       super(new ModifyRequest());
     }

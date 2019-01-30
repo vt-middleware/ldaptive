@@ -254,7 +254,7 @@ public abstract class AbstractMessage implements Message
     protected final T object;
 
 
-    AbstractBuilder(final T t)
+    protected AbstractBuilder(final T t)
     {
       object = t;
     }

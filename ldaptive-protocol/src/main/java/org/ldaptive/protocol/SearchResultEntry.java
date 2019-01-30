@@ -254,12 +254,23 @@ public class SearchResultEntry extends AbstractMessage
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  protected static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   // CheckStyle:OFF
   protected static class Builder extends AbstractMessage.AbstractBuilder<Builder, SearchResultEntry>
   {
 
 
-    public Builder()
+    protected Builder()
     {
       super(new SearchResultEntry());
     }

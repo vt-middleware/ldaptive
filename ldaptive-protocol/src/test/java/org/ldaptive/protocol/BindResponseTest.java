@@ -39,7 +39,7 @@ public class BindResponseTest
             0x04, 0x00,
             // no diagnostic message
             0x04, 0x00},
-          new BindResponse.Builder().messageID(1)
+          BindResponse.builder().messageID(1)
             .resultCode(ResultCode.SUCCESS)
             .matchedDN("")
             .diagnosticMessage("").build(),
@@ -61,7 +61,7 @@ public class BindResponseTest
             (byte) 0x87, 0x22, 0x3c, 0x31, 0x30, 0x61, 0x31, 0x33, 0x63, 0x37, 0x62, 0x66, 0x37, 0x30, 0x38, 0x63, 0x61,
             0x30, 0x66, 0x33, 0x39, 0x39, 0x63, 0x61, 0x39, 0x39, 0x65, 0x39, 0x32, 0x37, 0x64, 0x61, 0x38, 0x38, 0x62,
             0x3e},
-          new BindResponse.Builder()
+          BindResponse.builder()
             .messageID(1)
             .resultCode(ResultCode.SASL_BIND_IN_PROGRESS)
             .matchedDN("")

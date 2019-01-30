@@ -25,7 +25,7 @@ public class ModifyRequestTest
     return
       new Object[][] {
         new Object[] {
-          new ModifyRequest.Builder()
+          ModifyRequest.builder()
             .dn("uid=jdoe,ou=People,dc=example,dc=com")
             .modificiations(
               new Modification(Modification.Type.DELETE, new Attribute("givenName", "John")),
@@ -53,7 +53,7 @@ public class ModifyRequestTest
             0x61, 0x74, 0x68, 0x61, 0x6e, 0x20, 0x44, 0x6f, 0x65},
         },
         new Object[] {
-          new ModifyRequest.Builder()
+          ModifyRequest.builder()
             .dn("uid=1,ou=test,dc=vt,dc=edu")
             .modificiations(new Modification(Modification.Type.DELETE, new Attribute("authzTo"))).build(),
           new byte[] {

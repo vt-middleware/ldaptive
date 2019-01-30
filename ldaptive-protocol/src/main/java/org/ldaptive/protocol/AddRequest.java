@@ -86,6 +86,17 @@ public class AddRequest extends AbstractRequestMessage
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   /** Add request builder. */
   public static class Builder extends AbstractRequestMessage.AbstractBuilder<AddRequest.Builder, AddRequest>
   {
@@ -94,7 +105,7 @@ public class AddRequest extends AbstractRequestMessage
     /**
      * Default constructor.
      */
-    public Builder()
+    protected Builder()
     {
       super(new AddRequest());
     }

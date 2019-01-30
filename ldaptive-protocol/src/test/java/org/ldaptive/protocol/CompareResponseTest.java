@@ -39,7 +39,7 @@ public class CompareResponseTest
             0x04, 0x00,
             // no diagnostic message
             0x04, 0x00},
-          new CompareResponse.Builder().messageID(2)
+          CompareResponse.builder().messageID(2)
             .resultCode(ResultCode.COMPARE_TRUE)
             .matchedDN("")
             .diagnosticMessage("").build(),
@@ -57,7 +57,7 @@ public class CompareResponseTest
             0x04, 0x00,
             // no diagnostic message
             0x04, 0x00},
-          new CompareResponse.Builder().messageID(2)
+          CompareResponse.builder().messageID(2)
             .resultCode(ResultCode.COMPARE_FALSE)
             .matchedDN("")
             .diagnosticMessage("").build(),

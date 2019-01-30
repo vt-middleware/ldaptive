@@ -44,7 +44,7 @@ public class SearchResultEntryTest
             0x30, 0x0f,
             0x04, 0x02, 0x64, 0x63,
             0x31, 0x09, 0x04, 0x07, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65},
-          new SearchResultEntry.Builder()
+          SearchResultEntry.builder()
             .messageID(2)
             .ldapDN("dc=example,dc=com")
             .attributes(new Attribute("objectClass", "top", "domain"), new Attribute("dc", "example")).build(),
@@ -68,7 +68,7 @@ public class SearchResultEntryTest
             0x30, 0x06,
             0x04, 0x02, 0x64, 0x63,
             0x31, 0x00},
-          new SearchResultEntry.Builder()
+          SearchResultEntry.builder()
             .messageID(2)
             .ldapDN("dc=example,dc=com")
             .attributes(new Attribute("objectClass"), new Attribute("dc")).build(),
@@ -120,7 +120,7 @@ public class SearchResultEntryTest
             0x73,
             0x04, 0x0A, 0x6C, 0x6F, 0x63, 0x61, 0x6C, 0x50, 0x68, 0x6F, 0x6E, 0x65,
           },
-          new SearchResultEntry.Builder()
+          SearchResultEntry.builder()
             .messageID(2)
             .ldapDN("uid=818037,ou=People,dc=vt,dc=edu")
             .attributes(
@@ -153,7 +153,7 @@ public class SearchResultEntryTest
             0x04, 0x00,
             // attribute list
             0x30, 0x00},
-          new SearchResultEntry.Builder()
+          SearchResultEntry.builder()
             .messageID(4)
             .ldapDN("").build(),
         },

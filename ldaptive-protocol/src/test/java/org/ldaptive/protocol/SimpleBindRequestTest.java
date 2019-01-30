@@ -26,7 +26,7 @@ public class SimpleBindRequestTest
     return
       new Object[][] {
         new Object[]{
-          new SimpleBindRequest.Builder()
+          SimpleBindRequest.builder()
             .dn("uid=jdoe,ou=People,dc=example,dc=com")
             .password("secret123").build(),
           new byte[]{
@@ -40,7 +40,7 @@ public class SimpleBindRequestTest
             (byte) 0x80, 0x09, 0x73, 0x65, 0x63, 0x72, 0x65, 0x74, 0x31, 0x32, 0x33},
         },
         new Object[]{
-          new SimpleBindRequest.Builder()
+          SimpleBindRequest.builder()
             .dn("uid=jdoe,ou=People,dc=example,dc=com")
             .password("secret123")
             .controls(new PasswordPolicyControl()).build(),

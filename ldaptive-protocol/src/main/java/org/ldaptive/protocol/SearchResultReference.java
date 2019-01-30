@@ -130,12 +130,23 @@ public class SearchResultReference extends AbstractMessage
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  protected static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   // CheckStyle:OFF
   protected static class Builder extends AbstractMessage.AbstractBuilder<Builder, SearchResultReference>
   {
 
 
-    public Builder()
+    protected Builder()
     {
       super(new SearchResultReference());
     }

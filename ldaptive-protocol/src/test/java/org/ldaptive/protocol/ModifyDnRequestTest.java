@@ -25,7 +25,7 @@ public class ModifyDnRequestTest
     return
       new Object[][] {
         new Object[] {
-          new ModifyDnRequest.Builder()
+          ModifyDnRequest.builder()
             .oldDN("uid=jdoe,ou=People,dc=example,dc=com")
             .newDN("uid=john.doe")
             .delete(true).build(),
@@ -44,7 +44,7 @@ public class ModifyDnRequestTest
             0x01, 0x01, (byte) 0xff},
         },
         new Object[] {
-          new ModifyDnRequest.Builder()
+          ModifyDnRequest.builder()
             .oldDN("uid=john.doe,ou=People,dc=example,dc=com")
             .newDN("uid=john.doe")
             .delete(false)
@@ -67,7 +67,7 @@ public class ModifyDnRequestTest
             0x6d, 0x70, 0x6c, 0x65, 0x2c, 0x64, 0x63, 0x3d, 0x63, 0x6f, 0x6d},
         },
         new Object[] {
-          new ModifyDnRequest.Builder()
+          ModifyDnRequest.builder()
             .oldDN("uid=jdoe,ou=People,dc=example,dc=com")
             .newDN("uid=john.doe")
             .delete(true)

@@ -12,6 +12,7 @@ import org.ldaptive.asn1.DEREncoder;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UniversalDERTag;
+import org.ldaptive.protocol.filter.SearchFilterParser;
 
 /**
  * LDAP search request defined as:
@@ -152,6 +153,17 @@ public class SearchRequest extends AbstractRequestMessage
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
   /** Search request builder. */
   public static class Builder extends AbstractRequestMessage.AbstractBuilder<SearchRequest.Builder, SearchRequest>
   {
@@ -160,7 +172,7 @@ public class SearchRequest extends AbstractRequestMessage
     /**
      * Default constructor.
      */
-    public Builder()
+    protected Builder()
     {
       super(new SearchRequest());
     }
@@ -267,6 +279,20 @@ public class SearchRequest extends AbstractRequestMessage
     public Builder filter(final SearchFilter filter)
     {
       object.searchFilter = filter;
+      return self();
+    }
+
+
+    /**
+     * Sets the search filter.
+     *
+     * @param  filter  search filter
+     *
+     * @return  this builder
+     */
+    public Builder filter(final String filter)
+    {
+      object.searchFilter = SearchFilterParser.parse(filter);
       return self();
     }
 

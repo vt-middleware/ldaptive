@@ -38,7 +38,7 @@ public class DeleteResponseTest
             0x04, 0x00,
             // no diagnostic message
             0x04, 0x00},
-          new DeleteResponse.Builder().messageID(2)
+          DeleteResponse.builder().messageID(2)
             .resultCode(ResultCode.SUCCESS)
             .matchedDN("")
             .diagnosticMessage("").build(),

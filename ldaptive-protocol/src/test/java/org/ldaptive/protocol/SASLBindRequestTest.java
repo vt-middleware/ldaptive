@@ -26,7 +26,7 @@ public class SASLBindRequestTest
       new Object[][] {
         // CRAM-MD5 request 1
         new Object[] {
-          new SASLBindRequest("CRAM-MD5"),
+          SASLBindRequest.builder().mechanism("CRAM-MD5").build(),
           new byte[] {
             // preamble
             0x30, 0x16, 0x02, 0x01, 0x01, 0x60, 0x11, 0x02, 0x01, 0x03,
@@ -39,7 +39,9 @@ public class SASLBindRequestTest
         },
         // CRAM-MD5 request 2
         new Object[] {
-          new SASLBindRequest("CRAM-MD5", "u:jdoe d52116c87c31d9cc747600f9486d2a1d"),
+          SASLBindRequest.builder()
+            .mechanism("CRAM-MD5")
+            .credentials("u:jdoe d52116c87c31d9cc747600f9486d2a1d").build(),
           new byte[] {
             // preamble
             0x30, 0x3f, 0x02, 0x01, 0x01, 0x60, 0x3a, 0x02, 0x01, 0x03,

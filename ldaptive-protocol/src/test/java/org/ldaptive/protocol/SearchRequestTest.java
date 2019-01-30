@@ -30,7 +30,7 @@ public class SearchRequestTest
     return
       new Object[][] {
         new Object[] {
-          new SearchRequest.Builder()
+          SearchRequest.builder()
             .dn("dc=example,dc=com")
             .scope(SearchScope.SUBTREE)
             .aliases(DerefAliases.NEVER)
@@ -75,14 +75,14 @@ public class SearchRequestTest
             0x30, 0x06, 0x04, 0x01, 0x2a, 0x04, 0x01, 0x2b, },
         },
         new Object[] {
-          new SearchRequest.Builder()
+          SearchRequest.builder()
             .dn("ou=test,dc=vt,dc=edu")
             .scope(SearchScope.SUBTREE)
             .aliases(DerefAliases.NEVER)
             .sizeLimit(0)
             .timeLimit(0)
             .typesOnly(false)
-            .filter(new EqualityFilter("CN", "John Adams"))
+            .filter("(CN=John Adams)")
             .attributes(new String[] {"*"})
             .controls(new ProxyAuthorizationControl("dn:")).build(),
           new byte[] {
