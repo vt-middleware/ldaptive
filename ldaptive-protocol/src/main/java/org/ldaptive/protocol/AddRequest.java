@@ -29,10 +29,10 @@ public class AddRequest extends AbstractRequestMessage
   /** BER protocol number. */
   public static final int PROTOCOL_OP = 8;
 
-  /** */
+  /** LDAP DN to add. */
   private String ldapDN;
 
-  /** */
+  /** Attributes to add to the entry. */
   private Attribute[] attributes;
 
 
