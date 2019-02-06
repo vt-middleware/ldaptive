@@ -16,11 +16,11 @@ import org.ldaptive.protocol.UnsolicitedNotification;
  *
  * @author  Middleware Services
  */
-public class ExtendedOperationHandle extends OperationHandle
+public class ExtendedOperationHandle extends OperationHandle<ExtendedRequest>
 {
 
-  /** Function to handle extended response name and value. */
-  private BiConsumer<String, byte[]> onExtended;
+  /** Functions to handle extended response name and value. */
+  private BiConsumer<String, byte[]>[] onExtended;
 
 
   /**
@@ -61,7 +61,15 @@ public class ExtendedOperationHandle extends OperationHandle
 
 
   @Override
-  public ExtendedOperationHandle onResult(final Consumer<Result> function)
+  public ExtendedOperationHandle closeOnComplete()
+  {
+    super.closeOnComplete();
+    return this;
+  }
+
+
+  @Override
+  public ExtendedOperationHandle onResult(final Consumer<Result>... function)
   {
     super.onResult(function);
     return this;
@@ -69,7 +77,7 @@ public class ExtendedOperationHandle extends OperationHandle
 
 
   @Override
-  public ExtendedOperationHandle onControl(final Consumer<ResponseControl> function)
+  public ExtendedOperationHandle onControl(final Consumer<ResponseControl>... function)
   {
     super.onControl(function);
     return this;
@@ -77,7 +85,7 @@ public class ExtendedOperationHandle extends OperationHandle
 
 
   @Override
-  public ExtendedOperationHandle onIntermediate(final Consumer<IntermediateResponse> function)
+  public ExtendedOperationHandle onIntermediate(final Consumer<IntermediateResponse>... function)
   {
     super.onIntermediate(function);
     return this;
@@ -85,7 +93,7 @@ public class ExtendedOperationHandle extends OperationHandle
 
 
   @Override
-  public ExtendedOperationHandle onUnsolicitedNotification(final Consumer<UnsolicitedNotification> function)
+  public ExtendedOperationHandle onUnsolicitedNotification(final Consumer<UnsolicitedNotification>... function)
   {
     super.onUnsolicitedNotification(function);
     return this;
@@ -107,9 +115,10 @@ public class ExtendedOperationHandle extends OperationHandle
    *
    * @return  this handle
    */
-  public ExtendedOperationHandle onExtended(final BiConsumer<String, byte[]> function)
+  public ExtendedOperationHandle onExtended(final BiConsumer<String, byte[]>... function)
   {
     onExtended = function;
+    initializeMessageFunctional(onExtended);
     return this;
   }
 
@@ -122,7 +131,9 @@ public class ExtendedOperationHandle extends OperationHandle
   void extended(final ExtendedResponse response)
   {
     if (onExtended != null) {
-      onExtended.accept(response.getResponseName(), response.getResponseValue());
+      for (BiConsumer<String, byte[]> func : onExtended) {
+        func.accept(response.getResponseName(), response.getResponseValue());
+      }
     }
   }
 }

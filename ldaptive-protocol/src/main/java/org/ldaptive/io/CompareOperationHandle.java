@@ -16,11 +16,11 @@ import org.ldaptive.protocol.UnsolicitedNotification;
  *
  * @author  Middleware Services
  */
-public class CompareOperationHandle extends OperationHandle
+public class CompareOperationHandle extends OperationHandle<CompareRequest>
 {
 
-  /** Function to handle the compare result. */
-  private Consumer<Boolean> onCompare;
+  /** Functions to handle the compare result. */
+  private Consumer<Boolean>[] onCompare;
 
 
   /**
@@ -61,7 +61,15 @@ public class CompareOperationHandle extends OperationHandle
 
 
   @Override
-  public CompareOperationHandle onResult(final Consumer<Result> function)
+  public CompareOperationHandle closeOnComplete()
+  {
+    super.closeOnComplete();
+    return this;
+  }
+
+
+  @Override
+  public CompareOperationHandle onResult(final Consumer<Result>... function)
   {
     super.onResult(function);
     return this;
@@ -69,7 +77,7 @@ public class CompareOperationHandle extends OperationHandle
 
 
   @Override
-  public CompareOperationHandle onControl(final Consumer<ResponseControl> function)
+  public CompareOperationHandle onControl(final Consumer<ResponseControl>... function)
   {
     super.onControl(function);
     return this;
@@ -77,7 +85,7 @@ public class CompareOperationHandle extends OperationHandle
 
 
   @Override
-  public CompareOperationHandle onIntermediate(final Consumer<IntermediateResponse> function)
+  public CompareOperationHandle onIntermediate(final Consumer<IntermediateResponse>... function)
   {
     super.onIntermediate(function);
     return this;
@@ -85,7 +93,7 @@ public class CompareOperationHandle extends OperationHandle
 
 
   @Override
-  public CompareOperationHandle onUnsolicitedNotification(final Consumer<UnsolicitedNotification> function)
+  public CompareOperationHandle onUnsolicitedNotification(final Consumer<UnsolicitedNotification>... function)
   {
     super.onUnsolicitedNotification(function);
     return this;
@@ -107,9 +115,10 @@ public class CompareOperationHandle extends OperationHandle
    *
    * @return  this handle
    */
-  public CompareOperationHandle onCompare(final Consumer<Boolean> function)
+  public CompareOperationHandle onCompare(final Consumer<Boolean>... function)
   {
     onCompare = function;
+    initializeMessageFunctional(onCompare);
     return this;
   }
 
@@ -123,9 +132,13 @@ public class CompareOperationHandle extends OperationHandle
   {
     if (onCompare != null) {
       if (response.getResultCode() == ResultCode.COMPARE_TRUE) {
-        onCompare.accept(Boolean.TRUE);
+        for (Consumer<Boolean> func : onCompare) {
+          func.accept(Boolean.TRUE);
+        }
       } else if (response.getResultCode() == ResultCode.COMPARE_FALSE) {
-        onCompare.accept(Boolean.FALSE);
+        for (Consumer<Boolean> func : onCompare) {
+          func.accept(Boolean.FALSE);
+        }
       }
     }
   }
