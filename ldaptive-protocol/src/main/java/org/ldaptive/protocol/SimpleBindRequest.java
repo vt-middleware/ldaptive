@@ -38,13 +38,39 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
    */
   public SimpleBindRequest(final String name, final String pass)
   {
+    setLdapDN(name);
+    setPassword(pass);
+  }
+
+
+  /**
+   * Sets the LDAP DN.
+   *
+   * @param  name  LDAP DN to set
+   *
+   * @throws  IllegalArgumentException  if name is null or empty
+   */
+  protected void setLdapDN(final String name)
+  {
     if (name == null || name.length() == 0) {
       throw new IllegalArgumentException("name cannot be null or empty");
     }
+    ldapDN = name;
+  }
+
+
+  /**
+   * Sets the password.
+   *
+   * @param  pass  password to set
+   *
+   * @throws  IllegalArgumentException  if pass is null or empty
+   */
+  protected void setPassword(final String pass)
+  {
     if (pass == null || pass.length() == 0) {
       throw new IllegalArgumentException("password cannot be null or empty");
     }
-    ldapDN = name;
     password = pass;
   }
 
@@ -113,7 +139,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
      */
     public Builder dn(final String dn)
     {
-      object.ldapDN = dn;
+      object.setLdapDN(dn);
       return self();
     }
 
@@ -127,7 +153,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
      */
     public Builder password(final String password)
     {
-      object.password = password;
+      object.setPassword(password);
       return self();
     }
   }
