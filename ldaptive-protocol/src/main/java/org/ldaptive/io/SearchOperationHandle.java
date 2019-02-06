@@ -3,6 +3,7 @@ package org.ldaptive.io;
 
 import java.time.Duration;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.protocol.IntermediateResponse;
 import org.ldaptive.protocol.Result;
@@ -18,14 +19,14 @@ import org.ldaptive.protocol.UnsolicitedNotification;
  *
  * @author  Middleware Services
  */
-public class SearchOperationHandle extends OperationHandle
+public class SearchOperationHandle extends OperationHandle<SearchRequest>
 {
 
-  /** Function to handle response entries. */
-  private Consumer<SearchResultEntry> onEntry;
+  /** Functions to handle response entries. */
+  private Function<SearchResultEntry, SearchResultEntry>[] onEntry;
 
-  /** Function to handle response references. */
-  private Consumer<SearchResultReference> onReference;
+  /** Functions to handle response references. */
+  private Consumer<SearchResultReference>[] onReference;
 
   /** Synthetic result that is built as entries and references are received. */
   private SearchResult result = new SearchResult();
@@ -71,7 +72,15 @@ public class SearchOperationHandle extends OperationHandle
 
 
   @Override
-  public SearchOperationHandle onResult(final Consumer<Result> function)
+  public SearchOperationHandle closeOnComplete()
+  {
+    super.closeOnComplete();
+    return this;
+  }
+
+
+  @Override
+  public SearchOperationHandle onResult(final Consumer<Result>... function)
   {
     super.onResult(function);
     return this;
@@ -79,7 +88,7 @@ public class SearchOperationHandle extends OperationHandle
 
 
   @Override
-  public SearchOperationHandle onControl(final Consumer<ResponseControl> function)
+  public SearchOperationHandle onControl(final Consumer<ResponseControl>... function)
   {
     super.onControl(function);
     return this;
@@ -87,7 +96,7 @@ public class SearchOperationHandle extends OperationHandle
 
 
   @Override
-  public SearchOperationHandle onIntermediate(final Consumer<IntermediateResponse> function)
+  public SearchOperationHandle onIntermediate(final Consumer<IntermediateResponse>... function)
   {
     super.onIntermediate(function);
     return this;
@@ -95,7 +104,7 @@ public class SearchOperationHandle extends OperationHandle
 
 
   @Override
-  public SearchOperationHandle onUnsolicitedNotification(final Consumer<UnsolicitedNotification> function)
+  public SearchOperationHandle onUnsolicitedNotification(final Consumer<UnsolicitedNotification>... function)
   {
     super.onUnsolicitedNotification(function);
     return this;
@@ -111,29 +120,31 @@ public class SearchOperationHandle extends OperationHandle
 
 
   /**
-   * Sets the function to execute when a search result entry is received.
+   * Sets the functions to execute when a search result entry is received.
    *
    * @param  function  to execute on a search result entry
    *
    * @return  this handle
    */
-  public SearchOperationHandle onEntry(final Consumer<SearchResultEntry> function)
+  public SearchOperationHandle onEntry(final Function<SearchResultEntry, SearchResultEntry>... function)
   {
     onEntry = function;
+    initializeMessageFunctional(onEntry);
     return this;
   }
 
 
   /**
-   * Sets the function to execute when a search result reference is received.
+   * Sets the functions to execute when a search result reference is received.
    *
    * @param  function  to execute on a search result reference
    *
    * @return  this handle
    */
-  public SearchOperationHandle onReference(final Consumer<SearchResultReference> function)
+  public SearchOperationHandle onReference(final Consumer<SearchResultReference>... function)
   {
     onReference = function;
+    initializeMessageFunctional(onReference);
     return this;
   }
 
@@ -146,7 +157,10 @@ public class SearchOperationHandle extends OperationHandle
   void entry(final SearchResultEntry r)
   {
     if (onEntry != null) {
-      onEntry.accept(r);
+      SearchResultEntry e = r;
+      for (Function<SearchResultEntry, SearchResultEntry> func : onEntry) {
+        e = func.apply(e);
+      }
       consumedMessage();
     }
     result.addEntry(r);
@@ -161,7 +175,9 @@ public class SearchOperationHandle extends OperationHandle
   void reference(final SearchResultReference r)
   {
     if (onReference != null) {
-      onReference.accept(r);
+      for (Consumer<SearchResultReference> func : onReference) {
+        func.accept(r);
+      }
       consumedMessage();
     }
     result.addReference(r);

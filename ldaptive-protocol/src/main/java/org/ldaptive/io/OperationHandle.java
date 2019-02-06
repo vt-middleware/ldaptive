@@ -17,9 +17,11 @@ import org.ldaptive.protocol.UnsolicitedNotification;
 /**
  * Handle that notifies on the components of an LDAP operation request.
  *
+ * @param  <T>  type of request
+ *
  * @author  Middleware Services
  */
-public class OperationHandle
+public class OperationHandle<T extends Request>
 {
 
   /** Protocol request to send. */
@@ -34,20 +36,20 @@ public class OperationHandle
   /** Protocol message ID. */
   private Integer messageID;
 
-  /** Function to handle response results. */
-  private Consumer<Result> onResult;
+  /** Functions to handle response results. */
+  private Consumer<Result>[] onResult;
 
-  /** Function to handle response controls. */
-  private Consumer<ResponseControl> onControl;
+  /** Functions to handle response controls. */
+  private Consumer<ResponseControl>[] onControl;
 
-  /** Function to handle intermediate responses. */
-  private Consumer<IntermediateResponse> onIntermediate;
+  /** Functions to handle intermediate responses. */
+  private Consumer<IntermediateResponse>[] onIntermediate;
 
-  /** Function to handle exceptions. */
+  /** Functions to handle exceptions. */
   private Consumer<LdapException> onException;
 
-  /** Function to handle unsolicited notifications. */
-  private Consumer<UnsolicitedNotification> onUnsolicitedNotification;
+  /** Functions to handle unsolicited notifications. */
+  private Consumer<UnsolicitedNotification>[] onUnsolicitedNotification;
 
   /** Latch to determine when a response has been received. */
   private CountDownLatch responseDone = new CountDownLatch(1);
@@ -70,6 +72,9 @@ public class OperationHandle
   /** Exception encountered attempting to process the request. */
   private LdapException exception;
 
+  /** Whether to invoke close on the connection when the operation completes. */
+  private boolean closeOnComplete;
+
 
   /**
    * Creates a new operation handle.
@@ -78,7 +83,7 @@ public class OperationHandle
    * @param  conn  the request will be executed on
    * @param  timeout  duration to wait for a response
    */
-  OperationHandle(final Request req, final Connection conn, final Duration timeout)
+  OperationHandle(final T req, final Connection conn, final Duration timeout)
   {
     if (req == null) {
       throw new IllegalArgumentException("Request cannot be null");
@@ -157,57 +162,73 @@ public class OperationHandle
 
 
   /**
-   * Sets the function to execute when a result is received.
+   * Sets this handle to invoke {@link Connection#close()} when the handle completes.
+   *
+   * @return  this handle
+   */
+  public OperationHandle closeOnComplete()
+  {
+    closeOnComplete = true;
+    return this;
+  }
+
+
+  /**
+   * Sets the functions to execute when a result is received.
    *
    * @param  function  to execute on a result
    *
    * @return  this handle
    */
-  public OperationHandle onResult(final Consumer<Result> function)
+  public OperationHandle onResult(final Consumer<Result>... function)
   {
     onResult = function;
+    initializeMessageFunctional(onResult);
     return this;
   }
 
 
   /**
-   * Sets the function to execute when a control is received.
+   * Sets the functions to execute when a control is received.
    *
    * @param  function  to execute on a control
    *
    * @return  this handle
    */
-  public OperationHandle onControl(final Consumer<ResponseControl> function)
+  public OperationHandle onControl(final Consumer<ResponseControl>... function)
   {
     onControl = function;
+    initializeMessageFunctional(onControl);
     return this;
   }
 
 
   /**
-   * Sets the function to execute when an intermediate response is received.
+   * Sets the functions to execute when an intermediate response is received.
    *
    * @param  function  to execute on an intermediate response
    *
    * @return  this handle
    */
-  public OperationHandle onIntermediate(final Consumer<IntermediateResponse> function)
+  public OperationHandle onIntermediate(final Consumer<IntermediateResponse>... function)
   {
     onIntermediate = function;
+    initializeMessageFunctional(onIntermediate);
     return this;
   }
 
 
   /**
-   * Sets the function to execute when an unsolicited notification is received.
+   * Sets the functions to execute when an unsolicited notification is received.
    *
    * @param  function  to execute on an unsolicited notification
    *
    * @return  this handle
    */
-  public OperationHandle onUnsolicitedNotification(final Consumer<UnsolicitedNotification> function)
+  public OperationHandle onUnsolicitedNotification(final Consumer<UnsolicitedNotification>... function)
   {
     onUnsolicitedNotification = function;
+    initializeMessageFunctional(onUnsolicitedNotification);
     return this;
   }
 
@@ -222,7 +243,26 @@ public class OperationHandle
   public OperationHandle onException(final Consumer<LdapException> function)
   {
     onException = function;
+    initializeMessageFunctional(onException);
     return this;
+  }
+
+
+  /**
+   * Iterates over the supplied functions, set the connection and request if the type is {@link MessageFunctional}.
+   *
+   * @param  functions  to initialize
+   */
+  protected void initializeMessageFunctional(final Object... functions)
+  {
+    if (functions != null) {
+      for (Object o : functions) {
+        if (o instanceof MessageFunctional) {
+          ((MessageFunctional) o).setConnection(connection);
+          ((MessageFunctional) o).setRequest(request);
+        }
+      }
+    }
   }
 
 
@@ -346,7 +386,9 @@ public class OperationHandle
       throw new IllegalArgumentException("Result cannot be null");
     }
     if (onResult != null) {
-      onResult.accept(r);
+      for (Consumer<Result> func : onResult) {
+        func.accept(r);
+      }
       consumedMessage();
     }
     result = r;
@@ -362,7 +404,9 @@ public class OperationHandle
   void control(final ResponseControl c)
   {
     if (onControl != null) {
-      onControl.accept(c);
+      for (Consumer<ResponseControl> func : onControl) {
+        func.accept(c);
+      }
     }
   }
 
@@ -375,7 +419,9 @@ public class OperationHandle
   void intermediate(final IntermediateResponse r)
   {
     if (onIntermediate != null) {
-      onIntermediate.accept(r);
+      for (Consumer<IntermediateResponse> func : onIntermediate) {
+        func.accept(r);
+      }
       consumedMessage();
     }
   }
@@ -389,7 +435,9 @@ public class OperationHandle
   void unsolicitedNotification(final UnsolicitedNotification u)
   {
     if (onUnsolicitedNotification != null) {
-      onUnsolicitedNotification.accept(u);
+      for (Consumer<UnsolicitedNotification> func : onUnsolicitedNotification) {
+        func.accept(u);
+      }
       consumedMessage();
     }
   }
@@ -437,7 +485,15 @@ public class OperationHandle
       responseDone.countDown();
     } finally {
       receivedTime = Instant.now();
-      connection = null;
+      if (closeOnComplete) {
+        try {
+          connection.close();
+        } finally {
+          connection = null;
+        }
+      } else {
+        connection = null;
+      }
     }
   }
 
