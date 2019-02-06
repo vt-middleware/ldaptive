@@ -1,9 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.ldaptive.DerefAliases;
+import org.ldaptive.LdapUtils;
+import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchScope;
 import org.ldaptive.asn1.ApplicationDERTag;
 import org.ldaptive.asn1.BooleanType;
@@ -45,20 +48,23 @@ public class SearchRequest extends AbstractRequestMessage
   /** BER protocol number. */
   public static final int PROTOCOL_OP = 3;
 
+  /** hash code seed. */
+  private static final int HASH_CODE_SEED = 307;
+
   /** Base DN. */
-  private String baseDN;
+  private String baseDN = "";
 
   /** Search scope. */
-  private SearchScope searchScope;
+  private SearchScope searchScope = SearchScope.SUBTREE;
 
   /** Deref aliases. */
-  private DerefAliases derefAliases;
+  private DerefAliases derefAliases = DerefAliases.NEVER;
 
   /** Size limit. */
   private int sizeLimit;
 
   /** Time limit. */
-  private int timeLimit;
+  private Duration timeLimit = Duration.ZERO;
 
   /** Types only. */
   private boolean typesOnly;
@@ -67,13 +73,13 @@ public class SearchRequest extends AbstractRequestMessage
   private SearchFilter searchFilter;
 
   /** Return attributes. */
-  private String[] returnAttributes;
+  private String[] returnAttributes = ReturnAttributes.ALL_USER.value();
 
 
   /**
    * Default constructor.
    */
-  private SearchRequest() {}
+  public SearchRequest() {}
 
 
   /**
@@ -94,27 +100,218 @@ public class SearchRequest extends AbstractRequestMessage
     final SearchScope scope,
     final DerefAliases aliases,
     final int size,
-    final int time,
+    final Duration time,
     final boolean types,
     final SearchFilter filter,
     final String... attributes)
   {
-    baseDN = dn;
-    searchScope = scope;
-    derefAliases = aliases;
-    if (size < 0) {
-      throw new IllegalArgumentException("Size limit must be >= 0");
-    }
-    sizeLimit = size;
-    if (time < 0) {
-      throw new IllegalArgumentException("Time limit must be >= 0");
-    }
-    timeLimit = time;
-    typesOnly = types;
-    searchFilter = filter;
-    returnAttributes = attributes;
+    setBaseDN(dn);
+    setSearchScope(scope);
+    setDerefAliases(aliases);
+    setSizeLimit(size);
+    setTimeLimit(time);
+    setTypesOnly(types);
+    setSearchFilter(filter);
+    setReturnAttributes(attributes);
   }
   // CheckStyle:ParameterNumber ON
+
+
+  /**
+   * Returns the base DN.
+   *
+   * @return  base DN
+   */
+  public String getBaseDN()
+  {
+    return baseDN;
+  }
+
+
+  /**
+   * Sets the base DN.
+   *
+   * @param  dn  base DN
+   */
+  public void setBaseDN(final String dn)
+  {
+    baseDN = dn;
+  }
+
+
+  /**
+   * Gets the search scope.
+   *
+   * @return  search scope
+   */
+  public SearchScope getSearchScope()
+  {
+    return searchScope;
+  }
+
+
+  /**
+   * Sets the search scope.
+   *
+   * @param  scope  search scope
+   */
+  public void setSearchScope(final SearchScope scope)
+  {
+    searchScope = scope;
+  }
+
+
+  /**
+   * Returns how to dereference aliases.
+   *
+   * @return  how to dereference aliases
+   */
+  public DerefAliases getDerefAliases()
+  {
+    return derefAliases;
+  }
+
+
+  /**
+   * Sets how to dereference aliases.
+   *
+   * @param  aliases  how to dereference aliases
+   */
+  public void setDerefAliases(final DerefAliases aliases)
+  {
+    derefAliases = aliases;
+  }
+
+
+  /**
+   * Returns the size limit.
+   *
+   * @return  size limit
+   */
+  public int getSizeLimit()
+  {
+    return sizeLimit;
+  }
+
+
+  /**
+   * Sets the size limit.
+   *
+   * @param  limit  size limit
+   *
+   * @throws  IllegalArgumentException  if limit is negative
+   */
+  public void setSizeLimit(final int limit)
+  {
+    if (limit < 0) {
+      throw new IllegalArgumentException("Size limit cannot be negative");
+    }
+    sizeLimit = limit;
+  }
+
+
+  /**
+   * Returns the time limit.
+   *
+   * @return  time limit
+   */
+  public Duration getTimeLimit()
+  {
+    return timeLimit;
+  }
+
+
+  /**
+   * Sets the time limit.
+   *
+   * @param  limit  time limit
+   *
+   * @throws  IllegalArgumentException  if limit is null or negative
+   */
+  public void setTimeLimit(final Duration limit)
+  {
+    if (limit == null || limit.isNegative()) {
+      throw new IllegalArgumentException("Time limit cannot be null or negative");
+    }
+    timeLimit = limit;
+  }
+
+
+  /**
+   * Returns whether to return only attribute types.
+   *
+   * @return  whether to return only attribute types
+   */
+  public boolean isTypesOnly()
+  {
+    return typesOnly;
+  }
+
+
+  /**
+   * Sets whether to return only attribute types.
+   *
+   * @param  types  whether to return only attribute types
+   */
+  public void setTypesOnly(final boolean types)
+  {
+    typesOnly = types;
+  }
+
+
+  /**
+   * Returns the search filter.
+   *
+   * @return  search filter
+   */
+  public SearchFilter getSearchFilter()
+  {
+    return searchFilter;
+  }
+
+
+  /**
+   * Sets the search filter.
+   *
+   * @param  filter  search filter
+   */
+  public void setSearchFilter(final SearchFilter filter)
+  {
+    searchFilter = filter;
+  }
+
+
+  /**
+   * Sets the search filter. See {@link SearchFilterParser#parse(String)}.
+   *
+   * @param  filter  search filter
+   */
+  public void setSearchFilter(final String filter)
+  {
+    searchFilter = SearchFilterParser.parse(filter);
+  }
+
+
+  /**
+   * Returns the search return attributes.
+   *
+   * @return  search return attributes
+   */
+  public String[] getReturnAttributes()
+  {
+    return returnAttributes;
+  }
+
+
+  /**
+   * Sets the search return attributes.
+   *
+   * @param  attributes  search return attributes
+   */
+  public void setReturnAttributes(final String[] attributes)
+  {
+    returnAttributes = attributes;
+  }
 
 
   @Override
@@ -128,13 +325,53 @@ public class SearchRequest extends AbstractRequestMessage
         new IntegerType(UniversalDERTag.ENUM, searchScope.ordinal()),
         new IntegerType(UniversalDERTag.ENUM, derefAliases.ordinal()),
         new IntegerType(sizeLimit),
-        new IntegerType(timeLimit),
+        new IntegerType((int) timeLimit.getSeconds()),
         new BooleanType(typesOnly),
         searchFilter.getEncoder(),
         new ConstructedDEREncoder(
           UniversalDERTag.SEQ,
           Stream.of(returnAttributes).map(v -> new OctetStringType(v)).toArray(DEREncoder[]::new))),
     };
+  }
+
+
+  @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof SearchRequest) {
+      final SearchRequest v = (SearchRequest) o;
+      return LdapUtils.areEqual(baseDN, v.baseDN) &&
+        LdapUtils.areEqual(searchScope, v.searchScope) &&
+        LdapUtils.areEqual(derefAliases, v.derefAliases) &&
+        LdapUtils.areEqual(sizeLimit, v.sizeLimit) &&
+        LdapUtils.areEqual(timeLimit, v.timeLimit) &&
+        LdapUtils.areEqual(typesOnly, v.typesOnly) &&
+        LdapUtils.areEqual(searchFilter, v.searchFilter) &&
+        LdapUtils.areEqual(returnAttributes, v.returnAttributes) &&
+        LdapUtils.areEqual(getControls(), v.getControls());
+    }
+    return false;
+  }
+
+
+  @Override
+  public int hashCode()
+  {
+    return
+      LdapUtils.computeHashCode(
+        HASH_CODE_SEED,
+        baseDN,
+        searchScope,
+        derefAliases,
+        sizeLimit,
+        timeLimit,
+        typesOnly,
+        searchFilter,
+        returnAttributes,
+        getControls());
   }
 
 
@@ -154,6 +391,29 @@ public class SearchRequest extends AbstractRequestMessage
 
 
   /**
+   * Returns a new search request with the same properties as the supplied request.
+   *
+   * @param  request  to copy
+   *
+   * @return  copy of the supplied search request
+   */
+  public static SearchRequest copy(final SearchRequest request)
+  {
+    final SearchRequest sr = new SearchRequest();
+    sr.setBaseDN(request.getBaseDN());
+    sr.setSearchScope(request.getSearchScope());
+    sr.setDerefAliases(request.getDerefAliases());
+    sr.setSizeLimit(request.getSizeLimit());
+    sr.setTimeLimit(request.getTimeLimit());
+    sr.setTypesOnly(request.isTypesOnly());
+    sr.setSearchFilter(request.getSearchFilter());
+    sr.setReturnAttributes(request.getReturnAttributes());
+    sr.setControls(request.getControls());
+    return sr;
+  }
+
+
+  /**
    * Creates a builder for this class.
    *
    * @return  new builder
@@ -161,6 +421,19 @@ public class SearchRequest extends AbstractRequestMessage
   public static Builder builder()
   {
     return new Builder();
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @param  request  search request to initialize the builder with
+   *
+   * @return  new builder
+   */
+  public static Builder builder(final SearchRequest request)
+  {
+    return new Builder(request);
   }
 
 
@@ -175,6 +448,17 @@ public class SearchRequest extends AbstractRequestMessage
     protected Builder()
     {
       super(new SearchRequest());
+    }
+
+
+    /**
+     * Creates a new builder.
+     *
+     * @param  req  search request to build
+     */
+    protected Builder(final SearchRequest req)
+    {
+      super(req);
     }
 
 
@@ -194,7 +478,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder dn(final String dn)
     {
-      object.baseDN = dn;
+      object.setBaseDN(dn);
       return self();
     }
 
@@ -208,7 +492,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder scope(final SearchScope scope)
     {
-      object.searchScope = scope;
+      object.setSearchScope(scope);
       return self();
     }
 
@@ -222,7 +506,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder aliases(final DerefAliases aliases)
     {
-      object.derefAliases = aliases;
+      object.setDerefAliases(aliases);
       return self();
     }
 
@@ -236,7 +520,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder sizeLimit(final int size)
     {
-      object.sizeLimit = size;
+      object.setSizeLimit(size);
       return self();
     }
 
@@ -248,9 +532,9 @@ public class SearchRequest extends AbstractRequestMessage
      *
      * @return  this builder
      */
-    public Builder timeLimit(final int time)
+    public Builder timeLimit(final Duration time)
     {
-      object.timeLimit = time;
+      object.setTimeLimit(time);
       return self();
     }
 
@@ -264,7 +548,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder typesOnly(final boolean types)
     {
-      object.typesOnly = types;
+      object.setTypesOnly(types);
       return self();
     }
 
@@ -278,7 +562,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder filter(final SearchFilter filter)
     {
-      object.searchFilter = filter;
+      object.setSearchFilter(filter);
       return self();
     }
 
@@ -292,7 +576,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder filter(final String filter)
     {
-      object.searchFilter = SearchFilterParser.parse(filter);
+      object.setSearchFilter(filter);
       return self();
     }
 
@@ -306,7 +590,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder attributes(final String... attributes)
     {
-      object.returnAttributes = attributes;
+      object.setReturnAttributes(attributes);
       return self();
     }
   }

@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.protocol;
 
+import java.time.Duration;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.SearchScope;
 import org.ldaptive.control.ProxyAuthorizationControl;
@@ -35,7 +36,7 @@ public class SearchRequestTest
             .scope(SearchScope.SUBTREE)
             .aliases(DerefAliases.NEVER)
             .sizeLimit(1000)
-            .timeLimit(30)
+            .timeLimit(Duration.ofSeconds(30))
             .typesOnly(false)
             .filter(new AndFilter(new EqualityFilter("objectClass", "person"), new EqualityFilter("uid", "jdoe")))
             .attributes(new String[] {"*", "+"}).build(),
@@ -80,7 +81,7 @@ public class SearchRequestTest
             .scope(SearchScope.SUBTREE)
             .aliases(DerefAliases.NEVER)
             .sizeLimit(0)
-            .timeLimit(0)
+            .timeLimit(Duration.ofSeconds(0))
             .typesOnly(false)
             .filter("(CN=John Adams)")
             .attributes(new String[] {"*"})
