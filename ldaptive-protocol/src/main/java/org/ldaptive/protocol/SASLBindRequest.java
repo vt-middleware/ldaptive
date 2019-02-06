@@ -23,10 +23,10 @@ import org.ldaptive.asn1.OctetStringType;
 public class SASLBindRequest extends AbstractRequestMessage implements BindRequest
 {
 
-  /** */
+  /** SASL mechanism. */
   private String saslMechanism;
 
-  /** */
+  /** SASL credentials. */
   private byte[] saslCredentials;
 
 
