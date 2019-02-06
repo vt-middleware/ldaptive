@@ -10,7 +10,6 @@ import org.ldaptive.protocol.DeleteRequest;
 import org.ldaptive.protocol.ExtendedRequest;
 import org.ldaptive.protocol.ModifyDnRequest;
 import org.ldaptive.protocol.ModifyRequest;
-import org.ldaptive.protocol.Result;
 import org.ldaptive.protocol.SearchRequest;
 import org.ldaptive.protocol.UnbindRequest;
 
@@ -20,7 +19,7 @@ import org.ldaptive.protocol.UnbindRequest;
  * @author  Middleware Services
  */
 // CheckStyle:AbstractClassName OFF
-abstract class Connection implements AutoCloseable
+public abstract class Connection implements AutoCloseable
 // CheckStyle:AbstractClassName ON
 {
 
@@ -40,7 +39,18 @@ abstract class Connection implements AutoCloseable
    *
    * @return  operation handle
    */
-  public abstract OperationHandle operation(AddRequest request);
+  public abstract OperationHandle<AddRequest> operation(AddRequest request);
+
+
+  /**
+   * Creates a handle for a bind operation. Since clients must not send requests while a bind is in progress, some
+   * methods may not be supported on the the operation handle.
+   *
+   * @param  request  bind request
+   *
+   * @return  operation handle
+   */
+  public abstract OperationHandle<BindRequest> operation(BindRequest request);
 
 
   /**
@@ -60,7 +70,7 @@ abstract class Connection implements AutoCloseable
    *
    * @return  operation handle
    */
-  public abstract OperationHandle operation(DeleteRequest request);
+  public abstract OperationHandle<DeleteRequest> operation(DeleteRequest request);
 
 
   /**
@@ -80,7 +90,7 @@ abstract class Connection implements AutoCloseable
    *
    * @return  operation handle
    */
-  public abstract OperationHandle operation(ModifyRequest request);
+  public abstract OperationHandle<ModifyRequest> operation(ModifyRequest request);
 
 
   /**
@@ -90,7 +100,7 @@ abstract class Connection implements AutoCloseable
    *
    * @return  operation handle
    */
-  public abstract OperationHandle operation(ModifyDnRequest request);
+  public abstract OperationHandle<ModifyDnRequest> operation(ModifyDnRequest request);
 
 
   /**
@@ -104,17 +114,11 @@ abstract class Connection implements AutoCloseable
 
 
   /**
-   * Performs a bind operation. Bind operations are synchronous since they affect the security context of the
-   * connection. Other operations must block until the bind response is received.
+   * Returns whether this connection is open.
    *
-   * @param  request  bind request
-   *
-   * @return  bind operation result
-   *
-   * @throws  LdapException  if the bind operation fails
+   * @return  whether this connection is open
    */
-  public abstract Result operation(BindRequest request)
-    throws LdapException;
+  public abstract boolean isOpen();
 
 
   /**
