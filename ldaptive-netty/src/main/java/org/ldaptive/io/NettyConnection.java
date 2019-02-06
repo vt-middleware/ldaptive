@@ -406,27 +406,6 @@ public final class NettyConnection extends Connection
   }
 
 
-  @Override
-  public Result operation(final BindRequest request)
-    throws LdapException
-  {
-    throwIfClosed();
-    final OperationHandle handle =  new OperationHandle(
-      request,
-      this,
-      connectionConfig.getResponseTimeout() != null ? connectionConfig.getResponseTimeout() : DEFAULT_RESPONSE_TIMEOUT);
-    final Result result;
-    // TODO add a timeout property or simply throw if a another bind is in progress
-    bindLock.writeLock().lock();
-    try {
-      result = handle.execute();
-    } finally {
-      bindLock.writeLock().unlock();
-    }
-    return result;
-  }
-
-
   /**
    * Performs a GSS-API SASL bind operation.
    *
@@ -544,6 +523,16 @@ public final class NettyConnection extends Connection
   public OperationHandle operation(final AddRequest request)
   {
     return operationInternal(request);
+  }
+
+
+  @Override
+  public BindOperationHandle operation(final BindRequest request)
+  {
+    return new BindOperationHandle(
+      request,
+      this,
+      connectionConfig.getResponseTimeout() != null ? connectionConfig.getResponseTimeout() : DEFAULT_RESPONSE_TIMEOUT);
   }
 
 
@@ -690,7 +679,7 @@ public final class NettyConnection extends Connection
    *
    * @return  whether the Netty channel is open
    */
-  private boolean isOpen()
+  public boolean isOpen()
   {
     return channel != null && channel.isOpen();
   }
@@ -710,14 +699,50 @@ public final class NettyConnection extends Connection
   }
 
 
-  @Override
-  protected void finalize()
-    throws Throwable
+  /** Bind specific operation handle that locks other operations until the bind completes. */
+  public class BindOperationHandle extends OperationHandle<BindRequest>
   {
-    try {
-      close();
-    } finally {
-      super.finalize();
+
+
+    /**
+     * Creates a new bind operation handle.
+     *
+     * @param  req  bind request to expect a response for
+     * @param  conn  the request will be executed on
+     * @param  timeout  duration to wait for a response
+     */
+    BindOperationHandle(final BindRequest req, final Connection conn, final Duration timeout)
+    {
+      super(req, conn, timeout);
+    }
+
+
+    @Override
+    public OperationHandle send()
+    {
+      throw new UnsupportedOperationException("Bind requests are synchronous, invoke execute");
+    }
+
+
+    @Override
+    public Result await()
+    {
+      throw new UnsupportedOperationException("Bind requests are synchronous, invoke execute");
+    }
+
+
+    @Override
+    public Result execute()
+      throws LdapException
+    {
+      // TODO add a timeout property or simply throw if a another bind is in progress
+      bindLock.writeLock().lock();
+      try {
+        super.send();
+        return super.await();
+      } finally {
+        bindLock.writeLock().unlock();
+      }
     }
   }
 
