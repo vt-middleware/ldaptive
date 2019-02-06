@@ -213,14 +213,14 @@ public class ExtendedResponse extends AbstractResult
 
     public Builder responseName(final String name)
     {
-      object.setResponseName(name);
+      object.responseName = name;
       return this;
     }
 
 
     public Builder responseValue(final byte[] value)
     {
-      object.setResponseValue(value);
+      object.responseValue = value;
       return this;
     }
   }

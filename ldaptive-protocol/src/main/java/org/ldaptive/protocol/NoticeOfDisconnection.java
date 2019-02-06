@@ -102,20 +102,6 @@ public class NoticeOfDisconnection extends UnsolicitedNotification
     {
       return this;
     }
-
-
-    public Builder responseName(final String name)
-    {
-      object.setResponseName(name);
-      return this;
-    }
-
-
-    public Builder responseValue(final byte[] value)
-    {
-      object.setResponseValue(value);
-      return this;
-    }
   }
   // CheckStyle:ON
 }
