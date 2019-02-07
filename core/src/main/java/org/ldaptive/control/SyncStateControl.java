@@ -273,15 +273,12 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, syncState=%s, entryUuid=%s, cookie=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        syncState,
-        entryUuid,
-        LdapUtils.base64Encode(cookie));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("syncState=").append(syncState).append(", ")
+      .append("entryUuid=").append(entryUuid).append(", ")
+      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append("]").toString();
   }
 
 

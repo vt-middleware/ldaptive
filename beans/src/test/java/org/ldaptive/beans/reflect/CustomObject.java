@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.reflect;
 
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.transcode.ValueTranscoder;
 
 /**
  * Interface for testing bean annotations.

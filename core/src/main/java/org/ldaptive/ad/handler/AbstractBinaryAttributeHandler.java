@@ -1,20 +1,21 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.handler;
 
-import org.ldaptive.Connection;
+import java.util.stream.Stream;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapException;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.handler.AbstractSearchEntryHandler;
+import org.ldaptive.handler.AbstractEntryHandler;
 
 /**
  * Base class for entry handlers that convert a binary attribute to it's string form.
  *
+ * @param  <T>  type of object to handle
+ *
  * @author  Middleware Services
  */
-public abstract class AbstractBinaryAttributeHandler extends AbstractSearchEntryHandler
+public abstract class AbstractBinaryAttributeHandler<T> extends AbstractEntryHandler<T>
 {
 
   /** hash code seed. */
@@ -47,26 +48,25 @@ public abstract class AbstractBinaryAttributeHandler extends AbstractSearchEntry
 
 
   @Override
-  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
-    throws LdapException
+  protected void handleAttributes(final LdapEntry entry)
   {
     for (LdapAttribute la : entry.getAttributes()) {
       if (attributeName.equalsIgnoreCase(la.getName())) {
         if (la.isBinary()) {
-          final LdapAttribute newAttr = new LdapAttribute(la.getSortBehavior());
+          final LdapAttribute newAttr = new LdapAttribute();
           newAttr.setName(la.getName());
           for (byte[] b : la.getBinaryValues()) {
             newAttr.addStringValue(convertValue(b));
           }
-          entry.addAttribute(newAttr);
+          entry.addAttributes(newAttr);
           logger.debug("Processed attribute {}", newAttr);
-          handleAttribute(conn, request, newAttr);
+          handleAttribute(newAttr);
         } else {
           logger.warn("Attribute {} must be set as a binary attribute", attributeName);
-          handleAttribute(conn, request, la);
+          handleAttribute(la);
         }
       } else {
-        handleAttribute(conn, request, la);
+        handleAttribute(la);
       }
     }
   }
@@ -83,17 +83,11 @@ public abstract class AbstractBinaryAttributeHandler extends AbstractSearchEntry
 
 
   @Override
-  public void initializeRequest(final SearchRequest request)
+  public void setRequest(final SearchRequest request)
   {
-    boolean isAttrSet = false;
     final String[] binaryAttrs = request.getBinaryAttributes();
     if (binaryAttrs != null) {
-      for (String attr : binaryAttrs) {
-        if (attributeName.equalsIgnoreCase(attr)) {
-          isAttrSet = true;
-          break;
-        }
-      }
+      final boolean isAttrSet = Stream.of(binaryAttrs).anyMatch(a -> attributeName.equalsIgnoreCase(a));
       if (!isAttrSet) {
         request.setBinaryAttributes(LdapUtils.concatArrays(binaryAttrs, new String[] {attributeName}));
       }

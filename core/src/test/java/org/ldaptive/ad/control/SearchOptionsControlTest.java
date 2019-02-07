@@ -47,7 +47,7 @@ public class SearchOptionsControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request")
+  @Test(groups = "control", dataProvider = "request")
   public void encode(final byte[] berValue, final SearchOptionsControl expected)
     throws Exception
   {

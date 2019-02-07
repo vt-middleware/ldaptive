@@ -25,9 +25,6 @@ public class SslConfig extends AbstractConfig
   /** Certificate hostname verifier. */
   private CertificateHostnameVerifier hostnameVerifier;
 
-  /** Hostname verifier config. */
-  private HostnameVerifierConfig hostnameVerifierConfig;
-
   /** Enabled cipher suites. */
   private String[] enabledCipherSuites;
 
@@ -85,8 +82,8 @@ public class SslConfig extends AbstractConfig
   public boolean isEmpty()
   {
     return
-      credentialConfig == null && trustManagers == null && hostnameVerifier == null && hostnameVerifierConfig == null &&
-        enabledCipherSuites == null && enabledProtocols == null && handshakeCompletedListeners == null;
+      credentialConfig == null && trustManagers == null && hostnameVerifier == null && enabledCipherSuites == null &&
+        enabledProtocols == null && handshakeCompletedListeners == null;
   }
 
 
@@ -159,30 +156,6 @@ public class SslConfig extends AbstractConfig
     checkImmutable();
     logger.trace("setting hostnameVerifier: {}", verifier);
     hostnameVerifier = verifier;
-  }
-
-
-  /**
-   * Returns the hostname verifier config.
-   *
-   * @return  hostname verifier config
-   */
-  protected HostnameVerifierConfig getHostnameVerifierConfig()
-  {
-    return hostnameVerifierConfig;
-  }
-
-
-  /**
-   * Sets the hostname verifier config.
-   *
-   * @param  config  hostname verifier config
-   */
-  protected void setHostnameVerifierConfig(final HostnameVerifierConfig config)
-  {
-    checkImmutable();
-    logger.trace("setting hostnameVerifierConfig: {}", config);
-    hostnameVerifierConfig = config;
   }
 
 
@@ -265,13 +238,12 @@ public class SslConfig extends AbstractConfig
    *
    * @return  ssl config
    */
-  public static SslConfig newSslConfig(final SslConfig config)
+  public static SslConfig copy(final SslConfig config)
   {
     final SslConfig sc = new SslConfig();
     sc.setCredentialConfig(config.getCredentialConfig());
     sc.setTrustManagers(config.getTrustManagers());
     sc.setHostnameVerifier(config.getHostnameVerifier());
-    sc.setHostnameVerifierConfig(config.getHostnameVerifierConfig());
     sc.setEnabledCipherSuites(config.getEnabledCipherSuites());
     sc.setEnabledProtocols(config.getEnabledProtocols());
     sc.setHandshakeCompletedListeners(config.getHandshakeCompletedListeners());
@@ -304,9 +276,6 @@ public class SslConfig extends AbstractConfig
     if (trustManagers != null) {
       initializer.setTrustManagers(trustManagers);
     }
-    if (hostnameVerifierConfig != null) {
-      initializer.setHostnameVerifierConfig(hostnameVerifierConfig);
-    }
     return initializer;
   }
 
@@ -314,18 +283,86 @@ public class SslConfig extends AbstractConfig
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::credentialConfig=%s, trustManagers=%s, hostnameVerifier=%s, hostnameVerifierConfig=%s, " +
-        "enabledCipherSuites=%s, enabledProtocols=%s, handshakeCompletedListeners=%s]",
-        getClass().getName(),
-        hashCode(),
-        credentialConfig,
-        Arrays.toString(trustManagers),
-        hostnameVerifier,
-        hostnameVerifierConfig,
-        Arrays.toString(enabledCipherSuites),
-        Arrays.toString(enabledProtocols),
-        Arrays.toString(handshakeCompletedListeners));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("credentialConfig=").append(credentialConfig).append(", ")
+      .append("trustManagers=").append(Arrays.toString(trustManagers)).append(", ")
+      .append("hostnameVerifier=").append(hostnameVerifier).append(", ")
+      .append("enabledCipherSuites=").append(Arrays.toString(enabledCipherSuites)).append(", ")
+      .append("enabledProtocols=").append(Arrays.toString(enabledProtocols)).append(", ")
+      .append("handshakeCompletedListeners=").append(Arrays.toString(handshakeCompletedListeners))
+      .append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+
+    private final SslConfig object = new SslConfig();
+
+
+    protected Builder() {}
+
+
+    public Builder credentialConfig(final CredentialConfig config)
+    {
+      object.setCredentialConfig(config);
+      return this;
+    }
+
+
+    public Builder trustManagers(final TrustManager... managers)
+    {
+      object.setTrustManagers(managers);
+      return this;
+    }
+
+
+    public Builder hostnameVerifier(final CertificateHostnameVerifier verifier)
+    {
+      object.setHostnameVerifier(verifier);
+      return this;
+    }
+
+
+    public Builder cipherSuites(final String... suites)
+    {
+      object.setEnabledCipherSuites(suites);
+      return this;
+    }
+
+
+    public Builder protocols(final String... protocols)
+    {
+      object.setEnabledProtocols(protocols);
+      return this;
+    }
+
+
+    public Builder handshakeListeners(final HandshakeCompletedListener... listeners)
+    {
+      object.setHandshakeCompletedListeners(listeners);
+      return this;
+    }
+
+
+    public SslConfig build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

@@ -119,7 +119,9 @@ public class IdlePruneStrategy implements PruneStrategy
   @Override
   public String toString()
   {
-    return
-      String.format("[%s@%d::prunePeriod=%s, idleTime=%s]", getClass().getName(), hashCode(), prunePeriod, idleTime);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("prunePeriod=").append(prunePeriod).append(", ")
+      .append("idleTime=").append(idleTime).append("]").toString();
   }
 }

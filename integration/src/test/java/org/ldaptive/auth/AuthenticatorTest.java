@@ -7,8 +7,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModificationType;
-import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
@@ -17,9 +16,9 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
+import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.ResultCode;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchResult;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.auth.ext.ActiveDirectoryAccountState;
@@ -30,11 +29,9 @@ import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.SessionTrackingControl;
-import org.ldaptive.extended.PasswordModifyOperation;
+import org.ldaptive.extended.ExtendedOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
-import org.ldaptive.pool.BlockingConnectionPool;
-import org.ldaptive.pool.PooledConnectionFactory;
-import org.ldaptive.pool.PooledConnectionFactoryManager;
+import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.velocity.TemplateSearchDnResolver;
 import org.ldaptive.velocity.UserContext;
 import org.testng.AssertJUnit;
@@ -67,19 +64,19 @@ public class AuthenticatorTest extends AbstractTest
   private static LdapEntry specialCharsLdapEntry3;
 
   /** Authenticator instance for concurrency testing. */
-  private Authenticator singleTLSAuth;
+  private final Authenticator singleTLSAuth;
 
   /** Authenticator instance for concurrency testing. */
-  private Authenticator singleSSLAuth;
+  private final Authenticator singleSSLAuth;
 
   /** Authenticator instance for concurrency testing. */
-  private Authenticator singleTLSDnAuth;
+  private final Authenticator singleTLSDnAuth;
 
   /** Authenticator instance for concurrency testing. */
-  private Authenticator singleSSLDnAuth;
+  private final Authenticator singleSSLDnAuth;
 
   /** Authenticator instance for concurrency testing. */
-  private Authenticator pooledTLSAuth;
+  private final Authenticator pooledTLSAuth;
 
   /**
    * Default constructor.
@@ -103,7 +100,7 @@ public class AuthenticatorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry6")
-  @BeforeClass(groups = {"auth"})
+  @BeforeClass(groups = "auth")
   public void createAuthEntry(final String ldifFile)
     throws Exception
   {
@@ -114,15 +111,11 @@ public class AuthenticatorTest extends AbstractTest
     final AuthenticationHandler ah = pooledTLSAuth.getAuthenticationHandler();
     final DefaultConnectionFactory cf =
       (DefaultConnectionFactory) ((ConnectionFactoryManager) ah).getConnectionFactory();
-    final BlockingConnectionPool cp = new BlockingConnectionPool(cf);
-    final PooledConnectionFactory pcf = new PooledConnectionFactory(cp);
-    pooledTLSAuth.setAuthenticationHandler(new PooledBindAuthenticationHandler(pcf));
-    try {
-      cp.initialize();
-    } catch (UnsupportedOperationException e) {
-      // ignore if not supported
-      AssertJUnit.assertNotNull(e);
-    }
+    final PooledConnectionFactory pcf = new PooledConnectionFactory();
+    pcf.setDefaultConnectionFactory(cf);
+    pcf.setPoolConfig(new PoolConfig());
+    pcf.initialize();
+    pooledTLSAuth.setAuthenticationHandler(new SimpleBindAuthenticationHandler(pcf));
   }
 
 
@@ -132,7 +125,7 @@ public class AuthenticatorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createSpecialCharsEntry2")
-  @BeforeClass(groups = {"auth"})
+  @BeforeClass(groups = "auth")
   public void createSpecialCharsEntry2(final String ldifFile)
     throws Exception
   {
@@ -148,7 +141,7 @@ public class AuthenticatorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createSpecialCharsEntry3")
-  @BeforeClass(groups = {"auth"})
+  @BeforeClass(groups = "auth")
   public void createSpecialCharsEntry3(final String ldifFile)
     throws Exception
   {
@@ -159,7 +152,7 @@ public class AuthenticatorTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"auth"}, dependsOnGroups = {"authAccountState"})
+  @AfterClass(groups = "auth", dependsOnGroups = "authAccountState")
   public void deleteAuthEntry()
     throws Exception
   {
@@ -168,11 +161,7 @@ public class AuthenticatorTest extends AbstractTest
     super.deleteLdapEntry(specialCharsLdapEntry3.getDn());
 
     final AuthenticationHandler ah = pooledTLSAuth.getAuthenticationHandler();
-    try {
-      (((PooledConnectionFactoryManager) ah).getConnectionFactory().getConnectionPool()).close();
-    } catch (IllegalStateException e) {
-      AssertJUnit.fail(e.getMessage());
-    }
+    ((SimpleBindAuthenticationHandler) ah).getConnectionFactory().close();
   }
 
 
@@ -249,7 +238,7 @@ public class AuthenticatorTest extends AbstractTest
    * @param  baseDn  to check
    */
   @Parameters({ "loadPropertiesUrl", "loadPropertiesBaseDn" })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void loadProperties(final String ldapUrl, final String baseDn)
   {
     final Authenticator auth = TestUtils.readAuthenticator("classpath:/org/ldaptive/ldap.tls.properties");
@@ -268,7 +257,7 @@ public class AuthenticatorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "getDnCn", "getDnUser", "getDnDuplicateFilter" })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void resolveDn(final String cn, final String user, final String duplicateFilter)
     throws Exception
   {
@@ -315,7 +304,7 @@ public class AuthenticatorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "getDnCn", "getDnUser", "getDnDuplicateFilter" })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void resolveDnFormat(final String cn, final String user, final String duplicateFilter)
     throws Exception
   {
@@ -335,7 +324,7 @@ public class AuthenticatorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "getDnCn", "getDnUser", "getDnDuplicateFilter" })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void resolveDnVelocity(final String cn, final String user, final String duplicateFilter)
     throws Exception
   {
@@ -369,7 +358,7 @@ public class AuthenticatorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("getDnUser")
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void resolveDnAggregate(final String user)
     throws Exception
   {
@@ -399,9 +388,6 @@ public class AuthenticatorTest extends AbstractTest
     try {
       auth.resolveDn(new User(user));
       AssertJUnit.fail("Should have thrown LdapException");
-    } catch (UnsupportedOperationException e) {
-      // ignore this test if not supported by the provider
-      AssertJUnit.assertNotNull(e);
     } catch (Exception e) {
       AssertJUnit.assertEquals(LdapException.class, e.getClass());
     }
@@ -428,7 +414,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateDnResults"
     })
   @Test(
-    groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
+    groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
   public void authenticateDn(final String dn, final String credential, final String returnAttrs, final String ldifFile)
     throws Exception
@@ -436,15 +422,15 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     final Authenticator auth = createTLSDnAuthenticator(false);
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
 
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
 
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
 
@@ -464,7 +450,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateDnResults"
     })
   @Test(
-    groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
+    groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
   public void authenticateDnSsl(
     final String dn,
@@ -476,15 +462,15 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     final Authenticator auth = createSSLDnAuthenticator(false);
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
 
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
 
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
 
@@ -503,7 +489,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateDnFilter",
       "authenticateDnFilterParameters"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateDnHandler(
     final String dn,
     final String credential,
@@ -514,85 +500,22 @@ public class AuthenticatorTest extends AbstractTest
     final Authenticator auth = createTLSDnAuthenticator(true);
 
     final TestAuthenticationResponseHandler authHandler = new TestAuthenticationResponseHandler();
-    auth.setAuthenticationResponseHandlers(authHandler);
+    auth.setResponseHandlers(authHandler);
 
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
     AssertJUnit.assertTrue(!authHandler.getResults().isEmpty());
     AssertJUnit.assertFalse(authHandler.getResults().get(dn));
 
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
     AssertJUnit.assertTrue(authHandler.getResults().get(dn));
 
     authHandler.getResults().clear();
 
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
     AssertJUnit.assertTrue(authHandler.getResults().get(dn));
-  }
-
-
-  /**
-   * @param  user  to authenticate.
-   * @param  credential  to authenticate with.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Parameters({ "digestMd5User", "digestMd5Credential" })
-  @Test(groups = {"auth"})
-  public void authenticateDigestMd5(final String user, final String credential)
-    throws Exception
-  {
-    // TODO ignore active directory until it's configured
-    if (TestControl.isActiveDirectory()) {
-      return;
-    }
-
-    final Authenticator auth = TestUtils.createDigestMD5Authenticator();
-
-    AuthenticationResponse response = auth.authenticate(
-      new AuthenticationRequest(user, new Credential(INVALID_PASSWD), ReturnAttributes.NONE.value()));
-    AssertJUnit.assertFalse(response.getResult());
-
-    response = auth.authenticate(
-      new AuthenticationRequest(user, new Credential(credential), ReturnAttributes.NONE.value()));
-    AssertJUnit.assertTrue(response.getResult());
-  }
-
-
-  /**
-   * @param  user  to authenticate.
-   * @param  credential  to authenticate with.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Parameters({ "cramMd5User", "cramMd5Credential" })
-  @Test(groups = {"auth"})
-  public void authenticateCramMd5(final String user, final String credential)
-    throws Exception
-  {
-    // TODO ignore active directory until it's configured
-    if (TestControl.isActiveDirectory()) {
-      return;
-    }
-
-    try {
-      final Authenticator auth = TestUtils.createCramMD5Authenticator();
-      AuthenticationResponse response = auth.authenticate(
-        new AuthenticationRequest(user, new Credential(INVALID_PASSWD), ReturnAttributes.NONE.value()));
-      AssertJUnit.assertFalse(response.getResult());
-
-      response = auth.authenticate(
-        new AuthenticationRequest(user, new Credential(credential), ReturnAttributes.NONE.value()));
-      AssertJUnit.assertTrue(response.getResult());
-    } catch (LdapException e) {
-      // ignore this test if not supported by the server
-      AssertJUnit.assertEquals(ResultCode.AUTH_METHOD_NOT_SUPPORTED, e.getResultCode());
-    } catch (UnsupportedOperationException e) {
-      // ignore this test if not supported by the provider
-      AssertJUnit.assertNotNull(e);
-    }
   }
 
 
@@ -612,7 +535,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateResults"
     })
   @Test(
-    groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
+    groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
   public void authenticate(final String user, final String credential, final String returnAttrs, final String ldifFile)
     throws Exception
@@ -622,22 +545,22 @@ public class AuthenticatorTest extends AbstractTest
     // test invalid user
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest("i-do-not-exist", new Credential(credential)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
     AssertJUnit.assertEquals(AuthenticationResultCode.DN_RESOLUTION_FAILURE, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
-    AssertJUnit.assertNotNull(response.getMessage());
+    AssertJUnit.assertNotNull(response.getDiagnosticMessage());
 
     // test failed auth with return attributes
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD), returnAttrs.split("\\|")));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
     AssertJUnit.assertEquals(
       AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.INVALID_CREDENTIALS, response.getResultCode());
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
     AssertJUnit.assertEquals(
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
@@ -646,12 +569,12 @@ public class AuthenticatorTest extends AbstractTest
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
     AssertJUnit.assertEquals(
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
 
@@ -671,7 +594,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateResults"
     })
   @Test(
-    groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
+    groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
   public void authenticateSsl(
     final String user,
@@ -685,15 +608,15 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
 
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
 
@@ -715,7 +638,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateResults"
     })
   @Test(
-    groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
+    groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
   public void authenticatePooled(
     final String user,
@@ -728,16 +651,16 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     AuthenticationResponse response = pooledTLSAuth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
 
     response = pooledTLSAuth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
 
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
     response = pooledTLSAuth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
 
@@ -758,7 +681,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateReturnAttrs",
       "authenticateResults"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateVelocity(
       final String user,
       final String credential,
@@ -789,16 +712,16 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(new User(null, context), new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
 
     response = auth.authenticate(new AuthenticationRequest(new User(null, context), new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
 
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(
       new AuthenticationRequest(new User(null, context), new Credential(credential), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
 
@@ -817,7 +740,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateReturnAttrs",
       "authenticateResults"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateAggregate(
     final String user,
     final String credential,
@@ -846,17 +769,17 @@ public class AuthenticatorTest extends AbstractTest
     authHandlers.put("system1", auth.getAuthenticationHandler());
     authHandlers.put("system2", auth.getAuthenticationHandler());
 
-    final AggregateDnResolver.AuthenticationHandler authHandler = new AggregateDnResolver.AuthenticationHandler();
+    final AggregateAuthenticationHandler authHandler = new AggregateAuthenticationHandler();
     authHandler.setAuthenticationHandlers(authHandlers);
     auth.setAuthenticationHandler(authHandler);
 
     // test invalid user
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest("i-do-not-exist", new Credential(credential)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
     AssertJUnit.assertEquals(AuthenticationResultCode.DN_RESOLUTION_FAILURE, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
-    AssertJUnit.assertNotNull(response.getMessage());
+    AssertJUnit.assertNotNull(response.getDiagnosticMessage());
 
     // test multiple DNs
     try {
@@ -870,14 +793,14 @@ public class AuthenticatorTest extends AbstractTest
     // test failed auth with return attributes
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD), returnAttrs.split("\\|")));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
     AssertJUnit.assertEquals(
       AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.INVALID_CREDENTIALS, response.getResultCode());
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
     AssertJUnit.assertEquals(
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
@@ -886,12 +809,12 @@ public class AuthenticatorTest extends AbstractTest
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
     AssertJUnit.assertEquals(
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
 
@@ -908,7 +831,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateCredential",
       "authenticateReturnAttrs"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateInvalidInput(final String user, final String credential, final String returnAttrs)
     throws Exception
   {
@@ -918,29 +841,29 @@ public class AuthenticatorTest extends AbstractTest
       new AuthenticationRequest(user, null, returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(AuthenticationResultCode.INVALID_CREDENTIAL, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
-    AssertJUnit.assertNotNull(response.getMessage());
+    AssertJUnit.assertNotNull(response.getDiagnosticMessage());
 
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(new byte[0]), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(AuthenticationResultCode.INVALID_CREDENTIAL, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
-    AssertJUnit.assertNotNull(response.getMessage());
+    AssertJUnit.assertNotNull(response.getDiagnosticMessage());
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(""), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(AuthenticationResultCode.INVALID_CREDENTIAL, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
-    AssertJUnit.assertNotNull(response.getMessage());
+    AssertJUnit.assertNotNull(response.getDiagnosticMessage());
 
     response = auth.authenticate(
       new AuthenticationRequest((String) null, new Credential(credential), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(AuthenticationResultCode.DN_RESOLUTION_FAILURE, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
-    AssertJUnit.assertNotNull(response.getMessage());
+    AssertJUnit.assertNotNull(response.getDiagnosticMessage());
 
     response = auth.authenticate(new AuthenticationRequest("", new Credential(credential), returnAttrs.split("\\|")));
     AssertJUnit.assertEquals(AuthenticationResultCode.DN_RESOLUTION_FAILURE, response.getAuthenticationResultCode());
     AssertJUnit.assertNull(response.getResultCode());
-    AssertJUnit.assertNotNull(response.getMessage());
+    AssertJUnit.assertNotNull(response.getDiagnosticMessage());
   }
 
 
@@ -959,7 +882,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateReturnAttrs",
       "authenticateResults"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateReturnAttributes(
     final String user,
     final String credential,
@@ -985,7 +908,7 @@ public class AuthenticatorTest extends AbstractTest
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
 
     // attributes on the authenticator
     auth.setReturnAttributes(returnAttrs.split("\\|"));
@@ -994,7 +917,7 @@ public class AuthenticatorTest extends AbstractTest
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
     auth.setReturnAttributes((String) null);
 
     // NONE attributes on the authenticator
@@ -1004,7 +927,7 @@ public class AuthenticatorTest extends AbstractTest
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
     auth.setReturnAttributes((String) null);
 
     // NONE attributes on the authenticator and request
@@ -1030,7 +953,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateSpecialCharsUser2",
       "authenticateSpecialCharsCredential2"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateSpecialChars2(final String user, final String credential)
     throws Exception
   {
@@ -1039,10 +962,10 @@ public class AuthenticatorTest extends AbstractTest
     // test without rewrite
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
 
     // test with rewrite
 
@@ -1054,10 +977,10 @@ public class AuthenticatorTest extends AbstractTest
     ((SearchDnResolver) auth.getDnResolver()).setBaseDn("dc=blah");
     ((SearchDnResolver) auth.getDnResolver()).setSubtreeSearch(true);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
   }
 
 
@@ -1072,7 +995,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateSpecialCharsUser3",
       "authenticateSpecialCharsCredential3"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateSpecialChars3(final String user, final String credential)
     throws Exception
   {
@@ -1080,10 +1003,10 @@ public class AuthenticatorTest extends AbstractTest
 
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
   }
 
 
@@ -1103,7 +1026,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateResults"
     })
   @Test(
-    groups = {"auth"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
+    groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
   public void authenticateSearchEntry(
     final String user,
@@ -1123,12 +1046,12 @@ public class AuthenticatorTest extends AbstractTest
     final String expected = TestUtils.readFileIntoString(ldifFile);
     final AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
     AssertJUnit.assertEquals(
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
 
@@ -1147,7 +1070,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateReturnAttrs",
       "authenticateResults"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateWhoAmI(
     final String user,
     final String credential,
@@ -1159,23 +1082,18 @@ public class AuthenticatorTest extends AbstractTest
       return;
     }
 
-    // provider doesn't support this operation
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP does not support this operation");
-    }
-
     final Authenticator auth = createTLSAuthenticator(true);
     auth.setEntryResolver(new WhoAmIEntryResolver());
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
     final AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
     AssertJUnit.assertEquals(
       AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
       response.getAuthenticationResultCode());
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
 
@@ -1194,7 +1112,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateReturnAttrs",
       "authenticateResults"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateAuthorizationIdentity(
     final String user,
     final String credential,
@@ -1202,13 +1120,8 @@ public class AuthenticatorTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    // provider doesn't support this control
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP does not support this control");
-    }
-
     final Authenticator auth = createTLSAuthenticator(true);
-    final BindAuthenticationHandler ah = (BindAuthenticationHandler) auth.getAuthenticationHandler();
+    final SimpleBindAuthenticationHandler ah = (SimpleBindAuthenticationHandler) auth.getAuthenticationHandler();
     ah.setAuthenticationControls(new AuthorizationIdentityRequestControl());
     auth.setEntryResolver(new AuthorizationIdentityEntryResolver());
 
@@ -1216,12 +1129,12 @@ public class AuthenticatorTest extends AbstractTest
     try {
       final AuthenticationResponse response = auth.authenticate(
         new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-      AssertJUnit.assertTrue(response.getResult());
+      AssertJUnit.assertTrue(response.isSuccess());
       AssertJUnit.assertEquals(
         AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
         response.getAuthenticationResultCode());
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
     } catch (IllegalStateException e) {
       throw new UnsupportedOperationException("LDAP server does not support this control");
     }
@@ -1243,7 +1156,7 @@ public class AuthenticatorTest extends AbstractTest
       "authenticateReturnAttrs",
       "authenticateResults"
     })
-  @Test(groups = {"auth"})
+  @Test(groups = "auth")
   public void authenticateSessionTracking(
     final String user,
     final String credential,
@@ -1251,13 +1164,8 @@ public class AuthenticatorTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    // provider doesn't support this control
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP does not support this control");
-    }
-
     final Authenticator auth = createTLSAuthenticator(true);
-    auth.setAuthenticationRequestHandlers(
+    auth.setRequestHandlers(
       new AddControlAuthenticationRequestHandler(
         (dn, arUser) -> new RequestControl[] {
           new SessionTrackingControl("151.101.32.133", "", SessionTrackingControl.USERNAME_ACCT_OID, ""), }));
@@ -1268,12 +1176,12 @@ public class AuthenticatorTest extends AbstractTest
         new Credential(credential),
         returnAttrs.split("\\|"));
       final AuthenticationResponse response = auth.authenticate(request);
-      AssertJUnit.assertTrue(response.getResult());
+      AssertJUnit.assertTrue(response.isSuccess());
       AssertJUnit.assertEquals(
         AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
         response.getAuthenticationResultCode());
       AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), new SearchResult(response.getLdapEntry()));
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
     } catch (IllegalStateException e) {
       throw new UnsupportedOperationException("LDAP server does not support this control");
     }
@@ -1299,133 +1207,128 @@ public class AuthenticatorTest extends AbstractTest
       return;
     }
 
+    final ConnectionFactory cf = TestUtils.createSetupConnectionFactory();
     AuthenticationResponse response;
     PasswordPolicyControl ppcResponse;
     final Authenticator auth = createTLSAuthenticator(true);
-    auth.setAuthenticationRequestHandlers(new PasswordPolicyAuthenticationRequestHandler());
-    auth.setAuthenticationResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
-    try (Connection conn = TestUtils.createSetupConnection()) {
-      conn.open();
+    auth.setRequestHandlers(new PasswordPolicyAuthenticationRequestHandler());
+    auth.setResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
 
-      // get the entry DN
-      final String entryDn = auth.resolveDn(new User(user));
+    // get the entry DN
+    final String entryDn = auth.resolveDn(new User(user));
 
-      // test bind sending ppolicy control
-      response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-      AssertJUnit.assertTrue(response.getResult());
+    // test bind sending ppolicy control
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+    AssertJUnit.assertTrue(response.isSuccess());
+    ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+    AssertJUnit.assertNotNull(ppcResponse);
+
+    AssertJUnit.assertNull(ppcResponse.getError());
+    AssertJUnit.assertNull(response.getAccountState());
+    AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+    AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
+
+    final ModifyOperation modify = new ModifyOperation(cf);
+    modify.execute(
+      new ModifyRequest(
+        entryDn,
+        new AttributeModification(
+          AttributeModification.Type.ADD,
+          new LdapAttribute("pwdPolicySubentry", "cn=default,ou=policies,dc=vt,dc=edu"))));
+    Thread.sleep(2000);
+
+    // test bind with zero expiration time
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+    AssertJUnit.assertTrue(response.isSuccess());
+    ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+    AssertJUnit.assertEquals(0, ppcResponse.getTimeBeforeExpiration());
+    AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+    AssertJUnit.assertNotNull(response.getAccountState().getWarning().getExpiration());
+    AssertJUnit.assertNull(response.getAccountState().getError());
+
+    // test bind with expiration time
+    final String newCredential = credential + "-new";
+    final ExtendedOperation passwordModify = new ExtendedOperation(cf);
+    passwordModify.execute(
+      new PasswordModifyRequest(entryDn, credential, newCredential));
+    Thread.sleep(2000);
+
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
+    AssertJUnit.assertTrue(response.isSuccess());
+    ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+    AssertJUnit.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
+    AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+    AssertJUnit.assertNotNull(response.getAccountState().getWarning().getExpiration());
+    AssertJUnit.assertNull(response.getAccountState().getError());
+
+    // test bind on locked account
+    modify.execute(
+      new ModifyRequest(
+        entryDn,
+        new AttributeModification(
+          AttributeModification.Type.ADD.ADD,
+          new LdapAttribute("pwdAccountLockedTime", "000001010000Z"))));
+
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
+    AssertJUnit.assertFalse(response.isSuccess());
+    ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+    AssertJUnit.assertEquals(PasswordPolicyControl.Error.ACCOUNT_LOCKED, ppcResponse.getError());
+    AssertJUnit.assertEquals(
+      PasswordPolicyControl.Error.ACCOUNT_LOCKED.getCode(),
+      response.getAccountState().getError().getCode());
+    AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+    AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
+
+    modify.execute(
+      new ModifyRequest(
+        entryDn,
+        new AttributeModification(AttributeModification.Type.ADD.DELETE, new LdapAttribute("pwdAccountLockedTime"))));
+
+    // test bind with grace login
+    modify.execute(
+      new ModifyRequest(
+        entryDn,
+        new AttributeModification(
+          AttributeModification.Type.REPLACE,
+          new LdapAttribute("pwdPolicySubentry", "cn=1s-expire,ou=policies,dc=vt,dc=edu"))));
+    Thread.sleep(2000);
+
+    // note that OpenLDAP never sends back 0 grace logins
+    int graceLogins = 2;
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
+    do {
       ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-      AssertJUnit.assertNotNull(ppcResponse);
-
-      AssertJUnit.assertNull(ppcResponse.getError());
-      AssertJUnit.assertNull(response.getAccountState());
-      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+      AssertJUnit.assertTrue(response.isSuccess());
       AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
-
-      final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(
-        new ModifyRequest(
-          entryDn,
-          new AttributeModification(
-            AttributeModificationType.ADD,
-            new LdapAttribute("pwdPolicySubentry", "cn=default,ou=policies,dc=vt,dc=edu"))));
-      Thread.sleep(2000);
-
-      // test bind with zero expiration time
-      response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-      AssertJUnit.assertTrue(response.getResult());
-      ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-      AssertJUnit.assertEquals(0, ppcResponse.getTimeBeforeExpiration());
-      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
-      AssertJUnit.assertNotNull(response.getAccountState().getWarning().getExpiration());
+      AssertJUnit.assertEquals(graceLogins, ppcResponse.getGraceAuthNsRemaining());
+      AssertJUnit.assertEquals(graceLogins, response.getAccountState().getWarning().getLoginsRemaining());
+      AssertJUnit.assertNull(response.getAccountState().getWarning().getExpiration());
       AssertJUnit.assertNull(response.getAccountState().getError());
-
-      // test bind with expiration time
-      final String newCredential = credential + "-new";
-      final PasswordModifyOperation passwordModify = new PasswordModifyOperation(conn);
-      passwordModify.execute(
-        new PasswordModifyRequest(entryDn, new Credential(credential), new Credential(newCredential)));
+      graceLogins--;
       Thread.sleep(2000);
-
       response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
-      AssertJUnit.assertTrue(response.getResult());
-      ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-      AssertJUnit.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
-      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
-      AssertJUnit.assertNotNull(response.getAccountState().getWarning().getExpiration());
-      AssertJUnit.assertNull(response.getAccountState().getError());
+    } while (response.isSuccess());
 
-      // test bind on locked account
-      modify.execute(
-        new ModifyRequest(
-          entryDn,
-          new AttributeModification(
-            AttributeModificationType.ADD,
-            new LdapAttribute("pwdAccountLockedTime", "000001010000Z"))));
+    // password expired
+    ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
+    AssertJUnit.assertFalse(response.isSuccess());
+    AssertJUnit.assertEquals(PasswordPolicyControl.Error.PASSWORD_EXPIRED, ppcResponse.getError());
+    AssertJUnit.assertEquals(
+      PasswordPolicyControl.Error.PASSWORD_EXPIRED.getCode(),
+      response.getAccountState().getError().getCode());
+    AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
+    AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
 
-      response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
-      AssertJUnit.assertFalse(response.getResult());
-      ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-      AssertJUnit.assertEquals(PasswordPolicyControl.Error.ACCOUNT_LOCKED, ppcResponse.getError());
-      AssertJUnit.assertEquals(
-        PasswordPolicyControl.Error.ACCOUNT_LOCKED.getCode(),
-        response.getAccountState().getError().getCode());
-      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
-      AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
-
-      modify.execute(
-        new ModifyRequest(
-          entryDn,
-          new AttributeModification(AttributeModificationType.REMOVE, new LdapAttribute("pwdAccountLockedTime"))));
-
-      // test bind with grace login
-      modify.execute(
-        new ModifyRequest(
-          entryDn,
-          new AttributeModification(
-            AttributeModificationType.REPLACE,
-            new LdapAttribute("pwdPolicySubentry", "cn=1s-expire,ou=policies,dc=vt,dc=edu"))));
-      Thread.sleep(2000);
-
-      // note that OpenLDAP never sends back 0 grace logins
-      int graceLogins = 2;
-      response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
-      do {
-        ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-        AssertJUnit.assertTrue(response.getResult());
-        AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
-        AssertJUnit.assertEquals(graceLogins, ppcResponse.getGraceAuthNsRemaining());
-        AssertJUnit.assertEquals(graceLogins, response.getAccountState().getWarning().getLoginsRemaining());
-        AssertJUnit.assertNull(response.getAccountState().getWarning().getExpiration());
-        AssertJUnit.assertNull(response.getAccountState().getError());
-        graceLogins--;
-        Thread.sleep(2000);
-        response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
-      } while (response.getResult());
-
-      // password expired
-      ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-      AssertJUnit.assertFalse(response.getResult());
-      AssertJUnit.assertEquals(PasswordPolicyControl.Error.PASSWORD_EXPIRED, ppcResponse.getError());
-      AssertJUnit.assertEquals(
-        PasswordPolicyControl.Error.PASSWORD_EXPIRED.getCode(),
-        response.getAccountState().getError().getCode());
-      AssertJUnit.assertEquals(-1, ppcResponse.getGraceAuthNsRemaining());
-      AssertJUnit.assertEquals(-1, ppcResponse.getTimeBeforeExpiration());
-
-      modify.execute(
-        new ModifyRequest(
-          entryDn,
-          new AttributeModification(
-            AttributeModificationType.REMOVE, new LdapAttribute("pwdPolicySubentry"))));
-      modify.execute(
-        new ModifyRequest(
-          entryDn,
-          new AttributeModification(
-            AttributeModificationType.REPLACE, new LdapAttribute("userPassword", credential))));
-    } catch (UnsupportedOperationException e) {
-      // ignore this test if not supported
-      AssertJUnit.assertNotNull(e);
-    }
+    modify.execute(
+      new ModifyRequest(
+        entryDn,
+        new AttributeModification(
+          AttributeModification.Type.DELETE, new LdapAttribute("pwdPolicySubentry"))));
+    modify.execute(
+      new ModifyRequest(
+        entryDn,
+        new AttributeModification(
+          AttributeModification.Type.REPLACE, new LdapAttribute("userPassword", credential))));
   }
 
 
@@ -1449,14 +1352,14 @@ public class AuthenticatorTest extends AbstractTest
     }
 
     final Authenticator auth = createTLSAuthenticator(true);
-    auth.setAuthenticationResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler());
+    auth.setResponseHandlers(new ActiveDirectoryAuthenticationResponseHandler());
     auth.setResolveEntryOnFailure(true);
 
     // success, store the entry for modify operations
     // setting return attributes uses the search entry resolver
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), ReturnAttributes.ALL_USER.value()));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
     AssertJUnit.assertNull(response.getAccountState());
 
     LdapEntry entry = response.getLdapEntry();
@@ -1467,7 +1370,7 @@ public class AuthenticatorTest extends AbstractTest
     // setting return attributes uses the search entry resolver
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD), ReturnAttributes.ALL_USER.value()));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
     AssertJUnit.assertEquals(ActiveDirectoryAccountState.Error.LOGON_FAILURE, response.getAccountState().getError());
     entry = response.getLdapEntry();
     AssertJUnit.assertNull(entry.getAttribute("pwdLastSet"));
@@ -1475,7 +1378,7 @@ public class AuthenticatorTest extends AbstractTest
 
     // bad password, no return attributes
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
     AssertJUnit.assertEquals(ActiveDirectoryAccountState.Error.LOGON_FAILURE, response.getAccountState().getError());
     entry = response.getLdapEntry();
     AssertJUnit.assertNull(entry.getAttribute("pwdLastSet"));
@@ -1483,55 +1386,52 @@ public class AuthenticatorTest extends AbstractTest
 
     // bad password, leverage an existing connection factory for entry
     // resolution on a failed bind
-    final BindAuthenticationHandler ah = (BindAuthenticationHandler) singleTLSAuth.getAuthenticationHandler();
+    final SimpleBindAuthenticationHandler ah =
+      (SimpleBindAuthenticationHandler) singleTLSAuth.getAuthenticationHandler();
     auth.setEntryResolver(new SearchEntryResolver(ah.getConnectionFactory()));
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD), ReturnAttributes.ALL_USER.value()));
-    AssertJUnit.assertFalse(response.getResult());
+    AssertJUnit.assertFalse(response.isSuccess());
     AssertJUnit.assertEquals(ActiveDirectoryAccountState.Error.LOGON_FAILURE, response.getAccountState().getError());
     entry = response.getLdapEntry();
     AssertJUnit.assertNotNull(entry.getAttribute("pwdLastSet"));
     AssertJUnit.assertNotNull(entry.getAttribute("userAccountControl"));
     auth.setEntryResolver(null);
 
-    try (Connection conn = TestUtils.createSetupConnection()) {
-      conn.open();
+    final ModifyOperation modify = new ModifyOperation(TestUtils.createSetupConnectionFactory());
 
-      final ModifyOperation modify = new ModifyOperation(conn);
+    // account disabled
+    final String userAccountControl = entry.getAttribute("userAccountControl").getStringValue();
+    modify.execute(
+      new ModifyRequest(
+        entry.getDn(),
+        new AttributeModification(
+          AttributeModification.Type.REPLACE,
+          new LdapAttribute("userAccountControl", "514"))));
 
-      // account disabled
-      final String userAccountControl = entry.getAttribute("userAccountControl").getStringValue();
-      modify.execute(
-        new ModifyRequest(
-          entry.getDn(),
-          new AttributeModification(
-            AttributeModificationType.REPLACE,
-            new LdapAttribute("userAccountControl", "514"))));
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+    AssertJUnit.assertFalse(response.isSuccess());
+    AssertJUnit.assertEquals(
+      ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED,
+      response.getAccountState().getError());
 
-      response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-      AssertJUnit.assertFalse(response.getResult());
-      AssertJUnit.assertEquals(
-        ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED,
-        response.getAccountState().getError());
+    modify.execute(
+      new ModifyRequest(
+        entry.getDn(),
+        new AttributeModification(
+          AttributeModification.Type.REPLACE,
+          new LdapAttribute("userAccountControl", userAccountControl))));
 
-      modify.execute(
-        new ModifyRequest(
-          entry.getDn(),
-          new AttributeModification(
-            AttributeModificationType.REPLACE,
-            new LdapAttribute("userAccountControl", userAccountControl))));
+    // account must change password
+    modify.execute(
+      new ModifyRequest(
+        entry.getDn(),
+        new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute("pwdLastSet", "0"))));
 
-      // account must change password
-      modify.execute(
-        new ModifyRequest(
-          entry.getDn(),
-          new AttributeModification(AttributeModificationType.REPLACE, new LdapAttribute("pwdLastSet", "0"))));
-
-      response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-      AssertJUnit.assertFalse(response.getResult());
-      AssertJUnit.assertEquals(
-        ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE,
-        response.getAccountState().getError());
-    }
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
+    AssertJUnit.assertFalse(response.isSuccess());
+    AssertJUnit.assertEquals(
+      ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE,
+      response.getAccountState().getError());
   }
 }

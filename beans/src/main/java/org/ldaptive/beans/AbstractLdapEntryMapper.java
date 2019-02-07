@@ -68,7 +68,8 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
     for (AttributeValueMutator mutator : descriptor.getAttributeValueMutators()) {
       logger.debug("using mutator {}", mutator);
       if (mutator != null) {
-        final LdapAttribute attr = new LdapAttribute(mutator.getSortBehavior(), mutator.isBinary());
+        final LdapAttribute attr = new LdapAttribute();
+        attr.setBinary(mutator.isBinary());
         attr.setName(mutator.getName());
         if (attr.isBinary()) {
           final Collection<byte[]> c = mutator.getBinaryValues(source);
@@ -82,7 +83,7 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
           }
         }
         if (attr.size() > 0) {
-          dest.addAttribute(attr);
+          dest.addAttributes(attr);
         }
       }
     }

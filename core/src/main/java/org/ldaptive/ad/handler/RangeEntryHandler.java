@@ -5,15 +5,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SearchEntry;
-import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
-import org.ldaptive.handler.AbstractSearchEntryHandler;
+import org.ldaptive.SearchResponse;
+import org.ldaptive.handler.AbstractEntryHandler;
+import org.ldaptive.handler.SearchResultHandler;
 
 /**
  * Rewrites attributes returned from Active Directory to include all values by performing additional searches. This
@@ -25,10 +24,13 @@ import org.ldaptive.handler.AbstractSearchEntryHandler;
  * searches will request "member;Range=1500-2999" and then "member;Range=3000-4499". When the returned attribute is of
  * the form "member;Range=3000-*", all values have been retrieved.</p>
  *
+ * This handler should only be used with the {@link org.ldaptive.SearchOperation#execute()} method since it leverages
+ * the connection to make further searches.
+ *
  * @author  Middleware Services
  * @author  Tom Zeller
  */
-public class RangeEntryHandler extends AbstractSearchEntryHandler
+public class RangeEntryHandler extends AbstractEntryHandler<SearchResponse> implements SearchResultHandler
 {
 
   /** hash code seed. */
@@ -48,8 +50,15 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
-    throws LdapException
+  public SearchResponse apply(final SearchResponse response)
+  {
+    response.getEntries().forEach(this::handleEntry);
+    return response;
+  }
+
+
+  @Override
+  protected void handleAttributes(final LdapEntry entry)
   {
     final Map<LdapAttribute, Matcher> matchingAttrs = new HashMap<>();
     for (LdapAttribute la : entry.getAttributes()) {
@@ -78,9 +87,10 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
       // Create or update the attribute whose ID has the range syntax removed
       LdapAttribute newAttr = entry.getAttribute(attrTypeName);
       if (newAttr == null) {
-        newAttr = new LdapAttribute(la.getSortBehavior(), la.isBinary());
+        newAttr = new LdapAttribute();
+        newAttr.setBinary(la.isBinary());
         newAttr.setName(attrTypeName);
-        entry.addAttribute(newAttr);
+        entry.addAttributes(newAttr);
       }
 
       // Copy values
@@ -91,7 +101,7 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
       }
 
       // Remove original attribute with range syntax from returned attributes
-      entry.removeAttribute(la);
+      entry.removeAttributes(la);
 
       // If the attribute ID ends with * we're done, otherwise increment
       if (!la.getName().endsWith(END_OF_RANGE)) {
@@ -105,17 +115,20 @@ public class RangeEntryHandler extends AbstractSearchEntryHandler
         final String nextAttrID = String.format(RANGE_FORMAT, attrTypeName, end + 1, end + diff + 1);
 
         // Search for next increment of values
-        logger.debug("Searching for '{}' to increment {}", nextAttrID, msg);
+        try {
+          logger.debug("Searching for '{}' to increment {}", nextAttrID, msg);
 
-        final SearchOperation search = new SearchOperation(conn);
-        final SearchRequest sr = SearchRequest.newObjectScopeSearchRequest(entry.getDn(), new String[] {nextAttrID});
-        final SearchResult result = search.execute(sr).getResult();
+          final SearchRequest sr = SearchRequest.objectScopeSearchRequest(entry.getDn(), new String[] {nextAttrID});
+          final SearchResponse result = getConnection().operation(sr).execute();
 
-        // Add all attributes to the search result
-        entry.addAttributes(result.getEntry().getAttributes());
+          // Add all attributes to the search result
+          entry.addAttributes(result.getEntry().getAttributes());
+        } catch (LdapException e) {
+          logger.warn("Error retrieving attribute ID: {}", nextAttrID, e);
+        }
 
         // Iterate
-        handleAttributes(conn, request, entry);
+        handleAttributes(entry);
       }
     }
   }

@@ -145,7 +145,7 @@ public class IntegerTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "ints")
+  @Test(groups = "asn1", dataProvider = "ints")
   public void decode(final byte[] bytes, final BigInteger expected, final BigInteger unsigned, final int unsignedPrim)
     throws Exception
   {
@@ -161,7 +161,7 @@ public class IntegerTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "ints")
+  @Test(groups = "asn1", dataProvider = "ints")
   public void decodeUnsigned(
     final byte[] bytes, final BigInteger expected, final BigInteger unsigned, final int unsignedPrim)
     throws Exception
@@ -178,7 +178,7 @@ public class IntegerTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "ints")
+  @Test(groups = "asn1", dataProvider = "ints")
   public void decodeUnsignedPrimitive(
     final byte[] bytes, final BigInteger expected, final BigInteger unsigned, final int unsignedPrim)
     throws Exception
@@ -195,7 +195,7 @@ public class IntegerTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "ints")
+  @Test(groups = "asn1", dataProvider = "ints")
   public void encode(
     final byte[] expected, final BigInteger integer, final BigInteger unsigned, final int unsignedPrim)
     throws Exception

@@ -29,7 +29,7 @@ public class DN implements DEREncoder
    */
   public DN(final Collection<RDN> names)
   {
-    rdns = names.toArray(new RDN[names.size()]);
+    rdns = names.toArray(new RDN[0]);
   }
 
 
@@ -65,7 +65,7 @@ public class DN implements DEREncoder
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      typeEncoders.toArray(new DEREncoder[typeEncoders.size()]));
+      typeEncoders.toArray(new DEREncoder[0]));
     return se.encode();
   }
 
@@ -108,6 +108,8 @@ public class DN implements DEREncoder
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::rdns=%s]", getClass().getName(), hashCode(), Arrays.toString(rdns));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("rdns=").append(Arrays.toString(rdns)).append("]").toString();
   }
 }

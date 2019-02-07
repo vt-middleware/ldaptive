@@ -89,29 +89,24 @@ public final class BlockingConnectionPoolPropertySource extends AbstractProperty
   {
     initializeObject(INVOKER);
 
-    DefaultConnectionFactory cf = object.getConnectionFactory();
+    DefaultConnectionFactory cf = object.getDefaultConnectionFactory();
     if (cf == null) {
       cf = new DefaultConnectionFactory();
-
-      final DefaultConnectionFactoryPropertySource cfPropSource = new DefaultConnectionFactoryPropertySource(
-        cf,
-        propertiesDomain,
-        properties);
-      cfPropSource.initialize();
-      object.setConnectionFactory(cf);
+      object.setDefaultConnectionFactory(cf);
     }
+    final DefaultConnectionFactoryPropertySource cfPropSource = new DefaultConnectionFactoryPropertySource(
+      cf,
+      propertiesDomain,
+      properties);
+    cfPropSource.initialize();
 
     PoolConfig pc = object.getPoolConfig();
     if (pc == null) {
       pc = new PoolConfig();
-
-      final PoolConfigPropertySource pcPropSource = new PoolConfigPropertySource(pc, propertiesDomain, properties);
-      pcPropSource.initialize();
       object.setPoolConfig(pc);
-    } else {
-      final SimplePropertySource<PoolConfig> sPropSource = new SimplePropertySource<>(pc, propertiesDomain, properties);
-      sPropSource.initialize();
     }
+    final PoolConfigPropertySource pcPropSource = new PoolConfigPropertySource(pc, propertiesDomain, properties);
+    pcPropSource.initialize();
   }
 
 

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 
 /**
  * Provides a custom implementation for adding LDAP principals to a subject that represent roles.
@@ -72,7 +72,9 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::%s]", getClass().getName(), hashCode(), roleName);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("roleName=").append(roleName).append("]").toString();
   }
 
 
@@ -90,7 +92,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
    *
    * @return  ldap roles
    */
-  public static Set<LdapRole> toRoles(final SearchResult result)
+  public static Set<LdapRole> toRoles(final SearchResponse result)
   {
     final Set<LdapRole> r = new HashSet<>();
     for (LdapEntry le : result.getEntries()) {

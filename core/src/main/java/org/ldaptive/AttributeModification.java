@@ -2,83 +2,74 @@
 package org.ldaptive;
 
 /**
- * Contains the data required to modify an ldap attribute.
+ * LDAP modification defined as:
+ *
+ * <pre>
+   modification    PartialAttribute
+
+   PartialAttribute ::= SEQUENCE {
+     type       AttributeDescription,
+     vals       SET OF value AttributeValue }
+ * </pre>
  *
  * @author  Middleware Services
  */
 public class AttributeModification
 {
+  /** Modification type. */
+  public enum Type {
 
-  /** Type of modification to perform. */
-  private AttributeModificationType attrMod;
+    /** Add a new attribute. */
+    ADD,
+
+    /** Delete an attribute. */
+    DELETE,
+
+    /** Replace an attribute. */
+    REPLACE,
+
+    /** Increment the value of an attribute. */
+    INCREMENT,
+  }
+
+  /** Modification type. */
+  private final Type operation;
 
   /** Attribute to modify. */
-  private LdapAttribute attribute;
-
-  /** Default constructor. */
-  public AttributeModification() {}
+  private final LdapAttribute attribute;
 
 
   /**
-   * Creates a new attribute modification.
+   * Creates a new modification.
    *
-   * @param  type  attribute modification type
-   * @param  attr  to modify
+   * @param  type  of modification
+   * @param  attr  attribute to modify
    */
-  public AttributeModification(final AttributeModificationType type, final LdapAttribute attr)
+  public AttributeModification(final Type type, final LdapAttribute attr)
   {
-    setAttributeModificationType(type);
-    setAttribute(attr);
+    operation = type;
+    attribute = attr;
   }
 
 
-  /**
-   * Returns the attribute modification type.
-   *
-   * @return  attribute modification type
-   */
-  public AttributeModificationType getAttributeModificationType()
+  public Type getOperation()
   {
-    return attrMod;
+    return operation;
   }
 
 
-  /**
-   * Sets the attribute modification type.
-   *
-   * @param  type  attribute modification type
-   */
-  public void setAttributeModificationType(final AttributeModificationType type)
-  {
-    attrMod = type;
-  }
-
-
-  /**
-   * Returns the ldap attribute.
-   *
-   * @return  ldap attribute
-   */
   public LdapAttribute getAttribute()
   {
     return attribute;
   }
 
 
-  /**
-   * Sets the ldap attribute.
-   *
-   * @param  attr  ldap attribute
-   */
-  public void setAttribute(final LdapAttribute attr)
-  {
-    attribute = attr;
-  }
-
-
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::attrMod=%s, attribute=%s]", getClass().getName(), hashCode(), attrMod, attribute);
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("operation=").append(operation).append(", ")
+      .append("attribute=").append(attribute).toString();
   }
 }

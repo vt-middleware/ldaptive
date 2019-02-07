@@ -1,179 +1,124 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider;
 
-import org.ldaptive.AddRequest;
-import org.ldaptive.BindRequest;
-import org.ldaptive.CompareRequest;
-import org.ldaptive.DeleteRequest;
+import org.ldaptive.ActivePassiveConnectionStrategy;
+import org.ldaptive.Connection;
+import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionStrategy;
+import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapException;
-import org.ldaptive.ModifyDnRequest;
-import org.ldaptive.ModifyRequest;
-import org.ldaptive.Response;
-import org.ldaptive.SearchRequest;
-import org.ldaptive.control.RequestControl;
-import org.ldaptive.extended.ExtendedRequest;
-import org.ldaptive.extended.UnsolicitedNotificationListener;
+import org.ldaptive.LdapURL;
+import org.ldaptive.UnbindRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Interface for a provider specific implementation of ldap operations.
+ * Base class for connection implementations.
  *
  * @author  Middleware Services
  */
-public interface ProviderConnection
+// CheckStyle:AbstractClassName OFF
+public abstract class ProviderConnection implements Connection
+// CheckStyle:AbstractClassName ON
 {
 
+  /** Logger for this class. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(ProviderConnection.class);
 
-  /**
-   * Bind to the ldap.
-   *
-   * @param  request  containing the data necessary to perform the operation
-   *
-   * @return  response associated with the bind operation
-   *
-   * @throws  LdapException  if an error occurs
-   */
-  Response<Void> bind(BindRequest request)
-    throws LdapException;
+  /** Provides host connection configuration. */
+  protected final ConnectionConfig connectionConfig;
+
+  /** Connection strategy for this connection. Default value is {@link ActivePassiveConnectionStrategy}. */
+  private final ConnectionStrategy connectionStrategy;
 
 
   /**
-   * Add an entry to an ldap.
+   * Creates a new provider connection.
    *
-   * @param  request  containing the data necessary to perform the operation
-   *
-   * @return  response associated with the add operation
-   *
-   * @throws  LdapException  if an error occurs
+   * @param  config  connection configuration
    */
-  Response<Void> add(AddRequest request)
-    throws LdapException;
+  public ProviderConnection(final ConnectionConfig config)
+  {
+    connectionConfig = config;
+    if (connectionConfig.getConnectionStrategy() == null) {
+      if (connectionConfig.getLdapUrl().startsWith("dns:")) {
+        connectionStrategy = new DnsSrvConnectionStrategy();
+      } else {
+        connectionStrategy = new ActivePassiveConnectionStrategy();
+      }
+    } else {
+      connectionStrategy = connectionConfig.getConnectionStrategy();
+    }
+    synchronized (connectionStrategy) {
+      if (!connectionStrategy.isInitialized()) {
+        connectionStrategy.initialize(connectionConfig.getLdapUrl());
+      }
+    }
+  }
+
+
+  @Override
+  public synchronized void open()
+    throws LdapException
+  {
+    LOGGER.debug("Opening connection {}", this);
+    if (isOpen()) {
+      throw new ConnectException("Connection is already open");
+    }
+
+    LdapException lastThrown = null;
+    for (LdapURL url : connectionStrategy.apply()) {
+      try {
+        LOGGER.trace(
+          "Attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);
+        open(url);
+        connectionStrategy.success(url);
+        lastThrown = null;
+        break;
+      } catch (ConnectException e) {
+        connectionStrategy.failure(url);
+        lastThrown = e;
+        LOGGER.debug(
+          "Error connecting to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy, e);
+      }
+    }
+    if (lastThrown != null) {
+      throw lastThrown;
+    }
+  }
 
 
   /**
-   * Compare an entry in the ldap.
+   * Attempt to open a connection to the supplied LDAP URL.
    *
-   * @param  request  containing the data necessary to perform the operation
+   * @param  url  LDAP URL to connect to
    *
-   * @return  response associated with the compare operation
-   *
-   * @throws  LdapException  if an error occurs
+   * @throws  LdapException  if opening the connection fails
    */
-  Response<Boolean> compare(CompareRequest request)
-    throws LdapException;
+  protected abstract void open(LdapURL url) throws LdapException;
 
 
   /**
-   * Delete an entry in the ldap.
+   * Executes an unbind operation. Clients should close connections using {@link #close()}.
    *
-   * @param  request  containing the data necessary to perform the operation
-   *
-   * @return  response associated with the delete operation
-   *
-   * @throws  LdapException  if an error occurs
+   * @param  request  unbind request
    */
-  Response<Void> delete(DeleteRequest request)
-    throws LdapException;
+  protected abstract void operation(UnbindRequest request);
 
 
   /**
-   * Modify an entry in the ldap.
+   * Write the request in the supplied handle to the LDAP server. This method does not throw, it should report
+   * exceptions to the handle.
    *
-   * @param  request  containing the data necessary to perform the operation
-   *
-   * @return  response associated with the modify operation
-   *
-   * @throws  LdapException  if an error occurs
+   * @param  handle  for the operation write
    */
-  Response<Void> modify(ModifyRequest request)
-    throws LdapException;
+  protected abstract void write(DefaultOperationHandle handle);
 
 
   /**
-   * Modify the DN of an entry in the ldap.
+   * Report back to the connection that the supplied handle has received a response and is done.
    *
-   * @param  request  containing the data necessary to perform the operation
-   *
-   * @return  response associated with the modify dn operation
-   *
-   * @throws  LdapException  if an error occurs
+   * @param  handle  that is done
    */
-  Response<Void> modifyDn(ModifyDnRequest request)
-    throws LdapException;
-
-
-  /**
-   * Search the ldap.
-   *
-   * @param  request  containing the data necessary to perform the operation
-   *
-   * @return  search iterator
-   *
-   * @throws  LdapException  if an error occurs
-   */
-  SearchIterator search(SearchRequest request)
-    throws LdapException;
-
-
-  /**
-   * Search the ldap asynchronously.
-   *
-   * @param  request  containing the data necessary to perform the operation
-   * @param  listener  to be notified as results arrive
-   *
-   * @throws  LdapException  if an error occurs
-   */
-  void searchAsync(SearchRequest request, SearchListener listener)
-    throws LdapException;
-
-
-  /**
-   * Abandon an operation.
-   *
-   * @param  messageId  of the operation to abandon
-   * @param  controls  request controls
-   *
-   * @throws  LdapException  if an error occurs
-   */
-  void abandon(int messageId, RequestControl[] controls)
-    throws LdapException;
-
-
-  /**
-   * Perform an extended operation in the ldap.
-   *
-   * @param  request  containing the data necessary to perform the operation
-   *
-   * @return  response associated with the extended operation
-   *
-   * @throws  LdapException  if an error occurs
-   */
-  Response<?> extendedOperation(ExtendedRequest request)
-    throws LdapException;
-
-
-  /**
-   * Adds a listener to receive unsolicited notifications.
-   *
-   * @param  listener  to receive unsolicited notifications
-   */
-  void addUnsolicitedNotificationListener(UnsolicitedNotificationListener listener);
-
-
-  /**
-   * Removes a listener from receiving unsolicited notifications.
-   *
-   * @param  listener  that was registered to receive unsolicited notifications
-   */
-  void removeUnsolicitedNotificationListener(UnsolicitedNotificationListener listener);
-
-
-  /**
-   * Tear down this connection to an LDAP.
-   *
-   * @param  controls  request controls
-   *
-   * @throws  LdapException  if an LDAP error occurs
-   */
-  void close(RequestControl[] controls)
-    throws LdapException;
+  protected abstract void done(DefaultOperationHandle handle);
 }

@@ -121,13 +121,10 @@ public class SortRequestControl extends AbstractControl implements RequestContro
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, sortKeys=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        Arrays.toString(sortKeys));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("sortKeys=").append(Arrays.toString(sortKeys)).append("]").toString();
   }
 
 
@@ -144,7 +141,7 @@ public class SortRequestControl extends AbstractControl implements RequestContro
       if (sortKeys[i].getReverseOrder()) {
         l.add(new ContextType(1, sortKeys[i].getReverseOrder()));
       }
-      keyEncoders[i] = new ConstructedDEREncoder(UniversalDERTag.SEQ, l.toArray(new DEREncoder[l.size()]));
+      keyEncoders[i] = new ConstructedDEREncoder(UniversalDERTag.SEQ, l.toArray(new DEREncoder[0]));
     }
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(UniversalDERTag.SEQ, keyEncoders);

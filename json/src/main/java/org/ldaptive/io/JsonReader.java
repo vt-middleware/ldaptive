@@ -14,11 +14,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchResult;
-import org.ldaptive.SortBehavior;
+import org.ldaptive.SearchResponse;
+import org.ldaptive.SearchResultReference;
 
 /**
- * Reads JSON from a {@link Reader} and returns a {@link SearchResult}.
+ * Reads JSON from a {@link Reader} and returns a {@link SearchResponse}.
  *
  * @author  Middleware Services
  */
@@ -39,24 +39,9 @@ public class JsonReader implements SearchResultReader
    */
   public JsonReader(final Reader reader)
   {
-    this(reader, SortBehavior.getDefaultSortBehavior());
-  }
-
-
-  /**
-   * Creates a new json reader.
-   *
-   * @param  reader  to read JSON from
-   * @param  sb  sort behavior of the search result
-   */
-  public JsonReader(final Reader reader, final SortBehavior sb)
-  {
     jsonReader = reader;
-    if (sb == null) {
-      throw new IllegalArgumentException("Sort behavior cannot be null");
-    }
     final GsonBuilder builder = new GsonBuilder();
-    builder.registerTypeAdapter(SearchResult.class, new SearchResultDeserializer(sb));
+    builder.registerTypeAdapter(SearchResponse.class, new SearchResultDeserializer());
     gson = builder.disableHtmlEscaping().create();
   }
 
@@ -69,11 +54,11 @@ public class JsonReader implements SearchResultReader
    * @throws  IOException  if an error occurs using the reader
    */
   @Override
-  public SearchResult read()
+  public SearchResponse read()
     throws IOException
   {
     try {
-      return gson.fromJson(jsonReader, SearchResult.class);
+      return gson.fromJson(jsonReader, SearchResponse.class);
     } catch (JsonParseException e) {
       throw new IOException(e);
     }
@@ -81,45 +66,39 @@ public class JsonReader implements SearchResultReader
 
 
   /**
-   * Deserializes a {@link SearchResult} by iterating over the json elements.
+   * Deserializes a {@link SearchResponse} by iterating over the json elements.
    */
-  private static class SearchResultDeserializer implements JsonDeserializer<SearchResult>
+  private static class SearchResultDeserializer implements JsonDeserializer<SearchResponse>
   {
-
-    /** Sort behavior. */
-    private final SortBehavior sortBehavior;
-
-
-    /**
-     * Creates a new search result deserializer.
-     *
-     * @param  sb  sort behavior of the search result
-     */
-    SearchResultDeserializer(final SortBehavior sb)
-    {
-      sortBehavior = sb;
-    }
 
 
     @Override
-    public SearchResult deserialize(final JsonElement json, final Type type, final JsonDeserializationContext context)
+    public SearchResponse deserialize(final JsonElement json, final Type type, final JsonDeserializationContext context)
       throws JsonParseException
     {
-      final SearchResult result = new SearchResult(sortBehavior);
+      final SearchResponse result = new SearchResponse();
       final JsonArray jsonResult = json.getAsJsonArray();
       for (JsonElement jsonEntry : jsonResult) {
-        final LdapEntry entry = new LdapEntry(sortBehavior);
+        LdapEntry entry = null;
         for (Map.Entry<String, JsonElement> jsonAttr : jsonEntry.getAsJsonObject().entrySet()) {
-          if ("dn".equals(jsonAttr.getKey())) {
+          if ("ref".equals(jsonAttr.getKey())) {
+            final SearchResultReference ref = new SearchResultReference();
+            jsonAttr.getValue().getAsJsonArray().forEach(i -> ref.addUri(i.getAsString()));
+            result.addReference(ref);
+            result.addReference(ref);
+          } else if ("dn".equals(jsonAttr.getKey())) {
+            entry = new LdapEntry();
             entry.setDn(jsonAttr.getValue().getAsString());
           } else {
-            final LdapAttribute attr = new LdapAttribute(sortBehavior);
+            final LdapAttribute attr = new LdapAttribute();
             attr.setName(jsonAttr.getKey());
             jsonAttr.getValue().getAsJsonArray().forEach(i -> attr.addStringValue(i.getAsString()));
-            entry.addAttribute(attr);
+            entry.addAttributes(attr);
           }
         }
-        result.addEntry(entry);
+        if (entry != null) {
+          result.addEntry(entry);
+        }
       }
       return result;
     }

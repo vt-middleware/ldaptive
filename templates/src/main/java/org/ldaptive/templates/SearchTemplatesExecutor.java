@@ -3,14 +3,13 @@ package org.ldaptive.templates;
 
 import java.util.Arrays;
 import java.util.Collection;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
+import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchResult;
-import org.ldaptive.SortBehavior;
-import org.ldaptive.concurrent.AggregatePooledSearchExecutor;
-import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.SearchResponse;
+import org.ldaptive.concurrent.AggregateSearchOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +26,10 @@ public class SearchTemplatesExecutor
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Search executor. */
-  private AggregatePooledSearchExecutor searchExecutor;
+  private AggregateSearchOperation searchOperation;
 
   /** Connection factory. */
-  private PooledConnectionFactory[] connectionFactories;
+  private ConnectionFactory[] connectionFactories;
 
   /** Search templates. */
   private SearchTemplates[] searchTemplates;
@@ -43,49 +42,49 @@ public class SearchTemplatesExecutor
   /**
    * Creates a new templates search executor.
    *
-   * @param  executor  aggregate pooled search executor
+   * @param  operation  aggregate pooled search executor
    * @param  factories  pooled connection factories
    * @param  templates  search templates
    */
   public SearchTemplatesExecutor(
-    final AggregatePooledSearchExecutor executor,
+    final AggregateSearchOperation operation,
     final PooledConnectionFactory[] factories,
     final SearchTemplates... templates)
   {
-    searchExecutor = executor;
+    searchOperation = operation;
     connectionFactories = factories;
     searchTemplates = templates;
   }
 
 
   /**
-   * Returns the search executor.
+   * Returns the search operation.
    *
-   * @return  aggregate pooled search executor
+   * @return  aggregate search operation
    */
-  public AggregatePooledSearchExecutor getSearchExecutor()
+  public AggregateSearchOperation getSearchOperation()
   {
-    return searchExecutor;
+    return searchOperation;
   }
 
 
   /**
-   * Sets the search executor.
+   * Sets the search operation.
    *
-   * @param  executor  aggregate pooled search executor
+   * @param  operation  aggregate search operation
    */
-  public void setSearchExecutor(final AggregatePooledSearchExecutor executor)
+  public void setSearchOperation(final AggregateSearchOperation operation)
   {
-    searchExecutor = executor;
+    searchOperation = operation;
   }
 
 
   /**
    * Returns the connection factories.
    *
-   * @return  pooled connection factories
+   * @return  connection factories
    */
-  public PooledConnectionFactory[] getConnectionFactories()
+  public ConnectionFactory[] getConnectionFactories()
   {
     return connectionFactories;
   }
@@ -94,9 +93,9 @@ public class SearchTemplatesExecutor
   /**
    * Sets the connection factories.
    *
-   * @param  factories  pooled connection factory
+   * @param  factories  connection factory
    */
-  public void setConnectionFactories(final PooledConnectionFactory[] factories)
+  public void setConnectionFactories(final ConnectionFactory[] factories)
   {
     connectionFactories = factories;
   }
@@ -133,7 +132,7 @@ public class SearchTemplatesExecutor
    *
    * @throws  LdapException  if the search fails
    */
-  public SearchResult search(final Query query)
+  public SearchResponse search(final Query query)
     throws LdapException
   {
     logger.debug("Query: {}", query);
@@ -182,7 +181,7 @@ public class SearchTemplatesExecutor
    *
    * @throws  LdapException  if the search fails
    */
-  protected SearchResult search(
+  protected SearchResponse search(
     final SearchFilter[] filters,
     final String[] returnAttrs,
     final Integer fromResult,
@@ -191,27 +190,27 @@ public class SearchTemplatesExecutor
   {
     logger.debug("Performing search with {} filters", Arrays.toString(filters));
 
-    // perform parallel searches
-    final Collection<Response<SearchResult>> responses = searchExecutor.search(
+    // perform searches
+    final Collection<SearchResponse> responses = searchOperation.execute(
       connectionFactories,
       filters,
       returnAttrs);
 
     // iterate over all results and store each entry
-    final SearchResult result = new SearchResult(SortBehavior.ORDERED);
-    for (Response<SearchResult> r : responses) {
-      for (LdapEntry le : r.getResult().getEntries()) {
-        result.addEntry(le);
-        logger.debug("Search found: {}", le.getDn());
+    final SearchResponse result = new SearchResponse();
+    for (SearchResponse res : responses) {
+      for (LdapEntry e : res.getEntries()) {
+        result.addEntry(e);
+        logger.debug("Search found: {}", e.getDn());
       }
     }
 
-    final SearchResult subResult;
+    final SearchResponse subResult;
     if (fromResult != null) {
       if (toResult != null) {
         subResult = result.subResult(fromResult, toResult);
       } else {
-        subResult = result.subResult(fromResult, result.size());
+        subResult = result.subResult(fromResult, result.entrySize());
       }
     } else if (toResult != null) {
       subResult = result.subResult(0, toResult);
@@ -226,9 +225,12 @@ public class SearchTemplatesExecutor
   public void close()
   {
     if (connectionFactories != null) {
-      for (PooledConnectionFactory factory : connectionFactories) {
-        factory.getConnectionPool().close();
+      for (ConnectionFactory factory : connectionFactories) {
+        factory.close();
       }
+    }
+    if (searchOperation != null) {
+      searchOperation.shutdown();
     }
   }
 
@@ -236,14 +238,10 @@ public class SearchTemplatesExecutor
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::searchExecutor=%s, connectionFactories=%s, " +
-        "searchTemplates=%s]",
-        getClass().getName(),
-        hashCode(),
-        searchExecutor,
-        Arrays.toString(connectionFactories),
-        Arrays.toString(searchTemplates));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("searchOperation=").append(searchOperation).append(", ")
+      .append("connectionFactories=").append(Arrays.toString(connectionFactories)).append(", ")
+      .append("searchTemplates=").append(Arrays.toString(searchTemplates)).append("]").toString();
   }
 }

@@ -3,15 +3,14 @@ package org.ldaptive.auth;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import org.ldaptive.AbstractSearchOperationFactory;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchScope;
-import org.ldaptive.handler.SearchEntryHandler;
-import org.ldaptive.referral.ReferralHandler;
 
 /**
  * Base implementation for search entry resolvers. Uses an object level search on the {@link
@@ -39,13 +38,10 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
   private boolean subtreeSearch;
 
   /** How to handle aliases. */
-  private DerefAliases derefAliases;
+  private DerefAliases derefAliases = DerefAliases.NEVER;
 
-  /** Referral handler. */
-  private ReferralHandler referralHandler;
-
-  /** Ldap entry handlers. */
-  private SearchEntryHandler[] entryHandlers;
+  /** Binary attribute names. */
+  private String[] binaryAttributes;
 
 
   /**
@@ -190,47 +186,25 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
 
 
   /**
-   * Returns the referral handler.
+   * Returns names of binary attributes.
    *
-   * @return  referral handler
+   * @return  binary attribute names
    */
-  public ReferralHandler getReferralHandler()
+  public String[] getBinaryAttributes()
   {
-    return referralHandler;
+    return binaryAttributes;
   }
 
 
   /**
-   * Sets the referral handler.
+   * Sets names of binary attributes.
    *
-   * @param  handler  referral handler
+   * @param  attrs  binary attribute names
    */
-  public void setReferralHandler(final ReferralHandler handler)
+  public void setBinaryAttributes(final String... attrs)
   {
-    logger.trace("setting referralHandler: {}", handler);
-    referralHandler = handler;
-  }
-
-
-  /**
-   * Returns the search entry handlers.
-   *
-   * @return  search entry handlers
-   */
-  public SearchEntryHandler[] getSearchEntryHandlers()
-  {
-    return entryHandlers;
-  }
-
-
-  /**
-   * Sets the search entry handlers.
-   *
-   * @param  handlers  search entry handlers
-   */
-  public void setSearchEntryHandlers(final SearchEntryHandler... handlers)
-  {
-    entryHandlers = handlers;
+    logger.trace("setting binaryAttributes: {}", Arrays.toString(attrs));
+    binaryAttributes = attrs;
   }
 
 
@@ -244,7 +218,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @throws  LdapException  if an error occurs attempting the search
    */
-  protected abstract SearchResult performLdapSearch(
+  protected abstract SearchResponse performLdapSearch(
     AuthenticationCriteria criteria,
     AuthenticationHandlerResponse response)
     throws LdapException;
@@ -293,21 +267,19 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
   {
     final SearchRequest request;
     if (userFilter != null) {
-      request = new SearchRequest(baseDn, createSearchFilter(ac));
-      request.setReturnAttributes(ac.getAuthenticationRequest().getReturnAttributes());
-      if (subtreeSearch) {
-        request.setSearchScope(SearchScope.SUBTREE);
-      } else {
-        request.setSearchScope(SearchScope.ONELEVEL);
-      }
+      request = SearchRequest.builder()
+        .dn(baseDn)
+        .filter(createSearchFilter(ac))
+        .attributes(ac.getAuthenticationRequest().getReturnAttributes())
+        .scope(subtreeSearch ? SearchScope.SUBTREE : SearchScope.ONELEVEL)
+        .build();
     } else {
-      request = SearchRequest.newObjectScopeSearchRequest(
+      request = SearchRequest.objectScopeSearchRequest(
         ac.getDn(),
         ac.getAuthenticationRequest().getReturnAttributes());
     }
     request.setDerefAliases(derefAliases);
-    request.setReferralHandler(referralHandler);
-    request.setSearchEntryHandlers(entryHandlers);
+    request.setBinaryAttributes(binaryAttributes);
     return request;
   }
 
@@ -318,7 +290,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
   {
     logger.debug("resolve criteria={}", criteria);
 
-    final SearchResult result = performLdapSearch(criteria, response);
+    final SearchResponse result = performLdapSearch(criteria, response);
     logger.debug("resolved result={} for criteria={}", result, criteria);
 
     LdapEntry entry = null;

@@ -4,13 +4,14 @@ package org.ldaptive.concurrent;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
+import org.ldaptive.DeleteResponse;
 
 /**
  * Executes an ldap delete operation on a separate thread.
  *
  * @author  Middleware Services
  */
-public class DeleteOperationWorker extends AbstractOperationWorker<DeleteRequest, Void>
+public class DeleteOperationWorker extends AbstractOperationWorker<DeleteRequest, DeleteResponse>
 {
 
 

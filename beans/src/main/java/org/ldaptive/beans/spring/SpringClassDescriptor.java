@@ -46,7 +46,7 @@ public class SpringClassDescriptor extends AbstractClassDescriptor
       for (final Attribute attr : entryAnnotation.attributes()) {
         if ("".equals(attr.property()) && attr.values().length > 0) {
           addAttributeValueMutator(
-            new SimpleAttributeValueMutator(attr.name(), attr.values(), attr.binary(), attr.sortBehavior()));
+            new SimpleAttributeValueMutator(attr.name(), attr.values(), attr.binary()));
         } else {
           addAttributeValueMutator(new SpelAttributeValueMutator(attr, evaluationContext));
         }

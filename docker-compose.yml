@@ -2,9 +2,9 @@ version: "3.7"
 
 services:
   ldaptive:
-    image: code.vt.edu:5005/middleware/docker/maven:3.6.0
+    image: maven:3.6.0-jdk-11
     volumes:
-      - $HOME/.m2:/apps/home/appsadm/.m2
+      - $HOME/.m2:/root/.m2
       - $PWD:/apps/ldaptive
     environment:
       - HOST=ldap-test:389
@@ -13,7 +13,14 @@ services:
       - BIND_CREDENTIAL=VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2
       - TEST_GROUP=core
       - PROVIDER
-    command: bash -c "cd /apps/ldaptive && integration/run"
+    networks:
+      ldap_net:
+        ipv4_address: 172.28.1.10
+    command: >
+      bash -c "export DEBIAN_FRONTEND=noninteractive &&
+      apt-get update && apt-get install -y net-tools krb5-user &&
+      /apps/ldaptive/integration/krb5_init &&
+      cd /apps/ldaptive && integration/run"
 
   ldap-test:
     image: code.vt.edu:5005/middleware/edldap-deploy-env/ldap-test-openldap:latest
@@ -21,9 +28,20 @@ services:
       - "389:389"
       - "636:636"
       - "88:88"
+    networks:
+      ldap_net:
+        ipv4_address: 172.28.1.11
     logging:
       #driver: "json-file"
       driver: "none"
       options:
         max-size: "100M"
         max-file: "5"
+
+networks:
+  ldap_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+

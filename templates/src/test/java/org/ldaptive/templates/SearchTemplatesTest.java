@@ -229,7 +229,7 @@ public class SearchTemplatesTest
    * @param  query  to apply to the template
    * @param  filters  to compare
    */
-  @Test(groups = {"templatestest"}, dataProvider = "template-data")
+  @Test(groups = "templatestest", dataProvider = "template-data")
   public void format(final SearchTemplates templates, final Query query, final SearchFilter[] filters)
   {
     AssertJUnit.assertArrayEquals(filters, templates.format(query));

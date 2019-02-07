@@ -5,7 +5,7 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.http.HttpServletResponse;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.io.LdifWriter;
 
 /**
@@ -18,7 +18,7 @@ public class LdifServletSearchTemplatesExecutor extends AbstractServletSearchTem
 
 
   @Override
-  protected void writeResponse(final SearchResult result, final HttpServletResponse response)
+  protected void writeResponse(final SearchResponse result, final HttpServletResponse response)
     throws IOException
   {
     response.setContentType("text/plain");

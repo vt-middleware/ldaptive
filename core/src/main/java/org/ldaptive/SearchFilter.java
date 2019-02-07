@@ -231,31 +231,30 @@ public class SearchFilter
       }
     } else {
       int multiByte = 0;
-      for (int i = 0; i < utf8.length; i++) {
+      for (byte b : utf8) {
         if (multiByte > 0) {
-          sb.append('\\').append(LdapUtils.hexEncode(utf8[i]));
+          sb.append('\\').append(LdapUtils.hexEncode(b));
           multiByte--;
-        } else if ((utf8[i] & 0x7F) == utf8[i]) {
-          if (utf8[i] <= 0x1F ||
-              utf8[i] == 0x28 || utf8[i] == 0x29 || utf8[i] == 0x2A || utf8[i] == 0x5C || utf8[i] == 0x7F) {
-            sb.append('\\').append(LdapUtils.hexEncode(utf8[i]));
+        } else if ((b & 0x7F) == b) {
+          if (b <= 0x1F || b == 0x28 || b == 0x29 || b == 0x2A || b == 0x5C || b == 0x7F) {
+            sb.append('\\').append(LdapUtils.hexEncode(b));
           } else {
-            sb.append((char) utf8[i]);
+            sb.append((char) b);
           }
         } else {
           // 2 byte character
-          if ((utf8[i] & 0xE0) == 0xC0) {
+          if ((b & 0xE0) == 0xC0) {
             multiByte = 1;
-          // 3 byte character
-          } else if ((utf8[i] & 0xF0) == 0xE0) {
+            // 3 byte character
+          } else if ((b & 0xF0) == 0xE0) {
             multiByte = 2;
-          // 4 byte character
-          } else if ((utf8[i] & 0xF8) == 0xF0) {
+            // 4 byte character
+          } else if ((b & 0xF8) == 0xF0) {
             multiByte = 3;
           } else {
             throw new IllegalStateException("Could not read UTF-8 string encoding");
           }
-          sb.append('\\').append(LdapUtils.hexEncode(utf8[i]));
+          sb.append('\\').append(LdapUtils.hexEncode(b));
         }
       }
     }
@@ -289,7 +288,67 @@ public class SearchFilter
   @Override
   public String toString()
   {
-    return
-      String.format("[%s@%d::filter=%s, parameters=%s]", getClass().getName(), hashCode(), searchFilter, parameters);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("filter=").append(searchFilter).append(", ")
+      .append("parameters=").append(parameters).append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+
+    private final SearchFilter object = new SearchFilter();
+
+
+    protected Builder() {}
+
+
+    public Builder filter(final String filter)
+    {
+      object.setFilter(filter);
+      return this;
+    }
+
+
+    public Builder parameter(final String name, final String value)
+    {
+      object.setParameter(name, value);
+      return this;
+    }
+
+
+    public Builder parameter(final int pos, final String value)
+    {
+      object.setParameter(pos, value);
+      return this;
+    }
+
+
+    public Builder parameters(final Object... values)
+    {
+      object.setParameters(values);
+      return this;
+    }
+
+
+    public SearchFilter build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

@@ -286,12 +286,9 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::trustManagers=%s, trustStrategy=%s]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(trustManagers),
-        trustStrategy);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("trustManagers=").append(Arrays.toString(trustManagers)).append(", ")
+      .append("trustStrategy=").append(trustStrategy).append("]").toString();
   }
 }

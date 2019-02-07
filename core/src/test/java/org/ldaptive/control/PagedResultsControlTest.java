@@ -208,7 +208,7 @@ public class PagedResultsControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
+  @Test(groups = "control", dataProvider = "request-response")
   public void encode(final DERBuffer berValue, final PagedResultsControl expected)
     throws Exception
   {
@@ -222,7 +222,7 @@ public class PagedResultsControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
+  @Test(groups = "control", dataProvider = "request-response")
   public void decode(final DERBuffer berValue, final PagedResultsControl expected)
     throws Exception
   {

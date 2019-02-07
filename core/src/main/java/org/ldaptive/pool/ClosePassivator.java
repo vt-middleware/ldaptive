@@ -15,11 +15,10 @@ public class ClosePassivator implements Passivator<Connection>
   @Override
   public boolean passivate(final Connection c)
   {
-    boolean success = false;
     if (c != null) {
       c.close();
-      success = true;
+      return true;
     }
-    return success;
+    return false;
   }
 }

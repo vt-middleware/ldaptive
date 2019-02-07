@@ -46,7 +46,7 @@ public class ProxyAuthorizationControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request")
+  @Test(groups = "control", dataProvider = "request")
   public void decode(final byte[] berValue, final ProxyAuthorizationControl expected)
     throws Exception
   {

@@ -1,8 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.transcode.ValueTranscoder;
 
 /**
  * Compares two ldap attributes, ignoring the case of all attribute values.
@@ -43,12 +44,12 @@ public class LdapAttributeIgnoreCaseComparator implements Comparator<LdapAttribu
   public static LdapAttribute lowerCaseAttribute(final LdapAttribute la)
   {
     try {
-      final LdapAttribute lowerCase = new LdapAttribute(la.getSortBehavior());
+      final LdapAttribute lowerCase = new LdapAttribute();
       lowerCase.setName(la.getName());
-      lowerCase.addStringValues(la.getValues(TRANSCODER));
+      lowerCase.addStringValues(la.getValues(TRANSCODER.decoder()));
       return lowerCase;
     } catch (UnsupportedOperationException e) {
-      throw new IllegalArgumentException(e);
+      throw new IllegalArgumentException("Error lower casing attribute " + la, e);
     }
   }
 
@@ -68,7 +69,7 @@ public class LdapAttributeIgnoreCaseComparator implements Comparator<LdapAttribu
     @Override
     public String decodeBinaryValue(final byte[] value)
     {
-      throw new UnsupportedOperationException("Binary values cannot be lower cased");
+      return (new String(value, StandardCharsets.UTF_8)).toLowerCase();
     }
 
 
@@ -82,7 +83,7 @@ public class LdapAttributeIgnoreCaseComparator implements Comparator<LdapAttribu
     @Override
     public byte[] encodeBinaryValue(final String value)
     {
-      throw new UnsupportedOperationException("Binary values cannot be lower cased");
+      return value.toLowerCase().getBytes(StandardCharsets.UTF_8);
     }
 
 

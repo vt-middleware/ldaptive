@@ -1,12 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
-import org.ldaptive.Connection;
+import org.ldaptive.AbstractSearchOperationFactory;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.control.SortKey;
 import org.ldaptive.control.SortRequestControl;
 import org.slf4j.Logger;
@@ -17,14 +17,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class VirtualListViewClient
+public class VirtualListViewClient extends AbstractSearchOperationFactory
 {
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-  /** Connection to invoke the search operation on. */
-  private final Connection connection;
 
   /** Used on the search operation. */
   private final SortRequestControl sortControl;
@@ -33,12 +30,12 @@ public class VirtualListViewClient
   /**
    * Creates a new virtual list view client.
    *
-   * @param  conn  to execute the search operation on
+   * @param  cf  to get a connection from
    * @param  keys  to supply to a sort request control
    */
-  public VirtualListViewClient(final Connection conn, final SortKey... keys)
+  public VirtualListViewClient(final ConnectionFactory cf, final SortKey... keys)
   {
-    connection = conn;
+    setConnectionFactory(cf);
     sortControl = new SortRequestControl(keys);
   }
 
@@ -59,10 +56,10 @@ public class VirtualListViewClient
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> execute(final SearchRequest request, final VirtualListViewParams params)
+  public SearchResponse execute(final SearchRequest request, final VirtualListViewParams params)
     throws LdapException
   {
-    final SearchOperation search = new SearchOperation(connection);
+    final SearchOperation search = createSearchOperation();
     request.setControls(sortControl, params.createRequestControl(true));
     return search.execute(request);
   }
@@ -82,20 +79,20 @@ public class VirtualListViewClient
    *
    * @param  request  search request to execute
    * @param  params  virtual list view data
-   * @param  response  of a previous VLV operation
+   * @param  result  of a previous VLV operation
    *
    * @return  search operation response
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> execute(
+  public SearchResponse execute(
     final SearchRequest request,
     final VirtualListViewParams params,
-    final Response<SearchResult> response)
+    final SearchResponse result)
     throws LdapException
   {
-    final SearchOperation search = new SearchOperation(connection);
-    request.setControls(sortControl, params.createRequestControl(response, true));
+    final SearchOperation search = createSearchOperation();
+    request.setControls(sortControl, params.createRequestControl(result, true));
     return search.execute(request);
   }
 }

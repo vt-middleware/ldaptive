@@ -1,15 +1,17 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.handler;
 
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ad.GlobalIdentifier;
+import org.ldaptive.handler.LdapEntryHandler;
 
 /**
  * Processes an objectGuid attribute by converting it from binary to it's string form.
  *
  * @author  Middleware Services
  */
-public class ObjectGuidHandler extends AbstractBinaryAttributeHandler
+public class ObjectGuidHandler extends AbstractBinaryAttributeHandler<LdapEntry> implements LdapEntryHandler
 {
 
   /** hash code seed. */
@@ -34,6 +36,14 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler
   public ObjectGuidHandler(final String attrName)
   {
     setAttributeName(attrName);
+  }
+
+
+  @Override
+  public LdapEntry apply(final LdapEntry entry)
+  {
+    handleEntry(entry);
+    return entry;
   }
 
 

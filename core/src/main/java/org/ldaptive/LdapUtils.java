@@ -187,7 +187,7 @@ public final class LdapUtils
           sb.append("%");
           // CheckStyle:MagicNumber OFF
           if (ch <= 0x7F) {
-            sb.append(hexEncode(new byte[] {(byte) (ch & 0x7F)}));
+            sb.append(hexEncode((byte) (ch & 0x7F)));
           } else {
             sb.append(hexEncode(utf8Encode(String.valueOf(ch))));
           }
@@ -217,7 +217,7 @@ public final class LdapUtils
           // CheckStyle:MagicNumber OFF
           if (ch <= 0x1F || ch == 0x7F) {
             sb.append("%");
-            sb.append(hexEncode(new byte[] {(byte) (ch & 0x7F)}));
+            sb.append(hexEncode((byte) (ch & 0x7F)));
           } else {
             sb.append(ch);
           }
@@ -240,7 +240,11 @@ public final class LdapUtils
    */
   public static byte[] base64Decode(final String value)
   {
-    return value != null ? Base64.getDecoder().decode(value.getBytes()) : null;
+    try {
+      return value != null ? Base64.getDecoder().decode(value.getBytes(StandardCharsets.UTF_8)) : null;
+    } catch (IllegalArgumentException e) {
+      throw new IllegalArgumentException("Error decoding value: " + value, e);
+    }
   }
 
 
@@ -603,6 +607,9 @@ public final class LdapUtils
     final InputStream is;
     if (path.startsWith(CLASSPATH_PREFIX)) {
       is = LdapUtils.class.getResourceAsStream(path.substring(CLASSPATH_PREFIX.length()));
+      if (is == null) {
+        throw new NullPointerException("Could not get stream from " + path);
+      }
     } else if (path.startsWith(FILE_PREFIX)) {
       is = new FileInputStream(new File(path.substring(FILE_PREFIX.length())));
     } else {

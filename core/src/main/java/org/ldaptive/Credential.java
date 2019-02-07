@@ -84,10 +84,8 @@ public class Credential
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::bytes=%s]",
-      getClass().getName(),
-      hashCode(),
-      new String(bytes, StandardCharsets.UTF_8));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("bytes=").append(new String(bytes, StandardCharsets.UTF_8)).append("]").toString();
   }
 }

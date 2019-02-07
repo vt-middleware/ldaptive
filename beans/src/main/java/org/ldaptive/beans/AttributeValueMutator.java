@@ -2,7 +2,6 @@
 package org.ldaptive.beans;
 
 import java.util.Collection;
-import org.ldaptive.SortBehavior;
 
 /**
  * Interface for mutating an attribute value on an arbitrary object.
@@ -27,14 +26,6 @@ public interface AttributeValueMutator
    * @return  whether the attribute is binary
    */
   boolean isBinary();
-
-
-  /**
-   * Returns the sort behavior of the attribute.
-   *
-   * @return  sort behavior of the attribute
-   */
-  SortBehavior getSortBehavior();
 
 
   /**

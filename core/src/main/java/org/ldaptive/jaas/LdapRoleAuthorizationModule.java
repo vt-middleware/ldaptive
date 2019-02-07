@@ -70,8 +70,8 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
         noResultsIsError = Boolean.valueOf(value);
       } else if ("roleResolverFactory".equalsIgnoreCase(key)) {
         try {
-          roleResolverFactory = (RoleResolverFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+          roleResolverFactory = (RoleResolverFactory) Class.forName(value).getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
           throw new IllegalArgumentException(e);
         }
       }
@@ -123,7 +123,7 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
       final SearchFilter filter = new SearchFilter(roleFilter);
       filter.setParameter("dn", loginDn);
       filter.setParameter("user", loginName);
-      searchRequest.setSearchFilter(filter);
+      searchRequest.setFilter(filter);
 
       final Set<LdapRole> lr = roleResolver.search(searchRequest);
       if (lr.isEmpty() && noResultsIsError) {

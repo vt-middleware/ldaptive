@@ -15,19 +15,19 @@ function run_mvn() {
 
 case "$1" in
   clean)
-    run_mvn integration,distribution,apache,jldap,opendj,unboundid clean
+    run_mvn integration,distribution clean
     ;;
   javadoc)
-    run_mvn apache,jldap,opendj,unboundid javadoc:javadoc
+    run_mvn javadoc:javadoc
     ;;
   package)
-    run_mvn distribution,apache,jldap,opendj,unboundid package
+    run_mvn distribution package
     ;;
   verify)
-    run_mvn distribution,apache,jldap,opendj,unboundid verify
+    run_mvn distribution verify
     ;;
   install)
-    run_mvn distribution,apache,jldap,opendj,unboundid install
+    run_mvn distribution install
     ;;
   versions-set)
     VERSION=${2}
@@ -35,13 +35,13 @@ case "$1" in
       echo "USAGE: `basename $0` versions-set <version>"
       exit 1
     fi
-    run_mvn distribution,apache,jldap,opendj,unboundid versions:set "-DnewVersion=${VERSION} -DgenerateBackupPoms=false"
+    run_mvn distribution versions:set "-DnewVersion=${VERSION} -DgenerateBackupPoms=false"
     ;;
   versions-display-dependency)
-    run_mvn integration,distribution,apache,jldap,opendj,unboundid versions:display-dependency-updates
+    run_mvn integration,distribution versions:display-dependency-updates
     ;;
   versions-display-plugin)
-    run_mvn integration,distribution,apache,jldap,opendj,unboundid versions:display-plugin-updates
+    run_mvn integration,distribution versions:display-plugin-updates
     ;;
   deploy)
     LOCAL_REPO=${2}
@@ -49,11 +49,11 @@ case "$1" in
       echo "USAGE: `basename $0` deploy <repo-directory>"
       exit 1
     fi
-    run_mvn apache,jldap,opendj,unboundid clean
-    run_mvn apache,jldap,opendj,unboundid deploy "-DaltDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
+    run_mvn clean
+    run_mvn deploy "-DaltDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
     ;;
   bundle-create)
-    run_mvn distribution,apache,jldap,opendj,unboundid repository:bundle-create -Dsign=true
+    run_mvn distribution repository:bundle-create -Dsign=true
     ;;
   *)
     if [ -n "$1" ]; then

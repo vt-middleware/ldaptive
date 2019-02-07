@@ -2,15 +2,13 @@
 package org.ldaptive.beans.spring.parser;
 
 import org.ldaptive.auth.Authenticator;
-import org.ldaptive.auth.BindAuthenticationHandler;
-import org.ldaptive.auth.PooledBindAuthenticationHandler;
+import org.ldaptive.auth.SimpleBindAuthenticationHandler;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
-import org.ldaptive.pool.PooledConnectionFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
@@ -19,7 +17,7 @@ import org.w3c.dom.Element;
  *
  * @author Middleware Services
  */
-public abstract class AbstractAuthenticatorBeanDefinitionParser extends AbstractConnectionPoolBeanDefinitionParser
+public abstract class AbstractAuthenticatorBeanDefinitionParser extends AbstractConnectionFactoryBeanDefinitionParser
 {
 
 
@@ -41,7 +39,7 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
   {
     final BeanDefinitionBuilder authHandler;
     if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
-      authHandler = BeanDefinitionBuilder.genericBeanDefinition(BindAuthenticationHandler.class);
+      authHandler = BeanDefinitionBuilder.genericBeanDefinition(SimpleBindAuthenticationHandler.class);
       authHandler.addPropertyValue(
         "connectionFactory",
         parseDefaultConnectionFactory(null, element, false).getBeanDefinition());
@@ -50,13 +48,10 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
       if (element.hasAttribute("id")) {
         name = element.getAttribute("id") + "-bind-pool";
       }
-      authHandler = BeanDefinitionBuilder.genericBeanDefinition(PooledBindAuthenticationHandler.class);
-      final BeanDefinitionBuilder connectionFactory = BeanDefinitionBuilder.genericBeanDefinition(
-        PooledConnectionFactory.class);
-      connectionFactory.addPropertyValue(
-        "connectionPool",
-        parseConnectionPool(null, name, element, false).getBeanDefinition());
-      authHandler.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
+      authHandler = BeanDefinitionBuilder.genericBeanDefinition(SimpleBindAuthenticationHandler.class);
+      authHandler.addPropertyValue(
+        "connectionFactory",
+        parsePooledConnectionFactory(null, name, element, false).getBeanDefinition());
     }
     return authHandler;
   }

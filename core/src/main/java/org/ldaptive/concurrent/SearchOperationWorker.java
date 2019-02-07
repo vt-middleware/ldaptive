@@ -4,14 +4,14 @@ package org.ldaptive.concurrent;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 
 /**
  * Executes an ldap search operation on a separate thread.
  *
  * @author  Middleware Services
  */
-public class SearchOperationWorker extends AbstractOperationWorker<SearchRequest, SearchResult>
+public class SearchOperationWorker extends AbstractOperationWorker<SearchRequest, SearchResponse>
 {
 
 

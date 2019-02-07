@@ -77,14 +77,10 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::trustManagers=%s, hostnameVerifierConfig=%s, keyManagers=%s, createDefaultTrustManagers=%s]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(trustManagers),
-        hostnameVerifierConfig,
-        Arrays.toString(keyManagers),
-        createDefaultTrustManagers);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("trustManagers=").append(Arrays.toString(trustManagers)).append(", ")
+      .append("keyManagers=").append(Arrays.toString(keyManagers)).append(", ")
+      .append("createDefaultTrustManagers=").append(createDefaultTrustManagers).append("]").toString();
   }
 }

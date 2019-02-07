@@ -3,8 +3,7 @@ package org.ldaptive.ad;
 
 import java.util.Collection;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.SortBehavior;
-import org.ldaptive.ad.io.UnicodePwdValueTranscoder;
+import org.ldaptive.ad.transcode.UnicodePwdValueTranscoder;
 
 /**
  * Helper class for the active directory unicodePwd attribute. Configures a binary attribute of that name and allows
@@ -14,9 +13,6 @@ import org.ldaptive.ad.io.UnicodePwdValueTranscoder;
  */
 public class UnicodePwdAttribute extends LdapAttribute
 {
-
-  /** serial version uid. */
-  private static final long serialVersionUID = -6140237711183070669L;
 
   /** name of this attribute. */
   private static final String ATTR_NAME = "unicodePwd";
@@ -28,8 +24,8 @@ public class UnicodePwdAttribute extends LdapAttribute
   /** Default constructor. */
   public UnicodePwdAttribute()
   {
-    super(SortBehavior.UNORDERED, true);
     setName(ATTR_NAME);
+    setBinary(true);
   }
 
 
@@ -48,24 +44,13 @@ public class UnicodePwdAttribute extends LdapAttribute
   @Override
   public Collection<String> getStringValues()
   {
-    return getValues(TRANSCODER);
+    return getValues(TRANSCODER.decoder());
   }
 
 
   @Override
   public void addStringValue(final String... value)
   {
-    for (String s : value) {
-      addValue(TRANSCODER, value);
-    }
-  }
-
-
-  @Override
-  public void removeStringValue(final String... value)
-  {
-    for (String s : value) {
-      removeBinaryValue(TRANSCODER.encodeBinaryValue(s));
-    }
+    addValue(TRANSCODER.encoder(), value);
   }
 }

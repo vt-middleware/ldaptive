@@ -1,8 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.handler;
 
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ad.SecurityIdentifier;
+import org.ldaptive.handler.LdapEntryHandler;
 
 /**
  * Processes an objectSid attribute by converting it from binary to it's string form. See
@@ -10,7 +12,7 @@ import org.ldaptive.ad.SecurityIdentifier;
  *
  * @author  Middleware Services
  */
-public class ObjectSidHandler extends AbstractBinaryAttributeHandler
+public class ObjectSidHandler extends AbstractBinaryAttributeHandler<LdapEntry> implements LdapEntryHandler
 {
 
   /** hash code seed. */
@@ -35,6 +37,14 @@ public class ObjectSidHandler extends AbstractBinaryAttributeHandler
   public ObjectSidHandler(final String attrName)
   {
     setAttributeName(attrName);
+  }
+
+
+  @Override
+  public LdapEntry apply(final LdapEntry entry)
+  {
+    handleEntry(entry);
+    return entry;
   }
 
 

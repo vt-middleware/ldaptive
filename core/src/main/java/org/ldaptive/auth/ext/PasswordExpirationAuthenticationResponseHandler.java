@@ -32,7 +32,7 @@ public class PasswordExpirationAuthenticationResponseHandler implements Authenti
         final ZonedDateTime exp = ZonedDateTime.now().plusSeconds(expiringControl.getTimeBeforeExpiration());
         response.setAccountState(new PasswordExpirationAccountState(exp));
       } else {
-        logger.warn("Received password expiring control with non-positive value: %s", expiringControl);
+        logger.warn("Received password expiring control with non-positive value: {}", expiringControl);
       }
     }
 

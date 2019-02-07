@@ -7,15 +7,13 @@ import java.io.InputStreamReader;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.schema.AttributeType;
@@ -81,7 +79,7 @@ public final class SchemaFactory
    *
    * @return  schema
    */
-  public static Schema createSchema(final SearchResult schemaResult)
+  public static Schema createSchema(final SearchResponse schemaResult)
   {
     final Set<AttributeType> attributeTypes = new HashSet<>();
     final Set<ObjectClass> objectClasses = new HashSet<>();
@@ -115,21 +113,17 @@ public final class SchemaFactory
    *
    * @throws  LdapException  if the search fails
    */
-  protected static SearchResult getSearchResult(
+  protected static SearchResponse getSearchResult(
     final ConnectionFactory factory,
     final String dn,
     final String filter,
     final String[] retAttrs)
     throws LdapException
   {
-    try (Connection conn = factory.getConnection()) {
-      conn.open();
-
-      final PagedResultsClient client = new PagedResultsClient(conn, 100);
-      final SearchRequest request = new SearchRequest(dn, filter, retAttrs);
-      final Response<SearchResult> response = client.executeToCompletion(request);
-      return response.getResult();
-    }
+    final PagedResultsClient client = new PagedResultsClient(factory, 100);
+    return client.executeToCompletion(
+      SearchRequest.builder()
+        .dn(dn).filter(filter).attributes(retAttrs).build());
   }
 
 
@@ -246,6 +240,6 @@ public final class SchemaFactory
         break;
       }
     }
-    return values != null ? values.toArray(new String[values.size()]) : null;
+    return values != null ? values.toArray(new String[0]) : null;
   }
 }

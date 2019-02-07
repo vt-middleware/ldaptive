@@ -62,6 +62,15 @@ public abstract class AbstractControl implements Control
   }
 
 
+  @Override
+  public String toString()
+  {
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(criticality).append("]").toString();
+  }
+
+
   // CheckStyle:EqualsHashCode OFF
   @Override
   public boolean equals(final Object o)

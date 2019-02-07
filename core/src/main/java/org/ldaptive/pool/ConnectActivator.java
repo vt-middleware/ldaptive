@@ -20,15 +20,14 @@ public class ConnectActivator implements Activator<Connection>
   @Override
   public boolean activate(final Connection c)
   {
-    boolean success = false;
     if (c != null) {
       try {
         c.open();
-        success = true;
+        return true;
       } catch (Exception e) {
         logger.error("unable to connect to the ldap", e);
       }
     }
-    return success;
+    return false;
   }
 }

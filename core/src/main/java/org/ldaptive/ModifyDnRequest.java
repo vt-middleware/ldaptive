@@ -1,123 +1,248 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.Arrays;
+import org.ldaptive.asn1.ApplicationDERTag;
+import org.ldaptive.asn1.BooleanType;
+import org.ldaptive.asn1.ConstructedDEREncoder;
+import org.ldaptive.asn1.ContextDERTag;
+import org.ldaptive.asn1.DEREncoder;
+import org.ldaptive.asn1.IntegerType;
+import org.ldaptive.asn1.OctetStringType;
 
 /**
- * Contains the data required to perform an ldap modify dn operation.
+ * LDAP modify DN request defined as:
+ *
+ * <pre>
+   ModifyDNRequest ::= [APPLICATION 12] SEQUENCE {
+     entry           LDAPDN,
+     newrdn          RelativeLDAPDN,
+     deleteoldrdn    BOOLEAN,
+     newSuperior     [0] LDAPDN OPTIONAL }
+ * </pre>
  *
  * @author  Middleware Services
  */
-public class ModifyDnRequest extends AbstractRequest
+public class ModifyDnRequest extends AbstractRequestMessage
 {
+
+  /** BER protocol number. */
+  public static final int PROTOCOL_OP = 12;
 
   /** DN to modify. */
   private String oldModifyDn;
 
   /** New DN. */
-  private String newModifyDn;
+  private String newModifyRDn;
 
   /** Whether to delete the old RDN attribute. */
-  private boolean deleteOldRDn = true;
+  private boolean deleteOldRDn;
 
-
-  /** Default constructor. */
-  public ModifyDnRequest() {}
+  /** New superior DN. */
+  private String newSuperiorDn;
 
 
   /**
-   * Creates a new modify dn request.
-   *
-   * @param  oldDn  to modify
-   * @param  newDn  to rename to
+   * Default constructor.
    */
-  public ModifyDnRequest(final String oldDn, final String newDn)
+  private ModifyDnRequest() {}
+
+
+  /**
+   * Creates a new modify DN request.
+   *
+   * @param  oldDN  old modify DN
+   * @param  newRDN  new modify DN
+   * @param  delete  whether to delete the old RDN attribute
+   */
+  public ModifyDnRequest(final String oldDN, final String newRDN, final boolean delete)
   {
-    setDn(oldDn);
-    setNewDn(newDn);
+    this(oldDN, newRDN, delete, null);
   }
 
 
   /**
-   * Returns the DN to modify.
+   * Creates a new modify DN request.
    *
-   * @return  DN
+   * @param  oldDN  old modify DN
+   * @param  newRDN  new modify DN
+   * @param  delete  whether to delete the old RDN attribute
+   * @param newSuperior  new superior DN
    */
-  public String getDn()
+  public ModifyDnRequest(final String oldDN, final String newRDN, final boolean delete, final String newSuperior)
+  {
+    oldModifyDn = oldDN;
+    newModifyRDn = newRDN;
+    deleteOldRDn = delete;
+    newSuperiorDn = newSuperior;
+  }
+
+
+  /**
+   * Returns the old DN.
+   *
+   * @return  old DN
+   */
+  public String getOldDn()
   {
     return oldModifyDn;
   }
 
 
   /**
-   * Sets the DN to modify.
+   * Returns the new RDN.
    *
-   * @param  dn  to modify
+   * @return  new RDN
    */
-  public void setDn(final String dn)
+  public String getNewRDn()
   {
-    oldModifyDn = dn;
+    return newModifyRDn;
   }
 
 
   /**
-   * Returns the new DN.
+   * Whether to delete the old RDN.
    *
-   * @return  DN
+   * @return  whether to delete the old RDN
    */
-  public String getNewDn()
-  {
-    return newModifyDn;
-  }
-
-
-  /**
-   * Sets the new DN.
-   *
-   * @param  dn  to rename to
-   */
-  public void setNewDn(final String dn)
-  {
-    newModifyDn = dn;
-  }
-
-
-  /**
-   * Returns whether to delete the old RDN attribute.
-   *
-   * @return  whether to delete the old RDN attribute
-   */
-  public boolean getDeleteOldRDn()
+  public boolean isDeleteOldRDn()
   {
     return deleteOldRDn;
   }
 
 
   /**
-   * Sets whether to delete the old RDN attribute.
+   * Returns the new superior DN.
    *
-   * @param  b  whether to delete the old RDN attribute
+   * @return  new superior DN
    */
-  public void setDeleteOldRDn(final boolean b)
+  public String getNewSuperiorDn()
   {
-    deleteOldRDn = b;
+    return newSuperiorDn;
+  }
+
+
+  @Override
+  protected DEREncoder[] getRequestEncoders(final int id)
+  {
+    if (newSuperiorDn == null) {
+      return new DEREncoder[] {
+        new IntegerType(id),
+        new ConstructedDEREncoder(
+          new ApplicationDERTag(PROTOCOL_OP, true),
+          new OctetStringType(oldModifyDn),
+          new OctetStringType(newModifyRDn),
+          new BooleanType(deleteOldRDn)),
+      };
+    } else {
+      return new DEREncoder[] {
+        new IntegerType(id),
+        new ConstructedDEREncoder(
+          new ApplicationDERTag(PROTOCOL_OP, true),
+          new OctetStringType(oldModifyDn),
+          new OctetStringType(newModifyRDn),
+          new BooleanType(deleteOldRDn),
+          new OctetStringType(new ContextDERTag(0, false), newSuperiorDn)),
+      };
+    }
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::oldModifyDn=%s, newModifyDn=%s, deleteOldRDn=%s, " +
-        "controls=%s, referralHandler=%s, intermediateResponseHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        oldModifyDn,
-        newModifyDn,
-        deleteOldRDn,
-        Arrays.toString(getControls()),
-        getReferralHandler(),
-        Arrays.toString(getIntermediateResponseHandlers()));
+    return new StringBuilder(super.toString()).append(", ")
+      .append("oldModifyDn=").append(oldModifyDn).append(", ")
+      .append("newModifyRDn=").append(newModifyRDn).append(", ")
+      .append("delete=").append(deleteOldRDn).append(", ")
+      .append("superior=").append(newSuperiorDn).toString();
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  /** Modify DN request builder. */
+  public static class Builder extends AbstractRequestMessage.AbstractBuilder<ModifyDnRequest.Builder, ModifyDnRequest>
+  {
+
+
+    /**
+     * Default constructor.
+     */
+    protected Builder()
+    {
+      super(new ModifyDnRequest());
+    }
+
+
+    @Override
+    protected Builder self()
+    {
+      return this;
+    }
+
+
+    /**
+     * Sets the old modify ldap DN.
+     *
+     * @param  dn  ldap DN
+     *
+     * @return  this builder
+     */
+    public Builder oldDN(final String dn)
+    {
+      object.oldModifyDn = dn;
+      return self();
+    }
+
+
+    /**
+     * Sets the new modify ldap DN.
+     *
+     * @param  dn  ldap DN
+     *
+     * @return  this builder
+     */
+    public Builder newRDN(final String dn)
+    {
+      object.newModifyRDn = dn;
+      return self();
+    }
+
+
+    /**
+     * Sets whether to delete the old RDN.
+     *
+     * @param  delete  whether to delete the old RDN
+     *
+     * @return  this builder
+     */
+    public Builder delete(final boolean delete)
+    {
+      object.deleteOldRDn = delete;
+      return self();
+    }
+
+
+    /**
+     * Sets the new superior ldap DN.
+     *
+     * @param  dn  ldap DN
+     *
+     * @return  this builder
+     */
+    public Builder superior(final String dn)
+    {
+      object.newSuperiorDn = dn;
+      return self();
+    }
   }
 }

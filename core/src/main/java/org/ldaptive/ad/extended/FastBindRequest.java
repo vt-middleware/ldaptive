@@ -1,47 +1,33 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.extended;
 
-import java.util.Arrays;
-import org.ldaptive.AbstractRequest;
 import org.ldaptive.extended.ExtendedRequest;
 
 /**
- * Contains the data required to perform a fast bind operation.
+ * LDAP fast bind request defined as:
+ *
+ * <pre>
+   ExtendedRequest ::= [APPLICATION 23] SEQUENCE {
+     requestName      [0] LDAPOID,
+     requestValue     [1] OCTET STRING OPTIONAL }
+ * </pre>
+ *
+ * where the request value is absent.
  *
  * @author  Middleware Services
  */
-public class FastBindRequest extends AbstractRequest implements ExtendedRequest
+public class FastBindRequest extends ExtendedRequest
 {
 
   /** OID of this extended request. */
   public static final String OID = "1.2.840.113556.1.4.1781";
 
 
-  @Override
-  public byte[] encode()
+  /**
+   * Default constructor.
+   */
+  public FastBindRequest()
   {
-    return null;
-  }
-
-
-  @Override
-  public String getOID()
-  {
-    return OID;
-  }
-
-
-  @Override
-  public String toString()
-  {
-    return
-      String.format(
-        "[%s@%d::controls=%s, referralHandler=%s, " +
-        "intermediateResponseHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(getControls()),
-        getReferralHandler(),
-        Arrays.toString(getIntermediateResponseHandlers()));
+    super(OID);
   }
 }

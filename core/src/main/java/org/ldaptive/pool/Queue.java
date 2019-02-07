@@ -132,6 +132,9 @@ public class Queue<T> implements Iterable<T>
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::queueType=%s, queue=%s]", getClass().getName(), hashCode(), queueType, queue);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("queueType=").append(queueType).append(", ")
+      .append("queue=").append(queue).append("]").toString();
   }
 }

@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
-import java.io.StringWriter;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -10,13 +9,12 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.ResultCode;
 import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.TestUtils;
-import org.ldaptive.io.LdifWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.AssertJUnit;
@@ -53,9 +51,6 @@ public class ConnectionPoolTest extends AbstractTest
   private String searchBaseDn;
 
   /** LdapPool instance for concurrency testing. */
-  private SoftLimitConnectionPool softLimitPool;
-
-  /** LdapPool instance for concurrency testing. */
   private BlockingConnectionPool blockingPool;
 
   /** LdapPool instance for concurrency testing. */
@@ -63,9 +58,6 @@ public class ConnectionPoolTest extends AbstractTest
 
   /** LdapPool instance for concurrency testing. */
   private BlockingConnectionPool connStrategyPool;
-
-  /** Time in millis it takes the pool test to run. */
-  private long softLimitRuntime;
 
   /** Time in millis it takes the pool test to run. */
   private long blockingRuntime;
@@ -87,7 +79,6 @@ public class ConnectionPoolTest extends AbstractTest
     })
   @BeforeClass(
     groups = {
-      "softlimitpool",
       "blockingpool",
       "blockingtimeoutpool",
       "connstrategypool"})
@@ -98,16 +89,8 @@ public class ConnectionPoolTest extends AbstractTest
 
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
 
-    final PoolConfig softLimitPc = new PoolConfig();
-    softLimitPc.setValidateOnCheckIn(true);
-    softLimitPc.setValidateOnCheckOut(true);
-    softLimitPc.setValidatePeriodically(true);
-    softLimitPc.setValidatePeriod(Duration.ofSeconds(5));
-    softLimitPool = new SoftLimitConnectionPool(softLimitPc, new DefaultConnectionFactory(cc));
-    softLimitPool.setPruneStrategy(new IdlePruneStrategy(Duration.ofSeconds(5), Duration.ofSeconds(1)));
-    softLimitPool.setValidator(new SearchValidator());
-
     final PoolConfig blockingPc = new PoolConfig();
+    blockingPc.setMaxPoolSize(30);
     blockingPc.setValidateOnCheckIn(true);
     blockingPc.setValidateOnCheckOut(true);
     blockingPc.setValidatePeriodically(true);
@@ -117,6 +100,7 @@ public class ConnectionPoolTest extends AbstractTest
     blockingPool.setValidator(new SearchValidator());
 
     final PoolConfig blockingTimeoutPc = new PoolConfig();
+    blockingTimeoutPc.setMaxPoolSize(30);
     blockingTimeoutPc.setValidateOnCheckIn(true);
     blockingTimeoutPc.setValidateOnCheckOut(true);
     blockingTimeoutPc.setValidatePeriodically(true);
@@ -162,12 +146,11 @@ public class ConnectionPoolTest extends AbstractTest
     })
   @BeforeClass(
     groups = {
-      "softlimitpool",
       "blockingpool",
       "blockingtimeoutpool",
       "connstrategypool"
       },
-    dependsOnMethods = {"createPools"})
+    dependsOnMethods = "createPools")
   // CheckStyle:ParameterNumber OFF
   public void createPoolEntry(
     final String ldifFile2,
@@ -197,7 +180,6 @@ public class ConnectionPoolTest extends AbstractTest
       super.createLdapEntry(e.getValue()[0]);
     }
 
-    softLimitPool.initialize();
     blockingPool.initialize();
     blockingTimeoutPool.initialize();
     connStrategyPool.initialize();
@@ -232,7 +214,6 @@ public class ConnectionPoolTest extends AbstractTest
     })
   @BeforeClass(
     groups = {
-      "softlimitpool",
       "blockingpool",
       "blockingtimeoutpool",
       "connstrategypool"})
@@ -267,7 +248,6 @@ public class ConnectionPoolTest extends AbstractTest
   /** @throws  Exception  On test failure. */
   @AfterClass(
     groups = {
-      "softlimitpool",
       "blockingpool",
       "blockingtimeoutpool",
       "connstrategypool"})
@@ -284,9 +264,6 @@ public class ConnectionPoolTest extends AbstractTest
     super.deleteLdapEntry(ENTRIES.get("9")[0].getDn());
     super.deleteLdapEntry(ENTRIES.get("10")[0].getDn());
 
-    softLimitPool.close();
-    AssertJUnit.assertEquals(softLimitPool.availableCount(), 0);
-    AssertJUnit.assertEquals(softLimitPool.activeCount(), 0);
     blockingPool.close();
     AssertJUnit.assertEquals(blockingPool.availableCount(), 0);
     AssertJUnit.assertEquals(blockingPool.activeCount(), 0);
@@ -396,70 +373,7 @@ public class ConnectionPoolTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"softlimitpool"})
-  public void checkSoftLimitPoolImmutable()
-    throws Exception
-  {
-    try {
-      softLimitPool.getPoolConfig().setMinPoolSize(8);
-      AssertJUnit.fail("Expected illegalstateexception to be thrown");
-    } catch (IllegalStateException e) {
-      AssertJUnit.assertEquals(IllegalStateException.class, e.getClass());
-    }
-
-    try {
-      softLimitPool.getConnectionFactory().getConnectionConfig().setConnectTimeout(Duration.ofSeconds(10));
-      AssertJUnit.fail("Expected illegalstateexception to be thrown");
-    } catch (IllegalStateException e) {
-      AssertJUnit.assertEquals(IllegalStateException.class, e.getClass());
-    }
-  }
-
-
-  /**
-   * @param  request  to search with
-   * @param  results  to expect from the search.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(
-    groups = {"softlimitpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000)
-  public void softLimitSmallSearch(final SearchRequest request, final LdapEntry results)
-    throws Exception
-  {
-    softLimitRuntime += search(softLimitPool, request, results);
-  }
-
-
-  /**
-   * @param  request  to search with
-   * @param  results  to expect from the search.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(
-    groups = {"softlimitpool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100, timeOut = 60000,
-    dependsOnMethods = {"softLimitSmallSearch"})
-  public void softLimitMediumSearch(final SearchRequest request, final LdapEntry results)
-    throws Exception
-  {
-    softLimitRuntime += search(softLimitPool, request, results);
-  }
-
-
-  /** @throws  Exception  On test failure. */
-  @Test(groups = {"softlimitpool"}, dependsOnMethods = {"softLimitMediumSearch"})
-  public void softLimitMaxClean()
-    throws Exception
-  {
-    Thread.sleep(10000);
-    AssertJUnit.assertEquals(0, softLimitPool.activeCount());
-    AssertJUnit.assertEquals(PoolConfig.DEFAULT_MIN_POOL_SIZE, softLimitPool.availableCount());
-  }
-
-
-  /** @throws  Exception  On test failure. */
-  @Test(groups = {"blockingpool"})
+  @Test(groups = "blockingpool")
   public void checkBlockingPoolImmutable()
     throws Exception
   {
@@ -471,7 +385,7 @@ public class ConnectionPoolTest extends AbstractTest
     }
 
     try {
-      blockingPool.getConnectionFactory().getConnectionConfig().setConnectTimeout(Duration.ofSeconds(10));
+      blockingPool.getDefaultConnectionFactory().getConnectionConfig().setConnectTimeout(Duration.ofSeconds(10));
       AssertJUnit.fail("Expected illegalstateexception to be thrown");
     } catch (IllegalStateException e) {
       AssertJUnit.assertEquals(IllegalStateException.class, e.getClass());
@@ -486,7 +400,7 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000)
+    groups = "blockingpool", dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50, timeOut = 300000)
   public void blockingSmallSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -501,8 +415,8 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100, timeOut = 60000,
-    dependsOnMethods = {"blockingSmallSearch"})
+    groups = "blockingpool", dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100, timeOut = 300000,
+    dependsOnMethods = "blockingSmallSearch")
   public void blockingMediumSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -517,8 +431,8 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingpool"}, dataProvider = "pool-data", threadPoolSize = 50, invocationCount = 1000, timeOut = 60000,
-    dependsOnMethods = {"blockingMediumSearch"})
+    groups = "blockingpool", dataProvider = "pool-data", threadPoolSize = 50, invocationCount = 1000,
+    timeOut = 300000, dependsOnMethods = "blockingMediumSearch")
   public void blockingLargeSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -527,7 +441,7 @@ public class ConnectionPoolTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"blockingpool"}, dependsOnMethods = {"blockingLargeSearch"})
+  @Test(groups = "blockingpool", dependsOnMethods = "blockingLargeSearch")
   public void blockingMaxClean()
     throws Exception
   {
@@ -544,8 +458,8 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingtimeoutpool"}, dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50,
-    timeOut = 60000)
+    groups = "blockingtimeoutpool", dataProvider = "pool-data", threadPoolSize = 3, invocationCount = 50,
+    timeOut = 300000)
   public void blockingTimeoutSmallSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -564,8 +478,8 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingtimeoutpool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100,
-    timeOut = 60000, dependsOnMethods = {"blockingTimeoutSmallSearch"})
+    groups = "blockingtimeoutpool", dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100,
+    timeOut = 300000, dependsOnMethods = "blockingTimeoutSmallSearch")
   public void blockingTimeoutMediumSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -584,8 +498,8 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"blockingtimeoutpool"}, dataProvider = "pool-data", threadPoolSize = 50, invocationCount = 1000,
-    timeOut = 60000, dependsOnMethods = {"blockingTimeoutMediumSearch"})
+    groups = "blockingtimeoutpool", dataProvider = "pool-data", threadPoolSize = 50, invocationCount = 1000,
+    timeOut = 300000, dependsOnMethods = "blockingTimeoutMediumSearch")
   public void blockingTimeoutLargeSearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -598,7 +512,7 @@ public class ConnectionPoolTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"blockingtimeoutpool"}, dependsOnMethods = {"blockingTimeoutLargeSearch"})
+  @Test(groups = "blockingtimeoutpool", dependsOnMethods = "blockingTimeoutLargeSearch")
   public void blockingTimeoutMaxClean()
     throws Exception
   {
@@ -615,8 +529,8 @@ public class ConnectionPoolTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = {"connstrategypool"}, dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100,
-    timeOut = 60000)
+    groups = "connstrategypool", dataProvider = "pool-data", threadPoolSize = 10, invocationCount = 100,
+    timeOut = 300000)
   public void connStrategySearch(final SearchRequest request, final LdapEntry results)
     throws Exception
   {
@@ -638,14 +552,13 @@ public class ConnectionPoolTest extends AbstractTest
   {
     final long startTime = System.currentTimeMillis();
     Connection conn = null;
-    SearchResult result = null;
+    final SearchResponse result;
     try {
       logger.trace("waiting for pool checkout");
       conn = pool.getConnection();
       logger.trace("performing search: {}", request);
 
-      final SearchOperation search = new SearchOperation(conn);
-      result = search.execute(request).getResult();
+      result = conn.operation(request).execute();
       logger.trace("search completed: {}", result);
     } finally {
       logger.trace("returning connection to pool");
@@ -654,10 +567,9 @@ public class ConnectionPoolTest extends AbstractTest
       }
     }
 
-    final StringWriter sw = new StringWriter();
-    final LdifWriter lw = new LdifWriter(sw);
-    lw.write(result);
-    AssertJUnit.assertEquals(results, TestUtils.convertLdifToResult(sw.toString()).getEntry());
+    logger.info("CONNECTION POOL:: RESULT: {}", result);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, result.getResultCode());
+    TestUtils.assertEquals(results, result.getEntry());
     return System.currentTimeMillis() - startTime;
   }
 }

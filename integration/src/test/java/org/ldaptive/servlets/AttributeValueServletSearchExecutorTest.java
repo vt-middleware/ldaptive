@@ -41,7 +41,7 @@ public class AttributeValueServletSearchExecutorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "createEntry12", "webXml" })
-  @BeforeClass(groups = {"servlet"})
+  @BeforeClass(groups = "servlet")
   public void createLdapEntry(final String ldifFile, final String webXml)
     throws Exception
   {
@@ -54,7 +54,7 @@ public class AttributeValueServletSearchExecutorTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"servlet"})
+  @AfterClass(groups = "servlet")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -76,7 +76,7 @@ public class AttributeValueServletSearchExecutorTest extends AbstractTest
       "attributeServletAttr",
       "attributeServletValue"
     })
-  @Test(groups = {"servlet"})
+  @Test(groups = "servlet")
   public void attributeServlet(final String query, final String attr, final String attributeValue)
     throws Exception
   {

@@ -2,6 +2,7 @@
 package org.ldaptive;
 
 import java.time.Duration;
+import java.util.function.Predicate;
 import org.ldaptive.ssl.SslConfig;
 
 /**
@@ -16,16 +17,19 @@ public class ConnectionConfig extends AbstractConfig
   private String ldapUrl;
 
   /** Duration of time that connects will block. */
-  private Duration connectTimeout;
+  private Duration connectTimeout = Duration.ofMinutes(1);
 
   /** Duration of time to wait for responses. */
-  private Duration responseTimeout;
+  private Duration responseTimeout = Duration.ofMinutes(1);
+
+  /** Whether to automatically reconnect to the server when a connection is lost. */
+  private boolean autoReconnect;
+
+  /** Condition used to determine whether another reconnect attempt should be made. Default makes a single attempt. */
+  private Predicate<Integer> autoReconnectCondition = attempt -> attempt == 1;
 
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
-
-  /** Connect to LDAP using SSL protocol. */
-  private boolean useSSL;
 
   /** Connect to LDAP using startTLS. */
   private boolean useStartTLS;
@@ -34,7 +38,7 @@ public class ConnectionConfig extends AbstractConfig
   private ConnectionInitializer connectionInitializer;
 
   /** Connection strategy. */
-  private ConnectionStrategy connectionStrategy = new DefaultConnectionStrategy();
+  private ConnectionStrategy connectionStrategy;
 
 
   /** Default constructor. */
@@ -132,6 +136,54 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
+   * Returns whether connections will attempt to reconnect.
+   *
+   * @return  whether to automatically reconnect when a connection is lost
+   */
+  public boolean getAutoReconnect()
+  {
+    return autoReconnect;
+  }
+
+
+  /**
+   * Sets whether connections with attempt to reconnect.
+   *
+   * @param  b  whether to automatically reconnect when a connection is lost
+   */
+  public void setAutoReconnect(final boolean b)
+  {
+    checkImmutable();
+    logger.trace("setting autoReconnect: {}", b);
+    autoReconnect = b;
+  }
+
+
+  /**
+   * Returns the auto reconnect condition.
+   *
+   * @return  auto reconnect condition
+   */
+  public Predicate<Integer> getAutoReconnectCondition()
+  {
+    return autoReconnectCondition;
+  }
+
+
+  /**
+   * Sets the auto reconnect condition.
+   *
+   * @param  predicate  to determine whether to attempt a reconnect
+   */
+  public void setAutoReconnectCondition(final Predicate<Integer> predicate)
+  {
+    checkImmutable();
+    logger.trace("setting autoReconnectCondition: {}", predicate);
+    autoReconnectCondition = predicate;
+  }
+
+
+  /**
    * Returns the ssl config.
    *
    * @return  ssl config
@@ -152,30 +204,6 @@ public class ConnectionConfig extends AbstractConfig
     checkImmutable();
     logger.trace("setting sslConfig: {}", config);
     sslConfig = config;
-  }
-
-
-  /**
-   * Returns whether the SSL protocol will be used for connections.
-   *
-   * @return  whether the SSL protocol will be used
-   */
-  public boolean getUseSSL()
-  {
-    return useSSL;
-  }
-
-
-  /**
-   * Sets whether the SSL protocol will be used for connections.
-   *
-   * @param  b  whether the SSL protocol will be used
-   */
-  public void setUseSSL(final boolean b)
-  {
-    checkImmutable();
-    logger.trace("setting useSSL: {}", b);
-    useSSL = b;
   }
 
 
@@ -241,7 +269,7 @@ public class ConnectionConfig extends AbstractConfig
   /**
    * Sets the connection strategy.
    *
-   * @param  strategy  for making connections
+   * @param  strategy  for making new connections
    */
   public void setConnectionStrategy(final ConnectionStrategy strategy)
   {
@@ -252,20 +280,21 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns a connection config initialized with the supplied config.
+   * Returns a new connection config initialized with the supplied config.
    *
    * @param  config  connection config to read properties from
    *
    * @return  connection config
    */
-  public static ConnectionConfig newConnectionConfig(final ConnectionConfig config)
+  public static ConnectionConfig copy(final ConnectionConfig config)
   {
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl(config.getLdapUrl());
     cc.setConnectTimeout(config.getConnectTimeout());
     cc.setResponseTimeout(config.getResponseTimeout());
-    cc.setSslConfig(config.getSslConfig());
-    cc.setUseSSL(config.getUseSSL());
+    cc.setAutoReconnect(config.getAutoReconnect());
+    cc.setAutoReconnectCondition(config.getAutoReconnectCondition());
+    cc.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
     cc.setUseStartTLS(config.getUseStartTLS());
     cc.setConnectionInitializer(config.getConnectionInitializer());
     cc.setConnectionStrategy(config.getConnectionStrategy());
@@ -276,19 +305,108 @@ public class ConnectionConfig extends AbstractConfig
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::ldapUrl=%s, connectTimeout=%s, responseTimeout=%s, " +
-        "sslConfig=%s, useSSL=%s, useStartTLS=%s, connectionInitializer=%s, connectionStrategy=%s]",
-        getClass().getName(),
-        hashCode(),
-        ldapUrl,
-        connectTimeout,
-        responseTimeout,
-        sslConfig,
-        useSSL,
-        useStartTLS,
-        connectionInitializer,
-        connectionStrategy);
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("ldapUrl=").append(ldapUrl).append(", ")
+      .append("connectTimeout=").append(connectTimeout).append(", ")
+      .append("responseTimeout=").append(responseTimeout).append(", ")
+      .append("autoReconnect=").append(autoReconnect).append(", ")
+      .append("autoReconnectCondition=").append(autoReconnectCondition).append(", ")
+      .append("sslConfig=").append(sslConfig).append(", ")
+      .append("useStartTLS=").append(useStartTLS).append(", ")
+      .append("connectionInitializer=").append(connectionInitializer).append(", ")
+      .append("connectionStrategy=").append(connectionStrategy).toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+    private final ConnectionConfig object = new ConnectionConfig();
+
+
+    protected Builder() {}
+
+
+    public Builder url(final String url)
+    {
+      object.setLdapUrl(url);
+      return this;
+    }
+
+
+    public Builder connectTimeout(final Duration timeout)
+    {
+      object.setConnectTimeout(timeout);
+      return this;
+    }
+
+
+    public Builder responseTimeout(final Duration timeout)
+    {
+      object.setResponseTimeout(timeout);
+      return this;
+    }
+
+
+    public Builder autoReconnect(final boolean b)
+    {
+      object.setAutoReconnect(b);
+      return this;
+    }
+
+
+    public Builder autoReconnectCondition(final Predicate<Integer> predicate)
+    {
+      object.setAutoReconnectCondition(predicate);
+      return this;
+    }
+
+
+    public Builder sslConfig(final SslConfig config)
+    {
+      object.setSslConfig(config);
+      return this;
+    }
+
+
+    public Builder useStartTLS(final boolean b)
+    {
+      object.setUseStartTLS(b);
+      return this;
+    }
+
+
+    public Builder connectionInitializer(final ConnectionInitializer initializer)
+    {
+      object.setConnectionInitializer(initializer);
+      return this;
+    }
+
+
+    public Builder strategy(final ConnectionStrategy strategy)
+    {
+      object.setConnectionStrategy(strategy);
+      return this;
+    }
+
+
+    public ConnectionConfig build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

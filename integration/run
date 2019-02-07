@@ -10,7 +10,7 @@ fi
 
 mvn -Dmaven.javadoc.skip=true -B -V \
   -DldapTestHost=ldap://${HOST} \
-  -DldapSslTestHost=ldap://${SSL_HOST} \
+  -DldapSslTestHost=ldaps://${SSL_HOST} \
   -DldapBaseDn="${BASE_DN}" \
   -DldapBindDn="${BIND_DN}" \
   -DldapBindCredential="${BIND_CREDENTIAL}" \

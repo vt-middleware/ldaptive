@@ -162,7 +162,7 @@ public class Extensions
     for (Map.Entry<String, List<String>> entry : extensions.entrySet()) {
       sb.append(entry.getKey()).append(" ");
       if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-        sb.append(SchemaUtils.formatDescriptors(entry.getValue().toArray(new String[entry.getValue().size()])));
+        sb.append(SchemaUtils.formatDescriptors(entry.getValue().toArray(new String[0])));
       }
     }
     return sb.toString();
@@ -193,6 +193,8 @@ public class Extensions
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::extensions=%s]", getClass().getName(), hashCode(), extensions);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("extensions=").append(extensions).append("]").toString();
   }
 }

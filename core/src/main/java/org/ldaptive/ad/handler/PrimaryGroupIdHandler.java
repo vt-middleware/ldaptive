@@ -1,18 +1,17 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.handler;
 
-import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.ad.SecurityIdentifier;
-import org.ldaptive.handler.AbstractSearchEntryHandler;
+import org.ldaptive.handler.AbstractEntryHandler;
+import org.ldaptive.handler.SearchResultHandler;
 
 /**
  * Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the
@@ -21,9 +20,12 @@ import org.ldaptive.handler.AbstractSearchEntryHandler;
  * with the {@link ObjectSidHandler} to ensure the 'objectSid' attribute is in the proper form. See
  * http://support2.microsoft.com/kb/297951
  *
+ * This handler should only be used with the {@link org.ldaptive.SearchOperation#execute()} method since it leverages
+ * the connection to make further searches.
+ *
  * @author  Middleware Services
  */
-public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
+public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> implements SearchResultHandler
 {
 
   /** hash code seed. */
@@ -82,8 +84,15 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
-    throws LdapException
+  public SearchResponse apply(final SearchResponse response)
+  {
+    response.getEntries().forEach(this::handleEntry);
+    return response;
+  }
+
+
+  @Override
+  protected void handleAttributes(final LdapEntry entry)
   {
     final LdapAttribute objectSid = entry.getAttribute("objectSid");
     final LdapAttribute primaryGroupId = entry.getAttribute("primaryGroupID");
@@ -104,22 +113,26 @@ public class PrimaryGroupIdHandler extends AbstractSearchEntryHandler
         sid,
         primaryGroupId.getStringValue());
 
-      final SearchRequest sr = new SearchRequest();
-      sr.setBaseDn(baseDn != null ? baseDn : request.getBaseDn());
-      sr.setReturnAttributes(ReturnAttributes.NONE.value());
-      sr.setSearchFilter(new SearchFilter(groupFilter, new Object[] {groupSid}));
+      try {
+        final SearchRequest sr = SearchRequest.builder()
+          .dn(baseDn != null ? baseDn : getRequest().getBaseDn())
+          .attributes(ReturnAttributes.NONE.value())
+          .filter(new SearchFilter(groupFilter, new Object[] {groupSid}).format())
+          .build();
 
-      final SearchOperation search = new SearchOperation(conn);
-      final SearchResult result = search.execute(sr).getResult();
-      if (result.size() == 0) {
-        logger.debug("could not find primary group for SID {}", groupSid);
-      } else {
-        LdapAttribute memberOf = entry.getAttribute("memberOf");
-        if (memberOf == null) {
-          memberOf = new LdapAttribute("memberOf");
-          entry.addAttribute(memberOf);
+        final SearchResponse result = getConnection().operation(sr).execute();
+        if (result.entrySize() == 0) {
+          logger.debug("could not find primary group for SID {}", groupSid);
+        } else {
+          LdapAttribute memberOf = entry.getAttribute("memberOf");
+          if (memberOf == null) {
+            memberOf = new LdapAttribute("memberOf");
+            entry.addAttributes(memberOf);
+          }
+          memberOf.addStringValue(result.getEntry().getDn());
         }
-        memberOf.addStringValue(result.getEntry().getDn());
+      } catch (LdapException e) {
+        logger.warn("Error retrieving group ID: {}", groupSid, e);
       }
     }
   }

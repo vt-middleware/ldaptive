@@ -8,11 +8,12 @@ import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.Authenticator;
-import org.ldaptive.auth.BindAuthenticationHandler;
+import org.ldaptive.auth.CompareAuthenticationHandler;
 import org.ldaptive.auth.DnResolver;
+import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.SearchDnResolver;
-import org.ldaptive.pool.PooledConnectionFactory;
-import org.ldaptive.pool.PooledConnectionFactoryManager;
+import org.ldaptive.auth.SearchEntryResolver;
+import org.ldaptive.auth.SimpleBindAuthenticationHandler;
 
 /**
  * Reads properties specific to {@link org.ldaptive.auth.Authenticator} and returns an initialized object of that type.
@@ -95,7 +96,6 @@ public final class AuthenticatorPropertySource extends AbstractPropertySource<Au
     DnResolver dnResolver = object.getDnResolver();
     if (dnResolver == null) {
       dnResolver = new SearchDnResolver();
-
       final SearchDnResolverPropertySource dnPropSource = new SearchDnResolverPropertySource(
         (SearchDnResolver) dnResolver,
         propertiesDomain,
@@ -103,53 +103,89 @@ public final class AuthenticatorPropertySource extends AbstractPropertySource<Au
       dnPropSource.initialize();
       object.setDnResolver(dnResolver);
     } else {
-      final SimplePropertySource<DnResolver> sPropSource = new SimplePropertySource<>(
-        dnResolver,
-        propertiesDomain,
-        properties);
-      sPropSource.initialize();
-    }
-    if (dnResolver instanceof PooledConnectionFactoryManager) {
-      final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) dnResolver;
-      if (cfm.getConnectionFactory() == null) {
-        initPooledConnectionFactoryManager(cfm);
+      if (dnResolver instanceof SearchDnResolver) {
+        final SearchDnResolverPropertySource dnPropSource = new SearchDnResolverPropertySource(
+          (SearchDnResolver) dnResolver,
+          propertiesDomain,
+          properties);
+        dnPropSource.initialize();
+      } else {
+        final SimplePropertySource<DnResolver> sPropSource = new SimplePropertySource<>(
+          dnResolver,
+          propertiesDomain,
+          properties);
+        sPropSource.initialize();
+        if (dnResolver instanceof ConnectionFactoryManager) {
+          final ConnectionFactoryManager resolverManager = (ConnectionFactoryManager) dnResolver;
+          if (resolverManager.getConnectionFactory() == null) {
+            initConnectionFactoryManager(resolverManager);
+          }
+        }
       }
     }
-    if (dnResolver instanceof ConnectionFactoryManager) {
-      final ConnectionFactoryManager cfm = (ConnectionFactoryManager) dnResolver;
-      if (cfm.getConnectionFactory() == null) {
-        initConnectionFactoryManager(cfm);
+
+    // initialize the EntryResolver if supplied
+    final EntryResolver entryResolver = object.getEntryResolver();
+    if (entryResolver != null) {
+      if (entryResolver instanceof SearchEntryResolver) {
+        final SearchEntryResolverPropertySource entryPropSource = new SearchEntryResolverPropertySource(
+          (SearchEntryResolver) entryResolver,
+          propertiesDomain,
+          properties);
+        entryPropSource.initialize();
+      } else {
+        final SimplePropertySource<EntryResolver> sPropSource = new SimplePropertySource<>(
+          entryResolver,
+          propertiesDomain,
+          properties);
+        sPropSource.initialize();
+        if (entryResolver instanceof ConnectionFactoryManager) {
+          final ConnectionFactoryManager resolverManager = (ConnectionFactoryManager) entryResolver;
+          if (resolverManager.getConnectionFactory() == null) {
+            initConnectionFactoryManager(resolverManager);
+          }
+        }
       }
     }
 
     // initialize a BindAuthenticationHandler by default
     AuthenticationHandler authHandler = object.getAuthenticationHandler();
     if (authHandler == null) {
-      authHandler = new BindAuthenticationHandler();
-
-      final BindAuthenticationHandlerPropertySource ahPropSource = new BindAuthenticationHandlerPropertySource(
-        (BindAuthenticationHandler) authHandler,
-        propertiesDomain,
-        properties);
+      authHandler = new SimpleBindAuthenticationHandler();
+      final SimpleBindAuthenticationHandlerPropertySource ahPropSource =
+        new SimpleBindAuthenticationHandlerPropertySource(
+          (SimpleBindAuthenticationHandler) authHandler,
+          propertiesDomain,
+          properties);
       ahPropSource.initialize();
       object.setAuthenticationHandler(authHandler);
     } else {
-      final SimplePropertySource<AuthenticationHandler> sPropSource = new SimplePropertySource<>(
-        authHandler,
-        propertiesDomain,
-        properties);
-      sPropSource.initialize();
-    }
-    if (authHandler instanceof PooledConnectionFactoryManager) {
-      final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) authHandler;
-      if (cfm.getConnectionFactory() == null) {
-        initPooledConnectionFactoryManager(cfm);
-      }
-    }
-    if (authHandler instanceof ConnectionFactoryManager) {
-      final ConnectionFactoryManager cfm = (ConnectionFactoryManager) authHandler;
-      if (cfm.getConnectionFactory() == null) {
-        initConnectionFactoryManager(cfm);
+      if (authHandler instanceof SimpleBindAuthenticationHandler) {
+        final SimpleBindAuthenticationHandlerPropertySource ahPropSource =
+          new SimpleBindAuthenticationHandlerPropertySource(
+            (SimpleBindAuthenticationHandler) authHandler,
+            propertiesDomain,
+            properties);
+        ahPropSource.initialize();
+      } else if (authHandler instanceof CompareAuthenticationHandler) {
+        final CompareAuthenticationHandlerPropertySource ahPropSource =
+          new CompareAuthenticationHandlerPropertySource(
+            (CompareAuthenticationHandler) authHandler,
+            propertiesDomain,
+            properties);
+        ahPropSource.initialize();
+      } else {
+        final SimplePropertySource<AuthenticationHandler> sPropSource = new SimplePropertySource<>(
+          authHandler,
+          propertiesDomain,
+          properties);
+        sPropSource.initialize();
+        if (authHandler instanceof ConnectionFactoryManager) {
+          final ConnectionFactoryManager handlerManager = (ConnectionFactoryManager) authHandler;
+          if (handlerManager.getConnectionFactory() == null) {
+            initConnectionFactoryManager(handlerManager);
+          }
+        }
       }
     }
   }
@@ -164,23 +200,6 @@ public final class AuthenticatorPropertySource extends AbstractPropertySource<Au
   {
     final DefaultConnectionFactory cf = new DefaultConnectionFactory();
     final DefaultConnectionFactoryPropertySource cfPropSource = new DefaultConnectionFactoryPropertySource(
-      cf,
-      propertiesDomain,
-      properties);
-    cfPropSource.initialize();
-    cfm.setConnectionFactory(cf);
-  }
-
-
-  /**
-   * Initializes the supplied connection factory manager using the properties in this property source.
-   *
-   * @param  cfm  to initialize
-   */
-  private void initPooledConnectionFactoryManager(final PooledConnectionFactoryManager cfm)
-  {
-    final PooledConnectionFactory cf = new PooledConnectionFactory();
-    final PooledConnectionFactoryPropertySource cfPropSource = new PooledConnectionFactoryPropertySource(
       cf,
       propertiesDomain,
       properties);

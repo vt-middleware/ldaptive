@@ -18,7 +18,7 @@ public class ShowRecycledControl extends AbstractControl implements RequestContr
   public static final String OID = "1.2.840.113556.1.4.2064";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 971;
+  private static final int HASH_CODE_SEED = 991;
 
 
   /** Default constructor. */
@@ -60,13 +60,6 @@ public class ShowRecycledControl extends AbstractControl implements RequestContr
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
-  }
-
-
-  @Override
-  public String toString()
-  {
-    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
   }
 
 

@@ -1,9 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.Arrays;
+import java.util.List;
+import org.ldaptive.dns.DNSContextFactory;
+import org.ldaptive.dns.MockDirContext;
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 /**
@@ -14,62 +16,108 @@ import org.testng.annotations.Test;
 public class DnsSrvConnectionStrategyTest
 {
 
-  /** Strategy to test. */
-  private final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy();
+  /** Mock resolver. */
+  private DNSContextFactory contextFactory;
 
 
   /**
-   * DNS test data.
+   * Initialize the context factory.
    *
-   * @return  test data
+   * @throws  Exception  on test failure
    */
-  @DataProvider(name = "records")
-  public Object[][] createRecords()
+  @BeforeTest
+  public void setUp()
+    throws Exception
   {
-    return
-      new Object[][] {
-        new Object[] {
-          new DnsSrvConnectionStrategy.SrvRecord[] {
-            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 larry.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 curly.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 moe.ldaptive.org.", 0),
-          },
-          new DnsSrvConnectionStrategy.SrvRecord[] {
-            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 larry.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 curly.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord("0 0 389 moe.ldaptive.org.", 0),
-          },
-        },
-        new Object[] {
-          new DnsSrvConnectionStrategy.SrvRecord[] {
-            new DnsSrvConnectionStrategy.SrvRecord("5 100 389 larry.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord("1 0 389 curly.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord("3 200 389 moe.ldaptive.org.", 0),
-          },
-          new DnsSrvConnectionStrategy.SrvRecord[] {
-            new DnsSrvConnectionStrategy.SrvRecord("1 0 389 curly.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord("3 200 389 moe.ldaptive.org.", 0),
-            new DnsSrvConnectionStrategy.SrvRecord("5 100 389 larry.ldaptive.org.", 0),
-          },
-        },
-      };
+    final MockDirContext context = new MockDirContext();
+    context.addAttribute(
+      "_ldap._tcp.ldaptive.org",
+      "SRV",
+      "1 0 389 directory-1.ldaptive.org",
+      "3 200 389 directory-2.ldaptive.org",
+      "5 100 389 directory-3.ldaptive.org");
+    context.addAttribute(
+      "_ldap._tcp",
+      "SRV",
+      "1 0 389 directory-1.ldaptive.org",
+      "3 200 389 directory-2.ldaptive.org",
+      "5 100 389 directory-3.ldaptive.org");
+    contextFactory = () -> context;
   }
 
 
   /**
-   * @param  records  to sort
-   * @param  sorted  to compare
-   *
-   * @throws  Exception  On test failure.
+   * Unit test for {@link DnsSrvConnectionStrategy#parseDnsUrl(String)}.
    */
-  @Test(groups = {"provider"}, dataProvider = "records")
-  public void sortSrvRecords(
-    final DnsSrvConnectionStrategy.SrvRecord[] records,
-    final DnsSrvConnectionStrategy.SrvRecord[] sorted)
-    throws Exception
+  @Test
+  public void parseDnsUrl()
   {
+    final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy();
+    Assert.assertEquals(strategy.parseDnsUrl("dns:"), new String[] {"dns:", null});
     Assert.assertEquals(
-      strategy.sortSrvRecords(Arrays.asList(records)).toArray(new DnsSrvConnectionStrategy.SrvRecord[records.length]),
-      sorted);
+      strategy.parseDnsUrl("dns:?_ldap._tcp.ldaptive.org"),
+      new String[] {"dns:", "_ldap._tcp.ldaptive.org"});
+    Assert.assertEquals(strategy.parseDnsUrl("dns://dns.server.com"), new String[] {"dns://dns.server.com", null});
+    Assert.assertEquals(
+      strategy.parseDnsUrl("dns://dns.server.com/ldaptive.org"),
+      new String[] {"dns://dns.server.com/ldaptive.org", null});
+    Assert.assertEquals(
+      strategy.parseDnsUrl("dns://dns.server.com/ldaptive.org?_ldap._tcp"),
+      new String[] {"dns://dns.server.com/ldaptive.org", "_ldap._tcp"});
+    Assert.assertEquals(
+      strategy.parseDnsUrl("dns://dns.server.com?_ldap._tcp"),
+      new String[] {"dns://dns.server.com", "_ldap._tcp"});
+  }
+
+
+  /**
+   * Unit test for {@link DnsSrvConnectionStrategy#apply()}.
+   */
+  @Test
+  public void applyDefault()
+  {
+    final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy(
+      contextFactory, DnsSrvConnectionStrategy.DEFAULT_TTL);
+    strategy.initialize(null);
+    final List<LdapURL> urls = strategy.apply();
+    Assert.assertEquals(urls.size(), 3);
+  }
+
+
+  /**
+   * Unit test for {@link DnsSrvConnectionStrategy#apply()}.
+   */
+  @Test
+  public void applyMultiple()
+  {
+    final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy(
+      contextFactory, DnsSrvConnectionStrategy.DEFAULT_TTL);
+    strategy.initialize("dns:?_ldap._tcp.dne.ldaptive.org dns:");
+    final List<LdapURL> urls = strategy.apply();
+    Assert.assertEquals(urls.size(), 3);
+  }
+
+
+  /**
+   * Unit test for {@link DnsSrvConnectionStrategy#apply()}.
+   */
+  @Test
+  public void applyCustom()
+  {
+    final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy();
+    strategy.initialize("dns:?_ldap._tcp.w2k.vt.edu");
+    final List<LdapURL> urls = strategy.apply();
+    Assert.assertEquals(urls.size(), 3);
+  }
+
+
+  /**
+   * Unit test for {@link DnsSrvConnectionStrategy#apply()}.
+   */
+  @Test
+  public void applyEmpty()
+  {
+    final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy();
+    strategy.initialize(null);
   }
 }

@@ -3,10 +3,8 @@ package org.ldaptive.pool;
 
 import org.ldaptive.Connection;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchScope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +30,7 @@ public class SearchValidator implements Validator<Connection>
   {
     searchRequest = new SearchRequest();
     searchRequest.setBaseDn("");
-    searchRequest.setSearchFilter(new SearchFilter("(objectClass=*)"));
+    searchRequest.setFilter("(objectClass=*)");
     searchRequest.setReturnAttributes(ReturnAttributes.NONE.value());
     searchRequest.setSearchScope(SearchScope.OBJECT);
     searchRequest.setSizeLimit(1);
@@ -75,23 +73,23 @@ public class SearchValidator implements Validator<Connection>
   @Override
   public boolean validate(final Connection c)
   {
-    boolean success = false;
     if (c != null) {
       try {
-        final SearchOperation search = new SearchOperation(c);
-        final SearchResult result = search.execute(searchRequest).getResult();
-        success = result.size() > 0;
+        final SearchResponse result = c.operation(searchRequest).execute();
+        return result.entrySize() > 0;
       } catch (Exception e) {
         logger.debug("validation failed for search request {}", searchRequest, e);
       }
     }
-    return success;
+    return false;
   }
 
 
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::searchRequest=%s]", getClass().getName(), hashCode(), searchRequest);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("searchRequest=").append(searchRequest).append("]").toString();
   }
 }

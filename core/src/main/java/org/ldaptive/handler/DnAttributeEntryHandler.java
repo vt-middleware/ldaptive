@@ -1,19 +1,16 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.handler;
 
-import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapException;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SearchEntry;
-import org.ldaptive.SearchRequest;
 
 /**
  * Adds the entry DN as an attribute to the result set. Provides a client side implementation of RFC 5020.
  *
  * @author  Middleware Services
  */
-public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
+public class DnAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler
 {
 
   /** hash code seed. */
@@ -73,11 +70,18 @@ public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
-    throws LdapException
+  public LdapEntry apply(final LdapEntry entry)
+  {
+    handleEntry(entry);
+    return entry;
+  }
+
+
+  @Override
+  protected void handleAttributes(final LdapEntry entry)
   {
     if (entry.getAttribute(dnAttributeName) == null) {
-      entry.addAttribute(new LdapAttribute(dnAttributeName, entry.getDn()));
+      entry.addAttributes(new LdapAttribute(dnAttributeName, entry.getDn()));
     } else if (addIfExists) {
       entry.getAttribute(dnAttributeName).addStringValue(entry.getDn());
     }
@@ -109,12 +113,9 @@ public class DnAttributeEntryHandler extends AbstractSearchEntryHandler
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::dnAttributeName=%s, addIfExists=%s]",
-        getClass().getName(),
-        hashCode(),
-        dnAttributeName,
-        addIfExists);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("dnAttributeName=").append(dnAttributeName).append(", ")
+      .append("addIfExists=").append(addIfExists).append("]").toString();
   }
 }

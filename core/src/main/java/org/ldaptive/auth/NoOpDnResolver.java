@@ -32,6 +32,6 @@ public class NoOpDnResolver implements DnResolver
   @Override
   public String toString()
   {
-    return String.format("[%s@%d]", getClass().getName(), hashCode());
+    return new StringBuilder("[").append(getClass().getName()).append("@").append(hashCode()).append("]").toString();
   }
 }

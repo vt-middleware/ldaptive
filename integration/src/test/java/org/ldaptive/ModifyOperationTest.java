@@ -25,7 +25,7 @@ public class ModifyOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry4")
-  @BeforeClass(groups = {"modify"})
+  @BeforeClass(groups = "modify")
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -36,7 +36,7 @@ public class ModifyOperationTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"modify"})
+  @AfterClass(groups = "modify")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -51,23 +51,20 @@ public class ModifyOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "addAttributeDn", "addAttributeAttribute" })
-  @Test(groups = {"modify"})
+  @Test(groups = "modify")
   public void addAttribute(final String dn, final String attrs)
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ModifyOperation modify = new ModifyOperation(cf);
+    modify.execute(
+      new ModifyRequest(dn, new AttributeModification(AttributeModification.Type.ADD, expected.getAttribute())));
 
-      final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(
-        new ModifyRequest(dn, new AttributeModification(AttributeModificationType.ADD, expected.getAttribute())));
-
-      final SearchOperation search = new SearchOperation(conn);
-      final SearchResult result = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()})).getResult();
-      AssertJUnit.assertEquals(expected.getAttribute(), result.getEntry().getAttribute());
-    }
+    final SearchOperation search = new SearchOperation(cf);
+    final SearchResponse result = search.execute(
+      SearchRequest.objectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()}));
+    AssertJUnit.assertEquals(expected.getAttribute(), result.getEntry().getAttribute());
   }
 
 
@@ -78,28 +75,25 @@ public class ModifyOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "addAttributesDn", "addAttributesAttributes" })
-  @Test(groups = {"modify"})
+  @Test(groups = "modify")
   public void addAttributes(final String dn, final String attrs)
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final ModifyOperation modify = new ModifyOperation(conn);
-      final AttributeModification[] mods = new AttributeModification[expected.size()];
-      int i = 0;
-      for (LdapAttribute la : expected.getAttributes()) {
-        mods[i] = new AttributeModification(AttributeModificationType.ADD, la);
-        i++;
-      }
-      modify.execute(new ModifyRequest(dn, mods));
-
-      final SearchOperation search = new SearchOperation(conn);
-      final SearchResult result = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(dn, expected.getAttributeNames())).getResult();
-      TestUtils.assertEquals(expected, result.getEntry());
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ModifyOperation modify = new ModifyOperation(cf);
+    final AttributeModification[] mods = new AttributeModification[expected.size()];
+    int i = 0;
+    for (LdapAttribute la : expected.getAttributes()) {
+      mods[i] = new AttributeModification(AttributeModification.Type.ADD, la);
+      i++;
     }
+    modify.execute(new ModifyRequest(dn, mods));
+
+    final SearchOperation search = new SearchOperation(cf);
+    final SearchResponse result = search.execute(
+      SearchRequest.objectScopeSearchRequest(dn, expected.getAttributeNames()));
+    TestUtils.assertEquals(expected, result.getEntry());
   }
 
 
@@ -110,23 +104,20 @@ public class ModifyOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "replaceAttributeDn", "replaceAttributeAttribute" })
-  @Test(groups = {"modify"}, dependsOnMethods = {"addAttribute"})
+  @Test(groups = "modify", dependsOnMethods = "addAttribute")
   public void replaceAttribute(final String dn, final String attrs)
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ModifyOperation modify = new ModifyOperation(cf);
+    modify.execute(
+      new ModifyRequest(dn, new AttributeModification(AttributeModification.Type.REPLACE, expected.getAttribute())));
 
-      final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(
-        new ModifyRequest(dn, new AttributeModification(AttributeModificationType.REPLACE, expected.getAttribute())));
-
-      final SearchOperation search = new SearchOperation(conn);
-      final SearchResult result = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()})).getResult();
-      TestUtils.assertEquals(expected, result.getEntry());
-    }
+    final SearchOperation search = new SearchOperation(cf);
+    final SearchResponse result = search.execute(
+      SearchRequest.objectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()}));
+    TestUtils.assertEquals(expected, result.getEntry());
   }
 
 
@@ -137,28 +128,25 @@ public class ModifyOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "replaceAttributesDn", "replaceAttributesAttributes" })
-  @Test(groups = {"modify"}, dependsOnMethods = {"addAttributes"})
+  @Test(groups = "modify", dependsOnMethods = "addAttributes")
   public void replaceAttributes(final String dn, final String attrs)
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final ModifyOperation modify = new ModifyOperation(conn);
-      final AttributeModification[] mods = new AttributeModification[expected.size()];
-      int i = 0;
-      for (LdapAttribute la : expected.getAttributes()) {
-        mods[i] = new AttributeModification(AttributeModificationType.REPLACE, la);
-        i++;
-      }
-      modify.execute(new ModifyRequest(dn, mods));
-
-      final SearchOperation search = new SearchOperation(conn);
-      final SearchResult result = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(dn, expected.getAttributeNames())).getResult();
-      TestUtils.assertEquals(expected, result.getEntry());
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ModifyOperation modify = new ModifyOperation(cf);
+    final AttributeModification[] mods = new AttributeModification[expected.size()];
+    int i = 0;
+    for (LdapAttribute la : expected.getAttributes()) {
+      mods[i] = new AttributeModification(AttributeModification.Type.REPLACE, la);
+      i++;
     }
+    modify.execute(new ModifyRequest(dn, mods));
+
+    final SearchOperation search = new SearchOperation(cf);
+    final SearchResponse result = search.execute(
+      SearchRequest.objectScopeSearchRequest(dn, expected.getAttributeNames()));
+    TestUtils.assertEquals(expected, result.getEntry());
   }
 
 
@@ -169,24 +157,21 @@ public class ModifyOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "removeAttributeDn", "removeAttributeAttribute" })
-  @Test(groups = {"modify"}, dependsOnMethods = {"replaceAttribute"})
+  @Test(groups = "modify", dependsOnMethods = "replaceAttribute")
   public void removeAttribute(final String dn, final String attrs)
     throws Exception
   {
     final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
 
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ModifyOperation modify = new ModifyOperation(cf);
+    modify.execute(
+      new ModifyRequest(dn, new AttributeModification(AttributeModification.Type.DELETE, expected.getAttribute())));
 
-      final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(
-        new ModifyRequest(dn, new AttributeModification(AttributeModificationType.REMOVE, expected.getAttribute())));
-
-      final SearchOperation search = new SearchOperation(conn);
-      final SearchResult result = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()})).getResult();
-      AssertJUnit.assertEquals(0, result.getEntry().getAttributes().size());
-    }
+    final SearchOperation search = new SearchOperation(cf);
+    final SearchResponse result = search.execute(
+      SearchRequest.objectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()}));
+    AssertJUnit.assertEquals(0, result.getEntry().getAttributes().size());
   }
 
 
@@ -197,7 +182,7 @@ public class ModifyOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "removeAttributesDn", "removeAttributesAttributes" })
-  @Test(groups = {"modify"}, dependsOnMethods = {"replaceAttributes"})
+  @Test(groups = "modify", dependsOnMethods = "replaceAttributes")
   public void removeAttributes(final String dn, final String attrs)
     throws Exception
   {
@@ -208,21 +193,18 @@ public class ModifyOperationTest extends AbstractTest
     remove.getAttributes().remove(remove.getAttribute(attrsName[0]));
     expected.getAttributes().remove(expected.getAttribute(attrsName[1]));
 
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final ModifyOperation modify = new ModifyOperation(conn);
-      final AttributeModification[] mods = new AttributeModification[expected.size()];
-      int i = 0;
-      for (LdapAttribute la : remove.getAttributes()) {
-        mods[i++] = new AttributeModification(AttributeModificationType.REMOVE, la);
-      }
-      modify.execute(new ModifyRequest(dn, mods));
-
-      final SearchOperation search = new SearchOperation(conn);
-      final SearchResult result = search.execute(
-        SearchRequest.newObjectScopeSearchRequest(dn, expected.getAttributeNames())).getResult();
-      TestUtils.assertEquals(expected, result.getEntry());
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ModifyOperation modify = new ModifyOperation(cf);
+    final AttributeModification[] mods = new AttributeModification[expected.size()];
+    int i = 0;
+    for (LdapAttribute la : remove.getAttributes()) {
+      mods[i++] = new AttributeModification(AttributeModification.Type.DELETE, la);
     }
+    modify.execute(new ModifyRequest(dn, mods));
+
+    final SearchOperation search = new SearchOperation(cf);
+    final SearchResponse result = search.execute(
+      SearchRequest.objectScopeSearchRequest(dn, expected.getAttributeNames()));
+    TestUtils.assertEquals(expected, result.getEntry());
   }
 }

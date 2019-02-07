@@ -3,7 +3,6 @@ package org.ldaptive.beans.reflect;
 
 import java.lang.reflect.Method;
 import java.util.Collection;
-import org.ldaptive.SortBehavior;
 
 /**
  * Attribute mutator associated with the {@link Method} of an object.
@@ -29,7 +28,7 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
    */
   public MethodAttributeValueMutator(final ReflectionTranscoder transcoder, final Method getter, final Method setter)
   {
-    super(null, false, null, transcoder);
+    super(null, false, transcoder);
     getterMethod = getter;
     if (getterMethod != null) {
       getterMethod.setAccessible(true);
@@ -46,7 +45,6 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
    *
    * @param  name  of the attribute
    * @param  binary  whether the attribute is binary
-   * @param  sortBehavior  sort behavior of the attribute
    * @param  transcoder  to mutate the methods
    * @param  getter  method to read data
    * @param  setter  method to write data
@@ -54,12 +52,11 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   public MethodAttributeValueMutator(
     final String name,
     final boolean binary,
-    final SortBehavior sortBehavior,
     final ReflectionTranscoder transcoder,
     final Method getter,
     final Method setter)
   {
-    super(name, binary, sortBehavior, transcoder);
+    super(name, binary, transcoder);
     getterMethod = getter;
     if (getterMethod != null) {
       getterMethod.setAccessible(true);
@@ -112,17 +109,12 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::name=%s, binary=%s, sortBehavior=%s, " +
-        "reflectionTranscoder=%s, getterMethod=%s, setterMethod=%s]",
-        getClass().getName(),
-        hashCode(),
-        getName(),
-        isBinary(),
-        getSortBehavior(),
-        getReflectionTranscoder(),
-        getterMethod,
-        setterMethod);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("name=").append(getName()).append(", ")
+      .append("binary=").append(isBinary()).append(", ")
+      .append("reflectionTranscoder=").append(getReflectionTranscoder()).append(", ")
+      .append("getterMethod=").append(getterMethod).append(", ")
+      .append("setterMethod=").append(setterMethod).append("]").toString();
   }
 }

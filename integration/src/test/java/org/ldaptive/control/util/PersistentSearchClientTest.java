@@ -5,23 +5,19 @@ import java.util.EnumSet;
 import java.util.concurrent.BlockingQueue;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModificationType;
-import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DnParser;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
 import org.ldaptive.ModifyDnOperation;
 import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
-import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.control.PersistentSearchChangeType;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -47,7 +43,7 @@ public class PersistentSearchClientTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry31")
-  @BeforeClass(groups = {"control-util"})
+  @BeforeClass(groups = "control-util")
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -58,7 +54,7 @@ public class PersistentSearchClientTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"control-util"})
+  @AfterClass(groups = "control-util")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -79,7 +75,7 @@ public class PersistentSearchClientTest extends AbstractTest
       "persistentSearchReturnAttrs",
       "persistentSearchResults"
     })
-  @Test(groups = {"control-util"})
+  @Test(groups = "control-util")
   public void persistentSearch(final String dn, final String returnAttrs, final String ldifFile)
     throws Exception
   {
@@ -88,91 +84,78 @@ public class PersistentSearchClientTest extends AbstractTest
     }
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
-    final SearchResult expectedResult = TestUtils.convertLdifToResult(expected);
+    final SearchResponse expectedResult = TestUtils.convertLdifToResult(expected);
 
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final PersistentSearchClient client = new PersistentSearchClient(
+      cf,
+      EnumSet.allOf(PersistentSearchChangeType.class),
+      true,
+      true);
+    final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
+    final BlockingQueue<PersistentSearchItem> results = client.execute(request);
 
-      final PersistentSearchClient client = new PersistentSearchClient(
-        conn,
-        EnumSet.allOf(PersistentSearchChangeType.class),
-        true,
-        true);
-      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn, returnAttrs.split("\\|"));
-      final BlockingQueue<PersistentSearchItem> results = client.execute(request);
-
-      // test the async request
-      PersistentSearchItem item = results.take();
-      if (item.isException()) {
-        throw item.getException();
-      }
-
-      AsyncRequest asyncRequest = null;
-      if (item.isAsyncRequest()) {
-        asyncRequest = item.getAsyncRequest();
-        // some providers don't support the request object
-        AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
-      }
-      checkItem(item);
-
-      // make a change
-      final LdapAttribute modAttr = new LdapAttribute("initials", "PSC");
-      final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(new ModifyRequest(dn, new AttributeModification(AttributeModificationType.REPLACE, modAttr)));
-      item = results.take();
-      checkItem(item);
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(
-        PersistentSearchChangeType.MODIFY,
-        item.getEntry().getEntryChangeNotificationControl().getChangeType());
-      expectedResult.getEntry().addAttribute(modAttr);
-      TestUtils.assertEquals(
-        expectedResult,
-        new SearchResult(createCompareEntry(expectedResult.getEntry(), item.getEntry().getSearchEntry())));
-
-      // modify dn
-      final String modDn = "CN=PSC," + DnParser.substring(dn, 1);
-      final LdapAttribute cn = expectedResult.getEntry().getAttribute("cn");
-      final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
-      modifyDn.execute(new ModifyDnRequest(dn, modDn));
-      item = results.take();
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(
-        PersistentSearchChangeType.MODDN,
-        item.getEntry().getEntryChangeNotificationControl().getChangeType());
-      expectedResult.getEntry().setDn(modDn);
-      expectedResult.getEntry().addAttribute(new LdapAttribute("CN", "PSC"));
-      TestUtils.assertEquals(
-        expectedResult,
-        new SearchResult(createCompareEntry(expectedResult.getEntry(), item.getEntry().getSearchEntry())));
-
-      // modify dn back
-      modifyDn.execute(new ModifyDnRequest(modDn, dn));
-      item = results.take();
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(
-        PersistentSearchChangeType.MODDN,
-        item.getEntry().getEntryChangeNotificationControl().getChangeType());
-      expectedResult.getEntry().setDn(dn);
-      expectedResult.getEntry().addAttribute(cn);
-      TestUtils.assertEquals(
-        expectedResult,
-        new SearchResult(createCompareEntry(expectedResult.getEntry(), item.getEntry().getSearchEntry())));
-
-      asyncRequest.abandon();
-      if (!results.isEmpty()) {
-        item = results.take();
-        if (item.isResponse()) {
-          AssertJUnit.assertEquals(ResultCode.USER_CANCELLED, item.getResponse().getResultCode());
-        } else if (item.isException()) {
-          final LdapException e = (LdapException) item.getException();
-          AssertJUnit.assertEquals(ResultCode.USER_CANCELLED, e.getResultCode());
-        } else {
-          AssertJUnit.fail("Unknown result type");
-        }
-      }
-      AssertJUnit.assertTrue(results.isEmpty());
+    // test the async request
+    PersistentSearchItem item = results.take();
+    if (item.isException()) {
+      throw item.getException();
     }
+    checkItem(item);
+
+    // make a change
+    final LdapAttribute modAttr = new LdapAttribute("initials", "PSC");
+    final ModifyOperation modify = new ModifyOperation(cf);
+    modify.execute(new ModifyRequest(dn, new AttributeModification(AttributeModification.Type.REPLACE, modAttr)));
+    item = results.take();
+    checkItem(item);
+    AssertJUnit.assertTrue(item.isEntry());
+    AssertJUnit.assertEquals(
+      PersistentSearchChangeType.MODIFY,
+      item.getEntry().getEntryChangeNotificationControl().getChangeType());
+    expectedResult.getEntry().addAttributes(modAttr);
+    TestUtils.assertEquals(
+      expectedResult.getEntry(),
+      createCompareEntry(expectedResult.getEntry(), item.getEntry().getSearchEntry()));
+
+    // modify dn
+    final String modDn = "CN=PSC," + DnParser.substring(dn, 1);
+    final LdapAttribute cn = expectedResult.getEntry().getAttribute("cn");
+    final ModifyDnOperation modifyDn = new ModifyDnOperation(cf);
+    modifyDn.execute(new ModifyDnRequest(dn, DnParser.substring(modDn, 0, 1), true));
+    item = results.take();
+    AssertJUnit.assertTrue(item.isEntry());
+    AssertJUnit.assertEquals(
+      PersistentSearchChangeType.MODDN,
+      item.getEntry().getEntryChangeNotificationControl().getChangeType());
+    expectedResult.getEntry().setDn(modDn);
+    expectedResult.getEntry().addAttributes(new LdapAttribute("CN", "PSC"));
+    TestUtils.assertEquals(
+      expectedResult.getEntry(),
+      createCompareEntry(expectedResult.getEntry(), item.getEntry().getSearchEntry()));
+
+    // modify dn back
+    modifyDn.execute(new ModifyDnRequest(modDn, DnParser.substring(dn, 0, 1), true));
+    item = results.take();
+    AssertJUnit.assertTrue(item.isEntry());
+    AssertJUnit.assertEquals(
+      PersistentSearchChangeType.MODDN,
+      item.getEntry().getEntryChangeNotificationControl().getChangeType());
+    expectedResult.getEntry().setDn(dn);
+    expectedResult.getEntry().addAttributes(cn);
+    TestUtils.assertEquals(
+      expectedResult.getEntry(),
+      createCompareEntry(expectedResult.getEntry(), item.getEntry().getSearchEntry()));
+
+    client.abandon();
+    if (!results.isEmpty()) {
+      item = results.take();
+      if (item.isResult()) {
+        AssertJUnit.assertEquals(ResultCode.USER_CANCELLED, item.getResult().getResultCode());
+      } else {
+        AssertJUnit.fail("Unknown result type");
+      }
+    }
+    AssertJUnit.assertTrue(results.isEmpty());
   }
 
 
@@ -186,21 +169,15 @@ public class PersistentSearchClientTest extends AbstractTest
    */
   private void checkItem(final PersistentSearchItem item)
   {
-    if (item.isResponse()) {
-      if (ResultCode.UNAVAILABLE_CRITICAL_EXTENSION.equals(item.getResponse().getResultCode())) {
+    if (item.isResult()) {
+      if (ResultCode.UNAVAILABLE_CRITICAL_EXTENSION.equals(item.getResult().getResultCode())) {
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support this control");
       } else {
-        throw new IllegalStateException("Unexpected response: " + item.getResponse());
+        throw new IllegalStateException("Unexpected response: " + item.getResult());
       }
     } else if (item.isException()) {
-      final LdapException e = (LdapException) item.getException();
-      if (ResultCode.UNAVAILABLE_CRITICAL_EXTENSION.equals(e.getResultCode())) {
-        // ignore this test if not supported by the server
-        throw new UnsupportedOperationException("LDAP server does not support this control");
-      } else {
-        throw new IllegalStateException("Unexpected exception: " + e);
-      }
+      throw new IllegalStateException("Unexpected exception: " + item.getException());
     }
   }
 
@@ -213,15 +190,12 @@ public class PersistentSearchClientTest extends AbstractTest
    * @param  searchEntry  returned from a persistent search
    *
    * @return  sanitized entry to compare with
-   *
-   * @throws  Exception  if an error occurs
    */
-  private LdapEntry createCompareEntry(final LdapEntry expectedEntry, final SearchEntry searchEntry)
-    throws Exception
+  private LdapEntry createCompareEntry(final LdapEntry expectedEntry, final LdapEntry searchEntry)
   {
-    final LdapEntry compareEntry = new LdapEntry(expectedEntry.getDn());
+    final LdapEntry compareEntry = LdapEntry.builder().dn(expectedEntry.getDn()).build();
     for (String attr : expectedEntry.getAttributeNames()) {
-      compareEntry.addAttribute(searchEntry.getAttribute(attr));
+      compareEntry.addAttributes(searchEntry.getAttribute(attr));
     }
     return compareEntry;
   }

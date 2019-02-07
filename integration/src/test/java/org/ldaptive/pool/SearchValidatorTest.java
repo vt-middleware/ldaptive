@@ -3,6 +3,7 @@ package org.ldaptive.pool;
 
 import org.ldaptive.AbstractTest;
 import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.TestUtils;
@@ -20,19 +21,20 @@ public class SearchValidatorTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"validator"})
+  @Test(groups = "validator")
   public void defaultSettings()
     throws Exception
   {
-    final Connection c = TestUtils.createConnection();
-    final SearchValidator sv = new SearchValidator();
+    final SearchValidator validator = new SearchValidator();
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final Connection c = cf.getConnection();
     try {
       c.open();
-      AssertJUnit.assertTrue(sv.validate(c));
+      AssertJUnit.assertTrue(validator.validate(c));
     } finally {
       c.close();
     }
-    AssertJUnit.assertFalse(sv.validate(c));
+    AssertJUnit.assertFalse(validator.validate(c));
   }
 
 
@@ -41,21 +43,23 @@ public class SearchValidatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"validator"})
+  @Test(groups = "validator")
   @Parameters("ldapBaseDn")
   public void customSettings(final String searchDn)
     throws Exception
   {
-    final Connection c = TestUtils.createConnection();
-    final SearchValidator sv = new SearchValidator(new SearchRequest(searchDn, new SearchFilter("(cn=*)")));
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final Connection c = cf.getConnection();
+    final SearchValidator validator1 = new SearchValidator(new SearchRequest(searchDn, new SearchFilter("(cn=*)")));
+    final SearchValidator validator2 = new SearchValidator(new SearchRequest(searchDn, new SearchFilter("(dne=*)")));
     try {
       c.open();
-      AssertJUnit.assertTrue(sv.validate(c));
-      sv.getSearchRequest().setSearchFilter(new SearchFilter("(dne=*)"));
-      AssertJUnit.assertFalse(sv.validate(c));
+      AssertJUnit.assertTrue(validator1.validate(c));
+      AssertJUnit.assertFalse(validator2.validate(c));
     } finally {
       c.close();
     }
-    AssertJUnit.assertFalse(sv.validate(c));
+    AssertJUnit.assertFalse(validator1.validate(c));
+    AssertJUnit.assertFalse(validator2.validate(c));
   }
 }

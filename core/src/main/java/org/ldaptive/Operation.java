@@ -2,26 +2,25 @@
 package org.ldaptive;
 
 /**
- * Interface for ldap operations.
+ * Operation interface.
  *
- * @param  <Q>  type of ldap request
- * @param  <S>  type of ldap response
+ * @param  <Q>  type of request
+ * @param  <S>  type of result
  *
  * @author  Middleware Services
  */
-public interface Operation<Q extends Request, S>
+public interface Operation<Q extends Request, S extends Result>
 {
 
 
   /**
-   * Execute this ldap operation.
+   * Executes a request.
    *
-   * @param  request  containing the data required by this operation
+   * @param  request  operation request
    *
-   * @return  response for this operation
+   * @return  operation result
    *
    * @throws  LdapException  if the operation fails
    */
-  Response<S> execute(Q request)
-    throws LdapException;
+  S execute(Q request) throws LdapException;
 }

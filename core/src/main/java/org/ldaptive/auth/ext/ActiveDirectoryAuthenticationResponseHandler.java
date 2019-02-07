@@ -5,7 +5,7 @@ import java.time.Period;
 import java.time.ZonedDateTime;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.ad.io.FileTimeValueTranscoder;
+import org.ldaptive.ad.transcode.FileTimeValueTranscoder;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 
@@ -64,7 +64,7 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
   @Override
   public void handle(final AuthenticationResponse response)
   {
-    if (response.getResult()) {
+    if (response.isSuccess()) {
       final LdapEntry entry = response.getLdapEntry();
       final LdapAttribute expTime = entry.getAttribute("msDS-UserPasswordExpiryTimeComputed");
       final LdapAttribute pwdLastSet = entry.getAttribute("pwdLastSet");
@@ -72,9 +72,9 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
       ZonedDateTime exp = null;
       // ignore expTime if account is set to never expire
       if (expTime != null && !"9223372036854775807".equals(expTime.getStringValue())) {
-        exp = expTime.getValue(new FileTimeValueTranscoder());
+        exp = expTime.getValue(new FileTimeValueTranscoder().decoder());
       } else if (expirationPeriod != null && pwdLastSet != null) {
-        exp = pwdLastSet.getValue(new FileTimeValueTranscoder()).plus(expirationPeriod);
+        exp = pwdLastSet.getValue(new FileTimeValueTranscoder().decoder()).plus(expirationPeriod);
       }
 
       if (exp != null) {
@@ -88,9 +88,9 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
         }
       }
     } else {
-      if (response.getMessage() != null) {
+      if (response.getDiagnosticMessage() != null) {
         final ActiveDirectoryAccountState.Error adError = ActiveDirectoryAccountState.Error.parse(
-          response.getMessage());
+          response.getDiagnosticMessage());
         if (adError != null) {
           response.setAccountState(new ActiveDirectoryAccountState(adError));
         }
@@ -146,11 +146,9 @@ public class ActiveDirectoryAuthenticationResponseHandler implements Authenticat
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::expirationPeriod=%s, warningPeriod=%s]",
-      getClass().getName(),
-      hashCode(),
-      expirationPeriod,
-      warningPeriod);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("expirationPeriod=").append(expirationPeriod).append(", ")
+      .append("warningPeriod=").append(warningPeriod).append("]").toString();
   }
 }

@@ -2,13 +2,11 @@
 package org.ldaptive.ad.control.util;
 
 import org.ldaptive.AbstractTest;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.ad.control.DirSyncControl;
@@ -43,7 +41,7 @@ public class DirSyncClientTest extends AbstractTest
       "createEntry28",
       "createEntry29"
     })
-  @BeforeClass(groups = {"control-util"})
+  @BeforeClass(groups = "control-util")
   public void createLdapEntry(final String ldifFile1, final String ldifFile2, final String ldifFile3)
     throws Exception
   {
@@ -58,7 +56,7 @@ public class DirSyncClientTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"control-util"})
+  @AfterClass(groups = "control-util")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -79,33 +77,26 @@ public class DirSyncClientTest extends AbstractTest
       "dsSearchDn",
       "dsSearchFilter"
     })
-  @Test(groups = {"control-util"})
+  @Test(groups = "control-util")
   public void execute(final String dn, final String filter)
     throws Exception
   {
     if (!TestControl.isActiveDirectory()) {
       return;
     }
-    if (TestControl.isOpenDJProvider()) {
-      throw new UnsupportedOperationException("OpenDJ will not parse DNs used by this control");
-    }
 
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    final DirSyncClient client = new DirSyncClient(
+      TestUtils.createConnectionFactory(),
+      new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
 
-      final DirSyncClient client = new DirSyncClient(
-        conn,
-        new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
-
-      final SearchRequest request = new SearchRequest(
-        dn.substring(dn.indexOf(",") + 1, dn.length()),
-        new SearchFilter(filter),
-        "uid");
-      final Response<SearchResult> response = client.execute(request);
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertTrue(response.getResult().size() > 0);
-      AssertJUnit.assertFalse(client.hasMore(response));
-    }
+    final SearchRequest request = new SearchRequest(
+      dn.substring(dn.indexOf(",") + 1, dn.length()),
+      new SearchFilter(filter),
+      "uid");
+    final SearchResponse response = client.execute(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.entrySize() > 0);
+    AssertJUnit.assertFalse(client.hasMore(response));
   }
 
 
@@ -120,31 +111,24 @@ public class DirSyncClientTest extends AbstractTest
       "dsSearchDn",
       "dsSearchFilter"
     })
-  @Test(groups = {"control-util"})
+  @Test(groups = "control-util")
   public void executeToCompletion(final String dn, final String filter)
     throws Exception
   {
     if (!TestControl.isActiveDirectory()) {
       return;
     }
-    if (TestControl.isOpenDJProvider()) {
-      throw new UnsupportedOperationException("OpenDJ will not parse DNs used by this control");
-    }
 
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    final DirSyncClient client = new DirSyncClient(
+      TestUtils.createConnectionFactory(),
+      new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
 
-      final DirSyncClient client = new DirSyncClient(
-        conn,
-        new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
-
-      final SearchRequest request = new SearchRequest(
-        dn.substring(dn.indexOf(",") + 1, dn.length()),
-        new SearchFilter(filter),
-        "uid");
-      final Response<SearchResult> response = client.executeToCompletion(request);
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertTrue(response.getResult().size() > 0);
-    }
+    final SearchRequest request = new SearchRequest(
+      dn.substring(dn.indexOf(",") + 1, dn.length()),
+      new SearchFilter(filter),
+      "uid");
+    final SearchResponse response = client.executeToCompletion(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.entrySize() > 0);
   }
 }

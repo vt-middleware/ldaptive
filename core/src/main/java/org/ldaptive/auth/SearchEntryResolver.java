@@ -2,12 +2,11 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
-import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 
 /**
  * Looks up the LDAP entry associated with a user. If a connection factory is configured it will be used to perform the
@@ -18,9 +17,6 @@ import org.ldaptive.SearchResult;
  */
 public class SearchEntryResolver extends AbstractSearchEntryResolver implements ConnectionFactoryManager
 {
-
-  /** Connection factory. */
-  private ConnectionFactory factory;
 
 
   /** Default constructor. */
@@ -39,35 +35,16 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver implements 
 
 
   @Override
-  public ConnectionFactory getConnectionFactory()
-  {
-    return factory;
-  }
-
-
-  @Override
-  public void setConnectionFactory(final ConnectionFactory cf)
-  {
-    factory = cf;
-  }
-
-
-  @Override
-  public SearchResult performLdapSearch(
+  public SearchResponse performLdapSearch(
     final AuthenticationCriteria criteria,
     final AuthenticationHandlerResponse response)
     throws LdapException
   {
-    if (factory == null) {
-      final SearchOperation op = createSearchOperation(response.getConnection());
-      return op.execute(createSearchRequest(criteria)).getResult();
+    if (getConnectionFactory() == null) {
+      return response.getConnection().operation(createSearchRequest(criteria)).execute();
     } else {
-      try (Connection factoryConn = factory.getConnection()) {
-        factoryConn.open();
-
-        final SearchOperation op = createSearchOperation(factoryConn);
-        return op.execute(createSearchRequest(criteria)).getResult();
-      }
+      final SearchOperation op = createSearchOperation();
+      return op.execute(createSearchRequest(criteria));
     }
   }
 
@@ -75,22 +52,16 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver implements 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::factory=%s, baseDn=%s, userFilter=%s, " +
-        "userFilterParameters=%s, allowMultipleEntries=%s, " +
-        "subtreeSearch=%s, derefAliases=%s, referralHandler=%s, " +
-        "searchEntryHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        factory,
-        getBaseDn(),
-        getUserFilter(),
-        Arrays.toString(getUserFilterParameters()),
-        getAllowMultipleEntries(),
-        getSubtreeSearch(),
-        getDerefAliases(),
-        getReferralHandler(),
-        Arrays.toString(getSearchEntryHandlers()));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("factory=").append(getConnectionFactory()).append(", ")
+      .append("baseDn=").append(getBaseDn()).append(", ")
+      .append("userFilter=").append(getUserFilter()).append(", ")
+      .append("userFilterParameters=").append(Arrays.toString(getUserFilterParameters())).append(", ")
+      .append("allowMultipleEntries=").append(getAllowMultipleEntries()).append(", ")
+      .append("subtreeSearch=").append(getSubtreeSearch()).append(", ")
+      .append("derefAliases=").append(getDerefAliases()).append(", ")
+      .append("binaryAttributes=").append(Arrays.toString(getBinaryAttributes())).append(", ")
+      .append("entryHandlers=").append(Arrays.toString(getEntryHandlers())).append("]").toString();
   }
 }

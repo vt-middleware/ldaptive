@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import javax.servlet.http.HttpServletResponse;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 
 /**
  * Writes a single attribute value to the HTTP response. Useful for providing a mechanism to download large LDAP
@@ -19,7 +19,7 @@ public class AttributeValueServletSearchExecutor extends AbstractServletSearchEx
 
 
   @Override
-  protected void writeResponse(final SearchResult result, final HttpServletResponse response)
+  protected void writeResponse(final SearchResponse result, final HttpServletResponse response)
     throws IOException
   {
     final LdapEntry e = result.getEntry();

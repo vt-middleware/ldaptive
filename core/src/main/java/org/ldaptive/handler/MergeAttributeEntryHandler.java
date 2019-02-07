@@ -2,12 +2,9 @@
 package org.ldaptive.handler;
 
 import java.util.Arrays;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapException;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SearchEntry;
-import org.ldaptive.SearchRequest;
 
 /**
  * Merges the values of one or more attributes into a single attribute. The merged attribute may or may not already
@@ -15,7 +12,7 @@ import org.ldaptive.SearchRequest;
  *
  * @author  Middleware Services
  */
-public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
+public class MergeAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler
 {
 
   /** hash code seed. */
@@ -73,8 +70,15 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
-    throws LdapException
+  public LdapEntry apply(final LdapEntry entry)
+  {
+    handleEntry(entry);
+    return entry;
+  }
+
+
+  @Override
+  protected void handleAttributes(final LdapEntry entry)
   {
     boolean newAttribute = false;
     LdapAttribute mergedAttribute = entry.getAttribute(mergeAttributeName);
@@ -94,7 +98,7 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
     }
 
     if (mergedAttribute.size() > 0 && newAttribute) {
-      entry.addAttribute(mergedAttribute);
+      entry.addAttributes(mergedAttribute);
     }
   }
 
@@ -124,12 +128,9 @@ public class MergeAttributeEntryHandler extends AbstractSearchEntryHandler
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::mergeAttributeName=%s, attributeNames=%s]",
-        getClass().getName(),
-        hashCode(),
-        mergeAttributeName,
-        Arrays.toString(attributeNames));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("mergeAttributeName=").append(mergeAttributeName).append(", ")
+      .append("attributeNames=").append(Arrays.toString(attributeNames)).append("]").toString();
   }
 }

@@ -25,7 +25,6 @@ import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.Response;
 
 /**
  * Contains the base implementation for pooling connections. The main design objective for the supplied pooling
@@ -84,7 +83,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
    *
    * @return  connection factory
    */
-  public DefaultConnectionFactory getConnectionFactory()
+  public DefaultConnectionFactory getDefaultConnectionFactory()
   {
     return connectionFactory;
   }
@@ -95,9 +94,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
    *
    * @param  cf  connection factory
    */
-  public void setConnectionFactory(final DefaultConnectionFactory cf)
+  public void setDefaultConnectionFactory(final DefaultConnectionFactory cf)
   {
-    logger.trace("setting connectionFactory: {}", cf);
+    logger.trace("setting defaultConnectionFactory: {}", cf);
     connectionFactory = cf;
   }
 
@@ -449,10 +448,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   protected PooledConnectionProxy createConnection(final boolean throwOnFailure)
   {
     Connection c = connectionFactory.getConnection();
-    Response<Void> r = null;
     if (connectOnCreate) {
       try {
-        r = c.open();
+        c.open();
       } catch (LdapException e) {
         logger.error("{} unable to connect to the ldap", this, e);
         c = null;
@@ -462,7 +460,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
       }
     }
     if (c != null) {
-      return new DefaultPooledConnectionProxy(c, r);
+      return new DefaultPooledConnectionProxy(c);
     } else {
       return null;
     }
@@ -876,46 +874,23 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   }
 
 
-  /**
-   * Called by the garbage collector on an object when garbage collection determines that there are no more references
-   * to the object.
-   *
-   * @throws  Throwable  if an exception is thrown by this method
-   */
-  @Override
-  protected void finalize()
-    throws Throwable
-  {
-    try {
-      close();
-    } finally {
-      super.finalize();
-    }
-  }
-
-
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::name=%s, poolConfig=%s, activator=%s, passivator=%s, " +
-        "validator=%s pruneStrategy=%s, connectOnCreate=%s, " +
-        "connectionFactory=%s, initialized=%s, availableCount=%s, " +
-        "activeCount=%s]",
-        getClass().getName(),
-        hashCode(),
-        getName(),
-        getPoolConfig(),
-        getActivator(),
-        getPassivator(),
-        getValidator(),
-        getPruneStrategy(),
-        connectOnCreate,
-        connectionFactory,
-        initialized,
-        availableCount(),
-        activeCount());
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("name=").append(getName()).append(", ")
+      .append("poolConfig=").append(getPoolConfig()).append(", ")
+      .append("activator=").append(getActivator()).append(", ")
+      .append("passivator=").append(getPassivator()).append(", ")
+      .append("validator=").append(getValidator()).append(", ")
+      .append("pruneStrategy=").append(getPruneStrategy()).append(", ")
+      .append("connectOnCreate=").append(connectOnCreate).append(", ")
+      .append("connectionFactory=").append(connectionFactory).append(", ")
+      .append("failFastInitialize=").append(failFastInitialize).append(", ")
+      .append("initialized=").append(initialized).append(", ")
+      .append("availableCount=").append(availableCount()).append(", ")
+      .append("activeCount=").append(activeCount()).append("]").toString();
   }
 
 
@@ -932,9 +907,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     /** Underlying connection. */
     private final Connection conn;
 
-    /** Response produced when the connection was opened. */
-    private Response<Void> openResponse;
-
     /** Time this connection was created. */
     private final long createdTime = System.currentTimeMillis();
 
@@ -947,12 +919,10 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
      * Creates a new pooled connection.
      *
      * @param  c  connection to participate in this pool
-     * @param  r  response produced by opening the connection
      */
-    public DefaultPooledConnectionProxy(final Connection c, final Response<Void> r)
+    public DefaultPooledConnectionProxy(final Connection c)
     {
       conn = c;
-      openResponse = r;
     }
 
 
@@ -1006,7 +976,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
 
 
     @Override
-    @SuppressWarnings("unchecked")
     public Object invoke(final Object proxy, final Method method, final Object[] args)
       throws Throwable
     {
@@ -1015,19 +984,11 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
         // if the connection has been closed, invoke open
         if (!conn.isOpen()) {
           try {
-            openResponse = (Response<Void>) method.invoke(conn, args);
+            retValue = method.invoke(conn, args);
           } catch (InvocationTargetException e) {
             throw e.getTargetException();
           }
         }
-        retValue = openResponse;
-      } else if ("reopen".equals(method.getName())) {
-        try {
-          openResponse = (Response<Void>) method.invoke(conn, args);
-        } catch (InvocationTargetException e) {
-          throw e.getTargetException();
-        }
-        retValue = openResponse;
       } else if ("close".equals(method.getName())) {
         putConnection((Connection) proxy);
       } else {

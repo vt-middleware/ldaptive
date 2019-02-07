@@ -737,4 +737,97 @@ public class BeanGenerator
     generator.generate();
     generator.write(targetPath);
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+
+    private final BeanGenerator object = new BeanGenerator();
+
+
+    protected Builder() {}
+
+
+    public Builder schema(final Schema schema)
+    {
+      object.setSchema(schema);
+      return this;
+    }
+
+
+    public Builder packageName(final String name)
+    {
+      object.setPackageName(name);
+      return this;
+    }
+
+
+    public Builder objectClasses(final String... classes)
+    {
+      object.setObjectClasses(classes);
+      return this;
+    }
+
+
+    public Builder useOptionalAttributes(final boolean b)
+    {
+      object.setUseOptionalAttributes(b);
+      return this;
+    }
+
+
+    public Builder useOperationalAttributes(final boolean b)
+    {
+      object.setUseOperationalAttributes(b);
+      return this;
+    }
+
+
+    public Builder includeSuperiorClasses(final boolean b)
+    {
+      object.setIncludeSuperiorClasses(b);
+      return this;
+    }
+
+
+    public Builder typeMappings(final Map<String, Class<?>> mappings)
+    {
+      object.setTypeMappings(mappings);
+      return this;
+    }
+
+
+    public Builder nameMappings(final Map<String, String> mappings)
+    {
+      object.setNameMappings(mappings);
+      return this;
+    }
+
+
+    public Builder excludedNames(final String... classes)
+    {
+      object.setExcludedNames(classes);
+      return this;
+    }
+
+
+    public BeanGenerator build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

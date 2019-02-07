@@ -235,9 +235,7 @@ public final class DnParser
       char c = value.charAt(pos);
       boolean appendHex = false;
       boolean appendValue = false;
-      switch (c) {
-
-      case '\\':
+      if (c == '\\') {
         if (pos + 1 < value.length()) {
           c = value.charAt(++pos);
           // if hexadecimal character add to buffer to decode later
@@ -255,12 +253,9 @@ public final class DnParser
             appendValue = true;
           }
         }
-        break;
-
-      default:
+      } else {
         appendHex = hexValue.length() > 0;
         appendValue = true;
-        break;
       }
       if (appendHex) {
         sb.append(LdapUtils.utf8Encode(decodeHexValue(hexValue.toString().toCharArray())));

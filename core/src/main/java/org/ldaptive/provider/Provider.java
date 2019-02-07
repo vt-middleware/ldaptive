@@ -1,49 +1,28 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider;
 
+import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 
 /**
- * Provides access to a provider specific connection factory.
- *
- * @param  <T>  type of provider config for this provider
+ * Provides an abstraction layer for different {@link ProviderConnection} implementations.
  *
  * @author  Middleware Services
  */
-public interface Provider<T extends ProviderConfig>
+public interface Provider
 {
 
 
   /**
-   * Returns the provider configuration.
-   *
-   * @return  provider configuration
-   */
-  T getProviderConfig();
-
-
-  /**
-   * Sets the provider configuration.
-   *
-   * @param  pc  provider configuration
-   */
-  void setProviderConfig(T pc);
-
-
-  /**
-   * Returns the connection factory for this provider.
+   * Create a connection object. Implementations should not open a TCP socket in this method.
    *
    * @param  cc  connection configuration
    *
-   * @return  connection factory
+   * @return  provider connection
    */
-  ProviderConnectionFactory<T> getConnectionFactory(ConnectionConfig cc);
+  Connection create(ConnectionConfig cc);
 
 
-  /**
-   * Creates a new instance of this provider.
-   *
-   * @return  new instance of this provider
-   */
-  Provider<T> newInstance();
+  /** Free any resources associated with this provider. */
+  default void close() {}
 }

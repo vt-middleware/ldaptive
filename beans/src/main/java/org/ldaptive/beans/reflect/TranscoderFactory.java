@@ -3,7 +3,7 @@ package org.ldaptive.beans.reflect;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.transcode.ValueTranscoder;
 
 /**
  * Creates value transcoders and stores them in a static map.
@@ -60,7 +60,7 @@ public final class TranscoderFactory
   protected static ValueTranscoder<?> createValueTranscoder(final String type)
   {
     try {
-      return (ValueTranscoder<?>) Class.forName(type).newInstance();
+      return (ValueTranscoder<?>) Class.forName(type).getDeclaredConstructor().newInstance();
     } catch (Exception e) {
       throw new IllegalArgumentException("Could not instantiate transcoder", e);
     }

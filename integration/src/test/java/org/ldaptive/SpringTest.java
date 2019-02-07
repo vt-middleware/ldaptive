@@ -20,7 +20,7 @@ public class SpringTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"spring"})
+  @Test(groups = "spring")
   public void testSpringWiring()
     throws Exception
   {

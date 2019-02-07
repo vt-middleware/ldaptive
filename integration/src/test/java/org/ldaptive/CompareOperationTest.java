@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.ldaptive.referral.CompareReferralHandler;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -26,7 +25,7 @@ public class CompareOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry3")
-  @BeforeClass(groups = {"compare"})
+  @BeforeClass(groups = "compare")
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -37,7 +36,7 @@ public class CompareOperationTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"compare"})
+  @AfterClass(groups = "compare")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -54,92 +53,13 @@ public class CompareOperationTest extends AbstractTest
    */
   @Parameters({ "compareDn", "compareAttrName", "compareAttrValue" })
   @Test(
-    groups = {"compare"}, threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
+    groups = "compare", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
   public void compare(final String dn, final String attrName, final String attrValue)
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final CompareOperation compare = new CompareOperation(conn);
-      LdapAttribute la = new LdapAttribute();
-      la.setName("cn");
-      la.addStringValue("not-a-name");
-      AssertJUnit.assertFalse(compare.execute(new CompareRequest(dn, la)).getResult());
-
-      la = new LdapAttribute();
-      la.setName(attrName);
-      la.addStringValue(attrValue);
-      AssertJUnit.assertTrue(compare.execute(new CompareRequest(dn, la)).getResult());
-    }
-  }
-
-
-  /**
-   * @param  dn  to compare.
-   * @param  attrName  to compare with.
-   * @param  attrValue  to compare with.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Parameters(
-    {
-      "compareReferralDn",
-      "compareReferralAttrName",
-      "compareReferralAttrValue"
-    })
-  @Test(groups = {"compare"})
-  public void compareReferral(final String dn, final String attrName, final String attrValue)
-    throws Exception
-  {
-    if (TestControl.isActiveDirectory()) {
-      return;
-    }
-
-    // expects a referral on the dn ou=referrals
-    final String referralDn = "ou=referrals," + DnParser.substring(dn, 1);
-    final Connection conn = TestUtils.createConnection();
-    try {
-      conn.open();
-
-      final CompareOperation compare = new CompareOperation(conn);
-      try {
-        final CompareRequest request = new CompareRequest(referralDn, new LdapAttribute(attrName, attrValue));
-        final Response<Boolean> response = compare.execute(request);
-        AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
-        AssertJUnit.assertEquals(1, response.getReferralURLs().length);
-        AssertJUnit.assertEquals("ldap://localhost:389/ou=people,dc=vt,dc=edu", response.getReferralURLs()[0]);
-      } catch (LdapException e) {
-        AssertJUnit.assertEquals(ResultCode.REFERRAL, e.getResultCode());
-        AssertJUnit.assertEquals(1, e.getReferralURLs().length);
-        AssertJUnit.assertEquals("ldap://localhost:389/ou=people,dc=vt,dc=edu", e.getReferralURLs()[0]);
-      }
-    } finally {
-      conn.close();
-    }
-
-    try {
-      conn.open();
-
-      final CompareOperation compare = new CompareOperation(conn);
-      try {
-        final CompareRequest request = new CompareRequest(referralDn, new LdapAttribute(attrName, attrValue));
-        request.setReferralHandler(new CompareReferralHandler());
-
-        final Response<Boolean> response = compare.execute(request);
-        if (response.getResultCode() == ResultCode.COMPARE_TRUE) {
-          AssertJUnit.assertTrue(response.getResult());
-        } else {
-          // some providers don't support authenticated referrals
-          AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
-        }
-      } catch (UnsupportedOperationException e) {
-        // ignore this test if not supported
-        AssertJUnit.assertNotNull(e);
-      }
-    } finally {
-      conn.close();
-    }
+    final CompareOperation compare = new CompareOperation(TestUtils.createConnectionFactory());
+    AssertJUnit.assertFalse(compare.execute(new CompareRequest(dn, "cn", "not-a-name")).isTrue());
+    AssertJUnit.assertTrue(compare.execute(new CompareRequest(dn, attrName, attrValue)).isTrue());
   }
 }

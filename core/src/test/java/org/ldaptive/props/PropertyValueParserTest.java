@@ -3,9 +3,10 @@ package org.ldaptive.props;
 
 import java.time.Duration;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
-import org.ldaptive.handler.RecursiveEntryHandler;
+import org.ldaptive.handler.RecursiveResultHandler;
 import org.ldaptive.pool.IdlePruneStrategy;
-import org.ldaptive.sasl.CramMd5Config;
+import org.ldaptive.sasl.CramMD5Config;
+import org.ldaptive.sasl.DigestMD5Config;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
@@ -31,9 +32,9 @@ public class PropertyValueParserTest
   @DataProvider(name = "properties")
   public Object[][] createProperties()
   {
-    final String p1 = "org.ldaptive.handler.RecursiveEntryHandler" +
+    final String p1 = "org.ldaptive.handler.RecursiveResultHandler" +
       "{{searchAttribute=member}{mergeAttributes=mail,department}}";
-    final RecursiveEntryHandler o1 = new RecursiveEntryHandler();
+    final RecursiveResultHandler o1 = new RecursiveResultHandler();
     o1.setSearchAttribute("member");
     o1.setMergeAttributes("mail", "department");
 
@@ -45,14 +46,14 @@ public class PropertyValueParserTest
     o3.setPrunePeriod(Duration.ofMinutes(1));
     o3.setIdleTime(Duration.ofMinutes(2));
 
-    final String p4 = "org.ldaptive.sasl.CramMd5Config" +
+    final String p4 = "org.ldaptive.sasl.CramMD5Config" +
       "{{securityStrength=LOW}{qualityOfProtection=AUTH}}";
-    final CramMd5Config o4 = new CramMd5Config();
+    final CramMD5Config o4 = new CramMD5Config();
     o4.setSecurityStrength(SecurityStrength.LOW);
     o4.setQualityOfProtection(QualityOfProtection.AUTH);
 
     final String p5 = "{{mechanism=DIGEST_MD5}{authorizationId=test1}{mutualAuthentication=true}}";
-    final SaslConfig o5 = new SaslConfig();
+    final DigestMD5Config o5 = new DigestMD5Config();
     o5.setMechanism(Mechanism.DIGEST_MD5);
     o5.setAuthorizationId("test1");
     o5.setMutualAuthentication(true);
@@ -67,7 +68,7 @@ public class PropertyValueParserTest
         new Object[] {p2, null, o2, },
         new Object[] {p3, null, o3, },
         new Object[] {p4, null, o4, },
-        new Object[] {p5, SaslConfig.class, o5, },
+        new Object[] {p5, DigestMD5Config.class, o5, },
         new Object[] {p6, SaslConfig.class, o6, },
       };
   }
@@ -80,7 +81,7 @@ public class PropertyValueParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"props"}, dataProvider = "properties")
+  @Test(groups = "props", dataProvider = "properties")
   public void initializeType(final String property, final Class<?> type, final Object initialized)
     throws Exception
   {

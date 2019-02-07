@@ -4,7 +4,7 @@ package org.ldaptive.concurrent;
 import java.util.Collection;
 import java.util.concurrent.Future;
 import org.ldaptive.Request;
-import org.ldaptive.Response;
+import org.ldaptive.Result;
 
 /**
  * Interface for ldap operation workers. Operation workers leverage the java.util.concurrent package to execute
@@ -15,7 +15,7 @@ import org.ldaptive.Response;
  *
  * @author  Middleware Services
  */
-public interface OperationWorker<Q extends Request, S>
+public interface OperationWorker<Q extends Request, S extends Result>
 {
 
 
@@ -26,7 +26,7 @@ public interface OperationWorker<Q extends Request, S>
    *
    * @return  future response for this operation
    */
-  Future<Response<S>> execute(Q request);
+  Future<S> execute(Q request);
 
 
   /**
@@ -36,8 +36,7 @@ public interface OperationWorker<Q extends Request, S>
    *
    * @return  future responses for this operation
    */
-  @SuppressWarnings("unchecked")
-  Collection<Future<Response<S>>> execute(Q... requests);
+  Collection<Future<S>> execute(Q[] requests);
 
 
   /**
@@ -47,6 +46,5 @@ public interface OperationWorker<Q extends Request, S>
    *
    * @return  responses for this operation
    */
-  @SuppressWarnings("unchecked")
-  Collection<Response<S>> executeToCompletion(Q... requests);
+  Collection<S> executeToCompletion(Q[] requests);
 }

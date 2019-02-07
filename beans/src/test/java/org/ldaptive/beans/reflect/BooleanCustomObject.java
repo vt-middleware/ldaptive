@@ -10,7 +10,6 @@ import java.util.Set;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.Entry;
 
@@ -139,8 +138,8 @@ public class BooleanCustomObject implements CustomObject
 
     final T o1;
     try {
-      o1 = type.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      o1 = type.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
       throw new IllegalStateException(e);
     }
     o1.setType1(true);
@@ -166,41 +165,41 @@ public class BooleanCustomObject implements CustomObject
    */
   public static LdapEntry createLdapEntry()
   {
-    final LdapAttribute typeArray1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeArray1 = new LdapAttribute();
     typeArray1.setName("typeArray1");
     typeArray1.addStringValue("false", "true");
 
-    final LdapAttribute typeArray2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeArray2 = new LdapAttribute();
     typeArray2.setName("typeArray2");
     typeArray2.addStringValue("false", "true");
 
-    final LdapAttribute typeCol1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeCol1 = new LdapAttribute();
     typeCol1.setName("typeCol1");
     typeCol1.addStringValue("true", "false");
 
-    final LdapAttribute typeCol2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeCol2 = new LdapAttribute();
     typeCol2.setName("typeCol2");
     typeCol2.addStringValue("false", "true");
 
-    final LdapAttribute typeSet1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeSet1 = new LdapAttribute();
     typeSet1.setName("typeSet1");
     typeSet1.addStringValue("true", "false");
 
-    final LdapAttribute typeSet2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeSet2 = new LdapAttribute();
     typeSet2.setName("typeSet2");
     typeSet2.addStringValue("true", "false");
 
-    final LdapAttribute typeList1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeList1 = new LdapAttribute();
     typeList1.setName("typeList1");
     typeList1.addStringValue("false", "true");
 
-    final LdapAttribute typeList2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeList2 = new LdapAttribute();
     typeList2.setName("typeList2");
     typeList2.addStringValue("true", "false");
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=Boolean Entry,ou=people,dc=ldaptive,dc=org");
-    entry.addAttribute(
+    entry.addAttributes(
       new LdapAttribute("type1", "true"),
       new LdapAttribute("type2", "false"),
       new LdapAttribute("booleanthree", "true"),
@@ -222,8 +221,8 @@ public class BooleanCustomObject implements CustomObject
       @Attribute(name = "type1", property = "type1"),
       @Attribute(name = "type2", property = "type2"),
       @Attribute(name = "booleanthree", property = "type3"),
-      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray1", property = "typeArray1"),
+      @Attribute(name = "typeArray2", property = "typeArray2"),
       @Attribute(name = "typeCol1", property = "typeCol1"),
       @Attribute(name = "typeCol2", property = "typeCol2"),
       @Attribute(name = "typeSet1", property = "typeSet1"),
@@ -239,8 +238,8 @@ public class BooleanCustomObject implements CustomObject
       @Attribute(name = "type1", property = "type1"),
       @Attribute(name = "type2", property = "type2"),
       @Attribute(name = "booleanthree", property = "type3"),
-      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray1", property = "typeArray1"),
+      @Attribute(name = "typeArray2", property = "typeArray2"),
       @Attribute(name = "typeCol1", property = "typeCol1"),
       @Attribute(name = "typeCol2", property = "typeCol2"),
       @Attribute(name = "typeSet1", property = "typeSet1"),

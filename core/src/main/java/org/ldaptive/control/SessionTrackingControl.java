@@ -223,16 +223,13 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, sessionSourceIp=%s, sessionSourceName=%s, formatOID=%s, sessionTrackingIdentifier=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        sessionSourceIp,
-        sessionSourceName,
-        formatOID,
-        sessionTrackingIdentifier);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("sessionSourceIp=").append(sessionSourceIp).append(", ")
+      .append("sessionSourceName=").append(sessionSourceName).append(", ")
+      .append("formatOID=").append(formatOID).append(", ")
+      .append("sessionTrackingIdentifier=").append(sessionTrackingIdentifier).append("]").toString();
   }
 
 
@@ -245,9 +242,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     l.add(new OctetStringType(getFormatOID()));
     l.add(new OctetStringType(getSessionTrackingIdentifier()));
 
-    final ConstructedDEREncoder se = new ConstructedDEREncoder(
-      UniversalDERTag.SEQ,
-      l.toArray(new DEREncoder[l.size()]));
+    final ConstructedDEREncoder se = new ConstructedDEREncoder(UniversalDERTag.SEQ, l.toArray(new DEREncoder[0]));
     return se.encode();
   }
 

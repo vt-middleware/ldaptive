@@ -42,7 +42,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   public static final String OID = "2.16.840.1.113730.3.4.10";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 773;
+  private static final int HASH_CODE_SEED = 10709;
 
   /** list offset for the target entry. */
   private int targetPosition;
@@ -254,16 +254,13 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, targetPosition=%s, contentCount=%s, viewResult=%s, contextID=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        targetPosition,
-        contentCount,
-        viewResult,
-        LdapUtils.base64Encode(contextID));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("targetPosition=").append(targetPosition).append(", ")
+      .append("contentCount=").append(contentCount).append(", ")
+      .append("viewResult=").append(viewResult).append(", ")
+      .append("contextID=").append(LdapUtils.base64Encode(contextID)).append("]").toString();
   }
 
 

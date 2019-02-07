@@ -4,16 +4,13 @@ package org.ldaptive.beans.spring;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
-import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.AttributeValueMutator;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.transcode.ValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.TypeDescriptor;
@@ -78,13 +75,6 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   public boolean isBinary()
   {
     return attribute.binary();
-  }
-
-
-  @Override
-  public SortBehavior getSortBehavior()
-  {
-    return attribute.sortBehavior();
   }
 
 
@@ -243,16 +233,12 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::attribute=%s, expression=%s, evaluationContext=%s, " +
-        "transcoder=%s]",
-        getClass().getName(),
-        hashCode(),
-        attribute,
-        expression,
-        evaluationContext,
-        transcoder);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("attribute=").append(attribute).append(", ")
+      .append("expression=").append(expression).append(", ")
+      .append("evaluationContext=").append(evaluationContext).append(", ")
+      .append("transcoder=").append(transcoder).append("]").toString();
   }
 
 
@@ -275,13 +261,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
         c = new ArrayList<>(size);
       }
     } else if (Set.class.isAssignableFrom(type)) {
-      if (LinkedHashSet.class.isAssignableFrom(type)) {
-        c = new LinkedHashSet<>(size);
-      } else if (TreeSet.class.isAssignableFrom(type)) {
-        c = new TreeSet<>();
-      } else {
-        c = new HashSet<>(size);
-      }
+      c = new LinkedHashSet<>(size);
     } else {
       c = new ArrayList<>(size);
     }

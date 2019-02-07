@@ -4,13 +4,14 @@ package org.ldaptive.concurrent;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.BindOperation;
 import org.ldaptive.BindRequest;
+import org.ldaptive.BindResponse;
 
 /**
  * Executes an ldap bind operation on a separate thread.
  *
  * @author  Middleware Services
  */
-public class BindOperationWorker extends AbstractOperationWorker<BindRequest, Void>
+public class BindOperationWorker extends AbstractOperationWorker<BindRequest, BindResponse>
 {
 
 

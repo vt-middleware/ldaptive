@@ -92,13 +92,10 @@ public class AccountState
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::accountWarnings=%s, accountErrors=%s]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(accountWarnings),
-        Arrays.toString(accountErrors));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("accountWarnings=").append(Arrays.toString(accountWarnings)).append(", ")
+      .append("accountErrors=").append(Arrays.toString(accountErrors)).append("]").toString();
   }
 
 
@@ -196,13 +193,10 @@ public class AccountState
     @Override
     public String toString()
     {
-      return
-        String.format(
-          "[%s@%d::expiration=%s, loginsRemaining=%s]",
-          getClass().getName(),
-          hashCode(),
-          expiration,
-          loginsRemaining);
+      return new StringBuilder("[").append(
+        getClass().getName()).append("@").append(hashCode()).append("::")
+        .append("expiration=").append(expiration).append(", ")
+        .append("loginsRemaining=").append(loginsRemaining).append("]").toString();
     }
   }
 }

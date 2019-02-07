@@ -36,7 +36,7 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
   public static final String OID = "2.16.840.1.113730.3.4.9";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 761;
+  private static final int HASH_CODE_SEED = 769;
 
   /** number of entries before the target entry the server should send. */
   private int beforeCount;
@@ -406,19 +406,14 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, beforeCount=%s, afterCount=%s, targetOffset=%s, contentCount=%s, assertionValue=%s, " +
-        "contextID=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        beforeCount,
-        afterCount,
-        targetOffset,
-        contentCount,
-        assertionValue,
-        LdapUtils.base64Encode(contextID));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("beforeCount=").append(beforeCount).append(", ")
+      .append("afterCount=").append(afterCount).append(", ")
+      .append("targetOffset=").append(targetOffset).append(", ")
+      .append("contentCount=").append(contentCount).append(", ")
+      .append("assertionValue=").append(LdapUtils.base64Encode(contextID)).append("]").toString();
   }
 
 
@@ -448,7 +443,7 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      l.toArray(new DEREncoder[l.size()]));
+      l.toArray(new DEREncoder[0]));
     return se.encode();
   }
 }

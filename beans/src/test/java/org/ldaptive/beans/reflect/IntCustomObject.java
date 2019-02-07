@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.Entry;
 
@@ -138,8 +137,8 @@ public class IntCustomObject implements CustomObject
 
     final T o1;
     try {
-      o1 = type.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      o1 = type.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
       throw new IllegalStateException(e);
     }
     o1.setType1(100);
@@ -165,8 +164,8 @@ public class IntCustomObject implements CustomObject
       @Attribute(name = "type1", property = "type1"),
       @Attribute(name = "type2", property = "type2"),
       @Attribute(name = "numberthree", property = "type3"),
-      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray1", property = "typeArray1"),
+      @Attribute(name = "typeArray2", property = "typeArray2"),
       @Attribute(name = "typeCol1", property = "typeCol1"),
       @Attribute(name = "typeCol2", property = "typeCol2"),
       @Attribute(name = "typeSet1", property = "typeSet1"),
@@ -182,8 +181,8 @@ public class IntCustomObject implements CustomObject
       @Attribute(name = "type1", property = "type1"),
       @Attribute(name = "type2", property = "type2"),
       @Attribute(name = "numberthree", property = "type3"),
-      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray1", property = "typeArray1"),
+      @Attribute(name = "typeArray2", property = "typeArray2"),
       @Attribute(name = "typeCol1", property = "typeCol1"),
       @Attribute(name = "typeCol2", property = "typeCol2"),
       @Attribute(name = "typeSet1", property = "typeSet1"),

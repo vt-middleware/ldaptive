@@ -15,21 +15,4 @@ public class ExternalConfig extends SaslConfig
   {
     setMechanism(Mechanism.EXTERNAL);
   }
-
-
-  @Override
-  public String toString()
-  {
-    return
-      String.format(
-        "[%s@%d::mechanism=%s, authorizationId=%s, mutualAuthentication=%s, " +
-        "qualityOfProtection=%s, securityStrength=%s]",
-        getClass().getName(),
-        hashCode(),
-        getMechanism(),
-        getAuthorizationId(),
-        getMutualAuthentication(),
-        getQualityOfProtection(),
-        getSecurityStrength());
-  }
 }

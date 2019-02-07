@@ -1,31 +1,21 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.ldaptive.control.RequestControl;
-import org.ldaptive.handler.IntermediateResponseHandler;
-import org.ldaptive.referral.ReferralHandler;
-
 /**
- * Marker interface for all ldap requests.
+ * LDAP protocol request.
  *
  * @author  Middleware Services
  */
-public interface Request extends Message<RequestControl>
+public interface Request
 {
 
 
   /**
-   * Returns the referral handler.
+   * Encode this request as asn.1.
    *
-   * @return  referral handler
-   */
-  ReferralHandler getReferralHandler();
-
-
-  /**
-   * Returns the intermediate response handlers.
+   * @param  id  message id of this request
    *
-   * @return  intermediate response handlers
+   * @return  asn.1 encoded request
    */
-  IntermediateResponseHandler[] getIntermediateResponseHandlers();
+  byte[] encode(int id);
 }

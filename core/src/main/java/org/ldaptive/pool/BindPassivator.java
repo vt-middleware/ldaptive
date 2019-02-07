@@ -1,11 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
-import org.ldaptive.BindOperation;
+import org.ldaptive.AnonymousBindRequest;
 import org.ldaptive.BindRequest;
 import org.ldaptive.Connection;
-import org.ldaptive.Response;
-import org.ldaptive.ResultCode;
+import org.ldaptive.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +26,7 @@ public class BindPassivator implements Passivator<Connection>
   /** Creates a new bind passivator. */
   public BindPassivator()
   {
-    bindRequest = new BindRequest();
+    bindRequest = new AnonymousBindRequest();
   }
 
 
@@ -67,23 +66,23 @@ public class BindPassivator implements Passivator<Connection>
   @Override
   public boolean passivate(final Connection c)
   {
-    boolean success = false;
     if (c != null) {
       try {
-        final BindOperation bind = new BindOperation(c);
-        final Response<Void> response = bind.execute(bindRequest);
-        success = ResultCode.SUCCESS == response.getResultCode();
+        final Result result = c.operation(bindRequest).execute();
+        return result.isSuccess();
       } catch (Exception e) {
         logger.debug("passivation failed for bind request {}", bindRequest, e);
       }
     }
-    return success;
+    return false;
   }
 
 
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::bindRequest=%s]", getClass().getName(), hashCode(), bindRequest);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("bindRequest=").append(bindRequest).append("]").toString();
   }
 }

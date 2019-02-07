@@ -10,9 +10,9 @@ import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.ldaptive.LdapException;
-import org.ldaptive.SearchResult;
-import org.ldaptive.concurrent.AggregatePooledSearchExecutor;
-import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.PooledConnectionFactory;
+import org.ldaptive.SearchResponse;
+import org.ldaptive.concurrent.AggregateSearchOperation;
 import org.ldaptive.templates.Query;
 import org.ldaptive.templates.SearchTemplates;
 import org.ldaptive.templates.SearchTemplatesExecutor;
@@ -56,15 +56,15 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
     logger.debug("{} = {}", SPRING_CONTEXT_PATH, springContextPath);
 
     final ApplicationContext context = new ClassPathXmlApplicationContext(springContextPath);
-    setSearchExecutor(context.getBean(AggregatePooledSearchExecutor.class));
-    logger.debug("searchExecutor = {}", getSearchExecutor());
+    setSearchOperation(context.getBean(AggregateSearchOperation.class));
+    logger.debug("searchExecutor = {}", getSearchOperation());
 
     final Map<String, PooledConnectionFactory> factories = context.getBeansOfType(PooledConnectionFactory.class);
-    setConnectionFactories(factories.values().toArray(new PooledConnectionFactory[factories.size()]));
+    setConnectionFactories(factories.values().toArray(new PooledConnectionFactory[0]));
     logger.debug("connectionFactories = {}", Arrays.toString(getConnectionFactories()));
 
     final Map<String, SearchTemplates> templates = context.getBeansOfType(SearchTemplates.class);
-    setSearchTemplates(templates.values().toArray(new SearchTemplates[templates.size()]));
+    setSearchTemplates(templates.values().toArray(new SearchTemplates[0]));
     logger.debug("searchTemplates = {}", Arrays.toString(getSearchTemplates()));
 
     ignorePattern = config.getInitParameter(IGNORE_PATTERN) != null
@@ -134,7 +134,7 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
         query.setToResult(toResult);
         logger.info("Performing query {}", query);
 
-        final SearchResult result = search(query);
+        final SearchResponse result = search(query);
         writeResponse(result, response);
       }
     }
@@ -149,6 +149,6 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
    *
    * @throws  IOException  if an error occurs writing to the response
    */
-  protected abstract void writeResponse(SearchResult result, HttpServletResponse response)
+  protected abstract void writeResponse(SearchResponse result, HttpServletResponse response)
     throws IOException;
 }

@@ -238,18 +238,93 @@ public class PoolConfig extends AbstractConfig
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::minPoolSize=%s, maxPoolSize=%s, validateOnCheckIn=%s, validateOnCheckOut=%s, " +
-        "validatePeriodically=%s, validatePeriod=%s, validateTimeout=%s]",
-        getClass().getName(),
-        hashCode(),
-        minPoolSize,
-        maxPoolSize,
-        validateOnCheckIn,
-        validateOnCheckOut,
-        validatePeriodically,
-        validatePeriod,
-        validateTimeout);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("minPoolSize=").append(minPoolSize).append(", ")
+      .append("maxPoolSize=").append(maxPoolSize).append(", ")
+      .append("validateOnCheckIn=").append(validateOnCheckIn).append(", ")
+      .append("validateOnCheckOut=").append(validateOnCheckOut).append(", ")
+      .append("validatePeriodically=").append(validatePeriodically).append(", ")
+      .append("validatePeriod=").append(validatePeriod).append(", ")
+      .append("validateTimeout=").append(validateTimeout).append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+
+    private final PoolConfig object = new PoolConfig();
+
+
+    protected Builder() {}
+
+
+    public Builder min(final int size)
+    {
+      object.setMinPoolSize(size);
+      return this;
+    }
+
+
+    public Builder max(final int size)
+    {
+      object.setMaxPoolSize(size);
+      return this;
+    }
+
+
+    public Builder validateOnCheckIn(final boolean b)
+    {
+      object.setValidateOnCheckIn(b);
+      return this;
+    }
+
+
+    public Builder validateOnCheckOut(final boolean b)
+    {
+      object.setValidateOnCheckOut(b);
+      return this;
+    }
+
+
+    public Builder validatePeriodically(final boolean b)
+    {
+      object.setValidatePeriodically(b);
+      return this;
+    }
+
+
+    public Builder validatePeriod(final Duration period)
+    {
+      object.setValidatePeriod(period);
+      return this;
+    }
+
+
+    public Builder validateTimeout(final Duration time)
+    {
+      object.setValidateTimeout(time);
+      return this;
+    }
+
+
+    public PoolConfig build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

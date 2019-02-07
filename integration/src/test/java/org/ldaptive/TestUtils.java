@@ -13,7 +13,6 @@ import org.ldaptive.io.LdifReader;
 import org.ldaptive.props.AuthenticatorPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 import org.testng.AssertJUnit;
-import org.testng.annotations.DataProvider;
 
 /**
  * Utility methods for ldap tests.
@@ -70,97 +69,107 @@ public final class TestUtils
 
 
   /**
-   * @return  connection
-   *
-   * @throws  Exception  On test failure.
+   * @return  connection factory
    */
-  @DataProvider(name = "setup-ldap")
-  public static Connection createSetupConnection()
-    throws Exception
+  public static ConnectionFactory createSetupConnectionFactory()
   {
-    return
-      DefaultConnectionFactory.getConnection(readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"))
+      .build();
   }
 
 
   /**
-   * @return  connection
-   *
-   * @throws  Exception  On test failure.
+   * @return  connection factory
    */
-  @DataProvider(name = "ldap")
-  public static Connection createConnection()
-    throws Exception
+  public static ConnectionFactory createConnectionFactory()
   {
-    return DefaultConnectionFactory.getConnection(readConnectionConfig(null));
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig(null))
+      .build();
   }
 
 
   /**
-   * @return  connection
+   * @return  connection factory
    *
-   * @throws  Exception  On test failure.
+   * @throws  LdapException  if the factory cannot be initialized
    */
-  @DataProvider(name = "sasl-external-ldap")
-  public static Connection createSaslExternalConnection()
-    throws Exception
+  public static SingleConnectionFactory createSingleConnectionFactory()
+    throws LdapException
   {
-    return
-      DefaultConnectionFactory.getConnection(readConnectionConfig("classpath:/org/ldaptive/ldap.external.properties"));
+    final SingleConnectionFactory cf =  SingleConnectionFactory.builder()
+      .config(readConnectionConfig(null))
+      .build();
+    cf.initialize();
+    return cf;
   }
 
 
   /**
-   * @return  connection
+   * @return  connection factory
    *
-   * @throws  Exception  On test failure.
+   * @throws  LdapException  if the factory cannot be initialized
    */
-  @DataProvider(name = "digest-md5-ldap")
-  public static Connection createDigestMd5Connection()
-    throws Exception
+  public static PooledConnectionFactory createPooledConnectionFactory()
+    throws LdapException
   {
-    return
-      DefaultConnectionFactory.getConnection(
-        readConnectionConfig("classpath:/org/ldaptive/ldap.digest-md5.properties"));
+    final PooledConnectionFactory cf =  PooledConnectionFactory.builder()
+      .config(readConnectionConfig(null))
+      .build();
+    cf.initialize();
+    return cf;
   }
 
 
   /**
-   * @return  connection
-   *
-   * @throws  Exception  On test failure.
+   * @return  connection factory
    */
-  @DataProvider(name = "cram-md5-ldap")
-  public static Connection createCramMd5Connection()
-    throws Exception
+  public static ConnectionFactory createSaslExternalConnectionFactory()
   {
-    return
-      DefaultConnectionFactory.getConnection(readConnectionConfig("classpath:/org/ldaptive/ldap.cram-md5.properties"));
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.external.properties"))
+      .build();
   }
 
 
   /**
-   * @return  connection
-   *
-   * @throws  Exception  On test failure.
+   * @return  connection factory
    */
-  @DataProvider(name = "gss-api-ldap")
-  public static Connection createGssApiConnection()
-    throws Exception
+  public static ConnectionFactory createDigestMd5ConnectionFactory()
   {
-    return
-      DefaultConnectionFactory.getConnection(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi.properties"));
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.digest-md5.properties"))
+      .build();
+  }
+
+
+  /**
+   * @return  connection factory
+   */
+  public static ConnectionFactory createCramMd5ConnectionFactory()
+  {
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.cram-md5.properties"))
+      .build();
+  }
+
+
+  /**
+   * @return  connection factory
+   */
+  public static ConnectionFactory createGssApiConnectionFactory()
+  {
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi.properties"))
+      .build();
   }
 
 
   /**
    * @return  authenticator
-   *
-   * @throws  Exception  On test failure.
    */
-  @DataProvider(name = "ssl-auth")
   public static Authenticator createSSLAuthenticator()
-    throws Exception
   {
     return readAuthenticator("classpath:/org/ldaptive/ldap.ssl.properties");
   }
@@ -168,12 +177,8 @@ public final class TestUtils
 
   /**
    * @return  authenticator
-   *
-   * @throws  Exception  On test failure.
    */
-  @DataProvider(name = "ssl-dn-auth")
   public static Authenticator createSSLDnAuthenticator()
-    throws Exception
   {
     final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.ssl.properties");
     auth.setDnResolver(new NoOpDnResolver());
@@ -183,12 +188,8 @@ public final class TestUtils
 
   /**
    * @return  authenticator
-   *
-   * @throws  Exception  On test failure.
    */
-  @DataProvider(name = "tls-auth")
   public static Authenticator createTLSAuthenticator()
-    throws Exception
   {
     return readAuthenticator("classpath:/org/ldaptive/ldap.tls.properties");
   }
@@ -196,44 +197,10 @@ public final class TestUtils
 
   /**
    * @return  authenticator
-   *
-   * @throws  Exception  On test failure.
    */
-  @DataProvider(name = "tls-dn-auth")
   public static Authenticator createTLSDnAuthenticator()
-    throws Exception
   {
     final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.tls.properties");
-    auth.setDnResolver(new NoOpDnResolver());
-    return auth;
-  }
-
-
-  /**
-   * @return  authenticator
-   *
-   * @throws  Exception  On test failure.
-   */
-  @DataProvider(name = "digest-md5-auth")
-  public static Authenticator createDigestMD5Authenticator()
-    throws Exception
-  {
-    final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.digest-md5.properties");
-    auth.setDnResolver(new NoOpDnResolver());
-    return auth;
-  }
-
-
-  /**
-   * @return  authenticator
-   *
-   * @throws  Exception  On test failure.
-   */
-  @DataProvider(name = "cram-md5-auth")
-  public static Authenticator createCramMD5Authenticator()
-    throws Exception
-  {
-    final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.cram-md5.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
   }
@@ -245,11 +212,8 @@ public final class TestUtils
    * @param  filename  to open.
    *
    * @return  reader.
-   *
-   * @throws  Exception  If file cannot be read.
    */
   public static BufferedReader readFile(final String filename)
-    throws Exception
   {
     return new BufferedReader(new InputStreamReader(TestUtils.class.getResourceAsStream(filename)));
   }
@@ -287,7 +251,7 @@ public final class TestUtils
    *
    * @throws  Exception  if ldif cannot be read
    */
-  public static SearchResult convertLdifToResult(final String ldif)
+  public static SearchResponse convertLdifToResult(final String ldif)
     throws Exception
   {
     final LdifReader reader = new LdifReader(new StringReader(ldif));
@@ -305,13 +269,13 @@ public final class TestUtils
    */
   public static LdapEntry convertStringToEntry(final String dn, final String attrs)
   {
-    final LdapEntry le = new LdapEntry(dn);
+    final LdapEntry le = LdapEntry.builder().dn(dn).build();
     for (String s : attrs.split("\\|")) {
       final String[] nameValuePairs = s.trim().split("=", 2);
       if (le.getAttribute(nameValuePairs[0]) != null) {
         le.getAttribute(nameValuePairs[0]).addStringValue(nameValuePairs[1]);
       } else {
-        le.addAttribute(new LdapAttribute(nameValuePairs[0], nameValuePairs[1]));
+        le.addAttributes(new LdapAttribute(nameValuePairs[0], nameValuePairs[1]));
       }
     }
     return le;
@@ -319,31 +283,34 @@ public final class TestUtils
 
 
   /**
-   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after converting the entries in actual from SearchEntry to
-   * LdapEntry.
+   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after removing the controls and messageId from the actual
+   * response entries.
    *
    * @param  expected  value
    * @param  actual  value
    */
-  public static void assertEquals(final SearchResult expected, final SearchResult actual)
+  public static void assertEquals(final SearchResponse expected, final SearchResponse actual)
   {
-    final SearchResult newResult = new SearchResult();
+    final SearchResponse newResult = new SearchResponse();
     for (LdapEntry e : actual.getEntries()) {
-      newResult.addEntry(new LdapEntry(e.getDn(), e.getAttributes()));
+      AssertJUnit.assertNotNull(e);
+      newResult.addEntry(LdapEntry.builder().dn(e.getDn()).attributes(e.getAttributes()).build());
     }
     AssertJUnit.assertEquals(expected, newResult);
   }
 
 
   /**
-   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after converting the actual entry to an LdapEntry.
+   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after removing the controls and messageId from the actual
+   * entry.
    *
    * @param  expected  value
    * @param  actual  value
    */
   public static void assertEquals(final LdapEntry expected, final LdapEntry actual)
   {
-    final LdapEntry newEntry = new LdapEntry(actual.getDn(), actual.getAttributes());
+    AssertJUnit.assertNotNull(actual);
+    final LdapEntry newEntry = LdapEntry.builder().dn(actual.getDn()).attributes(actual.getAttributes()).build();
     AssertJUnit.assertEquals(expected, newEntry);
   }
 

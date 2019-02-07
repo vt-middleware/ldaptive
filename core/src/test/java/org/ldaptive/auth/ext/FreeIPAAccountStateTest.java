@@ -83,7 +83,7 @@ public class FreeIPAAccountStateTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"auth-ext"}, dataProvider = "errors")
+  @Test(groups = "auth-ext", dataProvider = "errors")
   public void parse(final ResultCode rc, final String message, final FreeIPAAccountState.Error err)
     throws Exception
   {

@@ -94,31 +94,26 @@ public class FreeIPAAccountState extends AccountState
         throw new AccountNotFoundException(name());
 
       case FAILED_AUTHENTICATION:
-        throw new FailedLoginException(name());
 
       case ACCOUNT_DISABLED:
+
+      case CREDENTIAL_NOT_FOUND:
+
+      case UNKNOWN:
         throw new FailedLoginException(name());
 
       case PASSWORD_EXPIRED:
         throw new CredentialExpiredException(name());
 
-      case CREDENTIAL_NOT_FOUND:
-        throw new FailedLoginException(name());
-
       case ACCOUNT_EXPIRED:
         throw new AccountExpiredException(name());
 
       case MAXIMUM_LOGINS_EXCEEDED:
-        throw new AccountLockedException(name());
 
       case LOGIN_TIME_LIMITED:
-        throw new AccountLockedException(name());
 
       case LOGIN_LOCKOUT:
         throw new AccountLockedException(name());
-
-      case UNKNOWN:
-        throw new FailedLoginException(name());
 
       default:
         throw new IllegalStateException("Unknown FreeIPA error: " + this);
