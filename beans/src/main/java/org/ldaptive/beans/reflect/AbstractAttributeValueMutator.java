@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.reflect;
 
-import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.AttributeValueMutator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +22,6 @@ public abstract class AbstractAttributeValueMutator implements AttributeValueMut
   /** Whether this attribute is binary. */
   private final boolean attributeBinary;
 
-  /** Sort behavior of this attribute. */
-  private final SortBehavior attributeSortBehavior;
-
   /** Transcoder for modifying this attribute. */
   private final ReflectionTranscoder valueTranscoder;
 
@@ -35,18 +31,12 @@ public abstract class AbstractAttributeValueMutator implements AttributeValueMut
    *
    * @param  name  of the attribute
    * @param  binary  whether this attribute is binary
-   * @param  sortBehavior  how to sort this attribute
    * @param  transcoder  for mutating the attribute
    */
-  public AbstractAttributeValueMutator(
-    final String name,
-    final boolean binary,
-    final SortBehavior sortBehavior,
-    final ReflectionTranscoder transcoder)
+  public AbstractAttributeValueMutator(final String name, final boolean binary, final ReflectionTranscoder transcoder)
   {
     attributeName = name;
     attributeBinary = binary;
-    attributeSortBehavior = sortBehavior;
     valueTranscoder = transcoder;
   }
 
@@ -62,13 +52,6 @@ public abstract class AbstractAttributeValueMutator implements AttributeValueMut
   public boolean isBinary()
   {
     return attributeBinary;
-  }
-
-
-  @Override
-  public SortBehavior getSortBehavior()
-  {
-    return attributeSortBehavior;
   }
 
 

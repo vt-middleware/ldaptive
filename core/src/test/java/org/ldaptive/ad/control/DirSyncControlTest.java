@@ -122,7 +122,7 @@ public class DirSyncControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
+  @Test(groups = "control", dataProvider = "request-response")
   public void encode(final DERBuffer berValue, final DirSyncControl expected)
     throws Exception
   {
@@ -136,7 +136,7 @@ public class DirSyncControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
+  @Test(groups = "control", dataProvider = "request-response")
   public void decode(final DERBuffer berValue, final DirSyncControl expected)
     throws Exception
   {

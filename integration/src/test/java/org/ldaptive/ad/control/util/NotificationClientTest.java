@@ -6,8 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModificationType;
-import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
@@ -16,7 +15,6 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
-import org.ldaptive.async.AsyncRequest;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -36,7 +34,7 @@ public class NotificationClientTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("ncSearchDn")
-  @Test(groups = {"control-util"})
+  @Test(groups = "control-util")
   public void execute(final String dn)
     throws Exception
   {
@@ -44,16 +42,9 @@ public class NotificationClientTest extends AbstractTest
       return;
     }
 
-    // provider doesn't support this control
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP does not support this control");
-    }
-
-    final Connection conn = TestUtils.createConnection();
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
     try {
-      conn.open();
-
-      final NotificationClient client = new NotificationClient(conn);
+      final NotificationClient client = new NotificationClient(cf);
 
       final SearchRequest request = new SearchRequest(
         "ou=test,dc=middleware,dc=vt,dc=edu",
@@ -67,17 +58,14 @@ public class NotificationClientTest extends AbstractTest
       if (item.isException()) {
         throw item.getException();
       }
-      AssertJUnit.assertTrue(item.isAsyncRequest());
-      AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
+      AssertJUnit.assertTrue(item.getResult().getMessageID() > 0);
 
-      final AsyncRequest asyncRequest = item.getAsyncRequest();
-
-      final ModifyOperation modify = new ModifyOperation(conn);
+      final ModifyOperation modify = new ModifyOperation(cf);
       modify.execute(
         new ModifyRequest(
           dn,
           new AttributeModification(
-            AttributeModificationType.REPLACE,
+            AttributeModification.Type.REPLACE,
             new LdapAttribute("sn", Integer.toString(new Random().nextInt(1000000))))));
 
       item = results.poll(5, TimeUnit.SECONDS);
@@ -85,16 +73,13 @@ public class NotificationClientTest extends AbstractTest
       AssertJUnit.assertTrue(item.isEntry());
       AssertJUnit.assertNotNull(item.getEntry());
 
-      asyncRequest.abandon();
-
+      client.abandon();
     } finally {
-      final ModifyOperation modify = new ModifyOperation(conn);
+      final ModifyOperation modify = new ModifyOperation(cf);
       modify.execute(
         new ModifyRequest(
           dn,
-          new AttributeModification(AttributeModificationType.REPLACE, new LdapAttribute("sn", "Admin"))));
-
-      conn.close();
+          new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute("sn", "Admin"))));
     }
   }
 }

@@ -4,7 +4,7 @@ package org.ldaptive.props;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.ConnectionStrategy;
-import org.ldaptive.DefaultConnectionStrategy;
+import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.RandomConnectionStrategy;
 import org.ldaptive.RoundRobinConnectionStrategy;
 
@@ -36,14 +36,14 @@ public class ConnectionConfigPropertyInvoker extends AbstractPropertyInvoker
       if (ConnectionInitializer.class.isAssignableFrom(type)) {
         newValue = createTypeFromPropertyValue(ConnectionInitializer.class, value);
       } else if (ConnectionStrategy.class.isAssignableFrom(type)) {
-        if ("DEFAULT".equals(value)) {
-          newValue = new DefaultConnectionStrategy();
-        } else if ("ACTIVE_PASSIVE".equals(value)) {
+        if ("ACTIVE_PASSIVE".equals(value)) {
           newValue = new ActivePassiveConnectionStrategy();
         } else if ("ROUND_ROBIN".equals(value)) {
           newValue = new RoundRobinConnectionStrategy();
         } else if ("RANDOM".equals(value)) {
           newValue = new RandomConnectionStrategy();
+        } else if ("DNS_SRV".equals(value)) {
+          newValue = new DnsSrvConnectionStrategy();
         } else {
           newValue = createTypeFromPropertyValue(ConnectionStrategy.class, value);
         }

@@ -548,28 +548,21 @@ public class AttributeType extends AbstractNamedSchemaElement
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::oid=%s, names=%s, description=%s, obsolete=%s, " +
-        "superiorType=%s, equalityMatchingRule=%s, " +
-        "orderingMatchingRule=%s, substringMatchingRule=%s, syntaxOID=%s, " +
-        "singleValued=%s, collective=%s, noUserModification=%s, usage=%s, " +
-        "extensions=%s]",
-        getClass().getName(),
-        hashCode(),
-        oid,
-        Arrays.toString(getNames()),
-        getDescription(),
-        isObsolete(),
-        superiorType,
-        equalityMatchingRule,
-        orderingMatchingRule,
-        substringMatchingRule,
-        syntaxOID,
-        singleValued,
-        collective,
-        noUserModification,
-        usage,
-        getExtensions());
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("oid=").append(oid).append(", ")
+      .append("names=").append(Arrays.toString(getNames())).append(", ")
+      .append("description=").append(getDescription()).append(", ")
+      .append("obsolete=").append(isObsolete()).append(", ")
+      .append("superiorType=").append(superiorType).append(", ")
+      .append("equalityMatchingRule=").append(equalityMatchingRule).append(", ")
+      .append("orderingMatchingRule=").append(orderingMatchingRule).append(", ")
+      .append("substringMatchingRule=").append(substringMatchingRule).append(", ")
+      .append("syntaxOID=").append(syntaxOID).append(", ")
+      .append("singleValued=").append(singleValued).append(", ")
+      .append("collective=").append(collective).append(", ")
+      .append("noUserModification=").append(noUserModification).append(", ")
+      .append("usage=").append(usage).append(", ")
+      .append("extensions=").append(getExtensions()).append("]").toString();
   }
 }

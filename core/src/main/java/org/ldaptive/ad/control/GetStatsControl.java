@@ -126,13 +126,10 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, statistics=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        statistics);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("statistics=").append(statistics).append("]").toString();
   }
 
 

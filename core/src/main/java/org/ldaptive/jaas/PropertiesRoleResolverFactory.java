@@ -6,12 +6,10 @@ import java.util.Map;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.pool.PooledConnectionFactory;
-import org.ldaptive.pool.PooledConnectionFactoryManager;
 import org.ldaptive.props.DefaultConnectionFactoryPropertySource;
-import org.ldaptive.props.PooledConnectionFactoryPropertySource;
 import org.ldaptive.props.PropertySource.PropertyDomain;
 import org.ldaptive.props.SearchRequestPropertySource;
+import org.ldaptive.props.SearchRoleResolverPropertySource;
 
 /**
  * Provides a module role resolver factory implementation that uses the properties package in this library.
@@ -62,32 +60,28 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory imp
     if (options.containsKey("roleResolver")) {
       try {
         final String className = (String) options.get("roleResolver");
-        rr = (RoleResolver) Class.forName(className).newInstance();
-      } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+        rr = (RoleResolver) Class.forName(className).getDeclaredConstructor().newInstance();
+      } catch (Exception e) {
         throw new IllegalArgumentException(e);
+      }
+      if (rr instanceof ConnectionFactoryManager) {
+        final ConnectionFactoryManager cfm = (ConnectionFactoryManager) rr;
+        if (cfm.getConnectionFactory() == null) {
+          final DefaultConnectionFactory cf = new DefaultConnectionFactory();
+          final DefaultConnectionFactoryPropertySource cfPropSource = new DefaultConnectionFactoryPropertySource(
+            cf,
+            PropertyDomain.AUTH,
+            createProperties(options));
+          cfPropSource.initialize();
+          cfm.setConnectionFactory(cf);
+        }
       }
     } else {
       rr = new SearchRoleResolver();
-    }
-    if (rr instanceof PooledConnectionFactoryManager) {
-      final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) rr;
-      final PooledConnectionFactory cf = new PooledConnectionFactory();
-      final PooledConnectionFactoryPropertySource source = new PooledConnectionFactoryPropertySource(
-        cf,
-        PropertyDomain.AUTH,
+      final SearchRoleResolverPropertySource source = new SearchRoleResolverPropertySource(
+        (SearchRoleResolver) rr,
         createProperties(options));
       source.initialize();
-      cfm.setConnectionFactory(cf);
-    }
-    if (rr instanceof ConnectionFactoryManager) {
-      final ConnectionFactoryManager cfm = (ConnectionFactoryManager) rr;
-      final DefaultConnectionFactory cf = new DefaultConnectionFactory();
-      final DefaultConnectionFactoryPropertySource source = new DefaultConnectionFactoryPropertySource(
-        cf,
-        PropertyDomain.AUTH,
-        createProperties(options));
-      source.initialize();
-      cfm.setConnectionFactory(cf);
     }
     return rr;
   }
@@ -110,9 +104,9 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory imp
   /** Iterates over the CACHE and closes all role resolvers. */
   public static void close()
   {
-    CACHE.values().stream().filter(rr -> rr instanceof PooledConnectionFactoryManager).forEach(rr -> {
-      final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) rr;
-      cfm.getConnectionFactory().getConnectionPool().close();
+    CACHE.values().stream().filter(rr -> rr instanceof ConnectionFactoryManager).forEach(rr -> {
+      final ConnectionFactoryManager cfm = (ConnectionFactoryManager) rr;
+      cfm.getConnectionFactory().close();
     });
   }
 }

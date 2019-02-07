@@ -3,8 +3,6 @@ package org.ldaptive.beans.persistence;
 
 import org.ldaptive.AbstractTest;
 import org.ldaptive.BindConnectionInitializer;
-import org.ldaptive.Connection;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ReturnAttributes;
@@ -14,8 +12,8 @@ import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.beans.generate.InetOrgPerson;
 import org.ldaptive.beans.reflect.DefaultLdapEntryMapper;
-import org.ldaptive.io.GeneralizedTimeValueTranscoder;
-import org.ldaptive.io.UUIDValueTranscoder;
+import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
+import org.ldaptive.transcode.UUIDValueTranscoder;
 import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -40,19 +38,14 @@ public class LdapEntryManagerTest extends AbstractTest
   public Object[][] createManagers()
     throws Exception
   {
-    final ConnectionFactory cf = new DefaultConnectionFactory(
+    final DefaultConnectionFactory cf = new DefaultConnectionFactory(
       TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
-    LdapEntry entry = null;
-    try (Connection conn = cf.getConnection()) {
-      conn.open();
-
-      final BindConnectionInitializer ci =
-        (BindConnectionInitializer) conn.getConnectionConfig().getConnectionInitializer();
-      final SearchOperation op = new SearchOperation(conn);
-      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(ci.getBindDn());
-      request.setReturnAttributes(ReturnAttributes.ALL.value());
-      entry = op.execute(request).getResult().getEntry();
-    }
+    final BindConnectionInitializer ci =
+      (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializer();
+    final SearchOperation op = new SearchOperation(cf);
+    final SearchRequest request = SearchRequest.objectScopeSearchRequest(ci.getBindDn());
+    request.setReturnAttributes(ReturnAttributes.ALL.value());
+    final LdapEntry entry = op.execute(request).getEntry();
 
     return
       new Object[][] {
@@ -69,7 +62,7 @@ public class LdapEntryManagerTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"beans-manager"}, dataProvider = "managers")
+  @Test(groups = "beans-manager", dataProvider = "managers")
   public void find(final LdapEntryManager<InetOrgPerson> manager, final LdapEntry entry)
     throws Exception
   {
@@ -83,11 +76,11 @@ public class LdapEntryManagerTest extends AbstractTest
         entry.getAttribute("cn").getStringValues().iterator().next(),
         person.getCn().iterator().next());
       AssertJUnit.assertEquals(
-        entry.getAttribute("createTimestamp").getValue(new GeneralizedTimeValueTranscoder()),
+        entry.getAttribute("createTimestamp").getValue((new GeneralizedTimeValueTranscoder()).decoder()),
         person.getCreateTimestamp());
       AssertJUnit.assertEquals(entry.getDn(), person.getDn());
       AssertJUnit.assertEquals(
-        entry.getAttribute("entryUUID").getValue(new UUIDValueTranscoder()),
+        entry.getAttribute("entryUUID").getValue((new UUIDValueTranscoder()).decoder()),
         person.getEntryUUID());
     }
   }

@@ -7,7 +7,7 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link SearchResult}.
+ * Unit test for {@link SearchResponse}.
  *
  * @author  Middleware Services
  */
@@ -24,7 +24,7 @@ public class SearchResultTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry7")
-  @BeforeClass(groups = {"bean"})
+  @BeforeClass(groups = "bean")
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -35,7 +35,7 @@ public class SearchResultTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"bean"})
+  @AfterClass(groups = "bean")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -58,19 +58,15 @@ public class SearchResultTest extends AbstractTest
       "toSearchResultsAttrs",
       "toSearchResultsResults"
     })
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void toSearchResults(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
 
-      final SearchOperation search = new SearchOperation(conn);
-
-      final SearchResult result = search.execute(
-        new SearchRequest(dn, new SearchFilter(filter), returnAttrs.split("\\|"))).getResult();
-      final String expected = TestUtils.readFileIntoString(ldifFile);
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
-    }
+    final SearchResponse result = search.execute(
+      new SearchRequest(dn, new SearchFilter(filter), returnAttrs.split("\\|")));
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }
 }

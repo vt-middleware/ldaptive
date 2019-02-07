@@ -149,14 +149,61 @@ public class X509CredentialConfig implements CredentialConfig
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::trustCertificates=%s, authenticationCertificate=%s, " +
-        "authenticationKey=%s]",
-        getClass().getName(),
-        hashCode(),
-        trustCertificates,
-        authenticationCertificate,
-        authenticationKey);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("trustCertificates=").append(trustCertificates).append(", ")
+      .append("authenticationCertificate=").append(authenticationCertificate).append(", ")
+      .append("authenticationKey=").append(authenticationKey).append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+
+    private final X509CredentialConfig object = new X509CredentialConfig();
+
+
+    protected Builder() {}
+
+
+    public Builder trustCertificates(final String certificates)
+    {
+      object.setTrustCertificates(certificates);
+      return this;
+    }
+
+
+    public Builder authenticationCertificate(final String certificate)
+    {
+      object.setAuthenticationCertificate(certificate);
+      return this;
+    }
+
+
+    public Builder authenticationKey(final String key)
+    {
+      object.setAuthenticationKey(key);
+      return this;
+    }
+
+
+    public X509CredentialConfig build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

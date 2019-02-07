@@ -52,20 +52,16 @@ public class ClassGenerator
     "org.ldaptive.ad.control.util",
     "org.ldaptive.ad.extended",
     "org.ldaptive.ad.handler",
-    "org.ldaptive.async",
-    "org.ldaptive.async.handler",
     "org.ldaptive.auth",
     "org.ldaptive.auth.ext",
     "org.ldaptive.beans",
     "org.ldaptive.beans.generate",
     "org.ldaptive.beans.persistence",
     "org.ldaptive.beans.reflect",
-    "org.ldaptive.cache",
     "org.ldaptive.concurrent",
     "org.ldaptive.control",
     "org.ldaptive.control.util",
     "org.ldaptive.extended",
-    "org.ldaptive.intermediate",
     "org.ldaptive.handler",
     "org.ldaptive.io",
     "org.ldaptive.pool",
@@ -76,6 +72,7 @@ public class ClassGenerator
     "org.ldaptive.schema",
     "org.ldaptive.ssl",
     "org.ldaptive.templates",
+    "org.ldaptive.transcode",
   };
 
   /** String containing all import statements. */
@@ -116,13 +113,13 @@ public class ClassGenerator
 
     // read the source files
     final Path sourceDir = Paths.get(path + "/doc-sources");
-    Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
+    Files.walkFileTree(sourceDir, new SimpleFileVisitor<>() {
       @Override
       public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
         throws IOException
       {
         if (attrs.isRegularFile()) {
-          final String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+          final String content = Files.readString(file);
           final String name = file.getName(file.getNameCount() - 2).toString();
           final List<String> l;
           if (sections.containsKey(name)) {
@@ -291,13 +288,13 @@ public class ClassGenerator
 
     // add imports
     final Path sourceDir = Paths.get(path);
-    Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
+    Files.walkFileTree(sourceDir, new SimpleFileVisitor<>() {
       @Override
       public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
         throws IOException
       {
         if (attrs.isRegularFile()) {
-          String content = new String(Files.readAllBytes(file), StandardCharsets.UTF_8);
+          String content = Files.readString(file);
           content = content.replaceFirst(
             "package org.ldaptive.doc;",
             "package org.ldaptive.doc;\n\n" + IMPORT_STATEMENTS);

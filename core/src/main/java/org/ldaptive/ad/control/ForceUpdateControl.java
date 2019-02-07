@@ -64,13 +64,6 @@ public class ForceUpdateControl extends AbstractControl implements RequestContro
 
 
   @Override
-  public String toString()
-  {
-    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
-  }
-
-
-  @Override
   public byte[] encode()
   {
     return null;

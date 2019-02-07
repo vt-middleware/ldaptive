@@ -1,12 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
-import org.ldaptive.SearchEntry;
-import org.ldaptive.SearchResult;
-import org.ldaptive.async.AsyncRequest;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncStateControl;
-import org.ldaptive.intermediate.SyncInfoMessage;
+import org.ldaptive.extended.SyncInfoMessage;
 
 /**
  * Contains data returned when using the sync repl search control.
@@ -16,35 +14,17 @@ import org.ldaptive.intermediate.SyncInfoMessage;
 public class SyncReplItem
 {
 
-  /** Async request from the search operation. */
-  private final AsyncRequest asyncRequest;
-
   /** Entry contained in this sync repl item. */
   private final Entry syncReplEntry;
 
   /** Message contained in this sync repl item. */
   private final SyncInfoMessage syncInfoMessage;
 
-  /** Response contained in this sync repl item. */
-  private final Response syncReplResponse;
+  /** Result contained in this sync repl item. */
+  private final Result syncReplResult;
 
   /** Exception thrown by the search operation. */
   private final Exception syncReplException;
-
-
-  /**
-   * Creates a new sync repl item.
-   *
-   * @param  request  that represents this item
-   */
-  public SyncReplItem(final AsyncRequest request)
-  {
-    asyncRequest = request;
-    syncReplEntry = null;
-    syncInfoMessage = null;
-    syncReplResponse = null;
-    syncReplException = null;
-  }
 
 
   /**
@@ -54,10 +34,9 @@ public class SyncReplItem
    */
   public SyncReplItem(final Entry entry)
   {
-    asyncRequest = null;
     syncReplEntry = entry;
     syncInfoMessage = null;
-    syncReplResponse = null;
+    syncReplResult = null;
     syncReplException = null;
   }
 
@@ -69,10 +48,9 @@ public class SyncReplItem
    */
   public SyncReplItem(final SyncInfoMessage message)
   {
-    asyncRequest = null;
     syncReplEntry = null;
     syncInfoMessage = message;
-    syncReplResponse = null;
+    syncReplResult = null;
     syncReplException = null;
   }
 
@@ -80,14 +58,13 @@ public class SyncReplItem
   /**
    * Creates a new sync repl item.
    *
-   * @param  response  that represents this item
+   * @param  result  that represents this item
    */
-  public SyncReplItem(final Response response)
+  public SyncReplItem(final Result result)
   {
-    asyncRequest = null;
     syncReplEntry = null;
     syncInfoMessage = null;
-    syncReplResponse = response;
+    syncReplResult = result;
     syncReplException = null;
   }
 
@@ -99,33 +76,10 @@ public class SyncReplItem
    */
   public SyncReplItem(final Exception exception)
   {
-    asyncRequest = null;
     syncReplEntry = null;
     syncInfoMessage = null;
-    syncReplResponse = null;
+    syncReplResult = null;
     syncReplException = exception;
-  }
-
-
-  /**
-   * Returns whether this item represents an async request.
-   *
-   * @return  whether this item represents an async request
-   */
-  public boolean isAsyncRequest()
-  {
-    return asyncRequest != null;
-  }
-
-
-  /**
-   * Returns the async request contained in this item or null if this item does not contain an async request.
-   *
-   * @return  async request
-   */
-  public AsyncRequest getAsyncRequest()
-  {
-    return asyncRequest;
   }
 
 
@@ -174,24 +128,24 @@ public class SyncReplItem
 
 
   /**
-   * Returns whether this item represents a response.
+   * Returns whether this item represents a result.
    *
-   * @return  whether this item represents a response
+   * @return  whether this item represents a result
    */
-  public boolean isResponse()
+  public boolean isResult()
   {
-    return syncReplResponse != null;
+    return syncReplResult != null;
   }
 
 
   /**
-   * Returns the response contained in this item or null if this item does not contain a response.
+   * Returns the result contained in this item or null if this item does not contain a result.
    *
-   * @return  response
+   * @return  result
    */
-  public Response getResponse()
+  public Result getResult()
   {
-    return syncReplResponse;
+    return syncReplResult;
   }
 
 
@@ -220,21 +174,19 @@ public class SyncReplItem
   @Override
   public String toString()
   {
-    final String s;
-    if (isAsyncRequest()) {
-      s = String.format("[%s@%d::asyncRequest=%s]", getClass().getName(), hashCode(), asyncRequest);
-    } else if (isEntry()) {
-      s = String.format("[%s@%d::syncReplEntry=%s]", getClass().getName(), hashCode(), syncReplEntry);
+    final StringBuilder sb = new StringBuilder("[").append(getClass().getName()).append("@").append(hashCode());
+    if (isEntry()) {
+      sb.append("::syncReplEntry=").append(syncReplEntry).append("]");
     } else if (isMessage()) {
-      s = String.format("[%s@%d::syncInfoMessage=%s]", getClass().getName(), hashCode(), syncInfoMessage);
-    } else if (isResponse()) {
-      s = String.format("[%s@%d::syncReplResponse=%s]", getClass().getName(), hashCode(), syncReplResponse);
+      sb.append("::syncInfoMessage=").append(syncInfoMessage).append("]");
+    } else if (isResult()) {
+      sb.append("::syncReplResult=").append(syncReplResult).append("]");
     } else if (isException()) {
-      s = String.format("[%s@%d::syncReplException=%s]", getClass().getName(), hashCode(), syncReplException);
+      sb.append("::syncReplException=").append(syncReplException).append("]");
     } else {
-      s = String.format("[%s@%d]", getClass().getName(), hashCode());
+      sb.append("]");
     }
-    return s;
+    return sb.toString();
   }
 
 
@@ -243,7 +195,7 @@ public class SyncReplItem
   {
 
     /** Search entry that this class wraps. */
-    private final SearchEntry searchEntry;
+    private final LdapEntry searchEntry;
 
     /** Control to search the entry for. */
     private final SyncStateControl syncStateControl;
@@ -255,7 +207,7 @@ public class SyncReplItem
      *
      * @param  entry  to search for sync state control in
      */
-    public Entry(final SearchEntry entry)
+    public Entry(final LdapEntry entry)
     {
       searchEntry = entry;
       syncStateControl = (SyncStateControl) entry.getControl(SyncStateControl.OID);
@@ -267,7 +219,7 @@ public class SyncReplItem
      *
      * @return  underlying search entry
      */
-    public SearchEntry getSearchEntry()
+    public LdapEntry getSearchEntry()
     {
       return searchEntry;
     }
@@ -287,17 +239,19 @@ public class SyncReplItem
     @Override
     public String toString()
     {
-      return String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
+      return new StringBuilder("[").append(
+        getClass().getName()).append("@").append(hashCode()).append("::")
+        .append("searchEntry=").append(searchEntry).append("]").toString();
     }
   }
 
 
-  /** Wrapper class that provides easy access to the {@link SyncDoneControl} contained in a response. */
-  public static class Response
+  /** Wrapper class that provides easy access to the {@link SyncDoneControl} contained in a result. */
+  public static class Result
   {
 
-    /** Response that this class wraps. */
-    private final org.ldaptive.Response<SearchResult> response;
+    /** Result that this class wraps. */
+    private final org.ldaptive.Result result;
 
     /** Control to search the response for. */
     private final SyncDoneControl syncDoneControl;
@@ -309,21 +263,21 @@ public class SyncReplItem
      *
      * @param  res  to search for sync done control in
      */
-    public Response(final org.ldaptive.Response<SearchResult> res)
+    public Result(final org.ldaptive.Result res)
     {
-      response = res;
-      syncDoneControl = (SyncDoneControl) response.getControl(SyncDoneControl.OID);
+      result = res;
+      syncDoneControl = (SyncDoneControl) result.getControl(SyncDoneControl.OID);
     }
 
 
     /**
-     * Returns the underlying response.
+     * Returns the underlying result.
      *
-     * @return  underlying response
+     * @return  underlying result
      */
-    public org.ldaptive.Response<SearchResult> getResponse()
+    public org.ldaptive.Result getResult()
     {
-      return response;
+      return result;
     }
 
 
@@ -341,7 +295,9 @@ public class SyncReplItem
     @Override
     public String toString()
     {
-      return String.format("[%s@%d::response=%s]", getClass().getName(), hashCode(), response);
+      return new StringBuilder("[").append(
+        getClass().getName()).append("@").append(hashCode()).append("::")
+        .append("result=").append(result).append("]").toString();
     }
   }
 }

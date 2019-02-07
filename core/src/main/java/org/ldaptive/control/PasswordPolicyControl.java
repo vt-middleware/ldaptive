@@ -112,28 +112,23 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
       switch (this) {
 
       case PASSWORD_EXPIRED:
+
+      case CHANGE_AFTER_RESET:
         throw new CredentialExpiredException(name());
 
       case ACCOUNT_LOCKED:
         throw new AccountLockedException(name());
 
-      case CHANGE_AFTER_RESET:
-        throw new CredentialExpiredException(name());
-
       case PASSWORD_MOD_NOT_ALLOWED:
-        throw new AccountException(name());
 
       case MUST_SUPPLY_OLD_PASSWORD:
         throw new AccountException(name());
 
       case INSUFFICIENT_PASSWORD_QUALITY:
-        throw new CredentialException(name());
 
       case PASSWORD_TOO_SHORT:
-        throw new CredentialException(name());
 
       case PASSWORD_TOO_YOUNG:
-        throw new CredentialException(name());
 
       case PASSWORD_IN_HISTORY:
         throw new CredentialException(name());
@@ -296,15 +291,12 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, timeBeforeExpiration=%s, graceAuthNsRemaining=%s, error=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        timeBeforeExpiration,
-        graceAuthNsRemaining,
-        error);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("timeBeforeExpiration=").append(timeBeforeExpiration).append(", ")
+      .append("graceAuthNsRemaining=").append(graceAuthNsRemaining).append(", ")
+      .append("error=").append(error).append("]").toString();
   }
 
 

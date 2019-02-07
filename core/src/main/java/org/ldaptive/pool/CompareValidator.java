@@ -1,10 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
-import org.ldaptive.CompareOperation;
 import org.ldaptive.CompareRequest;
+import org.ldaptive.CompareResponse;
 import org.ldaptive.Connection;
-import org.ldaptive.LdapAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,9 +25,7 @@ public class CompareValidator implements Validator<Connection>
   /** Creates a new compare validator. */
   public CompareValidator()
   {
-    compareRequest = new CompareRequest();
-    compareRequest.setDn("");
-    compareRequest.setAttribute(new LdapAttribute("objectClass", "top"));
+    compareRequest = new CompareRequest("", "objectClass", "top");
   }
 
 
@@ -68,22 +65,23 @@ public class CompareValidator implements Validator<Connection>
   @Override
   public boolean validate(final Connection c)
   {
-    boolean success = false;
     if (c != null) {
       try {
-        final CompareOperation compare = new CompareOperation(c);
-        success = compare.execute(compareRequest).getResult();
+        final CompareResponse response = c.operation(compareRequest).execute();
+        return response.isTrue();
       } catch (Exception e) {
         logger.debug("validation failed for compare request {}", compareRequest, e);
       }
     }
-    return success;
+    return false;
   }
 
 
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::compareRequest=%s]", getClass().getName(), hashCode(), compareRequest);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("compareRequest=").append(compareRequest).append("]").toString();
   }
 }

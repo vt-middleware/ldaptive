@@ -1,10 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.sasl;
 
+import java.util.Arrays;
 import org.ldaptive.AbstractConfig;
 
 /**
- * Contains all the configuration data for SASL authentication.
+ * Contains basic configuration data for SASL authentication.
  *
  * @author  Middleware Services
  */
@@ -15,16 +16,19 @@ public class SaslConfig extends AbstractConfig
   private Mechanism mechanism;
 
   /** sasl authorization id. */
-  private String authorizationId = "";
+  private String authorizationId;
 
   /** perform mutual authentication. */
   private Boolean mutualAuthentication;
 
   /** sasl quality of protection. */
-  private QualityOfProtection qualityOfProtection;
+  private QualityOfProtection[] qualityOfProtection;
 
   /** sasl security strength. */
   private SecurityStrength securityStrength;
+
+  /** sasl realm. */
+  private String saslRealm;
 
 
   /**
@@ -104,7 +108,7 @@ public class SaslConfig extends AbstractConfig
    *
    * @return  quality of protection
    */
-  public QualityOfProtection getQualityOfProtection()
+  public QualityOfProtection[] getQualityOfProtection()
   {
     return qualityOfProtection;
   }
@@ -115,10 +119,10 @@ public class SaslConfig extends AbstractConfig
    *
    * @param  qop  quality of protection
    */
-  public void setQualityOfProtection(final QualityOfProtection qop)
+  public void setQualityOfProtection(final QualityOfProtection... qop)
   {
     checkImmutable();
-    logger.trace("setting qualityOfProtection: {}", qop);
+    logger.trace("setting qualityOfProtection: {}", Arrays.toString(qop));
     qualityOfProtection = qop;
   }
 
@@ -147,19 +151,40 @@ public class SaslConfig extends AbstractConfig
   }
 
 
+  /**
+   * Returns the sasl realm.
+   *
+   * @return  realm
+   */
+  public String getRealm()
+  {
+    return saslRealm;
+  }
+
+
+  /**
+   * Sets the sasl realm.
+   *
+   * @param  realm  to set
+   */
+  public void setRealm(final String realm)
+  {
+    checkImmutable();
+    logger.trace("setting realm: {}", realm);
+    saslRealm = realm;
+  }
+
+
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::mechanism=%s, authorizationId=%s, mutualAuthentication=%s, qualityOfProtection=%s, " +
-        "securityStrength=%s]",
-        getClass().getName(),
-        hashCode(),
-        mechanism,
-        authorizationId,
-        mutualAuthentication,
-        qualityOfProtection,
-        securityStrength);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("mechanism=").append(mechanism).append(", ")
+      .append("authorizationId=").append(authorizationId).append(", ")
+      .append("mutualAuthentication=").append(mutualAuthentication).append(", ")
+      .append("qualityOfProtection=").append(Arrays.toString(qualityOfProtection)).append(", ")
+      .append("securityStrength=").append(securityStrength).append(", ")
+      .append("realm=").append(saslRealm).append("]").toString();
   }
 }

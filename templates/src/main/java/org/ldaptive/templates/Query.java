@@ -46,7 +46,7 @@ public class Query
       while (queryTokens.hasMoreTokens()) {
         l.add(queryTokens.nextToken());
       }
-      terms = l.toArray(new String[l.size()]);
+      terms = l.toArray(new String[0]);
     } else {
       terms = EMPTY_STRING_ARRAY;
     }
@@ -155,16 +155,12 @@ public class Query
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::terms=%s, returnAttributes=%s, searchRestrictions=%s, " +
-        "fromResult=%d, toResult=%d]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(terms),
-        Arrays.toString(returnAttributes),
-        searchRestrictions,
-        fromResult,
-        toResult);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("terms=").append(Arrays.toString(terms)).append(", ")
+      .append("returnAttributes=").append(Arrays.toString(returnAttributes)).append(", ")
+      .append("searchRestrictions=").append(searchRestrictions).append(", ")
+      .append("fromResult=").append(fromResult).append(", ")
+      .append("toResult=").append(toResult).append("]").toString();
   }
 }

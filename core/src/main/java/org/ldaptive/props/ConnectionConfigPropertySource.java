@@ -90,15 +90,14 @@ public final class ConnectionConfigPropertySource extends AbstractPropertySource
     SslConfig sc = object.getSslConfig();
     if (sc == null) {
       sc = new SslConfig();
-
       final SslConfigPropertySource scSource = new SslConfigPropertySource(sc, propertiesDomain, properties);
       scSource.initialize();
       if (!sc.isEmpty()) {
         object.setSslConfig(sc);
       }
     } else {
-      final SimplePropertySource<SslConfig> sPropSource = new SimplePropertySource<>(sc, propertiesDomain, properties);
-      sPropSource.initialize();
+      final SslConfigPropertySource scSource = new SslConfigPropertySource(sc, propertiesDomain, properties);
+      scSource.initialize();
     }
 
 
@@ -106,7 +105,6 @@ public final class ConnectionConfigPropertySource extends AbstractPropertySource
     // configure a bind connection initializer if bind properties are found
     if (ci == null) {
       final BindConnectionInitializer bci = new BindConnectionInitializer();
-
       final BindConnectionInitializerPropertySource bciSource = new BindConnectionInitializerPropertySource(
         bci,
         propertiesDomain,

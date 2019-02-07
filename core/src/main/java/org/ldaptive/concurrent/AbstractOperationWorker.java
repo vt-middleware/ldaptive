@@ -4,7 +4,6 @@ package org.ldaptive.concurrent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
@@ -13,7 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import org.ldaptive.Operation;
 import org.ldaptive.Request;
-import org.ldaptive.Response;
+import org.ldaptive.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +24,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractOperationWorker<Q extends Request, S> implements OperationWorker<Q, S>
+public abstract class AbstractOperationWorker<Q extends Request, S extends Result> implements OperationWorker<Q, S>
 {
 
   /** Logger for this class. */
@@ -70,9 +69,9 @@ public abstract class AbstractOperationWorker<Q extends Request, S> implements O
    * @return  future response for this operation
    */
   @Override
-  public Future<Response<S>> execute(final Q request)
+  public Future<S> execute(final Q request)
   {
-    return service.submit(createCallable(operation, request));
+    return service.submit(() -> operation.execute(request));
   }
 
 
@@ -85,11 +84,11 @@ public abstract class AbstractOperationWorker<Q extends Request, S> implements O
    */
   @Override
   @SuppressWarnings("unchecked")
-  public Collection<Future<Response<S>>> execute(final Q... requests)
+  public Collection<Future<S>> execute(final Q... requests)
   {
-    final List<Future<Response<S>>> results = new ArrayList<>(requests.length);
+    final List<Future<S>> results = new ArrayList<>(requests.length);
     for (Q request : requests) {
-      results.add(service.submit(createCallable(operation, request)));
+      results.add(service.submit(() -> operation.execute(request)));
     }
     return results;
   }
@@ -104,16 +103,16 @@ public abstract class AbstractOperationWorker<Q extends Request, S> implements O
    */
   @Override
   @SuppressWarnings("unchecked")
-  public Collection<Response<S>> executeToCompletion(final Q... requests)
+  public Collection<S> executeToCompletion(final Q... requests)
   {
-    final CompletionService<Response<S>> cs = new ExecutorCompletionService<>(service);
-    final List<Future<Response<S>>> futures = new ArrayList<>(requests.length);
+    final CompletionService<S> cs = new ExecutorCompletionService<>(service);
+    final List<Future<S>> futures = new ArrayList<>(requests.length);
     for (Q request : requests) {
-      futures.add(cs.submit(createCallable(operation, request)));
+      futures.add(cs.submit(() -> operation.execute(request)));
     }
 
-    final List<Response<S>> responses = new ArrayList<>(requests.length);
-    for (Future<Response<S>> future : futures) {
+    final List<S> responses = new ArrayList<>(requests.length);
+    for (Future<S> future : futures) {
       try {
         responses.add(future.get());
       } catch (ExecutionException e) {
@@ -126,40 +125,9 @@ public abstract class AbstractOperationWorker<Q extends Request, S> implements O
   }
 
 
-  /**
-   * Returns a {@link Callable} that executes the supplied request with the supplied operation.
-   *
-   * @param  <Q>  type of ldap request
-   * @param  <S>  type of ldap response
-   * @param  operation  to execute
-   * @param  request  to pass to the operation
-   *
-   * @return  callable for the supplied operation and request
-   */
-  public static <Q extends Request, S> Callable<Response<S>> createCallable(
-    final Operation<Q, S> operation,
-    final Q request)
-  {
-    return
-      () -> operation.execute(request);
-  }
-
-
   /** Invokes {@link ExecutorService#shutdown()} on the underlying executor service. */
   public void shutdown()
   {
     service.shutdown();
-  }
-
-
-  @Override
-  protected void finalize()
-    throws Throwable
-  {
-    try {
-      shutdown();
-    } finally {
-      super.finalize();
-    }
   }
 }

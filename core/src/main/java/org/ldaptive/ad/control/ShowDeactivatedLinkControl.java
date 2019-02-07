@@ -64,13 +64,6 @@ public class ShowDeactivatedLinkControl extends AbstractControl implements Reque
 
 
   @Override
-  public String toString()
-  {
-    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
-  }
-
-
-  @Override
   public byte[] encode()
   {
     return null;

@@ -1,6 +1,0 @@
-- Add a new entry to an ldap directory
-   ldapadd -ldapUrl ldap://directory.ldaptive.org -file myentry.ldif
-
-- Display all the command line options available 
-
-   ldapadd -help

@@ -1,16 +1,17 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.templates;
 
+import java.util.concurrent.Executors;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchResult;
+import org.ldaptive.PooledConnectionFactory;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.TestUtils;
-import org.ldaptive.concurrent.AggregatePooledSearchExecutor;
-import org.ldaptive.pool.BlockingConnectionPool;
-import org.ldaptive.pool.ConnectionPool;
-import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.concurrent.AggregateSearchOperation;
+import org.ldaptive.pool.PoolConfig;
+import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -38,7 +39,7 @@ public class SearchTemplatesExecutorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry26")
-  @BeforeClass(groups = {"templates"})
+  @BeforeClass(groups = "templates")
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -56,19 +57,19 @@ public class SearchTemplatesExecutorTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("ldapBaseDn")
-  @BeforeClass(groups = {"templates"})
+  @BeforeClass(groups = "templates")
   public void createExecutor(final String baseDn)
     throws Exception
   {
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
-    final AggregatePooledSearchExecutor se = new AggregatePooledSearchExecutor();
-    se.setBaseDn(baseDn);
+    final AggregateSearchOperation search = new AggregateSearchOperation(Executors.newFixedThreadPool(10));
+    search.setRequest(SearchRequest.builder().dn(baseDn).build());
 
-    final ConnectionPool cp = new BlockingConnectionPool(new DefaultConnectionFactory(cc));
-    cp.initialize();
+    final PooledConnectionFactory cf = new PooledConnectionFactory(cc, PoolConfig.builder().min(5).max(10).build());
+    cf.initialize();
     executor = new SearchTemplatesExecutor(
-      se,
-      new PooledConnectionFactory[] {new PooledConnectionFactory(cp)},
+      search,
+      new PooledConnectionFactory[] {cf, },
       new SearchTemplates(
         "(|(givenName={term1})(sn={term1}))",
         "(|(givenName={term1}*)(sn={term1}*))",
@@ -91,7 +92,7 @@ public class SearchTemplatesExecutorTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"templates"})
+  @AfterClass(groups = "templates")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -121,14 +122,17 @@ public class SearchTemplatesExecutorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"templates"}, dataProvider = "search-data", threadPoolSize = 3, invocationCount = 50, timeOut = 60000)
+  @Test(groups = "templates", dataProvider = "search-data", threadPoolSize = 3, invocationCount = 50,
+    timeOut = 60000)
   public void search(final String query)
     throws Exception
   {
     final Query q = new Query(query);
     q.setReturnAttributes(testLdapEntry.getAttributeNames());
 
-    final SearchResult sr = executor.search(q);
+    final SearchResponse sr = executor.search(q);
+    AssertJUnit.assertNotNull(sr);
+    AssertJUnit.assertNotNull(sr.getEntry());
     TestUtils.assertEquals(testLdapEntry, sr.getEntry());
   }
 }

@@ -48,7 +48,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   public BlockingConnectionPool(final PoolConfig pc, final DefaultConnectionFactory cf)
   {
     setPoolConfig(pc);
-    setConnectionFactory(cf);
+    setDefaultConnectionFactory(cf);
   }
 
 

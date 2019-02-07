@@ -1,31 +1,50 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 /**
- * Connection strategy that returns URLs ordered exactly the way they are configured. This means that the first URL will
- * always be attempted first, followed by each URL in the list.
+ * Connection strategy that attempts hosts ordered exactly the way they are configured. This means that the first host
+ * will always be attempted first, followed by each host in the list.
  *
  * @author  Middleware Services
  */
-public class ActivePassiveConnectionStrategy implements ConnectionStrategy
+public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
 {
 
+  /** LDAP URLs. */
+  private List<LdapURL> ldapURLs;
 
-  /**
-   * Return the URLs in the order they are provided, so that the first URL is always tried first, then the second, and
-   * so forth.
-   *
-   * @param  metadata  which can be used to produce the URL list
-   *
-   * @return  list of URLs to attempt connections to
-   */
+
   @Override
-  public String[] getLdapUrls(final ConnectionFactoryMetadata metadata)
+  public boolean isInitialized()
   {
-    if (metadata == null || metadata.getLdapUrl() == null) {
-      return null;
-    }
+    return ldapURLs != null;
+  }
 
-    return metadata.getLdapUrl().split(" ");
+
+  @Override
+  public void initialize(final String urls)
+  {
+    if (urls.contains(" ")) {
+      ldapURLs = Stream.of(urls.split(" ")).map(LdapURL::new).collect(Collectors.collectingAndThen(
+        Collectors.toList(),
+        Collections::unmodifiableList));
+    } else {
+      ldapURLs = Collections.singletonList(new LdapURL(urls));
+    }
+  }
+
+
+  @Override
+  public List<LdapURL> apply()
+  {
+    if (!isInitialized()) {
+      throw new IllegalStateException("Strategy is not initialized");
+    }
+    return ldapURLs;
   }
 }

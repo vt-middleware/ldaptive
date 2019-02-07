@@ -6,7 +6,7 @@
        xsi:schemaLocation="
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-${project.version}.xsd">
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd">
 
   <context:property-placeholder location="classpath:/spring-ext.properties"/>
 
@@ -64,6 +64,7 @@
   <ldaptive:sasl-bind-search-authenticator
     id="sasl-auth"
     mechanism="${ldap.sasl.mechanism}"
+    authorizationId="dn:uid=test4,${ldap.baseDn}"
     qualityOfProtection="${ldap.sasl.qualityOfProtection}"
     securityStrength="${ldap.sasl.securityStrength}"
     ldapUrl="${ldap.url}"
@@ -84,8 +85,7 @@
     idleTime="${ldap.pool.idleTime:PT10M}"
     prunePeriod="${ldap.pool.prunePeriod:PT5M}"
     failFastInitialize="false"
-    subtreeSearch="${ldap.subtreeSearch:true}"
-    useSSL="false">
+    subtreeSearch="${ldap.subtreeSearch:true}">
     <ldaptive:authentication-response-handler>
       <ldaptive:password-expiration-handler/>
     </ldaptive:authentication-response-handler>
@@ -110,7 +110,6 @@
     baseDn="${ldap.baseDn}"
     userFilter="(mail={user})"
     bindDn="${ldap.bindDn}"
-    provider="org.ldaptive.provider.jndi.JndiProvider"
     bindCredential="${ldap.bindCredential}"
     trustCertificates="classpath:/ldaptive.trust.crt"
     connectTimeout="${ldap.connectTimeout}"
@@ -137,64 +136,34 @@
     trustCertificates="classpath:/ldaptive.trust.crt"
   />
 
-  <ldaptive:connection-pool
-    ldapUrl="${ldap.url}"
-    trustCertificates="classpath:/ldaptive.trust.crt"
-  />
-
-  <ldaptive:search-executor
+  <ldaptive:search-operation
     baseDn="${ldap.baseDn}"
-    searchFilter="(mail=*)"
+    filter="(mail=*)"
     returnAttributes="cn,givenName,sn"
     searchScope="${ldap.searchScope}"
     timeLimit="${ldap.timeLimit}"
     sizeLimit="${ldap.sizeLimit}"
     binaryAttributes="jpegPhoto,userCertificate"
-    sortBehavior="${ldap.sortBehavior}"
   />
 
-  <ldaptive:parallel-search-executor
+  <ldaptive:parallel-search-operation
     baseDn="${ldap.baseDn}"
-    searchFilter="(mail=*)"
+    filter="(mail=*)"
     returnAttributes="cn,givenName,sn"
     searchScope="${ldap.searchScope}"
     timeLimit="${ldap.timeLimit}"
     sizeLimit="${ldap.sizeLimit}"
     binaryAttributes="jpegPhoto,userCertificate"
-    sortBehavior="${ldap.sortBehavior}"
   />
 
-  <ldaptive:parallel-pooled-search-executor
+  <ldaptive:aggregate-search-operation
     baseDn="${ldap.baseDn}"
-    searchFilter="(mail=*)"
+    filter="(mail=*)"
     returnAttributes="cn,givenName,sn"
     searchScope="${ldap.searchScope}"
     timeLimit="${ldap.timeLimit}"
     sizeLimit="${ldap.sizeLimit}"
     binaryAttributes="jpegPhoto,userCertificate"
-    sortBehavior="${ldap.sortBehavior}"
-  />
-
-  <ldaptive:aggregate-search-executor
-    baseDn="${ldap.baseDn}"
-    searchFilter="(mail=*)"
-    returnAttributes="cn,givenName,sn"
-    searchScope="${ldap.searchScope}"
-    timeLimit="${ldap.timeLimit}"
-    sizeLimit="${ldap.sizeLimit}"
-    binaryAttributes="jpegPhoto,userCertificate"
-    sortBehavior="${ldap.sortBehavior}"
-  />
-
-  <ldaptive:aggregate-pooled-search-executor
-    baseDn="${ldap.baseDn}"
-    searchFilter="(mail=*)"
-    returnAttributes="cn,givenName,sn"
-    searchScope="${ldap.searchScope}"
-    timeLimit="${ldap.timeLimit}"
-    sizeLimit="${ldap.sizeLimit}"
-    binaryAttributes="jpegPhoto,userCertificate"
-    sortBehavior="${ldap.sortBehavior}"
   />
 
   <ldaptive:connection-config

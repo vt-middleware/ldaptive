@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
-import org.ldaptive.sasl.CramMd5Config;
-import org.ldaptive.sasl.DigestMd5Config;
+import org.ldaptive.sasl.CramMD5Config;
+import org.ldaptive.sasl.DigestMD5Config;
 import org.ldaptive.sasl.ExternalConfig;
 import org.ldaptive.sasl.GssApiConfig;
 import org.ldaptive.sasl.SaslConfig;
@@ -87,11 +87,11 @@ public class SaslBindSearchAuthenticatorBeanDefinitionParser extends AbstractSea
     switch (value) {
 
     case "DIGEST_MD5":
-      saslConfig = new DigestMd5Config();
+      saslConfig = new DigestMD5Config();
       break;
 
     case "CRAM_MD5":
-      saslConfig = new CramMd5Config();
+      saslConfig = new CramMD5Config();
       break;
 
     case "EXTERNAL":

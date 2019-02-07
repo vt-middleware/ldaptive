@@ -139,13 +139,13 @@ public abstract class AbstractLoginModule implements LoginModule
       "setLdapPrincipal = {}, setLdapDnPrincipal = {}, " +
       "setLdapCredential = {}, defaultRole = {}, principalGroupName = {}, " +
       "roleGroupName = {}",
-      Boolean.toString(useFirstPass),
-      Boolean.toString(tryFirstPass),
-      Boolean.toString(storePass),
-      Boolean.toString(clearPass),
-      Boolean.toString(setLdapPrincipal),
-      Boolean.toString(setLdapDnPrincipal),
-      Boolean.toString(setLdapCredential),
+      useFirstPass,
+      tryFirstPass,
+      storePass,
+      clearPass,
+      setLdapPrincipal,
+      setLdapDnPrincipal,
+      setLdapCredential,
       defaultRole,
       principalGroupName,
       roleGroupName);
@@ -306,9 +306,9 @@ public abstract class AbstractLoginModule implements LoginModule
       "Begin getCredentials: useFistPass = {}, tryFistPass = {}, " +
       "useCallback = {}, callbackhandler class = {}, " +
       "name callback class = {}, password callback class = {}",
-      Boolean.toString(useFirstPass),
-      Boolean.toString(tryFirstPass),
-      Boolean.toString(useCallback),
+      useFirstPass,
+      tryFirstPass,
+      useCallback,
       callbackHandler.getClass().getName(),
       nameCb.getClass().getName(),
       passCb.getClass().getName());

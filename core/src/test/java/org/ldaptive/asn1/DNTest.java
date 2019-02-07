@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
+import java.nio.charset.StandardCharsets;
 import org.ldaptive.LdapUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -57,15 +58,17 @@ public class DNTest
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "www.ldaptive.org".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
+                  "www.ldaptive.org".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "ldaptive".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR,
+                  "ldaptive".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "org".getBytes("UTF-8"))))),
+                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "org".getBytes(StandardCharsets.UTF_8))))),
         },
         // DC=org, DC=ldaptive, UID=7 + CN=www.ldaptive.org
         // BER 30:5B:31:2A:30:0F:06:0A:09:92:26:89:93:F2:2C:64:01:01:13:01:37:30
@@ -99,18 +102,20 @@ public class DNTest
             new RDN(
               new AttributeValueAssertion(
                 "0.9.2342.19200300.100.1.1",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "7".getBytes("UTF-8"))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "7".getBytes(StandardCharsets.UTF_8))),
               new AttributeValueAssertion(
                 "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "www.ldaptive.org".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
+                  "www.ldaptive.org".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "ldaptive".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR,
+                  "ldaptive".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "org".getBytes("UTF-8"))))),
+                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "org".getBytes(StandardCharsets.UTF_8))))),
         },
         // O="CN=www.apache.org, foo", CN=www.example.org
         // BER 30:3B:31:18:30:16:06:03:55:04:03:13:0F:77:77:77:2E:65:78:61:6D:70
@@ -136,13 +141,14 @@ public class DNTest
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "www.example.org".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
+                  "www.example.org".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.10",
                 new AttributeValueAssertion.Value(
                   UniversalDERTag.PRINTSTR,
-                  "CN=www.apache.org, foo".getBytes("UTF-8"))))),
+                  "CN=www.apache.org, foo".getBytes(StandardCharsets.UTF_8))))),
         },
         // O="foo, CN=www.apache.org,", CN=www.example.org
         // BER 30:3C:31:18:30:16:06:03:55:04:03:13:0F:77:77:77:2E:65:78:61:6D:70
@@ -168,13 +174,14 @@ public class DNTest
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "www.example.org".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
+                  "www.example.org".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.10",
                 new AttributeValueAssertion.Value(
                   UniversalDERTag.PRINTSTR,
-                  "foo, CN=www.apache.org,".getBytes("UTF-8"))))),
+                  "foo, CN=www.apache.org,".getBytes(StandardCharsets.UTF_8))))),
         },
         // CN=login.live.com, OU=Passport, O=Microsoft Corporation,
         // STREET=One Microsoft Way, L=Redmond, ST=Washington,
@@ -207,51 +214,59 @@ public class DNTest
             new RDN(
               new AttributeValueAssertion(
                 "1.3.6.1.4.1.311.60.2.1.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "US".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "US".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "1.3.6.1.4.1.311.60.2.1.2",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "Washington".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
+                  "Washington".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.15",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "V1.0, Clause 5.(b)".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
+                  "V1.0, Clause 5.(b)".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.5",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "600413485".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
+                  "600413485".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.6",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "US".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "US".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.17",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "98052".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "98052".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.8",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "Washington".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
+                  "Washington".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.7",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "Redmond".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "Redmond".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.9",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "One Microsoft Way".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.T61STR,
+                  "One Microsoft Way".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.10",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "Microsoft Corporation".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.T61STR,
+                  "Microsoft Corporation".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.11",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "Passport".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.T61STR,
+                  "Passport".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "login.live.com".getBytes("UTF-8"))))),
+                new AttributeValueAssertion.Value(UniversalDERTag.T61STR,
+                  "login.live.com".getBytes(StandardCharsets.UTF_8))))),
         },
         // C=US, DC=edu, DC=vt, ST=Virginia, L=Blacksburg,
         // O=Virginia Polytechnic Institute and State University,
@@ -281,45 +296,50 @@ public class DNTest
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR, "glider.cc.vt.edu".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR,
+                  "glider.cc.vt.edu".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.5",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "1248110657961".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
+                  "1248110657961".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.11",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR, "SETI".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR, "SETI".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.11",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR, "Middleware-Client".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR,
+                  "Middleware-Client".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.10",
                 new AttributeValueAssertion.Value(
                   UniversalDERTag.UTF8STR,
-                  "Virginia Polytechnic Institute and State University".getBytes("UTF-8")))),
+                  "Virginia Polytechnic Institute and State University".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.7",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR, "Blacksburg".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR,
+                  "Blacksburg".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.8",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR, "Virginia".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR,
+                  "Virginia".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "vt".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "vt".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "edu".getBytes("UTF-8")))),
+                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "edu".getBytes(StandardCharsets.UTF_8)))),
             new RDN(
               new AttributeValueAssertion(
                 "2.5.4.6",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "US".getBytes("UTF-8"))))),
+                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "US".getBytes(StandardCharsets.UTF_8))))),
         },
       };
   }
@@ -332,7 +352,7 @@ public class DNTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "dns")
+  @Test(groups = "asn1", dataProvider = "dns")
   public void decode(final byte[] bytes, final DN expected)
     throws Exception
   {
@@ -346,7 +366,7 @@ public class DNTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "dns")
+  @Test(groups = "asn1", dataProvider = "dns")
   public void encode(final byte[] expected, final DN sequence)
     throws Exception
   {

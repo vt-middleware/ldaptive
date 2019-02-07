@@ -9,18 +9,19 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchExecutor;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchScope;
 import org.ldaptive.io.LdifReader;
-import org.ldaptive.schema.io.AttributeTypeValueTranscoder;
-import org.ldaptive.schema.io.DITContentRuleValueTranscoder;
-import org.ldaptive.schema.io.DITStructureRuleValueTranscoder;
-import org.ldaptive.schema.io.MatchingRuleUseValueTranscoder;
-import org.ldaptive.schema.io.MatchingRuleValueTranscoder;
-import org.ldaptive.schema.io.NameFormValueTranscoder;
-import org.ldaptive.schema.io.ObjectClassValueTranscoder;
-import org.ldaptive.schema.io.SyntaxValueTranscoder;
+import org.ldaptive.schema.transcode.AttributeTypeValueTranscoder;
+import org.ldaptive.schema.transcode.DITContentRuleValueTranscoder;
+import org.ldaptive.schema.transcode.DITStructureRuleValueTranscoder;
+import org.ldaptive.schema.transcode.MatchingRuleUseValueTranscoder;
+import org.ldaptive.schema.transcode.MatchingRuleValueTranscoder;
+import org.ldaptive.schema.transcode.NameFormValueTranscoder;
+import org.ldaptive.schema.transcode.ObjectClassValueTranscoder;
+import org.ldaptive.schema.transcode.SyntaxValueTranscoder;
 
 /**
  * Factory to create {@link Schema} objects from an LDAP entry.
@@ -92,7 +93,11 @@ public final class SchemaFactory
   public static Schema createSchema(final ConnectionFactory factory)
     throws LdapException
   {
-    final LdapEntry rootDSE = getLdapEntry(factory, "", "(objectClass=*)", new String[] {SUBSCHEMA_SUBENTRY_ATTR_NAME});
+    final LdapEntry rootDSE = getLdapEntry(
+      factory,
+      "",
+      "(objectClass=*)",
+      SUBSCHEMA_SUBENTRY_ATTR_NAME);
     final String entryDn = rootDSE.getAttribute(SUBSCHEMA_SUBENTRY_ATTR_NAME).getStringValue();
     return createSchema(getLdapEntry(factory, entryDn, "(objectClass=subSchema)", ReturnAttributes.ALL.value()));
   }
@@ -132,42 +137,42 @@ public final class SchemaFactory
 
     final LdapAttribute atAttr = schemaEntry.getAttribute(ATTRIBUTE_TYPES_ATTR_NAME);
     if (atAttr != null) {
-      schema.setAttributeTypes(atAttr.getValues(new AttributeTypeValueTranscoder()));
+      schema.setAttributeTypes(atAttr.getValues(new AttributeTypeValueTranscoder().decoder()));
     }
 
     final LdapAttribute dcrAttr = schemaEntry.getAttribute(DIT_CONTENT_RULES_ATTR_NAME);
     if (dcrAttr != null) {
-      schema.setDitContentRules(dcrAttr.getValues(new DITContentRuleValueTranscoder()));
+      schema.setDitContentRules(dcrAttr.getValues(new DITContentRuleValueTranscoder().decoder()));
     }
 
     final LdapAttribute dsrAttr = schemaEntry.getAttribute(DIT_STRUCTURE_RULES_ATTR_NAME);
     if (dsrAttr != null) {
-      schema.setDitStructureRules(dsrAttr.getValues(new DITStructureRuleValueTranscoder()));
+      schema.setDitStructureRules(dsrAttr.getValues(new DITStructureRuleValueTranscoder().decoder()));
     }
 
     final LdapAttribute sAttr = schemaEntry.getAttribute(LDAP_SYNTAXES_ATTR_NAME);
     if (sAttr != null) {
-      schema.setSyntaxes(sAttr.getValues(new SyntaxValueTranscoder()));
+      schema.setSyntaxes(sAttr.getValues(new SyntaxValueTranscoder().decoder()));
     }
 
     final LdapAttribute mrAttr = schemaEntry.getAttribute(MATCHING_RULES_ATTR_NAME);
     if (mrAttr != null) {
-      schema.setMatchingRules(mrAttr.getValues(new MatchingRuleValueTranscoder()));
+      schema.setMatchingRules(mrAttr.getValues(new MatchingRuleValueTranscoder().decoder()));
     }
 
     final LdapAttribute mruAttr = schemaEntry.getAttribute(MATCHING_RULE_USE_ATTR_NAME);
     if (mruAttr != null) {
-      schema.setMatchingRuleUses(mruAttr.getValues(new MatchingRuleUseValueTranscoder()));
+      schema.setMatchingRuleUses(mruAttr.getValues(new MatchingRuleUseValueTranscoder().decoder()));
     }
 
     final LdapAttribute nfAttr = schemaEntry.getAttribute(NAME_FORMS_ATTR_NAME);
     if (nfAttr != null) {
-      schema.setNameForms(nfAttr.getValues(new NameFormValueTranscoder()));
+      schema.setNameForms(nfAttr.getValues(new NameFormValueTranscoder().decoder()));
     }
 
     final LdapAttribute ocAttr = schemaEntry.getAttribute(OBJECT_CLASS_ATTR_NAME);
     if (ocAttr != null) {
-      schema.setObjectClasses(ocAttr.getValues(new ObjectClassValueTranscoder()));
+      schema.setObjectClasses(ocAttr.getValues(new ObjectClassValueTranscoder().decoder()));
     }
 
     return schema;
@@ -190,15 +195,12 @@ public final class SchemaFactory
     final ConnectionFactory factory,
     final String dn,
     final String filter,
-    final String[] retAttrs)
+    final String... retAttrs)
     throws LdapException
   {
-    final SearchExecutor executor = new SearchExecutor();
-    executor.setBaseDn(dn);
-    executor.setSearchScope(SearchScope.OBJECT);
-    executor.setReturnAttributes(retAttrs);
-
-    final SearchResult result = executor.search(factory, filter).getResult();
+    final SearchOperation search = new SearchOperation(factory);
+    final SearchResponse result = search.execute(
+      SearchRequest.builder().dn(dn).scope(SearchScope.OBJECT).filter(filter).attributes(retAttrs).build());
     return result.getEntry();
   }
 }

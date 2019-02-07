@@ -82,8 +82,10 @@ public class LdapPrincipal implements Principal, Serializable, Comparable<Princi
   @Override
   public String toString()
   {
-    return
-      String.format("[%s@%d::%s%s]", getClass().getName(), hashCode(), ldapName, ldapEntry != null ? ldapEntry : "");
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("ldapName=").append(ldapName).append(", ")
+      .append("ldapEntry=").append(ldapEntry != null ? ldapEntry : "").append("]").toString();
   }
 
 

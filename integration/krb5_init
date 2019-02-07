@@ -1,0 +1,29 @@
+#!/bin/sh
+
+echo "172.28.1.11 ldap-test" >>/etc/hosts
+cat /etc/hosts
+tee /etc/krb5.conf <<EOF
+[libdefaults]
+    default_realm = VT.EDU
+
+[realms]
+    VT.EDU = {
+        kdc = ldap-test
+        admin_server = ldap-test
+        default_domain = VT.EDU
+    }
+
+[domain_realm]
+    . = VT.EDU
+    .vt.edu = VT.EDU
+    vt.edu = VT.EDU
+EOF
+ktutil <<EOF
+addent -password -p test@VT.EDU -k 1 -e aes256-cts
+password
+wkt /etc/krb5.keytab
+list
+exit
+EOF
+kinit -kt /etc/krb5.keytab test@VT.EDU
+klist

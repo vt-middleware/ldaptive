@@ -2,112 +2,80 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
+import org.ldaptive.AbstractResult;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.Response;
-import org.ldaptive.ResultCode;
-import org.ldaptive.control.ResponseControl;
 
 /**
- * Response object for authenticator.
+ * Synthetic response object that encapsulates data used for authentication.
  *
  * @author  Middleware Services
  */
-public class AuthenticationResponse extends Response<Boolean>
+public class AuthenticationResponse extends AbstractResult
 {
 
+  /** hash code seed. */
+  private static final int HASH_CODE_SEED = 10427;
+
   /** Result of the authentication operation. */
-  private final AuthenticationResultCode authenticationResultCode;
+  private AuthenticationHandlerResponse authenticationHandlerResponse;
 
   /** Resolved DN. */
-  private final String resolvedDn;
+  private String resolvedDn;
 
   /** Ldap entry of authenticated user. */
-  private final LdapEntry ldapEntry;
+  private LdapEntry ldapEntry;
 
   /** Account state. */
   private AccountState accountState;
 
 
+  /** Default constructor. */
+  private AuthenticationResponse() {}
+
+
   /**
    * Creates a new authentication response.
    *
-   * @param  authRc  authentication result code
-   * @param  rc  result code from the underlying ldap operation
+   * @param  response  authentication handler response
    * @param  dn  produced by the DN resolver
    * @param  entry  of the authenticated user
    */
   public AuthenticationResponse(
-    final AuthenticationResultCode authRc,
-    final ResultCode rc,
+    final AuthenticationHandlerResponse response,
     final String dn,
     final LdapEntry entry)
   {
-    super(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc, rc);
-    authenticationResultCode = authRc;
+    copyValues(response);
+    authenticationHandlerResponse = response;
     resolvedDn = dn;
     ldapEntry = entry;
   }
 
 
   /**
-   * Creates a new authentication response.
+   * Returns whether the authentication handler produced a {@link
+   * AuthenticationResultCode#AUTHENTICATION_HANDLER_SUCCESS} result.
    *
-   * @param  authRc  authentication result code
-   * @param  rc  result code from the underlying ldap operation
-   * @param  dn  produced by the DN resolver
-   * @param  entry  of the authenticated user
-   * @param  msg  authentication message
+   * @return  whether authentication was successful
    */
-  public AuthenticationResponse(
-    final AuthenticationResultCode authRc,
-    final ResultCode rc,
-    final String dn,
-    final LdapEntry entry,
-    final String msg)
+  public boolean isSuccess()
   {
-    super(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc, rc, msg, null, null, null, -1);
-    authenticationResultCode = authRc;
-    resolvedDn = dn;
-    ldapEntry = entry;
+    return
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS ==
+        authenticationHandlerResponse.getAuthenticationResultCode();
   }
 
 
-  /**
-   * Creates a new authentication response.
-   *
-   * @param  authRc  authentication result code
-   * @param  rc  result code from the underlying ldap operation
-   * @param  dn  produced by the DN resolver
-   * @param  entry  of the authenticated user
-   * @param  msg  authentication message
-   * @param  controls  response controls from the underlying ldap operation
-   * @param  msgId  message id from the underlying ldap operation
-   */
-  public AuthenticationResponse(
-    final AuthenticationResultCode authRc,
-    final ResultCode rc,
-    final String dn,
-    final LdapEntry entry,
-    final String msg,
-    final ResponseControl[] controls,
-    final int msgId)
-  {
-    super(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authRc, rc, msg, null, controls, null, msgId);
-    authenticationResultCode = authRc;
-    resolvedDn = dn;
-    ldapEntry = entry;
-  }
-
-
-  /**
-   * Returns the result code associated with the authentication operation.
-   *
-   * @return  authentication result code
-   */
   public AuthenticationResultCode getAuthenticationResultCode()
   {
-    return authenticationResultCode;
+    return authenticationHandlerResponse.getAuthenticationResultCode();
+  }
+
+
+  public AuthenticationHandlerResponse getAuthenticationHandlerResponse()
+  {
+    return authenticationHandlerResponse;
   }
 
 
@@ -156,21 +124,114 @@ public class AuthenticationResponse extends Response<Boolean>
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof AuthenticationResponse) {
+      final AuthenticationResponse v = (AuthenticationResponse) o;
+      return super.equals(o) &&
+             LdapUtils.areEqual(authenticationHandlerResponse, v.authenticationHandlerResponse) &&
+             LdapUtils.areEqual(resolvedDn, v.resolvedDn) &&
+             LdapUtils.areEqual(ldapEntry, v.ldapEntry) &&
+             LdapUtils.areEqual(accountState, v.accountState);
+    }
+    return false;
+  }
+
+
+  @Override
+  public int hashCode()
+  {
+    return LdapUtils.computeHashCode(
+      HASH_CODE_SEED,
+      getMessageID(),
+      getControls(),
+      getResultCode(),
+      getMatchedDN(),
+      getDiagnosticMessage(),
+      getReferralURLs(),
+      authenticationHandlerResponse,
+      resolvedDn,
+      ldapEntry,
+      accountState);
+  }
+
+
+  @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::authenticationResultCode=%s, resolvedDn=%s, ldapEntry=%s, accountState=%s, result=%s, " +
-        "resultCode=%s, message=%s, controls=%s]",
-        getClass().getName(),
-        hashCode(),
-        authenticationResultCode,
-        resolvedDn,
-        ldapEntry,
-        accountState,
-        getResult(),
-        getResultCode(),
-        encodeCntrlChars ? LdapUtils.percentEncodeControlChars(getMessage()) : getMessage(),
-        Arrays.toString(getControls()));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("authenticationHandlerResponse=").append(authenticationHandlerResponse).append(", ")
+      .append("resolvedDn=").append(resolvedDn).append(", ")
+      .append("ldapEntry=").append(ldapEntry).append(", ")
+      .append("accountState=").append(accountState).append(", ")
+      .append("resultCode=").append(getResultCode()).append(", ")
+      .append("message=").append(
+        ENCODE_CNTRL_CHARS ? LdapUtils.percentEncodeControlChars(getDiagnosticMessage()) :
+          getDiagnosticMessage()).append(", ")
+      .append("controls=").append(Arrays.toString(getControls())).append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  protected static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  protected static class Builder extends AbstractResult.AbstractBuilder<Builder, AuthenticationResponse>
+  {
+
+
+    protected Builder()
+    {
+      super(new AuthenticationResponse());
+    }
+
+
+    @Override
+    protected Builder self()
+    {
+      return this;
+    }
+
+
+    public Builder response(final AuthenticationHandlerResponse response)
+    {
+      object.copyValues(response);
+      object.authenticationHandlerResponse = response;
+      return this;
+    }
+
+
+    public Builder dn(final String dn)
+    {
+      object.resolvedDn = dn;
+      return this;
+    }
+
+
+    public Builder entry(final LdapEntry entry)
+    {
+      object.ldapEntry = entry;
+      return this;
+    }
+
+
+    public Builder state(final AccountState state)
+    {
+      object.accountState = state;
+      return this;
+    }
+  }
+  // CheckStyle:ON
 }

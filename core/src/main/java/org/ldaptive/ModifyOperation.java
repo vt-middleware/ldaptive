@@ -6,25 +6,134 @@ package org.ldaptive;
  *
  * @author  Middleware Services
  */
-public class ModifyOperation extends AbstractOperation<ModifyRequest, Void>
+public class ModifyOperation extends AbstractOperation<ModifyRequest, ModifyResponse>
 {
+
+
+  /**
+   * Default constructor.
+   */
+  public ModifyOperation() {}
 
 
   /**
    * Creates a new modify operation.
    *
-   * @param  conn  connection
+   * @param  factory  connection factory
    */
-  public ModifyOperation(final Connection conn)
+  public ModifyOperation(final ConnectionFactory factory)
   {
-    super(conn);
+    super(factory);
   }
 
 
-  @Override
-  protected Response<Void> invoke(final ModifyRequest request)
+  /**
+   * Sends a modify request. See {@link OperationHandle#send()}.
+   *
+   * @param  request  modify request
+   *
+   * @return  operation handle
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public OperationHandle<ModifyRequest, ModifyResponse> send(final ModifyRequest request)
     throws LdapException
   {
-    return getConnection().getProviderConnection().modify(request);
+    final Connection conn = getConnectionFactory().getConnection();
+    conn.open();
+    return configureHandle(conn.operation(request)).closeOnComplete().send();
+  }
+
+
+  /**
+   * Sends a modify request. See {@link OperationHandle#send()}.
+   *
+   * @param  factory  connection factory
+   * @param  request  modify request
+   *
+   * @return  operation handle
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public static OperationHandle<ModifyRequest, ModifyResponse> send(
+    final ConnectionFactory factory,
+    final ModifyRequest request)
+    throws LdapException
+  {
+    final Connection conn = factory.getConnection();
+    conn.open();
+    return conn.operation(request).closeOnComplete().send();
+  }
+
+
+  /**
+   * Executes a modify request. See {@link OperationHandle#execute()}.
+   *
+   * @param  request  modify request
+   *
+   * @return  modify result
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public ModifyResponse execute(final ModifyRequest request)
+    throws LdapException
+  {
+    try (Connection conn = getConnectionFactory().getConnection()) {
+      conn.open();
+      return configureHandle(conn.operation(request)).execute();
+    }
+  }
+
+
+  /**
+   * Executes a modify request. See {@link OperationHandle#execute()}.
+   *
+   * @param  factory  connection factory
+   * @param  request  modify request
+   *
+   * @return  modify result
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public static ModifyResponse execute(final ConnectionFactory factory, final ModifyRequest request)
+    throws LdapException
+  {
+    try (Connection conn = factory.getConnection()) {
+      conn.open();
+      return conn.operation(request).execute();
+    }
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  /** Modify operation builder. */
+  public static class Builder extends AbstractOperation.AbstractBuilder<ModifyOperation.Builder, ModifyOperation>
+  {
+
+
+    /**
+     * Creates a new builder.
+     */
+    protected Builder()
+    {
+      super(new ModifyOperation());
+    }
+
+
+    @Override
+    protected Builder self()
+    {
+      return this;
+    }
   }
 }

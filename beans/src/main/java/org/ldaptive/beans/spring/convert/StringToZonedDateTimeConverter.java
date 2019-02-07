@@ -2,7 +2,7 @@
 package org.ldaptive.beans.spring.convert;
 
 import java.time.ZonedDateTime;
-import org.ldaptive.io.GeneralizedTimeValueTranscoder;
+import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
 import org.springframework.core.convert.converter.Converter;
 
 /**

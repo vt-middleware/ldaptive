@@ -3,14 +3,11 @@ package org.ldaptive.control.util;
 
 import java.util.Iterator;
 import org.ldaptive.AbstractTest;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
-import org.ldaptive.SortBehavior;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.control.SortKey;
@@ -45,7 +42,7 @@ public class VirtualListViewClientTest extends AbstractTest
       "createEntry20",
       "createEntry21"
     })
-  @BeforeClass(groups = {"control-util"})
+  @BeforeClass(groups = "control-util")
   public void createLdapEntry(final String ldifFile1, final String ldifFile2, final String ldifFile3)
     throws Exception
   {
@@ -60,7 +57,7 @@ public class VirtualListViewClientTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"control-util"})
+  @AfterClass(groups = "control-util")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -81,7 +78,7 @@ public class VirtualListViewClientTest extends AbstractTest
       "vlvSearchDn",
       "vlvSearchFilter"
     })
-  @Test(groups = {"control-util"})
+  @Test(groups = "control-util")
   public void execute(final String dn, final String filter)
     throws Exception
   {
@@ -90,69 +87,43 @@ public class VirtualListViewClientTest extends AbstractTest
       return;
     }
 
-    // provider doesn't support this control
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP does not support this control");
-    }
+    VirtualListViewClient client = new VirtualListViewClient(
+      TestUtils.createConnectionFactory(),
+      new SortKey("uid", "caseExactMatch"),
+      new SortKey("givenName", "caseIgnoreMatch"));
 
-    final Connection conn = TestUtils.createConnection();
-    try {
-      conn.open();
+    SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
+    //request.setSortBehavior(SortBehavior.ORDERED);
+    SearchResponse response = client.execute(request, new VirtualListViewParams(1, 0, 1));
+    Iterator<LdapEntry> i = response.getEntries().iterator();
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());
+    AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
 
-      final VirtualListViewClient client = new VirtualListViewClient(
-        conn,
-        new SortKey("uid", "caseExactMatch"),
-        new SortKey("givenName", "caseIgnoreMatch"));
-
-      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
-      request.setSortBehavior(SortBehavior.ORDERED);
-      Response<SearchResult> response = client.execute(request, new VirtualListViewParams(1, 0, 1));
-      Iterator<LdapEntry> i = response.getResult().getEntries().iterator();
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());
-      AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
-
-      response = client.execute(request, new VirtualListViewParams(2, 1, 1), response);
-      i = response.getResult().getEntries().iterator();
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());
-      AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
-      AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
-
-    } catch (UnsupportedOperationException e) {
-      // ignore this test if not supported
-      AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
-    }
+    response = client.execute(request, new VirtualListViewParams(2, 1, 1), response);
+    i = response.getEntries().iterator();
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());
+    AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
+    AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
 
     // VLV does not give a clean way to destroy the server side sorted entries
     // list. Open a new connection.
-    try {
-      conn.open();
+    client = new VirtualListViewClient(TestUtils.createConnectionFactory(), new SortKey("uid", "caseExactMatch"));
 
-      final VirtualListViewClient client = new VirtualListViewClient(conn, new SortKey("uid", "caseExactMatch"));
+    request = new SearchRequest(dn, new SearchFilter(filter));
+    //request.setSortBehavior(SortBehavior.ORDERED);
+    response = client.execute(request, new VirtualListViewParams("21", 1, 0));
+    i = response.getEntries().iterator();
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
+    AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
 
-      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
-      request.setSortBehavior(SortBehavior.ORDERED);
-      Response<SearchResult> response = client.execute(request, new VirtualListViewParams("21", 1, 0));
-      Iterator<LdapEntry> i = response.getResult().getEntries().iterator();
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
-      AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
-
-      response = client.execute(request, new VirtualListViewParams("19", 0, 2), response);
-      i = response.getResult().getEntries().iterator();
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());
-      AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
-      AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
-
-    } catch (UnsupportedOperationException e) {
-      // ignore this test if not supported
-      AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
-    }
+    response = client.execute(request, new VirtualListViewParams("19", 0, 2), response);
+    i = response.getEntries().iterator();
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertEquals(testLdapEntries[0].getDn(), i.next().getDn());
+    AssertJUnit.assertEquals(testLdapEntries[1].getDn(), i.next().getDn());
+    AssertJUnit.assertEquals(testLdapEntries[2].getDn(), i.next().getDn());
   }
 }

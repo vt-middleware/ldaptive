@@ -7,7 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.Entry;
 
@@ -156,8 +155,8 @@ public class CharCustomObject implements CustomObject
 
     final T o1;
     try {
-      o1 = type.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      o1 = type.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
       throw new IllegalStateException(e);
     }
     o1.setCustomDn("cn=String Entry,ou=people,dc=ldaptive,dc=org");
@@ -187,8 +186,8 @@ public class CharCustomObject implements CustomObject
       @Attribute(name = "typeCol2", property = "typeCol2"),
       @Attribute(name = "typeSet1", property = "typeSet1"),
       @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeList2", property = "typeList2", sortBehavior = SortBehavior.ORDERED)})
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")})
   public static class Default extends CharCustomObject {}
 
 
@@ -204,8 +203,8 @@ public class CharCustomObject implements CustomObject
       @Attribute(name = "typeCol2", property = "typeCol2"),
       @Attribute(name = "typeSet1", property = "typeSet1"),
       @Attribute(name = "typeSet2", property = "typeSet2"),
-      @Attribute(name = "typeList1", property = "typeList1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeList2", property = "typeList2", sortBehavior = SortBehavior.ORDERED)})
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2")})
   public static class Spring extends CharCustomObject
   {
     // CheckStyle:JavadocMethod OFF

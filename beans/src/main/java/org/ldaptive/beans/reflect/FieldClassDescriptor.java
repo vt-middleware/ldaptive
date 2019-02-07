@@ -2,14 +2,14 @@
 package org.ldaptive.beans.reflect;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.ldaptive.beans.AbstractClassDescriptor;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.AttributeValueMutator;
 import org.ldaptive.beans.DnValueMutator;
 import org.ldaptive.beans.Entry;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.transcode.ValueTranscoder;
 
 /**
  * Creates DN and attribute mutators for the {@link Field}s on a type.
@@ -48,7 +48,7 @@ public class FieldClassDescriptor extends AbstractClassDescriptor
    */
   protected Map<String, Field> getDeclaredFields(final Class<?> type)
   {
-    final Map<String, Field> fields = new HashMap<>();
+    final Map<String, Field> fields = new LinkedHashMap<>();
     Class<?> c = type;
     while (c != null) {
       for (Field field : c.getDeclaredFields()) {
@@ -93,7 +93,6 @@ public class FieldClassDescriptor extends AbstractClassDescriptor
       new FieldAttributeValueMutator(
         name,
         attribute.binary(),
-        attribute.sortBehavior(),
         new DefaultReflectionTranscoder(field.getGenericType(), transcoder),
         field);
   }

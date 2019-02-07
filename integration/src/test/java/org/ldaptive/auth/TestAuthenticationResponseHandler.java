@@ -19,7 +19,7 @@ public class TestAuthenticationResponseHandler implements AuthenticationResponse
   @Override
   public void handle(final AuthenticationResponse response)
   {
-    results.put(response.getLdapEntry().getDn(), response.getResult());
+    results.put(response.getLdapEntry().getDn(), response.isSuccess());
   }
 
 

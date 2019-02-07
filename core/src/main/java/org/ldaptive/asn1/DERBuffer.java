@@ -27,7 +27,7 @@ public interface DERBuffer
    *
    * @return  This buffer
    *
-   * @throws  IllegalArgumentException  if the preconditions on <tt>newPosition</tt> do not hold
+   * @throws  IllegalArgumentException  if the preconditions on newPosition do not hold
    */
   DERBuffer position(int newPosition);
 
@@ -49,7 +49,7 @@ public interface DERBuffer
    *
    * @return  This buffer
    *
-   * @throws  IllegalArgumentException  if the preconditions on <tt>newLimit</tt> do not hold
+   * @throws  IllegalArgumentException  if the preconditions on newLimit do not hold
    */
   DERBuffer limit(int newLimit);
 

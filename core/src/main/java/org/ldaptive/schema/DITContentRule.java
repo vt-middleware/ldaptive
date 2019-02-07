@@ -359,21 +359,16 @@ public class DITContentRule extends AbstractNamedSchemaElement
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::oid=%s, names=%s, description=%s, obsolete=%s, " +
-        "auxiliaryClasses=%s, requiredAttributes=%s, " +
-        "optionalAttributes=%s, restrictedAttributes=%s, extensions=%s]",
-        getClass().getName(),
-        hashCode(),
-        oid,
-        Arrays.toString(getNames()),
-        getDescription(),
-        isObsolete(),
-        Arrays.toString(auxiliaryClasses),
-        Arrays.toString(requiredAttributes),
-        Arrays.toString(optionalAttributes),
-        Arrays.toString(restrictedAttributes),
-        getExtensions());
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("oid=").append(oid).append(", ")
+      .append("names=").append(Arrays.toString(getNames())).append(", ")
+      .append("description=").append(getDescription()).append(", ")
+      .append("obsolete=").append(isObsolete()).append(", ")
+      .append("auxiliaryClasses=").append(Arrays.toString(auxiliaryClasses)).append(", ")
+      .append("requiredAttributes=").append(Arrays.toString(requiredAttributes)).append(", ")
+      .append("optionalAttributes=").append(Arrays.toString(optionalAttributes)).append(", ")
+      .append("restrictedAttributes=").append(Arrays.toString(restrictedAttributes)).append(", ")
+      .append("extensions=").append(getExtensions()).append("]").toString();
   }
 }

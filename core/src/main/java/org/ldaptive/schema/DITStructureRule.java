@@ -265,18 +265,14 @@ public class DITStructureRule extends AbstractNamedSchemaElement
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::id=%s, names=%s, description=%s, obsolete=%s, " +
-        "nameForm=%s, superiorRules=%s, extensions=%s]",
-        getClass().getName(),
-        hashCode(),
-        id,
-        Arrays.toString(getNames()),
-        getDescription(),
-        isObsolete(),
-        nameForm,
-        Arrays.toString(superiorRules),
-        getExtensions());
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("id=").append(id).append(", ")
+      .append("names=").append(Arrays.toString(getNames())).append(", ")
+      .append("description=").append(getDescription()).append(", ")
+      .append("obsolete=").append(isObsolete()).append(", ")
+      .append("nameForm=").append(nameForm).append(", ")
+      .append("superiorRules=").append(Arrays.toString(superiorRules)).append(", ")
+      .append("extensions=").append(getExtensions()).append("]").toString();
   }
 }

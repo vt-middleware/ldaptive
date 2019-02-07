@@ -105,7 +105,7 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
         assertions.add(new AttributeValueAssertion(oid, new Value(tag, e.getRemainingBytes())));
       });
     parser.parse(encoded);
-    return assertions.toArray(new AttributeValueAssertion[assertions.size()]);
+    return assertions.toArray(new AttributeValueAssertion[0]);
   }
 
 
@@ -134,13 +134,10 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::attributeOid=%s, attributeValue=%s]",
-        getClass().getName(),
-        hashCode(),
-        attributeOid,
-        attributeValue);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("attributeOid=").append(attributeOid).append(", ")
+      .append("attributeValue=").append(attributeValue).append("]").toString();
   }
 
 
@@ -218,13 +215,10 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
     @Override
     public String toString()
     {
-      return
-        String.format(
-          "[%s@%d::attributeValueTag=%s, attributeValueBytes=%s]",
-          getClass().getName(),
-          hashCode(),
-          attributeValueTag,
-          LdapUtils.utf8Encode(attributeValueBytes));
+      return new StringBuilder("[").append(
+        getClass().getName()).append("@").append(hashCode()).append("::")
+        .append("attributeValueTag=").append(attributeValueTag).append(", ")
+        .append("attributeValueBytes=").append(LdapUtils.utf8Encode(attributeValueBytes)).append("]").toString();
     }
   }
 }

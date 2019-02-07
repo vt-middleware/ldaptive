@@ -106,25 +106,22 @@ public class ActiveDirectoryAccountState extends AccountState
         throw new FailedLoginException(name());
 
       case INVALID_LOGON_HOURS:
+
+      case ACCOUNT_DISABLED:
+
+      case ACCOUNT_LOCKED_OUT:
         throw new AccountLockedException(name());
 
       case INVALID_WORKSTATION:
         throw new AccountException(name());
 
       case PASSWORD_EXPIRED:
-        throw new CredentialExpiredException(name());
-
-      case ACCOUNT_DISABLED:
-        throw new AccountLockedException(name());
-
-      case ACCOUNT_EXPIRED:
-        throw new AccountExpiredException(name());
 
       case PASSWORD_MUST_CHANGE:
         throw new CredentialExpiredException(name());
 
-      case ACCOUNT_LOCKED_OUT:
-        throw new AccountLockedException(name());
+      case ACCOUNT_EXPIRED:
+        throw new AccountExpiredException(name());
 
       default:
         throw new IllegalStateException("Unknown active directory error: " + this);

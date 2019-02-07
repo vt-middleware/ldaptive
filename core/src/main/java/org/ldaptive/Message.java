@@ -1,23 +1,49 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.ldaptive.control.Control;
+import org.ldaptive.control.ResponseControl;
 
 /**
- * Interface for ldap messages.
- *
- * @param  <T>  type of control
+ * LDAP protocol response.
  *
  * @author  Middleware Services
  */
-public interface Message<T extends Control>
+public interface Message
 {
 
 
   /**
-   * Returns the controls for this message.
+   * Returns the ID for this message.
    *
-   * @return  controls
+   * @return  message ID
    */
-  T[] getControls();
+  int getMessageID();
+
+
+  /**
+   * Returns the response controls for this message.
+   *
+   * @return  response controls
+   */
+  ResponseControl[] getControls();
+
+
+  /**
+   * Returns the first response control with the supplied OID.
+   *
+   * @param  oid  of the response control to return
+   *
+   * @return  response control or null if control could not be found
+   */
+  default ResponseControl getControl(final String oid)
+  {
+    if (getControls() != null) {
+      for (ResponseControl c : getControls()) {
+        if (c.getOID().equals(oid)) {
+          return c;
+        }
+      }
+    }
+    return null;
+  }
 }

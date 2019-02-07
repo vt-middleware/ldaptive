@@ -209,7 +209,7 @@ public class ObjectClassTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"schema"}, dataProvider = "definitions")
+  @Test(groups = "schema", dataProvider = "definitions")
   public void parse(final ObjectClass objectClass, final String definition)
     throws Exception
   {

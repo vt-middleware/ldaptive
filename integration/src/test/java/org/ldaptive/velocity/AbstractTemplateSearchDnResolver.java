@@ -7,7 +7,7 @@ import org.apache.velocity.app.event.EventCartridge;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
 import org.apache.velocity.exception.VelocityException;
 import org.ldaptive.SearchFilter;
-import org.ldaptive.auth.AbstractSearchDnResolver;
+import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.User;
 
 /**
@@ -15,14 +15,14 @@ import org.ldaptive.auth.User;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractTemplateSearchDnResolver extends AbstractSearchDnResolver
+public abstract class AbstractTemplateSearchDnResolver extends SearchDnResolver
 {
 
   /** Template. */
   private final Template template;
 
   /** Event handler used for escaping. */
-  private ReferenceInsertionEventHandler eventHandler = new EscapingReferenceInsertionEventHandler();
+  private final ReferenceInsertionEventHandler eventHandler = new EscapingReferenceInsertionEventHandler();
 
 
   /**

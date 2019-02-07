@@ -2,85 +2,58 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
+import org.ldaptive.AbstractResult;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.Response;
-import org.ldaptive.ResultCode;
-import org.ldaptive.control.ResponseControl;
+import org.ldaptive.Result;
 
 /**
  * Response object for authentication handlers.
  *
  * @author  Middleware Services
  */
-public class AuthenticationHandlerResponse extends Response<Boolean>
+public class AuthenticationHandlerResponse extends AbstractResult
 {
 
+  /** hash code seed. */
+  private static final int HASH_CODE_SEED = 10429;
+
+  /** Authentication result code. */
+  private AuthenticationResultCode authenticationResultCode;
+
   /** Connection that authentication occurred on. */
-  private final Connection connection;
+  private Connection connection;
+
+
+  /** Default constructor. */
+  private AuthenticationHandlerResponse() {}
 
 
   /**
    * Creates a new authentication response.
    *
-   * @param  success  authentication result
-   * @param  rc  result code from the underlying ldap operation
+   * @param  <T>  type of LDAP result
+   * @param  result  of the LDAP operation used to produce this response
+   * @param  code  authentication result code
    * @param  conn  connection the authentication occurred on
    */
-  public AuthenticationHandlerResponse(final boolean success, final ResultCode rc, final Connection conn)
+  public <T extends Result> AuthenticationHandlerResponse(
+    final T result,
+    final AuthenticationResultCode code,
+    final Connection conn)
   {
-    super(success, rc);
+    copyValues(result);
+    authenticationResultCode = code;
     connection = conn;
   }
 
 
-  /**
-   * Creates a new authentication response.
-   *
-   * @param  success  authentication result
-   * @param  rc  result code from the underlying ldap operation
-   * @param  conn  connection the authentication occurred on
-   * @param  msg  authentication message
-   */
-  public AuthenticationHandlerResponse(
-    final boolean success,
-    final ResultCode rc,
-    final Connection conn,
-    final String msg)
+  public AuthenticationResultCode getAuthenticationResultCode()
   {
-    super(success, rc, msg, null, null, null, -1);
-    connection = conn;
+    return authenticationResultCode;
   }
 
 
-  /**
-   * Creates a new ldap response.
-   *
-   * @param  success  authentication result
-   * @param  rc  result code from the underlying ldap operation
-   * @param  conn  connection the authentication occurred on
-   * @param  msg  authentication message
-   * @param  controls  response controls from the underlying ldap operation
-   * @param  msgId  message id from the underlying ldap operation
-   */
-  public AuthenticationHandlerResponse(
-    final boolean success,
-    final ResultCode rc,
-    final Connection conn,
-    final String msg,
-    final ResponseControl[] controls,
-    final int msgId)
-  {
-    super(success, rc, msg, null, controls, null, msgId);
-    connection = conn;
-  }
-
-
-  /**
-   * Returns the connection that the ldap operation occurred on.
-   *
-   * @return  connection
-   */
   public Connection getConnection()
   {
     return connection;
@@ -88,17 +61,92 @@ public class AuthenticationHandlerResponse extends Response<Boolean>
 
 
   @Override
+  public boolean equals(final Object o)
+  {
+    if (o == this) {
+      return true;
+    }
+    if (o instanceof AuthenticationHandlerResponse) {
+      final AuthenticationHandlerResponse v = (AuthenticationHandlerResponse) o;
+      return super.equals(o) &&
+             LdapUtils.areEqual(authenticationResultCode, v.authenticationResultCode) &&
+             LdapUtils.areEqual(connection, v.connection);
+    }
+    return false;
+  }
+
+
+  @Override
+  public int hashCode()
+  {
+    return LdapUtils.computeHashCode(
+      HASH_CODE_SEED,
+      getMessageID(),
+      getControls(),
+      getResultCode(),
+      getMatchedDN(),
+      getDiagnosticMessage(),
+      getReferralURLs(),
+      authenticationResultCode,
+      connection);
+  }
+
+
+  @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::connection=%s, result=%s, resultCode=%s, message=%s, controls=%s]",
-        getClass().getName(),
-        hashCode(),
-        connection,
-        getResult(),
-        getResultCode(),
-        encodeCntrlChars ? LdapUtils.percentEncodeControlChars(getMessage()) : getMessage(),
-        Arrays.toString(getControls()));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("connection=").append(connection).append(", ")
+      .append("resultCode=").append(getResultCode()).append(", ")
+      .append("message=").append(
+        ENCODE_CNTRL_CHARS ? LdapUtils.percentEncodeControlChars(getDiagnosticMessage()) :
+          getDiagnosticMessage()).append(", ")
+      .append("controls=").append(Arrays.toString(getControls())).append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  protected static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  protected static class Builder extends AbstractResult.AbstractBuilder<Builder, AuthenticationHandlerResponse>
+  {
+
+
+    protected Builder()
+    {
+      super(new AuthenticationHandlerResponse());
+    }
+
+
+    @Override
+    protected Builder self()
+    {
+      return this;
+    }
+
+
+    public Builder resultCode(final AuthenticationResultCode code)
+    {
+      object.authenticationResultCode = code;
+      return this;
+    }
+
+
+    public Builder connection(final Connection conn)
+    {
+      object.connection = conn;
+      return this;
+    }
+  }
+  // CheckStyle:ON
 }

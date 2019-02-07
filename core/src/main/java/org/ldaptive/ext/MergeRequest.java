@@ -2,7 +2,6 @@
 package org.ldaptive.ext;
 
 import java.util.Arrays;
-import org.ldaptive.AbstractRequest;
 import org.ldaptive.LdapEntry;
 
 /**
@@ -10,7 +9,7 @@ import org.ldaptive.LdapEntry;
  *
  * @author  Middleware Services
  */
-public class MergeRequest extends AbstractRequest
+public class MergeRequest
 {
 
   /** Ldap entry to merge. */
@@ -170,20 +169,12 @@ public class MergeRequest extends AbstractRequest
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::ldapEntry=%s, deleteEntry=%s, searchAttributes=%s, " +
-        "includeAttributes=%s, excludeAttributes=%s, controls=%s, " +
-        "referralHandler=%s, intermediateResponseHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        ldapEntry,
-        deleteEntry,
-        Arrays.toString(searchAttrs),
-        Arrays.toString(includeAttrs),
-        Arrays.toString(excludeAttrs),
-        Arrays.toString(getControls()),
-        getReferralHandler(),
-        Arrays.toString(getIntermediateResponseHandlers()));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("ldapEntry=").append(ldapEntry).append(", ")
+      .append("deleteEntry=").append(deleteEntry).append(", ")
+      .append("searchAttributes=").append(Arrays.toString(searchAttrs)).append(", ")
+      .append("includeAttributes=").append(Arrays.toString(includeAttrs)).append(", ")
+      .append("excludeAttributes=").append(Arrays.toString(includeAttrs)).append("]").toString();
   }
 }

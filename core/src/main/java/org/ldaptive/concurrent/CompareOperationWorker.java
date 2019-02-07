@@ -4,13 +4,14 @@ package org.ldaptive.concurrent;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.CompareOperation;
 import org.ldaptive.CompareRequest;
+import org.ldaptive.CompareResponse;
 
 /**
  * Executes an ldap compare operation on a separate thread.
  *
  * @author  Middleware Services
  */
-public class CompareOperationWorker extends AbstractOperationWorker<CompareRequest, Boolean>
+public class CompareOperationWorker extends AbstractOperationWorker<CompareRequest, CompareResponse>
 {
 
 

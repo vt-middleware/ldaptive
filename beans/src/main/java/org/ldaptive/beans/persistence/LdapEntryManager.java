@@ -1,8 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.persistence;
 
+import org.ldaptive.AddResponse;
+import org.ldaptive.DeleteResponse;
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
+import org.ldaptive.Result;
 
 /**
  * Interface to manage objects that have been annotated to contain LDAP data.
@@ -38,7 +40,7 @@ public interface LdapEntryManager<T>
    *
    * @throws  LdapException  if the add fails
    */
-  Response<Void> add(T object)
+  AddResponse add(T object)
     throws LdapException;
 
 
@@ -51,7 +53,7 @@ public interface LdapEntryManager<T>
    *
    * @throws  LdapException  if the merge fails
    */
-  Response<Void> merge(T object)
+  Result merge(T object)
     throws LdapException;
 
 
@@ -64,6 +66,6 @@ public interface LdapEntryManager<T>
    *
    * @throws  LdapException  if the delete fails
    */
-  Response<Void> delete(T object)
+  DeleteResponse delete(T object)
     throws LdapException;
 }

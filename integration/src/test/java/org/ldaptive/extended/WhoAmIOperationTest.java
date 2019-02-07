@@ -3,15 +3,14 @@ package org.ldaptive.extended;
 
 import org.ldaptive.AbstractTest;
 import org.ldaptive.BindConnectionInitializer;
-import org.ldaptive.Connection;
-import org.ldaptive.Response;
+import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link WhoAmIOperation}.
+ * Unit test for the WhoAmI extended operation.
  *
  * @author  Middleware Services
  */
@@ -20,7 +19,7 @@ public class WhoAmIOperationTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"extended"})
+  @Test(groups = "extended")
   public void whoami()
     throws Exception
   {
@@ -29,19 +28,11 @@ public class WhoAmIOperationTest extends AbstractTest
       return;
     }
 
-    // provider doesn't support this operation
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP does not support this operation");
-    }
-
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final WhoAmIOperation whoami = new WhoAmIOperation(conn);
-      final Response<String> res = whoami.execute(new WhoAmIRequest());
-      final BindConnectionInitializer ci =
-        (BindConnectionInitializer) conn.getConnectionConfig().getConnectionInitializer();
-      AssertJUnit.assertEquals("dn:" + ci.getBindDn(), res.getResult());
-    }
+    final DefaultConnectionFactory cf = (DefaultConnectionFactory) TestUtils.createConnectionFactory();
+    final ExtendedOperation whoami = new ExtendedOperation(cf);
+    final ExtendedResponse res = whoami.execute(new WhoAmIRequest());
+    final BindConnectionInitializer ci =
+      (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializer();
+    AssertJUnit.assertEquals("dn:" + ci.getBindDn(), WhoAmIResponseParser.parse(res));
   }
 }

@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.Arrays;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -12,9 +13,6 @@ import org.testng.annotations.Test;
  */
 public class RoundRobinConnectionStrategyTest
 {
-
-  /** Strategy to test. */
-  private final RoundRobinConnectionStrategy strategy = new RoundRobinConnectionStrategy();
 
 
   /**
@@ -28,89 +26,82 @@ public class RoundRobinConnectionStrategyTest
     return
       new Object[][] {
         new Object[] {
-          new TestConnectionFactoryMetadata(),
-          null,
+          "ldap://directory.ldaptive.org",
+          new LdapURL[] {new LdapURL("ldap://directory.ldaptive.org")},
+          0,
         },
         new Object[] {
-          new TestConnectionFactoryMetadata("ldap://directory.ldaptive.org"),
-          new String[] {"ldap://directory.ldaptive.org"},
-        },
-        new Object[] {
-          new TestConnectionFactoryMetadata("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org"),
-          new String[] {
-            "ldap://directory-1.ldaptive.org",
-            "ldap://directory-2.ldaptive.org",
+          "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org",
+          new LdapURL[] {
+            new LdapURL("ldap://directory-1.ldaptive.org"),
+            new LdapURL("ldap://directory-2.ldaptive.org"),
           },
+          0,
         },
         new Object[] {
-          new TestConnectionFactoryMetadata(
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org " +
-            "ldap://directory-3.ldaptive.org",
-            0),
-          new String[] {
-            "ldap://directory-1.ldaptive.org",
-            "ldap://directory-2.ldaptive.org",
-            "ldap://directory-3.ldaptive.org",
+          "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org",
+          new LdapURL[] {
+            new LdapURL("ldap://directory-1.ldaptive.org"),
+            new LdapURL("ldap://directory-2.ldaptive.org"),
+            new LdapURL("ldap://directory-3.ldaptive.org"),
           },
+          0,
         },
         new Object[] {
-          new TestConnectionFactoryMetadata(
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org " +
-            "ldap://directory-3.ldaptive.org",
-            1),
-          new String[] {
-            "ldap://directory-2.ldaptive.org",
-            "ldap://directory-3.ldaptive.org",
-            "ldap://directory-1.ldaptive.org",
+          "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org",
+          new LdapURL[] {
+            new LdapURL("ldap://directory-2.ldaptive.org"),
+            new LdapURL("ldap://directory-3.ldaptive.org"),
+            new LdapURL("ldap://directory-1.ldaptive.org"),
           },
+          1,
         },
         new Object[] {
-          new TestConnectionFactoryMetadata(
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org " +
-            "ldap://directory-3.ldaptive.org",
-            2),
-          new String[] {
-            "ldap://directory-3.ldaptive.org",
-            "ldap://directory-1.ldaptive.org",
-            "ldap://directory-2.ldaptive.org",
+          "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org",
+          new LdapURL[] {
+            new LdapURL("ldap://directory-3.ldaptive.org"),
+            new LdapURL("ldap://directory-1.ldaptive.org"),
+            new LdapURL("ldap://directory-2.ldaptive.org"),
           },
+          2,
         },
         new Object[] {
-          new TestConnectionFactoryMetadata(
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org " +
-            "ldap://directory-3.ldaptive.org",
-            3),
-          new String[] {
-            "ldap://directory-1.ldaptive.org",
-            "ldap://directory-2.ldaptive.org",
-            "ldap://directory-3.ldaptive.org",
+          "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org",
+          new LdapURL[] {
+            new LdapURL("ldap://directory-1.ldaptive.org"),
+            new LdapURL("ldap://directory-2.ldaptive.org"),
+            new LdapURL("ldap://directory-3.ldaptive.org"),
           },
+          3,
         },
         new Object[] {
-          new TestConnectionFactoryMetadata(
-            "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org " +
-            "ldap://directory-3.ldaptive.org",
-            4),
-          new String[] {
-            "ldap://directory-2.ldaptive.org",
-            "ldap://directory-3.ldaptive.org",
-            "ldap://directory-1.ldaptive.org",
+          "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org",
+          new LdapURL[] {
+            new LdapURL("ldap://directory-2.ldaptive.org"),
+            new LdapURL("ldap://directory-3.ldaptive.org"),
+            new LdapURL("ldap://directory-1.ldaptive.org"),
           },
+          4,
         },
       };
   }
 
 
   /**
-   * @param  metadata  to get ldap urls from
-   * @param  urls  to compare
+   * Unit test for {@link RoundRobinConnectionStrategy#apply()}.
    *
-   * @throws  Exception  On test failure.
+   * @param  actual  to initialize strategy with
+   * @param  expected  to compare
+   * @param  count  number of times to invoke {@link ConnectionStrategy#apply()}
    */
-  @Test(groups = {"provider"}, dataProvider = "urls")
-  public void getLdapUrls(final ConnectionFactoryMetadata metadata, final String[] urls)
-    throws Exception
+  @Test(groups = "provider", dataProvider = "urls")
+  public void apply(final String actual, final LdapURL[] expected, final int count)
   {
-    Assert.assertEquals(strategy.getLdapUrls(metadata), urls);
+    final RoundRobinConnectionStrategy strategy = new RoundRobinConnectionStrategy();
+    strategy.initialize(actual);
+    for (int i = 0; i < count; i++) {
+      strategy.apply();
+    }
+    Assert.assertEquals(strategy.apply(), Arrays.asList(expected));
   }
 }

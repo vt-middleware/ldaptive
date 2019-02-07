@@ -113,13 +113,10 @@ public class PasswordExpiringControl extends AbstractControl implements Response
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, timeBeforeExpiration=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        timeBeforeExpiration);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("timeBeforeExpiration=").append(timeBeforeExpiration).append("]").toString();
   }
 
 

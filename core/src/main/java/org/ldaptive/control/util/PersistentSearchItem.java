@@ -1,9 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
-import org.ldaptive.Response;
-import org.ldaptive.SearchEntry;
-import org.ldaptive.async.AsyncRequest;
+import org.ldaptive.LdapEntry;
+import org.ldaptive.Result;
 import org.ldaptive.control.EntryChangeNotificationControl;
 
 /**
@@ -14,31 +13,14 @@ import org.ldaptive.control.EntryChangeNotificationControl;
 public class PersistentSearchItem
 {
 
-  /** Async request from the search operation. */
-  private final AsyncRequest asyncRequest;
-
   /** Entry contained in this persistent search item. */
   private final Entry persistentSearchEntry;
 
-  /** Response contained in this persistent search item. */
-  private final Response persistentSearchResponse;
+  /** Result contained in this persistent search item. */
+  private final Result persistentSearchResult;
 
   /** Exception thrown by the search operation. */
   private final Exception persistentSearchException;
-
-
-  /**
-   * Creates a new persistent search item.
-   *
-   * @param  request  that represents this item
-   */
-  public PersistentSearchItem(final AsyncRequest request)
-  {
-    asyncRequest = request;
-    persistentSearchEntry = null;
-    persistentSearchResponse = null;
-    persistentSearchException = null;
-  }
 
 
   /**
@@ -48,9 +30,8 @@ public class PersistentSearchItem
    */
   public PersistentSearchItem(final Entry entry)
   {
-    asyncRequest = null;
     persistentSearchEntry = entry;
-    persistentSearchResponse = null;
+    persistentSearchResult = null;
     persistentSearchException = null;
   }
 
@@ -58,13 +39,12 @@ public class PersistentSearchItem
   /**
    * Creates a new persistent search item.
    *
-   * @param  response  that represents this item
+   * @param  result  that represents this item
    */
-  public PersistentSearchItem(final Response response)
+  public PersistentSearchItem(final Result result)
   {
-    asyncRequest = null;
     persistentSearchEntry = null;
-    persistentSearchResponse = response;
+    persistentSearchResult = result;
     persistentSearchException = null;
   }
 
@@ -76,32 +56,9 @@ public class PersistentSearchItem
    */
   public PersistentSearchItem(final Exception exception)
   {
-    asyncRequest = null;
     persistentSearchEntry = null;
-    persistentSearchResponse = null;
+    persistentSearchResult = null;
     persistentSearchException = exception;
-  }
-
-
-  /**
-   * Returns whether this item represents an async request.
-   *
-   * @return  whether this item represents an async request
-   */
-  public boolean isAsyncRequest()
-  {
-    return asyncRequest != null;
-  }
-
-
-  /**
-   * Returns the async request contained in this item or null if this item does not contain an async request.
-   *
-   * @return  async request
-   */
-  public AsyncRequest getAsyncRequest()
-  {
-    return asyncRequest;
   }
 
 
@@ -128,24 +85,24 @@ public class PersistentSearchItem
 
 
   /**
-   * Returns whether this item represents a response.
+   * Returns whether this item represents a result.
    *
-   * @return  whether this item represents a response
+   * @return  whether this item represents a result
    */
-  public boolean isResponse()
+  public boolean isResult()
   {
-    return persistentSearchResponse != null;
+    return persistentSearchResult != null;
   }
 
 
   /**
-   * Returns the response contained in this item or null if this item does not contain a response.
+   * Returns the result contained in this item or null if this item does not contain a result.
    *
-   * @return  response
+   * @return  result
    */
-  public Response getResponse()
+  public Result getResult()
   {
-    return persistentSearchResponse;
+    return persistentSearchResult;
   }
 
 
@@ -174,27 +131,17 @@ public class PersistentSearchItem
   @Override
   public String toString()
   {
-    final String s;
-    if (isAsyncRequest()) {
-      s = String.format("[%s@%d::asyncRequest=%s]", getClass().getName(), hashCode(), asyncRequest);
-    } else if (isEntry()) {
-      s = String.format("[%s@%d::persistentSearchEntry=%s]", getClass().getName(), hashCode(), persistentSearchEntry);
-    } else if (isResponse()) {
-      s = String.format(
-        "[%s@%d::persistentSearchResponse=%s]",
-        getClass().getName(),
-        hashCode(),
-        persistentSearchResponse);
+    final StringBuilder sb = new StringBuilder("[").append(getClass().getName()).append("@").append(hashCode());
+    if (isEntry()) {
+      sb.append("::persistentSearchEntry=").append(persistentSearchEntry).append("]");
+    } else if (isResult()) {
+      sb.append("::persistentSearchResult=").append(persistentSearchResult).append("]");
     } else if (isException()) {
-      s = String.format(
-        "[%s@%d::persistentSearchException=%s]",
-        getClass().getName(),
-        hashCode(),
-        persistentSearchException);
+      sb.append("::persistentSearchException=").append(persistentSearchException).append("]");
     } else {
-      s = String.format("[%s@%d]", getClass().getName(), hashCode());
+      sb.append("]");
     }
-    return s;
+    return sb.toString();
   }
 
 
@@ -205,7 +152,7 @@ public class PersistentSearchItem
   {
 
     /** Search entry that this class wraps. */
-    private final SearchEntry searchEntry;
+    private final LdapEntry searchEntry;
 
     /** Control to search the entry for. */
     private final EntryChangeNotificationControl entryChangeNotificationControl;
@@ -217,7 +164,7 @@ public class PersistentSearchItem
      *
      * @param  entry  to search for entry change notification control in
      */
-    public Entry(final SearchEntry entry)
+    public Entry(final LdapEntry entry)
     {
       searchEntry = entry;
       entryChangeNotificationControl = (EntryChangeNotificationControl) entry.getControl(
@@ -230,7 +177,7 @@ public class PersistentSearchItem
      *
      * @return  underlying search entry
      */
-    public SearchEntry getSearchEntry()
+    public LdapEntry getSearchEntry()
     {
       return searchEntry;
     }
@@ -250,7 +197,9 @@ public class PersistentSearchItem
     @Override
     public String toString()
     {
-      return String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
+      return new StringBuilder("[").append(
+        getClass().getName()).append("@").append(hashCode()).append("::")
+        .append("searchEntry=").append(searchEntry).append("]").toString();
     }
   }
 }

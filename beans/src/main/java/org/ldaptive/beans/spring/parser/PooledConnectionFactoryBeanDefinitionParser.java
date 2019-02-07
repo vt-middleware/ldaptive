@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
-import org.ldaptive.pool.PooledConnectionFactory;
+import org.ldaptive.PooledConnectionFactory;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -14,7 +14,7 @@ import org.w3c.dom.Element;
  *
  * @author Middleware Services
  */
-public class PooledConnectionFactoryBeanDefinitionParser extends AbstractConnectionPoolBeanDefinitionParser
+public class PooledConnectionFactoryBeanDefinitionParser extends AbstractConnectionFactoryBeanDefinitionParser
 {
 
 
@@ -49,6 +49,6 @@ public class PooledConnectionFactoryBeanDefinitionParser extends AbstractConnect
     if (element.hasAttribute("id")) {
       name = element.getAttribute("id") + "-connection-pool";
     }
-    builder.addPropertyValue("connectionPool", parseConnectionPool(null, name, element, true).getBeanDefinition());
+    parsePooledConnectionFactory(builder, name, element, true);
   }
 }

@@ -1,9 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Connection strategy that randomizes the list of configured URLs. A random URL ordering will be created for each
@@ -11,26 +12,44 @@ import java.util.List;
  *
  * @author  Middleware Services
  */
-public class RandomConnectionStrategy implements ConnectionStrategy
+public class RandomConnectionStrategy extends AbstractConnectionStrategy
 {
 
+  /** LDAP URLs. */
+  private List<LdapURL> ldapURLs;
 
-  /**
-   * Return a list of URLs in random order.
-   *
-   * @param  metadata  which can be used to produce the URL list
-   *
-   * @return  list of URLs to attempt connections to
-   */
+
   @Override
-  public String[] getLdapUrls(final ConnectionFactoryMetadata metadata)
+  public boolean isInitialized()
   {
-    if (metadata == null || metadata.getLdapUrl() == null) {
-      return null;
-    }
+    return ldapURLs != null;
+  }
 
-    final List<String> l = Arrays.asList(metadata.getLdapUrl().split(" "));
-    Collections.shuffle(l);
-    return l.toArray(new String[l.size()]);
+
+  @Override
+  public void initialize(final String urls)
+  {
+    if (urls.contains(" ")) {
+      ldapURLs = Stream.of(urls.split(" ")).map(LdapURL::new).collect(Collectors.collectingAndThen(
+        Collectors.toList(),
+        Collections::unmodifiableList));
+    } else {
+      ldapURLs = Collections.singletonList(new LdapURL(urls));
+    }
+  }
+
+
+  @Override
+  public synchronized List<LdapURL> apply()
+  {
+    if (!isInitialized()) {
+      throw new IllegalStateException("Strategy is not initialized");
+    }
+    return ldapURLs.stream().collect(Collectors.collectingAndThen(
+      Collectors.toList(),
+      l -> {
+        Collections.shuffle(l);
+        return Collections.unmodifiableList(l);
+      }));
   }
 }

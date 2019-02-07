@@ -6,11 +6,11 @@ import java.io.Writer;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SearchReference;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
+import org.ldaptive.SearchResultReference;
 
 /**
- * Writes a {@link SearchResult} as LDIF to a {@link Writer}.
+ * Writes a {@link SearchResponse} as LDIF to a {@link Writer}.
  *
  * @author  Middleware Services
  */
@@ -43,7 +43,7 @@ public class LdifWriter implements SearchResultWriter
    * @throws  IOException  if an error occurs using the writer
    */
   @Override
-  public void write(final SearchResult result)
+  public void write(final SearchResponse result)
     throws IOException
   {
     ldifWriter.write(createLdif(result));
@@ -58,7 +58,7 @@ public class LdifWriter implements SearchResultWriter
    *
    * @return  LDIF
    */
-  protected String createLdif(final SearchResult result)
+  protected String createLdif(final SearchResponse result)
   {
     // build string from results
     final StringBuilder ldif = new StringBuilder();
@@ -66,7 +66,7 @@ public class LdifWriter implements SearchResultWriter
       for (LdapEntry le : result.getEntries()) {
         ldif.append(createLdifEntry(le));
       }
-      for (SearchReference sr : result.getReferences()) {
+      for (SearchResultReference sr : result.getReferences()) {
         ldif.append(createSearchReference(sr));
       }
     }
@@ -125,14 +125,14 @@ public class LdifWriter implements SearchResultWriter
    *
    * @return  LDIF
    */
-  protected String createSearchReference(final SearchReference ref)
+  protected String createSearchReference(final SearchResultReference ref)
   {
     if (ref == null) {
       return "";
     }
 
     final StringBuilder refLdif = new StringBuilder();
-    for (String url : ref.getReferralUrls()) {
+    for (String url : ref.getUris()) {
       if (LdapUtils.shouldBase64Encode(url)) {
         refLdif.append("ref:: ").append(LdapUtils.base64Encode(url)).append(LINE_SEPARATOR);
       } else {

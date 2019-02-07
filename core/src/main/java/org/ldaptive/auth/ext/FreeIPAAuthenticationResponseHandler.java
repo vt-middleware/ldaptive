@@ -8,7 +8,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
-import org.ldaptive.io.GeneralizedTimeValueTranscoder;
+import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,11 +81,11 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
     if (response.getResultCode() != ResultCode.SUCCESS) {
       final FreeIPAAccountState.Error fError = FreeIPAAccountState.Error.parse(
         response.getResultCode(),
-        response.getMessage());
+        response.getDiagnosticMessage());
       if (fError != null) {
         response.setAccountState(new FreeIPAAccountState(fError));
       }
-    } else if (response.getResult()) {
+    } else if (response.isSuccess()) {
       final LdapEntry entry = response.getLdapEntry();
       final LdapAttribute expTime = entry.getAttribute("krbPasswordExpiration");
       final LdapAttribute failedLogins = entry.getAttribute("krbLoginFailedCount");
@@ -98,9 +98,9 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
       }
 
       if (expTime != null) {
-        exp = expTime.getValue(new GeneralizedTimeValueTranscoder());
+        exp = expTime.getValue(new GeneralizedTimeValueTranscoder().decoder());
       } else if (expirationPeriod != null && lastPwdChange != null) {
-        exp = lastPwdChange.getValue(new GeneralizedTimeValueTranscoder()).plus(expirationPeriod);
+        exp = lastPwdChange.getValue(new GeneralizedTimeValueTranscoder().decoder()).plus(expirationPeriod);
       }
       if (exp != null) {
         if (warningPeriod != null) {
@@ -194,12 +194,10 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
   @Override
   public String toString()
   {
-    return String.format(
-      "[%s@%d::expirationPeriod=%s, warningPeriod=%s, maxLoginFailures=%s]",
-      getClass().getName(),
-      hashCode(),
-      expirationPeriod,
-      warningPeriod,
-      maxLoginFailures);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("expirationPeriod=").append(expirationPeriod).append(", ")
+      .append("warningPeriod=").append(warningPeriod).append(", ")
+      .append("maxLoginFailures=").append(maxLoginFailures).append("]").toString();
   }
 }

@@ -309,20 +309,15 @@ public class NameForm extends AbstractNamedSchemaElement
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::oid=%s, names=%s, description=%s, obsolete=%s, " +
-        "structuralClass=%s, requiredAttributes=%s, " +
-        "optionalAttributes=%s, extensions=%s]",
-        getClass().getName(),
-        hashCode(),
-        oid,
-        Arrays.toString(getNames()),
-        getDescription(),
-        isObsolete(),
-        structuralClass,
-        Arrays.toString(requiredAttributes),
-        Arrays.toString(optionalAttributes),
-        getExtensions());
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("oid=").append(oid).append(", ")
+      .append("names=").append(Arrays.toString(getNames())).append(", ")
+      .append("description=").append(getDescription()).append(", ")
+      .append("obsolete=").append(isObsolete()).append(", ")
+      .append("structuralClass=").append(structuralClass).append(", ")
+      .append("requiredAttributes=").append(Arrays.toString(requiredAttributes)).append(", ")
+      .append("optionalAttributes=").append(Arrays.toString(optionalAttributes)).append(", ")
+      .append("extensions=").append(getExtensions()).append("]").toString();
   }
 }

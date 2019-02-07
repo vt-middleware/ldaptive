@@ -28,7 +28,7 @@ public class ModifyDnOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry5")
-  @BeforeClass(groups = {"modifyDn"})
+  @BeforeClass(groups = "modifyDn")
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -39,7 +39,7 @@ public class ModifyDnOperationTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"modifyDn"})
+  @AfterClass(groups = "modifyDn")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -57,40 +57,32 @@ public class ModifyDnOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "modifyOldDn", "modifyNewDn" })
-  @Test(groups = {"modifyDn"})
+  @Test(groups = "modifyDn")
   public void modifyDnLdapEntry(final String oldDn, final String newDn)
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    AssertJUnit.assertTrue(search.execute(SearchRequest.objectScopeSearchRequest(oldDn)).entrySize() > 0);
 
-      final SearchOperation search = new SearchOperation(conn);
-      AssertJUnit.assertTrue(search.execute(SearchRequest.newObjectScopeSearchRequest(oldDn)).getResult().size() > 0);
-
-      final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
-      Response<Void> response = modifyDn.execute(new ModifyDnRequest(oldDn, newDn));
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      modifyDnLdapEntry = search.execute(SearchRequest.newObjectScopeSearchRequest(newDn)).getResult().getEntry();
-      AssertJUnit.assertNotNull(modifyDnLdapEntry);
-      try {
-        final Response<SearchResult> r = search.execute(SearchRequest.newObjectScopeSearchRequest(oldDn));
-        AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
-      } catch (LdapException e) {
-        AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, e.getResultCode());
-      } catch (Exception e) {
-        AssertJUnit.fail("Should have thrown LdapException, threw " + e);
-      }
-      response = modifyDn.execute(new ModifyDnRequest(newDn, oldDn));
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertTrue(search.execute(SearchRequest.newObjectScopeSearchRequest(oldDn)).getResult().size() > 0);
-      try {
-        final Response<SearchResult> r = search.execute(SearchRequest.newObjectScopeSearchRequest(newDn));
-        AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
-      } catch (LdapException e) {
-        AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, e.getResultCode());
-      } catch (Exception e) {
-        AssertJUnit.fail("Should have thrown LdapException, threw " + e);
-      }
+    final ModifyDnOperation modifyDn = new ModifyDnOperation(TestUtils.createConnectionFactory());
+    ModifyDnResponse response = modifyDn.execute(new ModifyDnRequest(oldDn, DnParser.substring(newDn, 0, 1), true));
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    modifyDnLdapEntry = search.execute(SearchRequest.objectScopeSearchRequest(newDn)).getEntry();
+    AssertJUnit.assertNotNull(modifyDnLdapEntry);
+    try {
+      final SearchResponse r = search.execute(SearchRequest.objectScopeSearchRequest(oldDn));
+      AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
+    } catch (Exception e) {
+      AssertJUnit.fail("Should have thrown LdapException, threw " + e);
+    }
+    response = modifyDn.execute(new ModifyDnRequest(newDn, DnParser.substring(oldDn, 0, 1), true));
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(search.execute(SearchRequest.objectScopeSearchRequest(oldDn)).entrySize() > 0);
+    try {
+      final SearchResponse r = search.execute(SearchRequest.objectScopeSearchRequest(newDn));
+      AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
+    } catch (Exception e) {
+      AssertJUnit.fail("Should have thrown LdapException, threw " + e);
     }
   }
 }

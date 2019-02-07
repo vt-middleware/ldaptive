@@ -13,7 +13,7 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.DN;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.asn1.RDN;
-import org.ldaptive.io.StringValueTranscoder;
+import org.ldaptive.transcode.StringValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,7 +197,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
     } catch (CertificateParsingException e) {
       logger.warn("Error reading subject alt names from certificate", e);
     }
-    return names.toArray(new String[names.size()]);
+    return names.toArray(new String[0]);
   }
 
 
@@ -222,7 +222,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
         }
       }
     }
-    return names.toArray(new String[names.size()]);
+    return names.toArray(new String[0]);
   }
 
 

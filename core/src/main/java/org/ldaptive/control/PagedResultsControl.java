@@ -180,14 +180,11 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, size=%s, cookie=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        resultSize,
-        LdapUtils.base64Encode(cookie));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("size=").append(resultSize).append(", ")
+      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append("]").toString();
   }
 
 

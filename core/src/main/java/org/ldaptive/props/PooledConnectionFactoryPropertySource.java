@@ -5,11 +5,8 @@ import java.io.Reader;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.Set;
-import org.ldaptive.pool.BlockingConnectionPool;
-import org.ldaptive.pool.ConnectionPool;
-import org.ldaptive.pool.ConnectionPoolType;
-import org.ldaptive.pool.PooledConnectionFactory;
-import org.ldaptive.pool.SoftLimitConnectionPool;
+import org.ldaptive.ConnectionConfig;
+import org.ldaptive.PooledConnectionFactory;
 
 /**
  * Reads properties specific to {@link PooledConnectionFactory} and returns an initialized object of that type.
@@ -19,8 +16,9 @@ import org.ldaptive.pool.SoftLimitConnectionPool;
 public final class PooledConnectionFactoryPropertySource extends AbstractPropertySource<PooledConnectionFactory>
 {
 
-  /** Connection pool type. */
-  private ConnectionPoolType poolType = ConnectionPoolType.BLOCKING;
+  /** Invoker for connection factory. */
+  private static final PooledConnectionFactoryPropertyInvoker INVOKER = new PooledConnectionFactoryPropertyInvoker(
+    PooledConnectionFactory.class);
 
 
   /**
@@ -86,50 +84,28 @@ public final class PooledConnectionFactoryPropertySource extends AbstractPropert
   }
 
 
-  /**
-   * Returns the pool type.
-   *
-   * @return  pool type
-   */
-  public ConnectionPoolType getPoolType()
-  {
-    return poolType;
-  }
-
-
-  /** @param  pt  pool type */
-  public void setPoolType(final ConnectionPoolType pt)
-  {
-    poolType = pt;
-  }
-
-
   @Override
   public void initialize()
   {
-    final ConnectionPool cp;
-    if (poolType == ConnectionPoolType.BLOCKING) {
-      cp = new BlockingConnectionPool();
+    initializeObject(INVOKER);
 
-      final BlockingConnectionPoolPropertySource cpPropSource = new BlockingConnectionPoolPropertySource(
-        (BlockingConnectionPool) cp,
+    ConnectionConfig cc = object.getConnectionConfig();
+    if (cc == null) {
+      cc = new ConnectionConfig();
+      final ConnectionConfigPropertySource ccPropSource = new ConnectionConfigPropertySource(
+        cc,
         propertiesDomain,
         properties);
-      cpPropSource.initialize();
-    } else if (poolType == ConnectionPoolType.SOFTLIMIT) {
-      cp = new SoftLimitConnectionPool();
-
-      final BlockingConnectionPoolPropertySource cpPropSource = new BlockingConnectionPoolPropertySource(
-        (SoftLimitConnectionPool) cp,
-        propertiesDomain,
-        properties);
-      cpPropSource.initialize();
-    } else {
-      throw new IllegalStateException("Unknown pool type: " + poolType);
+      ccPropSource.initialize();
+      object.setConnectionConfig(cc);
     }
 
-    cp.initialize();
-    object.setConnectionPool(cp);
+    final BlockingConnectionPoolPropertySource cpPropSource = new BlockingConnectionPoolPropertySource(
+      object,
+      propertiesDomain,
+      properties);
+    cpPropSource.initialize();
+    object.initialize();
   }
 
 

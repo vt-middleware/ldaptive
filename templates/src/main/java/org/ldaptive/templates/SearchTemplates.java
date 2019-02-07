@@ -104,7 +104,7 @@ public class SearchTemplates
       }
       filters.add(filter);
     }
-    return filters.toArray(new SearchFilter[filters.size()]);
+    return filters.toArray(new SearchFilter[0]);
   }
 
 
@@ -138,14 +138,11 @@ public class SearchTemplates
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::filterTemplates=%s, searchRestrictions=%s, termParsers=%s]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(filterTemplates),
-        searchRestrictions,
-        Arrays.toString(termParsers));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("filterTemplates=").append(Arrays.toString(filterTemplates)).append(", ")
+      .append("searchRestrictions=").append(searchRestrictions).append(", ")
+      .append("termParsers=").append(Arrays.toString(termParsers)).append("]").toString();
   }
 
 

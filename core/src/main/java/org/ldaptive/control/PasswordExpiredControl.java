@@ -61,13 +61,6 @@ public class PasswordExpiredControl extends AbstractControl implements ResponseC
 
 
   @Override
-  public String toString()
-  {
-    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
-  }
-
-
-  @Override
   public void decode(final DERBuffer encoded)
   {
     final String value = OctetStringType.decode(encoded);

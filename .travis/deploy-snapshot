@@ -45,7 +45,7 @@ REPO_URL="https://github.com/vt-middleware/${REPO_NAME}.git"
 git clone $REPO_URL
 
 # Deploy the artifact to the maven repo
-mvn -Papache,jldap,opendj,unboundid,ldapi deploy -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_NAME}
+mvn deploy -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_NAME}
 
 # Push changes to the maven repo
 cd $REPO_NAME

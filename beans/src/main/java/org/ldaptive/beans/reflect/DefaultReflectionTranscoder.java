@@ -9,20 +9,20 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import org.ldaptive.io.BooleanValueTranscoder;
-import org.ldaptive.io.ByteArrayValueTranscoder;
-import org.ldaptive.io.CertificateValueTranscoder;
-import org.ldaptive.io.CharArrayValueTranscoder;
-import org.ldaptive.io.DoubleValueTranscoder;
-import org.ldaptive.io.FloatValueTranscoder;
-import org.ldaptive.io.GeneralizedTimeValueTranscoder;
-import org.ldaptive.io.IntegerValueTranscoder;
-import org.ldaptive.io.LongValueTranscoder;
-import org.ldaptive.io.ObjectValueTranscoder;
-import org.ldaptive.io.ShortValueTranscoder;
-import org.ldaptive.io.StringValueTranscoder;
-import org.ldaptive.io.UUIDValueTranscoder;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.transcode.BooleanValueTranscoder;
+import org.ldaptive.transcode.ByteArrayValueTranscoder;
+import org.ldaptive.transcode.CertificateValueTranscoder;
+import org.ldaptive.transcode.CharArrayValueTranscoder;
+import org.ldaptive.transcode.DoubleValueTranscoder;
+import org.ldaptive.transcode.FloatValueTranscoder;
+import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
+import org.ldaptive.transcode.IntegerValueTranscoder;
+import org.ldaptive.transcode.LongValueTranscoder;
+import org.ldaptive.transcode.ObjectValueTranscoder;
+import org.ldaptive.transcode.ShortValueTranscoder;
+import org.ldaptive.transcode.StringValueTranscoder;
+import org.ldaptive.transcode.UUIDValueTranscoder;
+import org.ldaptive.transcode.ValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -266,12 +266,9 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::customTranscoder=%s, valueTranscoder=%s]",
-        getClass().getName(),
-        hashCode(),
-        customTranscoder,
-        valueTranscoder);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("customTranscoder=").append(customTranscoder).append(", ")
+      .append("valueTranscoder=").append(valueTranscoder).append("]").toString();
   }
 }

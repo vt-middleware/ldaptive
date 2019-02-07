@@ -3,9 +3,7 @@ package org.ldaptive.jaas;
 
 import java.io.Serializable;
 import java.security.Principal;
-import java.security.acl.Group;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 import org.ldaptive.LdapUtils;
@@ -15,17 +13,17 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class LdapGroup implements Group, Serializable
+public class LdapGroup implements Principal, Serializable
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 431;
 
   /** serial version uid. */
-  private static final long serialVersionUID = 2075424472884533862L;
+  private static final long serialVersionUID = 7947097145323474960L;
 
-  /** LDAP role name. */
-  private final String roleName;
+  /** LDAP group name. */
+  private final String groupName;
 
   /** Principal members. */
   private final Set<Principal> members = new HashSet<>();
@@ -38,32 +36,38 @@ public class LdapGroup implements Group, Serializable
    */
   public LdapGroup(final String name)
   {
-    roleName = name;
+    groupName = name;
   }
 
 
   @Override
   public String getName()
   {
-    return roleName;
+    return groupName;
   }
 
-
-  @Override
-  public boolean addMember(final Principal user)
+  /**
+   * Adds a member to this group.
+   *
+   * @param  user  to add
+   */
+  public void addMember(final Principal user)
   {
-    return members.add(user);
+    members.add(user);
   }
 
 
-  @Override
-  public boolean removeMember(final Principal user)
+  /**
+   * Removes a member from this group.
+   *
+   * @param  user  to remove
+   */
+  public void removeMember(final Principal user)
   {
-    return members.remove(user);
+    members.remove(user);
   }
 
 
-  @Override
   public boolean isMember(final Principal member)
   {
     for (Principal p : members) {
@@ -72,13 +76,6 @@ public class LdapGroup implements Group, Serializable
       }
     }
     return false;
-  }
-
-
-  @Override
-  public Enumeration<? extends Principal> members()
-  {
-    return Collections.enumeration(members);
   }
 
 
@@ -101,7 +98,7 @@ public class LdapGroup implements Group, Serializable
     }
     if (o instanceof LdapGroup) {
       final LdapGroup v = (LdapGroup) o;
-      return LdapUtils.areEqual(roleName, v.roleName) &&
+      return LdapUtils.areEqual(groupName, v.groupName) &&
              LdapUtils.areEqual(members, v.members);
     }
     return false;
@@ -111,13 +108,16 @@ public class LdapGroup implements Group, Serializable
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, roleName, members);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, groupName, members);
   }
 
 
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::%s%s]", getClass().getName(), hashCode(), roleName, members);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("groupName=").append(groupName).append(", ")
+      .append("members=").append(members).append("]").toString();
   }
 }

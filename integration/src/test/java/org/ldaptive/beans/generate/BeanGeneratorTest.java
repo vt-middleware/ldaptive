@@ -2,7 +2,6 @@
 package org.ldaptive.beans.generate;
 
 import org.ldaptive.AbstractTest;
-import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.schema.Schema;
@@ -19,7 +18,7 @@ public class BeanGeneratorTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"beans-generate"})
+  @Test(groups = "beans-generate")
   public void generate()
     throws Exception
   {
@@ -27,13 +26,7 @@ public class BeanGeneratorTest extends AbstractTest
       return;
     }
 
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP has a dead lock bug");
-    }
-
-    final DefaultConnectionFactory factory = new DefaultConnectionFactory(
-      TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
-    final Schema schema = SchemaFactory.createSchema(factory);
+    final Schema schema = SchemaFactory.createSchema(TestUtils.createSetupConnectionFactory());
     final BeanGenerator generator = new BeanGenerator();
     generator.setSchema(schema);
     generator.setExcludedNames("objectClass");
@@ -48,7 +41,7 @@ public class BeanGeneratorTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"beans-generate"})
+  @Test(groups = "beans-generate")
   public void generateAD()
     throws Exception
   {
@@ -56,14 +49,8 @@ public class BeanGeneratorTest extends AbstractTest
       return;
     }
 
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP has a dead lock bug");
-    }
-
-    final DefaultConnectionFactory factory = new DefaultConnectionFactory(
-      TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
     final Schema schema = org.ldaptive.ad.schema.SchemaFactory.createSchema(
-      factory,
+      TestUtils.createSetupConnectionFactory(),
       "CN=Schema,CN=Configuration,DC=middleware,DC=vt,DC=edu");
     final BeanGenerator generator = new BeanGenerator();
     generator.setSchema(schema);

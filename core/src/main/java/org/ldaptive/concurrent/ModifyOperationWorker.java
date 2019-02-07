@@ -4,13 +4,14 @@ package org.ldaptive.concurrent;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
+import org.ldaptive.ModifyResponse;
 
 /**
  * Executes an ldap modify operation on a separate thread.
  *
  * @author  Middleware Services
  */
-public class ModifyOperationWorker extends AbstractOperationWorker<ModifyRequest, Void>
+public class ModifyOperationWorker extends AbstractOperationWorker<ModifyRequest, ModifyResponse>
 {
 
 

@@ -2,11 +2,10 @@
 package org.ldaptive.beans;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SortBehavior;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +22,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Attribute value mutators for this class. */
-  private final Map<String, AttributeValueMutator> attributeMutators = new HashMap<>();
+  private final Map<String, AttributeValueMutator> attributeMutators = new LinkedHashMap<>();
 
   /** Dn value mutator for this class. */
   private DnValueMutator dnMutator;
@@ -92,13 +91,10 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::dnMutator=%s, attributeMutators=%s]",
-        getClass().getName(),
-        hashCode(),
-        dnMutator,
-        attributeMutators);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("dnMutator=").append(dnMutator).append(", ")
+      .append("attributeMutators=").append(attributeMutators).append("]").toString();
   }
 
 
@@ -147,15 +143,11 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
      * @param  name  of the attribute
      * @param  values  of the attribute
      * @param  binary  whether values contains base64 encoded data
-     * @param  behavior  sort behavior of the attribute
      */
-    public SimpleAttributeValueMutator(
-      final String name,
-      final String[] values,
-      final boolean binary,
-      final SortBehavior behavior)
+    public SimpleAttributeValueMutator(final String name, final String[] values, final boolean binary)
     {
-      la = new LdapAttribute(behavior, binary);
+      la = new LdapAttribute();
+      la.setBinary(binary);
       la.setName(name);
       if (binary) {
         for (String value : values) {
@@ -178,13 +170,6 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     public boolean isBinary()
     {
       return la.isBinary();
-    }
-
-
-    @Override
-    public SortBehavior getSortBehavior()
-    {
-      return la.getSortBehavior();
     }
 
 
@@ -213,7 +198,9 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     @Override
     public String toString()
     {
-      return String.format("[%s@%d::ldapAttribute=%s]", getClass().getName(), hashCode(), la);
+      return new StringBuilder("[").append(
+        getClass().getName()).append("@").append(hashCode()).append("::")
+        .append("ldapAttribute=").append(la).append("]").toString();
     }
   }
 }

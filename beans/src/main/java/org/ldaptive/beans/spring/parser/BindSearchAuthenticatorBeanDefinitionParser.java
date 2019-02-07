@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
-import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.auth.SearchEntryResolver;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -44,7 +43,7 @@ public class BindSearchAuthenticatorBeanDefinitionParser extends AbstractSearchA
       if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
         entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
       } else {
-        entryResolver = BeanDefinitionBuilder.genericBeanDefinition(PooledSearchEntryResolver.class);
+        entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
       }
       entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
     } else {

@@ -9,12 +9,10 @@ import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
-import org.ldaptive.ad.extended.FastBindOperation;
-import org.ldaptive.pool.BlockingConnectionPool;
-import org.ldaptive.pool.PooledConnectionFactory;
-import org.ldaptive.pool.PooledConnectionFactoryManager;
+import org.ldaptive.ad.extended.FastBindConnectionInitializer;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -101,7 +99,7 @@ public class AuthenticatorLoadTest extends AbstractTest
       "createEntry9",
       "createEntry10"
     })
-  @BeforeClass(groups = {"authload"})
+  @BeforeClass(groups = "authload")
   // CheckStyle:ParameterNumber OFF
   public void createAuthEntry(
     final String ldifFile2,
@@ -118,53 +116,51 @@ public class AuthenticatorLoadTest extends AbstractTest
     // initialize the pooled authenticator
     DefaultConnectionFactory drcf = (DefaultConnectionFactory)
       ((ConnectionFactoryManager) pooledTLSAuth.getDnResolver()).getConnectionFactory();
-    BlockingConnectionPool resolverCp = new BlockingConnectionPool(drcf);
-    resolverCp.initialize();
-
-    PooledConnectionFactory drFactory = new PooledConnectionFactory(resolverCp);
-    PooledSearchDnResolver dr = new PooledSearchDnResolver(drFactory);
+    PooledConnectionFactory drFactory = new PooledConnectionFactory();
+    drFactory.setDefaultConnectionFactory(drcf);
+    drFactory.initialize();
+    SearchDnResolver dr = new SearchDnResolver(drFactory);
     dr.setBaseDn(((SearchDnResolver) pooledTLSAuth.getDnResolver()).getBaseDn());
     dr.setUserFilter(((SearchDnResolver) pooledTLSAuth.getDnResolver()).getUserFilter());
     pooledTLSAuth.setDnResolver(dr);
 
     DefaultConnectionFactory ahcf = (DefaultConnectionFactory)
       ((ConnectionFactoryManager) pooledTLSAuth.getAuthenticationHandler()).getConnectionFactory();
-    ConnectionConfig ahcc = ConnectionConfig.newConnectionConfig(ahcf.getConnectionConfig());
+    ConnectionConfig ahcc = ConnectionConfig.copy(ahcf.getConnectionConfig());
     ahcc.setConnectionInitializer(null);
     ahcf.setConnectionConfig(ahcc);
 
-    BlockingConnectionPool ahCp = new BlockingConnectionPool(ahcf);
-    ahCp.initialize();
-
-    PooledConnectionFactory ahFactory = new PooledConnectionFactory(ahCp);
-    pooledTLSAuth.setAuthenticationHandler(new PooledBindAuthenticationHandler(ahFactory));
+    PooledConnectionFactory ahFactory = new PooledConnectionFactory();
+    ahFactory.setDefaultConnectionFactory(ahcf);
+    ahFactory.initialize();
+    pooledTLSAuth.setAuthenticationHandler(new SimpleBindAuthenticationHandler(ahFactory));
 
     // initialize the ad authenticator
     if (TestControl.isActiveDirectory()) {
       ahcf = (DefaultConnectionFactory)
         ((ConnectionFactoryManager) singleADFastBind.getAuthenticationHandler()).getConnectionFactory();
-      ahcc = ConnectionConfig.newConnectionConfig(ahcf.getConnectionConfig());
-      ahcc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
-      ((BindAuthenticationHandler) singleADFastBind.getAuthenticationHandler()).setConnectionFactory(
+      ahcc = ConnectionConfig.copy(ahcf.getConnectionConfig());
+      ahcc.setConnectionInitializer(new FastBindConnectionInitializer());
+      ((SimpleBindAuthenticationHandler) singleADFastBind.getAuthenticationHandler()).setConnectionFactory(
         new DefaultConnectionFactory(ahcc));
       // initialize the pooled ad authenticator
       drcf = (DefaultConnectionFactory) ((SearchDnResolver) pooledADFastBind.getDnResolver()).getConnectionFactory();
-      resolverCp = new BlockingConnectionPool(drcf);
-      resolverCp.initialize();
-      drFactory = new PooledConnectionFactory(resolverCp);
-      dr = new PooledSearchDnResolver(drFactory);
+      drFactory = new PooledConnectionFactory();
+      drFactory.setDefaultConnectionFactory(drcf);
+      drFactory.initialize();
+      dr = new SearchDnResolver(drFactory);
       dr.setBaseDn(((SearchDnResolver) pooledADFastBind.getDnResolver()).getBaseDn());
       dr.setUserFilter(((SearchDnResolver) pooledADFastBind.getDnResolver()).getUserFilter());
       pooledADFastBind.setDnResolver(dr);
 
       ahcf = (DefaultConnectionFactory)
         ((ConnectionFactoryManager) pooledADFastBind.getAuthenticationHandler()).getConnectionFactory();
-      ahcc = ConnectionConfig.newConnectionConfig(ahcf.getConnectionConfig());
-      ahcc.setConnectionInitializer(new FastBindOperation.FastBindConnectionInitializer());
-      ahCp = new BlockingConnectionPool(new DefaultConnectionFactory(ahcc));
-      ahCp.initialize();
-      ahFactory = new PooledConnectionFactory(ahCp);
-      pooledADFastBind.setAuthenticationHandler(new PooledBindAuthenticationHandler(ahFactory));
+      ahcc = ConnectionConfig.copy(ahcf.getConnectionConfig());
+      ahcc.setConnectionInitializer(new FastBindConnectionInitializer());
+      ahFactory = new PooledConnectionFactory();
+      ahFactory.setDefaultConnectionFactory(ahcf);
+      ahFactory.initialize();
+      pooledADFastBind.setAuthenticationHandler(new SimpleBindAuthenticationHandler(ahFactory));
     }
 
     // CheckStyle:Indentation OFF
@@ -187,7 +183,7 @@ public class AuthenticatorLoadTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"authload"})
+  @AfterClass(groups = "authload")
   public void deleteAuthEntry()
     throws Exception
   {
@@ -202,10 +198,10 @@ public class AuthenticatorLoadTest extends AbstractTest
     super.deleteLdapEntry(ENTRIES.get("10")[0].getDn());
 
     final DnResolver dr = pooledTLSAuth.getDnResolver();
-    ((PooledConnectionFactoryManager) dr).getConnectionFactory().getConnectionPool().close();
+    ((ConnectionFactoryManager) dr).getConnectionFactory().close();
 
     final AuthenticationHandler ah = pooledTLSAuth.getAuthenticationHandler();
-    ((PooledConnectionFactoryManager) ah).getConnectionFactory().getConnectionPool().close();
+    ((ConnectionFactoryManager) ah).getConnectionFactory().close();
   }
 
 
@@ -310,7 +306,7 @@ public class AuthenticatorLoadTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"authload"}, dataProvider = "auth-data", threadPoolSize = 50, invocationCount = 1000, timeOut = 60000)
+  @Test(groups = "authload", dataProvider = "auth-data", threadPoolSize = 50, invocationCount = 1000, timeOut = 60000)
   public void authenticatePooled(
     final String user,
     final String credential,
@@ -335,7 +331,7 @@ public class AuthenticatorLoadTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"authload"}, dataProvider = "auth-data", threadPoolSize = 5, invocationCount = 50, timeOut = 60000)
+  @Test(groups = "authload", dataProvider = "auth-data", threadPoolSize = 5, invocationCount = 50, timeOut = 60000)
   public void authenticateADFastBind(
     final String user,
     final String credential,
@@ -350,7 +346,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     // test auth with fast bind
     final AuthenticationResponse response = singleADFastBind.authenticate(
       new AuthenticationRequest(user, new Credential(credential)));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
   }
 
 
@@ -362,7 +358,7 @@ public class AuthenticatorLoadTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"authload"}, dataProvider = "auth-data", threadPoolSize = 5, invocationCount = 50, timeOut = 60000)
+  @Test(groups = "authload", dataProvider = "auth-data", threadPoolSize = 5, invocationCount = 50, timeOut = 60000)
   public void authenticatePooledADFastBind(
     final String user,
     final String credential,
@@ -378,6 +374,6 @@ public class AuthenticatorLoadTest extends AbstractTest
     final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = pooledADFastBind.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    AssertJUnit.assertTrue(response.getResult());
+    AssertJUnit.assertTrue(response.isSuccess());
   }
 }

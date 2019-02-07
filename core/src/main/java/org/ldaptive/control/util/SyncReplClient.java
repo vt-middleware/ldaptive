@@ -3,25 +3,14 @@ package org.ldaptive.control.util;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.Request;
-import org.ldaptive.Response;
-import org.ldaptive.SearchEntry;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
-import org.ldaptive.async.AsyncRequest;
-import org.ldaptive.async.AsyncSearchOperation;
-import org.ldaptive.async.handler.AsyncRequestHandler;
 import org.ldaptive.control.SyncRequestControl;
-import org.ldaptive.extended.CancelOperation;
-import org.ldaptive.extended.CancelRequest;
-import org.ldaptive.handler.HandlerResult;
-import org.ldaptive.handler.IntermediateResponseHandler;
-import org.ldaptive.handler.OperationResponseHandler;
-import org.ldaptive.handler.SearchEntryHandler;
-import org.ldaptive.intermediate.IntermediateResponse;
-import org.ldaptive.intermediate.SyncInfoMessage;
+import org.ldaptive.extended.ExtendedResponse;
+import org.ldaptive.extended.SyncInfoMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,22 +25,25 @@ public class SyncReplClient
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Connection to invoke the search operation on. */
-  private final Connection connection;
+  /** Connection factory to get a connection from. */
+  private final ConnectionFactory factory;
 
   /** Controls which mode the sync repl control should use. */
   private final boolean refreshAndPersist;
+
+  /** Search operation handle. */
+  private SearchOperationHandle handle;
 
 
   /**
    * Creates a new sync repl client.
    *
-   * @param  conn  to execute the async search operation on
+   * @param  cf  to get a connection from
    * @param  persist  whether to refresh and persist or just refresh
    */
-  public SyncReplClient(final Connection conn, final boolean persist)
+  public SyncReplClient(final ConnectionFactory cf, final boolean persist)
   {
-    connection = conn;
+    factory = cf;
     refreshAndPersist = persist;
   }
 
@@ -97,14 +89,6 @@ public class SyncReplClient
    * <ul>
    *   <li>{@link SearchRequest#setControls( org.ldaptive.control.RequestControl...)} is invoked with {@link
    *     SyncRequestControl}</li>
-   *   <li>{@link SearchRequest#setSearchEntryHandlers(SearchEntryHandler...)} is invoked with a custom handler that
-   *     places sync repl data in a blocking queue.</li>
-   *   <li>{@link SearchRequest#setIntermediateResponseHandlers( IntermediateResponseHandler...)} is invoked with a
-   *     custom handler that places sync repl data in a blocking queue.</li>
-   *   <li>{@link AsyncSearchOperation#setOperationResponseHandlers( OperationResponseHandler[])} is invoked with a
-   *     custom handler that places the sync repl response in a blocking queue.</li>
-   *   <li>{@link AsyncSearchOperation#setExceptionHandler(org.ldaptive.async.handler.ExceptionHandler)} is invoked with
-   *     a custom handler that places the exception in a blocking queue.</li>
    * </ul>
    *
    * <p>The search request object should not be reused for any other search operations.</p>
@@ -117,7 +101,6 @@ public class SyncReplClient
    *
    * @throws  LdapException  if the search fails
    */
-  @SuppressWarnings("unchecked")
   public BlockingQueue<SyncReplItem> execute(
     final SearchRequest request,
     final CookieManager manager,
@@ -126,143 +109,82 @@ public class SyncReplClient
   {
     final BlockingQueue<SyncReplItem> queue = new LinkedBlockingQueue<>(capacity);
 
-    final AsyncSearchOperation search = new AsyncSearchOperation(connection);
-    search.setOperationResponseHandlers(
-      new OperationResponseHandler<SearchRequest, SearchResult>() {
-        @Override
-        public HandlerResult<Response<SearchResult>> handle(
-          final Connection conn,
-          final SearchRequest request,
-          final Response<SearchResult> response)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", response);
-            search.shutdown();
-
-            final SyncReplItem item = new SyncReplItem(new SyncReplItem.Response(response));
-            if (item.getResponse().getSyncDoneControl() != null) {
-              final byte[] cookie = item.getResponse().getSyncDoneControl().getCookie();
-              if (cookie != null) {
-                manager.writeCookie(cookie);
-              }
-            }
-            queue.put(item);
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue response {}", response);
-          }
-          return new HandlerResult<>(response);
-        }
-      });
-    search.setAsyncRequestHandlers(
-      new AsyncRequestHandler() {
-        @Override
-        public HandlerResult<AsyncRequest> handle(
-          final Connection conn,
-          final Request request,
-          final AsyncRequest asyncRequest)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", asyncRequest);
-            queue.put(new SyncReplItem(asyncRequest));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue async request {}", asyncRequest);
-          }
-          return new HandlerResult<>(null);
-        }
-      });
-    search.setExceptionHandler(
-      (conn, request1, exception) -> {
-        try {
-          logger.debug("received exception:", exception);
-          search.shutdown();
-          queue.put(new SyncReplItem(exception));
-        } catch (Exception e) {
-          logger.warn("Unable to enqueue exception:", exception);
-        }
-        return new HandlerResult<>(null);
-      });
-
     request.setControls(
       new SyncRequestControl(
         refreshAndPersist ? SyncRequestControl.Mode.REFRESH_AND_PERSIST : SyncRequestControl.Mode.REFRESH_ONLY,
         manager.readCookie(),
         true));
-    request.setSearchEntryHandlers(
-      new SearchEntryHandler() {
-        @Override
-        public HandlerResult<SearchEntry> handle(
-          final Connection conn,
-          final SearchRequest request,
-          final SearchEntry entry)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", entry);
 
-            final SyncReplItem item = new SyncReplItem(new SyncReplItem.Entry(entry));
-            if (item.getEntry().getSyncStateControl() != null) {
-              final byte[] cookie = item.getEntry().getSyncStateControl().getCookie();
-              if (cookie != null) {
-                manager.writeCookie(cookie);
-              }
-            }
-            queue.put(item);
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue entry {}", entry);
-          }
-          return new HandlerResult<>(null);
+    final SearchOperation search = new SearchOperation(factory, request);
+    search.setResultHandlers(result -> {
+      logger.debug("received {}", result);
+      final SyncReplItem item = new SyncReplItem(new SyncReplItem.Result(result));
+      if (item.getResult().getSyncDoneControl() != null) {
+        final byte[] cookie = item.getResult().getSyncDoneControl().getCookie();
+        if (cookie != null) {
+          manager.writeCookie(cookie);
         }
-
-        @Override
-        public void initializeRequest(final SearchRequest request) {}
-      });
-    request.setIntermediateResponseHandlers(
-      new IntermediateResponseHandler() {
-        @Override
-        public HandlerResult<IntermediateResponse> handle(
-          final Connection conn,
-          final Request request,
-          final IntermediateResponse response)
-          throws LdapException
-        {
-          if (SyncInfoMessage.OID.equals(response.getOID())) {
-            try {
-              logger.debug("received {}", response);
-
-              final SyncInfoMessage message = (SyncInfoMessage) response;
-              if (message.getCookie() != null) {
-                manager.writeCookie(message.getCookie());
-              }
-              queue.put(new SyncReplItem(message));
-            } catch (Exception e) {
-              logger.warn("Unable to enqueue intermediate response {}", response);
-            }
-          }
-          return new HandlerResult<>(null);
+      }
+      try {
+        queue.put(item);
+      } catch (InterruptedException e) {
+        logger.warn("Unable to enqueue result {}", result);
+      }
+    });
+    search.setExceptionHandler(e -> {
+      logger.debug("received exception", e);
+      try {
+        queue.put(new SyncReplItem(e));
+      } catch (InterruptedException ex) {
+        logger.warn("Unable to enqueue exception", ex);
+      }
+    });
+    search.setEntryHandlers(entry -> {
+      logger.debug("received {}", entry);
+      final SyncReplItem item = new SyncReplItem(new SyncReplItem.Entry(entry));
+      if (item.getEntry().getSyncStateControl() != null) {
+        final byte[] cookie = item.getEntry().getSyncStateControl().getCookie();
+        if (cookie != null) {
+          manager.writeCookie(cookie);
         }
-      });
+      }
+      try {
+        queue.put(item);
+      } catch (InterruptedException e) {
+        logger.warn("Unable to enqueue entry {}", entry);
+      }
+      return null;
+    });
+    search.setIntermediateResponseHandlers(response -> {
+      if (SyncInfoMessage.OID.equals(response.getResponseName())) {
+        logger.debug("received {}", response);
+        final SyncInfoMessage message = (SyncInfoMessage) response;
+        if (message.getCookie() != null) {
+          manager.writeCookie(message.getCookie());
+        }
+        try {
+          queue.put(new SyncReplItem(message));
+        } catch (InterruptedException e) {
+          logger.warn("Unable to enqueue intermediate response {}", response);
+        }
+      }
+    });
 
-    search.execute(request);
+    handle = search.send();
     return queue;
   }
 
 
   /**
-   * Invokes a cancel operation on the supplied ldap message id. Convenience method supplied to cancel sync repl
-   * operations.
+   * Invokes a cancel operation on the underlying search operation.
    *
-   * @param  messageId  of the operation to cancel
-   *
-   * @return  cancel operation response
+   * @return  cancel operation result
    *
    * @throws  LdapException  if the cancel operation fails
    */
-  public Response<Void> cancel(final int messageId)
+  public ExtendedResponse cancel()
     throws LdapException
   {
-    final CancelOperation cancel = new CancelOperation(connection);
-    return cancel.execute(new CancelRequest(messageId));
+    return handle.cancel().execute();
   }
 }

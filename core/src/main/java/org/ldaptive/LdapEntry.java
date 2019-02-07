@@ -1,134 +1,92 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.OctetStringType;
 
 /**
- * Simple bean representing an ldap entry. Contains a DN and ldap attributes.
+ * LDAP search result entry defined as:
+ *
+ * <pre>
+   SearchResultEntry ::= [APPLICATION 4] SEQUENCE {
+     objectName      LDAPDN,
+     attributes      PartialAttributeList }
+
+   PartialAttributeList ::= SEQUENCE OF
+     partialAttribute PartialAttribute
+
+   PartialAttribute ::= SEQUENCE {
+     type       AttributeDescription,
+     vals       SET OF value AttributeValue }
+ * </pre>
  *
  * @author  Middleware Services
  */
-public class LdapEntry extends AbstractLdapBean
+public class LdapEntry extends AbstractMessage
 {
 
+  /** BER protocol number. */
+  public static final int PROTOCOL_OP = 4;
+
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 331;
+  private static final int HASH_CODE_SEED = 10303;
 
-  /** serial version uid. */
-  private static final long serialVersionUID = 7819007625501406463L;
+  /** LDAP DN of the entry. */
+  private String ldapDn;
 
-  /** Distinguished name for this entry. */
-  private String entryDn;
-
-  /** Attributes contained in this bean. */
-  private final Map<String, LdapAttribute> entryAttributes;
-
-
-  /** Default constructor. */
-  public LdapEntry()
-  {
-    this(SortBehavior.getDefaultSortBehavior());
-  }
+  /** LDAP attributes on the entry. */
+  private Map<String, LdapAttribute> attributes = new LinkedHashMap<>();
 
 
   /**
-   * Creates a new ldap entry.
-   *
-   * @param  sb  sort behavior
+   * Default constructor.
    */
-  public LdapEntry(final SortBehavior sb)
-  {
-    super(sb);
-    if (SortBehavior.UNORDERED == sb) {
-      entryAttributes = new HashMap<>();
-    } else if (SortBehavior.ORDERED == sb) {
-      entryAttributes = new LinkedHashMap<>();
-    } else if (SortBehavior.SORTED == sb) {
-      entryAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    } else {
-      throw new IllegalArgumentException("Unknown sort behavior: " + sb);
-    }
-  }
+  public LdapEntry() {}
 
 
   /**
-   * Creates a new ldap entry.
+   * Creates a new search result entry.
    *
-   * @param  dn  dn for this entry
+   * @param  buffer  to decode
    */
-  public LdapEntry(final String dn)
+  public LdapEntry(final DERBuffer buffer)
   {
-    this();
-    setDn(dn);
+    final DERParser parser = new DERParser();
+    parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
+    parser.registerHandler("/SEQ/APP(4)/OCTSTR[0]", new LdapDnHandler(this));
+    parser.registerHandler("/SEQ/APP(4)/SEQ/SEQ", new AttributesHandler(this));
+    parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
+    parser.parse(buffer);
   }
 
 
-  /**
-   * Creates a new ldap entry.
-   *
-   * @param  dn  dn for this entry
-   * @param  attr  ldap attribute for this entry
-   */
-  public LdapEntry(final String dn, final LdapAttribute... attr)
-  {
-    this();
-    setDn(dn);
-    for (LdapAttribute a : attr) {
-      addAttribute(a);
-    }
-  }
-
-
-  /**
-   * Creates a new ldap entry.
-   *
-   * @param  dn  dn for this entry
-   * @param  attrs  collection of attributes to add
-   */
-  public LdapEntry(final String dn, final Collection<LdapAttribute> attrs)
-  {
-    this();
-    setDn(dn);
-    addAttributes(attrs);
-  }
-
-
-  /**
-   * Returns the DN.
-   *
-   * @return  entry DN
-   */
   public String getDn()
   {
-    return entryDn;
+    return ldapDn;
   }
 
 
-  /**
-   * Sets the DN.
-   *
-   * @param  dn  dn to set
-   */
   public void setDn(final String dn)
   {
-    entryDn = dn;
+    ldapDn = dn;
   }
 
 
-  /**
-   * Returns a collection of ldap attribute.
-   *
-   * @return  collection of ldap attribute
-   */
   public Collection<LdapAttribute> getAttributes()
   {
-    return entryAttributes.values();
+    return attributes.values();
   }
 
 
@@ -140,10 +98,10 @@ public class LdapEntry extends AbstractLdapBean
    */
   public LdapAttribute getAttribute()
   {
-    if (entryAttributes.isEmpty()) {
+    if (attributes.isEmpty()) {
       return null;
     }
-    return entryAttributes.values().iterator().next();
+    return attributes.values().iterator().next();
   }
 
 
@@ -157,7 +115,7 @@ public class LdapEntry extends AbstractLdapBean
   public LdapAttribute getAttribute(final String name)
   {
     if (name != null) {
-      return entryAttributes.get(name.toLowerCase());
+      return attributes.get(name.toLowerCase());
     }
     return null;
   }
@@ -170,60 +128,55 @@ public class LdapEntry extends AbstractLdapBean
    */
   public String[] getAttributeNames()
   {
-    final String[] names = new String[entryAttributes.size()];
-    int i = 0;
-    for (LdapAttribute la : entryAttributes.values()) {
-      names[i++] = la.getName();
-    }
-    return names;
+    return attributes.values().stream().map(LdapAttribute::getName).toArray(String[]::new);
   }
 
 
   /**
-   * Adds an attribute to this ldap attributes.
+   * Adds attributes to the entry.
    *
-   * @param  attr  attribute to add
+   * @param  attrs  attributes to add
    */
-  public void addAttribute(final LdapAttribute... attr)
+  public void addAttributes(final LdapAttribute... attrs)
   {
-    for (LdapAttribute a : attr) {
-      entryAttributes.put(a.getName().toLowerCase(), a);
+    for (LdapAttribute a : attrs) {
+      attributes.put(a.getName().toLowerCase(), a);
     }
   }
 
 
   /**
-   * Adds attribute(s) to this ldap attributes.
+   * Adds attributes to the entry.
    *
-   * @param  attrs  collection of attributes to add
+   * @param  attrs  attributes to add
    */
   public void addAttributes(final Collection<LdapAttribute> attrs)
   {
-    attrs.forEach(this::addAttribute);
+    attrs.forEach(a -> attributes.put(a.getName().toLowerCase(), a));
+  }
+
+
+  /**
+   * Removes the attribute with the supplied name.
+   *
+   * @param  name  of attribute to remove
+   */
+  public void removeAttribute(final String name)
+  {
+    attributes.remove(name.toLowerCase());
   }
 
 
   /**
    * Removes an attribute from this ldap attributes.
    *
-   * @param  attr  attribute to remove
+   * @param  attrs  attribute to remove
    */
-  public void removeAttribute(final LdapAttribute... attr)
+  public void removeAttributes(final LdapAttribute... attrs)
   {
-    for (LdapAttribute a : attr) {
-      entryAttributes.remove(a.getName().toLowerCase());
+    for (LdapAttribute a : attrs) {
+      attributes.remove(a.getName().toLowerCase());
     }
-  }
-
-
-  /**
-   * Removes the attribute of the supplied name from this ldap attributes.
-   *
-   * @param  name  of attribute to remove
-   */
-  public void removeAttribute(final String name)
-  {
-    entryAttributes.remove(name.toLowerCase());
   }
 
 
@@ -234,44 +187,25 @@ public class LdapEntry extends AbstractLdapBean
    */
   public void removeAttributes(final Collection<LdapAttribute> attrs)
   {
-    attrs.forEach(this::removeAttribute);
+    attrs.forEach(a -> attributes.remove(a.getName().toLowerCase()));
   }
 
 
   /**
-   * Changes the name of an attribute in this entry. The old attribute is removed from this entry, the name is changed
-   * with {@link LdapAttribute#setName(String)}, and the attribute is added back to this entry. If oldName does not
-   * exist, this method does nothing.
+   * Returns the number of attributes.
    *
-   * @param  oldName  attribute name to change from
-   * @param  newName  attribute name to change to
-   */
-  public void renameAttribute(final String oldName, final String newName)
-  {
-    final LdapAttribute la = getAttribute(oldName);
-    if (la != null) {
-      removeAttribute(oldName);
-      la.setName(newName);
-      addAttribute(la);
-    }
-  }
-
-
-  /**
-   * Returns the number of attributes in this ldap attributes.
-   *
-   * @return  number of attributes in this ldap attributes
+   * @return  number of attributes
    */
   public int size()
   {
-    return entryAttributes.size();
+    return attributes.size();
   }
 
 
-  /** Removes all the attributes in this ldap attributes. */
+  /** Removes all the attributes. */
   public void clear()
   {
-    entryAttributes.clear();
+    attributes.clear();
   }
 
 
@@ -281,12 +215,12 @@ public class LdapEntry extends AbstractLdapBean
     if (o == this) {
       return true;
     }
-    if (o != null && getClass() == o.getClass())  {
+    if (o instanceof LdapEntry && super.equals(o)) {
       final LdapEntry v = (LdapEntry) o;
       return LdapUtils.areEqual(
-               entryDn != null ? entryDn.toLowerCase() : null,
-               v.entryDn != null ? v.entryDn.toLowerCase() : null) &&
-             LdapUtils.areEqual(entryAttributes, v.entryAttributes);
+        ldapDn != null ? ldapDn.toLowerCase() : null,
+        v.ldapDn != null ? v.ldapDn.toLowerCase() : null) &&
+        LdapUtils.areEqual(attributes, v.attributes);
     }
     return false;
   }
@@ -298,15 +232,40 @@ public class LdapEntry extends AbstractLdapBean
     return
       LdapUtils.computeHashCode(
         HASH_CODE_SEED,
-        entryDn != null ? entryDn.toLowerCase() : null,
-        entryAttributes.values());
+        getMessageID(),
+        getControls(),
+        ldapDn != null ? ldapDn.toLowerCase() : null,
+        attributes);
   }
 
 
   @Override
   public String toString()
   {
-    return String.format("[dn=%s%s]", entryDn, entryAttributes.values());
+    return new StringBuilder(
+      super.toString()).append(", ")
+      .append("dn=").append(ldapDn).append(", ")
+      .append("attributes=").append(attributes != null ? attributes.values() : null).toString();
+  }
+
+
+  /**
+   * Returns a new entry whose attributes are sorted naturally by name without options.
+   *
+   * @param  le  entry to sort
+   *
+   * @return  sorted entry
+   */
+  public static LdapEntry sort(final LdapEntry le)
+  {
+    final LdapEntry sorted = new LdapEntry();
+    sorted.copyValues(le);
+    sorted.setDn(le.getDn());
+    sorted.addAttributes(
+      le.getAttributes().stream()
+        .map(LdapAttribute::sort)
+        .sorted(Comparator.comparing(o -> o.getName(false))).collect(Collectors.toCollection(LinkedHashSet::new)));
+    return sorted;
   }
 
 
@@ -325,20 +284,191 @@ public class LdapEntry extends AbstractLdapBean
     for (LdapAttribute sourceAttr : source.getAttributes()) {
       final LdapAttribute targetAttr = target.getAttribute(sourceAttr.getName());
       if (targetAttr == null) {
-        final AttributeModification mod = new AttributeModification(AttributeModificationType.ADD, sourceAttr);
+        final AttributeModification mod = new AttributeModification(AttributeModification.Type.ADD, sourceAttr);
         mods.add(mod);
       } else if (!targetAttr.equals(sourceAttr)) {
-        final AttributeModification mod = new AttributeModification(AttributeModificationType.REPLACE, sourceAttr);
+        final AttributeModification mod = new AttributeModification(AttributeModification.Type.REPLACE, sourceAttr);
         mods.add(mod);
       }
     }
     for (LdapAttribute targetAttr : target.getAttributes()) {
       final LdapAttribute sourceAttr = source.getAttribute(targetAttr.getName());
       if (sourceAttr == null) {
-        final AttributeModification mod = new AttributeModification(AttributeModificationType.REMOVE, targetAttr);
+        final AttributeModification mod = new AttributeModification(AttributeModification.Type.DELETE, targetAttr);
         mods.add(mod);
       }
     }
-    return mods.toArray(new AttributeModification[mods.size()]);
+    return mods.toArray(AttributeModification[]::new);
   }
+
+
+  /** Parse handler implementation for the LDAP DN. */
+  protected static class LdapDnHandler extends AbstractParseHandler<LdapEntry>
+  {
+
+
+    /**
+     * Creates a new ldap dn handler.
+     *
+     * @param  response  to configure
+     */
+    LdapDnHandler(final LdapEntry response)
+    {
+      super(response);
+    }
+
+
+    @Override
+    public void handle(final DERParser parser, final DERBuffer encoded)
+    {
+      getObject().setDn(OctetStringType.decode(encoded));
+    }
+  }
+
+
+  /** Parse handler implementation for the attributes. */
+  protected static class AttributesHandler extends AbstractParseHandler<LdapEntry>
+  {
+
+
+    /**
+     * Creates a new attributes handler.
+     *
+     * @param  response  to configure
+     */
+    AttributesHandler(final LdapEntry response)
+    {
+      super(response);
+    }
+
+
+    @Override
+    public void handle(final DERParser parser, final DERBuffer encoded)
+    {
+      final AttributeParser p = new AttributeParser();
+      p.parse(encoded);
+
+      if (p.getName().isEmpty()) {
+        throw new IllegalArgumentException("Could not parse attribute");
+      }
+      if (p.getValues().isEmpty()) {
+        getObject().addAttributes(LdapAttribute.builder().name(p.getName().get()).build());
+      } else {
+        getObject().addAttributes(
+          LdapAttribute.builder().name(p.getName().get()).bufferValues(p.getValues().get()).build());
+      }
+    }
+  }
+
+
+  /**
+   * Parses a buffer containing an attribute name and it's values.
+   */
+  protected static class AttributeParser
+  {
+
+    /** Parser for decoding LDAP attributes. */
+    private final DERParser parser = new DERParser();
+
+    /** Attribute name. */
+    private String name;
+
+    /** Attribute values. */
+    private List<ByteBuffer> values = new ArrayList<>();
+
+
+    /**
+     * Creates a new attribute parser.
+     */
+    public AttributeParser()
+    {
+      parser.registerHandler("/OCTSTR", (p, e) -> name = OctetStringType.decode(e));
+      parser.registerHandler("/SET/OCTSTR", (p, e) -> values.add(ByteBuffer.wrap(e.getRemainingBytes())));
+    }
+
+
+    /**
+     * Examines the supplied buffer and parses an LDAP attribute if one is found.
+     *
+     * @param  buffer  to parse
+     */
+    public void parse(final DERBuffer buffer)
+    {
+      parser.parse(buffer);
+    }
+
+
+    /**
+     * Returns the attribute name.
+     *
+     * @return  attribute name or empty
+     */
+    public Optional<String> getName()
+    {
+      return Optional.ofNullable(name);
+    }
+
+
+    /**
+     * Returns the attribute values.
+     *
+     * @return  attribute values or empty
+     */
+    public Optional<List<ByteBuffer>> getValues()
+    {
+      return values.isEmpty() ? Optional.empty() : Optional.of(values);
+    }
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder extends AbstractMessage.AbstractBuilder<Builder, LdapEntry>
+  {
+
+
+    protected Builder()
+    {
+      super(new LdapEntry());
+    }
+
+
+    @Override
+    protected Builder self()
+    {
+      return this;
+    }
+
+
+    public Builder dn(final String dn)
+    {
+      object.setDn(dn);
+      return this;
+    }
+
+
+    public Builder attributes(final LdapAttribute... attrs)
+    {
+      object.addAttributes(attrs);
+      return this;
+    }
+
+
+    public Builder attributes(final Collection<LdapAttribute> attrs)
+    {
+      object.addAttributes(attrs);
+      return this;
+    }
+  }
+  // CheckStyle:ON
 }

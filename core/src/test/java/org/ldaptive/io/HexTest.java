@@ -94,7 +94,7 @@ public class HexTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "encode-decode")
+  @Test(groups = "io", dataProvider = "encode-decode")
   public void encodeAndDecode(final byte[] raw, final String encoded)
     throws Exception
   {
@@ -109,7 +109,7 @@ public class HexTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "invalid-decode")
+  @Test(groups = "io", dataProvider = "invalid-decode")
   public void decodeException(final char[] data)
     throws Exception
   {
