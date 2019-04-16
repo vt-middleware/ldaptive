@@ -2,7 +2,7 @@
 package org.ldaptive.provider.jndi;
 
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
@@ -91,7 +91,7 @@ public class JndiUtils
   public LdapAttribute toLdapAttribute(final Attribute attr)
     throws NamingException
   {
-    final Set<Object> values = new HashSet<>();
+    final Set<Object> values = new LinkedHashSet<>();
     final NamingEnumeration<?> ne = attr.getAll();
     while (ne.hasMore()) {
       values.add(ne.next());
