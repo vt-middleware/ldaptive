@@ -1,0 +1,12 @@
+PoolConfig poolConfig = new PoolConfig();
+poolConfig.setValidateOnCheckOut(true);
+BlockingConnectionPool pool = new BlockingConnectionPool(poolConfig, new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
+SearchRequest request = new SearchRequest();
+request.setBaseDn("uid=dfisher,ou=people,dc=vt,dc=edu");
+request.setSearchFilter(new SearchFilter("(uid=dfisher)"));
+request.setReturnAttributes(new String[0]);
+request.setSearchScope(SearchScope.OBJECT);
+request.setSizeLimit(1);
+SearchValidator validator = new SearchValidator(request);
+pool.setValidator(validator);
+pool.initialize();

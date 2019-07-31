@@ -1,0 +1,137 @@
+@import url('pygment_trac.css');
+
+@font-face {
+  font-family: 'Nauman';
+  src: url('Nauman-Regular-webfont.eot');
+  src: url('Nauman-Regular-webfont.eot?#iefix') format('embedded-opentype'),
+       url('Nauman-Regular-webfont.woff') format('woff'),
+       url('Nauman-Regular-webfont.ttf') format('truetype'),
+       url('Nauman-Regular-webfont.svg#naumanregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/******************************************
+ * General elements
+ ******************************************/
+body {
+  background-color: #eceef6;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Nauman, Verdana, Sans-Serif;
+  font-weight: bold;
+  font-style: normal;
+  color: #445AA9;
+}
+
+h1 {
+  font-size: 130%;
+}
+
+h2 {
+  font-size: 120%;
+}
+
+h2:after {
+  content: "";
+  display: block;
+  height: 1px;
+  width: 100%;
+  margin: 0px;
+  background: #9c9c9c;
+}
+
+h3 {
+  font-size: 110%;
+  border: 1px dotted #9c9c9c;
+  background: #eceef6;
+  padding: 3px;
+}
+
+h4 {
+  font-size: 100%;
+  text-decoration: underline #9c9c9c;
+}
+
+pre, code {
+  font-family: Source Code Pro, monospace;
+  font-size: 14px;
+  line-height: 140%;
+}
+
+fieldset, pre {
+  border: 1px solid #9c9c9c;
+  background-color: #ebebeb;
+  overflow: auto;
+  width: 90%;
+  margin: 10px auto;
+  padding: 10px 20px;
+}
+
+pre code {
+  color: black;
+  font-size: 14px;
+  display: block;
+}
+
+code {
+  font-size: 18px;
+  color: #296643;
+  margin: 0;
+  padding: 0;
+}
+
+table {
+  border: 1px solid black;
+  width: 90%;
+  border-spacing: 0px 0px;
+  border-collapse: separate;
+  empty-cells: show;
+}
+
+td,th {
+  border: 1px solid black;
+  padding: 10px;
+  font-size: 14px;
+}
+
+/******************************************
+ * Specific page elements
+ ******************************************/
+#page-wrapper {
+  margin:0 auto;
+  padding: 0 8% 8% 8%;
+  width: 70%;
+  background-color: #fff;
+  box-shadow: 0 0 30px 5px #333;
+  -moz-box-shadow: 0 0 30px 5px #333;
+  -webkit-box-shadow: 0 0 30px 5px #333;
+  border-radius: 12px;
+  -moz-border-radius: 12px;
+}
+
+#header {
+  background: #fff;
+  height: 110px;
+}
+
+#content {
+  line-height: 125%;
+  font-family: Alegreya Sans, Helvetica, Sans-Serif;
+  font-size: 18px;
+}
+
+#footer {
+  margin: 24px 0;
+  font-family: Nauman, Verdana, Sans-Serif;
+  font-size: 14px;
+  line-height: 125%;
+  text-align: center;
+}
+
+#footer p {
+  margin: 2px 0;
+}

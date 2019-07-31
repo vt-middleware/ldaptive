@@ -1,0 +1,12 @@
+DefaultConnectionFactory factory = new DefaultConnectionFactory("ldap://directory.ldaptive.org");
+Schema schema = SchemaFactory.createSchema(factory);
+BeanGenerator generator = new BeanGenerator();
+generator.setSchema(schema);
+generator.setExcludedNames("objectClass");
+generator.setObjectClasses("inetOrgPerson");
+generator.setPackageName("org.ldaptive.beans.schema");
+generator.setUseOperationalAttributes(true);
+generator.setUseOptionalAttributes(true);
+generator.setIncludeSuperiorClasses(true);
+generator.generate();
+generator.write("target/generated-test-sources/ldaptive");
