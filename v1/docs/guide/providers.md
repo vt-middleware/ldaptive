@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - providers
-redirect_from: "/docs/guide/providers/"
+redirect_from: "/v1/docs/guide/providers/"
 ---
 
 # Providers

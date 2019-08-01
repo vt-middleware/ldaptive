@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - jaas
-redirect_from: "/docs/guide/jaas/"
+redirect_from: "/v1/docs/guide/jaas/"
 ---
 
 {% include relative %}

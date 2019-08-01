@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - entry handlers
-redirect_from: "/docs/guide/operations/search/entryhandlers/"
+redirect_from: "/v1/docs/guide/operations/search/entryhandlers/"
 ---
 
 # Search Entry Handlers

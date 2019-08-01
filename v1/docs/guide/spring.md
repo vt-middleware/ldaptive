@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - spring
-redirect_from: "/docs/guide/spring/"
+redirect_from: "/v1/docs/guide/spring/"
 ---
 
 # Spring Integration
@@ -147,7 +147,7 @@ Ldaptive provides a [schema extension](http://www.ldaptive.org/schema/spring-ext
        xsi:schemaLocation="
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version_v1 }}.xsd">
 
   <context:property-placeholder location="classpath:/spring-ext.properties"/>
 
@@ -178,7 +178,7 @@ DefaultConnectionFactory connectionFactory = context.getBean("connection-factory
        xsi:schemaLocation="
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version_v1 }}.xsd">
 
   <context:property-placeholder location="classpath:/spring-ext.properties"/>
 
@@ -211,7 +211,7 @@ PooledConnectionFactory pooledConnectionFactory = context.getBean("pooled-connec
        xsi:schemaLocation="
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version_v1 }}.xsd">
 
   <context:property-placeholder location="classpath:/spring-ext.properties"/>
 
@@ -244,7 +244,7 @@ SearchExecutor executor = context.getBean("search-executor", SearchExecutor.clas
        xsi:schemaLocation="
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version_v1 }}.xsd">
 
   <context:property-placeholder location="classpath:/spring-ext.properties"/>
 

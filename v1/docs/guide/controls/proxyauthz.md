@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - proxy authorization
-redirect_from: "/docs/guide/controls/proxyauthz/"
+redirect_from: "/v1/docs/guide/controls/proxyauthz/"
 ---
 
 # Proxy Authorization
@@ -11,7 +11,7 @@ Request that an operation be processed by a different authorization identity tha
 ## Using the Proxy Authorization Control
 
 {% highlight java %}
-{% include source/controls/proxyauthz/1.java %}
+{% include source_v1/controls/proxyauthz/1.java %}
 {% endhighlight %}
 
 ## Provider Support

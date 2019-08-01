@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - delete
-redirect_from: "/docs/guide/operations/delete/"
+redirect_from: "/v1/docs/guide/operations/delete/"
 ---
 
 # Delete Operation
@@ -9,6 +9,6 @@ redirect_from: "/docs/guide/operations/delete/"
 Removes an LDAP entry from the directory.
 
 {% highlight java %}
-{% include source/operations/delete/1.java %}
+{% include source_v1/operations/delete/1.java %}
 {% endhighlight %}
 

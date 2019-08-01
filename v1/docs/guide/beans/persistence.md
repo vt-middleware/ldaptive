@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - persistence
-redirect_from: "/docs/guide/beans/persistence/"
+redirect_from: "/v1/docs/guide/beans/persistence/"
 ---
 
 {% include relative %}
@@ -17,7 +17,7 @@ Or included as a maven dependency:
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-beans</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}
@@ -81,6 +81,6 @@ public class MyObject
 Perform some common operations against the LDAP:
 
 {% highlight java %}
-{% include source/beans/persistence/1.java %}
+{% include source_v1/beans/persistence/1.java %}
 {% endhighlight %}
 

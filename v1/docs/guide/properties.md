@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - properties
-redirect_from: "/docs/guide/properties/"
+redirect_from: "/v1/docs/guide/properties/"
 ---
 
 # Properties
@@ -16,6 +16,6 @@ org.ldaptive.useStartTLS=true
 {% endhighlight %}
 
 {% highlight java %}
-{% include source/properties/1.java %}
+{% include source_v1/properties/1.java %}
 {% endhighlight %}
 

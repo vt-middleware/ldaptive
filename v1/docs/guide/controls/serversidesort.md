@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - server side sort
-redirect_from: "/docs/guide/controls/serversidesort/"
+redirect_from: "/v1/docs/guide/controls/serversidesort/"
 ---
 
 # Server Side Sorting
@@ -13,7 +13,7 @@ Request that the server sort results before returning them to the client. See [R
 - reverseOrder - whether the entries should be presented in reverse sorted order; default is false
 
 {% highlight java %}
-{% include source/controls/serversidesort/1.java %}
+{% include source_v1/controls/serversidesort/1.java %}
 {% endhighlight %}
 
 ## Provider Support

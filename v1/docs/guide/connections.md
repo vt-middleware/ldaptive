@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - connections
-redirect_from: "/docs/guide/connections/"
+redirect_from: "/v1/docs/guide/connections/"
 ---
 
 {% include relative %}
@@ -13,11 +13,11 @@ LDAP connections are stateful and persistent, which means they must be opened be
 A DefaultConnectionFactory can be used statically or as an instance variable:
 
 {% highlight java %}
-{% include source/connections/1.java %}
+{% include source_v1/connections/1.java %}
 {% endhighlight %}
 
 {% highlight java %}
-{% include source/connections/2.java %}
+{% include source_v1/connections/2.java %}
 {% endhighlight %}
 
 See the [pooling guide]({{ relative }}docs/guide/connections/pooling.html) for details on how to use a PooledConnectionFactory.
@@ -27,13 +27,13 @@ See the [pooling guide]({{ relative }}docs/guide/connections/pooling.html) for d
 When transmitting sensitive data to or from an LDAP it's important to use a secure connection. To use SSL:
 
 {% highlight java %}
-{% include source/connections/3.java %}
+{% include source_v1/connections/3.java %}
 {% endhighlight %}
 
 startTLS allows the client to upgrade and downgrade the security of the connection as needed. To use startTLS:
 
 {% highlight java %}
-{% include source/connections/4.java %}
+{% include source_v1/connections/4.java %}
 {% endhighlight %}
 
 In practice it is not advisable to downgrade a TLS connection, after all, you've already done the hard work to establish a TLS connection. In fact, many LDAP servers don't even support the operation. The server will simply close the connection if a stopTLS operation is received. Consequently ldaptive doesn't have functions for starting and stopping TLS on an open connection. You must decide whether you wish to use startTLS before the connection is opened.
@@ -78,13 +78,13 @@ Ldaptive includes several classes to make the use of keystores and X509 credenti
 Use a custom truststore for startTLS connections that is located on the classpath:
 
 {% highlight java %}
-{% include source/connections/5.java %}
+{% include source_v1/connections/5.java %}
 {% endhighlight %}
 
 Use X509 certificates for both authentication and trust that are located on the file system:
 
 {% highlight java %}
-{% include source/connections/6.java %}
+{% include source_v1/connections/6.java %}
 {% endhighlight %}
 
 Supported certificate formats include:
@@ -122,7 +122,7 @@ Note that retry controls the number of retries after the first reopen. A single 
 For example:
 
 {% highlight java %}
-{% include source/connections/7.java %}
+{% include source_v1/connections/7.java %}
 {% endhighlight %}
 
 - Retry #1: sleep 3 seconds
@@ -161,7 +161,7 @@ So what causes an operation to be retried? Each provider has a default list of r
 If you need to modify the default setting you can do so by changing the provider configuration:
 
 {% highlight java %}
-{% include source/connections/8.java %}
+{% include source_v1/connections/8.java %}
 {% endhighlight %}
 
 ## URLs & Connection Strategies
@@ -183,7 +183,7 @@ ROUND_ROBIN | attempt the next URL in the order provided for each connection; UR
 RANDOM | attempt a random URL; useful for stateless implementations
 
 {% highlight java %}
-{% include source/connections/9.java %}
+{% include source_v1/connections/9.java %}
 {% endhighlight %}
 
 Note that if multiple URLs are provided with a DEFAULT strategy to the JNDI provider then you will get the JNDI active/passive behavior. No other ldaptive provider currently supports multiple URLS in the DEFAULT strategy. If multiple URLs are supplied, those providers typically select the last URL in the list.
@@ -193,7 +193,7 @@ Note that if multiple URLs are provided with a DEFAULT strategy to the JNDI prov
 Some providers support arbitrary string based properties to control certain connection behavior. To set those properties:
 
 {% highlight java %}
-{% include source/connections/10.java %}
+{% include source_v1/connections/10.java %}
 {% endhighlight %}
 
 See the [providers guide]({{ relative }}docs/guide/providers.html) for more information.

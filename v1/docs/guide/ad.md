@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - active directory
-redirect_from: "/docs/guide/ad/"
+redirect_from: "/v1/docs/guide/ad/"
 ---
 
 # Active Directory
@@ -39,7 +39,7 @@ The Global Catalog enables searching for Active Directory objects in any domain 
 Some attributes in the Active Directory may be binary and need to be declared as such when they are retrieved. To work around this issue you can invoke: `SearchRequest.setBinaryAttributes(new String[] {"objectSid", "objectGUID"})`. This will allow you to properly retrieve these attributes as byte arrays. If you prefer to use these attributes in their string forms, ldaptive provides two handlers that will automatically convert these values for you:
 
 {% highlight java %}
-{% include source/ad/1.java %}
+{% include source_v1/ad/1.java %}
 {% endhighlight %}
 
 Using these search entry handlers will return values like:

@@ -5,10 +5,10 @@ redirect_from: "/v1/download/"
 ---
 
 # Latest distribution
-Download version {{ site.version }} which includes source code and classes in zip or tar.gz format
+Download version {{ site.version_v1 }} which includes source code and classes in zip or tar.gz format
 
-* [ldaptive-{{ site.version }}-dist.tar.gz](downloads/{{ site.version }}/ldaptive-{{ site.version }}-dist.tar.gz)   [[PGP](downloads/{{ site.version }}/ldaptive-{{ site.version }}-dist.tar.gz.asc)]
-* [ldaptive-{{ site.version }}-dist.zip](downloads/{{ site.version }}/ldaptive-{{ site.version }}-dist.zip)   [[PGP](downloads/{{ site.version }}/ldaptive-{{ site.version }}-dist.zip.asc)]
+* [ldaptive-{{ site.version_v1 }}-dist.tar.gz](downloads/{{ site.version_v1 }}/ldaptive-{{ site.version_v1 }}-dist.tar.gz)   [[PGP](downloads/{{ site.version_v1 }}/ldaptive-{{ site.version_v1 }}-dist.tar.gz.asc)]
+* [ldaptive-{{ site.version_v1 }}-dist.zip](downloads/{{ site.version_v1 }}/ldaptive-{{ site.version_v1 }}-dist.zip)   [[PGP](downloads/{{ site.version_v1 }}/ldaptive-{{ site.version_v1 }}-dist.zip.asc)]
 
 Individual artifacts are available in the [Maven Central Repository](http://repo1.maven.org/maven2/org/ldaptive/). If you would like to use this project in your maven build, include the following in your pom.xml:
 {% highlight xml %}
@@ -16,13 +16,13 @@ Individual artifacts are available in the [Maven Central Repository](http://repo
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}
 
 ## Providers
-By default the core library uses JNDI for LDAP operations. You can replace JNDI with a provider of your choice. See the [provider documentation](docs/guide/providers.html).
+By default the core library uses JNDI for LDAP operations. You can replace JNDI with a provider of your choice. See the [provider documentation](v1/docs/guide/providers.html).
 
 ### UnboundID
 {% highlight xml %}
@@ -30,7 +30,7 @@ By default the core library uses JNDI for LDAP operations. You can replace JNDI 
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-unboundid</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}
@@ -41,7 +41,7 @@ By default the core library uses JNDI for LDAP operations. You can replace JNDI 
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-apache</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}
@@ -52,7 +52,7 @@ By default the core library uses JNDI for LDAP operations. You can replace JNDI 
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-jldap</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}
@@ -63,7 +63,7 @@ By default the core library uses JNDI for LDAP operations. You can replace JNDI 
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-opendj</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}
@@ -76,7 +76,7 @@ By default the core library uses JNDI for LDAP operations. You can replace JNDI 
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-json</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}

@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - generation
-redirect_from: "/docs/guide/beans/generation/"
+redirect_from: "/v1/docs/guide/beans/generation/"
 ---
 
 {% include relative %}
@@ -17,7 +17,7 @@ Or included as a maven dependency:
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-beans</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}
@@ -25,7 +25,7 @@ Or included as a maven dependency:
 ## Using Java to generate beans
 
 {% highlight java %}
-{% include source/beans/generation/1.java %}
+{% include source_v1/beans/generation/1.java %}
 {% endhighlight %}
 
 This would generate a bean that looks like:
@@ -153,7 +153,7 @@ Add the dependencies to your pom.xml:
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-beans</artifactId>
-    <version>{{ site.version}}</version>
+    <version>{{ site.version_v1}}</version>
   </dependency>
   <dependency>
     <groupId>com.sun.codemodel</groupId>

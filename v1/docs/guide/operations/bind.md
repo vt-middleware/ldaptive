@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - bind
-redirect_from: "/docs/guide/operations/bind/"
+redirect_from: "/v1/docs/guide/operations/bind/"
 ---
 
 {% include relative %}
@@ -13,7 +13,7 @@ Authenticates to the LDAP and if successful, changes the authentication context 
 ## Simple Bind
 
 {% highlight java %}
-{% include source/operations/bind/1.java %}
+{% include source_v1/operations/bind/1.java %}
 {% endhighlight %}
 
 To perform an anonymous bind, execute a bind operation with an empty bind request.
@@ -29,6 +29,6 @@ The following SASL mechanisms are supported:
 Note that the default JNDI provider supports all these mechanisms, but others may not. UnsupportedOperationException will be thrown by providers if a SASL mechanism is attempted but not supported.
 
 {% highlight java %}
-{% include source/operations/bind/2.java %}
+{% include source_v1/operations/bind/2.java %}
 {% endhighlight %}
 

@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - dir sync
-redirect_from: "/docs/guide/ad/dirsync/"
+redirect_from: "/v1/docs/guide/ad/dirsync/"
 ---
 
 # Directory Synchronization (DirSync)
@@ -18,7 +18,7 @@ The DirSyncControl should be sent along with the ExtendedDnControl and the ShowD
 ## DirSyncClient
 
 {% highlight java %}
-{% include source/ad/dirsync/1.java %}
+{% include source_v1/ad/dirsync/1.java %}
 {% endhighlight %}
 
 #### Useful Links

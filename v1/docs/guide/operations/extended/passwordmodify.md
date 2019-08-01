@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - password modify
-redirect_from: "/docs/guide/operations/extended/passwordmodify/"
+redirect_from: "/v1/docs/guide/operations/extended/passwordmodify/"
 ---
 
 # Password Modify
@@ -9,13 +9,13 @@ redirect_from: "/docs/guide/operations/extended/passwordmodify/"
 Modifies an entry's userPassword attribute as described in [RFC 3062](http://www.ietf.org/rfc/rfc3062.txt).
 
 {% highlight java %}
-{% include source/operations/extended/passwordmodify/1.java %}
+{% include source_v1/operations/extended/passwordmodify/1.java %}
 {% endhighlight %}
 
 This operation can also be used to generate passwords:
 
 {% highlight java %}
-{% include source/operations/extended/passwordmodify/2.java %}
+{% include source_v1/operations/extended/passwordmodify/2.java %}
 {% endhighlight %}
 
 ## Provider Support

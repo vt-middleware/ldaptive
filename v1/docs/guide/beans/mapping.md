@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - bean mapping
-redirect_from: "/docs/guide/beans/mapping/"
+redirect_from: "/v1/docs/guide/beans/mapping/"
 ---
 
 {% include relative %}
@@ -17,7 +17,7 @@ Or included as a maven dependency:
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-beans</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}
@@ -107,7 +107,7 @@ Ldaptive provides a default implementation of the the LdapEntryMapper that suppo
 Collections and arrays are supported, but property nesting is not. Only simple Java beans should be used with this ldap entry mapper.
 
 {% highlight java %}
-{% include source/beans/mapping/1.java %}
+{% include source_v1/beans/mapping/1.java %}
 {% endhighlight %}
 
 ## SpringLdapEntryMapper

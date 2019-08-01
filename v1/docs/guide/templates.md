@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - templates
-redirect_from: "/docs/guide/templates/"
+redirect_from: "/v1/docs/guide/templates/"
 ---
 
 {% include relative %}
@@ -23,7 +23,7 @@ Some named parameters are defined by the templates in order to write search filt
 - {initialN} is replaced with the first letter of the Nth query term
 
 {% highlight java %}
-{% include source/templates/1.java %}
+{% include source_v1/templates/1.java %}
 {% endhighlight %}
 
 Templates support is provided in a separate library that is available in the _jars_ directory of the [latest download]({{ relative }}download.html).
@@ -35,7 +35,7 @@ Or included as a maven dependency:
    <dependency>
      <groupId>org.ldaptive</groupId>
      <artifactId>ldaptive-templates</artifactId>
-     <version>{{ site.version }}</version>
+     <version>{{ site.version_v1 }}</version>
    </dependency>
 </dependencies>
 {% endhighlight %}
@@ -231,7 +231,7 @@ This webapp can be used with the maven war overlay to customize it's configurati
    <dependency>
      <groupId>org.ldaptive</groupId>
      <artifactId>ldaptive-webapp</artifactId>
-     <version>{{ site.version }}</version>
+     <version>{{ site.version_v1 }}</version>
    </dependency>
 </dependencies>
 {% endhighlight %}

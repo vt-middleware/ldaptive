@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - referrals
-redirect_from: "/docs/guide/operations/referrals/"
+redirect_from: "/v1/docs/guide/operations/referrals/"
 ---
 
 # Referrals
@@ -24,7 +24,7 @@ public interface ReferralHandler<Q extends Request, S> extends Handler<Q, Respon
 The most common use case for referrals is for searching. If you wish to follow referrals, Ldaptive provides an implementation called `SearchReferralHandler` for this purpose. This implementation will also follow search references.
 
 {% highlight java %}
-{% include source/operations/referrals/1.java %}
+{% include source_v1/operations/referrals/1.java %}
 {% endhighlight %}
 
 Handlers are also provided for Add, Compare, Delete, ModifyDn and Modify operations.

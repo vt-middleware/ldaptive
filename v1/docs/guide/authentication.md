@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - authentication
-redirect_from: "/docs/guide/authentication/"
+redirect_from: "/v1/docs/guide/authentication/"
 ---
 
 {% include relative %}
@@ -15,7 +15,7 @@ Authentication against an LDAP follows this multi-step process:
 3. Entry Resolution
 
 {% highlight java %}
-{% include source/authentication/1.java %}
+{% include source_v1/authentication/1.java %}
 {% endhighlight %}
 
 ## DN Resolution
@@ -47,7 +47,7 @@ The {user} search filter argument is always assigned the user value from Authent
 If your directory does not allow anonymous access to the attribute used for DN resolution then you can configure a `BindConnectionInitializer`:
 
 {% highlight java %}
-{% include source/authentication/2.java %}
+{% include source_v1/authentication/2.java %}
 {% endhighlight %}
 
 ### FormatDnResolver
@@ -68,7 +68,7 @@ Does not perform any resolution. The user value from AuthenticationRequest#getUs
 Uses multiple DN resolvers to look up a user's DN. Each DN resolver is invoked on a separate thread. If multiple DNs are allowed then the first one retrieved is returned. Note that you must use the AggregateDnResolver#AuthenticationHandler inner class with this implementation. The labels provided must link a single DN resolver to a single authentication handler.
 
 {% highlight java %}
-{% include source/authentication/3.java %}
+{% include source_v1/authentication/3.java %}
 {% endhighlight %}
 
 #### Use cases

@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - persistent search
-redirect_from: "/docs/guide/controls/psearch/"
+redirect_from: "/v1/docs/guide/controls/psearch/"
 ---
 
 # Persistent Search
@@ -11,7 +11,7 @@ Request that the server keep a search operation open and send changes to the cli
 ## Using the Persistent Search Client
 
 {% highlight java %}
-{% include source/controls/psearch/1.java %}
+{% include source_v1/controls/psearch/1.java %}
 {% endhighlight %}
 
 ## Provider Support

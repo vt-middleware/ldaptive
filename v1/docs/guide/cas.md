@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - cas
-redirect_from: "/docs/guide/cas/"
+redirect_from: "/v1/docs/guide/cas/"
 ---
 
 # CAS

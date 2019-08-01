@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - search
-redirect_from: "/docs/guide/operations/search/"
+redirect_from: "/v1/docs/guide/operations/search/"
 ---
 
 # Search Operation
@@ -11,7 +11,7 @@ The primary operation of LDAP servers. Provides the ability to retrieve multiple
 Searches for entries matching: _(&(givenName=daniel)(sn=fisher))_ over the _dc=ldaptive,dc=org_ DIT and returns entries containing just the mail and displayName attributes.
 
 {% highlight java %}
-{% include source/operations/search/1.java %}
+{% include source_v1/operations/search/1.java %}
 {% endhighlight %}
 
 ### SearchRequest Properties
@@ -39,13 +39,13 @@ The SearchFilter object provides support for both positional and named parameter
 #### Positional
 
 {% highlight java %}
-{% include source/operations/search/2.java %}
+{% include source_v1/operations/search/2.java %}
 {% endhighlight %}
 
 #### Named
 
 {% highlight java %}
-{% include source/operations/search/3.java %}
+{% include source_v1/operations/search/3.java %}
 {% endhighlight %}
 
 In this manner applications can define custom, readable filters for their users and then set the parameters accordingly.
@@ -85,6 +85,6 @@ public interface Cache<Q extends SearchRequest>
 If a cache is supplied, it will be inspected for each request and will forgo sending the request to the LDAP if a cached result is found. Ldaptive provides one implementation called LRUCache which leverages a LinkedHashMap to store requests and responses. To use a cache invoke the search operation like this:
 
 {% highlight java %}
-{% include source/operations/search/4.java %}
+{% include source_v1/operations/search/4.java %}
 {% endhighlight %}
 

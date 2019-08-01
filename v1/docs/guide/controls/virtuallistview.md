@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - virtual list view
-redirect_from: "/docs/guide/controls/virtuallistview/"
+redirect_from: "/v1/docs/guide/controls/virtuallistview/"
 ---
 
 {% include relative %}
@@ -13,7 +13,7 @@ Request that the server return a subset of the full search results. Unlike the [
 ## Using the Virtual List View Client
 
 {% highlight java %}
-{% include source/controls/virtuallistview/1.java %}
+{% include source_v1/controls/virtuallistview/1.java %}
 {% endhighlight %}
 
 ## Provider Support

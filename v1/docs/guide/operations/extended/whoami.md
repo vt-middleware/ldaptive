@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - who am i
-redirect_from: "/docs/guide/operations/extended/whoami/"
+redirect_from: "/v1/docs/guide/operations/extended/whoami/"
 ---
 
 # Who Am I
@@ -9,7 +9,7 @@ redirect_from: "/docs/guide/operations/extended/whoami/"
 Returns the name of the authorization entity established on the connection as described in [RFC 4532](http://www.ietf.org/rfc/rfc4532.txt).
 
 {% highlight java %}
-{% include source/operations/extended/whoami/1.java %}
+{% include source_v1/operations/extended/whoami/1.java %}
 {% endhighlight %}
 
 ## Provider Support

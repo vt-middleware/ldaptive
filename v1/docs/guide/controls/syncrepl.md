@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - syncrepl
-redirect_from: "/docs/guide/controls/syncrepl/"
+redirect_from: "/v1/docs/guide/controls/syncrepl/"
 ---
 
 # Content Synchronization (Sync Repl)
@@ -24,7 +24,7 @@ public interface CookieManager
 Creates a SyncReplClient to use for a content synchronization without an existing cookie. By setting the persist property to false we expect the server will send the client all content followed by a response. Which means we do not expect to block indefinitely.
 
 {% highlight java %}
-{% include source/controls/syncrepl/1.java %}
+{% include source_v1/controls/syncrepl/1.java %}
 {% endhighlight %}
 
 ## Refresh and Persist
@@ -32,7 +32,7 @@ Creates a SyncReplClient to use for a content synchronization without an existin
 Creates a SyncReplClient to use for a content synchronization without an existing cookie. By setting the persist property to true we expect the server will continue sending us content updates until the operation is cancelled.
 
 {% highlight java %}
-{% include source/controls/syncrepl/2.java %}
+{% include source_v1/controls/syncrepl/2.java %}
 {% endhighlight %}
 
 ## Provider Support

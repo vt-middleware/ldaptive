@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - session tracking
-redirect_from: "/docs/guide/controls/sessiontracking/"
+redirect_from: "/v1/docs/guide/controls/sessiontracking/"
 ---
 
 # Session Tracking
@@ -13,13 +13,13 @@ Include tracking information about a client session in an LDAP operation. See [D
 ### When binding and the user is not yet known
 
 {% highlight java %}
-{% include source/controls/sessiontracking/1.java %}
+{% include source_v1/controls/sessiontracking/1.java %}
 {% endhighlight %}
 
 ### When searching and the user is known
 
 {% highlight java %}
-{% include source/controls/sessiontracking/2.java %}
+{% include source_v1/controls/sessiontracking/2.java %}
 {% endhighlight %}
 
 ## Provider Support

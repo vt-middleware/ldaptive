@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - managedsait
-redirect_from: "/docs/guide/controls/managedsait/"
+redirect_from: "/v1/docs/guide/controls/managedsait/"
 ---
 
 # ManageDsaIT
@@ -9,7 +9,7 @@ redirect_from: "/docs/guide/controls/managedsait/"
 Request that the server return referrals as regular entries. See [RFC 3296](http://www.ietf.org/rfc/rfc3296.txt).
 
 {% highlight java %}
-{% include source/controls/managedsait/1.java %}
+{% include source_v1/controls/managedsait/1.java %}
 {% endhighlight %}
 
 ## Provider Support

@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - range results
-redirect_from: "/docs/guide/ad/rangeresults/"
+redirect_from: "/v1/docs/guide/ad/rangeresults/"
 ---
 
 # Range Results
@@ -11,7 +11,7 @@ Active Directory may not return all the values of an attribute, electing instead
 ## RangeEntryHandler
 
 {% highlight java %}
-{% include source/ad/rangeresults/1.java %}
+{% include source_v1/ad/rangeresults/1.java %}
 {% endhighlight %}
 
 #### Useful Links

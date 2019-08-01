@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - modify dn
-redirect_from: "/docs/guide/operations/modifydn/"
+redirect_from: "/v1/docs/guide/operations/modifydn/"
 ---
 
 # Modify DN Operation
@@ -9,6 +9,6 @@ redirect_from: "/docs/guide/operations/modifydn/"
 Changes the DN of an LDAP entry.
 
 {% highlight java %}
-{% include source/operations/modifydn/1.java %}
+{% include source_v1/operations/modifydn/1.java %}
 {% endhighlight %}
 

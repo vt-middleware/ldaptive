@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - modify
-redirect_from: "/docs/guide/operations/modify/"
+redirect_from: "/v1/docs/guide/operations/modify/"
 ---
 
 # Modify Operation
@@ -9,6 +9,6 @@ redirect_from: "/docs/guide/operations/modify/"
 Changes the attributes of an LDAP entry.
 
 {% highlight java %}
-{% include source/operations/modify/1.java %}
+{% include source_v1/operations/modify/1.java %}
 {% endhighlight %}
 

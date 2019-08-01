@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - operations
-redirect_from: "/docs/guide/operations/"
+redirect_from: "/v1/docs/guide/operations/"
 ---
 
 # Operations

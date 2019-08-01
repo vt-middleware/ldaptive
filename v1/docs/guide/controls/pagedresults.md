@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - paged results
-redirect_from: "/docs/guide/controls/pagedresults/"
+redirect_from: "/v1/docs/guide/controls/pagedresults/"
 ---
 
 # Paged Results
@@ -15,13 +15,13 @@ The PagedResultClient encapsulates the cookie management associated with this co
 ### Perform paged search to completion
 
 {% highlight java %}
-{% include source/controls/pagedresults/1.java %}
+{% include source_v1/controls/pagedresults/1.java %}
 {% endhighlight %}
 
 ### Inspect each response myself
 
 {% highlight java %}
-{% include source/controls/pagedresults/2.java %}
+{% include source_v1/controls/pagedresults/2.java %}
 {% endhighlight %}
 
 ## Using the PagedResultsControl
@@ -29,7 +29,7 @@ The PagedResultClient encapsulates the cookie management associated with this co
 If you need fine grain control over this operation, this sample code illustrates how to use the PagedResultsControl directly with a SearchOperation.
 
 {% highlight java %}
-{% include source/controls/pagedresults/3.java %}
+{% include source_v1/controls/pagedresults/3.java %}
 {% endhighlight %}
 
 ## Provider Support

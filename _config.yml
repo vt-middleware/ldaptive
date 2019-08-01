@@ -4,6 +4,9 @@ gems:
 version:
   - 1.2.4
 
+version_v1:
+  - 1.2.4
+
 issueURL:
   - "https://github.com/vt-middleware/ldaptive/issues/"
 

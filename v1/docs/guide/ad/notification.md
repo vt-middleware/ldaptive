@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - notification
-redirect_from: "/docs/guide/ad/notification/"
+redirect_from: "/v1/docs/guide/ad/notification/"
 ---
 
 # Directory Notification
@@ -17,7 +17,7 @@ A notification client is provided to encapsulate the asychronous search and expo
 ## NotificationClient
 
 {% highlight java %}
-{% include source/ad/notification/1.java %}
+{% include source_v1/ad/notification/1.java %}
 {% endhighlight %}
 
 #### Useful links

@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - formatting
-redirect_from: "/docs/guide/formatting/"
+redirect_from: "/v1/docs/guide/formatting/"
 ---
 
 {% include relative %}
@@ -15,7 +15,7 @@ Ldaptive provides implementations for formatting LDAP results in LDIF, DSML vers
 LDIF can be written to any java.io.Writer using an LdifWriter.
 
 {% highlight java %}
-{% include source/formatting/1.java %}
+{% include source_v1/formatting/1.java %}
 {% endhighlight %}
 
 produces:
@@ -28,7 +28,7 @@ mail: dfisher@ldaptive.org
 LDIF can be read using any java.io.Reader using an LdifReader.
 
 {% highlight java %}
-{% include source/formatting/2.java %}
+{% include source_v1/formatting/2.java %}
 {% endhighlight %}
 
 ## DSML
@@ -36,7 +36,7 @@ LDIF can be read using any java.io.Reader using an LdifReader.
 DSML can be written to any java.io.Writer using a Dsmlv1Writer.
 
 {% highlight java %}
-{% include source/formatting/3.java %}
+{% include source_v1/formatting/3.java %}
 {% endhighlight %}
 
 produces:
@@ -57,7 +57,7 @@ produces:
 DSML can be read using any java.io.Reader using a Dsmlv1Reader.
 
 {% highlight java %}
-{% include source/formatting/4.java %}
+{% include source_v1/formatting/4.java %}
 {% endhighlight %}
 
 ## JSON
@@ -71,7 +71,7 @@ Or included as a maven dependency:
   <dependency>
     <groupId>org.ldaptive</groupId>
     <artifactId>ldaptive-json</artifactId>
-    <version>{{ site.version }}</version>
+    <version>{{ site.version_v1 }}</version>
   </dependency>
 </dependencies>
 {% endhighlight %}
@@ -79,7 +79,7 @@ Or included as a maven dependency:
 JSON can be written to any java.io.Writer using a JsonWriter.
 
 {% highlight java %}
-{% include source/formatting/5.java %}
+{% include source_v1/formatting/5.java %}
 {% endhighlight %}
 
 produces:
@@ -91,7 +91,7 @@ produces:
 JSON can be read using any java.io.Reader using a JsonReader.
 
 {% highlight java %}
-{% include source/formatting/6.java %}
+{% include source_v1/formatting/6.java %}
 {% endhighlight %}
 
 ## Sorting
@@ -99,7 +99,7 @@ JSON can be read using any java.io.Reader using a JsonReader.
 To control sorting when reading an LDAP result the sort behavior can be supplied to the reader:
 
 {% highlight java %}
-{% include source/formatting/7.java %}
+{% include source_v1/formatting/7.java %}
 {% endhighlight %}
 
 Sort behavior can also be controlled by setting a JVM System property:
