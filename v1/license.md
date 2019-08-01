@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - license
-redirect_from: "/license/"
+redirect_from: "/v1/license/"
 ---
 
 # Licensing options

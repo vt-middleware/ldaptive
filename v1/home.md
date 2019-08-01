@@ -1,8 +1,8 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive
-permalink: /
-redirect_from: "/home/"
+permalink: /v1
+redirect_from: "/v1/home/"
 ---
 
 # LDAP library for Java.

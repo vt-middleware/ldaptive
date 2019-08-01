@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - download
-redirect_from: "/download/"
+redirect_from: "/v1/download/"
 ---
 
 # Latest distribution

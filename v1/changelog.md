@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: default_v1
 title: Ldaptive - changelog
-redirect_from: "/changelog/"
+redirect_from: "/v1/changelog/"
 ---
 
 # Release Notes
