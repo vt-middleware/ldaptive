@@ -29,7 +29,7 @@ PooledConnectionFactory cf = new PooledConnectionFactory("ldap://directory.ldapt
 cf.initialize();
 
 SearchTemplatesExecutor executor = new SearchTemplatesExecutor(
-  new AggregateSearchExecutor(),
+  new AggregateSearchOperation(),
   new PooledConnectionFactory[] {cf},
   oneTermTemplate,
   twoTermTemplate,
