@@ -8,4 +8,4 @@ ConnectionConfig.builder()
       .trustStore("classpath:/my.truststore")
       .build())
     .build())
-  .build()
+  .build();

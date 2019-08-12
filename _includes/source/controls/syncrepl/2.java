@@ -1,4 +1,4 @@
-SingleConnectionFactory cf = new SingleConnectionFactory(("ldap://directory.ldaptive.org");
+SingleConnectionFactory cf = new SingleConnectionFactory("ldap://directory.ldaptive.org");
 cf.initialize();
 SyncReplClient client = new SyncReplClient(cf, true); // true indicates persist
 SearchRequest request = SearchRequest.objectScopeSearchRequest("dc=ldaptive,dc=org");

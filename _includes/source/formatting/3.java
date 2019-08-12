@@ -5,6 +5,6 @@ SearchResponse response = search.execute(SearchRequest.builder()
   .dn("dc=ldaptive,dc=org")
   .filter("(uid=dfisher)")
   .attributes("mail")
-  .build();
+  .build());
 jsonWriter.write(response);
 System.out.println(writer.toString());

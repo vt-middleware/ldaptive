@@ -10,4 +10,4 @@ ConnectionConfig.builder()
       .authenticationKey("file:/tmp/mykey.pkcs8")
       .build())
     .build())
-  .build()
+  .build();

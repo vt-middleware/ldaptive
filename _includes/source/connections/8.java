@@ -4,4 +4,4 @@ ConnectionConfig.builder()
   .connectTimeout(Duration.ofSeconds(5))
   .responseTimeout(Duration.ofSeconds(5))
   .strategy(new RoundRobinConnectionStrategy())
-  .build()
+  .build();

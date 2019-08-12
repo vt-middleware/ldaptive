@@ -6,4 +6,4 @@ ConnectionConfig.builder()
   .sslConfig(SslConfig.builder()
     .hostnameVerifier(new AllowAnyHostnameVerifier())
     .build())
-  .build()
+  .build();
