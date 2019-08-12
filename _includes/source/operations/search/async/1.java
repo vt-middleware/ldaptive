@@ -8,7 +8,6 @@ SearchOperation search = SearchOperation.builder()
   })
   .onResult(result -> {
     // search is complete
-    return result;
   })
   .build();
 

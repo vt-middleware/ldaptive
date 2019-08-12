@@ -16,5 +16,5 @@ AuthenticationResponse response = auth.authenticate(
 if (response.isSuccess()) { // authentication succeeded
 
 } else { // authentication failed
-  String msg = response.getMessage(); // read the failure message
+  String msg = response.getDiagnosticMessage(); // read the failure message
 }

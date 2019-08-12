@@ -25,12 +25,11 @@ SearchTemplates threeTermTemplate = new SearchTemplates(
   "(sn={term3})");
 
 // create a pooled connection factory for searching
-BlockingConnectionPool cp = new BlockingConnectionPool(new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
-cp.initialize();
-PooledConnectionFactory cf = new PooledConnectionFactory(cp);
+PooledConnectionFactory cf = new PooledConnectionFactory("ldap://directory.ldaptive.org");
+cf.initialize();
 
 SearchTemplatesExecutor executor = new SearchTemplatesExecutor(
-  new AggregatePooledSearchExecutor(),
+  new AggregateSearchExecutor(),
   new PooledConnectionFactory[] {cf},
   oneTermTemplate,
   twoTermTemplate,
@@ -38,12 +37,12 @@ SearchTemplatesExecutor executor = new SearchTemplatesExecutor(
 
 // get results for a one term query
 Query oneTermQuery = new Query("fisher");
-SearchResult oneTermResult = executor.search(oneTermQuery);
+SearchResponse oneTermResult = executor.search(oneTermQuery);
 
 // get results for a two term query
 Query twoTermQuery = new Query("daniel fisher");
-SearchResult twoTermResult = executor.search(twoTermQuery);
+SearchResponse twoTermResult = executor.search(twoTermQuery);
 
 // get results for a three term query
 Query threeTermQuery = new Query("daniel william fisher");
-SearchResult threeTermResult = executor.search(threeTermQuery);
+SearchResponse threeTermResult = executor.search(threeTermQuery);
