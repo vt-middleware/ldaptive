@@ -1,9 +1,8 @@
-final String uid;
 SearchOperation search = SearchOperation.builder()
   .factory(new DefaultConnectionFactory("ldap://directory.ldaptive.org"))
   .onEntry(entry -> {
     // process the entry
-    uid = entry.getAttribute("uid").getStringValue();
+    String uid = entry.getAttribute("uid").getStringValue();
     return entry;
   })
   .onResult(result -> {
