@@ -17,11 +17,3 @@ This operation can also be used to generate passwords:
 {% highlight java %}
 {% include source/operations/extended/passwordmodify/2.java %}
 {% endhighlight %}
-
-## Provider Support
-
-| JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-| <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font>
-
-{% include provider-support-legend.md %}
-

@@ -16,23 +16,13 @@ validateOnCheckOut | false | whether connections should be validated when loaned
 validatePeriodically | false | whether connections should be validated periodically when the pool is idle
 validateTimerPeriod | PT30M | period at which pool should be validated
 
-Ldaptive provides two pooling implementations: BlockingConnectionPool and SoftLimitConnectionPool. A blocking connection pool will block requests for a connection until one is available for use. A soft limit connection pool will grow beyond the maxPoolSize as needed. Our testing has shown that a properly tuned blocking pool will generally out perform a soft limit pool because it will take longer to provision a new connection than to wait for an existing connection to become available. However there may be circumstances where a soft limit pool is the best solution.
-
-## BlockingConnectionPool
-
-A pool of LDAP connections that has a set minimum and maximum size. The pool will not grow beyond the maximum size, so when the pool is exhausted, requests for new connections will block. The length of time the pool will block before throwing an exception is configurable. By default the pool will block indefinitely and there is no guarantee that waiting threads will be serviced in the order in which they made their requests. This implementation should be used when you need to control the exact number of ldap connections that can be created. A block wait time can be configured so that a BlockingTimeoutException will be thrown if a client waits longer than a defined period.
+Ldaptive provides a `PooledConnectionFactory` implementation which uses a blocking connection pool.
 
 {% highlight java %}
 {% include source/connections/pooling/1.java %}
 {% endhighlight %}
 
-## SoftLimitConnectionPool
-
-A pool of LDAP connections that has a set minimum but no maximum. The pool will grow beyond the maximum size when the pool is exhausted. Pool size will return to its minimum based on the configuration of the prune timer. This implementation should be used when you have some flexibility in the number of LDAP connections that can be created to handle spikes in load. Note that this pool will begin blocking if it cannot create new LDAP connections.
-
-{% highlight java %}
-{% include source/connections/pooling/2.java %}
-{% endhighlight %}
+Unlike a `DefaultConnectionFactory`, this implementation must be initialized before use and closed to free the pool resources.
 
 ## Validation
 
@@ -52,7 +42,7 @@ Ldaptive provides the following validator implementations:
 Validates a connection by performing a compare operation. By default this validator performs a rootDSE compare on objectClass: top.
 
 {% highlight java %}
-{% include source/connections/pooling/3.java %}
+{% include source/connections/pooling/2.java %}
 {% endhighlight %}
 
 Validation is successful if the compare operation returns true.
@@ -62,7 +52,7 @@ Validation is successful if the compare operation returns true.
 Validates a connection by performing a search operation. By default this validator performs an object level rootDSE search for _(objectClass=*)_.
 
 {% highlight java %}
-{% include source/connections/pooling/4.java %}
+{% include source/connections/pooling/3.java %}
 {% endhighlight %}
 
 Validation is successful if the search returns one or more results.
@@ -72,7 +62,7 @@ Validation is successful if the search returns one or more results.
 You can also configure validation to occur when the pool is idle instead of during check outs and check ins. By performing validation periodically rather than for every checkIn/checkOut you will improve performance during peak periods of load. This functionality can also serve as a keep-alive for long lived connections.
 
 {% highlight java %}
-{% include source/connections/pooling/5.java %}
+{% include source/connections/pooling/4.java %}
 {% endhighlight %}
 
 ## Pruning
@@ -104,6 +94,6 @@ idleTime | PT10M | time at which a connection should be considered idle and beco
 A custom idle prune strategy can be configured by setting the prune strategy on the connection pool.
 
 {% highlight java %}
-{% include source/connections/pooling/6.java %}
+{% include source/connections/pooling/5.java %}
 {% endhighlight %}
 

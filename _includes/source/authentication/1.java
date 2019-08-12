@@ -1,22 +1,25 @@
 // use a secure connection for authentication
-ConnectionConfig connConfig = new ConnectionConfig("ldap://directory.ldaptive.org");
-connConfig.setUseStartTLS(true);
+ConnectionConfig connConfig = ConnectionConfig.builder()
+  .url("ldap://directory.ldaptive.org")
+  .useStartTLS(true)
+  .build();
 
 // use a search dn resolver
-SearchDnResolver dnResolver = new SearchDnResolver(new DefaultConnectionFactory(connConfig));
-dnResolver.setBaseDn("ou=people,dc=ldaptive,dc=org");
-dnResolver.setUserFilter("(uid={user})");
+SearchDnResolver dnResolver = SearchDnResolver.builder()
+  .factory(new DefaultConnectionFactory(connConfig))
+  .dn("ou=people,dc=ldaptive,dc=org")
+  .filter("(uid={user})")
+  .build();
 
-// perform a bind for password validation
-BindAuthenticationHandler authHandler = new BindAuthenticationHandler(new DefaultConnectionFactory(connConfig));
+// perform a simple bind for password validation
+SimpleBindAuthenticationHandler authHandler = new SimpleBindAuthenticationHandler(new DefaultConnectionFactory(connConfig));
 
 Authenticator auth = new Authenticator(dnResolver, authHandler);
 AuthenticationResponse response = auth.authenticate(
   new AuthenticationRequest("dfisher", new Credential("password"), new String[] {"mail", "sn"}));
-if (response.getResult()) { // authentication succeeded
+if (response.isSuccess()) { // authentication succeeded
   LdapEntry entry = response.getLdapEntry(); // read mail and sn attributes
-
 } else { // authentication failed
-  String msg = response.getMessage(); // read the failure message
+  String msg = response.getDiagnosticMessage(); // read the failure message
   ResponseControl[] ctls = response.getControls(); // read any response controls
 }

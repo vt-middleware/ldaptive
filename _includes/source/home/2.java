@@ -1,9 +1,12 @@
-ConnectionConfig connConfig = new ConnectionConfig("ldap://directory.ldaptive.org");
-connConfig.setUseStartTLS(true);
-ConnectionFactory cf = new DefaultConnectionFactory(connConfig);
-SearchExecutor executor = new SearchExecutor();
-executor.setBaseDn("dc=ldaptive,dc=org");
-SearchResult result = executor.search(cf, "(uid=*fisher)", "mail", "sn").getResult();
-for (LdapEntry entry : result.getEntries()) {
+SearchOperation search = new SearchOperation(
+  DefaultConnectionFactory.builder()
+    .config(ConnectionConfig.builder()
+      .url("ldap://directory.ldaptive.org")
+      .useStartTLS(true)
+      .build())
+    .build(),
+    "dc=ldaptive,dc=org");
+SearchResponse response = search.execute("(uid=*fisher)", "mail", "sn");
+for (LdapEntry entry : response.getEntries()) {
   // do something useful with the entry
 }

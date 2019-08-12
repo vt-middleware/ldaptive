@@ -1,15 +1,22 @@
-SoftLimitConnectionPool pool = new SoftLimitConnectionPool(new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
-pool.initialize();
-PooledConnectionFactory connFactory = new PooledConnectionFactory(pool);
-
-Connection conn = connFactory.getConnection();
+PooledConnectionFactory cf = PooledConnectionFactory.builder()
+  .config(ConnectionConfig.builder()
+    .url("ldap://directory.ldaptive.org")
+    .build())
+  .config(PoolConfig.builder()
+    .validateOnCheckIn(true)
+    .build())
+  .validator(new CompareValidator(CompareRequest.builder()
+    .dn("ou=people,dc=vt,dc=edu")
+    .name("ou")
+    .value("people")
+    .build()))
+  .build();
+  cf.initialize();
 try {
-  // connection is already open, perform an operation
-
+  SearchOperation search = new SearchOperation(cf, "dc=ldaptive,dc=org");
+  SearchResponse response = search.execute("(uid=dfisher)");
+  LdapEntry entry = response.getEntry();
 } finally {
-  // closing a connection returns it to the pool
-  conn.close();
+  // close the pool
+  cf.close();
 }
-
-// close the pool
-pool.close();

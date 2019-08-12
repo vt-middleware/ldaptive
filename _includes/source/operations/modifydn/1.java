@@ -1,8 +1,6 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
-try {
-  conn.open();
-  ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
-  modifyDn.execute(new ModifyDnRequest("uid=dfisher,ou=people,dc=ldaptive,dc=org", "uid=dfisher,ou=robots,dc=ldaptive,dc=org"));
-} finally {
-  conn.close();
-}
+ModifyDnOperation modifyDn = new ModifyDnOperation(new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
+modifyDn.execute(ModifyDnRequest.builder()
+  .oldDN("uid=dfisher,ou=people,dc=ldaptive,dc=org")
+  .newRDN("uid=danielf")
+  .delete(true)
+  .build());

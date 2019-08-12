@@ -16,19 +16,17 @@ Authenticates to the LDAP and if successful, changes the authentication context 
 {% include source/operations/bind/1.java %}
 {% endhighlight %}
 
-To perform an anonymous bind, execute a bind operation with an empty bind request.
+Note that the `DefaultConnectionFactory` implementation will close the connection when it is done and may not be suitable choice depending on your use case.
 
-## SASL Bind
-
-The following SASL mechanisms are supported:
-- CRAM-MD5
-- DIGEST-MD5
-- EXTERNAL
-- GSSAPI
-
-Note that the default JNDI provider supports all these mechanisms, but others may not. UnsupportedOperationException will be thrown by providers if a SASL mechanism is attempted but not supported.
+## Anonymous Bind
 
 {% highlight java %}
 {% include source/operations/bind/2.java %}
 {% endhighlight %}
 
+
+## External Bind
+
+{% highlight java %}
+{% include source/operations/bind/3.java %}
+{% endhighlight %}

@@ -13,11 +13,3 @@ Request that the server keep a search operation open and send changes to the cli
 {% highlight java %}
 {% include source/controls/psearch/1.java %}
 {% endhighlight %}
-
-## Provider Support
-
-| JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-| <font color="#cc0000">✗</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font>
-
-{% include provider-support-legend.md %}
-

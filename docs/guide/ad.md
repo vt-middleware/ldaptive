@@ -10,25 +10,21 @@ Active Directory provides an LDAPv3 compliant interface for performing operation
 
 ## Controls
 
-The following controls have concrete implementations in Ldaptive. A matrix of control to supported provider is shown here:
+The following controls have concrete implementations in Ldaptive.
 
-|                    | JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-|--------------------|:----:|:-----:|:-----------:|:---------:|:-----:
-|DirSync             | <font color="#cc0000">✗</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#cc0000">✗</font>
-|ExtendedDn          | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|ForceUpdate         | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|GetStats            | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|LazyCommit          | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|Notification        | <font color="#cc0000">✗</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|PermissiveModify    | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|RangeRetrievalNoerr | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|SearchOptions       | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|ShowDeactivatedLink | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|ShowDeleted         | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|ShowRecycled        | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-|VerifyName          | <font color="#6aa84f">✓</font>    | <font color="#6aa84f">✓</font>     | <font color="#cc0000">✗</font>           | <font color="#6aa84f">✓</font>         | <font color="#6aa84f">✓</font>
-
-{% include provider-support-legend.md %}
+- DirSync
+- ExtendedDn
+- ForceUpdate
+- GetStats
+- LazyCommit
+- Notification
+- PermissiveModify
+- RangeRetrievalNoerr
+- SearchOptions
+- ShowDeactivatedLink
+- ShowDeleted
+- ShowRecycled
+- VerifyName
 
 ## Global Catalog
 
@@ -50,18 +46,8 @@ objectGUID: {B1DB3CCA-72BD-4F31-9EBF-C70CD44BDA32}
 objectSid: S-1-5-21-1051162837-3568060411-1686669321-1105
 {% endhighlight %}
 
-## JNDI Provider
+## Referrals
 
-### Referrals
-
-JNDI provides three ways in which to handle LDAP referrals: 'ignore', 'follow', and 'throw'. Ldaptive does not expose the 'ignore' option as this sends the ManageDsaIT control. Since Active Directory does not support this control, you will avoid `javax.naming.PartialResultException: Unprocessed Continuation Reference(s)` exceptions. By default ldaptive sets the 'throw' option and exposes any referrals in `SearchResult#getReferences()`.
-
-If you are confident that all the referrals returned by the Active Directory can be followed then `SearchRequest#setReferralHandler(new SearchReferralHandler())` can be invoked. Note that referrals often contain hostnames other than the server that is being searched. The authentication credentials for the original connection must be valid for any hosts supplied by the referrals. In addition, these hostnames must be DNS resolvable and reachable in order for the search to be successful. `javax.naming.CommunicationException` and `java.net.UnknownHostException` are commonly encountered when following referrals.
+If you are confident that all the referrals returned by the Active Directory can be followed then `SearchOperation#setSearchResultHandlers(new SearchReferralHandler())` can be used. Note that referrals often contain hostnames other than the server that is being searched. The authentication credentials for the original connection must be valid for any hosts supplied by the referrals. In addition, these hostnames must be DNS resolvable and reachable in order for the search to be successful. `javax.naming.CommunicationException` and `java.net.UnknownHostException` are commonly encountered when following referrals.
 
 Note that Active Directory will typically use referrals for any search bases that access domain DNS objects at the root level. e.g. dc=mydomain,dc=org.
-
-#### Useful Links
-
-- [Referrals in JNDI](http://docs.oracle.com/javase/jndi/tutorial/ldap/referral/jndi.html)
-- [Manually Following Referrals](http://docs.oracle.com/javase/jndi/tutorial/ldap/referral/throw.html)
-

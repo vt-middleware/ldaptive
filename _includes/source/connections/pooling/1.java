@@ -1,15 +1,17 @@
-BlockingConnectionPool pool = new BlockingConnectionPool(new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
-pool.initialize();
-PooledConnectionFactory connFactory = new PooledConnectionFactory(pool);
-
-Connection conn = connFactory.getConnection();
+PooledConnectionFactory cf = PooledConnectionFactory.builder()
+  .config(ConnectionConfig.builder()
+    .url("ldap://directory.ldaptive.org")
+    .build())
+  .config(PoolConfig.builder()
+    .min(2)
+    .max(5)
+    .build())
+  .build();
+cf.initialize();
 try {
-  // connection is already open, perform an operation
-
+  SearchOperation search = new SearchOperation(cf, "dc=ldaptive,dc=org");
+  SearchResponse response = search.execute("(uid=dfisher)");
+  LdapEntry entry = response.getEntry();
 } finally {
-  // closing a connection returns it to the pool
-  conn.close();
+  cf.close();
 }
-
-// close the pool
-pool.close();

@@ -1,9 +1,3 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
-try {
-  conn.open();
-  WhoAmIOperation whoami = new WhoAmIOperation(conn);
-  Response<String> response = whoami.execute(new WhoAmIRequest());
-  String authzId = response.getResult();
-} finally {
-  conn.close();
-}
+ExtendedOperation whoami = new ExtendedOperation(new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
+ExtendedResponse response = whoami.execute(new WhoAmIRequest());
+String authzId = WhoAmIResponseParser.parse(response);

@@ -1,12 +1,13 @@
 java.util.Properties props = new java.util.Properties();
 props.load(new FileInputStream("/path/to/ldap.properties"));
 
-SearchExecutor searchExecutor = new SearchExecutor();
-SearchRequestPropertySource srSource = new SearchRequestPropertySource(searchExecutor, props);
-srSource.initialize();
-
 DefaultConnectionFactory connectionFactory = new DefaultConnectionFactory();
 DefaultConnectionFactoryPropertySource dcfSource = new DefaultConnectionFactoryPropertySource(connectionFactory, props);
 dcfSource.initialize();
 
-SearchResult result = searchExecutor.search(connectionFactory, "(mail=dfisher@ldaptive.org)").getResult();
+SearchRequest request = new SearchRequest();
+SearchRequestPropertySource srSource = new SearchRequestPropertySource(request, props);
+srSource.initialize();
+
+SearchOperation search = new SearchOperation(connectionFactory);
+SearchResponse response = SearchOperation.execute(connectionFactory, request);

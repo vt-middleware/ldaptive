@@ -12,7 +12,7 @@ scope | Must be one-level or object-level
 filter | Must be '(objectClass=*)'
 attributes | list of attributes to be returned when a change occurs. Does not specify attributes which will generate notifications.
 
-A notification client is provided to encapsulate the asychronous search and expose a blocking queue.
+A notification client is provided to encapsulate the asynchronous search and expose a blocking queue.
 
 ## NotificationClient
 

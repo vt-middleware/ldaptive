@@ -1,7 +1,24 @@
-PoolConfig poolConfig = new PoolConfig();
-poolConfig.setValidateOnCheckIn(true);
-BlockingConnectionPool pool = new BlockingConnectionPool(poolConfig, new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
-// perform a compare on the ou: people attribute for the ou=people,dc=vt,dc=edu dn
-CompareValidator validator = new CompareValidator(new CompareRequest("ou=people,dc=vt,dc=edu", new LdapAttribute("ou", "people")));
-pool.setValidator(validator);
-pool.initialize();
+PooledConnectionFactory cf = PooledConnectionFactory.builder()
+  .config(ConnectionConfig.builder()
+    .url("ldap://directory.ldaptive.org")
+    .build())
+  .config(PoolConfig.builder()
+    .validateOnCheckOut(true)
+    .build())
+  .validator(new SearchValidator(SearchRequest.builder()
+    .dn("uid=dfisher,ou=people,dc=vt,dc=edu")
+    .filter("(uid=dfisher)")
+    .attributes(ReturnAttributes.NONE.value())
+    .scope(SearchScope.OBJECT)
+    .sizeLimit(1)
+    .build()))
+  .build();
+cf.initialize();
+try {
+  SearchOperation search = new SearchOperation(cf, "dc=ldaptive,dc=org");
+  SearchResponse response = search.execute("(uid=dfisher)");
+  LdapEntry entry = response.getEntry();
+} finally {
+  // close the pool
+  cf.close();
+}

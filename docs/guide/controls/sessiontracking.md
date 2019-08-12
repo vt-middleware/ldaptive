@@ -21,11 +21,3 @@ Include tracking information about a client session in an LDAP operation. See [D
 {% highlight java %}
 {% include source/controls/sessiontracking/2.java %}
 {% endhighlight %}
-
-## Provider Support
-
-| JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-| <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#cc0000">✗</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font>
-
-{% include provider-support-legend.md %}
-

@@ -77,10 +77,11 @@ Connection conn = cf.getConnection();
                            http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
   <bean id="pool"
-    class="org.ldaptive.pool.BlockingConnectionPool"
+    class="org.ldaptive.PooledConnectionFactory"
     init-method="initialize"
     p:blockWaitTime="5000">
-    <constructor-arg index="0">
+    <constructor-arg index="0" ref="connectionConfig"/>
+    <constructor-arg index="1">
       <bean class="org.ldaptive.pool.PoolConfig"
         p:minPoolSize="5"
         p:maxPoolSize="20"
@@ -88,13 +89,7 @@ Connection conn = cf.getConnection();
         p:validatePeriod="30"
       />
     </constructor-arg>
-    <constructor-arg index="1" ref="connectionFactory"/>
   </bean>
-
-  <bean id="connectionFactory"
-    class="org.ldaptive.DefaultConnectionFactory"
-    p:connectionConfig-ref="connectionConfig"
-  />
 
   <bean id="connectionConfig"
     class="org.ldaptive.ConnectionConfig"
@@ -129,8 +124,7 @@ To access your pool:
 
 {% highlight java %}
 ClassPathXmlApplicationContext poolContext = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-pool-context.xml", });
-BlockingConnectionPool pool = poolContext.getBean("pool", BlockingConnectionFactory.class);
-Connection conn = pool.getConnection();
+PooledConnectionFactory pool = poolContext.getBean("pool", PooledConnectionFactory.class);
 {% endhighlight %}
 
 ## Spring Extensible XML
@@ -200,7 +194,7 @@ ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new 
 PooledConnectionFactory pooledConnectionFactory = context.getBean("pooled-connection-factory", PooledConnectionFactory.class);
 {% endhighlight %}
 
-### Search Executor
+### Search Operation
 
 {% highlight xml %}
 <?xml version="1.0" encoding="UTF-8"?>
@@ -215,14 +209,13 @@ PooledConnectionFactory pooledConnectionFactory = context.getBean("pooled-connec
 
   <context:property-placeholder location="classpath:/spring-ext.properties"/>
 
-  <ldaptive:search-executor
+  <ldaptive:search-operation
     baseDn="ou=people,dc=ldaptive,dc=org"
     searchFilter="(mail=*)"
     returnAttributes="cn,givenName,sn"
     timeLimit="PT5S"
     sizeLimit="100"
     binaryAttributes="jpegPhoto,userCertificate"
-    sortBehavior="ORDERED"
   />
 
 </beans>
@@ -230,7 +223,7 @@ PooledConnectionFactory pooledConnectionFactory = context.getBean("pooled-connec
 
 {% highlight java %}
 ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-ext-context.xml", });
-SearchExecutor executor = context.getBean("search-executor", SearchExecutor.class);
+SearchOperation search = context.getBean("search-operation", SearchOperation.class);
 {% endhighlight %}
 
 ### Authenticator

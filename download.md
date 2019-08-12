@@ -21,53 +21,6 @@ Individual artifacts are available in the [Maven Central Repository](http://repo
 </dependencies>
 {% endhighlight %}
 
-## Providers
-By default the core library uses JNDI for LDAP operations. You can replace JNDI with a provider of your choice. See the [provider documentation](docs/guide/providers.html).
-
-### UnboundID
-{% highlight xml %}
-<dependencies>
-  <dependency>
-    <groupId>org.ldaptive</groupId>
-    <artifactId>ldaptive-unboundid</artifactId>
-    <version>{{ site.version }}</version>
-  </dependency>
-</dependencies>
-{% endhighlight %}
-
-### Apache
-{% highlight xml %}
-<dependencies>
-  <dependency>
-    <groupId>org.ldaptive</groupId>
-    <artifactId>ldaptive-apache</artifactId>
-    <version>{{ site.version }}</version>
-  </dependency>
-</dependencies>
-{% endhighlight %}
-
-### JLDAP
-{% highlight xml %}
-<dependencies>
-  <dependency>
-    <groupId>org.ldaptive</groupId>
-    <artifactId>ldaptive-jldap</artifactId>
-    <version>{{ site.version }}</version>
-  </dependency>
-</dependencies>
-{% endhighlight %}
-
-### OpenDJ
-{% highlight xml %}
-<dependencies>
-  <dependency>
-    <groupId>org.ldaptive</groupId>
-    <artifactId>ldaptive-opendj</artifactId>
-    <version>{{ site.version }}</version>
-  </dependency>
-</dependencies>
-{% endhighlight %}
-
 ## Additional Libraries
 
 ### JSON Support

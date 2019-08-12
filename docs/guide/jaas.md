@@ -8,7 +8,7 @@ redirect_from: "/docs/guide/jaas/"
 
 # JAAS Login Modules
 
-Ldaptive provides several login modules for authentication and authorization against an LDAP. Each module accepts properties that correspond to the setters on objects in the ldaptive code base. If you are looking to set a specific configuration option that is available as a setter, the chances are that it will be accepted on the module. Any unknown options will be passed to the provider as a generic property. Both the [authentication]({{ relative }}docs/guide/authentication.html) and the [connection]({{ relative }}docs/guide/connections.html) documentation is useful for understanding JAAS configuration options.
+Ldaptive provides several login modules for authentication and authorization against an LDAP. Each module accepts properties that correspond to the setters on objects in the ldaptive code base. If you are looking to set a specific configuration option that is available as a setter, the chances are that it will be accepted on the module. Any unknown options will logged at WARN level. Both the [authentication]({{ relative }}docs/guide/authentication.html) and the [connection]({{ relative }}docs/guide/connections.html) documentation is useful for understanding JAAS configuration options.
 
 ## LdapLoginModule
 
@@ -81,8 +81,9 @@ ldaptive {
     useStartTLS="true"
     userFilter="(uid={user})"
     userRoleAttribute="eduPersonAffiliation"
-    dnResolver="org.ldaptive.auth.PooledSearchDnResolver"
-    authenticationHandler="org.ldaptive.auth.PooledBindAuthenticationHandler"
+    dnResolver="org.ldaptive.auth.SearchDnResolver"
+    authenticationHandler="org.ldaptive.auth.SimpleBindAuthenticationHandler"
+    connectionFactory="org.ldaptive.PooledConnectionFactory"
     cacheId="ldaptive-pooled";
 };
 {% endhighlight %}

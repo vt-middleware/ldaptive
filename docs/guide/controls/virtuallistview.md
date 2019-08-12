@@ -15,11 +15,3 @@ Request that the server return a subset of the full search results. Unlike the [
 {% highlight java %}
 {% include source/controls/virtuallistview/1.java %}
 {% endhighlight %}
-
-## Provider Support
-
-| JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-| <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#f1c232">✶</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font>
-
-{% include provider-support-legend.md %}
-

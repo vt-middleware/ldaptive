@@ -34,11 +34,3 @@ Creates a SyncReplClient to use for a content synchronization without an existin
 {% highlight java %}
 {% include source/controls/syncrepl/2.java %}
 {% endhighlight %}
-
-## Provider Support
-
-| JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-| <font color="#cc0000">✗</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#f1c232">✶</font>
-
-{% include provider-support-legend.md %}
-

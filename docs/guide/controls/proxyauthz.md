@@ -13,11 +13,3 @@ Request that an operation be processed by a different authorization identity tha
 {% highlight java %}
 {% include source/controls/proxyauthz/1.java %}
 {% endhighlight %}
-
-## Provider Support
-
-| JNDI | JLDAP | Apache LDAP | UnboundID | OpenDJ
-| <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font> | <font color="#cc0000">✗</font> | <font color="#6aa84f">✓</font> | <font color="#6aa84f">✓</font>
-
-{% include provider-support-legend.md %}
-

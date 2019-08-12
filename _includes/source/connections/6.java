@@ -1,10 +1,9 @@
-ConnectionConfig connConfig = new ConnectionConfig("ldap://directory.ldaptive.org");
-connConfig.setUseStartTLS(true);
-
-X509CredentialConfig credConfig = new X509CredentialConfig();
-credConfig.setTrustCertificates("file:/tmp/certs.pem");
-credConfig.setAuthenticationCertificate("file:/tmp/mycert.pem");
-credConfig.setAuthenticationKey("file:/tmp/mykey.pkcs8");
-
-connConfig.setSslConfig(new SslConfig(credConfig));
-Connection conn = DefaultConnectionFactory.getConnection(connConfig);
+ConnectionConfig.builder()
+  .url("ldap://directory.ldaptive.org")
+  .useStartTLS(true)
+  .connectTimeout(Duration.ofSeconds(5))
+  .responseTimeout(Duration.ofSeconds(5))
+  .sslConfig(SslConfig.builder()
+    .hostnameVerifier(new AllowAnyHostnameVerifier())
+    .build())
+  .build()

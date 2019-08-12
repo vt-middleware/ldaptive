@@ -1,8 +1,7 @@
 ConnectionFactory cf = new DefaultConnectionFactory("ldap://directory.ldaptive.org");
-SearchExecutor executor = new SearchExecutor();
-executor.setBaseDn("dc=ldaptive,dc=org");
-SearchResult result = executor.search(cf, "(uid=dfisher)").getResult();
-LdapEntry entry = result.getEntry();
+SearchOperation search = new SearchOperation(cf, "dc=ldaptive,dc=org");
+SearchResponse res = search.execute("(uid=dfisher)");
+LdapEntry entry = res.getEntry();
 
 DefaultLdapEntryMapper<MyObject> mapper = new DefaultLdapEntryMapper<>();
 MyObject object = new MyObject();

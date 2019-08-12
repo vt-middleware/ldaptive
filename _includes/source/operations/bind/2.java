@@ -1,9 +1,11 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
-try {
-  conn.open();
-  BindOperation bind = new BindOperation(conn);
-  bind.execute(new BindRequest("dfisher@ldaptive.org", new Credential("password"), new DigestMd5Config()));
-  // perform another operation as this principal
-} finally {
-  conn.close();
+SingleConnectionFactory cf = new SingleConnectionFactory("ldap://directory.ldaptive.org");
+cf.initialize();
+BindOperation bind = new BindOperation(cf);
+BindResponse res = bind.execute(new AnonymousBindRequest());
+if (res.isSuccess()) {
+  // bind succeeded
+} else {
+  // bind failed
 }
+// use the connection factory to perform anonymous operations
+cf.close();

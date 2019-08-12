@@ -13,15 +13,15 @@ Operations provide the core functionality for interacting with LDAP servers. Lda
 - Bind
 - Add
 - Modify
-- Rename
+- Modify DN
 - Delete
 
 The operation interface looks like:
 
 {% highlight java %}
-public interface Operation<Q extends Request, S>
+public interface Operation<Q extends Request, S extends Result>
 {
-  Response<S> execute(Q request) throws LdapException;
+  S execute(Q request) throws LdapException;
 }
 {% endhighlight %}
 

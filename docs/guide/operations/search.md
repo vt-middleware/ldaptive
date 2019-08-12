@@ -20,17 +20,14 @@ The following properties can be configured on a per request basis:
 
 Name | Default Value | Description
 baseDn | "" | DN to search; An empty value searches the rootDSE;
-searchFilter | null | LDAP filter to execute
-returnAttributes | null | names of attributes to include in the search result
+filter | null | LDAP filter to execute
+returnAttributes | ALL_USER | names of attributes to include in the search result
 searchScope | SUBTREE | scope of the search; Valid values include: OBJECT, ONELEVEL, SUBTREE
-timeLimit | 0 | length of time in milliseconds that a search operation should execute; A value of 0 means execute indefinitely; When time limit arrives result will contain any result returned up to that point
+timeLimit | 0 | length of time that a search operation should execute; A value of 0 means execute indefinitely; When the time limit arrives result will contain any result returned up to that point
 sizeLimit | 0 | maximum number of entries to include in the search result; A value of 0 means includes all entries
-derefAliases | null | how aliases are dereferences; Valid values include: NEVER, SEARCHING, FINDING, ALWAYS; A null value means use the provider default
-typesOnly | false | whether to return attribute types only
+derefAliases | NEVER | how aliases are dereferences; Valid values include: NEVER, SEARCHING, FINDING, ALWAYS
+typesOnly | false | whether to return attribute types only, no values
 binaryAttributes | null | attribute names that should be considered binary regardless of how they are stored
-sortBehavior | UNORDERED | how result data should be sorted; Valid values include: UNORDERED, ORDERED, SORTED
-searchEntryHandlers | null | entry handlers to process each entry in the result
-searchReferenceHandlers | null | reference handlers to process each reference in the result
 
 ## Search Filters
 
@@ -52,39 +49,14 @@ In this manner applications can define custom, readable filters for their users 
 
 ## Search Result Order
 
-The result data stored in the SearchResult, LdapEntry, and LdapAttribute objects is unordered by default. The following implementations are provided:
-
-- UNORDERED - stores results in an undetermined order as dictated by internal implementation
-- ORDERED - stores results in the order they were returned from the LDAP
-- SORTED - stores results sorted by entry DN, attribute name, and attribute value
-
-The sort behavior can be controlled on a per request basis with:
-
-{% highlight java %}
-searchRequest.setSortBehavior(SortBehavior.SORTED);
-{% endhighlight %}
-
-The default sort behavior can be controlled with a JVM switch:
-
-{% highlight bash %}
--Dorg.ldaptive.sortBehavior=org.ldaptive.SortBehavior.ORDERED
-{% endhighlight %}
-
-## Search Result Caching
-
-The search operation supports supplying a cache when executing a request. The interface for Cache looks like:
-
-{% highlight java %}
-public interface Cache<Q extends SearchRequest>
-{
-  SearchResult get(Q request);
-  void put(Q request, SearchResult result);
-}
-{% endhighlight %}
-
-If a cache is supplied, it will be inspected for each request and will forgo sending the request to the LDAP if a cached result is found. Ldaptive provides one implementation called LRUCache which leverages a LinkedHashMap to store requests and responses. To use a cache invoke the search operation like this:
+The result data stored in the SearchResponse, LdapEntry, and LdapAttribute objects are ordered as they are returned in the LDAP response. If you need to sort this data, static methods are available which sort elements naturally:
 
 {% highlight java %}
 {% include source/operations/search/4.java %}
 {% endhighlight %}
 
+Search results can be sorted automatically by setting the following JVM switch:
+
+{% highlight bash %}
+-Dorg.ldaptive.sortSearchResults=true
+{% endhighlight %}

@@ -6,6 +6,11 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.0.0 - SNAPSHOT
+
+Netty library refactoring.
+
+
 ## Version 1.2.4 - 18Jan2019
 
 Issue | Description

@@ -1,7 +1,16 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
-SearchOperation search = new SearchOperation(conn);
-SearchOperation.ReopenOperationExceptionHandler handler = search.new ReopenOperationExceptionHandler();
-handler.setRetry(5); // retry operations 5 times
-handler.setRetryWait(3000); // wait 3 seconds between retries
-handler.setRetryBackoff(2); // set a backoff factor of 2
-search.setOperationExceptionHandler(handler);
+ConnectionConfig.builder()
+  .url("ldap://directory.ldaptive.org")
+  .useStartTLS(true)
+  .connectTimeout(Duration.ofSeconds(5))
+  .responseTimeout(Duration.ofSeconds(5))
+  .autoReconnect(true)
+  .autoReconnectCondition(attempt -> {
+    if (attempt <= 5) {
+      try {
+        final Duration sleepTime = Duration.ofSeconds(1).multipliedBy(attempt);
+        Thread.sleep(sleepTime.toMillis());
+      } catch (InterruptedException ie) {}
+        return true;
+      }
+    return false;})
+  .build()

@@ -35,9 +35,17 @@ Provides the ability to read a PEM encoded certificate from an LDAP attribute in
 
 ## GeneralizedTimeValueTranscoder
 
-Provides the ability to read a generalized time from an LDAP attribute in order to create a `java.util.Calendar` (or ZonedDateTime in v1.2) object. Conversely, a `java.util.Calendar` can also be written to the directory in generalized time format.
+Provides the ability to read a generalized time from an LDAP attribute in order to create a `ZonedDateTime` object. Conversely, a `ZonedDateTime` can also be written to the directory in generalized time format.
 
 {% highlight java %}
 {% include source/operations/search/valuetranscoders/2.java %}
+{% endhighlight %}
+
+## UUIDValueTranscoder
+
+Provides the ability to read a generalized time from an LDAP attribute in order to create a `ZonedDateTime` object. Conversely, a `ZonedDateTime` can also be written to the directory in generalized time format.
+
+{% highlight java %}
+{% include source/operations/search/valuetranscoders/3.java %}
 {% endhighlight %}
 

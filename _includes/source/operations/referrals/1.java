@@ -1,15 +1,10 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
-SearchRequest request = new SearchRequest("dc=ldaptive,dc=org", "(&(givenName=daniel)(sn=fisher))");
-request.setReferralHandler(new SearchReferralHandler());
-try {
-  conn.open();
-  SearchOperation search = new SearchOperation(conn);
-  // referrals will be followed to build the response
-  SearchResult result = search.execute(request).getResult();
-  for (LdapEntry entry : result.getEntries()) {
-    // do something useful with the entry
-  }
-
-} finally {
-  conn.close();
+SearchOperation search = new SearchOperation(new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
+search.setSearchResultHandlers(new FollowSearchReferralHandler());
+SearchResponse res = search.execute(SearchRequest.builder()
+  .dn("dc=ldaptive,dc=org")
+  .filter("(&(givenName=daniel)(sn=fisher))")
+  .build());
+LdapEntry entry = res.getEntry(); // if you're expecting a single entry
+for (LdapEntry le : res.getEntries()) { // if you're expecting multiple entries
+  // do something useful with the entry
 }

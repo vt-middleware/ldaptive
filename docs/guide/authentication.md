@@ -31,7 +31,7 @@ public interface DnResolver
 
 Ldaptive provides the following DN resolution implementations:
 
-### SearchDnResolver / PooledSearchDnResolver
+### SearchDnResolver
 
 Resolves an entry DN by performing an LDAP search. This resolver has the following properties:
 
@@ -42,7 +42,7 @@ userFilterArgs | null | search filter arguments
 allowMultipleDns | false | whether to throw an exception if multiple entries are found with the search filter
 subtreeSearch | false | whether a subtree search should be performed; by default a onelevel search is used
 
-The {user} search filter argument is always assigned the user value from AuthenticationRequest#getUser(), so the userFilterArgs property only needs to be set when you specify custom arguments. Note that the SearchDnResolver will open and close a connection for every authentication.
+The {user} search filter argument is always assigned the user value from AuthenticationRequest#getUser(), so the userFilterArgs property only needs to be set when you specify custom arguments. Note that if you supply a `DefaultConnectionFactory` a connection will be opened and closed for every authentication.
 
 If your directory does not allow anonymous access to the attribute used for DN resolution then you can configure a `BindConnectionInitializer`:
 
@@ -65,7 +65,7 @@ The %1$s format argument is always assigned the user value from AuthenticationRe
 Does not perform any resolution. The user value from AuthenticationRequest#getUser() is returned as the DN. Used by authentication mechanisms that do not leverage an entry DN, such as DIGEST-MD5.
 
 ### AggregateDnResolver
-Uses multiple DN resolvers to look up a user's DN. Each DN resolver is invoked on a separate thread. If multiple DNs are allowed then the first one retrieved is returned. Note that you must use the AggregateDnResolver#AuthenticationHandler inner class with this implementation. The labels provided must link a single DN resolver to a single authentication handler.
+Uses multiple DN resolvers to look up a user's DN. Each DN resolver is invoked on a separate thread. If multiple DNs are allowed then the first one retrieved is returned. Note that you must use the `AggregateAuthenticationHandler` class with this implementation. The labels provided must link a single DN resolver to a single authentication handler.
 
 {% highlight java %}
 {% include source/authentication/3.java %}
@@ -89,13 +89,13 @@ public interface AuthenticationHandler
 
 Ldaptive provides the following authentication handler implementations:
 
-### BindAuthenticationHandler / PooledBindAuthenticationHandler
+### SimpleBindAuthenticationHandler
 
-Authenticates an entry DN by performing an LDAP bind operation with that DN and the credential. This is the most common method of authentication against an LDAP and should be used in most circumstances. Note that the BindAuthenticationHandler will open and close a connection for every authentication.
+Authenticates an entry DN by performing an LDAP simple bind operation with that DN and the credential. This is the most common method of authentication against an LDAP and should be used in most circumstances.
 
-### CompareAuthenticationHandler / PooledCompareAuthenticationHandler
+### CompareAuthenticationHandler
 
-Authenticates an entry DN by performing an LDAP compare operation on the userPassword attribute. This authentication handler should be used in cases where you do not have authorization to perform binds, but do have authorization to read the userPassword attribute. Note that the CompareAuthenticationHandler will open and close a connection for every authentication. This authentication handler has the following properties:
+Authenticates an entry DN by performing an LDAP compare operation on the userPassword attribute. This authentication handler should be used in cases where you do not have authorization to perform binds, but do have authorization to read the userPassword attribute. This authentication handler has the following properties:
 
 Name | Default Value | Description
 passwordScheme | SHA | hash algorithm used by the LDAP for userPassword; Must be a valid Java MessageDigest algorithm.

@@ -11,27 +11,28 @@ Ldaptive is a simple, extensible Java API for interacting with LDAP servers. It 
 ## Rationale
 Developers need LDAP integration for their products, but the JNDI API is cumbersome and takes a great deal of resources to learn and use. In addition, most applications only require a subset of LDAP functionality: search and authentication.
 
+### version [2.0.0-SNAPSHOT](https://github.com/vt-middleware/maven-repo/tree/master/org/ldaptive/ldaptive/2.0.0-SNAPSHOT) is now available for testing.
+[v1 docs](v1/) are still available.
+
 ## Features
-* Search result caching
+* Netty based asynchronous networking
+* Reactive API
 * Connection pooling
 * Authentication API with support for password policy
 * JAAS modules for authentication and authorization
 * SSL/startTLS support with easy configuration of trust and key material
-* Input/output of LDIF and DSML version 1
-* Command line scripts for operations
-* Supported providers:
-  * JNDI
-  * UnboundID
-  * Apache
-  * JLdap
-  * OpenDJ
-* Supported controls (no external dependencies required):
+* Input/output of LDIF
+* Supported controls:
   * ManageDsaIT (RFC 3296)
   * Paged results (RFC 2696)
   * Virtual List View (draft-ietf-ldapext-ldapv3-vlv-09)
   * Server side sorting (RFC 2891)
+  * Content synchronization (RFC 4533)
   * Proxy Authorization (RFC 4370)
-  * Password policy (draft-behera-ldap-password-policy-10)
+  * Persistent Search (draft-ietf-ldapext-psearch-03)
+  * Password policy (draft-behera-ldap-password-policy-10 and draft-vchu-ldap-pwd-policy-00)
+  * Session tracking (draft-wahl-ldap-session-03)
+  * Tree delete (draft-armijo-ldap-treedelete)
 
 ## Quick Start Guide
 
@@ -59,3 +60,11 @@ These search examples all leverage the SearchExecutor class. For more details on
 
 For more details on authentication, see the [authentication documentation](docs/guide/authentication.html).
 
+## What changed between v1 and v2?
+* Ldaptive is longer a wrapper API around other Java libraries. It now includes it's own LDAP protocol implementation.
+* The try-finally paradigm used for connection management has been removed. All operations use a connection factory and implement that pattern themselves.
+* Most classes now include static builders.
+* The `SearchExecutor` functionality is now included in `SearchOperation`.
+* `SortBehavior` has been removed in favor of providing static sort methods on individual classes.
+* Search result cache implementations have been removed. It's trivial for application to do their own caching.
+* Transcoders have been moved to the `transcode` package.

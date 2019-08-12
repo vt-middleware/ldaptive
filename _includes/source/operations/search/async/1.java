@@ -1,16 +1,20 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
-try {
-  conn.open();
-  AsyncSearchOperation search = new AsyncSearchOperation(conn);
-  SearchRequest request = new SearchRequest("ou=people,dc=ldaptive,dc=org", "(cn=*fisher)");
-  FutureResponse<SearchResult> response = search.execute(request);
+final String uid;
+SearchOperation search = SearchOperation.builder()
+  .factory(new DefaultConnectionFactory("ldap://directory.ldaptive.org"))
+  .onEntry(entry -> {
+    // process the entry
+    uid = entry.getAttribute("uid").getStringValue();
+    return entry;
+  })
+  .onResult(result -> {
+    // search is complete
+    return result;
+  })
+  .build();
 
-  // block until response arrives
-  SearchResult result = response.getResult();
-
-  // cleanup the underlying executor service
-  search.shutdown();
-
-} finally {
-  conn.close();
-}
+// non-blocking search
+search.send(SearchRequest.builder()
+  .dn("dc=ldaptive,dc=org")
+  .filter("(&(givenName=d*)(sn=f*))")
+  .attributes("uid")
+  .build());

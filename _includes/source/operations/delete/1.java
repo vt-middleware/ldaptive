@@ -1,8 +1,4 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
-try {
-  conn.open();
-  DeleteOperation delete = new DeleteOperation(conn);
-  delete.execute(new DeleteRequest("uid=dfisher,ou=people,dc=ldaptive,dc=org"));
-} finally {
-  conn.close();
-}
+DeleteOperation delete = new DeleteOperation(new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
+delete.execute(DeleteRequest.builder()
+  .dn("uid=dfisher,ou=people,dc=ldaptive,dc=org")
+  .build());

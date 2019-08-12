@@ -1,11 +1,7 @@
-ConnectionFactory connFactory = new DefaultConnectionFactory("ldap://directory.ldaptive.org");
-Connection conn = connFactory.getConnection();
-try {
-  // open the connection to the ldap
-  conn.open();
-
-  // perform an operation on the connection
-} finally {
-  // close the connection to the ldap
-  conn.close();
-}
+DefaultConnectionFactory.builder()
+  .config(ConnectionConfig.builder()
+    .url("ldaps://directory.ldaptive.org")
+    .connectTimeout(Duration.ofSeconds(5))
+    .responseTimeout(Duration.ofSeconds(5))
+    .build())
+  .build();

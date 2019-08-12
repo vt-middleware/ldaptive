@@ -1,15 +1,11 @@
-Connection conn = DefaultConnectionFactory.getConnection("ldap://directory.ldaptive.org");
-try {
-  conn.open();
-  SearchOperation search = new SearchOperation(conn);
-  SearchRequest request = new SearchRequest("dc=ldaptive,dc=org","(givenName=d*)", "cn", "sn");
-  SortRequestControl src = new SortRequestControl(new SortKey[] {new SortKey("sn", "caseExactMatch")}, true); // sort by surname
-  request.setControls(src);
-  SearchResult result = search.execute(request).getResult();
-  for (LdapEntry entry : result.getEntries()) {
-    // do something useful with the entry
-  }
-
-} finally {
-  conn.close();
+SearchOperation search = new SearchOperation(new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
+SearchRequest request = SearchRequest.builder()
+  .dn("dc=ldaptive,dc=org")
+  .filter("(givenName=d*)")
+  .attributes("cn", "sn")
+  .controls(new SortRequestControl(new SortKey[] {new SortKey("sn", "caseExactMatch")}, true)) // sort by surname
+  .build();
+SearchResponse response = search.execute(request);
+for (LdapEntry entry : response.getEntries()) {
+  // do something useful with the entry
 }

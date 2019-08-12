@@ -1,14 +1,18 @@
-ConnectionConfig connConfig = new ConnectionConfig("ldap://directory.ldaptive.org");
-connConfig.setUseStartTLS(true);
-SearchDnResolver dnResolver = new SearchDnResolver(new DefaultConnectionFactory(connConfig));
-dnResolver.setBaseDn("ou=people,dc=ldaptive,dc=org");
-dnResolver.setUserFilter("uid={user}");
-BindAuthenticationHandler authHandler = new BindAuthenticationHandler(new DefaultConnectionFactory(connConfig));
+ConnectionConfig connConfig = ConnectionConfig.builder()
+  .url("ldap://directory.ldaptive.org")
+  .useStartTLS(true)
+  .build();
+SearchDnResolver dnResolver = SearchDnResolver.builder()
+  .factory(new DefaultConnectionFactory(connConfig))
+  .dn("ou=people,dc=ldaptive,dc=org")
+  .filter("uid={user}")
+  .build();
+SimpleBindAuthenticationHandler authHandler = new SimpleBindAuthenticationHandler(new DefaultConnectionFactory(connConfig));
 authHandler.setAuthenticationControls(new PasswordPolicyControl());
 Authenticator auth = new Authenticator(dnResolver, authHandler);
-auth.setAuthenticationResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
+auth.setResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
 AuthenticationResponse response = auth.authenticate(new AuthenticationRequest("dfisher", new Credential("password")));
-if (response.getResult()) {
+if (response.isSuccess()) {
   // authentication succeeded, check account state
   AccountState state = response.getAccountState();
   // authentication succeeded, only a warning should exist

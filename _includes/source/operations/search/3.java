@@ -1,3 +1,5 @@
-SearchFilter filter = new SearchFilter("(|(uid={uid})(mail={mail}))");
-filter.setParameter("uid", "1234");
-filter.setParameter("mail", "dfisher*@ldaptive.org");
+SearchFilter filter = SearchFilter.builder()
+  .filter("(|(uid={uid})(mail={mail}))")
+  .parameter("uid", "1234")
+  .parameter("mail", "dfisher*@ldaptive.org")
+  .build();
