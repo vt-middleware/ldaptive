@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.time.Instant;
 import org.ldaptive.extended.ExtendedOperationHandle;
+import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
@@ -58,14 +59,6 @@ public interface OperationHandle<Q extends Request, S extends Result>
 
 
   /**
-   * Sets this handle to close the connection when the handle completes.
-   *
-   * @return  this handle
-   */
-  OperationHandle<Q, S> closeOnComplete();
-
-
-  /**
    * Sets the functions to execute when a result is received.
    *
    * @param  function  to execute on a result
@@ -118,11 +111,21 @@ public interface OperationHandle<Q extends Request, S extends Result>
   /**
    * Sets the function to execute when an exception occurs.
    *
-   * @param  function  to execute on an exception occurs
+   * @param  function  to execute when an exception occurs
    *
    * @return  this handle
    */
   OperationHandle<Q, S> onException(ExceptionHandler function);
+
+
+  /**
+   * Sets the function to execute when the operation completes.
+   *
+   * @param  function  to execute on completion
+   *
+   * @return  this handle
+   */
+  OperationHandle<Q, S> onComplete(CompleteHandler function);
 
 
   /**

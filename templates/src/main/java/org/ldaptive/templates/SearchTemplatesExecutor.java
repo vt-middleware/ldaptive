@@ -3,13 +3,10 @@ package org.ldaptive.templates;
 
 import java.util.Arrays;
 import java.util.Collection;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResponse;
-import org.ldaptive.concurrent.AggregateSearchOperation;
+import org.ldaptive.concurrent.SearchOperationWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,10 +23,7 @@ public class SearchTemplatesExecutor
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Search executor. */
-  private AggregateSearchOperation searchOperation;
-
-  /** Connection factory. */
-  private ConnectionFactory[] connectionFactories;
+  private SearchOperationWorker searchOperationWorker;
 
   /** Search templates. */
   private SearchTemplates[] searchTemplates;
@@ -42,62 +36,35 @@ public class SearchTemplatesExecutor
   /**
    * Creates a new templates search executor.
    *
-   * @param  operation  aggregate pooled search executor
-   * @param  factories  pooled connection factories
+   * @param  worker  search operation worker
    * @param  templates  search templates
    */
-  public SearchTemplatesExecutor(
-    final AggregateSearchOperation operation,
-    final PooledConnectionFactory[] factories,
-    final SearchTemplates... templates)
+  public SearchTemplatesExecutor(final SearchOperationWorker worker, final SearchTemplates... templates)
   {
-    searchOperation = operation;
-    connectionFactories = factories;
+    searchOperationWorker = worker;
     searchTemplates = templates;
   }
 
 
   /**
-   * Returns the search operation.
+   * Returns the search operation worker.
    *
-   * @return  aggregate search operation
+   * @return  search operation worker
    */
-  public AggregateSearchOperation getSearchOperation()
+  public SearchOperationWorker getSearchOperationWorker()
   {
-    return searchOperation;
+    return searchOperationWorker;
   }
 
 
   /**
-   * Sets the search operation.
+   * Sets the search operation worker.
    *
-   * @param  operation  aggregate search operation
+   * @param  worker  search operation worker
    */
-  public void setSearchOperation(final AggregateSearchOperation operation)
+  public void setSearchOperationWorker(final SearchOperationWorker worker)
   {
-    searchOperation = operation;
-  }
-
-
-  /**
-   * Returns the connection factories.
-   *
-   * @return  connection factories
-   */
-  public ConnectionFactory[] getConnectionFactories()
-  {
-    return connectionFactories;
-  }
-
-
-  /**
-   * Sets the connection factories.
-   *
-   * @param  factories  connection factory
-   */
-  public void setConnectionFactories(final ConnectionFactory[] factories)
-  {
-    connectionFactories = factories;
+    searchOperationWorker = worker;
   }
 
 
@@ -129,11 +96,8 @@ public class SearchTemplatesExecutor
    * @param  query  to execute
    *
    * @return  ldap result
-   *
-   * @throws  LdapException  if the search fails
    */
   public SearchResponse search(final Query query)
-    throws LdapException
   {
     logger.debug("Query: {}", query);
 
@@ -178,23 +142,17 @@ public class SearchTemplatesExecutor
    * @param  toResult  index to return results to
    *
    * @return  ldap result containing all results
-   *
-   * @throws  LdapException  if the search fails
    */
   protected SearchResponse search(
     final SearchFilter[] filters,
     final String[] returnAttrs,
     final Integer fromResult,
     final Integer toResult)
-    throws LdapException
   {
     logger.debug("Performing search with {} filters", Arrays.toString(filters));
 
     // perform searches
-    final Collection<SearchResponse> responses = searchOperation.execute(
-      connectionFactories,
-      filters,
-      returnAttrs);
+    final Collection<SearchResponse> responses = searchOperationWorker.execute(filters, returnAttrs);
 
     // iterate over all results and store each entry
     final SearchResponse result = new SearchResponse();
@@ -224,13 +182,8 @@ public class SearchTemplatesExecutor
   /** Closes any resources associated with this object. */
   public void close()
   {
-    if (connectionFactories != null) {
-      for (ConnectionFactory factory : connectionFactories) {
-        factory.close();
-      }
-    }
-    if (searchOperation != null) {
-      searchOperation.shutdown();
+    if (searchOperationWorker != null) {
+      searchOperationWorker.getOperation().getConnectionFactory().close();
     }
   }
 
@@ -240,8 +193,7 @@ public class SearchTemplatesExecutor
   {
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("searchOperation=").append(searchOperation).append(", ")
-      .append("connectionFactories=").append(Arrays.toString(connectionFactories)).append(", ")
+      .append("searchOperationWorker=").append(searchOperationWorker).append(", ")
       .append("searchTemplates=").append(Arrays.toString(searchTemplates)).append("]").toString();
   }
 }

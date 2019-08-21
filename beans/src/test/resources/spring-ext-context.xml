@@ -44,17 +44,7 @@
     binaryAttributes="jpegPhoto,userCertificate"
   />
 
-  <ldaptive:parallel-search-operation
-    baseDn="dc=ldaptive,dc=org"
-    filter="(mail=*)"
-    returnAttributes="cn,givenName,sn"
-    searchScope="ONELEVEL"
-    timeLimit="PT5S"
-    sizeLimit="10"
-    binaryAttributes="jpegPhoto,userCertificate"
-  />
-
-  <ldaptive:aggregate-search-operation
+  <ldaptive:search-operation-worker
     baseDn="dc=ldaptive,dc=org"
     filter="(mail=*)"
     returnAttributes="cn,givenName,sn"

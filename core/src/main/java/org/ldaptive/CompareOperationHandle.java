@@ -2,6 +2,7 @@
 package org.ldaptive;
 
 import org.ldaptive.handler.CompareValueHandler;
+import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
@@ -35,10 +36,6 @@ public interface CompareOperationHandle extends OperationHandle<CompareRequest, 
 
 
   @Override
-  CompareOperationHandle closeOnComplete();
-
-
-  @Override
   CompareOperationHandle onResult(ResultHandler... function);
 
 
@@ -60,6 +57,10 @@ public interface CompareOperationHandle extends OperationHandle<CompareRequest, 
 
   @Override
   CompareOperationHandle onException(ExceptionHandler function);
+
+
+  @Override
+  CompareOperationHandle onComplete(CompleteHandler function);
 
 
   /**

@@ -146,17 +146,7 @@
     binaryAttributes="jpegPhoto,userCertificate"
   />
 
-  <ldaptive:parallel-search-operation
-    baseDn="${ldap.baseDn}"
-    filter="(mail=*)"
-    returnAttributes="cn,givenName,sn"
-    searchScope="${ldap.searchScope}"
-    timeLimit="${ldap.timeLimit}"
-    sizeLimit="${ldap.sizeLimit}"
-    binaryAttributes="jpegPhoto,userCertificate"
-  />
-
-  <ldaptive:aggregate-search-operation
+  <ldaptive:search-operation-worker
     baseDn="${ldap.baseDn}"
     filter="(mail=*)"
     returnAttributes="cn,givenName,sn"

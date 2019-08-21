@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
+import java.util.Arrays;
 import org.ldaptive.AbstractOperation;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
@@ -58,12 +59,13 @@ public class ExtendedOperation extends AbstractOperation<ExtendedRequest, Extend
    *
    * @throws LdapException  if the connection cannot be opened
    */
+  @Override
   public ExtendedOperationHandle send(final ExtendedRequest request)
     throws LdapException
   {
     final Connection conn = getConnectionFactory().getConnection();
     conn.open();
-    return configureHandle(conn.operation(request)).closeOnComplete().send();
+    return configureHandle(conn.operation(request)).onComplete(() -> conn.close()).send();
   }
 
 
@@ -82,7 +84,7 @@ public class ExtendedOperation extends AbstractOperation<ExtendedRequest, Extend
   {
     final Connection conn = factory.getConnection();
     conn.open();
-    return conn.operation(request).closeOnComplete().send();
+    return conn.operation(request).onComplete(() -> conn.close()).send();
   }
 
 
@@ -143,6 +145,14 @@ public class ExtendedOperation extends AbstractOperation<ExtendedRequest, Extend
       .onException(getExceptionHandler())
       .onUnsolicitedNotification(getUnsolicitedNotificationHandlers())
       .onResult(getResultHandlers());
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(super.toString()).append(", ")
+      .append("extendedValueHandlers=").append(Arrays.toString(extendedValueHandlers)).toString();
   }
 
 

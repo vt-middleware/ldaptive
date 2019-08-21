@@ -1,18 +1,26 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.concurrent;
 
-import java.util.concurrent.ExecutorService;
 import org.ldaptive.CompareOperation;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.CompareResponse;
 
 /**
- * Executes an ldap compare operation on a separate thread.
+ * Executes multiple ldap compare operations asynchronously.
  *
  * @author  Middleware Services
  */
-public class CompareOperationWorker extends AbstractOperationWorker<CompareRequest, CompareResponse>
+public class CompareOperationWorker extends AbstractOperationWorker<CompareOperation, CompareRequest, CompareResponse>
 {
+
+
+  /**
+   * Default constructor.
+   */
+  public CompareOperationWorker()
+  {
+    super(new CompareOperation());
+  }
 
 
   /**
@@ -23,17 +31,5 @@ public class CompareOperationWorker extends AbstractOperationWorker<CompareReque
   public CompareOperationWorker(final CompareOperation op)
   {
     super(op);
-  }
-
-
-  /**
-   * Creates a new compare operation worker.
-   *
-   * @param  op  compare operation to execute
-   * @param  es  executor service
-   */
-  public CompareOperationWorker(final CompareOperation op, final ExecutorService es)
-  {
-    super(op, es);
   }
 }

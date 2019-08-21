@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.Arrays;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
@@ -158,6 +159,21 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
       .onException(getExceptionHandler())
       .onUnsolicitedNotification(getUnsolicitedNotificationHandlers())
       .onResult(getResultHandlers());
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("connectionFactory=").append(connectionFactory).append(", ")
+      .append("resultHandlers=").append(Arrays.toString(resultHandlers)).append(", ")
+      .append("controlHandlers=").append(Arrays.toString(controlHandlers)).append(", ")
+      .append("referralHandlers=").append(Arrays.toString(referralHandlers)).append(", ")
+      .append("intermediateResponseHandlers=").append(Arrays.toString(intermediateResponseHandlers)).append(", ")
+      .append("exceptionHandler=").append(exceptionHandler).append(", ")
+      .append("unsolicitedNotificationHandlers=").append(Arrays.toString(unsolicitedNotificationHandlers)).toString();
   }
 
 

@@ -4,37 +4,32 @@ package org.ldaptive.concurrent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletionService;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import org.ldaptive.LdapException;
 import org.ldaptive.Operation;
+import org.ldaptive.OperationHandle;
 import org.ldaptive.Request;
 import org.ldaptive.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Base class for worker operations. If no {@link ExecutorService} is provided a cached thread pool is used by default.
+ * Base class for worker operations.
  *
+ * @param  <T>  type of operation
  * @param  <Q>  type of ldap request
  * @param  <S>  type of ldap response
  *
  * @author  Middleware Services
  */
-public abstract class AbstractOperationWorker<Q extends Request, S extends Result> implements OperationWorker<Q, S>
+public abstract class AbstractOperationWorker<T extends Operation<Q , S>, Q extends Request, S extends Result>
+  implements OperationWorker<Q, S>
 {
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** operation to execute. */
-  private final Operation<Q, S> operation;
-
-  /** to submit operations to. */
-  private final ExecutorService service;
+  private T operation;
 
 
   /**
@@ -42,36 +37,31 @@ public abstract class AbstractOperationWorker<Q extends Request, S extends Resul
    *
    * @param  op  operation
    */
-  public AbstractOperationWorker(final Operation<Q, S> op)
+  public AbstractOperationWorker(final T op)
   {
-    this(op, Executors.newCachedThreadPool());
+    setOperation(op);
   }
 
 
   /**
-   * Creates a new abstract operation worker.
+   * Returns the underlying operation.
    *
-   * @param  op  operation
-   * @param  es  executor service
+   * @return  operation
    */
-  public AbstractOperationWorker(final Operation<Q, S> op, final ExecutorService es)
+  public T getOperation()
+  {
+    return operation;
+  }
+
+
+  /**
+   * Sets the underlying operation.
+   *
+   * @param  op  to set
+   */
+  public void setOperation(final T op)
   {
     operation = op;
-    service = es;
-  }
-
-
-  /**
-   * Execute an ldap operation on a separate thread.
-   *
-   * @param  request  containing the data required by this operation
-   *
-   * @return  future response for this operation
-   */
-  @Override
-  public Future<S> execute(final Q request)
-  {
-    return service.submit(() -> operation.execute(request));
   }
 
 
@@ -83,12 +73,15 @@ public abstract class AbstractOperationWorker<Q extends Request, S extends Resul
    * @return  future responses for this operation
    */
   @Override
-  @SuppressWarnings("unchecked")
-  public Collection<Future<S>> execute(final Q... requests)
+  public Collection<OperationHandle<Q, S>> send(final Q[] requests)
   {
-    final List<Future<S>> results = new ArrayList<>(requests.length);
+    final List<OperationHandle<Q, S>> results = new ArrayList<>(requests.length);
     for (Q request : requests) {
-      results.add(service.submit(() -> operation.execute(request)));
+      try {
+        results.add(operation.send(request));
+      } catch (LdapException e) {
+        logger.warn("Error occurred attempting to execute request {}", request, e);
+      }
     }
     return results;
   }
@@ -102,32 +95,26 @@ public abstract class AbstractOperationWorker<Q extends Request, S extends Resul
    * @return  responses for this operation
    */
   @Override
-  @SuppressWarnings("unchecked")
-  public Collection<S> executeToCompletion(final Q... requests)
+  public Collection<S> execute(final Q[] requests)
   {
-    final CompletionService<S> cs = new ExecutorCompletionService<>(service);
-    final List<Future<S>> futures = new ArrayList<>(requests.length);
-    for (Q request : requests) {
-      futures.add(cs.submit(() -> operation.execute(request)));
-    }
-
     final List<S> responses = new ArrayList<>(requests.length);
-    for (Future<S> future : futures) {
+    final Collection<OperationHandle<Q, S>> handles = send(requests);
+    for (OperationHandle<Q, S> handle : handles) {
       try {
-        responses.add(future.get());
-      } catch (ExecutionException e) {
-        logger.debug("ExecutionException thrown, ignoring", e);
-      } catch (InterruptedException e) {
-        logger.warn("InterruptedException thrown, ignoring", e);
+        responses.add(handle.await());
+      } catch (LdapException e) {
+        logger.warn("Error occurred waiting on handle {}", handle, e);
       }
     }
     return responses;
   }
 
 
-  /** Invokes {@link ExecutorService#shutdown()} on the underlying executor service. */
-  public void shutdown()
+  @Override
+  public String toString()
   {
-    service.shutdown();
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("operation=").append(operation).toString();
   }
 }

@@ -36,12 +36,13 @@ public class ModifyDnOperation extends AbstractOperation<ModifyDnRequest, Modify
    *
    * @throws  LdapException  if the connection cannot be opened
    */
+  @Override
   public OperationHandle<ModifyDnRequest, ModifyDnResponse> send(final ModifyDnRequest request)
     throws LdapException
   {
     final Connection conn = getConnectionFactory().getConnection();
     conn.open();
-    return configureHandle(conn.operation(request)).closeOnComplete().send();
+    return configureHandle(conn.operation(request)).onComplete(() -> conn.close()).send();
   }
 
 
@@ -62,7 +63,7 @@ public class ModifyDnOperation extends AbstractOperation<ModifyDnRequest, Modify
   {
     final Connection conn = factory.getConnection();
     conn.open();
-    return conn.operation(request).closeOnComplete().send();
+    return conn.operation(request).onComplete(() -> conn.close()).send();
   }
 
 

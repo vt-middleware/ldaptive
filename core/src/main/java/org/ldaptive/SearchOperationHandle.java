@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.LdapEntryHandler;
@@ -37,10 +38,6 @@ public interface SearchOperationHandle extends OperationHandle<SearchRequest, Se
 
 
   @Override
-  SearchOperationHandle closeOnComplete();
-
-
-  @Override
   SearchOperationHandle onResult(ResultHandler... function);
 
 
@@ -62,6 +59,10 @@ public interface SearchOperationHandle extends OperationHandle<SearchRequest, Se
 
   @Override
   SearchOperationHandle onException(ExceptionHandler function);
+
+
+  @Override
+  SearchOperationHandle onComplete(CompleteHandler function);
 
 
   /**

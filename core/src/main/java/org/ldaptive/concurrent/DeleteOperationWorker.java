@@ -1,18 +1,26 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.concurrent;
 
-import java.util.concurrent.ExecutorService;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.DeleteResponse;
 
 /**
- * Executes an ldap delete operation on a separate thread.
+ * Executes multiple ldap delete operations asynchronously.
  *
  * @author  Middleware Services
  */
-public class DeleteOperationWorker extends AbstractOperationWorker<DeleteRequest, DeleteResponse>
+public class DeleteOperationWorker extends AbstractOperationWorker<DeleteOperation, DeleteRequest, DeleteResponse>
 {
+
+
+  /**
+   * Default constructor.
+   */
+  public DeleteOperationWorker()
+  {
+    super(new DeleteOperation());
+  }
 
 
   /**
@@ -23,17 +31,5 @@ public class DeleteOperationWorker extends AbstractOperationWorker<DeleteRequest
   public DeleteOperationWorker(final DeleteOperation op)
   {
     super(op);
-  }
-
-
-  /**
-   * Creates a new delete operation worker.
-   *
-   * @param  op  delete operation to execute
-   * @param  es  executor service
-   */
-  public DeleteOperationWorker(final DeleteOperation op, final ExecutorService es)
-  {
-    super(op, es);
   }
 }

@@ -17,7 +17,7 @@ public class SharedNettyProvider extends NettyProvider
   /** Event group used for all connections . */
   private static final EventLoopGroup SHARED_WORKER_GROUP = new NioEventLoopGroup(
     0,
-    new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyProvider.class, true, Thread.NORM_PRIORITY)));
+    new ThreadPerTaskExecutor(new DefaultThreadFactory(SharedNettyProvider.class, true, Thread.NORM_PRIORITY)));
 
 
   /** Default constructor. */

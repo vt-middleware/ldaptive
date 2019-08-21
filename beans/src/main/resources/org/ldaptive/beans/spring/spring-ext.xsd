@@ -17,8 +17,7 @@
   <xsd:element name="connection-factory" type="connectionFactoryType"/>
   <xsd:element name="connection-config" type="connectionConfigType"/>
   <xsd:element name="search-operation" type="searchOperationType"/>
-  <xsd:element name="parallel-search-operation" type="searchOperationType"/>
-  <xsd:element name="aggregate-search-operation" type="searchOperationType"/>
+  <xsd:element name="search-operation-worker" type="searchOperationType"/>
 
   <!-- Authenticator configuration -->
   <xsd:complexType name="anonymousSearchAuthenticatorType">

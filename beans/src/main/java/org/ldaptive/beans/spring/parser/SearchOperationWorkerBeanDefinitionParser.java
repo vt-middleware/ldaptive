@@ -1,7 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
-import org.ldaptive.concurrent.ParallelSearchOperation;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.concurrent.SearchOperationWorker;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -10,11 +11,11 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
 
 /**
- * Parser for <pre>parallel-search-operation</pre> elements.
+ * Parser for <pre>search-operation-worker</pre> elements.
  *
  * @author Middleware Services
  */
-public class ParallelSearchOperationBeanDefinitionParser extends SearchOperationBeanDefinitionParser
+public class SearchOperationWorkerBeanDefinitionParser extends SearchOperationBeanDefinitionParser
 {
 
 
@@ -28,14 +29,14 @@ public class ParallelSearchOperationBeanDefinitionParser extends SearchOperation
     throws BeanDefinitionStoreException
   {
     final String idAttrValue = element.getAttribute("id");
-    return StringUtils.hasText(idAttrValue) ? idAttrValue : "parallel-search-operation";
+    return StringUtils.hasText(idAttrValue) ? idAttrValue : "search-operation-worker";
   }
 
 
   @Override
   protected Class<?> getBeanClass(final Element element)
   {
-    return ParallelSearchOperation.class;
+    return SearchOperationWorker.class;
   }
 
 
@@ -45,6 +46,8 @@ public class ParallelSearchOperationBeanDefinitionParser extends SearchOperation
     final ParserContext context,
     final BeanDefinitionBuilder builder)
   {
-    super.doParse(element, context, builder);
+    final BeanDefinitionBuilder searchOperation = BeanDefinitionBuilder.genericBeanDefinition(SearchOperation.class);
+    searchOperation.addPropertyValue("request", parseSearchRequest(null, element).getBeanDefinition());
+    builder.addPropertyValue("operation", searchOperation.getBeanDefinition());
   }
 }

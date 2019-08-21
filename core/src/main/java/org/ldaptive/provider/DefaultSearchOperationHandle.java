@@ -8,6 +8,7 @@ import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
+import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.LdapEntryHandler;
@@ -96,14 +97,6 @@ public class DefaultSearchOperationHandle
 
 
   @Override
-  public DefaultSearchOperationHandle closeOnComplete()
-  {
-    super.closeOnComplete();
-    return this;
-  }
-
-
-  @Override
   public DefaultSearchOperationHandle onResult(final ResultHandler... function)
   {
     super.onResult(function);
@@ -147,6 +140,14 @@ public class DefaultSearchOperationHandle
   public DefaultSearchOperationHandle onException(final ExceptionHandler function)
   {
     super.onException(function);
+    return this;
+  }
+
+
+  @Override
+  public DefaultSearchOperationHandle onComplete(final CompleteHandler function)
+  {
+    super.onComplete(function);
     return this;
   }
 

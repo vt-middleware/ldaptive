@@ -10,8 +10,7 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.auth.Authenticator;
-import org.ldaptive.concurrent.AggregateSearchOperation;
-import org.ldaptive.concurrent.ParallelSearchOperation;
+import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.SearchValidator;
@@ -75,9 +74,8 @@ public class NamespaceHandlerTest
   {
     AssertJUnit.assertEquals(1, context.getBeansOfType(PooledConnectionFactory.class).size());
     AssertJUnit.assertEquals(1, context.getBeansOfType(DefaultConnectionFactory.class).size());
-    AssertJUnit.assertEquals(3, context.getBeansOfType(SearchOperation.class).size());
-    AssertJUnit.assertEquals(1, context.getBeansOfType(ParallelSearchOperation.class).size());
-    AssertJUnit.assertEquals(1, context.getBeansOfType(AggregateSearchOperation.class).size());
+    AssertJUnit.assertEquals(1, context.getBeansOfType(SearchOperation.class).size());
+    AssertJUnit.assertEquals(1, context.getBeansOfType(SearchOperationWorker.class).size());
     AssertJUnit.assertEquals(1, context.getBeansOfType(ConnectionConfig.class).size());
     AssertJUnit.assertEquals(1, context.getBeansOfType(Authenticator.class).size());
   }
@@ -139,26 +137,12 @@ public class NamespaceHandlerTest
    * Test parallel search operation.
    */
   @Test(groups = "beans-spring")
-  public void testParallelSearchOperation()
+  public void testSearchOperationWorker()
   {
-    final ParallelSearchOperation operation = context.getBean(
-      "parallel-search-operation", ParallelSearchOperation.class);
+    final SearchOperationWorker operation = context.getBean(
+      "search-operation-worker", SearchOperationWorker.class);
     AssertJUnit.assertNotNull(operation);
-    testSearchRequest(operation.getRequest());
-  }
-
-
-  /**
-   * Test aggregate search operation.
-   */
-  @Test(groups = "beans-spring")
-  public void testAggregateSearchOperation()
-  {
-    final AggregateSearchOperation operation = context.getBean(
-      "aggregate-search-operation",
-      AggregateSearchOperation.class);
-    AssertJUnit.assertNotNull(operation);
-    testSearchRequest(operation.getRequest());
+    testSearchRequest(operation.getOperation().getRequest());
   }
 
 

@@ -28,8 +28,7 @@ import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
-import org.ldaptive.concurrent.AggregateSearchOperation;
-import org.ldaptive.concurrent.ParallelSearchOperation;
+import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
@@ -156,7 +155,7 @@ public class NamespaceHandlerTest
     AssertJUnit.assertEquals(7, context.getBeansOfType(Authenticator.class).size());
     AssertJUnit.assertEquals(1, context.getBeansOfType(PooledConnectionFactory.class).size());
     AssertJUnit.assertEquals(1, context.getBeansOfType(DefaultConnectionFactory.class).size());
-    AssertJUnit.assertEquals(3, context.getBeansOfType(SearchOperation.class).size());
+    AssertJUnit.assertEquals(1, context.getBeansOfType(SearchOperation.class).size());
     AssertJUnit.assertEquals(1, context.getBeansOfType(ConnectionConfig.class).size());
   }
 
@@ -378,29 +377,14 @@ public class NamespaceHandlerTest
 
 
   /**
-   * Test parallel search operation.
+   * Test search operation worker.
    */
   @Test(groups = "beans-spring")
-  public void testParallelSearchOperation()
+  public void testSearchOperationWorker()
   {
-    final ParallelSearchOperation operation = context.getBean(
-      "parallel-search-operation", ParallelSearchOperation.class);
+    final SearchOperationWorker operation = context.getBean("search-operation-worker", SearchOperationWorker.class);
     AssertJUnit.assertNotNull(operation);
-    testSearchRequest(operation.getRequest());
-  }
-
-
-  /**
-   * Test aggregate search operation.
-   */
-  @Test(groups = "beans-spring")
-  public void testAggregateSearchOperation()
-  {
-    final AggregateSearchOperation operation = context.getBean(
-      "aggregate-search-operation",
-      AggregateSearchOperation.class);
-    AssertJUnit.assertNotNull(operation);
-    testSearchRequest(operation.getRequest());
+    testSearchRequest(operation.getOperation().getRequest());
   }
 
 
