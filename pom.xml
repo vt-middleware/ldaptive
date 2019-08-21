@@ -180,8 +180,8 @@
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
-        <artifactId>netty-all</artifactId>
-        <version>4.1.37.Final</version>
+        <artifactId>netty-handler</artifactId>
+        <version>4.1.39.Final</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
