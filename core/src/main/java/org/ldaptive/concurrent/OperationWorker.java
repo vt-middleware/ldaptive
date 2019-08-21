@@ -2,13 +2,13 @@
 package org.ldaptive.concurrent;
 
 import java.util.Collection;
-import java.util.concurrent.Future;
+import org.ldaptive.OperationHandle;
 import org.ldaptive.Request;
 import org.ldaptive.Result;
 
 /**
- * Interface for ldap operation workers. Operation workers leverage the java.util.concurrent package to execute
- * non-blocking operations.
+ * Interface for ldap operation workers. These interface is meant to facilitate executing multiple requests and
+ * processing multiple responses.
  *
  * @param  <Q>  type of ldap request
  * @param  <S>  type of ldap response
@@ -20,31 +20,21 @@ public interface OperationWorker<Q extends Request, S extends Result>
 
 
   /**
-   * Execute an ldap operation on a separate thread.
-   *
-   * @param  request  containing the data required by this operation
-   *
-   * @return  future response for this operation
-   */
-  Future<S> execute(Q request);
-
-
-  /**
-   * Execute an ldap operation for each request on a separate thread.
+   * Execute an ldap operation for each request.
    *
    * @param  requests  containing the data required by this operation
    *
-   * @return  future responses for this operation
+   * @return  handle responses for this operation
    */
-  Collection<Future<S>> execute(Q[] requests);
+  Collection<OperationHandle<Q, S>> send(Q[] requests);
 
 
   /**
-   * Execute an ldap operation for each request on a separate thread and waits for each operation to complete.
+   * Execute an ldap operation for each request and waits for each operation to complete.
    *
    * @param  requests  containing the data required by this operation
    *
    * @return  responses for this operation
    */
-  Collection<S> executeToCompletion(Q[] requests);
+  Collection<S> execute(Q[] requests);
 }

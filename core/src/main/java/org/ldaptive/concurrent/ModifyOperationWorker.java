@@ -1,18 +1,26 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.concurrent;
 
-import java.util.concurrent.ExecutorService;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ModifyResponse;
 
 /**
- * Executes an ldap modify operation on a separate thread.
+ * Executes multiple ldap modify operations asynchronously.
  *
  * @author  Middleware Services
  */
-public class ModifyOperationWorker extends AbstractOperationWorker<ModifyRequest, ModifyResponse>
+public class ModifyOperationWorker extends AbstractOperationWorker<ModifyOperation, ModifyRequest, ModifyResponse>
 {
+
+
+  /**
+   * Default constructor.
+   */
+  public ModifyOperationWorker()
+  {
+    super(new ModifyOperation());
+  }
 
 
   /**
@@ -23,17 +31,5 @@ public class ModifyOperationWorker extends AbstractOperationWorker<ModifyRequest
   public ModifyOperationWorker(final ModifyOperation op)
   {
     super(op);
-  }
-
-
-  /**
-   * Creates a new modify operation worker.
-   *
-   * @param  op  modify operation to execute
-   * @param  es  executor service
-   */
-  public ModifyOperationWorker(final ModifyOperation op, final ExecutorService es)
-  {
-    super(op, es);
   }
 }

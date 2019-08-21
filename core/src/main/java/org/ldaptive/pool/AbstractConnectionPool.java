@@ -69,7 +69,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   /** Executor for scheduling pool tasks. */
   private ScheduledExecutorService poolExecutor;
 
-  /** Whether {@link #initialize()} has been invoked. */
+  /** Whether {@link #initialize()} has been successfully invoked. */
   private boolean initialized;
 
   /**

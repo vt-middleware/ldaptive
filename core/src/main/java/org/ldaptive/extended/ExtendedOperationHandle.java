@@ -3,6 +3,7 @@ package org.ldaptive.extended;
 
 import org.ldaptive.LdapException;
 import org.ldaptive.OperationHandle;
+import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.ExtendedValueHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
@@ -37,10 +38,6 @@ public interface ExtendedOperationHandle extends OperationHandle<ExtendedRequest
 
 
   @Override
-  ExtendedOperationHandle closeOnComplete();
-
-
-  @Override
   ExtendedOperationHandle onResult(ResultHandler... function);
 
 
@@ -62,6 +59,10 @@ public interface ExtendedOperationHandle extends OperationHandle<ExtendedRequest
 
   @Override
   ExtendedOperationHandle onException(ExceptionHandler function);
+
+
+  @Override
+  ExtendedOperationHandle onComplete(CompleteHandler function);
 
 
   /**

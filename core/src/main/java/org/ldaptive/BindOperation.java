@@ -28,6 +28,46 @@ public class BindOperation extends AbstractOperation<BindRequest, BindResponse>
 
 
   /**
+   * Sends a bind request. See {@link OperationHandle#send()}.
+   *
+   * @param  request  bind request
+   *
+   * @return  operation handle
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  @Override
+  public OperationHandle<BindRequest, BindResponse> send(final BindRequest request)
+    throws LdapException
+  {
+    final Connection conn = getConnectionFactory().getConnection();
+    conn.open();
+    return configureHandle(conn.operation(request)).onComplete(() -> conn.close()).send();
+  }
+
+
+  /**
+   * Sends a bind request. See {@link OperationHandle#send()}.
+   *
+   * @param  factory  connection factory
+   * @param  request  bind request
+   *
+   * @return  operation handle
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public static OperationHandle<BindRequest, BindResponse> send(
+    final ConnectionFactory factory,
+    final BindRequest request)
+    throws LdapException
+  {
+    final Connection conn = factory.getConnection();
+    conn.open();
+    return conn.operation(request).onComplete(() -> conn.close()).send();
+  }
+
+
+  /**
    * Executes a bind request. See {@link OperationHandle#execute()}.
    *
    * @param  request  bind request

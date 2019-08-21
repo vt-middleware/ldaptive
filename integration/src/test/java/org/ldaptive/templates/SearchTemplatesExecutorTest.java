@@ -1,15 +1,15 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.templates;
 
-import java.util.concurrent.Executors;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.PooledConnectionFactory;
+import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestUtils;
-import org.ldaptive.concurrent.AggregateSearchOperation;
+import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.pool.PoolConfig;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -62,14 +62,11 @@ public class SearchTemplatesExecutorTest extends AbstractTest
     throws Exception
   {
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
-    final AggregateSearchOperation search = new AggregateSearchOperation(Executors.newFixedThreadPool(10));
-    search.setRequest(SearchRequest.builder().dn(baseDn).build());
-
     final PooledConnectionFactory cf = new PooledConnectionFactory(cc, PoolConfig.builder().min(5).max(10).build());
     cf.initialize();
+
     executor = new SearchTemplatesExecutor(
-      search,
-      new PooledConnectionFactory[] {cf, },
+      new SearchOperationWorker(new SearchOperation(cf, SearchRequest.builder().dn(baseDn).build())),
       new SearchTemplates(
         "(|(givenName={term1})(sn={term1}))",
         "(|(givenName={term1}*)(sn={term1}*))",

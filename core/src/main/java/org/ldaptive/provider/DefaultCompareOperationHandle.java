@@ -8,6 +8,7 @@ import org.ldaptive.CompareResponse;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
 import org.ldaptive.handler.CompareValueHandler;
+import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
@@ -58,14 +59,6 @@ public class DefaultCompareOperationHandle
 
 
   @Override
-  public DefaultCompareOperationHandle closeOnComplete()
-  {
-    super.closeOnComplete();
-    return this;
-  }
-
-
-  @Override
   public DefaultCompareOperationHandle onResult(final ResultHandler... function)
   {
     super.onResult(function);
@@ -109,6 +102,14 @@ public class DefaultCompareOperationHandle
   public DefaultCompareOperationHandle onException(final ExceptionHandler function)
   {
     super.onException(function);
+    return this;
+  }
+
+
+  @Override
+  public DefaultCompareOperationHandle onComplete(final CompleteHandler function)
+  {
+    super.onComplete(function);
     return this;
   }
 

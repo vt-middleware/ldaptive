@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.Arrays;
 import org.ldaptive.filter.Filter;
 import org.ldaptive.filter.FilterParser;
 import org.ldaptive.handler.LdapEntryHandler;
@@ -306,9 +307,9 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     conn.open();
     final SearchRequest req = configureRequest(baseDN, filter, returnAttributes);
     if (handlers != null) {
-      return configureHandle(conn.operation(req)).onEntry(handlers).closeOnComplete().send();
+      return configureHandle(conn.operation(req)).onEntry(handlers).onComplete(() -> conn.close()).send();
     } else {
-      return configureHandle(conn.operation(req)).closeOnComplete().send();
+      return configureHandle(conn.operation(req)).onComplete(() -> conn.close()).send();
     }
   }
 
@@ -322,12 +323,13 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @throws  LdapException  if the connection cannot be opened
    */
+  @Override
   public SearchOperationHandle send(final SearchRequest req)
     throws LdapException
   {
     final Connection conn = getConnectionFactory().getConnection();
     conn.open();
-    return configureHandle(conn.operation(req)).closeOnComplete().send();
+    return configureHandle(conn.operation(req)).onComplete(() -> conn.close()).send();
   }
 
 
@@ -343,7 +345,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   {
     final Connection conn = getConnectionFactory().getConnection();
     conn.open();
-    return configureHandle(conn.operation(getRequest())).closeOnComplete().send();
+    return configureHandle(conn.operation(getRequest())).onComplete(() -> conn.close()).send();
   }
 
 
@@ -362,7 +364,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   {
     final Connection conn = factory.getConnection();
     conn.open();
-    return conn.operation(req).closeOnComplete().send();
+    return conn.operation(req).onComplete(() -> conn.close()).send();
   }
 
 
@@ -674,7 +676,20 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     op.setEntryHandlers(operation.getEntryHandlers());
     op.setReferenceHandlers(operation.getReferenceHandlers());
     op.setSearchResultHandlers(operation.getSearchResultHandlers());
+    op.setConnectionFactory(operation.getConnectionFactory());
+    op.setRequest(operation.getRequest());
     return op;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(super.toString()).append(", ")
+      .append("request=").append(request).append(", ")
+      .append("entryHandlers=").append(Arrays.toString(entryHandlers)).append(", ")
+      .append("referenceHandlers=").append(Arrays.toString(referenceHandlers)).append(", ")
+      .append("searchResultHandlers=").append(Arrays.toString(searchResultHandlers)).toString();
   }
 
 

@@ -14,7 +14,19 @@ public interface Operation<Q extends Request, S extends Result>
 
 
   /**
-   * Executes a request.
+   * Sends an asynchronous request and does not wait for a response.
+   *
+   * @param  request  operation request
+   *
+   * @return  operation result
+   *
+   * @throws  LdapException  if the operation fails
+   */
+  OperationHandle<Q, S> send(Q request) throws LdapException;
+
+
+  /**
+   * Sends an asynchronous request and waits for the response.
    *
    * @param  request  operation request
    *

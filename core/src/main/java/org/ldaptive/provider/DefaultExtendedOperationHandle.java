@@ -6,6 +6,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.extended.ExtendedOperationHandle;
 import org.ldaptive.extended.ExtendedRequest;
 import org.ldaptive.extended.ExtendedResponse;
+import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.ExtendedValueHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
@@ -60,14 +61,6 @@ public class DefaultExtendedOperationHandle
 
 
   @Override
-  public DefaultExtendedOperationHandle closeOnComplete()
-  {
-    super.closeOnComplete();
-    return this;
-  }
-
-
-  @Override
   public DefaultExtendedOperationHandle onResult(final ResultHandler... function)
   {
     super.onResult(function);
@@ -111,6 +104,14 @@ public class DefaultExtendedOperationHandle
   public DefaultExtendedOperationHandle onException(final ExceptionHandler function)
   {
     super.onException(function);
+    return this;
+  }
+
+
+  @Override
+  public DefaultExtendedOperationHandle onComplete(final CompleteHandler function)
+  {
+    super.onComplete(function);
     return this;
   }
 

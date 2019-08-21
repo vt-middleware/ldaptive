@@ -23,8 +23,7 @@ import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
-import org.ldaptive.concurrent.AggregateSearchOperation;
-import org.ldaptive.concurrent.ParallelSearchOperation;
+import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.ProxyAuthorizationControl;
 import org.ldaptive.control.SortKey;
@@ -1876,7 +1875,7 @@ public class SearchOperationTest extends AbstractTest
       "searchResults"
     })
   @Test(groups = "search")
-  public void parallelSearch(
+  public void searchWorker(
     final String dn,
     final String filter,
     final String filterParameters,
@@ -1887,61 +1886,17 @@ public class SearchOperationTest extends AbstractTest
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
-    final ParallelSearchOperation op = new ParallelSearchOperation();
+    final SearchOperationWorker op = new SearchOperationWorker();
     try {
-      op.setRequest(SearchRequest.builder().dn(dn).build());
+      op.getOperation().setConnectionFactory(cf);
+      op.getOperation().setRequest(SearchRequest.builder().dn(dn).build());
       final Collection<SearchResponse> results = op.execute(
-        cf,
         new SearchFilter[] {new SearchFilter(filter, filterParameters.split("\\|"))},
         returnAttrs.split("\\|"));
       AssertJUnit.assertEquals(1, results.size());
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), results.iterator().next());
     } finally {
-      op.shutdown();
-    }
-  }
-
-
-  /**
-   * @param  dn  to search on.
-   * @param  filter  to search with.
-   * @param  filterParameters  to replace parameters in filter with.
-   * @param  returnAttrs  to return from search.
-   * @param  ldifFile  to compare with
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Parameters(
-    {
-      "searchDn",
-      "searchFilter",
-      "searchFilterParameters",
-      "searchReturnAttrs",
-      "searchResults"
-    })
-  @Test(groups = "search")
-  public void aggregateSearch(
-    final String dn,
-    final String filter,
-    final String filterParameters,
-    final String returnAttrs,
-    final String ldifFile)
-    throws Exception
-  {
-    final String expected = TestUtils.readFileIntoString(ldifFile);
-
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
-    final AggregateSearchOperation op = new AggregateSearchOperation();
-    try {
-      op.setRequest(SearchRequest.builder().dn(dn).build());
-      final Collection<SearchResponse> results = op.execute(
-        new ConnectionFactory[] {cf},
-        new SearchFilter[] {new SearchFilter(filter, filterParameters.split("\\|"))},
-        returnAttrs.split("\\|"));
-      AssertJUnit.assertEquals(1, results.size());
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), results.iterator().next());
-    } finally {
-      op.shutdown();
+      cf.close();
     }
   }
 }

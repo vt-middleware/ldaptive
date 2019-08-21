@@ -9,10 +9,9 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletConfig;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.ldaptive.LdapException;
-import org.ldaptive.PooledConnectionFactory;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchResponse;
-import org.ldaptive.concurrent.AggregateSearchOperation;
+import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.templates.Query;
 import org.ldaptive.templates.SearchTemplates;
 import org.ldaptive.templates.SearchTemplatesExecutor;
@@ -56,12 +55,10 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
     logger.debug("{} = {}", SPRING_CONTEXT_PATH, springContextPath);
 
     final ApplicationContext context = new ClassPathXmlApplicationContext(springContextPath);
-    setSearchOperation(context.getBean(AggregateSearchOperation.class));
-    logger.debug("searchExecutor = {}", getSearchOperation());
-
-    final Map<String, PooledConnectionFactory> factories = context.getBeansOfType(PooledConnectionFactory.class);
-    setConnectionFactories(factories.values().toArray(new PooledConnectionFactory[0]));
-    logger.debug("connectionFactories = {}", Arrays.toString(getConnectionFactories()));
+    final SearchOperationWorker search = context.getBean(SearchOperationWorker.class);
+    search.getOperation().setConnectionFactory(context.getBean(ConnectionFactory.class));
+    setSearchOperationWorker(search);
+    logger.debug("searchExecutor = {}", getSearchOperationWorker());
 
     final Map<String, SearchTemplates> templates = context.getBeansOfType(SearchTemplates.class);
     setSearchTemplates(templates.values().toArray(new SearchTemplates[0]));
@@ -79,7 +76,7 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
 
   @Override
   public void search(final HttpServletRequest request, final HttpServletResponse response)
-    throws LdapException, IOException
+    throws IOException
   {
     Integer fromResult = null;
     if (request.getParameter("from-result") != null) {

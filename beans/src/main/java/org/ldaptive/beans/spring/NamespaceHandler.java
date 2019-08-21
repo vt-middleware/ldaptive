@@ -3,16 +3,15 @@ package org.ldaptive.beans.spring;
 
 import org.ldaptive.beans.spring.parser.ADAuthenticatorBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.AggregateAuthenticatorBeanDefinitionParser;
-import org.ldaptive.beans.spring.parser.AggregateSearchOperationBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.AnonSearchAuthenticatorBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.BindSearchAuthenticatorBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.ConnectionConfigBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.ConnectionFactoryBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.DirectAuthenticatorBeanDefinitionParser;
-import org.ldaptive.beans.spring.parser.ParallelSearchOperationBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.PooledConnectionFactoryBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.SaslBindSearchAuthenticatorBeanDefinitionParser;
 import org.ldaptive.beans.spring.parser.SearchOperationBeanDefinitionParser;
+import org.ldaptive.beans.spring.parser.SearchOperationWorkerBeanDefinitionParser;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 
 /**
@@ -39,7 +38,6 @@ public class NamespaceHandler extends NamespaceHandlerSupport
     registerBeanDefinitionParser("connection-factory", new ConnectionFactoryBeanDefinitionParser());
     registerBeanDefinitionParser("connection-config", new ConnectionConfigBeanDefinitionParser());
     registerBeanDefinitionParser("search-operation", new SearchOperationBeanDefinitionParser());
-    registerBeanDefinitionParser("parallel-search-operation", new ParallelSearchOperationBeanDefinitionParser());
-    registerBeanDefinitionParser("aggregate-search-operation", new AggregateSearchOperationBeanDefinitionParser());
+    registerBeanDefinitionParser("search-operation-worker", new SearchOperationWorkerBeanDefinitionParser());
   }
 }

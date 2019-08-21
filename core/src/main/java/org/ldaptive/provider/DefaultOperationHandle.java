@@ -20,6 +20,7 @@ import org.ldaptive.extended.ExtendedOperationHandle;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.extended.StartTLSRequest;
 import org.ldaptive.extended.UnsolicitedNotification;
+import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
@@ -73,6 +74,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   /** Functions to handle unsolicited notifications. */
   private UnsolicitedNotificationHandler[] onUnsolicitedNotification;
 
+  /** Functions to run when the operation completes. */
+  private CompleteHandler onComplete;
+
   /** Latch to determine when a response has been received. */
   private final CountDownLatch responseDone = new CountDownLatch(1);
 
@@ -93,9 +97,6 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
 
   /** Exception encountered attempting to process the request. */
   private LdapException exception;
-
-  /** Whether to invoke close on the connection when the operation completes. */
-  private boolean closeOnComplete;
 
 
   /**
@@ -157,14 +158,6 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
 
 
   @Override
-  public DefaultOperationHandle<Q, S> closeOnComplete()
-  {
-    closeOnComplete = true;
-    return this;
-  }
-
-
-  @Override
   public DefaultOperationHandle<Q, S> onResult(final ResultHandler... function)
   {
     onResult = function;
@@ -214,6 +207,14 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   {
     onException = function;
     initializeMessageFunctional(onException);
+    return this;
+  }
+
+
+  @Override
+  public DefaultOperationHandle<Q, S> onComplete(final CompleteHandler function)
+  {
+    onComplete = function;
     return this;
   }
 
@@ -283,13 +284,11 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       throw new IllegalStateException(
         "Request has not been sent for handle " + this + ". Invoke execute before calling this method.");
     }
-    final boolean closeOnCancel = closeOnComplete;
-    if (closeOnComplete) {
-      closeOnComplete = false;
-    }
+    final CompleteHandler completeHandler = onComplete;
+    onComplete = null;
     final ExtendedOperationHandle handle = connection.operation(new CancelRequest(messageID));
-    if (closeOnCancel) {
-      handle.closeOnComplete();
+    if (completeHandler != null) {
+      handle.onComplete(completeHandler);
     }
     return handle;
   }
@@ -343,6 +342,12 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public ExceptionHandler getOnException()
   {
     return onException;
+  }
+
+
+  public CompleteHandler getOnComplete()
+  {
+    return onComplete;
   }
 
 
@@ -498,7 +503,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
 
 
   /**
-   * Invokes {@link #onException} and sets the result. Handle is considered done when this is invoked.
+   * Invokes {@link #onException} followed by {@link #complete()}.
    *
    * @param  e  exception
    */
@@ -535,7 +540,8 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
 
 
   /**
-   * Releases the latch and sets the response as received.
+   * Releases the latch and sets the response as received. Invokes {@link #onComplete}. Handle is considered done when
+   * this is invoked.
    */
   private void complete()
   {
@@ -544,15 +550,14 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
     } finally {
       receivedTime = Instant.now();
       connection.done(this);
-      if (closeOnComplete) {
+      if (onComplete != null) {
         try {
-          connection.close();
-        } finally {
-          connection = null;
+          onComplete.execute();
+        } catch (Exception ex) {
+          logger.warn("Complete consumer {} threw an exception", onComplete, ex);
         }
-      } else {
-        connection = null;
       }
+      connection = null;
     }
   }
 
