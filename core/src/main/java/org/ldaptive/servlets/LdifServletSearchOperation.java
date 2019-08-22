@@ -6,14 +6,14 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import javax.servlet.http.HttpServletResponse;
 import org.ldaptive.SearchResponse;
-import org.ldaptive.io.JsonWriter;
+import org.ldaptive.io.LdifWriter;
 
 /**
- * Writes search results as JSON. See {@link AbstractServletSearchTemplatesExecutor}.
+ * Writes LDAP search results in LDIF format. See {@link AbstractServletSearchOperation}.
  *
  * @author  Middleware Services
  */
-public class JsonServletSearchTemplatesExecutor extends AbstractServletSearchTemplatesExecutor
+public class LdifServletSearchOperation extends AbstractServletSearchOperation
 {
 
 
@@ -21,9 +21,9 @@ public class JsonServletSearchTemplatesExecutor extends AbstractServletSearchTem
   protected void writeResponse(final SearchResponse result, final HttpServletResponse response)
     throws IOException
   {
-    response.setContentType("application/json");
+    response.setContentType("text/plain");
 
-    final JsonWriter writer = new JsonWriter(new BufferedWriter(new OutputStreamWriter(response.getOutputStream())));
+    final LdifWriter writer = new LdifWriter(new BufferedWriter(new OutputStreamWriter(response.getOutputStream())));
     writer.write(result);
   }
 }

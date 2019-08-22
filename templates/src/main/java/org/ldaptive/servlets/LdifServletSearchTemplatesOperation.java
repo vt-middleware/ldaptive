@@ -9,11 +9,11 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.io.LdifWriter;
 
 /**
- * Writes search results in LDIF format. See {@link AbstractServletSearchExecutor}.
+ * Writes execute results in LDIF format. See {@link AbstractServletSearchTemplatesOperation}.
  *
  * @author  Middleware Services
  */
-public class LdifServletSearchExecutor extends AbstractServletSearchExecutor
+public class LdifServletSearchTemplatesOperation extends AbstractServletSearchTemplatesOperation
 {
 
 

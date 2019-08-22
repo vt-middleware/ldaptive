@@ -9,11 +9,11 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.io.JsonWriter;
 
 /**
- * Writes search results as JSON. See {@link AbstractServletSearchExecutor}.
+ * Writes execute results as JSON. See {@link AbstractServletSearchOperation}.
  *
  * @author  Middleware Services
  */
-public class JsonServletSearchExecutor extends AbstractServletSearchExecutor
+public class JsonServletSearchOperation extends AbstractServletSearchOperation
 {
 
 

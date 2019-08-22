@@ -20,11 +20,11 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link AttributeValueServletSearchExecutor}.
+ * Unit test for {@link AttributeValueServletSearchOperation}.
  *
  * @author  Middleware Services
  */
-public class AttributeValueServletSearchExecutorTest extends AbstractTest
+public class AttributeValueServletSearchOperationTest extends AbstractTest
 {
 
   /** Entry created for tests. */
@@ -64,8 +64,8 @@ public class AttributeValueServletSearchExecutorTest extends AbstractTest
 
 
   /**
-   * @param  query  to search for.
-   * @param  attr  attribute to return from search
+   * @param  query  to execute for.
+   * @param  attr  attribute to return from execute
    * @param  attributeValue  to compare
    *
    * @throws  Exception  On test failure.

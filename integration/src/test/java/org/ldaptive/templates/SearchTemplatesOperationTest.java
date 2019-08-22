@@ -19,18 +19,18 @@ import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link SearchTemplatesExecutor}.
+ * Unit test for {@link SearchTemplatesOperation}.
  *
  * @author  Middleware Services
  */
-public class SearchTemplatesExecutorTest extends AbstractTest
+public class SearchTemplatesOperationTest extends AbstractTest
 {
 
   /** Entry created for ldap tests. */
   private static LdapEntry testLdapEntry;
 
   /** Executor to test. */
-  private SearchTemplatesExecutor executor;
+  private SearchTemplatesOperation searchOperation;
 
 
   /**
@@ -65,7 +65,7 @@ public class SearchTemplatesExecutorTest extends AbstractTest
     final PooledConnectionFactory cf = new PooledConnectionFactory(cc, PoolConfig.builder().min(5).max(10).build());
     cf.initialize();
 
-    executor = new SearchTemplatesExecutor(
+    searchOperation = new SearchTemplatesOperation(
       new SearchOperationWorker(new SearchOperation(cf, SearchRequest.builder().dn(baseDn).build())),
       new SearchTemplates(
         "(|(givenName={term1})(sn={term1}))",
@@ -94,7 +94,7 @@ public class SearchTemplatesExecutorTest extends AbstractTest
     throws Exception
   {
     super.deleteLdapEntry(testLdapEntry.getDn());
-    executor.close();
+    searchOperation.close();
   }
 
 
@@ -127,7 +127,7 @@ public class SearchTemplatesExecutorTest extends AbstractTest
     final Query q = new Query(query);
     q.setReturnAttributes(testLdapEntry.getAttributeNames());
 
-    final SearchResponse sr = executor.search(q);
+    final SearchResponse sr = searchOperation.execute(q);
     AssertJUnit.assertNotNull(sr);
     AssertJUnit.assertNotNull(sr.getEntry());
     TestUtils.assertEquals(testLdapEntry, sr.getEntry());

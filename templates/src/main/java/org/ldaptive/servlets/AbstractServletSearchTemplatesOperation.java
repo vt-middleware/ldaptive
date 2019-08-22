@@ -14,7 +14,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.templates.Query;
 import org.ldaptive.templates.SearchTemplates;
-import org.ldaptive.templates.SearchTemplatesExecutor;
+import org.ldaptive.templates.SearchTemplatesOperation;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -24,8 +24,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractServletSearchTemplatesExecutor extends SearchTemplatesExecutor
-  implements ServletSearchExecutor
+public abstract class AbstractServletSearchTemplatesOperation extends SearchTemplatesOperation
+  implements ServletSearchOperation
 {
 
   /** Spring context path. */
@@ -75,7 +75,7 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
 
 
   @Override
-  public void search(final HttpServletRequest request, final HttpServletResponse response)
+  public void execute(final HttpServletRequest request, final HttpServletResponse response)
     throws IOException
   {
     Integer fromResult = null;
@@ -131,7 +131,7 @@ public abstract class AbstractServletSearchTemplatesExecutor extends SearchTempl
         query.setToResult(toResult);
         logger.info("Performing query {}", query);
 
-        final SearchResponse result = search(query);
+        final SearchResponse result = execute(query);
         writeResponse(result, response);
       }
     }

@@ -12,12 +12,12 @@ import org.ldaptive.LdapException;
  *
  * @author  Middleware Services
  */
-public interface ServletSearchExecutor
+public interface ServletSearchOperation
 {
 
 
   /**
-   * Prepares this servlet search executor for use.
+   * Prepares this servlet search operation for use.
    *
    * @param  config  to initialize this object with
    */
@@ -27,16 +27,16 @@ public interface ServletSearchExecutor
   /**
    * Reads parameters from the request, performs an ldap search, and writes the result to the response.
    *
-   * @param  request  servlet request to read search parameters from
+   * @param  request  servlet request to read search request parameters from
    * @param  response  servlet response to write ldap search result to
    *
    * @throws  LdapException  if an error occurs performing the search
    * @throws  IOException  if an error occurs writing to the response
    */
-  void search(HttpServletRequest request, HttpServletResponse response)
+  void execute(HttpServletRequest request, HttpServletResponse response)
     throws LdapException, IOException;
 
 
-  /** Closes any resources associated with this servlet search executor. */
+  /** Closes any resources associated with this servlet search operation. */
   void close();
 }

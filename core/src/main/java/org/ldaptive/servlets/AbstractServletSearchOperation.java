@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractServletSearchExecutor implements ServletSearchExecutor
+public abstract class AbstractServletSearchOperation implements ServletSearchOperation
 {
 
   /** Logger for this class. */
@@ -80,7 +80,7 @@ public abstract class AbstractServletSearchExecutor implements ServletSearchExec
 
 
   @Override
-  public void search(final HttpServletRequest request, final HttpServletResponse response)
+  public void execute(final HttpServletRequest request, final HttpServletResponse response)
     throws LdapException, IOException
   {
     final String queryString = request.getParameter("query");
@@ -97,9 +97,9 @@ public abstract class AbstractServletSearchExecutor implements ServletSearchExec
 
 
   /**
-   * Writes the supplied search result to the servlet response output stream.
+   * Writes the supplied execute result to the servlet response output stream.
    *
-   * @param  result  search result to write
+   * @param  result  execute result to write
    * @param  response  to write to
    *
    * @throws  IOException  if an error occurs writing to the response

@@ -8,8 +8,8 @@
     <servlet-name>LdifSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.LdifServletSearchExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.LdifServletSearchOperation</param-value>
     </init-param>
     <init-param>
       <param-name>ldapUrl</param-name>
@@ -40,8 +40,8 @@
     <servlet-name>JsonSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.JsonServletSearchExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.JsonServletSearchOperation</param-value>
     </init-param>
     <init-param>
       <param-name>ldapUrl</param-name>
@@ -72,8 +72,8 @@
     <servlet-name>AttributeSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.AttributeValueServletSearchExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.AttributeValueServletSearchOperation</param-value>
     </init-param>
     <init-param>
       <param-name>ldapUrl</param-name>
@@ -100,8 +100,8 @@
     <servlet-name>TemplatesLdifSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesOperation</param-value>
     </init-param>
     <init-param>
       <param-name>springContextPath</param-name>
@@ -112,8 +112,8 @@
     <servlet-name>TemplatesJsonSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.JsonServletSearchTemplatesExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.JsonServletSearchTemplatesOperation</param-value>
     </init-param>
     <init-param>
       <param-name>springContextPath</param-name>
@@ -124,8 +124,8 @@
     <servlet-name>TemplatesLdifIgnoreSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesOperation</param-value>
     </init-param>
     <init-param>
       <param-name>springContextPath</param-name>
