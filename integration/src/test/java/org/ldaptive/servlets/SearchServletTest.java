@@ -26,7 +26,7 @@ import org.testng.annotations.Test;
  *
  * @author  Middleware Services
  */
-public class ServletSearchExecutorTest extends AbstractTest
+public class SearchServletTest extends AbstractTest
 {
 
   /** Entry created for tests. */
@@ -66,8 +66,8 @@ public class ServletSearchExecutorTest extends AbstractTest
 
 
   /**
-   * @param  query  to search for.
-   * @param  attrs  attributes to return from search
+   * @param  query  to execute for.
+   * @param  attrs  attributes to return from execute
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -102,8 +102,8 @@ public class ServletSearchExecutorTest extends AbstractTest
 
 
   /**
-   * @param  query  to search for.
-   * @param  attrs  attributes to return from search
+   * @param  query  to execute for.
+   * @param  attrs  attributes to return from execute
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -142,8 +142,8 @@ public class ServletSearchExecutorTest extends AbstractTest
 
 
   /**
-   * @param  query  to search for.
-   * @param  attrs  attributes to return from search
+   * @param  query  to execute for.
+   * @param  attrs  attributes to return from execute
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -176,8 +176,8 @@ public class ServletSearchExecutorTest extends AbstractTest
 
 
   /**
-   * @param  query  to search for.
-   * @param  attrs  attributes to return from search
+   * @param  query  to execute for.
+   * @param  attrs  attributes to return from execute
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.
@@ -218,8 +218,8 @@ public class ServletSearchExecutorTest extends AbstractTest
 
 
   /**
-   * @param  query  to search for.
-   * @param  attrs  attributes to return from search
+   * @param  query  to execute for.
+   * @param  attrs  attributes to return from execute
    * @param  ldifFile  to compare with
    *
    * @throws  Exception  On test failure.

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class SearchTemplatesExecutor
+public class SearchTemplatesOperation
 {
 
   /** Logger for this class. */
@@ -30,16 +30,16 @@ public class SearchTemplatesExecutor
 
 
   /** Default constructor. */
-  public SearchTemplatesExecutor() {}
+  public SearchTemplatesOperation() {}
 
 
   /**
-   * Creates a new templates search executor.
+   * Creates a new search templates operation.
    *
    * @param  worker  search operation worker
    * @param  templates  search templates
    */
-  public SearchTemplatesExecutor(final SearchOperationWorker worker, final SearchTemplates... templates)
+  public SearchTemplatesOperation(final SearchOperationWorker worker, final SearchTemplates... templates)
   {
     searchOperationWorker = worker;
     searchTemplates = templates;
@@ -80,9 +80,9 @@ public class SearchTemplatesExecutor
 
 
   /**
-   * Sets the search templates.
+   * Sets the execute templates.
    *
-   * @param  templates  search templates
+   * @param  templates  execute templates
    */
   public void setSearchTemplates(final SearchTemplates[] templates)
   {
@@ -97,11 +97,10 @@ public class SearchTemplatesExecutor
    *
    * @return  ldap result
    */
-  public SearchResponse search(final Query query)
+  public SearchResponse execute(final Query query)
   {
     logger.debug("Query: {}", query);
 
-    // get a search object
     SearchTemplates templates = null;
     if (query.getTerms().length > 0) {
 
@@ -116,9 +115,9 @@ public class SearchTemplatesExecutor
       if (termCount > 0) {
         templates = searchTemplates[termCount - 1];
         if (templates != null) {
-          logger.debug("Found search templates {} for term count of {}", templates, termCount);
+          logger.debug("Found execute templates {} for term count of {}", templates, termCount);
         } else {
-          logger.debug("No search module found for term count of {}", termCount);
+          logger.debug("No execute module found for term count of {}", termCount);
         }
       } else {
         logger.debug("No terms found in query {}", query);
@@ -126,7 +125,7 @@ public class SearchTemplatesExecutor
     }
 
     if (templates != null) {
-      return search(templates.format(query), query.getReturnAttributes(), query.getFromResult(), query.getToResult());
+      return execute(templates.format(query), query.getReturnAttributes(), query.getFromResult(), query.getToResult());
     } else {
       return null;
     }
@@ -143,7 +142,7 @@ public class SearchTemplatesExecutor
    *
    * @return  ldap result containing all results
    */
-  protected SearchResponse search(
+  protected SearchResponse execute(
     final SearchFilter[] filters,
     final String[] returnAttrs,
     final Integer fromResult,

@@ -10,11 +10,11 @@ import org.ldaptive.SearchResponse;
 
 /**
  * Writes a single attribute value to the HTTP response. Useful for providing a mechanism to download large LDAP
- * attributes, such as certificates and photos. See {@link AbstractServletSearchExecutor}.
+ * attributes, such as certificates and photos. See {@link AbstractServletSearchOperation}.
  *
  * @author  Middleware Services
  */
-public class AttributeValueServletSearchExecutor extends AbstractServletSearchExecutor
+public class AttributeValueServletSearchOperation extends AbstractServletSearchOperation
 {
 
 
