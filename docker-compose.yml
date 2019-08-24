@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   ldaptive:
-    image: maven:3.6.0-jdk-11
+    image: maven:3.6.1-jdk-11
     volumes:
       - $HOME/.m2:/root/.m2
       - $PWD:/apps/ldaptive
@@ -23,7 +23,7 @@ services:
       cd /apps/ldaptive && integration/run"
 
   ldap-test:
-    image: code.vt.edu:5005/middleware/edldap-deploy-env/ldap-test-openldap:latest
+    image: dhawes/ldap-test-openldap:latest
     ports:
       - "389:389"
       - "636:636"
