@@ -1,10 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Connection strategy that randomizes the list of configured URLs. A random URL ordering will be created for each
@@ -15,41 +17,28 @@ import java.util.stream.Stream;
 public class RandomConnectionStrategy extends AbstractConnectionStrategy
 {
 
-  /** LDAP URLs. */
-  private List<LdapURL> ldapURLs;
 
-
-  @Override
-  public boolean isInitialized()
+  /** Default constructor. */
+  public RandomConnectionStrategy()
   {
-    return ldapURLs != null;
+    active = new HashMap<>();
   }
 
 
   @Override
-  public void initialize(final String urls)
-  {
-    if (urls.contains(" ")) {
-      ldapURLs = Stream.of(urls.split(" ")).map(LdapURL::new).collect(Collectors.collectingAndThen(
-        Collectors.toList(),
-        Collections::unmodifiableList));
-    } else {
-      ldapURLs = Collections.singletonList(new LdapURL(urls));
-    }
-  }
-
-
-  @Override
-  public synchronized List<LdapURL> apply()
+  public List<LdapURL> apply()
   {
     if (!isInitialized()) {
       throw new IllegalStateException("Strategy is not initialized");
     }
-    return ldapURLs.stream().collect(Collectors.collectingAndThen(
-      Collectors.toList(),
-      l -> {
-        Collections.shuffle(l);
-        return Collections.unmodifiableList(l);
-      }));
+    synchronized (lock) {
+      final List<LdapURL> l = new ArrayList<>();
+      l.addAll(active.values());
+      Collections.shuffle(l);
+      if (inactive.size() > 0) {
+        l.addAll(inactive.values().stream().map(Map.Entry::getValue).collect(Collectors.toList()));
+      }
+      return Collections.unmodifiableList(l);
+    }
   }
 }

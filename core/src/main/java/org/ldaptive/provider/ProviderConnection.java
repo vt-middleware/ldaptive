@@ -1,6 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider;
 
+import java.time.Instant;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
@@ -8,7 +14,9 @@ import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
+import org.ldaptive.RetryMetadata;
 import org.ldaptive.UnbindRequest;
+import org.ldaptive.control.RequestControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +38,9 @@ public abstract class ProviderConnection implements Connection
 
   /** Connection strategy for this connection. Default value is {@link ActivePassiveConnectionStrategy}. */
   private final ConnectionStrategy connectionStrategy;
+
+  /** Executor for scheduling tasks. */
+  private final ScheduledExecutorService executor;
 
 
   /**
@@ -54,6 +65,36 @@ public abstract class ProviderConnection implements Connection
         connectionStrategy.initialize(connectionConfig.getLdapUrl());
       }
     }
+
+    if (connectionStrategy.active().size() > 1 || connectionStrategy instanceof DnsSrvConnectionStrategy) {
+      executor = Executors.newSingleThreadScheduledExecutor(
+        r -> {
+          final Thread t = new Thread(r);
+          t.setDaemon(true);
+          return t;
+        });
+      executor.scheduleAtFixedRate(
+        () -> {
+          for (Map.Entry<RetryMetadata, Map.Entry<Integer, LdapURL>> entry : connectionStrategy.inactive().entrySet()) {
+            // ensure inactive URL waits at least the inactive period before testing
+            if (Instant.now().isAfter(entry.getKey().getFailureTime().plus(connectionStrategy.getInactivePeriod()))) {
+              if (connectionStrategy.getInactiveCondition().test(entry.getKey())) {
+                if (test(entry.getValue().getValue())) {
+                  connectionStrategy.success(entry.getValue().getValue());
+                } else {
+                  entry.getKey().incrementAttempts();
+                }
+              }
+            }
+          }
+        },
+        connectionStrategy.getInactivePeriod().toMillis(),
+        connectionStrategy.getInactivePeriod().toMillis(),
+        TimeUnit.MILLISECONDS);
+      LOGGER.debug("inactive connection strategy task scheduled for {}", this);
+    } else {
+      executor = null;
+    }
   }
 
 
@@ -67,7 +108,11 @@ public abstract class ProviderConnection implements Connection
     }
 
     LdapException lastThrown = null;
-    for (LdapURL url : connectionStrategy.apply()) {
+    final List<LdapURL> urls = connectionStrategy.apply();
+    if (urls == null || urls.isEmpty()) {
+      throw new ConnectException("Connection strategy did not produced any LDAP URLs");
+    }
+    for (LdapURL url : urls) {
       try {
         LOGGER.trace(
           "Attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);
@@ -86,6 +131,25 @@ public abstract class ProviderConnection implements Connection
       throw lastThrown;
     }
   }
+
+
+  @Override
+  public synchronized void close(final RequestControl... controls)
+  {
+    if (executor != null) {
+      executor.shutdown();
+    }
+  }
+
+
+  /**
+   * Determine whether the supplied URL is acceptable for use.
+   *
+   * @param  url  LDAP URL to test
+   *
+   * @return  whether URL can be become active
+   */
+  protected abstract boolean test(LdapURL url);
 
 
   /**

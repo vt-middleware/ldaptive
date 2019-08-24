@@ -64,6 +64,7 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.ModifyResponse;
 import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
+import org.ldaptive.RetryMetadata;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.UnbindRequest;
@@ -173,6 +174,21 @@ public final class NettyConnection extends ProviderConnection
     channelOptions.forEach(bootstrap::option);
     bootstrap.handler(initializer);
     return bootstrap;
+  }
+
+
+  @Override
+  protected boolean test(final LdapURL url)
+  {
+    final NettyConnection conn = new NettyConnection(workerGroup, connectionConfig);
+    try {
+      conn.open(url);
+      return true;
+    } catch (LdapException e) {
+      return false;
+    } finally {
+      conn.close();
+    }
   }
 
 
@@ -641,6 +657,7 @@ public final class NettyConnection extends ProviderConnection
     } finally {
       pendingResponses.clear();
       channel = null;
+      super.close(controls);
     }
   }
 
@@ -656,13 +673,15 @@ public final class NettyConnection extends ProviderConnection
     if (isOpen()) {
       throw new IllegalStateException("Reconnect cannot be invoked when the connection is open");
     }
-    for (int i = 0; connectionConfig.getAutoReconnectCondition().test(i + 1); i++) {
+    final RetryMetadata metadata = new RetryMetadata();
+    while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
       try {
         open();
         LOGGER.info("auto reconnect succeeded");
         break;
       } catch (LdapException e) {
         LOGGER.debug("auto reconnect failed", e);
+        metadata.incrementAttempts();
       }
     }
   }

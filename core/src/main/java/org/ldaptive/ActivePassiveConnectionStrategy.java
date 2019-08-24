@@ -1,10 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Connection strategy that attempts hosts ordered exactly the way they are configured. This means that the first host
@@ -15,27 +17,10 @@ import java.util.stream.Stream;
 public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
 {
 
-  /** LDAP URLs. */
-  private List<LdapURL> ldapURLs;
 
-
-  @Override
-  public boolean isInitialized()
+  public ActivePassiveConnectionStrategy()
   {
-    return ldapURLs != null;
-  }
-
-
-  @Override
-  public void initialize(final String urls)
-  {
-    if (urls.contains(" ")) {
-      ldapURLs = Stream.of(urls.split(" ")).map(LdapURL::new).collect(Collectors.collectingAndThen(
-        Collectors.toList(),
-        Collections::unmodifiableList));
-    } else {
-      ldapURLs = Collections.singletonList(new LdapURL(urls));
-    }
+    active = new TreeMap<>();
   }
 
 
@@ -45,6 +30,13 @@ public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
     if (!isInitialized()) {
       throw new IllegalStateException("Strategy is not initialized");
     }
-    return ldapURLs;
+    synchronized (lock) {
+      final List<LdapURL> l = new ArrayList<>();
+      l.addAll(active.values());
+      if (inactive.size() > 0) {
+        l.addAll(inactive.values().stream().map(Map.Entry::getValue).collect(Collectors.toList()));
+      }
+      return Collections.unmodifiableList(l);
+    }
   }
 }
