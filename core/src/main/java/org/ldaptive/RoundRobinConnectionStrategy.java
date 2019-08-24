@@ -1,10 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Connection strategy that moves the first URL in it's list to the end of that list.
@@ -14,39 +16,31 @@ import java.util.stream.Stream;
 public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy
 {
 
-  /** LDAP URLs. */
-  private List<LdapURL> ldapURLs;
 
-
-  @Override
-  public boolean isInitialized()
+  public RoundRobinConnectionStrategy()
   {
-    return ldapURLs != null;
+    active = new LinkedHashMap<>();
   }
 
 
   @Override
-  public void initialize(final String urls)
-  {
-    if (urls.contains(" ")) {
-      ldapURLs = Stream.of(urls.split(" ")).map(LdapURL::new).collect(Collectors.toList());
-    } else {
-      ldapURLs = Collections.singletonList(new LdapURL(urls));
-    }
-  }
-
-
-  @Override
-  public synchronized List<LdapURL> apply()
+  public List<LdapURL> apply()
   {
     if (!isInitialized()) {
       throw new IllegalStateException("Strategy is not initialized");
     }
-    if (ldapURLs.size() == 1) {
-      return ldapURLs;
+
+    synchronized (lock) {
+      final List<LdapURL> l = new ArrayList<>();
+      l.addAll(active.values());
+      if (inactive.size() > 0) {
+        l.addAll(inactive.values().stream().map(Map.Entry::getValue).collect(Collectors.toList()));
+      }
+
+      final Map.Entry<Integer, LdapURL> entry = active.entrySet().iterator().next();
+      active.remove(entry.getKey());
+      active.put(entry.getKey(), entry.getValue());
+      return Collections.unmodifiableList(l);
     }
-    final List<LdapURL> l = List.copyOf(ldapURLs);
-    ldapURLs.add(ldapURLs.remove(0));
-    return l;
   }
 }

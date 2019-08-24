@@ -1,9 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.HashMap;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Interface to describe various connection strategies. Each strategy returns an ordered list of LDAP URLs to attempt
@@ -32,15 +33,23 @@ public interface ConnectionStrategy
 
 
   /**
-   * Returns the metadata for the URLs from this strategy.
+   * Returns the period at which inactive connections will be tested.
    *
-   * @return  URL metadata
+   * @return  inactive period
    */
-  Map<LdapURL, Map<String, Object>> getMetadata();
+  Duration getInactivePeriod();
 
 
   /**
-   * Returns an ordered list of LDAP URLs to connect to.
+   * Returns the condition under which an inactive test should be executed.
+   *
+   * @return  inactive condition
+   */
+  Predicate<RetryMetadata> getInactiveCondition();
+
+
+  /**
+   * Returns an ordered list of LDAP URLs to attempt connections to.
    *
    * @return  ordered LDAP URLs
    */
@@ -48,35 +57,33 @@ public interface ConnectionStrategy
 
 
   /**
-   * Records a success for the supplied URL in the strategy metadata.
+   * Returns all active LDAP URLs.
    *
-   * @param  url  which was successfully connected to
+   * @return  active URLs
    */
-  default void success(final LdapURL url)
-  {
-    final Map<String, Object> keyValues = getMetadata().computeIfAbsent(url, ldapURL -> new HashMap<>());
-    keyValues.computeIfPresent("successCount", (k, v) -> {
-      if (v == null) {
-        return 1L;
-      }
-      return (long) v + 1;
-    });
-  }
+  Map<Integer, LdapURL> active();
 
 
   /**
-   * Records a failure for the supplied URL in the strategy metadata.
+   * Returns all inactive LDAP URLs.
+   *
+   * @return  inactive URLs
+   */
+  Map<RetryMetadata, Map.Entry<Integer, LdapURL>> inactive();
+
+
+  /**
+   * Indicates the supplied URL was successfully connected to.
+   *
+   * @param  url  which was successfully connected to
+   */
+  void success(LdapURL url);
+
+
+  /**
+   * Indicates the supplied URL could not be connected to.
    *
    * @param  url  which was could not be connected to
    */
-  default void failure(final LdapURL url)
-  {
-    final Map<String, Object> keyValues = getMetadata().computeIfAbsent(url, ldapURL -> new HashMap<>());
-    keyValues.computeIfPresent("failureCount", (k, v) -> {
-      if (v == null) {
-        return 1L;
-      }
-      return (long) v + 1;
-    });
-  }
+  void failure(LdapURL url);
 }
