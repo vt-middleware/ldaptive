@@ -357,7 +357,6 @@ public class FilterParserTest
     final String[] values = new String[]{"j", "k", "l", "m", "n", "o", "p", "q", "r", "*s", "*", "}", "!", "|"};
     final String[] operators = new String[]{"&", "|"};
     final String[] filterTypes = new String[]{"~=", "=", ">=", "<=", ":="};
-    //final Random rand = new Random();
     final int count = rand.nextInt(seed) + 1;
     String filter = "";
     for (int i = 0; i < count; i++) {
@@ -366,7 +365,7 @@ public class FilterParserTest
       final String v = values[rand.nextInt(values.length)];
       final String f = filterTypes[rand.nextInt(filterTypes.length)];
       String extraFilter = "";
-      if ("!".equals(o) || "&".equals(o)) {
+      if ("|".equals(o) || "&".equals(o)) {
         for (int j = 0; j < rand.nextInt(100)+1; j++) {
           if (j % 2 == 0) {
             extraFilter = "(!(" + a + "=" + v +"))";
