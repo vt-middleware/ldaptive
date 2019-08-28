@@ -136,26 +136,27 @@ public class DnsSrvConnectionStrategyTest
     final MockConnection conn = new MockConnection(cc);
     conn.setOpenPredicate(ldapURL -> !ldapURL.getHostname().contains("-1"));
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389")));
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
 
     // first entry should fail, list should reorder with that entry last
     conn.open();
-    Assert.assertEquals(strategy.active.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 2);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-2.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389")));
-    Assert.assertEquals(strategy.inactive.size(), 1);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().iterator().next().getValue(), new LdapURL("ldap://directory-1.ldaptive.org:389"));
+      strategy.ldapURLSet.inactive.values().iterator().next().getValue(),
+      new LdapURL("ldap://directory-1.ldaptive.org:389"));
 
     // confirm the inactive entry stays at the end
     Assert.assertEquals(
@@ -164,15 +165,16 @@ public class DnsSrvConnectionStrategyTest
         new LdapURL("ldap://directory-2.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389"),
         new LdapURL("ldap://directory-1.ldaptive.org:389")));
-    Assert.assertEquals(strategy.active.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 2);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-2.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389")));
-    Assert.assertEquals(strategy.inactive.size(), 1);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().iterator().next().getValue(), new LdapURL("ldap://directory-1.ldaptive.org:389"));
+      strategy.ldapURLSet.inactive.values().iterator().next().getValue(),
+      new LdapURL("ldap://directory-1.ldaptive.org:389"));
 
     // mark first entry as active, list should reorder with that entry first
     strategy.success(new LdapURL("ldap://directory-1.ldaptive.org:389"));
@@ -182,14 +184,14 @@ public class DnsSrvConnectionStrategyTest
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389")));
-    Assert.assertEquals(strategy.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389")));
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
   }
 
 
@@ -204,22 +206,24 @@ public class DnsSrvConnectionStrategyTest
     final MockConnection conn = new MockConnection(cc);
     conn.setOpenPredicate(ldapURL -> !ldapURL.getHostname().contains("-1") && !ldapURL.getHostname().contains("-2"));
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389")));
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
 
     // first and second entry should fail, list should reorder with those entries last
     conn.open();
-    Assert.assertEquals(strategy.active.size(), 1);
-    Assert.assertEquals(strategy.active.values().iterator().next(), new LdapURL("ldap://directory-3.ldaptive.org:389"));
-    Assert.assertEquals(strategy.inactive.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().stream().map(e -> e.getValue()).collect(Collectors.toList()),
+      strategy.ldapURLSet.active.values().iterator().next(),
+      new LdapURL("ldap://directory-3.ldaptive.org:389"));
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 2);
+    Assert.assertEquals(
+      strategy.ldapURLSet.inactive.values().stream().map(e -> e.getValue()).collect(Collectors.toList()),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389")));
@@ -231,11 +235,13 @@ public class DnsSrvConnectionStrategyTest
         new LdapURL("ldap://directory-3.ldaptive.org:389"),
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389")));
-    Assert.assertEquals(strategy.active.size(), 1);
-    Assert.assertEquals(strategy.active.values().iterator().next(), new LdapURL("ldap://directory-3.ldaptive.org:389"));
-    Assert.assertEquals(strategy.inactive.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().stream().map(e -> e.getValue()).collect(Collectors.toList()),
+      strategy.ldapURLSet.active.values().iterator().next(),
+      new LdapURL("ldap://directory-3.ldaptive.org:389"));
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 2);
+    Assert.assertEquals(
+      strategy.ldapURLSet.inactive.values().stream().map(e -> e.getValue()).collect(Collectors.toList()),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389")));
@@ -248,15 +254,16 @@ public class DnsSrvConnectionStrategyTest
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389")));
-    Assert.assertEquals(strategy.active.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 2);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389")));
-    Assert.assertEquals(strategy.inactive.size(), 1);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().iterator().next().getValue(), new LdapURL("ldap://directory-2.ldaptive.org:389"));
+      strategy.ldapURLSet.inactive.values().iterator().next().getValue(),
+      new LdapURL("ldap://directory-2.ldaptive.org:389"));
 
     // mark second entry as active, list should reorder with that entry second
     strategy.success(new LdapURL("ldap://directory-2.ldaptive.org:389"));
@@ -266,13 +273,13 @@ public class DnsSrvConnectionStrategyTest
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389")));
-    Assert.assertEquals(strategy.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org:389"),
         new LdapURL("ldap://directory-2.ldaptive.org:389"),
         new LdapURL("ldap://directory-3.ldaptive.org:389")));
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
   }
 }

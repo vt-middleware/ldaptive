@@ -3,14 +3,11 @@ package org.ldaptive;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
 import org.ldaptive.dns.DNSContextFactory;
 import org.ldaptive.dns.DefaultDNSContextFactory;
 import org.ldaptive.dns.SRVDNSResolver;
@@ -100,7 +97,7 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
    */
   public DnsSrvConnectionStrategy(final DNSContextFactory factory, final Duration ttl, final boolean ssl)
   {
-    active = new TreeMap<>();
+    super(LdapURLSet.Type.SORTED);
     dnsContextFactory = factory;
     srvTtl = ttl;
     useSSL = ssl;
@@ -113,14 +110,8 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
     ldapUrls = urls;
     readSrvRecords(ldapUrls);
     if (!srvRecords.isEmpty()) {
-      synchronized (lock) {
-        active.clear();
-        inactive.clear();
-        int i = 1;
-        for (SRVRecord record : srvRecords) {
-          active.put(i++, record.getLdapURL());
-        }
-      }
+      ldapURLSet.clear();
+      ldapURLSet.add(srvRecords.stream().map(SRVRecord::getLdapURL).toArray(LdapURL[]::new));
     }
     initialized = true;
   }
@@ -195,21 +186,13 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
     if (!isInitialized()) {
       throw new IllegalStateException("Strategy is not initialized");
     }
-    synchronized (lock) {
-      if (Instant.now().isAfter(expirationTime)) {
-        initialize(ldapUrls);
-        logger.debug("Retrieved SRV records from DNS: {}", srvRecords);
-      } else {
-        logger.debug("Using SRV records from internal cache: {}", srvRecords);
-      }
-
-      final List<LdapURL> l = new ArrayList<>();
-      l.addAll(active.values());
-      if (inactive.size() > 0) {
-        l.addAll(inactive.values().stream().map(Map.Entry::getValue).collect(Collectors.toList()));
-      }
-      return Collections.unmodifiableList(l);
+    if (Instant.now().isAfter(expirationTime)) {
+      initialize(ldapUrls);
+      logger.debug("Retrieved SRV records from DNS: {}", srvRecords);
+    } else {
+      logger.debug("Using SRV records from internal cache: {}", srvRecords);
     }
+    return ldapURLSet.getUrls(null);
   }
 
 
