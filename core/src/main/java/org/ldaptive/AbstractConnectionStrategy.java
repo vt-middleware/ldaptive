@@ -2,11 +2,9 @@
 package org.ldaptive;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,23 +19,28 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Active LDAP URLs. */
-  protected Map<Integer, LdapURL> active;
-
-  /** Inactive LDAP URLs. */
-  protected Map<RetryMetadata, Map.Entry<Integer, LdapURL>> inactive = new LinkedHashMap<>();
-
-  /** Lock for active and inactive maps. */
-  protected Object lock = new Object();
-
   /** Whether this strategy has been successfully initialized. */
   protected boolean initialized;
+
+  /** Set of LDAP URLs to attempt connections to. */
+  protected final LdapURLSet ldapURLSet;
 
   /** Duration of time to test inactive connections. */
   private Duration inactivePeriod = Duration.ofMinutes(1);
 
   /** Condition used to determine whether to test an inactive URL. */
   private Predicate<RetryMetadata> inactiveCondition = metadata -> true;
+
+
+  /**
+   * Creates a new abstract connection strategy.
+   *
+   * @param  type  of LDAP URL set
+   */
+  public AbstractConnectionStrategy(final LdapURLSet.Type type)
+  {
+    ldapURLSet = new LdapURLSet(type);
+  }
 
 
   @Override
@@ -57,12 +60,9 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
       throw new IllegalArgumentException("urls cannot be empty or null");
     }
     if (urls.contains(" ")) {
-      int i = 1;
-      for (String url : urls.split(" ")) {
-        active.put(i++, new LdapURL(url));
-      }
+      ldapURLSet.add(Stream.of(urls.split(" ")).map(LdapURL::new).toArray(LdapURL[]::new));
     } else {
-      active.put(1, new LdapURL(urls));
+      ldapURLSet.add(new LdapURL(urls));
     }
     initialized = true;
   }
@@ -107,70 +107,27 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   @Override
   public void success(final LdapURL url)
   {
-    synchronized (lock) {
-      final Optional<Map.Entry<Integer, LdapURL>> entry = getInactive(url);
-      if (entry.isPresent()) {
-        inactive.entrySet().removeIf(e -> e.getValue().equals(entry.get()));
-        active.put(entry.get().getKey(), entry.get().getValue());
-      }
-    }
+    ldapURLSet.activate(url);
   }
 
 
   @Override
   public void failure(final LdapURL url)
   {
-    synchronized (lock) {
-      final Optional<Map.Entry<Integer, LdapURL>> entry = getActive(url);
-      if (entry.isPresent()) {
-        active.entrySet().removeIf(e -> e.equals(entry.get()));
-        inactive.put(new RetryMetadata(), entry.get());
-      }
-    }
+    ldapURLSet.inactivate(url);
   }
 
 
   @Override
   public Map<Integer, LdapURL> active()
   {
-    synchronized (lock) {
-      return Collections.unmodifiableMap(active);
-    }
+    return ldapURLSet.getActiveUrls();
   }
 
 
   @Override
   public Map<RetryMetadata, Map.Entry<Integer, LdapURL>> inactive()
   {
-    synchronized (lock) {
-      return Collections.unmodifiableMap(inactive);
-    }
-  }
-
-
-  /**
-   * Returns the active entry for the supplied url.
-   *
-   * @param  url  to find
-   *
-   * @return  active entry or null
-   */
-  protected Optional<Map.Entry<Integer, LdapURL>> getActive(final LdapURL url)
-  {
-    return active.entrySet().stream().filter(e -> url.equals(e.getValue())).findAny();
-  }
-
-
-  /**
-   * Returns the inactive entry for the supplied url.
-   *
-   * @param  url  to find
-   *
-   * @return  inactive entry or null
-   */
-  protected Optional<Map.Entry<Integer, LdapURL>> getInactive(final LdapURL url)
-  {
-    return inactive.entrySet().stream()
-      .filter(e -> url.equals(e.getValue().getValue())).map(e -> e.getValue()).findAny();
+    return ldapURLSet.getInactiveUrls();
   }
 }

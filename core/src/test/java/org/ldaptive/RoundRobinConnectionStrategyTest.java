@@ -120,26 +120,27 @@ public class RoundRobinConnectionStrategyTest
     final MockConnection conn = new MockConnection(cc);
     conn.setOpenPredicate(ldapURL -> !ldapURL.getHostname().contains("-1"));
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
 
     // first entry should fail, list should reorder with that entry last
     conn.open();
-    Assert.assertEquals(strategy.active.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 2);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-2.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.inactive.size(), 1);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().iterator().next().getValue(), new LdapURL("ldap://directory-1.ldaptive.org"));
+      strategy.ldapURLSet.inactive.values().iterator().next().getValue(),
+      new LdapURL("ldap://directory-1.ldaptive.org"));
 
     // confirm the inactive entry stays at the end
     Assert.assertEquals(
@@ -148,15 +149,16 @@ public class RoundRobinConnectionStrategyTest
         new LdapURL("ldap://directory-2.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org")));
-    Assert.assertEquals(strategy.active.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 2);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org")));
-    Assert.assertEquals(strategy.inactive.size(), 1);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().iterator().next().getValue(), new LdapURL("ldap://directory-1.ldaptive.org"));
+      strategy.ldapURLSet.inactive.values().iterator().next().getValue(),
+      new LdapURL("ldap://directory-1.ldaptive.org"));
 
     // mark first entry as active, list should reorder with that entry last
     strategy.success(new LdapURL("ldap://directory-1.ldaptive.org"));
@@ -166,14 +168,14 @@ public class RoundRobinConnectionStrategyTest
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org")));
-    Assert.assertEquals(strategy.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-2.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
   }
 
 
@@ -188,22 +190,24 @@ public class RoundRobinConnectionStrategyTest
     final MockConnection conn = new MockConnection(cc);
     conn.setOpenPredicate(ldapURL -> !ldapURL.getHostname().contains("-1") && !ldapURL.getHostname().contains("-2"));
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
 
     // first and second entry should fail, list should reorder with those entries last
     conn.open();
-    Assert.assertEquals(strategy.active.size(), 1);
-    Assert.assertEquals(strategy.active.values().iterator().next(), new LdapURL("ldap://directory-3.ldaptive.org"));
-    Assert.assertEquals(strategy.inactive.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().stream().map(e -> e.getValue()).collect(Collectors.toList()),
+      strategy.ldapURLSet.active.values().iterator().next(),
+      new LdapURL("ldap://directory-3.ldaptive.org"));
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 2);
+    Assert.assertEquals(
+      strategy.ldapURLSet.inactive.values().stream().map(e -> e.getValue()).collect(Collectors.toList()),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org")));
@@ -215,11 +219,13 @@ public class RoundRobinConnectionStrategyTest
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org")));
-    Assert.assertEquals(strategy.active.size(), 1);
-    Assert.assertEquals(strategy.active.values().iterator().next(), new LdapURL("ldap://directory-3.ldaptive.org"));
-    Assert.assertEquals(strategy.inactive.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().stream().map(e -> e.getValue()).collect(Collectors.toList()),
+      strategy.ldapURLSet.active.values().iterator().next(),
+      new LdapURL("ldap://directory-3.ldaptive.org"));
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 2);
+    Assert.assertEquals(
+      strategy.ldapURLSet.inactive.values().stream().map(e -> e.getValue()).collect(Collectors.toList()),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org")));
@@ -232,15 +238,16 @@ public class RoundRobinConnectionStrategyTest
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org")));
-    Assert.assertEquals(strategy.active.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 2);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.inactive.size(), 1);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().iterator().next().getValue(), new LdapURL("ldap://directory-2.ldaptive.org"));
+      strategy.ldapURLSet.inactive.values().iterator().next().getValue(),
+      new LdapURL("ldap://directory-2.ldaptive.org"));
 
     // confirm the inactive entries stay at the end
     Assert.assertEquals(
@@ -249,15 +256,16 @@ public class RoundRobinConnectionStrategyTest
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org")));
-    Assert.assertEquals(strategy.active.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 2);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org")));
-    Assert.assertEquals(strategy.inactive.size(), 1);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 1);
     Assert.assertEquals(
-      strategy.inactive.values().iterator().next().getValue(), new LdapURL("ldap://directory-2.ldaptive.org"));
+      strategy.ldapURLSet.inactive.values().iterator().next().getValue(),
+      new LdapURL("ldap://directory-2.ldaptive.org"));
 
     // mark second entry as active, list should reorder with that entry as the last active
     strategy.success(new LdapURL("ldap://directory-2.ldaptive.org"));
@@ -267,13 +275,13 @@ public class RoundRobinConnectionStrategyTest
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org")));
-    Assert.assertEquals(strategy.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
     Assert.assertEquals(
-      strategy.active.values(),
+      strategy.ldapURLSet.active.values(),
       List.of(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
   }
 }

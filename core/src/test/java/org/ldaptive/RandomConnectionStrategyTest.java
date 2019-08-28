@@ -98,32 +98,32 @@ public class RandomConnectionStrategyTest
       }
     });
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.active.size(), 3);
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
 
     // first entry should fail
     conn.open();
-    Assert.assertEquals(strategy.active.size(), 2);
-    Assert.assertEquals(strategy.inactive.size(), 1);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 1);
 
     // confirm the inactive entry stays at the end
     List<LdapURL> applyList = strategy.apply();
     Assert.assertEquals(applyList.size(), 3);
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(0)));
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(1)));
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(0)));
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(1)));
     Assert.assertTrue(
-      strategy.inactive.values().stream().map(
+      strategy.ldapURLSet.inactive.values().stream().map(
         e -> e.getValue()).collect(Collectors.toList()).contains(applyList.get(2)));
 
     // mark inactive entry as active
-    strategy.success(strategy.inactive.values().iterator().next().getValue());
+    strategy.success(strategy.ldapURLSet.inactive.values().iterator().next().getValue());
     applyList = strategy.apply();
     Assert.assertEquals(applyList.size(), 3);
-    Assert.assertEquals(strategy.active.size(), 3);
-    Assert.assertEquals(strategy.inactive.size(), 0);
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(0)));
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(1)));
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(2)));
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(0)));
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(1)));
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(2)));
   }
 
 
@@ -150,45 +150,45 @@ public class RandomConnectionStrategyTest
       }
     });
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.active.size(), 3);
-    Assert.assertEquals(strategy.inactive.size(), 0);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
 
     // first and second entry should fail
     conn.open();
-    Assert.assertEquals(strategy.active.size(), 1);
-    Assert.assertEquals(strategy.inactive.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 1);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 2);
 
     // confirm the inactive entries stay at the end
     List<LdapURL> applyList = strategy.apply();
     Assert.assertEquals(applyList.size(), 3);
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(0)));
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(0)));
     Assert.assertTrue(
-      strategy.inactive.values().stream().map(
+      strategy.ldapURLSet.inactive.values().stream().map(
         e -> e.getValue()).collect(Collectors.toList()).contains(applyList.get(1)));
     Assert.assertTrue(
-      strategy.inactive.values().stream().map(
+      strategy.ldapURLSet.inactive.values().stream().map(
         e -> e.getValue()).collect(Collectors.toList()).contains(applyList.get(2)));
 
     // mark first entry as active
-    strategy.success(strategy.inactive.values().iterator().next().getValue());
+    strategy.success(strategy.ldapURLSet.inactive.values().iterator().next().getValue());
     applyList = strategy.apply();
     Assert.assertEquals(applyList.size(), 3);
-    Assert.assertEquals(strategy.active.size(), 2);
-    Assert.assertEquals(strategy.inactive.size(), 1);
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(0)));
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(1)));
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 2);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 1);
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(0)));
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(1)));
     Assert.assertTrue(
-      strategy.inactive.values().stream().map(
+      strategy.ldapURLSet.inactive.values().stream().map(
         e -> e.getValue()).collect(Collectors.toList()).contains(applyList.get(2)));
 
     // mark second entry as active
-    strategy.success(strategy.inactive.values().iterator().next().getValue());
+    strategy.success(strategy.ldapURLSet.inactive.values().iterator().next().getValue());
     applyList = strategy.apply();
     Assert.assertEquals(applyList.size(), 3);
-    Assert.assertEquals(strategy.active.size(), 3);
-    Assert.assertEquals(strategy.inactive.size(), 0);
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(0)));
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(1)));
-    Assert.assertTrue(strategy.active.values().contains(applyList.get(2)));
+    Assert.assertEquals(strategy.ldapURLSet.active.size(), 3);
+    Assert.assertEquals(strategy.ldapURLSet.inactive.size(), 0);
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(0)));
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(1)));
+    Assert.assertTrue(strategy.ldapURLSet.active.values().contains(applyList.get(2)));
   }
 }
