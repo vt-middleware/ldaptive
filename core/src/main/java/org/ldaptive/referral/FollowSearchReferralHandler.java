@@ -23,7 +23,7 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
   /** Creates a new search referral handler. */
   public FollowSearchReferralHandler()
   {
-    this(DEFAULT_REFERRAL_LIMIT, 0, new DefaultReferralConnectionFactory());
+    this(DEFAULT_REFERRAL_LIMIT, 1, new DefaultReferralConnectionFactory());
   }
 
 
@@ -34,7 +34,7 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
    */
   public FollowSearchReferralHandler(final ReferralConnectionFactory factory)
   {
-    this(DEFAULT_REFERRAL_LIMIT, 0, factory);
+    this(DEFAULT_REFERRAL_LIMIT, 1, factory);
   }
 
 
@@ -45,7 +45,7 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
    */
   public FollowSearchReferralHandler(final int limit)
   {
-    this(limit, 0, new DefaultReferralConnectionFactory());
+    this(limit, 1, new DefaultReferralConnectionFactory());
   }
 
 
@@ -57,7 +57,7 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
    */
   public FollowSearchReferralHandler(final int limit, final ReferralConnectionFactory factory)
   {
-    this(limit, 0, factory);
+    this(limit, 1, factory);
   }
 
 
