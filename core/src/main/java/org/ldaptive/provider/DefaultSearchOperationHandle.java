@@ -2,6 +2,7 @@
 package org.ldaptive.provider;
 
 import java.time.Duration;
+import java.util.Arrays;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperationHandle;
@@ -210,7 +211,7 @@ public class DefaultSearchOperationHandle
         try {
           e = func.apply(e);
         } catch (Exception ex) {
-          logger.warn("Entry function {} threw an exception", func, ex);
+          logger.warn("Entry function {} in handle {} threw an exception", func, this, ex);
         }
       }
       consumedMessage();
@@ -233,11 +234,22 @@ public class DefaultSearchOperationHandle
         try {
           func.accept(r.getUris());
         } catch (Exception ex) {
-          logger.warn("Reference consumer {} threw an exception", func, ex);
+          logger.warn("Reference consumer {} in handle {} threw an exception", func, this, ex);
         }
       }
       consumedMessage();
     }
     result.addReference(r);
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(super.toString()).append(", ")
+      .append("onEntry=").append(Arrays.toString(onEntry)).append(", ")
+      .append("onReference=").append(Arrays.toString(onReference)).append(", ")
+      .append("onSearchResult=").append(Arrays.toString(onSearchResult)).append(", ")
+      .append("result=").append(result).toString();
   }
 }

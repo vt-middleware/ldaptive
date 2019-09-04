@@ -2,6 +2,7 @@
 package org.ldaptive.provider;
 
 import java.time.Duration;
+import java.util.Arrays;
 import org.ldaptive.CompareOperationHandle;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.CompareResponse;
@@ -149,5 +150,13 @@ public class DefaultCompareOperationHandle
         }
       }
     }
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(super.toString()).append(", ")
+      .append("onCompare=").append(Arrays.toString(onCompare)).toString();
   }
 }
