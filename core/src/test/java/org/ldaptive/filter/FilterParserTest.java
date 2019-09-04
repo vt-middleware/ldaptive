@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
+import java.util.Random;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -13,7 +14,10 @@ import org.testng.annotations.Test;
 public class FilterParserTest
 {
 
-
+  /**
+   * Random number generator.
+   */
+  private static Random rand = new Random();
   /**
    * Search filter test data.
    *
@@ -32,6 +36,31 @@ public class FilterParserTest
         new Object[] {
           "givenName:=",
           new ExtensibleFilter(null, "givenName", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "uupid:caseExactMatch:=john",
+          new ExtensibleFilter("caseExactMatch", "uupid", "john"),
+          false,
+        },
+        new Object[] {
+          ":2.5.13.5:=john",
+          new ExtensibleFilter("2.5.13.5", null, "john"),
+          false,
+        },
+        new Object[] {
+          "uid:dn:caseExactMatch:=1152120",
+          new ExtensibleFilter("caseExactMatch", "uid", "1152120", true),
+          false,
+        },
+        new Object[] {
+          "uid:dn:2.5.13.5:=1152120",
+          new ExtensibleFilter("2.5.13.5", "uid", "1152120", true),
+          false,
+        },
+        new Object[] {
+          "uid:dn:=1152120",
+          new ExtensibleFilter(null, "uid", "1152120", true),
           false,
         },
         new Object[] {
@@ -63,6 +92,22 @@ public class FilterParserTest
           "givenName:=John)",
           null,
           true,
+        },
+        new Object[] {
+          "uupid=jo\\00hn",
+          new EqualityFilter("uupid", "jo\0hn"),
+          false,
+        },
+        new Object[] {
+          "uupid=\\5cdhawes\\5c",
+          new EqualityFilter("uupid", "\\dhawes\\"),
+          false,
+        },
+        new Object[] {
+          "(|(cn=|&~!<>:=.dhawes))",
+          new OrFilter(
+            new EqualityFilter("cn", "|&~!<>:=.dhawes")),
+          false,
         },
         new Object[] {
           "(givenName=*)",
@@ -234,6 +279,26 @@ public class FilterParserTest
       };
   }
 
+  /**
+   * Search filter test data generated randomly.
+   *
+   * @return  request test data
+   */
+  @DataProvider(name = "generateRandomFilter")
+  public Object[][] createRandomFilter()
+  {
+    return
+      new Object[][] {
+        new Object[] {
+          generateFilter(rand.nextInt(1000)+1, false),
+          false,
+        },
+        new Object[] {
+          generateFilter(rand.nextInt(1000)+1, true),
+          true,
+        },
+      };
+  }
 
   /**
    * @param  value  to parse.
@@ -243,7 +308,7 @@ public class FilterParserTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = "provider", dataProvider = "filter")
-  public void parse(final String value, final Filter filter, final boolean throwsException)
+  public void parseAndCompare(final String value, final Filter filter, final boolean throwsException)
     throws Exception
   {
     try {
@@ -256,5 +321,65 @@ public class FilterParserTest
         Assert.fail("Should not have thrown exception");
       }
     }
+  }
+
+  /**
+   * @param  value  to parse.
+   * @param  throwsException  whether an exception is expected
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "provider", dataProvider = "generateRandomFilter", invocationCount = 1000)
+  public void parse(final String value, final boolean throwsException)
+    throws Exception
+  {
+    try {
+      FilterParser.parse(value);
+      if (throwsException) {
+        Assert.fail("Should have thrown exception");
+      }
+    } catch (Exception e) {
+      if (!throwsException) {
+        Assert.fail("Should not have thrown exception");
+      }
+    }
+  }
+
+  /**
+   * @param  seed  to rand function.
+   * @param generateBadData boolean which decides if the filter is a bad one.
+   *
+   * @return generated filter string.
+   */
+  private static String generateFilter(final int seed, final boolean generateBadData)
+  {
+    final String[] attr = new String[]{"a", "b", "c", "d", "e", "f", "g", "h", "i"};
+    final String[] values = new String[]{"j", "k", "l", "m", "n", "o", "p", "q", "r", "*s", "*", "}", "!", "|"};
+    final String[] operators = new String[]{"&", "|"};
+    final String[] filterTypes = new String[]{"~=", "=", ">=", "<=", ":="};
+    final int count = rand.nextInt(seed) + 1;
+    String filter = "";
+    for (int i = 0; i < count; i++) {
+      final String o = operators[rand.nextInt(operators.length)];
+      final String a = attr[rand.nextInt(attr.length)];
+      final String v = values[rand.nextInt(values.length)];
+      final String f = filterTypes[rand.nextInt(filterTypes.length)];
+      String extraFilter = "";
+      if ("|".equals(o) || "&".equals(o)) {
+        for (int j = 0; j < rand.nextInt(100)+1; j++) {
+          if (j % 2 == 0) {
+            extraFilter = "(!(" + a + "=" + v +"))";
+          } else {
+            extraFilter = "(|(" + a + "=" + v +"))";
+          }
+        }
+      }
+      if (generateBadData) {
+        extraFilter = extraFilter + f;
+      }
+      filter = "(" + o + ("".equals(extraFilter) ? "" : extraFilter)+ "(" + a + f + v + ")" +
+        ("".equals(filter) ? "" : filter) + ")";
+    }
+    return filter;
   }
 }
