@@ -2,6 +2,7 @@
 package org.ldaptive.provider;
 
 import java.time.Duration;
+import java.util.Arrays;
 import org.ldaptive.LdapException;
 import org.ldaptive.extended.ExtendedOperationHandle;
 import org.ldaptive.extended.ExtendedRequest;
@@ -147,5 +148,13 @@ public class DefaultExtendedOperationHandle
         }
       }
     }
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(super.toString()).append(", ")
+      .append("onExtended=").append(Arrays.toString(onExtended)).toString();
   }
 }

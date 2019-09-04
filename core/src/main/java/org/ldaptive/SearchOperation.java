@@ -381,7 +381,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   public SearchResponse execute(final String filter, final String... returnAttributes)
     throws LdapException
   {
-    return execute(FilterParser.parse(filter), returnAttributes, (LdapEntryHandler) null);
+    return execute(FilterParser.parse(filter), returnAttributes, (LdapEntryHandler[]) null);
   }
 
 
@@ -398,7 +398,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   public SearchResponse execute(final SearchFilter filter, final String... returnAttributes)
     throws LdapException
   {
-    return execute(FilterParser.parse(filter.format()), returnAttributes, (LdapEntryHandler) null);
+    return execute(FilterParser.parse(filter.format()), returnAttributes, (LdapEntryHandler[]) null);
   }
 
 
@@ -415,7 +415,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   public SearchResponse execute(final Filter filter, final String... returnAttributes)
     throws LdapException
   {
-    return execute(null, filter, returnAttributes, (LdapEntryHandler) null);
+    return execute(null, filter, returnAttributes, (LdapEntryHandler[]) null);
   }
 
 

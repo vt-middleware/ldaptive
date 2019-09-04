@@ -414,7 +414,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(r);
         } catch (Exception ex) {
-          logger.warn("Result function {} threw an exception", func, ex);
+          logger.warn("Result function {} in handle {} threw an exception", func, this, ex);
         }
       }
       consumedMessage();
@@ -436,7 +436,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(c);
         } catch (Exception ex) {
-          logger.warn("Control consumer {} threw an exception", func, ex);
+          logger.warn("Control consumer {} in handle {} threw an exception", func, this, ex);
         }
       }
     }
@@ -455,7 +455,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(url);
         } catch (Exception ex) {
-          logger.warn("Referral consumer {} threw an exception", func, ex);
+          logger.warn("Referral consumer {} in handle {} threw an exception", func, this, ex);
         }
       }
     }
@@ -474,7 +474,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(r);
         } catch (Exception ex) {
-          logger.warn("Intermediate response consumer {} threw an exception", func, ex);
+          logger.warn("Intermediate response consumer {} in handle {} threw an exception", func, this, ex);
         }
       }
       consumedMessage();
@@ -494,7 +494,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(u);
         } catch (Exception ex) {
-          logger.warn("Unsolicited notification consumer {} threw an exception", func, ex);
+          logger.warn("Unsolicited notification consumer {} in handle {} threw an exception", func, this, ex);
         }
       }
       consumedMessage();
@@ -522,7 +522,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       try {
         onException.accept(ldapEx);
       } catch (Exception ex) {
-        logger.warn("Exception consumer {} threw an exception", onException, ex);
+        logger.warn("Exception consumer {} in handle {} threw an exception", onException, this, ex);
       }
     }
     exception = ldapEx;
@@ -554,7 +554,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           onComplete.execute();
         } catch (Exception ex) {
-          logger.warn("Complete consumer {} threw an exception", onComplete, ex);
+          logger.warn("Complete consumer {} in handle {} threw an exception", onComplete, this, ex);
         }
       }
       connection = null;
