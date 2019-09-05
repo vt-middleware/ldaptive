@@ -4,8 +4,8 @@ ConnectionConfig.builder()
   .connectTimeout(Duration.ofSeconds(5))
   .responseTimeout(Duration.ofSeconds(5))
   .autoReconnect(true)
-  .autoReconnectCondition(attempt -> {
-    if (attempt <= 5) {
+  .autoReconnectCondition(metadata -> {
+    if (metadata.getAttempts() <= 5) {
       try {
         final Duration sleepTime = Duration.ofSeconds(1).multipliedBy(attempt);
         Thread.sleep(sleepTime.toMillis());

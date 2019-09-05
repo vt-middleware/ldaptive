@@ -5,7 +5,7 @@ SearchRequest request2 = new SearchRequest("dc=ldaptive,dc=org","(sn=fisher)");
 SearchOperationWorker search = new SearchOperationWorker(new SearchOperation(cf));
 
 // to perform non-blocking searches
-Collection<SearchOperationHandle> futures = search.send(new SearchRequest[] {request1, request2});
+Collection<OperationHandle<SearchRequest, SearchResponse>> futures = search.send(new SearchRequest[] {request1, request2});
 
 // to perform blocking searches
 Collection<SearchResponse> responses = search.execute(new SearchRequest[] {request1, request2});

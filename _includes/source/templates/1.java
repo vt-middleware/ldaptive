@@ -36,12 +36,12 @@ SearchTemplatesOperation search = new SearchTemplatesOperation(
 
 // get results for a one term query
 Query oneTermQuery = new Query("fisher");
-SearchResponse oneTermResult = executor.search(oneTermQuery);
+SearchResponse oneTermResult = search.execute(oneTermQuery);
 
 // get results for a two term query
 Query twoTermQuery = new Query("daniel fisher");
-SearchResponse twoTermResult = executor.search(twoTermQuery);
+SearchResponse twoTermResult = search.execute(twoTermQuery);
 
 // get results for a three term query
 Query threeTermQuery = new Query("daniel william fisher");
-SearchResponse threeTermResult = executor.search(threeTermQuery);
+SearchResponse threeTermResult = search.execute(threeTermQuery);
