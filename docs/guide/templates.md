@@ -10,7 +10,7 @@ redirect_from: "/docs/guide/templates/"
 
 The templates project provides a framework for accepting some number of words (or terms) and producing search results from an LDAP. The most common use case being free form search input, like one would expect for a search engine.
 
-A `SearchTemplatesExecutor` is configured with an ordered number of `SearchTemplates`. The first `SearchTemplates` object is expected to format search filters for one term queries. The second `SearchTemplates` object is expected to format search filters for two term queries, and so forth. The appropriate `SearchTemplates` is selected based on the `Query` that is provided to the executor and a search is executed for each of the filters in that templates. A single `SearchResponse` containing all results is returned. In this fashion a set of search terms can be transformed into LDAP search results.
+A `SearchTemplatesOperation` is configured with an ordered number of `SearchTemplates`. The first `SearchTemplates` object is expected to format search filters for one term queries. The second `SearchTemplates` object is expected to format search filters for two term queries, and so forth. The appropriate `SearchTemplates` is selected based on the `Query` that is provided to the operation and a search is executed for each of the filters in that templates. A single `SearchResponse` containing all results is returned. In this fashion a set of search terms can be transformed into LDAP search results.
 
 Some named parameters are defined by the templates in order to write search filters:
 
@@ -59,43 +59,27 @@ Expects the ${ldapUrl} and ${baseDn} properties to be replaced at build time.
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
                            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
-  <bean id="searchExecutor"
-        class="org.ldaptive.concurrent.AggregatePooledSearchExecutor"
-        p:baseDn="${baseDn}">
-    <constructor-arg index="0">
-      <bean class="java.util.concurrent.Executors"
-            factory-method="newCachedThreadPool"/>
-    </constructor-arg>
+  <bean id="connectionFactory"
+        class="org.ldaptive.PooledConnectionFactory"
+        init-method="initialize"
+        p:ldapUrl="${ldapUrl}"
+        p:blockWaitTime="5000"
+        p:minPoolSize="5"
+        p:maxPoolSize="10"
+        p:validatePeriodically="true">
+    <property name="validator">
+      <bean class="org.ldaptive.pool.SearchValidator"/>
+    </property>
   </bean>
 
-  <bean id="connectionFactory"
-        class="org.ldaptive.pool.PooledConnectionFactory">
-    <constructor-arg index="0">
-      <bean class="org.ldaptive.pool.BlockingConnectionPool"
-            init-method="initialize"
-            p:blockWaitTime="5000">
-        <constructor-arg index="0">
-          <bean class="org.ldaptive.pool.PoolConfig"
-                p:minPoolSize="5"
-                p:maxPoolSize="10"
-                p:validatePeriodically="true"
-          />
-        </constructor-arg>
-        <constructor-arg index="1">
-          <bean class="org.ldaptive.DefaultConnectionFactory">
-            <constructor-arg index="0">
-              <bean class="org.ldaptive.ConnectionConfig"
-                    p:ldapUrl="${ldapUrl}"
-              />
-            </constructor-arg>
-          </bean>
-        </constructor-arg>
-        <property name="validator">
-          <bean class="org.ldaptive.pool.SearchValidator"/>
-        </property>
-      </bean>
-    </constructor-arg>
-  </bean>
+  <bean id="searchOperation"
+        class="org.ldaptive.SearchOperation"
+        p:baseDn="${baseDn}"
+        p:connectionFactory-ref="connectionFactory"/>
+
+  <bean id="searchOperationWorker"
+        class="org.ldaptive.concurrent.SearchOperationWorker"
+        p:operation-ref="searchOperation"/>
 
   <!-- SEARCH CONFIG -->
 

@@ -4,15 +4,10 @@ SearchRequest request1 = new SearchRequest("dc=ldaptive,dc=org","(givenName=dani
 SearchRequest request2 = new SearchRequest("dc=ldaptive,dc=org","(sn=fisher)");
 SearchOperationWorker search = new SearchOperationWorker(new SearchOperation(cf));
 
-// to perform a single search
-Future<SearchResponse> future = search.execute(request1);
+// to perform non-blocking searches
+Collection<SearchOperationHandle> futures = search.send(new SearchRequest[] {request1, request2});
 
-// to perform multiple searches
-Collection<Future<SearchResponse>> futures = search.execute(request1, request2);
+// to perform blocking searches
+Collection<SearchResponse> responses = search.execute(new SearchRequest[] {request1, request2});
 
-// to perform multiple searches and wait
-Collection<SearchResponse> responses = search.executeToCompletion(request1, request2);
-
-// cleanup the underlying executor service
-search.shutdown();
 cf.close();

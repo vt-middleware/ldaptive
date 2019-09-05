@@ -28,9 +28,8 @@ SearchTemplates threeTermTemplate = new SearchTemplates(
 PooledConnectionFactory cf = new PooledConnectionFactory("ldap://directory.ldaptive.org");
 cf.initialize();
 
-SearchTemplatesExecutor executor = new SearchTemplatesExecutor(
-  new AggregateSearchOperation(),
-  new PooledConnectionFactory[] {cf},
+SearchTemplatesOperation search = new SearchTemplatesOperation(
+  new SearchOperationWorker(new SearchOperation(cf)),
   oneTermTemplate,
   twoTermTemplate,
   threeTermTemplate);
