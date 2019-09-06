@@ -2,6 +2,7 @@
 package org.ldaptive.provider;
 
 import org.ldaptive.ActivePassiveConnectionStrategy;
+import org.ldaptive.ConnectException;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionStrategy;
