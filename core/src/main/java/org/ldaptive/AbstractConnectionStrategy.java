@@ -2,7 +2,11 @@
 package org.ldaptive;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
@@ -25,11 +29,17 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   /** Set of LDAP URLs to attempt connections to. */
   protected final LdapURLSet ldapURLSet;
 
+  /** Condition used to determine whether to activate a URL. */
+  protected Predicate<LdapURL> activateCondition;
+
   /** Duration of time to test inactive connections. */
   private Duration inactivePeriod = Duration.ofMinutes(1);
 
   /** Condition used to determine whether to test an inactive URL. */
-  private Predicate<RetryMetadata> inactiveCondition = metadata -> true;
+  private Predicate<RetryMetadata> retryCondition = metadata -> true;
+
+  /** Executor for testing inactive URLs. */
+  private ScheduledExecutorService executor;
 
 
   /**
@@ -51,7 +61,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
 
 
   @Override
-  public synchronized void initialize(final String urls)
+  public synchronized void initialize(final String urls, final Predicate<LdapURL> condition)
   {
     if (isInitialized()) {
       throw new IllegalStateException("Strategy has already been initialized");
@@ -64,6 +74,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
     } else {
       ldapURLSet.add(new LdapURL(urls));
     }
+    activateCondition = condition;
     initialized = true;
   }
 
@@ -87,20 +98,20 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
 
 
   @Override
-  public Predicate<RetryMetadata> getInactiveCondition()
+  public Predicate<RetryMetadata> getRetryCondition()
   {
-    return inactiveCondition;
+    return retryCondition;
   }
 
 
   /**
-   * Sets the inactive condition.
+   * Sets the retry condition which determines whether an attempt should be made to activate a URL.
    *
-   * @param  condition  that determines whether to test a connection
+   * @param  condition  that determines whether to active a URL
    */
-  public void setInactiveCondition(final Predicate<RetryMetadata> condition)
+  public void setRetryCondition(final Predicate<RetryMetadata> condition)
   {
-    inactiveCondition = condition;
+    retryCondition = condition;
   }
 
 
@@ -115,6 +126,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   public void failure(final LdapURL url)
   {
     ldapURLSet.inactivate(url);
+    createInactiveExecutor();
   }
 
 
@@ -129,5 +141,57 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   public Map<RetryMetadata, Map.Entry<Integer, LdapURL>> inactive()
   {
     return ldapURLSet.getInactiveUrls();
+  }
+
+
+  /**
+   * Creates a new scheduled thread executor if one is not already running. Schedules a task which tests inactive URLs.
+   * The task shuts down the executor if there are no inactive URLs to test.
+   */
+  private void createInactiveExecutor()
+  {
+    synchronized (this) {
+      if (executor == null && !ldapURLSet.getInactiveUrls().isEmpty()) {
+        executor = Executors.newScheduledThreadPool(
+          ldapURLSet.size() + 1,
+          r -> {
+            final Thread t = new Thread(r);
+            t.setDaemon(true);
+            return t;
+          });
+
+        executor.scheduleAtFixedRate(
+          () -> {
+            synchronized (this) {
+              if (ldapURLSet.getInactiveUrls().isEmpty()) {
+                try {
+                  executor.shutdown();
+                } finally {
+                  executor = null;
+                }
+                return;
+              }
+              for (Map.Entry<RetryMetadata, Map.Entry<Integer, LdapURL>> entry :
+                ldapURLSet.getInactiveUrls().entrySet()) {
+                // ensure inactive URL waits at least the inactive period before testing
+                if (Instant.now().isAfter(entry.getKey().getFailureTime().plus(inactivePeriod))) {
+                  if (retryCondition.test(entry.getKey())) {
+                    executor.submit(() -> {
+                      if (activateCondition.test(entry.getValue().getValue())) {
+                        success(entry.getValue().getValue());
+                      } else {
+                        entry.getKey().incrementAttempts();
+                      }
+                    });
+                  }
+                }
+              }
+            }
+          },
+          getInactivePeriod().toMillis(),
+          getInactivePeriod().toMillis(),
+          TimeUnit.MILLISECONDS);
+      }
+    }
   }
 }

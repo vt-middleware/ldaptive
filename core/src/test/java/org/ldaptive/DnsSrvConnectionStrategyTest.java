@@ -79,7 +79,7 @@ public class DnsSrvConnectionStrategyTest
   public void applyDefault()
   {
     final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy(contextFactory);
-    strategy.initialize(null);
+    strategy.initialize(null, ldapURL -> true);
     final List<LdapURL> urls = strategy.apply();
     Assert.assertEquals(urls.size(), 3);
   }
@@ -93,7 +93,7 @@ public class DnsSrvConnectionStrategyTest
   {
     final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy(
       contextFactory, DnsSrvConnectionStrategy.DEFAULT_TTL);
-    strategy.initialize("dns:?_ldap._tcp.dne.ldaptive.org dns:");
+    strategy.initialize("dns:?_ldap._tcp.dne.ldaptive.org dns:", ldapURL -> true);
     final List<LdapURL> urls = strategy.apply();
     Assert.assertEquals(urls.size(), 3);
   }
@@ -106,7 +106,7 @@ public class DnsSrvConnectionStrategyTest
   public void applyCustom()
   {
     final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy();
-    strategy.initialize("dns:?_ldap._tcp.w2k.vt.edu");
+    strategy.initialize("dns:?_ldap._tcp.w2k.vt.edu", ldapURL -> true);
     final List<LdapURL> urls = strategy.apply();
     Assert.assertEquals(urls.size(), 3);
   }
@@ -119,7 +119,7 @@ public class DnsSrvConnectionStrategyTest
   public void applyEmpty()
   {
     final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy();
-    strategy.initialize(null);
+    strategy.initialize(null, ldapURL -> true);
     final List<LdapURL> urls = strategy.apply();
     Assert.assertEquals(urls.size(), 0);
   }

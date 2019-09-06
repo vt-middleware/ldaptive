@@ -657,7 +657,6 @@ public final class NettyConnection extends ProviderConnection
     } finally {
       pendingResponses.clear();
       channel = null;
-      super.close(controls);
     }
   }
 

@@ -104,6 +104,19 @@ public class LdapURLSet
 
 
   /**
+   * Returns the number of URLs in this set.
+   *
+   * @return  number of URLs in this set
+   */
+  public int size()
+  {
+    synchronized (lock) {
+      return active.size() + inactive.size();
+    }
+  }
+
+
+  /**
    * Removes all URLs from this set.
    */
   public void clear()

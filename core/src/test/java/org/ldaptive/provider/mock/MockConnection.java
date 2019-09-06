@@ -192,6 +192,5 @@ public final class MockConnection extends ProviderConnection
   public void close(final RequestControl... controls)
   {
     open = false;
-    super.close(controls);
   }
 }
