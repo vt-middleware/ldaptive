@@ -273,7 +273,7 @@ public final class TestUtils
     for (String s : attrs.split("\\|")) {
       final String[] nameValuePairs = s.trim().split("=", 2);
       if (le.getAttribute(nameValuePairs[0]) != null) {
-        le.getAttribute(nameValuePairs[0]).addStringValue(nameValuePairs[1]);
+        le.getAttribute(nameValuePairs[0]).addStringValues(nameValuePairs[1]);
       } else {
         le.addAttributes(new LdapAttribute(nameValuePairs[0], nameValuePairs[1]));
       }
@@ -294,7 +294,7 @@ public final class TestUtils
     final SearchResponse newResult = new SearchResponse();
     for (LdapEntry e : actual.getEntries()) {
       AssertJUnit.assertNotNull(e);
-      newResult.addEntry(LdapEntry.builder().dn(e.getDn()).attributes(e.getAttributes()).build());
+      newResult.addEntries(LdapEntry.builder().dn(e.getDn()).attributes(e.getAttributes()).build());
     }
     AssertJUnit.assertEquals(expected, newResult);
   }

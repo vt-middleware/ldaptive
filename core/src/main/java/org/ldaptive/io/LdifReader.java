@@ -70,9 +70,9 @@ public class LdifReader implements SearchResultReader
           }
           if (!section.isEmpty()) {
             if (section.get(0).startsWith("dn")) {
-              result.addEntry(parseEntry(section));
+              result.addEntries(parseEntry(section));
             } else if (section.get(0).startsWith("ref")) {
-              result.addReference(parseReference(section));
+              result.addReferences(parseReference(section));
             } else {
               logger.debug("Unknown LDIF section {}", section.get(0));
             }
@@ -146,9 +146,9 @@ public class LdifReader implements SearchResultReader
           entry.addAttributes(newAttr);
         } else {
           if (existingAttr.isBinary()) {
-            existingAttr.addBinaryValue(newAttr.getBinaryValue());
+            existingAttr.addBinaryValues(newAttr.getBinaryValue());
           } else {
-            existingAttr.addStringValue(newAttr.getStringValue());
+            existingAttr.addStringValues(newAttr.getStringValue());
           }
         }
       }
@@ -187,7 +187,7 @@ public class LdifReader implements SearchResultReader
     }
     final LdapAttribute attr = new LdapAttribute(attrName);
     if (isBase64) {
-      attr.addBinaryValue(LdapUtils.base64Decode(attrValue));
+      attr.addBinaryValues(LdapUtils.base64Decode(attrValue));
     } else if (isUrl) {
       final byte[] b;
       if (LdapUtils.isResource(attrValue)) {
@@ -195,9 +195,9 @@ public class LdifReader implements SearchResultReader
       } else {
         b = LdapUtils.readURL(new URL(attrValue));
       }
-      attr.addBinaryValue(b);
+      attr.addBinaryValues(b);
     } else {
-      attr.addStringValue(attrValue);
+      attr.addStringValues(attrValue);
     }
     return attr;
   }
@@ -222,7 +222,7 @@ public class LdifReader implements SearchResultReader
         throw new IllegalArgumentException("Invalid LDAP reference data: " + line);
       }
       if (parts[1].startsWith(" ")) {
-        ref.addUri(parts[1].substring(1));
+        ref.addUris(parts[1].substring(1));
       } else if (parts[1].length() > 0) {
         throw new IllegalArgumentException("Invalid LDAP reference data: " + line);
       }

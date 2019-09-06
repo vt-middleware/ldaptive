@@ -63,7 +63,7 @@ public class SearchResultIgnoreCaseComparator implements Comparator<SearchRespon
   {
     final SearchResponse lowerCase = new SearchResponse();
     for (LdapEntry le : lr.getEntries()) {
-      lowerCase.addEntry(LdapEntryIgnoreCaseComparator.lowerCaseEntry(le, names));
+      lowerCase.addEntries(LdapEntryIgnoreCaseComparator.lowerCaseEntry(le, names));
     }
     return lowerCase;
   }

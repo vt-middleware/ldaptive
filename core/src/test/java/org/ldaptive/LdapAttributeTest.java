@@ -33,12 +33,12 @@ public class LdapAttributeTest
     AssertJUnit.assertEquals(1, la.size());
     AssertJUnit.assertEquals(la, new LdapAttribute("givenName", "William"));
     try {
-      la.addStringValue((String[]) null);
+      la.addStringValues((String[]) null);
       AssertJUnit.fail("Should have thrown NullPointerException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(NullPointerException.class, e.getClass());
     }
-    la.addStringValue((String) null);
+    la.addStringValues((String) null);
     AssertJUnit.assertEquals(1, la.size());
     la.clear();
     AssertJUnit.assertEquals(0, la.size());
@@ -58,7 +58,7 @@ public class LdapAttributeTest
   }
 
 
-  /** Tests for {@link LdapAttribute#addStringValue(String...)}. */
+  /** Tests for {@link LdapAttribute#addStringValues(String...)}. */
   @Test
   public void addStringValue()
   {
@@ -69,13 +69,13 @@ public class LdapAttributeTest
     AssertJUnit.assertEquals(1, la.getBinaryValues().size());
     AssertJUnit.assertEquals(la, new LdapAttribute("cn", "William Wallace"));
     try {
-      la.addStringValue((String[]) null);
+      la.addStringValues((String[]) null);
       AssertJUnit.fail("Should have thrown NullPointerException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(NullPointerException.class, e.getClass());
     }
-    la.addStringValue((String) null);
-    la.addBinaryValue("Bill".getBytes(StandardCharsets.UTF_8));
+    la.addStringValues((String) null);
+    la.addBinaryValues("Bill".getBytes(StandardCharsets.UTF_8));
     AssertJUnit.assertEquals(2, la.getBinaryValues().size());
     AssertJUnit.assertEquals(2, la.getStringValues().size());
     AssertJUnit.assertTrue(la.getStringValues().contains("Bill"));
@@ -91,7 +91,7 @@ public class LdapAttributeTest
   }
 
 
-  /** Tests for {@link LdapAttribute#addBinaryValue(byte[]...)}. */
+  /** Tests for {@link LdapAttribute#addBinaryValues(byte[]...)}. */
   @Test
   public void addBinaryValue()
   {
@@ -102,13 +102,13 @@ public class LdapAttributeTest
     AssertJUnit.assertEquals(1, la.getStringValues().size());
     AssertJUnit.assertEquals(la, new LdapAttribute("jpegPhoto", "image".getBytes()));
     try {
-      la.addBinaryValue((byte[][]) null);
+      la.addBinaryValues((byte[][]) null);
       AssertJUnit.fail("Should have thrown NullPointerException");
     } catch (Exception e) {
       AssertJUnit.assertEquals(NullPointerException.class, e.getClass());
     }
-    la.addBinaryValue((byte[]) null);
-    la.addStringValue("QmlsbA==");
+    la.addBinaryValues((byte[]) null);
+    la.addStringValues("QmlsbA==");
     AssertJUnit.assertEquals(2, la.getBinaryValues().size());
     AssertJUnit.assertEquals(2, la.getStringValues().size());
     AssertJUnit.assertTrue(la.getStringValues().contains("aW1hZ2U="));

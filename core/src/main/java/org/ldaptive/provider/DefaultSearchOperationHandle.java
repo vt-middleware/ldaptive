@@ -217,7 +217,7 @@ public class DefaultSearchOperationHandle
       consumedMessage();
     }
     if (e != null) {
-      result.addEntry(e);
+      result.addEntries(e);
     }
   }
 
@@ -239,7 +239,7 @@ public class DefaultSearchOperationHandle
       }
       consumedMessage();
     }
-    result.addReference(r);
+    result.addReferences(r);
   }
 
 

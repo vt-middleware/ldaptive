@@ -179,32 +179,32 @@ public class BinaryCustomObject implements CustomObject
     final LdapAttribute typeCol1 = new LdapAttribute();
     typeCol1.setBinary(true);
     typeCol1.setName("typeCol1");
-    typeCol1.addBinaryValue(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
+    typeCol1.addBinaryValues(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
 
     final LdapAttribute typeCol2 = new LdapAttribute();
     typeCol2.setBinary(true);
     typeCol2.setName("typeCol2");
-    typeCol2.addBinaryValue(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
+    typeCol2.addBinaryValues(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
 
     final LdapAttribute typeSet1 = new LdapAttribute();
     typeSet1.setBinary(true);
     typeSet1.setName("typeSet1");
-    typeSet1.addBinaryValue(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
+    typeSet1.addBinaryValues(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
 
     final LdapAttribute typeSet2 = new LdapAttribute();
     typeSet2.setBinary(true);
     typeSet2.setName("typeSet2");
-    typeSet2.addBinaryValue(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
+    typeSet2.addBinaryValues(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
 
     final LdapAttribute typeList1 = new LdapAttribute();
     typeList1.setBinary(true);
     typeList1.setName("typeList1");
-    typeList1.addBinaryValue(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
+    typeList1.addBinaryValues(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
 
     final LdapAttribute typeList2 = new LdapAttribute();
     typeList2.setBinary(true);
     typeList2.setName("typeList2");
-    typeList2.addBinaryValue(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
+    typeList2.addBinaryValues(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=Binary Entry,ou=people,dc=ldaptive,dc=org");

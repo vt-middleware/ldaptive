@@ -70,9 +70,9 @@ public class AggregateAuthenticationResponseHandler implements AuthenticationRes
    * @param  label  of the resolver
    * @param  handlers  authentication response handler
    */
-  public void addAuthenticationResponseHandler(final String label, final AuthenticationResponseHandler... handlers)
+  public void addAuthenticationResponseHandlers(final String label, final AuthenticationResponseHandler... handlers)
   {
-    logger.trace("adding authenticationResponseHandler: {}:{}", label, Arrays.toString(handlers));
+    logger.trace("adding authenticationResponseHandlers: {}:{}", label, Arrays.toString(handlers));
     responseHandlers.put(label, handlers);
   }
 
@@ -117,7 +117,7 @@ public class AggregateAuthenticationResponseHandler implements AuthenticationRes
 
     public Builder handler(final String label, final AuthenticationResponseHandler... handlers)
     {
-      object.addAuthenticationResponseHandler(label, handlers);
+      object.addAuthenticationResponseHandlers(label, handlers);
       return this;
     }
 

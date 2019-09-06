@@ -181,35 +181,35 @@ public class IntegerCustomObject implements CustomObject
   {
     final LdapAttribute typeArray1 = new LdapAttribute();
     typeArray1.setName("typeArray1");
-    typeArray1.addStringValue("301", "302");
+    typeArray1.addStringValues("301", "302");
 
     final LdapAttribute typeArray2 = new LdapAttribute();
     typeArray2.setName("typeArray2");
-    typeArray2.addStringValue("301", "302");
+    typeArray2.addStringValues("301", "302");
 
     final LdapAttribute typeCol1 = new LdapAttribute();
     typeCol1.setName("typeCol1");
-    typeCol1.addStringValue("501", "502");
+    typeCol1.addStringValues("501", "502");
 
     final LdapAttribute typeCol2 = new LdapAttribute();
     typeCol2.setName("typeCol2");
-    typeCol2.addStringValue("501", "502");
+    typeCol2.addStringValues("501", "502");
 
     final LdapAttribute typeSet1 = new LdapAttribute();
     typeSet1.setName("typeSet1");
-    typeSet1.addStringValue("601", "602");
+    typeSet1.addStringValues("601", "602");
 
     final LdapAttribute typeSet2 = new LdapAttribute();
     typeSet2.setName("typeSet2");
-    typeSet2.addStringValue("601", "602");
+    typeSet2.addStringValues("601", "602");
 
     final LdapAttribute typeList1 = new LdapAttribute();
     typeList1.setName("typeList1");
-    typeList1.addStringValue("701", "702");
+    typeList1.addStringValues("701", "702");
 
     final LdapAttribute typeList2 = new LdapAttribute();
     typeList2.setName("typeList2");
-    typeList2.addStringValue("701", "702");
+    typeList2.addStringValues("701", "702");
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=Integer Entry,ou=people,dc=ldaptive,dc=org");

@@ -92,7 +92,7 @@ public class LdapAttribute
   public LdapAttribute(final String type, final byte[]... value)
   {
     setName(type);
-    addBinaryValue(value);
+    addBinaryValues(value);
   }
 
 
@@ -105,7 +105,7 @@ public class LdapAttribute
   public LdapAttribute(final String type, final String... value)
   {
     setName(type);
-    addStringValue(value);
+    addStringValues(value);
   }
 
 
@@ -290,7 +290,7 @@ public class LdapAttribute
    *
    * @param  value  to add, null values are discarded
    */
-  public void addBinaryValue(final byte[]... value)
+  public void addBinaryValues(final byte[]... value)
   {
     Stream.of(value).filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::add);
   }
@@ -303,10 +303,7 @@ public class LdapAttribute
    */
   public void addBinaryValues(final Collection<byte[]> values)
   {
-    values.stream()
-      .filter(Objects::nonNull)
-      .map(ByteBuffer::wrap)
-      .forEach(attributeValues::add);
+    values.stream().filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::add);
   }
 
 
@@ -315,7 +312,7 @@ public class LdapAttribute
    *
    * @param  value  to add, null values are discarded
    */
-  public void addStringValue(final String... value)
+  public void addStringValues(final String... value)
   {
     Stream.of(value)
       .filter(Objects::nonNull)
@@ -367,9 +364,7 @@ public class LdapAttribute
    */
   public void addBufferValues(final ByteBuffer... values)
   {
-    Stream.of(values)
-      .filter(Objects::nonNull)
-      .forEach(attributeValues::add);
+    Stream.of(values).filter(Objects::nonNull).forEach(attributeValues::add);
   }
 
 
@@ -380,9 +375,7 @@ public class LdapAttribute
    */
   public void addBufferValues(final Collection<ByteBuffer> values)
   {
-    values.stream()
-      .filter(Objects::nonNull)
-      .forEach(attributeValues::add);
+    values.stream().filter(Objects::nonNull).forEach(attributeValues::add);
   }
 
 
@@ -394,7 +387,7 @@ public class LdapAttribute
    * @param  value  to encode and add, null values are discarded
    */
   @SuppressWarnings("unchecked")
-  public <T> void addValue(final Function<T, byte[]> func, final T... value)
+  public <T> void addValues(final Function<T, byte[]> func, final T... value)
   {
     Stream.of(value)
       .filter(Objects::nonNull)
@@ -407,7 +400,7 @@ public class LdapAttribute
 
   /**
    * Adds all the values in the supplied collection for this attribute by encoding them with the supplied function.
-   * See {@link #addValue(Function, Object...)}.
+   * See {@link #addValues(Function, Object...)}.
    *
    * @param  <T>  type attribute to encode
    * @param  func  to encode value with
@@ -421,6 +414,100 @@ public class LdapAttribute
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
       .forEach(attributeValues::add);
+  }
+
+
+  /**
+   * Removes the supplied byte array as a value from this attribute.
+   *
+   * @param  value  to remove, null values are discarded
+   */
+  public void removeBinaryValues(final byte[]... value)
+  {
+    Stream.of(value).filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Removes all the byte arrays in the supplied collection as values from this attribute.
+   *
+   * @param  values  to remove, null values are discarded
+   */
+  public void removeBinaryValues(final Collection<byte[]> values)
+  {
+    values.stream().filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::add);
+  }
+
+
+  /**
+   * Removes the supplied string as a value from this attribute.
+   *
+   * @param  value  to remove, null values are discarded
+   */
+  public void removeStringValues(final String... value)
+  {
+    Stream.of(value)
+      .filter(Objects::nonNull)
+      .map(v -> {
+        if (binary) {
+          try {
+            return LdapUtils.base64Decode(v);
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
+          }
+        }
+        return v.getBytes(StandardCharsets.UTF_8);
+      })
+      .filter(Objects::nonNull)
+      .map(ByteBuffer::wrap)
+      .forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Removes all the strings in the supplied collection as values from this attribute.
+   *
+   * @param  values  to remove, null values are discarded
+   */
+  public void removeStringValues(final Collection<String> values)
+  {
+    values.stream()
+      .filter(Objects::nonNull)
+      .map(v -> {
+        if (binary) {
+          try {
+            return LdapUtils.base64Decode(v);
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
+          }
+        }
+        return v.getBytes(StandardCharsets.UTF_8);
+      })
+      .filter(Objects::nonNull)
+      .map(ByteBuffer::wrap)
+      .forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Removes all the buffers in the supplied collection as values from this attribute.
+   *
+   * @param  values  to remove, null values are discarded
+   */
+  public void removeBufferValues(final ByteBuffer... values)
+  {
+    Stream.of(values).filter(Objects::nonNull).forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Removes all the buffers in the supplied collection as values from this attribute.
+   *
+   * @param  values  to remove, null values are discarded
+   */
+  public void removeBufferValues(final Collection<ByteBuffer> values)
+  {
+    values.stream().filter(Objects::nonNull).forEach(attributeValues::remove);
   }
 
 
@@ -596,14 +683,14 @@ public class LdapAttribute
     @SuppressWarnings("unchecked")
     public <T> Builder values(final Function<T, byte[]> func, final T... value)
     {
-      object.addValue(func, value);
+      object.addValues(func, value);
       return this;
     }
 
 
     public Builder values(final byte[]... values)
     {
-      object.addBinaryValue(values);
+      object.addBinaryValues(values);
       return this;
     }
 
@@ -617,7 +704,7 @@ public class LdapAttribute
 
     public Builder values(final String... values)
     {
-      object.addStringValue(values);
+      object.addStringValues(values);
       return this;
     }
 

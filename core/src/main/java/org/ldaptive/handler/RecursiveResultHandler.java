@@ -220,9 +220,9 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
               entry.addAttributes(newAttr);
             } else {
               if (newAttr.isBinary()) {
-                newAttr.getBinaryValues().forEach(oldAttr::addBinaryValue);
+                newAttr.getBinaryValues().forEach(oldAttr::addBinaryValues);
               } else {
-                newAttr.getStringValues().forEach(oldAttr::addStringValue);
+                newAttr.getStringValues().forEach(oldAttr::addStringValues);
               }
             }
           }

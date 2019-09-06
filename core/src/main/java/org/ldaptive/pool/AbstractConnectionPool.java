@@ -72,9 +72,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
   /** Whether {@link #initialize()} has been successfully invoked. */
   private boolean initialized;
 
-  /**
-   * Whether {@link #initialize()} should throw if pooling configuration requirements are not met.
-   */
+  /** Whether {@link #initialize()} should throw if pooling configuration requirements are not met. */
   private boolean failFastInitialize = true;
 
 
