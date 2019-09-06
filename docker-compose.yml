@@ -26,7 +26,9 @@ services:
     image: dhawes/ldap-test-openldap:latest
     ports:
       - "389:389"
+      - "10389:10389"
       - "636:636"
+      - "10636:10636"
       - "88:88"
     networks:
       ldap_net:
