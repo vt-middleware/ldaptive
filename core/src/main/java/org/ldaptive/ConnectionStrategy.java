@@ -20,8 +20,9 @@ public interface ConnectionStrategy
    * Prepare this strategy for use.
    *
    * @param  urls  LDAP URLs for this strategy
+   * @param  activateCondition  predicate to determine whether a connection is active
    */
-  void initialize(String urls);
+  void initialize(String urls, Predicate<LdapURL> activateCondition);
 
 
   /**
@@ -45,7 +46,7 @@ public interface ConnectionStrategy
    *
    * @return  inactive condition
    */
-  Predicate<RetryMetadata> getInactiveCondition();
+  Predicate<RetryMetadata> getRetryCondition();
 
 
   /**

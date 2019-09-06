@@ -61,7 +61,7 @@ public class ActivePassiveConnectionStrategyTest
   public void apply(final String actual, final LdapURL[] expected)
   {
     final ActivePassiveConnectionStrategy strategy = new ActivePassiveConnectionStrategy();
-    strategy.initialize(actual);
+    strategy.initialize(actual, ldapURL -> true);
     Assert.assertEquals(strategy.apply(), Arrays.asList(expected));
     Assert.assertEquals(strategy.apply(), Arrays.asList(expected));
     Assert.assertEquals(strategy.apply(), Arrays.asList(expected));

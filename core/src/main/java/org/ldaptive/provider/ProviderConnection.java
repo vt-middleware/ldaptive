@@ -1,22 +1,14 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionStrategy;
-import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
-import org.ldaptive.RetryMetadata;
 import org.ldaptive.UnbindRequest;
-import org.ldaptive.control.RequestControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,9 +31,6 @@ public abstract class ProviderConnection implements Connection
   /** Connection strategy for this connection. Default value is {@link ActivePassiveConnectionStrategy}. */
   private final ConnectionStrategy connectionStrategy;
 
-  /** Executor for scheduling tasks. */
-  private final ScheduledExecutorService executor;
-
 
   /**
    * Creates a new provider connection.
@@ -51,49 +40,11 @@ public abstract class ProviderConnection implements Connection
   public ProviderConnection(final ConnectionConfig config)
   {
     connectionConfig = config;
-    if (connectionConfig.getConnectionStrategy() == null) {
-      if (connectionConfig.getLdapUrl().startsWith("dns:")) {
-        connectionStrategy = new DnsSrvConnectionStrategy();
-      } else {
-        connectionStrategy = new ActivePassiveConnectionStrategy();
-      }
-    } else {
-      connectionStrategy = connectionConfig.getConnectionStrategy();
-    }
+    connectionStrategy = connectionConfig.getConnectionStrategy();
     synchronized (connectionStrategy) {
       if (!connectionStrategy.isInitialized()) {
-        connectionStrategy.initialize(connectionConfig.getLdapUrl());
+        connectionStrategy.initialize(connectionConfig.getLdapUrl(), url -> test(url));
       }
-    }
-
-    if (connectionStrategy.active().size() > 1 || connectionStrategy instanceof DnsSrvConnectionStrategy) {
-      executor = Executors.newSingleThreadScheduledExecutor(
-        r -> {
-          final Thread t = new Thread(r);
-          t.setDaemon(true);
-          return t;
-        });
-      executor.scheduleAtFixedRate(
-        () -> {
-          for (Map.Entry<RetryMetadata, Map.Entry<Integer, LdapURL>> entry : connectionStrategy.inactive().entrySet()) {
-            // ensure inactive URL waits at least the inactive period before testing
-            if (Instant.now().isAfter(entry.getKey().getFailureTime().plus(connectionStrategy.getInactivePeriod()))) {
-              if (connectionStrategy.getInactiveCondition().test(entry.getKey())) {
-                if (test(entry.getValue().getValue())) {
-                  connectionStrategy.success(entry.getValue().getValue());
-                } else {
-                  entry.getKey().incrementAttempts();
-                }
-              }
-            }
-          }
-        },
-        connectionStrategy.getInactivePeriod().toMillis(),
-        connectionStrategy.getInactivePeriod().toMillis(),
-        TimeUnit.MILLISECONDS);
-      LOGGER.debug("inactive connection strategy task scheduled for {}", this);
-    } else {
-      executor = null;
     }
   }
 
@@ -129,15 +80,6 @@ public abstract class ProviderConnection implements Connection
     }
     if (lastThrown != null) {
       throw lastThrown;
-    }
-  }
-
-
-  @Override
-  public synchronized void close(final RequestControl... controls)
-  {
-    if (executor != null) {
-      executor.shutdown();
     }
   }
 

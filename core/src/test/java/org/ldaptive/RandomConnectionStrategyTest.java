@@ -63,7 +63,7 @@ public class RandomConnectionStrategyTest
   public void apply(final String actual, final LdapURL[] expected)
   {
     final RandomConnectionStrategy strategy = new RandomConnectionStrategy();
-    strategy.initialize(actual);
+    strategy.initialize(actual, ldapURL -> true);
     Assert.assertEquals(
       new HashSet<>(strategy.apply()), Stream.of(expected).collect(Collectors.toSet()));
     Assert.assertEquals(

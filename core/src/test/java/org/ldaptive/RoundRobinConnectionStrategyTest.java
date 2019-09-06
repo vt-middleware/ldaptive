@@ -101,7 +101,7 @@ public class RoundRobinConnectionStrategyTest
   public void apply(final String actual, final LdapURL[] expected, final int count)
   {
     final RoundRobinConnectionStrategy strategy = new RoundRobinConnectionStrategy();
-    strategy.initialize(actual);
+    strategy.initialize(actual, ldapURL -> true);
     for (int i = 0; i < count; i++) {
       strategy.apply();
     }

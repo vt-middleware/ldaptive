@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 import org.ldaptive.dns.DNSContextFactory;
 import org.ldaptive.dns.DefaultDNSContextFactory;
 import org.ldaptive.dns.SRVDNSResolver;
@@ -105,7 +106,7 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
 
 
   @Override
-  public synchronized void initialize(final String urls)
+  public synchronized void initialize(final String urls, final Predicate<LdapURL> condition)
   {
     ldapUrls = urls;
     readSrvRecords(ldapUrls);
@@ -113,6 +114,7 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
       ldapURLSet.clear();
       ldapURLSet.add(srvRecords.stream().map(SRVRecord::getLdapURL).toArray(LdapURL[]::new));
     }
+    activateCondition = condition;
     initialized = true;
   }
 
@@ -187,7 +189,7 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
       throw new IllegalStateException("Strategy is not initialized");
     }
     if (Instant.now().isAfter(expirationTime)) {
-      initialize(ldapUrls);
+      initialize(ldapUrls, activateCondition);
       logger.debug("Retrieved SRV records from DNS: {}", srvRecords);
     } else {
       logger.debug("Using SRV records from internal cache: {}", srvRecords);

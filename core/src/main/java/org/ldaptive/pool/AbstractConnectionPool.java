@@ -786,7 +786,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
                 }
               }
             } finally {
-              es.shutdownNow();
+              es.shutdown();
             }
           }
           for (PooledConnectionProxy pc : remove) {
