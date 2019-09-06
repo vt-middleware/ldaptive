@@ -1,7 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
-
-import org.ldaptive.LdapException;
+package org.ldaptive;
 
 /**
  * Exception that indicates a connection attempt failed.
