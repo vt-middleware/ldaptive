@@ -10,7 +10,7 @@ import org.ldaptive.DefaultConnectionFactory;
 /**
  * Implements a pool of connections that has a set minimum and maximum size. The pool will not grow beyond the maximum
  * size and when the pool is exhausted, requests for new connections will block. The length of time the pool will block
- * is determined by {@link #getBlockWaitTime()}. By default the pool will block indefinitely and there is no guarantee
+ * is determined by {@link #getBlockWaitTime()}. By default the pool will block for 1 minute and there is no guarantee
  * that waiting threads will be serviced in the order in which they made their request. This implementation should be
  * used when you need to control the <em>exact</em> number of connections that can be created. See {@link
  * AbstractConnectionPool}.
@@ -21,7 +21,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
 {
 
   /** Duration to wait for an available connection. */
-  private Duration blockWaitTime;
+  private Duration blockWaitTime = Duration.ofMinutes(1);
 
 
   /** Creates a new blocking pool. */
@@ -53,7 +53,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
 
 
   /**
-   * Returns the block wait time. Default time is null, which will wait indefinitely.
+   * Returns the block wait time. Default time is 1 minute.
    *
    * @return  time to wait for available connections
    */
@@ -64,14 +64,14 @@ public class BlockingConnectionPool extends AbstractConnectionPool
 
 
   /**
-   * Sets the block wait time. Default time is null, which will wait indefinitely.
+   * Sets the block wait time. Default time is 1 minute.
    *
    * @param  time  to wait for available connections
    */
   public void setBlockWaitTime(final Duration time)
   {
-    if (time != null && time.isNegative()) {
-      throw new IllegalArgumentException("Block wait time cannot be negative");
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Block wait time cannot be null or negative");
     }
     blockWaitTime = time;
   }
