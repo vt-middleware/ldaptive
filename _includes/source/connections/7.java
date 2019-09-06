@@ -7,7 +7,7 @@ ConnectionConfig.builder()
   .autoReconnectCondition(metadata -> {
     if (metadata.getAttempts() <= 5) {
       try {
-        final Duration sleepTime = Duration.ofSeconds(1).multipliedBy(attempt);
+        final Duration sleepTime = Duration.ofSeconds(1).multipliedBy(metadata.getAttempts());
         Thread.sleep(sleepTime.toMillis());
       } catch (InterruptedException ie) {}
         return true;
