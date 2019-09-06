@@ -1402,6 +1402,55 @@ public class SearchOperationTest extends AbstractTest
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     AssertJUnit.assertTrue(response.getEntries().size() > 0);
     AssertJUnit.assertTrue(response.getReferralURLs().length == 0);
+
+    // chase referrals
+
+    // default limit
+    final String chaseReferralDn = "cn=0,ou=referrals-chase," + DnParser.substring(dn, 1);
+    request.setBaseDn(chaseReferralDn);
+    request.setSearchScope(SearchScope.SUBTREE);
+    request.setFilter(new SearchFilter("uupid=dhawes"));
+    search.setSearchResultHandlers(new FollowSearchReferralHandler());
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() > 0);
+
+    // limit 0
+    search.setSearchResultHandlers(new FollowSearchReferralHandler(0));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+    AssertJUnit.assertEquals("ldap://ldap-test:10389/cn=1,ou=1,ou=referrals-chase,dc=vt,dc=edu??sub",
+      response.getReferralURLs()[0]);
+
+    // limit 1
+    search.setSearchResultHandlers(new FollowSearchReferralHandler(1));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+    AssertJUnit.assertEquals("ldap://ldap-test:10389/cn=2,ou=2,ou=referrals-chase,dc=vt,dc=edu??sub",
+      response.getReferralURLs()[0]);
+
+    // limit 2
+    search.setSearchResultHandlers(new FollowSearchReferralHandler(2));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+    AssertJUnit.assertEquals("ldap://ldap-test:10389/cn=3,ou=3,ou=referrals-chase,dc=vt,dc=edu??sub",
+      response.getReferralURLs()[0]);
+
+    // limit 3
+    search.setSearchResultHandlers(new FollowSearchReferralHandler(3));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+    AssertJUnit.assertEquals("ldap://ldap-test:10389/ou=people,dc=vt,dc=edu??sub", response.getReferralURLs()[0]);
+
+    // limit 4
+    search.setSearchResultHandlers(new FollowSearchReferralHandler(4));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() > 0);
   }
 
 
@@ -1463,6 +1512,52 @@ public class SearchOperationTest extends AbstractTest
     AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
     AssertJUnit.assertTrue(response.entrySize() > 0);
     AssertJUnit.assertTrue(response.referenceSize() == 0);
+
+    // chase search references
+
+    // default limit
+    final String referenceDn = "ou=references-chase," + DnParser.substring(dn, 1);
+    request.setBaseDn(referenceDn);
+    request.setSearchScope(SearchScope.ONELEVEL);
+    request.setFilter(new SearchFilter("uupid=dhawes"));
+    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler());
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() > 0);
+
+    // limit 0
+    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(0));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+    AssertJUnit.assertFalse(response.getReferences().isEmpty());
+    for (SearchResultReference s : response.getReferences()) {
+      AssertJUnit.assertEquals("ldap://ldap-test:10389/ou=1,ou=references-chase,dc=vt,dc=edu??sub", s.getUris()[0]);
+    }
+
+    // limit 1
+    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(1));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+
+    // limit 2
+    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(2));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+
+    // limit 3
+    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(3));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+
+    // limit 4
+    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(4));
+    response = search.execute(request);
+    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    AssertJUnit.assertTrue(response.getEntries().size() > 0);
   }
 
 
