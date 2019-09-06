@@ -126,7 +126,7 @@ public class SearchResponseTest
     final LdapEntry entry1 = LdapEntry.builder()
       .dn("uid=1").build();
     final SearchResponse sr = new SearchResponse();
-    sr.addEntry(entry1);
+    sr.addEntries(entry1);
     AssertJUnit.assertEquals(entry1, sr.getEntry());
     AssertJUnit.assertEquals(entry1, sr.getEntry("uid=1"));
     AssertJUnit.assertEquals(entry1, sr.getEntry("UID=1"));
@@ -148,7 +148,7 @@ public class SearchResponseTest
     final LdapEntry entry2 = LdapEntry.builder()
       .dn("uid=2").build();
     final SearchResponse sr = new SearchResponse();
-    sr.addEntry(entry1, entry2);
+    sr.addEntries(entry1, entry2);
     AssertJUnit.assertEquals(entry1, sr.getEntry("uid=1"));
     AssertJUnit.assertEquals(entry1, sr.getEntry("UID=1"));
     AssertJUnit.assertEquals(entry2, sr.getEntry("UID=2"));
@@ -170,7 +170,7 @@ public class SearchResponseTest
     final LdapEntry entry2 = LdapEntry.builder()
       .dn("uid=2").build();
     final SearchResponse sr = new SearchResponse();
-    sr.addEntry(entry2, entry1);
+    sr.addEntries(entry2, entry1);
 
     final LdapEntry[] entries = sr.getEntries().toArray(LdapEntry[]::new);
     AssertJUnit.assertEquals(entry2, entries[0]);
@@ -189,7 +189,7 @@ public class SearchResponseTest
     final LdapEntry entry2 = LdapEntry.builder()
       .dn("uid=2").build();
     final SearchResponse sr = new SearchResponse();
-    sr.addEntry(entry2, entry1);
+    sr.addEntries(entry2, entry1);
     AssertJUnit.assertEquals(0, sr.subResult(2, 2).entrySize());
     AssertJUnit.assertEquals(1, sr.subResult(1, 2).entrySize());
     AssertJUnit.assertEquals(2, sr.subResult(0, 2).entrySize());

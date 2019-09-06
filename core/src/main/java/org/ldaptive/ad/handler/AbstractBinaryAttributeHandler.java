@@ -56,7 +56,7 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractEntryHan
           final LdapAttribute newAttr = new LdapAttribute();
           newAttr.setName(la.getName());
           for (byte[] b : la.getBinaryValues()) {
-            newAttr.addStringValue(convertValue(b));
+            newAttr.addStringValues(convertValue(b));
           }
           entry.addAttributes(newAttr);
           logger.debug("Processed attribute {}", newAttr);

@@ -37,7 +37,7 @@ public class UnicodePwdAttribute extends LdapAttribute
   public UnicodePwdAttribute(final String... values)
   {
     this();
-    addStringValue(values);
+    addStringValues(values);
   }
 
 
@@ -49,8 +49,8 @@ public class UnicodePwdAttribute extends LdapAttribute
 
 
   @Override
-  public void addStringValue(final String... value)
+  public void addStringValues(final String... value)
   {
-    addValue(TRANSCODER.encoder(), value);
+    addValues(TRANSCODER.encoder(), value);
   }
 }

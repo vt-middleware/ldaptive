@@ -129,7 +129,7 @@ public class SearchResponse extends AbstractResult
    *
    * @param  entry  entry to add
    */
-  public void addEntry(final LdapEntry... entry)
+  public void addEntries(final LdapEntry... entry)
   {
     Stream.of(entry).forEach(e -> resultEntries.put(e.getDn().toLowerCase(), e));
   }
@@ -188,7 +188,7 @@ public class SearchResponse extends AbstractResult
    *
    * @param  reference  reference to add
    */
-  public void addReference(final SearchResultReference... reference)
+  public void addReferences(final SearchResultReference... reference)
   {
     Collections.addAll(resultReferences, reference);
   }
@@ -241,7 +241,7 @@ public class SearchResponse extends AbstractResult
     int i = 0;
     for (Map.Entry<String, LdapEntry> e : resultEntries.entrySet()) {
       if (i >= fromIndex && i < toIndex) {
-        result.addEntry(e.getValue());
+        result.addEntries(e.getValue());
       }
       i++;
     }
@@ -386,14 +386,14 @@ public class SearchResponse extends AbstractResult
 
     public Builder entry(final LdapEntry... e)
     {
-      object.addEntry(e);
+      object.addEntries(e);
       return this;
     }
 
 
     public Builder reference(final SearchResultReference... r)
     {
-      object.addReference(r);
+      object.addReferences(r);
       return this;
     }
   }

@@ -83,7 +83,7 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> imp
     if (entry.getAttribute(dnAttributeName) == null) {
       entry.addAttributes(new LdapAttribute(dnAttributeName, entry.getDn()));
     } else if (addIfExists) {
-      entry.getAttribute(dnAttributeName).addStringValue(entry.getDn());
+      entry.getAttribute(dnAttributeName).addStringValues(entry.getDn());
     }
   }
 

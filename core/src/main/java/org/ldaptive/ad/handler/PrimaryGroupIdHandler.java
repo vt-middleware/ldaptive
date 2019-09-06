@@ -129,7 +129,7 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
             memberOf = new LdapAttribute("memberOf");
             entry.addAttributes(memberOf);
           }
-          memberOf.addStringValue(result.getEntry().getDn());
+          memberOf.addStringValues(result.getEntry().getDn());
         }
       } catch (LdapException e) {
         logger.warn("Error retrieving group ID: {}", groupSid, e);

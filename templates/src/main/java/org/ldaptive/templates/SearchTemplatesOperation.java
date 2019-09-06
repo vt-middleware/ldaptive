@@ -157,7 +157,7 @@ public class SearchTemplatesOperation
     final SearchResponse result = new SearchResponse();
     for (SearchResponse res : responses) {
       for (LdapEntry e : res.getEntries()) {
-        result.addEntry(e);
+        result.addEntries(e);
         logger.debug("Search found: {}", e.getDn());
       }
     }

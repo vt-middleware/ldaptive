@@ -83,21 +83,21 @@ public class JsonReader implements SearchResultReader
         for (Map.Entry<String, JsonElement> jsonAttr : jsonEntry.getAsJsonObject().entrySet()) {
           if ("ref".equals(jsonAttr.getKey())) {
             final SearchResultReference ref = new SearchResultReference();
-            jsonAttr.getValue().getAsJsonArray().forEach(i -> ref.addUri(i.getAsString()));
-            result.addReference(ref);
-            result.addReference(ref);
+            jsonAttr.getValue().getAsJsonArray().forEach(i -> ref.addUris(i.getAsString()));
+            result.addReferences(ref);
+            result.addReferences(ref);
           } else if ("dn".equals(jsonAttr.getKey())) {
             entry = new LdapEntry();
             entry.setDn(jsonAttr.getValue().getAsString());
           } else {
             final LdapAttribute attr = new LdapAttribute();
             attr.setName(jsonAttr.getKey());
-            jsonAttr.getValue().getAsJsonArray().forEach(i -> attr.addStringValue(i.getAsString()));
+            jsonAttr.getValue().getAsJsonArray().forEach(i -> attr.addStringValues(i.getAsString()));
             entry.addAttributes(attr);
           }
         }
         if (entry != null) {
-          result.addEntry(entry);
+          result.addEntries(entry);
         }
       }
       return result;

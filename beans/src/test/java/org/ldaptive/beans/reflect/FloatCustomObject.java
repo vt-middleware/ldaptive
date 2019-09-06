@@ -180,35 +180,35 @@ public class FloatCustomObject implements CustomObject
   {
     final LdapAttribute typeArray1 = new LdapAttribute();
     typeArray1.setName("typeArray1");
-    typeArray1.addStringValue("301.1", "302.2");
+    typeArray1.addStringValues("301.1", "302.2");
 
     final LdapAttribute typeArray2 = new LdapAttribute();
     typeArray2.setName("typeArray2");
-    typeArray2.addStringValue("301.1", "302.2");
+    typeArray2.addStringValues("301.1", "302.2");
 
     final LdapAttribute typeCol1 = new LdapAttribute();
     typeCol1.setName("typeCol1");
-    typeCol1.addStringValue("501.5", "502.5");
+    typeCol1.addStringValues("501.5", "502.5");
 
     final LdapAttribute typeCol2 = new LdapAttribute();
     typeCol2.setName("typeCol2");
-    typeCol2.addStringValue("501.5", "502.5");
+    typeCol2.addStringValues("501.5", "502.5");
 
     final LdapAttribute typeSet1 = new LdapAttribute();
     typeSet1.setName("typeSet1");
-    typeSet1.addStringValue("601.6", "602.6");
+    typeSet1.addStringValues("601.6", "602.6");
 
     final LdapAttribute typeSet2 = new LdapAttribute();
     typeSet2.setName("typeSet2");
-    typeSet2.addStringValue("601.6", "602.6");
+    typeSet2.addStringValues("601.6", "602.6");
 
     final LdapAttribute typeList1 = new LdapAttribute();
     typeList1.setName("typeList1");
-    typeList1.addStringValue("701.7", "702.7");
+    typeList1.addStringValues("701.7", "702.7");
 
     final LdapAttribute typeList2 = new LdapAttribute();
     typeList2.setName("typeList2");
-    typeList2.addStringValue("701.7", "702.7");
+    typeList2.addStringValues("701.7", "702.7");
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=Float Entry,ou=people,dc=ldaptive,dc=org");

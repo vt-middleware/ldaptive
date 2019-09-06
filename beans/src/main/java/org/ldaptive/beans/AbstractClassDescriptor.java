@@ -151,10 +151,10 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
       la.setName(name);
       if (binary) {
         for (String value : values) {
-          la.addBinaryValue(LdapUtils.base64Decode(value));
+          la.addBinaryValues(LdapUtils.base64Decode(value));
         }
       } else {
-        la.addStringValue(values);
+        la.addStringValues(values);
       }
     }
 

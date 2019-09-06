@@ -167,35 +167,35 @@ public class BooleanCustomObject implements CustomObject
   {
     final LdapAttribute typeArray1 = new LdapAttribute();
     typeArray1.setName("typeArray1");
-    typeArray1.addStringValue("false", "true");
+    typeArray1.addStringValues("false", "true");
 
     final LdapAttribute typeArray2 = new LdapAttribute();
     typeArray2.setName("typeArray2");
-    typeArray2.addStringValue("false", "true");
+    typeArray2.addStringValues("false", "true");
 
     final LdapAttribute typeCol1 = new LdapAttribute();
     typeCol1.setName("typeCol1");
-    typeCol1.addStringValue("true", "false");
+    typeCol1.addStringValues("true", "false");
 
     final LdapAttribute typeCol2 = new LdapAttribute();
     typeCol2.setName("typeCol2");
-    typeCol2.addStringValue("false", "true");
+    typeCol2.addStringValues("false", "true");
 
     final LdapAttribute typeSet1 = new LdapAttribute();
     typeSet1.setName("typeSet1");
-    typeSet1.addStringValue("true", "false");
+    typeSet1.addStringValues("true", "false");
 
     final LdapAttribute typeSet2 = new LdapAttribute();
     typeSet2.setName("typeSet2");
-    typeSet2.addStringValue("true", "false");
+    typeSet2.addStringValues("true", "false");
 
     final LdapAttribute typeList1 = new LdapAttribute();
     typeList1.setName("typeList1");
-    typeList1.addStringValue("false", "true");
+    typeList1.addStringValues("false", "true");
 
     final LdapAttribute typeList2 = new LdapAttribute();
     typeList2.setName("typeList2");
-    typeList2.addStringValue("true", "false");
+    typeList2.addStringValues("true", "false");
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=Boolean Entry,ou=people,dc=ldaptive,dc=org");

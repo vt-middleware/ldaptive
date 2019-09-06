@@ -89,12 +89,12 @@ public class MergeOperationTest extends AbstractTest
 
       final LdapAttribute gn = new LdapAttribute("givenName");
       gn.addStringValues(testLdapEntry.getAttribute("givenName").getStringValues());
-      gn.addStringValue("John");
+      gn.addStringValues("John");
       source.addAttributes(gn);
 
       final LdapAttribute initials = new LdapAttribute("initials");
       initials.addStringValues(testLdapEntry.getAttribute("initials").getStringValues());
-      initials.addStringValue("JC");
+      initials.addStringValues("JC");
       source.addAttributes(initials);
       request.setExcludeAttributes("givenName", "initials");
     }

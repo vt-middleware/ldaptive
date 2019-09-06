@@ -65,7 +65,7 @@ public class SearchResultReference extends AbstractMessage
    *
    * @param  uri  to add
    */
-  public void addUri(final String... uri)
+  public void addUris(final String... uri)
   {
     for (String s : uri) {
       references.add(s);
@@ -154,7 +154,7 @@ public class SearchResultReference extends AbstractMessage
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().addUri(OctetStringType.decode(encoded));
+      getObject().addUris(OctetStringType.decode(encoded));
     }
   }
 
@@ -190,7 +190,7 @@ public class SearchResultReference extends AbstractMessage
 
     public Builder uris(final String... uri)
     {
-      object.addUri(uri);
+      object.addUris(uri);
       return this;
     }
   }

@@ -95,7 +95,7 @@ public class SortResultHandlerTest
   {
     final SortResultHandler handler = new SortResultHandler();
     final SearchResponse response = new SearchResponse();
-    response.addEntry(actual);
+    response.addEntries(actual);
     Assert.assertEquals(
       handler.apply(response).getEntries(),
       Stream.of(expected).collect(Collectors.toCollection(LinkedHashSet::new)));

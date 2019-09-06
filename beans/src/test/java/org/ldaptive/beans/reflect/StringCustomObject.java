@@ -191,43 +191,43 @@ public class StringCustomObject implements CustomObject
   {
     final LdapAttribute typeArray1 = new LdapAttribute();
     typeArray1.setName("typeArray1");
-    typeArray1.addStringValue("tav1", "tav2");
+    typeArray1.addStringValues("tav1", "tav2");
 
     final LdapAttribute typeArray2 = new LdapAttribute();
     typeArray2.setName("typeArray2");
-    typeArray2.addStringValue("tav1", "tav2");
+    typeArray2.addStringValues("tav1", "tav2");
 
     final LdapAttribute col1 = new LdapAttribute();
     col1.setName("col1");
-    col1.addStringValue("cv1", "cv2");
+    col1.addStringValues("cv1", "cv2");
 
     final LdapAttribute col2 = new LdapAttribute();
     col2.setName("col2");
-    col2.addStringValue("cv1", "cv2");
+    col2.addStringValues("cv1", "cv2");
 
     final LdapAttribute typeCol1 = new LdapAttribute();
     typeCol1.setName("typeCol1");
-    typeCol1.addStringValue("tcv1", "tcv2");
+    typeCol1.addStringValues("tcv1", "tcv2");
 
     final LdapAttribute typeCol2 = new LdapAttribute();
     typeCol2.setName("typeCol2");
-    typeCol2.addStringValue("tcv1", "tcv2");
+    typeCol2.addStringValues("tcv1", "tcv2");
 
     final LdapAttribute typeSet1 = new LdapAttribute();
     typeSet1.setName("typeSet1");
-    typeSet1.addStringValue("tsv1", "tsv2");
+    typeSet1.addStringValues("tsv1", "tsv2");
 
     final LdapAttribute typeSet2 = new LdapAttribute();
     typeSet2.setName("typeSet2");
-    typeSet2.addStringValue("tsv1", "tsv2");
+    typeSet2.addStringValues("tsv1", "tsv2");
 
     final LdapAttribute typeList1 = new LdapAttribute();
     typeList1.setName("typeList1");
-    typeList1.addStringValue("tlv1", "tlv2");
+    typeList1.addStringValues("tlv1", "tlv2");
 
     final LdapAttribute typeList2 = new LdapAttribute();
     typeList2.setName("typeList2");
-    typeList2.addStringValue("tlv1", "tlv2");
+    typeList2.addStringValues("tlv1", "tlv2");
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=String Entry,ou=people,dc=ldaptive,dc=org");
