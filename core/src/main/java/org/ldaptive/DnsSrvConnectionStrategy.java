@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.ldaptive.dns.DNSContextFactory;
 import org.ldaptive.dns.DefaultDNSContextFactory;
 import org.ldaptive.dns.SRVDNSResolver;
@@ -39,9 +40,6 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
 
   /** Resolver(s) for SRV DNS records. */
   private Map<SRVDNSResolver, String> dnsResolvers;
-
-  /** SRV records from the last DNS lookup. */
-  private Set<SRVRecord> srvRecords;
 
   /** SRV records expiration time. */
   private Instant expirationTime;
@@ -97,7 +95,6 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
    */
   public DnsSrvConnectionStrategy(final DNSContextFactory factory, final Duration ttl, final boolean ssl)
   {
-    super(LdapURLSet.Type.SORTED);
     dnsContextFactory = factory;
     srvTtl = ttl;
     useSSL = ssl;
@@ -105,15 +102,30 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
 
 
   @Override
-  public synchronized void initialize(final String urls)
+  public void populate(final String urls, final LdapURLSet urlSet)
   {
     ldapUrls = urls;
-    readSrvRecords(ldapUrls);
-    if (!srvRecords.isEmpty()) {
-      ldapURLSet.clear();
-      ldapURLSet.add(srvRecords.stream().map(SRVRecord::getLdapURL).toArray(LdapURL[]::new));
+    // SRV records are ordered by priority then weight.
+    // Thus LdapURLSet will be organized by decreasing precedence.
+    final List<LdapURL> list = readSrvRecords(urls)
+        .stream()
+        .map(SRVRecord::getLdapURL)
+        .collect(Collectors.toList());
+    urlSet.populate(list);
+  }
+
+
+  @Override
+  public LdapURL next(final LdapURLSet urlSet)
+  {
+    if (Instant.now().isAfter(expirationTime)) {
+      populate(ldapUrls, urlSet);
     }
-    initialized = true;
+    final List<LdapURL> active = urlSet.getActiveUrls();
+    if (active.isEmpty()) {
+      throw new IllegalStateException("No active LDAP URLs available");
+    }
+    return active.get(0);
   }
 
 
@@ -121,8 +133,10 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
    * Parses the supplied DNS URL string and reads SRV records from DNS.
    *
    * @param  urls  to parse
+   *
+   * @return Set of DNS SRV records ordered first by priority and then by weight.
    */
-  protected void readSrvRecords(final String urls)
+  protected Set<SRVRecord> readSrvRecords(final String urls)
   {
     if (urls == null) {
       if (dnsContextFactory == null) {
@@ -149,13 +163,16 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
         dnsResolvers = Collections.singletonMap(new SRVDNSResolver(dnsContextFactory, useSSL), dnsUrl[1]);
       }
     }
-    srvRecords = retrieveDNSRecords();
+    logger.trace("Fetching SRV records from DNS");
+    final Set<SRVRecord> srvRecords = retrieveDNSRecords();
+    logger.debug("Retrieved SRV records from DNS: {}", srvRecords);
     if (srvRecords.isEmpty()) {
       logger.error("No SRV records found using {}", dnsResolvers);
       expirationTime = Instant.now();
     } else {
       expirationTime = Instant.now().plus(srvTtl);
     }
+    return srvRecords;
   }
 
 
@@ -172,27 +189,6 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
       return new String[] {url, null};
     }
     return url.split("\\?");
-  }
-
-
-  /**
-   * Returns a list of URLs retrieved from DNS SRV records.
-   *
-   * @return  list of URLs to attempt connections to
-   */
-  @Override
-  public synchronized List<LdapURL> apply()
-  {
-    if (!isInitialized()) {
-      throw new IllegalStateException("Strategy is not initialized");
-    }
-    if (Instant.now().isAfter(expirationTime)) {
-      initialize(ldapUrls);
-      logger.debug("Retrieved SRV records from DNS: {}", srvRecords);
-    } else {
-      logger.debug("Using SRV records from internal cache: {}", srvRecords);
-    }
-    return ldapURLSet.getUrls(null);
   }
 
 
@@ -220,8 +216,11 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      "[").append(getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("srvRecords=").append(srvRecords).append("]").toString();
+    return new StringBuilder("[")
+        .append(getClass().getName())
+        .append("@")
+        .append(hashCode())
+        .append(']')
+        .toString();
   }
 }

@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -11,22 +10,13 @@ import java.util.List;
  */
 public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy
 {
-
-
-  public RoundRobinConnectionStrategy()
-  {
-    super(LdapURLSet.Type.ORDERED);
-  }
-
-
   @Override
-  public List<LdapURL> apply()
+  public LdapURL next(final LdapURLSet urlSet)
   {
-    if (!isInitialized()) {
-      throw new IllegalStateException("Strategy is not initialized");
+    final List<LdapURL> active = urlSet.getActiveUrls();
+    if (active.isEmpty()) {
+      throw new IllegalStateException("No active LDAP URLs available");
     }
-    final List<LdapURL> urls = ldapURLSet.getUrls(null);
-    ldapURLSet.firstToLast();
-    return Collections.unmodifiableList(urls);
+    return active.get(urlSet.getUsageCount() % active.size());
   }
 }

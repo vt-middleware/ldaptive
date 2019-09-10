@@ -8,6 +8,16 @@ package org.ldaptive;
  */
 public interface ConnectionFactory extends AutoCloseable
 {
+  /**
+   * @return Connection configuration for this factory.
+   */
+  ConnectionConfig getConnectionConfig();
+
+
+  /**
+   * @return Set of LDAP URLs that connections produced by this factory can connect to.
+   */
+  LdapURLSet getLdapURLSet();
 
 
   /**
@@ -17,8 +27,7 @@ public interface ConnectionFactory extends AutoCloseable
    *
    * @throws  LdapException  if a connection cannot be returned
    */
-  Connection getConnection()
-    throws LdapException;
+  Connection getConnection() throws LdapException;
 
 
   /** Free any resources associated with this factory. */

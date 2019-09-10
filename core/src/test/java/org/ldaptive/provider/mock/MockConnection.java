@@ -10,6 +10,7 @@ import org.ldaptive.BindResponse;
 import org.ldaptive.CompareOperationHandle;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.DeleteResponse;
 import org.ldaptive.LdapException;
@@ -55,7 +56,7 @@ public final class MockConnection extends ProviderConnection
    */
   public MockConnection(final ConnectionConfig config)
   {
-    super(config);
+    super(new DefaultConnectionFactory(config));
   }
 
 

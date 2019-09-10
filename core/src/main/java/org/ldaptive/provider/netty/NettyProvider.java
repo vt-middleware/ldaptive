@@ -3,7 +3,7 @@ package org.ldaptive.provider.netty;
 
 import io.netty.channel.EventLoopGroup;
 import org.ldaptive.Connection;
-import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.provider.Provider;
 
 /**
@@ -30,9 +30,9 @@ public class NettyProvider implements Provider
 
 
   @Override
-  public Connection create(final ConnectionConfig cc)
+  public Connection create(final ConnectionFactory factory)
   {
-    return new NettyConnection(workerGroup, cc);
+    return new NettyConnection(workerGroup, factory);
   }
 
 

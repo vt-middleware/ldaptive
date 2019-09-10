@@ -11,20 +11,13 @@ import java.util.List;
  */
 public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
 {
-
-
-  public ActivePassiveConnectionStrategy()
-  {
-    super(LdapURLSet.Type.SORTED);
-  }
-
-
   @Override
-  public List<LdapURL> apply()
+  public LdapURL next(final LdapURLSet urlSet)
   {
-    if (!isInitialized()) {
-      throw new IllegalStateException("Strategy is not initialized");
+    final List<LdapURL> active = urlSet.getActiveUrls();
+    if (active.isEmpty()) {
+      throw new IllegalStateException("No active LDAP URLs available");
     }
-    return ldapURLSet.getUrls(null);
+    return active.get(0);
   }
 }

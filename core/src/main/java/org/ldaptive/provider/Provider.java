@@ -2,7 +2,7 @@
 package org.ldaptive.provider;
 
 import org.ldaptive.Connection;
-import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionFactory;
 
 /**
  * Provides an abstraction layer for different {@link ProviderConnection} implementations.
@@ -16,11 +16,11 @@ public interface Provider
   /**
    * Create a connection object. Implementations should not open a TCP socket in this method.
    *
-   * @param  cc  connection configuration
+   * @param  factory  Connection factory used to produce connections.
    *
-   * @return  provider connection
+   * @return  Provider connection instance.
    */
-  Connection create(ConnectionConfig cc);
+  Connection create(ConnectionFactory factory);
 
 
   /** Free any resources associated with this provider. */

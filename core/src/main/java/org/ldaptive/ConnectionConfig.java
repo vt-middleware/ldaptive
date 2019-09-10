@@ -280,6 +280,18 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
+   * @return The default connection strategy for the configured {@link #getLdapUrl()}.
+   */
+  public ConnectionStrategy defaultConnectionStrategy()
+  {
+    if (getLdapUrl().startsWith("dns:")) {
+      return new DnsSrvConnectionStrategy();
+    }
+    return new ActivePassiveConnectionStrategy();
+  }
+
+
+  /**
    * Returns a new connection config initialized with the supplied config.
    *
    * @param  config  connection config to read properties from

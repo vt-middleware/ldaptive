@@ -2,14 +2,10 @@
 package org.ldaptive;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.TreeMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,209 +17,130 @@ import org.slf4j.LoggerFactory;
  */
 public class LdapURLSet
 {
-
-  /** Type of backing map. */
-  public enum Type {
-
-    /** sorted list. */
-    SORTED,
-
-    /** ordered list. */
-    ORDERED,
-
-    /** unordered list. */
-    UNORDERED,
-  }
-
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Active LDAP URLs. */
-  protected Map<Integer, LdapURL> active;
-
-  /** Inactive LDAP URLs. */
-  protected Map<RetryMetadata, Map.Entry<Integer, LdapURL>> inactive = new LinkedHashMap<>();
+  /** List of LDAP URLs to connect to in order provided by the connection strategy. */
+  protected final List<LdapURL> urls = new ArrayList<>();
 
   /** Lock for active and inactive maps. */
-  protected Object lock = new Object();
+  private final Object lock = new Object();
+
+  /** Strategy responsible for producing LDAP URLs and next URL to try. */
+  private final ConnectionStrategy connectionStrategy;
+
+  /** Usage counter. */
+  private final AtomicInteger counter = new AtomicInteger();
 
 
   /**
-   * Creates a new LDAP URL set of the supplied type.
+   * Creates a new instance.
    *
-   * @param  type  of LDAP URL set
+   * @param strategy Connection strategy.
+   * @param ldapUrls Space-delimited string of URLs describing the LDAP hosts to connect to. The URLs in the string
+   *                 are commonly {@code ldap://} or {@code ldaps://} URLs that directly describe the hosts to connect
+   *                 to, but may also describe a resource from which to obtain LDAP connection URLs as is the case for
+   *                 {@link DnsSrvConnectionStrategy} that use URLs with the scheme {@code dns:}.
    */
-  public LdapURLSet(final Type type)
+  public LdapURLSet(final ConnectionStrategy strategy, final String ldapUrls)
   {
-    switch(type) {
-    case SORTED:
-      active = new TreeMap<>();
-      break;
-    case ORDERED:
-      active = new LinkedHashMap<>();
-      break;
-    case UNORDERED:
-      active = new HashMap<>();
-      break;
-    default:
-      throw new IllegalStateException("Unknown set type: " + type);
-    }
+    connectionStrategy = strategy;
+    connectionStrategy.populate(ldapUrls, this);
   }
 
 
   /**
-   * Adds new LDAP URLs to this set.
-   *
-   * @param  urls  to add
+   * @return Usage count, i.e. number of calls to {@link #doWithNextActiveUrl(Consumer)}.
    */
-  public void add(final LdapURL... urls)
+  public int getUsageCount()
   {
+    return counter.get();
+  }
+
+
+  /**
+   * @return True if there are any active LDAP URLs in the set, false otherwise.
+   */
+  public boolean hasActiveUrls()
+  {
+    return urls.stream().anyMatch(LdapURL::isActive);
+  }
+
+  /**
+   * @return List of active URLs in order they were added.
+   */
+  public List<LdapURL> getActiveUrls()
+  {
+    return urls.stream().filter(LdapURL::isActive).collect(Collectors.toList());
+  }
+
+  /**
+   * Executes the given consumer on the next active URL and increments the usage counter.
+   *
+   * @param consumer LDAP URL consumer.
+   *
+   * @return The active LDAP URL that was consumed.
+   *
+   * @throws IllegalStateException If no active URLs are available.
+   * @throws LdapException When the consumer function throws.
+   */
+  public LdapURL doWithNextActiveUrl(final Consumer<LdapURL> consumer) throws LdapException
+  {
+    final LdapURL url;
     synchronized (lock) {
-      int i = active.keySet().size() + 1;
-      for (LdapURL url : urls) {
-        if (active.values().stream().anyMatch(u -> u.equals(url))) {
-          throw new IllegalArgumentException("Duplicate LDAP URL " + url + " found in URL set: " + active);
-        }
-        active.put(i++, url);
+      url = connectionStrategy.next(this);
+      counter.incrementAndGet();
+    }
+    try {
+      logger.trace("Sending {} to consumer {}", url.getHostnameWithSchemeAndPort(), consumer);
+      consumer.accept(url);
+    } catch (RuntimeException e) {
+      url.deactivate();
+      if (e.getCause() instanceof LdapException) {
+        throw (LdapException) e.getCause();
       }
+      throw new LdapException("Error consuming " + url.getHostnameWithSchemeAndPort(), e);
     }
+    return url;
   }
 
 
   /**
-   * Moves the first URL in the set to the last. This operation is only meaningful for an ordered set.
+   * @return True if there are any inactive LDAP URLs in the set, false otherwise.
    */
-  public void firstToLast()
+  public boolean hasInactiveUrls()
   {
-    synchronized (lock) {
-      final Map.Entry<Integer, LdapURL> entry = active.entrySet().iterator().next();
-      active.remove(entry.getKey());
-      active.put(entry.getKey(), entry.getValue());
+    return urls.stream().anyMatch(u -> !u.isActive());
+  }
+
+
+  /**
+   * @return List of inactive URLs in order they were added.
+   */
+  public List<LdapURL> getInactiveUrls()
+  {
+    return urls.stream().filter(u -> !u.isActive()).collect(Collectors.toList());
+  }
+
+
+  /**
+   * Executes the given predicate on the next inactive URL such that if the predicate evaluates to true, the URL
+   * is activated. If there are no inactive URLs, this is a no-op.
+   *
+   * @param predicate Predicate that returns true on success, false otherwise.
+   *
+   * @return The inactive LDAP URL that was tested, or null if there were no inactive URLs to test.
+   */
+  public LdapURL doWithNextInactiveUrl(final Predicate<LdapURL> predicate)
+  {
+    final LdapURL url = urls.stream()
+        .filter(u -> !u.isActive())
+        .findFirst()
+        .orElse(null);
+    if (url != null && predicate.test(url)) {
+      url.activate();
     }
-  }
-
-
-  /**
-   * Removes all URLs from this set.
-   */
-  public void clear()
-  {
-    synchronized (lock) {
-      active.clear();
-      inactive.clear();
-    }
-  }
-
-
-  /**
-   * Moves an LDAP URL from an inactive state to an active state. No-op if the supplied URL is not inactive.
-   *
-   * @param  url  to activate
-   */
-  public void activate(final LdapURL url)
-  {
-    synchronized (lock) {
-      final Optional<Map.Entry<Integer, LdapURL>> entry = getInactive(url);
-      if (entry.isPresent()) {
-        inactive.entrySet().removeIf(e -> e.getValue().equals(entry.get()));
-        active.put(entry.get().getKey(), entry.get().getValue());
-      }
-    }
-  }
-
-
-  /**
-   * Moves an LDAP URL from an active state to an inactive state. No-op if the supplied URL is not active.
-   *
-   * @param  url  to activate
-   */
-  public void inactivate(final LdapURL url)
-  {
-    synchronized (lock) {
-      final Optional<Map.Entry<Integer, LdapURL>> entry = getActive(url);
-      if (entry.isPresent()) {
-        active.entrySet().removeIf(e -> e.equals(entry.get()));
-        inactive.put(new RetryMetadata(), entry.get());
-      }
-    }
-  }
-
-
-  /**
-   * Returns the LDAP URLs in the order specified by the type of set. If a function is supplied, it is executed before
-   * the inactive URLs are added to the end of the list.
-   *
-   * @param  function  to apply to the active URLs
-   *
-   * @return  list of LDAP URLs
-   */
-  public List<LdapURL> getUrls(final Consumer<List<LdapURL>> function)
-  {
-    synchronized (lock) {
-      final List<LdapURL> l = new ArrayList<>();
-      l.addAll(active.values());
-      if (function != null) {
-        function.accept(l);
-      }
-      if (inactive.size() > 0) {
-        l.addAll(inactive.values().stream().map(Map.Entry::getValue).collect(Collectors.toList()));
-      }
-      return Collections.unmodifiableList(l);
-    }
-  }
-
-
-  /**
-   * Returns all the active URLs with the ordered index it was added at.
-   *
-   * @return  active LDAP URLs
-   */
-  public Map<Integer, LdapURL> getActiveUrls()
-  {
-    synchronized (lock) {
-      return Collections.unmodifiableMap(active);
-    }
-  }
-
-
-  /**
-   * Returns all the inactive URLs with the {@link RetryMetadata} associated with that LDAP URL.
-   *
-   * @return  inactive LDAP URLs
-   */
-  public Map<RetryMetadata, Map.Entry<Integer, LdapURL>> getInactiveUrls()
-  {
-    synchronized (lock) {
-      return Collections.unmodifiableMap(inactive);
-    }
-  }
-
-
-  /**
-   * Returns the active entry for the supplied url.
-   *
-   * @param  url  to find
-   *
-   * @return  active entry or null
-   */
-  private Optional<Map.Entry<Integer, LdapURL>> getActive(final LdapURL url)
-  {
-    return active.entrySet().stream()
-      .filter(e -> url.equals(e.getValue())).findAny();
-  }
-
-
-  /**
-   * Returns the inactive entry for the supplied url.
-   *
-   * @param  url  to find
-   *
-   * @return  inactive entry or null
-   */
-  private Optional<Map.Entry<Integer, LdapURL>> getInactive(final LdapURL url)
-  {
-    return inactive.entrySet().stream()
-      .filter(e -> url.equals(e.getValue().getValue())).map(e -> e.getValue()).findAny();
+    return url;
   }
 
 
@@ -231,9 +148,29 @@ public class LdapURLSet
   public String toString()
   {
     return new StringBuilder("[")
-      .append(getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("type=").append(active.getClass().getSimpleName()).append(", ")
-      .append("active=").append(active).append(", ")
-      .append("inactive=").append(inactive).append("]").toString();
+        .append(getClass().getName()).append("@").append(hashCode()).append("::")
+        .append("active=").append(getActiveUrls()).append(", ")
+        .append("inactive=").append(getInactiveUrls()).toString();
+  }
+
+
+  /**
+   * Populates this set with a list of URLs in the order produced by
+   * {@link ConnectionStrategy#populate(String, LdapURLSet)}. This method MUST be called before the set is used, but
+   * MAY be called subsequently periodically to refresh the set of LDAP URLs.
+   *
+   * @param ldapUrls List of LDAP URLs to add to this set.
+   */
+  protected synchronized void populate(final List<LdapURL> ldapUrls)
+  {
+    // Copy activity state from any URLs currently in the set that match new entries
+    for (LdapURL url : urls) {
+      final LdapURL match = ldapUrls.stream().filter(u -> u.equals(url)).findFirst().orElse(null);
+      if (match != null && !url.isActive()) {
+        match.deactivate();
+      }
+    }
+    this.urls.clear();
+    this.urls.addAll(ldapUrls);
   }
 }

@@ -5,6 +5,7 @@ import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
 import java.security.PrivilegedAction;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,7 @@ import org.ldaptive.BindResponse;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.CompareResponse;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.DeleteResponse;
 import org.ldaptive.LdapAttribute;
@@ -144,11 +146,12 @@ public final class NettyConnection extends ProviderConnection
    * Creates a new connection.
    *
    * @param  group  event loop group
-   * @param  config  connection configuration
+   * @param  factory connection factory
    */
-  public NettyConnection(final EventLoopGroup group, final ConnectionConfig config)
+  public NettyConnection(final EventLoopGroup group, final ConnectionFactory factory)
   {
-    super(config);
+    super(factory);
+    final ConnectionConfig config = factory.getConnectionConfig();
     workerGroup = group;
     autoReconnect = config.getAutoReconnect();
     channelOptions = new HashMap<>();
@@ -180,7 +183,7 @@ public final class NettyConnection extends ProviderConnection
   @Override
   protected boolean test(final LdapURL url)
   {
-    final NettyConnection conn = new NettyConnection(workerGroup, connectionConfig);
+    final NettyConnection conn = new NettyConnection(workerGroup, connectionFactory);
     try {
       conn.open(url);
       return true;
@@ -203,13 +206,14 @@ public final class NettyConnection extends ProviderConnection
     channel = future.channel();
     channel.closeFuture().addListener(closeListener);
     pendingResponses.open();
+    final ConnectionConfig config = connectionFactory.getConnectionConfig();
     // startTLS request must occur after the connection is ready
-    if (connectionConfig.getUseStartTLS()) {
+    if (config.getUseStartTLS()) {
       operation(new StartTLSRequest());
     }
     // initialize the connection
-    if (connectionConfig.getConnectionInitializer() != null) {
-      connectionConfig.getConnectionInitializer().initialize(this);
+    if (config.getConnectionInitializer() != null) {
+      config.getConnectionInitializer().initialize(this);
     }
   }
 
@@ -228,7 +232,7 @@ public final class NettyConnection extends ProviderConnection
     SslHandler handler = null;
     if (ldapURL.getScheme().equals("ldaps")) {
       try {
-        handler = createSslHandler(connectionConfig);
+        handler = createSslHandler(connectionFactory.getConnectionConfig());
       } catch (SSLException e) {
         throw new ConnectException(e);
       }
@@ -330,9 +334,9 @@ public final class NettyConnection extends ProviderConnection
         throw new SSLException("SSL handshake failure");
       }
     }
-    if (connectionConfig.getSslConfig() != null && connectionConfig.getSslConfig().getHostnameVerifier() != null) {
-      final HostnameVerifier verifier = new HostnameVerifierAdapter(
-        connectionConfig.getSslConfig().getHostnameVerifier());
+    final ConnectionConfig config = connectionFactory.getConnectionConfig();
+    if (config.getSslConfig() != null && config.getSslConfig().getHostnameVerifier() != null) {
+      final HostnameVerifier verifier = new HostnameVerifierAdapter(config.getSslConfig().getHostnameVerifier());
       final SSLSession session = handler.engine().getSession();
       final String hostname = session.getPeerHost();
       if (!verifier.verify(hostname, session)) {
@@ -358,10 +362,11 @@ public final class NettyConnection extends ProviderConnection
     if (channel.pipeline().get(SslHandler.class) != null) {
       throw new ConnectException("SslHandler is already in use");
     }
+    final ConnectionConfig config = connectionFactory.getConnectionConfig();
     final DefaultExtendedOperationHandle handle = new DefaultExtendedOperationHandle(
       request,
       this,
-      connectionConfig.getResponseTimeout());
+        config.getResponseTimeout());
     final Result result;
     try {
       result = handle.execute();
@@ -370,7 +375,7 @@ public final class NettyConnection extends ProviderConnection
     }
     if (ResultCode.SUCCESS.equals(result.getResultCode())) {
       try {
-        channel.pipeline().addFirst("ssl", createSslHandler(connectionConfig));
+        channel.pipeline().addFirst("ssl", createSslHandler(config));
         waitForSSLHandshake(channel);
       } catch (SSLException e) {
         throw new ConnectException(e);
@@ -517,28 +522,29 @@ public final class NettyConnection extends ProviderConnection
   @Override
   public DefaultOperationHandle<AddRequest, AddResponse> operation(final AddRequest request)
   {
-    return new DefaultOperationHandle<>(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultOperationHandle<>(request, this, connectionFactory.getConnectionConfig().getResponseTimeout());
   }
 
 
   @Override
   public BindOperationHandle operation(final BindRequest request)
   {
-    return new BindOperationHandle(request, this, connectionConfig.getResponseTimeout());
+    return new BindOperationHandle(request, this, connectionFactory.getConnectionConfig().getResponseTimeout());
   }
 
 
   @Override
   public DefaultCompareOperationHandle operation(final CompareRequest request)
   {
-    return new DefaultCompareOperationHandle(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultCompareOperationHandle(
+        request, this, connectionFactory.getConnectionConfig().getResponseTimeout());
   }
 
 
   @Override
   public DefaultOperationHandle<DeleteRequest, DeleteResponse> operation(final DeleteRequest request)
   {
-    return new DefaultOperationHandle<>(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultOperationHandle<>(request, this, connectionFactory.getConnectionConfig().getResponseTimeout());
   }
 
 
@@ -548,28 +554,30 @@ public final class NettyConnection extends ProviderConnection
     if (request instanceof StartTLSRequest) {
       throw new IllegalArgumentException("StartTLS can only be invoked when the connection is opened");
     }
-    return new DefaultExtendedOperationHandle(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultExtendedOperationHandle(
+        request, this, connectionFactory.getConnectionConfig().getResponseTimeout());
   }
 
 
   @Override
   public DefaultOperationHandle<ModifyRequest, ModifyResponse> operation(final ModifyRequest request)
   {
-    return new DefaultOperationHandle<>(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultOperationHandle<>(request, this, connectionFactory.getConnectionConfig().getResponseTimeout());
   }
 
 
   @Override
   public DefaultOperationHandle<ModifyDnRequest, ModifyDnResponse> operation(final ModifyDnRequest request)
   {
-    return new DefaultOperationHandle<>(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultOperationHandle<>(request, this, connectionFactory.getConnectionConfig().getResponseTimeout());
   }
 
 
   @Override
   public DefaultSearchOperationHandle operation(final SearchRequest request)
   {
-    return new DefaultSearchOperationHandle(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultSearchOperationHandle(
+        request, this, connectionFactory.getConnectionConfig().getResponseTimeout());
   }
 
 
@@ -674,14 +682,14 @@ public final class NettyConnection extends ProviderConnection
       throw new IllegalStateException("Reconnect cannot be invoked when the connection is open");
     }
     final RetryMetadata metadata = new RetryMetadata();
-    while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
+    while (connectionFactory.getConnectionConfig().getAutoReconnectCondition().test(metadata)) {
       try {
         open();
         LOGGER.info("auto reconnect succeeded");
         break;
       } catch (LdapException e) {
         LOGGER.debug("auto reconnect failed", e);
-        metadata.incrementAttempts();
+        metadata.recordFailure(Instant.now());
       }
     }
   }
@@ -718,7 +726,7 @@ public final class NettyConnection extends ProviderConnection
     return new StringBuilder(getClass().getName()).append("@").append(hashCode()).append("::")
       .append("ldapUrl=").append(ldapURL).append(", ")
       .append("isOpen=").append(isOpen()).append(", ")
-      .append("connectionConfig=").append(connectionConfig).toString();
+      .append("connectionFactory=").append(connectionFactory).toString();
   }
 
 

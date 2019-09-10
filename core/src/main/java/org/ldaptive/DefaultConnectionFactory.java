@@ -18,6 +18,9 @@ public class DefaultConnectionFactory implements ConnectionFactory
   /** Connection configuration used by this factory. */
   private ConnectionConfig config;
 
+  /** Set of LDAP URLs that connections produced by this factory may connect to. */
+  private LdapURLSet ldapURLSet;
+
 
   /** Default constructor. */
   public DefaultConnectionFactory()
@@ -66,6 +69,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
    *
    * @return  connection config
    */
+  @Override
   public ConnectionConfig getConnectionConfig()
   {
     return config;
@@ -81,7 +85,11 @@ public class DefaultConnectionFactory implements ConnectionFactory
   public void setConnectionConfig(final ConnectionConfig cc)
   {
     config = cc;
+    if (config.getConnectionStrategy() == null) {
+      config.setConnectionStrategy(config.defaultConnectionStrategy());
+    }
     config.makeImmutable();
+    ldapURLSet = new LdapURLSet(config.getConnectionStrategy(), config.getLdapUrl());
   }
 
 
@@ -96,6 +104,13 @@ public class DefaultConnectionFactory implements ConnectionFactory
   }
 
 
+  @Override
+  public LdapURLSet getLdapURLSet()
+  {
+    return ldapURLSet;
+  }
+
+
   /**
    * Creates a new connection. Connections returned from this method must be opened before they can perform ldap
    * operations.
@@ -105,7 +120,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
   @Override
   public Connection getConnection()
   {
-    return provider.create(config);
+    return provider.create(this);
   }
 
 

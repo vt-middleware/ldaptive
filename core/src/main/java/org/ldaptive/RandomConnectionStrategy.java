@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Connection strategy that randomizes the list of configured URLs. A random URL ordering will be created for each
@@ -12,21 +12,16 @@ import java.util.List;
  */
 public class RandomConnectionStrategy extends AbstractConnectionStrategy
 {
-
-
-  /** Default constructor. */
-  public RandomConnectionStrategy()
-  {
-    super(LdapURLSet.Type.UNORDERED);
-  }
-
+  /** Random number generator. */
+  private final Random rnd = new Random();
 
   @Override
-  public List<LdapURL> apply()
+  public LdapURL next(final LdapURLSet urlSet)
   {
-    if (!isInitialized()) {
-      throw new IllegalStateException("Strategy is not initialized");
+    final List<LdapURL> active = urlSet.getActiveUrls();
+    if (active.isEmpty()) {
+      throw new IllegalStateException("No active LDAP URLs available");
     }
-    return ldapURLSet.getUrls(urls -> Collections.shuffle(urls));
+    return active.get(rnd.nextInt(active.size()));
   }
 }

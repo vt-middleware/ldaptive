@@ -2,6 +2,7 @@
 package org.ldaptive;
 
 import java.time.Instant;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Contains properties related to retries.
@@ -12,30 +13,10 @@ public class RetryMetadata
 {
 
   /** Time at which the failure occurred. */
-  private final Instant failureTime;
+  private Instant failureTime = Instant.MAX;
 
   /** Attempt count. */
-  private int attempts;
-
-
-  /**
-   * Creates a new retry metadata with failure time of {@link Instant#now()}.
-   */
-  public RetryMetadata()
-  {
-    failureTime = Instant.now();
-  }
-
-
-  /**
-   * Creates a new retry metadata.
-   *
-   * @param  time  failure time
-   */
-  public RetryMetadata(final Instant time)
-  {
-    failureTime = time;
-  }
+  private final AtomicInteger attempts = new AtomicInteger();
 
 
   /**
@@ -56,16 +37,39 @@ public class RetryMetadata
    */
   public int getAttempts()
   {
-    return attempts;
+    return attempts.get();
   }
 
 
   /**
-   * Increments the number of retry attempts made.
+   * Records a connection failure at the given instant.
+   *
+   * @param  time  Point in time where connection failed.
    */
-  public void incrementAttempts()
+  public void recordFailure(final Instant time)
   {
-    attempts++;
+    failureTime = time;
+    attempts.incrementAndGet();
+  }
+
+
+  /**
+   * @return True if at least one connection attempt has failed, false otherwise.
+   */
+  public boolean hasFailed()
+  {
+    return attempts.get() == 0;
+  }
+
+
+  /**
+   * Resets the internal failure tracking state such that {@link #hasFailed()} returns false until a failure is
+   * subsequently recorded.
+   */
+  public void reset()
+  {
+    failureTime = null;
+    attempts.set(0);
   }
 
 

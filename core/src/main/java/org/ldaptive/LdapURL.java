@@ -66,6 +66,15 @@ public class LdapURL
   /** Search filter of the ldap url. */
   private SearchFilter filter;
 
+  /** Metadata that describes connection failures on this URL. */
+  private final RetryMetadata retryMetadata = new RetryMetadata();
+
+  /**
+   * False if the last connection attempt to this URL failed, which should result in updating {@link #retryMetadata},
+   * otherwise true.
+   */
+  private boolean active = true;
+
 
   /**
    * Creates a new ldap url.
@@ -325,6 +334,42 @@ public class LdapURL
   }
 
 
+  /**
+    * @return Metadata describing retry attempts for connections made this URL.
+   */
+  public RetryMetadata getRetryMetadata()
+  {
+    return retryMetadata;
+  }
+
+
+  /**
+   * @return True if this URL can be connected to, false otherwise.
+   */
+  public boolean isActive()
+  {
+    return active;
+  }
+
+
+  /**
+   * Marks this URL as active.
+   */
+  public void activate()
+  {
+    active = true;
+  }
+
+
+  /**
+   * Marks this URL as inactive.
+   */
+  public void deactivate()
+  {
+    active = false;
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {
@@ -357,13 +402,16 @@ public class LdapURL
   {
     return new StringBuilder("[")
       .append(getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("scheme=").append(scheme).append(", ")
-      .append("hostname=").append(hostname).append(", ")
-      .append("port=").append(port).append(", ")
-      .append("baseDn=").append(baseDn).append(", ")
-      .append("attributes=").append(Arrays.toString(attributes)).append(", ")
-      .append("scope=").append(scope).append(", ")
-      .append("filter=").append(filter).append("]").toString();
+      .append("scheme=").append(scheme)
+      .append(", hostname=").append(hostname)
+      .append(", port=").append(port)
+      .append(", baseDn=").append(baseDn)
+      .append(", attributes=").append(Arrays.toString(attributes))
+      .append(", scope=").append(scope)
+      .append(", filter=").append(filter)
+      .append(", active=").append(active)
+      .append(']')
+      .toString();
   }
 
 

@@ -1,20 +1,16 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider;
 
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.Connection;
-import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
-import org.ldaptive.RetryMetadata;
+import org.ldaptive.LdapURLSet;
 import org.ldaptive.UnbindRequest;
 import org.ldaptive.control.RequestControl;
 import org.slf4j.Logger;
@@ -33,40 +29,23 @@ public abstract class ProviderConnection implements Connection
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(ProviderConnection.class);
 
-  /** Provides host connection configuration. */
-  protected final ConnectionConfig connectionConfig;
-
-  /** Connection strategy for this connection. Default value is {@link ActivePassiveConnectionStrategy}. */
-  private final ConnectionStrategy connectionStrategy;
+  /** Factory that produced this instance. */
+  protected final ConnectionFactory connectionFactory;
 
   /** Executor for scheduling tasks. */
   private final ScheduledExecutorService executor;
 
 
   /**
-   * Creates a new provider connection.
+   * Creates a new instance.
    *
-   * @param  config  connection configuration
+   * @param factory The factory that produced this connection.
    */
-  public ProviderConnection(final ConnectionConfig config)
+  public ProviderConnection(final ConnectionFactory factory)
   {
-    connectionConfig = config;
-    if (connectionConfig.getConnectionStrategy() == null) {
-      if (connectionConfig.getLdapUrl().startsWith("dns:")) {
-        connectionStrategy = new DnsSrvConnectionStrategy();
-      } else {
-        connectionStrategy = new ActivePassiveConnectionStrategy();
-      }
-    } else {
-      connectionStrategy = connectionConfig.getConnectionStrategy();
-    }
-    synchronized (connectionStrategy) {
-      if (!connectionStrategy.isInitialized()) {
-        connectionStrategy.initialize(connectionConfig.getLdapUrl());
-      }
-    }
-
-    if (connectionStrategy.active().size() > 1 || connectionStrategy instanceof DnsSrvConnectionStrategy) {
+    connectionFactory = factory;
+    final ConnectionStrategy strategy = connectionFactory.getConnectionConfig().getConnectionStrategy();
+    if (factory.getLdapURLSet().getActiveUrls().size() > 1 || strategy instanceof DnsSrvConnectionStrategy) {
       executor = Executors.newSingleThreadScheduledExecutor(
         r -> {
           final Thread t = new Thread(r);
@@ -75,21 +54,13 @@ public abstract class ProviderConnection implements Connection
         });
       executor.scheduleAtFixedRate(
         () -> {
-          for (Map.Entry<RetryMetadata, Map.Entry<Integer, LdapURL>> entry : connectionStrategy.inactive().entrySet()) {
-            // ensure inactive URL waits at least the inactive period before testing
-            if (Instant.now().isAfter(entry.getKey().getFailureTime().plus(connectionStrategy.getInactivePeriod()))) {
-              if (connectionStrategy.getInactiveCondition().test(entry.getKey())) {
-                if (test(entry.getValue().getValue())) {
-                  connectionStrategy.success(entry.getValue().getValue());
-                } else {
-                  entry.getKey().incrementAttempts();
-                }
-              }
-            }
+          final LdapURLSet urlSet = connectionFactory.getLdapURLSet();
+          while (urlSet.hasInactiveUrls()) {
+            urlSet.doWithNextInactiveUrl(strategy.getInactiveCondition().and(this::test));
           }
         },
-        connectionStrategy.getInactivePeriod().toMillis(),
-        connectionStrategy.getInactivePeriod().toMillis(),
+        strategy.getInactivePeriod().toMillis(),
+        strategy.getInactivePeriod().toMillis(),
         TimeUnit.MILLISECONDS);
       LOGGER.debug("inactive connection strategy task scheduled for {}", this);
     } else {
@@ -106,27 +77,20 @@ public abstract class ProviderConnection implements Connection
     if (isOpen()) {
       throw new ConnectException("Connection is already open");
     }
-
+    final ConnectionStrategy strategy = connectionFactory.getConnectionConfig().getConnectionStrategy();
+    final LdapURLSet urlSet = connectionFactory.getLdapURLSet();
     LdapException lastThrown = null;
-    final List<LdapURL> urls = connectionStrategy.apply();
-    if (urls == null || urls.isEmpty()) {
-      throw new ConnectException("Connection strategy did not produced any LDAP URLs");
-    }
-    for (LdapURL url : urls) {
+    LdapURL url = null;
+    do {
       try {
-        LOGGER.trace(
-          "Attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);
-        open(url);
-        connectionStrategy.success(url);
+        url = urlSet.doWithNextActiveUrl(this::wrappedOpen);
+        LOGGER.debug("Successfully connected to {} using strategy {}", url.getHostnameWithSchemeAndPort(), strategy);
         lastThrown = null;
-        break;
-      } catch (ConnectException e) {
-        connectionStrategy.failure(url);
+      } catch (LdapException e) {
         lastThrown = e;
-        LOGGER.debug(
-          "Error connecting to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy, e);
+        LOGGER.debug("LDAP connection error using strategy {}", strategy, e);
       }
-    }
+    } while (!isOpen() && urlSet.hasActiveUrls());
     if (lastThrown != null) {
       throw lastThrown;
     }
@@ -185,4 +149,19 @@ public abstract class ProviderConnection implements Connection
    * @param  handle  that is done
    */
   protected abstract void done(DefaultOperationHandle handle);
+
+
+  /**
+   * Provides an unchecked wrapper around {@link #open()}.
+   *
+   * @param url LDAP URL to attempt to connect to.
+   */
+  private void wrappedOpen(final LdapURL url)
+  {
+    try {
+      open(url);
+    } catch (LdapException e) {
+      throw new RuntimeException(e);
+    }
+  }
 }

@@ -18,7 +18,6 @@ import org.ldaptive.provider.Provider;
 public class PooledConnectionFactory extends BlockingConnectionPool implements ConnectionFactory
 {
 
-
   /** Default constructor. */
   public PooledConnectionFactory()
   {
@@ -109,6 +108,14 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
   public Provider getProvider()
   {
     return getDefaultConnectionFactory().getProvider();
+  }
+
+
+
+  @Override
+  public LdapURLSet getLdapURLSet()
+  {
+    return getDefaultConnectionFactory().getLdapURLSet();
   }
 
 
