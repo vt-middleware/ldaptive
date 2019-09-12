@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider;
 
-import java.util.List;
+import java.util.Iterator;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
@@ -59,11 +59,11 @@ public abstract class ProviderConnection implements Connection
     }
 
     LdapException lastThrown = null;
-    final List<LdapURL> urls = connectionStrategy.apply();
-    if (urls == null || urls.isEmpty()) {
-      throw new ConnectException("Connection strategy did not produced any LDAP URLs");
-    }
-    for (LdapURL url : urls) {
+    boolean strategyProducedUrls = false;
+    final Iterator<LdapURL> iter = connectionStrategy.iterator();
+    while (iter.hasNext()) {
+      strategyProducedUrls = true;
+      final LdapURL url = iter.next();
       try {
         LOGGER.trace(
           "Attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);
@@ -77,6 +77,9 @@ public abstract class ProviderConnection implements Connection
         LOGGER.debug(
           "Error connecting to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy, e);
       }
+    }
+    if (!strategyProducedUrls) {
+      throw new ConnectException("Connection strategy did not produced any LDAP URLs");
     }
     if (lastThrown != null) {
       throw lastThrown;
