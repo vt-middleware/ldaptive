@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -13,18 +14,29 @@ public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
 {
 
 
-  public ActivePassiveConnectionStrategy()
-  {
-    super(LdapURLSet.Type.SORTED);
-  }
-
-
   @Override
-  public List<LdapURL> apply()
+  public Iterator<LdapURL> iterator()
   {
     if (!isInitialized()) {
       throw new IllegalStateException("Strategy is not initialized");
     }
-    return ldapURLSet.getUrls(null);
+    return new Iterator<>() {
+      private final List<LdapURL> urls = ldapURLSet.getUrls();
+      private int i;
+
+
+      @Override
+      public boolean hasNext()
+      {
+        return i < urls.size();
+      }
+
+
+      @Override
+      public LdapURL next()
+      {
+        return urls.get(i++);
+      }
+    };
   }
 }

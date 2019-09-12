@@ -3,11 +3,12 @@ package org.ldaptive;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Map;
+import java.util.Collections;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,34 +24,24 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Whether this strategy has been successfully initialized. */
-  protected boolean initialized;
-
   /** Set of LDAP URLs to attempt connections to. */
-  protected final LdapURLSet ldapURLSet;
+  protected LdapURLSet ldapURLSet;
+
+  /** Whether this strategy has been successfully initialized. */
+  private boolean initialized;
 
   /** Condition used to determine whether to activate a URL. */
-  protected Predicate<LdapURL> activateCondition;
+  private Predicate<LdapURL> activateCondition;
 
   /** Duration of time to test inactive connections. */
   private Duration inactivePeriod = Duration.ofMinutes(1);
 
   /** Condition used to determine whether to test an inactive URL. */
-  private Predicate<RetryMetadata> retryCondition = metadata -> true;
+  private Predicate<LdapURL> retryCondition = url -> Instant.now().isAfter(
+    url.getRetryMetadata().getFailureTime().plus(inactivePeriod));
 
   /** Executor for testing inactive URLs. */
   private ScheduledExecutorService executor;
-
-
-  /**
-   * Creates a new abstract connection strategy.
-   *
-   * @param  type  of LDAP URL set
-   */
-  public AbstractConnectionStrategy(final LdapURLSet.Type type)
-  {
-    ldapURLSet = new LdapURLSet(type);
-  }
 
 
   @Override
@@ -66,16 +57,23 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
     if (isInitialized()) {
       throw new IllegalStateException("Strategy has already been initialized");
     }
+    ldapURLSet = new LdapURLSet(this, urls);
+    activateCondition = condition;
+    initialized = true;
+  }
+
+
+  @Override
+  public void populate(final String urls, final LdapURLSet urlSet)
+  {
     if (urls == null || urls.isEmpty()) {
       throw new IllegalArgumentException("urls cannot be empty or null");
     }
     if (urls.contains(" ")) {
-      ldapURLSet.add(Stream.of(urls.split(" ")).map(LdapURL::new).toArray(LdapURL[]::new));
+      urlSet.populate(Stream.of(urls.split(" ")).map(LdapURL::new).collect(Collectors.toList()));
     } else {
-      ldapURLSet.add(new LdapURL(urls));
+      urlSet.populate(Collections.singletonList(new LdapURL(urls)));
     }
-    activateCondition = condition;
-    initialized = true;
   }
 
 
@@ -97,8 +95,12 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   }
 
 
-  @Override
-  public Predicate<RetryMetadata> getRetryCondition()
+  /**
+   * Returns the retry condition which determines whether an attempt should be made to active a URL.
+   *
+   * @return  retry condition
+   */
+  public Predicate<LdapURL> getRetryCondition()
   {
     return retryCondition;
   }
@@ -109,7 +111,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
    *
    * @param  condition  that determines whether to active a URL
    */
-  public void setRetryCondition(final Predicate<RetryMetadata> condition)
+  public void setRetryCondition(final Predicate<LdapURL> condition)
   {
     retryCondition = condition;
   }
@@ -118,29 +120,15 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   @Override
   public void success(final LdapURL url)
   {
-    ldapURLSet.activate(url);
+    url.activate();
   }
 
 
   @Override
   public void failure(final LdapURL url)
   {
-    ldapURLSet.inactivate(url);
+    url.deactivate();
     createInactiveExecutor();
-  }
-
-
-  @Override
-  public Map<Integer, LdapURL> active()
-  {
-    return ldapURLSet.getActiveUrls();
-  }
-
-
-  @Override
-  public Map<RetryMetadata, Map.Entry<Integer, LdapURL>> inactive()
-  {
-    return ldapURLSet.getInactiveUrls();
   }
 
 
@@ -171,19 +159,15 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
                 }
                 return;
               }
-              for (Map.Entry<RetryMetadata, Map.Entry<Integer, LdapURL>> entry :
-                ldapURLSet.getInactiveUrls().entrySet()) {
-                // ensure inactive URL waits at least the inactive period before testing
-                if (Instant.now().isAfter(entry.getKey().getFailureTime().plus(inactivePeriod))) {
-                  if (retryCondition.test(entry.getKey())) {
-                    executor.submit(() -> {
-                      if (activateCondition.test(entry.getValue().getValue())) {
-                        success(entry.getValue().getValue());
-                      } else {
-                        entry.getKey().incrementAttempts();
-                      }
-                    });
-                  }
+              for (LdapURL url : ldapURLSet.getInactiveUrls()) {
+                if (retryCondition.test(url)) {
+                  executor.submit(() -> {
+                    if (activateCondition.test(url)) {
+                      success(url);
+                    } else {
+                      url.getRetryMetadata().recordFailure(Instant.now());
+                    }
+                  });
                 }
               }
             }

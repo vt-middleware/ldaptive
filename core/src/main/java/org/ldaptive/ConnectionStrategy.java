@@ -2,8 +2,6 @@
 package org.ldaptive;
 
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
 
 /**
@@ -12,8 +10,20 @@ import java.util.function.Predicate;
  *
  * @author  Middleware Services
  */
-public interface ConnectionStrategy
+public interface ConnectionStrategy extends Iterable<LdapURL>
 {
+
+
+  /**
+   * Populates a {@link LdapURLSet} from the URL string provided at configuration time.
+   *
+   * @param  urls  Space-delimited string of URLs describing the LDAP hosts to connect to. The URLs in the string
+   *               are commonly {@code ldap://} or {@code ldaps://} URLs that directly describe the hosts to connect to,
+   *               but may also describe a resource from which to obtain LDAP connection URLs as is the case for
+   *               {@link DnsSrvConnectionStrategy} that use URLs with the scheme {@code dns:}.
+   * @param  urlSet  LDAP URL set to populate.
+   */
+  void populate(String urls, LdapURLSet urlSet);
 
 
   /**
@@ -39,38 +49,6 @@ public interface ConnectionStrategy
    * @return  inactive period
    */
   Duration getInactivePeriod();
-
-
-  /**
-   * Returns the condition under which an inactive test should be executed.
-   *
-   * @return  inactive condition
-   */
-  Predicate<RetryMetadata> getRetryCondition();
-
-
-  /**
-   * Returns an ordered list of LDAP URLs to attempt connections to.
-   *
-   * @return  ordered LDAP URLs
-   */
-  List<LdapURL> apply();
-
-
-  /**
-   * Returns all active LDAP URLs.
-   *
-   * @return  active URLs
-   */
-  Map<Integer, LdapURL> active();
-
-
-  /**
-   * Returns all inactive LDAP URLs.
-   *
-   * @return  inactive URLs
-   */
-  Map<RetryMetadata, Map.Entry<Integer, LdapURL>> inactive();
 
 
   /**
