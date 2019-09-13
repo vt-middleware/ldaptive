@@ -30,22 +30,6 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy
     }
     urls.addAll(ldapURLSet.getInactiveUrls());
     counter.incrementAndGet();
-    return new Iterator<>() {
-      private int i;
-
-
-      @Override
-      public boolean hasNext()
-      {
-        return i < urls.size();
-      }
-
-
-      @Override
-      public LdapURL next()
-      {
-        return urls.get(i++);
-      }
-    };
+    return new DefaultLdapURLIterator(urls);
   }
 }
