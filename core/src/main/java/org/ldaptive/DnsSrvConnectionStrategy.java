@@ -191,24 +191,7 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
     if (Instant.now().isAfter(expirationTime)) {
       populate(ldapUrls, ldapURLSet);
     }
-    return new Iterator<>() {
-      private final List<LdapURL> urls = ldapURLSet.getUrls();
-      private int i;
-
-
-      @Override
-      public boolean hasNext()
-      {
-        return i < urls.size();
-      }
-
-
-      @Override
-      public LdapURL next()
-      {
-        return urls.get(i++);
-      }
-    };
+    return new DefaultLdapURLIterator(ldapURLSet.getUrls());
   }
 
 

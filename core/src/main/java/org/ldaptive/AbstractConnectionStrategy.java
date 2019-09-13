@@ -4,6 +4,8 @@ package org.ldaptive;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -176,6 +178,43 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
           getInactivePeriod().toMillis(),
           TimeUnit.MILLISECONDS);
       }
+    }
+  }
+
+
+  /** Default iterator implementation. */
+  protected static class DefaultLdapURLIterator implements Iterator<LdapURL>
+  {
+
+    /** URLs to iterate over. */
+    private final List<LdapURL> ldapUrls;
+
+    /** Iterator index. */
+    private int i;
+
+
+    /**
+     * Creates a new default LDAP URL iterator.
+     *
+     * @param  urls  to iterate over
+     */
+    public DefaultLdapURLIterator(final List<LdapURL> urls)
+    {
+      ldapUrls = urls;
+    }
+
+
+    @Override
+    public boolean hasNext()
+    {
+      return i < ldapUrls.size();
+    }
+
+
+    @Override
+    public LdapURL next()
+    {
+      return ldapUrls.get(i++);
     }
   }
 }
