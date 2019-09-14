@@ -110,7 +110,11 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
     // Thus LdapURLSet will be organized by decreasing precedence.
     final List<LdapURL> list = readSrvRecords(ldapUrls)
       .stream()
-      .map(SRVRecord::getLdapURL)
+      .map(srv -> {
+        final LdapURL url = srv.getLdapURL();
+        url.setRetryMetadata(new RetryMetadata(this));
+        return url;
+      })
       .collect(Collectors.toList());
     urlSet.populate(list);
   }
