@@ -67,7 +67,7 @@ public class LdapURL
   private SearchFilter filter;
 
   /** Metadata that describes connection failures on this URL. */
-  private final RetryMetadata retryMetadata = new RetryMetadata();
+  private RetryMetadata retryMetadata;
 
   /**
    * False if the last connection attempt to this URL failed, which should result in updating {@link #retryMetadata},
@@ -342,6 +342,17 @@ public class LdapURL
   RetryMetadata getRetryMetadata()
   {
     return retryMetadata;
+  }
+
+
+  /**
+   * Sets the retry metadata.
+   *
+   * @param  metadata  retry metadata
+   */
+  void setRetryMetadata(final RetryMetadata metadata)
+  {
+    retryMetadata = metadata;
   }
 
 

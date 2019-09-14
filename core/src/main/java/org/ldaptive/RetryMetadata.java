@@ -15,8 +15,33 @@ public class RetryMetadata
   /** Attempt count. */
   private final AtomicInteger attempts = new AtomicInteger();
 
+  /** Connection strategy associated with this retry. */
+  private final ConnectionStrategy connectionStrategy;
+
   /** Time at which the failure occurred. */
   private Instant failureTime;
+
+
+  /**
+   * Creates a new retry metadata.
+   *
+   * @param  strategy  connection strategy
+   */
+  public RetryMetadata(final ConnectionStrategy strategy)
+  {
+    connectionStrategy = strategy;
+  }
+
+
+  /**
+   * Return the connection strategy.
+   *
+   * @return  connection strategy
+   */
+  public ConnectionStrategy getConnectionStrategy()
+  {
+    return connectionStrategy;
+  }
 
 
   /**

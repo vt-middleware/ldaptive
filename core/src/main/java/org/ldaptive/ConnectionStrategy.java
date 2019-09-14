@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.time.Duration;
 import java.util.function.Predicate;
 
 /**
@@ -44,11 +43,19 @@ public interface ConnectionStrategy extends Iterable<LdapURL>
 
 
   /**
-   * Returns the period at which inactive connections will be tested.
+   * Returns the condition used to activate connections.
    *
-   * @return  inactive period
+   * @return  activate condition
    */
-  Duration getInactivePeriod();
+  Predicate<LdapURL> getActivateCondition();
+
+
+  /**
+   * Returns the condition used to determine whether to attempt to activate a connection.
+   *
+   * @return  retry condition
+   */
+  Predicate<LdapURL> getRetryCondition();
 
 
   /**
