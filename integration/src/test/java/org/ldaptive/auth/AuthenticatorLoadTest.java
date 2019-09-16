@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactoryManager;
+import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
@@ -127,7 +128,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     DefaultConnectionFactory ahcf = (DefaultConnectionFactory)
       ((ConnectionFactoryManager) pooledTLSAuth.getAuthenticationHandler()).getConnectionFactory();
     ConnectionConfig ahcc = ConnectionConfig.copy(ahcf.getConnectionConfig());
-    ahcc.setConnectionInitializers(null);
+    ahcc.setConnectionInitializers((ConnectionInitializer[]) null);
     ahcf.setConnectionConfig(ahcc);
 
     PooledConnectionFactory ahFactory = new PooledConnectionFactory();
