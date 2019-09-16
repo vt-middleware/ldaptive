@@ -127,7 +127,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     DefaultConnectionFactory ahcf = (DefaultConnectionFactory)
       ((ConnectionFactoryManager) pooledTLSAuth.getAuthenticationHandler()).getConnectionFactory();
     ConnectionConfig ahcc = ConnectionConfig.copy(ahcf.getConnectionConfig());
-    ahcc.setConnectionInitializer(null);
+    ahcc.setConnectionInitializers(null);
     ahcf.setConnectionConfig(ahcc);
 
     PooledConnectionFactory ahFactory = new PooledConnectionFactory();
@@ -140,7 +140,7 @@ public class AuthenticatorLoadTest extends AbstractTest
       ahcf = (DefaultConnectionFactory)
         ((ConnectionFactoryManager) singleADFastBind.getAuthenticationHandler()).getConnectionFactory();
       ahcc = ConnectionConfig.copy(ahcf.getConnectionConfig());
-      ahcc.setConnectionInitializer(new FastBindConnectionInitializer());
+      ahcc.setConnectionInitializers(new FastBindConnectionInitializer());
       ((SimpleBindAuthenticationHandler) singleADFastBind.getAuthenticationHandler()).setConnectionFactory(
         new DefaultConnectionFactory(ahcc));
       // initialize the pooled ad authenticator
@@ -156,7 +156,7 @@ public class AuthenticatorLoadTest extends AbstractTest
       ahcf = (DefaultConnectionFactory)
         ((ConnectionFactoryManager) pooledADFastBind.getAuthenticationHandler()).getConnectionFactory();
       ahcc = ConnectionConfig.copy(ahcf.getConnectionConfig());
-      ahcc.setConnectionInitializer(new FastBindConnectionInitializer());
+      ahcc.setConnectionInitializers(new FastBindConnectionInitializer());
       ahFactory = new PooledConnectionFactory();
       ahFactory.setDefaultConnectionFactory(ahcf);
       ahFactory.initialize();

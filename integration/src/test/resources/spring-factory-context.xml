@@ -14,7 +14,7 @@
     p:ldapUrl="${ldapTestHost}"
     p:useStartTLS="true"
     p:sslConfig-ref="sslConfig"
-    p:connectionInitializer-ref="bindConnectionInitializer"
+    p:connectionInitializers-ref="bindConnectionInitializer"
   />
 
   <bean id="bindConnectionInitializer"

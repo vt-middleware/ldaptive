@@ -191,7 +191,7 @@ public class NamespaceHandlerTest
     }
 
     if (authType != null) {
-      final BindConnectionInitializer ci = (BindConnectionInitializer) connectionConfig.getConnectionInitializer();
+      final BindConnectionInitializer ci = (BindConnectionInitializer) connectionConfig.getConnectionInitializers()[0];
       switch(authType) {
       case ANON_SEARCH:
         AssertJUnit.assertNull(ci);

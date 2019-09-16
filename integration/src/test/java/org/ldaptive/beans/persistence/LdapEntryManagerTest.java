@@ -41,7 +41,7 @@ public class LdapEntryManagerTest extends AbstractTest
     final DefaultConnectionFactory cf = new DefaultConnectionFactory(
       TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.setup.properties"));
     final BindConnectionInitializer ci =
-      (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializer();
+      (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializers()[0];
     final SearchOperation op = new SearchOperation(cf);
     final SearchRequest request = SearchRequest.objectScopeSearchRequest(ci.getBindDn());
     request.setReturnAttributes(ReturnAttributes.ALL.value());

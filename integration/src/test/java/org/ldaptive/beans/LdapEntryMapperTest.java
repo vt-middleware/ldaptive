@@ -42,7 +42,7 @@ public class LdapEntryMapperTest extends AbstractTest
   {
     final DefaultConnectionFactory cf = (DefaultConnectionFactory) TestUtils.createSetupConnectionFactory();
     final BindConnectionInitializer ci =
-      (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializer();
+      (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializers()[0];
     final SearchOperation op = new SearchOperation(cf);
     final SearchRequest request = SearchRequest.objectScopeSearchRequest(ci.getBindDn());
     request.setReturnAttributes(ReturnAttributes.ALL.value());
