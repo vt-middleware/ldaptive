@@ -74,6 +74,13 @@
       <artifactId>spring-expression</artifactId>
       <scope>test</scope>
     </dependency>
+    <!-- JMeter Load Testing Dependencies -->
+    <dependency>
+      <groupId>org.apache.jmeter</groupId>
+      <artifactId>ApacheJMeter_java</artifactId>
+      <version>5.1.1</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -142,6 +149,24 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
+          <execution>
+            <id>copy-integration-jar-to-jmeter-ext</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/jmeter/lib/ext</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${project.build.directory}</directory>
+                  <includes>
+                    <include>${project.artifactId}-${project.version}-tests.jar</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
           <execution>
             <id>copy-testng</id>
             <phase>validate</phase>
@@ -217,6 +242,58 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.lazerycode.jmeter</groupId>
+        <artifactId>jmeter-maven-plugin</artifactId>
+        <version>2.9.0</version>
+        <executions>
+          <!-- Run JMeter tests -->
+          <execution>
+            <id>jmeter-tests</id>
+            <goals>
+              <goal>jmeter</goal>
+            </goals>
+          </execution>
+          <!-- Fail build on errors in test -->
+          <execution>
+            <id>jmeter-check-results</id>
+            <goals>
+              <goal>results</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <errorRateThresholdInPercent>1</errorRateThresholdInPercent>
+          <generateReports>true</generateReports>
+          <propertiesReportGenerator>
+            <jmeter.reportgenerator.overall_granularity>1000</jmeter.reportgenerator.overall_granularity>
+          </propertiesReportGenerator>
+          <propertiesJMeter>
+            <jmeter.save.saveservice.thread_counts>true</jmeter.save.saveservice.thread_counts>
+            <jmeter.reportgenerator.apdex_satisfied_threshold>100</jmeter.reportgenerator.apdex_satisfied_threshold>
+            <jmeter.reportgenerator.apdex_tolerated_threshold>200</jmeter.reportgenerator.apdex_tolerated_threshold>
+          </propertiesJMeter>
+          <propertiesUser>
+            <ldapUrl>ldap://ldap-test</ldapUrl>
+            <numSearchSingleUsers>20</numSearchSingleUsers>
+            <numSearchPooledUsers>20</numSearchPooledUsers>
+            <numSearchDefaultUsers>20</numSearchDefaultUsers>
+            <numAuthDefaultUsers>20</numAuthDefaultUsers>
+            <userRampUp>2</userRampUp>
+            <runDuration>5</runDuration>
+            <connMaxOps>5</connMaxOps>
+            <autoReconnect>false</autoReconnect>
+            <minPoolSize>10</minPoolSize>
+            <maxPoolSize>10</maxPoolSize>
+          </propertiesUser>
+          <jmeterExtensions>
+            <artifact>org.ldaptive:ldaptive:${project.version}</artifact>
+            <artifact>kg.apc:jmeter-plugins-graphs-vs:2.0</artifact>
+            <artifact>kg.apc:jmeter-plugins-graphs-composite:2.0</artifact>
+            <artifact>org.springframework:spring-core:jar:5.1.9.RELEASE</artifact>
+          </jmeterExtensions>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
