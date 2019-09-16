@@ -66,6 +66,15 @@ public class LdapURL
   /** Search filter of the ldap url. */
   private SearchFilter filter;
 
+  /** Metadata that describes connection failures on this URL. */
+  private RetryMetadata retryMetadata;
+
+  /**
+   * False if the last connection attempt to this URL failed, which should result in updating {@link #retryMetadata},
+   * otherwise true.
+   */
+  private boolean active = true;
+
 
   /**
    * Creates a new ldap url.
@@ -322,6 +331,57 @@ public class LdapURL
   {
     return new StringBuilder(getScheme()).append("://")
       .append(getHostname() != null ? getHostname() : "null").append(":").append(getPort()).toString();
+  }
+
+
+  /**
+   * Returns the retry metadata.
+   *
+   * @return  metadata describing retry attempts for connections made this URL.
+   */
+  RetryMetadata getRetryMetadata()
+  {
+    return retryMetadata;
+  }
+
+
+  /**
+   * Sets the retry metadata.
+   *
+   * @param  metadata  retry metadata
+   */
+  void setRetryMetadata(final RetryMetadata metadata)
+  {
+    retryMetadata = metadata;
+  }
+
+
+  /**
+   * Returns whether this URL is currently active.
+   *
+   * @return  true if this URL can be connected to, false otherwise.
+   */
+  boolean isActive()
+  {
+    return active;
+  }
+
+
+  /**
+   * Marks this URL as active.
+   */
+  void activate()
+  {
+    active = true;
+  }
+
+
+  /**
+   * Marks this URL as inactive.
+   */
+  void deactivate()
+  {
+    active = false;
   }
 
 

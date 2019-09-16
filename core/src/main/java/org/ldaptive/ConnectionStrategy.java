@@ -1,9 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Interface to describe various connection strategies. Each strategy returns an ordered list of LDAP URLs to attempt
@@ -11,16 +9,29 @@ import java.util.Map;
  *
  * @author  Middleware Services
  */
-public interface ConnectionStrategy
+public interface ConnectionStrategy extends Iterable<LdapURL>
 {
+
+
+  /**
+   * Populates a {@link LdapURLSet} from the URL string provided at configuration time.
+   *
+   * @param  urls  Space-delimited string of URLs describing the LDAP hosts to connect to. The URLs in the string
+   *               are commonly {@code ldap://} or {@code ldaps://} URLs that directly describe the hosts to connect to,
+   *               but may also describe a resource from which to obtain LDAP connection URLs as is the case for
+   *               {@link DnsSrvConnectionStrategy} that use URLs with the scheme {@code dns:}.
+   * @param  urlSet  LDAP URL set to populate.
+   */
+  void populate(String urls, LdapURLSet urlSet);
 
 
   /**
    * Prepare this strategy for use.
    *
    * @param  urls  LDAP URLs for this strategy
+   * @param  activateCondition  predicate to determine whether a connection is active
    */
-  void initialize(String urls);
+  void initialize(String urls, Predicate<LdapURL> activateCondition);
 
 
   /**
@@ -32,51 +43,33 @@ public interface ConnectionStrategy
 
 
   /**
-   * Returns the metadata for the URLs from this strategy.
+   * Returns the condition used to activate connections.
    *
-   * @return  URL metadata
+   * @return  activate condition
    */
-  Map<LdapURL, Map<String, Object>> getMetadata();
+  Predicate<LdapURL> getActivateCondition();
 
 
   /**
-   * Returns an ordered list of LDAP URLs to connect to.
+   * Returns the condition used to determine whether to attempt to activate a connection.
    *
-   * @return  ordered LDAP URLs
+   * @return  retry condition
    */
-  List<LdapURL> apply();
+  Predicate<LdapURL> getRetryCondition();
 
 
   /**
-   * Records a success for the supplied URL in the strategy metadata.
+   * Indicates the supplied URL was successfully connected to.
    *
    * @param  url  which was successfully connected to
    */
-  default void success(final LdapURL url)
-  {
-    final Map<String, Object> keyValues = getMetadata().computeIfAbsent(url, ldapURL -> new HashMap<>());
-    keyValues.computeIfPresent("successCount", (k, v) -> {
-      if (v == null) {
-        return 1L;
-      }
-      return (long) v + 1;
-    });
-  }
+  void success(LdapURL url);
 
 
   /**
-   * Records a failure for the supplied URL in the strategy metadata.
+   * Indicates the supplied URL could not be connected to.
    *
    * @param  url  which was could not be connected to
    */
-  default void failure(final LdapURL url)
-  {
-    final Map<String, Object> keyValues = getMetadata().computeIfAbsent(url, ldapURL -> new HashMap<>());
-    keyValues.computeIfPresent("failureCount", (k, v) -> {
-      if (v == null) {
-        return 1L;
-      }
-      return (long) v + 1;
-    });
-  }
+  void failure(LdapURL url);
 }

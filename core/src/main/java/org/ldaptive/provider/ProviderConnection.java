@@ -1,12 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider;
 
+import java.util.Iterator;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.ConnectException;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionStrategy;
-import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.UnbindRequest;
@@ -41,18 +41,10 @@ public abstract class ProviderConnection implements Connection
   public ProviderConnection(final ConnectionConfig config)
   {
     connectionConfig = config;
-    if (connectionConfig.getConnectionStrategy() == null) {
-      if (connectionConfig.getLdapUrl().startsWith("dns:")) {
-        connectionStrategy = new DnsSrvConnectionStrategy();
-      } else {
-        connectionStrategy = new ActivePassiveConnectionStrategy();
-      }
-    } else {
-      connectionStrategy = connectionConfig.getConnectionStrategy();
-    }
+    connectionStrategy = connectionConfig.getConnectionStrategy();
     synchronized (connectionStrategy) {
       if (!connectionStrategy.isInitialized()) {
-        connectionStrategy.initialize(connectionConfig.getLdapUrl());
+        connectionStrategy.initialize(connectionConfig.getLdapUrl(), url -> test(url));
       }
     }
   }
@@ -68,7 +60,11 @@ public abstract class ProviderConnection implements Connection
     }
 
     LdapException lastThrown = null;
-    for (LdapURL url : connectionStrategy.apply()) {
+    boolean strategyProducedUrls = false;
+    final Iterator<LdapURL> iter = connectionStrategy.iterator();
+    while (iter.hasNext()) {
+      strategyProducedUrls = true;
+      final LdapURL url = iter.next();
       try {
         LOGGER.trace(
           "Attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);
@@ -83,10 +79,23 @@ public abstract class ProviderConnection implements Connection
           "Error connecting to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy, e);
       }
     }
+    if (!strategyProducedUrls) {
+      throw new ConnectException("Connection strategy did not produced any LDAP URLs");
+    }
     if (lastThrown != null) {
       throw lastThrown;
     }
   }
+
+
+  /**
+   * Determine whether the supplied URL is acceptable for use.
+   *
+   * @param  url  LDAP URL to test
+   *
+   * @return  whether URL can be become active
+   */
+  protected abstract boolean test(LdapURL url);
 
 
   /**

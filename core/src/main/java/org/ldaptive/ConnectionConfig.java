@@ -26,7 +26,7 @@ public class ConnectionConfig extends AbstractConfig
   private boolean autoReconnect;
 
   /** Condition used to determine whether another reconnect attempt should be made. Default makes a single attempt. */
-  private Predicate<Integer> autoReconnectCondition = attempt -> attempt == 1;
+  private Predicate<RetryMetadata> autoReconnectCondition = metadata -> metadata.getAttempts() == 0;
 
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
@@ -38,7 +38,7 @@ public class ConnectionConfig extends AbstractConfig
   private ConnectionInitializer connectionInitializer;
 
   /** Connection strategy. */
-  private ConnectionStrategy connectionStrategy;
+  private ConnectionStrategy connectionStrategy = new ActivePassiveConnectionStrategy();
 
 
   /** Default constructor. */
@@ -164,7 +164,7 @@ public class ConnectionConfig extends AbstractConfig
    *
    * @return  auto reconnect condition
    */
-  public Predicate<Integer> getAutoReconnectCondition()
+  public Predicate<RetryMetadata> getAutoReconnectCondition()
   {
     return autoReconnectCondition;
   }
@@ -175,7 +175,7 @@ public class ConnectionConfig extends AbstractConfig
    *
    * @param  predicate  to determine whether to attempt a reconnect
    */
-  public void setAutoReconnectCondition(final Predicate<Integer> predicate)
+  public void setAutoReconnectCondition(final Predicate<RetryMetadata> predicate)
   {
     checkImmutable();
     logger.trace("setting autoReconnectCondition: {}", predicate);
@@ -368,7 +368,7 @@ public class ConnectionConfig extends AbstractConfig
     }
 
 
-    public Builder autoReconnectCondition(final Predicate<Integer> predicate)
+    public Builder autoReconnectCondition(final Predicate<RetryMetadata> predicate)
     {
       object.setAutoReconnectCondition(predicate);
       return this;
