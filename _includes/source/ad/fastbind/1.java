@@ -5,7 +5,7 @@ FormatDnResolver dnResolver = new FormatDnResolver("%s@ldaptive.org");
 PooledConnectionFactory factory = new PooledConnectionFactory(ConnectionConfig.builder()
   .url("ldap://directory.ldaptive.org")
   .useStartTLS(true)
-  .connectionInitializer(new FastBindConnectionInitializer())
+  .connectionInitializers(new FastBindConnectionInitializer())
   .build());
 factory.initialize();
 

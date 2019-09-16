@@ -3,7 +3,7 @@ SearchOperation search = new SearchOperation(
     .config(ConnectionConfig.builder()
       .url("ldap://directory.ldaptive.org")
       .useStartTLS(true)
-      .connectionInitializer(BindConnectionInitializer.builder()
+      .connectionInitializers(BindConnectionInitializer.builder()
         .dn("cn=manager,ou=people,dc=ldaptive,dc=org")
         .credential("manager_password")
         .build())

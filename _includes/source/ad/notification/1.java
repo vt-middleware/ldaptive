@@ -1,6 +1,6 @@
 SingleConnectionFactory factory = new SingleConnectionFactory(ConnectionConfig.builder()
   .url("ldap://directory.ldaptive.org")
-  .connectionInitializer(
+  .connectionInitializers(
     new BindConnectionInitializer("cn=manager,ou=people,dc=ldaptive,dc=org", new Credential("manager_password")))
   .build());
 factory.initialize();
