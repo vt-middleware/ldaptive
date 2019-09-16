@@ -62,7 +62,7 @@ public abstract class AbstractConnectionConfigBeanDefinitionParser extends Abstr
 
     if (includeConnectionInitializer && element.hasAttribute("bindDn")) {
       connectionConfig.addPropertyValue(
-        "connectionInitializer",
+        "connectionInitializers",
         parseConnectionInitializer(null, element).getBeanDefinition());
     }
     return connectionConfig;

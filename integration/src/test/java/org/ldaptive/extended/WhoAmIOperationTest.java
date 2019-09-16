@@ -32,7 +32,7 @@ public class WhoAmIOperationTest extends AbstractTest
     final ExtendedOperation whoami = new ExtendedOperation(cf);
     final ExtendedResponse res = whoami.execute(new WhoAmIRequest());
     final BindConnectionInitializer ci =
-      (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializer();
+      (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializers()[0];
     AssertJUnit.assertEquals("dn:" + ci.getBindDn(), WhoAmIResponseParser.parse(res));
   }
 }

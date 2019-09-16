@@ -53,6 +53,7 @@ import org.ldaptive.CompareRequest;
 import org.ldaptive.CompareResponse;
 import org.ldaptive.ConnectException;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.DeleteResponse;
 import org.ldaptive.LdapAttribute;
@@ -209,8 +210,10 @@ public final class NettyConnection extends ProviderConnection
       operation(new StartTLSRequest());
     }
     // initialize the connection
-    if (connectionConfig.getConnectionInitializer() != null) {
-      connectionConfig.getConnectionInitializer().initialize(this);
+    if (connectionConfig.getConnectionInitializers() != null) {
+      for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
+        initializer.initialize(this);
+      }
     }
   }
 
@@ -673,7 +676,7 @@ public final class NettyConnection extends ProviderConnection
     if (isOpen()) {
       throw new IllegalStateException("Reconnect cannot be invoked when the connection is open");
     }
-    final RetryMetadata metadata = new RetryMetadata();
+    final RetryMetadata metadata = new RetryMetadata(connectionConfig.getConnectionStrategy());
     while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
       try {
         open();

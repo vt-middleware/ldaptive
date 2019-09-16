@@ -50,8 +50,8 @@ public class PropertiesTest
       "classpath:/org/ldaptive/ldap.null.properties");
     ccSource.initialize();
 
-    AssertJUnit.assertNotNull(cc.getConnectionInitializer());
-    AssertJUnit.assertNull(((BindConnectionInitializer) cc.getConnectionInitializer()).getBindSaslConfig());
+    AssertJUnit.assertNotNull(cc.getConnectionInitializers());
+    AssertJUnit.assertNull(((BindConnectionInitializer) cc.getConnectionInitializers()[0]).getBindSaslConfig());
 
     final SearchRequest sr = new SearchRequest();
     final SearchRequestPropertySource srSource = new SearchRequestPropertySource(
@@ -83,7 +83,7 @@ public class PropertiesTest
     cfSource.initialize();
 
     final ConnectionConfig cc = cf.getConnectionConfig();
-    final BindConnectionInitializer ci = (BindConnectionInitializer) cc.getConnectionInitializer();
+    final BindConnectionInitializer ci = (BindConnectionInitializer) cc.getConnectionInitializers()[0];
 
     AssertJUnit.assertEquals(host, cc.getLdapUrl());
     AssertJUnit.assertEquals(bindDn, ci.getBindDn());
@@ -136,7 +136,7 @@ public class PropertiesTest
 
     final DefaultConnectionFactory resolverBaseCf = resolverCf.getDefaultConnectionFactory();
     final ConnectionConfig authCc = resolverBaseCf.getConnectionConfig();
-    final BindConnectionInitializer authCi = (BindConnectionInitializer) authCc.getConnectionInitializer();
+    final BindConnectionInitializer authCi = (BindConnectionInitializer) authCc.getConnectionInitializers()[0];
     AssertJUnit.assertEquals("ldap://auth.ldaptive.org:14389", authCc.getLdapUrl());
     AssertJUnit.assertEquals(bindDn, authCi.getBindDn());
     AssertJUnit.assertEquals(Duration.ofSeconds(8), authCc.getConnectTimeout());
@@ -198,7 +198,7 @@ public class PropertiesTest
     final ConnectionFactoryManager cfm = (ConnectionFactoryManager) auth.getAuthenticationHandler();
     final PooledConnectionFactory cf = (PooledConnectionFactory) cfm.getConnectionFactory();
     final ConnectionConfig cc = cf.getConnectionConfig();
-    final BindConnectionInitializer ci = (BindConnectionInitializer) cc.getConnectionInitializer();
+    final BindConnectionInitializer ci = (BindConnectionInitializer) cc.getConnectionInitializers()[0];
 
     AssertJUnit.assertNotNull(cf.getProvider().getClass());
     AssertJUnit.assertEquals(host, cc.getLdapUrl());
@@ -236,7 +236,7 @@ public class PropertiesTest
     AssertJUnit.assertEquals(Duration.ofMinutes(2), pruneStrategy.getIdleTime());
 
     final ConnectionConfig authCc = resolverCf.getDefaultConnectionFactory().getConnectionConfig();
-    final BindConnectionInitializer authCi = (BindConnectionInitializer) authCc.getConnectionInitializer();
+    final BindConnectionInitializer authCi = (BindConnectionInitializer) authCc.getConnectionInitializers()[0];
     AssertJUnit.assertEquals(host, authCc.getLdapUrl());
     AssertJUnit.assertEquals(bindDn, authCi.getBindDn());
     AssertJUnit.assertEquals(Duration.ofSeconds(8), authCc.getConnectTimeout());

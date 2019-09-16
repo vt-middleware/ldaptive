@@ -2,6 +2,7 @@
 package org.ldaptive;
 
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.function.Predicate;
 import org.ldaptive.ssl.SslConfig;
 
@@ -34,8 +35,8 @@ public class ConnectionConfig extends AbstractConfig
   /** Connect to LDAP using startTLS. */
   private boolean useStartTLS;
 
-  /** Connection initializer to execute on {@link Connection#open()}. */
-  private ConnectionInitializer connectionInitializer;
+  /** Connection initializers to execute on {@link Connection#open()}. */
+  private ConnectionInitializer[] connectionInitializers;
 
   /** Connection strategy. */
   private ConnectionStrategy connectionStrategy = new ActivePassiveConnectionStrategy();
@@ -232,26 +233,26 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the connection initializer.
+   * Returns the connection initializers.
    *
-   * @return  connection initializer
+   * @return  connection initializers
    */
-  public ConnectionInitializer getConnectionInitializer()
+  public ConnectionInitializer[] getConnectionInitializers()
   {
-    return connectionInitializer;
+    return connectionInitializers;
   }
 
 
   /**
-   * Sets the connection initializer.
+   * Sets the connection initializers.
    *
-   * @param  initializer  connection initializer
+   * @param  initializers  connection initializers
    */
-  public void setConnectionInitializer(final ConnectionInitializer initializer)
+  public void setConnectionInitializers(final ConnectionInitializer... initializers)
   {
     checkImmutable();
-    logger.trace("setting connectionInitializer: {}", initializer);
-    connectionInitializer = initializer;
+    logger.trace("setting connectionInitializers: {}", Arrays.toString(initializers));
+    connectionInitializers = initializers;
   }
 
 
@@ -296,7 +297,7 @@ public class ConnectionConfig extends AbstractConfig
     cc.setAutoReconnectCondition(config.getAutoReconnectCondition());
     cc.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
     cc.setUseStartTLS(config.getUseStartTLS());
-    cc.setConnectionInitializer(config.getConnectionInitializer());
+    cc.setConnectionInitializers(config.getConnectionInitializers());
     cc.setConnectionStrategy(config.getConnectionStrategy());
     return cc;
   }
@@ -314,7 +315,7 @@ public class ConnectionConfig extends AbstractConfig
       .append("autoReconnectCondition=").append(autoReconnectCondition).append(", ")
       .append("sslConfig=").append(sslConfig).append(", ")
       .append("useStartTLS=").append(useStartTLS).append(", ")
-      .append("connectionInitializer=").append(connectionInitializer).append(", ")
+      .append("connectionInitializers=").append(Arrays.toString(connectionInitializers)).append(", ")
       .append("connectionStrategy=").append(connectionStrategy).toString();
   }
 
@@ -389,9 +390,9 @@ public class ConnectionConfig extends AbstractConfig
     }
 
 
-    public Builder connectionInitializer(final ConnectionInitializer initializer)
+    public Builder connectionInitializers(final ConnectionInitializer... initializers)
     {
-      object.setConnectionInitializer(initializer);
+      object.setConnectionInitializers(initializers);
       return this;
     }
 

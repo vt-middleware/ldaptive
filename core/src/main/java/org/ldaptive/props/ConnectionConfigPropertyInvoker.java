@@ -33,8 +33,8 @@ public class ConnectionConfigPropertyInvoker extends AbstractPropertyInvoker
   {
     Object newValue = value;
     if (type != String.class) {
-      if (ConnectionInitializer.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(ConnectionInitializer.class, value);
+      if (ConnectionInitializer[].class.isAssignableFrom(type)) {
+        newValue = createArrayTypeFromPropertyValue(ConnectionInitializer.class, value);
       } else if (ConnectionStrategy.class.isAssignableFrom(type)) {
         if ("ACTIVE_PASSIVE".equals(value)) {
           newValue = new ActivePassiveConnectionStrategy();
