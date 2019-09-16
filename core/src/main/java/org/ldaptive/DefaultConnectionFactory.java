@@ -3,6 +3,8 @@ package org.ldaptive;
 
 import org.ldaptive.provider.Provider;
 import org.ldaptive.provider.ProviderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Creates connections for performing ldap operations.
@@ -11,6 +13,9 @@ import org.ldaptive.provider.ProviderFactory;
  */
 public class DefaultConnectionFactory implements ConnectionFactory
 {
+
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Provider used by this factory. */
   private Provider provider;

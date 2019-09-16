@@ -2,7 +2,7 @@
 package org.ldaptive;
 
 /**
- * Factory for creating connections.
+ * Interface for connection factories.
  *
  * @author  Middleware Services
  */
