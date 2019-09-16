@@ -16,12 +16,17 @@ import org.ldaptive.provider.ProviderFactory;
 public class SingleConnectionFactory extends DefaultConnectionFactory
 {
 
-
   /** The connection used by this factory. */
   private Connection connection;
 
   /** The proxy used by this factory. */
   private Connection proxy;
+
+  /** Whether {@link #initialize()} has been successfully invoked. */
+  private boolean initialized;
+
+  /** Whether {@link #initialize()} should throw if the connection cannot be opened. */
+  private boolean failFastInitialize = true;
 
 
   /** Default constructor. */
@@ -63,6 +68,39 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
 
 
   /**
+   * Returns whether {@link #initialize()} should throw if the connection cannot be opened.
+   *
+   * @return  whether {@link #initialize()} should throw
+   */
+  public boolean getFailFastInitialize()
+  {
+    return failFastInitialize;
+  }
+
+
+  /**
+   * Sets whether {@link #initialize()} should throw if the connection cannot be opened.
+   *
+   * @param  b  whether {@link #initialize()} should throw
+   */
+  public void setFailFastInitialize(final boolean b)
+  {
+    failFastInitialize = b;
+  }
+
+
+  /**
+   * Returns whether this factory has been initialized.
+   *
+   * @return  whether this factory has been initialized
+   */
+  public boolean isInitialized()
+  {
+    return initialized;
+  }
+
+
+  /**
    * Prepares this factory for use.
    *
    * @throws   LdapException  if the connection cannot be opened
@@ -70,18 +108,33 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   public void initialize()
     throws LdapException
   {
+    if (initialized) {
+      throw new IllegalStateException("Connection factory has already been initialized");
+    }
     connection = super.getConnection();
-    connection.open();
+    try {
+      connection.open();
+    } catch (LdapException e) {
+      if (failFastInitialize) {
+        throw e;
+      }
+      logger.warn("Could not initialize connection factory", e);
+    }
+
     proxy = (Connection) Proxy.newProxyInstance(
       Connection.class.getClassLoader(),
       new Class[] {Connection.class},
       new ConnectionProxy(connection));
+    initialized = true;
   }
 
 
   @Override
   public Connection getConnection()
   {
+    if (!initialized) {
+      throw new IllegalStateException("Connection factory has not been initialized");
+    }
     return proxy;
   }
 
@@ -102,7 +155,9 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("provider=").append(getProvider()).append(", ")
-      .append("config=").append(getConnectionConfig()).append("]").toString();
+      .append("config=").append(getConnectionConfig()).append(", ")
+      .append("failFastInitialize=").append(failFastInitialize).append(", ")
+      .append("initialized=").append(initialized).append("]").toString();
   }
 
 
@@ -192,6 +247,13 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     public Builder config(final ConnectionConfig cc)
     {
       object.setConnectionConfig(cc);
+      return this;
+    }
+
+
+    public Builder failFastInitialize(final boolean failFast)
+    {
+      object.setFailFastInitialize(failFast);
       return this;
     }
 
