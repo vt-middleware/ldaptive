@@ -199,7 +199,6 @@ public final class NettyConnection extends ProviderConnection
     LOGGER.debug("Opening connection {}", this);
     final ChannelFuture future = connectInternal();
     channel = future.channel();
-    channel.closeFuture().addListener(closeListener);
     pendingResponses.open();
     // startTLS request must occur after the connection is ready
     if (connectionConfig.getUseStartTLS()) {
@@ -208,6 +207,7 @@ public final class NettyConnection extends ProviderConnection
       } catch (Exception e) {
         LOGGER.error("StartTLS failed on connection open", e);
         close();
+        pendingResponses.clear();
         throw e;
       }
     }
@@ -219,10 +219,12 @@ public final class NettyConnection extends ProviderConnection
         } catch (Exception e) {
           LOGGER.error("Connection initializer {} failed", initializer, e);
           close();
+          pendingResponses.clear();
           throw e;
         }
       }
     }
+    channel.closeFuture().addListener(closeListener);
   }
 
 
