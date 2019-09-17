@@ -104,13 +104,6 @@ public final class MockConnection extends ProviderConnection
 
 
   @Override
-  protected void done(final DefaultOperationHandle handle)
-  {
-    throw new UnsupportedOperationException();
-  }
-
-
-  @Override
   public void operation(final AbandonRequest request)
   {
     throw new UnsupportedOperationException();

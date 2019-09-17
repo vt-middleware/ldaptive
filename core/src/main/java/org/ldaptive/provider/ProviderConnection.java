@@ -122,12 +122,4 @@ public abstract class ProviderConnection implements Connection
    * @param  handle  for the operation write
    */
   protected abstract void write(DefaultOperationHandle handle);
-
-
-  /**
-   * Report back to the connection that the supplied handle has received a response and is done.
-   *
-   * @param  handle  that is done
-   */
-  protected abstract void done(DefaultOperationHandle handle);
 }
