@@ -2,6 +2,8 @@
 package org.ldaptive;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * Connection strategy that attempts hosts ordered exactly the way they are configured. This means that the first host
@@ -12,25 +14,25 @@ import java.util.Iterator;
 public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
 {
 
-  /** Whether to return a circular iterator. */
-  private final boolean circularIter;
+  /** Custom iterator function. */
+  private final Function<List<LdapURL>, Iterator<LdapURL>> iterFunction;
 
 
   /** Default constructor. */
   public ActivePassiveConnectionStrategy()
   {
-    this(false);
+    this(null);
   }
 
 
   /**
    * Creates a new active passive connection strategy.
    *
-   * @param  circular  use a circular iterator
+   * @param  function  that produces a custom iterator
    */
-  public ActivePassiveConnectionStrategy(final boolean circular)
+  public ActivePassiveConnectionStrategy(final Function<List<LdapURL>, Iterator<LdapURL>> function)
   {
-    circularIter = circular;
+    iterFunction = function;
   }
 
 
@@ -40,6 +42,9 @@ public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
     if (!isInitialized()) {
       throw new IllegalStateException("Strategy is not initialized");
     }
-    return new DefaultLdapURLIterator(ldapURLSet.getUrls(), circularIter);
+    if (iterFunction != null) {
+      return iterFunction.apply(ldapURLSet.getUrls());
+    }
+    return new DefaultLdapURLIterator(ldapURLSet.getUrls());
   }
 }
