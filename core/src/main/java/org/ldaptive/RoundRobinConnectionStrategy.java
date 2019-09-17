@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Connection strategy that moves the first URL in it's list to the end of that list.
+ * Connection strategy that reorders it's URLs based on the number of times it's been invoked.
  *
  * @author  Middleware Services
  */
@@ -16,6 +16,27 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy
 
   /** Usage counter. */
   private final AtomicInteger counter = new AtomicInteger();
+
+  /** Whether to return a circular iterator. */
+  private final boolean circularIter;
+
+
+  /** Default constructor. */
+  public RoundRobinConnectionStrategy()
+  {
+    this(false);
+  }
+
+
+  /**
+   * Creates a new round robin connection strategy.
+   *
+   * @param  circular  use a circular iterator
+   */
+  public RoundRobinConnectionStrategy(final boolean circular)
+  {
+    circularIter = circular;
+  }
 
 
   @Override
@@ -30,6 +51,6 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy
     }
     urls.addAll(ldapURLSet.getInactiveUrls());
     counter.incrementAndGet();
-    return new DefaultLdapURLIterator(urls);
+    return new DefaultLdapURLIterator(urls, circularIter);
   }
 }

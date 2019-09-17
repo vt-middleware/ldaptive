@@ -124,6 +124,9 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
     /** URLs to iterate over. */
     private final List<LdapURL> ldapUrls;
 
+    /** Whether this iterator should operate in a circular fashion. */
+    private final boolean circular;
+
     /** Iterator index. */
     private int i;
 
@@ -135,13 +138,29 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
      */
     public DefaultLdapURLIterator(final List<LdapURL> urls)
     {
+      this(urls, false);
+    }
+
+
+    /**
+     * Creates a new default LDAP URL iterator.
+     *
+     * @param  urls  to iterate over
+     * @param  b  whether to make this iterator circular
+     */
+    public DefaultLdapURLIterator(final List<LdapURL> urls, final boolean b)
+    {
       ldapUrls = urls;
+      circular = b;
     }
 
 
     @Override
     public boolean hasNext()
     {
+      if (circular) {
+        return true;
+      }
       return i < ldapUrls.size();
     }
 
@@ -149,6 +168,9 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
     @Override
     public LdapURL next()
     {
+      if (circular) {
+        return ldapUrls.get(i++ % ldapUrls.size());
+      }
       return ldapUrls.get(i++);
     }
   }
