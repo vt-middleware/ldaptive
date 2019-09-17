@@ -12,6 +12,27 @@ import java.util.Iterator;
 public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
 {
 
+  /** Whether to return a circular iterator. */
+  private final boolean circularIter;
+
+
+  /** Default constructor. */
+  public ActivePassiveConnectionStrategy()
+  {
+    this(false);
+  }
+
+
+  /**
+   * Creates a new active passive connection strategy.
+   *
+   * @param  circular  use a circular iterator
+   */
+  public ActivePassiveConnectionStrategy(final boolean circular)
+  {
+    circularIter = circular;
+  }
+
 
   @Override
   public Iterator<LdapURL> iterator()
@@ -19,6 +40,6 @@ public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
     if (!isInitialized()) {
       throw new IllegalStateException("Strategy is not initialized");
     }
-    return new DefaultLdapURLIterator(ldapURLSet.getUrls());
+    return new DefaultLdapURLIterator(ldapURLSet.getUrls(), circularIter);
   }
 }
