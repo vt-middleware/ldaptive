@@ -111,7 +111,7 @@ public class ConnectionPoolTest extends AbstractTest
     blockingTimeoutPool.setValidator(new SearchValidator());
 
     final ConnectionConfig connStrategyCc = TestUtils.readConnectionConfig(null);
-    connStrategyCc.setLdapUrl(String.format("%s ldap://dne.middleware.vt.edu", host));
+    connStrategyCc.setLdapUrl(String.format("%s ldap://dne.directory.ldaptive.org", host));
     connStrategyCc.setConnectionStrategy(new RoundRobinConnectionStrategy());
     final DefaultConnectionFactory connStrategyCf = new DefaultConnectionFactory(connStrategyCc);
 
