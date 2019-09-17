@@ -2,14 +2,14 @@
 package org.ldaptive.ssl;
 
 import java.security.GeneralSecurityException;
+import java.time.Duration;
 import java.util.Arrays;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.TrustManager;
 import org.ldaptive.AbstractConfig;
 
 /**
- * Contains all the configuration data for SSL and startTLS. Providers are not guaranteed to support all the options
- * contained here.
+ * Contains all the configuration data for SSL and startTLS.
  *
  * @author  Middleware Services
  */
@@ -33,6 +33,9 @@ public class SslConfig extends AbstractConfig
 
   /** Handshake completed listeners. */
   private HandshakeCompletedListener[] handshakeCompletedListeners;
+
+  /** Duration of time that handshakes will block. */
+  private Duration handshakeTimeout = Duration.ofMinutes(1);
 
 
   /** Default constructor. */
@@ -232,6 +235,33 @@ public class SslConfig extends AbstractConfig
 
 
   /**
+   * Returns the handshake timeout.
+   *
+   * @return  timeout
+   */
+  public Duration getHandshakeTimeout()
+  {
+    return handshakeTimeout;
+  }
+
+
+  /**
+   * Sets the maximum amount of time that handshakes will block.
+   *
+   * @param  time  timeout for handshakes
+   */
+  public void setHandshakeTimeout(final Duration time)
+  {
+    checkImmutable();
+    if (time != null && time.isNegative()) {
+      throw new IllegalArgumentException("Handshake timeout cannot be negative");
+    }
+    logger.trace("setting handshakeTimeout: {}", time);
+    handshakeTimeout = time;
+  }
+
+
+  /**
    * Returns a ssl config initialized with the supplied config.
    *
    * @param  config  ssl config to read properties from
@@ -247,6 +277,7 @@ public class SslConfig extends AbstractConfig
     sc.setEnabledCipherSuites(config.getEnabledCipherSuites());
     sc.setEnabledProtocols(config.getEnabledProtocols());
     sc.setHandshakeCompletedListeners(config.getHandshakeCompletedListeners());
+    sc.setHandshakeTimeout(config.getHandshakeTimeout());
     return sc;
   }
 
@@ -290,7 +321,8 @@ public class SslConfig extends AbstractConfig
       .append("hostnameVerifier=").append(hostnameVerifier).append(", ")
       .append("enabledCipherSuites=").append(Arrays.toString(enabledCipherSuites)).append(", ")
       .append("enabledProtocols=").append(Arrays.toString(enabledProtocols)).append(", ")
-      .append("handshakeCompletedListeners=").append(Arrays.toString(handshakeCompletedListeners))
+      .append("handshakeCompletedListeners=").append(Arrays.toString(handshakeCompletedListeners)).append(", ")
+      .append("handshakeTimeout=").append(handshakeTimeout)
       .append("]").toString();
   }
 
@@ -355,6 +387,13 @@ public class SslConfig extends AbstractConfig
     public Builder handshakeListeners(final HandshakeCompletedListener... listeners)
     {
       object.setHandshakeCompletedListeners(listeners);
+      return this;
+    }
+
+
+    public Builder handshakeTimeout(final Duration timeout)
+    {
+      object.setHandshakeTimeout(timeout);
       return this;
     }
 
