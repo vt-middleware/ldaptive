@@ -147,14 +147,6 @@ public interface OperationHandle<Q extends Request, S extends Result>
 
 
   /**
-   * Returns the time this operation handle was created.
-   *
-   * @return  creation time
-   */
-  Instant getCreationTime();
-
-
-  /**
    * Returns the time this operation sent a request.
    *
    * @return  sent time

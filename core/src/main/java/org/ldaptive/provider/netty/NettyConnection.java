@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -127,6 +128,9 @@ public final class NettyConnection extends ProviderConnection
   private final Semaphore throttle = new Semaphore(MAX_CONCURRENT_OPS);
 
   /** Operation lock when a bind occurs. */
+  private final ReadWriteLock reconnectLock = new ReentrantReadWriteLock();
+
+  /** Operation lock when a bind occurs. */
   private final ReadWriteLock bindLock = new ReentrantReadWriteLock();
 
   /** Whether connections should automatically reconnect. */
@@ -207,12 +211,24 @@ public final class NettyConnection extends ProviderConnection
     pendingResponses.open();
     // startTLS request must occur after the connection is ready
     if (connectionConfig.getUseStartTLS()) {
-      operation(new StartTLSRequest());
+      try {
+        operation(new StartTLSRequest());
+      } catch (Exception e) {
+        LOGGER.error("StartTLS failed on connection open", e);
+        close();
+        throw e;
+      }
     }
     // initialize the connection
     if (connectionConfig.getConnectionInitializers() != null) {
       for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
-        initializer.initialize(this);
+        try {
+          initializer.initialize(this);
+        } catch (Exception e) {
+          LOGGER.error("Connection initializer {} failed", initializer, e);
+          close();
+          throw e;
+        }
       }
     }
   }
@@ -392,15 +408,23 @@ public final class NettyConnection extends ProviderConnection
     if (!isOpen()) {
       LOGGER.warn("Attempt to unbind ignored, connection {} is not open", this);
     } else {
-      if (bindLock.readLock().tryLock()) {
+      if (reconnectLock.readLock().tryLock()) {
         try {
-          final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
-          channel.writeAndFlush(encodedRequest);
+          if (bindLock.readLock().tryLock()) {
+            try {
+              final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
+              channel.writeAndFlush(encodedRequest);
+            } finally {
+              bindLock.readLock().unlock();
+            }
+          } else {
+            throw new IllegalStateException("Bind in progress, cannot send unbind request");
+          }
         } finally {
-          bindLock.readLock().unlock();
+          reconnectLock.readLock().unlock();
         }
       } else {
-        throw new IllegalStateException("Bind in progress, cannot send unbind request");
+        throw new IllegalStateException("Reconnect in progress, cannot send unbind request");
       }
     }
   }
@@ -504,15 +528,23 @@ public final class NettyConnection extends ProviderConnection
     if (!isOpen()) {
       LOGGER.warn("Attempt to abandon request {} ignored, connection {} is not open", request.getMessageID(), this);
     } else {
-      if (bindLock.readLock().tryLock()) {
+      if (reconnectLock.readLock().tryLock()) {
         try {
-          final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
-          channel.writeAndFlush(encodedRequest);
+          if (bindLock.readLock().tryLock()) {
+            try {
+              final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
+              channel.writeAndFlush(encodedRequest);
+            } finally {
+              bindLock.readLock().unlock();
+            }
+          } else {
+            handle.exception(new LdapException("Bind in progress"));
+          }
         } finally {
-          bindLock.readLock().unlock();
+          reconnectLock.readLock().unlock();
         }
       } else {
-        handle.exception(new LdapException("Bind in progress"));
+        handle.exception(new LdapException("Reconnect in progress"));
       }
     }
   }
@@ -581,41 +613,49 @@ public final class NettyConnection extends ProviderConnection
   protected void write(final DefaultOperationHandle handle)
   {
     LOGGER.debug("Write handle {} {}", handle, pendingResponses);
-    if (!isOpen()) {
-      handle.exception(new LdapException("Connection is closed, write aborted"));
-    } else {
-      try {
-        if (throttle.tryAcquire(1, TimeUnit.MINUTES)) {
-          if (bindLock.readLock().tryLock()) {
-            try {
-              final EncodedRequest encodedRequest = new EncodedRequest(
-                messageID.getAndIncrement(),
-                handle.getRequest());
-              handle.messageID(encodedRequest.getMessageID());
-              try {
-                if (pendingResponses.put(encodedRequest.getMessageID(), handle) != null) {
-                  throw new IllegalStateException("Request already exists for ID " + encodedRequest.getMessageID());
-                }
-              } catch (LdapException e) {
-                if (inboundException != null) {
-                  throw new LdapException(e.getMessage(), inboundException);
-                }
-                throw e;
-              }
-              channel.writeAndFlush(encodedRequest);
-              handle.sent();
-            } finally {
-              bindLock.readLock().unlock();
-            }
+    try {
+      if (reconnectLock.readLock().tryLock(connectionConfig.getConnectTimeout().toMillis(), TimeUnit.MILLISECONDS)) {
+        try {
+          if (!isOpen()) {
+            handle.exception(new LdapException("Connection is closed, write aborted"));
           } else {
-            handle.exception(new LdapException("Bind in progress"));
+            if (throttle.tryAcquire(1, TimeUnit.MINUTES)) {
+              if (bindLock.readLock().tryLock()) {
+                try {
+                  final EncodedRequest encodedRequest = new EncodedRequest(
+                    messageID.getAndIncrement(),
+                    handle.getRequest());
+                  handle.messageID(encodedRequest.getMessageID());
+                  try {
+                    if (pendingResponses.put(encodedRequest.getMessageID(), handle) != null) {
+                      throw new IllegalStateException("Request already exists for ID " + encodedRequest.getMessageID());
+                    }
+                  } catch (LdapException e) {
+                    if (inboundException != null) {
+                      throw new LdapException(e.getMessage(), inboundException);
+                    }
+                    throw e;
+                  }
+                  channel.writeAndFlush(encodedRequest);
+                  handle.sent();
+                } finally {
+                  bindLock.readLock().unlock();
+                }
+              } else {
+                handle.exception(new LdapException("Bind in progress"));
+              }
+            } else {
+              handle.exception(new LdapException("Too many operations in progress"));
+            }
           }
-        } else {
-          handle.exception(new LdapException("Too many operations in progress"));
+        } finally {
+          reconnectLock.readLock().unlock();
         }
-      } catch (Exception e) {
-        handle.exception(e);
+      } else {
+        handle.exception(new LdapException("Reconnect in progress"));
       }
+    } catch (Exception e) {
+      handle.exception(e);
     }
   }
 
@@ -651,15 +691,19 @@ public final class NettyConnection extends ProviderConnection
         operation(req);
         channel.close();
       } else {
-        // notify outstanding requests
-        if (inboundException != null) {
-          pendingResponses.notifyOperationHandles(inboundException);
-        } else {
-          pendingResponses.notifyOperationHandles(new LdapException("Connection closed"));
+        if (!autoReconnect) {
+          // notify outstanding requests
+          if (inboundException != null) {
+            pendingResponses.notifyOperationHandles(inboundException);
+          } else {
+            pendingResponses.notifyOperationHandles(new LdapException("Connection closed"));
+          }
         }
       }
     } finally {
-      pendingResponses.clear();
+      if (!autoReconnect) {
+        pendingResponses.clear();
+      }
       channel = null;
     }
   }
@@ -676,16 +720,58 @@ public final class NettyConnection extends ProviderConnection
     if (isOpen()) {
       throw new IllegalStateException("Reconnect cannot be invoked when the connection is open");
     }
-    final RetryMetadata metadata = new RetryMetadata(connectionConfig.getConnectionStrategy());
-    while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
+    if (reconnectLock.writeLock().tryLock()) {
+      List<DefaultOperationHandle> replayOperations = null;
       try {
-        open();
-        LOGGER.info("auto reconnect succeeded");
-        break;
-      } catch (LdapException e) {
-        LOGGER.debug("auto reconnect failed", e);
-        metadata.recordFailure(Instant.now());
+        final RetryMetadata metadata = new RetryMetadata(connectionConfig.getConnectionStrategy());
+        while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
+          try {
+            open();
+            LOGGER.info("auto reconnect succeeded");
+            break;
+          } catch (Exception e) {
+            LOGGER.debug("auto reconnect failed", e);
+            metadata.recordFailure(Instant.now());
+          }
+        }
+
+        // replay operations that have been sent, but have not received a response
+        // notify all other operations
+        if (isOpen()) {
+          replayOperations = pendingResponses.handles().stream()
+            .filter(h -> h.getSentTime() != null && h.getReceivedTime() == null)
+            .collect(Collectors.toList());
+          replayOperations.forEach(h -> pendingResponses.remove(h.getMessageID()));
+          // notify outstanding requests that have received a response
+          try {
+            if (inboundException != null) {
+              pendingResponses.notifyOperationHandles(inboundException);
+            } else {
+              pendingResponses.notifyOperationHandles(new LdapException("Connection reconnect interrupted response"));
+            }
+          } finally {
+            pendingResponses.clear();
+          }
+        } else {
+          // notify all outstanding requests
+          try {
+            if (inboundException != null) {
+              pendingResponses.notifyOperationHandles(inboundException);
+            } else {
+              pendingResponses.notifyOperationHandles(new LdapException("Connection closed and reconnect failed"));
+            }
+          } finally {
+            pendingResponses.clear();
+          }
+        }
+      } finally {
+        reconnectLock.writeLock().unlock();
       }
+      if (replayOperations != null && replayOperations.size() > 0) {
+        replayOperations.forEach(h -> write(h));
+      }
+    } else {
+      throw new IllegalStateException("Reconnect is already in progress");
     }
   }
 
@@ -907,6 +993,7 @@ public final class NettyConnection extends ProviderConnection
     @Override
     protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
     {
+      LOGGER.trace("received {} bytes", in.readableBytes());
       final ResponseParser parser = new ResponseParser();
       final Message message =  parser.parse(new NettyDERBuffer(in))
         .orElseThrow(() -> new IllegalArgumentException("No response found"));
@@ -927,6 +1014,7 @@ public final class NettyConnection extends ProviderConnection
     @SuppressWarnings("unchecked")
     protected void channelRead0(final ChannelHandlerContext ctx, final Message msg)
     {
+      LOGGER.trace("received response message {}", msg);
       final DefaultOperationHandle handle = pendingResponses.get(msg.getMessageID());
       LOGGER.debug("Received response message {} for handle {}", msg, handle);
       if (handle != null) {
@@ -980,7 +1068,9 @@ public final class NettyConnection extends ProviderConnection
     {
       LOGGER.warn("Inbound handler caught exception", cause);
       inboundException = cause;
-      channel.close();
+      if (channel != null) {
+        channel.close();
+      }
     }
   }
 }

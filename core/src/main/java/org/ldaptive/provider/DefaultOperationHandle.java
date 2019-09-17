@@ -144,10 +144,13 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
     try {
       if (!responseDone.await(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
         abandon(new TimeoutException("No response received in " + responseTimeout.toMillis() + "ms"));
+        logger.trace("await abandoned handle {}", this);
       } else if (result != null && exception == null) {
+        logger.trace("await received result {} for handle {}", result, this);
         return result;
       }
     } catch (InterruptedException e) {
+      logger.trace("await interrupted for handle {} waiting for response", this, e);
       exception(e);
     }
     if (exception == null) {
@@ -272,7 +275,11 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         } finally {
           exception(cause);
         }
+      } else {
+        exception(cause);
       }
+    } else {
+      exception(cause);
     }
   }
 
@@ -294,10 +301,14 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   }
 
 
-  @Override
-  public Instant getCreationTime()
+  /**
+   * Returns the message ID assigned to this handle.
+   *
+   * @return  message ID
+   */
+  public int getMessageID()
   {
-    return creationTime;
+    return messageID;
   }
 
 
@@ -545,6 +556,10 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   private void complete()
   {
+    if (receivedTime != null) {
+      logger.warn("Operation already complete for handle {}", this);
+      return;
+    }
     try {
       responseDone.countDown();
     } finally {

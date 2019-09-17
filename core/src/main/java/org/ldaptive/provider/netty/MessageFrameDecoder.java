@@ -26,11 +26,13 @@ public class MessageFrameDecoder extends ByteToMessageDecoder
   @Override
   protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
   {
+    logger.trace("decoding {} bytes", in.readableBytes());
     if (in.readableBytes() > 2) {
       final int readerIdx = in.readerIndex();
       final int writerIdx = in.writerIndex();
       final DERBuffer buffer = new NettyDERBuffer(in.readSlice(in.readableBytes()));
       final int len = readMessageLength(buffer);
+      logger.trace("decoded length of {}", len);
       if (len > 0) {
         in.readerIndex(readerIdx);
         out.add(in.readRetainedSlice(len));

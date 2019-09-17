@@ -54,7 +54,6 @@ public abstract class ProviderConnection implements Connection
   public synchronized void open()
     throws LdapException
   {
-    LOGGER.debug("Opening connection {}", this);
     if (isOpen()) {
       throw new ConnectException("Connection is already open");
     }
