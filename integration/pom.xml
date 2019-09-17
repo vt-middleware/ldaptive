@@ -288,7 +288,6 @@
             <numAuthDefaultUsers>20</numAuthDefaultUsers>
             <userRampUp>2</userRampUp>
             <runDuration>5</runDuration>
-            <connMaxOps>5</connMaxOps>
             <autoReconnect>false</autoReconnect>
             <minPoolSize>10</minPoolSize>
             <maxPoolSize>10</maxPoolSize>

@@ -41,9 +41,6 @@ part of integration testing.
   - runDuration : 15 (seconds)
     - How long the entire test will execute. This should be at least a few seconds longer than the `userRampUp` so the
       last thread has time to contribute to the load testing.
-  - connMaxOps : 50
-    - org.ldaptive.provider.netty.NettyConnection#MAX_CONCURRENT_OPS
-    - The library default is 50
   - useStartTls : true
     - `org.ldaptive.ConnectionConfig#useStartTLS`
   - autoReconnect : false

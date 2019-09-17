@@ -9,7 +9,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -105,10 +104,6 @@ public final class NettyConnection extends ProviderConnection
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(NettyConnection.class);
 
-  /** Maximum number of concurrent operations to allow before blocking. */
-  private static final int MAX_CONCURRENT_OPS = Integer.parseInt(
-    System.getProperty("org.ldaptive.provider.netty.maxConcurrentOps", "50"));
-
   /** Event worker group used by the bootstrap. */
   private final EventLoopGroup workerGroup;
 
@@ -123,9 +118,6 @@ public final class NettyConnection extends ProviderConnection
 
   /** Message ID counter, incremented as requests are sent. */
   private final AtomicInteger messageID = new AtomicInteger(1);
-
-  /** Maximum number of concurrent operations. */
-  private final Semaphore throttle = new Semaphore(MAX_CONCURRENT_OPS);
 
   /** Operation lock when a bind occurs. */
   private final ReadWriteLock reconnectLock = new ReentrantReadWriteLock();
@@ -317,7 +309,9 @@ public final class NettyConnection extends ProviderConnection
     if (sc.getHostnameVerifier() == null) {
       engine.getSSLParameters().setEndpointIdentificationAlgorithm("LDAPS");
     }
-    return new SslHandler(engine);
+    final SslHandler handler = new SslHandler(engine);
+    handler.setHandshakeTimeout(sc.getHandshakeTimeout().toMillis(), TimeUnit.MILLISECONDS);
+    return handler;
   }
 
 
@@ -619,33 +613,29 @@ public final class NettyConnection extends ProviderConnection
           if (!isOpen()) {
             handle.exception(new LdapException("Connection is closed, write aborted"));
           } else {
-            if (throttle.tryAcquire(1, TimeUnit.MINUTES)) {
-              if (bindLock.readLock().tryLock()) {
+            if (bindLock.readLock().tryLock()) {
+              try {
+                final EncodedRequest encodedRequest = new EncodedRequest(
+                  messageID.getAndIncrement(),
+                  handle.getRequest());
+                handle.messageID(encodedRequest.getMessageID());
                 try {
-                  final EncodedRequest encodedRequest = new EncodedRequest(
-                    messageID.getAndIncrement(),
-                    handle.getRequest());
-                  handle.messageID(encodedRequest.getMessageID());
-                  try {
-                    if (pendingResponses.put(encodedRequest.getMessageID(), handle) != null) {
-                      throw new IllegalStateException("Request already exists for ID " + encodedRequest.getMessageID());
-                    }
-                  } catch (LdapException e) {
-                    if (inboundException != null) {
-                      throw new LdapException(e.getMessage(), inboundException);
-                    }
-                    throw e;
+                  if (pendingResponses.put(encodedRequest.getMessageID(), handle) != null) {
+                    throw new IllegalStateException("Request already exists for ID " + encodedRequest.getMessageID());
                   }
-                  channel.writeAndFlush(encodedRequest);
-                  handle.sent();
-                } finally {
-                  bindLock.readLock().unlock();
+                } catch (LdapException e) {
+                  if (inboundException != null) {
+                    throw new LdapException(e.getMessage(), inboundException);
+                  }
+                  throw e;
                 }
-              } else {
-                handle.exception(new LdapException("Bind in progress"));
+                channel.writeAndFlush(encodedRequest);
+                handle.sent();
+              } finally {
+                bindLock.readLock().unlock();
               }
             } else {
-              handle.exception(new LdapException("Too many operations in progress"));
+              handle.exception(new LdapException("Bind in progress"));
             }
           }
         } finally {
@@ -657,13 +647,6 @@ public final class NettyConnection extends ProviderConnection
     } catch (Exception e) {
       handle.exception(e);
     }
-  }
-
-
-  @Override
-  protected void done(final DefaultOperationHandle handle)
-  {
-    throttle.release();
   }
 
 
@@ -737,7 +720,7 @@ public final class NettyConnection extends ProviderConnection
 
         // replay operations that have been sent, but have not received a response
         // notify all other operations
-        if (isOpen()) {
+        if (isOpen() && connectionConfig.getAutoReplayCondition().test(metadata)) {
           replayOperations = pendingResponses.handles().stream()
             .filter(h -> h.getSentTime() != null && h.getReceivedTime() == null)
             .collect(Collectors.toList());

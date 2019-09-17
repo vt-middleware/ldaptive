@@ -564,7 +564,6 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       responseDone.countDown();
     } finally {
       receivedTime = Instant.now();
-      connection.done(this);
       if (onComplete != null) {
         try {
           onComplete.execute();

@@ -2,8 +2,6 @@
 package org.ldaptive.jmeter.setup_teardown;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Properties;
 import org.apache.jmeter.protocol.java.sampler.JavaSamplerContext;
 import org.ldaptive.BindConnectionInitializer;
@@ -16,12 +14,10 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.pool.PoolConfig;
-import org.ldaptive.provider.netty.NettyConnection;
 import org.ldaptive.ssl.AllowAnyTrustManager;
 import org.ldaptive.ssl.SslConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.ReflectionUtils;
 
 /**
  * Configuration that is required for all ThreadGroups in a TestPlan. This will be instantiated in a setupThreadGroup
@@ -34,9 +30,6 @@ public final class TestPlanConfig
 
   /** Logger instance */
   private static final Logger LOGGER = LoggerFactory.getLogger(TestPlanConfig.class);
-
-  /** Default max concurrent ops. */
-  private static final int DEFAULT_MAX_CONCURRENT_OPS = 50;
 
   /**
    * Config to be used with connections factories that are doing LDAP search operations.
@@ -430,10 +423,8 @@ public final class TestPlanConfig
   {
     try {
       final String ldapUrl = properties.ldapUrl();
-      final int maxOps = properties.nettyConnectionMaxOps();
       final boolean useStartTls = properties.useStartTls();
       final boolean autoReconnect = properties.autoReconnect();
-      setNettyMaxOps(maxOps);
 
       return ConnectionConfig.builder()
         .url(new LdapURL(ldapUrl).getHostnameWithSchemeAndPort())
@@ -477,35 +468,6 @@ public final class TestPlanConfig
         properties.bindCredential()));
     connectionBuilder.connectionInitializers(bindConnectionInitializer);
     return connectionBuilder.build();
-  }
-
-
-  /**
-   * Set the MAX_CONCURRENT_OPS for the {@link org.ldaptive.Connection} being used for tests
-   *
-   * @param maxOps defined via {@code -JconnMaxOps} program argument. Default is 50
-   *
-   * @throws LdapException if max ops cannot be set via reflection
-   */
-  private static void setNettyMaxOps(final int maxOps)
-    throws LdapException
-  {
-    if (maxOps != DEFAULT_MAX_CONCURRENT_OPS) {
-      LOGGER.info("Setting Netty Max Operations to " + maxOps);
-      final Field field = ReflectionUtils.findField(NettyConnection.class, "MAX_CONCURRENT_OPS");
-      if (field != null) {
-        field.setAccessible(true);
-        final Field modifiersField;
-        try {
-          modifiersField = Field.class.getDeclaredField("modifiers");
-          modifiersField.setAccessible(true);
-          modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
-          field.set(null, maxOps);
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-          throw new LdapException("Exception thrown while setting Netty Max Ops", e);
-        }
-      }
-    }
   }
 
 

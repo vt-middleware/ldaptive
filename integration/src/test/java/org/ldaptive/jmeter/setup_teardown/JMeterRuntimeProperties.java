@@ -40,9 +40,6 @@ public final class JMeterRuntimeProperties
   /** {@link org.ldaptive.auth.User} identifier for Authentication operation tests */
   private String authRequestId;
 
-  /** Max number of netty concurrent operations */
-  private int nettyConnectionMaxOps;
-
   /** Initial pool size for {@link org.ldaptive.PooledConnectionFactory} */
   private int minPoolSize;
 
@@ -91,7 +88,6 @@ public final class JMeterRuntimeProperties
     bindCredential = getPropValue("BIND_CREDENTIAL", "org.ldaptive.bindCredential");
     bindDn = getPropValue("BIND_DN", "org.ldaptive.bindDn");
     autoReconnect = Boolean.parseBoolean(getPropValue("CONNECTION_AUTO_RECONNECT", null));
-    nettyConnectionMaxOps = Integer.parseInt(getPropValue("CONNECTION_MAX_OPS", null));
     useStartTls = Boolean.parseBoolean(getPropValue("CONNECTION_USE_START_TLS", "org.ldaptive.useStartTLS"));
     ldapUrl = getPropValue("LDAP_URL", "org.ldaptive.ldapUrl");
     maxPoolSize = Integer.parseInt(getPropValue("MAX_POOL_SIZE", null));
@@ -139,12 +135,6 @@ public final class JMeterRuntimeProperties
   public String authRequestId()
   {
     return authRequestId;
-  }
-
-
-  public int nettyConnectionMaxOps()
-  {
-    return nettyConnectionMaxOps;
   }
 
 

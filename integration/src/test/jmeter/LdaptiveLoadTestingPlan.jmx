@@ -44,11 +44,6 @@
             <stringProp name="Argument.value">${__P(autoReconnect, false)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
-          <elementProp name="CONNECTION_MAX_OPS" elementType="Argument">
-            <stringProp name="Argument.name">CONNECTION_MAX_OPS</stringProp>
-            <stringProp name="Argument.value">${__P(connMaxOps, 50)}</stringProp>
-            <stringProp name="Argument.metadata">=</stringProp>
-          </elementProp>
           <elementProp name="CONNECTION_USE_START_TLS" elementType="Argument">
             <stringProp name="Argument.name">CONNECTION_USE_START_TLS</stringProp>
             <stringProp name="Argument.value">${__P(useStartTls, true)}</stringProp>
