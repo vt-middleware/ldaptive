@@ -4,6 +4,7 @@ package org.ldaptive.provider.netty;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldaptive.LdapException;
 import org.ldaptive.extended.UnsolicitedNotification;
 import org.ldaptive.provider.DefaultOperationHandle;
@@ -20,7 +21,7 @@ final class HandleMap
   private final ConcurrentHashMap<Integer, DefaultOperationHandle> pending = new ConcurrentHashMap<>();
 
   /** Whether this queue is currently accepting new handles. */
-  private boolean open;
+  private final AtomicBoolean open = new AtomicBoolean();
 
 
   /**
@@ -34,7 +35,7 @@ final class HandleMap
    */
   public void open()
   {
-    open = true;
+    open.set(true);
   }
 
 
@@ -43,7 +44,7 @@ final class HandleMap
    */
   public void close()
   {
-    open = false;
+    open.set(false);
   }
 
 
@@ -56,7 +57,7 @@ final class HandleMap
    */
   public DefaultOperationHandle get(final int id)
   {
-    return open ? pending.get(id) : null;
+    return open.get() ? pending.get(id) : null;
   }
 
 
@@ -69,7 +70,7 @@ final class HandleMap
    */
   public DefaultOperationHandle remove(final int id)
   {
-    return open ? pending.remove(id) : null;
+    return open.get() ? pending.remove(id) : null;
   }
 
 
@@ -86,7 +87,7 @@ final class HandleMap
   public DefaultOperationHandle put(final int id, final DefaultOperationHandle handle)
     throws LdapException
   {
-    if (!open) {
+    if (!open.get()) {
       throw new LdapException("Connection is closed, could not store handle " + handle);
     }
     return pending.putIfAbsent(id, handle);
