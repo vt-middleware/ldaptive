@@ -23,11 +23,14 @@ public class ConnectionConfig extends AbstractConfig
   /** Duration of time to wait for responses. */
   private Duration responseTimeout = Duration.ofMinutes(1);
 
-  /** Whether to automatically reconnect to the server when a connection is lost. */
-  private boolean autoReconnect;
+  /** Whether to automatically reconnect to the server when a connection is lost. Default is true. */
+  private boolean autoReconnect = true;
 
   /** Condition used to determine whether another reconnect attempt should be made. Default makes a single attempt. */
   private Predicate<RetryMetadata> autoReconnectCondition = metadata -> metadata.getAttempts() == 0;
+
+  /** Condition used to determine whether pending operations should be replayed after a reconnect. Default is true. */
+  private Predicate<RetryMetadata> autoReplayCondition = metadata -> true;
 
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
@@ -83,7 +86,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the connect timeout. If this value is null, then the provider default will be used.
+   * Returns the connect timeout.
    *
    * @return  timeout
    */
@@ -110,7 +113,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the response timeout. If this value is null, then the provider default will be used.
+   * Returns the response timeout.
    *
    * @return  timeout
    */
@@ -181,6 +184,30 @@ public class ConnectionConfig extends AbstractConfig
     checkImmutable();
     logger.trace("setting autoReconnectCondition: {}", predicate);
     autoReconnectCondition = predicate;
+  }
+
+
+  /**
+   * Returns the auto replay condition.
+   *
+   * @return  auto replay condition
+   */
+  public Predicate<RetryMetadata> getAutoReplayCondition()
+  {
+    return autoReplayCondition;
+  }
+
+
+  /**
+   * Sets the auto replay condition.
+   *
+   * @param  predicate  to determine whether to replay operations
+   */
+  public void setAutoReplayCondition(final Predicate<RetryMetadata> predicate)
+  {
+    checkImmutable();
+    logger.trace("setting autoReplayCondition: {}", predicate);
+    autoReplayCondition = predicate;
   }
 
 
@@ -295,6 +322,7 @@ public class ConnectionConfig extends AbstractConfig
     cc.setResponseTimeout(config.getResponseTimeout());
     cc.setAutoReconnect(config.getAutoReconnect());
     cc.setAutoReconnectCondition(config.getAutoReconnectCondition());
+    cc.setAutoReplayCondition(config.getAutoReplayCondition());
     cc.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
     cc.setUseStartTLS(config.getUseStartTLS());
     cc.setConnectionInitializers(config.getConnectionInitializers());
@@ -313,6 +341,7 @@ public class ConnectionConfig extends AbstractConfig
       .append("responseTimeout=").append(responseTimeout).append(", ")
       .append("autoReconnect=").append(autoReconnect).append(", ")
       .append("autoReconnectCondition=").append(autoReconnectCondition).append(", ")
+      .append("autoReplayCondition=").append(autoReplayCondition).append(", ")
       .append("sslConfig=").append(sslConfig).append(", ")
       .append("useStartTLS=").append(useStartTLS).append(", ")
       .append("connectionInitializers=").append(Arrays.toString(connectionInitializers)).append(", ")
@@ -372,6 +401,13 @@ public class ConnectionConfig extends AbstractConfig
     public Builder autoReconnectCondition(final Predicate<RetryMetadata> predicate)
     {
       object.setAutoReconnectCondition(predicate);
+      return this;
+    }
+
+
+    public Builder autoReplayCondition(final Predicate<RetryMetadata> predicate)
+    {
+      object.setAutoReplayCondition(predicate);
       return this;
     }
 
