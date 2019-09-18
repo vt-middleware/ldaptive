@@ -175,6 +175,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       connection.close();
     }
     super.close();
+    initialized = false;
   }
 
 
