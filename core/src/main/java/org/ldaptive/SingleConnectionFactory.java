@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.function.Consumer;
 import org.ldaptive.provider.Provider;
 import org.ldaptive.provider.ProviderFactory;
 
@@ -27,6 +28,9 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
 
   /** Whether {@link #initialize()} should throw if the connection cannot be opened. */
   private boolean failFastInitialize = true;
+
+  /** Consumer invoked for {@link #getConnection()}. */
+  private Consumer<Connection> connectionActivator;
 
 
   /** Default constructor. */
@@ -90,6 +94,28 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
 
 
   /**
+   * Returns the connection activator that is invoked as part of {@link #getConnection()}.
+   *
+   * @return  connection activator
+   */
+  public Consumer<Connection> getConnectionActivator()
+  {
+    return connectionActivator;
+  }
+
+
+  /**
+   * Sets the connection activator.
+   *
+   * @param  consumer  connection activator
+   */
+  public void setConnectionActivator(final Consumer<Connection> consumer)
+  {
+    connectionActivator = consumer;
+  }
+
+
+  /**
    * Returns whether this factory has been initialized.
    *
    * @return  whether this factory has been initialized
@@ -135,6 +161,9 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     if (!initialized) {
       throw new IllegalStateException("Connection factory has not been initialized");
     }
+    if (connectionActivator != null) {
+      connectionActivator.accept(connection);
+    }
     return proxy;
   }
 
@@ -157,7 +186,8 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       .append("provider=").append(getProvider()).append(", ")
       .append("config=").append(getConnectionConfig()).append(", ")
       .append("failFastInitialize=").append(failFastInitialize).append(", ")
-      .append("initialized=").append(initialized).append("]").toString();
+      .append("initialized=").append(initialized).append(", ")
+      .append("connectionActivator=").append(connectionActivator).append("]").toString();
   }
 
 
@@ -254,6 +284,13 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     public Builder failFastInitialize(final boolean failFast)
     {
       object.setFailFastInitialize(failFast);
+      return this;
+    }
+
+
+    public Builder connectionActivator(final Consumer<Connection> activator)
+    {
+      object.setConnectionActivator(activator);
       return this;
     }
 
