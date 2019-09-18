@@ -70,8 +70,8 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    */
   public void setBlockWaitTime(final Duration time)
   {
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Block wait time cannot be null or negative");
+    if (time != null && time.isNegative()) {
+      throw new IllegalArgumentException("Block wait time cannot be negative");
     }
     blockWaitTime = time;
   }
