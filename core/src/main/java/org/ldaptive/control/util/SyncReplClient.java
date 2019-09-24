@@ -49,6 +49,17 @@ public class SyncReplClient
 
 
   /**
+   * Returns the connection factory.
+   *
+   * @return  connection factory
+   */
+  public ConnectionFactory getConnectionFactory()
+  {
+    return factory;
+  }
+
+
+  /**
    * Invokes {@link #execute(SearchRequest, CookieManager, int)} with a {@link DefaultCookieManager} and a capacity of
    * {@link Integer#MAX_VALUE}.
    *
@@ -186,5 +197,16 @@ public class SyncReplClient
     throws LdapException
   {
     return handle.cancel().execute();
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder().append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("factory=").append(factory).append(", ")
+      .append("refreshAndPersist=").append(refreshAndPersist).append(", ")
+      .append("handle=").append(handle).toString();
   }
 }
