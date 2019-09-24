@@ -26,11 +26,15 @@ public class ConnectionConfig extends AbstractConfig
   /** Whether to automatically reconnect to the server when a connection is lost. Default is true. */
   private boolean autoReconnect = true;
 
-  /** Condition used to determine whether another reconnect attempt should be made. Default makes a single attempt. */
-  private Predicate<RetryMetadata> autoReconnectCondition = metadata -> metadata.getAttempts() == 0;
+  /**
+   * Condition used to determine whether another reconnect attempt should be made. Default makes a single attempt only
+   * if the connection was previously opened.
+   */
+  private Predicate<RetryMetadata> autoReconnectCondition =
+    metadata -> metadata.getSuccessTime() != null && metadata.getAttempts() == 0;
 
-  /** Condition used to determine whether pending operations should be replayed after a reconnect. Default is true. */
-  private Predicate<RetryMetadata> autoReplayCondition = metadata -> true;
+  /** Whether pending operations should be replayed after a reconnect. Default is true. */
+  private boolean autoReplay = true;
 
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
@@ -151,7 +155,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Sets whether connections with attempt to reconnect.
+   * Sets whether connections will attempt to reconnect when unexpectedly closed.
    *
    * @param  b  whether to automatically reconnect when a connection is lost
    */
@@ -188,26 +192,26 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the auto replay condition.
+   * Returns whether operations should be replayed after a reconnect.
    *
-   * @return  auto replay condition
+   * @return  whether to auto replay
    */
-  public Predicate<RetryMetadata> getAutoReplayCondition()
+  public boolean getAutoReplay()
   {
-    return autoReplayCondition;
+    return autoReplay;
   }
 
 
   /**
-   * Sets the auto replay condition.
+   * Sets whether operations will be replayed after a reconnect.
    *
-   * @param  predicate  to determine whether to replay operations
+   * @param  b  whether to replay operations
    */
-  public void setAutoReplayCondition(final Predicate<RetryMetadata> predicate)
+  public void setAutoReplay(final boolean b)
   {
     checkImmutable();
-    logger.trace("setting autoReplayCondition: {}", predicate);
-    autoReplayCondition = predicate;
+    logger.trace("setting autoReplay: {}", b);
+    autoReplay = b;
   }
 
 
@@ -322,7 +326,7 @@ public class ConnectionConfig extends AbstractConfig
     cc.setResponseTimeout(config.getResponseTimeout());
     cc.setAutoReconnect(config.getAutoReconnect());
     cc.setAutoReconnectCondition(config.getAutoReconnectCondition());
-    cc.setAutoReplayCondition(config.getAutoReplayCondition());
+    cc.setAutoReplay(config.getAutoReplay());
     cc.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
     cc.setUseStartTLS(config.getUseStartTLS());
     cc.setConnectionInitializers(config.getConnectionInitializers());
@@ -341,7 +345,7 @@ public class ConnectionConfig extends AbstractConfig
       .append("responseTimeout=").append(responseTimeout).append(", ")
       .append("autoReconnect=").append(autoReconnect).append(", ")
       .append("autoReconnectCondition=").append(autoReconnectCondition).append(", ")
-      .append("autoReplayCondition=").append(autoReplayCondition).append(", ")
+      .append("autoReplay=").append(autoReplay).append(", ")
       .append("sslConfig=").append(sslConfig).append(", ")
       .append("useStartTLS=").append(useStartTLS).append(", ")
       .append("connectionInitializers=").append(Arrays.toString(connectionInitializers)).append(", ")
@@ -405,9 +409,9 @@ public class ConnectionConfig extends AbstractConfig
     }
 
 
-    public Builder autoReplayCondition(final Predicate<RetryMetadata> predicate)
+    public Builder autoReplay(final boolean b)
     {
-      object.setAutoReplayCondition(predicate);
+      object.setAutoReplay(b);
       return this;
     }
 

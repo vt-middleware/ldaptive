@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -67,7 +68,6 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.ModifyResponse;
 import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
-import org.ldaptive.RetryMetadata;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.UnbindRequest;
@@ -119,20 +119,20 @@ public final class NettyConnection extends ProviderConnection
   /** Message ID counter, incremented as requests are sent. */
   private final AtomicInteger messageID = new AtomicInteger(1);
 
-  /** Operation lock when a bind occurs. */
+  /** Block operations while a reconnect is occurring. */
   private final ReadWriteLock reconnectLock = new ReentrantReadWriteLock();
 
   /** Operation lock when a bind occurs. */
   private final ReadWriteLock bindLock = new ReentrantReadWriteLock();
-
-  /** Whether connections should automatically reconnect. */
-  private final boolean autoReconnect;
 
   /** URL derived from the connection strategy. */
   private LdapURL ldapURL;
 
   /** Connection to the LDAP server. */
   private Channel channel;
+
+  /** Time this connection was successfully established. */
+  private Instant connectTime;
 
   /** Last exception received on the inbound pipeline. */
   private Throwable inboundException;
@@ -148,7 +148,6 @@ public final class NettyConnection extends ProviderConnection
   {
     super(config);
     workerGroup = group;
-    autoReconnect = config.getAutoReconnect();
     channelOptions = new HashMap<>();
     channelOptions.put(ChannelOption.SO_KEEPALIVE, true);
     channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) config.getConnectTimeout().toMillis());
@@ -191,40 +190,50 @@ public final class NettyConnection extends ProviderConnection
 
 
   @Override
-  protected synchronized void open(final LdapURL url)
+  protected void open(final LdapURL url)
     throws LdapException
   {
-    inboundException = null;
-    ldapURL = url;
-    LOGGER.debug("Opening connection {}", this);
-    final ChannelFuture future = connectInternal();
-    channel = future.channel();
-    pendingResponses.open();
-    // startTLS request must occur after the connection is ready
-    if (connectionConfig.getUseStartTLS()) {
-      try {
-        operation(new StartTLSRequest());
-      } catch (Exception e) {
-        LOGGER.error("StartTLS failed on connection open", e);
-        close();
-        pendingResponses.clear();
-        throw e;
-      }
+    if (isOpen()) {
+      throw new IllegalStateException("Connection is already open");
     }
-    // initialize the connection
-    if (connectionConfig.getConnectionInitializers() != null) {
-      for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
+    LOGGER.trace("Netty opening connection {}", this);
+    openLock.lock();
+    try {
+      inboundException = null;
+      ldapURL = url;
+      final ChannelFuture future = connectInternal();
+      channel = future.channel();
+      pendingResponses.open();
+      // startTLS request must occur after the connection is ready
+      if (connectionConfig.getUseStartTLS()) {
         try {
-          initializer.initialize(this);
+          operation(new StartTLSRequest());
         } catch (Exception e) {
-          LOGGER.error("Connection initializer {} failed", initializer, e);
+          LOGGER.error("StartTLS failed on connection open", e);
           close();
           pendingResponses.clear();
           throw e;
         }
       }
+      // initialize the connection
+      if (connectionConfig.getConnectionInitializers() != null) {
+        for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
+          try {
+            initializer.initialize(this);
+          } catch (Exception e) {
+            LOGGER.error("Connection initializer {} failed", initializer, e);
+            close();
+            pendingResponses.clear();
+            throw e;
+          }
+        }
+      }
+      channel.closeFuture().addListener(closeListener);
+      connectTime = Instant.now();
+      LOGGER.debug("Netty opened connection {}", this);
+    } finally {
+      openLock.unlock();
     }
-    channel.closeFuture().addListener(closeListener);
   }
 
 
@@ -252,6 +261,7 @@ public final class NettyConnection extends ProviderConnection
 
     final ChannelFuture future = bootstrap.connect(new InetSocketAddress(ldapURL.getHostname(), ldapURL.getPort()));
     future.awaitUninterruptibly();
+    LOGGER.trace("bootstrap connect returned {}", future);
     if (!future.isDone()) {
       throw new ConnectException("Connection could not be completed");
     }
@@ -658,12 +668,14 @@ public final class NettyConnection extends ProviderConnection
    * @param  controls  to send with the unbind request when closing the connection
    */
   @Override
-  public synchronized void close(final RequestControl... controls)
+  public void close(final RequestControl... controls)
   {
-    LOGGER.debug("Closing connection {}", this);
+    LOGGER.trace("Closing connection {}", this);
+    closeLock.lock();
     try {
       pendingResponses.close();
       if (isOpen()) {
+        LOGGER.trace("connection {} is open, initiate orderly shutdown", this);
         channel.closeFuture().removeListener(closeListener);
         // abandon outstanding requests
         if (pendingResponses.size() > 0) {
@@ -676,20 +688,32 @@ public final class NettyConnection extends ProviderConnection
         operation(req);
         channel.close();
       } else {
-        if (!autoReconnect) {
-          // notify outstanding requests
-          if (inboundException != null) {
-            pendingResponses.notifyOperationHandles(inboundException);
-          } else {
-            pendingResponses.notifyOperationHandles(new LdapException("Connection closed"));
-          }
+        LOGGER.trace("connection {} already closed", this);
+        if (!(connectionConfig.getAutoReconnect() && connectionConfig.getAutoReplay())) {
+          notifyOperationHandlesOfClose();
         }
       }
+      LOGGER.debug("Closed connection {}", this);
     } finally {
-      if (!autoReconnect) {
-        pendingResponses.clear();
-      }
       channel = null;
+      connectTime = null;
+      closeLock.unlock();
+    }
+  }
+
+
+  /**
+   * Sends an exception notification to all pending responses that the connection has been closed.
+   */
+  protected void notifyOperationHandlesOfClose()
+  {
+    if (pendingResponses.size() > 0) {
+      LOGGER.debug("Notifying operation handles {} of connection close", pendingResponses);
+      if (inboundException != null) {
+        pendingResponses.notifyOperationHandles(inboundException);
+      } else {
+        pendingResponses.notifyOperationHandles(new LdapException("Connection closed"));
+      }
     }
   }
 
@@ -699,55 +723,37 @@ public final class NettyConnection extends ProviderConnection
    *
    * @throws  IllegalStateException  if the connection is open
    */
-  protected synchronized void reconnect()
+  protected void reconnect()
   {
-    LOGGER.debug("Reconnecting connection {}", this);
     if (isOpen()) {
       throw new IllegalStateException("Reconnect cannot be invoked when the connection is open");
     }
+    if (isOpening()) {
+      LOGGER.debug("Open in progress, ignoring reconnect for connection {}", this);
+      notifyOperationHandlesOfClose();
+      return;
+    }
+    LOGGER.trace("Reconnecting connection {}", this);
     if (reconnectLock.writeLock().tryLock()) {
       List<DefaultOperationHandle> replayOperations = null;
       try {
-        final RetryMetadata metadata = new RetryMetadata(connectionConfig.getConnectionStrategy());
-        while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
-          try {
-            open();
-            LOGGER.info("auto reconnect succeeded");
-            break;
-          } catch (Exception e) {
-            LOGGER.debug("auto reconnect failed", e);
-            metadata.recordFailure(Instant.now());
-          }
+        try {
+          open();
+          LOGGER.info("auto reconnect succeeded for connection {}", this);
+        } catch (Exception e) {
+          LOGGER.debug("auto reconnect failed for connection {}", this, e);
         }
-
         // replay operations that have been sent, but have not received a response
         // notify all other operations
-        if (isOpen() && connectionConfig.getAutoReplayCondition().test(metadata)) {
+        if (isOpen() && connectionConfig.getAutoReplay()) {
           replayOperations = pendingResponses.handles().stream()
             .filter(h -> h.getSentTime() != null && h.getReceivedTime() == null)
             .collect(Collectors.toList());
           replayOperations.forEach(h -> pendingResponses.remove(h.getMessageID()));
           // notify outstanding requests that have received a response
-          try {
-            if (inboundException != null) {
-              pendingResponses.notifyOperationHandles(inboundException);
-            } else {
-              pendingResponses.notifyOperationHandles(new LdapException("Connection reconnect interrupted response"));
-            }
-          } finally {
-            pendingResponses.clear();
-          }
+          notifyOperationHandlesOfClose();
         } else {
-          // notify all outstanding requests
-          try {
-            if (inboundException != null) {
-              pendingResponses.notifyOperationHandles(inboundException);
-            } else {
-              pendingResponses.notifyOperationHandles(new LdapException("Connection closed and reconnect failed"));
-            }
-          } finally {
-            pendingResponses.clear();
-          }
+          notifyOperationHandlesOfClose();
         }
       } finally {
         reconnectLock.writeLock().unlock();
@@ -755,6 +761,7 @@ public final class NettyConnection extends ProviderConnection
       if (replayOperations != null && replayOperations.size() > 0) {
         replayOperations.forEach(h -> write(h));
       }
+      LOGGER.debug("Reconnected connection {}", this);
     } else {
       throw new IllegalStateException("Reconnect is already in progress");
     }
@@ -769,6 +776,25 @@ public final class NettyConnection extends ProviderConnection
   public boolean isOpen()
   {
     return channel != null && channel.isOpen();
+  }
+
+
+  /**
+   * Returns whether this connection is currently attempting to open a connection.
+   *
+   * @return  whether the Netty channel is in the process of opening
+   */
+  private boolean isOpening()
+  {
+    if (openLock.tryLock()) {
+      try {
+        return false;
+      } finally {
+        openLock.unlock();
+      }
+    } else {
+      return true;
+    }
   }
 
 
@@ -792,6 +818,7 @@ public final class NettyConnection extends ProviderConnection
     return new StringBuilder(getClass().getName()).append("@").append(hashCode()).append("::")
       .append("ldapUrl=").append(ldapURL).append(", ")
       .append("isOpen=").append(isOpen()).append(", ")
+      .append("connectTime=").append(connectTime).append(", ")
       .append("connectionConfig=").append(connectionConfig).toString();
   }
 
@@ -848,31 +875,35 @@ public final class NettyConnection extends ProviderConnection
 
   /**
    * Listener for channel close events. Invokes {@link #close()} to cleanup resources from a non-requested close event.
-   * If {@link #autoReconnect} is set, a connection reconnect is attempted.
+   * If {@link ConnectionConfig#getAutoReconnect()} is true, a connection reconnect is attempted.
    */
   private class CloseFutureListener implements GenericFutureListener<ChannelFuture>
   {
 
     /** Whether this listener is in the process of reconnecting. */
-    private boolean reconnecting;
+    private AtomicBoolean reconnecting = new AtomicBoolean();
 
 
     @Override
     public void operationComplete(final ChannelFuture future)
     {
-      LOGGER.debug("Close listener complete operation future={}, inboundException={}", future, inboundException);
+      LOGGER.debug("Close listener invoked with future={}", future, inboundException);
       inboundException = future.cause();
+      final boolean isOpening = isOpening();
       close();
-      if (autoReconnect && !reconnecting) {
+      if (connectionConfig.getAutoReconnect() && !isOpening && !reconnecting.get()) {
+        LOGGER.trace("scheduling reconnect thread for connection {}", this);
         NettyConnection.this.workerGroup.execute(
           () -> {
-            reconnecting = true;
+            reconnecting.set(true);
             try {
               reconnect();
             } finally {
-              reconnecting = false;
+              reconnecting.set(false);
             }
           });
+      } else {
+        notifyOperationHandlesOfClose();
       }
     }
   }

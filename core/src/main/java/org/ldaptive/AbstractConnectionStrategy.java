@@ -105,6 +105,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   public void success(final LdapURL url)
   {
     url.activate();
+    url.getRetryMetadata().recordSuccess(Instant.now());
   }
 
 

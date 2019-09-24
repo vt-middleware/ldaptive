@@ -18,6 +18,9 @@ public class RetryMetadata
   /** Connection strategy associated with this retry. */
   private final ConnectionStrategy connectionStrategy;
 
+  /** Time at which the last success occurred. */
+  private Instant successTime;
+
   /** Time at which the failure occurred. */
   private Instant failureTime;
 
@@ -34,6 +37,19 @@ public class RetryMetadata
 
 
   /**
+   * Creates a new retry metadata.
+   *
+   * @param  strategy  connection strategy
+   * @param  time  time of last successful connection
+   */
+  public RetryMetadata(final ConnectionStrategy strategy, final Instant time)
+  {
+    connectionStrategy = strategy;
+    successTime = time;
+  }
+
+
+  /**
    * Return the connection strategy.
    *
    * @return  connection strategy
@@ -41,6 +57,17 @@ public class RetryMetadata
   public ConnectionStrategy getConnectionStrategy()
   {
     return connectionStrategy;
+  }
+
+
+  /**
+   * Returns the success time.
+   *
+   * @return  time that the success occurred
+   */
+  public Instant getSuccessTime()
+  {
+    return successTime;
   }
 
 
@@ -67,6 +94,17 @@ public class RetryMetadata
 
 
   /**
+   * Records a connection success at the given instant.
+   *
+   * @param  time  Point in time where connection was opened.
+   */
+  public void recordSuccess(final Instant time)
+  {
+    successTime = time;
+  }
+
+
+  /**
    * Records a connection failure at the given instant.
    *
    * @param  time  Point in time where connection failed.
@@ -75,28 +113,6 @@ public class RetryMetadata
   {
     failureTime = time;
     attempts.incrementAndGet();
-  }
-
-
-  /**
-   * Whether this retry metadata has recorded a failure.
-   *
-   * @return  whether at least one connection attempt has failed, false otherwise.
-   */
-  public boolean hasFailed()
-  {
-    return attempts.get() == 0;
-  }
-
-
-  /**
-   * Resets the internal failure tracking state such that {@link #hasFailed()} returns false until a failure is
-   * subsequently recorded.
-   */
-  public void reset()
-  {
-    failureTime = null;
-    attempts.set(0);
   }
 
 
