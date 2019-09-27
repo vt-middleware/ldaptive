@@ -142,12 +142,20 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
     throws LdapException
   {
     try {
-      if (!responseDone.await(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
-        abandon(new TimeoutException("No response received in " + responseTimeout.toMillis() + "ms"));
-        logger.trace("await abandoned handle {}", this);
-      } else if (result != null && exception == null) {
-        logger.trace("await received result {} for handle {}", result, this);
-        return result;
+      if (responseTimeout == null) {
+        responseDone.await();
+        if (result != null && exception == null) {
+          logger.trace("await received result {} for handle {}", result, this);
+          return result;
+        }
+      } else {
+        if (!responseDone.await(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
+          abandon(new TimeoutException("No response received in " + responseTimeout.toMillis() + "ms"));
+          logger.trace("await abandoned handle {}", this);
+        } else if (result != null && exception == null) {
+          logger.trace("await received result {} for handle {}", result, this);
+          return result;
+        }
       }
     } catch (InterruptedException e) {
       logger.trace("await interrupted for handle {} waiting for response", this, e);
