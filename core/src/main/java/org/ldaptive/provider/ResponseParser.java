@@ -18,7 +18,6 @@ import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.extended.NoticeOfDisconnection;
 import org.ldaptive.extended.SyncInfoMessage;
-import org.ldaptive.extended.UnsolicitedNotification;
 
 /**
  * Parses a buffer looking for an LDAP response message.
@@ -81,8 +80,6 @@ public class ResponseParser
       final ExtendedResponse extRes = new ExtendedResponse(e);
       if (NoticeOfDisconnection.OID.equals(extRes.getResponseName())) {
         message = new NoticeOfDisconnection();
-      } else if (UnsolicitedNotification.OID.equals(extRes.getResponseName())) {
-        message = new UnsolicitedNotification();
       } else {
         message = extRes;
       }
