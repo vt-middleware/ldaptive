@@ -2,15 +2,11 @@
 package org.ldaptive.control.util;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
@@ -56,9 +52,6 @@ public class SyncReplRunner
 
   /** Invoked when a sync info message is received. */
   private Consumer<SyncInfoMessage> onMessage;
-
-  /** Queue of sync repl results. */
-  private BlockingQueue<SyncReplItem> results;
 
   /** Whether sync repl has been started. */
   private boolean run;
@@ -137,13 +130,7 @@ public class SyncReplRunner
    */
   public void initialize(final boolean refreshAndPersist, final Duration reconnectWait)
   {
-    final SingleConnectionFactory connectionFactory = reconnectFactory(
-      connectionConfig,
-      reconnectWait,
-      conn -> {
-        results = syncReplClient.execute(searchRequest, cookieManager, queueSize);
-        return null;
-      });
+    final SingleConnectionFactory connectionFactory = reconnectFactory(connectionConfig, reconnectWait);
     syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
   }
 
@@ -158,11 +145,16 @@ public class SyncReplRunner
       if (onStart != null && !onStart.get()) {
         throw new RuntimeException("Start aborted from " + onStart);
       }
+      BlockingQueue<SyncReplItem> results = null;
       while (run) {
         logger.info("Runner {} started", this);
         try {
           if (!((SingleConnectionFactory) syncReplClient.getConnectionFactory()).isInitialized()) {
             ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
+            results = syncReplClient.execute(searchRequest, cookieManager, queueSize);
+          }
+          if (results == null) {
+            throw new IllegalStateException("Blocking queue has not been initialized");
           }
           // blocks until result is received
           final SyncReplItem item = results.take();
@@ -240,14 +232,10 @@ public class SyncReplRunner
    *
    * @param  cc  connection configuration
    * @param  wait  length of time to wait between consecutive calls to open
-   * @param  initializer  connection initializer that executes a sync repl search
    *
    * @return  single connection factory
    */
-  protected static SingleConnectionFactory reconnectFactory(
-    final ConnectionConfig cc,
-    final Duration wait,
-    final ConnectionInitializer initializer)
+  protected static SingleConnectionFactory reconnectFactory(final ConnectionConfig cc, final Duration wait)
   {
     final ConnectionConfig newConfig = ConnectionConfig.copy(cc);
     newConfig.setAutoReconnect(true);
@@ -257,12 +245,6 @@ public class SyncReplRunner
       } catch (InterruptedException e) {}
       return true;
     });
-    final List<ConnectionInitializer> initializers = new ArrayList<>();
-    if (newConfig.getConnectionInitializers() != null) {
-      initializers.addAll(Arrays.asList(newConfig.getConnectionInitializers()));
-    }
-    initializers.add(initializer);
-    newConfig.setConnectionInitializers(initializers.toArray(new ConnectionInitializer[0]));
     final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig);
     factory.setFailFastInitialize(true);
     return factory;
