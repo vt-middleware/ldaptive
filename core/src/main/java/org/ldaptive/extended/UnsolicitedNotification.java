@@ -21,9 +21,6 @@ import org.ldaptive.asn1.DERBuffer;
 public class UnsolicitedNotification extends ExtendedResponse
 {
 
-  /** OID of this response. */
-  public static final String OID = "1.3.6.1.4.1.1466.20037";
-
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10331;
 
@@ -33,7 +30,6 @@ public class UnsolicitedNotification extends ExtendedResponse
    */
   public UnsolicitedNotification()
   {
-    setResponseName(OID);
     setMessageID(0);
   }
 
