@@ -31,7 +31,7 @@ public class ConnectionConfig extends AbstractConfig
    * if the connection was previously opened.
    */
   private Predicate<RetryMetadata> autoReconnectCondition =
-    metadata -> metadata.getSuccessTime() != null && metadata.getAttempts() == 0;
+    metadata -> metadata instanceof ClosedRetryMetadata && metadata.getAttempts() == 0;
 
   /** Whether pending operations should be replayed after a reconnect. Default is true. */
   private boolean autoReplay = true;

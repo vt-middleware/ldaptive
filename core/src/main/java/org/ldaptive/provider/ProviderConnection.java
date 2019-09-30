@@ -10,6 +10,7 @@ import org.ldaptive.ConnectException;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionStrategy;
+import org.ldaptive.InitialRetryMetadata;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.RetryMetadata;
@@ -39,11 +40,11 @@ public abstract class ProviderConnection implements Connection
   /** Provides host connection configuration. */
   protected final ConnectionConfig connectionConfig;
 
+  /** Time of the last successful open for this connection. */
+  protected Instant lastSuccessfulOpen;
+
   /** Connection strategy for this connection. Default value is {@link ActivePassiveConnectionStrategy}. */
   private final ConnectionStrategy connectionStrategy;
-
-  /** Time of the last successful open for this connection. */
-  private Instant lastSuccessfulOpen;
 
 
   /**
@@ -67,40 +68,22 @@ public abstract class ProviderConnection implements Connection
   public void open()
     throws LdapException
   {
-    if (isOpen()) {
-      throw new ConnectException("Connection is already open");
-    }
-
     LOGGER.debug("Strategy {} opening connection {}", connectionStrategy, this);
     openLock.lock();
     try {
-      LdapException lastThrown = null;
-      final RetryMetadata metadata = new RetryMetadata(connectionConfig.getConnectionStrategy(), lastSuccessfulOpen);
+      if (isOpen()) {
+        throw new ConnectException("Connection is already open");
+      }
+      final RetryMetadata metadata = new InitialRetryMetadata(lastSuccessfulOpen);
+      LdapException lastThrown;
       do {
-        boolean strategyProducedUrls = false;
-        final Iterator<LdapURL> iter = connectionStrategy.iterator();
-        while (iter.hasNext()) {
-          strategyProducedUrls = true;
-          final LdapURL url = iter.next();
-          try {
-            LOGGER.trace(
-              "Attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);
-            open(url);
-            connectionStrategy.success(url);
-            lastThrown = null;
-            break;
-          } catch (ConnectException e) {
-            connectionStrategy.failure(url);
-            lastThrown = e;
-            LOGGER.debug(
-              "Error connecting to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy, e);
-          }
-        }
-        if (!strategyProducedUrls) {
-          throw new ConnectException("Connection strategy did not produce any LDAP URLs");
-        }
-        if (lastThrown != null) {
-          metadata.recordFailure(Instant.now());
+        try {
+          strategyOpen(metadata);
+          lastThrown = null;
+          break;
+        } catch (LdapException e) {
+          lastThrown = e;
+          LOGGER.debug("Error opening connection for strategy {}", connectionStrategy, e);
         }
       } while (lastThrown != null && connectionConfig.getAutoReconnectCondition().test(metadata));
       if (lastThrown != null) {
@@ -110,6 +93,87 @@ public abstract class ProviderConnection implements Connection
       LOGGER.debug("Strategy {} opened connection {}", connectionStrategy, this);
     } finally {
       openLock.unlock();
+    }
+  }
+
+
+  /**
+   * Method to support reopening a connection that was previously established. This method differs from {@link #open()}
+   * in that the autoReconnectCondition is tested before the open is attempted.
+   *
+   * @param  metadata  associated with this reopen
+   *
+   * @throws  LdapException  if the open fails
+   */
+  protected void reopen(final RetryMetadata metadata)
+    throws LdapException
+  {
+    LOGGER.debug("Strategy {} reopening connection {}", connectionStrategy, this);
+    openLock.lock();
+    try {
+      if (isOpen()) {
+        throw new ConnectException("Connection is already open");
+      }
+      LdapException lastThrown = null;
+      while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
+        try {
+          strategyOpen(metadata);
+          lastThrown = null;
+          break;
+        } catch (LdapException e) {
+          lastThrown = e;
+          LOGGER.debug("Error reopening connection for strategy {}", connectionStrategy, e);
+        }
+      }
+      if (lastThrown != null) {
+        throw lastThrown;
+      }
+      lastSuccessfulOpen = Instant.now();
+      LOGGER.debug("Strategy {} reopened connection {}", connectionStrategy, this);
+    } finally {
+      openLock.unlock();
+    }
+  }
+
+
+  /**
+   * Retrieves URLs from the connection strategy and attempts each one, in order, until a connection is made or the list
+   * is exhausted.
+   *
+   * @param  metadata  to track URL success and failure
+   *
+   * @throws  LdapException  if a connection cannot be established
+   */
+  protected void strategyOpen(final RetryMetadata metadata)
+    throws LdapException
+  {
+    boolean strategyProducedUrls = false;
+    LdapException lastThrown = null;
+    final Iterator<LdapURL> iter = connectionStrategy.iterator();
+    while (iter.hasNext()) {
+      strategyProducedUrls = true;
+      final LdapURL url = iter.next();
+      try {
+        LOGGER.trace(
+          "Attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);
+        open(url);
+        connectionStrategy.success(url);
+        metadata.recordSuccess(Instant.now());
+        lastThrown = null;
+        break;
+      } catch (ConnectException e) {
+        connectionStrategy.failure(url);
+        lastThrown = e;
+        LOGGER.debug(
+          "Error connecting to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy, e);
+      }
+    }
+    if (!strategyProducedUrls) {
+      throw new IllegalStateException("Connection strategy did not produce any LDAP URLs");
+    }
+    if (lastThrown != null) {
+      metadata.recordFailure(Instant.now());
+      throw lastThrown;
     }
   }
 

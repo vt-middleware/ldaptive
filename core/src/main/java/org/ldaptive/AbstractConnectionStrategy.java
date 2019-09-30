@@ -65,12 +65,12 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
       urlSet.populate(Stream.of(urls.split(" "))
         .map(s -> {
           final LdapURL url = new LdapURL(s);
-          url.setRetryMetadata(new RetryMetadata(this));
+          url.setRetryMetadata(new LdapURLRetryMetadata(this));
           return url;
         }).collect(Collectors.toList()));
     } else {
       final LdapURL url = new LdapURL(urls);
-      url.setRetryMetadata(new RetryMetadata(this));
+      url.setRetryMetadata(new LdapURLRetryMetadata(this));
       urlSet.populate(Collections.singletonList(url));
     }
   }
