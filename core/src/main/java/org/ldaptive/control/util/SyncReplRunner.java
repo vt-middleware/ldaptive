@@ -7,6 +7,7 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.InitialRetryMetadata;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
@@ -240,10 +241,13 @@ public class SyncReplRunner
     final ConnectionConfig newConfig = ConnectionConfig.copy(cc);
     newConfig.setAutoReconnect(true);
     newConfig.setAutoReconnectCondition(metadata -> {
-      try {
-        Thread.sleep(wait.toMillis());
-      } catch (InterruptedException e) {}
-      return true;
+      if (metadata instanceof InitialRetryMetadata) {
+        try {
+          Thread.sleep(wait.toMillis());
+        } catch (InterruptedException e) {}
+        return true;
+      }
+      return false;
     });
     final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig);
     factory.setFailFastInitialize(true);

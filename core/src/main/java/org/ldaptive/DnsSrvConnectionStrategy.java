@@ -112,7 +112,7 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
       .stream()
       .map(srv -> {
         final LdapURL url = srv.getLdapURL();
-        url.setRetryMetadata(new RetryMetadata(this));
+        url.setRetryMetadata(new LdapURLRetryMetadata(this));
         return url;
       })
       .collect(Collectors.toList());

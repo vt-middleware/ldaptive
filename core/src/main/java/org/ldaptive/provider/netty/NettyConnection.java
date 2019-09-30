@@ -50,6 +50,7 @@ import org.ldaptive.AddRequest;
 import org.ldaptive.AddResponse;
 import org.ldaptive.BindRequest;
 import org.ldaptive.BindResponse;
+import org.ldaptive.ClosedRetryMetadata;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.CompareResponse;
 import org.ldaptive.ConnectException;
@@ -738,7 +739,7 @@ public final class NettyConnection extends ProviderConnection
       List<DefaultOperationHandle> replayOperations = null;
       try {
         try {
-          open();
+          reopen(new ClosedRetryMetadata(lastSuccessfulOpen));
           LOGGER.info("auto reconnect succeeded for connection {}", this);
         } catch (Exception e) {
           LOGGER.debug("auto reconnect failed for connection {}", this, e);
