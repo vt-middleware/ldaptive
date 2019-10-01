@@ -68,8 +68,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
-    <org.slf4j.version>1.7.25</org.slf4j.version>
-    <org.springframework.version>5.1.9.RELEASE</org.springframework.version>
+    <org.slf4j.version>1.7.28</org.slf4j.version>
+    <org.springframework.version>5.2.0.RELEASE</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.0.0</japicmp.oldVersion>
   </properties>
@@ -133,7 +133,7 @@
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcprov-jdk15on</artifactId>
-        <version>1.62</version>
+        <version>1.63</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -181,7 +181,7 @@
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-handler</artifactId>
-        <version>4.1.39.Final</version>
+        <version>4.1.42.Final</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -237,7 +237,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.23</version>
+              <version>8.25</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -274,7 +274,7 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>4.2.0</version>
+          <version>4.2.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
