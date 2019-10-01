@@ -100,4 +100,13 @@ public final class LdapURLActivator
     }
     inactiveUrls.removeIf(url -> url.isActive());
   }
+
+
+  /**
+   * Removes all registered inactive URLs.
+   */
+  void clear()
+  {
+    inactiveUrls.clear();
+  }
 }

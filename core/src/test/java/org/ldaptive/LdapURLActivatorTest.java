@@ -25,6 +25,7 @@ public class LdapURLActivatorTest
     strategy.initialize("ldap://directory.ldaptive.org", url -> true);
 
     final LdapURLActivator activator = LdapURLActivator.getInstance();
+    activator.clear();
     Assert.assertEquals(activator.getInactiveUrls().size(), 0);
     activator.testInactiveUrls();
     Assert.assertEquals(activator.getInactiveUrls().size(), 0);
