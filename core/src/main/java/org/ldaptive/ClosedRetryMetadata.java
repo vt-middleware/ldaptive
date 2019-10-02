@@ -11,14 +11,30 @@ import java.time.Instant;
 public class ClosedRetryMetadata extends AbstractRetryMetadata
 {
 
+  /** Last thrown exception. */
+  protected final Throwable failureException;
+
 
   /**
    * Creates a new closed retry metadata.
    *
    * @param  time  of last successful connection
+   * @param  ex  exception that caused the connection to close
    */
-  public ClosedRetryMetadata(final Instant time)
+  public ClosedRetryMetadata(final Instant time, final Throwable ex)
   {
     successTime = time;
+    failureException = ex;
+  }
+
+
+  /**
+   * Returns the exception that caused the closed connection.
+   *
+   * @return failure exception
+   */
+  public Throwable getFailureException()
+  {
+    return failureException;
   }
 }
