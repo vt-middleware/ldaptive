@@ -147,8 +147,8 @@ public class SyncReplRunner
         throw new RuntimeException("Start aborted from " + onStart);
       }
       BlockingQueue<SyncReplItem> results = null;
+      logger.info("Runner {} started", this);
       while (run) {
-        logger.info("Runner {} started", this);
         try {
           if (!((SingleConnectionFactory) syncReplClient.getConnectionFactory()).isInitialized()) {
             ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
