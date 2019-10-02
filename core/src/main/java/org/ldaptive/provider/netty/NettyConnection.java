@@ -214,7 +214,7 @@ public final class NettyConnection extends ProviderConnection
         try {
           operation(new StartTLSRequest());
         } catch (Exception e) {
-          LOGGER.error("StartTLS failed on connection open", e);
+          LOGGER.error("StartTLS failed on connection open for {}", this, e);
           close();
           pendingResponses.clear();
           throw e;
@@ -226,7 +226,7 @@ public final class NettyConnection extends ProviderConnection
           try {
             initializer.initialize(this);
           } catch (Exception e) {
-            LOGGER.error("Connection initializer {} failed", initializer, e);
+            LOGGER.error("Connection initializer {} failed for {}", initializer, this, e);
             close();
             pendingResponses.clear();
             throw e;
@@ -266,7 +266,7 @@ public final class NettyConnection extends ProviderConnection
 
     final ChannelFuture future = bootstrap.connect(new InetSocketAddress(ldapURL.getHostname(), ldapURL.getPort()));
     future.awaitUninterruptibly();
-    LOGGER.trace("bootstrap connect returned {}", future);
+    LOGGER.trace("bootstrap connect returned {} for {}", future, this);
     if (!future.isDone()) {
       throw new ConnectException("Connection could not be completed");
     }
@@ -465,7 +465,7 @@ public final class NettyConnection extends ProviderConnection
           try {
             return operation((SaslClientRequest) request);
           } catch (LdapException e) {
-            LOGGER.warn("SASL GSSAPI operation failed", e);
+            LOGGER.warn("SASL GSSAPI operation failed for {}", this, e);
           }
           return null;
         });
@@ -623,7 +623,7 @@ public final class NettyConnection extends ProviderConnection
   @Override
   protected void write(final DefaultOperationHandle handle)
   {
-    LOGGER.debug("Write handle {} {}", handle, pendingResponses);
+    LOGGER.debug("Write handle {} with pending responses {}", handle, pendingResponses);
     try {
       final boolean gotReconnectLock;
       if (connectionConfig.getReconnectTimeout() == null) {
@@ -692,7 +692,7 @@ public final class NettyConnection extends ProviderConnection
         channel.closeFuture().removeListener(closeListener);
         // abandon outstanding requests
         if (pendingResponses.size() > 0) {
-          LOGGER.info("Abandoning requests {} to close connection", pendingResponses);
+          LOGGER.info("Abandoning requests {} for {} to close connection", pendingResponses, this);
           pendingResponses.abandonRequests();
         }
         // unbind
@@ -721,7 +721,7 @@ public final class NettyConnection extends ProviderConnection
   protected void notifyOperationHandlesOfClose()
   {
     if (pendingResponses.size() > 0) {
-      LOGGER.debug("Notifying operation handles {} of connection close", pendingResponses);
+      LOGGER.debug("Notifying operation handles {} for {} of connection close", pendingResponses, this);
       if (inboundException != null) {
         pendingResponses.notifyOperationHandles(inboundException);
       } else {
@@ -900,7 +900,7 @@ public final class NettyConnection extends ProviderConnection
     @Override
     public void operationComplete(final ChannelFuture future)
     {
-      LOGGER.debug("Close listener invoked with future={}", future, inboundException);
+      LOGGER.debug("Close listener invoked for {} with future={}", this, future, inboundException);
       inboundException = future.cause();
       final boolean isOpening = isOpening();
       close();
@@ -1022,7 +1022,7 @@ public final class NettyConnection extends ProviderConnection
     @Override
     protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
     {
-      LOGGER.trace("received {} bytes", in.readableBytes());
+      LOGGER.trace("received {} bytes for {}", in.readableBytes(), this);
       final ResponseParser parser = new ResponseParser();
       final Message message =  parser.parse(new NettyDERBuffer(in))
         .orElseThrow(() -> new IllegalArgumentException("No response found"));
@@ -1043,7 +1043,6 @@ public final class NettyConnection extends ProviderConnection
     @SuppressWarnings("unchecked")
     protected void channelRead0(final ChannelHandlerContext ctx, final Message msg)
     {
-      LOGGER.trace("received response message {}", msg);
       final DefaultOperationHandle handle = pendingResponses.get(msg.getMessageID());
       LOGGER.debug("Received response message {} for handle {}", msg, handle);
       if (handle != null) {
@@ -1056,7 +1055,7 @@ public final class NettyConnection extends ProviderConnection
           ((DefaultSearchOperationHandle) handle).reference((SearchResultReference) msg);
         } else if (msg instanceof Result) {
           if (pendingResponses.remove(msg.getMessageID()) == null) {
-            LOGGER.warn("Processed message {} that no longer exists", msg.getMessageID());
+            LOGGER.warn("Processed message {} that no longer exists for {}", msg.getMessageID(), this);
           }
           if (msg instanceof ExtendedResponse) {
             ((DefaultExtendedOperationHandle) handle).extended((ExtendedResponse) msg);
@@ -1076,10 +1075,14 @@ public final class NettyConnection extends ProviderConnection
           throw new IllegalStateException("Unknown message type: " + msg);
         }
       } else if (msg instanceof UnsolicitedNotification) {
-        LOGGER.info("Received UnsolicitedNotification: {}", msg);
+        LOGGER.info("Received UnsolicitedNotification {} for {}", msg, this);
         pendingResponses.notifyOperationHandles((UnsolicitedNotification) msg);
       } else {
-        LOGGER.warn("Received response message {} without matching request in {}", msg, pendingResponses);
+        LOGGER.warn(
+          "Received response message {} without matching request in {} for {}",
+          msg,
+          pendingResponses,
+          this);
       }
     }
   }
@@ -1095,7 +1098,7 @@ public final class NettyConnection extends ProviderConnection
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause)
     {
-      LOGGER.warn("Inbound handler caught exception", cause);
+      LOGGER.warn("Inbound handler caught exception for {}", this, cause);
       inboundException = cause;
       if (channel != null) {
         channel.close();
