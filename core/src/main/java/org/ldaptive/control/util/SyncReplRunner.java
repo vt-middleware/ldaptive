@@ -251,7 +251,6 @@ public class SyncReplRunner
       return false;
     });
     newConfig.setAutoReplay(false);
-    newConfig.setReconnectTimeout(null);
     final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig);
     factory.setFailFastInitialize(true);
     return factory;
