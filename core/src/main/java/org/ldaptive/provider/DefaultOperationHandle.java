@@ -294,7 +294,12 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   {
     if (sentTime == null) {
       throw new IllegalStateException(
-        "Request has not been sent for handle " + this + ". Invoke execute before calling this method.");
+        "Request has not been sent for handle " + this + ". Invoke send before calling this method.");
+    }
+    // Don't cancel a request if the response has been received
+    if (receivedTime != null) {
+      throw new IllegalStateException(
+        "Operation completed for handle " + this + ". Cancel cannot be invoked.");
     }
     final CompleteHandler completeHandler = onComplete;
     onComplete = null;
