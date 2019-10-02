@@ -227,8 +227,9 @@ public class SyncReplRunner
    * the supplied config makes the following modifications:
    * <ul>
    *   <li>{@link ConnectionConfig#setAutoReconnect(boolean)} to true</li>
-   *   <li>{@link ConnectionConfig#setAutoReconnectCondition(Predicate)} to sleep and return true</li>
-   *   <li>Adds the supplied connection initializer to the connection config</li>
+   *   <li>{@link ConnectionConfig#setAutoReconnectCondition(Predicate)} to sleep and return true for
+   *   InitialRetryMetadata</li>
+   *   <li>{@link ConnectionConfig#setReconnectTimeout(Duration) to null}</li>
    * </ul>
    *
    * @param  cc  connection configuration
@@ -249,6 +250,8 @@ public class SyncReplRunner
       }
       return false;
     });
+    newConfig.setAutoReplay(false);
+    newConfig.setReconnectTimeout(null);
     final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig);
     factory.setFailFastInitialize(true);
     return factory;

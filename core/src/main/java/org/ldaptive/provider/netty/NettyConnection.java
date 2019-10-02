@@ -151,7 +151,11 @@ public final class NettyConnection extends ProviderConnection
     workerGroup = group;
     channelOptions = new HashMap<>();
     channelOptions.put(ChannelOption.SO_KEEPALIVE, true);
-    channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) config.getConnectTimeout().toMillis());
+    if (config.getConnectTimeout() != null) {
+      channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) config.getConnectTimeout().toMillis());
+    } else {
+      channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, 0);
+    }
     pendingResponses = new HandleMap();
   }
 
@@ -412,11 +416,11 @@ public final class NettyConnection extends ProviderConnection
   @Override
   protected void operation(final UnbindRequest request)
   {
-    if (!isOpen()) {
-      LOGGER.warn("Attempt to unbind ignored, connection {} is not open", this);
-    } else {
-      if (reconnectLock.readLock().tryLock()) {
-        try {
+    if (reconnectLock.readLock().tryLock()) {
+      try {
+        if (!isOpen()) {
+          LOGGER.warn("Attempt to unbind ignored, connection {} is not open", this);
+        } else {
           if (bindLock.readLock().tryLock()) {
             try {
               final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
@@ -427,12 +431,12 @@ public final class NettyConnection extends ProviderConnection
           } else {
             throw new IllegalStateException("Bind in progress, cannot send unbind request");
           }
-        } finally {
-          reconnectLock.readLock().unlock();
         }
-      } else {
-        throw new IllegalStateException("Reconnect in progress, cannot send unbind request");
+      } finally {
+        reconnectLock.readLock().unlock();
       }
+    } else {
+      LOGGER.warn("Attempt to unbind ignored, connection {} is reconnecting", this);
     }
   }
 
@@ -532,11 +536,11 @@ public final class NettyConnection extends ProviderConnection
   public void operation(final AbandonRequest request)
   {
     final DefaultOperationHandle handle = pendingResponses.remove(request.getMessageID());
-    if (!isOpen()) {
-      LOGGER.warn("Attempt to abandon request {} ignored, connection {} is not open", request.getMessageID(), this);
-    } else {
-      if (reconnectLock.readLock().tryLock()) {
-        try {
+    if (reconnectLock.readLock().tryLock()) {
+      try {
+        if (!isOpen()) {
+          handle.exception(new LdapException("Connection is not open"));
+        } else {
           if (bindLock.readLock().tryLock()) {
             try {
               final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
@@ -547,12 +551,12 @@ public final class NettyConnection extends ProviderConnection
           } else {
             handle.exception(new LdapException("Bind in progress"));
           }
-        } finally {
-          reconnectLock.readLock().unlock();
         }
-      } else {
-        handle.exception(new LdapException("Reconnect in progress"));
+      } finally {
+        reconnectLock.readLock().unlock();
       }
+    } else {
+      handle.exception(new LdapException("Reconnect in progress"));
     }
   }
 
@@ -621,7 +625,15 @@ public final class NettyConnection extends ProviderConnection
   {
     LOGGER.debug("Write handle {} {}", handle, pendingResponses);
     try {
-      if (reconnectLock.readLock().tryLock(connectionConfig.getConnectTimeout().toMillis(), TimeUnit.MILLISECONDS)) {
+      final boolean gotReconnectLock;
+      if (connectionConfig.getReconnectTimeout() == null) {
+        reconnectLock.readLock().lock();
+        gotReconnectLock = true;
+      } else {
+        gotReconnectLock = reconnectLock.readLock().tryLock(
+          connectionConfig.getReconnectTimeout().toMillis(), TimeUnit.MILLISECONDS);
+      }
+      if (gotReconnectLock) {
         try {
           if (!isOpen()) {
             handle.exception(new LdapException("Connection is closed, write aborted"));

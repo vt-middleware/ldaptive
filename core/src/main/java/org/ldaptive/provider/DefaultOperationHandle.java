@@ -114,9 +114,6 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
     if (conn == null) {
       throw new IllegalArgumentException("Connection cannot be null");
     }
-    if (timeout == null) {
-      throw new IllegalArgumentException("Timeout cannot be null");
-    }
     request = req;
     connection = conn;
     responseTimeout = timeout;

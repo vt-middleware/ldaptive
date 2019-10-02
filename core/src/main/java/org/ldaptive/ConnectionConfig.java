@@ -23,6 +23,12 @@ public class ConnectionConfig extends AbstractConfig
   /** Duration of time to wait for responses. */
   private Duration responseTimeout = Duration.ofMinutes(1);
 
+  /**
+   * Duration of time that operations will block on reconnects, should generally be longer than {@link
+   * #connectTimeout}.
+   */
+  private Duration reconnectTimeout = Duration.ofMinutes(2);
+
   /** Whether to automatically reconnect to the server when a connection is lost. Default is true. */
   private boolean autoReconnect = true;
 
@@ -140,6 +146,33 @@ public class ConnectionConfig extends AbstractConfig
     }
     logger.trace("setting responseTimeout: {}", time);
     responseTimeout = time;
+  }
+
+
+  /**
+   * Returns the reconnect timeout.
+   *
+   * @return  timeout
+   */
+  public Duration getReconnectTimeout()
+  {
+    return reconnectTimeout;
+  }
+
+
+  /**
+   * Sets the maximum amount of time that operations will block waiting for a reconnect.
+   *
+   * @param  time  timeout for reconnects
+   */
+  public void setReconnectTimeout(final Duration time)
+  {
+    checkImmutable();
+    if (time != null && time.isNegative()) {
+      throw new IllegalArgumentException("Reconnect timeout cannot be negative");
+    }
+    logger.trace("setting reconnectTimeout: {}", time);
+    reconnectTimeout = time;
   }
 
 
@@ -324,6 +357,7 @@ public class ConnectionConfig extends AbstractConfig
     cc.setLdapUrl(config.getLdapUrl());
     cc.setConnectTimeout(config.getConnectTimeout());
     cc.setResponseTimeout(config.getResponseTimeout());
+    cc.setReconnectTimeout(config.getReconnectTimeout());
     cc.setAutoReconnect(config.getAutoReconnect());
     cc.setAutoReconnectCondition(config.getAutoReconnectCondition());
     cc.setAutoReplay(config.getAutoReplay());
@@ -343,6 +377,7 @@ public class ConnectionConfig extends AbstractConfig
       .append("ldapUrl=").append(ldapUrl).append(", ")
       .append("connectTimeout=").append(connectTimeout).append(", ")
       .append("responseTimeout=").append(responseTimeout).append(", ")
+      .append("reconnectTimeout=").append(reconnectTimeout).append(", ")
       .append("autoReconnect=").append(autoReconnect).append(", ")
       .append("autoReconnectCondition=").append(autoReconnectCondition).append(", ")
       .append("autoReplay=").append(autoReplay).append(", ")
@@ -391,6 +426,13 @@ public class ConnectionConfig extends AbstractConfig
     public Builder responseTimeout(final Duration timeout)
     {
       object.setResponseTimeout(timeout);
+      return this;
+    }
+
+
+    public Builder reconnectTimeout(final Duration timeout)
+    {
+      object.setReconnectTimeout(timeout);
       return this;
     }
 
