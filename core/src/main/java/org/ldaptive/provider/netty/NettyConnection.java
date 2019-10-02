@@ -185,8 +185,10 @@ public final class NettyConnection extends ProviderConnection
     final NettyConnection conn = new NettyConnection(workerGroup, connectionConfig);
     try {
       conn.open(url);
+      LOGGER.debug("Test of {} successful", conn);
       return true;
     } catch (LdapException e) {
+      LOGGER.debug("Test of {} failed", conn, e);
       return false;
     } finally {
       conn.close();
