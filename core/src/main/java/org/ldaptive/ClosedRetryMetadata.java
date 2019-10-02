@@ -37,4 +37,12 @@ public class ClosedRetryMetadata extends AbstractRetryMetadata
   {
     return failureException;
   }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(super.toString()).append(", ")
+      .append("failureException=").append(failureException).toString();
+  }
 }
