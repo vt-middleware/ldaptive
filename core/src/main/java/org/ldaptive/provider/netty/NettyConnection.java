@@ -751,7 +751,7 @@ public final class NettyConnection extends ProviderConnection
       List<DefaultOperationHandle> replayOperations = null;
       try {
         try {
-          reopen(new ClosedRetryMetadata(lastSuccessfulOpen));
+          reopen(new ClosedRetryMetadata(lastSuccessfulOpen, inboundException));
           LOGGER.info("auto reconnect finished for connection {}", this);
         } catch (Exception e) {
           LOGGER.debug("auto reconnect failed for connection {}", this, e);
@@ -900,12 +900,12 @@ public final class NettyConnection extends ProviderConnection
     @Override
     public void operationComplete(final ChannelFuture future)
     {
-      LOGGER.debug("Close listener invoked for {} with future={}", this, future, inboundException);
       inboundException = future.cause();
+      LOGGER.debug("Close listener invoked for {} with future={}", NettyConnection.this, future, inboundException);
       final boolean isOpening = isOpening();
       close();
       if (connectionConfig.getAutoReconnect() && !isOpening && !reconnecting.get()) {
-        LOGGER.trace("scheduling reconnect thread for connection {}", this);
+        LOGGER.trace("scheduling reconnect thread for connection {}", NettyConnection.this);
         NettyConnection.this.workerGroup.execute(
           () -> {
             reconnecting.set(true);
@@ -1022,7 +1022,7 @@ public final class NettyConnection extends ProviderConnection
     @Override
     protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
     {
-      LOGGER.trace("received {} bytes for {}", in.readableBytes(), this);
+      LOGGER.trace("received {} bytes", in.readableBytes());
       final ResponseParser parser = new ResponseParser();
       final Message message =  parser.parse(new NettyDERBuffer(in))
         .orElseThrow(() -> new IllegalArgumentException("No response found"));
@@ -1055,7 +1055,7 @@ public final class NettyConnection extends ProviderConnection
           ((DefaultSearchOperationHandle) handle).reference((SearchResultReference) msg);
         } else if (msg instanceof Result) {
           if (pendingResponses.remove(msg.getMessageID()) == null) {
-            LOGGER.warn("Processed message {} that no longer exists for {}", msg.getMessageID(), this);
+            LOGGER.warn("Processed message {} that no longer exists for {}", msg.getMessageID(), NettyConnection.this);
           }
           if (msg instanceof ExtendedResponse) {
             ((DefaultExtendedOperationHandle) handle).extended((ExtendedResponse) msg);
@@ -1075,7 +1075,7 @@ public final class NettyConnection extends ProviderConnection
           throw new IllegalStateException("Unknown message type: " + msg);
         }
       } else if (msg instanceof UnsolicitedNotification) {
-        LOGGER.info("Received UnsolicitedNotification {} for {}", msg, this);
+        LOGGER.info("Received UnsolicitedNotification {} for {}", msg, NettyConnection.this);
         pendingResponses.notifyOperationHandles((UnsolicitedNotification) msg);
       } else {
         LOGGER.warn(
@@ -1098,7 +1098,7 @@ public final class NettyConnection extends ProviderConnection
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause)
     {
-      LOGGER.warn("Inbound handler caught exception for {}", this, cause);
+      LOGGER.warn("Inbound handler caught exception for {}", NettyConnection.this, cause);
       inboundException = cause;
       if (channel != null) {
         channel.close();
