@@ -8,7 +8,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.InitialRetryMetadata;
-import org.ldaptive.LdapException;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
@@ -197,7 +196,7 @@ public class SyncReplRunner
     run = false;
     try {
       syncReplClient.cancel();
-    } catch (LdapException e) {
+    } catch (Exception e) {
       logger.warn("Could not cancel sync repl request", e);
     }
     syncReplClient.getConnectionFactory().close();
