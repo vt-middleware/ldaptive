@@ -901,7 +901,12 @@ public final class NettyConnection extends ProviderConnection
     public void operationComplete(final ChannelFuture future)
     {
       inboundException = future.cause();
-      LOGGER.debug("Close listener invoked for {} with future={}", NettyConnection.this, future, inboundException);
+      LOGGER.debug(
+        "Close listener invoked for {} with future {} and cause {}",
+        NettyConnection.this,
+        future,
+        inboundException != null ? inboundException.getClass() : null,
+        inboundException);
       final boolean isOpening = isOpening();
       close();
       if (connectionConfig.getAutoReconnect() && !isOpening && !reconnecting.get()) {
