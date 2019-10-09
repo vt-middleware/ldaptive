@@ -2,7 +2,6 @@
 package org.ldaptive.provider.netty;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import org.ldaptive.asn1.DERBuffer;
 
 /**
@@ -16,30 +15,6 @@ public class NettyDERBuffer implements DERBuffer
 
   /** Underlying byte buffer. */
   private final ByteBuf buffer;
-
-
-  /**
-   * Creates a new netty DER buffer. See {@link Unpooled#directBuffer(int, int)}.
-   *
-   * @param  capacity  of this buffer
-   */
-  public NettyDERBuffer(final int capacity)
-  {
-    buffer = Unpooled.directBuffer(capacity, capacity);
-    buffer.setIndex(0, buffer.capacity());
-  }
-
-
-  /**
-   * Creates a new netty DER buffer. See {@link Unpooled#wrappedBuffer(byte[])}.
-   *
-   * @param  array  contents of the buffer
-   */
-  public NettyDERBuffer(final byte[] array)
-  {
-    buffer = Unpooled.wrappedBuffer(array);
-    buffer.setIndex(0, buffer.capacity());
-  }
 
 
   /**
