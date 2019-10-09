@@ -14,14 +14,14 @@ import java.util.concurrent.TimeUnit;
  *
  * @author  Middleware Services
  */
-public final class LdapURLActivator
+public final class LdapURLActivatorService
 {
 
   /** How often to test inactive connections. */
   public static final Duration PERIOD = Duration.ofMinutes(5);
 
   /** Instance of this singleton. */
-  private static final LdapURLActivator INSTANCE = new LdapURLActivator();
+  private static final LdapURLActivatorService INSTANCE = new LdapURLActivatorService();
 
   /** List of inactive URLs to test. */
   private final List<LdapURL> inactiveUrls = new ArrayList<>();
@@ -31,7 +31,7 @@ public final class LdapURLActivator
 
 
   /** Default constructor. */
-  private LdapURLActivator()
+  private LdapURLActivatorService()
   {
     executor = new ScheduledThreadPoolExecutor(
       1,
@@ -53,9 +53,9 @@ public final class LdapURLActivator
   /**
    * Returns the instance of this singleton.
    *
-   * @return  connection strategy retry
+   * @return  LDAP URL activator service
    */
-  public static LdapURLActivator getInstance()
+  public static LdapURLActivatorService getInstance()
   {
     return INSTANCE;
   }
