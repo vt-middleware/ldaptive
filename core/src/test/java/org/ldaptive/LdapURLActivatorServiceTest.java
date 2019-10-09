@@ -6,16 +6,16 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link LdapURLActivator}.
+ * Unit test for {@link LdapURLActivatorService}.
  *
  * @author  Middleware Services
  */
-public class LdapURLActivatorTest
+public class LdapURLActivatorServiceTest
 {
 
 
   /**
-   * Unit test for {@link LdapURLActivator#testInactiveUrls()}.
+   * Unit test for {@link LdapURLActivatorService#testInactiveUrls()}.
    */
   @Test
   public void retryInactiveUrls()
@@ -24,7 +24,7 @@ public class LdapURLActivatorTest
     strategy.setRetryCondition(url -> Instant.now().isAfter(url.getRetryMetadata().getFailureTime()));
     strategy.initialize("ldap://directory.ldaptive.org", url -> true);
 
-    final LdapURLActivator activator = LdapURLActivator.getInstance();
+    final LdapURLActivatorService activator = LdapURLActivatorService.getInstance();
     activator.clear();
     Assert.assertEquals(activator.getInactiveUrls().size(), 0);
     activator.testInactiveUrls();
