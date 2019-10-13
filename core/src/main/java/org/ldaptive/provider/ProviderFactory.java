@@ -2,7 +2,7 @@
 package org.ldaptive.provider;
 
 import java.lang.reflect.Constructor;
-import org.ldaptive.provider.netty.SharedNettyProvider;
+import org.ldaptive.provider.netty.SharedNioProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +58,6 @@ public final class ProviderFactory
         throw new IllegalStateException(e);
       }
     }
-    return new SharedNettyProvider();
+    return new SharedNioProvider();
   }
 }
