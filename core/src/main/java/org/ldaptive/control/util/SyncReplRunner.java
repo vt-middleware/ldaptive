@@ -3,6 +3,8 @@ package org.ldaptive.control.util;
 
 import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -53,8 +55,14 @@ public class SyncReplRunner
   /** Invoked when a sync info message is received. */
   private Consumer<SyncInfoMessage> onMessage;
 
-  /** Whether sync repl has been started. */
+  /** Whether {@link #start()} has been invoked. */
   private boolean run;
+
+  /** Whether {@link #stop()} has been invoked. */
+  private boolean stop;
+
+  /** Executor for running consumers. */
+  private ExecutorService consumerExecutor;
 
 
   /**
@@ -130,16 +138,26 @@ public class SyncReplRunner
    */
   public void initialize(final boolean refreshAndPersist, final Duration reconnectWait)
   {
+    consumerExecutor = Executors.newSingleThreadExecutor(
+      r -> {
+        final Thread t = new Thread(r);
+        t.setDaemon(true);
+        return t;
+      });
     final SingleConnectionFactory connectionFactory = reconnectFactory(connectionConfig, reconnectWait);
     syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
+    stop = false;
   }
 
 
   /**
    * Starts this runner.
    */
-  public void start()
+  public synchronized void start()
   {
+    if (run) {
+      throw new IllegalStateException("Runner has already been started");
+    }
     run = true;
     try {
       if (onStart != null && !onStart.get()) {
@@ -160,11 +178,32 @@ public class SyncReplRunner
           final SyncReplItem item = results.take();
           logger.debug("Received item {}", item);
           if (item.isEntry() && onEntry != null) {
-            onEntry.accept(item.getEntry());
+            consumerExecutor.execute(
+              () -> {
+                try {
+                  onEntry.accept(item.getEntry());
+                } catch (Exception e) {
+                  logger.warn("onEntry failed for item {}", item.getEntry(), e);
+                }
+              });
           } else if (item.isResult() && onResult != null) {
-            onResult.accept(item.getResult());
+            consumerExecutor.execute(
+              () -> {
+                try {
+                  onResult.accept(item.getResult());
+                } catch (Exception e) {
+                  logger.warn("onResult failed for item {}", item.getResult(), e);
+                }
+              });
           } else if (item.isMessage() && onMessage != null) {
-            onMessage.accept(item.getMessage());
+            consumerExecutor.execute(
+              () -> {
+                try {
+                  onMessage.accept(item.getMessage());
+                } catch (Exception e) {
+                  logger.warn("onResult failed for item {}", item.getMessage(), e);
+                }
+              });
           } else if (item.isException()) {
             throw item.getException();
           }
@@ -191,8 +230,12 @@ public class SyncReplRunner
   /**
    * Stops this runner.
    */
-  public void stop()
+  public synchronized void stop()
   {
+    if (stop) {
+      return;
+    }
+    stop = true;
     run = false;
     try {
       syncReplClient.cancel();
@@ -200,6 +243,7 @@ public class SyncReplRunner
       logger.warn("Could not cancel sync repl request", e);
     }
     syncReplClient.getConnectionFactory().close();
+    consumerExecutor.shutdown();
     logger.info("Runner {} stopped", this);
   }
 
@@ -228,7 +272,7 @@ public class SyncReplRunner
    *   <li>{@link ConnectionConfig#setAutoReconnect(boolean)} to true</li>
    *   <li>{@link ConnectionConfig#setAutoReconnectCondition(Predicate)} to sleep and return true for
    *   InitialRetryMetadata</li>
-   *   <li>{@link ConnectionConfig#setReconnectTimeout(Duration) to null}</li>
+   *   <li>{@link ConnectionConfig#setAutoReplay(boolean)} to false</li>
    * </ul>
    *
    * @param  cc  connection configuration
