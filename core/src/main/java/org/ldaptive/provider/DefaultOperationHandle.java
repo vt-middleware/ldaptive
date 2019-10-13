@@ -147,7 +147,8 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         }
       } else {
         if (!responseDone.await(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
-          abandon(new TimeoutException("No response received in " + responseTimeout.toMillis() + "ms"));
+          abandon(
+            new TimeoutException("No response received in " + responseTimeout.toMillis() + "ms for handle " + this));
           logger.trace("await abandoned handle {}", this);
         } else if (result != null && exception == null) {
           logger.trace("await received result {} for handle {}", result, this);
@@ -259,14 +260,11 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    * ProviderConnection#operation(AbandonRequest)}.
    *
    * @param  cause  the reason this request was abandoned
-   *
-   * @throws  IllegalStateException  if the request has not been sent to the server
    */
   public void abandon(final Throwable cause)
   {
     if (sentTime == null) {
-      throw new IllegalStateException(
-        "Request has not been sent for handle " + this + ". Invoke execute before calling this method.");
+      logger.warn("Request has not been sent for {}.", this);
     }
     // Bind, unbind, StartTLS and Cancel cannot be abandoned
     if (!(request instanceof BindRequest ||
