@@ -579,14 +579,14 @@ public class SyncInfoMessage extends IntermediateResponse
    *
    * @return  new builder
    */
-  protected static Builder builder()
+  public static Builder builder()
   {
     return new Builder();
   }
 
 
   // CheckStyle:OFF
-  protected static class Builder extends IntermediateResponse.Builder
+  public static class Builder extends IntermediateResponse.Builder
   {
 
 
