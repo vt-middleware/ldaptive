@@ -134,14 +134,14 @@ public class BindResponse extends AbstractResult
    *
    * @return  new builder
    */
-  protected static Builder builder()
+  public static Builder builder()
   {
     return new Builder();
   }
 
 
   // CheckStyle:OFF
-  protected static class Builder extends AbstractResult.AbstractBuilder<Builder, BindResponse>
+  public static class Builder extends AbstractResult.AbstractBuilder<Builder, BindResponse>
   {
 
 
