@@ -26,19 +26,27 @@ public class MessageFrameDecoder extends ByteToMessageDecoder
   @Override
   protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
   {
-    logger.trace("decoding {} bytes", in.readableBytes());
-    if (in.readableBytes() > 2) {
-      final int readerIdx = in.readerIndex();
-      final int writerIdx = in.writerIndex();
+    logger.trace("decoding {} bytes from {}", in.readableBytes(), in);
+    if (in.readableBytes() <= 2) {
+      return;
+    }
+
+    final int readerIdx = in.readerIndex();
+    final int writerIdx = in.writerIndex();
+    int len = 0;
+    try {
       final DERBuffer buffer = new NettyDERBuffer(in.readSlice(in.readableBytes()));
-      final int len = readMessageLength(buffer);
-      logger.trace("decoded length of {}", len);
-      if (len > 0) {
-        in.readerIndex(readerIdx);
-        out.add(in.readRetainedSlice(len));
-      } else {
-        in.setIndex(readerIdx, writerIdx);
-      }
+      len = readMessageLength(buffer);
+    } finally {
+      logger.trace("decoded message length of {} for {}", len, in);
+      // return the reader and writer indexes back to their initial position
+      in.setIndex(readerIdx, writerIdx);
+    }
+    if (len > 0) {
+      logger.trace("read enough bytes from {} to decode message", in);
+      out.add(in.readRetainedSlice(len));
+    } else {
+      logger.trace("could not read enough bytes from {} to decode message", in);
     }
   }
 
@@ -63,10 +71,12 @@ public class MessageFrameDecoder extends ByteToMessageDecoder
     try {
       final int len = messageParser.readLength(buffer);
       if (buffer.position() + len <= buffer.capacity()) {
+        logger.trace("read entire message of length {} with buffer {}", len, buffer);
         return buffer.position() + len;
       }
+      logger.trace("could not read entire message of length {} with buffer {}", len, buffer);
     } catch (Exception e) {
-      logger.trace("Error reading message length", e);
+      logger.warn("Error reading message length with buffer {}", buffer, e);
     }
     return -1;
   }
