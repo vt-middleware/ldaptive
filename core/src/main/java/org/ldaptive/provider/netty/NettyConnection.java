@@ -9,6 +9,9 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -30,14 +33,16 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.SingleThreadEventLoop;
 import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.logging.LogLevel;
@@ -105,6 +110,12 @@ public final class NettyConnection extends ProviderConnection
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(NettyConnection.class);
 
+  /** Request encoder pipeline handler. */
+  private static final RequestEncoder REQUEST_ENCODER = new RequestEncoder();
+
+  /** Type of channel. */
+  private final Class<? extends Channel> channelClass;
+
   /** Event worker group used by the bootstrap. */
   private final EventLoopGroup workerGroup;
 
@@ -126,6 +137,14 @@ public final class NettyConnection extends ProviderConnection
   /** Operation lock when a bind occurs. */
   private final ReadWriteLock bindLock = new ReentrantReadWriteLock();
 
+  /** Executor for scheduling a reconnect attempt. */
+  private ExecutorService reconnectExecutor = Executors.newSingleThreadExecutor(
+    r -> {
+      final Thread t = new Thread(r);
+      t.setDaemon(true);
+      return t;
+    });
+
   /** URL derived from the connection strategy. */
   private LdapURL ldapURL;
 
@@ -142,12 +161,17 @@ public final class NettyConnection extends ProviderConnection
   /**
    * Creates a new connection.
    *
+   * @param  clazz  type of channel
    * @param  group  event loop group
    * @param  config  connection configuration
    */
-  public NettyConnection(final EventLoopGroup group, final ConnectionConfig config)
+  public NettyConnection(
+    final Class<? extends Channel> clazz,
+    final EventLoopGroup group,
+    final ConnectionConfig config)
   {
     super(config);
+    channelClass = clazz;
     workerGroup = group;
     channelOptions = new HashMap<>();
     channelOptions.put(ChannelOption.SO_KEEPALIVE, true);
@@ -172,7 +196,7 @@ public final class NettyConnection extends ProviderConnection
   {
     final Bootstrap bootstrap = new Bootstrap();
     bootstrap.group(workerGroup);
-    bootstrap.channel(NioSocketChannel.class);
+    bootstrap.channel(channelClass);
     channelOptions.forEach(bootstrap::option);
     bootstrap.handler(initializer);
     return bootstrap;
@@ -182,7 +206,7 @@ public final class NettyConnection extends ProviderConnection
   @Override
   protected boolean test(final LdapURL url)
   {
-    final NettyConnection conn = new NettyConnection(workerGroup, connectionConfig);
+    final NettyConnection conn = new NettyConnection(channelClass, workerGroup, connectionConfig);
     try {
       conn.open(url);
       LOGGER.debug("Test of {} successful", conn);
@@ -208,13 +232,15 @@ public final class NettyConnection extends ProviderConnection
     try {
       inboundException = null;
       ldapURL = url;
-      final ChannelFuture future = connectInternal();
-      channel = future.channel();
+      channel = connectInternal();
       pendingResponses.open();
       // startTLS request must occur after the connection is ready
       if (connectionConfig.getUseStartTLS()) {
         try {
-          operation(new StartTLSRequest());
+          final Result result = operation(new StartTLSRequest());
+          if (!ResultCode.SUCCESS.equals(result.getResultCode())) {
+            throw new LdapException("StartTLS returned response: " + result);
+          }
         } catch (Exception e) {
           LOGGER.error("StartTLS failed on connection open for {}", this, e);
           close();
@@ -226,7 +252,10 @@ public final class NettyConnection extends ProviderConnection
       if (connectionConfig.getConnectionInitializers() != null) {
         for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
           try {
-            initializer.initialize(this);
+            final Result result = initializer.initialize(this);
+            if (!ResultCode.SUCCESS.equals(result.getResultCode())) {
+              throw new LdapException("Connection initializer returned response: " + result);
+            }
           } catch (Exception e) {
             LOGGER.error("Connection initializer {} failed for {}", initializer, this, e);
             close();
@@ -248,11 +277,11 @@ public final class NettyConnection extends ProviderConnection
    * Creates a Netty bootstrap and connects to the LDAP server. Handles the details of adding an SSL handler to the
    * pipeline. This method waits until the connection is established.
    *
-   * @return  channel future for the connection.
+   * @return  channel for the established connection.
    *
    * @throws  ConnectException  if the connection fails
    */
-  private ChannelFuture connectInternal()
+  private Channel connectInternal()
     throws ConnectException
   {
     SslHandler handler = null;
@@ -266,12 +295,15 @@ public final class NettyConnection extends ProviderConnection
     final ClientInitializer initializer = new ClientInitializer(handler);
     final Bootstrap bootstrap = createBootstrap(initializer);
 
+    final CountDownLatch channelLatch = new CountDownLatch(1);
     final ChannelFuture future = bootstrap.connect(new InetSocketAddress(ldapURL.getHostname(), ldapURL.getPort()));
-    future.awaitUninterruptibly();
-    LOGGER.trace("bootstrap connect returned {} for {}", future, this);
-    if (!future.isDone()) {
-      throw new ConnectException("Connection could not be completed");
+    future.addListener((ChannelFutureListener) f -> channelLatch.countDown());
+    try {
+      channelLatch.await();
+    } catch (InterruptedException e) {
+      future.cancel(true);
     }
+    LOGGER.trace("bootstrap connect returned {} for {}", future, this);
     if (future.isCancelled()) {
       throw new ConnectException("Connection cancelled");
     }
@@ -292,7 +324,7 @@ public final class NettyConnection extends ProviderConnection
         throw new ConnectException(e);
       }
     }
-    return future;
+    return future.channel();
   }
 
 
@@ -345,11 +377,14 @@ public final class NettyConnection extends ProviderConnection
     throws SSLException
   {
     // socket is connected, wait for SSL handshake to complete
+    final CountDownLatch sslLatch = new CountDownLatch(1);
     final SslHandler handler = ch.pipeline().get(SslHandler.class);
     final Future<Channel> sslFuture = handler.handshakeFuture();
-    sslFuture.awaitUninterruptibly();
-    if (!sslFuture.isDone()) {
-      throw new SSLException("SSL handshake could not be completed");
+    sslFuture.addListener((GenericFutureListener) f -> sslLatch.countDown());
+    try {
+      sslLatch.await();
+    } catch (InterruptedException e) {
+      sslFuture.cancel(true);
     }
     if (sslFuture.isCancelled()) {
       throw new SSLException("SSL handshake cancelled");
@@ -418,6 +453,7 @@ public final class NettyConnection extends ProviderConnection
   @Override
   protected void operation(final UnbindRequest request)
   {
+    LOGGER.debug("Unbind request {} with pending responses {}", request, pendingResponses);
     if (reconnectLock.readLock().tryLock()) {
       try {
         if (!isOpen()) {
@@ -426,7 +462,8 @@ public final class NettyConnection extends ProviderConnection
           if (bindLock.readLock().tryLock()) {
             try {
               final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
-              channel.writeAndFlush(encodedRequest);
+              channel.writeAndFlush(encodedRequest).addListeners(
+                ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             } finally {
               bindLock.readLock().unlock();
             }
@@ -538,6 +575,7 @@ public final class NettyConnection extends ProviderConnection
   public void operation(final AbandonRequest request)
   {
     final DefaultOperationHandle handle = pendingResponses.remove(request.getMessageID());
+    LOGGER.debug("Abandon handle {} with pending responses {}", handle, pendingResponses);
     if (reconnectLock.readLock().tryLock()) {
       try {
         if (!isOpen()) {
@@ -546,7 +584,8 @@ public final class NettyConnection extends ProviderConnection
           if (bindLock.readLock().tryLock()) {
             try {
               final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
-              channel.writeAndFlush(encodedRequest);
+              channel.writeAndFlush(encodedRequest).addListeners(
+                ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             } finally {
               bindLock.readLock().unlock();
             }
@@ -656,8 +695,19 @@ public final class NettyConnection extends ProviderConnection
                   }
                   throw e;
                 }
-                channel.writeAndFlush(encodedRequest);
-                handle.sent();
+                channel.writeAndFlush(encodedRequest).addListeners(
+                  ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE,
+                  (ChannelFutureListener) f -> {
+                    if (f.isSuccess()) {
+                      handle.sent();
+                    }
+                  });
+                if (LOGGER.isTraceEnabled() && channel.eventLoop() instanceof SingleThreadEventLoop) {
+                  LOGGER.trace(
+                    "Event loop group {} has {} pending tasks",
+                    channel.eventLoop().parent(),
+                    ((SingleThreadEventLoop) channel.eventLoop()).pendingTasks());
+                }
               } finally {
                 bindLock.readLock().unlock();
               }
@@ -678,7 +728,8 @@ public final class NettyConnection extends ProviderConnection
 
 
   /**
-   * Closes this connection. Abandons all pending responses and sends an unbind to the LDAP server.
+   * Closes this connection. Abandons all pending responses and sends an unbind to the LDAP server if the connection is
+   * open when this method is invoked.
    *
    * @param  controls  to send with the unbind request when closing the connection
    */
@@ -701,7 +752,7 @@ public final class NettyConnection extends ProviderConnection
         final UnbindRequest req = new UnbindRequest();
         req.setControls(controls);
         operation(req);
-        channel.close();
+        channel.close().addListener(new LogFutureListener());
       } else {
         LOGGER.trace("connection {} already closed", this);
         if (!(connectionConfig.getAutoReconnect() && connectionConfig.getAutoReplay())) {
@@ -889,10 +940,29 @@ public final class NettyConnection extends ProviderConnection
 
 
   /**
+   * Listener that logs the future success state when it occurs.
+   */
+  private class LogFutureListener implements ChannelFutureListener
+  {
+
+
+    @Override
+    public void operationComplete(final ChannelFuture future)
+    {
+      if (future.isSuccess()) {
+        LOGGER.trace("Operation channel success on {}", NettyConnection.this);
+      } else {
+        LOGGER.warn("Operation channel error on {}", NettyConnection.this, future.cause());
+      }
+    }
+  }
+
+
+  /**
    * Listener for channel close events. Invokes {@link #close()} to cleanup resources from a non-requested close event.
    * If {@link ConnectionConfig#getAutoReconnect()} is true, a connection reconnect is attempted.
    */
-  private class CloseFutureListener implements GenericFutureListener<ChannelFuture>
+  private class CloseFutureListener implements ChannelFutureListener
   {
 
     /** Whether this listener is in the process of reconnecting. */
@@ -913,11 +983,13 @@ public final class NettyConnection extends ProviderConnection
       close();
       if (connectionConfig.getAutoReconnect() && !isOpening && !reconnecting.get()) {
         LOGGER.trace("scheduling reconnect thread for connection {}", NettyConnection.this);
-        NettyConnection.this.workerGroup.execute(
+        reconnectExecutor.execute(
           () -> {
             reconnecting.set(true);
             try {
               reconnect();
+            } catch (Exception e) {
+              LOGGER.warn("Reconnect attempt failed for {}", NettyConnection.this, e);
             } finally {
               reconnecting.set(false);
             }
@@ -984,7 +1056,7 @@ public final class NettyConnection extends ProviderConnection
       if (LOGGER.isDebugEnabled()) {
         ch.pipeline().addLast("logger", new LoggingHandler(LogLevel.DEBUG));
       }
-      ch.pipeline().addLast("request_encoder", new RequestEncoder());
+      ch.pipeline().addLast("request_encoder", REQUEST_ENCODER);
       ch.pipeline().addLast("frame_decoder", new MessageFrameDecoder());
       ch.pipeline().addLast("response_decoder", new MessageDecoder());
       ch.pipeline().addLast("message_handler", new InboundMessageHandler());
@@ -1005,9 +1077,11 @@ public final class NettyConnection extends ProviderConnection
 
 
   /**
-   * Encodes an LDAP request into it's DER bytes. See {@link EncodedRequest#getEncoded()}.
+   * Encodes an LDAP request into it's DER bytes. See {@link EncodedRequest#getEncoded()}. This class prefers direct
+   * byte buffers.
    */
-  private static class RequestEncoder extends MessageToByteEncoder<EncodedRequest>
+  @ChannelHandler.Sharable
+  protected static class RequestEncoder extends MessageToByteEncoder<EncodedRequest>
   {
 
 
@@ -1020,9 +1094,10 @@ public final class NettyConnection extends ProviderConnection
 
 
   /**
-   * Decodes byte buffer into a concrete LDAP response message. See {@link ResponseParser}.
+   * Decodes byte buffer into a concrete LDAP response message. See {@link ResponseParser}. Note that {@link
+   * ByteToMessageDecoder} is stateful so this class cannot be marked sharable.
    */
-  private static class MessageDecoder extends ByteToMessageDecoder
+  protected static class MessageDecoder extends ByteToMessageDecoder
   {
 
 
@@ -1108,7 +1183,7 @@ public final class NettyConnection extends ProviderConnection
       LOGGER.warn("Inbound handler caught exception for {}", NettyConnection.this, cause);
       inboundException = cause;
       if (channel != null) {
-        channel.close();
+        channel.close().addListener(new LogFutureListener());
       }
     }
   }
