@@ -3,6 +3,8 @@ package org.ldaptive.control.util;
 
 import java.util.EnumSet;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -37,6 +39,9 @@ public class PersistentSearchClient
   /** Whether to return an Entry Change Notification control. */
   private final boolean returnEcs;
 
+  /** Executor for handler events. Default is a single thread executor. */
+  private final ExecutorService handlerExecutor;
+
   /** Search operation handle. */
   private SearchOperationHandle handle;
 
@@ -55,10 +60,36 @@ public class PersistentSearchClient
     final boolean co,
     final boolean re)
   {
+    this(cf, types, co, re, Executors.newSingleThreadExecutor(
+      r -> {
+        final Thread t = new Thread(r);
+        t.setDaemon(true);
+        return t;
+      }));
+  }
+
+
+  /**
+   * Creates a new persistent search client.
+   *
+   * @param  cf  to get a connection from
+   * @param  types  persistent search change types
+   * @param  co  whether only changed entries are returned
+   * @param  re  return an Entry Change Notification control
+   * @param  es  executor service used when a handler event fires
+   */
+  public PersistentSearchClient(
+    final ConnectionFactory cf,
+    final EnumSet<PersistentSearchChangeType> types,
+    final boolean co,
+    final boolean re,
+    final ExecutorService es)
+  {
     factory = cf;
     changeTypes = types;
     changesOnly = co;
     returnEcs = re;
+    handlerExecutor = es;
   }
 
 
@@ -105,29 +136,37 @@ public class PersistentSearchClient
     final SearchOperation search = new SearchOperation(factory, request);
     search.setResultHandlers(result -> {
       logger.debug("received {}", result);
-      try {
-        queue.put(new PersistentSearchItem(result));
-      } catch (InterruptedException e) {
-        logger.warn("Unable to enqueue result {}", result);
-      }
+      handlerExecutor.execute(
+        () -> {
+          try {
+            queue.put(new PersistentSearchItem(result));
+          } catch (InterruptedException e) {
+            logger.warn("Unable to enqueue result {}", result);
+          }
+        });
     });
     search.setExceptionHandler(e -> {
       logger.debug("received exception:", e);
-      try {
-        queue.put(new PersistentSearchItem(e));
-      } catch (InterruptedException e1) {
-        logger.warn("Unable to enqueue exception", e);
-      }
+      handlerExecutor.execute(
+        () -> {
+          try {
+            queue.put(new PersistentSearchItem(e));
+          } catch (InterruptedException e1) {
+            logger.warn("Unable to enqueue exception", e);
+          }
+        });
     });
     search.setEntryHandlers(entry -> {
       logger.debug("received {}", entry);
-      final PersistentSearchItem item = new PersistentSearchItem(new PersistentSearchItem.Entry(entry));
-      try {
-        queue.put(item);
-      } catch (InterruptedException e) {
-        logger.warn("Unable to enqueue entry {}", entry);
-      }
-      return entry;
+      handlerExecutor.execute(
+        () -> {
+          try {
+            queue.put(new PersistentSearchItem(new PersistentSearchItem.Entry(entry)));
+          } catch (InterruptedException e) {
+            logger.warn("Unable to enqueue entry {}", entry);
+          }
+        });
+      return null;
     });
     handle = search.send();
     return queue;
@@ -140,5 +179,6 @@ public class PersistentSearchClient
   public void abandon()
   {
     handle.abandon();
+    handlerExecutor.shutdown();
   }
 }
