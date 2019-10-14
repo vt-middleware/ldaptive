@@ -2,6 +2,8 @@
 package org.ldaptive.control.util;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -31,6 +33,9 @@ public class SyncReplClient
   /** Controls which mode the sync repl control should use. */
   private final boolean refreshAndPersist;
 
+  /** Executor for handler events. Default is a single thread executor. */
+  private final ExecutorService handlerExecutor;
+
   /** Search operation handle. */
   private SearchOperationHandle handle;
 
@@ -43,8 +48,27 @@ public class SyncReplClient
    */
   public SyncReplClient(final ConnectionFactory cf, final boolean persist)
   {
+    this(cf, persist, Executors.newSingleThreadExecutor(
+      r -> {
+        final Thread t = new Thread(r);
+        t.setDaemon(true);
+        return t;
+      }));
+  }
+
+
+  /**
+   * Creates a new sync repl client.
+   *
+   * @param  cf  to get a connection from
+   * @param  persist  whether to refresh and persist or just refresh
+   * @param  es  executor service used when a handler event fires
+   */
+  public SyncReplClient(final ConnectionFactory cf, final boolean persist, final ExecutorService es)
+  {
     factory = cf;
     refreshAndPersist = persist;
+    handlerExecutor = es;
   }
 
 
@@ -130,54 +154,66 @@ public class SyncReplClient
     search.setResultHandlers(result -> {
       logger.debug("received {}", result);
       final SyncReplItem item = new SyncReplItem(new SyncReplItem.Result(result));
-      if (item.getResult().getSyncDoneControl() != null) {
-        final byte[] cookie = item.getResult().getSyncDoneControl().getCookie();
-        if (cookie != null) {
-          manager.writeCookie(cookie);
-        }
-      }
-      try {
-        queue.put(item);
-      } catch (InterruptedException e) {
-        logger.warn("Unable to enqueue result {}", result);
-      }
+      handlerExecutor.execute(
+        () -> {
+          if (item.getResult().getSyncDoneControl() != null) {
+            final byte[] cookie = item.getResult().getSyncDoneControl().getCookie();
+            if (cookie != null) {
+              manager.writeCookie(cookie);
+            }
+          }
+          try {
+            queue.put(item);
+          } catch (InterruptedException e) {
+            logger.warn("Unable to enqueue result {}", result);
+          }
+        });
     });
     search.setExceptionHandler(e -> {
       logger.debug("received exception", e);
-      try {
-        queue.put(new SyncReplItem(e));
-      } catch (InterruptedException ex) {
-        logger.warn("Unable to enqueue exception", ex);
-      }
+      handlerExecutor.execute(
+        () -> {
+          try {
+            queue.put(new SyncReplItem(e));
+          } catch (InterruptedException ex) {
+            logger.warn("Unable to enqueue exception", ex);
+          }
+        });
     });
     search.setEntryHandlers(entry -> {
       logger.debug("received {}", entry);
       final SyncReplItem item = new SyncReplItem(new SyncReplItem.Entry(entry));
-      if (item.getEntry().getSyncStateControl() != null) {
-        final byte[] cookie = item.getEntry().getSyncStateControl().getCookie();
-        if (cookie != null) {
-          manager.writeCookie(cookie);
-        }
-      }
-      try {
-        queue.put(item);
-      } catch (InterruptedException e) {
-        logger.warn("Unable to enqueue entry {}", entry);
-      }
+      handlerExecutor.execute(
+        () -> {
+          if (item.getEntry().getSyncStateControl() != null) {
+            final byte[] cookie = item.getEntry().getSyncStateControl().getCookie();
+            if (cookie != null) {
+              manager.writeCookie(cookie);
+            }
+          }
+          try {
+            queue.put(item);
+          } catch (InterruptedException e) {
+            logger.warn("Unable to enqueue entry {}", entry);
+          }
+        });
       return null;
     });
     search.setIntermediateResponseHandlers(response -> {
       if (SyncInfoMessage.OID.equals(response.getResponseName())) {
         logger.debug("received {}", response);
         final SyncInfoMessage message = (SyncInfoMessage) response;
-        if (message.getCookie() != null) {
-          manager.writeCookie(message.getCookie());
-        }
-        try {
-          queue.put(new SyncReplItem(message));
-        } catch (InterruptedException e) {
-          logger.warn("Unable to enqueue intermediate response {}", response);
-        }
+        handlerExecutor.execute(
+          () -> {
+            if (message.getCookie() != null) {
+              manager.writeCookie(message.getCookie());
+            }
+            try {
+              queue.put(new SyncReplItem(message));
+            } catch (InterruptedException e) {
+              logger.warn("Unable to enqueue intermediate response {}", response);
+            }
+          });
       }
     });
 
@@ -187,7 +223,7 @@ public class SyncReplClient
 
 
   /**
-   * Invokes a cancel operation on the underlying search operation.
+   * Invokes a cancel operation on the underlying search operation and shuts down the executor.
    *
    * @return  cancel operation result
    *
@@ -196,7 +232,9 @@ public class SyncReplClient
   public ExtendedResponse cancel()
     throws LdapException
   {
-    return handle.cancel().execute();
+    final ExtendedResponse response = handle.cancel().execute();
+    handlerExecutor.shutdown();
+    return response;
   }
 
 
@@ -207,6 +245,7 @@ public class SyncReplClient
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("factory=").append(factory).append(", ")
       .append("refreshAndPersist=").append(refreshAndPersist).append(", ")
+      .append("handlerExecutor=").append(handlerExecutor).append(", ")
       .append("handle=").append(handle).toString();
   }
 }

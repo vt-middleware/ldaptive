@@ -3,8 +3,6 @@ package org.ldaptive.control.util;
 
 import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -18,7 +16,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Class that executes a {@link SyncReplClient} and expects to run continuously, reconnecting if the server is
- * unavailable.
+ * unavailable. Consumers must be registered to handle entries, results, and messages as they are returned from the
+ * server. If a consumer throws an exception, the connection will the closed and reopened, then the sync repl search
+ * will execute again. Consumers that want to stop the runner should throw {@link IllegalStateException}.
  *
  * @author  Middleware Services
  */
@@ -60,9 +60,6 @@ public class SyncReplRunner
 
   /** Whether {@link #stop()} has been invoked. */
   private boolean stop;
-
-  /** Executor for running consumers. */
-  private ExecutorService consumerExecutor;
 
 
   /**
@@ -138,12 +135,9 @@ public class SyncReplRunner
    */
   public void initialize(final boolean refreshAndPersist, final Duration reconnectWait)
   {
-    consumerExecutor = Executors.newSingleThreadExecutor(
-      r -> {
-        final Thread t = new Thread(r);
-        t.setDaemon(true);
-        return t;
-      });
+    if (run) {
+      throw new IllegalStateException("Runner has already been started");
+    }
     final SingleConnectionFactory connectionFactory = reconnectFactory(connectionConfig, reconnectWait);
     syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
     stop = false;
@@ -178,32 +172,11 @@ public class SyncReplRunner
           final SyncReplItem item = results.take();
           logger.debug("Received item {}", item);
           if (item.isEntry() && onEntry != null) {
-            consumerExecutor.execute(
-              () -> {
-                try {
-                  onEntry.accept(item.getEntry());
-                } catch (Exception e) {
-                  logger.warn("onEntry failed for item {}", item.getEntry(), e);
-                }
-              });
+            onEntry.accept(item.getEntry());
           } else if (item.isResult() && onResult != null) {
-            consumerExecutor.execute(
-              () -> {
-                try {
-                  onResult.accept(item.getResult());
-                } catch (Exception e) {
-                  logger.warn("onResult failed for item {}", item.getResult(), e);
-                }
-              });
+            onResult.accept(item.getResult());
           } else if (item.isMessage() && onMessage != null) {
-            consumerExecutor.execute(
-              () -> {
-                try {
-                  onMessage.accept(item.getMessage());
-                } catch (Exception e) {
-                  logger.warn("onResult failed for item {}", item.getMessage(), e);
-                }
-              });
+            onMessage.accept(item.getMessage());
           } else if (item.isException()) {
             throw item.getException();
           }
@@ -243,7 +216,6 @@ public class SyncReplRunner
       logger.warn("Could not cancel sync repl request", e);
     }
     syncReplClient.getConnectionFactory().close();
-    consumerExecutor.shutdown();
     logger.info("Runner {} stopped", this);
   }
 
