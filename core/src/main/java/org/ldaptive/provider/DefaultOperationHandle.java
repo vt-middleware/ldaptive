@@ -26,6 +26,7 @@ import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
+import org.ldaptive.handler.ResultPredicate;
 import org.ldaptive.handler.UnsolicitedNotificationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,14 +69,17 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   /** Functions to handle intermediate responses. */
   private IntermediateResponseHandler[] onIntermediate;
 
-  /** Functions to handle exceptions. */
+  /** Function to handle exceptions. */
   private ExceptionHandler onException;
 
-  /** Functions to handle unsolicited notifications. */
+  /** Function to handle unsolicited notifications. */
   private UnsolicitedNotificationHandler[] onUnsolicitedNotification;
 
-  /** Functions to run when the operation completes. */
+  /** Function to run when the operation completes. */
   private CompleteHandler onComplete;
+
+  /** Function to run when a result is received to determine whether an exception should be raised. */
+  private ResultPredicate throwCondition;
 
   /** Latch to determine when a response has been received. */
   private final CountDownLatch responseDone = new CountDownLatch(1);
@@ -143,6 +147,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         responseDone.await();
         if (result != null && exception == null) {
           logger.trace("await received result {} for handle {}", result, this);
+          if (throwCondition != null) {
+            throwCondition.testAndThrow(result);
+          }
           return result;
         }
       } else {
@@ -152,6 +159,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
           logger.trace("await abandoned handle {}", this);
         } else if (result != null && exception == null) {
           logger.trace("await received result {} for handle {}", result, this);
+          if (throwCondition != null) {
+            throwCondition.testAndThrow(result);
+          }
           return result;
         }
       }
@@ -224,6 +234,14 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public DefaultOperationHandle<Q, S> onComplete(final CompleteHandler function)
   {
     onComplete = function;
+    return this;
+  }
+
+
+  @Override
+  public DefaultOperationHandle<Q, S> throwIf(final ResultPredicate function)
+  {
+    throwCondition = function;
     return this;
   }
 
@@ -367,6 +385,12 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public CompleteHandler getOnComplete()
   {
     return onComplete;
+  }
+
+
+  public ResultPredicate getThrowCondition()
+  {
+    return throwCondition;
   }
 
 

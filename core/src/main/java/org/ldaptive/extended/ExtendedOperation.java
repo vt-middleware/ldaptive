@@ -143,6 +143,7 @@ public class ExtendedOperation extends AbstractOperation<ExtendedRequest, Extend
       .onReferral(getReferralHandlers())
       .onIntermediate(getIntermediateResponseHandlers())
       .onException(getExceptionHandler())
+      .throwIf(getThrowCondition())
       .onUnsolicitedNotification(getUnsolicitedNotificationHandlers())
       .onResult(getResultHandlers());
   }

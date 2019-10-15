@@ -652,6 +652,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
       .onReferral(getReferralHandlers())
       .onIntermediate(getIntermediateResponseHandlers())
       .onException(getExceptionHandler())
+      .throwIf(getThrowCondition())
       .onUnsolicitedNotification(getUnsolicitedNotificationHandlers())
       .onSearchResult(getSearchResultHandlers());
   }
@@ -672,6 +673,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     op.setReferralHandlers(operation.getReferralHandlers());
     op.setIntermediateResponseHandlers(operation.getIntermediateResponseHandlers());
     op.setExceptionHandler(operation.getExceptionHandler());
+    op.setThrowCondition(operation.getThrowCondition());
     op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
     op.setEntryHandlers(operation.getEntryHandlers());
     op.setReferenceHandlers(operation.getReferenceHandlers());
