@@ -49,7 +49,6 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.GenericFutureListener;
 import org.ldaptive.AbandonRequest;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AddResponse;
@@ -380,7 +379,7 @@ public final class NettyConnection extends ProviderConnection
     final CountDownLatch sslLatch = new CountDownLatch(1);
     final SslHandler handler = ch.pipeline().get(SslHandler.class);
     final Future<Channel> sslFuture = handler.handshakeFuture();
-    sslFuture.addListener((GenericFutureListener) f -> sslLatch.countDown());
+    sslFuture.addListener(f -> sslLatch.countDown());
     try {
       sslLatch.await();
     } catch (InterruptedException e) {
@@ -462,7 +461,7 @@ public final class NettyConnection extends ProviderConnection
           if (bindLock.readLock().tryLock()) {
             try {
               final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
-              channel.writeAndFlush(encodedRequest).addListeners(
+              channel.writeAndFlush(encodedRequest).addListener(
                 ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             } finally {
               bindLock.readLock().unlock();
@@ -584,7 +583,7 @@ public final class NettyConnection extends ProviderConnection
           if (bindLock.readLock().tryLock()) {
             try {
               final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
-              channel.writeAndFlush(encodedRequest).addListeners(
+              channel.writeAndFlush(encodedRequest).addListener(
                 ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             } finally {
               bindLock.readLock().unlock();
@@ -697,7 +696,7 @@ public final class NettyConnection extends ProviderConnection
                 }
                 channel.writeAndFlush(encodedRequest).addListeners(
                   ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE,
-                  (ChannelFutureListener) f -> {
+                  f -> {
                     if (f.isSuccess()) {
                       handle.sent();
                     }
