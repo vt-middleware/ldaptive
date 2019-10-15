@@ -9,6 +9,7 @@ import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
+import org.ldaptive.handler.ResultPredicate;
 import org.ldaptive.handler.UnsolicitedNotificationHandler;
 
 /**
@@ -126,6 +127,16 @@ public interface OperationHandle<Q extends Request, S extends Result>
    * @return  this handle
    */
   OperationHandle<Q, S> onComplete(CompleteHandler function);
+
+
+  /**
+   * Sets the function to determine whether an exception should be raised by a particular result.
+   *
+   * @param  function  to determine whether to throw an exception
+   *
+   * @return  this handle
+   */
+  OperationHandle<Q, S> throwIf(ResultPredicate function);
 
 
   /**

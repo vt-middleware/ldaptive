@@ -16,6 +16,7 @@ import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.ReferralHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
+import org.ldaptive.handler.ResultPredicate;
 import org.ldaptive.handler.SearchReferenceHandler;
 import org.ldaptive.handler.SearchResultHandler;
 import org.ldaptive.handler.UnsolicitedNotificationHandler;
@@ -141,6 +142,14 @@ public class DefaultSearchOperationHandle
   public DefaultSearchOperationHandle onException(final ExceptionHandler function)
   {
     super.onException(function);
+    return this;
+  }
+
+
+  @Override
+  public DefaultSearchOperationHandle throwIf(final ResultPredicate function)
+  {
+    super.throwIf(function);
     return this;
   }
 

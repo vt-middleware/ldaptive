@@ -138,6 +138,7 @@ public class CompareOperation extends AbstractOperation<CompareRequest, CompareR
       .onReferral(getReferralHandlers())
       .onIntermediate(getIntermediateResponseHandlers())
       .onException(getExceptionHandler())
+      .throwIf(getThrowCondition())
       .onUnsolicitedNotification(getUnsolicitedNotificationHandlers())
       .onResult(getResultHandlers());
   }

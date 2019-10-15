@@ -7,6 +7,7 @@ import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
+import org.ldaptive.handler.ResultPredicate;
 import org.ldaptive.handler.UnsolicitedNotificationHandler;
 
 /**
@@ -35,8 +36,11 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
   /** Functions to handle intermediate responses. */
   private IntermediateResponseHandler[] intermediateResponseHandlers;
 
-  /** Functions to handle exceptions. */
+  /** Function to handle exceptions. */
   private ExceptionHandler exceptionHandler;
+
+  /** Function to test results. */
+  private ResultPredicate throwCondition;
 
   /** Functions to handle unsolicited notifications. */
   private UnsolicitedNotificationHandler[] unsolicitedNotificationHandlers;
@@ -131,6 +135,18 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
   }
 
 
+  public ResultPredicate getThrowCondition()
+  {
+    return throwCondition;
+  }
+
+
+  public void setThrowCondition(final ResultPredicate function)
+  {
+    throwCondition = function;
+  }
+
+
   public UnsolicitedNotificationHandler[] getUnsolicitedNotificationHandlers()
   {
     return unsolicitedNotificationHandlers;
@@ -157,6 +173,7 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
       .onReferral(getReferralHandlers())
       .onIntermediate(getIntermediateResponseHandlers())
       .onException(getExceptionHandler())
+      .throwIf(getThrowCondition())
       .onUnsolicitedNotification(getUnsolicitedNotificationHandlers())
       .onResult(getResultHandlers());
   }
@@ -173,6 +190,7 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
       .append("referralHandlers=").append(Arrays.toString(referralHandlers)).append(", ")
       .append("intermediateResponseHandlers=").append(Arrays.toString(intermediateResponseHandlers)).append(", ")
       .append("exceptionHandler=").append(exceptionHandler).append(", ")
+      .append("throwCondition=").append(throwCondition).append(", ")
       .append("unsolicitedNotificationHandlers=").append(Arrays.toString(unsolicitedNotificationHandlers)).toString();
   }
 
@@ -303,6 +321,20 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
     public B onException(final ExceptionHandler handler)
     {
       object.setExceptionHandler(handler);
+      return self();
+    }
+
+
+    /**
+     * Sets the function to test a result.
+     *
+     * @param  function  to test a result
+     *
+     * @return  this builder
+     */
+    public B throwIf(final ResultPredicate function)
+    {
+      object.setThrowCondition(function);
       return self();
     }
 

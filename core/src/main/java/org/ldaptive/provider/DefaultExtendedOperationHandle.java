@@ -14,6 +14,7 @@ import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
+import org.ldaptive.handler.ResultPredicate;
 import org.ldaptive.handler.UnsolicitedNotificationHandler;
 
 /**
@@ -105,6 +106,14 @@ public class DefaultExtendedOperationHandle
   public DefaultExtendedOperationHandle onException(final ExceptionHandler function)
   {
     super.onException(function);
+    return this;
+  }
+
+
+  @Override
+  public DefaultExtendedOperationHandle throwIf(final ResultPredicate function)
+  {
+    super.throwIf(function);
     return this;
   }
 
