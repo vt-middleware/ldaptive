@@ -22,7 +22,9 @@ public class ConnectActivator implements Activator<Connection>
   {
     if (c != null) {
       try {
-        c.open();
+        if (!c.isOpen()) {
+          c.open();
+        }
         return true;
       } catch (Exception e) {
         logger.error("unable to connect to the ldap", e);
