@@ -4,6 +4,7 @@ package org.ldaptive.handler;
 import java.util.function.Predicate;
 import org.ldaptive.LdapException;
 import org.ldaptive.Result;
+import org.ldaptive.ResultCode;
 
 /**
  * Marker interface for a throw predicate.
@@ -13,6 +14,9 @@ import org.ldaptive.Result;
 @FunctionalInterface
 public interface ResultPredicate extends Predicate<Result>
 {
+
+  /** Predicates that throws if the result code is not {@link ResultCode#SUCCESS}. */
+  ResultPredicate NOT_SUCCESS = result -> !ResultCode.SUCCESS.equals(result.getResultCode());
 
 
   /**
