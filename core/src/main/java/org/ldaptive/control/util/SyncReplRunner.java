@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  * Class that executes a {@link SyncReplClient} and expects to run continuously, reconnecting if the server is
  * unavailable. Consumers must be registered to handle entries, results, and messages as they are returned from the
  * server. If a consumer throws an exception, the connection will the closed and reopened, then the sync repl search
- * will execute again. Consumers that want to stop the runner should throw {@link IllegalStateException}.
+ * will execute again.
  *
  * @author  Middleware Services
  */
@@ -166,7 +166,8 @@ public class SyncReplRunner
             results = syncReplClient.execute(searchRequest, cookieManager, queueSize);
           }
           if (results == null) {
-            throw new IllegalStateException("Blocking queue has not been initialized");
+            logger.error("Blocking queue has not been initialized");
+            break;
           }
           // blocks until result is received
           final SyncReplItem item = results.take();
@@ -180,15 +181,12 @@ public class SyncReplRunner
           } else if (item.isException()) {
             throw item.getException();
           }
-        } catch (IllegalStateException e) {
-          logger.info("Exception while waiting for results, stopping the runner.", e);
-          run = false;
         } catch (Exception e) {
           if (run) {
-            logger.error("Unexpected error, closing the connection factory. Runner will reconnect", e);
+            logger.error("Unexpected error, closing the connection factory. Runner will reconnect.", e);
             syncReplClient.getConnectionFactory().close();
           } else {
-            logger.error("Unexpected error, stopping the runner.", e);
+            logger.error("Unexpected error. Runner will exit.", e);
           }
         }
       }
@@ -268,6 +266,7 @@ public class SyncReplRunner
     newConfig.setAutoReplay(false);
     final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig);
     factory.setFailFastInitialize(true);
+    factory.setNonBlockingInitialize(false);
     return factory;
   }
 }
