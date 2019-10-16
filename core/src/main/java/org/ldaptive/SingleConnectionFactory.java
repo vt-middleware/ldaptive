@@ -143,7 +143,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     }
     if (nonBlockingInitialize) {
       if (initializeExecutor == null) {
-        initializeExecutor = Executors.newSingleThreadExecutor(
+        initializeExecutor = Executors.newCachedThreadPool(
           r -> {
             final Thread t = new Thread(r);
             t.setDaemon(true);
@@ -153,16 +153,11 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       initializeExecutor.execute(
         () -> {
           try {
-            if (!initialized) {
-              initializeInternal();
-            } else {
-              logger.debug("Factory already initialized");
-            }
+            initializeInternal();
           } catch (LdapException e) {
             logger.debug("Execution of initialize failed", e);
           }
         });
-
     } else {
       initializeInternal();
     }
@@ -177,19 +172,23 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   private void initializeInternal()
     throws LdapException
   {
-    try {
-      connection = super.getConnection();
-      connection.open();
-      proxy = (Connection) Proxy.newProxyInstance(
-        Connection.class.getClassLoader(),
-        new Class[] {Connection.class},
-        new ConnectionProxy(connection));
-      initialized = true;
-    } catch (LdapException e) {
-      if (failFastInitialize) {
-        throw e;
+    if (!initialized) {
+      try {
+        connection = super.getConnection();
+        connection.open();
+        proxy = (Connection) Proxy.newProxyInstance(
+          Connection.class.getClassLoader(),
+          new Class[] {Connection.class},
+          new ConnectionProxy(connection));
+        initialized = true;
+      } catch (LdapException e) {
+        if (failFastInitialize) {
+          throw e;
+        }
+        logger.warn("Could not initialize connection factory", e);
       }
-      logger.warn("Could not initialize connection factory", e);
+    } else {
+      logger.debug("Factory already initialized");
     }
   }
 
@@ -205,13 +204,17 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
 
 
   @Override
-  public void close()
+  public synchronized void close()
   {
     if (connection != null) {
       connection.close();
     }
     if (initializeExecutor != null) {
-      initializeExecutor.shutdown();
+      try {
+        initializeExecutor.shutdown();
+      } finally {
+        initializeExecutor = null;
+      }
     }
     super.close();
     initialized = false;
