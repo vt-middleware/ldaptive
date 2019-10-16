@@ -150,7 +150,7 @@ public final class NettyConnection extends ProviderConnection
   /** Connection to the LDAP server. */
   private Channel channel;
 
-  /** Time this connection was successfully established. */
+  /** Time this connection was successfully established, null if the connection is not open. */
   private Instant connectTime;
 
   /** Last exception received on the inbound pipeline. */
@@ -158,7 +158,9 @@ public final class NettyConnection extends ProviderConnection
 
 
   /**
-   * Creates a new connection.
+   * Creates a new connection. Netty supports various transport implementations including NIO, EPOLL, KQueue, etc. The
+   * class type and event loop group are tightly coupled in this regard. See {@link SharedNioProvider} for an example
+   * of what NIO parameters look like.
    *
    * @param  clazz  type of channel
    * @param  group  event loop group
@@ -238,7 +240,7 @@ public final class NettyConnection extends ProviderConnection
         try {
           final Result result = operation(new StartTLSRequest());
           if (!ResultCode.SUCCESS.equals(result.getResultCode())) {
-            throw new LdapException("StartTLS returned response: " + result);
+            throw new ConnectException("StartTLS returned response: " + result);
           }
         } catch (Exception e) {
           LOGGER.error("StartTLS failed on connection open for {}", this, e);
@@ -253,7 +255,7 @@ public final class NettyConnection extends ProviderConnection
           try {
             final Result result = initializer.initialize(this);
             if (!ResultCode.SUCCESS.equals(result.getResultCode())) {
-              throw new LdapException("Connection initializer returned response: " + result);
+              throw new ConnectException("Connection initializer returned response: " + result);
             }
           } catch (Exception e) {
             LOGGER.error("Connection initializer {} failed for {}", initializer, this, e);
@@ -298,6 +300,8 @@ public final class NettyConnection extends ProviderConnection
     final ChannelFuture future = bootstrap.connect(new InetSocketAddress(ldapURL.getHostname(), ldapURL.getPort()));
     future.addListener((ChannelFutureListener) f -> channelLatch.countDown());
     try {
+      // wait until the connection future is complete
+      // note that the wait time is controlled by the connectTimeout property in ConnectionConfig
       channelLatch.await();
     } catch (InterruptedException e) {
       future.cancel(true);
@@ -381,6 +385,8 @@ public final class NettyConnection extends ProviderConnection
     final Future<Channel> sslFuture = handler.handshakeFuture();
     sslFuture.addListener(f -> sslLatch.countDown());
     try {
+      // wait until the connection future is complete
+      // note that the wait time is controlled by the handshakeTimeout property in SslConfig
       sslLatch.await();
     } catch (InterruptedException e) {
       sslFuture.cancel(true);

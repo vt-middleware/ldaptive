@@ -3,6 +3,7 @@ package org.ldaptive.provider.netty;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldaptive.LdapException;
@@ -18,7 +19,7 @@ final class HandleMap
 {
 
   /** Map of message IDs to their operation handle. */
-  private final ConcurrentHashMap<Integer, DefaultOperationHandle> pending = new ConcurrentHashMap<>();
+  private final Map<Integer, DefaultOperationHandle> pending = new ConcurrentHashMap<>();
 
   /** Whether this queue is currently accepting new handles. */
   private final AtomicBoolean open = new AtomicBoolean();
