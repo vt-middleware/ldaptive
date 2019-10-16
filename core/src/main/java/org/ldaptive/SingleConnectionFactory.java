@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import org.ldaptive.provider.Provider;
 import org.ldaptive.provider.ProviderFactory;
 
@@ -27,6 +29,12 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
 
   /** Whether {@link #initialize()} should throw if the connection cannot be opened. */
   private boolean failFastInitialize = true;
+
+  /** Whether {@link #initialize()} should occur on a separate thread. */
+  private boolean nonBlockingInitialize;
+
+  /** Executor for scheduling {@link #initialize()}. */
+  private ExecutorService initializeExecutor;
 
 
   /** Default constructor. */
@@ -90,6 +98,28 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
 
 
   /**
+   * Returns whether {@link #initialize()} should execute on a separate thread.
+   *
+   * @return  whether {@link #initialize()} should block
+   */
+  public boolean getNonBlockingInitialize()
+  {
+    return nonBlockingInitialize;
+  }
+
+
+  /**
+   * Sets whether {@link #initialize()} should execute on a separate thread.
+   *
+   * @param  b  whether {@link #initialize()} should block
+   */
+  public void setNonBlockingInitialize(final boolean b)
+  {
+    nonBlockingInitialize = b;
+  }
+
+
+  /**
    * Returns whether this factory has been initialized.
    *
    * @return  whether this factory has been initialized
@@ -105,27 +135,62 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    *
    * @throws   LdapException  if the connection cannot be opened
    */
-  public void initialize()
+  public synchronized void initialize()
     throws LdapException
   {
     if (initialized) {
-      throw new IllegalStateException("Connection factory has already been initialized");
+      throw new IllegalStateException("Connection factory is already initialized");
     }
-    connection = super.getConnection();
+    if (nonBlockingInitialize) {
+      if (initializeExecutor == null) {
+        initializeExecutor = Executors.newSingleThreadExecutor(
+          r -> {
+            final Thread t = new Thread(r);
+            t.setDaemon(true);
+            return t;
+          });
+      }
+      initializeExecutor.execute(
+        () -> {
+          try {
+            if (!initialized) {
+              initializeInternal();
+            } else {
+              logger.debug("Factory already initialized");
+            }
+          } catch (LdapException e) {
+            logger.debug("Execution of initialize failed", e);
+          }
+        });
+
+    } else {
+      initializeInternal();
+    }
+  }
+
+
+  /**
+   * Attempts to open the connection and establish the proxy.
+   *
+   * @throws  LdapException  if {@link Connection#open()} fails and {@link #failFastInitialize} is true
+   */
+  private void initializeInternal()
+    throws LdapException
+  {
     try {
+      connection = super.getConnection();
       connection.open();
+      proxy = (Connection) Proxy.newProxyInstance(
+        Connection.class.getClassLoader(),
+        new Class[] {Connection.class},
+        new ConnectionProxy(connection));
+      initialized = true;
     } catch (LdapException e) {
       if (failFastInitialize) {
         throw e;
       }
       logger.warn("Could not initialize connection factory", e);
     }
-
-    proxy = (Connection) Proxy.newProxyInstance(
-      Connection.class.getClassLoader(),
-      new Class[] {Connection.class},
-      new ConnectionProxy(connection));
-    initialized = true;
   }
 
 
@@ -133,7 +198,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   public Connection getConnection()
   {
     if (!initialized) {
-      throw new IllegalStateException("Connection factory has not been initialized");
+      throw new IllegalStateException("Connection factory is not initialized");
     }
     return proxy;
   }
@@ -144,6 +209,9 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   {
     if (connection != null) {
       connection.close();
+    }
+    if (initializeExecutor != null) {
+      initializeExecutor.shutdown();
     }
     super.close();
     initialized = false;
@@ -158,6 +226,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       .append("provider=").append(getProvider()).append(", ")
       .append("config=").append(getConnectionConfig()).append(", ")
       .append("failFastInitialize=").append(failFastInitialize).append(", ")
+      .append("nonBlockingInitialize=").append(nonBlockingInitialize).append(", ")
       .append("initialized=").append(initialized).append("]").toString();
   }
 
@@ -255,6 +324,13 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     public Builder failFastInitialize(final boolean failFast)
     {
       object.setFailFastInitialize(failFast);
+      return this;
+    }
+
+
+    public Builder nonBlockingInitialize(final boolean nonBlocking)
+    {
+      object.setNonBlockingInitialize(nonBlocking);
       return this;
     }
 
