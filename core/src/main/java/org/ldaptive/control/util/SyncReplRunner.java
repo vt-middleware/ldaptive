@@ -8,6 +8,7 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.InitialRetryMetadata;
+import org.ldaptive.LdapException;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
@@ -184,6 +185,11 @@ public class SyncReplRunner
         } catch (Exception e) {
           if (run) {
             logger.error("Unexpected error, closing the connection factory. Runner will reconnect.", e);
+            try {
+              syncReplClient.cancel();
+            } catch (LdapException le) {
+              logger.warn("Error cancelling sync repl operation");
+            }
             syncReplClient.getConnectionFactory().close();
           } else {
             logger.error("Unexpected error. Runner will exit.", e);
