@@ -39,6 +39,9 @@ public class SyncReplClient
   /** Search operation handle. */
   private SearchOperationHandle handle;
 
+  /** Queue to hold responses from the sync repl search. */
+  private BlockingQueue<SyncReplItem> queue;
+
 
   /**
    * Creates a new sync repl client.
@@ -142,7 +145,7 @@ public class SyncReplClient
     final int capacity)
     throws LdapException
   {
-    final BlockingQueue<SyncReplItem> queue = new LinkedBlockingQueue<>(capacity);
+    queue = new LinkedBlockingQueue<>(capacity);
 
     request.setControls(
       new SyncRequestControl(
@@ -232,9 +235,18 @@ public class SyncReplClient
   public ExtendedResponse cancel()
     throws LdapException
   {
-    final ExtendedResponse response = handle.cancel().execute();
+    return handle.cancel().execute();
+  }
+
+
+  /**
+   * Closes the connection factory, shuts down the executor service and removes all items from the queue.
+   */
+  public void close()
+  {
+    factory.close();
     handlerExecutor.shutdown();
-    return response;
+    queue.clear();
   }
 
 
@@ -246,6 +258,7 @@ public class SyncReplClient
       .append("factory=").append(factory).append(", ")
       .append("refreshAndPersist=").append(refreshAndPersist).append(", ")
       .append("handlerExecutor=").append(handlerExecutor).append(", ")
+      .append("queueSize=").append(queue != null ? queue.size() : null).append(", ")
       .append("handle=").append(handle).toString();
   }
 }
