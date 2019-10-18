@@ -3,15 +3,22 @@ package org.ldaptive.control.util;
 
 import java.time.Duration;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.util.concurrent.DefaultThreadFactory;
+import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.InitialRetryMetadata;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
+import org.ldaptive.provider.Provider;
+import org.ldaptive.provider.netty.NettyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +36,9 @@ public class SyncReplRunner
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Connection provider. */
+  private final Provider connectionProvider;
+
   /** Connection configuration. */
   private final ConnectionConfig connectionConfig;
 
@@ -40,6 +50,9 @@ public class SyncReplRunner
 
   /** Size of the sync repl result queue. */
   private final int queueSize;
+
+  /** Thread executor used by {@link SyncReplClient}. */
+  private final ExecutorService executorService;
 
   /** Search operation handle. */
   private SyncReplClient syncReplClient;
@@ -77,10 +90,64 @@ public class SyncReplRunner
     final CookieManager manager,
     final int size)
   {
+    this(config, request, manager, size, null);
+  }
+
+
+  /**
+   * Creates a new sync repl runner. Creates a {@link NettyProvider} that uses NIO for the transport.
+   *
+   * @param  config  sync repl connection configuration
+   * @param  request  sync repl search request
+   * @param  manager  sync repl cookie manager
+   * @param  size  sync repl result queue size
+   * @param  es  executor service for sync repl client
+   */
+  public SyncReplRunner(
+    final ConnectionConfig config,
+    final SearchRequest request,
+    final CookieManager manager,
+    final int size,
+    final ExecutorService es)
+  {
+    this(
+      new NettyProvider(
+        NioSocketChannel.class,
+        new NioEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory(SyncReplRunner.class, true, Thread.NORM_PRIORITY)))),
+      config,
+      request,
+      manager,
+      size,
+      es);
+  }
+
+
+  /**
+   * Creates a new sync repl runner.
+   *
+   * @param  provider  sync repl connection provider
+   * @param  config  sync repl connection configuration
+   * @param  request  sync repl search request
+   * @param  manager  sync repl cookie manager
+   * @param  size  sync repl result queue size
+   * @param  es  executor service for sync repl client
+   */
+  public SyncReplRunner(
+    final Provider provider,
+    final ConnectionConfig config,
+    final SearchRequest request,
+    final CookieManager manager,
+    final int size,
+    final ExecutorService es)
+  {
+    connectionProvider = provider;
     connectionConfig = config;
     searchRequest = request;
     cookieManager = manager;
     queueSize = size;
+    executorService = es;
   }
 
 
@@ -139,8 +206,13 @@ public class SyncReplRunner
     if (run) {
       throw new IllegalStateException("Runner has already been started");
     }
-    final SingleConnectionFactory connectionFactory = reconnectFactory(connectionConfig, reconnectWait);
-    syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
+    final SingleConnectionFactory connectionFactory =
+      reconnectFactory(connectionProvider, connectionConfig, reconnectWait);
+    if (executorService != null) {
+      syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist, executorService);
+    } else {
+      syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
+    }
     stop = false;
   }
 
@@ -254,12 +326,16 @@ public class SyncReplRunner
    *   <li>{@link ConnectionConfig#setAutoReplay(boolean)} to false</li>
    * </ul>
    *
+   * @param  provider  connection provider
    * @param  cc  connection configuration
    * @param  wait  length of time to wait between consecutive calls to open
    *
    * @return  single connection factory
    */
-  protected static SingleConnectionFactory reconnectFactory(final ConnectionConfig cc, final Duration wait)
+  protected static SingleConnectionFactory reconnectFactory(
+    final Provider provider,
+    final ConnectionConfig cc,
+    final Duration wait)
   {
     final ConnectionConfig newConfig = ConnectionConfig.copy(cc);
     newConfig.setAutoReconnect(true);
@@ -273,7 +349,7 @@ public class SyncReplRunner
       return false;
     });
     newConfig.setAutoReplay(false);
-    final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig);
+    final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig, provider);
     factory.setFailFastInitialize(true);
     factory.setNonBlockingInitialize(false);
     return factory;
