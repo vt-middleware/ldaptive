@@ -219,8 +219,9 @@ public class SyncReplRunner
         syncReplClient.cancel();
       } catch (Exception e) {
         logger.warn("Could not cancel sync repl request", e);
+      } finally {
+        syncReplClient.close();
       }
-      syncReplClient.getConnectionFactory().close();
     }
     logger.info("Runner {} stopped", this);
   }

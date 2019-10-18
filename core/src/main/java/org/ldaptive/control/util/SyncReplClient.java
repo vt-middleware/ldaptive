@@ -162,7 +162,11 @@ public class SyncReplClient
           if (item.getResult().getSyncDoneControl() != null) {
             final byte[] cookie = item.getResult().getSyncDoneControl().getCookie();
             if (cookie != null) {
-              manager.writeCookie(cookie);
+              try {
+                manager.writeCookie(cookie);
+              } catch (Exception e) {
+                logger.warn("Unable to write cookie", e);
+              }
             }
           }
           try {
@@ -191,7 +195,11 @@ public class SyncReplClient
           if (item.getEntry().getSyncStateControl() != null) {
             final byte[] cookie = item.getEntry().getSyncStateControl().getCookie();
             if (cookie != null) {
-              manager.writeCookie(cookie);
+              try {
+                manager.writeCookie(cookie);
+              } catch (Exception e) {
+                logger.warn("Unable to write cookie", e);
+              }
             }
           }
           try {
@@ -209,7 +217,11 @@ public class SyncReplClient
         handlerExecutor.execute(
           () -> {
             if (message.getCookie() != null) {
-              manager.writeCookie(message.getCookie());
+              try {
+                manager.writeCookie(message.getCookie());
+              } catch (Exception e) {
+                logger.warn("Unable to write cookie", e);
+              }
             }
             try {
               queue.put(new SyncReplItem(message));
