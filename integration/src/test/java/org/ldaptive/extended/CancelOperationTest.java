@@ -58,7 +58,7 @@ public class CancelOperationTest extends AbstractTest
       search.setResultHandlers((ResultHandler) response -> result[0] = response);
 
       final SearchOperationHandle searchHandle = search.send();
-      latch.await(5, TimeUnit.SECONDS);
+      latch.await(10, TimeUnit.SECONDS);
 
       final ExtendedResponse cancelResult = searchHandle.cancel().execute();
       AssertJUnit.assertEquals(ResultCode.CANCELED, result[0].getResultCode());
