@@ -49,6 +49,9 @@ public class SyncReplClient
   /** Invoked when an exception is received. */
   private Consumer<Exception> onException;
 
+  /** Whether the sync repl search has received a result response. */
+  private boolean receivedResult;
+
 
   /**
    * Creates a new sync repl client.
@@ -164,6 +167,7 @@ public class SyncReplClient
     final SearchOperation search = new SearchOperation(factory, request);
     search.setResultHandlers(result -> {
       logger.debug("received {}", result);
+      receivedResult = true;
       if (result.getControl(SyncDoneControl.OID) != null) {
         final SyncDoneControl syncDoneControl = (SyncDoneControl) result.getControl(SyncDoneControl.OID);
         final byte[] cookie = syncDoneControl.getCookie();
@@ -243,8 +247,20 @@ public class SyncReplClient
       }
     });
 
+    receivedResult = false;
     handle = search.send();
     return handle;
+  }
+
+
+  /**
+   * Returns whether a search result has been received by this client.
+   *
+   * @return  whether a search result has been received
+   */
+  public boolean isComplete()
+  {
+    return receivedResult;
   }
 
 

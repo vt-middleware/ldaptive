@@ -21,7 +21,6 @@ import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
 import org.ldaptive.provider.Provider;
 import org.ldaptive.provider.netty.NettyProvider;
-import org.ldaptive.provider.netty.SharedNioProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,8 +73,8 @@ public class SyncReplRunner
 
 
   /**
-   * Creates a new sync repl runner. Uses the {@link SharedNioProvider} with a single thread {@link
-   * DefaultEventLoopGroup} for processing inbound messages.
+   * Creates a new sync repl runner. Uses the {@link NettyProvider} with a single thread {@link DefaultEventLoopGroup}
+   * for processing inbound messages.
    *
    * @param  config  sync repl connection configuration
    * @param  request  sync repl search request
@@ -83,19 +82,7 @@ public class SyncReplRunner
    */
   public SyncReplRunner(final ConnectionConfig config, final SearchRequest request, final CookieManager manager)
   {
-    this(
-      new NettyProvider(
-        NioSocketChannel.class,
-        new NioEventLoopGroup(
-          1,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
-        new DefaultEventLoopGroup(
-          1,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
-        Collections.singletonMap(ChannelOption.AUTO_READ, false)),
-      config,
-      request,
-      manager);
+    this(null, config, request, manager);
   }
 
 
@@ -175,14 +162,25 @@ public class SyncReplRunner
     if (started) {
       throw new IllegalStateException("Runner has already been started");
     }
-    final SingleConnectionFactory connectionFactory =
-      reconnectFactory(connectionProvider, connectionConfig, reconnectWait);
+    Provider provider = connectionProvider;
+    if (provider == null) {
+      provider = new NettyProvider(
+        NioSocketChannel.class,
+        new NioEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
+        new DefaultEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
+        Collections.singletonMap(ChannelOption.AUTO_READ, false));
+    }
+    final SingleConnectionFactory connectionFactory = reconnectFactory(provider, connectionConfig, reconnectWait);
     syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
     syncReplClient.setOnEntry(onEntry);
     syncReplClient.setOnResult(onResult);
     syncReplClient.setOnMessage(onMessage);
     syncReplClient.setOnException(e -> {
-      logger.warn("Received exception with started={}", started, e);
+      logger.warn("Received exception '{}' with started={}", e.getMessage(), started);
       if (started) {
         stop();
         start();
@@ -226,7 +224,9 @@ public class SyncReplRunner
     started = false;
     if (syncReplClient != null) {
       try {
-        syncReplClient.cancel();
+        if (!syncReplClient.isComplete()) {
+          syncReplClient.cancel();
+        }
       } catch (Exception e) {
         logger.warn("Could not cancel sync repl request", e);
       } finally {
