@@ -3,6 +3,7 @@ package org.ldaptive.control.util;
 
 import java.util.EnumSet;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.ConnectionFactory;
@@ -13,11 +14,14 @@ import org.ldaptive.ModifyDnOperation;
 import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
+import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
+import org.ldaptive.control.EntryChangeNotificationControl;
 import org.ldaptive.control.PersistentSearchChangeType;
 import org.testng.AssertJUnit;
 import org.testng.annotations.AfterClass;
@@ -87,75 +91,63 @@ public class PersistentSearchClientTest extends AbstractTest
     final SearchResponse expectedResult = TestUtils.convertLdifToResult(expected);
 
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
     final PersistentSearchClient client = new PersistentSearchClient(
       cf,
       EnumSet.allOf(PersistentSearchChangeType.class),
       true,
       true);
-    final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
-    final BlockingQueue<PersistentSearchItem> results = client.execute(request);
+    final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
+    client.setOnException(e -> queue.add(e));
+    client.setOnEntry(e -> queue.add(e));
+    client.setOnResult(r -> queue.add(r));
+    final SearchOperationHandle handle = client.send(request);
 
     // test the async request
-    PersistentSearchItem item = results.take();
-    if (item.isException()) {
-      throw item.getException();
-    }
-    checkItem(item);
+    checkItem(queue.take());
 
     // make a change
     final LdapAttribute modAttr = new LdapAttribute("initials", "PSC");
     final ModifyOperation modify = new ModifyOperation(cf);
     modify.execute(new ModifyRequest(dn, new AttributeModification(AttributeModification.Type.REPLACE, modAttr)));
-    item = results.take();
-    checkItem(item);
-    AssertJUnit.assertTrue(item.isEntry());
-    AssertJUnit.assertEquals(
-      PersistentSearchChangeType.MODIFY,
-      item.getEntry().getEntryChangeNotificationControl().getChangeType());
+    LdapEntry entry = (LdapEntry) queue.take();
+    AssertJUnit.assertNotNull(entry);
+    EntryChangeNotificationControl ecnc = (EntryChangeNotificationControl) entry.getControl(
+      EntryChangeNotificationControl.OID);
+    AssertJUnit.assertEquals(PersistentSearchChangeType.MODIFY, ecnc.getChangeType());
     expectedResult.getEntry().addAttributes(modAttr);
-    TestUtils.assertEquals(
-      expectedResult.getEntry(),
-      createCompareEntry(expectedResult.getEntry(), item.getEntry().getSearchEntry()));
+    TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
 
     // modify dn
     final String modDn = "CN=PSC," + DnParser.substring(dn, 1);
     final LdapAttribute cn = expectedResult.getEntry().getAttribute("cn");
     final ModifyDnOperation modifyDn = new ModifyDnOperation(cf);
     modifyDn.execute(new ModifyDnRequest(dn, DnParser.substring(modDn, 0, 1), true));
-    item = results.take();
-    AssertJUnit.assertTrue(item.isEntry());
-    AssertJUnit.assertEquals(
-      PersistentSearchChangeType.MODDN,
-      item.getEntry().getEntryChangeNotificationControl().getChangeType());
+    entry = (LdapEntry) queue.take();
+    AssertJUnit.assertNotNull(entry);
+    ecnc = (EntryChangeNotificationControl) entry.getControl(EntryChangeNotificationControl.OID);
+    AssertJUnit.assertEquals(PersistentSearchChangeType.MODDN, ecnc.getChangeType());
     expectedResult.getEntry().setDn(modDn);
     expectedResult.getEntry().addAttributes(new LdapAttribute("CN", "PSC"));
-    TestUtils.assertEquals(
-      expectedResult.getEntry(),
-      createCompareEntry(expectedResult.getEntry(), item.getEntry().getSearchEntry()));
+    TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
 
     // modify dn back
     modifyDn.execute(new ModifyDnRequest(modDn, DnParser.substring(dn, 0, 1), true));
-    item = results.take();
-    AssertJUnit.assertTrue(item.isEntry());
-    AssertJUnit.assertEquals(
-      PersistentSearchChangeType.MODDN,
-      item.getEntry().getEntryChangeNotificationControl().getChangeType());
+    entry = (LdapEntry) queue.take();
+    AssertJUnit.assertNotNull(entry);
+    ecnc = (EntryChangeNotificationControl) entry.getControl(EntryChangeNotificationControl.OID);
+    AssertJUnit.assertEquals(PersistentSearchChangeType.MODDN, ecnc.getChangeType());
     expectedResult.getEntry().setDn(dn);
     expectedResult.getEntry().addAttributes(cn);
-    TestUtils.assertEquals(
-      expectedResult.getEntry(),
-      createCompareEntry(expectedResult.getEntry(), item.getEntry().getSearchEntry()));
+    TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
 
     client.abandon();
-    if (!results.isEmpty()) {
-      item = results.take();
-      if (item.isResult()) {
-        AssertJUnit.assertEquals(ResultCode.USER_CANCELLED, item.getResult().getResultCode());
-      } else {
-        AssertJUnit.fail("Unknown result type");
-      }
+    if (!queue.isEmpty()) {
+      final Result result = (Result) queue.take();
+      AssertJUnit.assertNotNull(result);
+      AssertJUnit.assertEquals(ResultCode.USER_CANCELLED, result.getResultCode());
     }
-    AssertJUnit.assertTrue(results.isEmpty());
+    AssertJUnit.assertTrue(queue.isEmpty());
   }
 
 
@@ -167,17 +159,18 @@ public class PersistentSearchClientTest extends AbstractTest
    * @throws  UnsupportedOperationException  if the server doesn't support this control
    * @throws  IllegalStateException  if the item is a response or exception
    */
-  private void checkItem(final PersistentSearchItem item)
+  private void checkItem(final Object item)
   {
-    if (item.isResult()) {
-      if (ResultCode.UNAVAILABLE_CRITICAL_EXTENSION.equals(item.getResult().getResultCode())) {
+    if (item instanceof Result) {
+      final Result result = (Result) item;
+      if (ResultCode.UNAVAILABLE_CRITICAL_EXTENSION.equals(result.getResultCode())) {
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support this control");
       } else {
-        throw new IllegalStateException("Unexpected response: " + item.getResult());
+        throw new IllegalStateException("Unexpected response: " + result);
       }
-    } else if (item.isException()) {
-      throw new IllegalStateException("Unexpected exception: " + item.getException());
+    } else if (item instanceof Exception) {
+      throw new IllegalStateException("Unexpected exception: " + item);
     }
   }
 
