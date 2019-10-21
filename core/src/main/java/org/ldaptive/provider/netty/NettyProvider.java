@@ -34,6 +34,9 @@ public class NettyProvider implements Provider
   /** Override channel options. */
   private final Map<ChannelOption, Object> channelOptions;
 
+  /** Whether to shutdown the event loop groups on {@link #close()}. */
+  private boolean shutdownOnClose = true;
+
 
   /**
    * Creates a new netty provider.
@@ -68,6 +71,17 @@ public class NettyProvider implements Provider
   }
 
 
+  /**
+   * Sets whether to shutdown the event loop groups on close.
+   *
+   * @param  b  whether to shutdown on close
+   */
+  public void setShutdownOnClose(final boolean b)
+  {
+    shutdownOnClose = b;
+  }
+
+
   @Override
   public Connection create(final ConnectionConfig cc)
   {
@@ -78,16 +92,18 @@ public class NettyProvider implements Provider
   @Override
   public void close()
   {
-    try {
-      ioWorkerGroup.shutdownGracefully();
-    } catch (Exception e) {
-      logger.warn("Error shutting down the I/O worker group", e);
-    }
-    if (messageWorkerGroup != null) {
+    if (shutdownOnClose) {
       try {
-        messageWorkerGroup.shutdownGracefully();
+        ioWorkerGroup.shutdownGracefully();
       } catch (Exception e) {
-        logger.warn("Error shutting down the message worker group", e);
+        logger.warn("Error shutting down the I/O worker group", e);
+      }
+      if (messageWorkerGroup != null) {
+        try {
+          messageWorkerGroup.shutdownGracefully();
+        } catch (Exception e) {
+          logger.warn("Error shutting down the message worker group", e);
+        }
       }
     }
   }
