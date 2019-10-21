@@ -41,6 +41,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.SimpleUserEventChannelHandler;
 import io.netty.channel.SingleThreadEventLoop;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -112,11 +113,17 @@ public final class NettyConnection extends ProviderConnection
   /** Request encoder pipeline handler. */
   private static final RequestEncoder REQUEST_ENCODER = new RequestEncoder();
 
-  /** Type of channel. */
-  private final Class<? extends Channel> channelClass;
+  /** Inbound handler to read the next message if autoRead is false. */
+  private static final InboundAutoReadEventHandler READ_NEXT_MESSAGE = new InboundAutoReadEventHandler();
 
-  /** Event worker group used by the bootstrap. */
-  private final EventLoopGroup workerGroup;
+  /** Type of channel. */
+  private final Class<? extends Channel> channelType;
+
+  /** Event worker group used to process I/O. */
+  private final EventLoopGroup ioWorkerGroup;
+
+  /** Event worker group used to process inbound messages. */
+  private final EventLoopGroup messageWorkerGroup;
 
   /** Netty channel configuration options. */
   private final Map<ChannelOption, Object> channelOptions;
@@ -162,24 +169,32 @@ public final class NettyConnection extends ProviderConnection
    * class type and event loop group are tightly coupled in this regard. See {@link SharedNioProvider} for an example
    * of what NIO parameters look like.
    *
-   * @param  clazz  type of channel
-   * @param  group  event loop group
    * @param  config  connection configuration
+   * @param  type  type of channel
+   * @param  ioGroup  event loop group that handles I/O and supports the channel type, cannot be null
+   * @param  messageGroup  event loop group that handles inbound messages, can be null
+   * @param  options additional channel options
    */
   public NettyConnection(
-    final Class<? extends Channel> clazz,
-    final EventLoopGroup group,
-    final ConnectionConfig config)
+    final ConnectionConfig config,
+    final Class<? extends Channel> type,
+    final EventLoopGroup ioGroup,
+    final EventLoopGroup messageGroup,
+    final Map<ChannelOption, Object> options)
   {
     super(config);
-    channelClass = clazz;
-    workerGroup = group;
+    channelType = type;
+    ioWorkerGroup = ioGroup;
+    messageWorkerGroup = messageGroup;
     channelOptions = new HashMap<>();
     channelOptions.put(ChannelOption.SO_KEEPALIVE, true);
     if (config.getConnectTimeout() != null) {
       channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) config.getConnectTimeout().toMillis());
     } else {
       channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, 0);
+    }
+    if (options != null && !options.isEmpty()) {
+      channelOptions.putAll(options);
     }
     pendingResponses = new HandleMap();
   }
@@ -196,8 +211,8 @@ public final class NettyConnection extends ProviderConnection
   private Bootstrap createBootstrap(final ClientInitializer initializer)
   {
     final Bootstrap bootstrap = new Bootstrap();
-    bootstrap.group(workerGroup);
-    bootstrap.channel(channelClass);
+    bootstrap.group(ioWorkerGroup);
+    bootstrap.channel(channelType);
     channelOptions.forEach(bootstrap::option);
     bootstrap.handler(initializer);
     return bootstrap;
@@ -207,7 +222,12 @@ public final class NettyConnection extends ProviderConnection
   @Override
   protected boolean test(final LdapURL url)
   {
-    final NettyConnection conn = new NettyConnection(channelClass, workerGroup, connectionConfig);
+    final NettyConnection conn = new NettyConnection(
+      connectionConfig,
+      channelType,
+      ioWorkerGroup,
+      messageWorkerGroup,
+      null);
     try {
       conn.open(url);
       LOGGER.debug("Test of {} successful", conn);
@@ -326,6 +346,10 @@ public final class NettyConnection extends ProviderConnection
         future.channel().close();
         throw new ConnectException(e);
       }
+    }
+
+    if (!future.channel().config().isAutoRead()) {
+      future.channel().read();
     }
     return future.channel();
   }
@@ -1061,10 +1085,19 @@ public final class NettyConnection extends ProviderConnection
       if (LOGGER.isDebugEnabled()) {
         ch.pipeline().addLast("logger", new LoggingHandler(LogLevel.DEBUG));
       }
-      ch.pipeline().addLast("request_encoder", REQUEST_ENCODER);
+      // inbound handlers are processed top to bottom
+      // outbound handlers are processed bottom to top
       ch.pipeline().addLast("frame_decoder", new MessageFrameDecoder());
       ch.pipeline().addLast("response_decoder", new MessageDecoder());
-      ch.pipeline().addLast("message_handler", new InboundMessageHandler());
+      if (messageWorkerGroup != null) {
+        ch.pipeline().addLast(messageWorkerGroup, "message_handler", new InboundMessageHandler());
+      } else {
+        ch.pipeline().addLast("message_handler", new InboundMessageHandler());
+      }
+      if (!ch.config().isAutoRead()) {
+        ch.pipeline().addLast("next_message_handler", READ_NEXT_MESSAGE);
+      }
+      ch.pipeline().addLast("request_encoder", REQUEST_ENCODER);
       ch.pipeline().addLast("inbound_exception_handler", new InboundExceptionHandler());
     }
 
@@ -1078,6 +1111,20 @@ public final class NettyConnection extends ProviderConnection
     {
       return sslHandler != null;
     }
+  }
+
+
+  /** Enum that describes the state of an LDAP message in the pipeline. */
+  protected enum MessageStatus
+  {
+    /** All bytes for a message have been read. */
+    READ,
+
+    /** Bytes have been decoded into a concrete message. */
+    DECODED,
+
+    /** Message has passed through the entire pipeline. */
+    HANDLED,
   }
 
 
@@ -1114,6 +1161,9 @@ public final class NettyConnection extends ProviderConnection
       final Message message =  parser.parse(new NettyDERBuffer(in))
         .orElseThrow(() -> new IllegalArgumentException("No response found"));
       out.add(message);
+      if (ctx != null) {
+        ctx.fireUserEventTriggered(MessageStatus.DECODED);
+      }
     }
   }
 
@@ -1130,46 +1180,76 @@ public final class NettyConnection extends ProviderConnection
     @SuppressWarnings("unchecked")
     protected void channelRead0(final ChannelHandlerContext ctx, final Message msg)
     {
-      final DefaultOperationHandle handle = pendingResponses.get(msg.getMessageID());
-      LOGGER.debug("Received response message {} for handle {}", msg, handle);
-      if (handle != null) {
-        if (msg instanceof LdapEntry) {
-          for (LdapAttribute a : ((LdapEntry) msg).getAttributes()) {
-            a.configureBinary(((SearchRequest) handle.getRequest()).getBinaryAttributes());
+      try {
+        final DefaultOperationHandle handle = pendingResponses.get(msg.getMessageID());
+        LOGGER.debug("Received response message {} for handle {}", msg, handle);
+        if (handle != null) {
+          if (msg instanceof LdapEntry) {
+            for (LdapAttribute a : ((LdapEntry) msg).getAttributes()) {
+              a.configureBinary(((SearchRequest) handle.getRequest()).getBinaryAttributes());
+            }
+            ((DefaultSearchOperationHandle) handle).entry((LdapEntry) msg);
+          } else if (msg instanceof SearchResultReference) {
+            ((DefaultSearchOperationHandle) handle).reference((SearchResultReference) msg);
+          } else if (msg instanceof Result) {
+            if (pendingResponses.remove(msg.getMessageID()) == null) {
+              LOGGER.warn("Processed message {} that no longer exists for {}", msg.getMessageID(), NettyConnection.this);
+            }
+            if (msg instanceof ExtendedResponse) {
+              ((DefaultExtendedOperationHandle) handle).extended((ExtendedResponse) msg);
+            } else if (msg instanceof CompareResponse) {
+              ((DefaultCompareOperationHandle) handle).compare((CompareResponse) msg);
+            }
+            if (msg.getControls() != null && msg.getControls().length > 0) {
+              Stream.of(msg.getControls()).forEach(handle::control);
+            }
+            if (((Result) msg).getReferralURLs() != null && ((Result) msg).getReferralURLs().length > 0) {
+              handle.referral(((Result) msg).getReferralURLs());
+            }
+            handle.result((Result) msg);
+          } else if (msg instanceof IntermediateResponse) {
+            handle.intermediate((IntermediateResponse) msg);
+          } else {
+            throw new IllegalStateException("Unknown message type: " + msg);
           }
-          ((DefaultSearchOperationHandle) handle).entry((LdapEntry) msg);
-        } else if (msg instanceof SearchResultReference) {
-          ((DefaultSearchOperationHandle) handle).reference((SearchResultReference) msg);
-        } else if (msg instanceof Result) {
-          if (pendingResponses.remove(msg.getMessageID()) == null) {
-            LOGGER.warn("Processed message {} that no longer exists for {}", msg.getMessageID(), NettyConnection.this);
-          }
-          if (msg instanceof ExtendedResponse) {
-            ((DefaultExtendedOperationHandle) handle).extended((ExtendedResponse) msg);
-          } else if (msg instanceof CompareResponse) {
-            ((DefaultCompareOperationHandle) handle).compare((CompareResponse) msg);
-          }
-          if (msg.getControls() != null && msg.getControls().length > 0) {
-            Stream.of(msg.getControls()).forEach(handle::control);
-          }
-          if (((Result) msg).getReferralURLs() != null && ((Result) msg).getReferralURLs().length > 0) {
-            handle.referral(((Result) msg).getReferralURLs());
-          }
-          handle.result((Result) msg);
-        } else if (msg instanceof IntermediateResponse) {
-          handle.intermediate((IntermediateResponse) msg);
+        } else if (msg instanceof UnsolicitedNotification) {
+          LOGGER.info("Received UnsolicitedNotification {} for {}", msg, NettyConnection.this);
+          pendingResponses.notifyOperationHandles((UnsolicitedNotification) msg);
         } else {
-          throw new IllegalStateException("Unknown message type: " + msg);
+          LOGGER.warn(
+            "Received response message {} without matching request in {} for {}",
+            msg,
+            pendingResponses,
+            this);
         }
-      } else if (msg instanceof UnsolicitedNotification) {
-        LOGGER.info("Received UnsolicitedNotification {} for {}", msg, NettyConnection.this);
-        pendingResponses.notifyOperationHandles((UnsolicitedNotification) msg);
-      } else {
-        LOGGER.warn(
-          "Received response message {} without matching request in {} for {}",
-          msg,
-          pendingResponses,
-          this);
+      } finally {
+        if (ctx != null) {
+          ctx.fireUserEventTriggered(MessageStatus.HANDLED);
+        }
+      }
+    }
+  }
+
+
+  /**
+   * Initiates a channel read when an LDAP message has been processed.
+   */
+  @ChannelHandler.Sharable
+  protected static class InboundAutoReadEventHandler extends SimpleUserEventChannelHandler<MessageStatus>
+  {
+
+    /** Logger for this class. */
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+
+    @Override
+    protected void eventReceived(final ChannelHandlerContext ctx, final MessageStatus evt)
+    {
+      logger.trace("Received event {}", evt);
+      if (MessageStatus.HANDLED == evt) {
+        if (!ctx.channel().config().isAutoRead()) {
+          ctx.read();
+        }
       }
     }
   }

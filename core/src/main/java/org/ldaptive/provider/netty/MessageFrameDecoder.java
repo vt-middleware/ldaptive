@@ -45,6 +45,9 @@ public class MessageFrameDecoder extends ByteToMessageDecoder
     if (len > 0) {
       logger.trace("read enough bytes from {} to decode message", in);
       out.add(in.readRetainedSlice(len));
+      if (ctx != null) {
+        ctx.fireUserEventTriggered(NettyConnection.MessageStatus.READ);
+      }
     } else {
       logger.trace("could not read enough bytes from {} to decode message", in);
     }

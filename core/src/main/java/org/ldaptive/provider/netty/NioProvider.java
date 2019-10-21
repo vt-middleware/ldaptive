@@ -18,7 +18,7 @@ public class NioProvider extends NettyProvider
   /**
    * Creates a new NIO provider.
    *
-   * @param  numThreads  number of threads used by the {@link NioEventLoopGroup}
+   * @param  numThreads  number of threads used by the I/O {@link NioEventLoopGroup}
    */
   public NioProvider(final int numThreads)
   {

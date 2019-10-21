@@ -28,6 +28,17 @@ public class SharedNioProvider extends NettyProvider
   }
 
 
+  /**
+   * Creates a new shared NIO provider.
+   *
+   * @param  messageWorkerGroup  to handle inbound messages
+   */
+  public SharedNioProvider(final EventLoopGroup messageWorkerGroup)
+  {
+    super(NioSocketChannel.class, SHARED_WORKER_GROUP, messageWorkerGroup, null);
+  }
+
+
   @Override
   public void close() {}
 
