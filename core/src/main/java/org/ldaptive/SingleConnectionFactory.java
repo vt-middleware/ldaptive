@@ -206,6 +206,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   @Override
   public synchronized void close()
   {
+    initialized = false;
     if (connection != null) {
       connection.close();
     }
@@ -217,7 +218,6 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       }
     }
     super.close();
-    initialized = false;
   }
 
 

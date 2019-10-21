@@ -1193,7 +1193,10 @@ public final class NettyConnection extends ProviderConnection
             ((DefaultSearchOperationHandle) handle).reference((SearchResultReference) msg);
           } else if (msg instanceof Result) {
             if (pendingResponses.remove(msg.getMessageID()) == null) {
-              LOGGER.warn("Processed message {} that no longer exists for {}", msg.getMessageID(), NettyConnection.this);
+              LOGGER.warn(
+                "Processed message {} that no longer exists for {}",
+                msg.getMessageID(),
+                NettyConnection.this);
             }
             if (msg instanceof ExtendedResponse) {
               ((DefaultExtendedOperationHandle) handle).extended((ExtendedResponse) msg);
