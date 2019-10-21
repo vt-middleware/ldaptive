@@ -15,6 +15,7 @@ import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.InitialRetryMetadata;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapException;
 import org.ldaptive.Result;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
@@ -82,7 +83,7 @@ public class SyncReplRunner
    */
   public SyncReplRunner(final ConnectionConfig config, final SearchRequest request, final CookieManager manager)
   {
-    this(null, config, request, manager);
+    this(createProvider(), config, request, manager);
   }
 
 
@@ -104,6 +105,27 @@ public class SyncReplRunner
     connectionConfig = config;
     searchRequest = request;
     cookieManager = manager;
+  }
+
+
+  /**
+   * Returns a provider configured to use for sync repl. Uses it's own event loop groups with auto_read set to false.
+   *
+   * @return  provider
+   */
+  private static Provider createProvider()
+  {
+    final NettyProvider provider = new NettyProvider(
+      NioSocketChannel.class,
+      new NioEventLoopGroup(
+        1,
+        new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
+      new DefaultEventLoopGroup(
+        1,
+        new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
+      Collections.singletonMap(ChannelOption.AUTO_READ, false));
+    provider.setShutdownOnClose(false);
+    return provider;
   }
 
 
@@ -162,19 +184,10 @@ public class SyncReplRunner
     if (started) {
       throw new IllegalStateException("Runner has already been started");
     }
-    Provider provider = connectionProvider;
-    if (provider == null) {
-      provider = new NettyProvider(
-        NioSocketChannel.class,
-        new NioEventLoopGroup(
-          1,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
-        new DefaultEventLoopGroup(
-          1,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
-        Collections.singletonMap(ChannelOption.AUTO_READ, false));
-    }
-    final SingleConnectionFactory connectionFactory = reconnectFactory(provider, connectionConfig, reconnectWait);
+    final SingleConnectionFactory connectionFactory = reconnectFactory(
+      connectionProvider,
+      connectionConfig,
+      reconnectWait);
     syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
     syncReplClient.setOnEntry(onEntry);
     syncReplClient.setOnResult(onResult);
@@ -234,6 +247,31 @@ public class SyncReplRunner
       }
     }
     logger.info("Runner {} stopped", this);
+  }
+
+
+  /**
+   * Cancels the sync repl search and sends a new search request.
+   */
+  public synchronized void restartSearch()
+  {
+    if (stopped) {
+      throw new IllegalStateException("Runner is stopped");
+    }
+    if (syncReplClient != null) {
+      try {
+        if (!syncReplClient.isComplete()) {
+          syncReplClient.cancel();
+        }
+      } catch (Exception e) {
+        logger.warn("Could not cancel sync repl request", e);
+      }
+    }
+    try {
+      syncReplClient.send(searchRequest, cookieManager);
+    } catch (LdapException e) {
+      throw new IllegalStateException("Could not send sync repl request", e);
+    }
   }
 
 
