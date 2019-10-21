@@ -2,30 +2,33 @@
 package org.ldaptive.control.util;
 
 import java.time.Duration;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
+import java.util.Collections;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.DefaultEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.InitialRetryMetadata;
-import org.ldaptive.LdapException;
+import org.ldaptive.LdapEntry;
+import org.ldaptive.Result;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
 import org.ldaptive.provider.Provider;
 import org.ldaptive.provider.netty.NettyProvider;
+import org.ldaptive.provider.netty.SharedNioProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Class that executes a {@link SyncReplClient} and expects to run continuously, reconnecting if the server is
  * unavailable. Consumers must be registered to handle entries, results, and messages as they are returned from the
- * server. If a consumer throws an exception, the connection will the closed and reopened, then the sync repl search
+ * server. If a consumer throws an exception, the runner will be stopped and started, then the sync repl search
  * will execute again.
  *
  * @author  Middleware Services
@@ -48,12 +51,6 @@ public class SyncReplRunner
   /** Sync repl cookie manager. */
   private final CookieManager cookieManager;
 
-  /** Size of the sync repl result queue. */
-  private final int queueSize;
-
-  /** Thread executor used by {@link SyncReplClient}. */
-  private final ExecutorService executorService;
-
   /** Search operation handle. */
   private SyncReplClient syncReplClient;
 
@@ -61,66 +58,44 @@ public class SyncReplRunner
   private Supplier<Boolean> onStart;
 
   /** Invoked when an entry is received. */
-  private Consumer<SyncReplItem.Entry> onEntry;
+  private Consumer<LdapEntry> onEntry;
 
   /** Invoked when a result is received. */
-  private Consumer<SyncReplItem.Result> onResult;
+  private Consumer<Result> onResult;
 
   /** Invoked when a sync info message is received. */
   private Consumer<SyncInfoMessage> onMessage;
 
   /** Whether {@link #start()} has been invoked. */
-  private boolean run;
+  private boolean started;
 
   /** Whether {@link #stop()} has been invoked. */
-  private boolean stop;
+  private boolean stopped;
 
 
   /**
-   * Creates a new sync repl runner.
+   * Creates a new sync repl runner. Uses the {@link SharedNioProvider} with a single thread {@link
+   * DefaultEventLoopGroup} for processing inbound messages.
    *
    * @param  config  sync repl connection configuration
    * @param  request  sync repl search request
    * @param  manager  sync repl cookie manager
-   * @param  size  sync repl result queue size
    */
-  public SyncReplRunner(
-    final ConnectionConfig config,
-    final SearchRequest request,
-    final CookieManager manager,
-    final int size)
-  {
-    this(config, request, manager, size, null);
-  }
-
-
-  /**
-   * Creates a new sync repl runner. Creates a {@link NettyProvider} that uses NIO for the transport.
-   *
-   * @param  config  sync repl connection configuration
-   * @param  request  sync repl search request
-   * @param  manager  sync repl cookie manager
-   * @param  size  sync repl result queue size
-   * @param  es  executor service for sync repl client
-   */
-  public SyncReplRunner(
-    final ConnectionConfig config,
-    final SearchRequest request,
-    final CookieManager manager,
-    final int size,
-    final ExecutorService es)
+  public SyncReplRunner(final ConnectionConfig config, final SearchRequest request, final CookieManager manager)
   {
     this(
       new NettyProvider(
         NioSocketChannel.class,
         new NioEventLoopGroup(
           1,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory(SyncReplRunner.class, true, Thread.NORM_PRIORITY)))),
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
+        new DefaultEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
+        Collections.singletonMap(ChannelOption.AUTO_READ, false)),
       config,
       request,
-      manager,
-      size,
-      es);
+      manager);
   }
 
 
@@ -131,23 +106,17 @@ public class SyncReplRunner
    * @param  config  sync repl connection configuration
    * @param  request  sync repl search request
    * @param  manager  sync repl cookie manager
-   * @param  size  sync repl result queue size
-   * @param  es  executor service for sync repl client
    */
   public SyncReplRunner(
     final Provider provider,
     final ConnectionConfig config,
     final SearchRequest request,
-    final CookieManager manager,
-    final int size,
-    final ExecutorService es)
+    final CookieManager manager)
   {
     connectionProvider = provider;
     connectionConfig = config;
     searchRequest = request;
     cookieManager = manager;
-    queueSize = size;
-    executorService = es;
   }
 
 
@@ -167,7 +136,7 @@ public class SyncReplRunner
    *
    * @param  consumer  to invoke when an entry is received
    */
-  public void setOnEntry(final Consumer<SyncReplItem.Entry> consumer)
+  public void setOnEntry(final Consumer<LdapEntry> consumer)
   {
     onEntry = consumer;
   }
@@ -178,7 +147,7 @@ public class SyncReplRunner
    *
    * @param  consumer  to invoke when a result is received
    */
-  public void setOnResult(final Consumer<SyncReplItem.Result> consumer)
+  public void setOnResult(final Consumer<Result> consumer)
   {
     onResult = consumer;
   }
@@ -203,17 +172,23 @@ public class SyncReplRunner
    */
   public void initialize(final boolean refreshAndPersist, final Duration reconnectWait)
   {
-    if (run) {
+    if (started) {
       throw new IllegalStateException("Runner has already been started");
     }
     final SingleConnectionFactory connectionFactory =
       reconnectFactory(connectionProvider, connectionConfig, reconnectWait);
-    if (executorService != null) {
-      syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist, executorService);
-    } else {
-      syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
-    }
-    stop = false;
+    syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
+    syncReplClient.setOnEntry(onEntry);
+    syncReplClient.setOnResult(onResult);
+    syncReplClient.setOnMessage(onMessage);
+    syncReplClient.setOnException(e -> {
+      logger.warn("Received exception with started={}", started, e);
+      if (started) {
+        stop();
+        start();
+      }
+    });
+    stopped = false;
   }
 
 
@@ -222,56 +197,19 @@ public class SyncReplRunner
    */
   public synchronized void start()
   {
-    if (run) {
+    if (started) {
       throw new IllegalStateException("Runner has already been started");
     }
-    run = true;
     try {
       if (onStart != null && !onStart.get()) {
         throw new RuntimeException("Start aborted from " + onStart);
       }
-      BlockingQueue<SyncReplItem> results = null;
+      ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
+      syncReplClient.send(searchRequest, cookieManager);
+      started = true;
       logger.info("Runner {} started", this);
-      while (run) {
-        try {
-          if (!((SingleConnectionFactory) syncReplClient.getConnectionFactory()).isInitialized()) {
-            ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
-            results = syncReplClient.execute(searchRequest, cookieManager, queueSize);
-          }
-          if (results == null) {
-            logger.error("Blocking queue has not been initialized");
-            break;
-          }
-          // blocks until result is received
-          final SyncReplItem item = results.take();
-          logger.debug("Received item {}", item);
-          if (item.isEntry() && onEntry != null) {
-            onEntry.accept(item.getEntry());
-          } else if (item.isResult() && onResult != null) {
-            onResult.accept(item.getResult());
-          } else if (item.isMessage() && onMessage != null) {
-            onMessage.accept(item.getMessage());
-          } else if (item.isException()) {
-            throw item.getException();
-          }
-        } catch (Exception e) {
-          if (run) {
-            logger.error("Unexpected error, closing the connection factory. Runner will reconnect.", e);
-            try {
-              syncReplClient.cancel();
-            } catch (LdapException le) {
-              logger.warn("Error cancelling sync repl operation");
-            }
-            syncReplClient.getConnectionFactory().close();
-          } else {
-            logger.error("Unexpected error. Runner will exit.", e);
-          }
-        }
-      }
     } catch (Exception e) {
       logger.error("Could not start the runner", e);
-    } finally {
-      stop();
     }
   }
 
@@ -281,11 +219,11 @@ public class SyncReplRunner
    */
   public synchronized void stop()
   {
-    if (stop) {
+    if (stopped) {
       return;
     }
-    stop = true;
-    run = false;
+    stopped = true;
+    started = false;
     if (syncReplClient != null) {
       try {
         syncReplClient.cancel();
@@ -307,12 +245,11 @@ public class SyncReplRunner
       .append("syncReplClient=").append(syncReplClient).append(", ")
       .append("searchRequest=").append(searchRequest).append(", ")
       .append("cookieManager=").append(cookieManager).append(", ")
-      .append("queueSize=").append(queueSize).append(", ")
       .append("onStart=").append(onStart).append(", ")
       .append("onEntry=").append(onEntry).append(", ")
       .append("onResult=").append(onResult).append(", ")
       .append("onMessage=").append(onMessage).append(", ")
-      .append("run=").append(run).toString();
+      .append("started=").append(started).toString();
   }
 
 

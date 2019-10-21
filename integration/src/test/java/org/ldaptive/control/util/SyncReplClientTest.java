@@ -2,17 +2,21 @@
 package org.ldaptive.control.util;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.Message;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
+import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
+import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncStateControl;
 import org.ldaptive.extended.SyncInfoMessage;
 import org.testng.AssertJUnit;
@@ -84,24 +88,28 @@ public class SyncReplClientTest extends AbstractTest
     SingleConnectionFactory cf = null;
     try {
       cf = TestUtils.createSingleConnectionFactory();
-      final SyncReplClient client = new SyncReplClient(cf, false);
       final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
+      final SyncReplClient client = new SyncReplClient(cf, false);
+      final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
+      client.setOnException(e -> queue.add(e));
+      client.setOnEntry(e -> queue.add(e));
+      client.setOnMessage(m -> queue.add(m));
+      client.setOnResult(r -> queue.add(r));
+      client.send(request, new DefaultCookieManager());
 
-      SyncReplItem item = results.take();
-      if (item.isException()) {
-        throw item.getException();
-      }
+      final LdapEntry entry = (LdapEntry) queue.take();
+      AssertJUnit.assertNotNull(entry);
+      final SyncStateControl ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
+      AssertJUnit.assertEquals(SyncStateControl.State.ADD, ssc.getSyncState());
+      AssertJUnit.assertNotNull(ssc.getEntryUuid());
+      AssertJUnit.assertNull(ssc.getCookie());
 
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(SyncStateControl.State.ADD, item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNull(item.getEntry().getSyncStateControl().getCookie());
+      final Result result = (Result) queue.take();
+      AssertJUnit.assertNotNull(result);
+      final SyncDoneControl sdc = (SyncDoneControl) result.getControl(SyncDoneControl.OID);
+      AssertJUnit.assertEquals(true, sdc.getRefreshDeletes());
+      AssertJUnit.assertNotNull(sdc.getCookie());
 
-      item = results.take();
-      AssertJUnit.assertTrue(item.isResult());
-      AssertJUnit.assertEquals(true, item.getResult().getSyncDoneControl().getRefreshDeletes());
-      AssertJUnit.assertNotNull(item.getResult().getSyncDoneControl().getCookie());
     } finally {
       cf.close();
     }
@@ -134,35 +142,30 @@ public class SyncReplClientTest extends AbstractTest
     SingleConnectionFactory cf = null;
     try {
       cf = TestUtils.createSingleConnectionFactory();
-      final SyncReplClient client = new SyncReplClient(cf, true);
       final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
+      final SyncReplClient client = new SyncReplClient(cf, true);
+      final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
+      client.setOnException(e -> queue.add(e));
+      client.setOnEntry(e -> queue.add(e));
+      client.setOnMessage(m -> queue.add(m));
+      client.setOnResult(r -> queue.add(r));
+      client.send(request, new DefaultCookieManager());
 
-      // test the async request
-      SyncReplItem item = results.take();
-      if (item.isException()) {
-        throw item.getException();
-      }
+      LdapEntry entry = (LdapEntry) queue.take();
+      AssertJUnit.assertNotNull(entry);
+      SyncStateControl ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
+      AssertJUnit.assertEquals(SyncStateControl.State.ADD, ssc.getSyncState());
+      AssertJUnit.assertNotNull(ssc.getEntryUuid());
+      AssertJUnit.assertNull(ssc.getCookie());
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), entry);
 
-      // test the first entry
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(SyncStateControl.State.ADD, item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNull(item.getEntry().getSyncStateControl().getCookie());
-      TestUtils.assertEquals(
-        TestUtils.convertLdifToResult(expected).getEntry(),
-        item.getEntry().getSearchEntry());
-
-      // test the info message
-      item = results.take();
-      if (item.isException()) {
-        throw item.getException();
-      }
-      AssertJUnit.assertTrue(item.isMessage());
-      AssertJUnit.assertEquals(SyncInfoMessage.Type.REFRESH_DELETE, item.getMessage().getMessageType());
-      AssertJUnit.assertNotNull(item.getMessage().getCookie());
-      AssertJUnit.assertFalse(item.getMessage().getRefreshDeletes());
-      AssertJUnit.assertTrue(item.getMessage().getRefreshDone());
+      final Message message = (Message) queue.take();
+      AssertJUnit.assertNotNull(message);
+      final SyncInfoMessage sim = (SyncInfoMessage) message;
+      AssertJUnit.assertEquals(SyncInfoMessage.Type.REFRESH_DELETE, sim.getMessageType());
+      AssertJUnit.assertNotNull(sim.getCookie());
+      AssertJUnit.assertFalse(sim.getRefreshDeletes());
+      AssertJUnit.assertTrue(sim.getRefreshDone());
 
       // make a change
       final ModifyOperation modify = new ModifyOperation(cf);
@@ -170,35 +173,33 @@ public class SyncReplClientTest extends AbstractTest
         new ModifyRequest(
           dn,
           new AttributeModification(AttributeModification.Type.ADD, new LdapAttribute("employeeType", "Employee"))));
-      item = results.take();
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getCookie());
+
+      entry = (LdapEntry) queue.take();
+      AssertJUnit.assertNotNull(entry);
+      ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
+      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, ssc.getSyncState());
+      AssertJUnit.assertNotNull(ssc.getEntryUuid());
+      AssertJUnit.assertNotNull(ssc.getCookie());
 
       // change it back
       modify.execute(
         new ModifyRequest(
           dn,
           new AttributeModification(AttributeModification.Type.DELETE, new LdapAttribute("employeeType"))));
-      item = results.take();
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getCookie());
-      TestUtils.assertEquals(
-        TestUtils.convertLdifToResult(expected).getEntry(),
-        item.getEntry().getSearchEntry());
+
+      entry = (LdapEntry) queue.take();
+      AssertJUnit.assertNotNull(entry);
+      ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
+      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, ssc.getSyncState());
+      AssertJUnit.assertNotNull(ssc.getEntryUuid());
+      AssertJUnit.assertNotNull(ssc.getCookie());
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), entry);
 
       client.cancel();
 
-      item = results.take();
-      if (item.isException()) {
-        throw item.getException();
-      }
-      AssertJUnit.assertTrue(item.isResult());
-      AssertJUnit.assertTrue(results.isEmpty());
-      AssertJUnit.assertEquals(ResultCode.CANCELED, item.getResult().getResult().getResultCode());
+      final Result result = (Result) queue.take();
+      AssertJUnit.assertNotNull(result);
+      AssertJUnit.assertEquals(ResultCode.CANCELED, result.getResultCode());
     } finally {
       cf.close();
     }
