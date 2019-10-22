@@ -5,7 +5,7 @@ SearchRequest request = SearchRequest.objectScopeSearchRequest("dc=ldaptive,dc=o
 client.setOnEntry(e -> {
   // process this entry with the sync state control data
   SyncStateControl ssc = (SyncStateControl) e.getControl(SyncStateControl.OID);
-  if (entry.size() > 0) { // arbitrary condition
+  if (e.size() > 0) { // arbitrary condition
     // stop receiving updates
     client.cancel();
   }
