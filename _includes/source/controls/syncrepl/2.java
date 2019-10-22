@@ -2,27 +2,25 @@ SingleConnectionFactory cf = new SingleConnectionFactory("ldap://directory.ldapt
 cf.initialize();
 SyncReplClient client = new SyncReplClient(cf, true); // true indicates persist
 SearchRequest request = SearchRequest.objectScopeSearchRequest("dc=ldaptive,dc=org");
-BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
-while (true) {
-  SyncReplItem item = results.take(); // blocks until result is received
-  if (item.isEntry()) {
-    SyncStateControl ssc = item.getEntry().getSyncStateControl();
-    LdapEntry entry = item.getEntry().getSearchEntry();
-    // process this entry with the sync state control data
-    if (entry.size() > 0) { // arbitrary condition
-      // stop receiving updates
-      client.cancel();
-    }
-  } else if (item.isMessage()) {
-    SyncInfoMessage sim = item.getMessage();
-    // process this info message
-  } else if (item.isResult()) {
-    SyncDoneControl sdc = item.getResult().getSyncDoneControl();
-    // synchronization complete
-    break;
-  } else if (item.isException()) {
-    // an error has occurred
-    throw item.getException();
+client.setOnEntry(e -> {
+  // process this entry with the sync state control data
+  SyncStateControl ssc = (SyncStateControl) e.getControl(SyncStateControl.OID);
+  if (entry.size() > 0) { // arbitrary condition
+    // stop receiving updates
+    client.cancel();
   }
-}
-cf.close();
+});
+client.setOnMessage(m -> {
+  // process a message
+});
+client.setOnResult(r -> {
+  // synchronization complete
+  SyncDoneControl syncDoneControl = (SyncDoneControl) r.getControl(SyncDoneControl.OID);
+});
+client.setOnException(e -> {
+  // handle exception
+});
+SearchOperationHandle handle = client.send(request, new DefaultCookieManager());
+// wait until result is received (or forever)
+handle.await();
+client.close();

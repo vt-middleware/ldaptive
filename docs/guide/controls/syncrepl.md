@@ -8,7 +8,7 @@ redirect_from: "/docs/guide/controls/syncrepl/"
 
 Request that the server send the client updates in order for the client to stay in sync with the server. See [RFC 4533](http://www.ietf.org/rfc/rfc4533.txt).
 
-Note that these examples use the _DefaultCookieManager which stores cookie data in memory_. Most implementers will want to provider a custom implementation to persist cookie data. The interface for CookieManager looks like:
+Note that these examples use the _DefaultCookieManager which stores cookie data in memory_. Most implementers will want to provide a custom implementation to persist cookie data. The interface for CookieManager looks like:
 
 {% highlight java %}
 public interface CookieManager
