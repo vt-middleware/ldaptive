@@ -9,9 +9,9 @@ client.setOnEntry(e -> {
     // stop receiving updates
     try {
       client.cancel();
-    } catch (LdapException e) {
+    } catch (LdapException ex) {
       // will be sent to onException
-      throw new RuntimeException("Error cancelling sync repl", e);
+      throw new RuntimeException("Error cancelling sync repl", ex);
     }
   }
 });
