@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider.netty;
+package org.ldaptive.transport.netty;
 
 import java.util.Map;
 import io.netty.channel.Channel;
@@ -7,7 +7,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.provider.Provider;
+import org.ldaptive.transport.Transport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class NettyProvider implements Provider
+public class NettyTransport implements Transport
 {
 
   /** Logger for this class. */
@@ -44,7 +44,7 @@ public class NettyProvider implements Provider
    * @param  type  of channel
    * @param  ioGroup  event loop group to handle I/O
    */
-  public NettyProvider(final Class<? extends Channel> type, final EventLoopGroup ioGroup)
+  public NettyTransport(final Class<? extends Channel> type, final EventLoopGroup ioGroup)
   {
     this(type, ioGroup, null, null);
   }
@@ -58,7 +58,7 @@ public class NettyProvider implements Provider
    * @param  messageGroup  event loop group to handle inbound messages, can be null
    * @param  options  netty channel options
    */
-  public NettyProvider(
+  public NettyTransport(
     final Class<? extends Channel> type,
     final EventLoopGroup ioGroup,
     final EventLoopGroup messageGroup,

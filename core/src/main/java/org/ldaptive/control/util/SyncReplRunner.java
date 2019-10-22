@@ -8,6 +8,12 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.DefaultEventLoopGroup;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollSocketChannel;
+import io.netty.channel.kqueue.KQueue;
+import io.netty.channel.kqueue.KQueueEventLoopGroup;
+import io.netty.channel.kqueue.KQueueSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -20,8 +26,8 @@ import org.ldaptive.Result;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
-import org.ldaptive.provider.Provider;
-import org.ldaptive.provider.netty.NettyProvider;
+import org.ldaptive.transport.Transport;
+import org.ldaptive.transport.netty.NettyTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +45,8 @@ public class SyncReplRunner
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Connection provider. */
-  private final Provider connectionProvider;
+  /** Connection transport. */
+  private final Transport connectionTransport;
 
   /** Connection configuration. */
   private final ConnectionConfig connectionConfig;
@@ -74,7 +80,7 @@ public class SyncReplRunner
 
 
   /**
-   * Creates a new sync repl runner. Uses the {@link NettyProvider} with a single thread {@link DefaultEventLoopGroup}
+   * Creates a new sync repl runner. Uses a {@link NettyTransport} with a single thread {@link DefaultEventLoopGroup}
    * for processing inbound messages.
    *
    * @param  config  sync repl connection configuration
@@ -83,25 +89,25 @@ public class SyncReplRunner
    */
   public SyncReplRunner(final ConnectionConfig config, final SearchRequest request, final CookieManager manager)
   {
-    this(createProvider(), config, request, manager);
+    this(createTransport(), config, request, manager);
   }
 
 
   /**
    * Creates a new sync repl runner.
    *
-   * @param  provider  sync repl connection provider
+   * @param  transport  sync repl connection transport
    * @param  config  sync repl connection configuration
    * @param  request  sync repl search request
    * @param  manager  sync repl cookie manager
    */
   public SyncReplRunner(
-    final Provider provider,
+    final Transport transport,
     final ConnectionConfig config,
     final SearchRequest request,
     final CookieManager manager)
   {
-    connectionProvider = provider;
+    connectionTransport = transport;
     connectionConfig = config;
     searchRequest = request;
     cookieManager = manager;
@@ -109,23 +115,47 @@ public class SyncReplRunner
 
 
   /**
-   * Returns a provider configured to use for sync repl. Uses it's own event loop groups with auto_read set to false.
+   * Returns a transport configured to use for sync repl. Uses it's own event loop groups with auto_read set to false.
+   * Detects whether Epoll or KQueue transports are available, otherwise uses NIO.
    *
-   * @return  provider
+   * @return  transport
    */
-  private static Provider createProvider()
+  private static Transport createTransport()
   {
-    final NettyProvider provider = new NettyProvider(
-      NioSocketChannel.class,
-      new NioEventLoopGroup(
-        1,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
-      new DefaultEventLoopGroup(
-        1,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
-      Collections.singletonMap(ChannelOption.AUTO_READ, false));
-    provider.setShutdownOnClose(false);
-    return provider;
+    final NettyTransport transport;
+    if (Epoll.isAvailable()) {
+      transport = new NettyTransport(
+        EpollSocketChannel.class,
+        new EpollEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
+        new DefaultEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
+        Collections.singletonMap(ChannelOption.AUTO_READ, false));
+    } else if (KQueue.isAvailable()) {
+      transport = new NettyTransport(
+        KQueueSocketChannel.class,
+        new KQueueEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
+        new DefaultEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
+        Collections.singletonMap(ChannelOption.AUTO_READ, false));
+    } else {
+      transport = new NettyTransport(
+        NioSocketChannel.class,
+        new NioEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
+        new DefaultEventLoopGroup(
+          1,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
+        Collections.singletonMap(ChannelOption.AUTO_READ, false));
+    }
+    transport.setShutdownOnClose(false);
+    return transport;
   }
 
 
@@ -185,7 +215,7 @@ public class SyncReplRunner
       throw new IllegalStateException("Runner has already been started");
     }
     final SingleConnectionFactory connectionFactory = reconnectFactory(
-      connectionProvider,
+      connectionTransport,
       connectionConfig,
       reconnectWait);
     syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
@@ -301,14 +331,14 @@ public class SyncReplRunner
    *   <li>{@link ConnectionConfig#setAutoReplay(boolean)} to false</li>
    * </ul>
    *
-   * @param  provider  connection provider
+   * @param  transport  connection transport
    * @param  cc  connection configuration
    * @param  wait  length of time to wait between consecutive calls to open
    *
    * @return  single connection factory
    */
   protected static SingleConnectionFactory reconnectFactory(
-    final Provider provider,
+    final Transport transport,
     final ConnectionConfig cc,
     final Duration wait)
   {
@@ -324,7 +354,7 @@ public class SyncReplRunner
       return false;
     });
     newConfig.setAutoReplay(false);
-    final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig, provider);
+    final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig, transport);
     factory.setFailFastInitialize(true);
     factory.setNonBlockingInitialize(false);
     return factory;

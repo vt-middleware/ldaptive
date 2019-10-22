@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive.transport;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -49,7 +49,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   private Request request;
 
   /** Connection to send the request on. */
-  private ProviderConnection connection;
+  private TransportConnection connection;
 
   /** Time to wait for a response. */
   private Duration responseTimeout;
@@ -87,7 +87,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   /** Timestamp when the handle was created. */
   private final Instant creationTime = Instant.now();
 
-  /** Timestamp when the request was sent. See {@link ProviderConnection#write(DefaultOperationHandle)}. */
+  /** Timestamp when the request was sent. See {@link TransportConnection#write(DefaultOperationHandle)}. */
   private Instant sentTime;
 
   /** Timestamp when the result was received or an exception occurred. */
@@ -110,7 +110,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    * @param  conn  the request will be executed on
    * @param  timeout  duration to wait for a response
    */
-  public DefaultOperationHandle(final Q req, final ProviderConnection conn, final Duration timeout)
+  public DefaultOperationHandle(final Q req, final TransportConnection conn, final Duration timeout)
   {
     if (req == null) {
       throw new IllegalArgumentException("Request cannot be null");
@@ -275,7 +275,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
 
   /**
    * Abandons this operation. Any threads waiting on the result will receive an empty result. See {@link
-   * ProviderConnection#operation(AbandonRequest)}.
+   * TransportConnection#operation(AbandonRequest)}.
    *
    * @param  cause  the reason this request was abandoned
    */

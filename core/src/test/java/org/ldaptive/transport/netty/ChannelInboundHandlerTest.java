@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider.netty;
+package org.ldaptive.transport.netty;
 
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive.transport;
 
 import org.ldaptive.Connection;
 import org.ldaptive.OperationHandle;
@@ -34,7 +34,7 @@ public abstract class MessageFunctional<Q extends Request, S extends Result>
   }
 
 
-  public void setConnection(final ProviderConnection conn)
+  public void setConnection(final TransportConnection conn)
   {
     connection = conn;
   }

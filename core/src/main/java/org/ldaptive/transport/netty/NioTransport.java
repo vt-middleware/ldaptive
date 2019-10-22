@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider.netty;
+package org.ldaptive.transport.netty;
 
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -11,7 +11,7 @@ import io.netty.util.concurrent.ThreadPerTaskExecutor;
  *
  * @author  Middleware Services
  */
-public class NioProvider extends NettyProvider
+public class NioTransport extends NettyTransport
 {
 
 
@@ -20,12 +20,12 @@ public class NioProvider extends NettyProvider
    *
    * @param  numThreads  number of threads used by the I/O {@link NioEventLoopGroup}
    */
-  public NioProvider(final int numThreads)
+  public NioTransport(final int numThreads)
   {
     super(
       NioSocketChannel.class,
       new NioEventLoopGroup(
         numThreads,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory(NioProvider.class, true, Thread.NORM_PRIORITY))));
+        new ThreadPerTaskExecutor(new DefaultThreadFactory(NioTransport.class, true, Thread.NORM_PRIORITY))));
   }
 }

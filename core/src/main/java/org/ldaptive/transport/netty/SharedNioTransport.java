@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider.netty;
+package org.ldaptive.transport.netty;
 
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -12,17 +12,17 @@ import io.netty.util.concurrent.ThreadPerTaskExecutor;
  *
  * @author  Middleware Services
  */
-public class SharedNioProvider extends NettyProvider
+public class SharedNioTransport extends NettyTransport
 {
 
   /** Event group used for all connections . */
   private static final EventLoopGroup SHARED_WORKER_GROUP = new NioEventLoopGroup(
     0,
-    new ThreadPerTaskExecutor(new DefaultThreadFactory(SharedNioProvider.class, true, Thread.NORM_PRIORITY)));
+    new ThreadPerTaskExecutor(new DefaultThreadFactory(SharedNioTransport.class, true, Thread.NORM_PRIORITY)));
 
 
   /** Default constructor. */
-  public SharedNioProvider()
+  public SharedNioTransport()
   {
     super(NioSocketChannel.class, SHARED_WORKER_GROUP);
   }
@@ -33,7 +33,7 @@ public class SharedNioProvider extends NettyProvider
    *
    * @param  messageWorkerGroup  to handle inbound messages
    */
-  public SharedNioProvider(final EventLoopGroup messageWorkerGroup)
+  public SharedNioTransport(final EventLoopGroup messageWorkerGroup)
   {
     super(NioSocketChannel.class, SHARED_WORKER_GROUP, messageWorkerGroup, null);
   }

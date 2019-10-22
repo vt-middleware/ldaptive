@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive.transport;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -38,7 +38,7 @@ public class DefaultCompareOperationHandle
    * @param  conn  the request will be executed on
    * @param  timeout  duration to wait for a response
    */
-  public DefaultCompareOperationHandle(final CompareRequest req, final ProviderConnection conn, final Duration timeout)
+  public DefaultCompareOperationHandle(final CompareRequest req, final TransportConnection conn, final Duration timeout)
   {
     super(req, conn, timeout);
   }

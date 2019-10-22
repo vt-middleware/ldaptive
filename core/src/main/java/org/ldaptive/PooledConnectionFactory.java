@@ -8,7 +8,7 @@ import org.ldaptive.pool.Passivator;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PruneStrategy;
 import org.ldaptive.pool.Validator;
-import org.ldaptive.provider.Provider;
+import org.ldaptive.transport.Transport;
 
 /**
  * Creates connections for performing ldap operations.
@@ -69,11 +69,11 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
    *
    * @param  cc  connection configuration
    * @param  pc  pool configuration
-   * @param  p  provider
+   * @param  t  transport
    */
-  public PooledConnectionFactory(final ConnectionConfig cc, final PoolConfig pc, final Provider p)
+  public PooledConnectionFactory(final ConnectionConfig cc, final PoolConfig pc, final Transport t)
   {
-    setDefaultConnectionFactory(new DefaultConnectionFactory(cc, p));
+    setDefaultConnectionFactory(new DefaultConnectionFactory(cc, t));
     setPoolConfig(pc);
   }
 
@@ -102,13 +102,13 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
 
 
   /**
-   * Returns the ldap provider.
+   * Returns the ldap transport.
    *
-   * @return  ldap provider
+   * @return  ldap transport
    */
-  public Provider getProvider()
+  public Transport getTransport()
   {
-    return getDefaultConnectionFactory().getProvider();
+    return getDefaultConnectionFactory().getTransport();
   }
 
 

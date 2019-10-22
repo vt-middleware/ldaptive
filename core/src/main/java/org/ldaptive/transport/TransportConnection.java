@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive.transport;
 
 import java.time.Instant;
 import java.util.Iterator;
@@ -24,12 +24,12 @@ import org.slf4j.LoggerFactory;
  * @author  Middleware Services
  */
 // CheckStyle:AbstractClassName OFF
-public abstract class ProviderConnection implements Connection
+public abstract class TransportConnection implements Connection
 // CheckStyle:AbstractClassName ON
 {
 
   /** Logger for this class. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(ProviderConnection.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TransportConnection.class);
 
   /** Only one invocation of open can occur at a time. */
   protected final Lock openLock = new ReentrantLock();
@@ -52,7 +52,7 @@ public abstract class ProviderConnection implements Connection
    *
    * @param  config  connection configuration
    */
-  public ProviderConnection(final ConnectionConfig config)
+  public TransportConnection(final ConnectionConfig config)
   {
     connectionConfig = config;
     connectionStrategy = connectionConfig.getConnectionStrategy();

@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive.transport;
 
 import java.util.Optional;
 import org.ldaptive.AddResponse;

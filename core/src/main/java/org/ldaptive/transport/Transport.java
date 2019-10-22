@@ -1,15 +1,15 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive.transport;
 
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 
 /**
- * Provides an abstraction layer for different {@link ProviderConnection} implementations.
+ * Provides an abstraction layer for different {@link TransportConnection} implementations.
  *
  * @author  Middleware Services
  */
-public interface Provider
+public interface Transport
 {
 
 

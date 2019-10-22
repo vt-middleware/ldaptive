@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider.netty;
+package org.ldaptive.transport.netty;
 
 import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
@@ -83,19 +83,19 @@ import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.extended.StartTLSRequest;
 import org.ldaptive.extended.UnsolicitedNotification;
-import org.ldaptive.provider.DefaultCompareOperationHandle;
-import org.ldaptive.provider.DefaultExtendedOperationHandle;
-import org.ldaptive.provider.DefaultOperationHandle;
-import org.ldaptive.provider.DefaultSearchOperationHandle;
-import org.ldaptive.provider.ProviderConnection;
-import org.ldaptive.provider.ResponseParser;
-import org.ldaptive.provider.SaslClient;
 import org.ldaptive.sasl.GssApiBindRequest;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslClientRequest;
 import org.ldaptive.ssl.HostnameVerifierAdapter;
 import org.ldaptive.ssl.SSLContextInitializer;
 import org.ldaptive.ssl.SslConfig;
+import org.ldaptive.transport.DefaultCompareOperationHandle;
+import org.ldaptive.transport.DefaultExtendedOperationHandle;
+import org.ldaptive.transport.DefaultOperationHandle;
+import org.ldaptive.transport.DefaultSearchOperationHandle;
+import org.ldaptive.transport.ResponseParser;
+import org.ldaptive.transport.SaslClient;
+import org.ldaptive.transport.TransportConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +104,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public final class NettyConnection extends ProviderConnection
+public final class NettyConnection extends TransportConnection
 {
 
   /** Logger for this class. */
@@ -166,7 +166,7 @@ public final class NettyConnection extends ProviderConnection
 
   /**
    * Creates a new connection. Netty supports various transport implementations including NIO, EPOLL, KQueue, etc. The
-   * class type and event loop group are tightly coupled in this regard. See {@link SharedNioProvider} for an example
+   * class type and event loop group are tightly coupled in this regard. See {@link SharedNioTransport} for an example
    * of what NIO parameters look like.
    *
    * @param  config  connection configuration
@@ -930,7 +930,7 @@ public final class NettyConnection extends ProviderConnection
      * @param  conn  the request will be executed on
      * @param  timeout  duration to wait for a response
      */
-    BindOperationHandle(final BindRequest req, final ProviderConnection conn, final Duration timeout)
+    BindOperationHandle(final BindRequest req, final TransportConnection conn, final Duration timeout)
     {
       super(req, conn, timeout);
     }

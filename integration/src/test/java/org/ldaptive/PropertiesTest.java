@@ -200,7 +200,7 @@ public class PropertiesTest
     final ConnectionConfig cc = cf.getConnectionConfig();
     final BindConnectionInitializer ci = (BindConnectionInitializer) cc.getConnectionInitializers()[0];
 
-    AssertJUnit.assertNotNull(cf.getProvider().getClass());
+    AssertJUnit.assertNotNull(cf.getTransport().getClass());
     AssertJUnit.assertEquals(host, cc.getLdapUrl());
     AssertJUnit.assertEquals(bindDn, ci.getBindDn());
     AssertJUnit.assertEquals(Duration.ofSeconds(8), cc.getConnectTimeout());

@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive.transport;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -39,7 +39,7 @@ public class DefaultExtendedOperationHandle
    */
   public DefaultExtendedOperationHandle(
     final ExtendedRequest req,
-    final ProviderConnection conn,
+    final TransportConnection conn,
     final Duration timeout)
   {
     super(req, conn, timeout);
