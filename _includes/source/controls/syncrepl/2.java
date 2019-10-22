@@ -7,7 +7,12 @@ client.setOnEntry(e -> {
   SyncStateControl ssc = (SyncStateControl) e.getControl(SyncStateControl.OID);
   if (e.size() > 0) { // arbitrary condition
     // stop receiving updates
-    client.cancel();
+    try {
+      client.cancel();
+    } catch (LdapException e) {
+      // will be sent to onException
+      throw new RuntimeException("Error cancelling sync repl", e);
+    }
   }
 });
 client.setOnMessage(m -> {
