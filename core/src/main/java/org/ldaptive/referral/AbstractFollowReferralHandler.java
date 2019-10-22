@@ -11,7 +11,7 @@ import org.ldaptive.Operation;
 import org.ldaptive.Request;
 import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
-import org.ldaptive.provider.MessageFunctional;
+import org.ldaptive.transport.MessageFunctional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

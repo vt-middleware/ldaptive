@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.ldaptive.dns.DNSContextFactory;
 import org.ldaptive.dns.MockDirContext;
-import org.ldaptive.provider.mock.MockConnection;
+import org.ldaptive.transport.mock.MockConnection;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;

@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.ldaptive.provider.Provider;
-import org.ldaptive.provider.ProviderFactory;
+import org.ldaptive.transport.Transport;
+import org.ldaptive.transport.TransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,8 +17,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Provider used by this factory. */
-  private Provider provider;
+  /** Transport used by this factory. */
+  private Transport transport;
 
   /** Connection configuration used by this factory. */
   private ConnectionConfig config;
@@ -27,7 +27,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
   /** Default constructor. */
   public DefaultConnectionFactory()
   {
-    provider = ProviderFactory.getProvider();
+    transport = TransportFactory.getTransport();
   }
 
 
@@ -49,7 +49,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
    */
   public DefaultConnectionFactory(final ConnectionConfig cc)
   {
-    this(cc, ProviderFactory.getProvider());
+    this(cc, TransportFactory.getTransport());
   }
 
 
@@ -57,11 +57,11 @@ public class DefaultConnectionFactory implements ConnectionFactory
    * Creates a new default connection factory.
    *
    * @param  cc  connection configuration
-   * @param  p  provider
+   * @param  t  transport
    */
-  public DefaultConnectionFactory(final ConnectionConfig cc, final Provider p)
+  public DefaultConnectionFactory(final ConnectionConfig cc, final Transport t)
   {
-    provider = p;
+    transport = t;
     setConnectionConfig(cc);
   }
 
@@ -91,13 +91,13 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Returns the ldap provider.
+   * Returns the ldap transport.
    *
-   * @return  ldap provider
+   * @return  ldap transport
    */
-  public Provider getProvider()
+  public Transport getTransport()
   {
-    return provider;
+    return transport;
   }
 
 
@@ -110,14 +110,14 @@ public class DefaultConnectionFactory implements ConnectionFactory
   @Override
   public Connection getConnection()
   {
-    return provider.create(config);
+    return transport.create(config);
   }
 
 
   @Override
   public void close()
   {
-    provider.close();
+    transport.close();
   }
 
 
@@ -126,7 +126,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
   {
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("provider=").append(provider).append(", ")
+      .append("transport=").append(transport).append(", ")
       .append("config=").append(config).append("]").toString();
   }
 

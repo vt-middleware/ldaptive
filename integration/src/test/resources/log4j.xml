@@ -66,7 +66,7 @@
     <appender-ref ref="CONSOLE"/>
   </category>
 
-  <category name="org.ldaptive.provider"
+  <category name="org.ldaptive.transport"
             additivity="false">
     <priority value="DEBUG"/>
     <appender-ref ref="CONSOLE"/>

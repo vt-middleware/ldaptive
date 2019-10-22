@@ -7,8 +7,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.ldaptive.provider.Provider;
-import org.ldaptive.provider.ProviderFactory;
+import org.ldaptive.transport.Transport;
+import org.ldaptive.transport.TransportFactory;
 
 /**
  * Creates a single connection which is proxied for LDAP operations.
@@ -59,7 +59,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public SingleConnectionFactory(final ConnectionConfig cc)
   {
-    this(cc, ProviderFactory.getProvider());
+    this(cc, TransportFactory.getTransport());
   }
 
 
@@ -69,7 +69,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    * @param  cc  connection configuration
    * @param  p  provider
    */
-  public SingleConnectionFactory(final ConnectionConfig cc, final Provider p)
+  public SingleConnectionFactory(final ConnectionConfig cc, final Transport p)
   {
     super(cc, p);
   }
@@ -226,7 +226,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   {
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("provider=").append(getProvider()).append(", ")
+      .append("provider=").append(getTransport()).append(", ")
       .append("config=").append(getConnectionConfig()).append(", ")
       .append("failFastInitialize=").append(failFastInitialize).append(", ")
       .append("nonBlockingInitialize=").append(nonBlockingInitialize).append(", ")

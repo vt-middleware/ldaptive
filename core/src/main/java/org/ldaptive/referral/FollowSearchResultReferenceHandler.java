@@ -10,7 +10,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.filter.FilterParser;
 import org.ldaptive.handler.SearchResultHandler;
-import org.ldaptive.provider.DefaultSearchOperationHandle;
+import org.ldaptive.transport.DefaultSearchOperationHandle;
 
 /**
  * Provides handling of an ldap continuation reference for search operations.

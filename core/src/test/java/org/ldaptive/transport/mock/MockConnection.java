@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider.mock;
+package org.ldaptive.transport.mock;
 
 import java.util.function.Predicate;
 import org.ldaptive.AbandonRequest;
@@ -27,16 +27,16 @@ import org.ldaptive.UnbindRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.extended.ExtendedOperationHandle;
 import org.ldaptive.extended.ExtendedRequest;
-import org.ldaptive.provider.DefaultOperationHandle;
-import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.sasl.SaslClientRequest;
+import org.ldaptive.transport.DefaultOperationHandle;
+import org.ldaptive.transport.TransportConnection;
 
 /**
  * Mock connection for testing.
  *
  * @author  Middleware Services
  */
-public final class MockConnection extends ProviderConnection
+public final class MockConnection extends TransportConnection
 {
 
   /** Predicate to control the results of {@link #open(LdapURL)}. */

@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
-import org.ldaptive.provider.Provider;
+import org.ldaptive.transport.Transport;
 
 /**
  * Handles properties for {@link org.ldaptive.PooledConnectionFactory}.
@@ -28,8 +28,8 @@ public class PooledConnectionFactoryPropertyInvoker extends BlockingConnectionPo
   {
     Object newValue = value;
     if (type != String.class) {
-      if (Provider.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(Provider.class, value);
+      if (Transport.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(Transport.class, value);
       } else {
         newValue = super.convertValue(type, value);
       }

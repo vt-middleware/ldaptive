@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider.netty;
+package org.ldaptive.transport.netty;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldaptive.LdapException;
 import org.ldaptive.extended.UnsolicitedNotification;
-import org.ldaptive.provider.DefaultOperationHandle;
+import org.ldaptive.transport.DefaultOperationHandle;
 
 /**
  * Container for operation handles that are waiting on a response from the LDAP server.

@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.provider;
+package org.ldaptive.transport;
 
 import java.nio.charset.StandardCharsets;
 import javax.security.sasl.Sasl;
@@ -62,7 +62,7 @@ public class SaslClient
    *
    * @throws  SaslException  if an error occurs
    */
-  public BindResponse bind(final ProviderConnection conn, final SaslClientRequest request)
+  public BindResponse bind(final TransportConnection conn, final SaslClientRequest request)
     throws SaslException
   {
     BindResponse response;

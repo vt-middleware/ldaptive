@@ -7,7 +7,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
-import org.ldaptive.provider.MessageFunctional;
+import org.ldaptive.transport.MessageFunctional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
