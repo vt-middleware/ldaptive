@@ -3,5 +3,5 @@ ConnectionConfig.builder()
   .useStartTLS(true)
   .connectTimeout(Duration.ofSeconds(5))
   .responseTimeout(Duration.ofSeconds(5))
-  .strategy(new RoundRobinConnectionStrategy())
+  .connectionStrategy(new RoundRobinConnectionStrategy())
   .build();
