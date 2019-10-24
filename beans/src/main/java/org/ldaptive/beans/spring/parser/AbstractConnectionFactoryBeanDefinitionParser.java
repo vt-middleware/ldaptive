@@ -3,9 +3,9 @@ package org.ldaptive.beans.spring.parser;
 
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.PooledConnectionFactory;
+import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
-import org.ldaptive.pool.SearchValidator;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
@@ -70,26 +70,41 @@ public abstract class AbstractConnectionFactoryBeanDefinitionParser extends Abst
     pool.addPropertyValue("poolConfig", parsePoolConfig(null, element).getBeanDefinition());
 
     final BeanDefinitionBuilder blockWaitTime =  BeanDefinitionBuilder.rootBeanDefinition(
-      AbstractAuthenticatorBeanDefinitionParser.class,
+      AbstractBeanDefinitionParser.class,
       "parseDuration");
     blockWaitTime.addConstructorArgValue(element.getAttribute("blockWaitTime"));
     pool.addPropertyValue("blockWaitTime", blockWaitTime.getBeanDefinition());
 
 
     pool.addPropertyValue("failFastInitialize", element.getAttribute("failFastInitialize"));
+
     final BeanDefinitionBuilder pruneStrategy = BeanDefinitionBuilder.genericBeanDefinition(IdlePruneStrategy.class);
     final BeanDefinitionBuilder prunePeriod =  BeanDefinitionBuilder.rootBeanDefinition(
-      AbstractAuthenticatorBeanDefinitionParser.class,
+      AbstractBeanDefinitionParser.class,
       "parseDuration");
     prunePeriod.addConstructorArgValue(element.getAttribute("prunePeriod"));
     final BeanDefinitionBuilder idleTime =  BeanDefinitionBuilder.rootBeanDefinition(
-      AbstractAuthenticatorBeanDefinitionParser.class,
+      AbstractBeanDefinitionParser.class,
       "parseDuration");
     idleTime.addConstructorArgValue(element.getAttribute("idleTime"));
     pruneStrategy.addPropertyValue("prunePeriod", prunePeriod.getBeanDefinition());
     pruneStrategy.addPropertyValue("idleTime", idleTime.getBeanDefinition());
     pool.addPropertyValue("pruneStrategy", pruneStrategy.getBeanDefinition());
-    pool.addPropertyValue("validator", new SearchValidator());
+
+    final BeanDefinitionBuilder validator = BeanDefinitionBuilder.genericBeanDefinition(
+      SearchConnectionValidator.class);
+    final BeanDefinitionBuilder validatePeriod =  BeanDefinitionBuilder.rootBeanDefinition(
+      AbstractBeanDefinitionParser.class,
+      "parseDuration");
+    validatePeriod.addConstructorArgValue(element.getAttribute("validatePeriod"));
+    final BeanDefinitionBuilder validateTimeout =  BeanDefinitionBuilder.rootBeanDefinition(
+      AbstractBeanDefinitionParser.class,
+      "parseDuration");
+    validateTimeout.addConstructorArgValue(element.getAttribute("validateTimeout"));
+    validator.addPropertyValue("validatePeriod", validatePeriod.getBeanDefinition());
+    validator.addPropertyValue("validateTimeout", validateTimeout.getBeanDefinition());
+    pool.addPropertyValue("validator", validator.getBeanDefinition());
+
     if (element.hasAttribute("ldapUrl")) {
       pool.setInitMethodName("initialize");
     } else {
@@ -117,11 +132,6 @@ public abstract class AbstractConnectionFactoryBeanDefinitionParser extends Abst
     poolConfig.addPropertyValue("maxPoolSize", element.getAttribute("maxPoolSize"));
     poolConfig.addPropertyValue("validateOnCheckOut", element.getAttribute("validateOnCheckOut"));
     poolConfig.addPropertyValue("validatePeriodically", element.getAttribute("validatePeriodically"));
-    final BeanDefinitionBuilder validatePeriod =  BeanDefinitionBuilder.rootBeanDefinition(
-      AbstractAuthenticatorBeanDefinitionParser.class,
-      "parseDuration");
-    validatePeriod.addConstructorArgValue(element.getAttribute("validatePeriod"));
-    poolConfig.addPropertyValue("validatePeriod", validatePeriod.getBeanDefinition());
     return poolConfig;
   }
 }

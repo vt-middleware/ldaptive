@@ -1,21 +1,16 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.pool;
+package org.ldaptive;
 
-import org.ldaptive.AbstractTest;
-import org.ldaptive.CompareRequest;
-import org.ldaptive.Connection;
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link CompareValidator}.
+ * Test for {@link CompareConnectionValidator}.
  *
  * @author  Middleware Services
  */
-public class CompareValidatorTest extends AbstractTest
+public class CompareConnectionValidatorTest extends AbstractTest
 {
 
 
@@ -24,16 +19,16 @@ public class CompareValidatorTest extends AbstractTest
   public void defaultSettings()
     throws Exception
   {
-    final CompareValidator validator = new CompareValidator();
+    final CompareConnectionValidator validator = new CompareConnectionValidator();
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
     final Connection c = cf.getConnection();
     try {
       c.open();
-      AssertJUnit.assertTrue(validator.validate(c));
+      AssertJUnit.assertTrue(validator.apply(c));
     } finally {
       c.close();
     }
-    AssertJUnit.assertFalse(validator.validate(c));
+    AssertJUnit.assertFalse(validator.apply(c));
   }
 
 
@@ -49,18 +44,18 @@ public class CompareValidatorTest extends AbstractTest
   {
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
     final Connection c = cf.getConnection();
-    final CompareValidator validator1 = new CompareValidator(
+    final CompareConnectionValidator validator1 = new CompareConnectionValidator(
       new CompareRequest(compareDn, "objectClass", "inetOrgPerson"));
-    final CompareValidator validator2 = new CompareValidator(
+    final CompareConnectionValidator validator2 = new CompareConnectionValidator(
       new CompareRequest("cn=does-not-exist", "objectClass", "inetOrgPerson"));
     try {
       c.open();
-      AssertJUnit.assertTrue(validator1.validate(c));
-      AssertJUnit.assertFalse(validator2.validate(c));
+      AssertJUnit.assertTrue(validator1.apply(c));
+      AssertJUnit.assertTrue(validator2.apply(c));
     } finally {
       c.close();
     }
-    AssertJUnit.assertFalse(validator1.validate(c));
-    AssertJUnit.assertFalse(validator2.validate(c));
+    AssertJUnit.assertFalse(validator1.apply(c));
+    AssertJUnit.assertFalse(validator2.apply(c));
   }
 }

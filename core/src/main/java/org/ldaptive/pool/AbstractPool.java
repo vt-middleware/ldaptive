@@ -1,17 +1,17 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
+import org.ldaptive.Connection;
+import org.ldaptive.ConnectionValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Contains functionality common to pool implementations.
  *
- * @param  <T>  type of object being pooled
- *
  * @author  Middleware Services
  */
-public abstract class AbstractPool<T>
+public abstract class AbstractPool
 {
 
   /** Logger for this class. */
@@ -24,13 +24,13 @@ public abstract class AbstractPool<T>
   private PoolConfig poolConfig;
 
   /** For activating pooled objects. */
-  private Activator<T> activator;
+  private ConnectionActivator activator;
 
   /** For passivating pooled objects. */
-  private Passivator<T> passivator;
+  private ConnectionPassivator passivator;
 
   /** For validating pooled objects. */
-  private Validator<T> validator;
+  private ConnectionValidator validator;
 
   /** For removing pooled objects. */
   private PruneStrategy pruneStrategy;
@@ -87,7 +87,7 @@ public abstract class AbstractPool<T>
    *
    * @return  activator
    */
-  public Activator<T> getActivator()
+  public ConnectionActivator getActivator()
   {
     return activator;
   }
@@ -98,7 +98,7 @@ public abstract class AbstractPool<T>
    *
    * @param  a  activator
    */
-  public void setActivator(final Activator<T> a)
+  public void setActivator(final ConnectionActivator a)
   {
     logger.trace("setting activator: {}", a);
     activator = a;
@@ -106,13 +106,13 @@ public abstract class AbstractPool<T>
 
 
   /**
-   * Prepare the object to exit the pool for use.
+   * Prepare the connection to exit the pool for use.
    *
-   * @param  t  pooled object
+   * @param  conn pooled connection
    *
-   * @return  whether the object successfully activated
+   * @return  whether the connection successfully activated
    */
-  public boolean activate(final T t)
+  public boolean activate(final Connection conn)
   {
     boolean success = false;
     if (activator == null) {
@@ -120,11 +120,11 @@ public abstract class AbstractPool<T>
       logger.trace("no activator configured");
     } else {
       try {
-        success = activator.activate(t);
+        success = activator.apply(conn);
       } catch (Exception e) {
         logger.warn("activate threw exception", e);
       }
-      logger.trace("activation for {} = {}", t, success);
+      logger.trace("activation for {} = {}", conn, success);
     }
     return success;
   }
@@ -135,7 +135,7 @@ public abstract class AbstractPool<T>
    *
    * @return  passivator
    */
-  public Passivator<T> getPassivator()
+  public ConnectionPassivator getPassivator()
   {
     return passivator;
   }
@@ -146,7 +146,7 @@ public abstract class AbstractPool<T>
    *
    * @param  p  passivator
    */
-  public void setPassivator(final Passivator<T> p)
+  public void setPassivator(final ConnectionPassivator p)
   {
     logger.trace("setting passivator: {}", p);
     passivator = p;
@@ -154,13 +154,13 @@ public abstract class AbstractPool<T>
 
 
   /**
-   * Prepare the object to enter the pool after use.
+   * Prepare the connection to reenter the pool after use.
    *
-   * @param  t  pooled object
+   * @param  conn  pooled connection
    *
-   * @return  whether the object successfully passivated
+   * @return  whether the connection successfully passivated
    */
-  public boolean passivate(final T t)
+  public boolean passivate(final Connection conn)
   {
     boolean success = false;
     if (passivator == null) {
@@ -168,59 +168,59 @@ public abstract class AbstractPool<T>
       logger.trace("no passivator configured");
     } else {
       try {
-        success = passivator.passivate(t);
+        success = passivator.apply(conn);
       } catch (Exception e) {
         logger.warn("passivate threw exception", e);
       }
-      logger.trace("passivation for {} = {}", t, success);
+      logger.trace("passivation for {} = {}", conn, success);
     }
     return success;
   }
 
 
   /**
-   * Returns the validator for this pool.
+   * Returns the connection validator for this pool.
    *
-   * @return  validator
+   * @return  connection validator
    */
-  public Validator<T> getValidator()
+  public ConnectionValidator getValidator()
   {
     return validator;
   }
 
 
   /**
-   * Sets the validator for this pool.
+   * Sets the connection validator for this pool.
    *
-   * @param  v  validator
+   * @param  cv  connection validator
    */
-  public void setValidator(final Validator<T> v)
+  public void setValidator(final ConnectionValidator cv)
   {
-    logger.trace("setting validator: {}", v);
-    validator = v;
+    logger.trace("setting validatorStrategy: {}", cv);
+    validator = cv;
   }
 
 
   /**
-   * Verify the object is still viable for use in the pool.
+   * Verify the connection is still viable for use in the pool.
    *
-   * @param  t  pooled object
+   * @param  conn  pooled connection
    *
-   * @return  whether the object is viable
+   * @return  whether the connection is viable
    */
-  public boolean validate(final T t)
+  public boolean validate(final Connection conn)
   {
     boolean success = false;
     if (validator == null) {
       success = true;
-      logger.warn("validate called, but no validator configured");
+      logger.warn("validate called, but no validator strategy configured");
     } else {
       try {
-        success = validator.validate(t);
+        success = validator.apply(conn);
       } catch (Exception e) {
         logger.warn("validate threw exception", e);
       }
-      logger.trace("validation for {} = {}", t, success);
+      logger.trace("validation for {} = {}", conn, success);
     }
     return success;
   }

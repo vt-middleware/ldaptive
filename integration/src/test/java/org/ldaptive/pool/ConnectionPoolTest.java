@@ -11,6 +11,7 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
 import org.ldaptive.RoundRobinConnectionStrategy;
+import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
@@ -94,21 +95,21 @@ public class ConnectionPoolTest extends AbstractTest
     blockingPc.setValidateOnCheckIn(true);
     blockingPc.setValidateOnCheckOut(true);
     blockingPc.setValidatePeriodically(true);
-    blockingPc.setValidatePeriod(Duration.ofSeconds(5));
     blockingPool = new BlockingConnectionPool(blockingPc, new DefaultConnectionFactory(cc));
     blockingPool.setPruneStrategy(new IdlePruneStrategy(Duration.ofSeconds(5), Duration.ofSeconds(1)));
-    blockingPool.setValidator(new SearchValidator());
+    blockingPool.setValidator(
+      SearchConnectionValidator.builder().period(Duration.ofSeconds(5)).timeout(Duration.ofSeconds(5)).build());
 
     final PoolConfig blockingTimeoutPc = new PoolConfig();
     blockingTimeoutPc.setMaxPoolSize(30);
     blockingTimeoutPc.setValidateOnCheckIn(true);
     blockingTimeoutPc.setValidateOnCheckOut(true);
     blockingTimeoutPc.setValidatePeriodically(true);
-    blockingTimeoutPc.setValidatePeriod(Duration.ofSeconds(5));
     blockingTimeoutPool = new BlockingConnectionPool(blockingTimeoutPc, new DefaultConnectionFactory(cc));
     blockingTimeoutPool.setPruneStrategy(new IdlePruneStrategy(Duration.ofSeconds(5), Duration.ofSeconds(1)));
     blockingTimeoutPool.setBlockWaitTime(Duration.ofSeconds(1));
-    blockingTimeoutPool.setValidator(new SearchValidator());
+    blockingTimeoutPool.setValidator(
+      SearchConnectionValidator.builder().period(Duration.ofSeconds(5)).timeout(Duration.ofSeconds(5)).build());
 
     final ConnectionConfig connStrategyCc = TestUtils.readConnectionConfig(null);
     connStrategyCc.setLdapUrl(String.format("%s ldap://dne.directory.ldaptive.org", host));

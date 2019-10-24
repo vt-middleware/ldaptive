@@ -54,6 +54,9 @@ public class ConnectionConfig extends AbstractConfig
   /** Connection strategy. */
   private ConnectionStrategy connectionStrategy = new ActivePassiveConnectionStrategy();
 
+  /** Connection validator. */
+  private ConnectionValidator connectionValidator;
+
 
   /** Default constructor. */
   public ConnectionConfig() {}
@@ -345,6 +348,30 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
+   * Returns the connection validator.
+   *
+   * @return  connection validator
+   */
+  public ConnectionValidator getConnectionValidator()
+  {
+    return connectionValidator;
+  }
+
+
+  /**
+   * Sets the connection validator.
+   *
+   * @param  validator  for validating connections
+   */
+  public void setConnectionValidator(final ConnectionValidator validator)
+  {
+    checkImmutable();
+    logger.trace("setting connectionValidator: {}", validator);
+    connectionValidator = validator;
+  }
+
+
+  /**
    * Returns a new connection config initialized with the supplied config.
    *
    * @param  config  connection config to read properties from
@@ -365,6 +392,7 @@ public class ConnectionConfig extends AbstractConfig
     cc.setUseStartTLS(config.getUseStartTLS());
     cc.setConnectionInitializers(config.getConnectionInitializers());
     cc.setConnectionStrategy(config.getConnectionStrategy());
+    cc.setConnectionValidator(config.getConnectionValidator());
     return cc;
   }
 
@@ -384,7 +412,8 @@ public class ConnectionConfig extends AbstractConfig
       .append("sslConfig=").append(sslConfig).append(", ")
       .append("useStartTLS=").append(useStartTLS).append(", ")
       .append("connectionInitializers=").append(Arrays.toString(connectionInitializers)).append(", ")
-      .append("connectionStrategy=").append(connectionStrategy).toString();
+      .append("connectionStrategy=").append(connectionStrategy).append(", ")
+      .append("connectionValidator=").append(connectionValidator).toString();
   }
 
 
@@ -479,9 +508,16 @@ public class ConnectionConfig extends AbstractConfig
     }
 
 
-    public Builder strategy(final ConnectionStrategy strategy)
+    public Builder connectionStrategy(final ConnectionStrategy strategy)
     {
       object.setConnectionStrategy(strategy);
+      return this;
+    }
+
+
+    public Builder connectionValidator(final ConnectionValidator validator)
+    {
+      object.setConnectionValidator(validator);
       return this;
     }
 

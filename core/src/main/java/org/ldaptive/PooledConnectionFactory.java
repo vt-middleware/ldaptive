@@ -2,12 +2,11 @@
 package org.ldaptive;
 
 import java.time.Duration;
-import org.ldaptive.pool.Activator;
 import org.ldaptive.pool.BlockingConnectionPool;
-import org.ldaptive.pool.Passivator;
+import org.ldaptive.pool.ConnectionActivator;
+import org.ldaptive.pool.ConnectionPassivator;
 import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PruneStrategy;
-import org.ldaptive.pool.Validator;
 import org.ldaptive.transport.Transport;
 
 /**
@@ -176,21 +175,21 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
     }
 
 
-    public Builder activator(final Activator<Connection> activator)
+    public Builder activator(final ConnectionActivator activator)
     {
       object.setActivator(activator);
       return this;
     }
 
 
-    public Builder passivator(final Passivator<Connection> passivator)
+    public Builder passivator(final ConnectionPassivator passivator)
     {
       object.setPassivator(passivator);
       return this;
     }
 
 
-    public Builder validator(final Validator<Connection> validator)
+    public Builder validator(final ConnectionValidator validator)
     {
       object.setValidator(validator);
       return this;

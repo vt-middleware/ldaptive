@@ -2,24 +2,15 @@
 package org.ldaptive.pool;
 
 import java.time.Duration;
+import java.util.function.Function;
 
 /**
  * Provides an interface for pruning connections from the pool.
  *
  * @author  Middleware Services
  */
-public interface PruneStrategy
+public interface PruneStrategy extends Function<PooledConnectionProxy, Boolean>
 {
-
-
-  /**
-   * Invoked to determine whether a connection should be pruned from the pool.
-   *
-   * @param  conn  that is available for pruning
-   *
-   * @return  whether the connection should be pruned
-   */
-  boolean prune(PooledConnectionProxy conn);
 
 
   /**
