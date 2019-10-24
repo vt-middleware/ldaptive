@@ -50,6 +50,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.ScheduledFuture;
 import org.ldaptive.AbandonRequest;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AddResponse;
@@ -61,6 +62,7 @@ import org.ldaptive.CompareResponse;
 import org.ldaptive.ConnectException;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionInitializer;
+import org.ldaptive.ConnectionValidator;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.DeleteResponse;
 import org.ldaptive.LdapAttribute;
@@ -143,8 +145,8 @@ public final class NettyConnection extends TransportConnection
   /** Operation lock when a bind occurs. */
   private final ReadWriteLock bindLock = new ReentrantReadWriteLock();
 
-  /** Executor for scheduling a reconnect attempt. */
-  private ExecutorService reconnectExecutor = Executors.newSingleThreadExecutor(
+  /** Executor for scheduling various connection related tasks. */
+  private ExecutorService connectionExecutor = Executors.newSingleThreadExecutor(
     r -> {
       final Thread t = new Thread(r);
       t.setDaemon(true);
@@ -875,7 +877,7 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
-   * Returns whether this connection is currently attempting to open a connection.
+   * Returns whether this connection is currently attempting to open.
    *
    * @return  whether the Netty channel is in the process of opening
    */
@@ -886,6 +888,25 @@ public final class NettyConnection extends TransportConnection
         return false;
       } finally {
         openLock.unlock();
+      }
+    } else {
+      return true;
+    }
+  }
+
+
+  /**
+   * Returns whether this connection is currently attempting to close.
+   *
+   * @return  whether the Netty channel is in the process of closing
+   */
+  private boolean isClosing()
+  {
+    if (closeLock.tryLock()) {
+      try {
+        return false;
+      } finally {
+        closeLock.unlock();
       }
     } else {
       return true;
@@ -1012,7 +1033,7 @@ public final class NettyConnection extends TransportConnection
       close();
       if (connectionConfig.getAutoReconnect() && !isOpening && !reconnecting.get()) {
         LOGGER.trace("scheduling reconnect thread for connection {}", NettyConnection.this);
-        reconnectExecutor.execute(
+        connectionExecutor.execute(
           () -> {
             reconnecting.set(true);
             try {
@@ -1098,6 +1119,9 @@ public final class NettyConnection extends TransportConnection
         ch.pipeline().addLast("next_message_handler", READ_NEXT_MESSAGE);
       }
       ch.pipeline().addLast("request_encoder", REQUEST_ENCODER);
+      if (connectionConfig.getConnectionValidator() != null) {
+        ch.pipeline().addLast("validate_conn", new ValidatorHandler(connectionConfig.getConnectionValidator()));
+      }
       ch.pipeline().addLast("inbound_exception_handler", new InboundExceptionHandler());
     }
 
@@ -1259,6 +1283,64 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
+   * Schedules a connection validator to run based on it's strategy. If the validator fails an exception caught is fired
+   * in the pipeline.
+   */
+  private class ValidatorHandler extends ChannelInboundHandlerAdapter
+  {
+
+    /** Connection validator. */
+    private final ConnectionValidator connectionValidator;
+
+    /** Future to track execution status. */
+    private ScheduledFuture sf;
+
+
+    /**
+     * Creates a new validator handler.
+     *
+     * @param  validator  to execute
+     */
+    ValidatorHandler(final ConnectionValidator validator)
+    {
+      connectionValidator = validator;
+    }
+
+
+    @Override
+    public void channelActive(final ChannelHandlerContext ctx)
+    {
+      sf = ctx.executor().scheduleAtFixedRate(
+        () -> {
+          final java.util.concurrent.Future<Boolean> f = connectionExecutor.submit(
+            () -> connectionValidator.apply(NettyConnection.this));
+          boolean success = false;
+          try {
+            success = f.get(connectionValidator.getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
+          } catch (Exception e) {
+            LOGGER.debug("validating {} threw unexpected exception", NettyConnection.this, e);
+          }
+          if (!success) {
+            ctx.fireExceptionCaught(new LdapException("Connection validation failed for " + NettyConnection.this));
+          }
+        },
+        connectionValidator.getValidatePeriod().toMillis(),
+        connectionValidator.getValidatePeriod().toMillis(),
+        TimeUnit.MILLISECONDS);
+    }
+
+
+    @Override
+    public void channelInactive(final ChannelHandlerContext ctx)
+    {
+      if (sf != null) {
+        sf.cancel(true);
+      }
+    }
+  }
+
+
+  /**
    * Sets {@link #inboundException} and closes the channel when an exception occurs.
    */
   private class InboundExceptionHandler extends ChannelInboundHandlerAdapter
@@ -1270,7 +1352,7 @@ public final class NettyConnection extends TransportConnection
     {
       LOGGER.warn("Inbound handler caught exception for {}", NettyConnection.this, cause);
       inboundException = cause;
-      if (channel != null) {
+      if (channel != null && !isClosing()) {
         channel.close().addListener(new LogFutureListener());
       }
     }

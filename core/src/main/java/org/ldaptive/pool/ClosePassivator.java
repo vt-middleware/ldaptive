@@ -8,15 +8,15 @@ import org.ldaptive.Connection;
  *
  * @author  Middleware Services
  */
-public class ClosePassivator implements Passivator<Connection>
+public class ClosePassivator implements ConnectionPassivator
 {
 
 
   @Override
-  public boolean passivate(final Connection c)
+  public Boolean apply(final Connection conn)
   {
-    if (c != null) {
-      c.close();
+    if (conn != null) {
+      conn.close();
       return true;
     }
     return false;

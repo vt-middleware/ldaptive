@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
-import java.time.Duration;
 import org.ldaptive.AbstractConfig;
 
 /**
@@ -27,12 +26,6 @@ public class PoolConfig extends AbstractConfig
   /** Default validate periodically, value is {@value}. */
   public static final boolean DEFAULT_VALIDATE_PERIODICALLY = false;
 
-  /** Default validate period, value is 30 minutes. */
-  public static final Duration DEFAULT_VALIDATE_PERIOD = Duration.ofMinutes(30);
-
-  /** Default per connection validate timeout, value is 5 seconds. */
-  public static final Duration DEFAULT_VALIDATE_TIMEOUT = Duration.ofSeconds(5);
-
   /** Minimum pool size. */
   private int minPoolSize = DEFAULT_MIN_POOL_SIZE;
 
@@ -47,12 +40,6 @@ public class PoolConfig extends AbstractConfig
 
   /** Whether the pool should be validated periodically. */
   private boolean validatePeriodically = DEFAULT_VALIDATE_PERIODICALLY;
-
-  /** Time that the pool validation should repeat. */
-  private Duration validatePeriod = DEFAULT_VALIDATE_PERIOD;
-
-  /** Maximum length of time a connection validation should block. */
-  private Duration validateTimeout = DEFAULT_VALIDATE_TIMEOUT;
 
 
   /**
@@ -181,60 +168,6 @@ public class PoolConfig extends AbstractConfig
   }
 
 
-  /**
-   * Returns the validate period. Default value is {@link #DEFAULT_VALIDATE_PERIOD}.
-   *
-   * @return  validate period
-   */
-  public Duration getValidatePeriod()
-  {
-    return validatePeriod;
-  }
-
-
-  /**
-   * Sets the period for which the pool will be validated.
-   *
-   * @param  time  in seconds
-   */
-  public void setValidatePeriod(final Duration time)
-  {
-    checkImmutable();
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Validate period cannot be null or negative");
-    }
-    logger.trace("setting validatePeriod: {}", time);
-    validatePeriod = time;
-  }
-
-
-  /**
-   * Returns the timeout imposed when validating a single connection.
-   *
-   * @return  validate timeout
-   */
-  public Duration getValidateTimeout()
-  {
-    return validateTimeout;
-  }
-
-
-  /**
-   * Sets the timeout imposed when validating a single connection.
-   *
-   * @param  time  for a connection validation
-   */
-  public void setValidateTimeout(final Duration time)
-  {
-    checkImmutable();
-    if (time != null && time.isNegative()) {
-      throw new IllegalArgumentException("Validate timeout cannot be negative");
-    }
-    logger.trace("setting validateTimeout: {}", time);
-    validateTimeout = time;
-  }
-
-
   @Override
   public String toString()
   {
@@ -244,9 +177,7 @@ public class PoolConfig extends AbstractConfig
       .append("maxPoolSize=").append(maxPoolSize).append(", ")
       .append("validateOnCheckIn=").append(validateOnCheckIn).append(", ")
       .append("validateOnCheckOut=").append(validateOnCheckOut).append(", ")
-      .append("validatePeriodically=").append(validatePeriodically).append(", ")
-      .append("validatePeriod=").append(validatePeriod).append(", ")
-      .append("validateTimeout=").append(validateTimeout).append("]").toString();
+      .append("validatePeriodically=").append(validatePeriodically).append("]").toString();
   }
 
 
@@ -303,20 +234,6 @@ public class PoolConfig extends AbstractConfig
     public Builder validatePeriodically(final boolean b)
     {
       object.setValidatePeriodically(b);
-      return this;
-    }
-
-
-    public Builder validatePeriod(final Duration period)
-    {
-      object.setValidatePeriod(period);
-      return this;
-    }
-
-
-    public Builder validateTimeout(final Duration time)
-    {
-      object.setValidateTimeout(time);
       return this;
     }
 

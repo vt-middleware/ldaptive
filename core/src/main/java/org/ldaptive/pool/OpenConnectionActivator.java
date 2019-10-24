@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class ConnectActivator implements Activator<Connection>
+public class OpenConnectionActivator implements ConnectionActivator
 {
 
   /** Logger for this class. */
@@ -18,12 +18,12 @@ public class ConnectActivator implements Activator<Connection>
 
 
   @Override
-  public boolean activate(final Connection c)
+  public Boolean apply(final Connection conn)
   {
-    if (c != null) {
+    if (conn != null) {
       try {
-        if (!c.isOpen()) {
-          c.open();
+        if (!conn.isOpen()) {
+          conn.open();
         }
         return true;
       } catch (Exception e) {

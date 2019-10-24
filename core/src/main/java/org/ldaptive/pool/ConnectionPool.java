@@ -18,7 +18,7 @@ public interface ConnectionPool
    *
    * @return  activator
    */
-  Activator<Connection> getActivator();
+  ConnectionActivator getActivator();
 
 
   /**
@@ -26,7 +26,7 @@ public interface ConnectionPool
    *
    * @param  a  activator
    */
-  void setActivator(Activator<Connection> a);
+  void setActivator(ConnectionActivator a);
 
 
   /**
@@ -34,7 +34,7 @@ public interface ConnectionPool
    *
    * @return  passivator
    */
-  Passivator<Connection> getPassivator();
+  ConnectionPassivator getPassivator();
 
 
   /**
@@ -42,23 +42,7 @@ public interface ConnectionPool
    *
    * @param  p  passivator
    */
-  void setPassivator(Passivator<Connection> p);
-
-
-  /**
-   * Returns the validator for this pool.
-   *
-   * @return  validator
-   */
-  Validator<Connection> getValidator();
-
-
-  /**
-   * Sets the validator for this pool.
-   *
-   * @param  v  validator
-   */
-  void setValidator(Validator<Connection> v);
+  void setPassivator(ConnectionPassivator p);
 
 
   /** Initialize this pool for use. */
@@ -72,8 +56,6 @@ public interface ConnectionPool
    *
    * @throws  PoolException  if this operation fails
    * @throws  BlockingTimeoutException  if this pool is configured with a block time and it occurs
-   * @throws  PoolInterruptedException  if this pool is configured with a block time and the current thread is
-   *                                    interrupted
    */
   Connection getConnection()
     throws PoolException;

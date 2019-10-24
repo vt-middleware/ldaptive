@@ -8,6 +8,7 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.PooledConnectionFactory;
+import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
@@ -32,7 +33,6 @@ import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
-import org.ldaptive.pool.SearchValidator;
 import org.ldaptive.sasl.DigestMD5Config;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
@@ -469,12 +469,12 @@ public class NamespaceHandlerTest
     AssertJUnit.assertFalse(factory.getFailFastInitialize());
     AssertJUnit.assertEquals(Duration.ofMinutes(5), factory.getPruneStrategy().getPrunePeriod());
     AssertJUnit.assertEquals(Duration.ofMinutes(10), ((IdlePruneStrategy) factory.getPruneStrategy()).getIdleTime());
-    AssertJUnit.assertEquals(SearchValidator.class, factory.getValidator().getClass());
+    AssertJUnit.assertEquals(SearchConnectionValidator.class, factory.getValidator().getClass());
 
     final PoolConfig poolConfig = factory.getPoolConfig();
     AssertJUnit.assertEquals(3, poolConfig.getMinPoolSize());
     AssertJUnit.assertEquals(10, poolConfig.getMaxPoolSize());
-    AssertJUnit.assertEquals(Duration.ofMinutes(5), poolConfig.getValidatePeriod());
+    AssertJUnit.assertEquals(Duration.ofMinutes(5), factory.getValidator().getValidatePeriod());
     AssertJUnit.assertFalse(poolConfig.isValidateOnCheckOut());
     AssertJUnit.assertTrue(poolConfig.isValidatePeriodically());
 

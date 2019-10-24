@@ -1,22 +1,16 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.pool;
+package org.ldaptive;
 
-import org.ldaptive.AbstractTest;
-import org.ldaptive.Connection;
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.SearchFilter;
-import org.ldaptive.SearchRequest;
-import org.ldaptive.TestUtils;
 import org.testng.AssertJUnit;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Test for {@link SearchValidator}.
+ * Test for {@link SearchConnectionValidator}.
  *
  * @author  Middleware Services
  */
-public class SearchValidatorTest extends AbstractTest
+public class SearchConnectionValidatorTest extends AbstractTest
 {
 
 
@@ -25,16 +19,16 @@ public class SearchValidatorTest extends AbstractTest
   public void defaultSettings()
     throws Exception
   {
-    final SearchValidator validator = new SearchValidator();
+    final SearchConnectionValidator validator = new SearchConnectionValidator();
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
     final Connection c = cf.getConnection();
     try {
       c.open();
-      AssertJUnit.assertTrue(validator.validate(c));
+      AssertJUnit.assertTrue(validator.apply(c));
     } finally {
       c.close();
     }
-    AssertJUnit.assertFalse(validator.validate(c));
+    AssertJUnit.assertFalse(validator.apply(c));
   }
 
 
@@ -50,16 +44,18 @@ public class SearchValidatorTest extends AbstractTest
   {
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
     final Connection c = cf.getConnection();
-    final SearchValidator validator1 = new SearchValidator(new SearchRequest(searchDn, new SearchFilter("(cn=*)")));
-    final SearchValidator validator2 = new SearchValidator(new SearchRequest(searchDn, new SearchFilter("(dne=*)")));
+    final SearchConnectionValidator validator1 = new SearchConnectionValidator(
+      new SearchRequest(searchDn, new SearchFilter("(cn=*)")));
+    final SearchConnectionValidator validator2 = new SearchConnectionValidator(
+      new SearchRequest(searchDn, new SearchFilter("(dne=*)")));
     try {
       c.open();
-      AssertJUnit.assertTrue(validator1.validate(c));
-      AssertJUnit.assertFalse(validator2.validate(c));
+      AssertJUnit.assertTrue(validator1.apply(c));
+      AssertJUnit.assertTrue(validator2.apply(c));
     } finally {
       c.close();
     }
-    AssertJUnit.assertFalse(validator1.validate(c));
-    AssertJUnit.assertFalse(validator2.validate(c));
+    AssertJUnit.assertFalse(validator1.apply(c));
+    AssertJUnit.assertFalse(validator2.apply(c));
   }
 }

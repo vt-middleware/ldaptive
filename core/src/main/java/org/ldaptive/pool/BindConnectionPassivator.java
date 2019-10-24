@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class BindPassivator implements Passivator<Connection>
+public class BindConnectionPassivator implements ConnectionPassivator
 {
 
   /** Logger for this class. */
@@ -24,9 +24,9 @@ public class BindPassivator implements Passivator<Connection>
 
 
   /** Creates a new bind passivator. */
-  public BindPassivator()
+  public BindConnectionPassivator()
   {
-    bindRequest = new AnonymousBindRequest();
+    this(new AnonymousBindRequest());
   }
 
 
@@ -35,7 +35,7 @@ public class BindPassivator implements Passivator<Connection>
    *
    * @param  br  to use for binds
    */
-  public BindPassivator(final BindRequest br)
+  public BindConnectionPassivator(final BindRequest br)
   {
     bindRequest = br;
   }
@@ -64,11 +64,11 @@ public class BindPassivator implements Passivator<Connection>
 
 
   @Override
-  public boolean passivate(final Connection c)
+  public Boolean apply(final Connection conn)
   {
-    if (c != null) {
+    if (conn != null) {
       try {
-        final Result result = c.operation(bindRequest).execute();
+        final Result result = conn.operation(bindRequest).execute();
         return result.isSuccess();
       } catch (Exception e) {
         logger.debug("passivation failed for bind request {}", bindRequest, e);

@@ -12,19 +12,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.SearchConnectionValidator;
 
 /**
  * Contains the base implementation for pooling connections. The main design objective for the supplied pooling
@@ -36,7 +35,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConnectionPool extends AbstractPool<Connection> implements ConnectionPool
+public abstract class AbstractConnectionPool extends AbstractPool implements ConnectionPool
 {
 
   /** Lock for the entire pool. */
@@ -209,18 +208,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     }
     logger.debug("beginning pool initialization for {}", this);
 
-    // sanity check the configuration
-    if ((getPoolConfig().isValidatePeriodically() ||
-         getPoolConfig().isValidateOnCheckIn() ||
-         getPoolConfig().isValidateOnCheckOut()) && getValidator() == null) {
-      throw new IllegalStateException("Validation is enabled, but no validator has been configured");
-    }
-    if ((!getPoolConfig().isValidatePeriodically() &&
-         !getPoolConfig().isValidateOnCheckIn() &&
-         !getPoolConfig().isValidateOnCheckOut()) && getValidator() != null) {
-      throw new IllegalStateException("Validator configured, but no validate flag has been set");
-    }
-
     getPoolConfig().makeImmutable();
 
     if (getPruneStrategy() == null) {
@@ -228,18 +215,25 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
       logger.debug("no prune strategy configured, using default prune strategy: {}", getPruneStrategy());
     }
 
+    if (getValidator() == null) {
+      setValidator(new SearchConnectionValidator());
+      logger.debug("no validator strategy configured, using default validator strategy: {}", getValidator());
+    }
+
     // sanity check the scheduler periods
     if (getPruneStrategy().getPrunePeriod().toMillis() <= 0) {
       throw new IllegalStateException(
         "Prune period " + getPruneStrategy().getPrunePeriod() + " must be greater than zero");
     }
-    if (getPoolConfig().getValidatePeriod().toMillis() <= 0) {
+    if (getValidator().getValidatePeriod() != null &&
+        getValidator().getValidatePeriod().toMillis() <= 0) {
       throw new IllegalStateException(
-        "Validate period " + getPoolConfig().getValidatePeriod() + " must be greater than zero");
+        "Validate period " + getValidator().getValidatePeriod() + " must be greater than zero");
     }
-    if (getPoolConfig().getValidateTimeout() != null && getPoolConfig().getValidateTimeout().toMillis() <= 0) {
+    if (getValidator().getValidateTimeout() != null &&
+        getValidator().getValidateTimeout().toMillis() <= 0) {
       throw new IllegalStateException(
-        "Validate timeout " + getPoolConfig().getValidateTimeout() + " must be greater than zero");
+        "Validate timeout " + getValidator().getValidateTimeout() + " must be greater than zero");
     }
 
     available = new Queue<>(queueType);
@@ -284,20 +278,22 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
       TimeUnit.MILLISECONDS);
     logger.debug("prune pool task scheduled for {}", this);
 
-    poolExecutor.scheduleAtFixedRate(
-      () -> {
-        logger.debug("begin validate task for {}", AbstractConnectionPool.this);
-        try {
-          validate();
-        } catch (Exception e) {
-          logger.error("validation task failed for {}", AbstractConnectionPool.this);
-        }
-        logger.debug("end validate task for {}", AbstractConnectionPool.this);
-      },
-      getPoolConfig().getValidatePeriod().toMillis(),
-      getPoolConfig().getValidatePeriod().toMillis(),
-      TimeUnit.MILLISECONDS);
-    logger.debug("validate pool task scheduled for {}", this);
+    if (getPoolConfig().isValidatePeriodically()) {
+      poolExecutor.scheduleAtFixedRate(
+        () -> {
+          logger.debug("begin validate task for {}", AbstractConnectionPool.this);
+          try {
+            validate();
+          } catch (Exception e) {
+            logger.error("validation task failed for {}", AbstractConnectionPool.this);
+          }
+          logger.debug("end validate task for {}", AbstractConnectionPool.this);
+        },
+        getValidator().getValidatePeriod().toMillis(),
+        getValidator().getValidatePeriod().toMillis(),
+        TimeUnit.MILLISECONDS);
+      logger.debug("validate pool task scheduled for {}", this);
+    }
 
     initialized = true;
     logger.info("pool initialized {}", this);
@@ -404,8 +400,6 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
    *
    * @throws  PoolException  if this operation fails
    * @throws  BlockingTimeoutException  if this pool is configured with a block time and it occurs
-   * @throws  PoolInterruptedException  if this pool is configured with a block time and the current thread is
-   *                                    interrupted
    * @throws  IllegalStateException  if this pool has not been initialized
    */
   @Override
@@ -629,9 +623,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
    *
    * @param  pc  connection
    *
-   * @throws  PoolException  if this method fails
-   * @throws  ActivationException  if the connection cannot be activated
-   * @throws  ValidationException  if the connection cannot be validated
+   * @throws  PoolException  if activation or validation fails
    */
   protected void activateAndValidateConnection(final PooledConnectionProxy pc)
     throws PoolException
@@ -639,12 +631,12 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     if (!activate(pc.getConnection())) {
       logger.warn("connection failed activation: {}", pc);
       removeAvailableAndActiveConnection(pc);
-      throw new ActivationException("Activation of connection failed");
+      throw new PoolException("Activation of connection failed");
     }
     if (getPoolConfig().isValidateOnCheckOut() && !validate(pc.getConnection())) {
       logger.warn("connection failed check out validation: {}", pc);
       removeAvailableAndActiveConnection(pc);
-      throw new ValidationException("Validation of connection failed");
+      throw new PoolException("Validation of connection failed");
     }
   }
 
@@ -703,7 +695,7 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
           final Iterator<PooledConnectionProxy> connIter = available.iterator();
           for (int i = 0; i < numConnToPrune && currentPoolSize > minPoolSize; i++) {
             final PooledConnectionProxy pc = connIter.next();
-            if (getPruneStrategy().prune(pc)) {
+            if (getPruneStrategy().apply(pc)) {
               connIter.remove();
               pc.getConnection().close();
               logger.trace("destroyed connection: {}", pc);
@@ -738,61 +730,54 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     poolLock.lock();
     try {
       if (!available.isEmpty()) {
-        if (getPoolConfig().isValidatePeriodically()) {
-          logger.debug("validate available pool of size {} for {}", available.size(), this);
+        logger.debug("validate available pool of size {} for {}", available.size(), this);
 
-          final List<PooledConnectionProxy> remove = new ArrayList<>();
-          if (getPoolConfig().getValidateTimeout() == null) {
+        final List<PooledConnectionProxy> remove = new ArrayList<>();
+        if (getValidator().getValidateTimeout() == null) {
+          for (PooledConnectionProxy pc : available) {
+            logger.trace("validating {}", pc);
+            if (validate(pc.getConnection())) {
+              logger.trace("{} passed validation", pc);
+            } else {
+              logger.warn("{} failed validation", pc);
+              remove.add(pc);
+            }
+          }
+        } else {
+          final ExecutorService es = Executors.newCachedThreadPool();
+          try {
+            final Map<PooledConnectionProxy, Future<Boolean>> results = new HashMap<>(available.size());
             for (PooledConnectionProxy pc : available) {
               logger.trace("validating {}", pc);
-              if (validate(pc.getConnection())) {
-                logger.trace("{} passed validation", pc);
-              } else {
-                logger.warn("{} failed validation", pc);
-                remove.add(pc);
-              }
+              results.put(pc, es.submit(() -> validate(pc.getConnection())));
             }
-          } else {
-            final ExecutorService es = Executors.newCachedThreadPool();
-            try {
-              final Map<PooledConnectionProxy, Future<Boolean>> results = new HashMap<>(available.size());
-              for (PooledConnectionProxy pc : available) {
-                logger.trace("validating {}", pc);
-                results.put(pc, es.submit(() -> validate(pc.getConnection())));
+            for (Map.Entry<PooledConnectionProxy, Future<Boolean>> entry : results.entrySet()) {
+              final Future<Boolean> future = entry.getValue();
+              boolean validateResult = false;
+              try {
+                validateResult = future.get(
+                  getValidator().getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
+              } catch (Exception e) {
+                logger.debug("validating {} threw unexpected exception", entry.getKey(), e);
+                future.cancel(true);
               }
-              for (Map.Entry<PooledConnectionProxy, Future<Boolean>> entry : results.entrySet()) {
-                final Future<Boolean> future = entry.getValue();
-                boolean validateResult = false;
-                try {
-                  validateResult = future.get(getPoolConfig().getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
-                } catch (InterruptedException e) {
-                  logger.debug("validating {} interrupted", entry.getKey(), e);
-                  future.cancel(true);
-                } catch (ExecutionException e) {
-                  logger.debug("validating {} threw unexpected exception", entry.getKey(), e);
-                  future.cancel(true);
-                } catch (TimeoutException e) {
-                  logger.debug("validating {} timed out", entry.getKey(), e);
-                  future.cancel(true);
-                }
 
-                if (validateResult) {
-                  logger.trace("{} passed validation", entry.getKey());
-                } else {
-                  logger.warn("{} failed validation", entry.getKey());
-                  remove.add(entry.getKey());
-                }
+              if (validateResult) {
+                logger.trace("{} passed validation", entry.getKey());
+              } else {
+                logger.warn("{} failed validation", entry.getKey());
+                remove.add(entry.getKey());
               }
-            } finally {
-              es.shutdown();
             }
+          } finally {
+            es.shutdown();
           }
-          for (PooledConnectionProxy pc : remove) {
-            logger.trace("removing {} from the pool", pc);
-            available.remove(pc);
-            pc.getConnection().close();
-            logger.trace("destroyed connection: {}", pc);
-          }
+        }
+        for (PooledConnectionProxy pc : remove) {
+          logger.trace("removing {} from the pool", pc);
+          available.remove(pc);
+          pc.getConnection().close();
+          logger.trace("destroyed connection: {}", pc);
         }
       } else {
         logger.debug("no available connections, no validation performed for {}", this);

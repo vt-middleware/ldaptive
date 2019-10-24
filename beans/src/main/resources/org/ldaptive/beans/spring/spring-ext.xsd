@@ -228,6 +228,7 @@
     <xsd:attribute name="validateOnCheckOut" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="validatePeriodically" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="validatePeriod" type="xsd:string" use="optional" default="PT5M"/>
+    <xsd:attribute name="validateTimeout" type="xsd:string" use="optional" default="PT5S"/>
     <xsd:attribute name="prunePeriod" type="xsd:string" use="optional" default="PT5M"/>
     <xsd:attribute name="idleTime" type="xsd:string" use="optional" default="PT10M"/>
     <xsd:attribute name="disablePooling" type="xsd:string" use="optional" default="false"/>

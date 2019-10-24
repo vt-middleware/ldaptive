@@ -4,7 +4,9 @@ package org.ldaptive.props;
 import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
+import org.ldaptive.ConnectionValidator;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PoolConfig;
 
@@ -107,6 +109,31 @@ public final class BlockingConnectionPoolPropertySource extends AbstractProperty
     }
     final PoolConfigPropertySource pcPropSource = new PoolConfigPropertySource(pc, propertiesDomain, properties);
     pcPropSource.initialize();
+
+    ConnectionValidator cv = object.getValidator();
+    if (cv == null) {
+      cv = new SearchConnectionValidator();
+      final SearchConnectionValidatorPropertySource cvPropSource = new SearchConnectionValidatorPropertySource(
+        (SearchConnectionValidator) cv,
+        propertiesDomain,
+        properties);
+      cvPropSource.initialize();
+      object.setValidator(cv);
+    } else {
+      if (cv instanceof SearchConnectionValidator) {
+        final SearchConnectionValidatorPropertySource cvPropSource = new SearchConnectionValidatorPropertySource(
+          (SearchConnectionValidator) cv,
+          propertiesDomain,
+          properties);
+        cvPropSource.initialize();
+      } else {
+        final SimplePropertySource<ConnectionValidator> sPropSource = new SimplePropertySource<>(
+          cv,
+          propertiesDomain,
+          properties);
+        sPropSource.initialize();
+      }
+    }
   }
 
 

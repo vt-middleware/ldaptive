@@ -189,7 +189,6 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    *
    * @throws  PoolException  if this method fails
    * @throws  BlockingTimeoutException  if this pool is configured with a block time and it occurs
-   * @throws  PoolInterruptedException  if the current thread is interrupted
    */
   protected PooledConnectionProxy blockAvailableConnection()
     throws PoolException
@@ -217,7 +216,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       }
     } catch (InterruptedException e) {
       logger.error("waiting for available connection interrupted", e);
-      throw new PoolInterruptedException("Interrupted while waiting for an available connection", e);
+      throw new PoolException("Interrupted while waiting for an available connection", e);
     } finally {
       poolLock.unlock();
     }
