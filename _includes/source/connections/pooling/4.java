@@ -5,7 +5,7 @@ PooledConnectionFactory cf = PooledConnectionFactory.builder()
   .config(PoolConfig.builder()
     .validatePeriodically(true)
     .build())
-  .validator(new SearchValidator())
+  .validator(new SearchConnectionValidator())
   .build();
 cf.initialize();
 try {
