@@ -84,8 +84,8 @@ public class IdlePruneStrategy implements PruneStrategy
    */
   public void setPrunePeriod(final Duration period)
   {
-    if (period == null || period.isNegative()) {
-      throw new IllegalArgumentException("Prune period cannot be null or negative");
+    if (period == null || period.isNegative() || period.isZero()) {
+      throw new IllegalArgumentException("Prune period cannot be null, negative or zero");
     }
     prunePeriod = period;
   }

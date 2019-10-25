@@ -117,8 +117,8 @@ public class ConnectionConfig extends AbstractConfig
   public void setConnectTimeout(final Duration time)
   {
     checkImmutable();
-    if (time != null && time.isNegative()) {
-      throw new IllegalArgumentException("Connect timeout cannot be negative");
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Connect timeout cannot be null or negative");
     }
     logger.trace("setting connectTimeout: {}", time);
     connectTimeout = time;
@@ -144,8 +144,8 @@ public class ConnectionConfig extends AbstractConfig
   public void setResponseTimeout(final Duration time)
   {
     checkImmutable();
-    if (time != null && time.isNegative()) {
-      throw new IllegalArgumentException("Connect timeout cannot be negative");
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Connect timeout cannot be null or negative");
     }
     logger.trace("setting responseTimeout: {}", time);
     responseTimeout = time;
@@ -171,8 +171,8 @@ public class ConnectionConfig extends AbstractConfig
   public void setReconnectTimeout(final Duration time)
   {
     checkImmutable();
-    if (time != null && time.isNegative()) {
-      throw new IllegalArgumentException("Reconnect timeout cannot be negative");
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Reconnect timeout cannot be null or negative");
     }
     logger.trace("setting reconnectTimeout: {}", time);
     reconnectTimeout = time;
