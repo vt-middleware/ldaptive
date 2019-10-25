@@ -2,7 +2,7 @@
 package org.ldaptive.templates;
 
 import org.ldaptive.SearchFilter;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -232,6 +232,6 @@ public class SearchTemplatesTest
   @Test(groups = "templatestest", dataProvider = "template-data")
   public void format(final SearchTemplates templates, final Query query, final SearchFilter[] filters)
   {
-    AssertJUnit.assertArrayEquals(filters, templates.format(query));
+    Assert.assertEquals(templates.format(query), filters);
   }
 }

@@ -15,7 +15,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.TestUtils;
 import org.ldaptive.io.JsonReader;
 import org.ldaptive.io.JsonWriter;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -91,13 +91,13 @@ public class SearchServletTest extends AbstractTest
 
     final WebResponse response = sc.getResponse(request);
 
-    AssertJUnit.assertNotNull(response);
-    AssertJUnit.assertEquals("text/plain", response.getContentType());
+    Assert.assertNotNull(response);
+    Assert.assertEquals(response.getContentType(), "text/plain");
 
     final SearchResponse result = TestUtils.convertLdifToResult(response.getText());
     // ignore references for this test
     result.getReferences().clear();
-    AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    Assert.assertEquals(result, TestUtils.convertLdifToResult(expected));
   }
 
 
@@ -128,8 +128,8 @@ public class SearchServletTest extends AbstractTest
 
     final WebResponse response = sc.getResponse(request);
 
-    AssertJUnit.assertNotNull(response);
-    AssertJUnit.assertEquals("application/json", response.getContentType());
+    Assert.assertNotNull(response);
+    Assert.assertEquals(response.getContentType(), "application/json");
     // active directory uppercases CN in the DN
     final JsonReader reader = new JsonReader(
       new StringReader(
@@ -137,7 +137,7 @@ public class SearchServletTest extends AbstractTest
     final SearchResponse result = reader.read();
     // ignore references for this test
     result.getReferences().clear();
-    AssertJUnit.assertEquals(TestUtils.convertLdifToResult(ldif), result);
+    Assert.assertEquals(result, TestUtils.convertLdifToResult(ldif));
   }
 
 
@@ -167,11 +167,11 @@ public class SearchServletTest extends AbstractTest
 
     final WebResponse response = sc.getResponse(request);
 
-    AssertJUnit.assertNotNull(response);
-    AssertJUnit.assertEquals("text/plain", response.getContentType());
+    Assert.assertNotNull(response);
+    Assert.assertEquals(response.getContentType(), "text/plain");
 
     final SearchResponse result = TestUtils.convertLdifToResult(response.getText());
-    AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    Assert.assertEquals(result, TestUtils.convertLdifToResult(expected));
   }
 
 
@@ -208,12 +208,12 @@ public class SearchServletTest extends AbstractTest
 
     final WebResponse response = sc.getResponse(request);
 
-    AssertJUnit.assertNotNull(response);
-    AssertJUnit.assertEquals("application/json", response.getContentType());
+    Assert.assertNotNull(response);
+    Assert.assertEquals(response.getContentType(), "application/json");
     // active directory uppercases CN in the DN
-    AssertJUnit.assertEquals(
-      json,
-      response.getText().replaceAll("CN=", "cn=").replaceAll("OU=Test", "ou=test").replaceAll("DC=", "dc="));
+    Assert.assertEquals(
+      response.getText().replaceAll("CN=", "cn=").replaceAll("OU=Test", "ou=test").replaceAll("DC=", "dc="),
+      json);
   }
 
 
@@ -243,19 +243,19 @@ public class SearchServletTest extends AbstractTest
 
     WebResponse response = sc.getResponse(request);
 
-    AssertJUnit.assertNotNull(response);
-    AssertJUnit.assertEquals("text/plain", response.getContentType());
+    Assert.assertNotNull(response);
+    Assert.assertEquals(response.getContentType(), "text/plain");
 
     final SearchResponse result = TestUtils.convertLdifToResult(response.getText());
-    AssertJUnit.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    Assert.assertEquals(result, TestUtils.convertLdifToResult(expected));
 
     request = new PostMethodWebRequest("http://servlets.ldaptive.org/TemplatesLdifIgnoreSearch");
     request.setParameter("query", "df");
 
     response = sc.getResponse(request);
 
-    AssertJUnit.assertNotNull(response);
-    AssertJUnit.assertEquals("text/plain", response.getContentType());
-    AssertJUnit.assertEquals("", response.getText());
+    Assert.assertNotNull(response);
+    Assert.assertEquals(response.getContentType(), "text/plain");
+    Assert.assertEquals(response.getText(), "");
   }
 }

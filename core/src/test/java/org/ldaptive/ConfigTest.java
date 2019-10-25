@@ -8,7 +8,6 @@ import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -75,7 +74,7 @@ public class ConfigTest
           }
           Assert.fail("Should have thrown IllegalStateException for " + method);
         } catch (Exception e) {
-          AssertJUnit.assertEquals(IllegalStateException.class, e.getCause().getClass());
+          Assert.assertEquals(e.getCause().getClass(), IllegalStateException.class);
         }
       }
     }

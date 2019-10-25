@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -59,7 +59,7 @@ public class CompareOperationTest extends AbstractTest
     throws Exception
   {
     final CompareOperation compare = new CompareOperation(TestUtils.createConnectionFactory());
-    AssertJUnit.assertFalse(compare.execute(new CompareRequest(dn, "cn", "not-a-name")).isTrue());
-    AssertJUnit.assertTrue(compare.execute(new CompareRequest(dn, attrName, attrValue)).isTrue());
+    Assert.assertFalse(compare.execute(new CompareRequest(dn, "cn", "not-a-name")).isTrue());
+    Assert.assertTrue(compare.execute(new CompareRequest(dn, attrName, attrValue)).isTrue());
   }
 }

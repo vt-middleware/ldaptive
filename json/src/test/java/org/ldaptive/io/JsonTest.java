@@ -7,7 +7,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -137,7 +137,7 @@ public class JsonTest
   {
     final StringWriter writer = new StringWriter();
     (new JsonWriter(writer)).write(result);
-    AssertJUnit.assertEquals(json, writer.toString());
+    Assert.assertEquals(writer.toString(), json);
   }
 
 
@@ -152,6 +152,6 @@ public class JsonTest
     throws Exception
   {
     final StringReader reader = new StringReader(json);
-    AssertJUnit.assertEquals(result, (new JsonReader(reader)).read());
+    Assert.assertEquals(result, (new JsonReader(reader)).read());
   }
 }

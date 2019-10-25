@@ -42,7 +42,7 @@ import org.ldaptive.referral.DefaultReferralConnectionFactory;
 import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
 import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -228,7 +228,7 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new SearchFilter(filter, filterParameters.split("\\|")))
         .attributes(ReturnAttributes.NONE.value()).build());
-    AssertJUnit.assertTrue(result.getEntry().getAttributes().isEmpty());
+    Assert.assertTrue(result.getEntry().getAttributes().isEmpty());
 
     // test searching without handler
     result = search.execute(
@@ -246,9 +246,9 @@ public class SearchOperationTest extends AbstractTest
       returnAttrs.split("\\|"),
       new NoOpEntryHandler(), srh);
     // ignore the case of entryDN; some directories return those in mixed case
-    AssertJUnit.assertEquals(
-      0,
-      (new LdapEntryIgnoreCaseComparator("entryDN")).compare(entryDnResult.getEntry(), result.getEntry()));
+    Assert.assertEquals(
+      (new LdapEntryIgnoreCaseComparator("entryDN")).compare(entryDnResult.getEntry(), result.getEntry()),
+      0);
 
     // test that entry dn handler is no-op if attribute name conflicts
     srh.setDnAttributeName("givenName");
@@ -258,11 +258,11 @@ public class SearchOperationTest extends AbstractTest
       returnAttrs.split("\\|"),
       new NoOpEntryHandler(), srh);
     // ignore the case of entryDN; some directories return those in mixed case
-    AssertJUnit.assertEquals(
-      0,
+    Assert.assertEquals(
       (new LdapEntryIgnoreCaseComparator("entryDN")).compare(
         TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()));
+        result.getEntry()),
+      0);
   }
 
 
@@ -351,8 +351,8 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new SearchFilter(filter, filterParameters.split("\\|")))
         .attributes(ReturnAttributes.NONE.value()).build());
-    AssertJUnit.assertNotNull(result.getEntry());
-    AssertJUnit.assertTrue(result.getEntry().getAttributes().isEmpty());
+    Assert.assertNotNull(result.getEntry());
+    Assert.assertTrue(result.getEntry().getAttributes().isEmpty());
 
     // test searching, user attributes
     result = search.execute(
@@ -360,9 +360,9 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new SearchFilter(filter, filterParameters.split("\\|")))
         .attributes(ReturnAttributes.ALL_USER.value()).build());
-    AssertJUnit.assertNotNull(result.getEntry());
-    AssertJUnit.assertNotNull(result.getEntry().getAttribute("cn"));
-    AssertJUnit.assertNull(result.getEntry().getAttribute("createTimestamp"));
+    Assert.assertNotNull(result.getEntry());
+    Assert.assertNotNull(result.getEntry().getAttribute("cn"));
+    Assert.assertNull(result.getEntry().getAttribute("createTimestamp"));
 
     // test searching, operations attributes
     if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
@@ -379,9 +379,9 @@ public class SearchOperationTest extends AbstractTest
           .filter(new SearchFilter(filter, filterParameters.split("\\|")))
           .attributes(ReturnAttributes.ALL_OPERATIONAL.value()).build());
     }
-    AssertJUnit.assertNotNull(result.getEntry());
-    AssertJUnit.assertNull(result.getEntry().getAttribute("cn"));
-    AssertJUnit.assertNotNull(result.getEntry().getAttribute("createTimestamp"));
+    Assert.assertNotNull(result.getEntry());
+    Assert.assertNull(result.getEntry().getAttribute("cn"));
+    Assert.assertNotNull(result.getEntry().getAttribute("createTimestamp"));
 
     // test searching, all attributes
     if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
@@ -398,9 +398,9 @@ public class SearchOperationTest extends AbstractTest
           .filter(new SearchFilter(filter, filterParameters.split("\\|")))
           .attributes(ReturnAttributes.ALL.value()).build());
     }
-    AssertJUnit.assertNotNull(result.getEntry());
-    AssertJUnit.assertNotNull(result.getEntry().getAttribute("cn"));
-    AssertJUnit.assertNotNull(result.getEntry().getAttribute("createTimestamp"));
+    Assert.assertNotNull(result.getEntry());
+    Assert.assertNotNull(result.getEntry().getAttribute("cn"));
+    Assert.assertNotNull(result.getEntry().getAttribute("createTimestamp"));
   }
 
 
@@ -458,14 +458,14 @@ public class SearchOperationTest extends AbstractTest
       } while (cookie != null);
       // ignore the case of member and contactPerson;
       // some directories return those in mixed case
-      AssertJUnit.assertEquals(
-        0,
+      Assert.assertEquals(
         (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
           TestUtils.convertLdifToResult(expected),
-          pagedResults));
+          pagedResults),
+        0);
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     } finally {
       cf.close();
     }
@@ -522,11 +522,11 @@ public class SearchOperationTest extends AbstractTest
       }
       // ignore the case of member and contactPerson;
       // some directories return those in mixed case
-      AssertJUnit.assertEquals(
-        0,
+      Assert.assertEquals(
         (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
           TestUtils.convertLdifToResult(expected),
-          result));
+          result),
+        0);
       contextID =
         ((VirtualListViewResponseControl) result.getControl(VirtualListViewResponseControl.OID)).getContextID();
 
@@ -535,14 +535,14 @@ public class SearchOperationTest extends AbstractTest
       result = search.execute(request);
       // ignore the case of member and contactPerson;
       // some directories return those in mixed case
-      AssertJUnit.assertEquals(
-        0,
+      Assert.assertEquals(
         (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
           TestUtils.convertLdifToResult(expected),
-          result));
+          result),
+        0);
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
   }
 
@@ -586,7 +586,7 @@ public class SearchOperationTest extends AbstractTest
       // confirm sorted
       int i = 2;
       for (LdapEntry e : result.getEntries()) {
-        AssertJUnit.assertEquals(String.valueOf(2000 + i), e.getAttribute("uid").getStringValue());
+        Assert.assertEquals(e.getAttribute("uid").getStringValue(), String.valueOf(2000 + i));
         i++;
       }
 
@@ -598,12 +598,12 @@ public class SearchOperationTest extends AbstractTest
       // confirm sorted
       i = 5;
       for (LdapEntry e : result.getEntries()) {
-        AssertJUnit.assertEquals(String.valueOf(2000 + i), e.getAttribute("uid").getStringValue());
+        Assert.assertEquals(e.getAttribute("uid").getStringValue(), String.valueOf(2000 + i));
         i--;
       }
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
   }
 
@@ -637,8 +637,8 @@ public class SearchOperationTest extends AbstractTest
 
       // no authz
       SearchResponse response = search.execute(request);
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(1, response.entrySize());
+      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+      Assert.assertEquals(response.entrySize(), 1);
 
       // anonymous authz
       request.setControls(new ProxyAuthorizationControl("dn:"));
@@ -647,13 +647,13 @@ public class SearchOperationTest extends AbstractTest
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support this control");
       }
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(0, response.entrySize());
+      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+      Assert.assertEquals(response.entrySize(), 0);
 
       // authz denied
       request.setControls(new ProxyAuthorizationControl("dn:" + authzTo));
       response = search.execute(request);
-      AssertJUnit.assertEquals(ResultCode.AUTHORIZATION_DENIED, response.getResultCode());
+      Assert.assertEquals(response.getResultCode(), ResultCode.AUTHORIZATION_DENIED);
 
       // add authzTo
       final ModifyOperation modify = new ModifyOperation(TestUtils.createConnectionFactory());
@@ -664,12 +664,12 @@ public class SearchOperationTest extends AbstractTest
       addedAttribute = true;
 
       response = search.execute(request);
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(1, response.entrySize());
+      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+      Assert.assertEquals(response.entrySize(), 1);
 
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     } finally {
       if (addedAttribute) {
         try {
@@ -680,7 +680,7 @@ public class SearchOperationTest extends AbstractTest
               authzFrom,
               new AttributeModification(AttributeModification.Type.DELETE, new LdapAttribute("authzTo"))));
         } catch (LdapException e) {
-          AssertJUnit.fail(e.getMessage());
+          Assert.fail(e.getMessage());
         }
       }
     }
@@ -726,11 +726,11 @@ public class SearchOperationTest extends AbstractTest
 
     // ignore the case of member and contactPerson; some directories return
     // those in mixed case
-    AssertJUnit.assertEquals(
-      0,
+    Assert.assertEquals(
       (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
         TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()));
+        result.getEntry()),
+      0);
   }
 
 
@@ -769,11 +769,11 @@ public class SearchOperationTest extends AbstractTest
 
     // ignore the case of member and contactPerson; some directories return
     // those in mixed case
-    AssertJUnit.assertEquals(
-      0,
+    Assert.assertEquals(
       (new LdapEntryIgnoreCaseComparator("member")).compare(
         TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()));
+        result.getEntry()),
+      0);
   }
 
 
@@ -809,11 +809,11 @@ public class SearchOperationTest extends AbstractTest
     final SearchResponse result = search.execute(sr);
     // ignore the case of member and contactPerson; some directories return
     // those in mixed case
-    AssertJUnit.assertEquals(
-      0,
+    Assert.assertEquals(
       (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
         TestUtils.convertLdifToResult(expected).getEntry(),
-        SearchResponse.merge(result).getEntry()));
+        SearchResponse.merge(result).getEntry()),
+      0);
   }
 
 
@@ -853,11 +853,11 @@ public class SearchOperationTest extends AbstractTest
     final SearchResponse result = search.execute(sr);
     // ignore the case of member and contactPerson; some directories return
     // those in mixed case
-    AssertJUnit.assertEquals(
-      0,
+    Assert.assertEquals(
       (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
         TestUtils.convertLdifToResult(expected).getEntry(),
-        SearchResponse.merge(result).getEntry()));
+        SearchResponse.merge(result).getEntry()),
+      0);
   }
 
 
@@ -931,26 +931,26 @@ public class SearchOperationTest extends AbstractTest
       .binary(returnAttr).build();
 
     SearchResponse result = search.execute(request);
-    AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
-    AssertJUnit.assertEquals(base64Value, result.getEntry().getAttribute().getStringValue());
+    Assert.assertTrue(result.getEntry().getAttribute().isBinary());
+    Assert.assertEquals(result.getEntry().getAttribute().getStringValue(), base64Value);
 
     request = SearchRequest.builder().dn(dn).filter(new SearchFilter(filter)).attributes("sn").build();
     result = search.execute(request);
-    AssertJUnit.assertFalse(result.getEntry().getAttribute().isBinary());
-    AssertJUnit.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
+    Assert.assertFalse(result.getEntry().getAttribute().isBinary());
+    Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
 
     request = SearchRequest.builder().dn(dn).filter(new SearchFilter(filter)).attributes("sn").binary("sn").build();
     result = search.execute(request);
-    AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
-    AssertJUnit.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
+    Assert.assertTrue(result.getEntry().getAttribute().isBinary());
+    Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
 
     request = SearchRequest.builder()
       .dn(dn)
       .filter(new SearchFilter(filter))
       .attributes("userCertificate;binary").build();
     result = search.execute(request);
-    AssertJUnit.assertTrue(result.getEntry().getAttribute().isBinary());
-    AssertJUnit.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
+    Assert.assertTrue(result.getEntry().getAttribute().isBinary());
+    Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
   }
 
 
@@ -1109,11 +1109,11 @@ public class SearchOperationTest extends AbstractTest
       throw new UnsupportedOperationException("LDAP server does not support this DN syntax");
     }
     // ignore the case of member; some directories return it in mixed case
-    AssertJUnit.assertEquals(
-      0,
+    Assert.assertEquals(
       (new LdapEntryIgnoreCaseComparator("member")).compare(
         TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()));
+        result.getEntry()),
+      0);
   }
 
 
@@ -1146,13 +1146,13 @@ public class SearchOperationTest extends AbstractTest
 
     final SearchResponse response = search.execute(sr);
     final GetStatsControl ctrl = (GetStatsControl) response.getControl(GetStatsControl.OID);
-    AssertJUnit.assertTrue(ctrl.getStatistics().size() > 1);
+    Assert.assertTrue(ctrl.getStatistics().size() > 1);
 
     final LdapAttribute whenCreated = response.getEntry().getAttribute("whenCreated");
-    AssertJUnit.assertNotNull(whenCreated.getValue(new GeneralizedTimeValueTranscoder().decoder()));
+    Assert.assertNotNull(whenCreated.getValue(new GeneralizedTimeValueTranscoder().decoder()));
 
     final LdapAttribute whenChanged = response.getEntry().getAttribute("whenChanged");
-    AssertJUnit.assertNotNull(whenChanged.getValue(new GeneralizedTimeValueTranscoder().decoder()));
+    Assert.assertNotNull(whenChanged.getValue(new GeneralizedTimeValueTranscoder().decoder()));
   }
 
 
@@ -1199,7 +1199,7 @@ public class SearchOperationTest extends AbstractTest
       search.execute(sr);
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
   }
 
@@ -1343,13 +1343,13 @@ public class SearchOperationTest extends AbstractTest
     request.setFilter(new SearchFilter("(uugid=*)"));
 
     SearchResponse response = search.execute(request);
-    AssertJUnit.assertEquals(resultsSize, response.entrySize());
-    AssertJUnit.assertEquals(ResultCode.SIZE_LIMIT_EXCEEDED, response.getResultCode());
+    Assert.assertEquals(response.entrySize(), resultsSize);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SIZE_LIMIT_EXCEEDED);
 
     request.setFilter(new SearchFilter(filter));
     response = search.execute(request);
-    AssertJUnit.assertEquals(resultsSize, response.entrySize());
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.entrySize(), resultsSize);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
@@ -1388,10 +1388,10 @@ public class SearchOperationTest extends AbstractTest
       .build();
     final SearchOperation search = new SearchOperation(cf);
     SearchResponse response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() == 0);
-    AssertJUnit.assertEquals(1, response.getReferralURLs().length);
-    AssertJUnit.assertEquals("ldap://localhost:389/ou=people,dc=vt,dc=edu??one", response.getReferralURLs()[0]);
+    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
+    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertEquals(response.getReferralURLs().length, 1);
+    Assert.assertEquals(response.getReferralURLs()[0], "ldap://localhost:389/ou=people,dc=vt,dc=edu??one");
 
     search.setSearchResultHandlers(new FollowSearchReferralHandler(url -> {
       final ConnectionConfig refConfig = ConnectionConfig.copy(cc);
@@ -1399,9 +1399,9 @@ public class SearchOperationTest extends AbstractTest
       return new DefaultConnectionFactory(refConfig);
     }));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() > 0);
-    AssertJUnit.assertTrue(response.getReferralURLs().length == 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.getEntries().size() > 0);
+    Assert.assertTrue(response.getReferralURLs().length == 0);
 
     // chase referrals
 
@@ -1412,45 +1412,48 @@ public class SearchOperationTest extends AbstractTest
     request.setFilter(new SearchFilter("uupid=dhawes"));
     search.setSearchResultHandlers(new FollowSearchReferralHandler());
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() > 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.getEntries().size() > 0);
 
     // limit 0
     search.setSearchResultHandlers(new FollowSearchReferralHandler(0));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() == 0);
-    AssertJUnit.assertEquals("ldap://ldap-test:10389/cn=1,ou=1,ou=referrals-chase,dc=vt,dc=edu??sub",
-      response.getReferralURLs()[0]);
+    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
+    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertEquals(
+      response.getReferralURLs()[0],
+      "ldap://ldap-test:10389/cn=1,ou=1,ou=referrals-chase,dc=vt,dc=edu??sub");
 
     // limit 1
     search.setSearchResultHandlers(new FollowSearchReferralHandler(1));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() == 0);
-    AssertJUnit.assertEquals("ldap://ldap-test:10389/cn=2,ou=2,ou=referrals-chase,dc=vt,dc=edu??sub",
-      response.getReferralURLs()[0]);
+    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
+    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertEquals(
+      response.getReferralURLs()[0],
+      "ldap://ldap-test:10389/cn=2,ou=2,ou=referrals-chase,dc=vt,dc=edu??sub");
 
     // limit 2
     search.setSearchResultHandlers(new FollowSearchReferralHandler(2));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() == 0);
-    AssertJUnit.assertEquals("ldap://ldap-test:10389/cn=3,ou=3,ou=referrals-chase,dc=vt,dc=edu??sub",
-      response.getReferralURLs()[0]);
+    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
+    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertEquals(
+      response.getReferralURLs()[0],
+      "ldap://ldap-test:10389/cn=3,ou=3,ou=referrals-chase,dc=vt,dc=edu??sub");
 
     // limit 3
     search.setSearchResultHandlers(new FollowSearchReferralHandler(3));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.REFERRAL, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() == 0);
-    AssertJUnit.assertEquals("ldap://ldap-test:10389/ou=people,dc=vt,dc=edu??sub", response.getReferralURLs()[0]);
+    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
+    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertEquals(response.getReferralURLs()[0], "ldap://ldap-test:10389/ou=people,dc=vt,dc=edu??sub");
 
     // limit 4
     search.setSearchResultHandlers(new FollowSearchReferralHandler(4));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() > 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.getEntries().size() > 0);
   }
 
 
@@ -1492,12 +1495,12 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     search.setReferenceHandlers((SearchReferenceHandler) uris -> refs.addAll(Arrays.asList(uris)));
     SearchResponse response = search.execute(request);
-    AssertJUnit.assertTrue(response.entrySize() > 0);
-    AssertJUnit.assertTrue(refs.size() > 0);
+    Assert.assertTrue(response.entrySize() > 0);
+    Assert.assertTrue(refs.size() > 0);
     for (String r : refs) {
-      AssertJUnit.assertNotNull(r);
+      Assert.assertNotNull(r);
     }
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
 
     refs.clear();
     final FollowSearchResultReferenceHandler srh = new FollowSearchResultReferenceHandler(
@@ -1509,9 +1512,9 @@ public class SearchOperationTest extends AbstractTest
       });
     search.setSearchResultHandlers(srh);
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.entrySize() > 0);
-    AssertJUnit.assertTrue(response.referenceSize() == 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.entrySize() > 0);
+    Assert.assertTrue(response.referenceSize() == 0);
 
     // chase search references
 
@@ -1522,42 +1525,42 @@ public class SearchOperationTest extends AbstractTest
     request.setFilter(new SearchFilter("uupid=dhawes"));
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler());
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() > 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.getEntries().size() > 0);
 
     // limit 0
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(0));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() == 0);
-    AssertJUnit.assertFalse(response.getReferences().isEmpty());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertFalse(response.getReferences().isEmpty());
     for (SearchResultReference s : response.getReferences()) {
-      AssertJUnit.assertEquals("ldap://ldap-test:10389/ou=1,ou=references-chase,dc=vt,dc=edu??sub", s.getUris()[0]);
+      Assert.assertEquals(s.getUris()[0], "ldap://ldap-test:10389/ou=1,ou=references-chase,dc=vt,dc=edu??sub");
     }
 
     // limit 1
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(1));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.getEntries().size() == 0);
 
     // limit 2
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(2));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.getEntries().size() == 0);
 
     // limit 3
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(3));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() == 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.getEntries().size() == 0);
 
     // limit 4
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(4));
     response = search.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.getEntries().size() > 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.getEntries().size() > 0);
   }
 
 
@@ -1601,18 +1604,18 @@ public class SearchOperationTest extends AbstractTest
     search.setEntryHandlers(new ObjectSidHandler(), new ObjectGuidHandler());
     search.setReferenceHandlers((SearchReferenceHandler) uris -> refs.addAll(Arrays.asList(uris)));
     SearchResponse response = search.execute(request);
-    AssertJUnit.assertTrue(response.entrySize() > 0);
-    AssertJUnit.assertTrue(refs.size() > 0);
+    Assert.assertTrue(response.entrySize() > 0);
+    Assert.assertTrue(refs.size() > 0);
     for (String r : refs) {
-      AssertJUnit.assertNotNull(r);
+      Assert.assertNotNull(r);
     }
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
 
     refs.clear();
     search.setSearchResultHandlers(new FollowSearchReferralHandler(new DefaultReferralConnectionFactory(cc)));
     response = search.execute(request);
-    AssertJUnit.assertTrue(response.entrySize() > 0);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertTrue(response.entrySize() > 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
@@ -1664,9 +1667,9 @@ public class SearchOperationTest extends AbstractTest
     request.setBinaryAttributes("jpegPhoto");
 
     final SearchResponse result = search.execute(request);
-    AssertJUnit.assertEquals(
-      TestUtils.convertStringToEntry(dn, results).getAttribute("jpegPhoto").getStringValue(),
-      result.getEntry().getAttribute("jpegPhoto").getStringValue());
+    Assert.assertEquals(
+      result.getEntry().getAttribute("jpegPhoto").getStringValue(),
+      TestUtils.convertStringToEntry(dn, results).getAttribute("jpegPhoto").getStringValue());
   }
 
 
@@ -1678,7 +1681,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest("", new String[] {"supportedSASLMechanisms"}));
-    AssertJUnit.assertTrue(result.getEntry().getAttributes().size() > 0);
+    Assert.assertTrue(result.getEntry().getAttributes().size() > 0);
   }
 
 
@@ -1690,7 +1693,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest("", new String[] {"supportedcontrol"}));
-    AssertJUnit.assertTrue(result.getEntry().getAttributes().size() > 0);
+    Assert.assertTrue(result.getEntry().getAttributes().size() > 0);
   }
 
 
@@ -1780,7 +1783,7 @@ public class SearchOperationTest extends AbstractTest
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
   }
 
@@ -1826,7 +1829,7 @@ public class SearchOperationTest extends AbstractTest
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
   }
 
@@ -1887,7 +1890,7 @@ public class SearchOperationTest extends AbstractTest
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     } finally {
       System.clearProperty("sun.security.krb5.debug");
       System.clearProperty("java.security.auth.login.config");
@@ -1988,7 +1991,7 @@ public class SearchOperationTest extends AbstractTest
       final Collection<SearchResponse> results = op.execute(
         new SearchFilter[] {new SearchFilter(filter, filterParameters.split("\\|"))},
         returnAttrs.split("\\|"));
-      AssertJUnit.assertEquals(1, results.size());
+      Assert.assertEquals(results.size(), 1);
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), results.iterator().next());
     } finally {
       cf.close();

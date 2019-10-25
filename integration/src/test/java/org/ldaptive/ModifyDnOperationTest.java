@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -62,27 +62,27 @@ public class ModifyDnOperationTest extends AbstractTest
     throws Exception
   {
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
-    AssertJUnit.assertTrue(search.execute(SearchRequest.objectScopeSearchRequest(oldDn)).entrySize() > 0);
+    Assert.assertTrue(search.execute(SearchRequest.objectScopeSearchRequest(oldDn)).entrySize() > 0);
 
     final ModifyDnOperation modifyDn = new ModifyDnOperation(TestUtils.createConnectionFactory());
     ModifyDnResponse response = modifyDn.execute(new ModifyDnRequest(oldDn, DnParser.substring(newDn, 0, 1), true));
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     modifyDnLdapEntry = search.execute(SearchRequest.objectScopeSearchRequest(newDn)).getEntry();
-    AssertJUnit.assertNotNull(modifyDnLdapEntry);
+    Assert.assertNotNull(modifyDnLdapEntry);
     try {
       final SearchResponse r = search.execute(SearchRequest.objectScopeSearchRequest(oldDn));
-      AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
+      Assert.assertEquals(r.getResultCode(), ResultCode.NO_SUCH_OBJECT);
     } catch (Exception e) {
-      AssertJUnit.fail("Should have thrown LdapException, threw " + e);
+      Assert.fail("Should have thrown LdapException, threw " + e);
     }
     response = modifyDn.execute(new ModifyDnRequest(newDn, DnParser.substring(oldDn, 0, 1), true));
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(search.execute(SearchRequest.objectScopeSearchRequest(oldDn)).entrySize() > 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(search.execute(SearchRequest.objectScopeSearchRequest(oldDn)).entrySize() > 0);
     try {
       final SearchResponse r = search.execute(SearchRequest.objectScopeSearchRequest(newDn));
-      AssertJUnit.assertEquals(ResultCode.NO_SUCH_OBJECT, r.getResultCode());
+      Assert.assertEquals(r.getResultCode(), ResultCode.NO_SUCH_OBJECT);
     } catch (Exception e) {
-      AssertJUnit.fail("Should have thrown LdapException, threw " + e);
+      Assert.fail("Should have thrown LdapException, threw " + e);
     }
   }
 }

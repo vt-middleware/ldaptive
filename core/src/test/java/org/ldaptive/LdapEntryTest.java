@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.Set;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -189,10 +188,10 @@ public class LdapEntryTest
     le.addAttributes(attr2, attr1);
 
     final LdapAttribute[] attrs = le.getAttributes().toArray(LdapAttribute[]::new);
-    AssertJUnit.assertEquals(attr2, attrs[0]);
-    AssertJUnit.assertEquals(attr1, attrs[1]);
+    Assert.assertEquals(attr2, attrs[0]);
+    Assert.assertEquals(attr1, attrs[1]);
     le.clear();
-    AssertJUnit.assertEquals(0, le.size());
+    Assert.assertEquals(le.size(), 0);
   }
 
 
@@ -204,14 +203,14 @@ public class LdapEntryTest
   {
     final LdapAttribute attr1 = new LdapAttribute("givenName", "John");
     final LdapEntry le = LdapEntry.builder().dn("uid=1").attributes(attr1).build();
-    AssertJUnit.assertEquals(attr1, le.getAttribute());
-    AssertJUnit.assertEquals(attr1, le.getAttribute("givenName"));
-    AssertJUnit.assertEquals(attr1, le.getAttribute("givenname"));
-    AssertJUnit.assertEquals("givenName", le.getAttributeNames()[0]);
-    AssertJUnit.assertEquals(1, le.size());
-    AssertJUnit.assertEquals(le, LdapEntry.builder().dn("uid=1").attributes(attr1).build());
+    Assert.assertEquals(attr1, le.getAttribute());
+    Assert.assertEquals(attr1, le.getAttribute("givenName"));
+    Assert.assertEquals(attr1, le.getAttribute("givenname"));
+    Assert.assertEquals("givenName", le.getAttributeNames()[0]);
+    Assert.assertEquals(le.size(), 1);
+    Assert.assertEquals(le, LdapEntry.builder().dn("uid=1").attributes(attr1).build());
     le.clear();
-    AssertJUnit.assertEquals(0, le.size());
+    Assert.assertEquals(le.size(), 0);
   }
 
 
@@ -224,17 +223,17 @@ public class LdapEntryTest
     final LdapAttribute attr1 = new LdapAttribute("givenName", "John");
     final LdapAttribute attr2 = new LdapAttribute("sn", "Doe");
     final LdapEntry le = LdapEntry.builder().dn("uid=1").attributes(attr2, attr1).build();
-    AssertJUnit.assertEquals(attr1, le.getAttribute("givenName"));
-    AssertJUnit.assertEquals(attr1, le.getAttribute("GIVENNAME"));
-    AssertJUnit.assertEquals(attr2, le.getAttribute("sn"));
-    AssertJUnit.assertEquals(attr2, le.getAttribute("SN"));
-    AssertJUnit.assertEquals(2, le.getAttributeNames().length);
-    AssertJUnit.assertEquals(2, le.size());
-    AssertJUnit.assertEquals(le, LdapEntry.builder().dn("uid=1").attributes(attr1, attr2).build());
+    Assert.assertEquals(attr1, le.getAttribute("givenName"));
+    Assert.assertEquals(attr1, le.getAttribute("GIVENNAME"));
+    Assert.assertEquals(attr2, le.getAttribute("sn"));
+    Assert.assertEquals(attr2, le.getAttribute("SN"));
+    Assert.assertEquals(le.getAttributeNames().length, 2);
+    Assert.assertEquals(le.size(), 2);
+    Assert.assertEquals(le, LdapEntry.builder().dn("uid=1").attributes(attr1, attr2).build());
     le.removeAttributes(attr2);
-    AssertJUnit.assertEquals(1, le.size());
+    Assert.assertEquals(le.size(), 1);
     le.clear();
-    AssertJUnit.assertEquals(0, le.size());
+    Assert.assertEquals(le.size(), 0);
   }
 
 
@@ -250,9 +249,9 @@ public class LdapEntryTest
     final LdapEntry le = LdapEntry.builder().dn("uid=1").attributes(s).build();
     le.addAttributes(attr2);
     le.removeAttribute("GIVENNAME");
-    AssertJUnit.assertEquals(1, le.size());
+    Assert.assertEquals(le.size(), 1);
     le.clear();
-    AssertJUnit.assertEquals(0, le.size());
+    Assert.assertEquals(le.size(), 0);
   }
 
 

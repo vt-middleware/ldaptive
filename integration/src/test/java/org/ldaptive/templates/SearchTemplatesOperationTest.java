@@ -11,7 +11,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.TestUtils;
 import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.pool.PoolConfig;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -128,8 +128,8 @@ public class SearchTemplatesOperationTest extends AbstractTest
     q.setReturnAttributes(testLdapEntry.getAttributeNames());
 
     final SearchResponse sr = searchOperation.execute(q);
-    AssertJUnit.assertNotNull(sr);
-    AssertJUnit.assertNotNull(sr.getEntry());
+    Assert.assertNotNull(sr);
+    Assert.assertNotNull(sr.getEntry());
     TestUtils.assertEquals(testLdapEntry, sr.getEntry());
   }
 }

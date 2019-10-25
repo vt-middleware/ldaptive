@@ -22,7 +22,7 @@ import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -72,12 +72,12 @@ public class NamespaceHandlerTest
   @Test(groups = "beans-spring")
   public void testSpringWiring()
   {
-    AssertJUnit.assertEquals(1, context.getBeansOfType(PooledConnectionFactory.class).size());
-    AssertJUnit.assertEquals(1, context.getBeansOfType(DefaultConnectionFactory.class).size());
-    AssertJUnit.assertEquals(1, context.getBeansOfType(SearchOperation.class).size());
-    AssertJUnit.assertEquals(1, context.getBeansOfType(SearchOperationWorker.class).size());
-    AssertJUnit.assertEquals(1, context.getBeansOfType(ConnectionConfig.class).size());
-    AssertJUnit.assertEquals(1, context.getBeansOfType(Authenticator.class).size());
+    Assert.assertEquals(context.getBeansOfType(PooledConnectionFactory.class).size(), 1);
+    Assert.assertEquals(context.getBeansOfType(DefaultConnectionFactory.class).size(), 1);
+    Assert.assertEquals(context.getBeansOfType(SearchOperation.class).size(), 1);
+    Assert.assertEquals(context.getBeansOfType(SearchOperationWorker.class).size(), 1);
+    Assert.assertEquals(context.getBeansOfType(ConnectionConfig.class).size(), 1);
+    Assert.assertEquals(context.getBeansOfType(Authenticator.class).size(), 1);
   }
 
 
@@ -88,7 +88,7 @@ public class NamespaceHandlerTest
   public void testConnectionConfig()
   {
     final ConnectionConfig config = context.getBean("connection-config", ConnectionConfig.class);
-    AssertJUnit.assertNotNull(config);
+    Assert.assertNotNull(config);
     testConnectionConfig(config, null);
   }
 
@@ -100,7 +100,7 @@ public class NamespaceHandlerTest
   public void testSearchOperation()
   {
     final SearchOperation operation = context.getBean("search-operation", SearchOperation.class);
-    AssertJUnit.assertNotNull(operation);
+    Assert.assertNotNull(operation);
     testSearchRequest(operation.getRequest());
   }
 
@@ -114,7 +114,7 @@ public class NamespaceHandlerTest
     final PooledConnectionFactory pooledConnectionFactory = context.getBean(
       "pooled-connection-factory",
       PooledConnectionFactory.class);
-    AssertJUnit.assertNotNull(pooledConnectionFactory);
+    Assert.assertNotNull(pooledConnectionFactory);
     testPooledConnectionFactory(pooledConnectionFactory, null);
   }
 
@@ -128,7 +128,7 @@ public class NamespaceHandlerTest
     final DefaultConnectionFactory connectionFactory = context.getBean(
       "connection-factory",
       DefaultConnectionFactory.class);
-    AssertJUnit.assertNotNull(connectionFactory);
+    Assert.assertNotNull(connectionFactory);
     testConnectionConfig(connectionFactory.getConnectionConfig(), null);
   }
 
@@ -141,7 +141,7 @@ public class NamespaceHandlerTest
   {
     final SearchOperationWorker operation = context.getBean(
       "search-operation-worker", SearchOperationWorker.class);
-    AssertJUnit.assertNotNull(operation);
+    Assert.assertNotNull(operation);
     testSearchRequest(operation.getOperation().getRequest());
   }
 
@@ -154,18 +154,18 @@ public class NamespaceHandlerTest
    */
   private void testPooledConnectionFactory(final PooledConnectionFactory factory, final AuthenticatorType authType)
   {
-    AssertJUnit.assertEquals(Duration.ofSeconds(3), factory.getBlockWaitTime());
-    AssertJUnit.assertFalse(factory.getFailFastInitialize());
-    AssertJUnit.assertEquals(Duration.ofMinutes(5), factory.getPruneStrategy().getPrunePeriod());
-    AssertJUnit.assertEquals(Duration.ofMinutes(10), ((IdlePruneStrategy) factory.getPruneStrategy()).getIdleTime());
-    AssertJUnit.assertEquals(SearchConnectionValidator.class, factory.getValidator().getClass());
+    Assert.assertEquals(factory.getBlockWaitTime(), Duration.ofSeconds(3));
+    Assert.assertFalse(factory.getFailFastInitialize());
+    Assert.assertEquals(factory.getPruneStrategy().getPrunePeriod(), Duration.ofMinutes(5));
+    Assert.assertEquals(((IdlePruneStrategy) factory.getPruneStrategy()).getIdleTime(), Duration.ofMinutes(10));
+    Assert.assertEquals(factory.getValidator().getClass(), SearchConnectionValidator.class);
 
     final PoolConfig poolConfig = factory.getPoolConfig();
-    AssertJUnit.assertEquals(3, poolConfig.getMinPoolSize());
-    AssertJUnit.assertEquals(10, poolConfig.getMaxPoolSize());
-    AssertJUnit.assertEquals(Duration.ofMinutes(5), factory.getValidator().getValidatePeriod());
-    AssertJUnit.assertFalse(poolConfig.isValidateOnCheckOut());
-    AssertJUnit.assertTrue(poolConfig.isValidatePeriodically());
+    Assert.assertEquals(poolConfig.getMinPoolSize(), 3);
+    Assert.assertEquals(poolConfig.getMaxPoolSize(), 10);
+    Assert.assertEquals(factory.getValidator().getValidatePeriod(), Duration.ofMinutes(5));
+    Assert.assertFalse(poolConfig.isValidateOnCheckOut());
+    Assert.assertTrue(poolConfig.isValidatePeriodically());
 
     testConnectionConfig(factory.getConnectionConfig(), authType);
   }
@@ -179,43 +179,37 @@ public class NamespaceHandlerTest
    */
   private void testConnectionConfig(final ConnectionConfig connectionConfig, final AuthenticatorType authType)
   {
-    AssertJUnit.assertNotNull(connectionConfig.getLdapUrl());
-    AssertJUnit.assertTrue(connectionConfig.getUseStartTLS());
-    AssertJUnit.assertEquals(Duration.ofSeconds(3), connectionConfig.getConnectTimeout());
-    AssertJUnit.assertEquals(Duration.ofSeconds(7), connectionConfig.getResponseTimeout());
+    Assert.assertNotNull(connectionConfig.getLdapUrl());
+    Assert.assertTrue(connectionConfig.getUseStartTLS());
+    Assert.assertEquals(connectionConfig.getConnectTimeout(), Duration.ofSeconds(3));
+    Assert.assertEquals(connectionConfig.getResponseTimeout(), Duration.ofSeconds(7));
     final CredentialConfig credentialConfig =  connectionConfig.getSslConfig().getCredentialConfig();
     if (credentialConfig instanceof X509CredentialConfig) {
-      AssertJUnit.assertNotNull(((X509CredentialConfig) credentialConfig).getTrustCertificates());
+      Assert.assertNotNull(((X509CredentialConfig) credentialConfig).getTrustCertificates());
     } else if (credentialConfig instanceof KeyStoreCredentialConfig) {
-      AssertJUnit.assertNotNull(((KeyStoreCredentialConfig) credentialConfig).getTrustStore());
+      Assert.assertNotNull(((KeyStoreCredentialConfig) credentialConfig).getTrustStore());
     }
 
     if (authType != null) {
       final BindConnectionInitializer ci = (BindConnectionInitializer) connectionConfig.getConnectionInitializers()[0];
       switch(authType) {
       case ANON_SEARCH:
-        AssertJUnit.assertNull(ci);
+      case DIRECT:
+        Assert.assertNull(ci);
         break;
       case BIND_SEARCH:
-        AssertJUnit.assertNotNull(ci);
-        AssertJUnit.assertNotNull(ci.getBindDn());
-        AssertJUnit.assertNotNull(ci.getBindCredential());
+      case AD:
+        Assert.assertNotNull(ci);
+        Assert.assertNotNull(ci.getBindDn());
+        Assert.assertNotNull(ci.getBindCredential());
         break;
       case SASL_SEARCH:
-        AssertJUnit.assertNotNull(ci);
+        Assert.assertNotNull(ci);
         final DigestMD5Config sc = (DigestMD5Config) ci.getBindSaslConfig();
-        AssertJUnit.assertNotNull(sc);
-        AssertJUnit.assertEquals(Mechanism.DIGEST_MD5, sc.getMechanism());
-        AssertJUnit.assertEquals(QualityOfProtection.AUTH_INT, sc.getQualityOfProtection());
-        AssertJUnit.assertEquals(SecurityStrength.MEDIUM, sc.getSecurityStrength());
-        break;
-      case DIRECT:
-        AssertJUnit.assertNull(ci);
-        break;
-      case AD:
-        AssertJUnit.assertNotNull(ci);
-        AssertJUnit.assertNotNull(ci.getBindDn());
-        AssertJUnit.assertNotNull(ci.getBindCredential());
+        Assert.assertNotNull(sc);
+        Assert.assertEquals(sc.getMechanism(), Mechanism.DIGEST_MD5);
+        Assert.assertEquals(sc.getQualityOfProtection(), QualityOfProtection.AUTH_INT);
+        Assert.assertEquals(sc.getSecurityStrength(), SecurityStrength.MEDIUM);
         break;
       default:
         throw new IllegalStateException("Unknown type");
@@ -231,13 +225,13 @@ public class NamespaceHandlerTest
    */
   private void testSearchRequest(final SearchRequest request)
   {
-    AssertJUnit.assertNotNull(request.getBaseDn());
-    AssertJUnit.assertTrue(request.getBaseDn().length() > 0);
-    AssertJUnit.assertNotNull(request.getFilter());
-    AssertJUnit.assertTrue(request.getReturnAttributes().length > 0);
-    AssertJUnit.assertEquals(SearchScope.ONELEVEL, request.getSearchScope());
-    AssertJUnit.assertEquals(Duration.ofSeconds(5), request.getTimeLimit());
-    AssertJUnit.assertEquals(10, request.getSizeLimit());
-    AssertJUnit.assertTrue(request.getBinaryAttributes().length > 0);
+    Assert.assertNotNull(request.getBaseDn());
+    Assert.assertTrue(request.getBaseDn().length() > 0);
+    Assert.assertNotNull(request.getFilter());
+    Assert.assertTrue(request.getReturnAttributes().length > 0);
+    Assert.assertEquals(request.getSearchScope(), SearchScope.ONELEVEL);
+    Assert.assertEquals(request.getTimeLimit(), Duration.ofSeconds(5));
+    Assert.assertEquals(request.getSizeLimit(), 10);
+    Assert.assertTrue(request.getBinaryAttributes().length > 0);
   }
 }

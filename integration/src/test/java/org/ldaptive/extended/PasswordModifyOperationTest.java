@@ -10,7 +10,7 @@ import org.ldaptive.TestUtils;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -79,30 +79,30 @@ public class PasswordModifyOperationTest extends AbstractTest
 
     final Authenticator auth = TestUtils.createSSLDnAuthenticator();
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(oldPass)));
-    AssertJUnit.assertTrue(response.isSuccess());
+    Assert.assertTrue(response.isSuccess());
 
     final ExtendedOperation modify = new ExtendedOperation(TestUtils.createConnectionFactory());
     // invalid password
     final ExtendedResponse res = modify.execute(new PasswordModifyRequest(dn, INVALID_PASSWD, newPass));
-    AssertJUnit.assertEquals(ResultCode.UNWILLING_TO_PERFORM, res.getResultCode());
+    Assert.assertEquals(res.getResultCode(), ResultCode.UNWILLING_TO_PERFORM);
 
     // change password
     ExtendedResponse modifyResponse = modify.execute(new PasswordModifyRequest(dn, oldPass, newPass));
-    AssertJUnit.assertNotNull(modifyResponse);
-    AssertJUnit.assertNull(modifyResponse.getResponseValue());
+    Assert.assertNotNull(modifyResponse);
+    Assert.assertNull(modifyResponse.getResponseValue());
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(oldPass)));
-    AssertJUnit.assertFalse(response.isSuccess());
+    Assert.assertFalse(response.isSuccess());
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(newPass)));
-    AssertJUnit.assertTrue(response.isSuccess());
+    Assert.assertTrue(response.isSuccess());
 
     // generate password
     modifyResponse = modify.execute(new PasswordModifyRequest(dn));
-    AssertJUnit.assertNotNull(modifyResponse);
-    AssertJUnit.assertNotNull(modifyResponse.getResponseValue());
+    Assert.assertNotNull(modifyResponse);
+    Assert.assertNotNull(modifyResponse.getResponseValue());
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(newPass)));
-    AssertJUnit.assertFalse(response.isSuccess());
+    Assert.assertFalse(response.isSuccess());
     response = auth.authenticate(
       new AuthenticationRequest(dn, new Credential(PasswordModifyResponseParser.parse(modifyResponse))));
-    AssertJUnit.assertTrue(response.isSuccess());
+    Assert.assertTrue(response.isSuccess());
   }
 }

@@ -6,7 +6,7 @@ import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -33,6 +33,6 @@ public class WhoAmIOperationTest extends AbstractTest
     final ExtendedResponse res = whoami.execute(new WhoAmIRequest());
     final BindConnectionInitializer ci =
       (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializers()[0];
-    AssertJUnit.assertEquals("dn:" + ci.getBindDn(), WhoAmIResponseParser.parse(res));
+    Assert.assertEquals(WhoAmIResponseParser.parse(res), "dn:" + ci.getBindDn());
   }
 }

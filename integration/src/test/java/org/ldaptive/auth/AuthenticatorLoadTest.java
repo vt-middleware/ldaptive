@@ -14,7 +14,7 @@ import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.ad.extended.FastBindConnectionInitializer;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -347,7 +347,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     // test auth with fast bind
     final AuthenticationResponse response = singleADFastBind.authenticate(
       new AuthenticationRequest(user, new Credential(credential)));
-    AssertJUnit.assertTrue(response.isSuccess());
+    Assert.assertTrue(response.isSuccess());
   }
 
 
@@ -375,6 +375,6 @@ public class AuthenticatorLoadTest extends AbstractTest
     final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = pooledADFastBind.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    AssertJUnit.assertTrue(response.isSuccess());
+    Assert.assertTrue(response.isSuccess());
   }
 }

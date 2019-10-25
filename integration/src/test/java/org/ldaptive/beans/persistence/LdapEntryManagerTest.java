@@ -14,7 +14,7 @@ import org.ldaptive.beans.generate.InetOrgPerson;
 import org.ldaptive.beans.reflect.DefaultLdapEntryMapper;
 import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
 import org.ldaptive.transcode.UUIDValueTranscoder;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -72,16 +72,16 @@ public class LdapEntryManagerTest extends AbstractTest
       final InetOrgPerson emptyPerson = new InetOrgPerson();
       emptyPerson.setDn(entry.getDn());
       final InetOrgPerson person = manager.find(emptyPerson);
-      AssertJUnit.assertEquals(
-        entry.getAttribute("cn").getStringValues().iterator().next(),
-        person.getCn().iterator().next());
-      AssertJUnit.assertEquals(
-        entry.getAttribute("createTimestamp").getValue((new GeneralizedTimeValueTranscoder()).decoder()),
-        person.getCreateTimestamp());
-      AssertJUnit.assertEquals(entry.getDn(), person.getDn());
-      AssertJUnit.assertEquals(
-        entry.getAttribute("entryUUID").getValue((new UUIDValueTranscoder()).decoder()),
-        person.getEntryUUID());
+      Assert.assertEquals(
+        person.getCn().iterator().next(),
+        entry.getAttribute("cn").getStringValues().iterator().next());
+      Assert.assertEquals(
+        person.getCreateTimestamp(),
+        entry.getAttribute("createTimestamp").getValue((new GeneralizedTimeValueTranscoder()).decoder()));
+      Assert.assertEquals(person.getDn(), entry.getDn());
+      Assert.assertEquals(
+        person.getEntryUUID(),
+        entry.getAttribute("entryUUID").getValue((new UUIDValueTranscoder()).decoder()));
     }
   }
 }

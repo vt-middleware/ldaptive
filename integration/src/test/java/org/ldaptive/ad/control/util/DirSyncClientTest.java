@@ -10,7 +10,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.ad.control.DirSyncControl;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -94,9 +94,9 @@ public class DirSyncClientTest extends AbstractTest
       new SearchFilter(filter),
       "uid");
     final SearchResponse response = client.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.entrySize() > 0);
-    AssertJUnit.assertFalse(client.hasMore(response));
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.entrySize() > 0);
+    Assert.assertFalse(client.hasMore(response));
   }
 
 
@@ -128,7 +128,7 @@ public class DirSyncClientTest extends AbstractTest
       new SearchFilter(filter),
       "uid");
     final SearchResponse response = client.executeToCompletion(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    AssertJUnit.assertTrue(response.entrySize() > 0);
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    Assert.assertTrue(response.entrySize() > 0);
   }
 }

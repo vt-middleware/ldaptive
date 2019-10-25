@@ -10,7 +10,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.TestUtils;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -88,23 +88,23 @@ public class PagedResultsClientTest extends AbstractTest
 
       final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
       SearchResponse response = client.execute(request);
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(1, response.entrySize());
-      AssertJUnit.assertEquals(testLdapEntries[0].getDn().toLowerCase(), response.getEntry().getDn().toLowerCase());
+      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+      Assert.assertEquals(response.entrySize(), 1);
+      Assert.assertEquals(response.getEntry().getDn().toLowerCase(), testLdapEntries[0].getDn().toLowerCase());
 
       int i = 1;
       while (client.hasMore(response)) {
         response = client.execute(request, response);
-        AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-        AssertJUnit.assertEquals(1, response.entrySize());
-        AssertJUnit.assertEquals(testLdapEntries[i].getDn().toLowerCase(), response.getEntry().getDn().toLowerCase());
+        Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+        Assert.assertEquals(response.entrySize(), 1);
+        Assert.assertEquals(response.getEntry().getDn().toLowerCase(), testLdapEntries[i].getDn().toLowerCase());
         i++;
       }
 
       try {
         client.execute(request, response);
       } catch (IllegalArgumentException e) {
-        AssertJUnit.assertNotNull(e);
+        Assert.assertNotNull(e);
       }
     } finally {
       cf.close();
@@ -135,14 +135,14 @@ public class PagedResultsClientTest extends AbstractTest
       final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
 
       final SearchResponse response = SearchResponse.sort(client.executeToCompletion(request));
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(3, response.entrySize());
+      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+      Assert.assertEquals(response.entrySize(), 3);
 
       final Iterator<LdapEntry> i = response.getEntries().iterator();
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(testLdapEntries[1].getDn().toLowerCase(), i.next().getDn().toLowerCase());
-      AssertJUnit.assertEquals(testLdapEntries[0].getDn().toLowerCase(), i.next().getDn().toLowerCase());
-      AssertJUnit.assertEquals(testLdapEntries[2].getDn().toLowerCase(), i.next().getDn().toLowerCase());
+      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+      Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[1].getDn().toLowerCase());
+      Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[0].getDn().toLowerCase());
+      Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[2].getDn().toLowerCase());
     } finally {
       cf.close();
     }

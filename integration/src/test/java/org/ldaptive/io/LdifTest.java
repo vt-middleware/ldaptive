@@ -11,7 +11,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -116,6 +116,6 @@ public class LdifTest extends AbstractTest
 
     final SearchResponse result2 = ldifReader.read();
 
-    AssertJUnit.assertEquals(result1, result2);
+    Assert.assertEquals(result1, result2);
   }
 }

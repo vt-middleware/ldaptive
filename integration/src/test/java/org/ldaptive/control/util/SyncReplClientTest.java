@@ -19,7 +19,7 @@ import org.ldaptive.TestUtils;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncStateControl;
 import org.ldaptive.extended.SyncInfoMessage;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -98,17 +98,17 @@ public class SyncReplClientTest extends AbstractTest
       client.send(request, new DefaultCookieManager());
 
       final LdapEntry entry = (LdapEntry) queue.take();
-      AssertJUnit.assertNotNull(entry);
+      Assert.assertNotNull(entry);
       final SyncStateControl ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
-      AssertJUnit.assertEquals(SyncStateControl.State.ADD, ssc.getSyncState());
-      AssertJUnit.assertNotNull(ssc.getEntryUuid());
-      AssertJUnit.assertNull(ssc.getCookie());
+      Assert.assertEquals(ssc.getSyncState(), SyncStateControl.State.ADD);
+      Assert.assertNotNull(ssc.getEntryUuid());
+      Assert.assertNull(ssc.getCookie());
 
       final Result result = (Result) queue.take();
-      AssertJUnit.assertNotNull(result);
+      Assert.assertNotNull(result);
       final SyncDoneControl sdc = (SyncDoneControl) result.getControl(SyncDoneControl.OID);
-      AssertJUnit.assertEquals(true, sdc.getRefreshDeletes());
-      AssertJUnit.assertNotNull(sdc.getCookie());
+      Assert.assertEquals(sdc.getRefreshDeletes(), true);
+      Assert.assertNotNull(sdc.getCookie());
 
     } finally {
       cf.close();
@@ -152,20 +152,20 @@ public class SyncReplClientTest extends AbstractTest
       client.send(request, new DefaultCookieManager());
 
       LdapEntry entry = (LdapEntry) queue.take();
-      AssertJUnit.assertNotNull(entry);
+      Assert.assertNotNull(entry);
       SyncStateControl ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
-      AssertJUnit.assertEquals(SyncStateControl.State.ADD, ssc.getSyncState());
-      AssertJUnit.assertNotNull(ssc.getEntryUuid());
-      AssertJUnit.assertNull(ssc.getCookie());
+      Assert.assertEquals(ssc.getSyncState(), SyncStateControl.State.ADD);
+      Assert.assertNotNull(ssc.getEntryUuid());
+      Assert.assertNull(ssc.getCookie());
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), entry);
 
       final Message message = (Message) queue.take();
-      AssertJUnit.assertNotNull(message);
+      Assert.assertNotNull(message);
       final SyncInfoMessage sim = (SyncInfoMessage) message;
-      AssertJUnit.assertEquals(SyncInfoMessage.Type.REFRESH_DELETE, sim.getMessageType());
-      AssertJUnit.assertNotNull(sim.getCookie());
-      AssertJUnit.assertFalse(sim.getRefreshDeletes());
-      AssertJUnit.assertTrue(sim.getRefreshDone());
+      Assert.assertEquals(sim.getMessageType(), SyncInfoMessage.Type.REFRESH_DELETE);
+      Assert.assertNotNull(sim.getCookie());
+      Assert.assertFalse(sim.getRefreshDeletes());
+      Assert.assertTrue(sim.getRefreshDone());
 
       // make a change
       final ModifyOperation modify = new ModifyOperation(cf);
@@ -175,11 +175,11 @@ public class SyncReplClientTest extends AbstractTest
           new AttributeModification(AttributeModification.Type.ADD, new LdapAttribute("employeeType", "Employee"))));
 
       entry = (LdapEntry) queue.take();
-      AssertJUnit.assertNotNull(entry);
+      Assert.assertNotNull(entry);
       ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
-      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, ssc.getSyncState());
-      AssertJUnit.assertNotNull(ssc.getEntryUuid());
-      AssertJUnit.assertNotNull(ssc.getCookie());
+      Assert.assertEquals(ssc.getSyncState(), SyncStateControl.State.MODIFY);
+      Assert.assertNotNull(ssc.getEntryUuid());
+      Assert.assertNotNull(ssc.getCookie());
 
       // change it back
       modify.execute(
@@ -188,18 +188,18 @@ public class SyncReplClientTest extends AbstractTest
           new AttributeModification(AttributeModification.Type.DELETE, new LdapAttribute("employeeType"))));
 
       entry = (LdapEntry) queue.take();
-      AssertJUnit.assertNotNull(entry);
+      Assert.assertNotNull(entry);
       ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
-      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, ssc.getSyncState());
-      AssertJUnit.assertNotNull(ssc.getEntryUuid());
-      AssertJUnit.assertNotNull(ssc.getCookie());
+      Assert.assertEquals(ssc.getSyncState(), SyncStateControl.State.MODIFY);
+      Assert.assertNotNull(ssc.getEntryUuid());
+      Assert.assertNotNull(ssc.getCookie());
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), entry);
 
       client.cancel();
 
       final Result result = (Result) queue.take();
-      AssertJUnit.assertNotNull(result);
-      AssertJUnit.assertEquals(ResultCode.CANCELED, result.getResultCode());
+      Assert.assertNotNull(result);
+      Assert.assertEquals(result.getResultCode(), ResultCode.CANCELED);
     } finally {
       cf.close();
     }

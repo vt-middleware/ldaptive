@@ -5,7 +5,6 @@ import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -127,13 +126,13 @@ public class SearchResponseTest
       .dn("uid=1").build();
     final SearchResponse sr = new SearchResponse();
     sr.addEntries(entry1);
-    AssertJUnit.assertEquals(entry1, sr.getEntry());
-    AssertJUnit.assertEquals(entry1, sr.getEntry("uid=1"));
-    AssertJUnit.assertEquals(entry1, sr.getEntry("UID=1"));
-    AssertJUnit.assertEquals(1, sr.entrySize());
-    AssertJUnit.assertEquals(1, sr.getEntryDns().size());
-    AssertJUnit.assertEquals("uid=1", sr.getEntryDns().iterator().next());
-    AssertJUnit.assertEquals(sr, SearchResponse.builder().entry(entry1).build());
+    Assert.assertEquals(entry1, sr.getEntry());
+    Assert.assertEquals(entry1, sr.getEntry("uid=1"));
+    Assert.assertEquals(entry1, sr.getEntry("UID=1"));
+    Assert.assertEquals(sr.entrySize(), 1);
+    Assert.assertEquals(sr.getEntryDns().size(), 1);
+    Assert.assertEquals(sr.getEntryDns().iterator().next(), "uid=1");
+    Assert.assertEquals(sr, SearchResponse.builder().entry(entry1).build());
   }
 
 
@@ -149,13 +148,13 @@ public class SearchResponseTest
       .dn("uid=2").build();
     final SearchResponse sr = new SearchResponse();
     sr.addEntries(entry1, entry2);
-    AssertJUnit.assertEquals(entry1, sr.getEntry("uid=1"));
-    AssertJUnit.assertEquals(entry1, sr.getEntry("UID=1"));
-    AssertJUnit.assertEquals(entry2, sr.getEntry("UID=2"));
-    AssertJUnit.assertEquals(entry2, sr.getEntry("uid=2"));
-    AssertJUnit.assertEquals(2, sr.entrySize());
-    AssertJUnit.assertEquals(2, sr.getEntryDns().size());
-    AssertJUnit.assertEquals(sr, SearchResponse.builder().entry(entry1, entry2).build());
+    Assert.assertEquals(entry1, sr.getEntry("uid=1"));
+    Assert.assertEquals(entry1, sr.getEntry("UID=1"));
+    Assert.assertEquals(entry2, sr.getEntry("UID=2"));
+    Assert.assertEquals(entry2, sr.getEntry("uid=2"));
+    Assert.assertEquals(sr.entrySize(), 2);
+    Assert.assertEquals(sr.getEntryDns().size(), 2);
+    Assert.assertEquals(sr, SearchResponse.builder().entry(entry1, entry2).build());
   }
 
 
@@ -173,8 +172,8 @@ public class SearchResponseTest
     sr.addEntries(entry2, entry1);
 
     final LdapEntry[] entries = sr.getEntries().toArray(LdapEntry[]::new);
-    AssertJUnit.assertEquals(entry2, entries[0]);
-    AssertJUnit.assertEquals(entry1, entries[1]);
+    Assert.assertEquals(entry2, entries[0]);
+    Assert.assertEquals(entry1, entries[1]);
   }
 
 
@@ -190,26 +189,26 @@ public class SearchResponseTest
       .dn("uid=2").build();
     final SearchResponse sr = new SearchResponse();
     sr.addEntries(entry2, entry1);
-    AssertJUnit.assertEquals(0, sr.subResult(2, 2).entrySize());
-    AssertJUnit.assertEquals(1, sr.subResult(1, 2).entrySize());
-    AssertJUnit.assertEquals(2, sr.subResult(0, 2).entrySize());
+    Assert.assertEquals(sr.subResult(2, 2).entrySize(), 0);
+    Assert.assertEquals(sr.subResult(1, 2).entrySize(), 1);
+    Assert.assertEquals(sr.subResult(0, 2).entrySize(), 2);
     try {
       sr.subResult(-1, 1);
-      AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
+      Assert.fail("Should have thrown IndexOutOfBoundsException");
     } catch (Exception e) {
-      AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
     }
     try {
       sr.subResult(0, 3);
-      AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
+      Assert.fail("Should have thrown IndexOutOfBoundsException");
     } catch (Exception e) {
-      AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
     }
     try {
       sr.subResult(1, 0);
-      AssertJUnit.fail("Should have thrown IndexOutOfBoundsException");
+      Assert.fail("Should have thrown IndexOutOfBoundsException");
     } catch (Exception e) {
-      AssertJUnit.assertEquals(IndexOutOfBoundsException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
     }
   }
 

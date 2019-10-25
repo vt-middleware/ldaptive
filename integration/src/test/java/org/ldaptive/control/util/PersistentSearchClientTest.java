@@ -23,7 +23,7 @@ import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.control.EntryChangeNotificationControl;
 import org.ldaptive.control.PersistentSearchChangeType;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -111,10 +111,10 @@ public class PersistentSearchClientTest extends AbstractTest
     final ModifyOperation modify = new ModifyOperation(cf);
     modify.execute(new ModifyRequest(dn, new AttributeModification(AttributeModification.Type.REPLACE, modAttr)));
     LdapEntry entry = (LdapEntry) queue.take();
-    AssertJUnit.assertNotNull(entry);
+    Assert.assertNotNull(entry);
     EntryChangeNotificationControl ecnc = (EntryChangeNotificationControl) entry.getControl(
       EntryChangeNotificationControl.OID);
-    AssertJUnit.assertEquals(PersistentSearchChangeType.MODIFY, ecnc.getChangeType());
+    Assert.assertEquals(ecnc.getChangeType(), PersistentSearchChangeType.MODIFY);
     expectedResult.getEntry().addAttributes(modAttr);
     TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
 
@@ -124,9 +124,9 @@ public class PersistentSearchClientTest extends AbstractTest
     final ModifyDnOperation modifyDn = new ModifyDnOperation(cf);
     modifyDn.execute(new ModifyDnRequest(dn, DnParser.substring(modDn, 0, 1), true));
     entry = (LdapEntry) queue.take();
-    AssertJUnit.assertNotNull(entry);
+    Assert.assertNotNull(entry);
     ecnc = (EntryChangeNotificationControl) entry.getControl(EntryChangeNotificationControl.OID);
-    AssertJUnit.assertEquals(PersistentSearchChangeType.MODDN, ecnc.getChangeType());
+    Assert.assertEquals(ecnc.getChangeType(), PersistentSearchChangeType.MODDN);
     expectedResult.getEntry().setDn(modDn);
     expectedResult.getEntry().addAttributes(new LdapAttribute("CN", "PSC"));
     TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
@@ -134,9 +134,9 @@ public class PersistentSearchClientTest extends AbstractTest
     // modify dn back
     modifyDn.execute(new ModifyDnRequest(modDn, DnParser.substring(dn, 0, 1), true));
     entry = (LdapEntry) queue.take();
-    AssertJUnit.assertNotNull(entry);
+    Assert.assertNotNull(entry);
     ecnc = (EntryChangeNotificationControl) entry.getControl(EntryChangeNotificationControl.OID);
-    AssertJUnit.assertEquals(PersistentSearchChangeType.MODDN, ecnc.getChangeType());
+    Assert.assertEquals(ecnc.getChangeType(), PersistentSearchChangeType.MODDN);
     expectedResult.getEntry().setDn(dn);
     expectedResult.getEntry().addAttributes(cn);
     TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
@@ -144,10 +144,10 @@ public class PersistentSearchClientTest extends AbstractTest
     client.abandon();
     if (!queue.isEmpty()) {
       final Result result = (Result) queue.take();
-      AssertJUnit.assertNotNull(result);
-      AssertJUnit.assertEquals(ResultCode.USER_CANCELLED, result.getResultCode());
+      Assert.assertNotNull(result);
+      Assert.assertEquals(result.getResultCode(), ResultCode.USER_CANCELLED);
     }
-    AssertJUnit.assertTrue(queue.isEmpty());
+    Assert.assertTrue(queue.isEmpty());
   }
 
 

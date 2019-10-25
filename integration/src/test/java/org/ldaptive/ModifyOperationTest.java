@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -64,7 +64,7 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()}));
-    AssertJUnit.assertEquals(expected.getAttribute(), result.getEntry().getAttribute());
+    Assert.assertEquals(expected.getAttribute(), result.getEntry().getAttribute());
   }
 
 
@@ -171,7 +171,7 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()}));
-    AssertJUnit.assertEquals(0, result.getEntry().getAttributes().size());
+    Assert.assertEquals(result.getEntry().getAttributes().size(), 0);
   }
 
 

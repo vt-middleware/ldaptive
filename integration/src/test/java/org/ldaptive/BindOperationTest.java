@@ -4,7 +4,7 @@ package org.ldaptive;
 import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.AuthorizationIdentityResponseControl;
 import org.ldaptive.control.SessionTrackingControl;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -59,7 +59,7 @@ public class BindOperationTest extends AbstractTest
   {
     final BindOperation bind = new BindOperation(TestUtils.createConnectionFactory());
     final BindResponse response = bind.execute(new SimpleBindRequest(dn, "INVALID-PASSWD"));
-    AssertJUnit.assertEquals(ResultCode.INVALID_CREDENTIALS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.INVALID_CREDENTIALS);
   }
 
 
@@ -76,7 +76,7 @@ public class BindOperationTest extends AbstractTest
   {
     final BindOperation bind = new BindOperation(TestUtils.createConnectionFactory());
     final BindResponse response = bind.execute(new SimpleBindRequest(dn, passwd));
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
@@ -96,14 +96,14 @@ public class BindOperationTest extends AbstractTest
     request.setControls(new AuthorizationIdentityRequestControl());
 
     final BindResponse response = bind.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
 
     final AuthorizationIdentityResponseControl ctrl = (AuthorizationIdentityResponseControl) response.getControl(
       AuthorizationIdentityResponseControl.OID);
     if (ctrl == null) {
       throw new UnsupportedOperationException("Authorization Identity Control not supported");
     }
-    AssertJUnit.assertEquals("dn:" + dn.toLowerCase(), ctrl.getAuthorizationId().toLowerCase());
+    Assert.assertEquals(ctrl.getAuthorizationId().toLowerCase(), "dn:" + dn.toLowerCase());
   }
 
 
@@ -128,6 +128,6 @@ public class BindOperationTest extends AbstractTest
         ""));
 
     final BindResponse response = bind.execute(request);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 }
