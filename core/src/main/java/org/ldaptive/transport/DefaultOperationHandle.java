@@ -143,7 +143,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
     throws LdapException
   {
     try {
-      if (responseTimeout == null) {
+      if (Duration.ZERO.equals(responseTimeout)) {
         responseDone.await();
         if (result != null && exception == null) {
           logger.trace("await received result {} for handle {}", result, this);

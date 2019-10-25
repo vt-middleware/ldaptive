@@ -70,8 +70,8 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    */
   public void setBlockWaitTime(final Duration time)
   {
-    if (time != null && time.isNegative()) {
-      throw new IllegalArgumentException("Block wait time cannot be negative");
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Block wait time cannot be null or negative");
     }
     blockWaitTime = time;
   }
@@ -199,13 +199,13 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     try {
       while (pc == null) {
         logger.trace("available pool is empty, waiting...");
-        if (blockWaitTime != null) {
+        if (Duration.ZERO.equals(blockWaitTime)) {
+          poolNotEmpty.await();
+        } else {
           if (!poolNotEmpty.await(blockWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
             logger.debug("block time exceeded, throwing exception");
             throw new BlockingTimeoutException("Block time exceeded");
           }
-        } else {
-          poolNotEmpty.await();
         }
         logger.trace("notified to continue...");
         try {

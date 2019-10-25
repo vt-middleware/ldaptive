@@ -33,8 +33,8 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
 
   public void setValidatePeriod(final Duration period)
   {
-    if (period == null || period.isNegative()) {
-      throw new IllegalArgumentException("Period cannot be null or negative");
+    if (period == null || period.isNegative() || period.isZero()) {
+      throw new IllegalArgumentException("Period cannot be null, negative or zero");
     }
     validatePeriod = period;
   }

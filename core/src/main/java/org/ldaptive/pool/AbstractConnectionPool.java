@@ -4,6 +4,7 @@ package org.ldaptive.pool;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -218,22 +219,6 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
     if (getValidator() == null) {
       setValidator(new SearchConnectionValidator());
       logger.debug("no validator strategy configured, using default validator strategy: {}", getValidator());
-    }
-
-    // sanity check the scheduler periods
-    if (getPruneStrategy().getPrunePeriod().toMillis() <= 0) {
-      throw new IllegalStateException(
-        "Prune period " + getPruneStrategy().getPrunePeriod() + " must be greater than zero");
-    }
-    if (getValidator().getValidatePeriod() != null &&
-        getValidator().getValidatePeriod().toMillis() <= 0) {
-      throw new IllegalStateException(
-        "Validate period " + getValidator().getValidatePeriod() + " must be greater than zero");
-    }
-    if (getValidator().getValidateTimeout() != null &&
-        getValidator().getValidateTimeout().toMillis() <= 0) {
-      throw new IllegalStateException(
-        "Validate timeout " + getValidator().getValidateTimeout() + " must be greater than zero");
     }
 
     available = new Queue<>(queueType);
@@ -733,7 +718,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
         logger.debug("validate available pool of size {} for {}", available.size(), this);
 
         final List<PooledConnectionProxy> remove = new ArrayList<>();
-        if (getValidator().getValidateTimeout() == null) {
+        if (Duration.ZERO.equals(getValidator().getValidateTimeout())) {
           for (PooledConnectionProxy pc : available) {
             logger.trace("validating {}", pc);
             if (validate(pc.getConnection())) {

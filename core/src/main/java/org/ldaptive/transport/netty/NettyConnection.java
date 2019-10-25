@@ -190,11 +190,7 @@ public final class NettyConnection extends TransportConnection
     messageWorkerGroup = messageGroup;
     channelOptions = new HashMap<>();
     channelOptions.put(ChannelOption.SO_KEEPALIVE, true);
-    if (config.getConnectTimeout() != null) {
-      channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) config.getConnectTimeout().toMillis());
-    } else {
-      channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, 0);
-    }
+    channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) config.getConnectTimeout().toMillis());
     if (options != null && !options.isEmpty()) {
       channelOptions.putAll(options);
     }
@@ -698,7 +694,7 @@ public final class NettyConnection extends TransportConnection
     LOGGER.debug("Write handle {} with pending responses {}", handle, pendingResponses);
     try {
       final boolean gotReconnectLock;
-      if (connectionConfig.getReconnectTimeout() == null) {
+      if (Duration.ZERO.equals(connectionConfig.getReconnectTimeout())) {
         reconnectLock.readLock().lock();
         gotReconnectLock = true;
       } else {
