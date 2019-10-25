@@ -31,10 +31,6 @@ import org.ldaptive.asn1.OctetStringType;
 public abstract class AbstractResult extends AbstractMessage implements Result
 {
 
-  /** Whether to encode control characters. */
-  protected static final boolean ENCODE_CNTRL_CHARS = Boolean.valueOf(
-    System.getProperty("org.ldaptive.response.ENCODE_CNTRL_CHARS", "false"));
-
   /** Result code. */
   private ResultCode resultCode;
 
@@ -144,10 +140,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
     return new StringBuilder(super.toString()).append(", ")
       .append("resultCode=").append(resultCode).append(", ")
       .append("matchedDN=").append(matchedDN).append(", ")
-      .append("diagnosticMessage=").append(
-        diagnosticMessage != null && !"".equals(diagnosticMessage) ?
-          ENCODE_CNTRL_CHARS ? LdapUtils.percentEncodeControlChars(diagnosticMessage) : diagnosticMessage :
-        diagnosticMessage).append(", ")
+      .append("diagnosticMessage=").append(getEncodedDiagnosticMessage()).append(", ")
       .append("referralURLs=").append(referralURLs).toString();
   }
 
