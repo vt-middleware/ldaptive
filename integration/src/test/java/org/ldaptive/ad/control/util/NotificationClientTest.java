@@ -15,7 +15,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -54,11 +54,11 @@ public class NotificationClientTest extends AbstractTest
       final BlockingQueue<NotificationClient.NotificationItem> results = client.execute(request);
 
       NotificationClient.NotificationItem item = results.poll(5, TimeUnit.SECONDS);
-      AssertJUnit.assertNotNull(item);
+      Assert.assertNotNull(item);
       if (item.isException()) {
         throw item.getException();
       }
-      AssertJUnit.assertTrue(item.getResult().getMessageID() > 0);
+      Assert.assertTrue(item.getResult().getMessageID() > 0);
 
       final ModifyOperation modify = new ModifyOperation(cf);
       modify.execute(
@@ -69,9 +69,9 @@ public class NotificationClientTest extends AbstractTest
             new LdapAttribute("sn", Integer.toString(new Random().nextInt(1000000))))));
 
       item = results.poll(5, TimeUnit.SECONDS);
-      AssertJUnit.assertNotNull(item);
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertNotNull(item.getEntry());
+      Assert.assertNotNull(item);
+      Assert.assertTrue(item.isEntry());
+      Assert.assertNotNull(item.getEntry());
 
       client.abandon();
     } finally {

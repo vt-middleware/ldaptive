@@ -2,7 +2,6 @@
 package org.ldaptive.asn1;
 
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -164,7 +163,7 @@ public class OidTypeTest
     try {
       new OidType(oid);
     } catch (Exception e) {
-      AssertJUnit.assertEquals(IllegalArgumentException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
     }
   }
 }

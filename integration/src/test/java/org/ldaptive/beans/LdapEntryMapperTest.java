@@ -16,7 +16,7 @@ import org.ldaptive.beans.reflect.DefaultLdapEntryMapper;
 import org.ldaptive.beans.spring.SpringLdapEntryMapper;
 import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
 import org.ldaptive.transcode.UUIDValueTranscoder;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -69,22 +69,22 @@ public class LdapEntryMapperTest extends AbstractTest
     if (TestControl.isActiveDirectory()) {
       final OrganizationalPerson person = new OrganizationalPerson();
       mapper.map(entry, person);
-      AssertJUnit.assertEquals(entry.getAttribute("cn").getStringValue(), person.getCn());
-      AssertJUnit.assertEquals(entry.getDn(), person.getDn());
-      AssertJUnit.assertEquals(entry.getAttribute("countryCode").getStringValue(), person.getCountryCode());
+      Assert.assertEquals(person.getCn(), entry.getAttribute("cn").getStringValue());
+      Assert.assertEquals(person.getDn(), entry.getDn());
+      Assert.assertEquals(person.getCountryCode(), entry.getAttribute("countryCode").getStringValue());
     } else {
       final InetOrgPerson person = new InetOrgPerson();
       mapper.map(entry, person);
-      AssertJUnit.assertEquals(
-        entry.getAttribute("cn").getStringValues().iterator().next(),
-        person.getCn().iterator().next());
-      AssertJUnit.assertEquals(
-        entry.getAttribute("createTimestamp").getValue((new GeneralizedTimeValueTranscoder()).decoder()),
-        person.getCreateTimestamp());
-      AssertJUnit.assertEquals(entry.getDn(), person.getDn());
-      AssertJUnit.assertEquals(
-        entry.getAttribute("entryUUID").getValue(new UUIDValueTranscoder().decoder()),
-        person.getEntryUUID());
+      Assert.assertEquals(
+        person.getCn().iterator().next(),
+        entry.getAttribute("cn").getStringValues().iterator().next());
+      Assert.assertEquals(
+        person.getCreateTimestamp(),
+        entry.getAttribute("createTimestamp").getValue((new GeneralizedTimeValueTranscoder()).decoder()));
+      Assert.assertEquals(person.getDn(), entry.getDn());
+      Assert.assertEquals(
+        person.getEntryUUID(),
+        entry.getAttribute("entryUUID").getValue(new UUIDValueTranscoder().decoder()));
     }
   }
 
@@ -106,10 +106,10 @@ public class LdapEntryMapperTest extends AbstractTest
       person.setDn(entry.getDn());
       person.setCountryCode(entry.getAttribute("countryCode").getStringValue());
       mapper.map(person, mapped);
-      AssertJUnit.assertEquals(person.getCn(), mapped.getAttribute("cn").getStringValue());
-      AssertJUnit.assertEquals(person.getDn(), mapped.getDn());
-      AssertJUnit.assertEquals(person.getCountryCode(), mapped.getAttribute("countryCode").getStringValue());
-      AssertJUnit.assertEquals("customvalue1", mapped.getAttribute("customname1").getStringValue());
+      Assert.assertEquals(person.getCn(), mapped.getAttribute("cn").getStringValue());
+      Assert.assertEquals(person.getDn(), mapped.getDn());
+      Assert.assertEquals(person.getCountryCode(), mapped.getAttribute("countryCode").getStringValue());
+      Assert.assertEquals("customvalue1", mapped.getAttribute("customname1").getStringValue());
     } else {
       final InetOrgPerson person = new InetOrgPerson();
       person.setCn(entry.getAttribute("cn").getStringValues());
@@ -118,17 +118,17 @@ public class LdapEntryMapperTest extends AbstractTest
       person.setDn(entry.getDn());
       person.setEntryUUID(entry.getAttribute("entryUUID").getValue((new UUIDValueTranscoder()).decoder()));
       mapper.map(person, mapped);
-      AssertJUnit.assertEquals(
+      Assert.assertEquals(
         person.getCn().iterator().next(),
         mapped.getAttribute("cn").getStringValues().iterator().next());
-      AssertJUnit.assertEquals(
+      Assert.assertEquals(
         person.getCreateTimestamp(),
         mapped.getAttribute("createTimestamp").getValue((new GeneralizedTimeValueTranscoder()).decoder()));
-      AssertJUnit.assertEquals(person.getDn(), mapped.getDn());
-      AssertJUnit.assertEquals(
+      Assert.assertEquals(person.getDn(), mapped.getDn());
+      Assert.assertEquals(
         person.getEntryUUID(),
         mapped.getAttribute("entryUUID").getValue((new UUIDValueTranscoder()).decoder()));
-      AssertJUnit.assertEquals("customvalue1", mapped.getAttribute("customname1").getStringValue());
+      Assert.assertEquals("customvalue1", mapped.getAttribute("customname1").getStringValue());
     }
   }
 }

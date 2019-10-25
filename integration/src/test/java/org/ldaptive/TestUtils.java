@@ -12,7 +12,7 @@ import org.ldaptive.auth.NoOpDnResolver;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.props.AuthenticatorPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 
 /**
  * Utility methods for ldap tests.
@@ -283,7 +283,7 @@ public final class TestUtils
 
 
   /**
-   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after removing the controls and messageId from the actual
+   * Invokes {@link Assert#assertEquals(Object, Object)} after removing the controls and messageId from the actual
    * response entries.
    *
    * @param  expected  value
@@ -293,15 +293,15 @@ public final class TestUtils
   {
     final SearchResponse newResult = new SearchResponse();
     for (LdapEntry e : actual.getEntries()) {
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
       newResult.addEntries(LdapEntry.builder().dn(e.getDn()).attributes(e.getAttributes()).build());
     }
-    AssertJUnit.assertEquals(expected, newResult);
+    Assert.assertEquals(newResult, expected);
   }
 
 
   /**
-   * Invokes {@link AssertJUnit#assertEquals(Object, Object)} after removing the controls and messageId from the actual
+   * Invokes {@link Assert#assertEquals(Object, Object)} after removing the controls and messageId from the actual
    * entry.
    *
    * @param  expected  value
@@ -309,9 +309,9 @@ public final class TestUtils
    */
   public static void assertEquals(final LdapEntry expected, final LdapEntry actual)
   {
-    AssertJUnit.assertNotNull(actual);
+    Assert.assertNotNull(actual);
     final LdapEntry newEntry = LdapEntry.builder().dn(actual.getDn()).attributes(actual.getAttributes()).build();
-    AssertJUnit.assertEquals(expected, newEntry);
+    Assert.assertEquals(newEntry, expected);
   }
 
 

@@ -6,7 +6,7 @@ import org.ldaptive.ssl.DefaultHostnameVerifier;
 import org.ldaptive.ssl.NoHostnameVerifier;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
@@ -40,7 +40,7 @@ public class ConnectionTest
 
     final AddOperation add = new AddOperation(TestUtils.createConnectionFactory());
     final AddResponse response = add.execute(new AddRequest(testLdapEntry.getDn(), testLdapEntry.getAttributes()));
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
@@ -50,7 +50,7 @@ public class ConnectionTest
     throws Exception
   {
     final CompareOperation compare = new CompareOperation(TestUtils.createConnectionFactory());
-    AssertJUnit.assertTrue(
+    Assert.assertTrue(
       compare.execute(
         new CompareRequest(
           testLdapEntry.getDn(), "mail", testLdapEntry.getAttribute("mail").getStringValue())).isTrue());
@@ -64,7 +64,7 @@ public class ConnectionTest
   {
     final DeleteOperation delete = new DeleteOperation(TestUtils.createConnectionFactory());
     final DeleteResponse response = delete.execute(new DeleteRequest(testLdapEntry.getDn()));
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
@@ -78,7 +78,7 @@ public class ConnectionTest
       new ModifyRequest(
         testLdapEntry.getDn(),
         new AttributeModification(AttributeModification.Type.ADD, new LdapAttribute("title", "President"))));
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
@@ -93,13 +93,13 @@ public class ConnectionTest
         testLdapEntry.getDn(),
         "cn=James Buchanan Jr.",
         true));
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     response = modifyDn.execute(
       new ModifyDnRequest(
         "cn=James Buchanan Jr.," + DnParser.substring(testLdapEntry.getDn(), 1),
         "cn=James Buchanan",
         true));
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
@@ -111,7 +111,7 @@ public class ConnectionTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
     final SearchResponse lr = search.execute(
       new SearchRequest(DnParser.substring(testLdapEntry.getDn(), 1), new SearchFilter("(uid=15)")));
-    AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), lr.getEntry().getDn().toLowerCase());
+    Assert.assertEquals(lr.getEntry().getDn().toLowerCase(), testLdapEntry.getDn().toLowerCase());
   }
 
 
@@ -231,9 +231,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      Assert.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
 
     // no trusted certificates
@@ -242,9 +242,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      Assert.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
 
     // no trusted certificates with hostname verification
@@ -254,9 +254,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      Assert.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
 
     // trust any
@@ -275,9 +275,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      Assert.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
 
     // trust any with hostname verification
@@ -309,9 +309,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      Assert.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
 
     // no trusted certificates
@@ -320,9 +320,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      Assert.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
 
     // no trusted certificates with hostname verification
@@ -332,9 +332,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      Assert.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
 
     // trust any
@@ -354,9 +354,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      AssertJUnit.fail("Should have thrown Exception, no exception thrown");
+      Assert.fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      AssertJUnit.assertNotNull(e);
+      Assert.assertNotNull(e);
     }
 
     // trust any with hostname verification
@@ -392,6 +392,6 @@ public class ConnectionTest
       ldapUrl.getHostname().substring(0, ldapUrl.getHostname().indexOf(".")) :
       ldapUrl.getHostname();
     final int openConns = TestUtils.countOpenConnections(hostPrefix);
-    AssertJUnit.assertEquals(0, openConns);
+    Assert.assertEquals(openConns, 0);
   }
 }

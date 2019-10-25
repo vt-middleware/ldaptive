@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.templates;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -59,6 +59,6 @@ public class QueryTest
   @Test(groups = "querytest", dataProvider = "query-data")
   public void format(final Query query, final String[] terms)
   {
-    AssertJUnit.assertArrayEquals(terms, query.getTerms());
+    Assert.assertEquals(query.getTerms(), terms);
   }
 }

@@ -13,7 +13,7 @@ import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.TestUtils;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -87,11 +87,11 @@ public class AttributeValueServletSearchOperationTest extends AbstractTest
 
     final WebResponse response = sc.getResponse(request);
 
-    AssertJUnit.assertNotNull(response);
-    AssertJUnit.assertEquals("application/octet-stream", response.getContentType());
-    AssertJUnit.assertEquals(
-      "attachment; filename=\"" + attr + ".bin\"",
-      response.getHeaderField("Content-Disposition"));
+    Assert.assertNotNull(response);
+    Assert.assertEquals(response.getContentType(), "application/octet-stream");
+    Assert.assertEquals(
+      response.getHeaderField("Content-Disposition"),
+      "attachment; filename=\"" + attr + ".bin\"");
 
     final InputStream input = response.getInputStream();
     final ByteArrayOutputStream data = new ByteArrayOutputStream();
@@ -106,6 +106,6 @@ public class AttributeValueServletSearchOperationTest extends AbstractTest
         data.close();
       }
     }
-    AssertJUnit.assertEquals(attributeValue, LdapUtils.base64Encode(data.toByteArray()));
+    Assert.assertEquals(LdapUtils.base64Encode(data.toByteArray()), attributeValue);
   }
 }

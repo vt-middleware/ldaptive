@@ -10,7 +10,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -42,11 +42,11 @@ public class MergeOperationTest extends AbstractTest
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
 
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
-    AssertJUnit.assertFalse(super.entryExists(cf, testLdapEntry));
+    Assert.assertFalse(super.entryExists(cf, testLdapEntry));
 
     final MergeOperation merge = new MergeOperation(cf);
     merge.execute(new MergeRequest(testLdapEntry));
-    AssertJUnit.assertTrue(super.entryExists(cf, testLdapEntry));
+    Assert.assertTrue(super.entryExists(cf, testLdapEntry));
   }
 
 
@@ -56,11 +56,11 @@ public class MergeOperationTest extends AbstractTest
     throws Exception
   {
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
-    AssertJUnit.assertTrue(super.entryExists(cf, testLdapEntry));
+    Assert.assertTrue(super.entryExists(cf, testLdapEntry));
 
     final MergeOperation merge = new MergeOperation(cf);
     merge.execute(new MergeRequest(testLdapEntry, true));
-    AssertJUnit.assertFalse(super.entryExists(cf, testLdapEntry));
+    Assert.assertFalse(super.entryExists(cf, testLdapEntry));
     merge.execute(new MergeRequest(testLdapEntry, true));
   }
 

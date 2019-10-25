@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -90,6 +90,6 @@ public class ActiveDirectoryAccountStateTest
   public void parseMessage(final String message, final ActiveDirectoryAccountState.Error err)
     throws Exception
   {
-    AssertJUnit.assertEquals(err, ActiveDirectoryAccountState.Error.parse(message));
+    Assert.assertEquals(ActiveDirectoryAccountState.Error.parse(message), err);
   }
 }

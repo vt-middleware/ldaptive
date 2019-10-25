@@ -15,7 +15,7 @@ import org.ldaptive.TestUtils;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.ResultHandler;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -61,8 +61,8 @@ public class CancelOperationTest extends AbstractTest
       latch.await(10, TimeUnit.SECONDS);
 
       final ExtendedResponse cancelResult = searchHandle.cancel().execute();
-      AssertJUnit.assertEquals(ResultCode.CANCELED, result[0].getResultCode());
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, cancelResult.getResultCode());
+      Assert.assertEquals(result[0].getResultCode(), ResultCode.CANCELED);
+      Assert.assertEquals(cancelResult.getResultCode(), ResultCode.SUCCESS);
     } finally {
       cf.close();
     }

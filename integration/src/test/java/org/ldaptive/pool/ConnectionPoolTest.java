@@ -18,7 +18,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.TestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
@@ -266,14 +266,14 @@ public class ConnectionPoolTest extends AbstractTest
     super.deleteLdapEntry(ENTRIES.get("10")[0].getDn());
 
     blockingPool.close();
-    AssertJUnit.assertEquals(blockingPool.availableCount(), 0);
-    AssertJUnit.assertEquals(blockingPool.activeCount(), 0);
+    Assert.assertEquals(blockingPool.availableCount(), 0);
+    Assert.assertEquals(blockingPool.activeCount(), 0);
     blockingTimeoutPool.close();
-    AssertJUnit.assertEquals(blockingTimeoutPool.availableCount(), 0);
-    AssertJUnit.assertEquals(blockingTimeoutPool.activeCount(), 0);
+    Assert.assertEquals(blockingTimeoutPool.availableCount(), 0);
+    Assert.assertEquals(blockingTimeoutPool.activeCount(), 0);
     connStrategyPool.close();
-    AssertJUnit.assertEquals(connStrategyPool.availableCount(), 0);
-    AssertJUnit.assertEquals(connStrategyPool.activeCount(), 0);
+    Assert.assertEquals(connStrategyPool.availableCount(), 0);
+    Assert.assertEquals(connStrategyPool.activeCount(), 0);
   }
 
 
@@ -380,16 +380,16 @@ public class ConnectionPoolTest extends AbstractTest
   {
     try {
       blockingPool.getPoolConfig().setMinPoolSize(8);
-      AssertJUnit.fail("Expected illegalstateexception to be thrown");
+      Assert.fail("Expected illegalstateexception to be thrown");
     } catch (IllegalStateException e) {
-      AssertJUnit.assertEquals(IllegalStateException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
     }
 
     try {
       blockingPool.getDefaultConnectionFactory().getConnectionConfig().setConnectTimeout(Duration.ofSeconds(10));
-      AssertJUnit.fail("Expected illegalstateexception to be thrown");
+      Assert.fail("Expected illegalstateexception to be thrown");
     } catch (IllegalStateException e) {
-      AssertJUnit.assertEquals(IllegalStateException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
     }
   }
 
@@ -447,8 +447,8 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     Thread.sleep(10000);
-    AssertJUnit.assertEquals(0, blockingPool.activeCount());
-    AssertJUnit.assertEquals(PoolConfig.DEFAULT_MIN_POOL_SIZE, blockingPool.availableCount());
+    Assert.assertEquals(blockingPool.activeCount(), 0);
+    Assert.assertEquals(blockingPool.availableCount(), PoolConfig.DEFAULT_MIN_POOL_SIZE);
   }
 
 
@@ -518,8 +518,8 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     Thread.sleep(10000);
-    AssertJUnit.assertEquals(0, blockingTimeoutPool.activeCount());
-    AssertJUnit.assertEquals(PoolConfig.DEFAULT_MIN_POOL_SIZE, blockingTimeoutPool.availableCount());
+    Assert.assertEquals(blockingTimeoutPool.activeCount(), 0);
+    Assert.assertEquals(blockingTimeoutPool.availableCount(), PoolConfig.DEFAULT_MIN_POOL_SIZE);
   }
 
 
@@ -569,7 +569,7 @@ public class ConnectionPoolTest extends AbstractTest
     }
 
     logger.info("CONNECTION POOL:: RESULT: {}", result);
-    AssertJUnit.assertEquals(ResultCode.SUCCESS, result.getResultCode());
+    Assert.assertEquals(result.getResultCode(), ResultCode.SUCCESS);
     TestUtils.assertEquals(results, result.getEntry());
     return System.currentTimeMillis() - startTime;
   }

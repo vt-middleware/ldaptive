@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 /**
@@ -26,22 +25,22 @@ public class LdapAttributeTest
   public void oneAttribute()
   {
     final LdapAttribute la = new LdapAttribute("givenName", "William");
-    AssertJUnit.assertEquals("William", la.getStringValue());
-    AssertJUnit.assertEquals(1, la.getStringValues().size());
-    AssertJUnit.assertEquals("William", la.getStringValues().iterator().next());
-    AssertJUnit.assertTrue(Arrays.equals("William".getBytes(), la.getBinaryValue()));
-    AssertJUnit.assertEquals(1, la.size());
-    AssertJUnit.assertEquals(la, new LdapAttribute("givenName", "William"));
+    Assert.assertEquals(la.getStringValue(), "William");
+    Assert.assertEquals(la.getStringValues().size(), 1);
+    Assert.assertEquals(la.getStringValues().iterator().next(), "William");
+    Assert.assertTrue(Arrays.equals("William".getBytes(), la.getBinaryValue()));
+    Assert.assertEquals(la.size(), 1);
+    Assert.assertEquals(la, new LdapAttribute("givenName", "William"));
     try {
       la.addStringValues((String[]) null);
-      AssertJUnit.fail("Should have thrown NullPointerException");
+      Assert.fail("Should have thrown NullPointerException");
     } catch (Exception e) {
-      AssertJUnit.assertEquals(NullPointerException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), NullPointerException.class);
     }
     la.addStringValues((String) null);
-    AssertJUnit.assertEquals(1, la.size());
+    Assert.assertEquals(la.size(), 1);
     la.clear();
-    AssertJUnit.assertEquals(0, la.size());
+    Assert.assertEquals(la.size(), 0);
   }
 
 
@@ -50,11 +49,11 @@ public class LdapAttributeTest
   public void twoAttributes()
   {
     final LdapAttribute la = new LdapAttribute("givenName", "Bill", "William");
-    AssertJUnit.assertEquals(2, la.getStringValues().size());
-    AssertJUnit.assertEquals(2, la.size());
-    AssertJUnit.assertEquals(la, new LdapAttribute("givenName", "Bill", "William"));
+    Assert.assertEquals(la.getStringValues().size(), 2);
+    Assert.assertEquals(la.size(), 2);
+    Assert.assertEquals(la, new LdapAttribute("givenName", "Bill", "William"));
     la.clear();
-    AssertJUnit.assertEquals(0, la.size());
+    Assert.assertEquals(la.size(), 0);
   }
 
 
@@ -63,31 +62,31 @@ public class LdapAttributeTest
   public void addStringValue()
   {
     final LdapAttribute la = new LdapAttribute("cn", "William Wallace");
-    AssertJUnit.assertEquals("William Wallace", la.getStringValue());
-    AssertJUnit.assertEquals("William Wallace".getBytes(StandardCharsets.UTF_8), la.getBinaryValue());
-    AssertJUnit.assertEquals(1, la.getStringValues().size());
-    AssertJUnit.assertEquals(1, la.getBinaryValues().size());
-    AssertJUnit.assertEquals(la, new LdapAttribute("cn", "William Wallace"));
+    Assert.assertEquals(la.getStringValue(), "William Wallace");
+    Assert.assertEquals(la.getBinaryValue(), "William Wallace".getBytes(StandardCharsets.UTF_8));
+    Assert.assertEquals(la.getStringValues().size(), 1);
+    Assert.assertEquals(la.getBinaryValues().size(), 1);
+    Assert.assertEquals(la, new LdapAttribute("cn", "William Wallace"));
     try {
       la.addStringValues((String[]) null);
-      AssertJUnit.fail("Should have thrown NullPointerException");
+      Assert.fail("Should have thrown NullPointerException");
     } catch (Exception e) {
-      AssertJUnit.assertEquals(NullPointerException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), NullPointerException.class);
     }
     la.addStringValues((String) null);
     la.addBinaryValues("Bill".getBytes(StandardCharsets.UTF_8));
-    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
-    AssertJUnit.assertEquals(2, la.getStringValues().size());
-    AssertJUnit.assertTrue(la.getStringValues().contains("Bill"));
-    AssertJUnit.assertTrue(la.getStringValues().contains("William Wallace"));
-    AssertJUnit.assertTrue(
+    Assert.assertEquals(la.getBinaryValues().size(), 2);
+    Assert.assertEquals(la.getStringValues().size(), 2);
+    Assert.assertTrue(la.getStringValues().contains("Bill"));
+    Assert.assertTrue(la.getStringValues().contains("William Wallace"));
+    Assert.assertTrue(
       la.getBinaryValues().stream().anyMatch(
         b -> Arrays.equals(b, "Bill".getBytes(StandardCharsets.UTF_8))));
-    AssertJUnit.assertTrue(
+    Assert.assertTrue(
       la.getBinaryValues().stream().anyMatch(
         b -> Arrays.equals(b, "William Wallace".getBytes(StandardCharsets.UTF_8))));
     la.clear();
-    AssertJUnit.assertEquals(0, la.size());
+    Assert.assertEquals(la.size(), 0);
   }
 
 
@@ -96,29 +95,29 @@ public class LdapAttributeTest
   public void addBinaryValue()
   {
     final LdapAttribute la = new LdapAttribute("jpegPhoto", "image".getBytes());
-    AssertJUnit.assertTrue(Arrays.equals("image".getBytes(), la.getBinaryValue()));
-    AssertJUnit.assertEquals("aW1hZ2U=", la.getStringValue());
-    AssertJUnit.assertEquals(1, la.getBinaryValues().size());
-    AssertJUnit.assertEquals(1, la.getStringValues().size());
-    AssertJUnit.assertEquals(la, new LdapAttribute("jpegPhoto", "image".getBytes()));
+    Assert.assertTrue(Arrays.equals("image".getBytes(), la.getBinaryValue()));
+    Assert.assertEquals(la.getStringValue(), "aW1hZ2U=");
+    Assert.assertEquals(la.getBinaryValues().size(), 1);
+    Assert.assertEquals(la.getStringValues().size(), 1);
+    Assert.assertEquals(la, new LdapAttribute("jpegPhoto", "image".getBytes()));
     try {
       la.addBinaryValues((byte[][]) null);
-      AssertJUnit.fail("Should have thrown NullPointerException");
+      Assert.fail("Should have thrown NullPointerException");
     } catch (Exception e) {
-      AssertJUnit.assertEquals(NullPointerException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), NullPointerException.class);
     }
     la.addBinaryValues((byte[]) null);
     la.addStringValues("QmlsbA==");
-    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
-    AssertJUnit.assertEquals(2, la.getStringValues().size());
-    AssertJUnit.assertTrue(la.getStringValues().contains("aW1hZ2U="));
-    AssertJUnit.assertTrue(la.getStringValues().contains("QmlsbA=="));
-    AssertJUnit.assertTrue(
+    Assert.assertEquals(la.getBinaryValues().size(), 2);
+    Assert.assertEquals(la.getStringValues().size(), 2);
+    Assert.assertTrue(la.getStringValues().contains("aW1hZ2U="));
+    Assert.assertTrue(la.getStringValues().contains("QmlsbA=="));
+    Assert.assertTrue(
       la.getBinaryValues().stream().anyMatch(b -> Arrays.equals(b, "Bill".getBytes(StandardCharsets.UTF_8))));
-    AssertJUnit.assertTrue(
+    Assert.assertTrue(
       la.getBinaryValues().stream().anyMatch(b -> Arrays.equals(b, "image".getBytes())));
     la.clear();
-    AssertJUnit.assertEquals(0, la.size());
+    Assert.assertEquals(la.size(), 0);
   }
 
 
@@ -137,21 +136,21 @@ public class LdapAttributeTest
     final LdapAttribute la = new LdapAttribute();
     la.setName("cn");
     la.addStringValues(commonNames);
-    AssertJUnit.assertNotNull(la.getStringValue());
-    AssertJUnit.assertNotNull(la.getStringValues());
-    AssertJUnit.assertNotNull(la.getBinaryValue());
-    AssertJUnit.assertNotNull(la.getBinaryValues());
-    AssertJUnit.assertEquals(2, la.getStringValues().size());
-    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
-    AssertJUnit.assertTrue(la.getStringValues().contains("Bill Wallace"));
-    AssertJUnit.assertTrue(la.getStringValues().contains("William Wallace"));
+    Assert.assertNotNull(la.getStringValue());
+    Assert.assertNotNull(la.getStringValues());
+    Assert.assertNotNull(la.getBinaryValue());
+    Assert.assertNotNull(la.getBinaryValues());
+    Assert.assertEquals(la.getStringValues().size(), 2);
+    Assert.assertEquals(la.getBinaryValues().size(), 2);
+    Assert.assertTrue(la.getStringValues().contains("Bill Wallace"));
+    Assert.assertTrue(la.getStringValues().contains("William Wallace"));
     Assert.assertEqualsNoOrder(commonNames.toArray(new String[2]), la.getStringValues().toArray(new String[2]));
     Assert.assertEquals(binaryCommonNames.size(), la.getBinaryValues().size());
     for (byte[] b : binaryCommonNames) {
       Assert.assertTrue(la.getBinaryValues().stream().anyMatch(a -> Arrays.equals(a, b)));
     }
     la.clear();
-    AssertJUnit.assertEquals(0, la.size());
+    Assert.assertEquals(la.size(), 0);
   }
 
 
@@ -170,21 +169,21 @@ public class LdapAttributeTest
     final LdapAttribute la = new LdapAttribute();
     la.setName("jpegPhoto");
     la.addBinaryValues(jpegPhotos);
-    AssertJUnit.assertNotNull(la.getStringValue());
-    AssertJUnit.assertNotNull(la.getStringValues());
-    AssertJUnit.assertNotNull(la.getBinaryValue());
-    AssertJUnit.assertNotNull(la.getBinaryValues());
-    AssertJUnit.assertEquals(2, la.getStringValues().size());
-    AssertJUnit.assertEquals(2, la.getBinaryValues().size());
-    AssertJUnit.assertTrue(la.getStringValues().contains("aW1hZ2Ux"));
-    AssertJUnit.assertTrue(la.getStringValues().contains("aW1hZ2Uy"));
+    Assert.assertNotNull(la.getStringValue());
+    Assert.assertNotNull(la.getStringValues());
+    Assert.assertNotNull(la.getBinaryValue());
+    Assert.assertNotNull(la.getBinaryValues());
+    Assert.assertEquals(la.getStringValues().size(), 2);
+    Assert.assertEquals(la.getBinaryValues().size(), 2);
+    Assert.assertTrue(la.getStringValues().contains("aW1hZ2Ux"));
+    Assert.assertTrue(la.getStringValues().contains("aW1hZ2Uy"));
     Assert.assertEqualsNoOrder(stringJpegPhotos.toArray(new String[2]), la.getStringValues().toArray(new String[2]));
-    Assert.assertEquals(jpegPhotos.size(), la.getBinaryValues().size());
+    Assert.assertEquals(la.getBinaryValues().size(), jpegPhotos.size());
     for (byte[] b : jpegPhotos) {
       Assert.assertTrue(la.getBinaryValues().stream().anyMatch(a -> Arrays.equals(a, b)));
     }
     la.clear();
-    AssertJUnit.assertEquals(0, la.size());
+    Assert.assertEquals(la.size(), 0);
   }
 
 
@@ -193,28 +192,28 @@ public class LdapAttributeTest
   public void attributeOptions()
   {
     LdapAttribute la = new LdapAttribute("cn", "William Wallace");
-    AssertJUnit.assertEquals("cn", la.getName());
-    AssertJUnit.assertEquals("cn", la.getName(true));
-    AssertJUnit.assertEquals("cn", la.getName(false));
-    AssertJUnit.assertNotNull(la.getOptions());
-    AssertJUnit.assertEquals(0, la.getOptions().size());
+    Assert.assertEquals(la.getName(), "cn");
+    Assert.assertEquals(la.getName(true), "cn");
+    Assert.assertEquals(la.getName(false), "cn");
+    Assert.assertNotNull(la.getOptions());
+    Assert.assertEquals(la.getOptions().size(), 0);
 
     la = new LdapAttribute("cn;lang-ru", "Уильям Уоллес");
-    AssertJUnit.assertEquals("cn;lang-ru", la.getName());
-    AssertJUnit.assertEquals("cn;lang-ru", la.getName(true));
-    AssertJUnit.assertEquals("cn", la.getName(false));
-    AssertJUnit.assertNotNull(la.getOptions());
-    AssertJUnit.assertEquals(1, la.getOptions().size());
-    AssertJUnit.assertEquals("lang-ru", la.getOptions().get(0));
+    Assert.assertEquals(la.getName(), "cn;lang-ru");
+    Assert.assertEquals(la.getName(true), "cn;lang-ru");
+    Assert.assertEquals(la.getName(false), "cn");
+    Assert.assertNotNull(la.getOptions());
+    Assert.assertEquals(la.getOptions().size(), 1);
+    Assert.assertEquals(la.getOptions().get(0), "lang-ru");
 
     la = new LdapAttribute("cn;lang-lv;dynamic", "Viljams Voless");
-    AssertJUnit.assertEquals("cn;lang-lv;dynamic", la.getName());
-    AssertJUnit.assertEquals("cn;lang-lv;dynamic", la.getName(true));
-    AssertJUnit.assertEquals("cn", la.getName(false));
-    AssertJUnit.assertNotNull(la.getOptions());
-    AssertJUnit.assertEquals(2, la.getOptions().size());
-    AssertJUnit.assertEquals("lang-lv", la.getOptions().get(0));
-    AssertJUnit.assertEquals("dynamic", la.getOptions().get(1));
+    Assert.assertEquals(la.getName(), "cn;lang-lv;dynamic");
+    Assert.assertEquals(la.getName(true), "cn;lang-lv;dynamic");
+    Assert.assertEquals(la.getName(false), "cn");
+    Assert.assertNotNull(la.getOptions());
+    Assert.assertEquals(la.getOptions().size(), 2);
+    Assert.assertEquals(la.getOptions().get(0), "lang-lv");
+    Assert.assertEquals(la.getOptions().get(1), "dynamic");
   }
 
 

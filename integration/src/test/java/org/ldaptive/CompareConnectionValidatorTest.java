@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
@@ -24,11 +24,11 @@ public class CompareConnectionValidatorTest extends AbstractTest
     final Connection c = cf.getConnection();
     try {
       c.open();
-      AssertJUnit.assertTrue(validator.apply(c));
+      Assert.assertTrue(validator.apply(c));
     } finally {
       c.close();
     }
-    AssertJUnit.assertFalse(validator.apply(c));
+    Assert.assertFalse(validator.apply(c));
   }
 
 
@@ -50,12 +50,12 @@ public class CompareConnectionValidatorTest extends AbstractTest
       new CompareRequest("cn=does-not-exist", "objectClass", "inetOrgPerson"));
     try {
       c.open();
-      AssertJUnit.assertTrue(validator1.apply(c));
-      AssertJUnit.assertTrue(validator2.apply(c));
+      Assert.assertTrue(validator1.apply(c));
+      Assert.assertTrue(validator2.apply(c));
     } finally {
       c.close();
     }
-    AssertJUnit.assertFalse(validator1.apply(c));
-    AssertJUnit.assertFalse(validator2.apply(c));
+    Assert.assertFalse(validator1.apply(c));
+    Assert.assertFalse(validator2.apply(c));
   }
 }
