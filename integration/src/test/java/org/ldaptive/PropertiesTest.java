@@ -34,6 +34,7 @@ public class PropertiesTest
   /** @throws  Exception  On test failure. */
   @BeforeClass(groups = "props")
   public void init()
+    throws Exception
   {
     System.setProperty("java.security.auth.login.config", "target/test-classes/ldap_jaas.config");
   }
@@ -111,10 +112,10 @@ public class PropertiesTest
 
     final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
     for (Function<LdapEntry, LdapEntry> handler : dnResolver.getEntryHandlers()) {
-      if (MergeAttributeEntryHandler.class.isInstance(handler)) {
+      if (handler instanceof MergeAttributeEntryHandler) {
         final MergeAttributeEntryHandler h = (MergeAttributeEntryHandler) handler;
         Assert.assertNotNull(h);
-      } else if (DnAttributeEntryHandler.class.isInstance(handler)) {
+      } else if (handler instanceof DnAttributeEntryHandler) {
         final DnAttributeEntryHandler h = (DnAttributeEntryHandler) handler;
         Assert.assertEquals(h.getDnAttributeName(), "myDN");
       } else {
@@ -214,10 +215,10 @@ public class PropertiesTest
 
     final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
     for (Function<LdapEntry, LdapEntry> handler : dnResolver.getEntryHandlers()) {
-      if (MergeAttributeEntryHandler.class.isInstance(handler)) {
+      if (handler instanceof MergeAttributeEntryHandler) {
         final MergeAttributeEntryHandler h = (MergeAttributeEntryHandler) handler;
         Assert.assertNotNull(h);
-      } else if (DnAttributeEntryHandler.class.isInstance(handler)) {
+      } else if (handler instanceof DnAttributeEntryHandler) {
         final DnAttributeEntryHandler h = (DnAttributeEntryHandler) handler;
         Assert.assertEquals(h.getDnAttributeName(), "myDN");
       } else {

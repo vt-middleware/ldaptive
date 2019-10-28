@@ -37,9 +37,7 @@ public final class Hex
    */
   private static final byte[] DECODE = new byte['f' + 1];
 
-  /**
-   * Initialize the DECODE table.
-   */
+  // Initialize the DECODE table
   // CheckStyle:MagicNumber OFF
   static {
     // set all values to -1 to indicate error

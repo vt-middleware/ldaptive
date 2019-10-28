@@ -38,10 +38,8 @@ public class AuthenticatorLoadTest extends AbstractTest
   /** Entries for auth tests. */
   private static final Map<String, LdapEntry[]> ENTRIES = new HashMap<>();
 
-  /**
-   * Initialize the map of entries.
-   */
   static {
+    // Initialize the map of entries
     for (int i = 2; i <= 10; i++) {
       ENTRIES.put(String.valueOf(i), new LdapEntry[2]);
     }

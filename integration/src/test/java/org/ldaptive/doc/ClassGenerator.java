@@ -84,8 +84,8 @@ public class ClassGenerator
   /** Sections to build beans for. */
   private final Map<String, List<String>> sections = new HashMap<>();
 
-  /** Initialize {@link #IMPORT_STATEMENTS}. */
   static {
+    // initialize import statements
     final StringBuilder sb = new StringBuilder();
     for (String p : PACKAGES_TO_IMPORT) {
       sb.append("import ").append(p).append(".*;").append("\n");

@@ -153,7 +153,7 @@ public class LdapLoginModule extends AbstractLoginModule
     } catch (LdapException e) {
       logger.debug("Error occurred attempting authentication", e);
       loginSuccess = false;
-      throw new LoginException(e != null ? e.getMessage() : "Authentication Error");
+      throw new LoginException(e.getMessage());
     }
     return true;
   }

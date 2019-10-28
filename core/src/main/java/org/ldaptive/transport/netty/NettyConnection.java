@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -205,7 +206,6 @@ public final class NettyConnection extends TransportConnection
    *
    * @return  Netty bootstrap
    */
-  @SuppressWarnings("unchecked")
   private Bootstrap createBootstrap(final ClientInitializer initializer)
   {
     final Bootstrap bootstrap = new Bootstrap();
@@ -602,11 +602,19 @@ public final class NettyConnection extends TransportConnection
   public void operation(final AbandonRequest request)
   {
     final DefaultOperationHandle handle = pendingResponses.remove(request.getMessageID());
+    if (handle == null) {
+      LOGGER.warn(
+        "Attempt to abandon message {} that no longer exists for {}",
+        request.getMessageID(),
+        NettyConnection.this);
+    }
     LOGGER.debug("Abandon handle {} with pending responses {}", handle, pendingResponses);
     if (reconnectLock.readLock().tryLock()) {
       try {
         if (!isOpen()) {
-          handle.exception(new LdapException("Connection is not open"));
+          if (handle != null) {
+            handle.exception(new LdapException("Connection is not open"));
+          }
         } else {
           if (bindLock.readLock().tryLock()) {
             try {
@@ -617,14 +625,18 @@ public final class NettyConnection extends TransportConnection
               bindLock.readLock().unlock();
             }
           } else {
-            handle.exception(new LdapException("Bind in progress"));
+            if (handle != null) {
+              handle.exception(new LdapException("Bind in progress"));
+            }
           }
         }
       } finally {
         reconnectLock.readLock().unlock();
       }
     } else {
-      handle.exception(new LdapException("Reconnect in progress"));
+      if (handle != null) {
+        handle.exception(new LdapException("Reconnect in progress"));
+      }
     }
   }
 
@@ -689,6 +701,7 @@ public final class NettyConnection extends TransportConnection
 
 
   @Override
+  @SuppressWarnings("unchecked")
   protected void write(final DefaultOperationHandle handle)
   {
     LOGGER.debug("Write handle {} with pending responses {}", handle, pendingResponses);
@@ -802,11 +815,8 @@ public final class NettyConnection extends TransportConnection
   {
     if (pendingResponses.size() > 0) {
       LOGGER.debug("Notifying operation handles {} for {} of connection close", pendingResponses, this);
-      if (inboundException != null) {
-        pendingResponses.notifyOperationHandles(inboundException);
-      } else {
-        pendingResponses.notifyOperationHandles(new LdapException("Connection closed"));
-      }
+      pendingResponses.notifyOperationHandles(
+        Objects.requireNonNullElseGet(inboundException, () -> new LdapException("Connection closed")));
     }
   }
 
@@ -852,7 +862,7 @@ public final class NettyConnection extends TransportConnection
         reconnectLock.writeLock().unlock();
       }
       if (replayOperations != null && replayOperations.size() > 0) {
-        replayOperations.forEach(h -> write(h));
+        replayOperations.forEach(this::write);
       }
       LOGGER.debug("Reconnect for connection {} finished", this);
     } else {

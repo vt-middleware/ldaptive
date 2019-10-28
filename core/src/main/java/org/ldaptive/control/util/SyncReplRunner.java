@@ -288,14 +288,12 @@ public class SyncReplRunner
     if (stopped) {
       throw new IllegalStateException("Runner is stopped");
     }
-    if (syncReplClient != null) {
-      try {
-        if (!syncReplClient.isComplete()) {
-          syncReplClient.cancel();
-        }
-      } catch (Exception e) {
-        logger.warn("Could not cancel sync repl request", e);
+    try {
+      if (!syncReplClient.isComplete()) {
+        syncReplClient.cancel();
       }
+    } catch (Exception e) {
+      logger.warn("Could not cancel sync repl request", e);
     }
     try {
       syncReplClient.send(searchRequest, cookieManager);
@@ -348,7 +346,7 @@ public class SyncReplRunner
       if (metadata instanceof InitialRetryMetadata) {
         try {
           Thread.sleep(wait.toMillis());
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException ignored) {}
         return true;
       }
       return false;

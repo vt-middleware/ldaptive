@@ -60,7 +60,7 @@ public class CompareOperation extends AbstractOperation<CompareRequest, CompareR
   {
     final Connection conn = getConnectionFactory().getConnection();
     conn.open();
-    return configureHandle(conn.operation(request)).onComplete(() -> conn.close()).send();
+    return configureHandle(conn.operation(request)).onComplete(conn::close).send();
   }
 
 
@@ -79,7 +79,7 @@ public class CompareOperation extends AbstractOperation<CompareRequest, CompareR
   {
     final Connection conn = factory.getConnection();
     conn.open();
-    return conn.operation(request).onComplete(() -> conn.close()).send();
+    return conn.operation(request).onComplete(conn::close).send();
   }
 
 

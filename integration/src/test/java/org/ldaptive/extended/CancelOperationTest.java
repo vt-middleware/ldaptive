@@ -13,8 +13,6 @@ import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.control.SyncRequestControl;
-import org.ldaptive.handler.LdapEntryHandler;
-import org.ldaptive.handler.ResultHandler;
 import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -43,19 +41,18 @@ public class CancelOperationTest extends AbstractTest
       return;
     }
 
-    final SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory();
-    try {
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
       final SearchOperation search = new SearchOperation(cf);
       final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn);
       request.setControls(new SyncRequestControl(SyncRequestControl.Mode.REFRESH_AND_PERSIST, true));
       search.setRequest(request);
       final CountDownLatch latch = new CountDownLatch(1);
-      search.setEntryHandlers((LdapEntryHandler) ldapEntry -> {
+      search.setEntryHandlers(ldapEntry -> {
         latch.countDown();
         return ldapEntry;
       });
       final Result[] result = new Result[1];
-      search.setResultHandlers((ResultHandler) response -> result[0] = response);
+      search.setResultHandlers(response -> result[0] = response);
 
       final SearchOperationHandle searchHandle = search.send();
       latch.await(10, TimeUnit.SECONDS);
@@ -63,8 +60,6 @@ public class CancelOperationTest extends AbstractTest
       final ExtendedResponse cancelResult = searchHandle.cancel().execute();
       Assert.assertEquals(result[0].getResultCode(), ResultCode.CANCELED);
       Assert.assertEquals(cancelResult.getResultCode(), ResultCode.SUCCESS);
-    } finally {
-      cf.close();
     }
   }
 }

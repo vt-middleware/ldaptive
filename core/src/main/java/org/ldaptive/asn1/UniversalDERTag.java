@@ -104,11 +104,8 @@ public enum UniversalDERTag implements DERTag {
   /** Maps tag names to tags. */
   private static final Map<String, UniversalDERTag> TAGNAME_MAP = new HashMap<>();
 
-
-  /**
-   * Initializes tag mapping.
-   */
   static {
+    // Initializes tag mapping
     for (UniversalDERTag tag : UniversalDERTag.values()) {
       TAGNO_MAP.put(tag.getTagNo(), tag);
       TAGNAME_MAP.put(tag.name(), tag);

@@ -129,7 +129,7 @@ public final class FilterParser
    */
   private static int findMatchingParenPosition(final String filter, final int start)
   {
-    if (filter == null | filter.length() == 0) {
+    if (filter == null || filter.length() == 0) {
       throw new IllegalArgumentException("Filter cannot be null or empty");
     }
     if (filter.charAt(start) != '(') {

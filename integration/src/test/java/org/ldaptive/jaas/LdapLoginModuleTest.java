@@ -39,10 +39,8 @@ public class LdapLoginModuleTest extends AbstractTest
   /** Entries for group tests. */
   private static final Map<String, LdapEntry[]> GROUP_ENTRIES = new HashMap<>();
 
-  /**
-   * Initialize the map of group entries.
-   */
   static {
+    // Initialize the map of group entries
     for (int i = 6; i <= 9; i++) {
       GROUP_ENTRIES.put(String.valueOf(i), new LdapEntry[2]);
     }
@@ -425,6 +423,7 @@ public class LdapLoginModuleTest extends AbstractTest
       for (String s : checkRoles) {
         if (s.equals(r.getName())) {
           match = true;
+          break;
         }
       }
       Assert.assertTrue(match);
@@ -535,6 +534,7 @@ public class LdapLoginModuleTest extends AbstractTest
       for (String s : checkRoles) {
         if (s.equals(r.getName())) {
           match = true;
+          break;
         }
       }
       Assert.assertTrue(match);

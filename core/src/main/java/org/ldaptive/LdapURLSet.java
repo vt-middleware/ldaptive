@@ -40,8 +40,7 @@ public class LdapURLSet
 
   public List<LdapURL> getUrls()
   {
-    final List<LdapURL> l = new ArrayList<>();
-    l.addAll(getActiveUrls());
+    final List<LdapURL> l = new ArrayList<>(getActiveUrls());
     if (hasInactiveUrls()) {
       l.addAll(getInactiveUrls());
     }

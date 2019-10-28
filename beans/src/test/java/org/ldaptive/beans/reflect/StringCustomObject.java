@@ -93,7 +93,6 @@ public class StringCustomObject implements CustomObject
 
 
   @Override
-  @SuppressWarnings("unchecked")
   public int hashCode()
   {
     return

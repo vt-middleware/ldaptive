@@ -58,7 +58,7 @@ public abstract class TransportConnection implements Connection
     connectionStrategy = connectionConfig.getConnectionStrategy();
     synchronized (connectionStrategy) {
       if (!connectionStrategy.isInitialized()) {
-        connectionStrategy.initialize(connectionConfig.getLdapUrl(), url -> test(url));
+        connectionStrategy.initialize(connectionConfig.getLdapUrl(), this::test);
       }
     }
   }

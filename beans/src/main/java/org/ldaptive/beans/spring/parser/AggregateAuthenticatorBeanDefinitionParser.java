@@ -108,13 +108,13 @@ public class AggregateAuthenticatorBeanDefinitionParser
     /** Authenticators to aggregate. */
     private List<Authenticator> authenticators;
 
-    /** Value for {@link AggregateDnResolver#allowMultipleDns}. */
+    /** Value for {@link AggregateDnResolver#getAllowMultipleDns()}. */
     private boolean allowMultipleDns;
 
-    /** Value for {@link Authenticator#returnAttributes}. */
+    /** Value for {@link Authenticator#getReturnAttributes()}. */
     private String[] returnAttributes;
 
-    /** Value of {@link Authenticator#resolveEntryOnFailure}. */
+    /** Value of {@link Authenticator#getResolveEntryOnFailure()}. */
     private boolean resolveEntryOnFailure;
 
 

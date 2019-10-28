@@ -36,10 +36,8 @@ public class ConnectionPoolTest extends AbstractTest
   /** Entries for pool tests. */
   private static final Map<String, LdapEntry[]> ENTRIES = new HashMap<>();
 
-  /**
-   * Initialize the map of entries.
-   */
   static {
+    // Initialize the map of entries
     for (int i = 2; i <= 10; i++) {
       ENTRIES.put(String.valueOf(i), new LdapEntry[2]);
     }

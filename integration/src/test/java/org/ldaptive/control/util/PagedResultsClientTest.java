@@ -81,9 +81,7 @@ public class PagedResultsClientTest extends AbstractTest
   public void execute(final String dn, final String filter)
     throws Exception
   {
-    SingleConnectionFactory cf = null;
-    try {
-      cf = TestUtils.createSingleConnectionFactory();
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
       final PagedResultsClient client = new PagedResultsClient(cf, 1);
 
       final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
@@ -106,8 +104,6 @@ public class PagedResultsClientTest extends AbstractTest
       } catch (IllegalArgumentException e) {
         Assert.assertNotNull(e);
       }
-    } finally {
-      cf.close();
     }
   }
 
@@ -127,9 +123,7 @@ public class PagedResultsClientTest extends AbstractTest
   public void executeToCompletion(final String dn, final String filter)
     throws Exception
   {
-    SingleConnectionFactory cf = null;
-    try {
-      cf = TestUtils.createSingleConnectionFactory();
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
       final PagedResultsClient client = new PagedResultsClient(cf, 1);
 
       final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
@@ -143,8 +137,6 @@ public class PagedResultsClientTest extends AbstractTest
       Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[1].getDn().toLowerCase());
       Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[0].getDn().toLowerCase());
       Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[2].getDn().toLowerCase());
-    } finally {
-      cf.close();
     }
   }
 }

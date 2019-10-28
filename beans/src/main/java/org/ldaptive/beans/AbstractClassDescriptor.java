@@ -99,7 +99,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
 
 
   /** Stores the DN value from a {@link Entry} configuration. Setter method is a no-op. */
-  protected class SimpleDnValueMutator implements DnValueMutator
+  protected static class SimpleDnValueMutator implements DnValueMutator
   {
 
     /** DN value to store. */
@@ -130,7 +130,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
 
 
   /** Stores an {@link Attribute} configuration in an {@link LdapAttribute} object. Setter methods are no-ops. */
-  protected class SimpleAttributeValueMutator implements AttributeValueMutator
+  protected static class SimpleAttributeValueMutator implements AttributeValueMutator
   {
 
     /** Ldap attribute to operate on. */

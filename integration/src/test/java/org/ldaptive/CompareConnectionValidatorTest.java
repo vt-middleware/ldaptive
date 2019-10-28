@@ -22,11 +22,9 @@ public class CompareConnectionValidatorTest extends AbstractTest
     final CompareConnectionValidator validator = new CompareConnectionValidator();
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
     final Connection c = cf.getConnection();
-    try {
+    try (c) {
       c.open();
       Assert.assertTrue(validator.apply(c));
-    } finally {
-      c.close();
     }
     Assert.assertFalse(validator.apply(c));
   }
