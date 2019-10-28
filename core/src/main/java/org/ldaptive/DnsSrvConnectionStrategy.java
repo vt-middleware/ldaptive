@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.ldaptive.dns.DNSContextFactory;
@@ -139,11 +140,10 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
       dnsResolvers = new HashMap<>();
       for (String url : urls.split(" ")) {
         final String[] dnsUrl = parseDnsUrl(url);
-        if (dnsContextFactory == null) {
-          dnsResolvers.put(new SRVDNSResolver(new DefaultDNSContextFactory(dnsUrl[0]), useSSL), dnsUrl[1]);
-        } else {
-          dnsResolvers.put(new SRVDNSResolver(dnsContextFactory, useSSL), dnsUrl[1]);
-        }
+        dnsResolvers.put(
+          new SRVDNSResolver(
+            Objects.requireNonNullElseGet(dnsContextFactory, () -> new DefaultDNSContextFactory(dnsUrl[0])), useSSL),
+          dnsUrl[1]);
       }
     } else {
       final String[] dnsUrl = parseDnsUrl(urls);

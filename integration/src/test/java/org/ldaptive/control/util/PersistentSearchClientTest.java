@@ -98,9 +98,9 @@ public class PersistentSearchClientTest extends AbstractTest
       true,
       true);
     final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
-    client.setOnException(e -> queue.add(e));
-    client.setOnEntry(e -> queue.add(e));
-    client.setOnResult(r -> queue.add(r));
+    client.setOnException(queue::add);
+    client.setOnEntry(queue::add);
+    client.setOnResult(queue::add);
     final SearchOperationHandle handle = client.send(request);
 
     // test the async request

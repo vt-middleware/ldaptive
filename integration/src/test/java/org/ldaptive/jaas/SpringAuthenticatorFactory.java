@@ -21,10 +21,8 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
   /** Application context. */
   private static ClassPathXmlApplicationContext context;
 
-  /**
-   * Initialize the context.
-   */
   static {
+    // Initialize the context
     try {
       context = new ClassPathXmlApplicationContext(
         new String[] {"/spring-jaas-context.xml", });

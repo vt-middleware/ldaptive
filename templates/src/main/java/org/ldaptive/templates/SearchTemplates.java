@@ -173,7 +173,7 @@ public class SearchTemplates
      }
    * </pre>
    */
-  public class DefaultTermParser implements TermParser
+  public static class DefaultTermParser implements TermParser
   {
 
 
@@ -200,7 +200,7 @@ public class SearchTemplates
      }
    * </pre>
    */
-  public class InitialTermParser implements TermParser
+  public static class InitialTermParser implements TermParser
   {
 
 

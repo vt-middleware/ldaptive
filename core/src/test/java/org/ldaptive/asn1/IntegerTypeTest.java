@@ -202,7 +202,7 @@ public class IntegerTypeTest
   {
     if (integer.intValue() == -1 && expected.length > 1) {
       // ignore multi byte negative 1
-      return;
+      Assert.assertTrue(expected.length > 1);
     } else {
       Assert.assertEquals(IntegerType.toBytes(integer), expected);
     }

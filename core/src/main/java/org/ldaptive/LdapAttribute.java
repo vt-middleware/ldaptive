@@ -61,8 +61,8 @@ public class LdapAttribute
   /** Whether this attribute is binary and string representations should be base64 encoded. */
   private boolean binary;
 
-  /** Configure custom binary attribute names. */
   static {
+    // Configure custom binary attribute names
     final String[] split = System.getProperty("org.ldaptive.attribute.binary", "").split(",");
     BINARY_ATTRIBUTES = LdapUtils.concatArrays(DEFAULT_BINARY_ATTRIBUTES, split);
   }

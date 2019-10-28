@@ -65,10 +65,6 @@ public class DERPath
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 601;
 
-
-  /**
-   * Class initializer.
-   */
   static {
     final StringBuilder validNames = new StringBuilder();
     validNames.append(ApplicationDERTag.TAG_NAME).append("\\(\\d+\\)|");

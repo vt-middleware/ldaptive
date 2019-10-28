@@ -138,7 +138,7 @@ public class Schema
         isBinary = true;
       } else {
         final Syntax syntax = getSyntax(syntaxOid);
-        if (syntax != null && Syntax.containsBooleanExtension(syntax, "X-NOT-HUMAN-READABLE")) {
+        if (Syntax.containsBooleanExtension(syntax, "X-NOT-HUMAN-READABLE")) {
           isBinary = true;
         }
       }

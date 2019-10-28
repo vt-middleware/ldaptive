@@ -85,16 +85,14 @@ public class SyncReplClientTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    SingleConnectionFactory cf = null;
-    try {
-      cf = TestUtils.createSingleConnectionFactory();
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
       final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
       final SyncReplClient client = new SyncReplClient(cf, false);
       final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
-      client.setOnException(e -> queue.add(e));
-      client.setOnEntry(e -> queue.add(e));
-      client.setOnMessage(m -> queue.add(m));
-      client.setOnResult(r -> queue.add(r));
+      client.setOnException(queue::add);
+      client.setOnEntry(queue::add);
+      client.setOnMessage(queue::add);
+      client.setOnResult(queue::add);
       client.send(request, new DefaultCookieManager());
 
       final LdapEntry entry = (LdapEntry) queue.take();
@@ -109,9 +107,6 @@ public class SyncReplClientTest extends AbstractTest
       final SyncDoneControl sdc = (SyncDoneControl) result.getControl(SyncDoneControl.OID);
       Assert.assertEquals(sdc.getRefreshDeletes(), true);
       Assert.assertNotNull(sdc.getCookie());
-
-    } finally {
-      cf.close();
     }
   }
 
@@ -139,16 +134,14 @@ public class SyncReplClientTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    SingleConnectionFactory cf = null;
-    try {
-      cf = TestUtils.createSingleConnectionFactory();
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
       final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
       final SyncReplClient client = new SyncReplClient(cf, true);
       final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
-      client.setOnException(e -> queue.add(e));
-      client.setOnEntry(e -> queue.add(e));
-      client.setOnMessage(m -> queue.add(m));
-      client.setOnResult(r -> queue.add(r));
+      client.setOnException(queue::add);
+      client.setOnEntry(queue::add);
+      client.setOnMessage(queue::add);
+      client.setOnResult(queue::add);
       client.send(request, new DefaultCookieManager());
 
       LdapEntry entry = (LdapEntry) queue.take();
@@ -200,8 +193,6 @@ public class SyncReplClientTest extends AbstractTest
       final Result result = (Result) queue.take();
       Assert.assertNotNull(result);
       Assert.assertEquals(result.getResultCode(), ResultCode.CANCELED);
-    } finally {
-      cf.close();
     }
   }
 }

@@ -41,9 +41,7 @@ public final class LdapURLActivatorService
         return t;
       });
     executor.scheduleAtFixedRate(
-      () -> {
-        testInactiveUrls();
-      },
+      this::testInactiveUrls,
       PERIOD.toMillis(),
       PERIOD.toMillis(),
       TimeUnit.MILLISECONDS);
@@ -98,7 +96,7 @@ public final class LdapURLActivatorService
         }
       }
     }
-    inactiveUrls.removeIf(url -> url.isActive());
+    inactiveUrls.removeIf(LdapURL::isActive);
   }
 
 

@@ -22,10 +22,8 @@ public abstract class AbstractTest
   /** Timeout for threaded tests. */
   public static final int TEST_TIME_OUT = 60000;
 
-  /**
-   * Add the BC provider.
-   */
   static {
+    // Add the BC provider
     Security.addProvider(new BouncyCastleProvider());
   }
 

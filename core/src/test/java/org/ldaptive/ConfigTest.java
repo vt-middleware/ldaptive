@@ -22,10 +22,8 @@ public class ConfigTest
   /** Map of default primitive type values. */
   private static final Map<Class<?>, Object> PRIMITIVE_TYPES = new HashMap<>();
 
-  /**
-   * Initialize primitive type values.
-   */
   static {
+    // Initialize primitive type values
     PRIMITIVE_TYPES.put(int.class, 0);
     PRIMITIVE_TYPES.put(long.class, 0);
     PRIMITIVE_TYPES.put(boolean.class, false);

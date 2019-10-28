@@ -307,9 +307,9 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     conn.open();
     final SearchRequest req = configureRequest(baseDN, filter, returnAttributes);
     if (handlers != null) {
-      return configureHandle(conn.operation(req)).onEntry(handlers).onComplete(() -> conn.close()).send();
+      return configureHandle(conn.operation(req)).onEntry(handlers).onComplete(conn::close).send();
     } else {
-      return configureHandle(conn.operation(req)).onComplete(() -> conn.close()).send();
+      return configureHandle(conn.operation(req)).onComplete(conn::close).send();
     }
   }
 
@@ -329,7 +329,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   {
     final Connection conn = getConnectionFactory().getConnection();
     conn.open();
-    return configureHandle(conn.operation(req)).onComplete(() -> conn.close()).send();
+    return configureHandle(conn.operation(req)).onComplete(conn::close).send();
   }
 
 
@@ -345,7 +345,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   {
     final Connection conn = getConnectionFactory().getConnection();
     conn.open();
-    return configureHandle(conn.operation(getRequest())).onComplete(() -> conn.close()).send();
+    return configureHandle(conn.operation(getRequest())).onComplete(conn::close).send();
   }
 
 
@@ -364,7 +364,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   {
     final Connection conn = factory.getConnection();
     conn.open();
-    return conn.operation(req).onComplete(() -> conn.close()).send();
+    return conn.operation(req).onComplete(conn::close).send();
   }
 
 

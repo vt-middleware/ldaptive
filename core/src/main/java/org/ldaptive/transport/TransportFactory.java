@@ -27,8 +27,8 @@ public final class TransportFactory
   /** Custom transport constructor. */
   private static Constructor<?> transportConstructor;
 
-  /** Initialize a custom transport if a system property is found. */
   static {
+    // Initialize a custom transport if a system property is found
     final String transportClass = System.getProperty(TRANSPORT);
     if (transportClass != null) {
       try {
