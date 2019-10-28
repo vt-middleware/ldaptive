@@ -1154,7 +1154,7 @@ public final class NettyConnection extends TransportConnection
     DECODED,
 
     /** Message has passed through the entire pipeline. */
-    HANDLED,
+    COMPLETE,
   }
 
 
@@ -1257,7 +1257,7 @@ public final class NettyConnection extends TransportConnection
         }
       } finally {
         if (ctx != null) {
-          ctx.fireUserEventTriggered(MessageStatus.HANDLED);
+          ctx.fireUserEventTriggered(MessageStatus.COMPLETE);
         }
       }
     }
@@ -1279,10 +1279,8 @@ public final class NettyConnection extends TransportConnection
     protected void eventReceived(final ChannelHandlerContext ctx, final MessageStatus evt)
     {
       logger.trace("Received event {}", evt);
-      if (MessageStatus.HANDLED == evt) {
-        if (!ctx.channel().config().isAutoRead()) {
-          ctx.read();
-        }
+      if (MessageStatus.COMPLETE == evt && !ctx.channel().config().isAutoRead()) {
+        ctx.read();
       }
     }
   }
