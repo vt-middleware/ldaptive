@@ -69,30 +69,36 @@ public abstract class TransportConnection implements Connection
     throws LdapException
   {
     LOGGER.debug("Strategy {} opening connection {}", connectionStrategy, this);
-    openLock.lock();
-    try {
-      if (isOpen()) {
-        throw new ConnectException("Connection is already open");
-      }
-      final RetryMetadata metadata = new InitialRetryMetadata(lastSuccessfulOpen);
-      LdapException lastThrown;
-      do {
-        try {
-          strategyOpen(metadata);
-          lastThrown = null;
-          break;
-        } catch (LdapException e) {
-          lastThrown = e;
-          LOGGER.debug("Error opening connection for strategy {}", connectionStrategy, e);
+    if (openLock.tryLock()) {
+      try {
+        if (isOpen()) {
+          throw new ConnectException("Connection is already open");
         }
-      } while (lastThrown != null && connectionConfig.getAutoReconnectCondition().test(metadata));
-      if (lastThrown != null) {
-        throw lastThrown;
+        final RetryMetadata metadata = new InitialRetryMetadata(lastSuccessfulOpen);
+        LdapException lastThrown;
+        do {
+          try {
+            strategyOpen(metadata);
+            lastThrown = null;
+            break;
+          } catch (LdapException e) {
+            lastThrown = e;
+            LOGGER.debug("Error opening connection for strategy {}", connectionStrategy, e);
+          }
+        } while (lastThrown != null && connectionConfig.getAutoReconnectCondition().test(metadata));
+        if (lastThrown != null) {
+          throw lastThrown;
+        }
+        if (isOpen()) {
+          lastSuccessfulOpen = Instant.now();
+        }
+        LOGGER.debug("Strategy {} finished open for connection {}", connectionStrategy, this);
+      } finally {
+        openLock.unlock();
       }
-      lastSuccessfulOpen = Instant.now();
-      LOGGER.debug("Strategy {} opened connection {}", connectionStrategy, this);
-    } finally {
-      openLock.unlock();
+    } else {
+      LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
+      throw new LdapException("Open in progress");
     }
   }
 
@@ -109,29 +115,35 @@ public abstract class TransportConnection implements Connection
     throws LdapException
   {
     LOGGER.debug("Strategy {} reopening connection {}", connectionStrategy, this);
-    openLock.lock();
-    try {
-      if (isOpen()) {
-        throw new ConnectException("Connection is already open");
-      }
-      LdapException lastThrown = null;
-      while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
-        try {
-          strategyOpen(metadata);
-          lastThrown = null;
-          break;
-        } catch (LdapException e) {
-          lastThrown = e;
-          LOGGER.debug("Error reopening connection for strategy {}", connectionStrategy, e);
+    if (openLock.tryLock()) {
+      try {
+        if (isOpen()) {
+          throw new ConnectException("Connection is already open");
         }
+        LdapException lastThrown = null;
+        while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
+          try {
+            strategyOpen(metadata);
+            lastThrown = null;
+            break;
+          } catch (LdapException e) {
+            lastThrown = e;
+            LOGGER.debug("Error reopening connection for strategy {}", connectionStrategy, e);
+          }
+        }
+        if (lastThrown != null) {
+          throw lastThrown;
+        }
+        if (isOpen()) {
+          lastSuccessfulOpen = Instant.now();
+        }
+        LOGGER.debug("Strategy {} finished reopen for connection {}", connectionStrategy, this);
+      } finally {
+        openLock.unlock();
       }
-      if (lastThrown != null) {
-        throw lastThrown;
-      }
-      lastSuccessfulOpen = Instant.now();
-      LOGGER.debug("Strategy {} reopened connection {}", connectionStrategy, this);
-    } finally {
-      openLock.unlock();
+    } else {
+      LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
+      throw new LdapException("Open in progress");
     }
   }
 
