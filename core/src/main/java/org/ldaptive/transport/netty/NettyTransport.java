@@ -95,12 +95,14 @@ public class NettyTransport implements Transport
     if (shutdownOnClose) {
       try {
         ioWorkerGroup.shutdownGracefully();
+        logger.trace("Shutdown worker group {}", ioWorkerGroup);
       } catch (Exception e) {
         logger.warn("Error shutting down the I/O worker group", e);
       }
       if (messageWorkerGroup != null) {
         try {
           messageWorkerGroup.shutdownGracefully();
+          logger.trace("Shutdown worker group {}", messageWorkerGroup);
         } catch (Exception e) {
           logger.warn("Error shutting down the message worker group", e);
         }

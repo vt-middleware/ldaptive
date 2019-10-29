@@ -213,6 +213,11 @@ public final class NettyConnection extends TransportConnection
     bootstrap.channel(channelType);
     channelOptions.forEach(bootstrap::option);
     bootstrap.handler(initializer);
+    LOGGER.trace(
+      "Created netty bootstrap {} with worker group {}(shutdown={})",
+      bootstrap,
+      ioWorkerGroup,
+      ioWorkerGroup.isShutdown());
     return bootstrap;
   }
 
@@ -247,47 +252,51 @@ public final class NettyConnection extends TransportConnection
       throw new IllegalStateException("Connection is already open");
     }
     LOGGER.trace("Netty opening connection {}", this);
-    openLock.lock();
-    try {
-      inboundException = null;
-      ldapURL = url;
-      channel = connectInternal();
-      pendingResponses.open();
-      // startTLS request must occur after the connection is ready
-      if (connectionConfig.getUseStartTLS()) {
-        try {
-          final Result result = operation(new StartTLSRequest());
-          if (!ResultCode.SUCCESS.equals(result.getResultCode())) {
-            throw new ConnectException("StartTLS returned response: " + result);
-          }
-        } catch (Exception e) {
-          LOGGER.error("StartTLS failed on connection open for {}", this, e);
-          close();
-          pendingResponses.clear();
-          throw e;
-        }
-      }
-      // initialize the connection
-      if (connectionConfig.getConnectionInitializers() != null) {
-        for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
+    if (openLock.tryLock()) {
+      try {
+        inboundException = null;
+        ldapURL = url;
+        channel = connectInternal();
+        pendingResponses.open();
+        // startTLS request must occur after the connection is ready
+        if (connectionConfig.getUseStartTLS()) {
           try {
-            final Result result = initializer.initialize(this);
+            final Result result = operation(new StartTLSRequest());
             if (!ResultCode.SUCCESS.equals(result.getResultCode())) {
-              throw new ConnectException("Connection initializer returned response: " + result);
+              throw new ConnectException("StartTLS returned response: " + result);
             }
           } catch (Exception e) {
-            LOGGER.error("Connection initializer {} failed for {}", initializer, this, e);
+            LOGGER.error("StartTLS failed on connection open for {}", this, e);
             close();
             pendingResponses.clear();
             throw e;
           }
         }
+        // initialize the connection
+        if (connectionConfig.getConnectionInitializers() != null) {
+          for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
+            try {
+              final Result result = initializer.initialize(this);
+              if (!ResultCode.SUCCESS.equals(result.getResultCode())) {
+                throw new ConnectException("Connection initializer returned response: " + result);
+              }
+            } catch (Exception e) {
+              LOGGER.error("Connection initializer {} failed for {}", initializer, this, e);
+              close();
+              pendingResponses.clear();
+              throw e;
+            }
+          }
+        }
+        channel.closeFuture().addListener(closeListener);
+        connectTime = Instant.now();
+        LOGGER.debug("Netty opened connection {}", this);
+      } finally {
+        openLock.unlock();
       }
-      channel.closeFuture().addListener(closeListener);
-      connectTime = Instant.now();
-      LOGGER.debug("Netty opened connection {}", this);
-    } finally {
-      openLock.unlock();
+    } else {
+      LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
+      throw new ConnectException("Open in progress");
     }
   }
 
@@ -315,11 +324,13 @@ public final class NettyConnection extends TransportConnection
     final Bootstrap bootstrap = createBootstrap(initializer);
 
     final CountDownLatch channelLatch = new CountDownLatch(1);
+    LOGGER.trace("Connecting to bootstrap {} with URL {}", bootstrap, ldapURL);
     final ChannelFuture future = bootstrap.connect(new InetSocketAddress(ldapURL.getHostname(), ldapURL.getPort()));
     future.addListener((ChannelFutureListener) f -> channelLatch.countDown());
     try {
       // wait until the connection future is complete
       // note that the wait time is controlled by the connectTimeout property in ConnectionConfig
+      // if a deadlock occurs here, there may not be enough threads available in the worker group
       channelLatch.await();
     } catch (InterruptedException e) {
       future.cancel(true);
@@ -777,33 +788,36 @@ public final class NettyConnection extends TransportConnection
   public void close(final RequestControl... controls)
   {
     LOGGER.trace("Closing connection {}", this);
-    closeLock.lock();
-    try {
-      pendingResponses.close();
-      if (isOpen()) {
-        LOGGER.trace("connection {} is open, initiate orderly shutdown", this);
-        channel.closeFuture().removeListener(closeListener);
-        // abandon outstanding requests
-        if (pendingResponses.size() > 0) {
-          LOGGER.info("Abandoning requests {} for {} to close connection", pendingResponses, this);
-          pendingResponses.abandonRequests();
+    if (closeLock.tryLock()) {
+      try {
+        pendingResponses.close();
+        if (isOpen()) {
+          LOGGER.trace("connection {} is open, initiate orderly shutdown", this);
+          channel.closeFuture().removeListener(closeListener);
+          // abandon outstanding requests
+          if (pendingResponses.size() > 0) {
+            LOGGER.info("Abandoning requests {} for {} to close connection", pendingResponses, this);
+            pendingResponses.abandonRequests();
+          }
+          // unbind
+          final UnbindRequest req = new UnbindRequest();
+          req.setControls(controls);
+          operation(req);
+          channel.close().addListener(new LogFutureListener());
+        } else {
+          LOGGER.trace("connection {} already closed", this);
+          if (!(connectionConfig.getAutoReconnect() && connectionConfig.getAutoReplay())) {
+            notifyOperationHandlesOfClose();
+          }
         }
-        // unbind
-        final UnbindRequest req = new UnbindRequest();
-        req.setControls(controls);
-        operation(req);
-        channel.close().addListener(new LogFutureListener());
-      } else {
-        LOGGER.trace("connection {} already closed", this);
-        if (!(connectionConfig.getAutoReconnect() && connectionConfig.getAutoReplay())) {
-          notifyOperationHandlesOfClose();
-        }
+        LOGGER.debug("Closed connection {}", this);
+      } finally {
+        channel = null;
+        connectTime = null;
+        closeLock.unlock();
       }
-      LOGGER.debug("Closed connection {}", this);
-    } finally {
-      channel = null;
-      connectTime = null;
-      closeLock.unlock();
+    } else {
+      LOGGER.debug("Close lock {} could not be acquired by {}", closeLock, Thread.currentThread());
     }
   }
 

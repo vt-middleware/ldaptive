@@ -370,9 +370,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
       poolLock.unlock();
     }
 
-    logger.debug("shutting down executor");
     poolExecutor.shutdown();
-    logger.debug("executor shutdown");
     logger.info("pool closed {}", this);
     initialized = false;
   }
