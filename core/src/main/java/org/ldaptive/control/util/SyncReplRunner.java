@@ -72,11 +72,8 @@ public class SyncReplRunner
   /** Invoked when a sync info message is received. */
   private Consumer<SyncInfoMessage> onMessage;
 
-  /** Whether {@link #start()} has been invoked. */
+  /** Whether the sync repl search is running. */
   private boolean started;
-
-  /** Whether {@link #stop()} has been invoked. */
-  private boolean stopped;
 
 
   /**
@@ -127,7 +124,7 @@ public class SyncReplRunner
       transport = new NettyTransport(
         EpollSocketChannel.class,
         new EpollEventLoopGroup(
-          1,
+          2,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
           1,
@@ -137,7 +134,7 @@ public class SyncReplRunner
       transport = new NettyTransport(
         KQueueSocketChannel.class,
         new KQueueEventLoopGroup(
-          1,
+          2,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
           1,
@@ -147,7 +144,7 @@ public class SyncReplRunner
       transport = new NettyTransport(
         NioSocketChannel.class,
         new NioEventLoopGroup(
-          1,
+          2,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
           1,
@@ -229,7 +226,6 @@ public class SyncReplRunner
         start();
       }
     });
-    stopped = false;
   }
 
 
@@ -260,10 +256,9 @@ public class SyncReplRunner
    */
   public synchronized void stop()
   {
-    if (stopped) {
+    if (!started) {
       return;
     }
-    stopped = true;
     started = false;
     if (syncReplClient != null) {
       try {
@@ -285,7 +280,7 @@ public class SyncReplRunner
    */
   public synchronized void restartSearch()
   {
-    if (stopped) {
+    if (!started) {
       throw new IllegalStateException("Runner is stopped");
     }
     try {
