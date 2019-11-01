@@ -2,7 +2,7 @@ SearchOperation search = new SearchOperation(new DefaultConnectionFactory("ldap:
 SearchRequest request = SearchRequest.builder()
   .dn("dc=ldaptive,dc=org")
   .filter("(givenName=d*)")
-  .attributes("cn", "sn")
+  .returnAttributes("cn", "sn")
   .controls(new SortRequestControl(new SortKey[] {new SortKey("sn", "caseExactMatch")}, true)) // sort by surname
   .build();
 SearchResponse response = search.execute(request);

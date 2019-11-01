@@ -2,7 +2,7 @@ SearchOperation search = new SearchOperation(new DefaultConnectionFactory("ldap:
 SearchResponse res = search.execute(SearchRequest.builder()
   .dn("dc=ldaptive,dc=org")
   .filter("(&(givenName=daniel)(sn=fisher))")
-  .attributes("entryUUID")
+  .returnAttributes("entryUUID")
   .build());
 LdapEntry entry = res.getEntry();
 UUID modifyTimestamp = entry.getAttribute("entryUUID").getValue(new UUIDValueTranscoder().decoder());

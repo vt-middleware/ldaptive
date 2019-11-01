@@ -2,7 +2,7 @@ SearchOperation search = new SearchOperation(new DefaultConnectionFactory("ldap:
 SearchRequest request = SearchRequest.builder()
   .dn("dc=ldaptive,dc=org")
   .filter("(givenName=d*)")
-  .attributes("cn", "sn")
+  .returnAttributes("cn", "sn")
   .controls(new ManageDsaITControl())
   .build();
 SearchResponse res = search.execute(request);

@@ -4,7 +4,7 @@ SearchOperation search = new SearchOperation(cf);
 SearchRequest request = SearchRequest.builder()
   .dn("dc=ldaptive,dc=org")
   .filter("(givenName=d*)")
-  .attributes("cn", "sn")
+  .returnAttributes("cn", "sn")
   .build();
 PagedResultsControl prc = new PagedResultsControl(25); // return 25 entries at a time
 request.setControls(prc);

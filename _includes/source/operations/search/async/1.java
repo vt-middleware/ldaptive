@@ -14,5 +14,5 @@ SearchOperation search = SearchOperation.builder()
 search.send(SearchRequest.builder()
   .dn("dc=ldaptive,dc=org")
   .filter("(&(givenName=d*)(sn=f*))")
-  .attributes("uid")
+  .returnAttributes("uid")
   .build());

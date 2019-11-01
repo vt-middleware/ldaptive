@@ -4,7 +4,7 @@ SearchOperation search = new SearchOperation(new DefaultConnectionFactory("ldap:
 SearchResponse response = search.execute(SearchRequest.builder()
   .dn("dc=ldaptive,dc=org")
   .filter("(uid=dfisher)")
-  .attributes("mail")
+  .returnAttributes("mail")
   .build());
 jsonWriter.write(response);
 System.out.println(writer.toString());

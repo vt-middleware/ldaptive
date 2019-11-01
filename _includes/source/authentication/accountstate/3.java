@@ -12,7 +12,7 @@ Authenticator auth = Authenticator.builder()
   .dnResolver(dnResolver)
   .authenticationHandler(authHandler)
   .responseHandlers(new EDirectoryAuthenticationResponseHandler())
-  .attributes(EDirectoryAuthenticationResponseHandler.ATTRIBUTES)
+  .returnAttributes(EDirectoryAuthenticationResponseHandler.ATTRIBUTES)
   .build();
 AuthenticationResponse response = auth.authenticate(new AuthenticationRequest("dfisher", new Credential("password")));
 if (response.isSuccess()) {

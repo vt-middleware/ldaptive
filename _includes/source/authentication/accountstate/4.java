@@ -10,7 +10,7 @@ Authenticator auth = Authenticator.builder()
     .build())
   .authenticationHandler(new SimpleBindAuthenticationHandler(new DefaultConnectionFactory(connConfig)))
   .responseHandlers(new FreeIPAAuthenticationResponseHandler())
-  .attributes(FreeIPAAuthenticationResponseHandler.ATTRIBUTES)
+  .returnAttributes(FreeIPAAuthenticationResponseHandler.ATTRIBUTES)
   .build();
 AuthenticationResponse response = auth.authenticate(new AuthenticationRequest("dfisher", new Credential("password")));
 if (response.isSuccess()) {
