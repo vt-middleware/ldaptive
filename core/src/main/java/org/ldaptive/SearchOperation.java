@@ -372,6 +372,54 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    * Executes a search request. See {@link SearchOperationHandle#execute()}.
    *
    * @param  filter  search filter
+   *
+   * @return  search result
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public SearchResponse execute(final String filter)
+    throws LdapException
+  {
+    return execute(FilterParser.parse(filter), null, (LdapEntryHandler[]) null);
+  }
+
+
+  /**
+   * Executes a search request. See {@link SearchOperationHandle#execute()}.
+   *
+   * @param  filter  search filter
+   *
+   * @return  search result
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public SearchResponse execute(final SearchFilter filter)
+    throws LdapException
+  {
+    return execute(FilterParser.parse(filter.format()), null, (LdapEntryHandler[]) null);
+  }
+
+
+  /**
+   * Executes a search request. See {@link SearchOperationHandle#execute()}.
+   *
+   * @param  filter  search filter
+   *
+   * @return  search result
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public SearchResponse execute(final Filter filter)
+    throws LdapException
+  {
+    return execute(null, filter, null, (LdapEntryHandler[]) null);
+  }
+
+
+  /**
+   * Executes a search request. See {@link SearchOperationHandle#execute()}.
+   *
+   * @param  filter  search filter
    * @param  returnAttributes  attributes to return
    *
    * @return  search result
@@ -629,7 +677,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
       builder.filter(filter);
     }
     if (returnAttributes != null) {
-      builder.attributes(returnAttributes);
+      builder.returnAttributes(returnAttributes);
     }
     return builder.build();
   }

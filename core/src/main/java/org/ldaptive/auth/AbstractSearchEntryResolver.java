@@ -270,7 +270,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
       request = SearchRequest.builder()
         .dn(baseDn)
         .filter(createSearchFilter(ac))
-        .attributes(ac.getAuthenticationRequest().getReturnAttributes())
+        .returnAttributes(ac.getAuthenticationRequest().getReturnAttributes())
         .scope(subtreeSearch ? SearchScope.SUBTREE : SearchScope.ONELEVEL)
         .build();
     } else {

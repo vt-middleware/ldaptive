@@ -217,7 +217,7 @@ public class SearchOperationTest extends AbstractTest
       SearchRequest.builder()
         .dn(dn)
         .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-         .attributes(returnAttrs.split("\\|")).build());
+         .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
 
     // test searching no attributes
@@ -225,7 +225,7 @@ public class SearchOperationTest extends AbstractTest
       SearchRequest.builder()
         .dn(dn)
         .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-        .attributes(ReturnAttributes.NONE.value()).build());
+        .returnAttributes(ReturnAttributes.NONE.value()).build());
     Assert.assertTrue(result.getEntry().getAttributes().isEmpty());
 
     // test searching without handler
@@ -293,7 +293,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchRequest subtreeRequest = SearchRequest.builder()
       .dn(DnParser.substring(expectedResult.getEntry().getDn(), 2))
       .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-      .attributes(returnAttrs.split("\\|"))
+      .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBTREE).build();
     SearchResponse result = search.execute(subtreeRequest);
     TestUtils.assertEquals(expectedResult, result);
@@ -301,7 +301,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchRequest onelevelRequest = SearchRequest.builder()
       .dn(DnParser.substring(expectedResult.getEntry().getDn(), 1))
       .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-      .attributes(returnAttrs.split("\\|"))
+      .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.ONELEVEL).build();
     result = search.execute(onelevelRequest);
     TestUtils.assertEquals(expectedResult, result);
@@ -309,7 +309,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchRequest objectRequest = SearchRequest.builder()
       .dn(expectedResult.getEntry().getDn())
       .filter(new SearchFilter("(objectClass=*)"))
-      .attributes(returnAttrs.split("\\|"))
+      .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.OBJECT).build();
     result = search.execute(objectRequest);
     TestUtils.assertEquals(expectedResult, result);
@@ -348,7 +348,7 @@ public class SearchOperationTest extends AbstractTest
       SearchRequest.builder()
         .dn(dn)
         .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-        .attributes(ReturnAttributes.NONE.value()).build());
+        .returnAttributes(ReturnAttributes.NONE.value()).build());
     Assert.assertNotNull(result.getEntry());
     Assert.assertTrue(result.getEntry().getAttributes().isEmpty());
 
@@ -357,7 +357,7 @@ public class SearchOperationTest extends AbstractTest
       SearchRequest.builder()
         .dn(dn)
         .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-        .attributes(ReturnAttributes.ALL_USER.value()).build());
+        .returnAttributes(ReturnAttributes.ALL_USER.value()).build());
     Assert.assertNotNull(result.getEntry());
     Assert.assertNotNull(result.getEntry().getAttribute("cn"));
     Assert.assertNull(result.getEntry().getAttribute("createTimestamp"));
@@ -369,13 +369,13 @@ public class SearchOperationTest extends AbstractTest
         SearchRequest.builder()
           .dn(dn)
           .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-          .attributes(ReturnAttributes.ALL_OPERATIONAL.add("createTimestamp")).build());
+          .returnAttributes(ReturnAttributes.ALL_OPERATIONAL.add("createTimestamp")).build());
     } else {
       result = search.execute(
         SearchRequest.builder()
           .dn(dn)
           .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-          .attributes(ReturnAttributes.ALL_OPERATIONAL.value()).build());
+          .returnAttributes(ReturnAttributes.ALL_OPERATIONAL.value()).build());
     }
     Assert.assertNotNull(result.getEntry());
     Assert.assertNull(result.getEntry().getAttribute("cn"));
@@ -388,13 +388,13 @@ public class SearchOperationTest extends AbstractTest
         SearchRequest.builder()
           .dn(dn)
           .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-          .attributes(ReturnAttributes.ALL.add("createTimestamp")).build());
+          .returnAttributes(ReturnAttributes.ALL.add("createTimestamp")).build());
     } else {
       result = search.execute(
         SearchRequest.builder()
           .dn(dn)
           .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-          .attributes(ReturnAttributes.ALL.value()).build());
+          .returnAttributes(ReturnAttributes.ALL.value()).build());
     }
     Assert.assertNotNull(result.getEntry());
     Assert.assertNotNull(result.getEntry().getAttribute("cn"));
@@ -430,7 +430,7 @@ public class SearchOperationTest extends AbstractTest
       final SearchRequest request = SearchRequest.builder()
         .dn(dn)
         .filter(new SearchFilter(filter))
-        .attributes(returnAttrs.split("\\|"))
+        .returnAttributes(returnAttrs.split("\\|"))
         .controls(prc).build();
 
       final SearchResponse pagedResults = new SearchResponse();
@@ -507,7 +507,7 @@ public class SearchOperationTest extends AbstractTest
       final SearchRequest request = SearchRequest.builder()
         .dn(dn)
         .filter(new SearchFilter(filter))
-        .attributes(returnAttrs.split("\\|"))
+        .returnAttributes(returnAttrs.split("\\|"))
         .controls(src, vlvrc).build();
 
       SearchResponse result = search.execute(request);
@@ -799,7 +799,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchRequest sr = SearchRequest.builder()
       .dn(dn)
       .filter(new SearchFilter(filter))
-      .attributes(returnAttrs.split("\\|")).build();
+      .returnAttributes(returnAttrs.split("\\|")).build();
 
     final SearchResponse result = search.execute(sr);
     // ignore the case of member and contactPerson; some directories return
@@ -843,7 +843,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchRequest sr = SearchRequest.builder()
       .dn(dn)
       .filter(new SearchFilter(filter))
-      .attributes(returnAttrs.split("\\|")).build();
+      .returnAttributes(returnAttrs.split("\\|")).build();
 
     final SearchResponse result = search.execute(sr);
     // ignore the case of member and contactPerson; some directories return
@@ -922,19 +922,23 @@ public class SearchOperationTest extends AbstractTest
     SearchRequest request = SearchRequest.builder()
       .dn(dn)
       .filter(new SearchFilter(filter))
-      .attributes(returnAttr)
-      .binary(returnAttr).build();
+      .returnAttributes(returnAttr)
+      .binaryAttributes(returnAttr).build();
 
     SearchResponse result = search.execute(request);
     Assert.assertTrue(result.getEntry().getAttribute().isBinary());
     Assert.assertEquals(result.getEntry().getAttribute().getStringValue(), base64Value);
 
-    request = SearchRequest.builder().dn(dn).filter(new SearchFilter(filter)).attributes("sn").build();
+    request = SearchRequest.builder().dn(dn).filter(new SearchFilter(filter)).returnAttributes("sn").build();
     result = search.execute(request);
     Assert.assertFalse(result.getEntry().getAttribute().isBinary());
     Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
 
-    request = SearchRequest.builder().dn(dn).filter(new SearchFilter(filter)).attributes("sn").binary("sn").build();
+    request = SearchRequest.builder()
+      .dn(dn)
+      .filter(new SearchFilter(filter))
+      .returnAttributes("sn")
+      .binaryAttributes("sn").build();
     result = search.execute(request);
     Assert.assertTrue(result.getEntry().getAttribute().isBinary());
     Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
@@ -942,7 +946,7 @@ public class SearchOperationTest extends AbstractTest
     request = SearchRequest.builder()
       .dn(dn)
       .filter(new SearchFilter(filter))
-      .attributes("userCertificate;binary").build();
+      .returnAttributes("userCertificate;binary").build();
     result = search.execute(request);
     Assert.assertTrue(result.getEntry().getAttribute().isBinary());
     Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
@@ -1239,14 +1243,14 @@ public class SearchOperationTest extends AbstractTest
       SearchRequest.builder()
         .dn(dn)
         .filter(new SearchFilter(filter, filterParameters.split("\\|")))
-        .attributes(returnAttrs.split("\\|")).build());
+        .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(specialCharsResult, result);
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter(new SearchFilter(binaryFilter, new Object[] {LdapUtils.base64Decode(binaryFilterParameters)}))
-        .attributes(returnAttrs.split("\\|")).build());
+        .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(specialCharsResult, result);
   }
 

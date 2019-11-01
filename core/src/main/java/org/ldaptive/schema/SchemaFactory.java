@@ -200,7 +200,7 @@ public final class SchemaFactory
   {
     final SearchOperation search = new SearchOperation(factory);
     final SearchResponse result = search.execute(
-      SearchRequest.builder().dn(dn).scope(SearchScope.OBJECT).filter(filter).attributes(retAttrs).build());
+      SearchRequest.builder().dn(dn).scope(SearchScope.OBJECT).filter(filter).returnAttributes(retAttrs).build());
     return result.getEntry();
   }
 }
