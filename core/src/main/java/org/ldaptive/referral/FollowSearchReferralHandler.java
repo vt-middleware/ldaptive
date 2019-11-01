@@ -87,9 +87,9 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
       .sizeLimit(getRequest().getSizeLimit())
       .timeLimit(getRequest().getTimeLimit())
       .typesOnly(getRequest().isTypesOnly())
-      .attributes(getRequest().getReturnAttributes())
+      .returnAttributes(getRequest().getReturnAttributes())
       .aliases(getRequest().getDerefAliases())
-      .binary(getRequest().getBinaryAttributes())
+      .binaryAttributes(getRequest().getBinaryAttributes())
       .build();
   }
 

@@ -99,6 +99,21 @@ public class SearchRequest extends AbstractRequestMessage
    *
    * @param  dn  base DN
    * @param  filter  search filter
+   */
+  public SearchRequest(
+    final String dn,
+    final String filter)
+  {
+    setBaseDn(dn);
+    setFilter(filter);
+  }
+
+
+  /**
+   * Creates a new search request.
+   *
+   * @param  dn  base DN
+   * @param  filter  search filter
    * @param  attributes  return attributes
    */
   public SearchRequest(
@@ -201,6 +216,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setBaseDn(final String dn)
   {
+    logger.trace("setting baseDn: {}", dn);
     baseDn = dn;
   }
 
@@ -226,6 +242,7 @@ public class SearchRequest extends AbstractRequestMessage
     if (scope == null) {
       throw new IllegalArgumentException("Scope cannot be null");
     }
+    logger.trace("setting searchScope: {}", scope);
     searchScope = scope;
   }
 
@@ -251,6 +268,7 @@ public class SearchRequest extends AbstractRequestMessage
     if (aliases == null) {
       throw new IllegalArgumentException("Aliases cannot be null");
     }
+    logger.trace("setting derefAliases: {}", aliases);
     derefAliases = aliases;
   }
 
@@ -278,6 +296,7 @@ public class SearchRequest extends AbstractRequestMessage
     if (limit < 0) {
       throw new IllegalArgumentException("Size limit cannot be negative");
     }
+    logger.trace("setting sizeLimit: {}", limit);
     sizeLimit = limit;
   }
 
@@ -305,6 +324,7 @@ public class SearchRequest extends AbstractRequestMessage
     if (limit == null || limit.isNegative()) {
       throw new IllegalArgumentException("Time limit cannot be null or negative");
     }
+    logger.trace("setting timeLimit: {}", limit);
     timeLimit = limit;
   }
 
@@ -327,6 +347,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setTypesOnly(final boolean types)
   {
+    logger.trace("setting typesOnly: {}", types);
     typesOnly = types;
   }
 
@@ -349,6 +370,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setFilter(final Filter filter)
   {
+    logger.trace("setting filter: {}", filter);
     searchFilter = filter;
   }
 
@@ -360,6 +382,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setFilter(final String filter)
   {
+    logger.trace("setting filter: {}", filter);
     searchFilter = FilterParser.parse(filter);
   }
 
@@ -371,6 +394,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setFilter(final SearchFilter filter)
   {
+    logger.trace("setting filter: {}", filter);
     searchFilter = FilterParser.parse(filter.format());
   }
 
@@ -393,6 +417,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setReturnAttributes(final String... attributes)
   {
+    logger.trace("setting returnAttributes: {}", Arrays.toString(attributes));
     returnAttributes = ReturnAttributes.parse(attributes);
   }
 
@@ -415,6 +440,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setBinaryAttributes(final String... attrs)
   {
+    logger.trace("setting binaryAttributes: {}", Arrays.toString(attrs));
     binaryAttributes = attrs;
   }
 
@@ -477,6 +503,7 @@ public class SearchRequest extends AbstractRequestMessage
         typesOnly,
         searchFilter,
         returnAttributes,
+        binaryAttributes,
         getControls());
   }
 
@@ -492,7 +519,7 @@ public class SearchRequest extends AbstractRequestMessage
       .append("timeLimit=").append(timeLimit).append(", ")
       .append("typesOnly=").append(typesOnly).append(", ")
       .append("filter=").append(searchFilter).append(", ")
-      .append("attributes=").append(Arrays.toString(returnAttributes)).append(", ")
+      .append("returnAttributes=").append(Arrays.toString(returnAttributes)).append(", ")
       .append("binaryAttributes=").append(Arrays.toString(binaryAttributes)).toString();
   }
 
@@ -601,6 +628,7 @@ public class SearchRequest extends AbstractRequestMessage
     sr.setTypesOnly(request.isTypesOnly());
     sr.setFilter(request.getFilter());
     sr.setReturnAttributes(request.getReturnAttributes());
+    sr.setBinaryAttributes(request.getBinaryAttributes());
     sr.setControls(request.getControls());
     return sr;
   }
@@ -795,7 +823,7 @@ public class SearchRequest extends AbstractRequestMessage
      *
      * @return  this builder
      */
-    public Builder attributes(final String... attributes)
+    public Builder returnAttributes(final String... attributes)
     {
       object.setReturnAttributes(attributes);
       return self();
@@ -809,7 +837,7 @@ public class SearchRequest extends AbstractRequestMessage
      *
      * @return  this builder
      */
-    public Builder attributes(final Collection<String> attributes)
+    public Builder returnAttributes(final Collection<String> attributes)
     {
       object.setReturnAttributes(attributes.toArray(String[]::new));
       return self();
@@ -823,7 +851,7 @@ public class SearchRequest extends AbstractRequestMessage
      *
      * @return  this builder
      */
-    public Builder binary(final String... attributes)
+    public Builder binaryAttributes(final String... attributes)
     {
       object.setBinaryAttributes(attributes);
       return self();
@@ -837,7 +865,7 @@ public class SearchRequest extends AbstractRequestMessage
      *
      * @return  this builder
      */
-    public Builder binary(final Collection<String> attributes)
+    public Builder binaryAttributes(final Collection<String> attributes)
     {
       object.setBinaryAttributes(attributes.toArray(String[]::new));
       return self();

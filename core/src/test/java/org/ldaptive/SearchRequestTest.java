@@ -37,7 +37,7 @@ public class SearchRequestTest
             .timeLimit(Duration.ofSeconds(30))
             .typesOnly(false)
             .filter(new AndFilter(new EqualityFilter("objectClass", "person"), new EqualityFilter("uid", "jdoe")))
-            .attributes(new String[] {"*", "+"}).build(),
+            .returnAttributes(new String[] {"*", "+"}).build(),
           new byte[] {
             // preamble
             0x30, 0x56, 0x02, 0x01, 0x02,
@@ -82,7 +82,7 @@ public class SearchRequestTest
             .timeLimit(Duration.ofSeconds(0))
             .typesOnly(false)
             .filter("(CN=John Adams)")
-            .attributes(new String[] {"*"})
+            .returnAttributes(new String[] {"*"})
             .controls(new ProxyAuthorizationControl("dn:")).build(),
           new byte[] {
             // preamble

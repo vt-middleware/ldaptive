@@ -116,7 +116,7 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
       try {
         final SearchRequest sr = SearchRequest.builder()
           .dn(baseDn != null ? baseDn : getRequest().getBaseDn())
-          .attributes(ReturnAttributes.NONE.value())
+          .returnAttributes(ReturnAttributes.NONE.value())
           .filter(new SearchFilter(groupFilter, new Object[] {groupSid}).format())
           .build();
 

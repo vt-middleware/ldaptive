@@ -123,7 +123,7 @@ public final class SchemaFactory
     final PagedResultsClient client = new PagedResultsClient(factory, 100);
     return client.executeToCompletion(
       SearchRequest.builder()
-        .dn(dn).filter(filter).attributes(retAttrs).build());
+        .dn(dn).filter(filter).returnAttributes(retAttrs).build());
   }
 
 

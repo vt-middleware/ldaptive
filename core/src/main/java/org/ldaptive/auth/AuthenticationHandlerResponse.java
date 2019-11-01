@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
-import java.util.Arrays;
 import org.ldaptive.AbstractResult;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapUtils;
@@ -98,11 +97,13 @@ public class AuthenticationHandlerResponse extends AbstractResult
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("connection=").append(connection).append(", ")
+      .append("authenticationResultCode=").append(authenticationResultCode).append(", ")
       .append("resultCode=").append(getResultCode()).append(", ")
-      .append("message=").append(
-        ENCODE_CNTRL_CHARS ? LdapUtils.percentEncodeControlChars(getDiagnosticMessage()) :
-          getDiagnosticMessage()).append(", ")
-      .append("controls=").append(Arrays.toString(getControls())).append("]").toString();
+      .append("matchedDN=").append(getMatchedDN()).append(", ")
+      .append("diagnosticMessage=").append(getEncodedDiagnosticMessage()).append(", ")
+      .append("referralURLs=").append(getReferralURLs()).append(", ")
+      .append("messageID=").append(getMessageID()).append(", ")
+      .append("controls=").append(getControls()).append("]").toString();
   }
 
 

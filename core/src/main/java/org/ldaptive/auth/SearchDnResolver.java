@@ -303,7 +303,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
     return SearchRequest.builder()
       .dn(baseDn)
       .filter(filter)
-      .attributes(ReturnAttributes.NONE.value())
+      .returnAttributes(ReturnAttributes.NONE.value())
       .scope(subtreeSearch ? SearchScope.SUBTREE : SearchScope.ONELEVEL)
       .aliases(derefAliases)
       .build();
