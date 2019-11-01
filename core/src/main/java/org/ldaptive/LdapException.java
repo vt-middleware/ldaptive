@@ -14,6 +14,17 @@ public class LdapException extends Exception
 
 
   /**
+   * Creates a new ldap exception based on the supplied result.
+   *
+   * @param  result  that produced this exception
+   */
+  public LdapException(final Result result)
+  {
+    this(formatResult(result));
+  }
+
+
+  /**
    * Creates a new ldap exception.
    *
    * @param  msg  describing this exception
@@ -44,5 +55,19 @@ public class LdapException extends Exception
   public LdapException(final String msg, final Throwable e)
   {
     super(msg, e);
+  }
+
+
+  /**
+   * Formats the supplied result for use as an exception message.
+   *
+   * @param  result  to format
+   *
+   * @return  formatted result
+   */
+  protected static String formatResult(final Result result)
+  {
+    return new StringBuilder("resultCode=").append(result.getResultCode()).append(", ")
+      .append("diagnosticMessage=").append(result.getEncodedDiagnosticMessage()).toString();
   }
 }
