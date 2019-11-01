@@ -551,7 +551,7 @@ public class Authenticator
      *
      * @return  this builder
      */
-    public Builder attributes(final String... attributes)
+    public Builder returnAttributes(final String... attributes)
     {
       object.setReturnAttributes(attributes);
       return this;
