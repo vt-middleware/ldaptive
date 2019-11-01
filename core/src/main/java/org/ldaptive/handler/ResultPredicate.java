@@ -30,24 +30,10 @@ public interface ResultPredicate extends Predicate<Result>
     throws LdapException
   {
     if (test(result)) {
-      throw new LdapException(formatResult(result));
+      if (result == null) {
+        throw new LdapException("Predicate failed for null result");
+      }
+      throw new LdapException(result);
     }
-  }
-
-
-  /**
-   * Formats the supplied result for use as an exception message.
-   *
-   * @param  result  to format
-   *
-   * @return  formatted result
-   */
-  default String formatResult(final Result result)
-  {
-    if (result == null) {
-      return "Predicate failed for null result";
-    }
-    return new StringBuilder("resultCode=").append(result.getResultCode()).append(", ")
-      .append("diagnosticMessage=").append(result.getEncodedDiagnosticMessage()).toString();
   }
 }
