@@ -81,9 +81,7 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
       .controls(getRequest().getControls())
       .scope(!url.isDefaultScope() ? url.getScope() : getRequest().getSearchScope())
       .dn(!url.isDefaultBaseDn() ? url.getBaseDn() : getRequest().getBaseDn())
-      .filter(
-        !url.isDefaultFilter() ?
-          FilterParser.parse(url.getFilter().format()) : getRequest().getFilter())
+      .filter(!url.isDefaultFilter() ? FilterParser.parse(url.getFilter()) : getRequest().getFilter())
       .sizeLimit(getRequest().getSizeLimit())
       .timeLimit(getRequest().getTimeLimit())
       .typesOnly(getRequest().isTypesOnly())

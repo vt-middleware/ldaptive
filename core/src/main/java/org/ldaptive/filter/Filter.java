@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
+import java.nio.charset.StandardCharsets;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.DEREncoder;
 
 /**
@@ -89,4 +91,59 @@ public interface Filter
    * @return  DER encoder
    */
   DEREncoder getEncoder();
+
+
+  /**
+   * Escapes the supplied string per RFC 4515.
+   *
+   * @param  s  to escape
+   *
+   * @return  escaped string
+   */
+  static String escape(final String s)
+  {
+    final StringBuilder sb = new StringBuilder(s.length());
+    final byte[] utf8 = s.getBytes(StandardCharsets.UTF_8);
+    // CheckStyle:MagicNumber OFF
+    // optimize if ASCII
+    if (s.length() == utf8.length) {
+      for (byte b : utf8) {
+        if (b <= 0x1F || b == 0x28 || b == 0x29 || b == 0x2A || b == 0x5C || b == 0x7F) {
+          sb.append('\\').append(LdapUtils.hexEncode(b));
+        } else {
+          sb.append((char) b);
+        }
+      }
+    } else {
+      int multiByte = 0;
+      for (byte b : utf8) {
+        if (multiByte > 0) {
+          sb.append('\\').append(LdapUtils.hexEncode(b));
+          multiByte--;
+        } else if ((b & 0x7F) == b) {
+          if (b <= 0x1F || b == 0x28 || b == 0x29 || b == 0x2A || b == 0x5C || b == 0x7F) {
+            sb.append('\\').append(LdapUtils.hexEncode(b));
+          } else {
+            sb.append((char) b);
+          }
+        } else {
+          // 2 byte character
+          if ((b & 0xE0) == 0xC0) {
+            multiByte = 1;
+            // 3 byte character
+          } else if ((b & 0xF0) == 0xE0) {
+            multiByte = 2;
+            // 4 byte character
+          } else if ((b & 0xF8) == 0xF0) {
+            multiByte = 3;
+          } else {
+            throw new IllegalStateException("Could not read UTF-8 string encoding");
+          }
+          sb.append('\\').append(LdapUtils.hexEncode(b));
+        }
+      }
+    }
+    // CheckStyle:MagicNumber ON
+    return sb.toString();
+  }
 }

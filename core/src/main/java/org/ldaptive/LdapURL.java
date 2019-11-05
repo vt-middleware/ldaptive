@@ -34,7 +34,7 @@ public class LdapURL
   protected static final String DEFAULT_BASE_DN = "";
 
   /** Default search filter value is '(objectClass=*)'. */
-  protected static final SearchFilter DEFAULT_FILTER = new SearchFilter("(objectClass=*)");
+  protected static final String DEFAULT_FILTER = "(objectClass=*)";
 
   /** Default scope, value is {@link SearchScope#OBJECT}. */
   protected static final SearchScope DEFAULT_SCOPE = SearchScope.OBJECT;
@@ -64,7 +64,7 @@ public class LdapURL
   private SearchScope scope;
 
   /** Search filter of the ldap url. */
-  private SearchFilter filter;
+  private String filter;
 
   /** Metadata that describes connection failures on this URL. */
   private LdapURLRetryMetadata retryMetadata;
@@ -117,7 +117,7 @@ public class LdapURL
     final String baseDn,
     final String[] attributes,
     final SearchScope scope,
-    final SearchFilter filter)
+    final String filter)
   {
     if (scheme == null) {
       throw new IllegalArgumentException("Scheme cannot be null");
@@ -250,7 +250,7 @@ public class LdapURL
    *
    * @return  filter
    */
-  public SearchFilter getFilter()
+  public String getFilter()
   {
     return filter == null ? DEFAULT_FILTER : filter;
   }
@@ -306,7 +306,7 @@ public class LdapURL
     } else if (SearchScope.SUBTREE == scope) {
       sb.append("sub");
     }
-    sb.append("?").append(LdapUtils.percentEncode(getFilter().format()));
+    sb.append("?").append(LdapUtils.percentEncode(getFilter()));
     return sb.toString();
   }
 
@@ -466,7 +466,7 @@ public class LdapURL
     }
 
     filter = m.group(7) != null
-      ? m.group(7).length() > 0 ? new SearchFilter(LdapUtils.percentDecode(m.group(7))) : null : null;
+      ? m.group(7).length() > 0 ? LdapUtils.percentDecode(m.group(7)) : null : null;
     // CheckStyle:MagicNumber ON
   }
 }

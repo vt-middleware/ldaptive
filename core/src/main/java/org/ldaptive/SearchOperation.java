@@ -19,6 +19,9 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   /** Search request to execute. */
   private SearchRequest request;
 
+  /** Filter template. */
+  private FilterTemplate filterTemplate;
+
   /** Functions to handle response entries. */
   private LdapEntryHandler[] entryHandlers;
 
@@ -88,6 +91,18 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   }
 
 
+  public FilterTemplate getTemplate()
+  {
+    return filterTemplate;
+  }
+
+
+  public void setTemplate(final FilterTemplate template)
+  {
+    filterTemplate = template;
+  }
+
+
   public LdapEntryHandler[] getEntryHandlers()
   {
     return entryHandlers;
@@ -128,6 +143,54 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    * Sends a search request. See {@link SearchOperationHandle#send()}.
    *
    * @param  filter  search filter
+   *
+   * @return  search operation handle
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public SearchOperationHandle send(final String filter)
+    throws LdapException
+  {
+    return send(null, FilterParser.parse(filter), null, (LdapEntryHandler[]) null);
+  }
+
+
+  /**
+   * Sends a search request. See {@link SearchOperationHandle#send()}.
+   *
+   * @param  template  filter tempalte
+   *
+   * @return  search operation handle
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public SearchOperationHandle send(final FilterTemplate template)
+    throws LdapException
+  {
+    return send(null, FilterParser.parse(template.format()), null, (LdapEntryHandler[]) null);
+  }
+
+
+  /**
+   * Sends a search request. See {@link SearchOperationHandle#send()}.
+   *
+   * @param  filter  search filter
+\   *
+   * @return  search operation handle
+   *
+   * @throws  LdapException  if the connection cannot be opened
+   */
+  public SearchOperationHandle send(final Filter filter)
+    throws LdapException
+  {
+    return send(null, filter, null, (LdapEntryHandler[]) null);
+  }
+
+
+  /**
+   * Sends a search request. See {@link SearchOperationHandle#send()}.
+   *
+   * @param  filter  search filter
    * @param  returnAttributes  attributes to return
    *
    * @return  search operation handle
@@ -144,17 +207,17 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   /**
    * Sends a search request. See {@link SearchOperationHandle#send()}.
    *
-   * @param  filter  search filter
+   * @param  template  filter template
    * @param  returnAttributes  attributes to return
    *
    * @return  search operation handle
    *
    * @throws  LdapException  if the connection cannot be opened
    */
-  public SearchOperationHandle send(final SearchFilter filter, final String... returnAttributes)
+  public SearchOperationHandle send(final FilterTemplate template, final String... returnAttributes)
     throws LdapException
   {
-    return send(null, FilterParser.parse(filter.format()), returnAttributes, (LdapEntryHandler[]) null);
+    return send(null, FilterParser.parse(template.format()), returnAttributes, (LdapEntryHandler[]) null);
   }
 
 
@@ -199,7 +262,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   /**
    * Sends a search request. See {@link SearchOperationHandle#send()}.
    *
-   * @param  filter  search filter
+   * @param  template  filter template
    * @param  returnAttributes  attributes to return
    * @param  handlers  entry handlers
    *
@@ -208,12 +271,12 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchOperationHandle send(
-    final SearchFilter filter,
+    final FilterTemplate template,
     final String[] returnAttributes,
     final LdapEntryHandler... handlers)
     throws LdapException
   {
-    return send(null, FilterParser.parse(filter.format()), returnAttributes, handlers);
+    return send(null, FilterParser.parse(template.format()), returnAttributes, handlers);
   }
 
 
@@ -265,7 +328,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    * Sends a search request. See {@link SearchOperationHandle#send()}.
    *
    * @param  baseDN  base DN
-   * @param  filter  search filter
+   * @param  template  filter template
    * @param  returnAttributes  attributes to return
    * @param  handlers  entry handlers
    *
@@ -275,12 +338,12 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    */
   public SearchOperationHandle send(
     final String baseDN,
-    final SearchFilter filter,
+    final FilterTemplate template,
     final String[] returnAttributes,
     final LdapEntryHandler... handlers)
     throws LdapException
   {
-    return send(baseDN, FilterParser.parse(filter.format()), returnAttributes, handlers);
+    return send(baseDN, FilterParser.parse(template.format()), returnAttributes, handlers);
   }
 
 
@@ -345,7 +408,8 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   {
     final Connection conn = getConnectionFactory().getConnection();
     conn.open();
-    return configureHandle(conn.operation(getRequest())).onComplete(conn::close).send();
+    final SearchRequest req = configureRequest(null, null, null);
+    return configureHandle(conn.operation(req)).onComplete(conn::close).send();
   }
 
 
@@ -387,16 +451,16 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   /**
    * Executes a search request. See {@link SearchOperationHandle#execute()}.
    *
-   * @param  filter  search filter
+   * @param  template  filter template
    *
    * @return  search result
    *
    * @throws  LdapException  if the connection cannot be opened
    */
-  public SearchResponse execute(final SearchFilter filter)
+  public SearchResponse execute(final FilterTemplate template)
     throws LdapException
   {
-    return execute(FilterParser.parse(filter.format()), null, (LdapEntryHandler[]) null);
+    return execute(FilterParser.parse(template.format()), null, (LdapEntryHandler[]) null);
   }
 
 
@@ -436,17 +500,17 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   /**
    * Executes a search request. See {@link SearchOperationHandle#execute()}.
    *
-   * @param  filter  search filter
+   * @param  template  filter template
    * @param  returnAttributes  attributes to return
    *
    * @return  search result
    *
    * @throws  LdapException  if the connection cannot be opened
    */
-  public SearchResponse execute(final SearchFilter filter, final String... returnAttributes)
+  public SearchResponse execute(final FilterTemplate template, final String... returnAttributes)
     throws LdapException
   {
-    return execute(FilterParser.parse(filter.format()), returnAttributes, (LdapEntryHandler[]) null);
+    return execute(FilterParser.parse(template.format()), returnAttributes, (LdapEntryHandler[]) null);
   }
 
 
@@ -491,7 +555,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   /**
    * Executes a search request. See {@link SearchOperationHandle#execute()}.
    *
-   * @param  filter  search filter
+   * @param  template  filter template
    * @param  returnAttributes  attributes to return
    * @param  handlers  entry handlers
    *
@@ -500,12 +564,12 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchResponse execute(
-    final SearchFilter filter,
+    final FilterTemplate template,
     final String[] returnAttributes,
     final LdapEntryHandler... handlers)
     throws LdapException
   {
-    return execute(FilterParser.parse(filter.format()), returnAttributes, handlers);
+    return execute(FilterParser.parse(template.format()), returnAttributes, handlers);
   }
 
 
@@ -557,7 +621,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    * Executes a search request. See {@link SearchOperationHandle#execute()}.
    *
    * @param  baseDN  base DN
-   * @param  filter  search filter
+   * @param  template  filter template
    * @param  returnAttributes  attributes to return
    * @param  handlers  entry handlers
    *
@@ -567,12 +631,12 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    */
   public SearchResponse execute(
     final String baseDN,
-    final SearchFilter filter,
+    final FilterTemplate template,
     final String[] returnAttributes,
     final LdapEntryHandler... handlers)
     throws LdapException
   {
-    return execute(baseDN, FilterParser.parse(filter.format()), returnAttributes, handlers);
+    return execute(baseDN, FilterParser.parse(template.format()), returnAttributes, handlers);
   }
 
 
@@ -619,7 +683,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
 
 
   /**
-   * Executes a search request. See {@link SearchOperationHandle#execute()}.
+   * Executes a search request using {@link #getRequest()}. See {@link SearchOperationHandle#execute()}.
    *
    * @return  search result
    *
@@ -630,7 +694,8 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   {
     try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
-      return configureHandle(conn.operation(getRequest())).execute();
+      final SearchRequest req = configureRequest(null, null, null);
+      return configureHandle(conn.operation(req)).execute();
     }
   }
 
@@ -675,6 +740,8 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     }
     if (filter != null) {
       builder.filter(filter);
+    } else if (getTemplate() != null) {
+      builder.filter(getTemplate());
     }
     if (returnAttributes != null) {
       builder.returnAttributes(returnAttributes);
@@ -728,6 +795,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     op.setSearchResultHandlers(operation.getSearchResultHandlers());
     op.setConnectionFactory(operation.getConnectionFactory());
     op.setRequest(operation.getRequest());
+    op.setTemplate(operation.getTemplate());
     return op;
   }
 
@@ -737,6 +805,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   {
     return new StringBuilder(super.toString()).append(", ")
       .append("request=").append(request).append(", ")
+      .append("template=").append(filterTemplate).append(", ")
       .append("entryHandlers=").append(Arrays.toString(entryHandlers)).append(", ")
       .append("referenceHandlers=").append(Arrays.toString(referenceHandlers)).append(", ")
       .append("searchResultHandlers=").append(Arrays.toString(searchResultHandlers)).toString();
@@ -785,6 +854,20 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     public Builder request(final SearchRequest request)
     {
       object.setRequest(request);
+      return self();
+    }
+
+
+    /**
+     * Sets the filter template.
+     *
+     * @param  template  to set
+     *
+     * @return  this builder
+     */
+    public Builder template(final FilterTemplate template)
+    {
+      object.setTemplate(template);
       return self();
     }
 

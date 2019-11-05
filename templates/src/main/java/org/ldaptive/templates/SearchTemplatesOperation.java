@@ -3,8 +3,8 @@ package org.ldaptive.templates;
 
 import java.util.Arrays;
 import java.util.Collection;
+import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.concurrent.SearchOperationWorker;
 import org.slf4j.Logger;
@@ -133,9 +133,9 @@ public class SearchTemplatesOperation
 
 
   /**
-   * Performs an LDAP search with the supplied filters and aggregates all the search results together.
+   * Performs an LDAP search with the supplied templates and aggregates all the search results together.
    *
-   * @param  filters  to execute
+   * @param  templates  to execute
    * @param  returnAttrs  attributes to return from the search
    * @param  fromResult  index to return results from
    * @param  toResult  index to return results to
@@ -143,15 +143,15 @@ public class SearchTemplatesOperation
    * @return  ldap result containing all results
    */
   protected SearchResponse execute(
-    final SearchFilter[] filters,
+    final FilterTemplate[] templates,
     final String[] returnAttrs,
     final Integer fromResult,
     final Integer toResult)
   {
-    logger.debug("Performing search with {} filters", Arrays.toString(filters));
+    logger.debug("Performing search with {} templates", Arrays.toString(templates));
 
     // perform searches
-    final Collection<SearchResponse> responses = searchOperationWorker.execute(filters, returnAttrs);
+    final Collection<SearchResponse> responses = searchOperationWorker.execute(templates, returnAttrs);
 
     // iterate over all results and store each entry
     final SearchResponse result = new SearchResponse();

@@ -216,7 +216,7 @@ public class SearchOperationTest extends AbstractTest
     SearchResponse result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+        .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
          .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
 
@@ -224,14 +224,14 @@ public class SearchOperationTest extends AbstractTest
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+        .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(ReturnAttributes.NONE.value()).build());
     Assert.assertTrue(result.getEntry().getAttributes().isEmpty());
 
     // test searching without handler
     result = search.execute(
       dn,
-      new SearchFilter(filter, filterParameters.split("\\|")),
+      new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       new LdapEntryHandler[0]);
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
@@ -240,7 +240,7 @@ public class SearchOperationTest extends AbstractTest
     final DnAttributeEntryHandler srh = new DnAttributeEntryHandler();
     result = search.execute(
       dn,
-      new SearchFilter(filter, filterParameters.split("\\|")),
+      new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       new NoOpEntryHandler(), srh);
     // ignore the case of entryDN; some directories return those in mixed case
@@ -252,7 +252,7 @@ public class SearchOperationTest extends AbstractTest
     srh.setDnAttributeName("givenName");
     result = search.execute(
       dn,
-      new SearchFilter(filter, filterParameters.split("\\|")),
+      new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       new NoOpEntryHandler(), srh);
     // ignore the case of entryDN; some directories return those in mixed case
@@ -292,7 +292,7 @@ public class SearchOperationTest extends AbstractTest
 
     final SearchRequest subtreeRequest = SearchRequest.builder()
       .dn(DnParser.substring(expectedResult.getEntry().getDn(), 2))
-      .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+      .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBTREE).build();
     SearchResponse result = search.execute(subtreeRequest);
@@ -300,7 +300,7 @@ public class SearchOperationTest extends AbstractTest
 
     final SearchRequest onelevelRequest = SearchRequest.builder()
       .dn(DnParser.substring(expectedResult.getEntry().getDn(), 1))
-      .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+      .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.ONELEVEL).build();
     result = search.execute(onelevelRequest);
@@ -308,7 +308,7 @@ public class SearchOperationTest extends AbstractTest
 
     final SearchRequest objectRequest = SearchRequest.builder()
       .dn(expectedResult.getEntry().getDn())
-      .filter(new SearchFilter("(objectClass=*)"))
+      .filter("(objectClass=*)")
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.OBJECT).build();
     result = search.execute(objectRequest);
@@ -347,7 +347,7 @@ public class SearchOperationTest extends AbstractTest
     SearchResponse result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+        .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(ReturnAttributes.NONE.value()).build());
     Assert.assertNotNull(result.getEntry());
     Assert.assertTrue(result.getEntry().getAttributes().isEmpty());
@@ -356,7 +356,7 @@ public class SearchOperationTest extends AbstractTest
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+        .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(ReturnAttributes.ALL_USER.value()).build());
     Assert.assertNotNull(result.getEntry());
     Assert.assertNotNull(result.getEntry().getAttribute("cn"));
@@ -368,13 +368,13 @@ public class SearchOperationTest extends AbstractTest
       result = search.execute(
         SearchRequest.builder()
           .dn(dn)
-          .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+          .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
           .returnAttributes(ReturnAttributes.ALL_OPERATIONAL.add("createTimestamp")).build());
     } else {
       result = search.execute(
         SearchRequest.builder()
           .dn(dn)
-          .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+          .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
           .returnAttributes(ReturnAttributes.ALL_OPERATIONAL.value()).build());
     }
     Assert.assertNotNull(result.getEntry());
@@ -387,13 +387,13 @@ public class SearchOperationTest extends AbstractTest
       result = search.execute(
         SearchRequest.builder()
           .dn(dn)
-          .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+          .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
           .returnAttributes(ReturnAttributes.ALL.add("createTimestamp")).build());
     } else {
       result = search.execute(
         SearchRequest.builder()
           .dn(dn)
-          .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+          .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
           .returnAttributes(ReturnAttributes.ALL.value()).build());
     }
     Assert.assertNotNull(result.getEntry());
@@ -429,7 +429,7 @@ public class SearchOperationTest extends AbstractTest
       // test searching
       final SearchRequest request = SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(filter))
+        .filter(filter)
         .returnAttributes(returnAttrs.split("\\|"))
         .controls(prc).build();
 
@@ -506,7 +506,7 @@ public class SearchOperationTest extends AbstractTest
       // test searching
       final SearchRequest request = SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(filter))
+        .filter(filter)
         .returnAttributes(returnAttrs.split("\\|"))
         .controls(src, vlvrc).build();
 
@@ -570,7 +570,7 @@ public class SearchOperationTest extends AbstractTest
       // test sort by uugid
       final SearchRequest request = SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(filter))
+        .filter(filter)
         .controls(src).build();
       SearchResponse result = search.execute(request);
       if (result.getResultCode() == ResultCode.UNAVAILABLE_CRITICAL_EXTENSION) {
@@ -626,9 +626,7 @@ public class SearchOperationTest extends AbstractTest
     try {
       final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
 
-      final SearchRequest request = SearchRequest.builder()
-        .dn(dn)
-        .filter(new SearchFilter(filter)).build();
+      final SearchRequest request = SearchRequest.builder().dn(dn).filter(filter).build();
 
       // no authz
       SearchResponse response = search.execute(request);
@@ -717,7 +715,7 @@ public class SearchOperationTest extends AbstractTest
     search.setSearchResultHandlers(rsrh);
 
     final SearchResponse result = search.execute(
-      dn, new SearchFilter(filter, filterParameters.split("\\|")), returnAttrs.split("\\|"));
+      dn, new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|"));
 
     // ignore the case of member and contactPerson; some directories return
     // those in mixed case
@@ -760,7 +758,7 @@ public class SearchOperationTest extends AbstractTest
     final RecursiveResultHandler rsrh = new RecursiveResultHandler("member", "member");
     search.setSearchResultHandlers(rsrh);
 
-    final SearchResponse result = search.execute(dn, new SearchFilter(filter), returnAttrs.split("\\|"));
+    final SearchResponse result = search.execute(dn, new FilterTemplate(filter), returnAttrs.split("\\|"));
 
     // ignore the case of member and contactPerson; some directories return
     // those in mixed case
@@ -798,7 +796,7 @@ public class SearchOperationTest extends AbstractTest
     // test result merge
     final SearchRequest sr = SearchRequest.builder()
       .dn(dn)
-      .filter(new SearchFilter(filter))
+      .filter(filter)
       .returnAttributes(returnAttrs.split("\\|")).build();
 
     final SearchResponse result = search.execute(sr);
@@ -842,7 +840,7 @@ public class SearchOperationTest extends AbstractTest
     // test result merge
     final SearchRequest sr = SearchRequest.builder()
       .dn(dn)
-      .filter(new SearchFilter(filter))
+      .filter(filter)
       .returnAttributes(returnAttrs.split("\\|")).build();
 
     final SearchResponse result = search.execute(sr);
@@ -890,7 +888,7 @@ public class SearchOperationTest extends AbstractTest
 
     final SearchResponse result = search.execute(
       dn,
-      new SearchFilter(filter),
+      filter,
       returnAttrs.split("\\|"),
       handler);
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
@@ -921,7 +919,7 @@ public class SearchOperationTest extends AbstractTest
     // test binary searching
     SearchRequest request = SearchRequest.builder()
       .dn(dn)
-      .filter(new SearchFilter(filter))
+      .filter(filter)
       .returnAttributes(returnAttr)
       .binaryAttributes(returnAttr).build();
 
@@ -929,14 +927,14 @@ public class SearchOperationTest extends AbstractTest
     Assert.assertTrue(result.getEntry().getAttribute().isBinary());
     Assert.assertEquals(result.getEntry().getAttribute().getStringValue(), base64Value);
 
-    request = SearchRequest.builder().dn(dn).filter(new SearchFilter(filter)).returnAttributes("sn").build();
+    request = SearchRequest.builder().dn(dn).filter(filter).returnAttributes("sn").build();
     result = search.execute(request);
     Assert.assertFalse(result.getEntry().getAttribute().isBinary());
     Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
 
     request = SearchRequest.builder()
       .dn(dn)
-      .filter(new SearchFilter(filter))
+      .filter(filter)
       .returnAttributes("sn")
       .binaryAttributes("sn").build();
     result = search.execute(request);
@@ -945,7 +943,7 @@ public class SearchOperationTest extends AbstractTest
 
     request = SearchRequest.builder()
       .dn(dn)
-      .filter(new SearchFilter(filter))
+      .filter(filter)
       .returnAttributes("userCertificate;binary").build();
     result = search.execute(request);
     Assert.assertTrue(result.getEntry().getAttribute().isBinary());
@@ -987,7 +985,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchResponse noChangeResult = TestUtils.convertLdifToResult(expected);
     SearchResponse result = search.execute(
       dn,
-      new SearchFilter(filter, filterParameters.split("\\|")),
+      new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
     TestUtils.assertEquals(noChangeResult, result);
@@ -1005,7 +1003,7 @@ public class SearchOperationTest extends AbstractTest
     }
     result = search.execute(
       dn,
-      new SearchFilter(filter, filterParameters.split("\\|")),
+      new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
     TestUtils.assertEquals(lcValuesChangeResult, result);
@@ -1021,7 +1019,7 @@ public class SearchOperationTest extends AbstractTest
     }
     result = search.execute(
       dn,
-      new SearchFilter(filter, filterParameters.split("\\|")),
+      new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
     TestUtils.assertEquals(ucNamesChangeResult, result);
@@ -1042,7 +1040,7 @@ public class SearchOperationTest extends AbstractTest
     }
     result = search.execute(
       dn,
-      new SearchFilter(filter, filterParameters.split("\\|")),
+      new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
     TestUtils.assertEquals(ucNamesChangeResult, result);
@@ -1062,7 +1060,7 @@ public class SearchOperationTest extends AbstractTest
       });
     result = search.execute(
       dn,
-      new SearchFilter(filter, filterParameters.split("\\|")),
+      new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
     TestUtils.assertEquals(lcgivenNameChangeResult, result);
@@ -1099,7 +1097,7 @@ public class SearchOperationTest extends AbstractTest
     search.setSearchResultHandlers(new RangeEntryHandler());
     final SearchResponse result = search.execute(
       dn,
-      new SearchFilter(filter),
+      filter,
       returnAttrs.split("\\|"),
       new ObjectSidHandler(), new ObjectGuidHandler());
 
@@ -1139,7 +1137,7 @@ public class SearchOperationTest extends AbstractTest
     search.setEntryHandlers(new ObjectSidHandler(), new ObjectGuidHandler());
     final SearchRequest sr = SearchRequest.builder()
       .dn(dn)
-      .filter(new SearchFilter(filter))
+      .filter(filter)
       .controls(new GetStatsControl()).build();
     sr.setControls(new GetStatsControl());
 
@@ -1181,7 +1179,7 @@ public class SearchOperationTest extends AbstractTest
       search.setEntryHandlers(new ObjectSidHandler(), new ObjectGuidHandler());
       final SearchRequest sr = SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(filter))
+        .filter(filter)
         .controls(
           new ForceUpdateControl(),
           new LazyCommitControl(),
@@ -1242,14 +1240,14 @@ public class SearchOperationTest extends AbstractTest
     SearchResponse result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(filter, filterParameters.split("\\|")))
+        .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(specialCharsResult, result);
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter(new SearchFilter(binaryFilter, new Object[] {LdapUtils.base64Decode(binaryFilterParameters)}))
+        .filter(new FilterTemplate(binaryFilter, new Object[] {LdapUtils.base64Decode(binaryFilterParameters)}))
         .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(specialCharsResult, result);
   }
@@ -1307,7 +1305,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
 
     // test special character searching
-    final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
+    final SearchRequest request = new SearchRequest(dn, filter);
     final SearchResponse result = search.execute(request);
     if (ResultCode.NO_SUCH_OBJECT == result.getResultCode()) {
       // ignore this test if not supported by the server
@@ -1339,13 +1337,13 @@ public class SearchOperationTest extends AbstractTest
     request.setBaseDn(dn);
     request.setSizeLimit(resultsSize);
 
-    request.setFilter(new SearchFilter("(uugid=*)"));
+    request.setFilter("(uugid=*)");
 
     SearchResponse response = search.execute(request);
     Assert.assertEquals(response.entrySize(), resultsSize);
     Assert.assertEquals(response.getResultCode(), ResultCode.SIZE_LIMIT_EXCEEDED);
 
-    request.setFilter(new SearchFilter(filter));
+    request.setFilter(filter);
     response = search.execute(request);
     Assert.assertEquals(response.entrySize(), resultsSize);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
@@ -1377,7 +1375,7 @@ public class SearchOperationTest extends AbstractTest
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
     request.setReturnAttributes(ReturnAttributes.NONE.value());
-    request.setFilter(new SearchFilter(filter));
+    request.setFilter(filter);
 
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
     cc.setConnectTimeout(Duration.ofMillis(500));
@@ -1408,7 +1406,7 @@ public class SearchOperationTest extends AbstractTest
     final String chaseReferralDn = "cn=0,ou=referrals-chase," + DnParser.substring(dn, 1);
     request.setBaseDn(chaseReferralDn);
     request.setSearchScope(SearchScope.SUBTREE);
-    request.setFilter(new SearchFilter("uupid=dhawes"));
+    request.setFilter("uupid=dhawes");
     search.setSearchResultHandlers(new FollowSearchReferralHandler());
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
@@ -1483,7 +1481,7 @@ public class SearchOperationTest extends AbstractTest
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
     request.setReturnAttributes(ReturnAttributes.NONE.value());
-    request.setFilter(new SearchFilter(filter));
+    request.setFilter(filter);
 
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
     cc.setConnectTimeout(Duration.ofMillis(500));
@@ -1521,7 +1519,7 @@ public class SearchOperationTest extends AbstractTest
     final String referenceDn = "ou=references-chase," + DnParser.substring(dn, 1);
     request.setBaseDn(referenceDn);
     request.setSearchScope(SearchScope.ONELEVEL);
-    request.setFilter(new SearchFilter("uupid=dhawes"));
+    request.setFilter("uupid=dhawes");
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler());
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
@@ -1590,7 +1588,7 @@ public class SearchOperationTest extends AbstractTest
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
     request.setReturnAttributes(ReturnAttributes.NONE.value());
-    request.setFilter(new SearchFilter(filter));
+    request.setFilter(filter);
 
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
     cc.setConnectTimeout(Duration.ofMillis(500));
@@ -1732,7 +1730,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchResponse result = search.execute(
       new SearchRequest(
         dn,
-        new SearchFilter(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
+        new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }
 
@@ -1774,7 +1772,7 @@ public class SearchOperationTest extends AbstractTest
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
-          new SearchFilter(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
+          new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
       if (result.getResultCode() == ResultCode.AUTH_METHOD_NOT_SUPPORTED) {
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support CRAM-MD5");
@@ -1824,7 +1822,7 @@ public class SearchOperationTest extends AbstractTest
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
-          new SearchFilter(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
+          new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
@@ -1885,7 +1883,7 @@ public class SearchOperationTest extends AbstractTest
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
-          new SearchFilter(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
+          new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
@@ -1928,7 +1926,7 @@ public class SearchOperationTest extends AbstractTest
   {
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(dn);
-    request.setFilter(new SearchFilter(filter, filterParameters.split("\\|")));
+    request.setFilter(new FilterTemplate(filter, filterParameters.split("\\|")));
     request.setReturnAttributes(returnAttrs.split("\\|"));
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
@@ -1987,7 +1985,7 @@ public class SearchOperationTest extends AbstractTest
       op.getOperation().setConnectionFactory(cf);
       op.getOperation().setRequest(SearchRequest.builder().dn(dn).build());
       final Collection<SearchResponse> results = op.execute(
-        new SearchFilter[]{new SearchFilter(filter, filterParameters.split("\\|"))},
+        new FilterTemplate[]{new FilterTemplate(filter, filterParameters.split("\\|"))},
         returnAttrs.split("\\|"));
       Assert.assertEquals(results.size(), 1);
       TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), results.iterator().next());

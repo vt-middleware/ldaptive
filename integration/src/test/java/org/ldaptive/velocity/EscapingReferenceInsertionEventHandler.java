@@ -6,11 +6,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
-import org.ldaptive.SearchFilter;
+import org.ldaptive.FilterTemplate;
 
 /**
- * Insertion event handler that encodes the inserted value using {@link SearchFilter#encodeValue(String)} or {@link
- * SearchFilter#encodeValue(byte[])}
+ * Insertion event handler that encodes the inserted value using {@link FilterTemplate#encodeValue(String)} or {@link
+ * FilterTemplate#encodeValue(byte[])}
  *
  * @author  Middleware Services
  */
@@ -40,7 +40,7 @@ public class EscapingReferenceInsertionEventHandler implements ReferenceInsertio
 
 
   /**
-   * Returns {@link SearchFilter#encodeValue} if value is a string.
+   * Returns {@link FilterTemplate#encodeValue} if value is a string.
    *
    * @param value to encode
    *
@@ -54,11 +54,11 @@ public class EscapingReferenceInsertionEventHandler implements ReferenceInsertio
 
     final String s;
     if (value instanceof String){
-      s = SearchFilter.encodeValue((String) value);
+      s = FilterTemplate.encodeValue((String) value);
     } else if (value instanceof byte[]) {
-      s = SearchFilter.encodeValue((byte[]) value);
+      s = FilterTemplate.encodeValue((byte[]) value);
     } else {
-      s = SearchFilter.encodeValue(value.toString());
+      s = FilterTemplate.encodeValue(value.toString());
     }
     return s;
   }

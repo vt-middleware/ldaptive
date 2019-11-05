@@ -49,6 +49,19 @@ public class BindConnectionInitializer implements ConnectionInitializer
    * @param  dn  bind dn
    * @param  credential  bind credential
    */
+  public BindConnectionInitializer(final String dn, final String credential)
+  {
+    setBindDn(dn);
+    setBindCredential(new Credential(credential));
+  }
+
+
+  /**
+   * Creates a new bind connection initializer.
+   *
+   * @param  dn  bind dn
+   * @param  credential  bind credential
+   */
   public BindConnectionInitializer(final String dn, final Credential credential)
   {
     setBindDn(dn);

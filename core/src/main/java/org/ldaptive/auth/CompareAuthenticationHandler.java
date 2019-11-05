@@ -7,6 +7,7 @@ import java.util.Arrays;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.CompareResponse;
 import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
@@ -30,6 +31,21 @@ public class CompareAuthenticationHandler extends AbstractAuthenticationHandler
 
   /** Password attribute. */
   private String passwordAttribute = DEFAULT_ATTRIBUTE;
+
+
+  /** Default constructor. */
+  public CompareAuthenticationHandler() {}
+
+
+  /**
+   * Creates a new compare authentication handler.
+   *
+   * @param  cf  connection factory
+   */
+  public CompareAuthenticationHandler(final ConnectionFactory cf)
+  {
+    setConnectionFactory(cf);
+  }
 
 
   /**

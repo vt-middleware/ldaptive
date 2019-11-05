@@ -89,7 +89,7 @@ public class LdapURLTest
             "o=University of Michigan,c=US",
             LdapURL.DEFAULT_ATTRIBUTES,
             SearchScope.SUBTREE,
-            new SearchFilter("(cn=Babs Jensen)")),
+            "(cn=Babs Jensen)"),
         },
         new Object[] {
           "LDAP://ldap1.example.com/c=GB?objectClass?ONE",
@@ -133,7 +133,7 @@ public class LdapURLTest
             "o=Babsco,c=US",
             LdapURL.DEFAULT_ATTRIBUTES,
             LdapURL.DEFAULT_SCOPE,
-            new SearchFilter("(four-octet=\\00\\00\\00\\04)")),
+            "(four-octet=\\00\\00\\00\\04)"),
         },
         new Object[] {
           "ldap://ldap.example.com/o=An%20Example%5C2C%20Inc.,c=US",
@@ -232,7 +232,7 @@ public class LdapURLTest
             "dc=ldaptive,dc=org",
             new String[] {"cn", "sn"},
             SearchScope.ONELEVEL,
-            new SearchFilter("(uid=dfisher)")),
+            "(uid=dfisher)"),
         },
       };
   }

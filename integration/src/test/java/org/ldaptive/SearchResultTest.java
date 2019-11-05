@@ -64,8 +64,7 @@ public class SearchResultTest extends AbstractTest
   {
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
 
-    final SearchResponse result = search.execute(
-      new SearchRequest(dn, new SearchFilter(filter), returnAttrs.split("\\|")));
+    final SearchResponse result = search.execute(new SearchRequest(dn, filter, returnAttrs.split("\\|")));
     final String expected = TestUtils.readFileIntoString(ldifFile);
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }

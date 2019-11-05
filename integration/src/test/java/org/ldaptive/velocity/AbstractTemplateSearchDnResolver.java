@@ -6,7 +6,7 @@ import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.app.event.EventCartridge;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
 import org.apache.velocity.exception.VelocityException;
-import org.ldaptive.SearchFilter;
+import org.ldaptive.FilterTemplate;
 import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.User;
 
@@ -53,9 +53,9 @@ public abstract class AbstractTemplateSearchDnResolver extends SearchDnResolver
 
 
   @Override
-  protected SearchFilter createSearchFilter(final User user)
+  protected FilterTemplate createFilterTemplate(final User user)
   {
-    final SearchFilter filter = new SearchFilter();
+    final FilterTemplate filter = new FilterTemplate();
     if (user != null && user.getContext() != null) {
       final VelocityContext context = (VelocityContext) user.getContext();
       final EventCartridge cartridge = new EventCartridge();

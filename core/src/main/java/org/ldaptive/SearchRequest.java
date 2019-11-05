@@ -73,7 +73,10 @@ public class SearchRequest extends AbstractRequestMessage
   /** Return attributes. */
   private String[] returnAttributes = ReturnAttributes.ALL_USER.value();
 
-  /** Binary attribute names. */
+  /**
+   * Binary attribute names used to convey attributes that should be treated as binary when a response is received for
+   * this request. This property is not part of the request specification. See {@link LdapAttribute#isBinary()}.
+   */
   private String[] binaryAttributes;
 
 
@@ -131,16 +134,16 @@ public class SearchRequest extends AbstractRequestMessage
    * Creates a new search request.
    *
    * @param  dn  base DN
-   * @param  filter  search filter
+   * @param  template  filter template
    * @param  attributes  return attributes
    */
   public SearchRequest(
     final String dn,
-    final SearchFilter filter,
+    final FilterTemplate template,
     final String... attributes)
   {
     setBaseDn(dn);
-    setFilter(filter);
+    setFilter(template);
     setReturnAttributes(attributes);
   }
 
@@ -388,14 +391,14 @@ public class SearchRequest extends AbstractRequestMessage
 
 
   /**
-   * Sets the search filter. See {@link SearchFilter} and {@link FilterParser#parse(String)}.
+   * Sets the search filter. See {@link FilterTemplate} and {@link FilterParser#parse(String)}.
    *
-   * @param  filter  search filter
+   * @param  template  filter template
    */
-  public void setFilter(final SearchFilter filter)
+  public void setFilter(final FilterTemplate template)
   {
-    logger.trace("setting filter: {}", filter);
-    searchFilter = FilterParser.parse(filter.format());
+    logger.trace("setting filter: {}", template);
+    searchFilter = FilterParser.parse(template.format());
   }
 
 
@@ -574,16 +577,16 @@ public class SearchRequest extends AbstractRequestMessage
    *
    * @param  dn  of an ldap entry
    * @param  attrs  to return
-   * @param  filter  to execute on the ldap entry
+   * @param  template  to execute on the ldap entry
    *
    * @return  search request
    */
   public static SearchRequest objectScopeSearchRequest(
     final String dn,
     final String[] attrs,
-    final SearchFilter filter)
+    final FilterTemplate template)
   {
-    return objectScopeSearchRequest(dn, attrs, FilterParser.parse(filter.format()));
+    return objectScopeSearchRequest(dn, attrs, FilterParser.parse(template.format()));
   }
 
 
@@ -805,13 +808,13 @@ public class SearchRequest extends AbstractRequestMessage
     /**
      * Sets the search filter.
      *
-     * @param  filter  search filter
+     * @param  template  filter template
      *
      * @return  this builder
      */
-    public Builder filter(final SearchFilter filter)
+    public Builder filter(final FilterTemplate template)
     {
-      object.setFilter(filter);
+      object.setFilter(template);
       return self();
     }
 

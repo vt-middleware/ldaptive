@@ -5,7 +5,6 @@ import java.util.Iterator;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
@@ -92,7 +91,7 @@ public class VirtualListViewClientTest extends AbstractTest
       new SortKey("uid", "caseExactMatch"),
       new SortKey("givenName", "caseIgnoreMatch"));
 
-    SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
+    SearchRequest request = new SearchRequest(dn, filter);
     //request.setSortBehavior(SortBehavior.ORDERED);
     SearchResponse response = client.execute(request, new VirtualListViewParams(1, 0, 1));
     Iterator<LdapEntry> i = response.getEntries().iterator();
@@ -111,7 +110,7 @@ public class VirtualListViewClientTest extends AbstractTest
     // list. Open a new connection.
     client = new VirtualListViewClient(TestUtils.createConnectionFactory(), new SortKey("uid", "caseExactMatch"));
 
-    request = new SearchRequest(dn, new SearchFilter(filter));
+    request = new SearchRequest(dn, filter);
     //request.setSortBehavior(SortBehavior.ORDERED);
     response = client.execute(request, new VirtualListViewParams("21", 1, 0));
     i = response.getEntries().iterator();

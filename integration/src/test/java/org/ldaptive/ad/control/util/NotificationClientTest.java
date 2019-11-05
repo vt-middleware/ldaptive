@@ -10,7 +10,6 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.TestControl;
@@ -46,9 +45,7 @@ public class NotificationClientTest extends AbstractTest
     try {
       final NotificationClient client = new NotificationClient(cf);
 
-      final SearchRequest request = new SearchRequest(
-        "ou=test,dc=middleware,dc=vt,dc=edu",
-        new SearchFilter("(objectClass=*)"));
+      final SearchRequest request = new SearchRequest("ou=test,dc=middleware,dc=vt,dc=edu", "(objectClass=*)");
       request.setSearchScope(SearchScope.ONELEVEL);
 
       final BlockingQueue<NotificationClient.NotificationItem> results = client.execute(request);

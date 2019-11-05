@@ -8,7 +8,7 @@ import org.ldaptive.Connection;
  *
  * @author  Middleware Services
  */
-public class ClosePassivator implements ConnectionPassivator
+public class CloseConnectionPassivator implements ConnectionPassivator
 {
 
 

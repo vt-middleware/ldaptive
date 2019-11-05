@@ -6,10 +6,10 @@ import java.util.Iterator;
 import org.ldaptive.AbstractSearchOperationFactory;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DerefAliases;
+import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
@@ -198,7 +198,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
 
 
   /**
-   * Attempts to find the DN for the supplied user. {@link #createSearchFilter(User)} ()} is used to create the search
+   * Attempts to find the DN for the supplied user. {@link #createFilterTemplate(User)} ()} is used to create the search
    * filter. If more than one entry matches the search, the result is controlled by {@link
    * #setAllowMultipleDns(boolean)}.
    *
@@ -216,8 +216,8 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
 
     String dn = null;
     if (user != null) {
-      // create the search filter
-      final SearchFilter filter = createSearchFilter(user);
+      // create the filter template
+      final FilterTemplate filter = createFilterTemplate(user);
 
       if (filter != null && filter.getFilter() != null) {
         final SearchResponse result = performLdapSearch(filter);
@@ -236,7 +236,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
           logger.info("search for user={} failed using filter={}", user, filter);
         }
       } else {
-        logger.error("DN search filter not found, no search performed");
+        logger.error("DN filter template not found, no search performed");
       }
     } else {
       logger.warn("DN resolution cannot occur, user is null");
@@ -260,16 +260,16 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
 
 
   /**
-   * Returns a search filter using {@link #userFilter} and {@link #userFilterParameters}. The user parameter is injected
-   * as a named parameter of 'user'.
+   * Returns a filter template using {@link #userFilter} and {@link #userFilterParameters}. The user parameter is
+   * injected as a named parameter of 'user'.
    *
    * @param  user  to resolve DN
    *
-   * @return  search filter
+   * @return  filter template
    */
-  protected SearchFilter createSearchFilter(final User user)
+  protected FilterTemplate createFilterTemplate(final User user)
   {
-    final SearchFilter filter = new SearchFilter();
+    final FilterTemplate filter = new FilterTemplate();
     if (user != null && user.getIdentifier() != null && !"".equals(user.getIdentifier())) {
       if (userFilter != null) {
         logger.debug("searching for DN using userFilter");
@@ -285,7 +285,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
         logger.error("Invalid userFilter, cannot be null or empty.");
       }
     } else {
-      logger.warn("Search filter cannot be created, user input was empty or null");
+      logger.warn("Filter template cannot be created, user input was empty or null");
     }
     return filter;
   }
@@ -294,15 +294,15 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   /**
    * Returns a search request for searching for a single entry in an LDAP, returning no attributes.
    *
-   * @param  filter  to execute
+   * @param  template  to execute
    *
    * @return  search request
    */
-  protected SearchRequest createSearchRequest(final SearchFilter filter)
+  protected SearchRequest createSearchRequest(final FilterTemplate template)
   {
     return SearchRequest.builder()
       .dn(baseDn)
-      .filter(filter)
+      .filter(template)
       .returnAttributes(ReturnAttributes.NONE.value())
       .scope(subtreeSearch ? SearchScope.SUBTREE : SearchScope.ONELEVEL)
       .aliases(derefAliases)
@@ -313,16 +313,16 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   /**
    * Executes the ldap search operation with the supplied filter.
    *
-   * @param  filter  to execute
+   * @param  template  to execute
    *
    * @return  ldap search result
    *
    * @throws  LdapException  if an error occurs
    */
-  protected SearchResponse performLdapSearch(final SearchFilter filter)
+  protected SearchResponse performLdapSearch(final FilterTemplate template)
     throws LdapException
   {
-    final SearchRequest request = createSearchRequest(filter);
+    final SearchRequest request = createSearchRequest(template);
     final SearchOperation op = createSearchOperation();
     return op.execute(request);
   }

@@ -5,7 +5,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
@@ -71,7 +70,7 @@ public class LdifTest extends AbstractTest
   {
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
 
-    final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
+    final SearchRequest request = new SearchRequest(dn, filter);
     if (TestControl.isActiveDirectory()) {
       request.setBinaryAttributes("objectSid", "objectGUID", "jpegPhoto");
     } else {
