@@ -12,7 +12,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
 import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchConnectionValidator;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestUtils;
@@ -288,7 +287,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             searchBaseDn,
-            new SearchFilter("(mail=jadams@ldaptive.org)"),
+            "(mail=jadams@ldaptive.org)",
             "departmentNumber",
             "givenName",
             "sn"),
@@ -297,7 +296,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             searchBaseDn,
-            new SearchFilter("(mail=tjefferson@ldaptive.org)"),
+            "(mail=tjefferson@ldaptive.org)",
             "departmentNumber",
             "givenName",
             "sn"),
@@ -306,7 +305,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             searchBaseDn,
-            new SearchFilter("(mail=jmadison@ldaptive.org)"),
+            "(mail=jmadison@ldaptive.org)",
             "departmentNumber",
             "givenName",
             "sn"),
@@ -315,7 +314,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             searchBaseDn,
-            new SearchFilter("(mail=jmonroe@ldaptive.org)"),
+            "(mail=jmonroe@ldaptive.org)",
             "departmentNumber",
             "givenName",
             "sn"),
@@ -324,7 +323,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             searchBaseDn,
-            new SearchFilter("(mail=jqadams@ldaptive.org)"),
+            "(mail=jqadams@ldaptive.org)",
             "departmentNumber",
             "givenName",
             "sn"),
@@ -333,7 +332,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             searchBaseDn,
-            new SearchFilter("(mail=ajackson@ldaptive.org)"),
+            "(mail=ajackson@ldaptive.org)",
             "departmentNumber",
             "givenName",
             "sn"),
@@ -342,7 +341,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             searchBaseDn,
-            new SearchFilter("(mail=mvburen@ldaptive.org)"),
+            "(mail=mvburen@ldaptive.org)",
             "departmentNumber",
             "givenName",
             "sn",
@@ -352,7 +351,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             searchBaseDn,
-            new SearchFilter("(mail=whharrison@ldaptive.org)"),
+            "(mail=whharrison@ldaptive.org)",
             "departmentNumber",
             "givenName",
             "sn"),
@@ -361,7 +360,7 @@ public class ConnectionPoolTest extends AbstractTest
         {
           new SearchRequest(
             searchBaseDn,
-            new SearchFilter("(mail=jtyler@ldaptive.org)"),
+            "(mail=jtyler@ldaptive.org)",
             "departmentNumber",
             "givenName",
             "sn"),

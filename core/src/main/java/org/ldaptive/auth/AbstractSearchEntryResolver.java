@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.Iterator;
 import org.ldaptive.AbstractSearchOperationFactory;
 import org.ldaptive.DerefAliases;
+import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchScope;
@@ -225,18 +225,17 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
 
 
   /**
-   * Returns a search filter using {@link #userFilter} and {@link #userFilterParameters}. {@link
-   * User#getIdentifier()} is injected with a named parameter of 'user', {@link User#getContext()} is injected with a
-   * named parameter of 'context', and {@link AuthenticationCriteria#getDn()} is injected with a named parameter of
-   * 'dn'.
+   * Returns a filter template using {@link #userFilter} and {@link #userFilterParameters}. {@link User#getIdentifier()}
+   * is injected with a named parameter of 'user', {@link User#getContext()} is injected with a named parameter of
+   * 'context', and {@link AuthenticationCriteria#getDn()} is injected with a named parameter of 'dn'.
    *
    * @param  ac  authentication criteria
    *
-   * @return  search filter
+   * @return  filter template
    */
-  protected SearchFilter createSearchFilter(final AuthenticationCriteria ac)
+  protected FilterTemplate createFilterTemplate(final AuthenticationCriteria ac)
   {
-    final SearchFilter filter = new SearchFilter();
+    final FilterTemplate filter = new FilterTemplate();
     if (userFilter != null) {
       logger.debug("searching for entry using userFilter");
       filter.setFilter(userFilter);
@@ -269,7 +268,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
     if (userFilter != null) {
       request = SearchRequest.builder()
         .dn(baseDn)
-        .filter(createSearchFilter(ac))
+        .filter(createFilterTemplate(ac))
         .returnAttributes(ac.getAuthenticationRequest().getReturnAttributes())
         .scope(subtreeSearch ? SearchScope.SUBTREE : SearchScope.ONELEVEL)
         .build();

@@ -5,7 +5,6 @@ import java.util.Iterator;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SingleConnectionFactory;
@@ -84,7 +83,7 @@ public class PagedResultsClientTest extends AbstractTest
     try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
       final PagedResultsClient client = new PagedResultsClient(cf, 1);
 
-      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
+      final SearchRequest request = new SearchRequest(dn, filter);
       SearchResponse response = client.execute(request);
       Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
       Assert.assertEquals(response.entrySize(), 1);
@@ -126,7 +125,7 @@ public class PagedResultsClientTest extends AbstractTest
     try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
       final PagedResultsClient client = new PagedResultsClient(cf, 1);
 
-      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
+      final SearchRequest request = new SearchRequest(dn, filter);
 
       final SearchResponse response = SearchResponse.sort(client.executeToCompletion(request));
       Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);

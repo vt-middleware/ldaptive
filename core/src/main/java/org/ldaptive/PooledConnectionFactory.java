@@ -77,11 +77,7 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
   }
 
 
-  /**
-   * Returns the connection config.
-   *
-   * @return  connection config
-   */
+  @Override
   public ConnectionConfig getConnectionConfig()
   {
     return getDefaultConnectionFactory().getConnectionConfig();

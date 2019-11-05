@@ -21,6 +21,14 @@ public interface ConnectionFactory extends AutoCloseable
     throws LdapException;
 
 
+  /**
+   * Returns the connection configuration used to create connections.
+   *
+   * @return  connection config
+   */
+  ConnectionConfig getConnectionConfig();
+
+
   /** Free any resources associated with this factory. */
   default void close() {}
 }

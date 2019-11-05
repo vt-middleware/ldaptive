@@ -24,7 +24,7 @@ public class SimpleBindAuthenticationHandler extends AbstractAuthenticationHandl
 
 
   /**
-   * Creates a new bind authentication handler.
+   * Creates a new simple bind authentication handler.
    *
    * @param  cf  connection factory
    */

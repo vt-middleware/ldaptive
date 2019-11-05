@@ -66,11 +66,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
   }
 
 
-  /**
-   * Returns the connection config.
-   *
-   * @return  connection config
-   */
+  @Override
   public ConnectionConfig getConnectionConfig()
   {
     return config;

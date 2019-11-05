@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
-import org.ldaptive.SearchFilter;
+import org.ldaptive.FilterTemplate;
 import org.ldaptive.control.RequestControl;
 
 /**
@@ -29,8 +29,8 @@ public class SearchRequestPropertyInvoker extends AbstractPropertyInvoker
   {
     Object newValue = value;
     if (type != String.class) {
-      if (SearchFilter.class.isAssignableFrom(type)) {
-        newValue = new SearchFilter(value);
+      if (FilterTemplate.class.isAssignableFrom(type)) {
+        newValue = new FilterTemplate(value);
       } else if (RequestControl[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(RequestControl.class, value);
       } else {

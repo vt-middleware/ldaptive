@@ -2,7 +2,7 @@
 package org.ldaptive.concurrent;
 
 import java.util.Collection;
-import org.ldaptive.SearchFilter;
+import org.ldaptive.FilterTemplate;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
@@ -45,24 +45,24 @@ public class SearchOperationWorker extends AbstractOperationWorker<SearchOperati
    */
   public Collection<SearchResponse> execute(final String... filters)
   {
-    final SearchFilter[] sf = new SearchFilter[filters.length];
+    final FilterTemplate[] templates = new FilterTemplate[filters.length];
     for (int i = 0; i < filters.length; i++) {
-      sf[i] = new SearchFilter(filters[i]);
+      templates[i] = new FilterTemplate(filters[i]);
     }
-    return execute(sf, (String[]) null);
+    return execute(templates, (String[]) null);
   }
 
 
   /**
    * Performs search operations for the supplied filters.
    *
-   * @param  filters  to search with
+   * @param  templates  to search with
    *
    * @return  search results
    */
-  public Collection<SearchResponse> execute(final SearchFilter... filters)
+  public Collection<SearchResponse> execute(final FilterTemplate... templates)
   {
-    return execute(filters, (String[]) null);
+    return execute(templates, (String[]) null);
   }
 
 
@@ -76,29 +76,29 @@ public class SearchOperationWorker extends AbstractOperationWorker<SearchOperati
    */
   public Collection<SearchResponse> execute(final String[] filters, final String... attrs)
   {
-    final SearchFilter[] sf = new SearchFilter[filters.length];
+    final FilterTemplate[] templates = new FilterTemplate[filters.length];
     for (int i = 0; i < filters.length; i++) {
-      sf[i] = new SearchFilter(filters[i]);
+      templates[i] = new FilterTemplate(filters[i]);
     }
-    return execute(sf, attrs);
+    return execute(templates, attrs);
   }
 
 
   /**
    * Performs search operations for the supplied filters with the supplied return attributes
    *
-   * @param  filters  to search with
+   * @param  templates  to search with
    * @param  attrs  attributes to return
    *
    * @return  search results
    */
-  public Collection<SearchResponse> execute(final SearchFilter[] filters, final String... attrs)
+  public Collection<SearchResponse> execute(final FilterTemplate[] templates, final String... attrs)
   {
-    final SearchRequest[] requests = new SearchRequest[filters.length];
-    for (int i = 0; i < filters.length; i++) {
+    final SearchRequest[] requests = new SearchRequest[templates.length];
+    for (int i = 0; i < templates.length; i++) {
       requests[i] = SearchRequest.copy(getOperation().getRequest());
-      if (filters[i] != null) {
-        requests[i].setFilter(filters[i]);
+      if (templates[i] != null) {
+        requests[i].setFilter(templates[i]);
       }
       if (attrs != null) {
         requests[i].setReturnAttributes(attrs);

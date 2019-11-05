@@ -42,10 +42,8 @@ public class SearchConnectionValidatorTest extends AbstractTest
   {
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
     final Connection c = cf.getConnection();
-    final SearchConnectionValidator validator1 = new SearchConnectionValidator(
-      new SearchRequest(searchDn, new SearchFilter("(cn=*)")));
-    final SearchConnectionValidator validator2 = new SearchConnectionValidator(
-      new SearchRequest(searchDn, new SearchFilter("(dne=*)")));
+    final SearchConnectionValidator validator1 = new SearchConnectionValidator(new SearchRequest(searchDn, "(cn=*)"));
+    final SearchConnectionValidator validator2 = new SearchConnectionValidator(new SearchRequest(searchDn, "(dne=*)"));
     try {
       c.open();
       Assert.assertTrue(validator1.apply(c));

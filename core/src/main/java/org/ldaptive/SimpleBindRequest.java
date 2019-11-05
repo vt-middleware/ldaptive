@@ -44,6 +44,19 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
 
 
   /**
+   * Creates a new simple bind request.
+   *
+   * @param  name  to bind as
+   * @param  cred  to bind with
+   */
+  public SimpleBindRequest(final String name, final Credential cred)
+  {
+    setLdapDN(name);
+    setPassword(cred.getString());
+  }
+
+
+  /**
    * Sets the LDAP DN.
    *
    * @param  name  LDAP DN to set

@@ -1,12 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.handler;
 
+import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.ad.SecurityIdentifier;
@@ -117,7 +117,7 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
         final SearchRequest sr = SearchRequest.builder()
           .dn(baseDn != null ? baseDn : getRequest().getBaseDn())
           .returnAttributes(ReturnAttributes.NONE.value())
-          .filter(new SearchFilter(groupFilter, new Object[] {groupSid}).format())
+          .filter(new FilterTemplate(groupFilter, new Object[] {groupSid}).format())
           .build();
 
         final SearchResponse result = getConnection().operation(sr).execute();

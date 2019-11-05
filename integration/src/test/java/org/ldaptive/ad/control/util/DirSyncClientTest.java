@@ -4,7 +4,6 @@ package org.ldaptive.ad.control.util;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
@@ -89,10 +88,7 @@ public class DirSyncClientTest extends AbstractTest
       TestUtils.createConnectionFactory(),
       new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
 
-    final SearchRequest request = new SearchRequest(
-      dn.substring(dn.indexOf(",") + 1, dn.length()),
-      new SearchFilter(filter),
-      "uid");
+    final SearchRequest request = new SearchRequest(dn.substring(dn.indexOf(",") + 1), filter, "uid");
     final SearchResponse response = client.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     Assert.assertTrue(response.entrySize() > 0);
@@ -123,10 +119,7 @@ public class DirSyncClientTest extends AbstractTest
       TestUtils.createConnectionFactory(),
       new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
 
-    final SearchRequest request = new SearchRequest(
-      dn.substring(dn.indexOf(",") + 1, dn.length()),
-      new SearchFilter(filter),
-      "uid");
+    final SearchRequest request = new SearchRequest(dn.substring(dn.indexOf(",") + 1), filter, "uid");
     final SearchResponse response = client.executeToCompletion(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     Assert.assertTrue(response.entrySize() > 0);

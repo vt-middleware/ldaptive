@@ -1,17 +1,18 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.ldaptive.filter.Filter;
 
 /**
- * Simple bean for an ldap search filter and it's parameters.
+ * Class for producing an LDAP search filter from a filter template. Templates can use either index based parameters or
+ * name based parameters for substitutions. Parameters are encoded according to RFC 4515.
  *
  * @author  Middleware Services
  */
-public class SearchFilter
+public class FilterTemplate
 {
 
   /** hash code seed. */
@@ -25,7 +26,7 @@ public class SearchFilter
 
 
   /** Default constructor. */
-  public SearchFilter() {}
+  public FilterTemplate() {}
 
 
   /**
@@ -33,7 +34,7 @@ public class SearchFilter
    *
    * @param  filter  to set
    */
-  public SearchFilter(final String filter)
+  public FilterTemplate(final String filter)
   {
     setFilter(filter);
   }
@@ -45,7 +46,7 @@ public class SearchFilter
    * @param  filter  to set
    * @param  params  to set
    */
-  public SearchFilter(final String filter, final Object[] params)
+  public FilterTemplate(final String filter, final Object[] params)
   {
     setFilter(filter);
     setParameters(params);
@@ -166,7 +167,7 @@ public class SearchFilter
 
 
   /**
-   * Encodes the supplied attribute value for use in a search filter. See {@link #escape(String)}.
+   * Encodes the supplied attribute value for use in a search filter. See {@link Filter#escape(String)}.
    *
    * @param  value  to encode
    *
@@ -178,13 +179,13 @@ public class SearchFilter
       return null;
     }
 
-    return escape(value);
+    return Filter.escape(value);
   }
 
 
   /**
    * Hex encodes the supplied object if it is of type byte[], otherwise the string format of the object is escaped. See
-   * {@link #escape(String)}.
+   * {@link Filter#escape(String)}.
    *
    * @param  obj  to encode
    *
@@ -208,71 +209,16 @@ public class SearchFilter
   }
 
 
-  /**
-   * Escapes the supplied string per RFC 4515.
-   *
-   * @param  s  to escape
-   *
-   * @return  escaped string
-   */
-  private static String escape(final String s)
-  {
-    final StringBuilder sb = new StringBuilder(s.length());
-    final byte[] utf8 = s.getBytes(StandardCharsets.UTF_8);
-    // CheckStyle:MagicNumber OFF
-    // optimize if ASCII
-    if (s.length() == utf8.length) {
-      for (byte b : utf8) {
-        if (b <= 0x1F || b == 0x28 || b == 0x29 || b == 0x2A || b == 0x5C || b == 0x7F) {
-          sb.append('\\').append(LdapUtils.hexEncode(b));
-        } else {
-          sb.append((char) b);
-        }
-      }
-    } else {
-      int multiByte = 0;
-      for (byte b : utf8) {
-        if (multiByte > 0) {
-          sb.append('\\').append(LdapUtils.hexEncode(b));
-          multiByte--;
-        } else if ((b & 0x7F) == b) {
-          if (b <= 0x1F || b == 0x28 || b == 0x29 || b == 0x2A || b == 0x5C || b == 0x7F) {
-            sb.append('\\').append(LdapUtils.hexEncode(b));
-          } else {
-            sb.append((char) b);
-          }
-        } else {
-          // 2 byte character
-          if ((b & 0xE0) == 0xC0) {
-            multiByte = 1;
-            // 3 byte character
-          } else if ((b & 0xF0) == 0xE0) {
-            multiByte = 2;
-            // 4 byte character
-          } else if ((b & 0xF8) == 0xF0) {
-            multiByte = 3;
-          } else {
-            throw new IllegalStateException("Could not read UTF-8 string encoding");
-          }
-          sb.append('\\').append(LdapUtils.hexEncode(b));
-        }
-      }
-    }
-    // CheckStyle:MagicNumber ON
-    return sb.toString();
-  }
-
-
   @Override
   public boolean equals(final Object o)
   {
     if (o == this) {
       return true;
     }
-    if (o instanceof SearchFilter) {
-      final SearchFilter v = (SearchFilter) o;
+    if (o instanceof FilterTemplate) {
+      final FilterTemplate v = (FilterTemplate) o;
       return LdapUtils.areEqual(searchFilter, v.searchFilter) &&
-             LdapUtils.areEqual(parameters, v.parameters);
+        LdapUtils.areEqual(parameters, v.parameters);
     }
     return false;
   }
@@ -311,7 +257,7 @@ public class SearchFilter
   {
 
 
-    private final SearchFilter object = new SearchFilter();
+    private final FilterTemplate object = new FilterTemplate();
 
 
     protected Builder() {}
@@ -345,7 +291,7 @@ public class SearchFilter
     }
 
 
-    public SearchFilter build()
+    public FilterTemplate build()
     {
       return object;
     }
