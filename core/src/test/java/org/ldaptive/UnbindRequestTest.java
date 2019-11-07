@@ -41,7 +41,7 @@ public class UnbindRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final UnbindRequest request, final byte[] berValue)
     throws Exception
   {

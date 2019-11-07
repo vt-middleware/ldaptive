@@ -105,7 +105,7 @@ public class MessageFrameDecoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "response")
+  @Test(groups = "transport", dataProvider = "response")
   public void decode(final byte[] berValue, final boolean frame)
     throws Exception
   {

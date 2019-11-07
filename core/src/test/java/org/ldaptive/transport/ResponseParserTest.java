@@ -102,7 +102,7 @@ public class ResponseParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "response")
+  @Test(groups = "transport", dataProvider = "response")
   public void parse(final byte[] berValue, final Message response)
     throws Exception
   {

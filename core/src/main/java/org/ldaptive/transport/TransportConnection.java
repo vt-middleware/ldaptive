@@ -48,7 +48,7 @@ public abstract class TransportConnection implements Connection
 
 
   /**
-   * Creates a new provider connection.
+   * Creates a new transport connection.
    *
    * @param  config  connection configuration
    */
@@ -83,7 +83,7 @@ public abstract class TransportConnection implements Connection
             break;
           } catch (LdapException e) {
             lastThrown = e;
-            LOGGER.debug("Error opening connection for strategy {}", connectionStrategy, e);
+            LOGGER.debug("Error opening connection for strategy {} with metadata {}", connectionStrategy, metadata, e);
           }
         } while (lastThrown != null && connectionConfig.getAutoReconnectCondition().test(metadata));
         if (lastThrown != null) {

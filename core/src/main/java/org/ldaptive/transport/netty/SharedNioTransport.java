@@ -29,7 +29,7 @@ public class SharedNioTransport extends NettyTransport
 
 
   /**
-   * Creates a new shared NIO provider.
+   * Creates a new shared NIO transport.
    *
    * @param  messageWorkerGroup  to handle inbound messages
    */

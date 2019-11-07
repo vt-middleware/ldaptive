@@ -58,7 +58,7 @@ public class NoticeOfDisconnectionTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "response")
+  @Test(dataProvider = "response")
   public void encode(final byte[] berValue, final NoticeOfDisconnection notification)
     throws Exception
   {

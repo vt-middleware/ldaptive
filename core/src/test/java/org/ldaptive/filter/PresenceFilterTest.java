@@ -70,7 +70,7 @@ public class PresenceFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "filter")
+  @Test(dataProvider = "filter")
   public void parse(final String value, final PresenceFilter filter)
     throws Exception
   {
@@ -103,7 +103,7 @@ public class PresenceFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "encoded")
+  @Test(dataProvider = "encoded")
   public void encode(final PresenceFilter filter, final byte[] berValue)
     throws Exception
   {

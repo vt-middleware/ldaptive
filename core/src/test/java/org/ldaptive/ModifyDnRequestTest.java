@@ -99,7 +99,7 @@ public class ModifyDnRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final ModifyDnRequest request, final byte[] berValue)
     throws Exception
   {

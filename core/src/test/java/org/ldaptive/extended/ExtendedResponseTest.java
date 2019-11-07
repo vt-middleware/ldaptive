@@ -119,7 +119,7 @@ public class ExtendedResponseTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "response")
+  @Test(dataProvider = "response")
   public void encode(final byte[] berValue, final ExtendedResponse response)
     throws Exception
   {

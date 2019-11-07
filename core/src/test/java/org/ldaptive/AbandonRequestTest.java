@@ -41,7 +41,7 @@ public class AbandonRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final AbandonRequest request, final byte[] berValue)
     throws Exception
   {

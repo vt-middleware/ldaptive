@@ -70,7 +70,7 @@ public class GreaterOrEqualFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "filter")
+  @Test(dataProvider = "filter")
   public void parse(final String value, final GreaterOrEqualFilter filter)
     throws Exception
   {
@@ -106,7 +106,7 @@ public class GreaterOrEqualFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "component")
+  @Test(dataProvider = "component")
   public void encode(final GreaterOrEqualFilter filter, final byte[] berValue)
     throws Exception
   {

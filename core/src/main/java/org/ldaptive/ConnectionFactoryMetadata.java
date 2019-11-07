@@ -11,7 +11,7 @@ public interface ConnectionFactoryMetadata
 
 
   /**
-   * Returns the LDAP URL the provider connection factory is using. May be space delimited for multiple URLs.
+   * Returns the LDAP URL the connection factory is using. May be space delimited for multiple URLs.
    *
    * @return  ldap url
    */
@@ -19,7 +19,7 @@ public interface ConnectionFactoryMetadata
 
 
   /**
-   * Returns the number of times the provider connection factory has created a connection.
+   * Returns the number of times the connection factory has created a connection.
    *
    * @return  connection count
    */

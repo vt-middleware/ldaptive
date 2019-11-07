@@ -115,7 +115,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
       while (en.hasMoreElements()) {
         final String name = (String) en.nextElement();
         final String value = (String) properties.get(name);
-        // add to provider specific properties if it isn't an ldaptive property
+        // add to extra properties if it isn't an ldaptive property
         if (!name.startsWith(PropertyDomain.LDAP.value())) {
           extraProps.put(name, value);
         } else {

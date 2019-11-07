@@ -43,7 +43,7 @@ public class CancelRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final CancelRequest request, final byte[] berValue)
     throws Exception
   {

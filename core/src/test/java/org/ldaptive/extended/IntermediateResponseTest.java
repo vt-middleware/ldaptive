@@ -51,7 +51,7 @@ public class IntermediateResponseTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "response")
+  @Test(dataProvider = "response")
   public void encode(final byte[] berValue, final IntermediateResponse response)
     throws Exception
   {

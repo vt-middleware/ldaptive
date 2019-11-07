@@ -16,7 +16,7 @@ public class NioTransport extends NettyTransport
 
 
   /**
-   * Creates a new NIO provider.
+   * Creates a new NIO transport.
    *
    * @param  numThreads  number of threads used by the I/O {@link NioEventLoopGroup}
    */

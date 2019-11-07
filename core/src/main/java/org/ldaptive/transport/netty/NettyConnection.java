@@ -147,12 +147,7 @@ public final class NettyConnection extends TransportConnection
   private final ReadWriteLock bindLock = new ReentrantReadWriteLock();
 
   /** Executor for scheduling various connection related tasks. */
-  private ExecutorService connectionExecutor = Executors.newSingleThreadExecutor(
-    r -> {
-      final Thread t = new Thread(r);
-      t.setDaemon(true);
-      return t;
-    });
+  private ExecutorService connectionExecutor;
 
   /** URL derived from the connection strategy. */
   private LdapURL ldapURL;
@@ -186,6 +181,9 @@ public final class NettyConnection extends TransportConnection
     final Map<ChannelOption, Object> options)
   {
     super(config);
+    if (ioGroup == null) {
+      throw new NullPointerException("I/O worker group cannot be null");
+    }
     channelType = type;
     ioWorkerGroup = ioGroup;
     messageWorkerGroup = messageGroup;
@@ -256,13 +254,21 @@ public final class NettyConnection extends TransportConnection
       try {
         inboundException = null;
         ldapURL = url;
+        if (connectionExecutor == null) {
+          connectionExecutor = Executors.newSingleThreadExecutor(
+            r -> {
+              final Thread t = new Thread(r, getClass().getSimpleName() + "-" + hashCode());
+              t.setDaemon(true);
+              return t;
+            });
+        }
         channel = connectInternal();
         pendingResponses.open();
         // startTLS request must occur after the connection is ready
         if (connectionConfig.getUseStartTLS()) {
           try {
             final Result result = operation(new StartTLSRequest());
-            if (!ResultCode.SUCCESS.equals(result.getResultCode())) {
+            if (!result.isSuccess()) {
               throw new ConnectException("StartTLS returned response: " + result);
             }
           } catch (Exception e) {
@@ -277,7 +283,7 @@ public final class NettyConnection extends TransportConnection
           for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
             try {
               final Result result = initializer.initialize(this);
-              if (!ResultCode.SUCCESS.equals(result.getResultCode())) {
+              if (!result.isSuccess()) {
                 throw new ConnectException("Connection initializer returned response: " + result);
               }
             } catch (Exception e) {
@@ -331,7 +337,13 @@ public final class NettyConnection extends TransportConnection
       // wait until the connection future is complete
       // note that the wait time is controlled by the connectTimeout property in ConnectionConfig
       // if a deadlock occurs here, there may not be enough threads available in the worker group
-      channelLatch.await();
+      if (!channelLatch.await(connectionConfig.getConnectTimeout().multipliedBy(2).toMillis(), TimeUnit.MILLISECONDS)) {
+        LOGGER.warn(
+          "Error connecting to {} for {}. connectTimeout was not honored, check number of available threads",
+          ldapURL,
+          this);
+        future.cancel(true);
+      }
     } catch (InterruptedException e) {
       future.cancel(true);
     }
@@ -420,7 +432,13 @@ public final class NettyConnection extends TransportConnection
     try {
       // wait until the connection future is complete
       // note that the wait time is controlled by the handshakeTimeout property in SslConfig
-      sslLatch.await();
+      if (!sslLatch.await(handler.getHandshakeTimeoutMillis() * 2, TimeUnit.MILLISECONDS)) {
+        LOGGER.warn(
+          "Error starting SSL with {} for {}. handShakeTimeout was not honored, check number of available threads",
+          ldapURL,
+          this);
+        sslFuture.cancel(true);
+      }
     } catch (InterruptedException e) {
       sslFuture.cancel(true);
     }
@@ -474,7 +492,7 @@ public final class NettyConnection extends TransportConnection
     } catch (LdapException e) {
       throw new ConnectException("StartTLS operation failed", e);
     }
-    if (ResultCode.SUCCESS.equals(result.getResultCode())) {
+    if (result.isSuccess()) {
       try {
         channel.pipeline().addFirst("ssl", createSslHandler(connectionConfig));
         waitForSSLHandshake(channel);
@@ -791,6 +809,9 @@ public final class NettyConnection extends TransportConnection
     if (closeLock.tryLock()) {
       try {
         pendingResponses.close();
+        if (connectionExecutor != null) {
+          connectionExecutor.shutdown();
+        }
         if (isOpen()) {
           LOGGER.trace("connection {} is open, initiate orderly shutdown", this);
           channel.closeFuture().removeListener(closeListener);
@@ -810,8 +831,9 @@ public final class NettyConnection extends TransportConnection
             notifyOperationHandlesOfClose();
           }
         }
-        LOGGER.debug("Closed connection {}", this);
+        LOGGER.info("Closed connection {}", this);
       } finally {
+        connectionExecutor = null;
         channel = null;
         connectTime = null;
         closeLock.unlock();
@@ -823,14 +845,21 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
-   * Sends an exception notification to all pending responses that the connection has been closed.
+   * Sends an exception notification to all pending responses that the connection has been closed. Since this invokes
+   * any configured exception handlers, notifications will use the {@link #messageWorkerGroup} if it is configured.
    */
   protected void notifyOperationHandlesOfClose()
   {
     if (pendingResponses.size() > 0) {
       LOGGER.debug("Notifying operation handles {} for {} of connection close", pendingResponses, this);
-      pendingResponses.notifyOperationHandles(
-        Objects.requireNonNullElseGet(inboundException, () -> new LdapException("Connection closed")));
+      if (messageWorkerGroup != null) {
+        messageWorkerGroup.execute(() ->
+          pendingResponses.notifyOperationHandles(
+            Objects.requireNonNullElseGet(inboundException, () -> new LdapException("Connection closed"))));
+      } else {
+        pendingResponses.notifyOperationHandles(
+          Objects.requireNonNullElseGet(inboundException, () -> new LdapException("Connection closed")));
+      }
     }
   }
 
@@ -1029,8 +1058,8 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
-   * Listener for channel close events. Invokes {@link #close()} to cleanup resources from a non-requested close event.
-   * If {@link ConnectionConfig#getAutoReconnect()} is true, a connection reconnect is attempted.
+   * Listener for channel close events. If {@link ConnectionConfig#getAutoReconnect()} is true, a connection reconnect
+   * is attempted on a separate thread.
    */
   private class CloseFutureListener implements ChannelFutureListener
   {
@@ -1049,9 +1078,7 @@ public final class NettyConnection extends TransportConnection
         future,
         inboundException != null ? inboundException.getClass() : null,
         inboundException);
-      final boolean isOpening = isOpening();
-      close();
-      if (connectionConfig.getAutoReconnect() && !isOpening && !reconnecting.get()) {
+      if (connectionConfig.getAutoReconnect() && !isOpening() && !reconnecting.get()) {
         LOGGER.trace("scheduling reconnect thread for connection {}", NettyConnection.this);
         connectionExecutor.execute(
           () -> {

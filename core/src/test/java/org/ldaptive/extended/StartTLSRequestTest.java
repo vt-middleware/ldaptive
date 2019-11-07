@@ -42,7 +42,7 @@ public class StartTLSRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final StartTLSRequest request, final byte[] berValue)
     throws Exception
   {

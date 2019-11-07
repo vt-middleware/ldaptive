@@ -81,7 +81,7 @@ public class ModifyRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final ModifyRequest request, final byte[] berValue)
     throws Exception
   {

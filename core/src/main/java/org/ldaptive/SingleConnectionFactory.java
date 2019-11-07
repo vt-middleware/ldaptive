@@ -67,11 +67,11 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    * Creates a new single connection factory.
    *
    * @param  cc  connection configuration
-   * @param  p  provider
+   * @param  t  transport
    */
-  public SingleConnectionFactory(final ConnectionConfig cc, final Transport p)
+  public SingleConnectionFactory(final ConnectionConfig cc, final Transport t)
   {
-    super(cc, p);
+    super(cc, t);
   }
 
 
@@ -145,7 +145,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       if (initializeExecutor == null) {
         initializeExecutor = Executors.newCachedThreadPool(
           r -> {
-            final Thread t = new Thread(r);
+            final Thread t = new Thread(r, getClass().getSimpleName() + "-" + hashCode());
             t.setDaemon(true);
             return t;
           });
@@ -226,7 +226,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   {
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("provider=").append(getTransport()).append(", ")
+      .append("transport=").append(getTransport()).append(", ")
       .append("config=").append(getConnectionConfig()).append(", ")
       .append("failFastInitialize=").append(failFastInitialize).append(", ")
       .append("nonBlockingInitialize=").append(nonBlockingInitialize).append(", ")
