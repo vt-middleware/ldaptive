@@ -119,6 +119,7 @@ public class SyncReplRunner
    */
   private static Transport createTransport()
   {
+    // message thread pool size must be >1 to handle stop/start as start may use startTLS
     final NettyTransport transport;
     if (Epoll.isAvailable()) {
       transport = new NettyTransport(
@@ -127,7 +128,7 @@ public class SyncReplRunner
           1,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
-          1,
+          2,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
         Collections.singletonMap(ChannelOption.AUTO_READ, false));
     } else if (KQueue.isAvailable()) {
@@ -137,7 +138,7 @@ public class SyncReplRunner
           1,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
-          1,
+          2,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
         Collections.singletonMap(ChannelOption.AUTO_READ, false));
     } else {
@@ -147,7 +148,7 @@ public class SyncReplRunner
           1,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
-          1,
+          2,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
         Collections.singletonMap(ChannelOption.AUTO_READ, false));
     }
