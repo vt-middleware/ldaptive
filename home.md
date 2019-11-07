@@ -61,10 +61,11 @@ These search examples all leverage the SearchExecutor class. For more details on
 For more details on authentication, see the [authentication documentation](docs/guide/authentication.html).
 
 ## What changed between v1 and v2?
-* Ldaptive is longer a wrapper API around other Java libraries. It now includes it's own LDAP protocol implementation.
-* The try-finally paradigm used for connection management has been removed. All operations use a connection factory and implement that pattern themselves.
+* Ldaptive is no longer a wrapper API around other Java libraries. It now includes it's own LDAP protocol implementation.
+* The try-finally paradigm used for connection management has been removed. All operations use a connection factory and implement that pattern internally.
 * Most classes now include static builders.
-* The `SearchExecutor` functionality is now included in `SearchOperation`.
+* The `SearchExecutor` functionality is now included in `SearchOperation`, that class has been removed.
 * `SortBehavior` has been removed in favor of providing static sort methods on individual classes.
 * Search result cache implementations have been removed. It's trivial for application to do their own caching.
 * Transcoders have been moved to the `transcode` package.
+# `SearchFilter` has been renamed `FilterTemplate`.
