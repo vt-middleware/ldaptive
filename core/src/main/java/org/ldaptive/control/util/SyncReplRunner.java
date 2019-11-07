@@ -43,7 +43,7 @@ public class SyncReplRunner
 {
 
   /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private static final Logger LOGGER = LoggerFactory.getLogger(SyncReplRunner.class);
 
   /** Connection transport. */
   private final Transport connectionTransport;
@@ -124,7 +124,7 @@ public class SyncReplRunner
       transport = new NettyTransport(
         EpollSocketChannel.class,
         new EpollEventLoopGroup(
-          2,
+          1,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
           1,
@@ -134,7 +134,7 @@ public class SyncReplRunner
       transport = new NettyTransport(
         KQueueSocketChannel.class,
         new KQueueEventLoopGroup(
-          2,
+          1,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
           1,
@@ -144,7 +144,7 @@ public class SyncReplRunner
       transport = new NettyTransport(
         NioSocketChannel.class,
         new NioEventLoopGroup(
-          2,
+          1,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
           1,
@@ -220,7 +220,7 @@ public class SyncReplRunner
     syncReplClient.setOnResult(onResult);
     syncReplClient.setOnMessage(onMessage);
     syncReplClient.setOnException(e -> {
-      logger.warn("Received exception '{}' with started={}", e.getMessage(), started);
+      LOGGER.warn("Received exception '{}' with started={} for {}", e.getMessage(), started, this);
       if (started) {
         stop();
         start();
@@ -241,12 +241,13 @@ public class SyncReplRunner
       if (onStart != null && !onStart.get()) {
         throw new RuntimeException("Start aborted from " + onStart);
       }
+      LOGGER.debug("Starting runner {}", this);
+      started = true;
       ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
       syncReplClient.send(searchRequest, cookieManager);
-      started = true;
-      logger.info("Runner {} started", this);
+      LOGGER.info("Runner {} started", this);
     } catch (Exception e) {
-      logger.error("Could not start the runner", e);
+      LOGGER.error("Could not start the runner", e);
     }
   }
 
@@ -259,6 +260,7 @@ public class SyncReplRunner
     if (!started) {
       return;
     }
+    LOGGER.debug("Stopping runner {}", this);
     started = false;
     if (syncReplClient != null) {
       try {
@@ -266,12 +268,12 @@ public class SyncReplRunner
           syncReplClient.cancel();
         }
       } catch (Exception e) {
-        logger.warn("Could not cancel sync repl request", e);
+        LOGGER.warn("Could not cancel sync repl request", e);
       } finally {
         syncReplClient.close();
       }
     }
-    logger.info("Runner {} stopped", this);
+    LOGGER.info("Runner {} stopped", this);
   }
 
 
@@ -288,7 +290,7 @@ public class SyncReplRunner
         syncReplClient.cancel();
       }
     } catch (Exception e) {
-      logger.warn("Could not cancel sync repl request", e);
+      LOGGER.warn("Could not cancel sync repl request", e);
     }
     try {
       syncReplClient.send(searchRequest, cookieManager);
@@ -336,10 +338,11 @@ public class SyncReplRunner
     final Duration wait)
   {
     final ConnectionConfig newConfig = ConnectionConfig.copy(cc);
-    newConfig.setAutoReconnect(true);
+    newConfig.setAutoReconnect(false);
     newConfig.setAutoReconnectCondition(metadata -> {
       if (metadata instanceof InitialRetryMetadata) {
         try {
+          LOGGER.debug("Waiting {}ms to reconnect", wait.toMillis());
           Thread.sleep(wait.toMillis());
         } catch (InterruptedException ignored) {}
         return true;

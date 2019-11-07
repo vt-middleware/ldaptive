@@ -68,7 +68,7 @@ public class SimpleBindRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final SimpleBindRequest request, final byte[] berValue)
     throws Exception
   {

@@ -18,11 +18,11 @@ public interface Transport
    *
    * @param  cc  connection configuration
    *
-   * @return  provider connection
+   * @return  connection
    */
   Connection create(ConnectionConfig cc);
 
 
-  /** Free any resources associated with this provider. */
+  /** Free any resources associated with this transport. */
   default void close() {}
 }

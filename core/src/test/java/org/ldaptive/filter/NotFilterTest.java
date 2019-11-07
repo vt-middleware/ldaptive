@@ -42,7 +42,7 @@ public class NotFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "component")
+  @Test(dataProvider = "component")
   public void encode(final NotFilter filter, final byte[] berValue)
     throws Exception
   {

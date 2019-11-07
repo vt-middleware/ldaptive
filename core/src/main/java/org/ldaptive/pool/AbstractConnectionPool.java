@@ -243,7 +243,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
 
     poolExecutor = Executors.newSingleThreadScheduledExecutor(
       r -> {
-        final Thread t = new Thread(r);
+        final Thread t = new Thread(r, getClass().getSimpleName() + "-" + hashCode());
         t.setDaemon(true);
         return t;
       });

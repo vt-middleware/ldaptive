@@ -90,7 +90,7 @@ public class EqualityFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "filter")
+  @Test(dataProvider = "filter")
   public void parse(final String value, final EqualityFilter filter)
     throws Exception
   {
@@ -123,7 +123,7 @@ public class EqualityFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "component")
+  @Test(dataProvider = "component")
   public void encode(final EqualityFilter filter, final byte[] berValue)
     throws Exception
   {

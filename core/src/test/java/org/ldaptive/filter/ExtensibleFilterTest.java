@@ -126,7 +126,7 @@ public class ExtensibleFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "filter")
+  @Test(dataProvider = "filter")
   public void parse(final String value, final ExtensibleFilter filter)
     throws Exception
   {
@@ -177,7 +177,7 @@ public class ExtensibleFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "component")
+  @Test(dataProvider = "component")
   public void encode(final ExtensibleFilter filter, final byte[] berValue)
     throws Exception
   {

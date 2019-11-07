@@ -102,7 +102,7 @@ public class SubstringFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "filter")
+  @Test(dataProvider = "filter")
   public void parse(final String value, final SubstringFilter filter)
     throws Exception
   {
@@ -166,7 +166,7 @@ public class SubstringFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "component")
+  @Test(dataProvider = "component")
   public void encode(final SubstringFilter filter, final byte[] berValue)
     throws Exception
   {

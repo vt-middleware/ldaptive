@@ -39,7 +39,7 @@ public class NettyTransport implements Transport
 
 
   /**
-   * Creates a new netty provider.
+   * Creates a new netty transport.
    *
    * @param  type  of channel
    * @param  ioGroup  event loop group to handle I/O
@@ -51,7 +51,7 @@ public class NettyTransport implements Transport
 
 
   /**
-   * Creates a new netty provider.
+   * Creates a new netty transport.
    *
    * @param  type  of channel
    * @param  ioGroup  event loop group to handle I/O

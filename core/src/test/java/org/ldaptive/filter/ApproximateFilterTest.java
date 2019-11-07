@@ -70,7 +70,7 @@ public class ApproximateFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "filter")
+  @Test(dataProvider = "filter")
   public void parse(final String value, final ApproximateFilter filter)
     throws Exception
   {
@@ -105,7 +105,7 @@ public class ApproximateFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "component")
+  @Test(dataProvider = "component")
   public void encode(final ApproximateFilter filter, final byte[] berValue)
     throws Exception
   {

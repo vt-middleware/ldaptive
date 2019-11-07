@@ -55,7 +55,7 @@ public class AddRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final AddRequest request, final byte[] berValue)
     throws Exception
   {

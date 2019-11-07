@@ -16,7 +16,7 @@ public interface ResultPredicate extends Predicate<Result>
 {
 
   /** Predicates that throws if the result code is not {@link ResultCode#SUCCESS}. */
-  ResultPredicate NOT_SUCCESS = result -> !ResultCode.SUCCESS.equals(result.getResultCode());
+  ResultPredicate NOT_SUCCESS = result -> !result.isSuccess();
 
 
   /**

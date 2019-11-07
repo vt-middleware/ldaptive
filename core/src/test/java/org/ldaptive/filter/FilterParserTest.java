@@ -307,7 +307,7 @@ public class FilterParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "filter")
+  @Test(dataProvider = "filter")
   public void parseAndCompare(final String value, final Filter filter, final boolean throwsException)
     throws Exception
   {
@@ -329,7 +329,7 @@ public class FilterParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "generateRandomFilter", invocationCount = 1000)
+  @Test(dataProvider = "generateRandomFilter", invocationCount = 1000)
   public void parse(final String value, final boolean throwsException)
     throws Exception
   {

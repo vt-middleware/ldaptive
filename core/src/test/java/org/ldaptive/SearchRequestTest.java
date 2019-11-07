@@ -130,7 +130,7 @@ public class SearchRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final SearchRequest request, final byte[] berValue)
     throws Exception
   {

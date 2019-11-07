@@ -52,7 +52,7 @@ public class DeleteResponseTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "response")
+  @Test(dataProvider = "response")
   public void encode(final byte[] berValue, final DeleteResponse response)
     throws Exception
   {

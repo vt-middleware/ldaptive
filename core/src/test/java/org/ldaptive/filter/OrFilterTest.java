@@ -50,7 +50,7 @@ public class OrFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "component")
+  @Test(dataProvider = "component")
   public void encode(final OrFilter filter, final byte[] berValue)
     throws Exception
   {

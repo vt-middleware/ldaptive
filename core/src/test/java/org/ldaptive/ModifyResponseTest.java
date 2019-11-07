@@ -51,7 +51,7 @@ public class ModifyResponseTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "response")
+  @Test(dataProvider = "response")
   public void encode(final byte[] berValue, final ModifyResponse response)
     throws Exception
   {

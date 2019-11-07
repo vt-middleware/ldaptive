@@ -100,7 +100,7 @@ public class MergeOperation
       final SearchResponse searchResult = conn.operation(
         SearchRequest.objectScopeSearchRequest(sourceEntry.getDn(), request.getSearchAttributes())).execute();
       if (searchResult.getResultCode() != ResultCode.SUCCESS &&
-        searchResult.getResultCode() != ResultCode.NO_SUCH_OBJECT) {
+          searchResult.getResultCode() != ResultCode.NO_SUCH_OBJECT) {
         throw new LdapException(
           String.format(
             "Error searching for entry: %s, response did not return success or no_such_object: %s",

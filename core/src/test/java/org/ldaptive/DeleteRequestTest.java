@@ -59,7 +59,7 @@ public class DeleteRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "provider", dataProvider = "request")
+  @Test(dataProvider = "request")
   public void encode(final DeleteRequest request, final byte[] berValue)
     throws Exception
   {
