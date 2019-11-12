@@ -9,6 +9,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldaptive.LdapException;
 import org.ldaptive.extended.UnsolicitedNotification;
 import org.ldaptive.transport.DefaultOperationHandle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Container for operation handles that are waiting on a response from the LDAP server.
@@ -18,11 +20,17 @@ import org.ldaptive.transport.DefaultOperationHandle;
 final class HandleMap
 {
 
+  /** Logger for this class. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(HandleMap.class);
+
   /** Map of message IDs to their operation handle. */
   private final Map<Integer, DefaultOperationHandle> pending = new ConcurrentHashMap<>();
 
+  /** Only one notification can occur at a time. */
+  private final AtomicBoolean notificationLock = new AtomicBoolean();
+
   /** Whether this queue is currently accepting new handles. */
-  private final AtomicBoolean open = new AtomicBoolean();
+  private boolean open;
 
 
   /**
@@ -36,7 +44,7 @@ final class HandleMap
    */
   public void open()
   {
-    open.set(true);
+    open = true;
   }
 
 
@@ -45,7 +53,7 @@ final class HandleMap
    */
   public void close()
   {
-    open.set(false);
+    open = false;
   }
 
 
@@ -58,7 +66,7 @@ final class HandleMap
    */
   public DefaultOperationHandle get(final int id)
   {
-    return open.get() ? pending.get(id) : null;
+    return open ? pending.get(id) : null;
   }
 
 
@@ -71,7 +79,7 @@ final class HandleMap
    */
   public DefaultOperationHandle remove(final int id)
   {
-    return open.get() ? pending.remove(id) : null;
+    return open ? pending.remove(id) : null;
   }
 
 
@@ -88,7 +96,7 @@ final class HandleMap
   public DefaultOperationHandle put(final int id, final DefaultOperationHandle handle)
     throws LdapException
   {
-    if (!open.get()) {
+    if (!open) {
       throw new LdapException("Connection is closed, could not store handle " + handle);
     }
     return pending.putIfAbsent(id, handle);
@@ -132,12 +140,21 @@ final class HandleMap
    */
   public void abandonRequests()
   {
-    synchronized (pending) {
-      pending.values().forEach(h -> {
-        if (h.getSentTime() != null && h.getReceivedTime() == null) {
-          h.abandon();
+    if (notificationLock.compareAndSet(false, true)) {
+      try {
+        final Iterator<DefaultOperationHandle> i = pending.values().iterator();
+        while (i.hasNext()) {
+          final DefaultOperationHandle h = i.next();
+          if (h.getSentTime() != null && h.getReceivedTime() == null) {
+            i.remove();
+            h.abandon();
+          }
         }
-      });
+      } finally {
+        notificationLock.set(false);
+      }
+    } else {
+      LOGGER.debug("Handle notification is already in progress");
     }
   }
 
@@ -150,13 +167,19 @@ final class HandleMap
    */
   public void notifyOperationHandles(final Throwable e)
   {
-    synchronized (pending) {
-      final Iterator<DefaultOperationHandle> i = pending.values().iterator();
-      while (i.hasNext()) {
-        final DefaultOperationHandle h = i.next();
-        i.remove();
-        h.exception(e);
+    if (notificationLock.compareAndSet(false, true)) {
+      try {
+        final Iterator<DefaultOperationHandle> i = pending.values().iterator();
+        while (i.hasNext()) {
+          final DefaultOperationHandle h = i.next();
+          i.remove();
+          h.exception(e);
+        }
+      } finally {
+        notificationLock.set(false);
       }
+    } else {
+      LOGGER.debug("Handle notification is already in progress");
     }
   }
 
@@ -168,12 +191,18 @@ final class HandleMap
    */
   public void notifyOperationHandles(final UnsolicitedNotification notification)
   {
-    synchronized (pending) {
-      pending.values().forEach(h -> {
-        if (h.getSentTime() != null && h.getReceivedTime() == null) {
-          h.unsolicitedNotification(notification);
-        }
-      });
+    if (notificationLock.compareAndSet(false, true)) {
+      try {
+        pending.values().forEach(h -> {
+          if (h.getSentTime() != null && h.getReceivedTime() == null) {
+            h.unsolicitedNotification(notification);
+          }
+        });
+      } finally {
+        notificationLock.set(false);
+      }
+    } else {
+      LOGGER.debug("Handle notification is already in progress");
     }
   }
 

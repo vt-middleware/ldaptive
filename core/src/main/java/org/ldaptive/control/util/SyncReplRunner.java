@@ -3,6 +3,7 @@ package org.ldaptive.control.util;
 
 import java.time.Duration;
 import java.util.Collections;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -45,6 +46,12 @@ public class SyncReplRunner
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(SyncReplRunner.class);
 
+  /** Number of I/O worker threads. */
+  private static final int IO_WORKER_THREADS = 1;
+
+  /** Number of message worker threads. */
+  private static final int MESSAGE_WORKER_THREADS = 2;
+
   /** Connection transport. */
   private final Transport connectionTransport;
 
@@ -74,6 +81,9 @@ public class SyncReplRunner
 
   /** Whether the sync repl search is running. */
   private boolean started;
+
+  /** Prevent multiple invocations of onException. */
+  private AtomicBoolean handlingException = new AtomicBoolean();
 
 
   /**
@@ -119,36 +129,37 @@ public class SyncReplRunner
    */
   private static Transport createTransport()
   {
-    // message thread pool size must be >1 to handle stop/start as start may use startTLS
+    // message thread pool size must be >1 since exceptions are reported on the messages thread pool
+    // startTLS and connection initializers will require additional threads
     final NettyTransport transport;
     if (Epoll.isAvailable()) {
       transport = new NettyTransport(
         EpollSocketChannel.class,
         new EpollEventLoopGroup(
-          1,
+          IO_WORKER_THREADS,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
-          2,
+          MESSAGE_WORKER_THREADS,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
         Collections.singletonMap(ChannelOption.AUTO_READ, false));
     } else if (KQueue.isAvailable()) {
       transport = new NettyTransport(
         KQueueSocketChannel.class,
         new KQueueEventLoopGroup(
-          1,
+          IO_WORKER_THREADS,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
-          2,
+          MESSAGE_WORKER_THREADS,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
         Collections.singletonMap(ChannelOption.AUTO_READ, false));
     } else {
       transport = new NettyTransport(
         NioSocketChannel.class,
         new NioEventLoopGroup(
-          1,
+          IO_WORKER_THREADS,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
         new DefaultEventLoopGroup(
-          2,
+          MESSAGE_WORKER_THREADS,
           new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
         Collections.singletonMap(ChannelOption.AUTO_READ, false));
     }
@@ -221,10 +232,20 @@ public class SyncReplRunner
     syncReplClient.setOnResult(onResult);
     syncReplClient.setOnMessage(onMessage);
     syncReplClient.setOnException(e -> {
-      LOGGER.warn("Received exception '{}' with started={} for {}", e.getMessage(), started, this);
       if (started) {
-        stop();
-        start();
+        if (handlingException.compareAndSet(false, true)) {
+          try {
+            LOGGER.warn("Received exception '{}' for {}", e.getMessage(), this);
+            stop();
+            start();
+          } finally {
+            handlingException.set(false);
+          }
+        } else {
+          LOGGER.debug("Ignoring exception, restart already in progress for {}", this);
+        }
+      } else {
+        LOGGER.debug("Ignoring exception, runner not started for {}", this);
       }
     });
   }
@@ -243,9 +264,9 @@ public class SyncReplRunner
         throw new RuntimeException("Start aborted from " + onStart);
       }
       LOGGER.debug("Starting runner {}", this);
-      started = true;
       ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
       syncReplClient.send(searchRequest, cookieManager);
+      started = true;
       LOGGER.info("Runner {} started", this);
     } catch (Exception e) {
       LOGGER.error("Could not start the runner", e);

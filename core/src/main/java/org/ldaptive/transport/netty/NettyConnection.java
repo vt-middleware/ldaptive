@@ -274,7 +274,6 @@ public final class NettyConnection extends TransportConnection
           } catch (Exception e) {
             LOGGER.error("StartTLS failed on connection open for {}", this, e);
             close();
-            pendingResponses.clear();
             throw e;
           }
         }
@@ -289,7 +288,6 @@ public final class NettyConnection extends TransportConnection
             } catch (Exception e) {
               LOGGER.error("Connection initializer {} failed for {}", initializer, this, e);
               close();
-              pendingResponses.clear();
               throw e;
             }
           }
@@ -827,12 +825,11 @@ public final class NettyConnection extends TransportConnection
           channel.close().addListener(new LogFutureListener());
         } else {
           LOGGER.trace("connection {} already closed", this);
-          if (!(connectionConfig.getAutoReconnect() && connectionConfig.getAutoReplay())) {
-            notifyOperationHandlesOfClose();
-          }
+          notifyOperationHandlesOfClose();
         }
         LOGGER.info("Closed connection {}", this);
       } finally {
+        pendingResponses.clear();
         connectionExecutor = null;
         channel = null;
         connectTime = null;
@@ -1078,17 +1075,20 @@ public final class NettyConnection extends TransportConnection
         future,
         inboundException != null ? inboundException.getClass() : null,
         inboundException);
-      if (connectionConfig.getAutoReconnect() && !isOpening() && !reconnecting.get()) {
+      if (connectionConfig.getAutoReconnect() && !isOpening()) {
         LOGGER.trace("scheduling reconnect thread for connection {}", NettyConnection.this);
         connectionExecutor.execute(
           () -> {
-            reconnecting.set(true);
-            try {
-              reconnect();
-            } catch (Exception e) {
-              LOGGER.warn("Reconnect attempt failed for {}", NettyConnection.this, e);
-            } finally {
-              reconnecting.set(false);
+            if (reconnecting.compareAndSet(false, true)) {
+              try {
+                reconnect();
+              } catch (Exception e) {
+                LOGGER.warn("Reconnect attempt failed for {}", NettyConnection.this, e);
+              } finally {
+                reconnecting.set(false);
+              }
+            } else {
+              LOGGER.debug("Ignoring reconnect attempt, reconnect already in progress for {}", NettyConnection.this);
             }
           });
       } else {

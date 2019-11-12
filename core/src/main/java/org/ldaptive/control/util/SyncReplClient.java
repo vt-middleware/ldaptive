@@ -265,7 +265,8 @@ public class SyncReplClient
 
 
   /**
-   * Invokes a cancel operation on the underlying search operation and shuts down the executor.
+   * Invokes a cancel operation on the underlying search operation. See {@link
+   * org.ldaptive.transport.DefaultOperationHandle#cancel()}.
    *
    * @return  cancel operation result
    *

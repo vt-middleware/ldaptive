@@ -257,6 +257,26 @@ public class FilterParserTest
           false,
         },
         new Object[] {
+          "(&(givenName=Bill\\2A)(sn=Wa\\28ll\\29ace))",
+          new AndFilter(new EqualityFilter("givenName", "Bill*"), new EqualityFilter("sn", "Wa(ll)ace")),
+          false,
+        },
+        new Object[] {
+          "(&(givenName=\\42\\69\\6C\\6C)(sn=\\57\\61\\6C\\6C\\61\\63\\65))",
+          new AndFilter(new EqualityFilter("givenName", "Bill"), new EqualityFilter("sn", "Wallace")),
+          false,
+        },
+        new Object[] {
+          "(&(givenName=B\\C3\\ACll))",
+          new AndFilter(new EqualityFilter("givenName", "B\u00ECll")),
+          false,
+        },
+        new Object[] {
+          "(&(givenName=B\\F0\\9F\\9C\\81ll))",
+          new AndFilter(new EqualityFilter("givenName", "B\uD83D\uDF01ll")),
+          false,
+        },
+        new Object[] {
           "((objectClass=*)&(uid=*))",
           null,
           true,

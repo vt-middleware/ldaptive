@@ -277,7 +277,21 @@ public class FilterTemplate
     }
 
 
+    public Builder parameter(final String name, final Object value)
+    {
+      object.setParameter(name, value);
+      return this;
+    }
+
+
     public Builder parameter(final int pos, final String value)
+    {
+      object.setParameter(pos, value);
+      return this;
+    }
+
+
+    public Builder parameter(final int pos, final Object value)
     {
       object.setParameter(pos, value);
       return this;
