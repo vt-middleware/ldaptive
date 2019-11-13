@@ -100,7 +100,7 @@ public class SyncStateControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "response")
+  @Test(groups = "control", dataProvider = "response")
   public void decode(final byte[] berValue, final SyncStateControl expected)
     throws Exception
   {

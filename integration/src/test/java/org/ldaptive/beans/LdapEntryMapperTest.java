@@ -66,7 +66,7 @@ public class LdapEntryMapperTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"beans-mapper"}, dataProvider = "mappers")
+  @Test(groups = "beans-mapper", dataProvider = "mappers")
   public void mapToObject(final LdapEntryMapper<Object> mapper, final LdapEntry entry)
     throws Exception
   {
@@ -99,7 +99,7 @@ public class LdapEntryMapperTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"beans-mapper"}, dataProvider = "mappers")
+  @Test(groups = "beans-mapper", dataProvider = "mappers")
   public void mapToLdapEntry(final LdapEntryMapper<Object> mapper, final LdapEntry entry)
     throws Exception
   {

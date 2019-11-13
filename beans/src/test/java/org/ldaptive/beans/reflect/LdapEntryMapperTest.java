@@ -119,7 +119,7 @@ public class LdapEntryMapperTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"beans"}, dataProvider = "objects")
+  @Test(groups = "beans", dataProvider = "objects")
   public void mapToLdapEntry(
     final CustomObject object,
     final LdapEntry entry,
@@ -140,7 +140,7 @@ public class LdapEntryMapperTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"beans"}, dataProvider = "objects")
+  @Test(groups = "beans", dataProvider = "objects")
   public void mapToObject(final CustomObject object, final LdapEntry entry, final LdapEntryMapper<CustomObject> mapper)
     throws Exception
   {

@@ -114,7 +114,7 @@ public class SyncInfoMessageTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"intermediate"}, dataProvider = "response")
+  @Test(groups = "intermediate", dataProvider = "response")
   public void decode(final byte[] berValue, final SyncInfoMessage expected)
     throws Exception
   {

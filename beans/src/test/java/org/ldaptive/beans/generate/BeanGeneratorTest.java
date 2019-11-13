@@ -49,7 +49,7 @@ public class BeanGeneratorTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"beans"}, dataProvider = "schemas")
+  @Test(groups = "beans", dataProvider = "schemas")
   public void generate(final Schema schema, final String packageName, final String[] objectClasses)
     throws Exception
   {

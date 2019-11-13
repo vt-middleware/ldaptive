@@ -76,7 +76,7 @@ public class CertificateValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "certs")
+  @Test(groups = "io", dataProvider = "certs")
   public void testTranscode(final Certificate cert, final String s, final byte[] b)
     throws Exception
   {

@@ -47,7 +47,7 @@ public class UUIDValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "uuids")
+  @Test(groups = "io", dataProvider = "uuids")
   public void testTranscode(final String s)
     throws Exception
   {

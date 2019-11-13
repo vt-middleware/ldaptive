@@ -80,7 +80,7 @@ public class PropertyValueParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"props"}, dataProvider = "properties")
+  @Test(groups = "props", dataProvider = "properties")
   public void initializeType(final String property, final Class<?> type, final Object initialized)
     throws Exception
   {

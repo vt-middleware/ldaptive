@@ -46,7 +46,7 @@ public class CompareRequestTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"compare"}, dataProvider = "requests")
+  @Test(groups = "compare", dataProvider = "requests")
   public void testToString(final CompareRequest request, final String string)
     throws Exception
   {

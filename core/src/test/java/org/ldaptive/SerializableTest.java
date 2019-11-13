@@ -67,7 +67,7 @@ public class SerializableTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"serialize"}, dataProvider = "objects")
+  @Test(groups = "serialize", dataProvider = "objects")
   public void testSerialize(final Serializable s)
     throws Exception
   {

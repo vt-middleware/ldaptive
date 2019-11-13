@@ -59,7 +59,7 @@ public class SearchFilterTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"filter"}, dataProvider = "filters")
+  @Test(groups = "filter", dataProvider = "filters")
   public void testFormat(final String encodedFilter, final SearchFilter filter)
     throws Exception
   {

@@ -67,7 +67,7 @@ public class SyncRequestControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request")
+  @Test(groups = "control", dataProvider = "request")
   public void decode(final byte[] berValue, final SyncRequestControl expected)
     throws Exception
   {

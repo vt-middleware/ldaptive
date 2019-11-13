@@ -136,7 +136,7 @@ public class OidTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "oids")
+  @Test(groups = "asn1", dataProvider = "oids")
   public void decode(final byte[] bytes, final String expected)
     throws Exception
   {
@@ -150,7 +150,7 @@ public class OidTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "oids")
+  @Test(groups = "asn1", dataProvider = "oids")
   public void encode(final byte[] expected, final String oid)
     throws Exception
   {
@@ -159,7 +159,7 @@ public class OidTypeTest
 
 
   /** @param  oid  to encode. */
-  @Test(groups = {"asn1"}, dataProvider = "invalid-oids")
+  @Test(groups = "asn1", dataProvider = "invalid-oids")
   public void invalid(final String oid)
   {
     try {

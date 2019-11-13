@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.provider.apache;
 
-import java.io.IOException;
 import java.util.Map;
-import org.apache.directory.api.ldap.codec.api.ExtendedResponseDecorator;
+import org.apache.directory.api.ldap.extras.extended.pwdModify.PasswordModifyResponse;
+import org.apache.directory.api.ldap.extras.extended.whoAmI.WhoAmIResponse;
 import org.apache.directory.api.ldap.model.cursor.CursorException;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
 import org.apache.directory.api.ldap.model.entry.Entry;
@@ -130,8 +130,6 @@ public class ApacheLdapConnection implements ProviderConnection
       }
       try {
         connection.close();
-      } catch (IOException e) {
-        throw new LdapException(e);
       } finally {
         connection = null;
       }
@@ -461,8 +459,10 @@ public class ApacheLdapConnection implements ProviderConnection
       throwOperationException(request, apacheExtRes);
 
       byte[] responseValue = null;
-      if (apacheExtRes instanceof ExtendedResponseDecorator) {
-        responseValue = ((ExtendedResponseDecorator) apacheExtRes).getResponseValue();
+      if (apacheExtRes instanceof WhoAmIResponse) {
+        responseValue = ((WhoAmIResponse) apacheExtRes).getAuthzId();
+      } else if (apacheExtRes instanceof PasswordModifyResponse) {
+        responseValue = ((PasswordModifyResponse) apacheExtRes).getGenPassword();
       }
 
       final org.ldaptive.extended.ExtendedResponse<?> extRes = ExtendedResponseFactory.createExtendedResponse(

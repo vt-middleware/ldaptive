@@ -22,6 +22,11 @@
   <module name="NewlineAtEndOfFile">
     <property name="fileExtensions" value="java"/>
   </module>
+  <module name="LineLength">
+    <property name="ignorePattern" value="(^.*\$.*\$.*$)|(^import .*)"/>
+    <property name="max" value="120"/>
+  </module>
+
   <module name="TreeWalker">
     <property name="tabWidth" value="2"/>
 
@@ -32,7 +37,9 @@
     </module>
 
     <!--  annotations -->
-    <module name="AnnotationUseStyle"/>
+    <module name="AnnotationUseStyle">
+      <property name="elementStyle" value="ignore"/>
+    </module>
     <module name="MissingDeprecated"/>
     <module name="MissingOverride"/>
     <module name="SuppressWarnings"/>
@@ -79,10 +86,6 @@
     </module>
 
     <!-- sizes -->
-    <module name="LineLength">
-      <property name="ignorePattern" value="(^.*\$.*\$.*$)|(^import .*)"/>
-      <property name="max" value="120"/>
-    </module>
     <module name="MethodLength">
       <property name="max" value="300"/>
     </module>

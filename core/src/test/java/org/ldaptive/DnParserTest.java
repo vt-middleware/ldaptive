@@ -167,7 +167,7 @@ public class DnParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"dnParser"}, dataProvider = "DNs")
+  @Test(groups = "dnParser", dataProvider = "DNs")
   public void testParsing(final String dn, final String name, final String value)
     throws Exception
   {
@@ -180,7 +180,7 @@ public class DnParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"dnParser"}, dataProvider = "invalidDNs")
+  @Test(groups = "dnParser", dataProvider = "invalidDNs")
   public void testInvalidParsing(final String dn)
     throws Exception
   {
@@ -194,7 +194,7 @@ public class DnParserTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"dnParser"})
+  @Test(groups = "dnParser")
   public void testSubstring()
     throws Exception
   {
@@ -219,7 +219,7 @@ public class DnParserTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"dnParser"})
+  @Test(groups = "dnParser")
   public void testSubstringEndIndex()
     throws Exception
   {

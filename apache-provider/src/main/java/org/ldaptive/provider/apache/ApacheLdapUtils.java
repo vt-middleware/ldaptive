@@ -5,14 +5,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.apache.directory.api.ldap.model.entry.Attribute;
-import org.apache.directory.api.ldap.model.entry.BinaryValue;
 import org.apache.directory.api.ldap.model.entry.DefaultAttribute;
 import org.apache.directory.api.ldap.model.entry.DefaultEntry;
 import org.apache.directory.api.ldap.model.entry.DefaultModification;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.entry.Modification;
 import org.apache.directory.api.ldap.model.entry.ModificationOperation;
-import org.apache.directory.api.ldap.model.entry.StringValue;
 import org.apache.directory.api.ldap.model.entry.Value;
 import org.apache.directory.api.ldap.model.exception.LdapException;
 import org.ldaptive.AttributeModification;
@@ -87,12 +85,12 @@ public class ApacheLdapUtils
    *
    * @return  apache ldap value
    */
-  public static Value<?> createValue(final Object o)
+  public static Value createValue(final Object o)
   {
     if (o instanceof String) {
-      return new StringValue((String) o);
+      return new Value((String) o);
     } else if (o instanceof byte[]) {
-      return new BinaryValue((byte[]) o);
+      return new Value((byte[]) o);
     } else {
       throw new IllegalArgumentException("Unsupported attribute value type " + o.getClass());
     }
@@ -140,7 +138,7 @@ public class ApacheLdapUtils
 
     final LdapAttribute la = new LdapAttribute(sortBehavior, isBinary);
     la.setName(a.getUpId());
-    for (Value<?> v : a) {
+    for (Value v : a) {
       if (isBinary) {
         la.addBinaryValue(v.getBytes());
       } else {

@@ -86,7 +86,7 @@ public class ActiveDirectoryAccountStateTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"auth-ext"}, dataProvider = "errors")
+  @Test(groups = "auth-ext", dataProvider = "errors")
   public void parseMessage(final String message, final ActiveDirectoryAccountState.Error err)
     throws Exception
   {

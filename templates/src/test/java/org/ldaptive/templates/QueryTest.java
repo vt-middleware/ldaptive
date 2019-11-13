@@ -56,7 +56,7 @@ public class QueryTest
    * @param  query  to get terms from
    * @param  terms  to compare
    */
-  @Test(groups = {"querytest"}, dataProvider = "query-data")
+  @Test(groups = "querytest", dataProvider = "query-data")
   public void format(final Query query, final String[] terms)
   {
     AssertJUnit.assertArrayEquals(terms, query.getTerms());

@@ -427,7 +427,7 @@ public class LdapURLTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"ldapURL"}, dataProvider = "urls")
+  @Test(groups = "ldapURL", dataProvider = "urls")
   public void testParsing(final LdapURL url, final LdapURL.Entry[] entries)
     throws Exception
   {

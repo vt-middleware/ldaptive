@@ -60,7 +60,7 @@ public class ConfigTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"config"}, dataProvider = "configs")
+  @Test(groups = "config", dataProvider = "configs")
   public void testImmutable(
     // CheckStyle:IllegalType OFF
     final AbstractConfig config)

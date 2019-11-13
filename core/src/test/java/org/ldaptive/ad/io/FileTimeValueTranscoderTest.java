@@ -51,7 +51,7 @@ public class FileTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "times")
+  @Test(groups = "io", dataProvider = "times")
   public void decodeStringValue(final ZonedDateTime date, final String fileTime)
     throws Exception
   {
@@ -65,7 +65,7 @@ public class FileTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "times")
+  @Test(groups = "io", dataProvider = "times")
   public void encodeStringValue(final ZonedDateTime date, final String fileTime)
     throws Exception
   {

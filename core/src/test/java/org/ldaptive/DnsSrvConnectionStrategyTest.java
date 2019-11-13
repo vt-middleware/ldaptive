@@ -62,7 +62,7 @@ public class DnsSrvConnectionStrategyTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"provider"}, dataProvider = "records")
+  @Test(groups = "provider", dataProvider = "records")
   public void sortSrvRecords(
     final DnsSrvConnectionStrategy.SrvRecord[] records,
     final DnsSrvConnectionStrategy.SrvRecord[] sorted)

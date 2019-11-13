@@ -137,7 +137,7 @@ public class JsonTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"jsontest"}, dataProvider = "search-data")
+  @Test(groups = "jsontest", dataProvider = "search-data")
   public void writer(final SearchResult result, final String json)
     throws Exception
   {
@@ -153,7 +153,7 @@ public class JsonTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"jsontest"}, dataProvider = "search-data")
+  @Test(groups = "jsontest", dataProvider = "search-data")
   public void reader(final SearchResult result, final String json)
     throws Exception
   {

@@ -18,7 +18,7 @@ public class LdapAttributeTest
 
 
   /** Tests default sort behavior. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void defaultSortBehavior()
   {
     final LdapAttribute la = new LdapAttribute("givenName");
@@ -35,7 +35,7 @@ public class LdapAttributeTest
 
 
   /** Tests ordered sort behavior. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void orderedSortBehavior()
   {
     final LdapAttribute la = new LdapAttribute(SortBehavior.ORDERED);
@@ -51,7 +51,7 @@ public class LdapAttributeTest
 
 
   /** Tests sorted sort behavior. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void sortedSortBehavior()
   {
     final LdapAttribute la = new LdapAttribute(SortBehavior.SORTED);
@@ -67,7 +67,7 @@ public class LdapAttributeTest
 
 
   /** Tests create with one value. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void createOne()
   {
     final LdapAttribute la = new LdapAttribute("givenName", "William");
@@ -95,7 +95,7 @@ public class LdapAttributeTest
 
 
   /** Tests create with two values. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void createTwo()
   {
     final LdapAttribute la = new LdapAttribute("givenName", "Bill", "William");
@@ -110,7 +110,7 @@ public class LdapAttributeTest
 
 
   /** Tests various string input. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void stringValue()
   {
     final LdapAttribute la = new LdapAttribute("cn", "William Wallace");
@@ -137,7 +137,7 @@ public class LdapAttributeTest
 
 
   /** Tests multiple string input. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void stringValues()
   {
     final List<String> commonNames = new ArrayList<>();
@@ -194,7 +194,7 @@ public class LdapAttributeTest
 
 
   /** Tests various binary input. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void binaryValue()
   {
     final LdapAttribute la = new LdapAttribute("jpegPhoto", "image".getBytes());
@@ -221,7 +221,7 @@ public class LdapAttributeTest
 
 
   /** Tests multiple string input. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void binaryValues()
   {
     final List<byte[]> jpegPhotos = new ArrayList<>();
@@ -274,7 +274,7 @@ public class LdapAttributeTest
 
 
   /** Tests attribute options. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void attributeOptions()
   {
     LdapAttribute la = new LdapAttribute("cn", "William Wallace");

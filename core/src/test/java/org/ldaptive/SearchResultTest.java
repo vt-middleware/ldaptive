@@ -31,7 +31,7 @@ public class SearchResultTest
 
 
   /** Tests default sort behavior. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void defaultSortBehavior()
   {
     final SearchResult sr = new SearchResult();
@@ -49,7 +49,7 @@ public class SearchResultTest
    * @param  entry1  ldap entry
    * @param  entry2  ldap entry
    */
-  @Test(groups = {"bean"}, dataProvider = "entries")
+  @Test(groups = "bean", dataProvider = "entries")
   public void orderedSortBehavior(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(SortBehavior.ORDERED);
@@ -70,7 +70,7 @@ public class SearchResultTest
    * @param  entry1  ldap entry
    * @param  entry2  ldap entry
    */
-  @Test(groups = {"bean"}, dataProvider = "entries")
+  @Test(groups = "bean", dataProvider = "entries")
   public void sortedSortBehavior(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(SortBehavior.SORTED);
@@ -91,7 +91,7 @@ public class SearchResultTest
    * @param  entry1  ldap entry
    * @param  entry2  ldap entry
    */
-  @Test(groups = {"bean"}, dataProvider = "entries")
+  @Test(groups = "bean", dataProvider = "entries")
   public void createOne(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(entry1);
@@ -112,7 +112,7 @@ public class SearchResultTest
    * @param  entry1  ldap entry
    * @param  entry2  ldap entry
    */
-  @Test(groups = {"bean"}, dataProvider = "entries")
+  @Test(groups = "bean", dataProvider = "entries")
   public void createTwo(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(entry2, entry1);
@@ -134,7 +134,7 @@ public class SearchResultTest
    * @param  entry1  ldap entry
    * @param  entry2  ldap entry
    */
-  @Test(groups = {"bean"}, dataProvider = "entries")
+  @Test(groups = "bean", dataProvider = "entries")
   public void createCollection(final LdapEntry entry1, final LdapEntry entry2)
   {
     final Set<LdapEntry> s = new HashSet<>();
@@ -160,7 +160,7 @@ public class SearchResultTest
    * @param  entry1  ldap entry
    * @param  entry2  ldap entry
    */
-  @Test(groups = {"bean"}, dataProvider = "entries")
+  @Test(groups = "bean", dataProvider = "entries")
   public void subResult(final LdapEntry entry1, final LdapEntry entry2)
   {
     final SearchResult sr = new SearchResult(SortBehavior.SORTED);

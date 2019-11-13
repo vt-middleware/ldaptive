@@ -43,7 +43,7 @@ public class SessionTrackingControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
+  @Test(groups = "control", dataProvider = "request-response")
   public void encode(final byte[] berValue, final SessionTrackingControl expected)
     throws Exception
   {
@@ -57,7 +57,7 @@ public class SessionTrackingControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
+  @Test(groups = "control", dataProvider = "request-response")
   public void decode(final byte[] berValue, final SessionTrackingControl expected)
     throws Exception
   {

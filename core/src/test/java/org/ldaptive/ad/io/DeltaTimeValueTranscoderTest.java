@@ -43,7 +43,7 @@ public class DeltaTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "times")
+  @Test(groups = "io", dataProvider = "times")
   public void testTranscode(final Long millis, final String deltaTime)
     throws Exception
   {

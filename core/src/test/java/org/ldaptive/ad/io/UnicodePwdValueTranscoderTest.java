@@ -85,7 +85,7 @@ public class UnicodePwdValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "passwords")
+  @Test(groups = "io", dataProvider = "passwords")
   public void testTranscode(final String pwd, final byte[] unicodePwd)
     throws Exception
   {
@@ -103,7 +103,7 @@ public class UnicodePwdValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "invalid")
+  @Test(groups = "io", dataProvider = "invalid")
   public void testInvalid(final String pwd, final byte[] unicodePwd)
     throws Exception
   {

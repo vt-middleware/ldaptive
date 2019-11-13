@@ -63,7 +63,7 @@ public class RandomConnectionStrategyTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"provider"}, dataProvider = "urls")
+  @Test(groups = "provider", dataProvider = "urls")
   public void getLdapUrls(final ConnectionFactoryMetadata metadata, final String[] urls)
     throws Exception
   {

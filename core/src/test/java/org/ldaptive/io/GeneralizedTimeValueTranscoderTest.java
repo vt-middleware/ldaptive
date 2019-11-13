@@ -286,7 +286,7 @@ public class GeneralizedTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "dates")
+  @Test(groups = "io", dataProvider = "dates")
   public void decodeGeneralized(final ZonedDateTime date, final String generalizedTime, final String formatTime)
     throws Exception
   {
@@ -301,7 +301,7 @@ public class GeneralizedTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "dates")
+  @Test(groups = "io", dataProvider = "dates")
   public void encodeFormat(final ZonedDateTime date, final String generalizedTime, final String formatTime)
     throws Exception
   {
@@ -316,7 +316,7 @@ public class GeneralizedTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "dates")
+  @Test(groups = "io", dataProvider = "dates")
   public void decodeFormat(final ZonedDateTime date, final String generalizedTime, final String formatTime)
     throws Exception
   {
@@ -329,7 +329,7 @@ public class GeneralizedTimeValueTranscoderTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"io"}, dataProvider = "invalid")
+  @Test(groups = "io", dataProvider = "invalid")
   public void testInvalid(final String generalizedTime)
     throws Exception
   {

@@ -2,16 +2,15 @@
 package org.ldaptive.provider.apache;
 
 import java.nio.ByteBuffer;
+import java.util.stream.Collectors;
 import org.apache.directory.api.ldap.extras.controls.SynchronizationModeEnum;
-import org.apache.directory.api.ldap.extras.controls.ad.AdDirSync;
-import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncFlag;
-import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncImpl;
-import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicy;
+import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncRequestImpl;
+import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncResponse;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyErrorEnum;
-import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyImpl;
+import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyRequestImpl;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyResponse;
 import org.apache.directory.api.ldap.extras.controls.syncrepl.syncDone.SyncDoneValue;
-import org.apache.directory.api.ldap.extras.controls.syncrepl.syncInfoValue.SyncRequestValueImpl;
+import org.apache.directory.api.ldap.extras.controls.syncrepl.syncRequest.SyncRequestValueImpl;
 import org.apache.directory.api.ldap.extras.controls.syncrepl.syncState.SyncStateValue;
 import org.apache.directory.api.ldap.extras.controls.vlv.VirtualListViewRequestImpl;
 import org.apache.directory.api.ldap.extras.controls.vlv.VirtualListViewResponse;
@@ -23,7 +22,7 @@ import org.apache.directory.api.ldap.model.message.controls.PagedResults;
 import org.apache.directory.api.ldap.model.message.controls.PagedResultsImpl;
 import org.apache.directory.api.ldap.model.message.controls.PersistentSearchImpl;
 import org.apache.directory.api.ldap.model.message.controls.SortKey;
-import org.apache.directory.api.ldap.model.message.controls.SortRequestControlImpl;
+import org.apache.directory.api.ldap.model.message.controls.SortRequestImpl;
 import org.apache.directory.api.ldap.model.message.controls.SortResponse;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
@@ -75,9 +74,9 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ctl = new ManageDsaITImpl(requestControl.getCriticality());
     } else if (SortRequestControl.OID.equals(requestControl.getOID())) {
       final SortRequestControl c = (SortRequestControl) requestControl;
-      ctl = new SortRequestControlImpl();
+      ctl = new SortRequestImpl();
       for (org.ldaptive.control.SortKey k : c.getSortKeys()) {
-        ((SortRequestControlImpl) ctl).addSortKey(
+        ((SortRequestImpl) ctl).addSortKey(
           new SortKey(k.getAttributeDescription(), k.getMatchingRuleId(), k.getReverseOrder()));
       }
       ctl.setCritical(c.getCriticality());
@@ -89,7 +88,7 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ctl.setCritical(c.getCriticality());
     } else if (PasswordPolicyControl.OID.equals(requestControl.getOID())) {
       final PasswordPolicyControl c = (PasswordPolicyControl) requestControl;
-      ctl = new PasswordPolicyImpl();
+      ctl = new PasswordPolicyRequestImpl();
       ctl.setCritical(c.getCriticality());
     } else if (SyncRequestControl.OID.equals(requestControl.getOID())) {
       final SyncRequestControl c = (SyncRequestControl) requestControl;
@@ -109,10 +108,10 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       ctl.setCritical(c.getCriticality());
     } else if (DirSyncControl.OID.equals(requestControl.getOID())) {
       final DirSyncControl c = (DirSyncControl) requestControl;
-      ctl = new AdDirSyncImpl();
-      ((AdDirSyncImpl) ctl).setCookie(c.getCookie());
-      ((AdDirSyncImpl) ctl).setFlags(AdDirSyncFlag.getFlags((int) c.getFlags()));
-      ((AdDirSyncImpl) ctl).setMaxReturnLength(c.getMaxAttributeCount());
+      ctl = new AdDirSyncRequestImpl();
+      ((AdDirSyncRequestImpl) ctl).setCookie(c.getCookie());
+      ((AdDirSyncRequestImpl) ctl).setParentsFirst((int) c.getFlags());
+      ((AdDirSyncRequestImpl) ctl).setMaxAttributeCount(c.getMaxAttributeCount());
       ctl.setCritical(c.getCriticality());
     } else if (VirtualListViewRequestControl.OID.equals(requestControl.getOID())) {
       final VirtualListViewRequestControl c = (VirtualListViewRequestControl) requestControl;
@@ -141,18 +140,14 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       final PagedResults c = (PagedResults) responseControl;
       ctl = new PagedResultsControl(c.getSize(), c.getCookie(), c.isCritical());
     } else if (PasswordPolicyControl.OID.equals(responseControl.getOid())) {
-      final PasswordPolicy c = (PasswordPolicy) responseControl;
-      if (c.hasResponse()) {
-        ctl = new PasswordPolicyControl(c.isCritical());
+      final PasswordPolicyResponse c = (PasswordPolicyResponse) responseControl;
+      ctl = new PasswordPolicyControl(c.isCritical());
+      ((PasswordPolicyControl) ctl).setTimeBeforeExpiration(c.getTimeBeforeExpiration());
+      ((PasswordPolicyControl) ctl).setGraceAuthNsRemaining(c.getGraceAuthNRemaining());
 
-        final PasswordPolicyResponse ppr = c.getResponse();
-        ((PasswordPolicyControl) ctl).setTimeBeforeExpiration(ppr.getTimeBeforeExpiration());
-        ((PasswordPolicyControl) ctl).setGraceAuthNsRemaining(ppr.getGraceAuthNRemaining());
-
-        final PasswordPolicyErrorEnum error = ppr.getPasswordPolicyError();
-        if (error != null) {
-          ((PasswordPolicyControl) ctl).setError(PasswordPolicyControl.Error.valueOf(error.getValue()));
-        }
+      final PasswordPolicyErrorEnum error = c.getPasswordPolicyError();
+      if (error != null) {
+        ((PasswordPolicyControl) ctl).setError(PasswordPolicyControl.Error.valueOf(error.getValue()));
       }
     } else if (SyncStateControl.OID.equals(responseControl.getOid())) {
       final SyncStateValue c = (SyncStateValue) responseControl;
@@ -172,9 +167,12 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
         c.getChangeNumber(),
         c.isCritical());
     } else if (DirSyncControl.OID.equals(responseControl.getOid())) {
-      final AdDirSync c = (AdDirSync) responseControl;
+      final AdDirSyncResponse c = (AdDirSyncResponse) responseControl;
       ctl = new DirSyncControl(
-        new DirSyncControl.Flag[] {DirSyncControl.Flag.valueOf(AdDirSyncFlag.getBitmask(c.getFlags())), },
+        new DirSyncControl.Flag[] {
+            DirSyncControl.Flag.valueOf(
+                c.getFlags().stream().map(f -> f.getValue()).collect(Collectors.summingInt(Integer::intValue))),
+        },
         c.getCookie(),
         c.getMaxReturnLength(),
         c.isCritical());

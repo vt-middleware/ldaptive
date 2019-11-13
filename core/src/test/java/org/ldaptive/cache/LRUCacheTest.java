@@ -24,7 +24,7 @@ public class LRUCacheTest
 
 
   /** @throws  Exception  On test failure. */
-  @BeforeClass(groups = {"cache"})
+  @BeforeClass(groups = "cache")
   public void initialize()
     throws Exception
   {
@@ -33,7 +33,7 @@ public class LRUCacheTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"cache"})
+  @AfterClass(groups = "cache")
   public void clear()
     throws Exception
   {
@@ -46,7 +46,7 @@ public class LRUCacheTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"cache"}, threadPoolSize = 5, invocationCount = 100, timeOut = 60000)
+  @Test(groups = "cache", threadPoolSize = 5, invocationCount = 100, timeOut = 60000)
   public void get()
     throws Exception
   {
@@ -60,7 +60,7 @@ public class LRUCacheTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"cache"})
+  @Test(groups = "cache")
   public void put()
     throws Exception
   {

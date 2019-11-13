@@ -333,7 +333,7 @@ public class DNTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "dns")
+  @Test(groups = "asn1", dataProvider = "dns")
   public void decode(final byte[] bytes, final DN expected)
     throws Exception
   {
@@ -347,7 +347,7 @@ public class DNTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "dns")
+  @Test(groups = "asn1", dataProvider = "dns")
   public void encode(final byte[] expected, final DN sequence)
     throws Exception
   {

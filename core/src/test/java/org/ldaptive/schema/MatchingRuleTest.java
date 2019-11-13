@@ -66,7 +66,7 @@ public class MatchingRuleTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"schema"}, dataProvider = "definitions")
+  @Test(groups = "schema", dataProvider = "definitions")
   public void parse(final MatchingRule matchingRule, final String definition)
     throws Exception
   {

@@ -34,7 +34,7 @@ public class LdapEntryTest
 
 
   /** Tests default sort behavior. */
-  @Test(groups = {"bean"})
+  @Test(groups = "bean")
   public void defaultSortBehavior()
   {
     final LdapEntry le = new LdapEntry("uid=1");
@@ -55,7 +55,7 @@ public class LdapEntryTest
    * @param  attr1  ldap attribute
    * @param  attr2  ldap attribute
    */
-  @Test(groups = {"bean"}, dataProvider = "attributes")
+  @Test(groups = "bean", dataProvider = "attributes")
   public void orderedSortBehavior(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry(SortBehavior.ORDERED);
@@ -76,7 +76,7 @@ public class LdapEntryTest
    * @param  attr1  ldap attribute
    * @param  attr2  ldap attribute
    */
-  @Test(groups = {"bean"}, dataProvider = "attributes")
+  @Test(groups = "bean", dataProvider = "attributes")
   public void sortedSortBehavior(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry(SortBehavior.SORTED);
@@ -97,7 +97,7 @@ public class LdapEntryTest
    * @param  attr1  ldap attribute
    * @param  attr2  ldap attribute
    */
-  @Test(groups = {"bean"}, dataProvider = "attributes")
+  @Test(groups = "bean", dataProvider = "attributes")
   public void createOne(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry("uid=1", attr1);
@@ -118,7 +118,7 @@ public class LdapEntryTest
    * @param  attr1  ldap attribute
    * @param  attr2  ldap attribute
    */
-  @Test(groups = {"bean"}, dataProvider = "attributes")
+  @Test(groups = "bean", dataProvider = "attributes")
   public void createTwo(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry("uid=1", attr2, attr1);
@@ -140,7 +140,7 @@ public class LdapEntryTest
    * @param  attr1  ldap attribute
    * @param  attr2  ldap attribute
    */
-  @Test(groups = {"bean"}, dataProvider = "attributes")
+  @Test(groups = "bean", dataProvider = "attributes")
   public void createCollection(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final Set<LdapAttribute> s = new HashSet<>();
@@ -166,7 +166,7 @@ public class LdapEntryTest
    * @param  attr1  ldap attribute
    * @param  attr2  ldap attribute
    */
-  @Test(groups = {"bean"}, dataProvider = "attributes")
+  @Test(groups = "bean", dataProvider = "attributes")
   public void renameAttribute(final LdapAttribute attr1, final LdapAttribute attr2)
   {
     final LdapEntry le = new LdapEntry("uid=1", attr2, attr1);

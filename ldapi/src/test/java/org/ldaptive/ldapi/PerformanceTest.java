@@ -44,7 +44,7 @@ public class PerformanceTest
    * @param  baseDn  to search on
    * @param  searchFilter  to execute
    */
-  @BeforeClass(groups = {"ldapi"})
+  @BeforeClass(groups = "ldapi")
   @Parameters(
     {
       "ldapSocketFile",
@@ -102,7 +102,7 @@ public class PerformanceTest
    *
    * @throws  Exception  On test errors.
    */
-  @Test(groups = {"ldapi"}, dataProvider = "factories")
+  @Test(groups = "ldapi", dataProvider = "factories")
   public void search(final ConnectionFactory connFactory, final SearchRequest request)
     throws Exception
   {
