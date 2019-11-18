@@ -19,17 +19,17 @@ public final class TransportFactory
 {
 
   /** Ldap transport system property. */
-  public static final String TRANSPORT = "org.ldaptive.transport";
+  private static final String TRANSPORT_PROPERTY = "org.ldaptive.transport";
 
   /** Logger for this class. */
-  private static  final Logger LOGGER = LoggerFactory.getLogger(TransportFactory.class);
+  private static final Logger LOGGER = LoggerFactory.getLogger(TransportFactory.class);
 
   /** Custom transport constructor. */
   private static Constructor<?> transportConstructor;
 
   static {
     // Initialize a custom transport if a system property is found
-    final String transportClass = System.getProperty(TRANSPORT);
+    final String transportClass = System.getProperty(TRANSPORT_PROPERTY);
     if (transportClass != null) {
       try {
         LOGGER.info("Setting ldap transport to {}", transportClass);
@@ -47,8 +47,8 @@ public final class TransportFactory
 
 
   /**
-   * The {@link #TRANSPORT} property is checked and that class is loaded if provided. Otherwise the Netty transport is
-   * returned.
+   * The {@link #TRANSPORT_PROPERTY} property is checked and that class is loaded if provided. Otherwise a Netty
+   * transport is returned.
    *
    * @return  ldaptive transport
    */

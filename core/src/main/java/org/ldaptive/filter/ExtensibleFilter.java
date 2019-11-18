@@ -2,10 +2,7 @@
 package org.ldaptive.filter;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Stream;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.BooleanType;
@@ -19,15 +16,11 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class ExtensibleFilter extends AbstractSearchFilter
+public class ExtensibleFilter implements Filter
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10061;
-
-  /** Regex pattern to match this filter type. */
-  private static final Pattern FILTER_PATTERN = Pattern.compile(
-    "\\((" + Filter.ATTRIBUTE_DESC + ")?(:[Dd][Nn])?(?::(.+))?:=(" + Filter.ASSERTION_VALUE + ")\\)");
 
   /** Matching rule id. */
   private final String matchingRuleID;
@@ -105,29 +98,6 @@ public class ExtensibleFilter extends AbstractSearchFilter
   }
 
 
-  /**
-   * Creates a new extensible filter by parsing the supplied filter string.
-   *
-   * @param  component  to parse
-   *
-   * @return  extensible filter or null if component doesn't match this filter type
-   */
-  public static ExtensibleFilter parse(final String component)
-  {
-    final Matcher m = FILTER_PATTERN.matcher(component);
-    if (m.matches()) {
-      // CheckStyle:MagicNumber OFF
-      final String rule = m.group(3);
-      final String attr = m.group(1);
-      final byte[] value = parseAssertionValue(m.group(4));
-      final boolean dn = m.group(2) != null;
-      return new ExtensibleFilter(rule, attr, value, dn);
-      // CheckStyle:MagicNumber ON
-    }
-    return null;
-  }
-
-
   @Override
   public DEREncoder getEncoder()
   {
@@ -180,7 +150,8 @@ public class ExtensibleFilter extends AbstractSearchFilter
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("matchingRuleID=").append(matchingRuleID).append(", ")
       .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("assertion=").append(Arrays.toString(assertion)).append(", ")
+      .append("assertion=").append(
+        assertion == null ? null : new String(assertion, StandardCharsets.UTF_8)).append(", ")
       .append("dnAttributes=").append(dnAttributes).toString();
   }
 }

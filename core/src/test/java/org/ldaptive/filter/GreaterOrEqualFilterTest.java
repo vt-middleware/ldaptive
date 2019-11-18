@@ -71,10 +71,10 @@ public class GreaterOrEqualFilterTest
    * @throws  Exception  On test failure.
    */
   @Test(dataProvider = "filter")
-  public void parse(final String value, final GreaterOrEqualFilter filter)
+  public void parseRegex(final String value, final GreaterOrEqualFilter filter)
     throws Exception
   {
-    Assert.assertEquals(GreaterOrEqualFilter.parse(value), filter);
+    Assert.assertEquals(RegexFilterFunction.parseGreaterOrEqualFilter(value), filter);
   }
 
 

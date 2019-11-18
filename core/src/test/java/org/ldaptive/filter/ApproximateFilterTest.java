@@ -71,10 +71,10 @@ public class ApproximateFilterTest
    * @throws  Exception  On test failure.
    */
   @Test(dataProvider = "filter")
-  public void parse(final String value, final ApproximateFilter filter)
+  public void parseRegex(final String value, final ApproximateFilter filter)
     throws Exception
   {
-    Assert.assertEquals(ApproximateFilter.parse(value), filter);
+    Assert.assertEquals(RegexFilterFunction.parseApproximateFilter(value), filter);
   }
 
 

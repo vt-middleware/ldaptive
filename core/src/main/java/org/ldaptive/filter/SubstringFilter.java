@@ -2,9 +2,8 @@
 package org.ldaptive.filter;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextDERTag;
@@ -21,7 +20,7 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class SubstringFilter extends AbstractSearchFilter
+public class SubstringFilter implements Filter
 {
 
   /** Type of substring match. */
@@ -39,10 +38,6 @@ public class SubstringFilter extends AbstractSearchFilter
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10099;
-
-  /** Regex pattern to match this filter type. */
-  private static final Pattern FILTER_PATTERN = Pattern.compile(
-    "\\((" + Filter.ATTRIBUTE_DESC + ")=((?:[^\\*]*\\*[^\\*]*)+)\\)");
 
   /** Attribute description. */
   private final String attributeDesc;
@@ -101,47 +96,6 @@ public class SubstringFilter extends AbstractSearchFilter
     subInitial = startsWith;
     subAny = contains;
     subFinal = endsWith;
-  }
-
-
-  /**
-   * Creates a new substring filter by parsing the supplied filter string.
-   *
-   * @param  component  to parse
-   *
-   * @return  substring filter or null if component doesn't match this filter type
-   */
-  public static SubstringFilter parse(final String component)
-  {
-    final Matcher m = FILTER_PATTERN.matcher(component);
-    if (m.matches()) {
-      // don't allow presence match or multiple asterisks
-      if (!m.group(2).equals("*") && !m.group(2).contains("**")) {
-        final String attr = m.group(1);
-        final String assertions = m.group(2);
-
-        String startsWith = null;
-        final int firstAsterisk = assertions.indexOf('*');
-        if (firstAsterisk > 0) {
-          startsWith = assertions.substring(0, firstAsterisk);
-        }
-        String endsWith = null;
-        final int lastAsterisk = assertions.lastIndexOf('*');
-        if (lastAsterisk < assertions.length() - 1) {
-          endsWith = assertions.substring(lastAsterisk + 1);
-        }
-        String[] contains = null;
-        if (lastAsterisk > firstAsterisk) {
-          contains = assertions.substring(firstAsterisk + 1, lastAsterisk).split("\\*");
-        }
-        return new SubstringFilter(
-          attr,
-          startsWith != null ? parseAssertionValue(startsWith) : null,
-          endsWith != null ? parseAssertionValue(endsWith) : null,
-          contains != null ? parseAssertionValue(contains) : null);
-      }
-    }
-    return null;
   }
 
 
@@ -225,8 +179,14 @@ public class SubstringFilter extends AbstractSearchFilter
     return new StringBuilder(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("subInitial=").append(Arrays.toString(subInitial)).append(", ")
-      .append("subAny=").append(Arrays.toString(subAny)).append(", ")
-      .append("subFinal=").append(Arrays.toString(subFinal)).toString();
+      .append("subInitial=").append(
+        subInitial == null ? null : new String(subInitial, StandardCharsets.UTF_8)).append(", ")
+      .append("subAny=").append(
+        subAny == null ? null :
+          Stream.of(subAny)
+            .map(b -> b == null ? null : new String(b, StandardCharsets.UTF_8))
+            .collect(Collectors.toList())).append(", ")
+      .append("subFinal=").append(
+        subFinal == null ? null : new String(subFinal, StandardCharsets.UTF_8)).toString();
   }
 }

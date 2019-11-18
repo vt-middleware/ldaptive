@@ -71,10 +71,10 @@ public class PresenceFilterTest
    * @throws  Exception  On test failure.
    */
   @Test(dataProvider = "filter")
-  public void parse(final String value, final PresenceFilter filter)
+  public void parseRegex(final String value, final PresenceFilter filter)
     throws Exception
   {
-    Assert.assertEquals(PresenceFilter.parse(value), filter);
+    Assert.assertEquals(RegexFilterFunction.parsePresenceFilter(value), filter);
   }
 
 

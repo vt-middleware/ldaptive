@@ -2,8 +2,6 @@
 package org.ldaptive.filter;
 
 import java.nio.charset.StandardCharsets;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -20,10 +18,6 @@ public class GreaterOrEqualFilter extends AbstractAttributeValueAssertionFilter
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10067;
-
-  /** Regex pattern to match this filter type. */
-  private static final Pattern FILTER_PATTERN = Pattern.compile(
-    "\\((" + ATTRIBUTE_DESC + ")>=(" + ASSERTION_VALUE + ")\\)");
 
 
   /**
@@ -47,25 +41,6 @@ public class GreaterOrEqualFilter extends AbstractAttributeValueAssertionFilter
   public GreaterOrEqualFilter(final String name, final byte[] value)
   {
     super(Type.GREATER_OR_EQUAL, name, value);
-  }
-
-
-  /**
-   * Creates a new greater or equal filter by parsing the supplied filter string.
-   *
-   * @param  component  to parse
-   *
-   * @return  greater or equal filter or null if component doesn't match this filter type
-   */
-  public static GreaterOrEqualFilter parse(final String component)
-  {
-    final Matcher m = FILTER_PATTERN.matcher(component);
-    if (m.matches()) {
-      final String attr = m.group(1);
-      final byte[] value = parseAssertionValue(m.group(2));
-      return new GreaterOrEqualFilter(attr, value);
-    }
-    return null;
   }
 
 
