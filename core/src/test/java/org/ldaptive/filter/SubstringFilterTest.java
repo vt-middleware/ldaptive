@@ -103,10 +103,10 @@ public class SubstringFilterTest
    * @throws  Exception  On test failure.
    */
   @Test(dataProvider = "filter")
-  public void parse(final String value, final SubstringFilter filter)
+  public void parseRegex(final String value, final SubstringFilter filter)
     throws Exception
   {
-    Assert.assertEquals(SubstringFilter.parse(value), filter);
+    Assert.assertEquals(RegexFilterFunction.parseSubstringFilter(value), filter);
   }
 
 

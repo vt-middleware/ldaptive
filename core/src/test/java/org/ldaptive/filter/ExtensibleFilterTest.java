@@ -127,10 +127,10 @@ public class ExtensibleFilterTest
    * @throws  Exception  On test failure.
    */
   @Test(dataProvider = "filter")
-  public void parse(final String value, final ExtensibleFilter filter)
+  public void parseRegex(final String value, final ExtensibleFilter filter)
     throws Exception
   {
-    Assert.assertEquals(ExtensibleFilter.parse(value), filter);
+    Assert.assertEquals(RegexFilterFunction.parseExtensibleFilter(value), filter);
   }
 
 

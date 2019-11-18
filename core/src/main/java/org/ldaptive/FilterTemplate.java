@@ -4,7 +4,7 @@ package org.ldaptive;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.ldaptive.filter.Filter;
+import org.ldaptive.filter.FilterUtils;
 
 /**
  * Class for producing an LDAP search filter from a filter template. Templates can use either index based parameters or
@@ -167,7 +167,7 @@ public class FilterTemplate
 
 
   /**
-   * Encodes the supplied attribute value for use in a search filter. See {@link Filter#escape(String)}.
+   * Encodes the supplied attribute value for use in a search filter. See {@link FilterUtils#escape(String)}.
    *
    * @param  value  to encode
    *
@@ -179,13 +179,13 @@ public class FilterTemplate
       return null;
     }
 
-    return Filter.escape(value);
+    return FilterUtils.escape(value);
   }
 
 
   /**
    * Hex encodes the supplied object if it is of type byte[], otherwise the string format of the object is escaped. See
-   * {@link Filter#escape(String)}.
+   * {@link FilterUtils#escape(String)}.
    *
    * @param  obj  to encode
    *

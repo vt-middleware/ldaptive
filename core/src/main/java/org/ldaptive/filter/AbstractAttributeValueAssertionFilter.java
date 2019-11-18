@@ -13,7 +13,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractAttributeValueAssertionFilter extends AbstractSearchFilter
+public abstract class AbstractAttributeValueAssertionFilter implements Filter
 {
 
   /** Type of filter. */
@@ -79,6 +79,7 @@ public abstract class AbstractAttributeValueAssertionFilter extends AbstractSear
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("filterType=").append(filterType).append(", ")
       .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("assertionValue=").append(new String(assertionValue, StandardCharsets.UTF_8)).toString();
+      .append("assertionValue=").append(
+        assertionValue == null ? null : new String(assertionValue, StandardCharsets.UTF_8)).toString();
   }
 }

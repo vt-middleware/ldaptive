@@ -1,16 +1,68 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
+import java.lang.reflect.Constructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Parses an LDAP search filter string.
+ * Encapsulates a {@link FilterFunction} and exposes a convenience static method for parsing filters. The filter
+ * function used by this class can be set using the system property {@link #FILTER_FUNCTION_PROPERTY}.
  *
  * @author  Middleware Services
  */
 public final class FilterParser
 {
 
+  /** Ldap filter function system property. */
+  private static final String FILTER_FUNCTION_PROPERTY = "org.ldaptive.filter.function";
+
+  /** Logger for this class. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(FilterParser.class);
+
+  /** Default filter function. */
+  private static final FilterFunction FILTER_FUNCTION = getFilterFunction();
+
+  /** Custom filter parser constructor. */
+  private static Constructor<?> filterFunctionConstructor;
+
+  static {
+    // Initialize a custom filter function if a system property is found
+    final String filterFunctionClass = System.getProperty(FILTER_FUNCTION_PROPERTY);
+    if (filterFunctionClass != null) {
+      try {
+        LOGGER.info("Setting ldap filter function to {}", filterFunctionClass);
+        filterFunctionConstructor = Class.forName(filterFunctionClass).getDeclaredConstructor();
+      } catch (Exception e) {
+        LOGGER.error("Error instantiating {}", filterFunctionClass, e);
+        throw new IllegalStateException(e);
+      }
+    }
+  }
+
+
   /** Default constructor. */
   private FilterParser() {}
+
+
+  /**
+   * The {@link #FILTER_FUNCTION_PROPERTY} property is checked and that class is loaded if provided. Otherwise the
+   * {@link RegexFilterFunction} is returned.
+   *
+   * @return  default filter function
+   */
+  public static FilterFunction getFilterFunction()
+  {
+    if (filterFunctionConstructor != null) {
+      try {
+        return (FilterFunction) filterFunctionConstructor.newInstance();
+      } catch (Exception e) {
+        LOGGER.error("Error creating new filter function instance with {}", filterFunctionConstructor, e);
+        throw new IllegalStateException(e);
+      }
+    }
+    return new DefaultFilterFunction();
+  }
 
 
   /**
@@ -24,164 +76,6 @@ public final class FilterParser
    */
   public static Filter parse(final String filter)
   {
-    final String balancedFilter;
-    // Check for balanced parentheses
-    if (filter.startsWith("(")) {
-      if (!filter.endsWith(")")) {
-        throw new IllegalArgumentException("Unbalanced parentheses. Opening paren without closing paren.");
-      }
-      balancedFilter = filter;
-    } else if (filter.endsWith(")")) {
-      throw new IllegalArgumentException("Unbalanced parentheses. Closing paren without opening paren.");
-    } else {
-      // Allow entire filter strings without enclosing parentheses
-      balancedFilter = "(".concat(filter).concat(")");
-    }
-
-    return readNextComponent(balancedFilter);
-  }
-
-
-  /**
-   * Reads the next component contained in the supplied filter.
-   *
-   * @param  filter  to parse
-   *
-   * @return  search filter
-   *
-   * @throws  IllegalArgumentException  if filter does not start with '(' and end with ')'
-   */
-  private static Filter readNextComponent(final String filter)
-  {
-    final int end = filter.length() - 1;
-    if (filter.charAt(0) != '(' || filter.charAt(end) != ')') {
-      throw new IllegalArgumentException("Filter must be surround by parentheses: " + filter);
-    }
-    int pos = 1;
-    final Filter searchFilter;
-    switch (filter.charAt(pos)) {
-
-    case '&':
-      searchFilter = readFilterSet(new AndFilter(), filter, ++pos, end);
-      break;
-
-    case '|':
-      searchFilter = readFilterSet(new OrFilter(), filter, ++pos, end);
-      break;
-
-    case '!':
-      searchFilter = readFilterSet(new NotFilter(), filter, ++pos, end);
-      break;
-
-    default:
-      // attempt to match a non-set filter type
-      searchFilter = detectFilterType(filter);
-      if (searchFilter == null) {
-        throw new IllegalArgumentException("Could not parse filter: " + filter);
-      }
-      break;
-    }
-    return searchFilter;
-  }
-
-
-  /**
-   * Reads the supplied filter using the supplied indices and adds them to the supplied filter set.
-   *
-   * @param  set  to update
-   * @param  filter  to parse
-   * @param  start  position in filter
-   * @param  end  position in filter
-   *
-   * @return  the supplied filter set with components added from filter
-   *
-   * @throws  IllegalArgumentException  if filter doesn't start with '(' and containing a matching ')'
-   */
-  private static FilterSet readFilterSet(final FilterSet set, final String filter, final int start, final int end)
-  {
-    int pos = start;
-    int closeIndex = findMatchingParenPosition(filter, pos);
-    if (filter.charAt(pos) != '(' || closeIndex == -1 || closeIndex == end) {
-      throw new IllegalArgumentException(
-        "Invalid filter syntax, missing parenthesis after " + set.getType());
-    }
-    while (pos < end) {
-      set.add(readNextComponent(filter.substring(pos, closeIndex + 1)));
-      pos = closeIndex + 1;
-      if (pos < end) {
-        closeIndex = findMatchingParenPosition(filter, pos);
-      }
-    }
-    return set;
-  }
-
-
-  /**
-   * Returns the index in the supplied filter of the closing paren that matches the opening paren at the start of the
-   * filter.
-   *
-   * @param  filter  to search
-   * @param  start  position of the opening paren
-   *
-   * @return  index of the matching paren
-   *
-   * @throws  IllegalArgumentException  if filter is null, empty or does not begin with '('
-   */
-  private static int findMatchingParenPosition(final String filter, final int start)
-  {
-    if (filter == null || filter.length() == 0) {
-      throw new IllegalArgumentException("Filter cannot be null or empty");
-    }
-    if (filter.charAt(start) != '(') {
-      throw new IllegalArgumentException("Filter must begin with '('");
-    }
-    int pos = start + 1;
-    int parenCount = 1;
-    while (pos < filter.length()) {
-      final char c = filter.charAt(pos);
-      if (c == '(') {
-        parenCount++;
-      } else if (c == ')') {
-        parenCount--;
-      }
-      if (parenCount == 0) {
-        return pos;
-      }
-      pos++;
-    }
-    return -1;
-  }
-
-
-  /**
-   * Inspects the supplied filter string to determine the type of filter it represents.
-   *
-   * @param  filter  to inspect
-   *
-   * @return  search filter
-   */
-  private static Filter detectFilterType(final String filter)
-  {
-    // note that presence *must* be checked before substring
-    Filter searchFilter = PresenceFilter.parse(filter);
-    if (searchFilter == null) {
-      searchFilter = EqualityFilter.parse(filter);
-    }
-    if (searchFilter == null) {
-      searchFilter = SubstringFilter.parse(filter);
-    }
-    if (searchFilter == null) {
-      searchFilter = ExtensibleFilter.parse(filter);
-    }
-    if (searchFilter == null) {
-      searchFilter = GreaterOrEqualFilter.parse(filter);
-    }
-    if (searchFilter == null) {
-      searchFilter = LessOrEqualFilter.parse(filter);
-    }
-    if (searchFilter == null) {
-      searchFilter = ApproximateFilter.parse(filter);
-    }
-    return searchFilter;
+    return FILTER_FUNCTION.apply(filter);
   }
 }

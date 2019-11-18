@@ -71,10 +71,10 @@ public class LessOrEqualFilterTest
    * @throws  Exception  On test failure.
    */
   @Test(dataProvider = "filter")
-  public void parse(final String value, final LessOrEqualFilter filter)
+  public void parseRegex(final String value, final LessOrEqualFilter filter)
     throws Exception
   {
-    Assert.assertEquals(LessOrEqualFilter.parse(value), filter);
+    Assert.assertEquals(RegexFilterFunction.parseLessOrEqualFilter(value), filter);
   }
 
 

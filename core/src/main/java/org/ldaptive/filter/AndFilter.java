@@ -92,4 +92,13 @@ public class AndFilter implements FilterSet
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, filterComponents);
   }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("filterComponents=").append(filterComponents).toString();
+  }
 }

@@ -87,4 +87,13 @@ public class NotFilter implements FilterSet
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, filterComponent);
   }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("filterComponent=").append(filterComponent).toString();
+  }
 }

@@ -91,10 +91,10 @@ public class EqualityFilterTest
    * @throws  Exception  On test failure.
    */
   @Test(dataProvider = "filter")
-  public void parse(final String value, final EqualityFilter filter)
+  public void parseRegex(final String value, final EqualityFilter filter)
     throws Exception
   {
-    Assert.assertEquals(EqualityFilter.parse(value), filter);
+    Assert.assertEquals(RegexFilterFunction.parseEqualityFilter(value), filter);
   }
 
 
