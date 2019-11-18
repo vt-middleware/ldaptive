@@ -202,7 +202,7 @@
               <classpathScope>test</classpathScope>
               <mainClass>org.ldaptive.doc.ClassGenerator</mainClass>
               <arguments>
-                <argument>https://github.com/vt-middleware/ldaptive/blob/gh-pages/_includes/source/source.zip?raw=true</argument>
+                <argument>https://github.com/vt-middleware/ldaptive/blob/gh-pages/_includes/source_v1/source.zip?raw=true</argument>
                 <argument>${project.build.directory}</argument>
               </arguments>
             </configuration>
