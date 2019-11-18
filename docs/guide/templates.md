@@ -184,8 +184,8 @@ Expects to find /templates-context.xml in the classpath and returns search resul
     <servlet-name>JsonSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.JsonServletSearchTemplatesExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.JsonServletSearchTemplatesOperation</param-value>
     </init-param>
     <!-- Classpath location of the spring context -->
     <init-param>

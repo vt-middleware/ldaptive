@@ -51,7 +51,7 @@ Developers need LDAP integration for their products, but the JNDI API is cumbers
 {% include source/home/3.java %}
 {% endhighlight %}
 
-These search examples all leverage the SearchExecutor class. For more details on searching and more control over the search operation in general, see the [search operation documentation](docs/guide/operations/search.html).
+These search examples all leverage the SearchOperation class. For more details on searching and more control over the search operation in general, see the [search operation documentation](docs/guide/operations/search.html).
 
 ### Authentication
 {% highlight java %}
