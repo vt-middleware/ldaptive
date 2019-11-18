@@ -110,7 +110,6 @@
     baseDn="${ldap.baseDn}"
     userFilter="(mail={user})"
     bindDn="${ldap.bindDn}"
-    provider="org.ldaptive.provider.jndi.JndiProvider"
     bindCredential="${ldap.bindCredential}"
     trustCertificates="classpath:/ldaptive.trust.crt"
     connectTimeout="${ldap.connectTimeout}"
