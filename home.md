@@ -68,4 +68,4 @@ For more details on authentication, see the [authentication documentation](docs/
 * `SortBehavior` has been removed in favor of providing static sort methods on individual classes.
 * Search result cache implementations have been removed. It's trivial for application to do their own caching.
 * Transcoders have been moved to the `transcode` package.
-# `SearchFilter` has been renamed `FilterTemplate`.
+* `SearchFilter` has been renamed `FilterTemplate`.
