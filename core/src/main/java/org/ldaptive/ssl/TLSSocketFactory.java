@@ -94,7 +94,7 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
   /**
    * Returns an instance of this socket factory configured with a hostname verifying trust manager. If the supplied ssl
    * config does not contain trust managers, {@link HostnameVerifyingTrustManager} with {@link DefaultHostnameVerifier}
-   * is set. See {@link #addHostnameVerifyingTrustManager(SslConfig, String[])}.
+   * is set.
    *
    * @param  config  to set on the socket factory
    * @param  names  to use for hostname verification
@@ -122,30 +122,6 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
       throw new IllegalArgumentException(e);
     }
     return sf;
-  }
-
-
-  /**
-   * Adds a {@link HostnameVerifyingTrustManager} to the supplied config if no trust managers have been configured. A
-   * {@link DefaultTrustManager} is also added in no {@link CredentialConfig} has been configured.
-   *
-   * @deprecated  {@link HostnameVerifierConfig} should be used for hostname verification
-   *
-   * @param  config  to modify
-   * @param  names  of the hosts to verify
-   */
-  @Deprecated
-  protected static void addHostnameVerifyingTrustManager(final SslConfig config, final String[] names)
-  {
-    if (config.getTrustManagers() == null) {
-      if (config.getCredentialConfig() == null) {
-        config.setTrustManagers(
-          new DefaultTrustManager(),
-          new HostnameVerifyingTrustManager(new DefaultHostnameVerifier(), names));
-      } else {
-        config.setTrustManagers(new HostnameVerifyingTrustManager(new DefaultHostnameVerifier(), names));
-      }
-    }
   }
 
 

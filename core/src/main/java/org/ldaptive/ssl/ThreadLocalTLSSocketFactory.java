@@ -64,7 +64,7 @@ public class ThreadLocalTLSSocketFactory extends TLSSocketFactory
   /**
    * Returns an instance of this socket factory configured with a hostname verifying trust manager. If the supplied ssl
    * config does not contain trust managers, {@link HostnameVerifyingTrustManager} with {@link DefaultHostnameVerifier}
-   * is set. See {@link #addHostnameVerifyingTrustManager(SslConfig, String[])}.
+   * is set.
    *
    * @param  config  to set on the socket factory
    * @param  names  to use for hostname verification
