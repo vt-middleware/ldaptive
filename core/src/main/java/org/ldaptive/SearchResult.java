@@ -4,6 +4,7 @@ package org.ldaptive;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -56,10 +57,7 @@ public class SearchResult extends AbstractLdapBean
       searchReferences = new LinkedHashSet<>();
     } else if (SortBehavior.SORTED == sb) {
       resultEntries = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-      searchReferences = new TreeSet<>(
-        (ref1, ref2) -> {
-          return Arrays.toString(ref1.getReferralUrls()).compareTo(Arrays.toString(ref2.getReferralUrls()));
-        });
+      searchReferences = new TreeSet<>(Comparator.comparing(ref -> Arrays.toString(ref.getReferralUrls())));
     } else {
       throw new IllegalArgumentException("Unknown sort behavior: " + sb);
     }

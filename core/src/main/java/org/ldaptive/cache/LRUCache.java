@@ -50,7 +50,7 @@ public class LRUCache<Q extends SearchRequest> implements Cache<Q>
    */
   public LRUCache(final int size, final Duration timeToLive, final Duration interval)
   {
-    cache = new LinkedHashMap<Q, Item>(INITIAL_CAPACITY, LOAD_FACTOR, true) {
+    cache = new LinkedHashMap<>(INITIAL_CAPACITY, LOAD_FACTOR, true) {
 
       /** serialVersionUID. */
       private static final long serialVersionUID = -4082551016104288539L;

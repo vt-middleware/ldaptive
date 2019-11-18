@@ -318,15 +318,12 @@ public final class LdapUtils
     throws IOException
   {
     final ByteArrayOutputStream data = new ByteArrayOutputStream();
-    try {
+    try (is; data) {
       final byte[] buffer = new byte[READ_BUFFER_SIZE];
       int length;
       while ((length = is.read(buffer)) != -1) {
         data.write(buffer, 0, length);
       }
-    } finally {
-      is.close();
-      data.close();
     }
     return data.toByteArray();
   }

@@ -101,7 +101,6 @@ public class TLSSocketFactory extends AbstractTLSSocketFactory
    *
    * @return  socket factory
    */
-  @SuppressWarnings("RedundantArrayCreation")
   public static SSLSocketFactory getHostnameVerifierFactory(final SslConfig config, final String[] names)
   {
     final TLSSocketFactory sf = new TLSSocketFactory();

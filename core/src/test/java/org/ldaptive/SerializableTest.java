@@ -87,12 +87,10 @@ public class SerializableTest
   private byte[] serialize(final Serializable s)
     throws Exception
   {
-    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    try (ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+    try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
+         ObjectOutputStream oos = new ObjectOutputStream(bos)) {
       oos.writeObject(s);
       return bos.toByteArray();
-    } finally {
-      bos.close();
     }
   }
 

@@ -21,16 +21,9 @@ public abstract class AbstractSearchRoleResolver extends AbstractSearchOperation
   public Set<LdapRole> search(final SearchRequest request)
     throws LdapException
   {
-    Connection conn = null;
-    try {
-      conn = getConnection();
-
+    try (Connection conn = getConnection()) {
       final SearchOperation op = createSearchOperation(conn);
       return LdapRole.toRoles(op.execute(request).getResult());
-    } finally {
-      if (conn != null) {
-        conn.close();
-      }
     }
   }
 

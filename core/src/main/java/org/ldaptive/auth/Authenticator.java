@@ -271,7 +271,7 @@ public class Authenticator
       return invalidInput;
     }
 
-    LdapEntry entry = null;
+    final LdapEntry entry;
 
     final AuthenticationRequest processedRequest = processRequest(dn, request);
     AuthenticationHandlerResponse response = null;

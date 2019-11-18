@@ -56,8 +56,7 @@ public class ClassLoaderTest
     final ConnectionConfig cc = new ConnectionConfig(host);
     cc.setUseSSL(true);
     cc.setSslConfig(createSslConfig());
-    final Connection conn = DefaultConnectionFactory.getConnection(cc);
-    try {
+    try (Connection conn = DefaultConnectionFactory.getConnection(cc)) {
       Thread.currentThread().setContextClassLoader(new TestClassLoader(cl));
       conn.open();
       final SearchOperation op = new SearchOperation(conn);
@@ -67,7 +66,6 @@ public class ClassLoaderTest
       AssertJUnit.assertEquals(ClassNotFoundException.class, e.getCause().getCause().getClass());
     } finally {
       Thread.currentThread().setContextClassLoader(cl);
-      conn.close();
     }
   }
 

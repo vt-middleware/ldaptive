@@ -298,6 +298,7 @@ public final class DnParser
         for (char c : chars) {
           if (c == s.charAt(i)) {
             match = true;
+            break;
           }
         }
         if (match) {

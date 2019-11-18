@@ -144,7 +144,7 @@ public class LdapEntryMapperTest
   public void mapToObject(final CustomObject object, final LdapEntry entry, final LdapEntryMapper<CustomObject> mapper)
     throws Exception
   {
-    final CustomObject mapped = object.getClass().newInstance();
+    final CustomObject mapped = object.getClass().getDeclaredConstructor().newInstance();
     mapper.map(entry, mapped);
     mapped.initialize();
     Assert.assertEquals(object, mapped);

@@ -116,7 +116,7 @@ public class ClassGenerator
 
     // read the source files
     final Path sourceDir = Paths.get(path + "/doc-sources");
-    Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
+    Files.walkFileTree(sourceDir, new SimpleFileVisitor<>() {
       @Override
       public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
         throws IOException
@@ -291,7 +291,7 @@ public class ClassGenerator
 
     // add imports
     final Path sourceDir = Paths.get(path);
-    Files.walkFileTree(sourceDir, new SimpleFileVisitor<Path>() {
+    Files.walkFileTree(sourceDir, new SimpleFileVisitor<>() {
       @Override
       public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
         throws IOException

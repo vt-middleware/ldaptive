@@ -156,8 +156,8 @@ public class CharCustomObject implements CustomObject
 
     final T o1;
     try {
-      o1 = type.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      o1 = type.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
       throw new IllegalStateException(e);
     }
     o1.setCustomDn("cn=String Entry,ou=people,dc=ldaptive,dc=org");

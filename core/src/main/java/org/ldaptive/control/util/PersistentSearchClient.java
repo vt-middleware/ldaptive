@@ -6,19 +6,13 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import org.ldaptive.Connection;
 import org.ldaptive.LdapException;
-import org.ldaptive.Request;
-import org.ldaptive.Response;
 import org.ldaptive.SearchEntry;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
 import org.ldaptive.async.AbandonOperation;
-import org.ldaptive.async.AsyncRequest;
 import org.ldaptive.async.AsyncSearchOperation;
-import org.ldaptive.async.handler.AsyncRequestHandler;
 import org.ldaptive.control.PersistentSearchChangeType;
 import org.ldaptive.control.PersistentSearchRequestControl;
 import org.ldaptive.handler.HandlerResult;
-import org.ldaptive.handler.OperationResponseHandler;
 import org.ldaptive.handler.SearchEntryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,45 +108,29 @@ public class PersistentSearchClient
 
     final AsyncSearchOperation search = new AsyncSearchOperation(connection);
     search.setOperationResponseHandlers(
-      new OperationResponseHandler<SearchRequest, SearchResult>() {
-        @Override
-        public HandlerResult<Response<SearchResult>> handle(
-          final Connection conn,
-          final SearchRequest request,
-          final Response<SearchResult> response)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", response);
-            search.shutdown();
+      (conn, req, res) -> {
+        try {
+          logger.debug("received {}", res);
+          search.shutdown();
 
-            queue.put(new PersistentSearchItem(response));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue response {}", response);
-          }
-          return new HandlerResult<>(response);
+          queue.put(new PersistentSearchItem(res));
+        } catch (Exception e) {
+          logger.warn("Unable to enqueue response {}", res);
         }
+        return new HandlerResult<>(res);
       });
     search.setAsyncRequestHandlers(
-      new AsyncRequestHandler() {
-        @Override
-        public HandlerResult<AsyncRequest> handle(
-          final Connection conn,
-          final Request request,
-          final AsyncRequest asyncRequest)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", asyncRequest);
-            queue.put(new PersistentSearchItem(asyncRequest));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue async request {}", asyncRequest);
-          }
-          return new HandlerResult<>(null);
+      (conn, req, asyncReq) -> {
+        try {
+          logger.debug("received {}", asyncReq);
+          queue.put(new PersistentSearchItem(asyncReq));
+        } catch (Exception e) {
+          logger.warn("Unable to enqueue async request {}", asyncReq);
         }
+        return new HandlerResult<>(null);
       });
     search.setExceptionHandler(
-      (conn, request1, exception) -> {
+      (conn, req, exception) -> {
         try {
           logger.debug("received exception:", exception);
           search.shutdown();

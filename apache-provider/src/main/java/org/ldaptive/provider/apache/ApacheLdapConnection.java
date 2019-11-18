@@ -4,7 +4,6 @@ package org.ldaptive.provider.apache;
 import java.util.Map;
 import org.apache.directory.api.ldap.extras.extended.pwdModify.PasswordModifyResponse;
 import org.apache.directory.api.ldap.extras.extended.whoAmI.WhoAmIResponse;
-import org.apache.directory.api.ldap.model.cursor.CursorException;
 import org.apache.directory.api.ldap.model.cursor.SearchCursor;
 import org.apache.directory.api.ldap.model.entry.Entry;
 import org.apache.directory.api.ldap.model.entry.Modification;
@@ -730,12 +729,10 @@ public class ApacheLdapConnection implements ProviderConnection
         } else if (curRes instanceof IntermediateResponse) {
           si = processIntermediateResponse((IntermediateResponse) curRes);
         }
-      } catch (CursorException e) {
-        throw new org.ldaptive.LdapException(e);
       } catch (RuntimeException e) {
         throw e;
       } catch (Exception e) {
-        throw new org.ldaptive.LdapException(e);
+        throw new LdapException(e);
       }
       return si;
     }

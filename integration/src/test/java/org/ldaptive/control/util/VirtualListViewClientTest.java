@@ -96,7 +96,7 @@ public class VirtualListViewClientTest extends AbstractTest
     }
 
     final Connection conn = TestUtils.createConnection();
-    try {
+    try (conn) {
       conn.open();
 
       final VirtualListViewClient client = new VirtualListViewClient(
@@ -122,8 +122,6 @@ public class VirtualListViewClientTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       AssertJUnit.assertNotNull(e);
-    } finally {
-      conn.close();
     }
 
     // VLV does not give a clean way to destroy the server side sorted entries

@@ -112,8 +112,7 @@ public class TestControl
       throw new IllegalStateException("Unknown provider: " + provider);
     }
 
-    final Connection conn = TestUtils.createSetupConnection();
-    try {
+    try (Connection conn = TestUtils.createSetupConnection()) {
       conn.open();
 
       final ModifyOperation modify = new ModifyOperation(conn);
@@ -126,8 +125,6 @@ public class TestControl
       } else {
         directoryType = "LDAP";
       }
-    } finally {
-      conn.close();
     }
   }
 

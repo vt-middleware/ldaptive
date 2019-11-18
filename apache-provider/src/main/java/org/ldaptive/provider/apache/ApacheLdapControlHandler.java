@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.apache.directory.api.ldap.extras.controls.SynchronizationModeEnum;
 import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncRequestImpl;
 import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncResponse;
+import org.apache.directory.api.ldap.extras.controls.ad.AdDirSyncResponseFlag;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyErrorEnum;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyRequestImpl;
 import org.apache.directory.api.ldap.extras.controls.ppolicy.PasswordPolicyResponse;
@@ -170,8 +171,9 @@ public class ApacheLdapControlHandler implements ControlHandler<Control>
       final AdDirSyncResponse c = (AdDirSyncResponse) responseControl;
       ctl = new DirSyncControl(
         new DirSyncControl.Flag[] {
-            DirSyncControl.Flag.valueOf(
-                c.getFlags().stream().map(f -> f.getValue()).collect(Collectors.summingInt(Integer::intValue))),
+          DirSyncControl.Flag.valueOf(
+            c.getFlags().stream().map(
+              AdDirSyncResponseFlag::getValue).collect(Collectors.summingInt(Integer::intValue))),
         },
         c.getCookie(),
         c.getMaxReturnLength(),

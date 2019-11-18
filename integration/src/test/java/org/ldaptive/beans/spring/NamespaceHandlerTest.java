@@ -530,16 +530,10 @@ public class NamespaceHandlerTest
           ((PooledConnectionFactoryManager) authHandler).getConnectionFactory().getConnectionPool();
       testConnectionPool(pool, null);
     } else {
-      Connection conn = null;
-      try {
-        conn = ((ConnectionFactoryManager) authHandler).getConnectionFactory().getConnection();
+      try (Connection conn = ((ConnectionFactoryManager) authHandler).getConnectionFactory().getConnection()) {
         testConnectionConfig(conn.getConnectionConfig(), null);
       } catch (LdapException e) {
         AssertJUnit.fail("Error getting connection: " + e.getMessage());
-      } finally {
-        if (conn != null) {
-          conn.close();
-        }
       }
     }
   }
@@ -573,16 +567,10 @@ public class NamespaceHandlerTest
           ((PooledConnectionFactoryManager) dnResolver).getConnectionFactory().getConnectionPool();
       testConnectionPool(pool, authType);
     } else {
-      Connection conn = null;
-      try {
-        conn = ((ConnectionFactoryManager) dnResolver).getConnectionFactory().getConnection();
+      try (Connection conn = ((ConnectionFactoryManager) dnResolver).getConnectionFactory().getConnection()) {
         testConnectionConfig(conn.getConnectionConfig(), authType);
       } catch (LdapException e) {
         AssertJUnit.fail("Error getting connection: " + e.getMessage());
-      } finally {
-        if (conn != null) {
-          conn.close();
-        }
       }
     }
   }
@@ -609,16 +597,10 @@ public class NamespaceHandlerTest
     AssertJUnit.assertFalse(poolConfig.isValidateOnCheckOut());
     AssertJUnit.assertTrue(poolConfig.isValidatePeriodically());
 
-    Connection conn = null;
-    try {
-      conn = pool.getConnection();
+    try (Connection conn = pool.getConnection()) {
       testConnectionConfig(conn.getConnectionConfig(), authType);
     } catch (LdapException e) {
       AssertJUnit.fail("Error getting connection from pool: " + e.getMessage());
-    } finally {
-      if (conn != null) {
-        conn.close();
-      }
     }
   }
 

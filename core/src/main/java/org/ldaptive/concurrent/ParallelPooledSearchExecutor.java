@@ -112,11 +112,9 @@ public class ParallelPooledSearchExecutor extends AbstractParallelSearchExecutor
   {
     return
       () -> {
-        try {
+        try (conn) {
           conn.open();
           return operation.execute(request);
-        } finally {
-          conn.close();
         }
       };
   }

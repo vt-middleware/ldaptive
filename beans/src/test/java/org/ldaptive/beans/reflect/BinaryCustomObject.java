@@ -150,8 +150,8 @@ public class BinaryCustomObject implements CustomObject
 
     final T o1;
     try {
-      o1 = type.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      o1 = type.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
       throw new IllegalStateException(e);
     }
     o1.setType1(new byte[] {0x01});

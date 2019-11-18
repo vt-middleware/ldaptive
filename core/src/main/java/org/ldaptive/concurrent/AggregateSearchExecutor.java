@@ -117,11 +117,9 @@ public class AggregateSearchExecutor extends AbstractAggregateSearchExecutor<Con
   {
     return
       () -> {
-        try {
+        try (conn) {
           conn.open();
           return worker.executeToCompletion(requests);
-        } finally {
-          conn.close();
         }
       };
   }

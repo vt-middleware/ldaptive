@@ -2144,9 +2144,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
-    Connection conn = null;
-    try {
-      conn = TestUtils.createSaslExternalConnection();
+    try (Connection conn = TestUtils.createSaslExternalConnection()) {
       conn.open();
 
       final SearchOperation search = new SearchOperation(conn);
@@ -2158,10 +2156,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       AssertJUnit.assertNotNull(e);
-    } finally {
-      if (conn != null) {
-        conn.close();
-      }
     }
   }
 

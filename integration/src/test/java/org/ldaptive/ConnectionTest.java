@@ -239,7 +239,7 @@ public class ConnectionTest
      * SearchOperationTest: 1
      */
     final LdapURL ldapUrl = new LdapURL(host);
-    final String hostPrefix = ldapUrl.getEntry().getHostname().indexOf(".") != -1 ?
+    final String hostPrefix = ldapUrl.getEntry().getHostname().contains(".") ?
       ldapUrl.getEntry().getHostname().substring(0, ldapUrl.getEntry().getHostname().indexOf(".")) :
       ldapUrl.getEntry().getHostname();
     final int openConns = TestUtils.countOpenConnections(hostPrefix);

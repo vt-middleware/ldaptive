@@ -523,8 +523,7 @@ public class LdapAttribute extends AbstractLdapBean
           return bb1.compareTo(bb2);
         };
     } else {
-      return
-        (o1, o2) -> o1.toString().compareTo(o2.toString());
+      return Comparator.comparing(Object::toString);
     }
   }
 

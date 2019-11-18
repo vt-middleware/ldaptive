@@ -459,6 +459,7 @@ public class LdapLoginModuleTest extends AbstractTest
       for (String s : checkRoles) {
         if (s.equals(r.getName())) {
           match = true;
+          break;
         }
       }
       AssertJUnit.assertTrue(match);
@@ -569,6 +570,7 @@ public class LdapLoginModuleTest extends AbstractTest
       for (String s : checkRoles) {
         if (s.equals(r.getName())) {
           match = true;
+          break;
         }
       }
       AssertJUnit.assertTrue(match);

@@ -164,7 +164,6 @@ public class JLdapUtils
    *
    * @return  search entry
    */
-  @SuppressWarnings("unchecked")
   public SearchEntry toSearchEntry(final LDAPEntry entry, final ResponseControl[] c, final int id)
   {
     final SearchEntry se = new SearchEntry(id, c, sortBehavior);

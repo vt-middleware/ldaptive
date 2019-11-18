@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -88,13 +87,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       }
 
       // remove any properties that don't have both getters and setters
-      final Iterator<Method[]> i = properties.values().iterator();
-      while (i.hasNext()) {
-        final Method[] m = i.next();
-        if (m[0] == null || m[1] == null) {
-          i.remove();
-        }
-      }
+      properties.values().removeIf(m -> m[0] == null || m[1] == null);
 
       PROPERTIES_CACHE.put(cacheKey, Collections.unmodifiableMap(properties));
     }

@@ -100,7 +100,7 @@ public class CompareOperationTest extends AbstractTest
     // expects a referral on the dn ou=referrals
     final String referralDn = "ou=referrals," + DnParser.substring(dn, 1);
     final Connection conn = TestUtils.createConnection();
-    try {
+    try (conn) {
       conn.open();
 
       final CompareOperation compare = new CompareOperation(conn);
@@ -115,8 +115,6 @@ public class CompareOperationTest extends AbstractTest
         AssertJUnit.assertEquals(1, e.getReferralURLs().length);
         AssertJUnit.assertEquals("ldap://localhost:389/ou=people,dc=vt,dc=edu", e.getReferralURLs()[0]);
       }
-    } finally {
-      conn.close();
     }
 
     try {

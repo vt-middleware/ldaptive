@@ -227,7 +227,7 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
   {
     return
       () -> {
-        try {
+        try (conn) {
           conn.open();
 
           SearchItem item;
@@ -244,8 +244,6 @@ public class QueueingSearchExecutor extends AbstractSearchExecutor
             logger.warn("Unable to insert item {}", item);
           }
           return null;
-        } finally {
-          conn.close();
         }
       };
   }
