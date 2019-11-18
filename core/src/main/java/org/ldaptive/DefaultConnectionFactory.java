@@ -173,7 +173,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
       final Logger l = LoggerFactory.getLogger(DefaultConnectionFactory.class);
       try {
         l.info("Setting ldap provider to {}", providerClass);
-        p = (Provider<?>) Class.forName(providerClass).newInstance();
+        p = (Provider<?>) Class.forName(providerClass).getDeclaredConstructor().newInstance();
       } catch (Exception e) {
         l.error("Error instantiating {}", providerClass, e);
         throw new IllegalStateException(e);

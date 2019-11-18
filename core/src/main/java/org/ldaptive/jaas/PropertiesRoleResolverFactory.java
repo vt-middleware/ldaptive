@@ -62,8 +62,8 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory imp
     if (options.containsKey("roleResolver")) {
       try {
         final String className = (String) options.get("roleResolver");
-        rr = (RoleResolver) Class.forName(className).newInstance();
-      } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+        rr = (RoleResolver) Class.forName(className).getDeclaredConstructor().newInstance();
+      } catch (Exception e) {
         throw new IllegalArgumentException(e);
       }
     } else {

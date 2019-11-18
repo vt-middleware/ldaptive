@@ -49,8 +49,8 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
         noResultsIsError = Boolean.valueOf(value);
       } else if ("authenticatorFactory".equalsIgnoreCase(key)) {
         try {
-          authenticatorFactory = (AuthenticatorFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+          authenticatorFactory = (AuthenticatorFactory) Class.forName(value).getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
           throw new IllegalArgumentException(e);
         }
       }

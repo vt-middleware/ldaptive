@@ -61,7 +61,8 @@ public final class SearchServlet extends HttpServlet
     if (searchExecutorClass != null) {
       try {
         logger.debug("Creating search executor: {}", searchExecutorClass);
-        searchExecutor = (ServletSearchExecutor) Class.forName(searchExecutorClass).newInstance();
+        searchExecutor = (ServletSearchExecutor) Class.forName(
+          searchExecutorClass).getDeclaredConstructor().newInstance();
       } catch (Exception e) {
         logger.error("Error instantiating {}", searchExecutorClass, e);
         throw new IllegalStateException(e);
