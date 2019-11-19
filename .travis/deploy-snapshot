@@ -15,8 +15,8 @@ if [ ! -z "$TRAVIS_TAG" ]; then
   exit 0
 fi
 
-# Only run this script against master
-if [ "$TRAVIS_BRANCH" != "master" ]; then
+# Only run this script against v1.3 
+if [ "$TRAVIS_BRANCH" != "v1.3" ]; then
   echo "Skipping snapshot deploy for BRANCH=${TRAVIS_BRANCH}."
   exit 0
 fi
@@ -45,7 +45,7 @@ REPO_URL="https://github.com/vt-middleware/${REPO_NAME}.git"
 git clone $REPO_URL
 
 # Deploy the artifact to the maven repo
-mvn -Papache,jldap,opendj,unboundid,ldapi deploy -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_NAME}
+mvn -Papache,jldap,opendj,ldapi deploy -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_NAME}
 
 # Push changes to the maven repo
 cd $REPO_NAME
