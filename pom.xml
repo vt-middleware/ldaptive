@@ -568,12 +568,6 @@
       </repositories>
     </profile>
     <profile>
-      <id>unboundid</id>
-      <modules>
-        <module>unboundid-provider</module>
-      </modules>
-    </profile>
-    <profile>
       <id>integration</id>
       <modules>
         <module>integration</module>

@@ -5,7 +5,7 @@ import org.ldaptive.control.RequestControl;
 import org.ldaptive.provider.Provider;
 import org.ldaptive.provider.ProviderConnection;
 import org.ldaptive.provider.ProviderConnectionFactory;
-import org.ldaptive.provider.jndi.JndiProvider;
+import org.ldaptive.provider.unboundid.UnboundIDProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -179,8 +179,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
         throw new IllegalStateException(e);
       }
     } else {
-      // set the default ldap provider to JNDI
-      p = new JndiProvider();
+      // set the default ldap provider to UnboundID
+      p = new UnboundIDProvider();
     }
     return p;
   }

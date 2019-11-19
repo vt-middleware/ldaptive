@@ -14,7 +14,7 @@
   </parent>
 
   <properties>
-    <ldapTestProvider>org.ldaptive.provider.jndi.JndiProvider</ldapTestProvider>
+    <ldapTestProvider>org.ldaptive.provider.unboundid.UnboundIDProvider</ldapTestProvider>
   </properties>
 
   <dependencies>
@@ -300,19 +300,6 @@
       </dependencies>
       <properties>
         <ldapTestProvider>org.ldaptive.provider.opendj.OpenDJProvider</ldapTestProvider>
-      </properties>
-    </profile>
-    <profile>
-      <id>unboundid</id>
-      <dependencies>
-        <dependency>
-          <groupId>org.ldaptive</groupId>
-          <artifactId>ldaptive-unboundid</artifactId>
-          <scope>test</scope>
-        </dependency>
-      </dependencies>
-      <properties>
-        <ldapTestProvider>org.ldaptive.provider.unboundid.UnboundIDProvider</ldapTestProvider>
       </properties>
     </profile>
   </profiles>
