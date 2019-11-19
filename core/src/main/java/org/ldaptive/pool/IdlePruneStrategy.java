@@ -42,6 +42,18 @@ public class IdlePruneStrategy implements PruneStrategy
 
 
   /**
+   * Creates a new idle prune strategy. Sets the prune period to half of the supplied idle time.
+   *
+   * @param  idle  time at which a connection should be pruned
+   */
+  public IdlePruneStrategy(final Duration idle)
+  {
+    setPrunePeriod(idle.dividedBy(2));
+    setIdleTime(idle);
+  }
+
+
+  /**
    * Creates a new idle prune strategy.
    *
    * @param  period  to execute the prune task
