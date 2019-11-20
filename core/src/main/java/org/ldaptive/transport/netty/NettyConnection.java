@@ -981,7 +981,8 @@ public final class NettyConnection extends TransportConnection
       .append("ldapUrl=").append(ldapURL).append(", ")
       .append("isOpen=").append(isOpen()).append(", ")
       .append("connectTime=").append(connectTime).append(", ")
-      .append("connectionConfig=").append(connectionConfig).toString();
+      .append("connectionConfig=").append(connectionConfig).append(", ")
+      .append("channel=").append(channel).toString();
   }
 
 
