@@ -1265,7 +1265,7 @@ public class AuthenticatorTest extends AbstractTest
       new ModifyRequest(
         entryDn,
         new AttributeModification(
-          AttributeModification.Type.ADD.ADD,
+          AttributeModification.Type.ADD,
           new LdapAttribute("pwdAccountLockedTime", "000001010000Z"))));
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
@@ -1281,7 +1281,7 @@ public class AuthenticatorTest extends AbstractTest
     modify.execute(
       new ModifyRequest(
         entryDn,
-        new AttributeModification(AttributeModification.Type.ADD.DELETE, new LdapAttribute("pwdAccountLockedTime"))));
+        new AttributeModification(AttributeModification.Type.DELETE, new LdapAttribute("pwdAccountLockedTime"))));
 
     // test bind with grace login
     modify.execute(

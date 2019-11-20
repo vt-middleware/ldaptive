@@ -39,7 +39,7 @@ public interface Message
   {
     if (getControls() != null) {
       for (ResponseControl c : getControls()) {
-        if (c.getOID().equals(oid)) {
+        if (c != null && c.getOID().equals(oid)) {
           return c;
         }
       }

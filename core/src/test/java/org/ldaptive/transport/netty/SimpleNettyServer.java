@@ -35,7 +35,7 @@ public class SimpleNettyServer
   public enum Event {
     /** Force a client disconnect. */
     DISCONNECT,
-  };
+  }
 
   /** Open notifications. */
   private Consumer<ChannelHandlerContext> onOpen;
@@ -111,9 +111,7 @@ public class SimpleNettyServer
             {
               final RequestParser parser = new RequestParser();
               final Optional<Request> message =  parser.parse(new NettyDERBuffer(in));
-              if (message.isPresent()) {
-                out.add(message.get());
-              }
+              message.ifPresent(out::add);
             }
           });
           ch.pipeline().addLast("message_handler", new SimpleChannelInboundHandler<Request>() {

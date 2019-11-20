@@ -166,7 +166,7 @@ public class DefaultSearchOperationHandle
   public DefaultSearchOperationHandle onEntry(final LdapEntryHandler... function)
   {
     onEntry = function;
-    initializeMessageFunctional((Object[]) onEntry);
+    initializeMessageFunctional(onEntry);
     return this;
   }
 
@@ -175,7 +175,7 @@ public class DefaultSearchOperationHandle
   public DefaultSearchOperationHandle onReference(final SearchReferenceHandler... function)
   {
     onReference = function;
-    initializeMessageFunctional((Object[]) onReference);
+    initializeMessageFunctional(onReference);
     return this;
   }
 
@@ -184,7 +184,7 @@ public class DefaultSearchOperationHandle
   public DefaultSearchOperationHandle onSearchResult(final SearchResultHandler... function)
   {
     onSearchResult = function;
-    initializeMessageFunctional((Object[]) onSearchResult);
+    initializeMessageFunctional(onSearchResult);
     return this;
   }
 

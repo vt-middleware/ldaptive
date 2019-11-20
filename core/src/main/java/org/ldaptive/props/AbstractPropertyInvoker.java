@@ -48,7 +48,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
         if (!method.isBridge()) {
           if (method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
             final String mName = method.getName().substring(3);
-            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1, mName.length());
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               m[1] = method;
@@ -58,7 +58,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             }
           } else if (method.getName().startsWith("get") && method.getParameterTypes().length == 0) {
             final String mName = method.getName().substring(3);
-            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1, mName.length());
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               m[0] = method;
@@ -68,7 +68,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             }
           } else if (method.getName().startsWith("is") && method.getParameterTypes().length == 0) {
             final String mName = method.getName().substring(2);
-            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1, mName.length());
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               // prefer any get method that may exist
