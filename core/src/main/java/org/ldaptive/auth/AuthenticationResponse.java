@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
+import java.util.Arrays;
 import org.ldaptive.AbstractResult;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
@@ -170,9 +171,9 @@ public class AuthenticationResponse extends AbstractResult
       .append("resultCode=").append(getResultCode()).append(", ")
       .append("matchedDN=").append(getMatchedDN()).append(", ")
       .append("diagnosticMessage=").append(getEncodedDiagnosticMessage()).append(", ")
-      .append("referralURLs=").append(getReferralURLs()).append(", ")
+      .append("referralURLs=").append(Arrays.toString(getReferralURLs())).append(", ")
       .append("messageID=").append(getMessageID()).append(", ")
-      .append("controls=").append(getControls()).append("]").toString();
+      .append("controls=").append(Arrays.toString(getControls())).append("]").toString();
   }
 
 

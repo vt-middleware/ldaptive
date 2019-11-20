@@ -180,7 +180,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public DefaultOperationHandle<Q, S> onResult(final ResultHandler... function)
   {
     onResult = function;
-    initializeMessageFunctional((Object[]) onResult);
+    initializeMessageFunctional(onResult);
     return this;
   }
 
@@ -189,7 +189,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public DefaultOperationHandle<Q, S> onControl(final ResponseControlHandler... function)
   {
     onControl = function;
-    initializeMessageFunctional((Object[]) onControl);
+    initializeMessageFunctional(onControl);
     return this;
   }
 
@@ -198,7 +198,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public DefaultOperationHandle<Q, S> onReferral(final ReferralHandler... function)
   {
     onReferral = function;
-    initializeMessageFunctional((Object[]) onReferral);
+    initializeMessageFunctional(onReferral);
     return this;
   }
 
@@ -207,7 +207,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public DefaultOperationHandle<Q, S> onIntermediate(final IntermediateResponseHandler... function)
   {
     onIntermediate = function;
-    initializeMessageFunctional((Object[]) onIntermediate);
+    initializeMessageFunctional(onIntermediate);
     return this;
   }
 
@@ -216,7 +216,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public DefaultOperationHandle<Q, S> onUnsolicitedNotification(final UnsolicitedNotificationHandler... function)
   {
     onUnsolicitedNotification = function;
-    initializeMessageFunctional((Object[]) onUnsolicitedNotification);
+    initializeMessageFunctional(onUnsolicitedNotification);
     return this;
   }
 

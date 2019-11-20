@@ -421,7 +421,7 @@ public class NamespaceHandlerTest
     if (authHandler.getConnectionFactory() instanceof PooledConnectionFactory) {
       testPooledConnectionFactory((PooledConnectionFactory) authHandler.getConnectionFactory(), null);
     } else {
-      testConnectionConfig(((DefaultConnectionFactory) authHandler.getConnectionFactory()).getConnectionConfig(), null);
+      testConnectionConfig(authHandler.getConnectionFactory().getConnectionConfig(), null);
     }
   }
 
@@ -452,7 +452,7 @@ public class NamespaceHandlerTest
       testPooledConnectionFactory((PooledConnectionFactory) dnResolver.getConnectionFactory(), authType);
     } else {
       testConnectionConfig(
-        ((DefaultConnectionFactory) dnResolver.getConnectionFactory()).getConnectionConfig(), authType);
+        dnResolver.getConnectionFactory().getConnectionConfig(), authType);
     }
   }
 
@@ -505,9 +505,11 @@ public class NamespaceHandlerTest
         (BindConnectionInitializer) connectionConfig.getConnectionInitializers()[0] : null;
       switch(authType) {
       case ANON_SEARCH:
+      case DIRECT:
         Assert.assertNull(ci);
         break;
       case BIND_SEARCH:
+      case AD:
         Assert.assertNotNull(ci);
         Assert.assertNotNull(ci.getBindDn());
         Assert.assertNotNull(ci.getBindCredential());
@@ -519,14 +521,6 @@ public class NamespaceHandlerTest
         Assert.assertEquals(sc.getMechanism(), Mechanism.DIGEST_MD5);
         Assert.assertEquals(sc.getQualityOfProtection()[0], QualityOfProtection.AUTH_INT);
         Assert.assertEquals(sc.getSecurityStrength(), SecurityStrength.MEDIUM);
-        break;
-      case DIRECT:
-        Assert.assertNull(ci);
-        break;
-      case AD:
-        Assert.assertNotNull(ci);
-        Assert.assertNotNull(ci.getBindDn());
-        Assert.assertNotNull(ci.getBindCredential());
         break;
       default:
         throw new IllegalStateException("Unknown type");

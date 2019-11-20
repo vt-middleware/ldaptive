@@ -1062,7 +1062,7 @@ public final class NettyConnection extends TransportConnection
   {
 
     /** Whether this listener is in the process of reconnecting. */
-    private AtomicBoolean reconnecting = new AtomicBoolean();
+    private final AtomicBoolean reconnecting = new AtomicBoolean();
 
 
     @Override

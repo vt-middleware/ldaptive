@@ -2,7 +2,6 @@
 package org.ldaptive.transport;
 
 import java.time.Instant;
-import java.util.Iterator;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.ldaptive.ActivePassiveConnectionStrategy;
@@ -161,10 +160,8 @@ public abstract class TransportConnection implements Connection
   {
     boolean strategyProducedUrls = false;
     LdapException lastThrown = null;
-    final Iterator<LdapURL> iter = connectionStrategy.iterator();
-    while (iter.hasNext()) {
+    for (LdapURL url : connectionStrategy) {
       strategyProducedUrls = true;
-      final LdapURL url = iter.next();
       try {
         LOGGER.trace(
           "Attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);

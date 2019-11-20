@@ -37,7 +37,6 @@ import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.NoOpEntryHandler;
 import org.ldaptive.handler.RecursiveResultHandler;
-import org.ldaptive.handler.SearchReferenceHandler;
 import org.ldaptive.referral.DefaultReferralConnectionFactory;
 import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
@@ -1490,7 +1489,7 @@ public class SearchOperationTest extends AbstractTest
       .config(cc)
       .build();
     final SearchOperation search = new SearchOperation(cf);
-    search.setReferenceHandlers((SearchReferenceHandler) uris -> refs.addAll(Arrays.asList(uris)));
+    search.setReferenceHandlers(uris -> refs.addAll(Arrays.asList(uris)));
     SearchResponse response = search.execute(request);
     Assert.assertTrue(response.entrySize() > 0);
     Assert.assertTrue(refs.size() > 0);
@@ -1599,7 +1598,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     search.setSearchResultHandlers(new PrimaryGroupIdHandler());
     search.setEntryHandlers(new ObjectSidHandler(), new ObjectGuidHandler());
-    search.setReferenceHandlers((SearchReferenceHandler) uris -> refs.addAll(Arrays.asList(uris)));
+    search.setReferenceHandlers(uris -> refs.addAll(Arrays.asList(uris)));
     SearchResponse response = search.execute(request);
     Assert.assertTrue(response.entrySize() > 0);
     Assert.assertTrue(refs.size() > 0);
@@ -1932,21 +1931,20 @@ public class SearchOperationTest extends AbstractTest
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
     final ConnectionFactory cf = new DefaultConnectionFactory(TestUtils.readConnectionConfig(null));
-    final SearchOperation search = new SearchOperation();
-    SearchResponse result = search.execute(cf, request);
+    SearchResponse result = SearchOperation.execute(cf, request);
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
 
     PooledConnectionFactory pcf = new PooledConnectionFactory(TestUtils.readConnectionConfig(null));
     pcf.setConnectOnCreate(false);
     pcf.initialize();
-    result = search.execute(pcf, request);
+    result = SearchOperation.execute(pcf, request);
     pcf.close();
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
 
     pcf = new PooledConnectionFactory(TestUtils.readConnectionConfig(null));
     pcf.setConnectOnCreate(true);
     pcf.initialize();
-    result = search.execute(pcf, request);
+    result = SearchOperation.execute(pcf, request);
     pcf.close();
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }
