@@ -17,6 +17,15 @@ public class EpollTransport extends NettyTransport
 
   /**
    * Creates a new Epoll transport.
+   */
+  public EpollTransport()
+  {
+    this(0);
+  }
+
+
+  /**
+   * Creates a new Epoll transport.
    *
    * @param  numThreads  number of threads used by the I/O {@link EpollEventLoopGroup}
    */

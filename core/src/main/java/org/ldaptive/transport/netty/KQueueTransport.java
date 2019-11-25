@@ -17,6 +17,15 @@ public class KQueueTransport extends NettyTransport
 
   /**
    * Creates a new KQueue transport.
+   */
+  public KQueueTransport()
+  {
+    this(0);
+  }
+
+
+  /**
+   * Creates a new KQueue transport.
    *
    * @param  numThreads  number of threads used by the I/O {@link KQueueEventLoopGroup}
    */
