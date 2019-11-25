@@ -1851,8 +1851,7 @@ public class SearchOperationTest extends AbstractTest
       "gssApiSearchReturnAttrs",
       "gssApiSearchResults"
     })
-  @Test(groups = "search", enabled = false)
-  // TODO figure out hostname resolution in docker compose
+  @Test(groups = "search")
   public void gssApiSearch(
     final String krb5Realm,
     final String krb5Kdc,

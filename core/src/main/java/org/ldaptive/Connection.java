@@ -4,6 +4,7 @@ package org.ldaptive;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.extended.ExtendedOperationHandle;
 import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.sasl.DefaultSaslClientRequest;
 import org.ldaptive.sasl.SaslClientRequest;
 
 /**
@@ -105,8 +106,7 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * Returns the result of a SASL request that requires use of the SASL client. This includes CRAM-MD5, DIGEST-MD5, and
-   * GSS-API.
+   * Returns the result of a SASL request that requires use of a generic SASL client.
    *
    * @param  request  SASL client request
    *
@@ -114,7 +114,20 @@ public interface Connection extends AutoCloseable
    *
    * @throws  LdapException  if the operation fails or another bind is in progress
    */
-  Result operation(SaslClientRequest request) throws LdapException;
+  BindResponse operation(SaslClientRequest request) throws LdapException;
+
+
+  /**
+   * Returns the result of a SASL request that requires use of the default SASL client. This includes CRAM-MD5,
+   * DIGEST-MD5, and GSS-API.
+   *
+   * @param  request  default SASL client request
+   *
+   * @return  operation result
+   *
+   * @throws  LdapException  if the operation fails or another bind is in progress
+   */
+  BindResponse operation(DefaultSaslClientRequest request) throws LdapException;
 
 
   /**

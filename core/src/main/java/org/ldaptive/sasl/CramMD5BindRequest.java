@@ -11,11 +11,11 @@ import javax.security.auth.callback.UnsupportedCallbackException;
  *
  * @author  Middleware Services
  */
-public class CramMD5BindRequest extends AbstractSaslClientRequest
+public class CramMD5BindRequest extends DefaultSaslClientRequest
 {
 
-  /** CRAM-MD5 SASL mechanism name. */
-  public static final String MECHANISM = "CRAM-MD5";
+  /** CRAM-MD5 SASL mechanism. */
+  public static final Mechanism MECHANISM = Mechanism.CRAM_MD5;
 
   /** Authentication ID. */
   private final String authenticationID;
@@ -54,7 +54,7 @@ public class CramMD5BindRequest extends AbstractSaslClientRequest
 
 
   @Override
-  public String getMechanism()
+  public Mechanism getMechanism()
   {
     return MECHANISM;
   }

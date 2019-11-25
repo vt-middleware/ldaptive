@@ -4,6 +4,7 @@ package org.ldaptive.sasl;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.security.auth.callback.Callback;
@@ -12,17 +13,19 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.sasl.RealmCallback;
 import javax.security.sasl.Sasl;
+import org.ldaptive.transport.DefaultSaslClient;
+import org.ldaptive.transport.GssApiSaslClient;
 
 /**
  * LDAP GSSAPI bind request.
  *
  * @author  Middleware Services
  */
-public class GssApiBindRequest extends AbstractSaslClientRequest
+public class GssApiBindRequest extends DefaultSaslClientRequest
 {
 
-  /** GSSAPI SASL mechanism name. */
-  private static final String MECHANISM = "GSSAPI";
+  /** GSSAPI SASL mechanism. */
+  private static final Mechanism MECHANISM = Mechanism.GSSAPI;
 
   /** Quality of protection. */
   private final QualityOfProtection[] allowedQoP;
@@ -38,6 +41,9 @@ public class GssApiBindRequest extends AbstractSaslClientRequest
 
   /** Password. */
   private final String password;
+
+  /** Boolean that ensures the {@link GssApiSaslClient} is only returned on the first request. */
+  private final AtomicBoolean invokeOnce = new AtomicBoolean();
 
 
   /**
@@ -76,6 +82,17 @@ public class GssApiBindRequest extends AbstractSaslClientRequest
 
 
   @Override
+  public SaslClient getSaslClient()
+  {
+    if (invokeOnce.compareAndSet(false, true)) {
+      return new GssApiSaslClient();
+    } else {
+      return new DefaultSaslClient();
+    }
+  }
+
+
+  @Override
   public void handle(final Callback[] callbacks)
     throws UnsupportedCallbackException
   {
@@ -99,7 +116,7 @@ public class GssApiBindRequest extends AbstractSaslClientRequest
 
 
   @Override
-  public String getMechanism()
+  public Mechanism getMechanism()
   {
     return MECHANISM;
   }

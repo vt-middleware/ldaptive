@@ -5,8 +5,6 @@ import java.time.Duration;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.RecursiveResultHandler;
 import org.ldaptive.pool.IdlePruneStrategy;
-import org.ldaptive.sasl.CramMD5Config;
-import org.ldaptive.sasl.DigestMD5Config;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
@@ -46,14 +44,15 @@ public class PropertyValueParserTest
     o3.setPrunePeriod(Duration.ofMinutes(1));
     o3.setIdleTime(Duration.ofMinutes(2));
 
-    final String p4 = "org.ldaptive.sasl.CramMD5Config" +
-      "{{securityStrength=LOW}{qualityOfProtection=AUTH}}";
-    final CramMD5Config o4 = new CramMD5Config();
+    final String p4 = "org.ldaptive.sasl.SaslConfig" +
+      "{{mechanism=CRAM_MD5}{securityStrength=LOW}{qualityOfProtection=AUTH}}";
+    final SaslConfig o4 = new SaslConfig();
+    o4.setMechanism(Mechanism.CRAM_MD5);
     o4.setSecurityStrength(SecurityStrength.LOW);
     o4.setQualityOfProtection(QualityOfProtection.AUTH);
 
     final String p5 = "{{mechanism=DIGEST_MD5}{authorizationId=test1}{mutualAuthentication=true}}";
-    final DigestMD5Config o5 = new DigestMD5Config();
+    final SaslConfig o5 = new SaslConfig();
     o5.setMechanism(Mechanism.DIGEST_MD5);
     o5.setAuthorizationId("test1");
     o5.setMutualAuthentication(true);
@@ -68,7 +67,7 @@ public class PropertyValueParserTest
         new Object[] {p2, null, o2, },
         new Object[] {p3, null, o3, },
         new Object[] {p4, null, o4, },
-        new Object[] {p5, DigestMD5Config.class, o5, },
+        new Object[] {p5, SaslConfig.class, o5, },
         new Object[] {p6, SaslConfig.class, o6, },
       };
   }

@@ -20,13 +20,13 @@ import org.ldaptive.ModifyDnResponse;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ModifyResponse;
 import org.ldaptive.OperationHandle;
-import org.ldaptive.Result;
 import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.UnbindRequest;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.extended.ExtendedOperationHandle;
 import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.sasl.DefaultSaslClientRequest;
 import org.ldaptive.sasl.SaslClientRequest;
 import org.ldaptive.transport.DefaultOperationHandle;
 import org.ldaptive.transport.TransportConnection;
@@ -47,6 +47,10 @@ public final class MockConnection extends TransportConnection
 
   /** Flag indicating the connection is open. */
   private boolean open;
+
+  /** LDAP URL. */
+  private LdapURL ldapURL;
+
 
   /**
    * Creates a new mock connection.
@@ -85,7 +89,15 @@ public final class MockConnection extends TransportConnection
     if (!openPredicate.test(url)) {
       throw new ConnectException("Cannot connect to " + url.getHostnameWithSchemeAndPort());
     }
+    ldapURL = url;
     open = true;
+  }
+
+
+  @Override
+  public LdapURL getLdapURL()
+  {
+    return ldapURL;
   }
 
 
@@ -167,7 +179,15 @@ public final class MockConnection extends TransportConnection
 
 
   @Override
-  public Result operation(final SaslClientRequest request)
+  public BindResponse operation(final SaslClientRequest request)
+    throws LdapException
+  {
+    throw new UnsupportedOperationException();
+  }
+
+
+  @Override
+  public BindResponse operation(final DefaultSaslClientRequest request)
     throws LdapException
   {
     throw new UnsupportedOperationException();

@@ -3,7 +3,6 @@ package org.ldaptive.transport.netty;
 
 import java.net.InetSocketAddress;
 import java.security.GeneralSecurityException;
-import java.security.PrivilegedAction;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
@@ -26,10 +25,6 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
-import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
-import javax.security.auth.login.LoginException;
-import javax.security.sasl.SaslException;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
@@ -86,8 +81,9 @@ import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.extended.StartTLSRequest;
 import org.ldaptive.extended.UnsolicitedNotification;
-import org.ldaptive.sasl.GssApiBindRequest;
+import org.ldaptive.sasl.DefaultSaslClientRequest;
 import org.ldaptive.sasl.QualityOfProtection;
+import org.ldaptive.sasl.SaslClient;
 import org.ldaptive.sasl.SaslClientRequest;
 import org.ldaptive.ssl.HostnameVerifierAdapter;
 import org.ldaptive.ssl.SSLContextInitializer;
@@ -95,9 +91,9 @@ import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.transport.DefaultCompareOperationHandle;
 import org.ldaptive.transport.DefaultExtendedOperationHandle;
 import org.ldaptive.transport.DefaultOperationHandle;
+import org.ldaptive.transport.DefaultSaslClient;
 import org.ldaptive.transport.DefaultSearchOperationHandle;
 import org.ldaptive.transport.ResponseParser;
-import org.ldaptive.transport.SaslClient;
 import org.ldaptive.transport.TransportConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,6 +298,13 @@ public final class NettyConnection extends TransportConnection
       LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
       throw new ConnectException("Open in progress");
     }
+  }
+
+
+  @Override
+  public LdapURL getLdapURL()
+  {
+    return ldapURL;
   }
 
 
@@ -535,7 +538,7 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
-   * Performs a GSS-API SASL bind operation.
+   * Performs a SASL bind operation that uses a custom client.
    *
    * @param  request  to send
    *
@@ -543,7 +546,7 @@ public final class NettyConnection extends TransportConnection
    *
    * @throws  LdapException  if the operation fails or another bind is in progress
    */
-  public Result operation(final GssApiBindRequest request)
+  public BindResponse operation(final SaslClientRequest request)
     throws LdapException
   {
     throwIfClosed();
@@ -551,23 +554,21 @@ public final class NettyConnection extends TransportConnection
       throw new LdapException("Bind in progress");
     }
     try {
-      final LoginContext context = new LoginContext(request.getClass().getSimpleName(), request);
-      context.login();
-      final Result result = Subject.doAs(
-        context.getSubject(), (PrivilegedAction<Result>) () -> {
-          try {
-            return operation((SaslClientRequest) request);
-          } catch (LdapException e) {
-            LOGGER.warn("SASL GSSAPI operation failed for {}", this, e);
-          }
-          return null;
-        });
+      final SaslClient client = request.getSaslClient();
+      final BindResponse result;
+      try {
+        result = client.bind(this, request);
+      } catch (Exception e) {
+        if (e instanceof LdapException) {
+          throw (LdapException) e;
+        } else {
+          throw new LdapException(e);
+        }
+      }
       if (result == null) {
-        throw new LdapException("SASL GSSAPI operation failed");
+        throw new LdapException("SASL operation failed");
       }
       return result;
-    } catch (LoginException e) {
-      throw new LdapException("SASL GSSAPI operation failed", e);
     } finally {
       bindLock.writeLock().unlock();
     }
@@ -584,7 +585,7 @@ public final class NettyConnection extends TransportConnection
    * @throws  LdapException  if the operation fails or another bind is in progress
    */
   @Override
-  public Result operation(final SaslClientRequest request)
+  public BindResponse operation(final DefaultSaslClientRequest request)
     throws LdapException
   {
     throwIfClosed();
@@ -592,32 +593,50 @@ public final class NettyConnection extends TransportConnection
       throw new LdapException("Bind in progress");
     }
     try {
-      final SaslClient client = new SaslClient(ldapURL.getHostname());
-      final BindResponse response;
-      boolean saslSecurity = false;
-      try {
-        response = client.bind(this, request);
-        if (response.getResultCode() == ResultCode.SUCCESS) {
-          final QualityOfProtection qop = client.getQualityOfProtection();
-          if (QualityOfProtection.AUTH_INT == qop || QualityOfProtection.AUTH_CONF == qop) {
-            if (channel.pipeline().get(SaslHandler.class) != null) {
-              channel.pipeline().remove(SaslHandler.class);
+      final SaslClient client = request.getSaslClient();
+      if (client instanceof DefaultSaslClient) {
+        final DefaultSaslClient defaultClient = (DefaultSaslClient) client;
+        final BindResponse response;
+        boolean saslSecurity = false;
+        try {
+          response = defaultClient.bind(this, request);
+          if (response.getResultCode() == ResultCode.SUCCESS) {
+            final QualityOfProtection qop = defaultClient.getQualityOfProtection();
+            if (QualityOfProtection.AUTH_INT == qop || QualityOfProtection.AUTH_CONF == qop) {
+              if (channel.pipeline().get(SaslHandler.class) != null) {
+                channel.pipeline().remove(SaslHandler.class);
+              }
+              if (channel.pipeline().get(SslHandler.class) != null) {
+                channel.pipeline().addAfter("ssl", "sasl", new SaslHandler(defaultClient.getClient()));
+              } else {
+                channel.pipeline().addFirst("sasl", new SaslHandler(defaultClient.getClient()));
+              }
+              saslSecurity = true;
             }
-            if (channel.pipeline().get(SslHandler.class) != null) {
-              channel.pipeline().addAfter("ssl", "sasl", new SaslHandler(client.getClient()));
-            } else {
-              channel.pipeline().addFirst("sasl", new SaslHandler(client.getClient()));
-            }
-            saslSecurity = true;
+          }
+          return response;
+        } catch (Exception e) {
+          throw new LdapException("SASL bind operation failed", e);
+        } finally {
+          if (!saslSecurity) {
+            defaultClient.dispose();
           }
         }
-        return response;
-      } catch (SaslException e) {
-        throw new LdapException("SASL bind operation failed", e);
-      } finally {
-        if (!saslSecurity) {
-          client.dispose();
+      } else {
+        final BindResponse result;
+        try {
+          result = client.bind(this, request);
+        } catch (Exception e) {
+          if (e instanceof LdapException) {
+            throw (LdapException) e;
+          } else {
+            throw new LdapException(e);
+          }
         }
+        if (result == null) {
+          throw new LdapException("SASL GSSAPI operation failed");
+        }
+        return result;
       }
     } finally {
       bindLock.writeLock().unlock();

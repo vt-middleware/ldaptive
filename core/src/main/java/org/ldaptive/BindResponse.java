@@ -4,7 +4,6 @@ package org.ldaptive;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
-import org.ldaptive.asn1.OctetStringType;
 
 /**
  * LDAP bind response defined as:
@@ -27,7 +26,7 @@ public class BindResponse extends AbstractResult
   private static final int HASH_CODE_SEED = 10243;
 
   /** Server SASL credentials. */
-  private String serverSaslCreds;
+  private byte[] serverSaslCreds;
 
 
   /**
@@ -55,13 +54,13 @@ public class BindResponse extends AbstractResult
   }
 
 
-  public String getServerSaslCreds()
+  public byte[] getServerSaslCreds()
   {
     return serverSaslCreds;
   }
 
 
-  public void setServerSaslCreds(final String creds)
+  public void setServerSaslCreds(final byte[] creds)
   {
     serverSaslCreds = creds;
   }
@@ -97,14 +96,6 @@ public class BindResponse extends AbstractResult
   }
 
 
-  @Override
-  public String toString()
-  {
-    return new StringBuilder(
-      super.toString()).append(", ").append("serverSaslCreds=").append(serverSaslCreds).toString();
-  }
-
-
   /** Parse handler implementation for the server SASL creds. */
   protected static class SASLCredsHandler extends AbstractParseHandler<BindResponse>
   {
@@ -124,7 +115,9 @@ public class BindResponse extends AbstractResult
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setServerSaslCreds(OctetStringType.decode(encoded));
+      if (encoded.remaining() > 0) {
+        getObject().setServerSaslCreds(encoded.getRemainingBytes());
+      }
     }
   }
 
@@ -158,7 +151,7 @@ public class BindResponse extends AbstractResult
     }
 
 
-    public Builder serverSaslCreds(final String creds)
+    public Builder serverSaslCreds(final byte[] creds)
     {
       object.setServerSaslCreds(creds);
       return this;

@@ -1,14 +1,14 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport;
 
-import java.nio.charset.StandardCharsets;
 import javax.security.sasl.Sasl;
 import javax.security.sasl.SaslException;
 import org.ldaptive.BindResponse;
 import org.ldaptive.ResultCode;
+import org.ldaptive.sasl.DefaultSaslClientRequest;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
-import org.ldaptive.sasl.SaslClientRequest;
+import org.ldaptive.sasl.SaslClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,28 +17,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class SaslClient
+public class DefaultSaslClient implements SaslClient<DefaultSaslClientRequest>
 {
 
   /** Logger for this class. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(SaslClient.class);
-
-  /** SASL server hostname. */
-  private final String serverName;
+  private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSaslClient.class);
 
   /** Underlying SASL client. */
   private javax.security.sasl.SaslClient client;
-
-
-  /**
-   * Creates a new SASL client.
-   *
-   * @param  host  SASL server hostname
-   */
-  public SaslClient(final String host)
-  {
-    serverName = host;
-  }
 
 
   /**
@@ -62,13 +48,14 @@ public class SaslClient
    *
    * @throws  SaslException  if an error occurs
    */
-  public BindResponse bind(final TransportConnection conn, final SaslClientRequest request)
+  public BindResponse bind(final TransportConnection conn, final DefaultSaslClientRequest request)
     throws SaslException
   {
     BindResponse response;
+    final String serverName = conn.getLdapURL().getHostname();
     try {
       client = Sasl.createSaslClient(
-        new String[]{request.getMechanism()},
+        new String[]{request.getMechanism().mechanism()},
         request.getAuthorizationID(),
         "ldap",
         serverName,
@@ -80,7 +67,7 @@ public class SaslClient
       while (!client.isComplete() &&
         (ResultCode.SASL_BIND_IN_PROGRESS == response.getResultCode() ||
           ResultCode.SUCCESS == response.getResultCode())) {
-        bytes = client.evaluateChallenge(response.getServerSaslCreds().getBytes(StandardCharsets.UTF_8));
+        bytes = client.evaluateChallenge(response.getServerSaslCreds());
         if (ResultCode.SUCCESS == response.getResultCode()) {
           if (bytes != null) {
             throw new SaslException("SASL client error: received response after completion");
@@ -123,15 +110,15 @@ public class SaslClient
 
 
   /**
-   * Disposes the underly SASL client. See {@link javax.security.sasl.SaslClient#dispose()}.
+   * Disposes the underlying SASL client. See {@link javax.security.sasl.SaslClient#dispose()}.
    */
   public void dispose()
   {
     if (client != null) {
       try {
         client.dispose();
-      } catch (SaslException se) {
-        LOGGER.warn("Error disposing of SASL client", se);
+      } catch (SaslException e) {
+        LOGGER.warn("Error disposing of SASL client", e);
       } finally {
         client = null;
       }
