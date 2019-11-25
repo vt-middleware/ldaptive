@@ -1,48 +1,19 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.sasl;
 
-import java.util.Map;
-import javax.security.auth.callback.CallbackHandler;
-
 /**
- * Interface for SASL requests that use a SASL client.
+ * Maker interface for SASL mechanisms that use a custom client.
  *
  * @author  Middleware Services
  */
-public interface SaslClientRequest extends CallbackHandler
+public interface SaslClientRequest
 {
 
 
   /**
-   * Returns the SASL mechanism.
+   * Returns the SASL client used by this request.
    *
-   * @return  SASL mechanism
+   * @return  SASL client
    */
-  String getMechanism();
-
-
-  /**
-   * Returns the SASL authorization.
-   *
-   * @return  SASL authorization
-   */
-  String getAuthorizationID();
-
-
-  /**
-   * Returns the SASL properties.
-   *
-   * @return  SASL properties
-   */
-  Map<String, ?> getSaslProperties();
-
-
-  /**
-   * Creates a new bind request for this client.
-   *
-   * @param  saslCredentials  to bind with
-   *
-   * @return  SASL bind request
-   */
-  SaslBindRequest createBindRequest(byte[] saslCredentials);
+  SaslClient getSaslClient();
 }

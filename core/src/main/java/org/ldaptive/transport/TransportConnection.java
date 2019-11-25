@@ -103,6 +103,15 @@ public abstract class TransportConnection implements Connection
 
 
   /**
+   * Returns the URL that was selected for this connection. The existence of this value does not indicate a current
+   * established connection.
+   *
+   * @return  LDAP URL
+   */
+  public abstract LdapURL getLdapURL();
+
+
+  /**
    * Method to support reopening a connection that was previously established. This method differs from {@link #open()}
    * in that the autoReconnectCondition is tested before the open is attempted.
    *

@@ -2,7 +2,6 @@
 package org.ldaptive.sasl;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import org.ldaptive.AbstractRequestMessage;
 import org.ldaptive.BindRequest;
 import org.ldaptive.asn1.ApplicationDERTag;
@@ -58,8 +57,7 @@ public class SaslBindRequest extends AbstractRequestMessage implements BindReque
    */
   public SaslBindRequest(final String mechanism, final String credentials)
   {
-    saslMechanism = mechanism;
-    saslCredentials = credentials != null ? credentials.getBytes(StandardCharsets.UTF_8) : null;
+    this(mechanism, credentials != null ? credentials.getBytes(StandardCharsets.UTF_8) : null);
   }
 
 
@@ -107,8 +105,7 @@ public class SaslBindRequest extends AbstractRequestMessage implements BindReque
   public String toString()
   {
     return new StringBuilder(super.toString()).append(", ")
-      .append("saslMechanism=").append(saslMechanism).append(", ")
-      .append("saslCredentials=").append(Arrays.toString(saslCredentials)).toString();
+      .append("saslMechanism=").append(saslMechanism).toString();
   }
 
 

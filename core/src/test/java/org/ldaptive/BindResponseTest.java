@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.nio.charset.StandardCharsets;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -65,7 +66,7 @@ public class BindResponseTest
             .resultCode(ResultCode.SASL_BIND_IN_PROGRESS)
             .matchedDN("")
             .diagnosticMessage("")
-            .serverSaslCreds("<10a13c7bf708ca0f399ca99e927da88b>").build(),
+            .serverSaslCreds("<10a13c7bf708ca0f399ca99e927da88b>".getBytes(StandardCharsets.UTF_8)).build(),
         },
       };
   }

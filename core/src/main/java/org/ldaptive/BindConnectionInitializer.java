@@ -5,12 +5,11 @@ import java.util.Arrays;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.sasl.CramMD5BindRequest;
 import org.ldaptive.sasl.DigestMD5BindRequest;
-import org.ldaptive.sasl.DigestMD5Config;
-import org.ldaptive.sasl.ExternalBindRequest;
 import org.ldaptive.sasl.GssApiBindRequest;
-import org.ldaptive.sasl.GssApiConfig;
+import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.SaslBindRequest;
 import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.sasl.ScramBindRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +169,7 @@ public class BindConnectionInitializer implements ConnectionInitializer
       switch(bindSaslConfig.getMechanism()) {
       case EXTERNAL:
         result = c.operation(SaslBindRequest.builder()
-          .mechanism(ExternalBindRequest.MECHANISM)
+          .mechanism(Mechanism.EXTERNAL.mechanism())
           .credentials(bindSaslConfig.getAuthorizationId() != null ? bindSaslConfig.getAuthorizationId() : "")
           .controls().build()).execute();
         break;
@@ -179,8 +178,8 @@ public class BindConnectionInitializer implements ConnectionInitializer
           bindDn,
           bindSaslConfig.getAuthorizationId(),
           bindCredential != null ? bindCredential.getString() : null,
-          bindSaslConfig instanceof DigestMD5Config ? bindSaslConfig.getRealm() : null,
-          bindSaslConfig instanceof DigestMD5Config ? bindSaslConfig.getQualityOfProtection() : null));
+          bindSaslConfig.getRealm(),
+          bindSaslConfig.getQualityOfProtection()));
         break;
       case CRAM_MD5:
         result = c.operation(new CramMD5BindRequest(
@@ -192,8 +191,17 @@ public class BindConnectionInitializer implements ConnectionInitializer
           bindDn,
           bindSaslConfig.getAuthorizationId(),
           bindCredential != null ? bindCredential.getString() : null,
-          bindSaslConfig instanceof GssApiConfig ? bindSaslConfig.getRealm() : null,
-          bindSaslConfig instanceof GssApiConfig ? bindSaslConfig.getQualityOfProtection() : null));
+          bindSaslConfig.getRealm(),
+          bindSaslConfig.getQualityOfProtection()));
+        break;
+      case SCRAM_SHA_1:
+        result = c.operation(new ScramBindRequest(Mechanism.SCRAM_SHA_1, bindDn, bindCredential.getString()));
+        break;
+      case SCRAM_SHA_256:
+        result = c.operation(new ScramBindRequest(Mechanism.SCRAM_SHA_256, bindDn, bindCredential.getString()));
+        break;
+      case SCRAM_SHA_512:
+        result = c.operation(new ScramBindRequest(Mechanism.SCRAM_SHA_512, bindDn, bindCredential.getString()));
         break;
       default:
         throw new IllegalStateException("Unknown SASL mechanism: " + bindSaslConfig.getMechanism());

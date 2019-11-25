@@ -20,11 +20,11 @@ import javax.security.sasl.Sasl;
  *
  * @author  Middleware Services
  */
-public class DigestMD5BindRequest extends AbstractSaslClientRequest
+public class DigestMD5BindRequest extends DefaultSaslClientRequest
 {
 
-  /** DIGEST-MD5 SASL mechanism name. */
-  public static final String MECHANISM = "DIGEST-MD5";
+  /** DIGEST-MD5 SASL mechanism. */
+  public static final Mechanism MECHANISM = Mechanism.DIGEST_MD5;
 
   /** Quality of protection. */
   private final QualityOfProtection[] allowedQoP;
@@ -116,7 +116,7 @@ public class DigestMD5BindRequest extends AbstractSaslClientRequest
 
 
   @Override
-  public String getMechanism()
+  public Mechanism getMechanism()
   {
     return MECHANISM;
   }

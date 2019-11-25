@@ -9,8 +9,8 @@ package org.ldaptive.sasl;
 public class ExternalBindRequest extends SaslBindRequest
 {
 
-  /** External SASL mechanism name. */
-  public static final String MECHANISM = "EXTERNAL";
+  /** External SASL mechanism. */
+  public static final Mechanism MECHANISM = Mechanism.EXTERNAL;
 
 
   /**
@@ -29,6 +29,6 @@ public class ExternalBindRequest extends SaslBindRequest
    */
   public ExternalBindRequest(final String authzID)
   {
-    super(MECHANISM, authzID != null ? authzID : "");
+    super(MECHANISM.mechanism(), authzID != null ? authzID : "");
   }
 }

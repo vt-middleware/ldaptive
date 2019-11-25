@@ -14,9 +14,9 @@ import org.ldaptive.auth.Authenticator;
 import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.pool.PoolConfig;
-import org.ldaptive.sasl.DigestMD5Config;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
+import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.SecurityStrength;
 import org.ldaptive.ssl.CredentialConfig;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
@@ -205,7 +205,7 @@ public class NamespaceHandlerTest
         break;
       case SASL_SEARCH:
         Assert.assertNotNull(ci);
-        final DigestMD5Config sc = (DigestMD5Config) ci.getBindSaslConfig();
+        final SaslConfig sc = ci.getBindSaslConfig();
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getMechanism(), Mechanism.DIGEST_MD5);
         Assert.assertEquals(sc.getQualityOfProtection(), QualityOfProtection.AUTH_INT);

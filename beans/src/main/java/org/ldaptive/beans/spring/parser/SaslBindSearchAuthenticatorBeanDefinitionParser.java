@@ -1,10 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
-import org.ldaptive.sasl.CramMD5Config;
-import org.ldaptive.sasl.DigestMD5Config;
-import org.ldaptive.sasl.ExternalConfig;
-import org.ldaptive.sasl.GssApiConfig;
+import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.SaslConfig;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -87,19 +84,38 @@ public class SaslBindSearchAuthenticatorBeanDefinitionParser extends AbstractSea
     switch (value) {
 
     case "DIGEST_MD5":
-      saslConfig = new DigestMD5Config();
+      saslConfig = new SaslConfig();
+      saslConfig.setMechanism(Mechanism.DIGEST_MD5);
       break;
 
     case "CRAM_MD5":
-      saslConfig = new CramMD5Config();
+      saslConfig = new SaslConfig();
+      saslConfig.setMechanism(Mechanism.CRAM_MD5);
       break;
 
     case "EXTERNAL":
-      saslConfig = new ExternalConfig();
+      saslConfig = new SaslConfig();
+      saslConfig.setMechanism(Mechanism.EXTERNAL);
       break;
 
     case "GSSAPI":
-      saslConfig = new GssApiConfig();
+      saslConfig = new SaslConfig();
+      saslConfig.setMechanism(Mechanism.GSSAPI);
+      break;
+
+    case "SCRAM_SHA_1":
+      saslConfig = new SaslConfig();
+      saslConfig.setMechanism(Mechanism.SCRAM_SHA_1);
+      break;
+
+    case "SCRAM_SHA_256":
+      saslConfig = new SaslConfig();
+      saslConfig.setMechanism(Mechanism.SCRAM_SHA_256);
+      break;
+
+    case "SCRAM_SHA_512":
+      saslConfig = new SaslConfig();
+      saslConfig.setMechanism(Mechanism.SCRAM_SHA_512);
       break;
 
     default:
