@@ -4,9 +4,9 @@ package org.ldaptive.transport;
 import java.lang.reflect.Constructor;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.kqueue.KQueue;
-import org.ldaptive.transport.netty.SharedEpollTransport;
-import org.ldaptive.transport.netty.SharedKQueueTransport;
-import org.ldaptive.transport.netty.SharedNioTransport;
+import org.ldaptive.transport.netty.EpollTransport;
+import org.ldaptive.transport.netty.KQueueTransport;
+import org.ldaptive.transport.netty.NioTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,11 +64,11 @@ public final class TransportFactory
     }
     final Transport transport;
     if (Epoll.isAvailable()) {
-      transport = new SharedEpollTransport();
+      transport = new EpollTransport(1);
     } else if (KQueue.isAvailable()) {
-      transport = new SharedKQueueTransport();
+      transport = new KQueueTransport(1);
     } else {
-      transport = new SharedNioTransport();
+      transport = new NioTransport(1);
     }
     return transport;
   }
