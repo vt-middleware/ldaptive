@@ -4,6 +4,7 @@ package org.ldaptive.beans.spring.parser;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.filter.Filter;
+import org.ldaptive.filter.FilterParseException;
 import org.ldaptive.filter.FilterParser;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -100,6 +101,10 @@ public class SearchOperationBeanDefinitionParser extends AbstractBeanDefinitionP
    */
   protected static Filter parseFilter(final String value)
   {
-    return FilterParser.parse(value);
+    try {
+      return FilterParser.parse(value);
+    } catch (FilterParseException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 }

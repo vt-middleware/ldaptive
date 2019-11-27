@@ -11,17 +11,18 @@ public abstract class AbstractFilterFunction implements FilterFunction
 
 
   @Override
-  public Filter apply(final String filter)
+  public Filter parse(final String filter)
+    throws FilterParseException
   {
     final String balancedFilter;
     // Check for balanced parentheses
     if (filter.startsWith("(")) {
       if (!filter.endsWith(")")) {
-        throw new IllegalArgumentException("Unbalanced parentheses. Opening paren without closing paren.");
+        throw new FilterParseException("Unbalanced parentheses. Opening paren without closing paren.");
       }
       balancedFilter = filter;
     } else if (filter.endsWith(")")) {
-      throw new IllegalArgumentException("Unbalanced parentheses. Closing paren without opening paren.");
+      throw new FilterParseException("Unbalanced parentheses. Closing paren without opening paren.");
     } else {
       // Allow entire filter strings without enclosing parentheses
       balancedFilter = "(".concat(filter).concat(")");
@@ -38,13 +39,14 @@ public abstract class AbstractFilterFunction implements FilterFunction
    *
    * @return  search filter
    *
-   * @throws  IllegalArgumentException  if filter does not start with '(' and end with ')'
+   * @throws  FilterParseException  if filter does not start with '(' and end with ')'
    */
   private Filter readNextComponent(final String filter)
+    throws FilterParseException
   {
     final int end = filter.length() - 1;
     if (filter.charAt(0) != '(' || filter.charAt(end) != ')') {
-      throw new IllegalArgumentException("Filter must be surround by parentheses: " + filter);
+      throw new FilterParseException("Filter must be surround by parentheses: '" + filter + "'");
     }
     int pos = 1;
     final Filter searchFilter;
@@ -66,7 +68,7 @@ public abstract class AbstractFilterFunction implements FilterFunction
       // attempt to match a non-set filter type
       searchFilter = parseFilterComp(filter);
       if (searchFilter == null) {
-        throw new IllegalArgumentException("Could not parse filter: " + filter);
+        throw new FilterParseException("Could not determine filter type for '" + filter + "'");
       }
       break;
     }
@@ -84,18 +86,22 @@ public abstract class AbstractFilterFunction implements FilterFunction
    *
    * @return  the supplied filter set with components added from filter
    *
-   * @throws  IllegalArgumentException  if filter doesn't start with '(' and containing a matching ')'
+   * @throws  FilterParseException  if filter doesn't start with '(' and containing a matching ')'
    */
   private FilterSet readFilterSet(final FilterSet set, final String filter, final int start, final int end)
+    throws FilterParseException
   {
     int pos = start;
     int closeIndex = findMatchingParenPosition(filter, pos);
     if (filter.charAt(pos) != '(' || closeIndex == -1 || closeIndex == end) {
-      throw new IllegalArgumentException(
-        "Invalid filter syntax, missing parenthesis after " + set.getType());
+      throw new FilterParseException("Invalid filter syntax, missing parenthesis after " + set.getType());
     }
     while (pos < end) {
-      set.add(readNextComponent(filter.substring(pos, closeIndex + 1)));
+      try {
+        set.add(readNextComponent(filter.substring(pos, closeIndex + 1)));
+      } catch (Exception e) {
+        throw new FilterParseException(e);
+      }
       pos = closeIndex + 1;
       if (pos < end) {
         closeIndex = findMatchingParenPosition(filter, pos);
@@ -114,15 +120,16 @@ public abstract class AbstractFilterFunction implements FilterFunction
    *
    * @return  index of the matching paren
    *
-   * @throws  IllegalArgumentException  if filter is null, empty or does not begin with '('
+   * @throws  FilterParseException  if filter is null, empty or does not begin with '('
    */
   private int findMatchingParenPosition(final String filter, final int start)
+    throws FilterParseException
   {
     if (filter == null || filter.length() == 0) {
-      throw new IllegalArgumentException("Filter cannot be null or empty");
+      throw new FilterParseException("Filter cannot be null or empty");
     }
     if (filter.charAt(start) != '(') {
-      throw new IllegalArgumentException("Filter must begin with '('");
+      throw new FilterParseException("Filter must begin with '('");
     }
     int pos = start + 1;
     int parenCount = 1;
@@ -148,6 +155,9 @@ public abstract class AbstractFilterFunction implements FilterFunction
    * @param  filter  to inspect
    *
    * @return  search filter
+   *
+   * @throws  FilterParseException  if filter is invalid
    */
-  protected abstract Filter parseFilterComp(String filter);
+  protected abstract Filter parseFilterComp(String filter)
+    throws FilterParseException;
 }

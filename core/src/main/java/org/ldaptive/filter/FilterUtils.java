@@ -81,8 +81,11 @@ public final class FilterUtils
    * @param  value  array of assertion values
    *
    * @return  assertion value bytes
+   *
+   * @throws  FilterParseException  if the value contains \0, ( or )
    */
   public static byte[][] parseAssertionValue(final String... value)
+    throws FilterParseException
   {
     final byte[][] bytes = new byte[value.length][];
     for (int i = 0; i < value.length; i++) {
@@ -99,21 +102,22 @@ public final class FilterUtils
    *
    * @return  assertion value bytes
    *
-   * @throws  IllegalArgumentException  if the value contains \0, ( or )
+   * @throws  FilterParseException  if the value contains \0, ( or )
    */
   public static byte[] parseAssertionValue(final String value)
+    throws FilterParseException
   {
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream(value.length());
     for (int i = 0; i < value.length(); i++) {
       final char c = value.charAt(i);
       if (c == '\0' || c == '(' || c == ')') {
-        throw new IllegalArgumentException("Assertion value contains unescaped characters");
+        throw new FilterParseException("Assertion value contains unescaped characters");
       } else if (c == '\\') {
         final char[] hexValue = new char[]{value.charAt(++i), value.charAt(++i)};
         try {
           bytes.write(LdapUtils.hexDecode(hexValue));
         } catch (IOException e) {
-          throw new IllegalArgumentException("Could not hex decode " + Arrays.toString(hexValue) + " in " + value);
+          throw new FilterParseException("Could not hex decode " + Arrays.toString(hexValue) + " in " + value);
         }
       } else {
         bytes.write(c);

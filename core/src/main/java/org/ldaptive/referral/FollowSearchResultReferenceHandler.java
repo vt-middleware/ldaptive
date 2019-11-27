@@ -8,6 +8,7 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
+import org.ldaptive.filter.FilterParseException;
 import org.ldaptive.filter.FilterParser;
 import org.ldaptive.handler.SearchResultHandler;
 import org.ldaptive.transport.DefaultSearchOperationHandle;
@@ -79,18 +80,22 @@ public class FollowSearchResultReferenceHandler extends AbstractFollowReferralHa
   @Override
   protected SearchRequest createReferralRequest(final LdapURL url)
   {
-    return SearchRequest.builder()
-      .controls(getRequest().getControls())
-      .scope(!url.isDefaultScope() ? url.getScope() : getRequest().getSearchScope())
-      .dn(!url.isDefaultBaseDn() ? url.getBaseDn() : getRequest().getBaseDn())
-      .filter(!url.isDefaultFilter() ? FilterParser.parse(url.getFilter()) : getRequest().getFilter())
-      .sizeLimit(getRequest().getSizeLimit())
-      .timeLimit(getRequest().getTimeLimit())
-      .typesOnly(getRequest().isTypesOnly())
-      .returnAttributes(getRequest().getReturnAttributes())
-      .aliases(getRequest().getDerefAliases())
-      .binaryAttributes(getRequest().getBinaryAttributes())
-      .build();
+    try {
+      return SearchRequest.builder()
+        .controls(getRequest().getControls())
+        .scope(!url.isDefaultScope() ? url.getScope() : getRequest().getSearchScope())
+        .dn(!url.isDefaultBaseDn() ? url.getBaseDn() : getRequest().getBaseDn())
+        .filter(!url.isDefaultFilter() ? FilterParser.parse(url.getFilter()) : getRequest().getFilter())
+        .sizeLimit(getRequest().getSizeLimit())
+        .timeLimit(getRequest().getTimeLimit())
+        .typesOnly(getRequest().isTypesOnly())
+        .returnAttributes(getRequest().getReturnAttributes())
+        .aliases(getRequest().getDerefAliases())
+        .binaryAttributes(getRequest().getBinaryAttributes())
+        .build();
+    } catch (FilterParseException e) {
+      throw new IllegalStateException("Could not parse filter in the LDAP URL '" + url.getFilter() + "'", e);
+    }
   }
 
 

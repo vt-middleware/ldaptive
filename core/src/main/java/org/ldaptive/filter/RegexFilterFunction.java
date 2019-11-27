@@ -50,6 +50,7 @@ public class RegexFilterFunction extends AbstractFilterFunction
 
   @Override
   protected Filter parseFilterComp(final String filter)
+    throws FilterParseException
   {
     // note that presence *must* be checked before substring
     Filter searchFilter = parsePresenceFilter(filter);
@@ -98,8 +99,11 @@ public class RegexFilterFunction extends AbstractFilterFunction
    * @param  component  to parse
    *
    * @return  equality filter or null if component doesn't match this filter type
+   *
+   * @throws  FilterParseException  if the filter is invalid
    */
   static EqualityFilter parseEqualityFilter(final String component)
+    throws FilterParseException
   {
     final Matcher m = EQUALITY_FILTER_PATTERN.matcher(component);
     if (m.matches()) {
@@ -118,8 +122,11 @@ public class RegexFilterFunction extends AbstractFilterFunction
    * @param  component  to parse
    *
    * @return  substring filter or null if component doesn't match this filter type
+   *
+   * @throws  FilterParseException  if the filter contains values that should have been escaped
    */
   static SubstringFilter parseSubstringFilter(final String component)
+    throws FilterParseException
   {
     final Matcher m = SUBSTRING_FILTER_PATTERN.matcher(component);
     if (m.matches()) {
@@ -145,11 +152,15 @@ public class RegexFilterFunction extends AbstractFilterFunction
           contains = assertions.substring(firstAsterisk + 1, lastAsterisk).split("\\*");
           throwOnEscapeChars(contains);
         }
-        return new SubstringFilter(
-          attr,
-          startsWith != null ? FilterUtils.parseAssertionValue(startsWith) : null,
-          endsWith != null ? FilterUtils.parseAssertionValue(endsWith) : null,
-          contains != null ? FilterUtils.parseAssertionValue(contains) : null);
+        try {
+          return new SubstringFilter(
+            attr,
+            startsWith != null ? FilterUtils.parseAssertionValue(startsWith) : null,
+            endsWith != null ? FilterUtils.parseAssertionValue(endsWith) : null,
+            contains != null ? FilterUtils.parseAssertionValue(contains) : null);
+        } catch (IllegalArgumentException e) {
+          throw new FilterParseException(e);
+        }
       }
     }
     return null;
@@ -162,8 +173,11 @@ public class RegexFilterFunction extends AbstractFilterFunction
    * @param  component  to parse
    *
    * @return  extensible filter or null if component doesn't match this filter type
+   *
+   * @throws  FilterParseException  if the component cannot be parsed
    */
   static ExtensibleFilter parseExtensibleFilter(final String component)
+    throws FilterParseException
   {
     final Matcher m = EXTENSIBLE_FILTER_PATTERN.matcher(component);
     if (m.matches()) {
@@ -172,7 +186,11 @@ public class RegexFilterFunction extends AbstractFilterFunction
       final String attr = m.group(1);
       final String value = m.group(4);
       final boolean dn = m.group(2) != null;
-      return new ExtensibleFilter(rule, attr, FilterUtils.parseAssertionValue(value), dn);
+      try {
+        return new ExtensibleFilter(rule, attr, FilterUtils.parseAssertionValue(value), dn);
+      } catch (IllegalArgumentException e) {
+        throw new FilterParseException(e);
+      }
       // CheckStyle:MagicNumber ON
     }
     return null;
@@ -185,8 +203,11 @@ public class RegexFilterFunction extends AbstractFilterFunction
    * @param  component  to parse
    *
    * @return  greater or equal filter or null if component doesn't match this filter type
+   *
+   * @throws  FilterParseException  if the component cannot be parsed
    */
   static GreaterOrEqualFilter parseGreaterOrEqualFilter(final String component)
+    throws FilterParseException
   {
     final Matcher m = GREATER_OR_EQUAL_FILTER_PATTERN.matcher(component);
     if (m.matches()) {
@@ -204,8 +225,11 @@ public class RegexFilterFunction extends AbstractFilterFunction
    * @param  component  to parse
    *
    * @return  less or equal filter or null if component doesn't match this filter type
+   *
+   * @throws  FilterParseException  if the component cannot be parsed
    */
   static LessOrEqualFilter parseLessOrEqualFilter(final String component)
+    throws FilterParseException
   {
     final Matcher m = LESS_OR_EQUAL_FILTER_PATTERN.matcher(component);
     if (m.matches()) {
@@ -223,8 +247,11 @@ public class RegexFilterFunction extends AbstractFilterFunction
    * @param  component  to parse
    *
    * @return  approximate filter or null if component doesn't match this filter type
+   *
+   * @throws  FilterParseException  if the component cannot be parsed
    */
   static ApproximateFilter parseApproximateFilter(final String component)
+    throws FilterParseException
   {
     final Matcher m = APPROXIMATE_FILTER_PATTERN.matcher(component);
     if (m.matches()) {
@@ -241,14 +268,15 @@ public class RegexFilterFunction extends AbstractFilterFunction
    *
    * @param  values  to check
    *
-   * @throws  IllegalArgumentException  if a value contains characters that should be escaped
+   * @throws  FilterParseException  if a value contains characters that should be escaped
    */
   private static void throwOnEscapeChars(final String... values)
+    throws FilterParseException
   {
     for (String s : values) {
       final Matcher m = ESCAPE_CHARS_PATTERN.matcher(s);
       if  (m.find()) {
-        throw new IllegalArgumentException("Invalid filter syntax, contains unescaped characters");
+        throw new FilterParseException("Invalid filter syntax, contains unescaped characters");
       }
     }
   }

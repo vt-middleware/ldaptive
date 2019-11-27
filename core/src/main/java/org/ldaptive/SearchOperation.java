@@ -146,6 +146,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search operation handle
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchOperationHandle send(final String filter)
@@ -162,6 +163,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search operation handle
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchOperationHandle send(final FilterTemplate template)
@@ -195,6 +197,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search operation handle
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchOperationHandle send(final String filter, final String... returnAttributes)
@@ -212,6 +215,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search operation handle
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchOperationHandle send(final FilterTemplate template, final String... returnAttributes)
@@ -247,6 +251,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search operation handle
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchOperationHandle send(
@@ -268,6 +273,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search operation handle
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchOperationHandle send(
@@ -311,6 +317,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search operation handle
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchOperationHandle send(
@@ -334,6 +341,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search operation handle
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchOperationHandle send(
@@ -439,6 +447,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search result
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchResponse execute(final String filter)
@@ -455,6 +464,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search result
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchResponse execute(final FilterTemplate template)
@@ -488,6 +498,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search result
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchResponse execute(final String filter, final String... returnAttributes)
@@ -505,6 +516,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search result
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchResponse execute(final FilterTemplate template, final String... returnAttributes)
@@ -540,6 +552,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search result
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchResponse execute(
@@ -561,6 +574,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search result
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchResponse execute(
@@ -604,6 +618,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search result
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchResponse execute(
@@ -627,6 +642,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  search result
    *
+   * @throws  org.ldaptive.filter.FilterParseException  if the filter cannot be parsed
    * @throws  LdapException  if the connection cannot be opened
    */
   public SearchResponse execute(

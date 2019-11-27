@@ -13,7 +13,9 @@ import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UniversalDERTag;
 import org.ldaptive.filter.Filter;
+import org.ldaptive.filter.FilterParseException;
 import org.ldaptive.filter.FilterParser;
+import org.ldaptive.filter.PresenceFilter;
 
 /**
  * LDAP search request defined as:
@@ -382,11 +384,17 @@ public class SearchRequest extends AbstractRequestMessage
    * Sets the search filter. See {@link FilterParser#parse(String)}.
    *
    * @param  filter  search filter
+   *
+   * @throws  IllegalArgumentException  if the filter cannot be parsed
    */
   public void setFilter(final String filter)
   {
     logger.trace("setting filter: {}", filter);
-    searchFilter = FilterParser.parse(filter);
+    try {
+      searchFilter = FilterParser.parse(filter);
+    } catch (FilterParseException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
 
@@ -394,11 +402,17 @@ public class SearchRequest extends AbstractRequestMessage
    * Sets the search filter. See {@link FilterTemplate} and {@link FilterParser#parse(String)}.
    *
    * @param  template  filter template
+   *
+   * @throws  IllegalArgumentException  if the filter cannot be parsed
    */
   public void setFilter(final FilterTemplate template)
   {
     logger.trace("setting filter: {}", template);
-    searchFilter = FilterParser.parse(template.format());
+    try {
+      searchFilter = FilterParser.parse(template.format());
+    } catch (FilterParseException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
 
@@ -550,7 +564,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public static SearchRequest objectScopeSearchRequest(final String dn, final String[] attrs)
   {
-    return objectScopeSearchRequest(dn, attrs, FilterParser.parse("(objectClass=*)"));
+    return objectScopeSearchRequest(dn, attrs, new PresenceFilter("objectClass"));
   }
 
 
@@ -562,13 +576,19 @@ public class SearchRequest extends AbstractRequestMessage
    * @param  filter  to execute on the ldap entry
    *
    * @return  search request
+   *
+   * @throws  IllegalArgumentException  if the filter cannot be parsed
    */
   public static SearchRequest objectScopeSearchRequest(
     final String dn,
     final String[] attrs,
     final String filter)
   {
-    return objectScopeSearchRequest(dn, attrs, FilterParser.parse(filter));
+    try {
+      return objectScopeSearchRequest(dn, attrs, FilterParser.parse(filter));
+    } catch (FilterParseException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
 
@@ -580,13 +600,19 @@ public class SearchRequest extends AbstractRequestMessage
    * @param  template  to execute on the ldap entry
    *
    * @return  search request
+   *
+   * @throws  IllegalArgumentException  if the filter cannot be parsed
    */
   public static SearchRequest objectScopeSearchRequest(
     final String dn,
     final String[] attrs,
     final FilterTemplate template)
   {
-    return objectScopeSearchRequest(dn, attrs, FilterParser.parse(template.format()));
+    try {
+      return objectScopeSearchRequest(dn, attrs, FilterParser.parse(template.format()));
+    } catch (FilterParseException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
 

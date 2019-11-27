@@ -72,10 +72,11 @@ public final class FilterParser
    *
    * @return  search filter
    *
-   * @throws  IllegalArgumentException  if filter parens are unbalanced
+   * @throws  FilterParseException  if filter is invalid
    */
   public static Filter parse(final String filter)
+    throws FilterParseException
   {
-    return FILTER_FUNCTION.apply(filter);
+    return FILTER_FUNCTION.parse(filter);
   }
 }

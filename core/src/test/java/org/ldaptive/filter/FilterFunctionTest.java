@@ -49,6 +49,7 @@ public class FilterFunctionTest
         new Object[] {"(cn=aaaaa", null, true, },
         new Object[] {"(&(cn=abc)", null, true, },
         new Object[] {"(=John)", null, true, },
+        new Object[] {"(?authId=)", null, true, },
         new Object[] {"(givenName:=John", null, true, },
         new Object[] {"givenName:=John)", null, true, },
         new Object[] {":=", null, true, },
@@ -565,11 +566,11 @@ public class FilterFunctionTest
   {
     final FilterFunction func = new DefaultFilterFunction();
     try {
-      Assert.assertEquals(func.apply(value), filter);
+      Assert.assertEquals(func.parse(value), filter);
       if (throwsException) {
         Assert.fail("Should have thrown exception");
       }
-    } catch (Exception e) {
+    } catch (FilterParseException e) {
       if (!throwsException) {
         Assert.fail("Should not have thrown exception");
       }
@@ -590,11 +591,11 @@ public class FilterFunctionTest
   {
     final FilterFunction func = new RegexFilterFunction();
     try {
-      Assert.assertEquals(func.apply(value), filter);
+      Assert.assertEquals(func.parse(value), filter);
       if (throwsException) {
         Assert.fail("Should have thrown exception");
       }
-    } catch (Exception e) {
+    } catch (FilterParseException e) {
       if (!throwsException) {
         Assert.fail("Should not have thrown exception");
       }
@@ -614,11 +615,11 @@ public class FilterFunctionTest
   {
     final FilterFunction func = new DefaultFilterFunction();
     try {
-      func.apply(value);
+      func.parse(value);
       if (throwsException) {
         Assert.fail("Should have thrown exception for filter " + value);
       }
-    } catch (Exception e) {
+    } catch (FilterParseException e) {
       if (!throwsException) {
         Assert.fail("Should not have thrown exception for filter " + value, e);
       }
@@ -638,11 +639,11 @@ public class FilterFunctionTest
   {
     final FilterFunction func = new RegexFilterFunction();
     try {
-      func.apply(value);
+      func.parse(value);
       if (throwsException) {
         Assert.fail("Should have thrown exception for filter " + value);
       }
-    } catch (Exception e) {
+    } catch (FilterParseException e) {
       if (!throwsException) {
         Assert.fail("Should not have thrown exception for filter " + value, e);
       }
@@ -652,18 +653,19 @@ public class FilterFunctionTest
 
   @Test
   public void performance()
+    throws Exception
   {
     final String filter = "(cn=daniel*fisher)";
     final DefaultFilterFunction defaultFunc = new DefaultFilterFunction();
     final RegexFilterFunction regexFunc = new RegexFilterFunction();
 
     long t1 = System.nanoTime();
-    defaultFunc.apply(filter);
+    defaultFunc.parse(filter);
     t1 = System.nanoTime() - t1;
     System.out.println(defaultFunc.getClass() + " performance time: " + t1 + "ns");
 
     long t2 = System.nanoTime();
-    regexFunc.apply(filter);
+    regexFunc.parse(filter);
     t2 = System.nanoTime() - t2;
     System.out.println(regexFunc.getClass() + " performance time: " + t2 + "ns");
   }

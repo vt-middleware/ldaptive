@@ -46,22 +46,26 @@ public class DefaultFilterFunction extends AbstractFilterFunction
 
   @Override
   protected Filter parseFilterComp(final String filter)
+    throws FilterParseException
   {
     if (filter == null || filter.isEmpty()) {
-      throw new IllegalArgumentException("Filter cannot be null or empty");
+      throw new FilterParseException("Filter cannot be null or empty");
     }
     CharBuffer filterBuffer = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(filter.getBytes()));
     if (filterBuffer.get() != '(') {
-      throw new IllegalArgumentException("Filter must start with '('");
+      throw new FilterParseException("Filter '" + filter + "' must start with '('");
     }
     if (filterBuffer.get(filterBuffer.limit() - 1) != ')') {
-      throw new IllegalArgumentException("Filter must end with ')'");
+      throw new FilterParseException("Filter '" + filter + "' must end with ')'");
     }
     if (!filterBuffer.hasRemaining()) {
-      throw new IllegalArgumentException("Filter does not contain an expression");
+      throw new FilterParseException("Filter '" + filter + "' does not contain an expression");
     }
     final Filter searchFilter;
     filterBuffer = filterBuffer.limit(filterBuffer.limit() - 1).slice();
+    if (!filterBuffer.hasRemaining()) {
+      throw new FilterParseException("Filter '" + filter + "' does not contain an expression");
+    }
     if (filterBuffer.get() == ':') {
       // extensible filter with no attribute description
       searchFilter = parseExtensible(null, filterBuffer);
@@ -70,7 +74,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
       filterBuffer.position(filterBuffer.position() - 1);
       final CharBuffer attribute = readAttribute(filterBuffer);
       if (attribute.length() == 0) {
-        throw new IllegalArgumentException("Invalid attribute description");
+        throw new FilterParseException("Invalid attribute description for filter '" + filter + "'");
       }
       switch(filterBuffer.get()) {
       case '=':
@@ -95,15 +99,19 @@ public class DefaultFilterFunction extends AbstractFilterFunction
             attribute.toString(),
             filterBuffer.position(filterBuffer.position() - 1).slice());
         } else {
-          searchFilter = new ExtensibleFilter(
-            null,
-            attribute.toString(),
-            FilterUtils.parseAssertionValue(filterBuffer.slice().toString()));
+          try {
+            searchFilter = new ExtensibleFilter(
+              null,
+              attribute.toString(),
+              FilterUtils.parseAssertionValue(filterBuffer.slice().toString()));
+          } catch (IllegalArgumentException e) {
+            throw new FilterParseException(e);
+          }
         }
         break;
       case '>':
         if (filterBuffer.get() != '=') {
-          throw new IllegalArgumentException("Invalid greaterOrEqual expression");
+          throw new FilterParseException("Invalid greaterOrEqual expression for filter '" + filter + "'");
         }
         searchFilter = new GreaterOrEqualFilter(
           attribute.toString(),
@@ -111,7 +119,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
         break;
       case '<':
         if (filterBuffer.get() != '=') {
-          throw new IllegalArgumentException("Invalid lessOrEqual expression");
+          throw new FilterParseException("Invalid lessOrEqual expression for filter '" + filter + "'");
         }
         searchFilter = new LessOrEqualFilter(
           attribute.toString(),
@@ -119,14 +127,14 @@ public class DefaultFilterFunction extends AbstractFilterFunction
         break;
       case '~':
         if (filterBuffer.get() != '=') {
-          throw new IllegalArgumentException("Invalid approximate expression");
+          throw new FilterParseException("Invalid approximate expression for filter '" + filter + "'");
         }
         searchFilter = new ApproximateFilter(
           attribute.toString(),
           FilterUtils.parseAssertionValue(filterBuffer.slice().toString()));
         break;
       default:
-        throw new IllegalArgumentException("Invalid filter expression");
+        throw new FilterParseException("Invalid filter expression for filter '" + filter + "'");
       }
     }
     return searchFilter;
@@ -140,11 +148,14 @@ public class DefaultFilterFunction extends AbstractFilterFunction
    * @param  cb  to read from
    *
    * @return  new char buffer
+   *
+   * @throws  FilterParseException  if the char buffer is empty
    */
   private CharBuffer readAttribute(final CharBuffer cb)
+    throws FilterParseException
   {
     if (cb.length() == 0) {
-      throw new IllegalArgumentException("Attribute buffer size must be greater than zero");
+      throw new FilterParseException("Attribute buffer size must be greater than zero");
     }
     final int limit = cb.limit();
     while (cb.hasRemaining()) {
@@ -168,28 +179,35 @@ public class DefaultFilterFunction extends AbstractFilterFunction
    * @param  cb  containing the assertion
    *
    * @return  either EqualityFilter or SubstringFilter
+   *
+   * @throws  FilterParseException  if neither substring or equality syntax can be parsed
    */
   private Filter parseSubstringOrEquality(final String attribute, final CharBuffer cb)
+    throws FilterParseException
   {
     final Filter filter;
     final Map<String, List<CharBuffer>> substrings = readSubstrings(cb);
     if (substrings.size() == 0) {
-      throw new IllegalArgumentException("Could not parse equality or substring assertion");
+      throw new FilterParseException("Could not parse equality or substring assertion");
     }
     if (substrings.containsKey("EQUALITY")) {
       filter = new EqualityFilter(
         attribute,
         FilterUtils.parseAssertionValue(substrings.get("EQUALITY").get(0).toString()));
     } else {
-      filter = new SubstringFilter(
-        attribute,
-        substrings.get("INITIAL") == null ? null :
-          FilterUtils.parseAssertionValue(substrings.get("INITIAL").get(0).toString()),
-        substrings.get("FINAL") == null ? null :
-          FilterUtils.parseAssertionValue(substrings.get("FINAL").get(0).toString()),
-        substrings.get("ANY") == null ? null :
-          FilterUtils.parseAssertionValue(
-            substrings.get("ANY").stream().map(CharBuffer::toString).toArray(String[]::new)));
+      try {
+        filter = new SubstringFilter(
+          attribute,
+          substrings.get("INITIAL") == null ? null :
+            FilterUtils.parseAssertionValue(substrings.get("INITIAL").get(0).toString()),
+          substrings.get("FINAL") == null ? null :
+            FilterUtils.parseAssertionValue(substrings.get("FINAL").get(0).toString()),
+          substrings.get("ANY") == null ? null :
+            FilterUtils.parseAssertionValue(
+              substrings.get("ANY").stream().map(CharBuffer::toString).toArray(String[]::new)));
+      } catch (IllegalArgumentException e) {
+        throw new FilterParseException(e);
+      }
     }
     return filter;
   }
@@ -269,13 +287,17 @@ public class DefaultFilterFunction extends AbstractFilterFunction
    *
    * @return  extensible filter
    *
-   * @throws  IllegalArgumentException  if the buffer does not contain an extensible expression
+   * @throws  FilterParseException  if the buffer does not contain an extensible expression
    */
   private ExtensibleFilter parseExtensible(final String attribute, final CharBuffer cb)
+    throws FilterParseException
   {
     boolean dnAttrs = false;
     CharBuffer remainingFilter = cb.slice();
     CharBuffer matchingRule = sliceAtMatch(remainingFilter, ':');
+    if (matchingRule == null) {
+      throw new FilterParseException("Invalid extensible expression, no data after ':'");
+    }
     if ("dn".equalsIgnoreCase(matchingRule.toString())) {
       dnAttrs = true;
       matchingRule = null;
@@ -289,13 +311,17 @@ public class DefaultFilterFunction extends AbstractFilterFunction
       }
     }
     if (remainingFilter.hasRemaining() && remainingFilter.get() != '=') {
-      throw new IllegalArgumentException("Invalid extensible expression");
+      throw new FilterParseException("Invalid extensible expression");
     }
-    return new ExtensibleFilter(
-      matchingRule == null ? null : matchingRule.toString(),
-      attribute,
-      FilterUtils.parseAssertionValue(remainingFilter.slice().toString()),
-      dnAttrs);
+    try {
+      return new ExtensibleFilter(
+        matchingRule == null ? null : matchingRule.toString(),
+        attribute,
+        FilterUtils.parseAssertionValue(remainingFilter.slice().toString()),
+        dnAttrs);
+    } catch (IllegalArgumentException e) {
+      throw new FilterParseException(e);
+    }
   }
 
 
