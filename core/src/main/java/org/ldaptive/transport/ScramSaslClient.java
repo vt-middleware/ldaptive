@@ -21,6 +21,11 @@ import org.ldaptive.sasl.ScramBindRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * SASL client that implements the SCRAM protocol. See RFC 5802.
+ *
+ * @author  Middleware Services
+ */
 public class ScramSaslClient implements SaslClient<ScramBindRequest>
 {
 
