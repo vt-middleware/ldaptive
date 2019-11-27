@@ -255,10 +255,10 @@ public class DefaultSearchOperationHandle
   @Override
   public String toString()
   {
+    // do not log the result object, it is not thread safe
     return new StringBuilder(super.toString()).append(", ")
       .append("onEntry=").append(Arrays.toString(onEntry)).append(", ")
       .append("onReference=").append(Arrays.toString(onReference)).append(", ")
-      .append("onSearchResult=").append(Arrays.toString(onSearchResult)).append(", ")
-      .append("result=").append(result).toString();
+      .append("onSearchResult=").append(Arrays.toString(onSearchResult)).toString();
   }
 }

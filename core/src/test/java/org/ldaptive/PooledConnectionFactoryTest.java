@@ -10,7 +10,7 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.pool.PoolConfig;
-import org.ldaptive.transport.netty.NettyTransport;
+import org.ldaptive.transport.netty.NettyConnectionFactoryTransport;
 import org.ldaptive.transport.netty.SimpleNettyServer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -84,7 +84,7 @@ public class PooledConnectionFactoryTest
           })
           .build(),
         PoolConfig.builder().min(10).max(10).build(),
-        new NettyTransport(
+        new NettyConnectionFactoryTransport(
           NioSocketChannel.class,
           new NioEventLoopGroup(
             1,

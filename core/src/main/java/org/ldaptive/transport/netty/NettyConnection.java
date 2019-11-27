@@ -124,6 +124,9 @@ public final class NettyConnection extends TransportConnection
   /** Event worker group used to process inbound messages. */
   private final EventLoopGroup messageWorkerGroup;
 
+  /** Whether to shutdown the event loop groups on {@link #close()}. */
+  private boolean shutdownOnClose;
+
   /** Netty channel configuration options. */
   private final Map<ChannelOption, Object> channelOptions;
 
@@ -160,21 +163,22 @@ public final class NettyConnection extends TransportConnection
 
   /**
    * Creates a new connection. Netty supports various transport implementations including NIO, EPOLL, KQueue, etc. The
-   * class type and event loop group are tightly coupled in this regard. See {@link SharedNioTransport} for an example
-   * of what NIO parameters look like.
+   * class type and event loop group are tightly coupled in this regard.
    *
    * @param  config  connection configuration
    * @param  type  type of channel
    * @param  ioGroup  event loop group that handles I/O and supports the channel type, cannot be null
    * @param  messageGroup  event loop group that handles inbound messages, can be null
-   * @param  options additional channel options
+   * @param  options  additional channel options
+   * @param  shutdownGroups  whether to shutdown the event loop groups when the connection is closed
    */
   public NettyConnection(
     final ConnectionConfig config,
     final Class<? extends Channel> type,
     final EventLoopGroup ioGroup,
     final EventLoopGroup messageGroup,
-    final Map<ChannelOption, Object> options)
+    final Map<ChannelOption, Object> options,
+    final boolean shutdownGroups)
   {
     super(config);
     if (ioGroup == null) {
@@ -189,6 +193,7 @@ public final class NettyConnection extends TransportConnection
     if (options != null && !options.isEmpty()) {
       channelOptions.putAll(options);
     }
+    shutdownOnClose = shutdownGroups;
     pendingResponses = new HandleMap();
   }
 
@@ -202,16 +207,15 @@ public final class NettyConnection extends TransportConnection
    */
   private Bootstrap createBootstrap(final ClientInitializer initializer)
   {
+    if (ioWorkerGroup.isShutdown()) {
+      throw new IllegalStateException("Attempt to open connection with shutdown event loop on " + this);
+    }
     final Bootstrap bootstrap = new Bootstrap();
     bootstrap.group(ioWorkerGroup);
     bootstrap.channel(channelType);
     channelOptions.forEach(bootstrap::option);
     bootstrap.handler(initializer);
-    LOGGER.trace(
-      "Created netty bootstrap {} with worker group {}(shutdown={})",
-      bootstrap,
-      ioWorkerGroup,
-      ioWorkerGroup.isShutdown());
+    LOGGER.trace("Created netty bootstrap {} with worker group {}", bootstrap, ioWorkerGroup);
     return bootstrap;
   }
 
@@ -224,7 +228,8 @@ public final class NettyConnection extends TransportConnection
       channelType,
       ioWorkerGroup,
       messageWorkerGroup,
-      null);
+      null,
+      false);
     try {
       conn.open(url);
       LOGGER.debug("Test of {} successful", conn);
@@ -852,6 +857,22 @@ public final class NettyConnection extends TransportConnection
         connectionExecutor = null;
         channel = null;
         connectTime = null;
+        if (shutdownOnClose) {
+          try {
+            ioWorkerGroup.shutdownGracefully();
+            LOGGER.trace("Shutdown worker group {}", ioWorkerGroup);
+          } catch (Exception e) {
+            LOGGER.warn("Error shutting down the I/O worker group", e);
+          }
+          if (messageWorkerGroup != null) {
+            try {
+              messageWorkerGroup.shutdownGracefully();
+              LOGGER.trace("Shutdown worker group {}", messageWorkerGroup);
+            } catch (Exception e) {
+              LOGGER.warn("Error shutting down the message worker group", e);
+            }
+          }
+        }
         closeLock.unlock();
       }
     } else {
@@ -1095,7 +1116,7 @@ public final class NettyConnection extends TransportConnection
         future,
         inboundException != null ? inboundException.getClass() : null,
         inboundException);
-      if (connectionConfig.getAutoReconnect() && !isOpening()) {
+      if (connectionConfig.getAutoReconnect() && !isOpening() && !isClosing()) {
         LOGGER.trace("scheduling reconnect thread for connection {}", NettyConnection.this);
         connectionExecutor.execute(
           () -> {

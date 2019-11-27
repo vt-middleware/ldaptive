@@ -2,11 +2,7 @@
 package org.ldaptive.transport;
 
 import java.lang.reflect.Constructor;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.kqueue.KQueue;
-import org.ldaptive.transport.netty.EpollTransport;
-import org.ldaptive.transport.netty.KQueueTransport;
-import org.ldaptive.transport.netty.NioTransport;
+import org.ldaptive.transport.netty.ConnectionTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,14 +58,6 @@ public final class TransportFactory
         throw new IllegalStateException(e);
       }
     }
-    final Transport transport;
-    if (Epoll.isAvailable()) {
-      transport = new EpollTransport(1);
-    } else if (KQueue.isAvailable()) {
-      transport = new KQueueTransport(1);
-    } else {
-      transport = new NioTransport(1);
-    }
-    return transport;
+    return new ConnectionTransport(1);
   }
 }

@@ -12,11 +12,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Creates netty connections.
+ * Creates netty connections with configured event loops. This implementation reuses the same event loops for each
+ * connection created.
  *
  * @author  Middleware Services
  */
-public class NettyTransport implements Transport
+public class NettyConnectionFactoryTransport implements Transport
 {
 
   /** Logger for this class. */
@@ -39,26 +40,26 @@ public class NettyTransport implements Transport
 
 
   /**
-   * Creates a new netty transport.
+   * Creates a new netty connection factory transport.
    *
    * @param  type  of channel
    * @param  ioGroup  event loop group to handle I/O
    */
-  public NettyTransport(final Class<? extends Channel> type, final EventLoopGroup ioGroup)
+  public NettyConnectionFactoryTransport(final Class<? extends Channel> type, final EventLoopGroup ioGroup)
   {
     this(type, ioGroup, null, null);
   }
 
 
   /**
-   * Creates a new netty transport.
+   * Creates a new netty connection factory transport.
    *
    * @param  type  of channel
    * @param  ioGroup  event loop group to handle I/O
    * @param  messageGroup  event loop group to handle inbound messages, can be null
    * @param  options  netty channel options
    */
-  public NettyTransport(
+  public NettyConnectionFactoryTransport(
     final Class<? extends Channel> type,
     final EventLoopGroup ioGroup,
     final EventLoopGroup messageGroup,
@@ -85,7 +86,7 @@ public class NettyTransport implements Transport
   @Override
   public Connection create(final ConnectionConfig cc)
   {
-    return new NettyConnection(cc, channelType, ioWorkerGroup, messageWorkerGroup, channelOptions);
+    return new NettyConnection(cc, channelType, ioWorkerGroup, messageWorkerGroup, channelOptions, false);
   }
 
 
@@ -94,12 +95,14 @@ public class NettyTransport implements Transport
   {
     if (shutdownOnClose) {
       try {
-        ioWorkerGroup.shutdownGracefully();
-        logger.trace("Shutdown worker group {}", ioWorkerGroup);
+        if (!ioWorkerGroup.isShutdown()) {
+          ioWorkerGroup.shutdownGracefully();
+          logger.trace("Shutdown worker group {}", ioWorkerGroup);
+        }
       } catch (Exception e) {
         logger.warn("Error shutting down the I/O worker group", e);
       }
-      if (messageWorkerGroup != null) {
+      if (messageWorkerGroup != null && !messageWorkerGroup.isShutdown()) {
         try {
           messageWorkerGroup.shutdownGracefully();
           logger.trace("Shutdown worker group {}", messageWorkerGroup);

@@ -8,34 +8,24 @@ import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.ThreadPerTaskExecutor;
 
 /**
- * Creates netty connections using a single, shared {@link NioEventLoopGroup}.
+ * Creates netty connections using a single, shared {@link NioEventLoopGroup}. This event loop group uses daemon
+ * threads and does not expect to be shutdown, however it can be manually shutdown using {@link #shutdown()}.
  *
  * @author  Middleware Services
  */
-public class SharedNioTransport extends NettyTransport
+public class NioSingletonTransport extends NettyConnectionFactoryTransport
 {
 
   /** Event group used for all connections . */
   private static final EventLoopGroup SHARED_WORKER_GROUP = new NioEventLoopGroup(
     0,
-    new ThreadPerTaskExecutor(new DefaultThreadFactory(SharedNioTransport.class, true, Thread.NORM_PRIORITY)));
+    new ThreadPerTaskExecutor(new DefaultThreadFactory(NioSingletonTransport.class, true, Thread.NORM_PRIORITY)));
 
 
   /** Default constructor. */
-  public SharedNioTransport()
+  public NioSingletonTransport()
   {
     super(NioSocketChannel.class, SHARED_WORKER_GROUP);
-  }
-
-
-  /**
-   * Creates a new shared NIO transport.
-   *
-   * @param  messageWorkerGroup  to handle inbound messages
-   */
-  public SharedNioTransport(final EventLoopGroup messageWorkerGroup)
-  {
-    super(NioSocketChannel.class, SHARED_WORKER_GROUP, messageWorkerGroup, null);
   }
 
 

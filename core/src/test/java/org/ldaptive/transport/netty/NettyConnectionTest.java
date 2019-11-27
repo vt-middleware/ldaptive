@@ -45,7 +45,8 @@ public class NettyConnectionTest
           0,
           new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
         null,
-        null);
+        null,
+        true);
       try {
         conn.open();
         Assert.assertTrue(conn.isOpen());
@@ -94,7 +95,8 @@ public class NettyConnectionTest
           0,
           new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
         null,
-        null);
+        null,
+        true);
       try {
         conn.open();
         Assert.assertTrue(conn.isOpen());
@@ -150,7 +152,8 @@ public class NettyConnectionTest
           1,
           new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
         null,
-        null);
+        null,
+        true);
       try {
         conn.open();
         Assert.assertTrue(conn.isOpen());
@@ -206,7 +209,8 @@ public class NettyConnectionTest
           2,
           new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
         null,
-        null);
+        null,
+        true);
       try {
         conn.open();
         Assert.assertTrue(conn.isOpen());

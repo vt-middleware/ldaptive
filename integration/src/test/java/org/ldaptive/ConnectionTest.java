@@ -125,17 +125,18 @@ public class ConnectionTest
     DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
 
     Connection conn = connFactory.getConnection();
-
     try {
       conn.open();
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
@@ -151,11 +152,13 @@ public class ConnectionTest
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
@@ -171,11 +174,13 @@ public class ConnectionTest
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {

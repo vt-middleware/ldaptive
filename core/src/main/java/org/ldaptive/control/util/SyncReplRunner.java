@@ -8,17 +8,6 @@ import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.DefaultEventLoopGroup;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollSocketChannel;
-import io.netty.channel.kqueue.KQueue;
-import io.netty.channel.kqueue.KQueueEventLoopGroup;
-import io.netty.channel.kqueue.KQueueSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.concurrent.DefaultThreadFactory;
-import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.InitialRetryMetadata;
 import org.ldaptive.LdapEntry;
@@ -28,7 +17,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
 import org.ldaptive.transport.Transport;
-import org.ldaptive.transport.netty.NettyTransport;
+import org.ldaptive.transport.netty.ConnectionFactoryTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,8 +76,7 @@ public class SyncReplRunner
 
 
   /**
-   * Creates a new sync repl runner. Uses a {@link NettyTransport} with a single thread {@link DefaultEventLoopGroup}
-   * for processing inbound messages.
+   * Creates a new sync repl runner. Uses a custom {@link ConnectionFactoryTransport} for processing I/O and messages.
    *
    * @param  config  sync repl connection configuration
    * @param  request  sync repl search request
@@ -131,38 +119,11 @@ public class SyncReplRunner
   {
     // message thread pool size must be >1 since exceptions are reported on the messages thread pool
     // startTLS and connection initializers will require additional threads
-    final NettyTransport transport;
-    if (Epoll.isAvailable()) {
-      transport = new NettyTransport(
-        EpollSocketChannel.class,
-        new EpollEventLoopGroup(
-          IO_WORKER_THREADS,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
-        new DefaultEventLoopGroup(
-          MESSAGE_WORKER_THREADS,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
-        Collections.singletonMap(ChannelOption.AUTO_READ, false));
-    } else if (KQueue.isAvailable()) {
-      transport = new NettyTransport(
-        KQueueSocketChannel.class,
-        new KQueueEventLoopGroup(
-          IO_WORKER_THREADS,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
-        new DefaultEventLoopGroup(
-          MESSAGE_WORKER_THREADS,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
-        Collections.singletonMap(ChannelOption.AUTO_READ, false));
-    } else {
-      transport = new NettyTransport(
-        NioSocketChannel.class,
-        new NioEventLoopGroup(
-          IO_WORKER_THREADS,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-io", true, Thread.NORM_PRIORITY))),
-        new DefaultEventLoopGroup(
-          MESSAGE_WORKER_THREADS,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory("syncReplRunner-messages", true, Thread.NORM_PRIORITY))),
-        Collections.singletonMap(ChannelOption.AUTO_READ, false));
-    }
+    final ConnectionFactoryTransport transport = new ConnectionFactoryTransport(
+      SyncReplRunner.class.getSimpleName(),
+      IO_WORKER_THREADS,
+      MESSAGE_WORKER_THREADS,
+      Collections.singletonMap(ChannelOption.AUTO_READ, false));
     transport.setShutdownOnClose(false);
     return transport;
   }
@@ -296,6 +257,17 @@ public class SyncReplRunner
       }
     }
     LOGGER.info("Runner {} stopped", this);
+  }
+
+
+  /**
+   * Returns whether this runner is started.
+   *
+   * @return  whether this runner is started
+   */
+  public boolean isStarted()
+  {
+    return started;
   }
 
 

@@ -169,7 +169,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    *
    * @throws  LdapException  if {@link Connection#open()} fails and {@link #failFastInitialize} is true
    */
-  private void initializeInternal()
+  private synchronized void initializeInternal()
     throws LdapException
   {
     if (!initialized) {
@@ -206,7 +206,6 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   @Override
   public synchronized void close()
   {
-    initialized = false;
     if (connection != null) {
       connection.close();
     }
@@ -218,6 +217,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       }
     }
     super.close();
+    initialized = false;
   }
 
 
