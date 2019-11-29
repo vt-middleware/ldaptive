@@ -2,7 +2,6 @@
 package org.ldaptive.transport;
 
 import java.time.Instant;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.ConnectException;
@@ -31,10 +30,10 @@ public abstract class TransportConnection implements Connection
   private static final Logger LOGGER = LoggerFactory.getLogger(TransportConnection.class);
 
   /** Only one invocation of open can occur at a time. */
-  protected final Lock openLock = new ReentrantLock();
+  protected final ReentrantLock openLock = new ReentrantLock();
 
   /** Only one invocation of close can occur at a time. */
-  protected final Lock closeLock = new ReentrantLock();
+  protected final ReentrantLock closeLock = new ReentrantLock();
 
   /** Provides host connection configuration. */
   protected final ConnectionConfig connectionConfig;

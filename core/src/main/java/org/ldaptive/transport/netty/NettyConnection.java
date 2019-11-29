@@ -15,7 +15,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -140,10 +139,10 @@ public final class NettyConnection extends TransportConnection
   private final AtomicInteger messageID = new AtomicInteger(1);
 
   /** Block operations while a reconnect is occurring. */
-  private final ReadWriteLock reconnectLock = new ReentrantReadWriteLock();
+  private final ReentrantReadWriteLock reconnectLock = new ReentrantReadWriteLock();
 
   /** Operation lock when a bind occurs. */
-  private final ReadWriteLock bindLock = new ReentrantReadWriteLock();
+  private final ReentrantReadWriteLock bindLock = new ReentrantReadWriteLock();
 
   /** Executor for scheduling various connection related tasks. */
   private ExecutorService connectionExecutor;
@@ -515,7 +514,11 @@ public final class NettyConnection extends TransportConnection
   @Override
   protected void operation(final UnbindRequest request)
   {
-    LOGGER.debug("Unbind request {} with pending responses {}", request, pendingResponses);
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("Unbind request {} with pending responses {}", request, pendingResponses);
+    } else if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Unbind request {} with {} pending responses", request, pendingResponses.size());
+    }
     if (reconnectLock.readLock().tryLock()) {
       try {
         if (!isOpen()) {
@@ -556,7 +559,7 @@ public final class NettyConnection extends TransportConnection
   {
     throwIfClosed();
     if (!bindLock.writeLock().tryLock()) {
-      throw new LdapException("Bind in progress");
+      throw new LdapException("Operation in progress, cannot send bind request");
     }
     try {
       final SaslClient client = request.getSaslClient();
@@ -595,7 +598,7 @@ public final class NettyConnection extends TransportConnection
   {
     throwIfClosed();
     if (!bindLock.writeLock().tryLock()) {
-      throw new LdapException("Bind in progress");
+      throw new LdapException("Operation in progress, cannot send bind request");
     }
     try {
       final SaslClient client = request.getSaslClient();
@@ -659,7 +662,11 @@ public final class NettyConnection extends TransportConnection
         request.getMessageID(),
         NettyConnection.this);
     }
-    LOGGER.debug("Abandon handle {} with pending responses {}", handle, pendingResponses);
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("Abandon handle {} with pending responses {}", handle, pendingResponses);
+    } else if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Abandon handle {} with {} pending responses", handle, pendingResponses.size());
+    }
     if (reconnectLock.readLock().tryLock()) {
       try {
         if (!isOpen()) {
@@ -755,7 +762,11 @@ public final class NettyConnection extends TransportConnection
   @SuppressWarnings("unchecked")
   protected void write(final DefaultOperationHandle handle)
   {
-    LOGGER.debug("Write handle {} with pending responses {}", handle, pendingResponses);
+    if (LOGGER.isTraceEnabled()) {
+      LOGGER.trace("Write handle {} with pending responses {}", handle, pendingResponses);
+    } else if (LOGGER.isDebugEnabled()) {
+      LOGGER.debug("Write handle {} with {} pending responses", handle, pendingResponses.size());
+    }
     try {
       final boolean gotReconnectLock;
       if (Duration.ZERO.equals(connectionConfig.getReconnectTimeout())) {
@@ -839,7 +850,11 @@ public final class NettyConnection extends TransportConnection
           channel.closeFuture().removeListener(closeListener);
           // abandon outstanding requests
           if (pendingResponses.size() > 0) {
-            LOGGER.info("Abandoning requests {} for {} to close connection", pendingResponses, this);
+            if (LOGGER.isTraceEnabled()) {
+              LOGGER.trace("Abandoning requests {} for {} to close connection", pendingResponses, this);
+            } else if (LOGGER.isInfoEnabled()) {
+              LOGGER.info("Abandoning {} requests for {} to close connection", pendingResponses.size(), this);
+            }
             pendingResponses.abandonRequests();
           }
           // unbind
@@ -888,7 +903,11 @@ public final class NettyConnection extends TransportConnection
   protected void notifyOperationHandlesOfClose()
   {
     if (pendingResponses.size() > 0) {
-      LOGGER.debug("Notifying operation handles {} for {} of connection close", pendingResponses, this);
+      if (LOGGER.isTraceEnabled()) {
+        LOGGER.trace("Notifying operation handles {} for {} of connection close", pendingResponses, this);
+      } else if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Notifying {} operation handles for {} of connection close", pendingResponses.size(), this);
+      }
       if (messageWorkerGroup != null) {
         messageWorkerGroup.execute(() ->
           pendingResponses.notifyOperationHandles(
@@ -917,34 +936,51 @@ public final class NettyConnection extends TransportConnection
       return;
     }
     LOGGER.trace("Reconnecting connection {}", this);
-    if (reconnectLock.writeLock().tryLock()) {
-      List<DefaultOperationHandle> replayOperations = null;
+    if (!reconnectLock.isWriteLocked()) {
+      boolean gotReconnectLock;
       try {
-        try {
-          reopen(new ClosedRetryMetadata(lastSuccessfulOpen, inboundException));
-          LOGGER.info("auto reconnect finished for connection {}", this);
-        } catch (Exception e) {
-          LOGGER.debug("auto reconnect failed for connection {}", this, e);
-        }
-        // replay operations that have been sent, but have not received a response
-        // notify all other operations
-        if (isOpen() && connectionConfig.getAutoReplay()) {
-          replayOperations = pendingResponses.handles().stream()
-            .filter(h -> h.getSentTime() != null && h.getReceivedTime() == null)
-            .collect(Collectors.toList());
-          replayOperations.forEach(h -> pendingResponses.remove(h.getMessageID()));
-          // notify outstanding requests that have received a response
-          notifyOperationHandlesOfClose();
+        if (Duration.ZERO.equals(connectionConfig.getReconnectTimeout())) {
+          reconnectLock.writeLock().lock();
+          gotReconnectLock = true;
         } else {
-          notifyOperationHandlesOfClose();
+          gotReconnectLock = reconnectLock.writeLock().tryLock(
+            connectionConfig.getReconnectTimeout().toMillis(), TimeUnit.MILLISECONDS);
         }
-      } finally {
-        reconnectLock.writeLock().unlock();
+      } catch (InterruptedException e) {
+        LOGGER.warn("Interrupted waiting on reconnect lock", e);
+        gotReconnectLock = false;
       }
-      if (replayOperations != null && replayOperations.size() > 0) {
-        replayOperations.forEach(this::write);
+      if (gotReconnectLock) {
+        List<DefaultOperationHandle> replayOperations = null;
+        try {
+          try {
+            reopen(new ClosedRetryMetadata(lastSuccessfulOpen, inboundException));
+            LOGGER.info("auto reconnect finished for connection {}", this);
+          } catch (Exception e) {
+            LOGGER.debug("auto reconnect failed for connection {}", this, e);
+          }
+          // replay operations that have been sent, but have not received a response
+          // notify all other operations
+          if (isOpen() && connectionConfig.getAutoReplay()) {
+            replayOperations = pendingResponses.handles().stream()
+              .filter(h -> h.getSentTime() != null && !h.hasConsumedMessage())
+              .collect(Collectors.toList());
+            replayOperations.forEach(h -> pendingResponses.remove(h.getMessageID()));
+            // notify outstanding requests that have received a response
+            notifyOperationHandlesOfClose();
+          } else {
+            notifyOperationHandlesOfClose();
+          }
+        } finally {
+          reconnectLock.writeLock().unlock();
+        }
+        if (replayOperations != null && replayOperations.size() > 0) {
+          replayOperations.forEach(this::write);
+        }
+        LOGGER.debug("Reconnect for connection {} finished", this);
+      } else {
+        LOGGER.warn("Reconnect failed, could not acquire reconnect lock");
       }
-      LOGGER.debug("Reconnect for connection {} finished", this);
     } else {
       throw new IllegalStateException("Reconnect is already in progress");
     }
@@ -1070,7 +1106,7 @@ public final class NettyConnection extends TransportConnection
           bindLock.writeLock().unlock();
         }
       } else {
-        throw new IllegalStateException("Bind in progress, cannot send bind request");
+        throw new IllegalStateException("Operation in progress, cannot send bind request");
       }
     }
   }
