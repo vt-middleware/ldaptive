@@ -204,6 +204,7 @@ public final class NettyConnection extends TransportConnection
    *
    * @return  Netty bootstrap
    */
+  @SuppressWarnings("unchecked")
   private Bootstrap createBootstrap(final ClientInitializer initializer)
   {
     if (ioWorkerGroup.isShutdown()) {
@@ -554,6 +555,8 @@ public final class NettyConnection extends TransportConnection
    *
    * @throws  LdapException  if the operation fails or another bind is in progress
    */
+  @Override
+  @SuppressWarnings("unchecked")
   public BindResponse operation(final SaslClientRequest request)
     throws LdapException
   {
@@ -593,6 +596,7 @@ public final class NettyConnection extends TransportConnection
    * @throws  LdapException  if the operation fails or another bind is in progress
    */
   @Override
+  @SuppressWarnings("unchecked")
   public BindResponse operation(final DefaultSaslClientRequest request)
     throws LdapException
   {
