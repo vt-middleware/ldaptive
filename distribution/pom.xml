@@ -56,16 +56,6 @@
     </dependency>
     <dependency>
       <groupId>org.ldaptive</groupId>
-      <artifactId>ldaptive-unboundid</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.ldaptive</groupId>
-      <artifactId>ldaptive-unboundid</artifactId>
-      <version>${project.version}</version>
-      <classifier>sources</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive-json</artifactId>
     </dependency>
     <dependency>
