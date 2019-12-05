@@ -105,6 +105,18 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
+   * Sets the maximum amount of time that connects will block.
+   *
+   * @param  time  in duration syntax
+   */
+  public void setConnectTimeoutDuration(final String time)
+  {
+    checkImmutable();
+    setConnectTimeout(Duration.parse(time));
+  }
+
+
+  /**
    * Returns the response timeout. If this value is null, then the provider default will be used.
    *
    * @return  timeout
@@ -128,6 +140,18 @@ public class ConnectionConfig extends AbstractConfig
     }
     logger.trace("setting responseTimeout: {}", time);
     responseTimeout = time;
+  }
+
+
+  /**
+   * Sets the maximum amount of time that operations will wait for a response.
+   *
+   * @param  time  in duration syntax
+   */
+  public void setResponseTimeoutDuration(final String time)
+  {
+    checkImmutable();
+    setResponseTimeout(Duration.parse(time));
   }
 
 

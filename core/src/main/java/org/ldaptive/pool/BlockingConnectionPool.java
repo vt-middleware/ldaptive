@@ -77,6 +77,17 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   }
 
 
+  /**
+   * Sets the block wait time. Default time is null, which will wait indefinitely.
+   *
+   * @param  time  in duration syntax
+   */
+  public void setBlockWaitTimeDuration(final String time)
+  {
+    setBlockWaitTime(Duration.parse(time));
+  }
+
+
   @Override
   public Connection getConnection()
     throws PoolException

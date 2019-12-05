@@ -104,6 +104,17 @@ public class IdlePruneStrategy implements PruneStrategy
 
 
   /**
+   * Sets the prune period.
+   *
+   * @param  period  in duration syntax
+   */
+  public void setPrunePeriodDuration(final String period)
+  {
+    setPrunePeriod(Duration.parse(period));
+  }
+
+
+  /**
    * Returns the idle time.
    *
    * @return  idle time
@@ -125,6 +136,17 @@ public class IdlePruneStrategy implements PruneStrategy
       throw new IllegalArgumentException("Idle time cannot be null or negative");
     }
     idleTime = time;
+  }
+
+
+  /**
+   * Sets the idle time.
+   *
+   * @param  time  in duration
+   */
+  public void setIdleTimeDuration(final String time)
+  {
+    setIdleTime(Duration.parse(time));
   }
 
 

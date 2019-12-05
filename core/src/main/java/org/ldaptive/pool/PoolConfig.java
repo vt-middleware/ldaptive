@@ -209,6 +209,18 @@ public class PoolConfig extends AbstractConfig
 
 
   /**
+   * Sets the period for which the pool will be validated.
+   *
+   * @param  time  in duration syntax
+   */
+  public void setValidatePeriodDuration(final String time)
+  {
+    checkImmutable();
+    setValidatePeriod(Duration.parse(time));
+  }
+
+
+  /**
    * Returns the timeout imposed when validating a single connection.
    *
    * @return  validate timeout
