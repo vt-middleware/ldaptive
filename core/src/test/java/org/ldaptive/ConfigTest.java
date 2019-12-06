@@ -5,12 +5,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.pool.PoolConfig;
-import org.ldaptive.provider.ProviderConfig;
 import org.ldaptive.sasl.SaslConfig;
-import org.ldaptive.ssl.SocketConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -25,10 +22,8 @@ public class ConfigTest
   /** Map of default primitive type values. */
   private static final Map<Class<?>, Object> PRIMITIVE_TYPES = new HashMap<>();
 
-  /**
-   * Initialize primitive type values.
-   */
   static {
+    // Initialize primitive type values
     PRIMITIVE_TYPES.put(int.class, 0);
     PRIMITIVE_TYPES.put(long.class, 0);
     PRIMITIVE_TYPES.put(boolean.class, false);
@@ -47,10 +42,8 @@ public class ConfigTest
       new Object[][] {
         new Object[] {new ConnectionConfig(), },
         new Object[] {new PoolConfig(), },
-        new Object[] {new ProviderConfig(), },
         new Object[] {new SaslConfig(), },
         new Object[] {new SslConfig(), },
-        new Object[] {new SocketConfig(), },
       };
   }
 
@@ -60,7 +53,7 @@ public class ConfigTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"config"}, dataProvider = "configs")
+  @Test(groups = "config", dataProvider = "configs")
   public void testImmutable(
     // CheckStyle:IllegalType OFF
     final AbstractConfig config)
@@ -79,7 +72,7 @@ public class ConfigTest
           }
           Assert.fail("Should have thrown IllegalStateException for " + method);
         } catch (Exception e) {
-          AssertJUnit.assertEquals(IllegalStateException.class, e.getCause().getClass());
+          Assert.assertEquals(e.getCause().getClass(), IllegalStateException.class);
         }
       }
     }

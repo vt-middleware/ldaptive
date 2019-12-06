@@ -3,18 +3,19 @@ package org.ldaptive.beans.persistence;
 
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
-import org.ldaptive.Connection;
+import org.ldaptive.AddResponse;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
+import org.ldaptive.DeleteResponse;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.Response;
+import org.ldaptive.Result;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.beans.LdapEntryMapper;
 import org.ldaptive.ext.MergeOperation;
 import org.ldaptive.ext.MergeRequest;
@@ -117,71 +118,49 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
     if (returnAttributes != null) {
       attrs = LdapUtils.concatArrays(attrs, returnAttributes);
     }
-    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn, attrs);
-    try (Connection conn = getConnectionFactory().getConnection()) {
-      conn.open();
-
-      final SearchOperation search = new SearchOperation(conn);
-      final Response<SearchResult> response = search.execute(request);
-      if (response.getResult().size() == 0) {
-        throw new IllegalArgumentException(
-          String.format("Unable to find ldap entry %s, no entries returned: %s", dn, response));
-      }
-      if (response.getResult().size() > 1) {
-        throw new IllegalArgumentException(
-          String.format("Unable to find ldap entry %s, multiple entries returned: %s", dn, response));
-      }
-      getLdapEntryMapper().map(response.getResult().getEntry(), object);
+    final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, attrs);
+    final SearchOperation search = new SearchOperation(connectionFactory);
+    final SearchResponse response = search.execute(request);
+    if (response.entrySize() == 0) {
+      throw new IllegalArgumentException(
+        String.format("Unable to find ldap entry %s, no entries returned: %s", dn, response));
     }
+    if (response.entrySize() > 1) {
+      throw new IllegalArgumentException(
+        String.format("Unable to find ldap entry %s, multiple entries returned: %s", dn, response));
+    }
+    getLdapEntryMapper().map(response.getEntry(), object);
     return object;
   }
 
 
   @Override
-  public Response<Void> add(final T object)
+  public AddResponse add(final T object)
+    throws LdapException
+  {
+    final LdapEntry entry = new LdapEntry();
+    getLdapEntryMapper().map(object, entry);
+    return AddOperation.execute(connectionFactory, new AddRequest(entry.getDn(), entry.getAttributes()));
+  }
+
+
+  @Override
+  public Result merge(final T object)
     throws LdapException
   {
     final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
 
-    final AddRequest request = new AddRequest(entry.getDn(), entry.getAttributes());
-    try (Connection conn = getConnectionFactory().getConnection()) {
-      conn.open();
-
-      final AddOperation add = new AddOperation(conn);
-      return add.execute(request);
-    }
+    final MergeOperation merge = new MergeOperation(connectionFactory);
+    return merge.execute(new MergeRequest(entry));
   }
 
 
   @Override
-  public Response<Void> merge(final T object)
-    throws LdapException
-  {
-    final LdapEntry entry = new LdapEntry();
-    getLdapEntryMapper().map(object, entry);
-
-    final MergeRequest request = new MergeRequest(entry);
-    try (Connection conn = getConnectionFactory().getConnection()) {
-      conn.open();
-
-      final MergeOperation merge = new MergeOperation(conn);
-      return merge.execute(request);
-    }
-  }
-
-
-  @Override
-  public Response<Void> delete(final T object)
+  public DeleteResponse delete(final T object)
     throws LdapException
   {
     final String dn = getLdapEntryMapper().mapDn(object);
-    final DeleteRequest request = new DeleteRequest(dn);
-    try (Connection conn = getConnectionFactory().getConnection()) {
-      conn.open();
-
-      final DeleteOperation delete = new DeleteOperation(conn);
-      return delete.execute(request);
-    }
+    return DeleteOperation.execute(connectionFactory, new DeleteRequest(dn));
   }
 }

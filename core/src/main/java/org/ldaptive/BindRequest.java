@@ -1,149 +1,36 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.Arrays;
-import org.ldaptive.sasl.SaslConfig;
-
 /**
- * Contains the data required to perform an ldap bind operation.
+ * LDAP bind request defined as:
+ *
+ * <pre>
+   BindRequest ::= [APPLICATION 0] SEQUENCE {
+     version                 INTEGER (1 ..  127),
+     name                    LDAPDN,
+     authentication          AuthenticationChoice }
+
+   AuthenticationChoice ::= CHOICE {
+     simple                  [0] OCTET STRING,
+                             -- 1 and 2 reserved
+     sasl                    [3] SaslCredentials,
+     ...  }
+
+   SaslCredentials ::= SEQUENCE {
+     mechanism               LDAPString,
+     credentials             OCTET STRING OPTIONAL }
+ * </pre>
  *
  * @author  Middleware Services
  */
-public class BindRequest extends AbstractRequest
+// CheckStyle:InterfaceIsType OFF
+public interface BindRequest extends Request
 {
 
-  /** DN to bind as before performing operations. */
-  private String bindDn;
+  /** BER protocol number. */
+  int PROTOCOL_OP = 0;
 
-  /** Credential for the bind DN. */
-  private Credential bindCredential;
-
-  /** Configuration for SASL authentication. */
-  private SaslConfig saslConfig;
-
-
-  /** Default constructor. */
-  public BindRequest() {}
-
-
-  /**
-   * Creates a new bind request.
-   *
-   * @param  dn  to bind as
-   * @param  credential  to bind with
-   */
-  public BindRequest(final String dn, final Credential credential)
-  {
-    setDn(dn);
-    setCredential(credential);
-  }
-
-
-  /**
-   * Creates a new bind request.
-   *
-   * @param  dn  to bind as
-   * @param  credential  to bind with
-   * @param  config  sasl configuration
-   */
-  public BindRequest(final String dn, final Credential credential, final SaslConfig config)
-  {
-    setDn(dn);
-    setCredential(credential);
-    setSaslConfig(config);
-  }
-
-
-  /**
-   * Creates a new bind request.
-   *
-   * @param  config  sasl configuration
-   */
-  public BindRequest(final SaslConfig config)
-  {
-    setSaslConfig(config);
-  }
-
-
-  /**
-   * Returns the bind DN.
-   *
-   * @return  DN to bind as
-   */
-  public String getDn()
-  {
-    return bindDn;
-  }
-
-
-  /**
-   * Sets the bind DN to authenticate as before performing operations.
-   *
-   * @param  dn  to bind as
-   */
-  public void setDn(final String dn)
-  {
-    bindDn = dn;
-  }
-
-
-  /**
-   * Returns the credential used with the bind DN.
-   *
-   * @return  bind DN credential
-   */
-  public Credential getCredential()
-  {
-    return bindCredential;
-  }
-
-
-  /**
-   * Sets the credential of the bind DN.
-   *
-   * @param  credential  to use with bind DN
-   */
-  public void setCredential(final Credential credential)
-  {
-    bindCredential = credential;
-  }
-
-
-  /**
-   * Returns the sasl config.
-   *
-   * @return  sasl config
-   */
-  public SaslConfig getSaslConfig()
-  {
-    return saslConfig;
-  }
-
-
-  /**
-   * Sets the sasl config.
-   *
-   * @param  config  sasl config
-   */
-  public void setSaslConfig(final SaslConfig config)
-  {
-    saslConfig = config;
-  }
-
-
-  @Override
-  public String toString()
-  {
-    return
-      String.format(
-        "[%s@%d::bindDn=%s, saslConfig=%s, controls=%s, referralHandler=%s, " +
-        "intermediateResponseHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        bindDn,
-        saslConfig,
-        Arrays.toString(getControls()),
-        getReferralHandler(),
-        Arrays.toString(getIntermediateResponseHandlers()));
-  }
+  /** bind protocol version. */
+  int VERSION = 3;
 }
+// CheckStyle:InterfaceIsType ON

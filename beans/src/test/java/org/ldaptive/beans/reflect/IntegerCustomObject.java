@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.reflect;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,7 +11,6 @@ import java.util.Set;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.Entry;
 
@@ -150,8 +150,8 @@ public class IntegerCustomObject implements CustomObject
 
     final T o1;
     try {
-      o1 = type.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      o1 = type.getDeclaredConstructor().newInstance();
+    } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
       throw new IllegalStateException(e);
     }
     o1.setIntegerDn("cn=Integer Entry,ou=people,dc=ldaptive,dc=org");
@@ -179,41 +179,41 @@ public class IntegerCustomObject implements CustomObject
    */
   public static LdapEntry createLdapEntry()
   {
-    final LdapAttribute typeArray1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeArray1 = new LdapAttribute();
     typeArray1.setName("typeArray1");
-    typeArray1.addStringValue("301", "302");
+    typeArray1.addStringValues("301", "302");
 
-    final LdapAttribute typeArray2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeArray2 = new LdapAttribute();
     typeArray2.setName("typeArray2");
-    typeArray2.addStringValue("301", "302");
+    typeArray2.addStringValues("301", "302");
 
-    final LdapAttribute typeCol1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeCol1 = new LdapAttribute();
     typeCol1.setName("typeCol1");
-    typeCol1.addStringValue("501", "502");
+    typeCol1.addStringValues("501", "502");
 
-    final LdapAttribute typeCol2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeCol2 = new LdapAttribute();
     typeCol2.setName("typeCol2");
-    typeCol2.addStringValue("501", "502");
+    typeCol2.addStringValues("501", "502");
 
-    final LdapAttribute typeSet1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeSet1 = new LdapAttribute();
     typeSet1.setName("typeSet1");
-    typeSet1.addStringValue("601", "602");
+    typeSet1.addStringValues("601", "602");
 
-    final LdapAttribute typeSet2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeSet2 = new LdapAttribute();
     typeSet2.setName("typeSet2");
-    typeSet2.addStringValue("601", "602");
+    typeSet2.addStringValues("601", "602");
 
-    final LdapAttribute typeList1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeList1 = new LdapAttribute();
     typeList1.setName("typeList1");
-    typeList1.addStringValue("701", "702");
+    typeList1.addStringValues("701", "702");
 
-    final LdapAttribute typeList2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeList2 = new LdapAttribute();
     typeList2.setName("typeList2");
-    typeList2.addStringValue("701", "702");
+    typeList2.addStringValues("701", "702");
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=Integer Entry,ou=people,dc=ldaptive,dc=org");
-    entry.addAttribute(
+    entry.addAttributes(
       new LdapAttribute("type1", "100"),
       new LdapAttribute("type2", "200"),
       new LdapAttribute("numberthree", "300"),
@@ -235,8 +235,8 @@ public class IntegerCustomObject implements CustomObject
       @Attribute(name = "type1", property = "type1"),
       @Attribute(name = "type2", property = "type2"),
       @Attribute(name = "numberthree", property = "type3"),
-      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray1", property = "typeArray1"),
+      @Attribute(name = "typeArray2", property = "typeArray2"),
       @Attribute(name = "typeCol1", property = "typeCol1"),
       @Attribute(name = "typeCol2", property = "typeCol2"),
       @Attribute(name = "typeSet1", property = "typeSet1"),
@@ -252,8 +252,8 @@ public class IntegerCustomObject implements CustomObject
       @Attribute(name = "type1", property = "type1"),
       @Attribute(name = "type2", property = "type2"),
       @Attribute(name = "numberthree", property = "type3"),
-      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray1", property = "typeArray1"),
+      @Attribute(name = "typeArray2", property = "typeArray2"),
       @Attribute(name = "typeCol1", property = "typeCol1"),
       @Attribute(name = "typeCol2", property = "typeCol2"),
       @Attribute(name = "typeSet1", property = "typeSet1"),

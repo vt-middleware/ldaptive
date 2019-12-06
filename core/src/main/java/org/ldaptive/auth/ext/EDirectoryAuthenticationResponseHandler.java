@@ -7,7 +7,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
-import org.ldaptive.io.GeneralizedTimeValueTranscoder;
+import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
 
 /**
  * Attempts to parse the authentication response and set the account state using data associated with eDirectory. The
@@ -46,19 +46,19 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
   @Override
   public void handle(final AuthenticationResponse response)
   {
-    if (response.getMessage() != null) {
-      final EDirectoryAccountState.Error edError = EDirectoryAccountState.Error.parse(response.getMessage());
+    if (response.getDiagnosticMessage() != null) {
+      final EDirectoryAccountState.Error edError = EDirectoryAccountState.Error.parse(response.getDiagnosticMessage());
       if (edError != null) {
         response.setAccountState(new EDirectoryAccountState(edError));
       }
-    } else if (response.getResult()) {
+    } else if (response.isSuccess()) {
       final LdapEntry entry = response.getLdapEntry();
       final LdapAttribute expTime = entry.getAttribute("passwordExpirationTime");
       final LdapAttribute loginRemaining = entry.getAttribute("loginGraceRemaining");
       final int loginRemainingValue = loginRemaining != null ? Integer.parseInt(loginRemaining.getStringValue()) : 0;
 
       if (expTime != null) {
-        final ZonedDateTime exp = expTime.getValue(new GeneralizedTimeValueTranscoder());
+        final ZonedDateTime exp = expTime.getValue(new GeneralizedTimeValueTranscoder().decoder());
         if (warningPeriod != null) {
           final ZonedDateTime warn = exp.minus(warningPeriod);
           if (ZonedDateTime.now().isAfter(warn)) {
@@ -99,6 +99,8 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::warningPeriod=%s]", getClass().getName(), hashCode(), warningPeriod);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("warningPeriod=").append(warningPeriod).append("]").toString();
   }
 }

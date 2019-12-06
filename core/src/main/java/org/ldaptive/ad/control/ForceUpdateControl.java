@@ -40,6 +40,13 @@ public class ForceUpdateControl extends AbstractControl implements RequestContro
 
 
   @Override
+  public boolean hasValue()
+  {
+    return false;
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {
@@ -53,13 +60,6 @@ public class ForceUpdateControl extends AbstractControl implements RequestContro
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
-  }
-
-
-  @Override
-  public String toString()
-  {
-    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
   }
 
 

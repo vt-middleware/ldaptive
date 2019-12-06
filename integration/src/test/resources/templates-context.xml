@@ -16,7 +16,7 @@
     </property>
   </bean>
 
-  <ldaptive:aggregate-pooled-search-executor baseDn="${ldapBaseDn}" binaryAttributes="jpegPhoto" />
+  <ldaptive:search-operation-worker baseDn="${ldapBaseDn}" binaryAttributes="jpegPhoto" />
 
   <ldaptive:pooled-connection-factory
     ldapUrl="${ldapTestHost}"

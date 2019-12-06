@@ -2,26 +2,37 @@
 package org.ldaptive;
 
 /**
- * Interface for ldap operations.
+ * Operation interface.
  *
- * @param  <Q>  type of ldap request
- * @param  <S>  type of ldap response
+ * @param  <Q>  type of request
+ * @param  <S>  type of result
  *
  * @author  Middleware Services
  */
-public interface Operation<Q extends Request, S>
+public interface Operation<Q extends Request, S extends Result>
 {
 
 
   /**
-   * Execute this ldap operation.
+   * Sends an asynchronous request and does not wait for a response.
    *
-   * @param  request  containing the data required by this operation
+   * @param  request  operation request
    *
-   * @return  response for this operation
+   * @return  operation result
    *
    * @throws  LdapException  if the operation fails
    */
-  Response<S> execute(Q request)
-    throws LdapException;
+  OperationHandle<Q, S> send(Q request) throws LdapException;
+
+
+  /**
+   * Sends an asynchronous request and waits for the response.
+   *
+   * @param  request  operation request
+   *
+   * @return  operation result
+   *
+   * @throws  LdapException  if the operation fails
+   */
+  S execute(Q request) throws LdapException;
 }

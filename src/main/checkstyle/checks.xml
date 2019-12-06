@@ -22,12 +22,18 @@
   <module name="NewlineAtEndOfFile">
     <property name="fileExtensions" value="java"/>
   </module>
+
+  <module name="LineLength">
+    <property name="ignorePattern" value="(^.*\$.*\$.*$)|(^import .*)"/>
+    <property name="max" value="120"/>
+  </module>
+
   <module name="TreeWalker">
     <property name="tabWidth" value="2"/>
 
     <module name="SuppressionCommentFilter">
-      <property name="offCommentFormat" value="CheckStyle\:([\w\|]+) OFF"/>
-      <property name="onCommentFormat" value="CheckStyle\:([\w\|]+) ON"/>
+      <property name="offCommentFormat" value="CheckStyle\:([\w\|]*)([ ]?)OFF"/>
+      <property name="onCommentFormat" value="CheckStyle\:([\w\|]*)([ ]?)ON"/>
       <property name="checkFormat" value="$1"/>
     </module>
 
@@ -79,10 +85,6 @@
     </module>
 
     <!-- sizes -->
-    <module name="LineLength">
-      <property name="ignorePattern" value="(^.*\$.*\$.*$)|(^import .*)"/>
-      <property name="max" value="120"/>
-    </module>
     <module name="MethodLength">
       <property name="max" value="300"/>
     </module>
@@ -166,7 +168,10 @@
     <module name="SuperClone"/>
     <module name="SuperFinalize"/>
     <module name="PackageDeclaration"/>
-    <module name="ReturnCount"/>
+    <module name="ReturnCount">
+      <property name="max" value="3"/>
+      <property name="maxForVoid" value="3"/>
+    </module>
     <module name="IllegalType">
       <property name="illegalClassNames"
                 value="java.util.GregorianCalendar, java.util.Hashtable,

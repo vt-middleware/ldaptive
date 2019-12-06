@@ -4,7 +4,6 @@ package org.ldaptive.beans.reflect;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import org.ldaptive.SortBehavior;
 
 /**
  * Attribute mutator associated with the {@link Field} of an object.
@@ -29,7 +28,7 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
    */
   public FieldAttributeValueMutator(final ReflectionTranscoder transcoder, final Field field)
   {
-    super(null, false, null, transcoder);
+    super(null, false, transcoder);
     f = field;
     f.setAccessible(true);
     isFinal = Modifier.isFinal(f.getModifiers());
@@ -41,18 +40,16 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
    *
    * @param  name  of the attribute
    * @param  binary  whether the attribute is binary
-   * @param  sortBehavior  sort behavior of the attribute
    * @param  transcoder  to mutate the field
    * @param  field  to mutate
    */
   public FieldAttributeValueMutator(
     final String name,
     final boolean binary,
-    final SortBehavior sortBehavior,
     final ReflectionTranscoder transcoder,
     final Field field)
   {
-    super(name, binary, sortBehavior, transcoder);
+    super(name, binary, transcoder);
     f = field;
     f.setAccessible(true);
     isFinal = Modifier.isFinal(f.getModifiers());
@@ -94,16 +91,11 @@ public class FieldAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::name=%s, binary=%s, sortBehavior=%s, " +
-        "reflectionTranscoder=%s, field=%s]",
-        getClass().getName(),
-        hashCode(),
-        getName(),
-        isBinary(),
-        getSortBehavior(),
-        getReflectionTranscoder(),
-        f);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("name=").append(getName()).append(", ")
+      .append("binary=").append(isBinary()).append(", ")
+      .append("reflectionTranscoder=").append(getReflectionTranscoder()).append(", ")
+      .append("field=").append(f).append("]").toString();
   }
 }

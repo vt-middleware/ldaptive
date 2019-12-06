@@ -2,7 +2,8 @@
 package org.ldaptive.control;
 
 import java.util.UUID;
-import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -27,10 +28,11 @@ public class SyncStateControlTest
     return
       new Object[][] {
         // Add state, no cookie
-        // BER:30:15:0A:01:01:04:10:84:31:77:EC:5B:0E:10:31:82:7F:11:6F:F5:6E:4E
-        // :59
         new Object[] {
-          LdapUtils.base64Decode("MBUKAQEEEIQxd+xbDhAxgn8Rb/VuTlk="),
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x15, 0x0A, 0x01, 0x01, 0x04, 0x10, (byte) 0x84, 0x31, 0x77, (byte) 0xEC, 0x5B, 0x0E, 0x10, 0x31,
+              (byte) 0x82, 0x7F, 0x11, 0x6F, (byte) 0xF5, 0x6E, 0x4E, 0x59}),
           new SyncStateControl(
             SyncStateControl.State.ADD,
             UUID.fromString("843177ec-5b0e-1031-827f-116ff56e4e59"),
@@ -38,14 +40,14 @@ public class SyncStateControlTest
             false),
         },
         // Modify state, cookie of length 52
-        // BER:30:4B:0A:01:02:04:10:5D:5D:A5:D0:5B:E2:10:31:82:84:11:6F:F5:6E:4E
-        // :59:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:30:31:32:30:37:30
-        // :36:31:38:31:35:35:32:2E:33:33:37:37:31:38:5A:23:30:30:30:30:30:30
-        // :23:30:30:30:23:30:30:30:30:30:30:
         new Object[] {
-          LdapUtils.base64Decode(
-            "MEsKAQIEEF1dpdBb4hAxgoQRb/VuTlkENHJpZD0wMDAsY3NuPTIwMTIwNzA2MTgx" +
-            "NTUyLjMzNzcxOFojMDAwMDAwIzAwMCMwMDAwMDA="),
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x4B, 0x0A, 0x01, 0x02, 0x04, 0x10, 0x5D, 0x5D, (byte) 0xA5, (byte) 0xD0, 0x5B, (byte) 0xE2, 0x10,
+              0x31, (byte) 0x82, (byte) 0x84, 0x11, 0x6F, (byte) 0xF5, 0x6E, 0x4E, 0x59, 0x04, 0x34, 0x72, 0x69, 0x64,
+              0x3D, 0x30, 0x30, 0x30, 0x2C, 0x63, 0x73, 0x6E, 0x3D, 0x32, 0x30, 0x31, 0x32, 0x30, 0x37, 0x30, 0x36,
+              0x31, 0x38, 0x31, 0x35, 0x35, 0x32, 0x2E, 0x33, 0x33, 0x37, 0x37, 0x31, 0x38, 0x5A, 0x23, 0x30, 0x30,
+              0x30, 0x30, 0x30, 0x30, 0x23, 0x30, 0x30, 0x30, 0x23, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30}),
           new SyncStateControl(
             SyncStateControl.State.MODIFY,
             UUID.fromString("5d5da5d0-5be2-1031-8284-116ff56e4e59"),
@@ -65,13 +67,13 @@ public class SyncStateControlTest
             false),
         },
         // Add state, cookie length of 52, empty UUID
-        // BER:30:3B:0A:01:01:04:00:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32
-        // :30:31:33:30:32:31:35:32:31:32:33:32:30:2E:34:36:34:34:38:35:5A:23
-        // :30:30:30:30:30:30:23:30:30:30:23:30:30:30:30:30:30:
         new Object[] {
-          LdapUtils.base64Decode(
-            "MDsKAQEEAAQ0cmlkPTAwMCxjc249MjAxMzAyMTUyMTIzMjAuNDY0NDg1WiMwMDAw" +
-            "MDAjMDAwIzAwMDAwMA=="),
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x3B, 0x0A, 0x01, 0x01, 0x04, 0x00, 0x04, 0x34, 0x72, 0x69, 0x64, 0x3D, 0x30, 0x30, 0x30, 0x2C,
+              0x63, 0x73, 0x6E, 0x3D, 0x32, 0x30, 0x31, 0x33, 0x30, 0x32, 0x31, 0x35, 0x32, 0x31, 0x32, 0x33, 0x32,
+              0x30, 0x2E, 0x34, 0x36, 0x34, 0x34, 0x38, 0x35, 0x5A, 0x23, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x23,
+              0x30, 0x30, 0x30, 0x23, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30}),
           new SyncStateControl(
             SyncStateControl.State.ADD,
             null,
@@ -100,8 +102,8 @@ public class SyncStateControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "response")
-  public void decode(final byte[] berValue, final SyncStateControl expected)
+  @Test(groups = "control", dataProvider = "response")
+  public void decode(final DERBuffer berValue, final SyncStateControl expected)
     throws Exception
   {
     final SyncStateControl actual = new SyncStateControl(expected.getCriticality());

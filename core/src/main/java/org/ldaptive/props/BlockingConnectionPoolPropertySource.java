@@ -4,7 +4,9 @@ package org.ldaptive.props;
 import java.io.Reader;
 import java.util.Properties;
 import java.util.Set;
+import org.ldaptive.ConnectionValidator;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.PoolConfig;
 
@@ -89,28 +91,48 @@ public final class BlockingConnectionPoolPropertySource extends AbstractProperty
   {
     initializeObject(INVOKER);
 
-    DefaultConnectionFactory cf = object.getConnectionFactory();
+    DefaultConnectionFactory cf = object.getDefaultConnectionFactory();
     if (cf == null) {
       cf = new DefaultConnectionFactory();
-
-      final DefaultConnectionFactoryPropertySource cfPropSource = new DefaultConnectionFactoryPropertySource(
-        cf,
-        propertiesDomain,
-        properties);
-      cfPropSource.initialize();
-      object.setConnectionFactory(cf);
+      object.setDefaultConnectionFactory(cf);
     }
+    final DefaultConnectionFactoryPropertySource cfPropSource = new DefaultConnectionFactoryPropertySource(
+      cf,
+      propertiesDomain,
+      properties);
+    cfPropSource.initialize();
 
     PoolConfig pc = object.getPoolConfig();
     if (pc == null) {
       pc = new PoolConfig();
-
-      final PoolConfigPropertySource pcPropSource = new PoolConfigPropertySource(pc, propertiesDomain, properties);
-      pcPropSource.initialize();
       object.setPoolConfig(pc);
+    }
+    final PoolConfigPropertySource pcPropSource = new PoolConfigPropertySource(pc, propertiesDomain, properties);
+    pcPropSource.initialize();
+
+    ConnectionValidator cv = object.getValidator();
+    if (cv == null) {
+      cv = new SearchConnectionValidator();
+      final SearchConnectionValidatorPropertySource cvPropSource = new SearchConnectionValidatorPropertySource(
+        (SearchConnectionValidator) cv,
+        propertiesDomain,
+        properties);
+      cvPropSource.initialize();
+      object.setValidator(cv);
     } else {
-      final SimplePropertySource<PoolConfig> sPropSource = new SimplePropertySource<>(pc, propertiesDomain, properties);
-      sPropSource.initialize();
+      if (cv instanceof SearchConnectionValidator) {
+        final SearchConnectionValidatorPropertySource cvPropSource = new SearchConnectionValidatorPropertySource(
+          (SearchConnectionValidator) cv,
+          propertiesDomain,
+          properties);
+        cvPropSource.initialize();
+      } else {
+        final SimplePropertySource<ConnectionValidator> sPropSource = new SimplePropertySource<>(
+          cv,
+          propertiesDomain,
+          properties);
+        sPropSource.initialize();
+      }
     }
   }
 

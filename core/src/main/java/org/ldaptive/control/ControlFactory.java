@@ -3,8 +3,7 @@ package org.ldaptive.control;
 
 import org.ldaptive.ad.control.DirSyncControl;
 import org.ldaptive.ad.control.GetStatsControl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ldaptive.asn1.DERBuffer;
 
 /**
  * Utility class for creating controls.
@@ -13,9 +12,6 @@ import org.slf4j.LoggerFactory;
  */
 public final class ControlFactory
 {
-
-  /** Logger for this class. */
-  private static final Logger LOGGER = LoggerFactory.getLogger(ControlFactory.class);
 
 
   /** Default constructor. */
@@ -31,9 +27,9 @@ public final class ControlFactory
    *
    * @return  response control
    */
-  public static ResponseControl createResponseControl(final String oid, final boolean critical, final byte[] encoded)
+  public static ResponseControl createResponseControl(final String oid, final boolean critical, final DERBuffer encoded)
   {
-    ResponseControl ctl = null;
+    final ResponseControl ctl;
     switch (oid) {
 
     case SortResponseControl.OID:
@@ -97,7 +93,7 @@ public final class ControlFactory
       break;
 
     default:
-      LOGGER.debug("Unsupported response control OID {}", oid);
+      ctl = new GenericControl(oid, critical, encoded);
       break;
     }
     return ctl;

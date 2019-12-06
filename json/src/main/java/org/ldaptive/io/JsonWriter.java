@@ -4,6 +4,7 @@ package org.ldaptive.io;
 import java.io.IOException;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.util.stream.Stream;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -14,10 +15,11 @@ import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
+import org.ldaptive.SearchResultReference;
 
 /**
- * Writes a {@link SearchResult} as JSON to a {@link Writer}.
+ * Writes a {@link SearchResponse} as JSON to a {@link Writer}.
  *
  * @author  Middleware Services
  */
@@ -40,7 +42,7 @@ public class JsonWriter implements SearchResultWriter
   {
     jsonWriter = writer;
     final GsonBuilder builder = new GsonBuilder();
-    builder.registerTypeAdapter(SearchResult.class, new SearchResultSerializer());
+    builder.registerTypeAdapter(SearchResponse.class, new SearchResultSerializer());
     gson = builder.disableHtmlEscaping().create();
   }
 
@@ -53,7 +55,7 @@ public class JsonWriter implements SearchResultWriter
    * @throws  IOException  if an error occurs using the writer
    */
   @Override
-  public void write(final SearchResult result)
+  public void write(final SearchResponse result)
     throws IOException
   {
     gson.toJson(result, jsonWriter);
@@ -62,15 +64,15 @@ public class JsonWriter implements SearchResultWriter
 
 
   /**
-   * Serializes a {@link SearchResult} by creating a json array to contain the entries. Each entry is a json object with
-   * the DN represented as a json primitive. Each attribute contains a json array of values.
+   * Serializes a {@link SearchResponse} by creating a json array to contain the entries. Each entry is a json object
+   * with the DN represented as a json primitive. Each attribute contains a json array of values.
    */
-  private static class SearchResultSerializer implements JsonSerializer<SearchResult>
+  private static class SearchResultSerializer implements JsonSerializer<SearchResponse>
   {
 
 
     @Override
-    public JsonElement serialize(final SearchResult result, final Type type, final JsonSerializationContext context)
+    public JsonElement serialize(final SearchResponse result, final Type type, final JsonSerializationContext context)
     {
       final JsonArray json = new JsonArray();
       for (LdapEntry entry : result.getEntries()) {
@@ -82,6 +84,13 @@ public class JsonWriter implements SearchResultWriter
           jsonEntry.add(attr.getName(), jsonAttrValues);
         }
         json.add(jsonEntry);
+      }
+      for (SearchResultReference reference : result.getReferences()) {
+        final JsonObject jsonReference = new JsonObject();
+        final JsonArray jsonUris = new JsonArray();
+        Stream.of(reference.getUris()).forEach(jsonUris::add);
+        jsonReference.add("ref", jsonUris);
+        json.add(jsonReference);
       }
       return json;
     }

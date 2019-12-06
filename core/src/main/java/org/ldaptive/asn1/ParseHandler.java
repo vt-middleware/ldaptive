@@ -1,8 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
-
 /**
  * Provides a hook in the DER parser for handling specific paths as they are encountered.
  *
@@ -18,5 +16,5 @@ public interface ParseHandler
    * @param  parser  that invoked this handler
    * @param  encoded  to handle
    */
-  void handle(DERParser parser, ByteBuffer encoded);
+  void handle(DERParser parser, DERBuffer encoded);
 }

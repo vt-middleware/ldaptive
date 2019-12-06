@@ -1,13 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.BooleanType;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
-import org.ldaptive.asn1.OctetStringType;
 
 /**
  * Response control for ldap content synchronization. See RFC 4533. Control is defined as:
@@ -164,26 +163,21 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, cookie=%s, refreshDeletes=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        LdapUtils.base64Encode(cookie),
-        refreshDeletes);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append(", ")
+      .append("refreshDeletes=").append(refreshDeletes).append("]").toString();
   }
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
     parser.registerHandler(RefreshDeletesHandler.PATH, new RefreshDeletesHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -192,7 +186,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   {
 
     /** DER path to cookie value. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[0]");
 
 
     /**
@@ -207,9 +201,9 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);
       }
@@ -222,7 +216,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   {
 
     /** DER path to the boolean. */
-    public static final DERPath PATH = new DERPath("/SEQ/BOOL");
+    public static final DERPath PATH = new DERPath("/SEQ/BOOL[1]");
 
 
     /**
@@ -237,7 +231,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setRefreshDeletes(BooleanType.decode(encoded));
     }

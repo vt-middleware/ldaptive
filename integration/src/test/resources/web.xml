@@ -8,8 +8,8 @@
     <servlet-name>LdifSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.LdifServletSearchExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.LdifServletSearchOperation</param-value>
     </init-param>
     <init-param>
       <param-name>ldapUrl</param-name>
@@ -30,10 +30,6 @@
     <init-param>
       <param-name>binaryAttributes</param-name>
       <param-value>jpegPhoto</param-value>
-    </init-param>
-    <init-param>
-      <param-name>poolType</param-name>
-      <param-value>BLOCKING</param-value>
     </init-param>
     <init-param>
       <param-name>blockWaitTime</param-name>
@@ -41,39 +37,11 @@
     </init-param>
   </servlet>
   <servlet>
-    <servlet-name>DsmlSearch</servlet-name>
-    <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
-    <init-param>
-      <param-name>ldapUrl</param-name>
-      <param-value>${ldapTestHost}</param-value>
-    </init-param>
-    <init-param>
-      <param-name>baseDn</param-name>
-      <param-value>${ldapBaseDn}</param-value>
-    </init-param>
-    <init-param>
-      <param-name>bindDn</param-name>
-      <param-value>${ldapBindDn}</param-value>
-    </init-param>
-    <init-param>
-      <param-name>bindCredential</param-name>
-      <param-value>${ldapBindCredential}</param-value>
-    </init-param>
-    <init-param>
-      <param-name>binaryAttributes</param-name>
-      <param-value>jpegPhoto</param-value>
-    </init-param>
-    <init-param>
-      <param-name>poolType</param-name>
-      <param-value>SOFTLIMIT</param-value>
-    </init-param>
-  </servlet>
-  <servlet>
     <servlet-name>JsonSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.JsonServletSearchExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.JsonServletSearchOperation</param-value>
     </init-param>
     <init-param>
       <param-name>ldapUrl</param-name>
@@ -96,16 +64,16 @@
       <param-value>jpegPhoto</param-value>
     </init-param>
     <init-param>
-      <param-name>poolType</param-name>
-      <param-value>SOFTLIMIT</param-value>
+      <param-name>blockWaitTime</param-name>
+      <param-value>PT5S</param-value>
     </init-param>
   </servlet>
   <servlet>
     <servlet-name>AttributeSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.AttributeValueServletSearchExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.AttributeValueServletSearchOperation</param-value>
     </init-param>
     <init-param>
       <param-name>ldapUrl</param-name>
@@ -127,29 +95,13 @@
       <param-name>binaryAttributes</param-name>
       <param-value>jpegPhoto</param-value>
     </init-param>
-    <init-param>
-      <param-name>poolType</param-name>
-      <param-value>BLOCKING</param-value>
-    </init-param>
   </servlet>
   <servlet>
     <servlet-name>TemplatesLdifSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesExecutor</param-value>
-    </init-param>
-    <init-param>
-      <param-name>springContextPath</param-name>
-      <param-value>/templates-context.xml</param-value>
-    </init-param>
-  </servlet>
-  <servlet>
-    <servlet-name>TemplatesDsmlSearch</servlet-name>
-    <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
-    <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.Dsmlv1ServletSearchTemplatesExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesOperation</param-value>
     </init-param>
     <init-param>
       <param-name>springContextPath</param-name>
@@ -160,8 +112,8 @@
     <servlet-name>TemplatesJsonSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.JsonServletSearchTemplatesExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.JsonServletSearchTemplatesOperation</param-value>
     </init-param>
     <init-param>
       <param-name>springContextPath</param-name>
@@ -172,8 +124,8 @@
     <servlet-name>TemplatesLdifIgnoreSearch</servlet-name>
     <servlet-class>org.ldaptive.servlets.SearchServlet</servlet-class>
     <init-param>
-      <param-name>searchExecutorClass</param-name>
-      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesExecutor</param-value>
+      <param-name>servletSearchOperation</param-name>
+      <param-value>org.ldaptive.servlets.LdifServletSearchTemplatesOperation</param-value>
     </init-param>
     <init-param>
       <param-name>springContextPath</param-name>
@@ -189,10 +141,6 @@
     <url-pattern>/LdifSearch</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>DsmlSearch</servlet-name>
-    <url-pattern>/DsmlSearch</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
     <servlet-name>JsonSearch</servlet-name>
     <url-pattern>/JsonSearch</url-pattern>
   </servlet-mapping>
@@ -203,10 +151,6 @@
   <servlet-mapping>
     <servlet-name>TemplatesLdifSearch</servlet-name>
     <url-pattern>/TemplatesLdifSearch</url-pattern>
-  </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>TemplatesDsmlSearch</servlet-name>
-    <url-pattern>/TemplatesDsmlSearch</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>TemplatesJsonSearch</servlet-name>

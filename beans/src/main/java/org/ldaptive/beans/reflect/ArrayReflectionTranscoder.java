@@ -161,6 +161,8 @@ public class ArrayReflectionTranscoder implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::valueTranscoder=%s]", getClass().getName(), hashCode(), valueTranscoder);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("valueTranscoder=").append(valueTranscoder).append("]").toString();
   }
 }

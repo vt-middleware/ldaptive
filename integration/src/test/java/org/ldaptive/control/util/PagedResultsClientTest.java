@@ -3,17 +3,13 @@ package org.ldaptive.control.util;
 
 import java.util.Iterator;
 import org.ldaptive.AbstractTest;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.LdapException;
-import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
-import org.ldaptive.SortBehavior;
+import org.ldaptive.SearchResponse;
+import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.TestUtils;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -44,7 +40,7 @@ public class PagedResultsClientTest extends AbstractTest
       "createEntry23",
       "createEntry25"
     })
-  @BeforeClass(groups = {"control-util"})
+  @BeforeClass(groups = "control-util")
   public void createLdapEntry(final String ldifFile1, final String ldifFile2, final String ldifFile3)
     throws Exception
   {
@@ -59,7 +55,7 @@ public class PagedResultsClientTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"control-util"})
+  @AfterClass(groups = "control-util")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -80,42 +76,33 @@ public class PagedResultsClientTest extends AbstractTest
       "prSearchDn",
       "prSearchFilter"
     })
-  @Test(groups = {"control-util"})
+  @Test(groups = "control-util")
   public void execute(final String dn, final String filter)
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
+      final PagedResultsClient client = new PagedResultsClient(cf, 1);
 
-      final PagedResultsClient client = new PagedResultsClient(conn, 1);
-
-      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
-      Response<SearchResult> response = client.execute(request);
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(1, response.getResult().size());
-      AssertJUnit.assertEquals(
-        testLdapEntries[0].getDn().toLowerCase(),
-        response.getResult().getEntry().getDn().toLowerCase());
+      final SearchRequest request = new SearchRequest(dn, filter);
+      SearchResponse response = client.execute(request);
+      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+      Assert.assertEquals(response.entrySize(), 1);
+      Assert.assertEquals(response.getEntry().getDn().toLowerCase(), testLdapEntries[0].getDn().toLowerCase());
 
       int i = 1;
       while (client.hasMore(response)) {
         response = client.execute(request, response);
-        AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-        AssertJUnit.assertEquals(1, response.getResult().size());
-        AssertJUnit.assertEquals(
-          testLdapEntries[i].getDn().toLowerCase(),
-          response.getResult().getEntry().getDn().toLowerCase());
+        Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+        Assert.assertEquals(response.entrySize(), 1);
+        Assert.assertEquals(response.getEntry().getDn().toLowerCase(), testLdapEntries[i].getDn().toLowerCase());
         i++;
       }
 
       try {
         client.execute(request, response);
       } catch (IllegalArgumentException e) {
-        AssertJUnit.assertNotNull(e);
+        Assert.assertNotNull(e);
       }
-    } catch (LdapException e) {
-      // ignore this test if not supported by the server
-      AssertJUnit.assertEquals(ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
     }
   }
 
@@ -131,30 +118,24 @@ public class PagedResultsClientTest extends AbstractTest
       "prSearchDn",
       "prSearchFilter"
     })
-  @Test(groups = {"control-util"})
+  @Test(groups = "control-util")
   public void executeToCompletion(final String dn, final String filter)
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
+      final PagedResultsClient client = new PagedResultsClient(cf, 1);
 
-      final PagedResultsClient client = new PagedResultsClient(conn, 1);
+      final SearchRequest request = new SearchRequest(dn, filter);
 
-      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
-      request.setSortBehavior(SortBehavior.SORTED);
+      final SearchResponse response = SearchResponse.sort(client.executeToCompletion(request));
+      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+      Assert.assertEquals(response.entrySize(), 3);
 
-      final Response<SearchResult> response = client.executeToCompletion(request);
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(3, response.getResult().size());
-
-      final Iterator<LdapEntry> i = response.getResult().getEntries().iterator();
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      AssertJUnit.assertEquals(testLdapEntries[1].getDn().toLowerCase(), i.next().getDn().toLowerCase());
-      AssertJUnit.assertEquals(testLdapEntries[0].getDn().toLowerCase(), i.next().getDn().toLowerCase());
-      AssertJUnit.assertEquals(testLdapEntries[2].getDn().toLowerCase(), i.next().getDn().toLowerCase());
-    } catch (LdapException e) {
-      // ignore this test if not supported by the server
-      AssertJUnit.assertEquals(ResultCode.UNAVAILABLE_CRITICAL_EXTENSION, e.getResultCode());
+      final Iterator<LdapEntry> i = response.getEntries().iterator();
+      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+      Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[1].getDn().toLowerCase());
+      Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[0].getDn().toLowerCase());
+      Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[2].getDn().toLowerCase());
     }
   }
 }

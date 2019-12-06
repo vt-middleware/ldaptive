@@ -149,13 +149,10 @@ public class Syntax extends AbstractSchemaElement
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::oid=%s, description=%s, extensions=%s]",
-        getClass().getName(),
-        hashCode(),
-        oid,
-        getDescription(),
-        getExtensions());
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("oid=").append(oid).append(", ")
+      .append("description=").append(getDescription()).append(", ")
+      .append("extensions=").append(getExtensions()).append("]").toString();
   }
 }

@@ -15,10 +15,10 @@ public interface ConnectionInitializer
    *
    * @param  conn  connection to initialize
    *
-   * @return  response associated with the initialization or an empty response
+   * @return  result associated with the initialization or an empty result
    *
    * @throws  LdapException  if initialization fails
    */
-  Response<Void> initialize(Connection conn)
+  Result initialize(Connection conn)
     throws LdapException;
 }

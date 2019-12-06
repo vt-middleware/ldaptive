@@ -22,10 +22,8 @@ public abstract class AbstractTest
   /** Timeout for threaded tests. */
   public static final int TEST_TIME_OUT = 60000;
 
-  /**
-   * Add the BC provider.
-   */
   static {
+    // Add the BC provider
     Security.addProvider(new BouncyCastleProvider());
   }
 
@@ -40,31 +38,23 @@ public abstract class AbstractTest
   public void createLdapEntry(final LdapEntry entry)
     throws Exception
   {
-    try (Connection conn = TestUtils.createSetupConnection()) {
-      conn.open();
-
-      final AddOperation create = new AddOperation(conn);
-      create.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
-      if (!entryExists(conn, entry)) {
-        throw new IllegalStateException("Could not add entry to LDAP");
-      }
-      if (TestControl.isActiveDirectory() && entry.getAttribute("userPassword") != null) {
-        final ModifyOperation modify = new ModifyOperation(conn);
-        modify.execute(
-          new ModifyRequest(
-            entry.getDn(),
-            new AttributeModification(
-              AttributeModificationType.REPLACE,
-              new UnicodePwdAttribute("password" + entry.getAttribute("uid").getStringValue())),
-            new AttributeModification(
-              AttributeModificationType.REPLACE,
-              new LdapAttribute("userAccountControl", "512"))));
-      }
-    } catch (LdapException e) {
-      // ignore entry already exists
-      if (ResultCode.ENTRY_ALREADY_EXISTS != e.getResultCode()) {
-        throw e;
-      }
+    final ConnectionFactory cf = TestUtils.createSetupConnectionFactory();
+    final AddOperation create = new AddOperation(cf);
+    create.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
+    if (!entryExists(cf, entry)) {
+      throw new IllegalStateException("Could not add entry to LDAP");
+    }
+    if (TestControl.isActiveDirectory() && entry.getAttribute("userPassword") != null) {
+      final ModifyOperation modify = new ModifyOperation(cf);
+      modify.execute(
+        new ModifyRequest(
+          entry.getDn(),
+          new AttributeModification(
+            AttributeModification.Type.REPLACE,
+            new UnicodePwdAttribute("password" + entry.getAttribute("uid").getStringValue())),
+          new AttributeModification(
+            AttributeModification.Type.REPLACE,
+            new LdapAttribute("userAccountControl", "512"))));
     }
   }
 
@@ -79,12 +69,9 @@ public abstract class AbstractTest
   public void deleteLdapEntry(final String dn)
     throws Exception
   {
-    try (Connection conn = TestUtils.createSetupConnection()) {
-      conn.open();
-      if (entryExists(conn, new LdapEntry(dn))) {
-        final DeleteOperation delete = new DeleteOperation(conn);
-        delete.execute(new DeleteRequest(dn));
-      }
+    if (entryExists(TestUtils.createSetupConnectionFactory(), LdapEntry.builder().dn(dn).build())) {
+      final DeleteOperation delete = new DeleteOperation(TestUtils.createSetupConnectionFactory());
+      delete.execute(new DeleteRequest(dn));
     }
   }
 
@@ -92,27 +79,17 @@ public abstract class AbstractTest
   /**
    * Performs a compare on the supplied entry to determine if it exists in the LDAP.
    *
-   * @param  conn  to perform compare with
+   * @param  cf  to perform compare with
    * @param  entry  to perform compare on
    *
    * @return  whether the supplied entry exists
    *
    * @throws  Exception  On failure.
    */
-  protected boolean entryExists(final Connection conn, final LdapEntry entry)
+  protected boolean entryExists(final ConnectionFactory cf, final LdapEntry entry)
     throws Exception
   {
-    final CompareOperation compare = new CompareOperation(conn);
-    final LdapAttribute la = new LdapAttribute();
-    la.setName("CN");
-    la.addStringValue(DnParser.getValue(entry.getDn(), "CN"));
-    try {
-      return compare.execute(new CompareRequest(entry.getDn(), la)).getResult();
-    } catch (LdapException e) {
-      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode()) {
-        return false;
-      }
-      throw e;
-    }
+    final CompareOperation compare = new CompareOperation(cf);
+    return compare.execute(new CompareRequest(entry.getDn(), "CN", DnParser.getValue(entry.getDn(), "CN"))).isTrue();
   }
 }

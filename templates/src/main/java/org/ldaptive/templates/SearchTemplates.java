@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.ldaptive.SearchFilter;
+import org.ldaptive.FilterTemplate;
 
 /**
  * Contains a list of common search filter templates that can be formatted for any given query.
@@ -85,26 +85,26 @@ public class SearchTemplates
 
 
   /**
-   * Creates the search filters using configured templates and the supplied query.
+   * Creates the filter templates using configured templates and the supplied query.
    *
    * @param  query  to create search filter with
    *
-   * @return  search filters
+   * @return  filter templates
    */
-  public SearchFilter[] format(final Query query)
+  public FilterTemplate[] format(final Query query)
   {
-    final List<SearchFilter> filters = new ArrayList<>(filterTemplates.length);
+    final List<FilterTemplate> templates = new ArrayList<>(filterTemplates.length);
     for (String template : filterTemplates) {
-      final SearchFilter filter = new SearchFilter(
+      final FilterTemplate filter = new FilterTemplate(
         concatFilters(template, query.getSearchRestrictions(), searchRestrictions));
       for (TermParser parser : termParsers) {
         for (Map.Entry<String, String> e : parser.parse(query.getTerms()).entrySet()) {
           filter.setParameter(e.getKey(), e.getValue());
         }
       }
-      filters.add(filter);
+      templates.add(filter);
     }
-    return filters.toArray(new SearchFilter[filters.size()]);
+    return templates.toArray(new FilterTemplate[0]);
   }
 
 
@@ -138,14 +138,11 @@ public class SearchTemplates
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::filterTemplates=%s, searchRestrictions=%s, termParsers=%s]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(filterTemplates),
-        searchRestrictions,
-        Arrays.toString(termParsers));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("filterTemplates=").append(Arrays.toString(filterTemplates)).append(", ")
+      .append("searchRestrictions=").append(searchRestrictions).append(", ")
+      .append("termParsers=").append(Arrays.toString(termParsers)).append("]").toString();
   }
 
 
@@ -176,7 +173,7 @@ public class SearchTemplates
      }
    * </pre>
    */
-  public class DefaultTermParser implements TermParser
+  public static class DefaultTermParser implements TermParser
   {
 
 
@@ -203,7 +200,7 @@ public class SearchTemplates
      }
    * </pre>
    */
-  public class InitialTermParser implements TermParser
+  public static class InitialTermParser implements TermParser
   {
 
 

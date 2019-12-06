@@ -73,18 +73,8 @@ public class SSLContextInitializerTest
     // default ssl context initializer
     final DefaultSSLContextInitializer defaultWithTM = new DefaultSSLContextInitializer();
     defaultWithTM.setTrustManagers(new AllowAnyTrustManager());
-    final DefaultSSLContextInitializer defaultWithHV = new DefaultSSLContextInitializer();
-    defaultWithHV.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
-    final DefaultSSLContextInitializer defaultWithTMHV = new DefaultSSLContextInitializer();
-    defaultWithTMHV.setTrustManagers(new AllowAnyTrustManager());
-    defaultWithTMHV.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
     final DefaultSSLContextInitializer defaultNoTrustWithTM = new DefaultSSLContextInitializer(false);
     defaultNoTrustWithTM.setTrustManagers(new AllowAnyTrustManager());
-    final DefaultSSLContextInitializer defaultNoTrustWithHV = new DefaultSSLContextInitializer(false);
-    defaultNoTrustWithHV.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
-    final DefaultSSLContextInitializer defaultNoTrustWithTMHV = new DefaultSSLContextInitializer(false);
-    defaultNoTrustWithTMHV.setTrustManagers(new AllowAnyTrustManager());
-    defaultNoTrustWithTMHV.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
 
     // x509 ssl context initializer
     final X509SSLContextInitializer x509 = new X509SSLContextInitializer();
@@ -92,20 +82,8 @@ public class SSLContextInitializerTest
     final X509SSLContextInitializer x509WithTM = new X509SSLContextInitializer();
     x509WithTM.setTrustCertificates(testCert);
     x509WithTM.setTrustManagers(new AllowAnyTrustManager());
-    final X509SSLContextInitializer x509WithHV = new X509SSLContextInitializer();
-    x509WithHV.setTrustCertificates(testCert);
-    x509WithHV.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
-    final X509SSLContextInitializer x509WithTMHV = new X509SSLContextInitializer();
-    x509WithTMHV.setTrustCertificates(testCert);
-    x509WithTMHV.setTrustManagers(new AllowAnyTrustManager());
-    x509WithTMHV.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
     final X509SSLContextInitializer x509NoTrustWithTM = new X509SSLContextInitializer();
     x509NoTrustWithTM.setTrustManagers(new AllowAnyTrustManager());
-    final X509SSLContextInitializer x509NoTrustWithHV = new X509SSLContextInitializer();
-    x509NoTrustWithHV.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
-    final X509SSLContextInitializer x509NoTrustWithTMHV = new X509SSLContextInitializer();
-    x509NoTrustWithTMHV.setTrustManagers(new AllowAnyTrustManager());
-    x509NoTrustWithTMHV.setHostnameVerifierConfig(new HostnameVerifierConfig(new DefaultHostnameVerifier(), "test"));
 
     return
       new Object[][] {
@@ -115,32 +93,10 @@ public class SSLContextInitializerTest
           "sun.security.ssl.X509TrustManagerImpl",
           "org.ldaptive.ssl.AllowAnyTrustManager",
         },
-        new Object[] {
-          defaultWithHV,
-          "sun.security.ssl.X509TrustManagerImpl",
-          "org.ldaptive.ssl.HostnameVerifyingTrustManager",
-        },
-        new Object[] {
-          defaultWithTMHV,
-          "sun.security.ssl.X509TrustManagerImpl",
-          "org.ldaptive.ssl.AllowAnyTrustManager",
-          "org.ldaptive.ssl.HostnameVerifyingTrustManager",
-        },
         new Object[] {new DefaultSSLContextInitializer(false), "", },
         new Object[] {
           defaultNoTrustWithTM,
           "org.ldaptive.ssl.AllowAnyTrustManager",
-        },
-        // default trust added
-        new Object[] {
-          defaultNoTrustWithHV,
-          "org.ldaptive.ssl.DefaultTrustManager",
-          "org.ldaptive.ssl.HostnameVerifyingTrustManager",
-        },
-        new Object[] {
-          defaultNoTrustWithTMHV,
-          "org.ldaptive.ssl.AllowAnyTrustManager",
-          "org.ldaptive.ssl.HostnameVerifyingTrustManager",
         },
         new Object[] {
           x509,
@@ -151,32 +107,10 @@ public class SSLContextInitializerTest
           "sun.security.ssl.X509TrustManagerImpl",
           "org.ldaptive.ssl.AllowAnyTrustManager",
         },
-        new Object[] {
-          x509WithHV,
-          "sun.security.ssl.X509TrustManagerImpl",
-          "org.ldaptive.ssl.HostnameVerifyingTrustManager",
-        },
-        new Object[] {
-          x509WithTMHV,
-          "sun.security.ssl.X509TrustManagerImpl",
-          "org.ldaptive.ssl.AllowAnyTrustManager",
-          "org.ldaptive.ssl.HostnameVerifyingTrustManager",
-        },
         new Object[] {new X509SSLContextInitializer(), "", },
         new Object[] {
           x509NoTrustWithTM,
           "org.ldaptive.ssl.AllowAnyTrustManager",
-        },
-        // default trust added
-        new Object[] {
-          x509NoTrustWithHV,
-          "org.ldaptive.ssl.DefaultTrustManager",
-          "org.ldaptive.ssl.HostnameVerifyingTrustManager",
-        },
-        new Object[] {
-          x509NoTrustWithTMHV,
-          "org.ldaptive.ssl.AllowAnyTrustManager",
-          "org.ldaptive.ssl.HostnameVerifyingTrustManager",
         },
       };
   }
@@ -188,7 +122,7 @@ public class SSLContextInitializerTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"ssl"}, dataProvider = "initializers")
+  @Test(groups = "ssl", dataProvider = "initializers")
   public void getTrustManagers(final SSLContextInitializer initializer, final String... clazz)
     throws Exception
   {

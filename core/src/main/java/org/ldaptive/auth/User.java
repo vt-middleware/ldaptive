@@ -65,6 +65,9 @@ public class User
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::identifier=%s, context=%s]", getClass().getName(), hashCode(), identifier, context);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("identifier=").append(identifier).append(", ")
+      .append("context=").append(context).append("]").toString();
   }
 }

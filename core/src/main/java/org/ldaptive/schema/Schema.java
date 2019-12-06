@@ -138,7 +138,7 @@ public class Schema
         isBinary = true;
       } else {
         final Syntax syntax = getSyntax(syntaxOid);
-        if (syntax != null && Syntax.containsBooleanExtension(syntax, "X-NOT-HUMAN-READABLE")) {
+        if (Syntax.containsBooleanExtension(syntax, "X-NOT-HUMAN-READABLE")) {
           isBinary = true;
         }
       }
@@ -146,7 +146,7 @@ public class Schema
         Collections.addAll(binaryAttrs, type.getNames());
       }
     }
-    return binaryAttrs.toArray(new String[binaryAttrs.size()]);
+    return binaryAttrs.toArray(new String[0]);
   }
 
 
@@ -489,20 +489,15 @@ public class Schema
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::attributeTypes=%s, ditContentRules=%s, " +
-        "ditStructureRules=%s, syntaxes=%s, matchingRules=%s, " +
-        "matchingRuleUses=%s, nameForms=%s, objectClasses=%s]",
-        getClass().getName(),
-        hashCode(),
-        attributeTypes,
-        ditContentRules,
-        ditStructureRules,
-        syntaxes,
-        matchingRules,
-        matchingRuleUses,
-        nameForms,
-        objectClasses);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("attributeTypes=").append(attributeTypes).append(", ")
+      .append("ditContentRules=").append(ditContentRules).append(", ")
+      .append("ditStructureRules=").append(ditStructureRules).append(", ")
+      .append("syntaxes=").append(syntaxes).append(", ")
+      .append("matchingRules=").append(matchingRules).append(", ")
+      .append("matchingRuleUses=").append(matchingRuleUses).append(", ")
+      .append("nameForms=").append(nameForms).append(", ")
+      .append("objectClasses=").append(objectClasses).append("]").toString();
   }
 }

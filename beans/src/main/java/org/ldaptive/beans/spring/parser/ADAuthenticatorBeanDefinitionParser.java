@@ -1,11 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
+import java.util.function.Function;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
-import org.ldaptive.auth.PooledSearchEntryResolver;
 import org.ldaptive.auth.SearchEntryResolver;
-import org.ldaptive.handler.SearchEntryHandler;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -47,15 +46,15 @@ public class ADAuthenticatorBeanDefinitionParser extends AbstractSearchAuthentic
       if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
         entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
       } else {
-        entryResolver = BeanDefinitionBuilder.genericBeanDefinition(PooledSearchEntryResolver.class);
+        entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
       }
       entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
     } else {
       entryResolver = super.parseEntryResolver(element, connectionFactory);
     }
     entryResolver.addPropertyValue(
-      "searchEntryHandlers",
-      new SearchEntryHandler[]{new ObjectGuidHandler(), new ObjectSidHandler()});
+      "entryHandlers",
+      new Function[]{new ObjectGuidHandler(), new ObjectSidHandler()});
     return entryResolver;
   }
 }

@@ -1,14 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
-import org.ldaptive.asn1.OctetStringType;
 
 /**
  * Response control for virtual list view. See http://tools.ietf.org/html/draft-ietf-ldapext-ldapv3-vlv-09. Control is
@@ -43,7 +42,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   public static final String OID = "2.16.840.1.113730.3.4.10";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 773;
+  private static final int HASH_CODE_SEED = 10709;
 
   /** list offset for the target entry. */
   private int targetPosition;
@@ -255,30 +254,25 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, targetPosition=%s, contentCount=%s, viewResult=%s, contextID=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        targetPosition,
-        contentCount,
-        viewResult,
-        LdapUtils.base64Encode(contextID));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("targetPosition=").append(targetPosition).append(", ")
+      .append("contentCount=").append(contentCount).append(", ")
+      .append("viewResult=").append(viewResult).append(", ")
+      .append("contextID=").append(LdapUtils.base64Encode(contextID)).append("]").toString();
   }
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(TargetPositionHandler.PATH, new TargetPositionHandler(this));
     parser.registerHandler(ContentCountHandler.PATH, new ContentCountHandler(this));
     parser.registerHandler(ViewResultHandler.PATH, new ViewResultHandler(this));
     parser.registerHandler(ContextIDHandler.PATH, new ContextIDHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -302,7 +296,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setTargetPosition(IntegerType.decode(encoded).intValue());
     }
@@ -329,7 +323,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setContentCount(IntegerType.decode(encoded).intValue());
     }
@@ -356,7 +350,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       final int resultValue = IntegerType.decode(encoded).intValue();
       final ResultCode rc = ResultCode.valueOf(resultValue);
@@ -373,7 +367,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   {
 
     /** DER path to context value. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[3]");
 
 
     /**
@@ -388,9 +382,9 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setContextID(cookie);
       }

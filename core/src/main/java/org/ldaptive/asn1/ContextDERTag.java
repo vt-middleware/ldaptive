@@ -38,6 +38,6 @@ public class ContextDERTag extends AbstractDERTag
   @Override
   public String name()
   {
-    return String.format("%s(%s)", TAG_NAME, getTagNo());
+    return new StringBuilder(TAG_NAME).append("(").append(getTagNo()).append(")").toString();
   }
 }

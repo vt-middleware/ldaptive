@@ -3,23 +3,14 @@ package org.ldaptive.ad.control.util;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
-import org.ldaptive.Request;
-import org.ldaptive.Response;
-import org.ldaptive.SearchEntry;
+import org.ldaptive.Result;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
 import org.ldaptive.ad.control.NotificationControl;
-import org.ldaptive.ad.handler.ObjectGuidHandler;
-import org.ldaptive.ad.handler.ObjectSidHandler;
-import org.ldaptive.async.AbandonOperation;
-import org.ldaptive.async.AsyncRequest;
-import org.ldaptive.async.AsyncSearchOperation;
-import org.ldaptive.async.handler.AsyncRequestHandler;
-import org.ldaptive.handler.HandlerResult;
-import org.ldaptive.handler.OperationResponseHandler;
-import org.ldaptive.handler.SearchEntryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,18 +25,21 @@ public class NotificationClient
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Connection to invoke the search operation on. */
-  private final Connection connection;
+  /** Connection factory to get a connection from. */
+  private final ConnectionFactory factory;
+
+  /** Search operation handle. */
+  private SearchOperationHandle handle;
 
 
   /**
    * Creates a new notification client.
    *
-   * @param  conn  to execute the search operation on
+   * @param  cf  to get a connection from
    */
-  public NotificationClient(final Connection conn)
+  public NotificationClient(final ConnectionFactory cf)
   {
-    connection = conn;
+    factory = cf;
   }
 
 
@@ -72,11 +66,6 @@ public class NotificationClient
    * <ul>
    *   <li>{@link SearchRequest#setControls( org.ldaptive.control.RequestControl...)} is invoked with {@link
    *     NotificationControl}</li>
-   *   <li>{@link SearchRequest#setSearchEntryHandlers(SearchEntryHandler...)} is invoked with a custom handler that
-   *     places notification data in a blocking queue. The {@link ObjectGuidHandler} and {@link ObjectSidHandler}
-   *     handlers are included as well.</li>
-   *   <li>{@link AsyncSearchOperation#setExceptionHandler(org.ldaptive.async.handler.ExceptionHandler)} is invoked with
-   *     a custom handler that places the exception in a blocking queue.</li>
    * </ul>
    *
    * <p>The search request object should not be reused for any other search operations.</p>
@@ -88,106 +77,50 @@ public class NotificationClient
    *
    * @throws  LdapException  if the search fails
    */
-  @SuppressWarnings("unchecked")
   public BlockingQueue<NotificationItem> execute(final SearchRequest request, final int capacity)
     throws LdapException
   {
     final BlockingQueue<NotificationItem> queue = new LinkedBlockingQueue<>(capacity);
 
-    final AsyncSearchOperation search = new AsyncSearchOperation(connection);
-    search.setOperationResponseHandlers(
-      new OperationResponseHandler<SearchRequest, SearchResult>() {
-        @Override
-        public HandlerResult<Response<SearchResult>> handle(
-          final Connection conn,
-          final SearchRequest request,
-          final Response<SearchResult> response)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", response);
-            search.shutdown();
-
-            queue.put(new NotificationItem(response));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue response {}", response);
-          }
-          return new HandlerResult<>(response);
-        }
-      });
-    search.setAsyncRequestHandlers(
-      new AsyncRequestHandler() {
-        @Override
-        public HandlerResult<AsyncRequest> handle(
-          final Connection conn,
-          final Request request,
-          final AsyncRequest asyncRequest)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", asyncRequest);
-            queue.put(new NotificationItem(asyncRequest));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue async request {}", asyncRequest);
-          }
-          return new HandlerResult<>(null);
-        }
-      });
-    search.setExceptionHandler(
-      (conn, request1, exception) -> {
-        try {
-          logger.debug("received exception:", exception);
-          search.shutdown();
-          queue.put(new NotificationItem(exception));
-        } catch (Exception e) {
-          logger.warn("Unable to enqueue exception:", exception);
-        }
-        return new HandlerResult<>(null);
-      });
-
     request.setControls(new NotificationControl());
-    request.setSearchEntryHandlers(
-      new ObjectGuidHandler(),
-      new ObjectSidHandler(),
-      new SearchEntryHandler() {
-        @Override
-        public HandlerResult<SearchEntry> handle(
-          final Connection conn,
-          final SearchRequest request,
-          final SearchEntry entry)
-          throws LdapException
-        {
-          try {
-            logger.debug("received {}", entry);
-            queue.put(new NotificationItem(entry));
-          } catch (Exception e) {
-            logger.warn("Unable to enqueue entry {}", entry);
-          }
-          return new HandlerResult<>(null);
-        }
+    final SearchOperation search = new SearchOperation(factory, request);
+    search.setResultHandlers(result -> {
+      logger.debug("received {}", result);
+      try {
+        queue.put(new NotificationItem(result));
+      } catch (InterruptedException e) {
+        logger.warn("Unable to enqueue result {}", result);
+      }
+    });
+    search.setExceptionHandler(e -> {
+      logger.debug("received exception", e);
+      try {
+        queue.put(new NotificationItem(e));
+      } catch (InterruptedException ex) {
+        logger.warn("Unable to enqueue exception", ex);
+      }
+    });
+    search.setEntryHandlers(entry -> {
+      logger.debug("received {}", entry);
+      try {
+        queue.put(new NotificationItem(entry));
+      } catch (InterruptedException e) {
+        logger.warn("Unable to enqueue entry {}", entry);
+      }
+      return entry;
+    });
 
-        @Override
-        public void initializeRequest(final SearchRequest request) {}
-      });
-
-    search.execute(request);
+    handle = search.send();
     return queue;
   }
 
 
   /**
-   * Invokes an abandon operation on the supplied ldap message id. Convenience method supplied to abandon async search
-   * operations.
-   *
-   * @param  messageId  of the operation to abandon
-   *
-   * @throws  LdapException  if the abandon operation fails
+   * Invokes an abandon operation on the last invocation of {@link #execute(SearchRequest, int)}.
    */
-  public void abandon(final int messageId)
-    throws LdapException
+  public void abandon()
   {
-    final AbandonOperation abandon = new AbandonOperation(connection);
-    abandon.execute(messageId);
+    handle.abandon();
   }
 
 
@@ -195,14 +128,11 @@ public class NotificationClient
   public static class NotificationItem
   {
 
-    /** Async request from the search operation. */
-    private final AsyncRequest asyncRequest;
-
     /** Entry contained in this notification item. */
-    private final SearchEntry searchEntry;
+    private final LdapEntry searchEntry;
 
-    /** Response contained in this notification item. */
-    private final Response searchResponse;
+    /** Result contained in this notification item. */
+    private final Result searchResult;
 
     /** Exception thrown by the search operation. */
     private final Exception searchException;
@@ -211,27 +141,12 @@ public class NotificationClient
     /**
      * Creates a new notification item.
      *
-     * @param  request  that represents this item
-     */
-    public NotificationItem(final AsyncRequest request)
-    {
-      asyncRequest = request;
-      searchEntry = null;
-      searchResponse = null;
-      searchException = null;
-    }
-
-
-    /**
-     * Creates a new notification item.
-     *
      * @param  entry  that represents this item
      */
-    public NotificationItem(final SearchEntry entry)
+    public NotificationItem(final LdapEntry entry)
     {
-      asyncRequest = null;
       searchEntry = entry;
-      searchResponse = null;
+      searchResult = null;
       searchException = null;
     }
 
@@ -239,13 +154,12 @@ public class NotificationClient
     /**
      * Creates a new notification item.
      *
-     * @param  response  that represents this item
+     * @param  result  that represents this item
      */
-    public NotificationItem(final Response response)
+    public NotificationItem(final Result result)
     {
-      asyncRequest = null;
       searchEntry = null;
-      searchResponse = response;
+      searchResult = result;
       searchException = null;
     }
 
@@ -257,32 +171,9 @@ public class NotificationClient
      */
     public NotificationItem(final Exception exception)
     {
-      asyncRequest = null;
       searchEntry = null;
-      searchResponse = null;
+      searchResult = null;
       searchException = exception;
-    }
-
-
-    /**
-     * Returns whether this item represents an async request.
-     *
-     * @return  whether this item represents an async request
-     */
-    public boolean isAsyncRequest()
-    {
-      return asyncRequest != null;
-    }
-
-
-    /**
-     * Returns the async request contained in this item or null if this item does not contain an async request.
-     *
-     * @return  async request
-     */
-    public AsyncRequest getAsyncRequest()
-    {
-      return asyncRequest;
     }
 
 
@@ -302,7 +193,7 @@ public class NotificationClient
      *
      * @return  search entry
      */
-    public SearchEntry getEntry()
+    public LdapEntry getEntry()
     {
       return searchEntry;
     }
@@ -313,9 +204,9 @@ public class NotificationClient
      *
      * @return  whether this item represents a response
      */
-    public boolean isResponse()
+    public boolean isResult()
     {
-      return searchResponse != null;
+      return searchResult != null;
     }
 
 
@@ -324,9 +215,9 @@ public class NotificationClient
      *
      * @return  response
      */
-    public Response getResponse()
+    public Result getResult()
     {
-      return searchResponse;
+      return searchResult;
     }
 
 
@@ -355,19 +246,17 @@ public class NotificationClient
     @Override
     public String toString()
     {
-      final String s;
-      if (isAsyncRequest()) {
-        s = String.format("[%s@%d::asyncRequest=%s]", getClass().getName(), hashCode(), asyncRequest);
-      } else if (isEntry()) {
-        s = String.format("[%s@%d::searchEntry=%s]", getClass().getName(), hashCode(), searchEntry);
-      } else if (isResponse()) {
-        s = String.format("[%s@%d::searchResponse=%s]", getClass().getName(), hashCode(), searchResponse);
+      final StringBuilder sb = new StringBuilder("[").append(getClass().getName()).append("@").append(hashCode());
+      if (isEntry()) {
+        sb.append("::searchEntry=").append(searchEntry).append("]");
+      } else if (isResult()) {
+        sb.append("::searchResult=").append(searchResult).append("]");
       } else if (isException()) {
-        s = String.format("[%s@%d::searchException=%s]", getClass().getName(), hashCode(), searchException);
+        sb.append("::syncReplException=").append(searchException).append("]");
       } else {
-        s = String.format("[%s@%d]", getClass().getName(), hashCode());
+        sb.append("]");
       }
-      return s;
+      return sb.toString();
     }
   }
 }

@@ -8,7 +8,7 @@ import java.util.Comparator;
  *
  * @author  Middleware Services
  */
-public class SearchResultIgnoreCaseComparator implements Comparator<SearchResult>
+public class SearchResultIgnoreCaseComparator implements Comparator<SearchResponse>
 {
 
   /** names of attributes to ignore the case of. */
@@ -43,7 +43,7 @@ public class SearchResultIgnoreCaseComparator implements Comparator<SearchResult
    * @return  a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater
    *          than the second.
    */
-  public int compare(final SearchResult a, final SearchResult b)
+  public int compare(final SearchResponse a, final SearchResponse b)
   {
     return lowerCaseResult(a, attributeNames).hashCode() - lowerCaseResult(b, attributeNames).hashCode();
   }
@@ -59,11 +59,11 @@ public class SearchResultIgnoreCaseComparator implements Comparator<SearchResult
    *
    * @throws  IllegalArgumentException  if a binary attribute is lower cased
    */
-  public static SearchResult lowerCaseResult(final SearchResult lr, final String... names)
+  public static SearchResponse lowerCaseResult(final SearchResponse lr, final String... names)
   {
-    final SearchResult lowerCase = new SearchResult(lr.getSortBehavior());
+    final SearchResponse lowerCase = new SearchResponse();
     for (LdapEntry le : lr.getEntries()) {
-      lowerCase.addEntry(LdapEntryIgnoreCaseComparator.lowerCaseEntry(le, names));
+      lowerCase.addEntries(LdapEntryIgnoreCaseComparator.lowerCaseEntry(le, names));
     }
     return lowerCase;
   }

@@ -1,10 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.ConstructedDEREncoder;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
@@ -102,6 +102,13 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the paged results size. For requests this is the requested page size. For responses this is the result size
    * estimate from the server.
@@ -173,14 +180,11 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, size=%s, cookie=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        resultSize,
-        LdapUtils.base64Encode(cookie));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("size=").append(resultSize).append(", ")
+      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append("]").toString();
   }
 
 
@@ -196,14 +200,12 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(SizeHandler.PATH, new SizeHandler(this));
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -212,7 +214,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   {
 
     /** DER path to result size. */
-    public static final DERPath PATH = new DERPath("/SEQ/INT");
+    public static final DERPath PATH = new DERPath("/SEQ/INT[0]");
 
 
     /**
@@ -227,7 +229,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setSize(IntegerType.decode(encoded).intValue());
     }
@@ -239,7 +241,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   {
 
     /** DER path to cookie value. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[1]");
 
 
     /**
@@ -254,9 +256,9 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);
       }

@@ -14,7 +14,7 @@ public class DERPathTest
 {
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"asn1"})
+  @Test(groups = "asn1")
   public void testPushPop()
     throws Exception
   {
@@ -32,7 +32,7 @@ public class DERPathTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"asn1"})
+  @Test(groups = "asn1")
   public void testEquals()
     throws Exception
   {
@@ -43,7 +43,7 @@ public class DERPathTest
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"asn1"})
+  @Test(groups = "asn1")
   public void testHashcode()
     throws Exception
   {
@@ -84,7 +84,7 @@ public class DERPathTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "paths")
+  @Test(groups = "asn1", dataProvider = "paths")
   public void testToString(final String testPath, final String expected)
     throws Exception
   {
@@ -98,7 +98,7 @@ public class DERPathTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "paths")
+  @Test(groups = "asn1", dataProvider = "paths")
   public void testEquals(final String testPath, final String expected)
     throws Exception
   {

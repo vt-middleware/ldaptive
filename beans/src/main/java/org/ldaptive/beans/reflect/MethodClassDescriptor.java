@@ -5,14 +5,14 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.ldaptive.beans.AbstractClassDescriptor;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.AttributeValueMutator;
 import org.ldaptive.beans.DnValueMutator;
 import org.ldaptive.beans.Entry;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.transcode.ValueTranscoder;
 
 /**
  * Creates DN and attribute mutators for the {@link java.lang.reflect.Method}s on a type. Leverages the {@link
@@ -52,7 +52,7 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
    */
   protected Map<String, PropertyDescriptor> getPropertyDescriptors(final Class<?> type)
   {
-    final Map<String, PropertyDescriptor> descriptors = new HashMap<>();
+    final Map<String, PropertyDescriptor> descriptors = new LinkedHashMap<>();
     try {
       final BeanInfo info = Introspector.getBeanInfo(type);
       if (info != null) {
@@ -104,7 +104,6 @@ public class MethodClassDescriptor extends AbstractClassDescriptor
       new MethodAttributeValueMutator(
         name,
         attribute.binary(),
-        attribute.sortBehavior(),
         new DefaultReflectionTranscoder(desc.getReadMethod().getGenericReturnType(), transcoder),
         desc.getReadMethod(),
         desc.getWriteMethod());

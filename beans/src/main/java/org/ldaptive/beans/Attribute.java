@@ -5,7 +5,6 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import org.ldaptive.SortBehavior;
 
 /**
  * Annotation to describe LDAP attribute data on a bean.
@@ -44,13 +43,6 @@ public @interface Attribute
    * @return  whether this attribute is binary
    */
   boolean binary() default false;
-
-  /**
-   * Sort behavior for this attribute.
-   *
-   * @return  sort behavior
-   */
-  SortBehavior sortBehavior() default SortBehavior.UNORDERED;
 
   /**
    * Transcoder for this attribute.

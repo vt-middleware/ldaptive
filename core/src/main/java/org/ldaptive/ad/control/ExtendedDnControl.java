@@ -77,6 +77,13 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the flag.
    *
@@ -123,7 +130,10 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::criticality=%s, flag=%s]", getClass().getName(), hashCode(), getCriticality(), flag);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("flag=").append(flag).append("]").toString();
   }
 
 

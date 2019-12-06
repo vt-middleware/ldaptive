@@ -25,32 +25,19 @@ public abstract class AbstractSSLContextInitializer implements SSLContextInitial
   /** Trust managers. */
   protected TrustManager[] trustManagers;
 
-  /** Hostname verifier config. */
-  protected HostnameVerifierConfig hostnameVerifierConfig;
-
 
   @Override
   public TrustManager[] getTrustManagers()
     throws GeneralSecurityException
   {
     final TrustManager[] tm = createTrustManagers();
-    final TrustManager[] hostnameTrustManager = hostnameVerifierConfig != null ?
-      new TrustManager[] {
-        new HostnameVerifyingTrustManager(
-          hostnameVerifierConfig.getCertificateHostnameVerifier(),
-          hostnameVerifierConfig.getHostnames()),
-      } : null;
     TrustManager[] aggregate = null;
     if (tm == null) {
-      if (trustManagers == null) {
-        if (hostnameTrustManager != null) {
-          aggregate = aggregateTrustManagers(new DefaultTrustManager(), hostnameTrustManager[0]);
-        }
-      } else {
-        aggregate = aggregateTrustManagers(LdapUtils.concatArrays(trustManagers, hostnameTrustManager));
+      if (trustManagers != null) {
+        aggregate = aggregateTrustManagers(trustManagers);
       }
     } else {
-      aggregate = aggregateTrustManagers(LdapUtils.concatArrays(tm, trustManagers, hostnameTrustManager));
+      aggregate = aggregateTrustManagers(LdapUtils.concatArrays(tm, trustManagers));
     }
     return aggregate;
   }
@@ -60,20 +47,6 @@ public abstract class AbstractSSLContextInitializer implements SSLContextInitial
   public void setTrustManagers(final TrustManager... managers)
   {
     trustManagers = managers;
-  }
-
-
-  @Override
-  public HostnameVerifierConfig getHostnameVerifierConfig()
-  {
-    return hostnameVerifierConfig;
-  }
-
-
-  @Override
-  public void setHostnameVerifierConfig(final HostnameVerifierConfig config)
-  {
-    hostnameVerifierConfig = config;
   }
 
 

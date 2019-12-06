@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext.xsd">
+
+  <ldaptive:anonymous-search-authenticator
+    ldapUrl="ldap://directory.ldaptive.org"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+    baseDn="dc=ldaptive,dc=org"
+    userFilter="(mail={user})"
+    connectTimeout="PT5S"
+    useStartTLS="true"
+    blockWaitTime="PT5S"
+    maxPoolSize="10"
+    minPoolSize="5"
+  />
+
+  <ldaptive:pooled-connection-factory
+    ldapUrl="ldap://directory.ldaptive.org"
+    responseTimeout="PT7S"
+    trustStore="classpath:/ldaptive.truststore"
+    trustStoreType="JKS"
+    keyStore="classpath:/ldaptive.p12"
+    keyStoreType="PKCS12"
+    keyStoreAliases="vt-ldap-test"
+  />
+
+  <ldaptive:connection-factory
+    ldapUrl="ldap://directory.ldaptive.org"
+    responseTimeout="PT7S"
+    trustCertificates="classpath:/ldaptive.trust.crt"
+  />
+
+  <ldaptive:search-operation
+    baseDn="dc=ldaptive,dc=org"
+    filter="(mail=*)"
+    returnAttributes="cn,givenName,sn"
+    searchScope="ONELEVEL"
+    timeLimit="PT5S"
+    sizeLimit="10"
+    binaryAttributes="jpegPhoto,userCertificate"
+  />
+
+  <ldaptive:search-operation-worker
+    baseDn="dc=ldaptive,dc=org"
+    filter="(mail=*)"
+    returnAttributes="cn,givenName,sn"
+    searchScope="ONELEVEL"
+    timeLimit="PT5S"
+    sizeLimit="10"
+    binaryAttributes="jpegPhoto,userCertificate"
+  />
+
+  <ldaptive:connection-config
+    ldapUrl="ldap://directory.ldaptive.org"
+    connectTimeout="PT3S"
+    responseTimeout="PT7S"
+    useStartTLS="true"
+    bindDn="uid=admin,ou=accounts,dc=ldaptive,dc=org"
+    bindCredential="admin-pass-word"
+    trustStore="classpath:/ldaptive.truststore"
+    trustStorePassword="changeit"
+    trustStoreType="JKS"
+    keyStore="classpath:/ldaptive.p12"
+    keyStorePassword="changeit"
+    keyStoreType="JKS"
+    keyStoreAliases="vt-ldap-test"
+  />
+
+</beans>

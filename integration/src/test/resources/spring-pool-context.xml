@@ -15,23 +15,23 @@
   </bean>
 
   <bean id="pool"
-    class="org.ldaptive.pool.BlockingConnectionPool"
-    init-method="initialize"
-    p:blockWaitTime="PT5S"
-    p:validator-ref="compareValidator">
+        class="org.ldaptive.pool.BlockingConnectionPool"
+        init-method="initialize"
+        p:blockWaitTime="PT5S"
+        p:validator-ref="compareValidator">
     <constructor-arg index="0">
       <bean class="org.ldaptive.pool.PoolConfig"
         p:minPoolSize="5"
         p:maxPoolSize="20"
         p:validatePeriodically="true"
-        p:validatePeriod="PT30S"
       />
     </constructor-arg>
     <constructor-arg index="1" ref="connectionFactory"/>
   </bean>
-  
+
   <bean id="compareValidator"
-    class="org.ldaptive.pool.CompareValidator"
+    class="org.ldaptive.CompareConnectionValidator"
+    p:validatePeriod="PT30S"
   />
   
   <bean id="connectionFactory"
@@ -44,7 +44,7 @@
     p:ldapUrl="${ldapTestHost}"
     p:useStartTLS="true"
     p:sslConfig-ref="sslConfig"
-    p:connectionInitializer-ref="bindConnectionInitializer"
+    p:connectionInitializers-ref="bindConnectionInitializer"
   />
 
   <bean id="sslConfig"

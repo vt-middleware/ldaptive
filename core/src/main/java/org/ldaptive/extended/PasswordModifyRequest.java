@@ -2,17 +2,14 @@
 package org.ldaptive.extended;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import org.ldaptive.AbstractRequest;
-import org.ldaptive.Credential;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextType;
 import org.ldaptive.asn1.DEREncoder;
 import org.ldaptive.asn1.UniversalDERTag;
 
 /**
- * Contains the data required to perform an ldap password modify operation. See RFC 3062. Request is defined as:
+ * LDAP password modify request defined as:
  *
  * <pre>
    PasswdModifyRequestValue ::= SEQUENCE {
@@ -23,158 +20,68 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class PasswordModifyRequest extends AbstractRequest implements ExtendedRequest
+public class PasswordModifyRequest extends ExtendedRequest
 {
 
-  /** OID of this extended request. */
+  /** OID of this request. */
   public static final String OID = "1.3.6.1.4.1.4203.1.11.1";
 
-  /** User to modify. */
-  private String userIdentity;
 
-  /** Current password. */
-  private Credential oldPassword;
-
-  /** Desired password. */
-  private Credential newPassword;
-
-
-  /** Default constructor. */
-  public PasswordModifyRequest() {}
+  /**
+   * Creates a new password modify request.
+   */
+  public PasswordModifyRequest()
+  {
+    super(OID);
+  }
 
 
   /**
    * Creates a new password modify request.
    *
-   * @param  identity  to modify
+   * @param  identity  to modify or null
    */
   public PasswordModifyRequest(final String identity)
   {
-    setUserIdentity(identity);
+    this(identity, null, null);
   }
 
 
   /**
    * Creates a new password modify request.
    *
-   * @param  identity  to modify
-   * @param  oldPass  current password for the dn
-   * @param  newPass  desired password for the dn
+   * @param  identity  to modify or null
+   * @param  oldPass  current password for the dn or null
    */
-  public PasswordModifyRequest(final String identity, final Credential oldPass, final Credential newPass)
+  public PasswordModifyRequest(final String identity, final String oldPass)
   {
-    setUserIdentity(identity);
-    setOldPassword(oldPass);
-    setNewPassword(newPass);
+    this(identity, oldPass, null);
   }
 
 
   /**
-   * Returns the user to modify.
+   * Creates a new password modify request.
    *
-   * @return  user identity
+   * @param  identity  to modify or null
+   * @param  oldPass  current password for the dn or null
+   * @param  newPass  desired password for the dn or null
    */
-  public String getUserIdentity()
+  public PasswordModifyRequest(final String identity, final String oldPass, final String newPass)
   {
-    return userIdentity;
-  }
-
-
-  /**
-   * Sets the user to modify.
-   *
-   * @param  identity  to modify
-   */
-  public void setUserIdentity(final String identity)
-  {
-    userIdentity = identity;
-  }
-
-
-  /**
-   * Returns the old password.
-   *
-   * @return  old password
-   */
-  public Credential getOldPassword()
-  {
-    return oldPassword;
-  }
-
-
-  /**
-   * Sets the old password.
-   *
-   * @param  oldPass  to verify
-   */
-  public void setOldPassword(final Credential oldPass)
-  {
-    oldPassword = oldPass;
-  }
-
-
-  /**
-   * Returns the new password.
-   *
-   * @return  new password
-   */
-  public Credential getNewPassword()
-  {
-    return newPassword;
-  }
-
-
-  /**
-   * Sets the new password.
-   *
-   * @param  newPass  to set
-   */
-  public void setNewPassword(final Credential newPass)
-  {
-    newPassword = newPass;
-  }
-
-
-  @Override
-  public byte[] encode()
-  {
+    super(OID);
     final List<DEREncoder> l = new ArrayList<>();
-    if (getUserIdentity() != null) {
-      l.add(new ContextType(0, getUserIdentity()));
+    if (identity != null) {
+      l.add(new ContextType(0, identity));
     }
-    if (getOldPassword() != null) {
-      l.add(new ContextType(1, getOldPassword().getString()));
+    if (oldPass != null) {
+      l.add(new ContextType(1, oldPass));
     }
-    if (getNewPassword() != null) {
-      l.add(new ContextType(2, getNewPassword().getString()));
+    if (newPass != null) {
+      l.add(new ContextType(2, newPass));
     }
-
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      l.toArray(new DEREncoder[l.size()]));
-    return se.encode();
-  }
-
-
-  @Override
-  public String getOID()
-  {
-    return OID;
-  }
-
-
-  @Override
-  public String toString()
-  {
-    return
-      String.format(
-        "[%s@%d::userIdentity=%s, controls=%s, referralHandler=%s, " +
-        "intermediateResponseHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        userIdentity,
-        Arrays.toString(getControls()),
-        getReferralHandler(),
-        Arrays.toString(getIntermediateResponseHandlers()));
+      l.toArray(DEREncoder[]::new));
+    setRequestValue(se.encode());
   }
 }

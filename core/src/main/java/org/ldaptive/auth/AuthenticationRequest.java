@@ -167,11 +167,11 @@ public class AuthenticationRequest
   /**
    * Sets the controls.
    *
-   * @param  c  controls to set
+   * @param  cntrls  controls to set
    */
-  public void setControls(final RequestControl... c)
+  public void setControls(final RequestControl... cntrls)
   {
-    controls = c;
+    controls = cntrls;
   }
 
 
@@ -182,7 +182,7 @@ public class AuthenticationRequest
    *
    * @return  authentication request
    */
-  public static AuthenticationRequest newAuthenticationRequest(final AuthenticationRequest request)
+  public static AuthenticationRequest copy(final AuthenticationRequest request)
   {
     final AuthenticationRequest r = new AuthenticationRequest();
     r.setUser(request.getUser());
@@ -196,13 +196,159 @@ public class AuthenticationRequest
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::user=%s, returnAttributes=%s, controls=%s]",
-        getClass().getName(),
-        hashCode(),
-        user,
-        Arrays.toString(returnAttributes),
-        Arrays.toString(controls));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("user=").append(user).append(", ")
+      .append("returnAttributes=").append(Arrays.toString(returnAttributes)).append(", ")
+      .append("controls=").append(Arrays.toString(controls)).append("]").toString();
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  /** Authentication request builder. */
+  public static class Builder
+  {
+
+    /** Authentication request to build. */
+    private final AuthenticationRequest object = new AuthenticationRequest();
+
+
+    /**
+     * Default constructor.
+     */
+    protected Builder() {}
+
+
+    /**
+     * Sets the user id.
+     *
+     * @param  id  user id
+     *
+     * @return  this builder
+     */
+    public Builder id(final String id)
+    {
+      object.setUser(new User(id));
+      return this;
+    }
+
+
+    /**
+     * Sets the user credential.
+     *
+     * @param  credential  user credential
+     *
+     * @return  this builder
+     */
+    public Builder credential(final Credential credential)
+    {
+      object.setCredential(credential);
+      return this;
+    }
+
+
+    /**
+     * Sets the user credential.
+     *
+     * @param  credential  user credential
+     *
+     * @return  this builder
+     */
+    public Builder credential(final String credential)
+    {
+      object.setCredential(new Credential(credential));
+      return this;
+    }
+
+
+    /**
+     * Sets the user credential.
+     *
+     * @param  credential  user credential
+     *
+     * @return  this builder
+     */
+    public Builder credential(final char[] credential)
+    {
+      object.setCredential(new Credential(credential));
+      return this;
+    }
+
+
+    /**
+     * Sets the user credential.
+     *
+     * @param  credential  user credential
+     *
+     * @return  this builder
+     */
+    public Builder credential(final byte[] credential)
+    {
+      object.setCredential(new Credential(credential));
+      return this;
+    }
+
+
+    /**
+     * Sets the user.
+     *
+     * @param  user  to authenticate
+     *
+     * @return  this builder
+     */
+    public Builder user(final User user)
+    {
+      object.setUser(user);
+      return this;
+    }
+
+
+    /**
+     * Sets the return attributes.
+     *
+     * @param  attributes  return attributes
+     *
+     * @return  this builder
+     */
+    public Builder returnAttributes(final String... attributes)
+    {
+      object.setReturnAttributes(attributes);
+      return this;
+    }
+
+
+    /**
+     * Sets the request controls.
+     *
+     * @param  controls  request controls
+     *
+     * @return  this builder
+     */
+    public Builder controls(final RequestControl... controls)
+    {
+      object.setControls(controls);
+      return this;
+    }
+
+
+    /**
+     * Returns the authentication request.
+     *
+     * @return  authentication request
+     */
+    public AuthenticationRequest build()
+    {
+      return object;
+    }
   }
 }

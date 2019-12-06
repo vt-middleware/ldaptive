@@ -1,10 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
-import org.ldaptive.auth.PooledSearchDnResolver;
 import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.SearchEntryResolver;
-import org.ldaptive.pool.PooledConnectionFactory;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -42,7 +40,7 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
     final BeanDefinitionBuilder authHandler = parseAuthHandler(element);
     final BeanDefinitionBuilder authResponseHandler = parseAuthResponseHandler(builder, authHandler, element);
     if (authResponseHandler != null) {
-      builder.addPropertyValue("authenticationResponseHandlers", authResponseHandler.getBeanDefinition());
+      builder.addPropertyValue("responseHandlers", authResponseHandler.getBeanDefinition());
     }
 
     builder.addConstructorArgValue(dnResolver.getBeanDefinition());
@@ -72,7 +70,7 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
   {
     BeanDefinitionBuilder dnResolver = builder;
     if (dnResolver == null) {
-      dnResolver = BeanDefinitionBuilder.genericBeanDefinition(PooledSearchDnResolver.class);
+      dnResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchDnResolver.class);
     }
     dnResolver.addPropertyValue("baseDn", element.getAttribute("baseDn"));
     dnResolver.addPropertyValue("subtreeSearch", element.getAttribute("subtreeSearch"));
@@ -95,33 +93,8 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
     final Element element,
     final BeanDefinitionBuilder connectionFactory)
   {
-    return BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
-  }
-
-
-  /**
-   * Creates a pooled connection factory.
-   *
-   * @param  builder  bean definition builder to set properties on, may be null
-   * @param  name  of the connection pool
-   * @param  element  containing configuration
-   * @param  includeConnectionInitializer  whether to include a connection initializer
-   *
-   * @return  pooled connection factory bean definition builder
-   */
-  protected BeanDefinitionBuilder parsePooledConnectionFactory(
-    final BeanDefinitionBuilder builder,
-    final String name,
-    final Element element,
-    final boolean includeConnectionInitializer)
-  {
-    BeanDefinitionBuilder connectionFactory = builder;
-    if (connectionFactory == null) {
-      connectionFactory = BeanDefinitionBuilder.genericBeanDefinition(PooledConnectionFactory.class);
-    }
-    connectionFactory.addPropertyValue(
-      "connectionPool",
-      parseConnectionPool(null, name, element, includeConnectionInitializer).getBeanDefinition());
-    return connectionFactory;
+    final BeanDefinitionBuilder entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
+    entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
+    return entryResolver;
   }
 }

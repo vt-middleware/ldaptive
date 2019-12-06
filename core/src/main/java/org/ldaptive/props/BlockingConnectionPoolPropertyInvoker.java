@@ -1,10 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
-import org.ldaptive.pool.Activator;
-import org.ldaptive.pool.Passivator;
+import org.ldaptive.ConnectionValidator;
+import org.ldaptive.pool.ConnectionActivator;
+import org.ldaptive.pool.ConnectionPassivator;
 import org.ldaptive.pool.PruneStrategy;
-import org.ldaptive.pool.Validator;
 
 /**
  * Handles properties for {@link org.ldaptive.pool.BlockingConnectionPool}.
@@ -31,14 +31,14 @@ public class BlockingConnectionPoolPropertyInvoker extends AbstractPropertyInvok
   {
     Object newValue = value;
     if (type != String.class) {
-      if (Activator.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(Activator.class, value);
-      } else if (Passivator.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(Passivator.class, value);
+      if (ConnectionActivator.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(ConnectionActivator.class, value);
+      } else if (ConnectionPassivator.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(ConnectionPassivator.class, value);
+      } else if (ConnectionValidator.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(ConnectionValidator.class, value);
       } else if (PruneStrategy.class.isAssignableFrom(type)) {
         newValue = createTypeFromPropertyValue(PruneStrategy.class, value);
-      } else if (Validator.class.isAssignableFrom(type)) {
-        newValue = createTypeFromPropertyValue(Validator.class, value);
       } else {
         newValue = convertSimpleType(type, value);
       }

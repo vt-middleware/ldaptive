@@ -66,8 +66,8 @@ public class LdapLoginModule extends AbstractLoginModule
         }
       } else if ("authenticatorFactory".equalsIgnoreCase(key)) {
         try {
-          authenticatorFactory = (AuthenticatorFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+          authenticatorFactory = (AuthenticatorFactory) Class.forName(value).getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
           throw new IllegalArgumentException(e);
         }
       }
@@ -102,7 +102,7 @@ public class LdapLoginModule extends AbstractLoginModule
 
       AuthenticationResponse response = auth.authenticate(authRequest);
       LdapEntry entry = null;
-      if (response.getResult()) {
+      if (response.isSuccess()) {
         entry = response.getLdapEntry();
         if (entry != null) {
           roles.addAll(LdapRole.toRoles(entry));
@@ -115,7 +115,7 @@ public class LdapLoginModule extends AbstractLoginModule
         if (tryFirstPass) {
           getCredentials(nameCb, passCb, true);
           response = auth.authenticate(authRequest);
-          if (response.getResult()) {
+          if (response.isSuccess()) {
             entry = response.getLdapEntry();
             if (entry != null) {
               roles.addAll(LdapRole.toRoles(entry));
@@ -153,7 +153,7 @@ public class LdapLoginModule extends AbstractLoginModule
     } catch (LdapException e) {
       logger.debug("Error occurred attempting authentication", e);
       loginSuccess = false;
-      throw new LoginException(e != null ? e.getMessage() : "Authentication Error");
+      throw new LoginException(e.getMessage());
     }
     return true;
   }

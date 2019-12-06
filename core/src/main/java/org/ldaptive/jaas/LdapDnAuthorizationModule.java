@@ -49,8 +49,8 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
         noResultsIsError = Boolean.valueOf(value);
       } else if ("authenticatorFactory".equalsIgnoreCase(key)) {
         try {
-          authenticatorFactory = (AuthenticatorFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+          authenticatorFactory = (AuthenticatorFactory) Class.forName(value).getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
           throw new IllegalArgumentException(e);
         }
       }
@@ -101,7 +101,7 @@ public class LdapDnAuthorizationModule extends AbstractLoginModule
     } catch (LdapException e) {
       logger.debug("Error occurred attempting DN lookup", e);
       loginSuccess = false;
-      throw new LoginException(e != null ? e.getMessage() : "DN resolution error");
+      throw new LoginException(e.getMessage());
     }
     return true;
   }

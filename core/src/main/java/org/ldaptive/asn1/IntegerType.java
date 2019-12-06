@@ -2,7 +2,6 @@
 package org.ldaptive.asn1;
 
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 
 /**
  * Converts arbitrary-precision integers to and from their DER encoded format.
@@ -92,9 +91,9 @@ public class IntegerType extends AbstractDERType implements DEREncoder
    *
    * @return  decoded bytes as an integer of arbitrary size.
    */
-  public static BigInteger decode(final ByteBuffer encoded)
+  public static BigInteger decode(final DERBuffer encoded)
   {
-    return new BigInteger(readBuffer(encoded));
+    return new BigInteger(encoded.getRemainingBytes());
   }
 
 
@@ -107,9 +106,37 @@ public class IntegerType extends AbstractDERType implements DEREncoder
    *
    * @return  decoded bytes as an unsigned integer of arbitrary size.
    */
-  public static BigInteger decodeUnsigned(final ByteBuffer encoded)
+  public static BigInteger decodeUnsigned(final DERBuffer encoded)
   {
-    return new BigInteger(1, readBuffer(encoded));
+    return new BigInteger(1, encoded.getRemainingBytes());
+  }
+
+
+  /**
+   * Converts bytes in the buffer to an unsigned primitive integer by reading from the current position to the limit,
+   * which assumes the bytes of the integer are in big-endian order. This method reads up to 4 bytes from the buffer.
+   *
+   * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the start of integer bytes
+   *                  and the limit is set beyond the last byte of integer data.
+   *
+   * @return  decoded bytes as an unsigned integer.
+   *
+   * @throws  IllegalArgumentException  if the buffer contains more than 4 bytes
+   */
+  public static int decodeUnsignedPrimitive(final DERBuffer encoded)
+  {
+    // CheckStyle:MagicNumber OFF
+    final byte[] bytes = encoded.getRemainingBytes();
+    if (bytes.length > 4) {
+      throw new IllegalArgumentException("Buffer length must be <= 4 bytes");
+    }
+    int i = 0;
+    for (byte b : bytes) {
+      i <<= 8;
+      i |= b & 0xFF;
+    }
+    return i;
+    // CheckStyle:MagicNumber ON
   }
 
 

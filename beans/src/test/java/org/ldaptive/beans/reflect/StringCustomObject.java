@@ -11,7 +11,6 @@ import java.util.Set;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.Entry;
 
@@ -94,7 +93,6 @@ public class StringCustomObject implements CustomObject
 
 
   @Override
-  @SuppressWarnings("unchecked")
   public int hashCode()
   {
     return
@@ -160,8 +158,8 @@ public class StringCustomObject implements CustomObject
 
     final T o1;
     try {
-      o1 = type.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      o1 = type.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
       throw new IllegalStateException(e);
     }
     o1.setType1("tv1");
@@ -190,49 +188,49 @@ public class StringCustomObject implements CustomObject
    */
   public static LdapEntry createLdapEntry()
   {
-    final LdapAttribute typeArray1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeArray1 = new LdapAttribute();
     typeArray1.setName("typeArray1");
-    typeArray1.addStringValue("tav1", "tav2");
+    typeArray1.addStringValues("tav1", "tav2");
 
-    final LdapAttribute typeArray2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeArray2 = new LdapAttribute();
     typeArray2.setName("typeArray2");
-    typeArray2.addStringValue("tav1", "tav2");
+    typeArray2.addStringValues("tav1", "tav2");
 
-    final LdapAttribute col1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute col1 = new LdapAttribute();
     col1.setName("col1");
-    col1.addStringValue("cv1", "cv2");
+    col1.addStringValues("cv1", "cv2");
 
-    final LdapAttribute col2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute col2 = new LdapAttribute();
     col2.setName("col2");
-    col2.addStringValue("cv1", "cv2");
+    col2.addStringValues("cv1", "cv2");
 
-    final LdapAttribute typeCol1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeCol1 = new LdapAttribute();
     typeCol1.setName("typeCol1");
-    typeCol1.addStringValue("tcv1", "tcv2");
+    typeCol1.addStringValues("tcv1", "tcv2");
 
-    final LdapAttribute typeCol2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeCol2 = new LdapAttribute();
     typeCol2.setName("typeCol2");
-    typeCol2.addStringValue("tcv1", "tcv2");
+    typeCol2.addStringValues("tcv1", "tcv2");
 
-    final LdapAttribute typeSet1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeSet1 = new LdapAttribute();
     typeSet1.setName("typeSet1");
-    typeSet1.addStringValue("tsv1", "tsv2");
+    typeSet1.addStringValues("tsv1", "tsv2");
 
-    final LdapAttribute typeSet2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeSet2 = new LdapAttribute();
     typeSet2.setName("typeSet2");
-    typeSet2.addStringValue("tsv1", "tsv2");
+    typeSet2.addStringValues("tsv1", "tsv2");
 
-    final LdapAttribute typeList1 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeList1 = new LdapAttribute();
     typeList1.setName("typeList1");
-    typeList1.addStringValue("tlv1", "tlv2");
+    typeList1.addStringValues("tlv1", "tlv2");
 
-    final LdapAttribute typeList2 = new LdapAttribute(SortBehavior.ORDERED);
+    final LdapAttribute typeList2 = new LdapAttribute();
     typeList2.setName("typeList2");
-    typeList2.addStringValue("tlv1", "tlv2");
+    typeList2.addStringValues("tlv1", "tlv2");
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=String Entry,ou=people,dc=ldaptive,dc=org");
-    entry.addAttribute(
+    entry.addAttributes(
       new LdapAttribute("customname1", "customvalue1"),
       new LdapAttribute("customname2", "customvalue1", "customvalue2"),
       new LdapAttribute("type1", "tv1"),
@@ -262,16 +260,16 @@ public class StringCustomObject implements CustomObject
       @Attribute(name = "type1", property = "type1"),
       @Attribute(name = "type2", property = "type2"),
       @Attribute(name = "stringthree", property = "type3"),
-      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray1", property = "typeArray1"),
+      @Attribute(name = "typeArray2", property = "typeArray2"),
       @Attribute(name = "col1", property = "col1"),
       @Attribute(name = "col2", property = "col2"),
       @Attribute(name = "typeCol1", property = "typeCol1"),
       @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeSet2", property = "typeSet2", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeList1", property = "typeList1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeList2", property = "typeList2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2"),
       @Attribute(
         name = "transcoded", property = "transcoded", transcoder = "org.ldaptive.beans.reflect.CustomObject$" +
           "PrefixStringValueTranscoder"
@@ -289,16 +287,16 @@ public class StringCustomObject implements CustomObject
       @Attribute(name = "type1", property = "type1"),
       @Attribute(name = "type2", property = "type2"),
       @Attribute(name = "stringthree", property = "type3"),
-      @Attribute(name = "typeArray1", property = "typeArray1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeArray2", property = "typeArray2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeArray1", property = "typeArray1"),
+      @Attribute(name = "typeArray2", property = "typeArray2"),
       @Attribute(name = "col1", property = "col1"),
       @Attribute(name = "col2", property = "col2"),
       @Attribute(name = "typeCol1", property = "typeCol1"),
       @Attribute(name = "typeCol2", property = "typeCol2"),
-      @Attribute(name = "typeSet1", property = "typeSet1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeSet2", property = "typeSet2", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeList1", property = "typeList1", sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeList2", property = "typeList2", sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeSet1", property = "typeSet1"),
+      @Attribute(name = "typeSet2", property = "typeSet2"),
+      @Attribute(name = "typeList1", property = "typeList1"),
+      @Attribute(name = "typeList2", property = "typeList2"),
       @Attribute(
         name = "transcoded", property = "transcoded", transcoder = "new org.ldaptive.beans.reflect.CustomObject$" +
           "PrefixStringValueTranscoder(1)"

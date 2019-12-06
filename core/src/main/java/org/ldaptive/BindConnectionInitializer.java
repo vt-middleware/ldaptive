@@ -3,7 +3,13 @@ package org.ldaptive;
 
 import java.util.Arrays;
 import org.ldaptive.control.RequestControl;
+import org.ldaptive.sasl.CramMD5BindRequest;
+import org.ldaptive.sasl.DigestMD5BindRequest;
+import org.ldaptive.sasl.GssApiBindRequest;
+import org.ldaptive.sasl.Mechanism;
+import org.ldaptive.sasl.SaslBindRequest;
 import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.sasl.ScramBindRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +40,19 @@ public class BindConnectionInitializer implements ConnectionInitializer
 
   /** Default constructor. */
   public BindConnectionInitializer() {}
+
+
+  /**
+   * Creates a new bind connection initializer.
+   *
+   * @param  dn  bind dn
+   * @param  credential  bind credential
+   */
+  public BindConnectionInitializer(final String dn, final String credential)
+  {
+    setBindDn(dn);
+    setBindCredential(new Credential(credential));
+  }
 
 
   /**
@@ -132,28 +151,71 @@ public class BindConnectionInitializer implements ConnectionInitializer
   /**
    * Sets the bind controls.
    *
-   * @param  c  controls to set
+   * @param  cntrls  controls to set
    */
-  public void setBindControls(final RequestControl... c)
+  public void setBindControls(final RequestControl... cntrls)
   {
-    logger.trace("setting bindControls: {}", Arrays.toString(c));
-    bindControls = c;
+    logger.trace("setting bindControls: {}", Arrays.toString(cntrls));
+    bindControls = cntrls;
   }
 
 
   @Override
-  public Response<Void> initialize(final Connection c)
+  public Result initialize(final Connection c)
     throws LdapException
   {
-    final BindRequest request = new BindRequest();
-    request.setDn(bindDn);
-    request.setCredential(bindCredential);
-    request.setSaslConfig(bindSaslConfig);
-    request.setControls(bindControls);
-
-    final BindOperation op = new BindOperation(c);
-    op.setOperationExceptionHandler(null);
-    return op.execute(request);
+    final Result result;
+    if (bindSaslConfig != null) {
+      switch(bindSaslConfig.getMechanism()) {
+      case EXTERNAL:
+        result = c.operation(SaslBindRequest.builder()
+          .mechanism(Mechanism.EXTERNAL.mechanism())
+          .credentials(bindSaslConfig.getAuthorizationId() != null ? bindSaslConfig.getAuthorizationId() : "")
+          .controls().build()).execute();
+        break;
+      case DIGEST_MD5:
+        result = c.operation(new DigestMD5BindRequest(
+          bindDn,
+          bindSaslConfig.getAuthorizationId(),
+          bindCredential != null ? bindCredential.getString() : null,
+          bindSaslConfig.getRealm(),
+          bindSaslConfig.getQualityOfProtection()));
+        break;
+      case CRAM_MD5:
+        result = c.operation(new CramMD5BindRequest(
+          bindDn,
+          bindCredential != null ? bindCredential.getString() : null));
+        break;
+      case GSSAPI:
+        result = c.operation(new GssApiBindRequest(
+          bindDn,
+          bindSaslConfig.getAuthorizationId(),
+          bindCredential != null ? bindCredential.getString() : null,
+          bindSaslConfig.getRealm(),
+          bindSaslConfig.getQualityOfProtection()));
+        break;
+      case SCRAM_SHA_1:
+        result = c.operation(new ScramBindRequest(Mechanism.SCRAM_SHA_1, bindDn, bindCredential.getString()));
+        break;
+      case SCRAM_SHA_256:
+        result = c.operation(new ScramBindRequest(Mechanism.SCRAM_SHA_256, bindDn, bindCredential.getString()));
+        break;
+      case SCRAM_SHA_512:
+        result = c.operation(new ScramBindRequest(Mechanism.SCRAM_SHA_512, bindDn, bindCredential.getString()));
+        break;
+      default:
+        throw new IllegalStateException("Unknown SASL mechanism: " + bindSaslConfig.getMechanism());
+      }
+    } else if (bindDn == null && bindCredential == null) {
+      result = c.operation(AnonymousBindRequest.builder()
+        .controls(bindControls).build()).execute();
+    } else {
+      result = c.operation(SimpleBindRequest.builder()
+        .dn(bindDn)
+        .password(bindCredential.getString())
+        .controls(bindControls).build()).execute();
+    }
+    return result;
   }
 
 
@@ -171,13 +233,82 @@ public class BindConnectionInitializer implements ConnectionInitializer
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::bindDn=%s, bindSaslConfig=%s, bindControls=%s]",
-        getClass().getName(),
-        hashCode(),
-        bindDn,
-        bindSaslConfig,
-        Arrays.toString(bindControls));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("bindDn=").append(bindDn).append(", ")
+      .append("bindSaslConfig=").append(bindSaslConfig).append(", ")
+      .append("bindControls=").append(Arrays.toString(bindControls)).append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+
+    private final BindConnectionInitializer object = new BindConnectionInitializer();
+
+
+    protected Builder() {}
+
+
+    public Builder dn(final String dn)
+    {
+      object.setBindDn(dn);
+      return this;
+    }
+
+
+    public Builder credential(final Credential credential)
+    {
+      object.setBindCredential(credential);
+      return this;
+    }
+
+
+    public Builder credential(final String credential)
+    {
+      object.setBindCredential(new Credential(credential));
+      return this;
+    }
+
+
+    public Builder credential(final byte[] credential)
+    {
+      object.setBindCredential(new Credential(credential));
+      return this;
+    }
+
+
+    public Builder saslConfig(final SaslConfig config)
+    {
+      object.setBindSaslConfig(config);
+      return this;
+    }
+
+
+    public Builder controls(final RequestControl... controls)
+    {
+      object.setBindControls(controls);
+      return this;
+    }
+
+
+    public BindConnectionInitializer build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

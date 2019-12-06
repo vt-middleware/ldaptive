@@ -48,22 +48,6 @@ public interface SSLContextInitializer
 
 
   /**
-   * Returns the hostname verifier config used when created SSL contexts.
-   *
-   * @return  hostname verifier config
-   */
-  HostnameVerifierConfig getHostnameVerifierConfig();
-
-
-  /**
-   * Sets the hostname verifier config.
-   *
-   * @param  config  hostname verifier config
-   */
-  void setHostnameVerifierConfig(HostnameVerifierConfig config);
-
-
-  /**
    * Returns the key managers used when creating SSL contexts.
    *
    * @return  key managers

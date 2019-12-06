@@ -2,10 +2,10 @@
 package org.ldaptive.ad.control;
 
 import java.math.BigInteger;
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.ConstructedDEREncoder;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
@@ -215,6 +215,13 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the flags value.
    *
@@ -307,15 +314,12 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, flags=%s, maxAttributeCount=%s, cookie=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        flags,
-        maxAttributeCount,
-        LdapUtils.base64Encode(cookie));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("flags=").append(flags).append(", ")
+      .append("maxAttributeCount=").append(maxAttributeCount).append(", ")
+      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append("]").toString();
   }
 
 
@@ -332,15 +336,13 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(FlagHandler.PATH, new FlagHandler(this));
     parser.registerHandler(MaxAttrCountHandler.PATH, new MaxAttrCountHandler(this));
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -364,7 +366,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setFlags(IntegerType.decode(encoded).longValue());
     }
@@ -391,7 +393,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setMaxAttributeCount(IntegerType.decode(encoded).intValue());
     }
@@ -403,7 +405,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
   {
 
     /** DER path to cookie value. */
-    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR");
+    public static final DERPath PATH = new DERPath("/SEQ/OCTSTR[2]");
 
 
     /**
@@ -418,9 +420,9 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      final byte[] cookie = OctetStringType.readBuffer(encoded);
+      final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
         getObject().setCookie(cookie);
       }

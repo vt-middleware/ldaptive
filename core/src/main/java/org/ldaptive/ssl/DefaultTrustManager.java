@@ -79,6 +79,6 @@ public class DefaultTrustManager implements X509TrustManager
         Collections.addAll(issuers, tm.getAcceptedIssuers());
       }
     }
-    return issuers.toArray(new X509Certificate[issuers.size()]);
+    return issuers.toArray(new X509Certificate[0]);
   }
 }

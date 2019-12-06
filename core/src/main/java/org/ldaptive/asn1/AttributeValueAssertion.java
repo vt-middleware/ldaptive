@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 import org.ldaptive.LdapUtils;
@@ -83,30 +82,30 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
    *
    * @return  decoded bytes as attribute value assertions
    */
-  public static AttributeValueAssertion[] decode(final ByteBuffer encoded)
+  public static AttributeValueAssertion[] decode(final DERBuffer encoded)
   {
     final List<AttributeValueAssertion> assertions = new ArrayList<>();
     final DERParser parser = new DERParser();
     parser.registerHandler(
       "/SEQ",
-      (parser1, encoded1) -> {
-        if (UniversalDERTag.OID.getTagNo() != parser1.readTag(encoded1).getTagNo()) {
+      (p, e) -> {
+        if (UniversalDERTag.OID.getTagNo() != p.readTag(e).getTagNo()) {
           throw new IllegalArgumentException("Expected OID tag");
         }
 
-        final int seqLimit = encoded1.limit();
-        final int oidLength = parser1.readLength(encoded1);
-        encoded1.limit(encoded1.position() + oidLength);
+        final int seqLimit = e.limit();
+        final int oidLength = p.readLength(e);
+        e.limit(e.position() + oidLength);
 
-        final String oid = OidType.decode(encoded1);
-        encoded1.limit(seqLimit);
+        final String oid = OidType.decode(e);
+        e.limit(seqLimit);
 
-        final DERTag tag = parser1.readTag(encoded1);
-        parser1.readLength(encoded1);
-        assertions.add(new AttributeValueAssertion(oid, new Value(tag, readBuffer(encoded1))));
+        final DERTag tag = p.readTag(e);
+        p.readLength(e);
+        assertions.add(new AttributeValueAssertion(oid, new Value(tag, e.getRemainingBytes())));
       });
     parser.parse(encoded);
-    return assertions.toArray(new AttributeValueAssertion[assertions.size()]);
+    return assertions.toArray(new AttributeValueAssertion[0]);
   }
 
 
@@ -135,13 +134,10 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::attributeOid=%s, attributeValue=%s]",
-        getClass().getName(),
-        hashCode(),
-        attributeOid,
-        attributeValue);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("attributeOid=").append(attributeOid).append(", ")
+      .append("attributeValue=").append(attributeValue).append("]").toString();
   }
 
 
@@ -219,13 +215,10 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
     @Override
     public String toString()
     {
-      return
-        String.format(
-          "[%s@%d::attributeValueTag=%s, attributeValueBytes=%s]",
-          getClass().getName(),
-          hashCode(),
-          attributeValueTag,
-          LdapUtils.utf8Encode(attributeValueBytes));
+      return new StringBuilder("[").append(
+        getClass().getName()).append("@").append(hashCode()).append("::")
+        .append("attributeValueTag=").append(attributeValueTag).append(", ")
+        .append("attributeValueBytes=").append(LdapUtils.utf8Encode(attributeValueBytes)).append("]").toString();
     }
   }
 }

@@ -4,16 +4,13 @@ package org.ldaptive.io;
 import java.io.StringReader;
 import java.io.StringWriter;
 import org.ldaptive.AbstractTest;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapEntry;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
-import org.ldaptive.SortBehavior;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -37,7 +34,7 @@ public class LdifTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry14")
-  @BeforeClass(groups = {"ldif"})
+  @BeforeClass(groups = "ldif")
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -48,7 +45,7 @@ public class LdifTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"ldif"})
+  @AfterClass(groups = "ldif")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -67,63 +64,30 @@ public class LdifTest extends AbstractTest
       "ldifSearchDn",
       "ldifSearchFilter"
     })
-  @Test(groups = {"ldif"})
+  @Test(groups = "ldif")
   public void searchAndCompareLdif(final String dn, final String filter)
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
 
-      final SearchOperation search = new SearchOperation(conn);
-
-      final SearchRequest request = new SearchRequest(dn, new SearchFilter(filter));
-      if (TestControl.isActiveDirectory()) {
-        request.setBinaryAttributes("objectSid", "objectGUID", "jpegPhoto");
-      } else {
-        request.setBinaryAttributes("jpegPhoto");
-      }
-
-      final SearchResult result1 = search.execute(request).getResult();
-
-      final StringWriter writer = new StringWriter();
-      final LdifWriter ldifWriter = new LdifWriter(writer);
-      ldifWriter.write(result1);
-
-      final StringReader reader = new StringReader(writer.toString());
-      final LdifReader ldifReader = new LdifReader(reader);
-      final SearchResult result2 = ldifReader.read();
-
-      TestUtils.assertEquals(result2, result1);
+    final SearchRequest request = new SearchRequest(dn, filter);
+    if (TestControl.isActiveDirectory()) {
+      request.setBinaryAttributes("objectSid", "objectGUID", "jpegPhoto");
+    } else {
+      request.setBinaryAttributes("jpegPhoto");
     }
-  }
 
-
-  /**
-   * @param  ldifFile  to create with
-   * @param  ldifSortedFile  to compare with
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Parameters(
-    {
-      "ldifEntry",
-      "ldifSortedEntry"
-    })
-  @Test(groups = {"ldif"})
-  public void readAndCompareSortedLdif(final String ldifFile, final String ldifSortedFile)
-    throws Exception
-  {
-    final String ldifStringSorted = TestUtils.readFileIntoString(ldifSortedFile);
-    final LdifReader ldifReader = new LdifReader(
-      new StringReader(TestUtils.readFileIntoString(ldifFile)),
-      SortBehavior.SORTED);
-    final SearchResult result = ldifReader.read();
+    final SearchResponse result1 = search.execute(request);
 
     final StringWriter writer = new StringWriter();
     final LdifWriter ldifWriter = new LdifWriter(writer);
-    ldifWriter.write(result);
+    ldifWriter.write(result1);
 
-    AssertJUnit.assertEquals(ldifStringSorted, writer.toString());
+    final StringReader reader = new StringReader(writer.toString());
+    final LdifReader ldifReader = new LdifReader(reader);
+    final SearchResponse result2 = ldifReader.read();
+
+    TestUtils.assertEquals(result2, result1);
   }
 
 
@@ -138,19 +102,19 @@ public class LdifTest extends AbstractTest
       "multipleLdifResultsIn",
       "multipleLdifResultsOut"
     })
-  @Test(groups = {"ldif"})
+  @Test(groups = "ldif")
   public void readAndCompareMultipleLdif(final String ldifFileIn, final String ldifFileOut)
     throws Exception
   {
     final String ldifStringIn = TestUtils.readFileIntoString(ldifFileIn);
     LdifReader ldifReader = new LdifReader(new StringReader(ldifStringIn));
-    final SearchResult result1 = ldifReader.read();
+    final SearchResponse result1 = ldifReader.read();
 
     final String ldifStringOut = TestUtils.readFileIntoString(ldifFileOut);
     ldifReader = new LdifReader(new StringReader(ldifStringOut));
 
-    final SearchResult result2 = ldifReader.read();
+    final SearchResponse result2 = ldifReader.read();
 
-    AssertJUnit.assertEquals(result1, result2);
+    Assert.assertEquals(result1, result2);
   }
 }

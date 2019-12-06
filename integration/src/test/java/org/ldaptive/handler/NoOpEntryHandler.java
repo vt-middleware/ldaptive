@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.handler;
 
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -8,11 +9,19 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class NoOpEntryHandler extends AbstractSearchEntryHandler
+public class NoOpEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 887;
+
+
+  @Override
+  public LdapEntry apply(final LdapEntry entry)
+  {
+    handleEntry(entry);
+    return entry;
+  }
 
 
   @Override

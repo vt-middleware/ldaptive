@@ -1,12 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.control.util;
 
-import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
-import org.ldaptive.Response;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.ad.control.DirSyncControl;
 import org.ldaptive.ad.control.ExtendedDnControl;
 import org.ldaptive.ad.control.ShowDeletedControl;
@@ -27,8 +26,8 @@ public class DirSyncClient
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-  /** Connection to invoke the search operation on. */
-  private final Connection connection;
+  /** Connection factory to get a connection from. */
+  private final ConnectionFactory factory;
 
   /** DirSync flags. */
   private final DirSyncControl.Flag[] dirSyncFlags;
@@ -43,36 +42,36 @@ public class DirSyncClient
   /**
    * Creates a new dir sync client.
    *
-   * @param  conn  to execute the search operation on
+   * @param  cf  to get a connection from
    */
-  public DirSyncClient(final Connection conn)
+  public DirSyncClient(final ConnectionFactory cf)
   {
-    this(conn, null, 0);
+    this(cf, null, 0);
   }
 
 
   /**
    * Creates a new dir sync client.
    *
-   * @param  conn  to execute the search operation on
+   * @param  cf  to get a connection from
    * @param  dsFlags  to set on the dir sync control
    */
-  public DirSyncClient(final Connection conn, final DirSyncControl.Flag[] dsFlags)
+  public DirSyncClient(final ConnectionFactory cf, final DirSyncControl.Flag[] dsFlags)
   {
-    this(conn, dsFlags, 0);
+    this(cf, dsFlags, 0);
   }
 
 
   /**
    * Creates a new dir sync client.
    *
-   * @param  conn  to execute the search operation on
+   * @param  cf  to get a connection from
    * @param  dsFlags  to set on the dir sync control
    * @param  count  max attribute count
    */
-  public DirSyncClient(final Connection conn, final DirSyncControl.Flag[] dsFlags, final int count)
+  public DirSyncClient(final ConnectionFactory cf, final DirSyncControl.Flag[] dsFlags, final int count)
   {
-    connection = conn;
+    factory = cf;
     dirSyncFlags = dsFlags;
     maxAttributeCount = count;
   }
@@ -114,7 +113,7 @@ public class DirSyncClient
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> execute(final SearchRequest request)
+  public SearchResponse execute(final SearchRequest request)
     throws LdapException
   {
     return execute(request, new DefaultCookieManager());
@@ -132,17 +131,17 @@ public class DirSyncClient
    * <p>The cookie is extracted from the supplied response and replayed in the request.</p>
    *
    * @param  request  search request to execute
-   * @param  response  of a previous dir sync operation
+   * @param  result  of a previous dir sync operation
    *
    * @return  search operation response
    *
    * @throws  IllegalArgumentException  if the response does not contain a dir sync cookie
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> execute(final SearchRequest request, final Response<SearchResult> response)
+  public SearchResponse execute(final SearchRequest request, final SearchResponse result)
     throws LdapException
   {
-    final byte[] cookie = getDirSyncCookie(response);
+    final byte[] cookie = getDirSyncCookie(result);
     if (cookie == null) {
       throw new IllegalArgumentException("Response does not contain a dir sync cookie");
     }
@@ -169,31 +168,30 @@ public class DirSyncClient
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> execute(final SearchRequest request, final CookieManager manager)
+  public SearchResponse execute(final SearchRequest request, final CookieManager manager)
     throws LdapException
   {
-    final SearchOperation search = new SearchOperation(connection);
     request.setControls(createRequestControls(manager.readCookie()));
-
-    final Response<SearchResult> response = search.execute(request);
-    final byte[] cookie = getDirSyncCookie(response);
+    final SearchOperation search = new SearchOperation(factory);
+    final SearchResponse result = search.execute(request);
+    final byte[] cookie = getDirSyncCookie(result);
     if (cookie != null) {
       manager.writeCookie(cookie);
     }
-    return response;
+    return result;
   }
 
 
   /**
-   * Returns whether {@link #execute(SearchRequest, Response)} can be invoked again.
+   * Returns whether {@link #execute(SearchRequest, SearchResponse)} can be invoked again.
    *
-   * @param  response  of a previous paged results operation
+   * @param  result  of a previous dir sync operation
    *
    * @return  whether more dir sync results can be retrieved from the server
    */
-  public boolean hasMore(final Response<SearchResult> response)
+  public boolean hasMore(final SearchResponse result)
   {
-    return getDirSyncFlags(response) != 0;
+    return getDirSyncFlags(result) != 0;
   }
 
 
@@ -206,7 +204,7 @@ public class DirSyncClient
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> executeToCompletion(final SearchRequest request)
+  public SearchResponse executeToCompletion(final SearchRequest request)
     throws LdapException
   {
     return executeToCompletion(request, new DefaultCookieManager());
@@ -235,18 +233,18 @@ public class DirSyncClient
    *
    * @throws  LdapException  if the search fails
    */
-  public Response<SearchResult> executeToCompletion(final SearchRequest request, final CookieManager manager)
+  public SearchResponse executeToCompletion(final SearchRequest request, final CookieManager manager)
     throws LdapException
   {
-    Response<SearchResult> response = null;
-    final SearchResult result = new SearchResult();
-    final SearchOperation search = new SearchOperation(connection);
+    SearchResponse response = null;
+    final SearchResponse combinedResponse = new SearchResponse();
+    final SearchOperation search = new SearchOperation(factory);
     byte[] cookie = manager.readCookie();
     long flags;
     do {
-      if (response != null && response.getResult() != null) {
-        result.addEntries(response.getResult().getEntries());
-        result.addReferences(response.getResult().getReferences());
+      if (response != null) {
+        combinedResponse.addEntries(response.getEntries());
+        combinedResponse.addReferences(response.getReferences());
       }
       request.setControls(createRequestControls(cookie));
       response = search.execute(request);
@@ -256,8 +254,8 @@ public class DirSyncClient
         manager.writeCookie(cookie);
       }
     } while (flags != 0);
-    response.getResult().addEntries(result.getEntries());
-    response.getResult().addReferences(result.getReferences());
+    response.addEntries(combinedResponse.getEntries());
+    response.addReferences(combinedResponse.getReferences());
     return response;
   }
 
@@ -265,14 +263,14 @@ public class DirSyncClient
   /**
    * Returns the dir sync flags in the supplied response or -1 if no flags exists.
    *
-   * @param  response  of a previous dir sync operation
+   * @param  result  of a previous dir sync operation
    *
    * @return  dir sync flags or -1
    */
-  protected long getDirSyncFlags(final Response<SearchResult> response)
+  protected long getDirSyncFlags(final SearchResponse result)
   {
     long flags = -1;
-    final DirSyncControl ctl = (DirSyncControl) response.getControl(DirSyncControl.OID);
+    final DirSyncControl ctl = (DirSyncControl) result.getControl(DirSyncControl.OID);
     if (ctl != null) {
       flags = ctl.getFlags();
     }
@@ -283,14 +281,14 @@ public class DirSyncClient
   /**
    * Returns the dir sync cookie in the supplied response or null if no cookie exists.
    *
-   * @param  response  of a previous dir sync operation
+   * @param  result  of a previous dir sync operation
    *
    * @return  dir sync cookie or null
    */
-  protected byte[] getDirSyncCookie(final Response<SearchResult> response)
+  protected byte[] getDirSyncCookie(final SearchResponse result)
   {
     byte[] cookie = null;
-    final DirSyncControl ctl = (DirSyncControl) response.getControl(DirSyncControl.OID);
+    final DirSyncControl ctl = (DirSyncControl) result.getControl(DirSyncControl.OID);
     if (ctl != null) {
       if (ctl.getCookie() != null && ctl.getCookie().length > 0) {
         cookie = ctl.getCookie();

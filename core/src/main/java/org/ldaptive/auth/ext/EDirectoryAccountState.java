@@ -88,22 +88,19 @@ public class EDirectoryAccountState extends AccountState
       switch (this) {
 
       case FAILED_AUTHENTICATION:
+
+      case BAD_PASSWORD:
         throw new FailedLoginException(name());
 
       case PASSWORD_EXPIRED:
         throw new CredentialExpiredException(name());
 
-      case BAD_PASSWORD:
-        throw new FailedLoginException(name());
-
       case ACCOUNT_EXPIRED:
         throw new AccountExpiredException(name());
 
       case MAXIMUM_LOGINS_EXCEEDED:
-        throw new AccountLockedException(name());
 
       case LOGIN_TIME_LIMITED:
-        throw new AccountLockedException(name());
 
       case LOGIN_LOCKOUT:
         throw new AccountLockedException(name());

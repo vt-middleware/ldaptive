@@ -1,12 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
+import java.net.Socket;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.stream.Stream;
+import javax.net.ssl.SSLEngine;
+import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class AggregateTrustManager implements X509TrustManager
+public class AggregateTrustManager extends X509ExtendedTrustManager
 {
 
   /** Enum to define how trust managers should be processed. */
@@ -62,6 +63,9 @@ public class AggregateTrustManager implements X509TrustManager
       throw new NullPointerException("Strategy cannot be null");
     }
     trustStrategy = strategy;
+    if (managers == null || managers.length == 0) {
+      throw new NullPointerException("Trust managers cannot be empty or null");
+    }
     trustManagers = managers;
   }
 
@@ -89,31 +93,157 @@ public class AggregateTrustManager implements X509TrustManager
 
 
   @Override
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType, final Socket socket)
+    throws CertificateException
+  {
+    CertificateException certEx = null;
+    for (X509TrustManager tm : trustManagers) {
+      try {
+        if (tm instanceof X509ExtendedTrustManager) {
+          ((X509ExtendedTrustManager) tm).checkClientTrusted(chain, authType, socket);
+        } else {
+          tm.checkClientTrusted(chain, authType);
+        }
+        logger.debug("checkClientTrusted for {} succeeded", tm);
+        if (trustStrategy == Strategy.ANY) {
+          return;
+        }
+      } catch (CertificateException e) {
+        logger.debug("checkClientTrusted for {} failed", tm);
+        if (trustStrategy == Strategy.ALL) {
+          throw e;
+        }
+        if (certEx == null) {
+          certEx = e;
+        }
+      }
+    }
+    if (certEx != null) {
+      throw certEx;
+    }
+  }
+
+
+  @Override
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType, final SSLEngine engine)
+    throws CertificateException
+  {
+    CertificateException certEx = null;
+    for (X509TrustManager tm : trustManagers) {
+      try {
+        if (tm instanceof X509ExtendedTrustManager) {
+          ((X509ExtendedTrustManager) tm).checkClientTrusted(chain, authType, engine);
+        } else {
+          tm.checkClientTrusted(chain, authType);
+        }
+        logger.debug("checkClientTrusted for {} succeeded", tm);
+        if (trustStrategy == Strategy.ANY) {
+          return;
+        }
+      } catch (CertificateException e) {
+        logger.debug("checkClientTrusted for {} failed", tm);
+        if (trustStrategy == Strategy.ALL) {
+          throw e;
+        }
+        if (certEx == null) {
+          certEx = e;
+        }
+      }
+    }
+    if (certEx != null) {
+      throw certEx;
+    }
+  }
+
+
+  @Override
   public void checkClientTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
-    if (trustManagers != null) {
-      CertificateException certEx = null;
-      for (X509TrustManager tm : trustManagers) {
-        try {
-          tm.checkClientTrusted(chain, authType);
-          logger.debug("checkClientTrusted for {} succeeded", tm);
-          if (trustStrategy == Strategy.ANY) {
-            return;
-          }
-        } catch (CertificateException e) {
-          logger.debug("checkClientTrusted for {} failed", tm);
-          if (trustStrategy == Strategy.ALL) {
-            throw e;
-          }
-          if (certEx == null) {
-            certEx = e;
-          }
+    CertificateException certEx = null;
+    for (X509TrustManager tm : trustManagers) {
+      try {
+        tm.checkClientTrusted(chain, authType);
+        logger.debug("checkClientTrusted for {} succeeded", tm);
+        if (trustStrategy == Strategy.ANY) {
+          return;
+        }
+      } catch (CertificateException e) {
+        logger.debug("checkClientTrusted for {} failed", tm);
+        if (trustStrategy == Strategy.ALL) {
+          throw e;
+        }
+        if (certEx == null) {
+          certEx = e;
         }
       }
-      if (certEx != null) {
-        throw certEx;
+    }
+    if (certEx != null) {
+      throw certEx;
+    }
+  }
+
+
+  @Override
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType, final Socket socket)
+    throws CertificateException
+  {
+    CertificateException certEx = null;
+    for (X509TrustManager tm : trustManagers) {
+      try {
+        if (tm instanceof X509ExtendedTrustManager) {
+          ((X509ExtendedTrustManager) tm).checkServerTrusted(chain, authType, socket);
+        } else {
+          tm.checkServerTrusted(chain, authType);
+        }
+        logger.debug("checkServerTrusted for {} succeeded", tm);
+        if (trustStrategy == Strategy.ANY) {
+          return;
+        }
+      } catch (CertificateException e) {
+        logger.debug("checkServerTrusted for {} failed", tm);
+        if (trustStrategy == Strategy.ALL) {
+          throw e;
+        }
+        if (certEx == null) {
+          certEx = e;
+        }
       }
+    }
+    if (certEx != null) {
+      throw certEx;
+    }
+  }
+
+
+  @Override
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType, final SSLEngine engine)
+    throws CertificateException
+  {
+    CertificateException certEx = null;
+    for (X509TrustManager tm : trustManagers) {
+      try {
+        if (tm instanceof X509ExtendedTrustManager) {
+          ((X509ExtendedTrustManager) tm).checkServerTrusted(chain, authType, engine);
+        } else {
+          tm.checkServerTrusted(chain, authType);
+        }
+        logger.debug("checkServerTrusted for {} succeeded", tm);
+        if (trustStrategy == Strategy.ANY) {
+          return;
+        }
+      } catch (CertificateException e) {
+        logger.debug("checkServerTrusted for {} failed", tm);
+        if (trustStrategy == Strategy.ALL) {
+          throw e;
+        }
+        if (certEx == null) {
+          certEx = e;
+        }
+      }
+    }
+    if (certEx != null) {
+      throw certEx;
     }
   }
 
@@ -122,28 +252,26 @@ public class AggregateTrustManager implements X509TrustManager
   public void checkServerTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
-    if (trustManagers != null) {
-      CertificateException certEx = null;
-      for (X509TrustManager tm : trustManagers) {
-        try {
-          tm.checkServerTrusted(chain, authType);
-          logger.debug("checkServerTrusted for {} succeeded", tm);
-          if (trustStrategy == Strategy.ANY) {
-            return;
-          }
-        } catch (CertificateException e) {
-          logger.debug("checkServerTrusted for {} failed", tm);
-          if (trustStrategy == Strategy.ALL) {
-            throw e;
-          }
-          if (certEx == null) {
-            certEx = e;
-          }
+    CertificateException certEx = null;
+    for (X509TrustManager tm : trustManagers) {
+      try {
+        tm.checkServerTrusted(chain, authType);
+        logger.debug("checkServerTrusted for {} succeeded", tm);
+        if (trustStrategy == Strategy.ANY) {
+          return;
+        }
+      } catch (CertificateException e) {
+        logger.debug("checkServerTrusted for {} failed", tm);
+        if (trustStrategy == Strategy.ALL) {
+          throw e;
+        }
+        if (certEx == null) {
+          certEx = e;
         }
       }
-      if (certEx != null) {
-        throw certEx;
-      }
+    }
+    if (certEx != null) {
+      throw certEx;
     }
   }
 
@@ -151,26 +279,16 @@ public class AggregateTrustManager implements X509TrustManager
   @Override
   public X509Certificate[] getAcceptedIssuers()
   {
-    final List<X509Certificate> issuers = new ArrayList<>();
-    if (trustManagers != null) {
-      for (X509TrustManager tm : trustManagers) {
-        logger.debug("invoking getAcceptedIssuers for {}", tm);
-        Collections.addAll(issuers, tm.getAcceptedIssuers());
-      }
-    }
-    return issuers.toArray(new X509Certificate[issuers.size()]);
+    return Stream.of(trustManagers).map(X509TrustManager::getAcceptedIssuers).toArray(X509Certificate[]::new);
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::trustManagers=%s, trustStrategy=%s]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(trustManagers),
-        trustStrategy);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("trustManagers=").append(Arrays.toString(trustManagers)).append(", ")
+      .append("trustStrategy=").append(trustStrategy).append("]").toString();
   }
 }

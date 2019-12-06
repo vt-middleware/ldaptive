@@ -2,22 +2,24 @@
 package org.ldaptive.control.util;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.AttributeModificationType;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.Message;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
+import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
+import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncStateControl;
-import org.ldaptive.intermediate.SyncInfoMessage;
-import org.testng.AssertJUnit;
+import org.ldaptive.extended.SyncInfoMessage;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -41,7 +43,7 @@ public class SyncReplClientTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry18")
-  @BeforeClass(groups = {"control-util"})
+  @BeforeClass(groups = "control-util")
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
@@ -52,7 +54,7 @@ public class SyncReplClientTest extends AbstractTest
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"control-util"})
+  @AfterClass(groups = "control-util")
   public void deleteLdapEntry()
     throws Exception
   {
@@ -73,7 +75,7 @@ public class SyncReplClientTest extends AbstractTest
       "syncReplSearchReturnAttrs",
       "syncReplSearchResults"
     })
-  @Test(groups = {"control-util"})
+  @Test(groups = "control-util")
   public void syncReplRefreshOnly(final String dn, final String returnAttrs, final String ldifFile)
     throws Exception
   {
@@ -83,32 +85,28 @@ public class SyncReplClientTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
+      final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
+      final SyncReplClient client = new SyncReplClient(cf, false);
+      final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
+      client.setOnException(queue::add);
+      client.setOnEntry(queue::add);
+      client.setOnMessage(queue::add);
+      client.setOnResult(queue::add);
+      client.send(request, new DefaultCookieManager());
 
-      final SyncReplClient client = new SyncReplClient(conn, false);
-      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
+      final LdapEntry entry = (LdapEntry) queue.take();
+      Assert.assertNotNull(entry);
+      final SyncStateControl ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
+      Assert.assertEquals(ssc.getSyncState(), SyncStateControl.State.ADD);
+      Assert.assertNotNull(ssc.getEntryUuid());
+      Assert.assertNull(ssc.getCookie());
 
-      SyncReplItem item = results.take();
-      if (item.isException()) {
-        throw item.getException();
-      }
-      if (item.isAsyncRequest()) {
-        // some providers don't support the request object
-        AssertJUnit.assertTrue(item.isAsyncRequest());
-        AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
-        item = results.take();
-      }
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(SyncStateControl.State.ADD, item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNull(item.getEntry().getSyncStateControl().getCookie());
-
-      item = results.take();
-      AssertJUnit.assertTrue(item.isResponse());
-      AssertJUnit.assertEquals(true, item.getResponse().getSyncDoneControl().getRefreshDeletes());
-      AssertJUnit.assertNotNull(item.getResponse().getSyncDoneControl().getCookie());
+      final Result result = (Result) queue.take();
+      Assert.assertNotNull(result);
+      final SyncDoneControl sdc = (SyncDoneControl) result.getControl(SyncDoneControl.OID);
+      Assert.assertEquals(sdc.getRefreshDeletes(), true);
+      Assert.assertNotNull(sdc.getCookie());
     }
   }
 
@@ -126,7 +124,7 @@ public class SyncReplClientTest extends AbstractTest
       "syncReplSearchReturnAttrs",
       "syncReplSearchResults"
     })
-  @Test(groups = {"control-util"})
+  @Test(groups = "control-util")
   public void syncReplRefreshAndPersist(final String dn, final String returnAttrs, final String ldifFile)
     throws Exception
   {
@@ -134,90 +132,67 @@ public class SyncReplClientTest extends AbstractTest
       return;
     }
 
-    // provider doesn't support cancel
-    if (TestControl.isApacheProvider()) {
-      throw new UnsupportedOperationException("Apache LDAP does not support cancel");
-    }
-    if (TestControl.isOpenDJProvider()) {
-      throw new UnsupportedOperationException("OpenDJ does not support cancel");
-    }
-
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
+      final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
+      final SyncReplClient client = new SyncReplClient(cf, true);
+      final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
+      client.setOnException(queue::add);
+      client.setOnEntry(queue::add);
+      client.setOnMessage(queue::add);
+      client.setOnResult(queue::add);
+      client.send(request, new DefaultCookieManager());
 
-      final SyncReplClient client = new SyncReplClient(conn, true);
-      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn, returnAttrs.split("\\|"));
-      final BlockingQueue<SyncReplItem> results = client.execute(request, new DefaultCookieManager());
+      LdapEntry entry = (LdapEntry) queue.take();
+      Assert.assertNotNull(entry);
+      SyncStateControl ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
+      Assert.assertEquals(ssc.getSyncState(), SyncStateControl.State.ADD);
+      Assert.assertNotNull(ssc.getEntryUuid());
+      Assert.assertNull(ssc.getCookie());
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), entry);
 
-      // test the async request
-      SyncReplItem item = results.take();
-      if (item.isException()) {
-        throw item.getException();
-      }
-      if (item.isAsyncRequest()) {
-        // some providers don't support the request object
-        AssertJUnit.assertTrue(item.isAsyncRequest());
-        AssertJUnit.assertTrue(item.getAsyncRequest().getMessageId() > 0);
-        item = results.take();
-      }
-
-      // test the first entry
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(SyncStateControl.State.ADD, item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNull(item.getEntry().getSyncStateControl().getCookie());
-      TestUtils.assertEquals(
-        TestUtils.convertLdifToResult(expected),
-        new SearchResult(item.getEntry().getSearchEntry()));
-
-      // test the info message
-      item = results.take();
-      if (item.isException()) {
-        throw item.getException();
-      }
-      AssertJUnit.assertTrue(item.isMessage());
-      AssertJUnit.assertEquals(SyncInfoMessage.Type.REFRESH_DELETE, item.getMessage().getMessageType());
-      AssertJUnit.assertNotNull(item.getMessage().getCookie());
-      AssertJUnit.assertFalse(item.getMessage().getRefreshDeletes());
-      AssertJUnit.assertTrue(item.getMessage().getRefreshDone());
+      final Message message = (Message) queue.take();
+      Assert.assertNotNull(message);
+      final SyncInfoMessage sim = (SyncInfoMessage) message;
+      Assert.assertEquals(sim.getMessageType(), SyncInfoMessage.Type.REFRESH_DELETE);
+      Assert.assertNotNull(sim.getCookie());
+      Assert.assertFalse(sim.getRefreshDeletes());
+      Assert.assertTrue(sim.getRefreshDone());
 
       // make a change
-      final ModifyOperation modify = new ModifyOperation(conn);
+      final ModifyOperation modify = new ModifyOperation(cf);
       modify.execute(
         new ModifyRequest(
           dn,
-          new AttributeModification(AttributeModificationType.ADD, new LdapAttribute("employeeType", "Employee"))));
-      item = results.take();
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getCookie());
+          new AttributeModification(AttributeModification.Type.ADD, new LdapAttribute("employeeType", "Employee"))));
+
+      entry = (LdapEntry) queue.take();
+      Assert.assertNotNull(entry);
+      ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
+      Assert.assertEquals(ssc.getSyncState(), SyncStateControl.State.MODIFY);
+      Assert.assertNotNull(ssc.getEntryUuid());
+      Assert.assertNotNull(ssc.getCookie());
 
       // change it back
       modify.execute(
         new ModifyRequest(
           dn,
-          new AttributeModification(AttributeModificationType.REMOVE, new LdapAttribute("employeeType"))));
-      item = results.take();
-      AssertJUnit.assertTrue(item.isEntry());
-      AssertJUnit.assertEquals(SyncStateControl.State.MODIFY, item.getEntry().getSyncStateControl().getSyncState());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getEntryUuid());
-      AssertJUnit.assertNotNull(item.getEntry().getSyncStateControl().getCookie());
-      TestUtils.assertEquals(
-        TestUtils.convertLdifToResult(expected),
-        new SearchResult(item.getEntry().getSearchEntry()));
+          new AttributeModification(AttributeModification.Type.DELETE, new LdapAttribute("employeeType"))));
 
-      client.cancel(item.getEntry().getSearchEntry().getMessageId());
+      entry = (LdapEntry) queue.take();
+      Assert.assertNotNull(entry);
+      ssc = (SyncStateControl) entry.getControl(SyncStateControl.OID);
+      Assert.assertEquals(ssc.getSyncState(), SyncStateControl.State.MODIFY);
+      Assert.assertNotNull(ssc.getEntryUuid());
+      Assert.assertNotNull(ssc.getCookie());
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), entry);
 
-      item = results.take();
-      if (item.isException()) {
-        throw item.getException();
-      }
-      AssertJUnit.assertTrue(item.isResponse());
-      AssertJUnit.assertTrue(results.isEmpty());
-      AssertJUnit.assertEquals(ResultCode.CANCELED, item.getResponse().getResponse().getResultCode());
+      client.cancel();
+
+      final Result result = (Result) queue.take();
+      Assert.assertNotNull(result);
+      Assert.assertEquals(result.getResultCode(), ResultCode.CANCELED);
     }
   }
 }

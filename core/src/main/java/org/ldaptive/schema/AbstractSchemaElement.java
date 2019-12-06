@@ -81,9 +81,7 @@ public abstract class AbstractSchemaElement implements SchemaElement
   {
     if (schemaElement != null) {
       final Extensions exts = schemaElement.getExtensions();
-      if (exts != null && Boolean.parseBoolean(exts.getValue(extensionName))) {
-        return true;
-      }
+      return exts != null && Boolean.parseBoolean(exts.getValue(extensionName));
     }
     return false;
   }

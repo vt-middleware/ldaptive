@@ -1,21 +1,20 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.jaas;
 
-import org.ldaptive.Connection;
+import java.util.Set;
+import org.ldaptive.AbstractSearchOperationFactory;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchRequest;
 
 /**
- * Looks up a user's roles using an LDAP search.
+ * Base class for search role resolver implementations.
  *
  * @author  Middleware Services
  */
-public class SearchRoleResolver extends AbstractSearchRoleResolver implements ConnectionFactoryManager
+public class SearchRoleResolver extends AbstractSearchOperationFactory implements RoleResolver
 {
-
-  /** Connection factory. */
-  private ConnectionFactory factory;
 
 
   /** Default constructor. */
@@ -33,50 +32,20 @@ public class SearchRoleResolver extends AbstractSearchRoleResolver implements Co
   }
 
 
-  /**
-   * Returns the connection factory.
-   *
-   * @return  connection factory
-   */
   @Override
-  public ConnectionFactory getConnectionFactory()
-  {
-    return factory;
-  }
-
-
-  /**
-   * Sets the connection factory.
-   *
-   * @param  cf  connection factory
-   */
-  @Override
-  public void setConnectionFactory(final ConnectionFactory cf)
-  {
-    factory = cf;
-  }
-
-
-  /**
-   * Retrieve a connection that is ready for use.
-   *
-   * @return  connection
-   *
-   * @throws  LdapException  if an error occurs opening the connection
-   */
-  @Override
-  protected Connection getConnection()
+  public Set<LdapRole> search(final SearchRequest request)
     throws LdapException
   {
-    final Connection conn = factory.getConnection();
-    conn.open();
-    return conn;
+    final SearchOperation op = createSearchOperation();
+    return LdapRole.toRoles(op.execute(request));
   }
 
 
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::factory=%s]", getClass().getName(), hashCode(), factory);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("factory=").append(getConnectionFactory()).append("]").toString();
   }
 }

@@ -42,6 +42,18 @@ public class IdlePruneStrategy implements PruneStrategy
 
 
   /**
+   * Creates a new idle prune strategy. Sets the prune period to half of the supplied idle time.
+   *
+   * @param  idle  time at which a connection should be pruned
+   */
+  public IdlePruneStrategy(final Duration idle)
+  {
+    setPrunePeriod(idle.dividedBy(2));
+    setIdleTime(idle);
+  }
+
+
+  /**
    * Creates a new idle prune strategy.
    *
    * @param  period  to execute the prune task
@@ -55,7 +67,7 @@ public class IdlePruneStrategy implements PruneStrategy
 
 
   @Override
-  public boolean prune(final PooledConnectionProxy conn)
+  public Boolean apply(final PooledConnectionProxy conn)
   {
     final Instant timeAvailable = conn.getPooledConnectionStatistics().getLastAvailableState();
     logger.trace("evaluating timestamp {} for connection {}", timeAvailable, conn);
@@ -84,8 +96,8 @@ public class IdlePruneStrategy implements PruneStrategy
    */
   public void setPrunePeriod(final Duration period)
   {
-    if (period == null || period.isNegative()) {
-      throw new IllegalArgumentException("Prune period cannot be null or negative");
+    if (period == null || period.isNegative() || period.isZero()) {
+      throw new IllegalArgumentException("Prune period cannot be null, negative or zero");
     }
     prunePeriod = period;
   }
@@ -119,7 +131,9 @@ public class IdlePruneStrategy implements PruneStrategy
   @Override
   public String toString()
   {
-    return
-      String.format("[%s@%d::prunePeriod=%s, idleTime=%s]", getClass().getName(), hashCode(), prunePeriod, idleTime);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("prunePeriod=").append(prunePeriod).append(", ")
+      .append("idleTime=").append(idleTime).append("]").toString();
   }
 }

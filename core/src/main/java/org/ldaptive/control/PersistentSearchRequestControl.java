@@ -112,6 +112,13 @@ public class PersistentSearchRequestControl extends AbstractControl implements R
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the persistent search change types.
    *
@@ -204,15 +211,12 @@ public class PersistentSearchRequestControl extends AbstractControl implements R
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, changeTypes=%s, changesOnly=%s, returnEcs=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        changeTypes,
-        changesOnly,
-        returnEcs);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("changeTypes=").append(changeTypes).append(", ")
+      .append("changesOnly=").append(changesOnly).append(", ")
+      .append("returnEcs=").append(returnEcs).append("]").toString();
   }
 
 

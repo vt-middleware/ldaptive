@@ -30,19 +30,11 @@ public abstract class AbstractCredentialReader<T> implements CredentialReader<T>
   public T read(final String path, final String... params)
     throws IOException, GeneralSecurityException
   {
-    final InputStream is = LdapUtils.getResource(path);
-    if (is != null) {
+    try (InputStream is = LdapUtils.getResource(path)) {
       logger.trace("Found resource at {}", path);
-      try {
-        final T credential = read(is, params);
-        logger.debug("Successfully loaded credential {} from path {}", credential, path);
-        return credential;
-      } finally {
-        is.close();
-      }
-    } else {
-      logger.debug("Failed to load {}", path);
-      return null;
+      final T credential = read(is, params);
+      logger.debug("Successfully loaded credential {} from path {}", credential, path);
+      return credential;
     }
   }
 

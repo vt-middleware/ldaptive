@@ -3,9 +3,8 @@ package org.ldaptive.props;
 
 import java.time.Duration;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
-import org.ldaptive.handler.RecursiveEntryHandler;
+import org.ldaptive.handler.RecursiveResultHandler;
 import org.ldaptive.pool.IdlePruneStrategy;
-import org.ldaptive.sasl.CramMd5Config;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
@@ -31,9 +30,9 @@ public class PropertyValueParserTest
   @DataProvider(name = "properties")
   public Object[][] createProperties()
   {
-    final String p1 = "org.ldaptive.handler.RecursiveEntryHandler" +
+    final String p1 = "org.ldaptive.handler.RecursiveResultHandler" +
       "{{searchAttribute=member}{mergeAttributes=mail,department}}";
-    final RecursiveEntryHandler o1 = new RecursiveEntryHandler();
+    final RecursiveResultHandler o1 = new RecursiveResultHandler();
     o1.setSearchAttribute("member");
     o1.setMergeAttributes("mail", "department");
 
@@ -45,9 +44,10 @@ public class PropertyValueParserTest
     o3.setPrunePeriod(Duration.ofMinutes(1));
     o3.setIdleTime(Duration.ofMinutes(2));
 
-    final String p4 = "org.ldaptive.sasl.CramMd5Config" +
-      "{{securityStrength=LOW}{qualityOfProtection=AUTH}}";
-    final CramMd5Config o4 = new CramMd5Config();
+    final String p4 = "org.ldaptive.sasl.SaslConfig" +
+      "{{mechanism=CRAM_MD5}{securityStrength=LOW}{qualityOfProtection=AUTH}}";
+    final SaslConfig o4 = new SaslConfig();
+    o4.setMechanism(Mechanism.CRAM_MD5);
     o4.setSecurityStrength(SecurityStrength.LOW);
     o4.setQualityOfProtection(QualityOfProtection.AUTH);
 
@@ -80,7 +80,7 @@ public class PropertyValueParserTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"props"}, dataProvider = "properties")
+  @Test(groups = "props", dataProvider = "properties")
   public void initializeType(final String property, final Class<?> type, final Object initialized)
     throws Exception
   {

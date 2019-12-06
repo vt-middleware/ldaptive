@@ -1,8 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.ldaptive.provider.Provider;
-import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Parameters;
 
@@ -14,20 +12,8 @@ import org.testng.annotations.Parameters;
 public class TestControl
 {
 
-  /** Attribute to block on. */
-  public static final LdapAttribute ATTR_IDLE = new LdapAttribute("mail", "test-idle@ldaptive.org");
-
-  /** Attribute to block on. */
-  public static final LdapAttribute ATTR_RUNNING = new LdapAttribute("mail", "test-running@ldaptive.org");
-
-  /** Time to wait before checking if lock is available. */
-  public static final int WAIT_TIME = 60000;
-
   /** Type of directory being tested. */
   private static String directoryType;
-
-  /** Type of provider being tested. */
-  private static String providerType;
 
 
   /**
@@ -53,39 +39,6 @@ public class TestControl
 
 
   /**
-   * Used by tests to determine if the JNDI provider is being tested.
-   *
-   * @return  whether the jndi provider is being tested
-   */
-  public static boolean isJndiProvider()
-  {
-    return "JNDI".equals(providerType);
-  }
-
-
-  /**
-   * Used by tests to determine if the Apache provider is being tested.
-   *
-   * @return  whether the apache provider is being tested
-   */
-  public static boolean isApacheProvider()
-  {
-    return "APACHE".equals(providerType);
-  }
-
-
-  /**
-   * Used by tests to determine if the OpenDJ provider is being tested.
-   *
-   * @return  whether the opendj provider is being tested
-   */
-  public static boolean isOpenDJProvider()
-  {
-    return "OPENDJ".equals(providerType);
-  }
-
-
-  /**
    * Obtains the lock before running all tests.
    *
    * @param  bindDn  to lock on
@@ -97,117 +50,58 @@ public class TestControl
   public void setup(final String bindDn)
     throws Exception
   {
-    final Provider<?> provider = DefaultConnectionFactory.getDefaultProvider();
-    if (provider.getClass().getName().contains("Jndi")) {
-      providerType = "JNDI";
-    } else if (provider.getClass().getName().contains("Apache")) {
-      providerType = "APACHE";
-    } else if (provider.getClass().getName().contains("JLdap")) {
-      providerType = "JLDAP";
-    } else if (provider.getClass().getName().contains("OpenDJ")) {
-      providerType = "OPENDJ";
-    } else if (provider.getClass().getName().contains("UnboundID")) {
-      providerType = "UNBOUNDID";
+    directoryType = "LDAP";
+    /*
+    if (isAD(TestUtils.createSetupConnectionFactory(), bindDn)) {
+      directoryType = "ACTIVE_DIRECTORY";
+    } else if (isOracle(TestUtils.createSetupConnectionFactory())) {
+      directoryType = "ORACLE";
     } else {
-      throw new IllegalStateException("Unknown provider: " + provider);
+      directoryType = "LDAP";
     }
-
-    final Connection conn = TestUtils.createSetupConnection();
-    try {
-      conn.open();
-
-      final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(
-        new ModifyRequest(bindDn, new AttributeModification(AttributeModificationType.REPLACE, ATTR_RUNNING)));
-      if (isAD(conn, bindDn)) {
-        directoryType = "ACTIVE_DIRECTORY";
-      } else if (isOracle(conn)) {
-        directoryType = "ORACLE";
-      } else {
-        directoryType = "LDAP";
-      }
-    } finally {
-      conn.close();
-    }
+    */
   }
 
 
   /**
    * Performs an object level search for the sAMAccountName attribute used by Active Directory.
    *
-   * @param  conn  to perform compare with
+   * @param  cf  to perform compare with
    * @param  bindDn  to perform search on
    *
    * @return  whether the supplied entry is in active directory
    *
    * @throws  Exception  On failure.
    */
-  protected boolean isAD(final Connection conn, final String bindDn)
+  protected boolean isAD(final ConnectionFactory cf, final String bindDn)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(conn);
-    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
+    final SearchOperation search = new SearchOperation(cf);
+    final SearchRequest request = SearchRequest.objectScopeSearchRequest(
       bindDn,
       ReturnAttributes.NONE.value(),
-      new SearchFilter("(sAMAccountName=*)"));
-    try {
-      return search.execute(request).getResult().size() == 1;
-    } catch (LdapException e) {
-      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() || ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
-        return false;
-      }
-      throw e;
-    }
+      "(sAMAccountName=*)");
+    return search.execute(request).entrySize() == 1;
   }
 
 
   /**
    * Performs an object level search on the root DSE for the vendorName attribute used by Oracle DS.
    *
-   * @param  conn  to perform compare with
+   * @param  cf  to perform compare with
    *
    * @return  whether the supplied entry contains a vendorName attribute identified by Oracle
    *
    * @throws  Exception  On failure.
    */
-  protected boolean isOracle(final Connection conn)
+  protected boolean isOracle(final ConnectionFactory cf)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(conn);
-    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest("", new String[] {"vendorName"});
-    try {
-      final LdapEntry rootDSE = search.execute(request).getResult().getEntry();
-      return
-        rootDSE.getAttribute("vendorName") != null &&
+    final SearchOperation search = new SearchOperation(cf);
+    final SearchRequest request = SearchRequest.objectScopeSearchRequest("", new String[] {"vendorName"});
+    final LdapEntry rootDSE = search.execute(request).getEntry();
+    return
+      rootDSE.getAttribute("vendorName") != null &&
         rootDSE.getAttribute("vendorName").getStringValue().contains("Oracle");
-    } catch (LdapException e) {
-      if (ResultCode.NO_SUCH_OBJECT == e.getResultCode() || ResultCode.NO_SUCH_ATTRIBUTE == e.getResultCode()) {
-        return false;
-      }
-      throw e;
-    }
-  }
-
-
-  /**
-   * Releases the lock after running all tests.
-   *
-   * @param  bindDn  to lock on
-   *
-   * @throws  Exception  on test failure
-   */
-  @AfterSuite(alwaysRun = true)
-  @Parameters("ldapBindDn")
-  public void teardown(final String bindDn)
-    throws Exception
-  {
-    try (Connection conn = TestUtils.createSetupConnection()) {
-      conn.open();
-
-      // set attribute when tests are finished
-      final ModifyOperation modify = new ModifyOperation(conn);
-      modify.execute(
-        new ModifyRequest(bindDn, new AttributeModification(AttributeModificationType.REPLACE, ATTR_IDLE)));
-    }
   }
 }

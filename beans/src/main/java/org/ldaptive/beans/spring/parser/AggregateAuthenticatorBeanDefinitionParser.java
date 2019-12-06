@@ -4,7 +4,10 @@ package org.ldaptive.beans.spring.parser;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.ldaptive.auth.AggregateAuthenticationHandler;
+import org.ldaptive.auth.AggregateAuthenticationResponseHandler;
 import org.ldaptive.auth.AggregateDnResolver;
+import org.ldaptive.auth.AggregateEntryResolver;
 import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
@@ -105,13 +108,13 @@ public class AggregateAuthenticatorBeanDefinitionParser
     /** Authenticators to aggregate. */
     private List<Authenticator> authenticators;
 
-    /** Value for {@link AggregateDnResolver#allowMultipleDns}. */
+    /** Value for {@link AggregateDnResolver#getAllowMultipleDns()}. */
     private boolean allowMultipleDns;
 
-    /** Value for {@link Authenticator#returnAttributes}. */
+    /** Value for {@link Authenticator#getReturnAttributes()}. */
     private String[] returnAttributes;
 
-    /** Value of {@link Authenticator#resolveEntryOnFailure}. */
+    /** Value of {@link Authenticator#getResolveEntryOnFailure()}. */
     private boolean resolveEntryOnFailure;
 
 
@@ -176,8 +179,8 @@ public class AggregateAuthenticatorBeanDefinitionParser
         if (auth.getEntryResolver() != null) {
           entryResolvers.put(id, auth.getEntryResolver());
         }
-        if (auth.getAuthenticationResponseHandlers() != null) {
-          responseHandlers.put(id, auth.getAuthenticationResponseHandlers());
+        if (auth.getResponseHandlers() != null) {
+          responseHandlers.put(id, auth.getResponseHandlers());
         }
       }
 
@@ -186,21 +189,20 @@ public class AggregateAuthenticatorBeanDefinitionParser
       dnResolver.setDnResolvers(dnResolvers);
       aggregateAuth.setDnResolver(dnResolver);
 
-      final AggregateDnResolver.AuthenticationHandler authHandler = new AggregateDnResolver.AuthenticationHandler();
+      final AggregateAuthenticationHandler authHandler = new AggregateAuthenticationHandler();
       authHandler.setAuthenticationHandlers(authHandlers);
       aggregateAuth.setAuthenticationHandler(authHandler);
 
       if (!entryResolvers.isEmpty()) {
-        final AggregateDnResolver.EntryResolver entryResolver = new AggregateDnResolver.EntryResolver();
+        final AggregateEntryResolver entryResolver = new AggregateEntryResolver();
         entryResolver.setEntryResolvers(entryResolvers);
         aggregateAuth.setEntryResolver(entryResolver);
       }
 
       if (!responseHandlers.isEmpty()) {
-        final AggregateDnResolver.AuthenticationResponseHandler responseHandler =
-          new AggregateDnResolver.AuthenticationResponseHandler();
+        final AggregateAuthenticationResponseHandler responseHandler = new AggregateAuthenticationResponseHandler();
         responseHandler.setAuthenticationResponseHandlers(responseHandlers);
-        aggregateAuth.setAuthenticationResponseHandlers(responseHandler);
+        aggregateAuth.setResponseHandlers(responseHandler);
       }
 
       aggregateAuth.setReturnAttributes(returnAttributes);

@@ -37,10 +37,10 @@ public class Authenticator
   private String[] returnAttributes;
 
   /** Handlers to handle authentication requests. */
-  private AuthenticationRequestHandler[] authenticationRequestHandlers;
+  private AuthenticationRequestHandler[] requestHandlers;
 
   /** Handlers to handle authentication responses. */
-  private AuthenticationResponseHandler[] authenticationResponseHandlers;
+  private AuthenticationResponseHandler[] responseHandlers;
 
   /** Whether to execute the entry resolver on authentication failure. */
   private boolean resolveEntryOnFailure;
@@ -178,9 +178,9 @@ public class Authenticator
    *
    * @return  authentication request handlers
    */
-  public AuthenticationRequestHandler[] getAuthenticationRequestHandlers()
+  public AuthenticationRequestHandler[] getRequestHandlers()
   {
-    return authenticationRequestHandlers;
+    return requestHandlers;
   }
 
 
@@ -189,9 +189,9 @@ public class Authenticator
    *
    * @param  handlers  authentication request handlers
    */
-  public void setAuthenticationRequestHandlers(final AuthenticationRequestHandler... handlers)
+  public void setRequestHandlers(final AuthenticationRequestHandler... handlers)
   {
-    authenticationRequestHandlers = handlers;
+    requestHandlers = handlers;
   }
 
 
@@ -200,9 +200,9 @@ public class Authenticator
    *
    * @return  authentication response handlers
    */
-  public AuthenticationResponseHandler[] getAuthenticationResponseHandlers()
+  public AuthenticationResponseHandler[] getResponseHandlers()
   {
-    return authenticationResponseHandlers;
+    return responseHandlers;
   }
 
 
@@ -211,9 +211,9 @@ public class Authenticator
    *
    * @param  handlers  authentication response handlers
    */
-  public void setAuthenticationResponseHandlers(final AuthenticationResponseHandler... handlers)
+  public void setResponseHandlers(final AuthenticationResponseHandler... handlers)
   {
-    authenticationResponseHandlers = handlers;
+    responseHandlers = handlers;
   }
 
 
@@ -271,8 +271,7 @@ public class Authenticator
       return invalidInput;
     }
 
-    LdapEntry entry = null;
-
+    final LdapEntry entry;
     final AuthenticationRequest processedRequest = processRequest(dn, request);
     AuthenticationHandlerResponse response = null;
     try {
@@ -288,21 +287,12 @@ public class Authenticator
       }
     }
 
-    logger.info("Authentication {} for dn: {}", response.getResult() ? "succeeded" : "failed", dn);
+    logger.info("Authentication {} for dn: {}", response.isSuccess() ? "succeeded" : "failed", dn);
 
-    final AuthenticationResponse authResponse = new AuthenticationResponse(
-      response.getResult() ? AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS
-                           : AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
-      response.getResultCode(),
-      dn,
-      entry,
-      response.getMessage(),
-      response.getControls(),
-      response.getMessageId());
-
+    final AuthenticationResponse authResponse = new AuthenticationResponse(response, dn, entry);
     // execute authentication response handlers
-    if (getAuthenticationResponseHandlers() != null && getAuthenticationResponseHandlers().length > 0) {
-      for (AuthenticationResponseHandler ah : getAuthenticationResponseHandlers()) {
+    if (getResponseHandlers() != null && getResponseHandlers().length > 0) {
+      for (AuthenticationResponseHandler ah : getResponseHandlers()) {
         ah.handle(authResponse);
       }
     }
@@ -325,41 +315,37 @@ public class Authenticator
     AuthenticationResponse response = null;
     final Credential credential = request.getCredential();
     if (credential == null || credential.getBytes() == null) {
-      response = new AuthenticationResponse(
-        AuthenticationResultCode.INVALID_CREDENTIAL,
-        null,
-        dn,
-        null,
-        "Credential cannot be null",
-        null,
-        -1);
+      response = AuthenticationResponse.builder()
+        .response(
+          AuthenticationHandlerResponse.builder()
+            .diagnosticMessage("Credential cannot be null")
+            .resultCode(AuthenticationResultCode.INVALID_CREDENTIAL).build())
+        .dn(dn)
+        .build();
     } else if (credential.getBytes().length == 0) {
-      response = new AuthenticationResponse(
-        AuthenticationResultCode.INVALID_CREDENTIAL,
-        null,
-        dn,
-        null,
-        "Credential cannot be empty",
-        null,
-        -1);
+      response = AuthenticationResponse.builder()
+        .response(
+          AuthenticationHandlerResponse.builder()
+            .diagnosticMessage("Credential cannot be empty")
+            .resultCode(AuthenticationResultCode.INVALID_CREDENTIAL).build())
+        .dn(dn)
+        .build();
     } else if (dn == null) {
-      response = new AuthenticationResponse(
-        AuthenticationResultCode.DN_RESOLUTION_FAILURE,
-        null,
-        dn,
-        null,
-        "DN cannot be null",
-        null,
-        -1);
+      response = AuthenticationResponse.builder()
+        .response(
+          AuthenticationHandlerResponse.builder()
+            .diagnosticMessage("DN cannot be null")
+            .resultCode(AuthenticationResultCode.DN_RESOLUTION_FAILURE).build())
+        .dn(dn)
+        .build();
     } else if (dn.isEmpty()) {
-      response = new AuthenticationResponse(
-        AuthenticationResultCode.DN_RESOLUTION_FAILURE,
-        null,
-        dn,
-        null,
-        "DN cannot be empty",
-        null,
-        -1);
+      response = AuthenticationResponse.builder()
+        .response(
+          AuthenticationHandlerResponse.builder()
+            .diagnosticMessage("DN cannot be empty")
+            .resultCode(AuthenticationResultCode.DN_RESOLUTION_FAILURE).build())
+        .dn(dn)
+        .build();
     }
     return response;
   }
@@ -379,12 +365,11 @@ public class Authenticator
   protected AuthenticationRequest processRequest(final String dn, final AuthenticationRequest request)
     throws LdapException
   {
-    if (returnAttributes == null &&
-        (getAuthenticationRequestHandlers() == null || getAuthenticationRequestHandlers().length == 0)) {
+    if (returnAttributes == null && (getRequestHandlers() == null || getRequestHandlers().length == 0)) {
       return request;
     }
 
-    final AuthenticationRequest newRequest = AuthenticationRequest.newAuthenticationRequest(request);
+    final AuthenticationRequest newRequest = AuthenticationRequest.copy(request);
     if (returnAttributes != null) {
       if (newRequest.getReturnAttributes() == null ||
         ReturnAttributes.NONE.equalsAttributes(newRequest.getReturnAttributes())) {
@@ -395,8 +380,8 @@ public class Authenticator
     }
 
     // execute authentication request handlers
-    if (getAuthenticationRequestHandlers() != null && getAuthenticationRequestHandlers().length > 0) {
-      for (AuthenticationRequestHandler ah : getAuthenticationRequestHandlers()) {
+    if (getRequestHandlers() != null && getRequestHandlers().length > 0) {
+      for (AuthenticationRequestHandler ah : getRequestHandlers()) {
         ah.handle(dn, newRequest);
       }
     }
@@ -416,12 +401,14 @@ public class Authenticator
    *
    * @throws  LdapException  if an error occurs resolving the entry
    */
-  protected LdapEntry resolveEntry(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response)
+  protected LdapEntry resolveEntry(
+    final AuthenticationCriteria criteria,
+    final AuthenticationHandlerResponse response)
     throws LdapException
   {
     LdapEntry entry = null;
     final EntryResolver er;
-    if (resolveEntryOnFailure || response.getResult()) {
+    if (resolveEntryOnFailure || response.isSuccess()) {
       if (entryResolver != null) {
         er = entryResolver;
       } else if (!ReturnAttributes.NONE.equalsAttributes(criteria.getAuthenticationRequest().getReturnAttributes())) {
@@ -437,7 +424,7 @@ public class Authenticator
         entry = er.resolve(criteria, response);
         logger.trace("resolved entry={} with resolver={}", entry, er);
       } catch (LdapException e) {
-        logger.debug("entry resolution failed for resolver={}", er, e);
+        logger.warn("entry resolution failed for resolver={}", er, e);
       }
     }
     if (entry == null) {
@@ -451,16 +438,134 @@ public class Authenticator
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::dnResolver=%s, authenticationHandler=%s, entryResolver=%s, returnAttributes=%s, " +
-        "authenticationResponseHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        getDnResolver(),
-        getAuthenticationHandler(),
-        getEntryResolver(),
-        Arrays.toString(getReturnAttributes()),
-        Arrays.toString(getAuthenticationResponseHandlers()));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("dnResolver=").append(dnResolver).append(", ")
+      .append("authenticationHandler=").append(authenticationHandler).append(", ")
+      .append("entryResolver=").append(entryResolver).append(", ")
+      .append("returnAttributes=").append(Arrays.toString(returnAttributes)).append(", ")
+      .append("requestHandlers=").append(Arrays.toString(requestHandlers)).append(", ")
+      .append("responseHandlers=").append(Arrays.toString(responseHandlers)).append("]").toString();
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  /** Authenticator builder. */
+  public static class Builder
+  {
+
+    /** Authenticator to build. */
+    private final Authenticator object = new Authenticator();
+
+
+    /**
+     * Default constructor.
+     */
+    protected Builder() {}
+
+
+    /**
+     * Sets the DN resolver.
+     *
+     * @param  resolver  DN resolver
+     *
+     * @return  this builder
+     */
+    public Builder dnResolver(final DnResolver resolver)
+    {
+      object.setDnResolver(resolver);
+      return this;
+    }
+
+
+    /**
+     * Sets the authentication handler.
+     *
+     * @param  handler  authentication handler
+     *
+     * @return  this builder
+     */
+    public Builder authenticationHandler(final AuthenticationHandler handler)
+    {
+      object.setAuthenticationHandler(handler);
+      return this;
+    }
+
+
+    /**
+     * Sets the entry resolver.
+     *
+     * @param  resolver  entry resolver
+     *
+     * @return  this builder
+     */
+    public Builder entryResolver(final EntryResolver resolver)
+    {
+      object.setEntryResolver(resolver);
+      return this;
+    }
+
+
+    /**
+     * Sets the authentication request handlers.
+     *
+     * @param  handlers  request handlers
+     *
+     * @return  this builder
+     */
+    public Builder requestHandlers(final AuthenticationRequestHandler... handlers)
+    {
+      object.setRequestHandlers(handlers);
+      return this;
+    }
+
+
+    /**
+     * Sets the authentication response handlers.
+     *
+     * @param  handlers  response handlers
+     *
+     * @return  this builder
+     */
+    public Builder responseHandlers(final AuthenticationResponseHandler... handlers)
+    {
+      object.setResponseHandlers(handlers);
+      return this;
+    }
+
+
+    /**
+     * Sets the return attributes.
+     *
+     * @param  attributes  return attributes
+     *
+     * @return  this builder
+     */
+    public Builder returnAttributes(final String... attributes)
+    {
+      object.setReturnAttributes(attributes);
+      return this;
+    }
+
+
+    /**
+     * Returns the authenticator.
+     *
+     * @return  authenticator
+     */
+    public Authenticator build()
+    {
+      return object;
+    }
   }
 }

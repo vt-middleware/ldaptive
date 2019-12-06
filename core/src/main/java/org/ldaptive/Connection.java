@@ -2,10 +2,13 @@
 package org.ldaptive;
 
 import org.ldaptive.control.RequestControl;
-import org.ldaptive.provider.ProviderConnection;
+import org.ldaptive.extended.ExtendedOperationHandle;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.sasl.DefaultSaslClientRequest;
+import org.ldaptive.sasl.SaslClientRequest;
 
 /**
- * Interface for ldap connection implementations.
+ * Interface for connection implementations.
  *
  * @author  Middleware Services
  */
@@ -14,44 +17,121 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * Returns the connection config for this connection. The config may be read-only.
+   * Executes an abandon operation. Clients should execute abandons using {@link OperationHandle#abandon()}.
    *
-   * @return  connection config
+   * @param  request  abandon request
    */
-  ConnectionConfig getConnectionConfig();
+  void operation(AbandonRequest request);
 
 
   /**
-   * This will establish a connection to the LDAP. This connection should be closed using {@link #close()}.
+   * Creates a handle for an add operation.
    *
-   * @return  response associated with the {@link ConnectionInitializer} or an empty response if no connection
-   *          initializer was configured
+   * @param  request  add request
    *
-   * @throws  IllegalStateException  if the connection is already open
-   * @throws  LdapException  if the LDAP cannot be reached
+   * @return  operation handle
    */
-  Response<Void> open()
-    throws LdapException;
+  OperationHandle<AddRequest, AddResponse> operation(AddRequest request);
 
 
   /**
-   * This will establish a connection to the LDAP using the supplied bind request. This connection should be closed
-   * using {@link #close()}.
+   * Creates a handle for a bind operation. Since clients must not send requests while a bind is in progress, some
+   * methods may not be supported on the the operation handle.
    *
-   * @param  request  containing bind information
+   * @param  request  bind request
    *
-   * @return  response associated with the bind operation
-   *
-   * @throws  IllegalStateException  if the connection is already open
-   * @throws  LdapException  if the LDAP cannot be reached
+   * @return  operation handle
    */
-  Response<Void> open(BindRequest request)
-    throws LdapException;
+  OperationHandle<BindRequest, BindResponse> operation(BindRequest request);
 
 
   /**
-   * Returns whether {@link #open(BindRequest)} was successfully invoked on this connection and {@link #close()} has not
-   * been invoked. This method does not indicate the viability of this connection for use.
+   * Creates a handle for a compare operation.
+   *
+   * @param  request  compare request
+   *
+   * @return  compare operation handle
+   */
+  CompareOperationHandle operation(CompareRequest request);
+
+
+  /**
+   * Creates a handle for an delete operation.
+   *
+   * @param  request  delete request
+   *
+   * @return  operation handle
+   */
+  OperationHandle<DeleteRequest, DeleteResponse> operation(DeleteRequest request);
+
+
+  /**
+   * Creates a handle for an extended operation.
+   *
+   * @param  request  extended request
+   *
+   * @return  extended operation handle
+   */
+  ExtendedOperationHandle operation(ExtendedRequest request);
+
+
+  /**
+   * Creates a handle for a modify operation.
+   *
+   * @param  request  modify request
+   *
+   * @return  operation handle
+   */
+  OperationHandle<ModifyRequest, ModifyResponse> operation(ModifyRequest request);
+
+
+  /**
+   * Creates a handle for a modify dn operation.
+   *
+   * @param  request  modify dn request
+   *
+   * @return  operation handle
+   */
+  OperationHandle<ModifyDnRequest, ModifyDnResponse> operation(ModifyDnRequest request);
+
+
+  /**
+   * Creates a handle for a search operation.
+   *
+   * @param  request  search request
+   *
+   * @return  search operation handle
+   */
+  SearchOperationHandle operation(SearchRequest request);
+
+
+  /**
+   * Returns the result of a SASL request that requires use of a generic SASL client.
+   *
+   * @param  request  SASL client request
+   *
+   * @return  operation result
+   *
+   * @throws  LdapException  if the operation fails or another bind is in progress
+   */
+  BindResponse operation(SaslClientRequest request) throws LdapException;
+
+
+  /**
+   * Returns the result of a SASL request that requires use of the default SASL client. This includes CRAM-MD5,
+   * DIGEST-MD5, and GSS-API.
+   *
+   * @param  request  default SASL client request
+   *
+   * @return  operation result
+   *
+   * @throws  LdapException  if the operation fails or another bind is in progress
+   */
+  BindResponse operation(DefaultSaslClientRequest request) throws LdapException;
+
+
+  /**
+   * Returns whether this connection is open.
    *
    * @return  whether this connection is open
    */
@@ -59,48 +139,24 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * Returns the provider connection to invoke the provider specific implementation. Must be called after a successful
-   * call to {@link #open()}.
+   * Opens the connection.
    *
-   * @return  provider connection
+   * @throws  LdapException  if an error occurs opening the connection
    */
-  ProviderConnection getProviderConnection();
+  void open() throws LdapException;
 
 
-  /** This will close the connection to the LDAP. */
-  void close();
+  @Override
+  default void close()
+  {
+    close((RequestControl[]) null);
+  }
 
 
   /**
-   * This will close the connection to the LDAP using the supplied controls.
+   * Closes the connection.
    *
-   * @param  controls  request controls
+   * @param  controls  to send when closing the connection
    */
-  void close(RequestControl[] controls);
-
-
-  /**
-   * This will close an existing connection to the LDAP and establish a new connection to the LDAP.
-   *
-   * @return  response associated with the {@link ConnectionInitializer} or an empty response if no connection
-   *          initializer was configured
-   *
-   * @throws  LdapException  if the LDAP cannot be reached
-   */
-  Response<Void> reopen()
-    throws LdapException;
-
-
-  /**
-   * This will close an existing connection to the LDAP and establish a new connection to the LDAP using the supplied
-   * bind request.
-   *
-   * @param  request  containing bind information
-   *
-   * @return  response associated with the bind operation
-   *
-   * @throws  LdapException  if the LDAP cannot be reached
-   */
-  Response<Void> reopen(BindRequest request)
-    throws LdapException;
+  void close(RequestControl... controls);
 }

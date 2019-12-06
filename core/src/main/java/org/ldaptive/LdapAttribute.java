@@ -1,142 +1,175 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.io.Serializable;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.TreeSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
-import org.ldaptive.io.ValueTranscoder;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
- * Simple bean representing an ldap attribute. Contains a name and a collection of values.
+ * LDAP attribute defined as:
+ *
+ * <pre>
+   Attribute ::= PartialAttribute(WITH COMPONENTS {
+     ...,
+     vals (SIZE(1..MAX))})
+ * </pre>
  *
  * @author  Middleware Services
  */
-public class LdapAttribute extends AbstractLdapBean
+public class LdapAttribute
 {
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 313;
+  private static final int HASH_CODE_SEED = 10223;
 
-  /** serial version uid. */
-  private static final long serialVersionUID = -3902233717232754155L;
+  /** List of attribute names known to use binary syntax. */
+  private static final String[] DEFAULT_BINARY_ATTRIBUTES = new String[] {
+    "photo",
+    "personalSignature",
+    "audio",
+    "jpegPhoto",
+    "javaSerializedData",
+    "thumbnailPhoto",
+    "thumbnailLogo",
+    "userCertificate",
+    "cACertificate",
+    "authorityRevocationList",
+    "certificateRevocationList",
+    "crossCertificatePair",
+    "x500UniqueIdentifier",
+  };
 
-  /** Name for this attribute. */
+  /** List of custom binary attribute names. */
+  private static final String[] BINARY_ATTRIBUTES;
+
+  /** Attribute name. */
   private String attributeName;
 
-  /** Values for this attribute. */
-  private final LdapAttributeValues<?> attributeValues;
+  /** Attribute values. */
+  private Set<ByteBuffer> attributeValues = new LinkedHashSet<>();
+
+  /** Whether this attribute is binary and string representations should be base64 encoded. */
+  private boolean binary;
+
+  static {
+    // Configure custom binary attribute names
+    final String[] split = System.getProperty("org.ldaptive.attribute.binary", "").split(",");
+    BINARY_ATTRIBUTES = LdapUtils.concatArrays(DEFAULT_BINARY_ATTRIBUTES, split);
+  }
 
 
   /** Default constructor. */
-  public LdapAttribute()
+  public LdapAttribute() {}
+
+
+  /**
+   * Creates a new attribute.
+   *
+   * @param  type  attribute description
+   */
+  public LdapAttribute(final String type)
   {
-    this(SortBehavior.getDefaultSortBehavior(), false);
+    setName(type);
   }
 
 
   /**
-   * Creates a new ldap attribute.
+   * Creates a new attribute.
    *
-   * @param  sb  sort behavior of this attribute
+   * @param  type  attribute description
+   * @param  value  attribute values
    */
-  public LdapAttribute(final SortBehavior sb)
+  public LdapAttribute(final String type, final byte[]... value)
   {
-    this(sb, false);
+    setName(type);
+    addBinaryValues(value);
   }
 
 
   /**
-   * Creates a new ldap attribute.
+   * Creates a new attribute.
    *
-   * @param  binary  whether this attribute contains binary values
+   * @param  type  attribute description
+   * @param  value  attribute values
    */
-  public LdapAttribute(final boolean binary)
+  public LdapAttribute(final String type, final String... value)
   {
-    this(SortBehavior.getDefaultSortBehavior(), binary);
+    setName(type);
+    addStringValues(value);
   }
 
 
   /**
-   * Creates a new ldap attribute.
+   * Sets the name. This method has the side effect of setting this attribute as binary if the name has an option of
+   * 'binary' or the name matches one of {@link #BINARY_ATTRIBUTES}.
    *
-   * @param  sb  sort behavior of this attribute
-   * @param  binary  whether this attribute contains binary values
+   * @param  type  attribute name
    */
-  public LdapAttribute(final SortBehavior sb, final boolean binary)
+  public void setName(final String type)
   {
-    super(sb);
-    if (binary) {
-      attributeValues = new LdapAttributeValues<>(byte[].class);
-    } else {
-      attributeValues = new LdapAttributeValues<>(String.class);
+    attributeName = type;
+    if (getOptions().contains("binary") || Stream.of(BINARY_ATTRIBUTES).anyMatch(attributeName::equals)) {
+      setBinary(true);
     }
   }
 
 
-  /**
-   * Creates a new ldap attribute.
-   *
-   * @param  name  of this attribute
-   */
-  public LdapAttribute(final String name)
+  public boolean isBinary()
   {
-    this();
-    setName(name);
+    return binary;
+  }
+
+
+  public void setBinary(final boolean b)
+  {
+    binary = b;
   }
 
 
   /**
-   * Creates a new ldap attribute.
+   * Checks whether {@link #DEFAULT_BINARY_ATTRIBUTES}, {@link #BINARY_ATTRIBUTES}, or attrNames matches the name of
+   * this attribute.  If a match is found this attribute is set as binary.
    *
-   * @param  name  of this attribute
-   * @param  values  of this attribute
+   * @param  attrNames  custom binary attribute names
    */
-  public LdapAttribute(final String name, final String... values)
+  public void configureBinary(final String... attrNames)
   {
-    this(false);
-    setName(name);
-    addStringValue(values);
+    if (binary) {
+      return;
+    }
+    if (attrNames != null && attrNames.length > 0) {
+      for (String s : attrNames) {
+        if (attributeName.equals(s)) {
+          binary = true;
+          break;
+        }
+      }
+    }
   }
 
 
-  /**
-   * Creates a new ldap attribute.
-   *
-   * @param  name  of this attribute
-   * @param  values  of this attribute
-   */
-  public LdapAttribute(final String name, final byte[]... values)
-  {
-    this(true);
-    setName(name);
-    addBinaryValue(values);
-  }
-
-
-  /**
-   * Returns the name of this attribute. Includes options if they exist.
-   *
-   * @return  attribute name
-   */
   public String getName()
   {
-    return getName(true);
+    return attributeName;
   }
 
 
   /**
-   * Returns the name of this attribute with or without options.
+   * Returns the attribute description with or without options.
    *
-   * @param  withOptions  whether options should be included in the name
+   * @param  withOptions  whether the attribute description should include options
    *
-   * @return  attribute name
+   * @return  attribute description
    */
   public String getName(final boolean withOptions)
   {
@@ -150,32 +183,54 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Sets the name of this attribute.
+   * Returns any options that may exist on the attribute description.
    *
-   * @param  name  to set
+   * @return  attribute description options
    */
-  public void setName(final String name)
+  public List<String> getOptions()
   {
-    attributeName = name;
+    if (attributeName.indexOf(";") > 0) {
+      final String[] split = attributeName.split(";");
+      if (split.length > 1) {
+        return IntStream.range(1, split.length).mapToObj(i -> split[i]).collect(Collectors.toUnmodifiableList());
+      }
+    }
+    return Collections.emptyList();
+  }
+
+
+  public byte[] getBinaryValue()
+  {
+    return attributeValues.isEmpty() ? null : attributeValues.iterator().next().array();
   }
 
 
   /**
-   * Returns the options for this attribute. Returns an empty array if attribute contains no options.
+   * Returns the values of this attribute as byte arrays. The return collection cannot be modified.
    *
-   * @return  options parsed from the attribute name
+   * @return  collection of string attribute values
    */
-  public String[] getOptions()
+  public Collection<byte[]> getBinaryValues()
   {
-    String[] options = null;
-    if (attributeName.indexOf(";") > 0) {
-      final String[] split = attributeName.split(";");
-      if (split.length > 1) {
-        options = new String[split.length - 1];
-        System.arraycopy(split, 1, options, 0, options.length);
-      }
+    if (attributeValues.isEmpty()) {
+      return Collections.emptySet();
     }
-    return options != null ? options : new String[0];
+    return attributeValues.stream().map(ByteBuffer::array).collect(Collectors.toUnmodifiableList());
+  }
+
+
+  /**
+   * Returns a single string value of this attribute.
+   *
+   * @return  single string attribute value or null if this attribute is empty
+   */
+  public String getStringValue()
+  {
+    if (attributeValues.isEmpty()) {
+      return null;
+    }
+    final ByteBuffer val = attributeValues.iterator().next();
+    return binary ? LdapUtils.base64Encode(val.array()) : new String(val.array(), StandardCharsets.UTF_8);
   }
 
 
@@ -187,239 +242,272 @@ public class LdapAttribute extends AbstractLdapBean
    */
   public Collection<String> getStringValues()
   {
-    return attributeValues.getStringValues();
-  }
-
-
-  /**
-   * Returns a single string value of this attribute. See {@link #getStringValues()}.
-   *
-   * @return  single string attribute value
-   */
-  public String getStringValue()
-  {
-    final Collection<String> values = getStringValues();
-    if (values.isEmpty()) {
-      return null;
+    if (attributeValues.isEmpty()) {
+      return Collections.emptySet();
     }
-    return values.iterator().next();
+    return attributeValues.stream().map(v -> {
+      if (binary) {
+        return LdapUtils.base64Encode(v.array());
+      }
+      return new String(v.array(), StandardCharsets.UTF_8);
+    }).collect(Collectors.toUnmodifiableList());
   }
 
 
   /**
-   * Returns the values of this attribute as byte arrays. String data is UTF-8 encoded. The return collection cannot be
-   * modified.
+   * Returns a single decoded value of this attribute.
    *
-   * @return  collection of byte array attribute values
-   */
-  public Collection<byte[]> getBinaryValues()
-  {
-    return attributeValues.getBinaryValues();
-  }
-
-
-  /**
-   * Returns a single byte array value of this attribute. See {@link #getBinaryValues()}.
+   * @param  <T>  type of decoded attribute
+   * @param  func  to decode attribute value with
    *
-   * @return  single byte array attribute value
+   * @return  single decoded attribute value or null if this attribute is empty
    */
-  public byte[] getBinaryValue()
+  public <T> T getValue(final Function<byte[], T> func)
   {
-    final Collection<byte[]> values = getBinaryValues();
-    if (values.isEmpty()) {
-      return null;
-    }
-    return values.iterator().next();
+    return attributeValues.isEmpty() ? null : func.apply(attributeValues.iterator().next().array());
   }
 
 
   /**
-   * Returns whether this ldap attribute contains a value of type byte[].
-   *
-   * @return  whether this ldap attribute contains a value of type byte[]
-   */
-  public boolean isBinary()
-  {
-    return attributeValues.isType(byte[].class);
-  }
-
-
-  /**
-   * Returns the values of this attribute decoded by the supplied transcoder.
+   * Returns the values of this attribute decoded by the supplied function.
    *
    * @param  <T>  type of decoded attributes
-   * @param  transcoder  to decode attribute values with
+   * @param  func  to decode attribute values with
    *
-   * @return  collection of decoded attribute values
+   * @return  collection of decoded attribute values, null values are discarded
    */
-  public <T> Collection<T> getValues(final ValueTranscoder<T> transcoder)
+  public <T> Collection<T> getValues(final Function<byte[] , T> func)
   {
-    final Collection<T> values = createSortBehaviorCollection(transcoder.getType());
-    if (isBinary()) {
-      values.addAll(getBinaryValues().stream().map(transcoder::decodeBinaryValue).collect(Collectors.toList()));
-    } else {
-      values.addAll(getStringValues().stream().map(transcoder::decodeStringValue).collect(Collectors.toList()));
-    }
-    return values;
-  }
-
-
-  /**
-   * Returns a single decoded value of this attribute. See {@link #getValues(ValueTranscoder)}.
-   *
-   * @param  <T>  type of decoded attributes
-   * @param  transcoder  to decode attribute values with
-   *
-   * @return  single decoded attribute value
-   */
-  public <T> T getValue(final ValueTranscoder<T> transcoder)
-  {
-    final Collection<T> t = getValues(transcoder);
-    if (t.isEmpty()) {
-      return null;
-    }
-    return t.iterator().next();
-  }
-
-
-  /**
-   * Adds the supplied string as a value for this attribute.
-   *
-   * @param  value  to add
-   *
-   * @throws  NullPointerException  if value is null
-   */
-  public void addStringValue(final String... value)
-  {
-    for (String s : value) {
-      attributeValues.add(s);
-    }
-  }
-
-
-  /**
-   * Adds all the strings in the supplied collection as values for this attribute. See {@link
-   * #addStringValue(String...)}.
-   *
-   * @param  values  to add
-   */
-  public void addStringValues(final Collection<String> values)
-  {
-    values.forEach(this::addStringValue);
+    return attributeValues.stream()
+      .filter(Objects::nonNull)
+      .map(ByteBuffer::array)
+      .map(func).collect(Collectors.toUnmodifiableList());
   }
 
 
   /**
    * Adds the supplied byte array as a value for this attribute.
    *
-   * @param  value  to add
-   *
-   * @throws  NullPointerException  if value is null
+   * @param  value  to add, null values are discarded
    */
-  public void addBinaryValue(final byte[]... value)
+  public void addBinaryValues(final byte[]... value)
   {
-    for (byte[] b : value) {
-      attributeValues.add(b);
-    }
+    Stream.of(value).filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::add);
   }
 
 
   /**
-   * Adds all the byte arrays in the supplied collection as values for this attribute. See {@link
-   * #addBinaryValue(byte[][])}.
+   * Adds all the byte arrays in the supplied collection as values for this attribute.
    *
-   * @param  values  to add
+   * @param  values  to add, null values are discarded
    */
   public void addBinaryValues(final Collection<byte[]> values)
   {
-    values.forEach(this::addBinaryValue);
+    values.stream().filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::add);
   }
 
 
   /**
-   * Adds the supplied values for this attribute by encoding them with the supplied transcoder.
+   * Adds the supplied string as a value for this attribute.
+   *
+   * @param  value  to add, null values are discarded
+   */
+  public void addStringValues(final String... value)
+  {
+    Stream.of(value)
+      .filter(Objects::nonNull)
+      .map(v -> {
+        if (binary) {
+          try {
+            return LdapUtils.base64Decode(v);
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
+          }
+        }
+        return v.getBytes(StandardCharsets.UTF_8);
+      })
+      .filter(Objects::nonNull)
+      .map(ByteBuffer::wrap)
+      .forEach(attributeValues::add);
+  }
+
+
+  /**
+   * Adds all the strings in the supplied collection as values for this attribute.
+   *
+   * @param  values  to add, null values are discarded
+   */
+  public void addStringValues(final Collection<String> values)
+  {
+    values.stream()
+      .filter(Objects::nonNull)
+      .map(v -> {
+        if (binary) {
+          try {
+            return LdapUtils.base64Decode(v);
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
+          }
+        }
+        return v.getBytes(StandardCharsets.UTF_8);
+      })
+      .filter(Objects::nonNull)
+      .map(ByteBuffer::wrap)
+      .forEach(attributeValues::add);
+  }
+
+
+  /**
+   * Adds all the buffers in the supplied collection as values for this attribute.
+   *
+   * @param  values  to add, null values are discarded
+   */
+  public void addBufferValues(final ByteBuffer... values)
+  {
+    Stream.of(values).filter(Objects::nonNull).forEach(attributeValues::add);
+  }
+
+
+  /**
+   * Adds all the buffers in the supplied collection as values for this attribute.
+   *
+   * @param  values  to add, null values are discarded
+   */
+  public void addBufferValues(final Collection<ByteBuffer> values)
+  {
+    values.stream().filter(Objects::nonNull).forEach(attributeValues::add);
+  }
+
+
+  /**
+   * Adds the supplied values for this attribute by encoding them with the supplied function.
    *
    * @param  <T>  type attribute to encode
-   * @param  transcoder  to encode value with
-   * @param  value  to encode and add
-   *
-   * @throws  NullPointerException  if value is null
+   * @param  func  to encode value with
+   * @param  value  to encode and add, null values are discarded
    */
   @SuppressWarnings("unchecked")
-  public <T> void addValue(final ValueTranscoder<T> transcoder, final T... value)
+  public <T> void addValues(final Function<T, byte[]> func, final T... value)
   {
-    for (T t : value) {
-      if (isBinary()) {
-        attributeValues.add(transcoder.encodeBinaryValue(t));
-      } else {
-        attributeValues.add(transcoder.encodeStringValue(t));
-      }
-    }
+    Stream.of(value)
+      .filter(Objects::nonNull)
+      .map(func::apply)
+      .filter(Objects::nonNull)
+      .map(ByteBuffer::wrap)
+      .forEach(attributeValues::add);
   }
 
 
   /**
-   * Adds all the values in the supplied collection for this attribute by encoding them with the supplied transcoder.
-   * See {@link #addValue(ValueTranscoder, Object...)}.
+   * Adds all the values in the supplied collection for this attribute by encoding them with the supplied function.
+   * See {@link #addValues(Function, Object...)}.
    *
    * @param  <T>  type attribute to encode
-   * @param  transcoder  to encode value with
-   * @param  values  to encode and add
+   * @param  func  to encode value with
+   * @param  values  to encode and add, null values are discarded
    */
-  @SuppressWarnings("unchecked")
-  public <T> void addValues(final ValueTranscoder<T> transcoder, final Collection<T> values)
+  public <T> void addValues(final Function<T, byte[]> func, final Collection<T> values)
   {
-    for (T value : values) {
-      addValue(transcoder, value);
-    }
+    values.stream()
+      .filter(Objects::nonNull)
+      .map(func::apply)
+      .filter(Objects::nonNull)
+      .map(ByteBuffer::wrap)
+      .forEach(attributeValues::add);
   }
 
 
   /**
-   * Removes the supplied value from the attribute values if it exists.
+   * Removes the supplied byte array as a value from this attribute.
    *
-   * @param  value  to remove
+   * @param  value  to remove, null values are discarded
    */
-  public void removeStringValue(final String... value)
+  public void removeBinaryValues(final byte[]... value)
   {
-    for (String s : value) {
-      attributeValues.remove(s);
-    }
+    Stream.of(value).filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::remove);
   }
 
 
   /**
-   * Removes the supplied values from the attribute values if they exists. See {@link #removeStringValue(String...)}.
+   * Removes all the byte arrays in the supplied collection as values from this attribute.
    *
-   * @param  values  to remove
-   */
-  public void removeStringValues(final Collection<String> values)
-  {
-    values.forEach(this::removeStringValue);
-  }
-
-
-  /**
-   * Removes the supplied value from the attribute values if it exists.
-   *
-   * @param  value  to remove
-   */
-  public void removeBinaryValue(final byte[]... value)
-  {
-    for (byte[] b : value) {
-      attributeValues.remove(b);
-    }
-  }
-
-
-  /**
-   * Removes the supplied values from the attribute values if they exists. See {@link #removeBinaryValue(byte[][])}.
-   *
-   * @param  values  to remove
+   * @param  values  to remove, null values are discarded
    */
   public void removeBinaryValues(final Collection<byte[]> values)
   {
-    values.forEach(this::removeBinaryValue);
+    values.stream().filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::add);
+  }
+
+
+  /**
+   * Removes the supplied string as a value from this attribute.
+   *
+   * @param  value  to remove, null values are discarded
+   */
+  public void removeStringValues(final String... value)
+  {
+    Stream.of(value)
+      .filter(Objects::nonNull)
+      .map(v -> {
+        if (binary) {
+          try {
+            return LdapUtils.base64Decode(v);
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
+          }
+        }
+        return v.getBytes(StandardCharsets.UTF_8);
+      })
+      .filter(Objects::nonNull)
+      .map(ByteBuffer::wrap)
+      .forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Removes all the strings in the supplied collection as values from this attribute.
+   *
+   * @param  values  to remove, null values are discarded
+   */
+  public void removeStringValues(final Collection<String> values)
+  {
+    values.stream()
+      .filter(Objects::nonNull)
+      .map(v -> {
+        if (binary) {
+          try {
+            return LdapUtils.base64Decode(v);
+          } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
+          }
+        }
+        return v.getBytes(StandardCharsets.UTF_8);
+      })
+      .filter(Objects::nonNull)
+      .map(ByteBuffer::wrap)
+      .forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Removes all the buffers in the supplied collection as values from this attribute.
+   *
+   * @param  values  to remove, null values are discarded
+   */
+  public void removeBufferValues(final ByteBuffer... values)
+  {
+    Stream.of(values).filter(Objects::nonNull).forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Removes all the buffers in the supplied collection as values from this attribute.
+   *
+   * @param  values  to remove, null values are discarded
+   */
+  public void removeBufferValues(final Collection<ByteBuffer> values)
+  {
+    values.stream().filter(Objects::nonNull).forEach(attributeValues::remove);
   }
 
 
@@ -461,114 +549,47 @@ public class LdapAttribute extends AbstractLdapBean
   @Override
   public int hashCode()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        attributeName != null ? attributeName.toLowerCase() : null,
-        attributeValues);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeName, attributeValues);
   }
 
 
   @Override
   public String toString()
   {
-    return String.format("[%s%s]", attributeName, attributeValues);
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("name=").append(attributeName).append(", ")
+      .append("values=").append(getStringValues()).append(", ")
+      .append("binary=").append(binary).toString();
   }
 
 
   /**
-   * Returns an implementation of collection for the sort behavior of this bean. This implementation returns HashSet for
-   * {@link SortBehavior#UNORDERED}, LinkedHashSet for {@link SortBehavior#ORDERED}, and TreeSet for {@link
-   * SortBehavior#SORTED}.
+   * Returns a new attribute whose values are sorted. String values are sorted naturally. Binary values are sorted using
+   * {@link ByteBuffer#compareTo(ByteBuffer)}.
    *
-   * @param  <E>  contained in the collection
-   * @param  c  type contained in the collection
+   * @param  la  attribute to sort
    *
-   * @return  collection corresponding to the sort behavior
+   * @return  sorted attribute
    */
-  protected <E> Collection<E> createSortBehaviorCollection(final Class<E> c)
+  public static LdapAttribute sort(final LdapAttribute la)
   {
-    Collection<E> values = null;
-    if (SortBehavior.UNORDERED == getSortBehavior()) {
-      values = new HashSet<>();
-    } else if (SortBehavior.ORDERED == getSortBehavior()) {
-      values = new LinkedHashSet<>();
-    } else if (SortBehavior.SORTED == getSortBehavior()) {
-      if (!c.isAssignableFrom(Comparable.class)) {
-        values = new TreeSet<>(getComparator(c));
-      } else {
-        values = new TreeSet<>();
-      }
-    }
-    return values;
-  }
-
-
-  /**
-   * Returns a comparator for the supplied class type. Should not be invoked for classes that have a natural ordering.
-   * Returns a comparator that uses {@link Object#toString()} for unknown types.
-   *
-   * @param  <E>  type of class
-   * @param  c  type to compare
-   *
-   * @return  comparator for use with the supplied type
-   */
-  private static <E> Comparator<E> getComparator(final Class<E> c)
-  {
-    if (c.isAssignableFrom(byte[].class)) {
-      return
+    final LdapAttribute sorted = new LdapAttribute(la.getName());
+    if (la.isBinary()) {
+      sorted.setBinary(true);
+      final Set<byte[]> newValues = la.getBinaryValues().stream().sorted(
         (o1, o2) -> {
-          final ByteBuffer bb1 = ByteBuffer.wrap((byte[]) o1);
-          final ByteBuffer bb2 = ByteBuffer.wrap((byte[]) o2);
+          final ByteBuffer bb1 = ByteBuffer.wrap(o1);
+          final ByteBuffer bb2 = ByteBuffer.wrap(o2);
           return bb1.compareTo(bb2);
-        };
+        }).collect(Collectors.toCollection(LinkedHashSet::new));
+      sorted.addBinaryValues(newValues);
     } else {
-      return
-        (o1, o2) -> o1.toString().compareTo(o2.toString());
+      final Set<String> newValues = la.getStringValues().stream()
+        .sorted(Comparator.comparing(String::toString)).collect(Collectors.toCollection(LinkedHashSet::new));
+      sorted.addStringValues(newValues);
     }
-  }
-
-
-  /**
-   * Creates a new ldap attribute. The collection of values is inspected for either String or byte[] and the appropriate
-   * attribute is created.
-   *
-   * @param  sb  sort behavior
-   * @param  name  of this attribute
-   * @param  values  of this attribute
-   *
-   * @return  ldap attribute
-   *
-   * @throws  IllegalArgumentException  if values contains something other than String or byte[]
-   */
-  public static LdapAttribute createLdapAttribute(
-    final SortBehavior sb,
-    final String name,
-    final Collection<Object> values)
-  {
-    final Collection<String> stringValues = new ArrayList<>();
-    final Collection<byte[]> binaryValues = new ArrayList<>();
-    for (Object value : values) {
-      if (value instanceof byte[]) {
-        binaryValues.add((byte[]) value);
-      } else if (value instanceof String) {
-        stringValues.add((String) value);
-      } else {
-        throw new IllegalArgumentException("Values must contain either String or byte[]");
-      }
-    }
-
-    final LdapAttribute la;
-    if (!binaryValues.isEmpty()) {
-      la = new LdapAttribute(sb, true);
-      la.setName(name);
-      la.addBinaryValues(binaryValues);
-    } else {
-      la = new LdapAttribute(sb, false);
-      la.setName(name);
-      la.addStringValues(stringValues);
-    }
-    return la;
+    return sorted;
   }
 
 
@@ -631,223 +652,95 @@ public class LdapAttribute extends AbstractLdapBean
 
 
   /**
-   * Simple bean for ldap attribute values.
+   * Creates a builder for this class.
    *
-   * @param  <T>  type of values
-   *
-   * @author  Middleware Services
+   * @return  new builder
    */
-  private class LdapAttributeValues<T> implements Serializable
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
   {
 
-    /** hash code seed. */
-    private static final int HASH_CODE_SEED = 317;
 
-    /** serial version uid. */
-    private static final long serialVersionUID = 8075255677989836494L;
-
-    /** Type of values. */
-    private final Class<T> type;
-
-    /** Collection of values. */
-    private final Collection<T> values;
+    private final LdapAttribute object = new LdapAttribute();
 
 
-    /**
-     * Creates a new ldap attribute values.
-     *
-     * @param  t  type of values
-     *
-     * @throws  IllegalArgumentException  if t is not a String or byte[]
-     */
-    LdapAttributeValues(final Class<T> t)
+    protected Builder() {}
+
+
+    public Builder name(final String name)
     {
-      if (!(t.isAssignableFrom(String.class) || t.isAssignableFrom(byte[].class))) {
-        throw new IllegalArgumentException("Only String and byte[] values are supported");
-      }
-      type = t;
-      values = createSortBehaviorCollection(type);
+      object.setName(name);
+      return this;
     }
 
 
-    /**
-     * Returns whether this ldap attribute values is of the supplied type.
-     *
-     * @param  c  type to check
-     *
-     * @return  whether this ldap attribute values is of the supplied type
-     */
-    public boolean isType(final Class<?> c)
-    {
-      return type.isAssignableFrom(c);
-    }
-
-
-    /**
-     * Returns the values in string format. If the type of this values is String, values are returned as is. If the type
-     * of this values is byte[], values are base64 encoded. See {@link #convertValuesToString(Collection)}.
-     *
-     * @return  unmodifiable collection
-     */
     @SuppressWarnings("unchecked")
-    public Collection<String> getStringValues()
+    public <T> Builder values(final Function<T, byte[]> func, final T... value)
     {
-      if (isType(String.class)) {
-        return Collections.unmodifiableCollection((Collection<String>) values);
-      }
-      return Collections.unmodifiableCollection(convertValuesToString((Collection<byte[]>) values));
+      object.addValues(func, value);
+      return this;
     }
 
 
-    /**
-     * Returns the values in binary format. If the type of this values is byte[], values are returned as is. If the type
-     * of this values is String, values are UTF-8 encoded. See {@link #convertValuesToByteArray(Collection)}.
-     *
-     * @return  unmodifiable collection
-     */
-    @SuppressWarnings("unchecked")
-    public Collection<byte[]> getBinaryValues()
+    public Builder values(final byte[]... values)
     {
-      if (isType(byte[].class)) {
-        return Collections.unmodifiableCollection((Collection<byte[]>) values);
-      }
-      return Collections.unmodifiableCollection(convertValuesToByteArray((Collection<String>) values));
+      object.addBinaryValues(values);
+      return this;
     }
 
 
-    /**
-     * Adds the supplied object to this values.
-     *
-     * @param  o  to add
-     *
-     * @throws  IllegalArgumentException  if o is null or if o is not the correct type
-     */
-    public void add(final Object o)
+    public Builder binaryValues(final Collection<byte[]> values)
     {
-      checkValue(o);
-      values.add(type.cast(o));
+      object.addBinaryValues(values);
+      return this;
     }
 
 
-    /**
-     * Removes the supplied object from this values if it exists.
-     *
-     * @param  o  to remove
-     *
-     * @throws  IllegalArgumentException  if o is null or if o is not the correct type
-     */
-    public void remove(final Object o)
+    public Builder values(final String... values)
     {
-      checkValue(o);
-      values.remove(type.cast(o));
+      object.addStringValues(values);
+      return this;
     }
 
 
-    /**
-     * Determines if the supplied object is acceptable to use in this values.
-     *
-     * @param  o  object to check
-     *
-     * @throws  IllegalArgumentException  if o is null or if o is not the correct type
-     */
-    private void checkValue(final Object o)
+    public Builder stringValues(final Collection<String> values)
     {
-      if (o == null) {
-        throw new IllegalArgumentException("Value cannot be null");
-      }
-      if (!isType(o.getClass())) {
-        throw new IllegalArgumentException(
-          String.format(
-            "Attribute %s does not support values of type %s",
-            attributeName,
-            o.getClass().isArray() ? o.getClass().getComponentType() : o.getClass().getName()));
-      }
+      object.addStringValues(values);
+      return this;
     }
 
 
-    /**
-     * Returns the number of values.
-     *
-     * @return  number of values
-     */
-    public int size()
+    public Builder values(final ByteBuffer... values)
     {
-      return values.size();
+      object.addBufferValues(values);
+      return this;
     }
 
 
-    /** Removes all the values. */
-    public void clear()
+    public Builder bufferValues(final Collection<ByteBuffer> values)
     {
-      values.clear();
+      object.addBufferValues(values);
+      return this;
     }
 
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public boolean equals(final Object o)
+    public Builder binary(final boolean b)
     {
-      if (o == this) {
-        return true;
-      }
-      if (o instanceof LdapAttributeValues) {
-        final LdapAttributeValues v = (LdapAttributeValues) o;
-        if (type != v.type) {
-          return false;
-        }
-        if (isType(byte[].class)) {
-          return LdapUtils.areEqual(
-            convertValuesToString((Collection<byte[]>) values),
-            convertValuesToString((Collection<byte[]>) v.values));
-        } else {
-          return LdapUtils.areEqual(values, v.values);
-        }
-      }
-      return false;
+      object.setBinary(b);
+      return this;
     }
 
 
-    @Override
-    public int hashCode()
+    public LdapAttribute build()
     {
-      return LdapUtils.computeHashCode(HASH_CODE_SEED, values);
-    }
-
-
-    @Override
-    public String toString()
-    {
-      return getStringValues().toString();
-    }
-
-
-    /**
-     * Base64 encodes the supplied collection of values.
-     *
-     * @param  v  values to encode
-     *
-     * @return  collection of string values
-     */
-    protected Collection<String> convertValuesToString(final Collection<byte[]> v)
-    {
-      final Collection<String> c = createSortBehaviorCollection(String.class);
-      c.addAll(v.stream().map(LdapUtils::base64Encode).collect(Collectors.toList()));
-      return c;
-    }
-
-
-    /**
-     * UTF-8 encodes the supplied collection of values.
-     *
-     * @param  v  values to encode
-     *
-     * @return  collection of byte array values
-     */
-    protected Collection<byte[]> convertValuesToByteArray(final Collection<String> v)
-    {
-      final Collection<byte[]> c = createSortBehaviorCollection(byte[].class);
-      c.addAll(v.stream().map(LdapUtils::utf8Encode).collect(Collectors.toList()));
-      return c;
+      return object;
     }
   }
+  // CheckStyle:ON
 }

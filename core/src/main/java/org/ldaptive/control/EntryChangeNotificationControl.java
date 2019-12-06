@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
@@ -215,28 +215,23 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, changeType=%s, previousDn=%s, changeNumber=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        changeType,
-        previousDn,
-        changeNumber);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("changeType=").append(changeType).append(", ")
+      .append("previousDn=").append(previousDn).append(", ")
+      .append("changeNumber=").append(changeNumber).append("]").toString();
   }
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(ChangeTypeHandler.PATH, new ChangeTypeHandler(this));
     parser.registerHandler(PreviousDnHandler.PATH, new PreviousDnHandler(this));
     parser.registerHandler(ChangeNumberHandler.PATH, new ChangeNumberHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -245,7 +240,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
   {
 
     /** DER path to change type. */
-    public static final DERPath PATH = new DERPath("/SEQ/ENUM");
+    public static final DERPath PATH = new DERPath("/SEQ/ENUM[0]");
 
 
     /**
@@ -260,7 +255,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       final int typeValue = IntegerType.decode(encoded).intValue();
       final PersistentSearchChangeType ct = PersistentSearchChangeType.valueOf(typeValue);
@@ -292,7 +287,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setPreviousDn(OctetStringType.decode(encoded));
     }
@@ -319,7 +314,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setChangeNumber(IntegerType.decode(encoded).intValue());
     }

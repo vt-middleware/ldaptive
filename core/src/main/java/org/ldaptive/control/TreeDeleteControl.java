@@ -15,7 +15,7 @@ public class TreeDeleteControl extends AbstractControl implements RequestControl
   public static final String OID = "1.2.840.113556.1.4.805";
 
   /** hash code seed. */
-  private static final int HASH_CODE_SEED = 7027;
+  private static final int HASH_CODE_SEED = 7043;
 
 
   /** Default constructor. */
@@ -37,6 +37,13 @@ public class TreeDeleteControl extends AbstractControl implements RequestControl
 
 
   @Override
+  public boolean hasValue()
+  {
+    return false;
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {
@@ -50,13 +57,6 @@ public class TreeDeleteControl extends AbstractControl implements RequestControl
   public int hashCode()
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
-  }
-
-
-  @Override
-  public String toString()
-  {
-    return String.format("[%s@%d::criticality=%s]", getClass().getName(), hashCode(), getCriticality());
   }
 
 

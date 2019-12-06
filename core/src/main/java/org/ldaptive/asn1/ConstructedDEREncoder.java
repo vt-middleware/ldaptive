@@ -40,12 +40,10 @@ public class ConstructedDEREncoder extends AbstractDERType implements DEREncoder
   {
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     try {
-      try {
+      try (bytes) {
         for (DEREncoder encoder : derEncoders) {
           bytes.write(encoder.encode());
         }
-      } finally {
-        bytes.close();
       }
     } catch (IOException e) {
       throw new IllegalStateException("Encode failed", e);

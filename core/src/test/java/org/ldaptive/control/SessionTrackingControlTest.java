@@ -1,7 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -25,12 +26,13 @@ public class SessionTrackingControlTest
   {
     return
       new Object[][] {
-        // BER: 30:42:04:09:31:39:32:2e:30:2e:32:2e:31:04:0f:61:70:70:2e:65:78:61:6d:70:6c:65:2e:63:6f:6d
-        //      04:1c:31:2e:33:2e:36:2e:31:2e:34:2e:31:2e:32:31:30:30:38:2e:31:30:38:2e:36:33:2e:31:2e:33
-        //      04:06:62:6c:6f:67:67:73
         new Object[] {
-          LdapUtils.base64Decode(
-            "MEIECTE5Mi4wLjIuMQQPYXBwLmV4YW1wbGUuY29tBBwxLjMuNi4xLjQuMS4yMTAwOC4xMDguNjMuMS4zBAZibG9nZ3M="),
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x42, 0x04, 0x09, 0x31, 0x39, 0x32, 0x2e, 0x30, 0x2e, 0x32, 0x2e, 0x31, 0x04, 0x0f, 0x61, 0x70,
+              0x70, 0x2e, 0x65, 0x78, 0x61, 0x6d, 0x70, 0x6c, 0x65, 0x2e, 0x63, 0x6f, 0x6d, 0x04, 0x1c, 0x31, 0x2e,
+              0x33, 0x2e, 0x36, 0x2e, 0x31, 0x2e, 0x34, 0x2e, 0x31, 0x2e, 0x32, 0x31, 0x30, 0x30, 0x38, 0x2e, 0x31,
+              0x30, 0x38, 0x2e, 0x36, 0x33, 0x2e, 0x31, 0x2e, 0x33, 0x04, 0x06, 0x62, 0x6c, 0x6f, 0x67, 0x67, 0x73}),
           new SessionTrackingControl("192.0.2.1", "app.example.com", "1.3.6.1.4.1.21008.108.63.1.3", "bloggs"),
         },
       };
@@ -43,11 +45,11 @@ public class SessionTrackingControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
-  public void encode(final byte[] berValue, final SessionTrackingControl expected)
+  @Test(groups = "control", dataProvider = "request-response")
+  public void encode(final DERBuffer berValue, final SessionTrackingControl expected)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue);
+    Assert.assertEquals(expected.encode(), berValue.getRemainingBytes());
   }
 
 
@@ -57,8 +59,8 @@ public class SessionTrackingControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
-  public void decode(final byte[] berValue, final SessionTrackingControl expected)
+  @Test(groups = "control", dataProvider = "request-response")
+  public void decode(final DERBuffer berValue, final SessionTrackingControl expected)
     throws Exception
   {
     final SessionTrackingControl actual = new SessionTrackingControl();

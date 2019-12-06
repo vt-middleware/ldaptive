@@ -2,284 +2,351 @@
 package org.ldaptive;
 
 import java.util.Arrays;
-import org.ldaptive.handler.AbstractRetryOperationExceptionHandler;
-import org.ldaptive.handler.Handler;
-import org.ldaptive.handler.HandlerResult;
-import org.ldaptive.handler.OperationExceptionHandler;
-import org.ldaptive.handler.OperationResponseHandler;
-import org.ldaptive.referral.ReferralHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ldaptive.handler.ExceptionHandler;
+import org.ldaptive.handler.IntermediateResponseHandler;
+import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ResponseControlHandler;
+import org.ldaptive.handler.ResultHandler;
+import org.ldaptive.handler.ResultPredicate;
+import org.ldaptive.handler.UnsolicitedNotificationHandler;
 
 /**
- * Provides common implementation for ldap operations.
+ * Base class for operations.
  *
- * @param  <Q>  type of ldap request
- * @param  <S>  type of ldap response
+ * @param  <Q>  type of request
+ * @param  <S>  type of result
  *
  * @author  Middleware Services
  */
-public abstract class AbstractOperation<Q extends Request, S> implements Operation<Q, S>
+public abstract class AbstractOperation<Q extends Request, S extends Result> implements Operation<Q, S>
 {
 
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  /** Connection factory. */
+  private ConnectionFactory connectionFactory;
 
-  /** Connection to perform operation. */
-  private final Connection connection;
+  /** Functions to handle response results. */
+  private ResultHandler[] resultHandlers;
 
-  /** Handler to handle operation exceptions. */
-  private OperationExceptionHandler<Q, S> operationExceptionHandler = new ReopenOperationExceptionHandler();
+  /** Functions to handle response controls. */
+  private ResponseControlHandler[] controlHandlers;
 
-  /** Handlers to handle operation responses. */
-  private OperationResponseHandler<Q, S>[] operationResponseHandlers;
+  /** Functions to handle referrals. */
+  private ReferralHandler[] referralHandlers;
+
+  /** Functions to handle intermediate responses. */
+  private IntermediateResponseHandler[] intermediateResponseHandlers;
+
+  /** Function to handle exceptions. */
+  private ExceptionHandler exceptionHandler;
+
+  /** Function to test results. */
+  private ResultPredicate throwCondition;
+
+  /** Functions to handle unsolicited notifications. */
+  private UnsolicitedNotificationHandler[] unsolicitedNotificationHandlers;
+
+
+  /**
+   * Default constructor.
+   */
+  public AbstractOperation() {}
 
 
   /**
    * Creates a new abstract operation.
    *
-   * @param  conn  to use for this operation
+   * @param  factory  connection factory
    */
-  public AbstractOperation(final Connection conn)
+  public AbstractOperation(final ConnectionFactory factory)
   {
-    connection = conn;
+    setConnectionFactory(factory);
+  }
+
+
+  public ConnectionFactory getConnectionFactory()
+  {
+    return connectionFactory;
+  }
+
+
+  public void setConnectionFactory(final ConnectionFactory factory)
+  {
+    connectionFactory = factory;
+  }
+
+
+  public ResultHandler[] getResultHandlers()
+  {
+    return resultHandlers;
+  }
+
+
+  public void setResultHandlers(final ResultHandler... handlers)
+  {
+    resultHandlers = handlers;
+  }
+
+
+  public ResponseControlHandler[] getControlHandlers()
+  {
+    return controlHandlers;
+  }
+
+
+  public void setControlHandlers(final ResponseControlHandler... handlers)
+  {
+    controlHandlers = handlers;
+  }
+
+
+  public ReferralHandler[] getReferralHandlers()
+  {
+    return referralHandlers;
+  }
+
+
+  public void setReferralHandlers(final ReferralHandler... handlers)
+  {
+    referralHandlers = handlers;
+  }
+
+
+  public IntermediateResponseHandler[] getIntermediateResponseHandlers()
+  {
+    return intermediateResponseHandlers;
+  }
+
+
+  public void setIntermediateResponseHandlers(final IntermediateResponseHandler... handlers)
+  {
+    intermediateResponseHandlers = handlers;
+  }
+
+
+  public ExceptionHandler getExceptionHandler()
+  {
+    return exceptionHandler;
+  }
+
+
+  public void setExceptionHandler(final ExceptionHandler handler)
+  {
+    exceptionHandler = handler;
+  }
+
+
+  public ResultPredicate getThrowCondition()
+  {
+    return throwCondition;
+  }
+
+
+  public void setThrowCondition(final ResultPredicate function)
+  {
+    throwCondition = function;
+  }
+
+
+  public UnsolicitedNotificationHandler[] getUnsolicitedNotificationHandlers()
+  {
+    return unsolicitedNotificationHandlers;
+  }
+
+
+  public void setUnsolicitedNotificationHandlers(final UnsolicitedNotificationHandler... handlers)
+  {
+    unsolicitedNotificationHandlers = handlers;
   }
 
 
   /**
-   * Returns the connection used for this operation.
+   * Adds configured functions to the supplied handle.
    *
-   * @return  connection
+   * @param  handle  to configure
+   *
+   * @return  configured handle
    */
-  protected Connection getConnection()
+  protected OperationHandle<Q, S> configureHandle(final OperationHandle<Q, S> handle)
   {
-    return connection;
-  }
-
-
-  /**
-   * Returns the operation exception handler.
-   *
-   * @return  operation exception handler
-   */
-  public OperationExceptionHandler<Q, S> getOperationExceptionHandler()
-  {
-    return operationExceptionHandler;
-  }
-
-
-  /**
-   * Sets the operation exception handler.
-   *
-   * @param  handler  operation exception handler
-   */
-  public void setOperationExceptionHandler(final OperationExceptionHandler<Q, S> handler)
-  {
-    operationExceptionHandler = handler;
-  }
-
-
-  /**
-   * Returns the operation response handlers.
-   *
-   * @return  operation response handlers
-   */
-  public OperationResponseHandler<Q, S>[] getOperationResponseHandlers()
-  {
-    return operationResponseHandlers;
-  }
-
-
-  /**
-   * Sets the operation response handlers.
-   *
-   * @param  handlers  operation response handlers
-   */
-  @SuppressWarnings("unchecked")
-  public void setOperationResponseHandlers(final OperationResponseHandler<Q, S>... handlers)
-  {
-    operationResponseHandlers = handlers;
-  }
-
-
-  /**
-   * Call the provider specific implementation of this ldap operation.
-   *
-   * @param  request  ldap request
-   *
-   * @return  ldap response
-   *
-   * @throws  LdapException  if the invocation fails
-   */
-  protected abstract Response<S> invoke(Q request)
-    throws LdapException;
-
-
-  @Override
-  public Response<S> execute(final Q request)
-    throws LdapException
-  {
-    logger.debug("execute request={} with connection={}", request, connection);
-
-    Response<S> response = null;
-    try {
-      response = invoke(request);
-    } catch (OperationException e) {
-      if (operationExceptionHandler == null) {
-        throw e;
-      }
-      logger.debug("Error performing LDAP operation, invoking exception handler: {}", operationExceptionHandler, e);
-
-      final HandlerResult<Response<S>> hr = operationExceptionHandler.handle(connection, request, response);
-      if (hr.getAbort()) {
-        throw e;
-      }
-      response = hr.getResult();
-    }
-
-    if (ResultCode.REFERRAL == response.getResultCode()) {
-      @SuppressWarnings("unchecked")
-      final ReferralHandler<Q, S> handler = request.getReferralHandler();
-      if (handler != null) {
-        logger.debug("Encountered referral, invoking referral handler: {}", handler);
-
-        final HandlerResult<Response<S>> hr = handler.handle(connection, request, response);
-        response = hr.getResult();
-      }
-    }
-
-    // execute response handlers
-    final HandlerResult<Response<S>> hr = executeHandlers(getOperationResponseHandlers(), request, response);
-
-    logger.debug("execute response={} for request={} with connection={}", hr.getResult(), request, connection);
-    return hr.getResult();
-  }
-
-
-  /**
-   * Processes each handler and returns a handler result containing a result processed by all handlers. If any handler
-   * indicates that the operation should be aborted, that flag is returned to the operation after all handlers have been
-   * invoked.
-   *
-   * @param  <Q>  type of request
-   * @param  <S>  type of response
-   * @param  handlers  to invoke
-   * @param  request  the operation was performed with
-   * @param  result  from the operation
-   *
-   * @return  handler result
-   *
-   * @throws  LdapException  if an error occurs processing a handler
-   */
-  protected <Q extends Request, S> HandlerResult<S> executeHandlers(
-    final Handler<Q, S>[] handlers,
-    final Q request,
-    final S result)
-    throws LdapException
-  {
-    S processed = result;
-    boolean abort = false;
-    if (handlers != null && handlers.length > 0) {
-      for (Handler<Q, S> handler : handlers) {
-        if (handler != null) {
-          try {
-            final HandlerResult<S> hr = handler.handle(getConnection(), request, processed);
-            if (hr != null) {
-              if (hr.getAbort()) {
-                abort = true;
-              }
-              processed = hr.getResult();
-            }
-          } catch (Exception e) {
-            logger.warn("{} threw unexpected exception", handler, e);
-          }
-        }
-      }
-    }
-    return new HandlerResult<>(processed, abort);
+    return handle
+      .onControl(getControlHandlers())
+      .onReferral(getReferralHandlers())
+      .onIntermediate(getIntermediateResponseHandlers())
+      .onException(getExceptionHandler())
+      .throwIf(getThrowCondition())
+      .onUnsolicitedNotification(getUnsolicitedNotificationHandlers())
+      .onResult(getResultHandlers());
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::connection=%s, operationExceptionHandler=%s, " +
-        "operationResponseHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        connection,
-        operationExceptionHandler,
-        Arrays.toString(operationResponseHandlers));
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("connectionFactory=").append(connectionFactory).append(", ")
+      .append("resultHandlers=").append(Arrays.toString(resultHandlers)).append(", ")
+      .append("controlHandlers=").append(Arrays.toString(controlHandlers)).append(", ")
+      .append("referralHandlers=").append(Arrays.toString(referralHandlers)).append(", ")
+      .append("intermediateResponseHandlers=").append(Arrays.toString(intermediateResponseHandlers)).append(", ")
+      .append("exceptionHandler=").append(exceptionHandler).append(", ")
+      .append("throwCondition=").append(throwCondition).append(", ")
+      .append("unsolicitedNotificationHandlers=").append(Arrays.toString(unsolicitedNotificationHandlers)).toString();
   }
 
 
   /**
-   * Exception handler that invokes {@link Connection#reopen(BindRequest)} when an operation exception occurs and then
-   * invokes the operation again.
+   * Base class for operation builders.
+   *
+   * @param  <B>  type of builder
+   * @param  <T>  type of operation
    */
-  public class ReopenOperationExceptionHandler extends AbstractRetryOperationExceptionHandler<Q, S>
+  protected abstract static class AbstractBuilder<B, T extends AbstractOperation>
   {
 
-    /** Bind request to use when reopening a connection. */
-    private final BindRequest bindRequest;
+    /** Operation to build. */
+    protected final T object;
 
 
-    /** Default constructor. */
-    public ReopenOperationExceptionHandler()
+    /**
+     * Creates a new abstract builder.
+     *
+     * @param  t  operation to build
+     */
+    protected AbstractBuilder(final T t)
     {
-      bindRequest = null;
+      object = t;
     }
 
 
     /**
-     * Creates a new reopen operation exception handler.
+     * Returns this builder.
      *
-     * @param  request  to bind with on reopen
+     * @return  builder
      */
-    public ReopenOperationExceptionHandler(final BindRequest request)
+    protected abstract B self();
+
+
+    /**
+     * Sets the connection factory.
+     *
+     * @param  factory  to set
+     *
+     * @return  this builder
+     */
+    public B factory(final ConnectionFactory factory)
     {
-      bindRequest = request;
+      object.setConnectionFactory(factory);
+      return self();
     }
 
 
-    @Override
-    protected void handleInternal(final Connection conn, final Q request, final Response<S> response)
-      throws LdapException
+    /**
+     * Sets the functions to execute when a result is received.
+     *
+     * @param  handlers  to execute on a result
+     *
+     * @return  this builder
+     */
+    public B onResult(final ResultHandler... handlers)
     {
-      logger.warn("Operation exception encountered, reopening connection");
-      if (bindRequest != null) {
-        conn.reopen(bindRequest);
-      } else {
-        conn.reopen();
-      }
+      object.setResultHandlers(handlers);
+      return self();
     }
 
 
-    @Override
-    protected HandlerResult<Response<S>> createResult(
-      final Connection conn,
-      final Q request,
-      final Response<S> response)
-      throws LdapException
+    /**
+     * Sets the functions to execute when a control is received.
+     *
+     * @param  handlers  to execute on a control
+     *
+     * @return  this builder
+     */
+    public B onControl(final ResponseControlHandler... handlers)
     {
-      return new HandlerResult<>(invoke(request));
+      object.setControlHandlers(handlers);
+      return self();
     }
 
 
-    @Override
-    public String toString()
+    /**
+     * Sets the functions to execute when a referral is received.
+     *
+     * @param  handlers  to execute on a referral
+     *
+     * @return  this builder
+     */
+    public B onReferral(final ReferralHandler... handlers)
     {
-      return
-        String.format(
-          "[%s@%d::retry=%s, retryWait=%s, retryBackoff=%s, bindRequest=%s]",
-          getClass().getName(),
-          hashCode(),
-          getRetry(),
-          getRetryWait(),
-          getRetryBackoff(),
-          bindRequest);
+      object.setReferralHandlers(handlers);
+      return self();
+    }
+
+
+    /**
+     * Sets the functions to execute when an intermediate response is received.
+     *
+     * @param  handlers  to execute on an intermediate response
+     *
+     * @return  this builder
+     */
+    public B onIntermediate(final IntermediateResponseHandler... handlers)
+    {
+      object.setIntermediateResponseHandlers(handlers);
+      return self();
+    }
+
+
+    /**
+     * Sets the functions to execute when an unsolicited notification is received.
+     *
+     * @param  handlers  to execute on an unsolicited notification
+     *
+     * @return  this builder
+     */
+    public B onUnsolicitedNotification(final UnsolicitedNotificationHandler... handlers)
+    {
+      object.setUnsolicitedNotificationHandlers(handlers);
+      return self();
+    }
+
+
+    /**
+     * Sets the function to execute when an exception occurs.
+     *
+     * @param  handler  to execute on an exception occurs
+     *
+     * @return  this builder
+     */
+    public B onException(final ExceptionHandler handler)
+    {
+      object.setExceptionHandler(handler);
+      return self();
+    }
+
+
+    /**
+     * Sets the function to test a result.
+     *
+     * @param  function  to test a result
+     *
+     * @return  this builder
+     */
+    public B throwIf(final ResultPredicate function)
+    {
+      object.setThrowCondition(function);
+      return self();
+    }
+
+
+    /**
+     * Returns the message.
+     *
+     * @return  message
+     */
+    public T build()
+    {
+      return object;
     }
   }
 }

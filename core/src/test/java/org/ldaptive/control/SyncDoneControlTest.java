@@ -1,7 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -26,13 +27,13 @@ public class SyncDoneControlTest
     return
       new Object[][] {
         // 52 length cookie, refreshDeletes true
-        // BER:30:39:04:34:72:69:64:3D:30:30:30:2C:63:73:6E:3D:32:30:31:32:30:37
-        // :30:33:32:30:34:38:30:30:2E:36:30:39:37:32:31:5A:23:30:30:30:30:30
-        // :30:23:30:30:30:23:30:30:30:30:30:30:01:01:FF
         new Object[] {
-          LdapUtils.base64Decode(
-            "MDkENHJpZD0wMDAsY3NuPTIwMTIwNzAzMjA0ODAwLjYwOTcyMVojMDAwMDAwIzAw" +
-            "MCMwMDAwMDABAf8="),
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x39, 0x04, 0x34, 0x72, 0x69, 0x64, 0x3D, 0x30, 0x30, 0x30, 0x2C, 0x63, 0x73, 0x6E, 0x3D, 0x32,
+              0x30, 0x31, 0x32, 0x30, 0x37, 0x30, 0x33, 0x32, 0x30, 0x34, 0x38, 0x30, 0x30, 0x2E, 0x36, 0x30, 0x39,
+              0x37, 0x32, 0x31, 0x5A, 0x23, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x23, 0x30, 0x30, 0x30, 0x23, 0x30,
+              0x30, 0x30, 0x30, 0x30, 0x30, 0x01, 0x01, (byte) 0xFF}),
           new SyncDoneControl(
             new byte[] {
               (byte) 0x72, (byte) 0x69, (byte) 0x64, (byte) 0x3D, (byte) 0x30,
@@ -60,8 +61,8 @@ public class SyncDoneControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "response")
-  public void decode(final byte[] berValue, final SyncDoneControl expected)
+  @Test(groups = "control", dataProvider = "response")
+  public void decode(final DERBuffer berValue, final SyncDoneControl expected)
     throws Exception
   {
     final SyncDoneControl actual = new SyncDoneControl(expected.getCriticality());

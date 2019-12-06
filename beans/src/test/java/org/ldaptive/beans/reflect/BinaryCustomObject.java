@@ -10,7 +10,6 @@ import java.util.Set;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SortBehavior;
 import org.ldaptive.beans.Attribute;
 import org.ldaptive.beans.Entry;
 
@@ -150,8 +149,8 @@ public class BinaryCustomObject implements CustomObject
 
     final T o1;
     try {
-      o1 = type.newInstance();
-    } catch (InstantiationException | IllegalAccessException e) {
+      o1 = type.getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
       throw new IllegalStateException(e);
     }
     o1.setType1(new byte[] {0x01});
@@ -177,38 +176,47 @@ public class BinaryCustomObject implements CustomObject
   public static LdapEntry createLdapEntry()
   {
     // CheckStyle:MagicNumber OFF
-    final LdapAttribute typeCol1 = new LdapAttribute(SortBehavior.ORDERED, true);
+    final LdapAttribute typeCol1 = new LdapAttribute();
+    typeCol1.setBinary(true);
     typeCol1.setName("typeCol1");
-    typeCol1.addBinaryValue(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
+    typeCol1.addBinaryValues(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
 
-    final LdapAttribute typeCol2 = new LdapAttribute(SortBehavior.ORDERED, true);
+    final LdapAttribute typeCol2 = new LdapAttribute();
+    typeCol2.setBinary(true);
     typeCol2.setName("typeCol2");
-    typeCol2.addBinaryValue(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
+    typeCol2.addBinaryValues(new byte[] {0x20, 0x0F, 0x1F}, new byte[] {0x21});
 
-    final LdapAttribute typeSet1 = new LdapAttribute(SortBehavior.ORDERED, true);
+    final LdapAttribute typeSet1 = new LdapAttribute();
+    typeSet1.setBinary(true);
     typeSet1.setName("typeSet1");
-    typeSet1.addBinaryValue(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
+    typeSet1.addBinaryValues(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
 
-    final LdapAttribute typeSet2 = new LdapAttribute(SortBehavior.ORDERED, true);
+    final LdapAttribute typeSet2 = new LdapAttribute();
+    typeSet2.setBinary(true);
     typeSet2.setName("typeSet2");
-    typeSet2.addBinaryValue(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
+    typeSet2.addBinaryValues(new byte[] {0x22, 0x0F, 0x1F}, new byte[] {0x23});
 
-    final LdapAttribute typeList1 = new LdapAttribute(SortBehavior.ORDERED, true);
+    final LdapAttribute typeList1 = new LdapAttribute();
+    typeList1.setBinary(true);
     typeList1.setName("typeList1");
-    typeList1.addBinaryValue(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
+    typeList1.addBinaryValues(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
 
-    final LdapAttribute typeList2 = new LdapAttribute(SortBehavior.ORDERED, true);
+    final LdapAttribute typeList2 = new LdapAttribute();
+    typeList2.setBinary(true);
     typeList2.setName("typeList2");
-    typeList2.addBinaryValue(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
+    typeList2.addBinaryValues(new byte[] {0x24, 0x0F, 0x1F}, new byte[] {0x25});
 
     final LdapEntry entry = new LdapEntry();
     entry.setDn("cn=Binary Entry,ou=people,dc=ldaptive,dc=org");
-    entry.addAttribute(
-      new LdapAttribute("customname1", new byte[] {0x40, 0x41, 0x42, 0x43}),
-      new LdapAttribute("customname2", new byte[] {0x44, 0x45, 0x46, 0x47}, new byte[] {0x48, 0x49, 0x50, 0x51}),
-      new LdapAttribute("type1", new byte[] {0x01}),
-      new LdapAttribute("type2", new byte[] {0x02, 0x0F}),
-      new LdapAttribute("binarythree", new byte[] {0x03, 0x0F, 0x1F}),
+    entry.addAttributes(
+      LdapAttribute.builder().name("customname1").values(new byte[] {0x40, 0x41, 0x42, 0x43}).binary(true).build(),
+      LdapAttribute.builder()
+        .name("customname2")
+        .values(new byte[] {0x44, 0x45, 0x46, 0x47}, new byte[] {0x48, 0x49, 0x50, 0x51})
+        .binary(true).build(),
+      LdapAttribute.builder().name("type1").values(new byte[] {0x01}).binary(true).build(),
+      LdapAttribute.builder().name("type2").values(new byte[] {0x02, 0x0F}).binary(true).build(),
+      LdapAttribute.builder().name("binarythree").values(new byte[] {0x03, 0x0F, 0x1F}).binary(true).build(),
       typeCol1,
       typeCol2,
       typeSet1,
@@ -224,18 +232,16 @@ public class BinaryCustomObject implements CustomObject
   @Entry(
     dn = "cn=Binary Entry,ou=people,dc=ldaptive,dc=org", attributes = {
       @Attribute(name = "customname1", values = "QEFCQw==", binary = true),
-      @Attribute(
-        name = "customname2", values = {"REVGRw==", "SElQUQ=="}, binary = true, sortBehavior = SortBehavior.ORDERED
-      ),
+      @Attribute(name = "customname2", values = {"REVGRw==", "SElQUQ=="}, binary = true),
       @Attribute(name = "type1", property = "type1", binary = true),
       @Attribute(name = "type2", property = "type2", binary = true),
       @Attribute(name = "binarythree", property = "type3", binary = true),
-      @Attribute(name = "typeCol1", property = "typeCol1", binary = true, sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol2", property = "typeCol2", binary = true, sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1", binary = true),
+      @Attribute(name = "typeCol2", property = "typeCol2", binary = true),
       @Attribute(name = "typeSet1", property = "typeSet1", binary = true),
       @Attribute(name = "typeSet2", property = "typeSet2", binary = true),
-      @Attribute(name = "typeList1", property = "typeList1", binary = true, sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeList2", property = "typeList2", binary = true, sortBehavior = SortBehavior.ORDERED)})
+      @Attribute(name = "typeList1", property = "typeList1", binary = true),
+      @Attribute(name = "typeList2", property = "typeList2", binary = true)})
   public static class Default extends BinaryCustomObject {}
 
 
@@ -243,18 +249,16 @@ public class BinaryCustomObject implements CustomObject
   @Entry(
     dn = "cn=Binary Entry,ou=people,dc=ldaptive,dc=org", attributes = {
       @Attribute(name = "customname1", values = "QEFCQw==", binary = true),
-      @Attribute(
-        name = "customname2", values = {"REVGRw==", "SElQUQ=="}, binary = true, sortBehavior = SortBehavior.ORDERED
-      ),
+      @Attribute(name = "customname2", values = {"REVGRw==", "SElQUQ=="}, binary = true),
       @Attribute(name = "type1", property = "type1", binary = true),
       @Attribute(name = "type2", property = "type2", binary = true),
       @Attribute(name = "binarythree", property = "type3", binary = true),
-      @Attribute(name = "typeCol1", property = "typeCol1", binary = true, sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeCol2", property = "typeCol2", binary = true, sortBehavior = SortBehavior.ORDERED),
+      @Attribute(name = "typeCol1", property = "typeCol1", binary = true),
+      @Attribute(name = "typeCol2", property = "typeCol2", binary = true),
       @Attribute(name = "typeSet1", property = "typeSet1", binary = true),
       @Attribute(name = "typeSet2", property = "typeSet2", binary = true),
-      @Attribute(name = "typeList1", property = "typeList1", binary = true, sortBehavior = SortBehavior.ORDERED),
-      @Attribute(name = "typeList2", property = "typeList2", binary = true, sortBehavior = SortBehavior.ORDERED)})
+      @Attribute(name = "typeList1", property = "typeList1", binary = true),
+      @Attribute(name = "typeList2", property = "typeList2", binary = true)})
   public static class Spring extends BinaryCustomObject
   {
     // CheckStyle:JavadocMethod OFF

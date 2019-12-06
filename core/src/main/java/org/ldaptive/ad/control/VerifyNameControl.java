@@ -69,6 +69,13 @@ public class VerifyNameControl extends AbstractControl implements RequestControl
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the server name.
    *
@@ -115,13 +122,10 @@ public class VerifyNameControl extends AbstractControl implements RequestControl
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, serverName=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        serverName);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("serverName=").append(serverName).append("]").toString();
   }
 
 

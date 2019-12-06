@@ -32,7 +32,7 @@ public class PooledConnectionStatistics
   public PooledConnectionStatistics(final int i)
   {
     size = i;
-    availableStats = new LinkedList<Instant>() {
+    availableStats = new LinkedList<>() {
 
 
       @Override
@@ -49,7 +49,7 @@ public class PooledConnectionStatistics
         return b;
       }
     };
-    activeStats = new LinkedList<Instant>() {
+    activeStats = new LinkedList<>() {
 
 
       @Override
@@ -130,6 +130,8 @@ public class PooledConnectionStatistics
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::size=%s]", getClass().getName(), hashCode(), size);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("size=").append(size).append("]").toString();
   }
 }

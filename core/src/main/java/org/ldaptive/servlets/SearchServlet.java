@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.servlets;
 
-import java.io.IOException;
 import java.util.Arrays;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -16,8 +15,7 @@ import org.slf4j.LoggerFactory;
  * servlet:
  *
  * <ul>
- *   <li>poolType - BLOCKING or SOFTLIMIT</li>
- *   <li>searchExecutorClass - fully qualified class name that implements ServletSearchExecutor</li>
+ *   <li>servletSearchOperation - fully qualified class name that implements ServletSearchOperation</li>
  * </ul>
  *
  * <p>All other init params will set properties on:</p>
@@ -38,8 +36,8 @@ import org.slf4j.LoggerFactory;
 public final class SearchServlet extends HttpServlet
 {
 
-  /** Custom search executor implementation, value is {@value}. */
-  private static final String SEARCH_EXECUTOR_CLASS = "searchExecutorClass";
+  /** Search operation implementation, value is {@value}. */
+  private static final String SERVLET_SEARCH_OPERATION = "servletSearchOperation";
 
   /** serial version uid. */
   private static final long serialVersionUID = 3437252581014900696L;
@@ -48,7 +46,7 @@ public final class SearchServlet extends HttpServlet
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Parses servlet requests and performs search operations. */
-  private ServletSearchExecutor searchExecutor;
+  private ServletSearchOperation searchOperation;
 
 
   @Override
@@ -57,32 +55,33 @@ public final class SearchServlet extends HttpServlet
   {
     super.init(config);
 
-    final String searchExecutorClass = config.getInitParameter(SEARCH_EXECUTOR_CLASS);
-    if (searchExecutorClass != null) {
+    final String searchOperationClass = config.getInitParameter(SERVLET_SEARCH_OPERATION);
+    if (searchOperationClass != null) {
       try {
-        logger.debug("Creating search executor: {}", searchExecutorClass);
-        searchExecutor = (ServletSearchExecutor) Class.forName(searchExecutorClass).newInstance();
+        logger.debug("Creating servlet search operation: {}", searchOperationClass);
+        searchOperation = (ServletSearchOperation) Class.forName(
+          searchOperationClass).getDeclaredConstructor().newInstance();
       } catch (Exception e) {
-        logger.error("Error instantiating {}", searchExecutorClass, e);
+        logger.error("Error instantiating {}", searchOperationClass, e);
         throw new IllegalStateException(e);
       }
     } else {
-      searchExecutor = new Dsmlv1ServletSearchExecutor();
+      searchOperation = new LdifServletSearchOperation();
     }
-    searchExecutor.initialize(config);
+    searchOperation.initialize(config);
   }
 
 
   @Override
   public void service(final HttpServletRequest request, final HttpServletResponse response)
-    throws ServletException, IOException
+    throws ServletException
   {
     logger.info(
       "search={} for attributes={}",
       request.getParameter("query"),
       Arrays.toString(request.getParameterValues("attrs")));
     try {
-      searchExecutor.search(request, response);
+      searchOperation.execute(request, response);
     } catch (Exception e) {
       logger.error("Error performing search", e);
       throw new ServletException(e);
@@ -94,7 +93,7 @@ public final class SearchServlet extends HttpServlet
   public void destroy()
   {
     try {
-      searchExecutor.close();
+      searchOperation.close();
     } finally {
       super.destroy();
     }

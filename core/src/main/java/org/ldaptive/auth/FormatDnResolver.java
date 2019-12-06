@@ -157,13 +157,10 @@ public class FormatDnResolver implements DnResolver
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::formatString=%s, formatArgs=%s, escapeUser=%s]",
-        getClass().getName(),
-        hashCode(),
-        formatString,
-        Arrays.toString(formatArgs),
-        escapeUser);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("formatString=").append(formatString).append(", ")
+      .append("formatArgs=").append(Arrays.toString(formatArgs)).append(", ")
+      .append("escapeUser=").append(escapeUser).append("]").toString();
   }
 }

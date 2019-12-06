@@ -79,19 +79,4 @@ public abstract class AbstractDERType
     }
     return encodedItem.array();
   }
-
-
-  /**
-   * Returns a byte array containing the bytes from {@link ByteBuffer#limit()} to {@link ByteBuffer#position()}.
-   *
-   * @param  encoded  to read bytes from
-   *
-   * @return  bytes
-   */
-  public static byte[] readBuffer(final ByteBuffer encoded)
-  {
-    final byte[] bytes = new byte[encoded.remaining()];
-    encoded.get(bytes);
-    return bytes;
-  }
 }

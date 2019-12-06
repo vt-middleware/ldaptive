@@ -48,6 +48,13 @@ public class ProxyAuthorizationControl extends AbstractControl implements Reques
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the authorization identity.
    *
@@ -94,13 +101,10 @@ public class ProxyAuthorizationControl extends AbstractControl implements Reques
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, authorizationId=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        authorizationId);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("authorizationId=").append(authorizationId).append("]").toString();
   }
 
 

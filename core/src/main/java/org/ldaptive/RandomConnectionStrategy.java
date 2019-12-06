@@ -1,9 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Connection strategy that randomizes the list of configured URLs. A random URL ordering will be created for each
@@ -11,26 +13,55 @@ import java.util.List;
  *
  * @author  Middleware Services
  */
-public class RandomConnectionStrategy implements ConnectionStrategy
+public class RandomConnectionStrategy extends AbstractConnectionStrategy
 {
 
 
-  /**
-   * Return a list of URLs in random order.
-   *
-   * @param  metadata  which can be used to produce the URL list
-   *
-   * @return  list of URLs to attempt connections to
-   */
   @Override
-  public String[] getLdapUrls(final ConnectionFactoryMetadata metadata)
+  public Iterator<LdapURL> iterator()
   {
-    if (metadata == null || metadata.getLdapUrl() == null) {
-      return null;
+    if (!isInitialized()) {
+      throw new IllegalStateException("Strategy is not initialized");
     }
+    // CheckStyle:AnonInnerLength OFF
+    return new Iterator<>() {
+      private final List<LdapURL> active = ldapURLSet.getActiveUrls().stream().collect(
+        Collectors.collectingAndThen(
+          Collectors.toCollection(ArrayList::new),
+          list -> {
+            Collections.shuffle(list);
+            return list;
+          }));
+      private final List<LdapURL> inactive = ldapURLSet.getInactiveUrls().stream().collect(
+        Collectors.collectingAndThen(
+          Collectors.toCollection(ArrayList::new),
+          list -> {
+            Collections.shuffle(list);
+            return list;
+          }));
+      private int i;
 
-    final List<String> l = Arrays.asList(metadata.getLdapUrl().split(" "));
-    Collections.shuffle(l);
-    return l.toArray(new String[l.size()]);
+
+      @Override
+      public boolean hasNext()
+      {
+        return i < active.size() + inactive.size();
+      }
+
+
+      @Override
+      public LdapURL next()
+      {
+        final LdapURL url;
+        if (i < active.size()) {
+          url = active.get(i);
+        } else {
+          url = inactive.get(i - active.size());
+        }
+        i++;
+        return url;
+      }
+    };
+    // CheckStyle:AnonInnerLength ON
   }
 }

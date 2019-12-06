@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
@@ -113,22 +113,17 @@ public class PasswordExpiringControl extends AbstractControl implements Response
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, timeBeforeExpiration=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        timeBeforeExpiration);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("timeBeforeExpiration=").append(timeBeforeExpiration).append("]").toString();
   }
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
-    final String time = OctetStringType.decode(ByteBuffer.wrap(berValue));
+    final String time = OctetStringType.decode(encoded);
     setTimeBeforeExpiration(Integer.valueOf(time));
   }
 }

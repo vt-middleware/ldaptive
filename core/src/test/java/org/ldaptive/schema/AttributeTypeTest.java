@@ -264,7 +264,7 @@ public class AttributeTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"schema"}, dataProvider = "definitions")
+  @Test(groups = "schema", dataProvider = "definitions")
   public void parse(final AttributeType type, final String definition)
     throws Exception
   {

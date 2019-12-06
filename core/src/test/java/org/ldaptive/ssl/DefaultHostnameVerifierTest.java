@@ -384,7 +384,7 @@ public class DefaultHostnameVerifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"ssl"}, dataProvider = "certificates")
+  @Test(groups = "ssl", dataProvider = "certificates")
   public void verifyDefault(final String hostname, final X509Certificate cert, final boolean pass)
     throws Exception
   {
@@ -399,7 +399,7 @@ public class DefaultHostnameVerifierTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"ssl"}, dataProvider = "certificates")
+  @Test(groups = "ssl", dataProvider = "certificates")
   public void verifySun(final String hostname, final X509Certificate cert, final boolean pass)
     throws Exception
   {

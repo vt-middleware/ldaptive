@@ -1,29 +1,30 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
-import java.util.Arrays;
-import org.ldaptive.AbstractRequest;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.UniversalDERTag;
 
 /**
- * Contains the data required to perform an ldap cancel operation. See RFC 3909.
+ * LDAP cancel request defined as:
+ *
+ * <pre>
+   ExtendedRequest ::= [APPLICATION 23] SEQUENCE {
+     requestName      [0] LDAPOID,
+     requestValue     [1] OCTET STRING OPTIONAL }
+
+   cancelRequestValue ::= SEQUENCE {
+     cancelID        MessageID -- MessageID is as defined in [RFC2251]
+   }
+ * </pre>
  *
  * @author  Middleware Services
  */
-public class CancelRequest extends AbstractRequest implements ExtendedRequest
+public class CancelRequest extends ExtendedRequest
 {
 
-  /** OID of this extended request. */
+  /** OID of this request. */
   public static final String OID = "1.3.6.1.1.8";
-
-  /** message id to cancel. */
-  private int messageId;
-
-
-  /** Default constructor. */
-  public CancelRequest() {}
 
 
   /**
@@ -33,59 +34,8 @@ public class CancelRequest extends AbstractRequest implements ExtendedRequest
    */
   public CancelRequest(final int id)
   {
-    setMessageId(id);
-  }
-
-
-  /**
-   * Returns the message id to cancel.
-   *
-   * @return  message id
-   */
-  public int getMessageId()
-  {
-    return messageId;
-  }
-
-
-  /**
-   * Sets the message id to cancel.
-   *
-   * @param  id  of the message to cancel
-   */
-  public void setMessageId(final int id)
-  {
-    messageId = id;
-  }
-
-
-  @Override
-  public byte[] encode()
-  {
-    final ConstructedDEREncoder se = new ConstructedDEREncoder(UniversalDERTag.SEQ, new IntegerType(getMessageId()));
-    return se.encode();
-  }
-
-
-  @Override
-  public String getOID()
-  {
-    return OID;
-  }
-
-
-  @Override
-  public String toString()
-  {
-    return
-      String.format(
-        "[%s@%d::messageId=%s, controls=%s, referralHandler=%s, " +
-        "intermediateResponseHandlers=%s]",
-        getClass().getName(),
-        hashCode(),
-        messageId,
-        Arrays.toString(getControls()),
-        getReferralHandler(),
-        Arrays.toString(getIntermediateResponseHandlers()));
+    super(OID);
+    final ConstructedDEREncoder se = new ConstructedDEREncoder(UniversalDERTag.SEQ, new IntegerType(id));
+    setRequestValue(se.encode());
   }
 }

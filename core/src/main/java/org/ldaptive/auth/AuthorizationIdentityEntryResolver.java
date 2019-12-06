@@ -2,9 +2,8 @@
 package org.ldaptive.auth;
 
 import org.ldaptive.LdapException;
-import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.control.AuthorizationIdentityResponseControl;
 
 /**
@@ -20,7 +19,7 @@ public class AuthorizationIdentityEntryResolver extends AbstractSearchEntryResol
 
 
   @Override
-  protected SearchResult performLdapSearch(
+  protected SearchResponse performLdapSearch(
     final AuthenticationCriteria criteria,
     final AuthenticationHandlerResponse response)
     throws LdapException
@@ -34,8 +33,7 @@ public class AuthorizationIdentityEntryResolver extends AbstractSearchEntryResol
 
     final String authzId = ctrl.getAuthorizationId();
     final String dn = authzId.split(":", 2)[1].trim();
-    final SearchOperation search = createSearchOperation(response.getConnection());
-    return search.execute(createSearchRequest(criteria, dn)).getResult();
+    return response.getConnection().operation(createSearchRequest(criteria, dn)).execute();
   }
 
 
@@ -49,12 +47,11 @@ public class AuthorizationIdentityEntryResolver extends AbstractSearchEntryResol
    */
   protected SearchRequest createSearchRequest(final AuthenticationCriteria ac, final String dn)
   {
-    final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(
+    final SearchRequest request = SearchRequest.objectScopeSearchRequest(
       dn,
       ac.getAuthenticationRequest().getReturnAttributes());
     request.setDerefAliases(getDerefAliases());
-    request.setReferralHandler(getReferralHandler());
-    request.setSearchEntryHandlers(getSearchEntryHandlers());
+    request.setBinaryAttributes(getBinaryAttributes());
     return request;
   }
 }

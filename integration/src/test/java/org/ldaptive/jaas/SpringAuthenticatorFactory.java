@@ -2,10 +2,10 @@
 package org.ldaptive.jaas;
 
 import java.util.Map;
+import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.Authenticator;
-import org.ldaptive.pool.PooledConnectionFactoryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -21,16 +21,14 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
   /** Application context. */
   private static ClassPathXmlApplicationContext context;
 
-  /**
-   * Initialize the context.
-   */
   static {
+    // Initialize the context
     try {
       context = new ClassPathXmlApplicationContext(
         new String[] {"/spring-jaas-context.xml", });
     } catch (Exception e) {
       final Logger logger = LoggerFactory.getLogger(SpringAuthenticatorFactory.class);
-      logger.warn("Could not create spring context", e.getMessage());
+      logger.warn("Could not create spring context", e);
     }
   }
 
@@ -63,15 +61,15 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
     }
 
     final Authenticator a = context.getBean("authenticator", Authenticator.class);
-    if (a.getDnResolver() instanceof PooledConnectionFactoryManager) {
-      final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) a.getDnResolver();
-      cfm.getConnectionFactory().getConnectionPool().close();
+    if (a.getDnResolver() instanceof ConnectionFactoryManager) {
+      final ConnectionFactoryManager cfm = (ConnectionFactoryManager) a.getDnResolver();
+      cfm.getConnectionFactory().close();
     }
 
     final AuthenticationHandler ah = a.getAuthenticationHandler();
-    if (ah instanceof PooledConnectionFactoryManager) {
-      final PooledConnectionFactoryManager cfm = (PooledConnectionFactoryManager) ah;
-      cfm.getConnectionFactory().getConnectionPool().close();
+    if (ah instanceof ConnectionFactoryManager) {
+      final ConnectionFactoryManager cfm = (ConnectionFactoryManager) ah;
+      cfm.getConnectionFactory().close();
     }
   }
 }

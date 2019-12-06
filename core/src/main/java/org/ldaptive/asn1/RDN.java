@@ -1,13 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.transcode.ValueTranscoder;
 
 /**
  * A set of attribute value assertions.
@@ -31,7 +30,7 @@ public class RDN implements DEREncoder
    */
   public RDN(final Collection<AttributeValueAssertion> assertions)
   {
-    attributeValueAssertions = assertions.toArray(new AttributeValueAssertion[assertions.size()]);
+    attributeValueAssertions = assertions.toArray(new AttributeValueAssertion[0]);
   }
 
 
@@ -72,7 +71,7 @@ public class RDN implements DEREncoder
         values.add(type.getValue());
       }
     }
-    return values.toArray(new AttributeValueAssertion.Value[values.size()]);
+    return values.toArray(new AttributeValueAssertion.Value[0]);
   }
 
 
@@ -144,7 +143,7 @@ public class RDN implements DEREncoder
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SET,
-      typeEncoders.toArray(new DEREncoder[typeEncoders.size()]));
+      typeEncoders.toArray(new DEREncoder[0]));
     return se.encode();
   }
 
@@ -157,18 +156,18 @@ public class RDN implements DEREncoder
    *
    * @return  decoded bytes as RDNs
    */
-  public static RDN[] decode(final ByteBuffer encoded)
+  public static RDN[] decode(final DERBuffer encoded)
   {
     final List<RDN> rdns = new ArrayList<>();
     final DERParser parser = new DERParser();
     parser.registerHandler(
       "/SEQ/SET",
-      (parser1, encoded1) -> {
-        rdns.add(new RDN(AttributeValueAssertion.decode(encoded1.slice())));
-        encoded1.position(encoded1.limit());
+      (p, e) -> {
+        rdns.add(new RDN(AttributeValueAssertion.decode(e)));
+        e.position(e.limit());
       });
     parser.parse(encoded);
-    return rdns.toArray(new RDN[rdns.size()]);
+    return rdns.toArray(new RDN[0]);
   }
 
 
@@ -196,11 +195,8 @@ public class RDN implements DEREncoder
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::attributeValueAssertions=%s]",
-        getClass().getName(),
-        hashCode(),
-        Arrays.toString(attributeValueAssertions));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("attributeValueAssertions=").append(Arrays.toString(attributeValueAssertions)).append("]").toString();
   }
 }

@@ -12,9 +12,9 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import com.sun.security.auth.callback.TextCallbackHandler;
+import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchRequest;
 
 /**
@@ -70,8 +70,8 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
         noResultsIsError = Boolean.valueOf(value);
       } else if ("roleResolverFactory".equalsIgnoreCase(key)) {
         try {
-          roleResolverFactory = (RoleResolverFactory) Class.forName(value).newInstance();
-        } catch (ClassNotFoundException | IllegalAccessException | InstantiationException e) {
+          roleResolverFactory = (RoleResolverFactory) Class.forName(value).getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
           throw new IllegalArgumentException(e);
         }
       }
@@ -120,10 +120,10 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
         loginSuccess = true;
       }
 
-      final SearchFilter filter = new SearchFilter(roleFilter);
-      filter.setParameter("dn", loginDn);
-      filter.setParameter("user", loginName);
-      searchRequest.setSearchFilter(filter);
+      final FilterTemplate template = new FilterTemplate(roleFilter);
+      template.setParameter("dn", loginDn);
+      template.setParameter("user", loginName);
+      searchRequest.setFilter(template);
 
       final Set<LdapRole> lr = roleResolver.search(searchRequest);
       if (lr.isEmpty() && noResultsIsError) {

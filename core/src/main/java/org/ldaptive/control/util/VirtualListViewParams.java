@@ -1,8 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
-import org.ldaptive.Response;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.control.VirtualListViewRequestControl;
 import org.ldaptive.control.VirtualListViewResponseControl;
 import org.slf4j.Logger;
@@ -130,17 +129,15 @@ public class VirtualListViewParams
    * inspected and if it contains a VLV response control, it's contextID and/or content count will be passed into the
    * created request control.
    *
-   * @param  response  response of a previous VLV operation
+   * @param  result  of a previous VLV operation
    * @param  critical  whether the returned control is critical
    *
    * @return  virtual list view request control
    */
-  public VirtualListViewRequestControl createRequestControl(
-    final Response<SearchResult> response,
-    final boolean critical)
+  public VirtualListViewRequestControl createRequestControl(final SearchResponse result, final boolean critical)
   {
     final VirtualListViewRequestControl control = createRequestControl(critical);
-    final VirtualListViewResponseControl responseControl = (VirtualListViewResponseControl) response.getControl(
+    final VirtualListViewResponseControl responseControl = (VirtualListViewResponseControl) result.getControl(
       VirtualListViewResponseControl.OID);
     if (responseControl != null) {
       if (assertionValue == null) {
@@ -155,24 +152,14 @@ public class VirtualListViewParams
   @Override
   public String toString()
   {
-    final String s;
+    final StringBuilder sb = new StringBuilder("[")
+      .append(getClass().getName()).append("@").append(hashCode()).append("::");
     if (assertionValue != null) {
-      s = String.format(
-        "[%s@%d::assertionValue=%s, beforeCount=%s, afterCount=%s]",
-        getClass().getName(),
-        hashCode(),
-        assertionValue,
-        beforeCount,
-        afterCount);
+      sb.append("assertionValue=").append(assertionValue).append(", ");
     } else {
-      s = String.format(
-        "[%s@%d::targetOffset=%s, beforeCount=%s, afterCount=%s]",
-        getClass().getName(),
-        hashCode(),
-        targetOffset,
-        beforeCount,
-        afterCount);
+      sb.append("targetOffset=").append(targetOffset).append(", ");
     }
-    return s;
+    sb.append("beforeCount=").append(beforeCount).append(", ").append("afterCount=").append(afterCount).append("]");
+    return sb.toString();
   }
 }

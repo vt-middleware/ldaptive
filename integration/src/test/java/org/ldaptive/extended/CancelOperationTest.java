@@ -1,26 +1,24 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import org.ldaptive.AbstractTest;
-import org.ldaptive.Connection;
-import org.ldaptive.LdapException;
-import org.ldaptive.Response;
+import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
-import org.ldaptive.SearchEntry;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
-import org.ldaptive.async.AsyncSearchOperation;
 import org.ldaptive.control.SyncRequestControl;
-import org.ldaptive.handler.HandlerResult;
-import org.ldaptive.handler.SearchEntryHandler;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link CancelOperation}.
+ * Unit test for cancelling a search operation.
  *
  * @author  Middleware Services
  */
@@ -34,7 +32,7 @@ public class CancelOperationTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Parameters("cancelDn")
-  @Test(groups = {"extended"})
+  @Test(groups = "extended")
   public void cancel(final String dn)
     throws Exception
   {
@@ -42,51 +40,26 @@ public class CancelOperationTest extends AbstractTest
     if (TestControl.isActiveDirectory()) {
       return;
     }
-    // provider doesn't support cancel
-    if (TestControl.isOpenDJProvider()) {
-      throw new UnsupportedOperationException("OpenDJ does not support cancel");
-    }
 
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final AsyncSearchOperation search = new AsyncSearchOperation(conn);
-      // needed to perform operations inside a handler
-      search.setUseMultiThreadedListener(true);
-      search.setExceptionHandler(
-        (conn1, request, exception) -> {
-          throw new UnsupportedOperationException(exception);
-        });
-
-      final SearchRequest request = SearchRequest.newObjectScopeSearchRequest(dn);
-      request.setSearchEntryHandlers(
-        new SearchEntryHandler() {
-          @Override
-          public HandlerResult<SearchEntry> handle(
-            final Connection conn,
-            final SearchRequest request,
-            final SearchEntry entry)
-            throws LdapException
-          {
-            try {
-              final CancelOperation cancel = new CancelOperation(conn);
-              final Response<Void> response = cancel.execute(new CancelRequest(entry.getMessageId()));
-              AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-              return new HandlerResult<>(null);
-            } catch (LdapException e) {
-              return new HandlerResult<>(null, true);
-            }
-          }
-
-          @Override
-          public void initializeRequest(final SearchRequest request) {}
-        });
+    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
+      final SearchOperation search = new SearchOperation(cf);
+      final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn);
       request.setControls(new SyncRequestControl(SyncRequestControl.Mode.REFRESH_AND_PERSIST, true));
+      search.setRequest(request);
+      final CountDownLatch latch = new CountDownLatch(1);
+      search.setEntryHandlers(ldapEntry -> {
+        latch.countDown();
+        return ldapEntry;
+      });
+      final Result[] result = new Result[1];
+      search.setResultHandlers(response -> result[0] = response);
 
-      final Response<SearchResult> response = search.execute(request);
-      AssertJUnit.assertEquals(ResultCode.CANCELED, response.getResultCode());
-    } catch (IllegalStateException e) {
-      throw (Exception) e.getCause();
+      final SearchOperationHandle searchHandle = search.send();
+      latch.await(10, TimeUnit.SECONDS);
+
+      final ExtendedResponse cancelResult = searchHandle.cancel().execute();
+      Assert.assertEquals(result[0].getResultCode(), ResultCode.CANCELED);
+      Assert.assertEquals(cancelResult.getResultCode(), ResultCode.SUCCESS);
     }
   }
 }

@@ -2,19 +2,16 @@
 package org.ldaptive.handler;
 
 import java.util.Arrays;
-import org.ldaptive.Connection;
 import org.ldaptive.LdapAttribute;
-import org.ldaptive.LdapException;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SearchEntry;
-import org.ldaptive.SearchRequest;
 
 /**
  * Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.
  *
  * @author  Middleware Services
  */
-public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
+public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler
 {
 
   /** hash code seed. */
@@ -157,23 +154,30 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected String handleDn(final Connection conn, final SearchRequest request, final SearchEntry entry)
+  public LdapEntry apply(final LdapEntry entry)
+  {
+    handleEntry(entry);
+    return entry;
+  }
+
+
+  @Override
+  protected String handleDn(final LdapEntry entry)
   {
     return CaseChange.perform(dnCaseChange, entry.getDn());
   }
 
 
   @Override
-  protected void handleAttributes(final Connection conn, final SearchRequest request, final SearchEntry entry)
-    throws LdapException
+  protected void handleAttributes(final LdapEntry entry)
   {
     if (attributeNames == null) {
-      super.handleAttributes(conn, request, entry);
+      super.handleAttributes(entry);
     } else {
       for (String s : attributeNames) {
         final LdapAttribute la = entry.getAttribute(s);
         if (la != null) {
-          handleAttribute(conn, request, la);
+          handleAttribute(la);
         }
       }
     }
@@ -181,21 +185,21 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
 
 
   @Override
-  protected String handleAttributeName(final Connection conn, final SearchRequest request, final String name)
+  protected String handleAttributeName(final String name)
   {
     return CaseChange.perform(attributeNameCaseChange, name);
   }
 
 
   @Override
-  protected String handleAttributeValue(final Connection conn, final SearchRequest request, final String value)
+  protected String handleAttributeValue(final String value)
   {
     return CaseChange.perform(attributeValueCaseChange, value);
   }
 
 
   @Override
-  protected byte[] handleAttributeValue(final Connection conn, final SearchRequest request, final byte[] value)
+  protected byte[] handleAttributeValue(final byte[] value)
   {
     return value;
   }
@@ -234,14 +238,11 @@ public class CaseChangeEntryHandler extends AbstractSearchEntryHandler
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::dnCaseChange=%s, attributeNameCaseChange=%s, attributeValueCaseChange=%s, attributeNames=%s]",
-        getClass().getName(),
-        hashCode(),
-        dnCaseChange,
-        attributeNameCaseChange,
-        attributeValueCaseChange,
-        Arrays.toString(attributeNames));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("dnCaseChange=").append(dnCaseChange).append(", ")
+      .append("attributeNameCaseChange=").append(attributeNameCaseChange).append(", ")
+      .append("attributeValueCaseChange=").append(attributeValueCaseChange).append(", ")
+      .append("attributeNames=").append(Arrays.toString(attributeNames)).append("]").toString();
   }
 }

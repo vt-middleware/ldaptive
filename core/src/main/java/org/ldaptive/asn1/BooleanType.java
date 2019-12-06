@@ -1,8 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
-
 /**
  * Converts booleans to and from their DER encoded format.
  *
@@ -66,9 +64,9 @@ public class BooleanType extends AbstractDERType implements DEREncoder
    *
    * @return  decoded bytes as a boolean.
    */
-  public static boolean decode(final ByteBuffer encoded)
+  public static boolean decode(final DERBuffer encoded)
   {
-    final byte[] bytes = readBuffer(encoded);
+    final byte[] bytes = encoded.getRemainingBytes();
     if (bytes.length > 1) {
       throw new IllegalArgumentException("Boolean cannot be longer than 1 byte");
     }

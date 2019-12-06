@@ -2,7 +2,7 @@
 package org.ldaptive.io;
 
 import java.io.IOException;
-import org.ldaptive.SearchResult;
+import org.ldaptive.SearchResponse;
 
 /**
  * Interface for reading ldap search results.
@@ -20,6 +20,6 @@ public interface SearchResultReader
    *
    * @throws  IOException  if an error occurs using the reader
    */
-  SearchResult read()
+  SearchResponse read()
     throws IOException;
 }

@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import java.nio.ByteBuffer;
 import javax.security.auth.login.AccountException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialException;
@@ -9,6 +8,7 @@ import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.LoginException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
@@ -112,28 +112,23 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
       switch (this) {
 
       case PASSWORD_EXPIRED:
+
+      case CHANGE_AFTER_RESET:
         throw new CredentialExpiredException(name());
 
       case ACCOUNT_LOCKED:
         throw new AccountLockedException(name());
 
-      case CHANGE_AFTER_RESET:
-        throw new CredentialExpiredException(name());
-
       case PASSWORD_MOD_NOT_ALLOWED:
-        throw new AccountException(name());
 
       case MUST_SUPPLY_OLD_PASSWORD:
         throw new AccountException(name());
 
       case INSUFFICIENT_PASSWORD_QUALITY:
-        throw new CredentialException(name());
 
       case PASSWORD_TOO_SHORT:
-        throw new CredentialException(name());
 
       case PASSWORD_TOO_YOUNG:
-        throw new CredentialException(name());
 
       case PASSWORD_IN_HISTORY:
         throw new CredentialException(name());
@@ -187,6 +182,13 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   public PasswordPolicyControl(final boolean critical)
   {
     super(OID, critical);
+  }
+
+
+  @Override
+  public boolean hasValue()
+  {
+    return false;
   }
 
 
@@ -289,15 +291,12 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, timeBeforeExpiration=%s, graceAuthNsRemaining=%s, error=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        timeBeforeExpiration,
-        graceAuthNsRemaining,
-        error);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("timeBeforeExpiration=").append(timeBeforeExpiration).append(", ")
+      .append("graceAuthNsRemaining=").append(graceAuthNsRemaining).append(", ")
+      .append("error=").append(error).append("]").toString();
   }
 
 
@@ -309,15 +308,13 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
 
 
   @Override
-  public void decode(final byte[] berValue)
+  public void decode(final DERBuffer encoded)
   {
-    logger.trace("decoding control: {}", LdapUtils.base64Encode(berValue));
-
     final DERParser parser = new DERParser();
     parser.registerHandler(TimeBeforeExpirationHandler.PATH, new TimeBeforeExpirationHandler(this));
     parser.registerHandler(GraceAuthnsRemainingHandler.PATH, new GraceAuthnsRemainingHandler(this));
     parser.registerHandler(ErrorHandler.PATH, new ErrorHandler(this));
-    parser.parse(ByteBuffer.wrap(berValue));
+    parser.parse(encoded);
   }
 
 
@@ -341,7 +338,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setTimeBeforeExpiration(IntegerType.decode(encoded).intValue());
     }
@@ -368,7 +365,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       getObject().setGraceAuthNsRemaining(IntegerType.decode(encoded).intValue());
     }
@@ -395,7 +392,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       final int errValue = IntegerType.decode(encoded).intValue();
       final PasswordPolicyControl.Error e = PasswordPolicyControl.Error.valueOf(errValue);

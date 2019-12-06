@@ -1,14 +1,15 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
+import java.security.GeneralSecurityException;
+import java.time.Duration;
 import java.util.Arrays;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.TrustManager;
 import org.ldaptive.AbstractConfig;
 
 /**
- * Contains all the configuration data for SSL and startTLS. Providers are not guaranteed to support all the options
- * contained here.
+ * Contains all the configuration data for SSL and startTLS.
  *
  * @author  Middleware Services
  */
@@ -24,9 +25,6 @@ public class SslConfig extends AbstractConfig
   /** Certificate hostname verifier. */
   private CertificateHostnameVerifier hostnameVerifier;
 
-  /** Hostname verifier config. */
-  private HostnameVerifierConfig hostnameVerifierConfig;
-
   /** Enabled cipher suites. */
   private String[] enabledCipherSuites;
 
@@ -35,6 +33,9 @@ public class SslConfig extends AbstractConfig
 
   /** Handshake completed listeners. */
   private HandshakeCompletedListener[] handshakeCompletedListeners;
+
+  /** Duration of time that handshakes will block. */
+  private Duration handshakeTimeout = Duration.ofMinutes(1);
 
 
   /** Default constructor. */
@@ -84,8 +85,8 @@ public class SslConfig extends AbstractConfig
   public boolean isEmpty()
   {
     return
-      credentialConfig == null && trustManagers == null && hostnameVerifier == null && hostnameVerifierConfig == null &&
-        enabledCipherSuites == null && enabledProtocols == null && handshakeCompletedListeners == null;
+      credentialConfig == null && trustManagers == null && hostnameVerifier == null && enabledCipherSuites == null &&
+        enabledProtocols == null && handshakeCompletedListeners == null;
   }
 
 
@@ -162,30 +163,6 @@ public class SslConfig extends AbstractConfig
 
 
   /**
-   * Returns the hostname verifier config.
-   *
-   * @return  hostname verifier config
-   */
-  protected HostnameVerifierConfig getHostnameVerifierConfig()
-  {
-    return hostnameVerifierConfig;
-  }
-
-
-  /**
-   * Sets the hostname verifier config.
-   *
-   * @param  config  hostname verifier config
-   */
-  protected void setHostnameVerifierConfig(final HostnameVerifierConfig config)
-  {
-    checkImmutable();
-    logger.trace("setting hostnameVerifierConfig: {}", config);
-    hostnameVerifierConfig = config;
-  }
-
-
-  /**
    * Returns the names of the SSL cipher suites to use for secure connections.
    *
    * @return  cipher suites
@@ -258,41 +235,173 @@ public class SslConfig extends AbstractConfig
 
 
   /**
+   * Returns the handshake timeout.
+   *
+   * @return  timeout
+   */
+  public Duration getHandshakeTimeout()
+  {
+    return handshakeTimeout;
+  }
+
+
+  /**
+   * Sets the maximum amount of time that handshakes will block.
+   *
+   * @param  time  timeout for handshakes
+   */
+  public void setHandshakeTimeout(final Duration time)
+  {
+    checkImmutable();
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Handshake timeout cannot be null or negative");
+    }
+    logger.trace("setting handshakeTimeout: {}", time);
+    handshakeTimeout = time;
+  }
+
+
+  /**
    * Returns a ssl config initialized with the supplied config.
    *
    * @param  config  ssl config to read properties from
    *
    * @return  ssl config
    */
-  public static SslConfig newSslConfig(final SslConfig config)
+  public static SslConfig copy(final SslConfig config)
   {
     final SslConfig sc = new SslConfig();
     sc.setCredentialConfig(config.getCredentialConfig());
     sc.setTrustManagers(config.getTrustManagers());
     sc.setHostnameVerifier(config.getHostnameVerifier());
-    sc.setHostnameVerifierConfig(config.getHostnameVerifierConfig());
     sc.setEnabledCipherSuites(config.getEnabledCipherSuites());
     sc.setEnabledProtocols(config.getEnabledProtocols());
     sc.setHandshakeCompletedListeners(config.getHandshakeCompletedListeners());
+    sc.setHandshakeTimeout(config.getHandshakeTimeout());
     return sc;
+  }
+
+
+  /**
+   * Creates an {@link SSLContextInitializer} from this configuration. If a {@link CredentialConfig} is provided it is
+   * used, otherwise a {@link DefaultSSLContextInitializer} is created.
+   *
+   * @return  SSL context initializer
+   *
+   * @throws  GeneralSecurityException  if the SSL context initializer cannot be created
+   */
+  public SSLContextInitializer createSSLContextInitializer()
+    throws GeneralSecurityException
+  {
+    final SSLContextInitializer initializer;
+    if (credentialConfig != null) {
+      initializer = credentialConfig.createSSLContextInitializer();
+    } else {
+      if (trustManagers != null) {
+        initializer = new DefaultSSLContextInitializer(false);
+      } else {
+        initializer = new DefaultSSLContextInitializer(true);
+      }
+    }
+
+    if (trustManagers != null) {
+      initializer.setTrustManagers(trustManagers);
+    }
+    return initializer;
   }
 
 
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::credentialConfig=%s, trustManagers=%s, hostnameVerifier=%s, hostnameVerifierConfig=%s, " +
-        "enabledCipherSuites=%s, enabledProtocols=%s, handshakeCompletedListeners=%s]",
-        getClass().getName(),
-        hashCode(),
-        credentialConfig,
-        Arrays.toString(trustManagers),
-        hostnameVerifier,
-        hostnameVerifierConfig,
-        Arrays.toString(enabledCipherSuites),
-        Arrays.toString(enabledProtocols),
-        Arrays.toString(handshakeCompletedListeners));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("credentialConfig=").append(credentialConfig).append(", ")
+      .append("trustManagers=").append(Arrays.toString(trustManagers)).append(", ")
+      .append("hostnameVerifier=").append(hostnameVerifier).append(", ")
+      .append("enabledCipherSuites=").append(Arrays.toString(enabledCipherSuites)).append(", ")
+      .append("enabledProtocols=").append(Arrays.toString(enabledProtocols)).append(", ")
+      .append("handshakeCompletedListeners=").append(Arrays.toString(handshakeCompletedListeners)).append(", ")
+      .append("handshakeTimeout=").append(handshakeTimeout)
+      .append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+
+    private final SslConfig object = new SslConfig();
+
+
+    protected Builder() {}
+
+
+    public Builder credentialConfig(final CredentialConfig config)
+    {
+      object.setCredentialConfig(config);
+      return this;
+    }
+
+
+    public Builder trustManagers(final TrustManager... managers)
+    {
+      object.setTrustManagers(managers);
+      return this;
+    }
+
+
+    public Builder hostnameVerifier(final CertificateHostnameVerifier verifier)
+    {
+      object.setHostnameVerifier(verifier);
+      return this;
+    }
+
+
+    public Builder cipherSuites(final String... suites)
+    {
+      object.setEnabledCipherSuites(suites);
+      return this;
+    }
+
+
+    public Builder protocols(final String... protocols)
+    {
+      object.setEnabledProtocols(protocols);
+      return this;
+    }
+
+
+    public Builder handshakeListeners(final HandshakeCompletedListener... listeners)
+    {
+      object.setHandshakeCompletedListeners(listeners);
+      return this;
+    }
+
+
+    public Builder handshakeTimeout(final Duration timeout)
+    {
+      object.setHandshakeTimeout(timeout);
+      return this;
+    }
+
+
+    public SslConfig build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

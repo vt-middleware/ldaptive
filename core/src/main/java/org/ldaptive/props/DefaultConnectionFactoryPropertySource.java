@@ -6,7 +6,6 @@ import java.util.Properties;
 import java.util.Set;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.provider.ProviderConfig;
 
 /**
  * Reads properties specific to {@link org.ldaptive.DefaultConnectionFactory} and returns an initialized object of that
@@ -86,7 +85,6 @@ public final class DefaultConnectionFactoryPropertySource extends AbstractProper
 
 
   @Override
-  @SuppressWarnings("unchecked")
   public void initialize()
   {
     initializeObject(INVOKER);
@@ -98,22 +96,6 @@ public final class DefaultConnectionFactoryPropertySource extends AbstractProper
       properties);
     ccPropSource.initialize();
     object.setConnectionConfig(cc);
-
-    final ProviderConfig pc = new ProviderConfig();
-    final ProviderConfigPropertySource pcPropSource = new ProviderConfigPropertySource(
-      pc,
-      propertiesDomain,
-      properties);
-    pcPropSource.initialize();
-    if (pc.getOperationExceptionResultCodes() != null) {
-      object.getProvider().getProviderConfig().setOperationExceptionResultCodes(pc.getOperationExceptionResultCodes());
-    }
-    if (pc.getControlProcessor() != null) {
-      object.getProvider().getProviderConfig().setControlProcessor(pc.getControlProcessor());
-    }
-    if (!extraProps.isEmpty()) {
-      object.getProvider().getProviderConfig().setProperties(extraProps);
-    }
   }
 
 

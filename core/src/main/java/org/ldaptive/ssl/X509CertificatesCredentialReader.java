@@ -32,6 +32,6 @@ public class X509CertificatesCredentialReader extends AbstractCredentialReader<X
         certList.add(cert);
       }
     }
-    return certList.toArray(new X509Certificate[certList.size()]);
+    return certList.toArray(new X509Certificate[0]);
   }
 }

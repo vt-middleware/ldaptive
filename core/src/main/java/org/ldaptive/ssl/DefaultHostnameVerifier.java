@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
-import java.nio.ByteBuffer;
 import java.security.cert.CertificateParsingException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -12,8 +11,9 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.DN;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.asn1.RDN;
-import org.ldaptive.io.StringValueTranscoder;
+import org.ldaptive.transcode.StringValueTranscoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,7 +197,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
     } catch (CertificateParsingException e) {
       logger.warn("Error reading subject alt names from certificate", e);
     }
-    return names.toArray(new String[names.size()]);
+    return names.toArray(new String[0]);
   }
 
 
@@ -213,7 +213,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
     final List<String> names = new ArrayList<>();
     final byte[] encodedDn = cert.getSubjectX500Principal().getEncoded();
     if (encodedDn != null && encodedDn.length > 0) {
-      final DN dn = DN.decode(ByteBuffer.wrap(encodedDn));
+      final DN dn = DN.decode(new DefaultDERBuffer(encodedDn));
       for (RDN rdn : dn.getRDNs()) {
         // for multi value RDNs the first value is used
         final String value = rdn.getAttributeValue("2.5.4.3", new StringValueTranscoder());
@@ -222,7 +222,7 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
         }
       }
     }
-    return names.toArray(new String[names.size()]);
+    return names.toArray(new String[0]);
   }
 
 

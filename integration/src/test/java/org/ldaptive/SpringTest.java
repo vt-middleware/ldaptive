@@ -3,7 +3,7 @@ package org.ldaptive;
 
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -20,13 +20,13 @@ public class SpringTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"spring"})
+  @Test(groups = "spring")
   public void testSpringWiring()
     throws Exception
   {
     final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
       new String[] {"/spring-context.xml", });
-    AssertJUnit.assertTrue(context.getBeanDefinitionCount() > 0);
+    Assert.assertTrue(context.getBeanDefinitionCount() > 0);
 
     ConnectionFactory cf = context.getBean("connectionFactory", ConnectionFactory.class);
     Connection conn = cf.getConnection();
@@ -38,7 +38,7 @@ public class SpringTest
 
     final ClassPathXmlApplicationContext factoryContext = new ClassPathXmlApplicationContext(
       new String[] {"/spring-factory-context.xml", });
-    AssertJUnit.assertTrue(factoryContext.getBeanDefinitionCount() > 0);
+    Assert.assertTrue(factoryContext.getBeanDefinitionCount() > 0);
     cf = factoryContext.getBean("connectionFactory", ConnectionFactory.class);
     conn = cf.getConnection();
     try {
@@ -49,7 +49,7 @@ public class SpringTest
 
     final ClassPathXmlApplicationContext poolContext = new ClassPathXmlApplicationContext(
       new String[] {"/spring-pool-context.xml", });
-    AssertJUnit.assertTrue(poolContext.getBeanDefinitionCount() > 0);
+    Assert.assertTrue(poolContext.getBeanDefinitionCount() > 0);
 
     BlockingConnectionPool pool = null;
     try {

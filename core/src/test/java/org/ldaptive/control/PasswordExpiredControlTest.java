@@ -1,7 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control;
 
-import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -24,9 +25,8 @@ public class PasswordExpiredControlTest
   public Object[][] createData()
   {
     return new Object[][] {
-      // BER: 30
       new Object[] {
-        LdapUtils.base64Decode("MA=="),
+        new DefaultDERBuffer(new byte[] {0x30}),
         new PasswordExpiredControl(),
       },
     };
@@ -39,8 +39,8 @@ public class PasswordExpiredControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "response")
-  public void decode(final byte[] berValue, final PasswordExpiredControl expected)
+  @Test(groups = "control", dataProvider = "response")
+  public void decode(final DERBuffer berValue, final PasswordExpiredControl expected)
     throws Exception
   {
     final PasswordExpiredControl actual = new PasswordExpiredControl(expected.getCriticality());

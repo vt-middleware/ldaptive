@@ -2,6 +2,8 @@
 package org.ldaptive;
 
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.function.Predicate;
 import org.ldaptive.ssl.SslConfig;
 
 /**
@@ -12,29 +14,83 @@ import org.ldaptive.ssl.SslConfig;
 public class ConnectionConfig extends AbstractConfig
 {
 
+  /** Predicate that attempts a single reconnect. */
+  public static final Predicate<RetryMetadata> ONE_RECONNECT_ATTEMPT =
+    metadata -> metadata instanceof ClosedRetryMetadata && metadata.getAttempts() == 0;
+
+  /** Predicate that attempts to reconnect forever, waiting for 5 seconds after the first attempt. */
+  public static final Predicate<RetryMetadata> INFINITE_RECONNECT_ATTEMPTS =
+    metadata -> {
+      if (metadata instanceof ClosedRetryMetadata) {
+        if (metadata.getAttempts() > 0) {
+          try {
+            // CheckStyle:MagicNumber OFF
+            Thread.sleep(Duration.ofSeconds(5).toMillis());
+            // CheckStyle:MagicNumber ON
+          } catch (InterruptedException e) {}
+        }
+        return true;
+      }
+      return false;
+    };
+
+  /** Predicate that attempts to reconnect forever, backing off in 5 second intervals after the first attempt. */
+  public static final Predicate<RetryMetadata> INFINITE_RECONNECT_ATTEMPTS_WITH_BACKOFF =
+    metadata -> {
+      if (metadata instanceof ClosedRetryMetadata) {
+        if (metadata.getAttempts() > 0) {
+          try {
+            // CheckStyle:MagicNumber OFF
+            Thread.sleep(Duration.ofSeconds(5).multipliedBy(metadata.getAttempts()).toMillis());
+            // CheckStyle:MagicNumber ON
+          } catch (InterruptedException e) {}
+        }
+        return true;
+      }
+      return false;
+    };
+
   /** URL to the LDAP(s). */
   private String ldapUrl;
 
   /** Duration of time that connects will block. */
-  private Duration connectTimeout;
+  private Duration connectTimeout = Duration.ofMinutes(1);
 
   /** Duration of time to wait for responses. */
-  private Duration responseTimeout;
+  private Duration responseTimeout = Duration.ofMinutes(1);
+
+  /**
+   * Duration of time that operations will block on reconnects, should generally be longer than {@link
+   * #connectTimeout}.
+   */
+  private Duration reconnectTimeout = Duration.ofMinutes(2);
+
+  /** Whether to automatically reconnect to the server when a connection is lost. Default is true. */
+  private boolean autoReconnect = true;
+
+  /**
+   * Condition used to determine whether another reconnect attempt should be made. Default makes a single attempt only
+   * if the connection was previously opened.
+   */
+  private Predicate<RetryMetadata> autoReconnectCondition = ONE_RECONNECT_ATTEMPT;
+
+  /** Whether pending operations should be replayed after a reconnect. Default is true. */
+  private boolean autoReplay = true;
 
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
 
-  /** Connect to LDAP using SSL protocol. */
-  private boolean useSSL;
-
   /** Connect to LDAP using startTLS. */
   private boolean useStartTLS;
 
-  /** Connection initializer to execute on {@link Connection#open()}. */
-  private ConnectionInitializer connectionInitializer;
+  /** Connection initializers to execute on {@link Connection#open()}. */
+  private ConnectionInitializer[] connectionInitializers;
 
   /** Connection strategy. */
-  private ConnectionStrategy connectionStrategy = new DefaultConnectionStrategy();
+  private ConnectionStrategy connectionStrategy = new ActivePassiveConnectionStrategy();
+
+  /** Connection validator. */
+  private ConnectionValidator connectionValidator;
 
 
   /** Default constructor. */
@@ -78,7 +134,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the connect timeout. If this value is null, then the provider default will be used.
+   * Returns the connect timeout.
    *
    * @return  timeout
    */
@@ -96,8 +152,8 @@ public class ConnectionConfig extends AbstractConfig
   public void setConnectTimeout(final Duration time)
   {
     checkImmutable();
-    if (time != null && time.isNegative()) {
-      throw new IllegalArgumentException("Connect timeout cannot be negative");
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Connect timeout cannot be null or negative");
     }
     logger.trace("setting connectTimeout: {}", time);
     connectTimeout = time;
@@ -105,7 +161,7 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the response timeout. If this value is null, then the provider default will be used.
+   * Returns the response timeout.
    *
    * @return  timeout
    */
@@ -123,11 +179,110 @@ public class ConnectionConfig extends AbstractConfig
   public void setResponseTimeout(final Duration time)
   {
     checkImmutable();
-    if (time != null && time.isNegative()) {
-      throw new IllegalArgumentException("Connect timeout cannot be negative");
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Connect timeout cannot be null or negative");
     }
     logger.trace("setting responseTimeout: {}", time);
     responseTimeout = time;
+  }
+
+
+  /**
+   * Returns the reconnect timeout.
+   *
+   * @return  timeout
+   */
+  public Duration getReconnectTimeout()
+  {
+    return reconnectTimeout;
+  }
+
+
+  /**
+   * Sets the maximum amount of time that operations will block waiting for a reconnect.
+   *
+   * @param  time  timeout for reconnects
+   */
+  public void setReconnectTimeout(final Duration time)
+  {
+    checkImmutable();
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Reconnect timeout cannot be null or negative");
+    }
+    logger.trace("setting reconnectTimeout: {}", time);
+    reconnectTimeout = time;
+  }
+
+
+  /**
+   * Returns whether connections will attempt to reconnect.
+   *
+   * @return  whether to automatically reconnect when a connection is lost
+   */
+  public boolean getAutoReconnect()
+  {
+    return autoReconnect;
+  }
+
+
+  /**
+   * Sets whether connections will attempt to reconnect when unexpectedly closed.
+   *
+   * @param  b  whether to automatically reconnect when a connection is lost
+   */
+  public void setAutoReconnect(final boolean b)
+  {
+    checkImmutable();
+    logger.trace("setting autoReconnect: {}", b);
+    autoReconnect = b;
+  }
+
+
+  /**
+   * Returns the auto reconnect condition.
+   *
+   * @return  auto reconnect condition
+   */
+  public Predicate<RetryMetadata> getAutoReconnectCondition()
+  {
+    return autoReconnectCondition;
+  }
+
+
+  /**
+   * Sets the auto reconnect condition.
+   *
+   * @param  predicate  to determine whether to attempt a reconnect
+   */
+  public void setAutoReconnectCondition(final Predicate<RetryMetadata> predicate)
+  {
+    checkImmutable();
+    logger.trace("setting autoReconnectCondition: {}", predicate);
+    autoReconnectCondition = predicate;
+  }
+
+
+  /**
+   * Returns whether operations should be replayed after a reconnect.
+   *
+   * @return  whether to auto replay
+   */
+  public boolean getAutoReplay()
+  {
+    return autoReplay;
+  }
+
+
+  /**
+   * Sets whether operations will be replayed after a reconnect.
+   *
+   * @param  b  whether to replay operations
+   */
+  public void setAutoReplay(final boolean b)
+  {
+    checkImmutable();
+    logger.trace("setting autoReplay: {}", b);
+    autoReplay = b;
   }
 
 
@@ -156,30 +311,6 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns whether the SSL protocol will be used for connections.
-   *
-   * @return  whether the SSL protocol will be used
-   */
-  public boolean getUseSSL()
-  {
-    return useSSL;
-  }
-
-
-  /**
-   * Sets whether the SSL protocol will be used for connections.
-   *
-   * @param  b  whether the SSL protocol will be used
-   */
-  public void setUseSSL(final boolean b)
-  {
-    checkImmutable();
-    logger.trace("setting useSSL: {}", b);
-    useSSL = b;
-  }
-
-
-  /**
    * Returns whether startTLS will be used for connections.
    *
    * @return  whether startTLS will be used
@@ -204,26 +335,26 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns the connection initializer.
+   * Returns the connection initializers.
    *
-   * @return  connection initializer
+   * @return  connection initializers
    */
-  public ConnectionInitializer getConnectionInitializer()
+  public ConnectionInitializer[] getConnectionInitializers()
   {
-    return connectionInitializer;
+    return connectionInitializers;
   }
 
 
   /**
-   * Sets the connection initializer.
+   * Sets the connection initializers.
    *
-   * @param  initializer  connection initializer
+   * @param  initializers  connection initializers
    */
-  public void setConnectionInitializer(final ConnectionInitializer initializer)
+  public void setConnectionInitializers(final ConnectionInitializer... initializers)
   {
     checkImmutable();
-    logger.trace("setting connectionInitializer: {}", initializer);
-    connectionInitializer = initializer;
+    logger.trace("setting connectionInitializers: {}", Arrays.toString(initializers));
+    connectionInitializers = initializers;
   }
 
 
@@ -241,7 +372,7 @@ public class ConnectionConfig extends AbstractConfig
   /**
    * Sets the connection strategy.
    *
-   * @param  strategy  for making connections
+   * @param  strategy  for making new connections
    */
   public void setConnectionStrategy(final ConnectionStrategy strategy)
   {
@@ -252,23 +383,51 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
-   * Returns a connection config initialized with the supplied config.
+   * Returns the connection validator.
+   *
+   * @return  connection validator
+   */
+  public ConnectionValidator getConnectionValidator()
+  {
+    return connectionValidator;
+  }
+
+
+  /**
+   * Sets the connection validator.
+   *
+   * @param  validator  for validating connections
+   */
+  public void setConnectionValidator(final ConnectionValidator validator)
+  {
+    checkImmutable();
+    logger.trace("setting connectionValidator: {}", validator);
+    connectionValidator = validator;
+  }
+
+
+  /**
+   * Returns a new connection config initialized with the supplied config.
    *
    * @param  config  connection config to read properties from
    *
    * @return  connection config
    */
-  public static ConnectionConfig newConnectionConfig(final ConnectionConfig config)
+  public static ConnectionConfig copy(final ConnectionConfig config)
   {
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl(config.getLdapUrl());
     cc.setConnectTimeout(config.getConnectTimeout());
     cc.setResponseTimeout(config.getResponseTimeout());
-    cc.setSslConfig(config.getSslConfig());
-    cc.setUseSSL(config.getUseSSL());
+    cc.setReconnectTimeout(config.getReconnectTimeout());
+    cc.setAutoReconnect(config.getAutoReconnect());
+    cc.setAutoReconnectCondition(config.getAutoReconnectCondition());
+    cc.setAutoReplay(config.getAutoReplay());
+    cc.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
     cc.setUseStartTLS(config.getUseStartTLS());
-    cc.setConnectionInitializer(config.getConnectionInitializer());
+    cc.setConnectionInitializers(config.getConnectionInitializers());
     cc.setConnectionStrategy(config.getConnectionStrategy());
+    cc.setConnectionValidator(config.getConnectionValidator());
     return cc;
   }
 
@@ -276,19 +435,132 @@ public class ConnectionConfig extends AbstractConfig
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::ldapUrl=%s, connectTimeout=%s, responseTimeout=%s, " +
-        "sslConfig=%s, useSSL=%s, useStartTLS=%s, connectionInitializer=%s, connectionStrategy=%s]",
-        getClass().getName(),
-        hashCode(),
-        ldapUrl,
-        connectTimeout,
-        responseTimeout,
-        sslConfig,
-        useSSL,
-        useStartTLS,
-        connectionInitializer,
-        connectionStrategy);
+    return new StringBuilder(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("ldapUrl=").append(ldapUrl).append(", ")
+      .append("connectTimeout=").append(connectTimeout).append(", ")
+      .append("responseTimeout=").append(responseTimeout).append(", ")
+      .append("reconnectTimeout=").append(reconnectTimeout).append(", ")
+      .append("autoReconnect=").append(autoReconnect).append(", ")
+      .append("autoReconnectCondition=").append(autoReconnectCondition).append(", ")
+      .append("autoReplay=").append(autoReplay).append(", ")
+      .append("sslConfig=").append(sslConfig).append(", ")
+      .append("useStartTLS=").append(useStartTLS).append(", ")
+      .append("connectionInitializers=").append(Arrays.toString(connectionInitializers)).append(", ")
+      .append("connectionStrategy=").append(connectionStrategy).append(", ")
+      .append("connectionValidator=").append(connectionValidator).toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+    private final ConnectionConfig object = new ConnectionConfig();
+
+
+    protected Builder() {}
+
+
+    public Builder url(final String url)
+    {
+      object.setLdapUrl(url);
+      return this;
+    }
+
+
+    public Builder connectTimeout(final Duration timeout)
+    {
+      object.setConnectTimeout(timeout);
+      return this;
+    }
+
+
+    public Builder responseTimeout(final Duration timeout)
+    {
+      object.setResponseTimeout(timeout);
+      return this;
+    }
+
+
+    public Builder reconnectTimeout(final Duration timeout)
+    {
+      object.setReconnectTimeout(timeout);
+      return this;
+    }
+
+
+    public Builder autoReconnect(final boolean b)
+    {
+      object.setAutoReconnect(b);
+      return this;
+    }
+
+
+    public Builder autoReconnectCondition(final Predicate<RetryMetadata> predicate)
+    {
+      object.setAutoReconnectCondition(predicate);
+      return this;
+    }
+
+
+    public Builder autoReplay(final boolean b)
+    {
+      object.setAutoReplay(b);
+      return this;
+    }
+
+
+    public Builder sslConfig(final SslConfig config)
+    {
+      object.setSslConfig(config);
+      return this;
+    }
+
+
+    public Builder useStartTLS(final boolean b)
+    {
+      object.setUseStartTLS(b);
+      return this;
+    }
+
+
+    public Builder connectionInitializers(final ConnectionInitializer... initializers)
+    {
+      object.setConnectionInitializers(initializers);
+      return this;
+    }
+
+
+    public Builder connectionStrategy(final ConnectionStrategy strategy)
+    {
+      object.setConnectionStrategy(strategy);
+      return this;
+    }
+
+
+    public Builder connectionValidator(final ConnectionValidator validator)
+    {
+      object.setConnectionValidator(validator);
+      return this;
+    }
+
+
+    public ConnectionConfig build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

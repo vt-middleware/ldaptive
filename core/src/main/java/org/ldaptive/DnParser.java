@@ -1,11 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.ParseHandler;
 import org.slf4j.Logger;
@@ -186,10 +187,10 @@ public final class DnParser
       if (attrValue.startsWith("#")) {
         final DERParser parser = new DERParser();
         final OctetStringHandler handler = new OctetStringHandler();
-        parser.registerHandler("/OCTSTR", handler);
+        parser.registerHandler("/OCTSTR[0]", handler);
 
         final String hexData = attrValue.substring(1);
-        parser.parse(ByteBuffer.wrap(decodeHexValue(hexData.toCharArray())));
+        parser.parse(new DefaultDERBuffer(decodeHexValue(hexData.toCharArray())));
         attributes.add(new LdapAttribute(attrName.trim(), handler.getDecodedValue()));
       } else {
         attributes.add(new LdapAttribute(attrName.trim(), decodeStringValue(attrValue)));
@@ -234,9 +235,7 @@ public final class DnParser
       char c = value.charAt(pos);
       boolean appendHex = false;
       boolean appendValue = false;
-      switch (c) {
-
-      case '\\':
+      if (c == '\\') {
         if (pos + 1 < value.length()) {
           c = value.charAt(++pos);
           // if hexadecimal character add to buffer to decode later
@@ -254,12 +253,9 @@ public final class DnParser
             appendValue = true;
           }
         }
-        break;
-
-      default:
+      } else {
         appendHex = hexValue.length() > 0;
         appendValue = true;
-        break;
       }
       if (appendHex) {
         sb.append(LdapUtils.utf8Encode(decodeHexValue(hexValue.toString().toCharArray())));
@@ -298,6 +294,7 @@ public final class DnParser
         for (char c : chars) {
           if (c == s.charAt(i)) {
             match = true;
+            break;
           }
         }
         if (match) {
@@ -319,7 +316,7 @@ public final class DnParser
 
 
     @Override
-    public void handle(final DERParser parser, final ByteBuffer encoded)
+    public void handle(final DERParser parser, final DERBuffer encoded)
     {
       decoded = OctetStringType.decode(encoded);
     }

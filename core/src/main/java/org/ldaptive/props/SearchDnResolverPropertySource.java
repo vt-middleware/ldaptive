@@ -11,11 +11,13 @@ import org.ldaptive.auth.SearchDnResolver;
  *
  * @author  Middleware Services
  */
-public final class SearchDnResolverPropertySource extends AbstractPropertySource<SearchDnResolver>
+public final class SearchDnResolverPropertySource
+  extends AbstractConnectionFactoryManagerPropertySource<SearchDnResolver>
 {
 
   /** Invoker for search dn resolver. */
-  private static final SimplePropertyInvoker INVOKER = new SimplePropertyInvoker(SearchDnResolver.class);
+  private static final SearchOperationFactoryPropertyInvoker INVOKER =
+    new SearchOperationFactoryPropertyInvoker(SearchDnResolver.class);
 
 
   /**
@@ -85,6 +87,7 @@ public final class SearchDnResolverPropertySource extends AbstractPropertySource
   public void initialize()
   {
     initializeObject(INVOKER);
+    super.initialize();
   }
 
 

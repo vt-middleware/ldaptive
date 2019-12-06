@@ -2,11 +2,11 @@
 package org.ldaptive;
 
 /**
- * Factory for creating connections.
+ * Interface for connection factories.
  *
  * @author  Middleware Services
  */
-public interface ConnectionFactory
+public interface ConnectionFactory extends AutoCloseable
 {
 
 
@@ -19,4 +19,16 @@ public interface ConnectionFactory
    */
   Connection getConnection()
     throws LdapException;
+
+
+  /**
+   * Returns the connection configuration used to create connections.
+   *
+   * @return  connection config
+   */
+  ConnectionConfig getConnectionConfig();
+
+
+  /** Free any resources associated with this factory. */
+  default void close() {}
 }

@@ -2,6 +2,8 @@
 package org.ldaptive.auth;
 
 import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.control.RequestControl;
@@ -13,14 +15,31 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractAuthenticationHandler implements AuthenticationHandler
+public abstract class AbstractAuthenticationHandler implements AuthenticationHandler, ConnectionFactoryManager
 {
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Connection factory. */
+  private ConnectionFactory factory;
+
   /** controls used by this handler. */
   private RequestControl[] authenticationControls;
+
+
+  @Override
+  public ConnectionFactory getConnectionFactory()
+  {
+    return factory;
+  }
+
+
+  @Override
+  public void setConnectionFactory(final ConnectionFactory cf)
+  {
+    factory = cf;
+  }
 
 
   /**
@@ -37,11 +56,11 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
   /**
    * Sets the controls for this authentication handler.
    *
-   * @param  c  controls to set
+   * @param  cntrls  controls to set
    */
-  public void setAuthenticationControls(final RequestControl... c)
+  public void setAuthenticationControls(final RequestControl... cntrls)
   {
-    authenticationControls = c;
+    authenticationControls = cntrls;
   }
 
 
@@ -51,10 +70,11 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
   {
     logger.debug("authenticate criteria={}", ac);
 
-    AuthenticationHandlerResponse response = null;
-    final Connection conn = getConnection();
+    final AuthenticationHandlerResponse response;
+    final Connection conn = factory.getConnection();
     boolean closeConn = false;
     try {
+      conn.open();
       response = authenticateInternal(conn, ac);
     } catch (LdapException | RuntimeException e) {
       closeConn = true;
@@ -67,17 +87,6 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     logger.debug("authenticate response={} for criteria={}", response, ac);
     return response;
   }
-
-
-  /**
-   * Returns a connection that the authentication operation should be performed on.
-   *
-   * @return  connection
-   *
-   * @throws  LdapException  if an error occurs provisioning the connection
-   */
-  protected abstract Connection getConnection()
-    throws LdapException;
 
 
   /**

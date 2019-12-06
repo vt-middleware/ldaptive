@@ -2,6 +2,8 @@
 package org.ldaptive.ad.control;
 
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -26,17 +28,17 @@ public class DirSyncControlTest
     return
       new Object[][] {
         // flags=0, maxAttrCount=0, no cookie
-        // BER: 30:08:02:01:00:02:01:00:04:00
         new Object[] {
-          LdapUtils.base64Decode("MAgCAQACAQAEAA=="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x08, 0x02, 0x01, 0x00, 0x02, 0x01, 0x00, 0x04, 0x00}),
           new DirSyncControl(),
         },
         // flags=0, maxAttrCount=0, cookie
         new Object[] {
-          LdapUtils.base64Decode(
-            "MHQCAQACAQAEbE1TRFMDAAAAAmDMQ7HCzQEAAAAAAAAAACgAAABbzwEAAAAAAAAA" +
-            "AAAAAAAAW88BAAAAAADzox7OKwdpRIu4ZIWpCoubAQAAAAAAAAABAAAAAAAAAPOj" +
-            "Hs4rB2lEi7hkhakKi5vyzwEAAAAAAA=="),
+          new DefaultDERBuffer(
+            LdapUtils.base64Decode(
+              "MHQCAQACAQAEbE1TRFMDAAAAAmDMQ7HCzQEAAAAAAAAAACgAAABbzwEAAAAAAAAA" +
+              "AAAAAAAAW88BAAAAAADzox7OKwdpRIu4ZIWpCoubAQAAAAAAAAABAAAAAAAAAPOj" +
+              "Hs4rB2lEi7hkhakKi5vyzwEAAAAAAA==")),
           new DirSyncControl(
             null,
             new byte[] {
@@ -66,9 +68,8 @@ public class DirSyncControlTest
             true),
         },
         // flags=ANCESTORS_FIRST_ORDER, maxAttrCount=100, no cookie
-        // BER: 30:09:02:02:08:00:02:01:64:04:00:
         new Object[] {
-          LdapUtils.base64Decode("MAkCAggAAgFkBAA="),
+          new DefaultDERBuffer(new byte[] {0x30, 0x09, 0x02, 0x02, 0x08, 0x00, 0x02, 0x01, 0x64, 0x04, 0x00}),
           new DirSyncControl(
             new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, },
             null,
@@ -77,10 +78,11 @@ public class DirSyncControlTest
         },
         // flags=ANCESTORS_FIRST_ORDER, maxAttrCount=100, cookie
         new Object[] {
-          LdapUtils.base64Decode(
-            "MHUCAggAAgFkBGxNU0RTAwAAAN2j6LS3ws0BAAAAAAAAAAAoAAAAW88BAAAAAAAA" +
-            "AAAAAAAAAFvPAQAAAAAA86MezisHaUSLuGSFqQqLmwEAAAAAAAAAAQAAAAAAAADz" +
-            "ox7OKwdpRIu4ZIWpCoubCdABAAAAAAA="),
+          new DefaultDERBuffer(
+            LdapUtils.base64Decode(
+              "MHUCAggAAgFkBGxNU0RTAwAAAN2j6LS3ws0BAAAAAAAAAAAoAAAAW88BAAAAAAAA" +
+              "AAAAAAAAAFvPAQAAAAAA86MezisHaUSLuGSFqQqLmwEAAAAAAAAAAQAAAAAAAADz" +
+              "ox7OKwdpRIu4ZIWpCoubCdABAAAAAAA=")),
           new DirSyncControl(
             new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, },
             new byte[] {
@@ -120,11 +122,11 @@ public class DirSyncControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
-  public void encode(final byte[] berValue, final DirSyncControl expected)
+  @Test(groups = "control", dataProvider = "request-response")
+  public void encode(final DERBuffer berValue, final DirSyncControl expected)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue);
+    Assert.assertEquals(expected.encode(), berValue.getRemainingBytes());
   }
 
 
@@ -134,8 +136,8 @@ public class DirSyncControlTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"control"}, dataProvider = "request-response")
-  public void decode(final byte[] berValue, final DirSyncControl expected)
+  @Test(groups = "control", dataProvider = "request-response")
+  public void decode(final DERBuffer berValue, final DirSyncControl expected)
     throws Exception
   {
     final DirSyncControl actual = new DirSyncControl(expected.getCriticality());

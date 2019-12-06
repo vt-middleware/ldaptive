@@ -162,6 +162,13 @@ public class SyncRequestControl extends AbstractControl implements RequestContro
   }
 
 
+  @Override
+  public boolean hasValue()
+  {
+    return true;
+  }
+
+
   /**
    * Returns the request mode.
    *
@@ -254,15 +261,12 @@ public class SyncRequestControl extends AbstractControl implements RequestContro
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::criticality=%s, requestMode=%s, cookie=%s, reloadHint=%s]",
-        getClass().getName(),
-        hashCode(),
-        getCriticality(),
-        requestMode,
-        LdapUtils.base64Encode(cookie),
-        reloadHint);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("criticality=").append(getCriticality()).append(", ")
+      .append("requestMode=").append(requestMode).append(", ")
+      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append(", ")
+      .append("reloadHint=").append(reloadHint).append("]").toString();
   }
 
 

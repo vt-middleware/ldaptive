@@ -1,31 +1,50 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.function.Function;
+
 /**
- * Connection strategy that returns URLs ordered exactly the way they are configured. This means that the first URL will
- * always be attempted first, followed by each URL in the list.
+ * Connection strategy that attempts hosts ordered exactly the way they are configured. This means that the first host
+ * will always be attempted first, followed by each host in the list.
  *
  * @author  Middleware Services
  */
-public class ActivePassiveConnectionStrategy implements ConnectionStrategy
+public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
 {
+
+  /** Custom iterator function. */
+  private final Function<List<LdapURL>, Iterator<LdapURL>> iterFunction;
+
+
+  /** Default constructor. */
+  public ActivePassiveConnectionStrategy()
+  {
+    this(null);
+  }
 
 
   /**
-   * Return the URLs in the order they are provided, so that the first URL is always tried first, then the second, and
-   * so forth.
+   * Creates a new active passive connection strategy.
    *
-   * @param  metadata  which can be used to produce the URL list
-   *
-   * @return  list of URLs to attempt connections to
+   * @param  function  that produces a custom iterator
    */
-  @Override
-  public String[] getLdapUrls(final ConnectionFactoryMetadata metadata)
+  public ActivePassiveConnectionStrategy(final Function<List<LdapURL>, Iterator<LdapURL>> function)
   {
-    if (metadata == null || metadata.getLdapUrl() == null) {
-      return null;
-    }
+    iterFunction = function;
+  }
 
-    return metadata.getLdapUrl().split(" ");
+
+  @Override
+  public Iterator<LdapURL> iterator()
+  {
+    if (!isInitialized()) {
+      throw new IllegalStateException("Strategy is not initialized");
+    }
+    if (iterFunction != null) {
+      return iterFunction.apply(ldapURLSet.getUrls());
+    }
+    return new DefaultLdapURLIterator(ldapURLSet.getUrls());
   }
 }

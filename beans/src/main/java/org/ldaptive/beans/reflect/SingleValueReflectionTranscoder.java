@@ -4,7 +4,7 @@ package org.ldaptive.beans.reflect;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import org.ldaptive.io.ValueTranscoder;
+import org.ldaptive.transcode.ValueTranscoder;
 
 /**
  * Reflection transcoder which expects to operate on collections containing a single value.
@@ -118,6 +118,8 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return String.format("[%s@%d::valueTranscoder=%s]", getClass().getName(), hashCode(), valueTranscoder);
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("valueTranscoder=").append(valueTranscoder).append("]").toString();
   }
 }

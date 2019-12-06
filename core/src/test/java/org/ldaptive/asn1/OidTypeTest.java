@@ -1,9 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.ByteBuffer;
 import org.testng.Assert;
-import org.testng.AssertJUnit;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -136,11 +134,11 @@ public class OidTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "oids")
+  @Test(groups = "asn1", dataProvider = "oids")
   public void decode(final byte[] bytes, final String expected)
     throws Exception
   {
-    Assert.assertEquals(OidType.decode(ByteBuffer.wrap(bytes)), expected);
+    Assert.assertEquals(OidType.decode(new DefaultDERBuffer(bytes)), expected);
   }
 
 
@@ -150,7 +148,7 @@ public class OidTypeTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"asn1"}, dataProvider = "oids")
+  @Test(groups = "asn1", dataProvider = "oids")
   public void encode(final byte[] expected, final String oid)
     throws Exception
   {
@@ -159,13 +157,13 @@ public class OidTypeTest
 
 
   /** @param  oid  to encode. */
-  @Test(groups = {"asn1"}, dataProvider = "invalid-oids")
+  @Test(groups = "asn1", dataProvider = "invalid-oids")
   public void invalid(final String oid)
   {
     try {
       new OidType(oid);
     } catch (Exception e) {
-      AssertJUnit.assertEquals(IllegalArgumentException.class, e.getClass());
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
     }
   }
 }

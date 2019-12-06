@@ -2,7 +2,7 @@
 package org.ldaptive.auth.ext;
 
 import org.ldaptive.ResultCode;
-import org.testng.AssertJUnit;
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -83,10 +83,10 @@ public class FreeIPAAccountStateTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = {"auth-ext"}, dataProvider = "errors")
+  @Test(groups = "auth-ext", dataProvider = "errors")
   public void parse(final ResultCode rc, final String message, final FreeIPAAccountState.Error err)
     throws Exception
   {
-    AssertJUnit.assertEquals(err, FreeIPAAccountState.Error.parse(rc, message));
+    Assert.assertEquals(FreeIPAAccountState.Error.parse(rc, message), err);
   }
 }

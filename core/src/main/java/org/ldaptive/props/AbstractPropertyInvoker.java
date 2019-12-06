@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -49,7 +48,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
         if (!method.isBridge()) {
           if (method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
             final String mName = method.getName().substring(3);
-            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1, mName.length());
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               m[1] = method;
@@ -59,7 +58,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             }
           } else if (method.getName().startsWith("get") && method.getParameterTypes().length == 0) {
             final String mName = method.getName().substring(3);
-            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1, mName.length());
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               m[0] = method;
@@ -69,7 +68,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             }
           } else if (method.getName().startsWith("is") && method.getParameterTypes().length == 0) {
             final String mName = method.getName().substring(2);
-            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1, mName.length());
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               // prefer any get method that may exist
@@ -88,13 +87,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       }
 
       // remove any properties that don't have both getters and setters
-      final Iterator<Method[]> i = properties.values().iterator();
-      while (i.hasNext()) {
-        final Method[] m = i.next();
-        if (m[0] == null || m[1] == null) {
-          i.remove();
-        }
-      }
+      properties.values().removeIf(method -> method[0] == null || method[1] == null);
 
       PROPERTIES_CACHE.put(cacheKey, Collections.unmodifiableMap(properties));
     }

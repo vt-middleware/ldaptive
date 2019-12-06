@@ -61,23 +61,23 @@ public class LdapEntryIgnoreCaseComparator implements Comparator<LdapEntry>
    */
   public static LdapEntry lowerCaseEntry(final LdapEntry le, final String... names)
   {
-    final LdapEntry lowerCase = new LdapEntry(le.getSortBehavior());
+    final LdapEntry lowerCase = new LdapEntry();
     lowerCase.setDn(le.getDn());
     for (LdapAttribute la : le.getAttributes()) {
       if (names != null) {
         boolean setAttr = false;
         for (String name : names) {
           if (name.equalsIgnoreCase(la.getName())) {
-            lowerCase.addAttribute(LdapAttributeIgnoreCaseComparator.lowerCaseAttribute(la));
+            lowerCase.addAttributes(LdapAttributeIgnoreCaseComparator.lowerCaseAttribute(la));
             setAttr = true;
             break;
           }
         }
         if (!setAttr) {
-          lowerCase.addAttribute(la);
+          lowerCase.addAttributes(la);
         }
       } else {
-        lowerCase.addAttribute(LdapAttributeIgnoreCaseComparator.lowerCaseAttribute(la));
+        lowerCase.addAttributes(LdapAttributeIgnoreCaseComparator.lowerCaseAttribute(la));
       }
     }
     return lowerCase;

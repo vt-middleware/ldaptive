@@ -284,17 +284,99 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   @Override
   public String toString()
   {
-    return
-      String.format(
-        "[%s@%d::trustStore=%s, trustStoreType=%s, trustStoreAliases=%s, " +
-        "keyStore=%s, keyStoreType=%s, keyStoreAliases=%s]",
-        getClass().getName(),
-        hashCode(),
-        trustStore,
-        trustStoreType,
-        Arrays.toString(trustStoreAliases),
-        keyStore,
-        keyStoreType,
-        Arrays.toString(keyStoreAliases));
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("trustStore=").append(trustStore).append(", ")
+      .append("trustStoreType=").append(trustStoreType).append(", ")
+      .append("trustStoreAliases=").append(Arrays.toString(trustStoreAliases)).append(", ")
+      .append("keyStore=").append(keyStore).append(", ")
+      .append("keyStoreType=").append(keyStoreType).append(", ")
+      .append("keyStoreAliases=").append(Arrays.toString(keyStoreAliases)).append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+
+    private final KeyStoreCredentialConfig object = new KeyStoreCredentialConfig();
+
+
+    protected Builder() {}
+
+
+    public Builder trustStore(final String name)
+    {
+      object.setTrustStore(name);
+      return this;
+    }
+
+
+    public Builder trustStorePassword(final String password)
+    {
+      object.setTrustStorePassword(password);
+      return this;
+    }
+
+
+    public Builder trustStoreType(final String type)
+    {
+      object.setTrustStoreType(type);
+      return this;
+    }
+
+
+    public Builder trustStoreAliases(final String... aliases)
+    {
+      object.setTrustStoreAliases(aliases);
+      return this;
+    }
+
+
+    public Builder keyStore(final String name)
+    {
+      object.setKeyStore(name);
+      return this;
+    }
+
+
+    public Builder keyStorePassword(final String password)
+    {
+      object.setKeyStorePassword(password);
+      return this;
+    }
+
+
+    public Builder keyStoreType(final String type)
+    {
+      object.setKeyStoreType(type);
+      return this;
+    }
+
+
+    public Builder keyStoreAliases(final String... aliases)
+    {
+      object.setKeyStoreAliases(aliases);
+      return this;
+    }
+
+
+    public KeyStoreCredentialConfig build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

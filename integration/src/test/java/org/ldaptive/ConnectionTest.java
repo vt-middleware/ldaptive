@@ -1,7 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.AssertJUnit;
+import org.ldaptive.ssl.AllowAnyTrustManager;
+import org.ldaptive.ssl.DefaultHostnameVerifier;
+import org.ldaptive.ssl.NoHostnameVerifier;
+import org.ldaptive.ssl.SslConfig;
+import org.ldaptive.ssl.X509CredentialConfig;
+import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
@@ -26,112 +31,92 @@ public class ConnectionTest
    * @throws  Exception  On test failure.
    */
   @Parameters("createEntry15")
-  @BeforeClass(groups = {"conn"})
+  @BeforeClass(groups = "conn")
   public void add(final String ldifFile)
     throws Exception
   {
     final String ldif = TestUtils.readFileIntoString(ldifFile);
     testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
 
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final AddOperation add = new AddOperation(conn);
-      final Response<Void> response = add.execute(new AddRequest(testLdapEntry.getDn(), testLdapEntry.getAttributes()));
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    }
+    final AddOperation add = new AddOperation(TestUtils.createConnectionFactory());
+    final AddResponse response = add.execute(new AddRequest(testLdapEntry.getDn(), testLdapEntry.getAttributes()));
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"conn"})
+  @Test(groups = "conn")
   public void compare()
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final CompareOperation compare = new CompareOperation(conn);
-      AssertJUnit.assertTrue(
-        compare.execute(new CompareRequest(testLdapEntry.getDn(), testLdapEntry.getAttribute("mail"))).getResult());
-    }
+    final CompareOperation compare = new CompareOperation(TestUtils.createConnectionFactory());
+    Assert.assertTrue(
+      compare.execute(
+        new CompareRequest(
+          testLdapEntry.getDn(), "mail", testLdapEntry.getAttribute("mail").getStringValue())).isTrue());
   }
 
 
   /** @throws  Exception  On test failure. */
-  @AfterClass(groups = {"conn"})
+  @AfterClass(groups = "conn")
   public void delete()
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final DeleteOperation delete = new DeleteOperation(conn);
-      final Response<Void> response = delete.execute(new DeleteRequest(testLdapEntry.getDn()));
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    }
+    final DeleteOperation delete = new DeleteOperation(TestUtils.createConnectionFactory());
+    final DeleteResponse response = delete.execute(new DeleteRequest(testLdapEntry.getDn()));
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"conn"})
+  @Test(groups = "conn")
   public void modify()
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final ModifyOperation modify = new ModifyOperation(conn);
-      final Response<Void> response = modify.execute(
-        new ModifyRequest(
-          testLdapEntry.getDn(),
-          new AttributeModification(AttributeModificationType.ADD, new LdapAttribute("title", "President"))));
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    }
+    final ModifyOperation modify = new ModifyOperation(TestUtils.createConnectionFactory());
+    final ModifyResponse response = modify.execute(
+      new ModifyRequest(
+        testLdapEntry.getDn(),
+        new AttributeModification(AttributeModification.Type.ADD, new LdapAttribute("title", "President"))));
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"conn"})
+  @Test(groups = "conn")
   public void modifyDn()
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final ModifyDnOperation modifyDn = new ModifyDnOperation(conn);
-      Response<Void> response = modifyDn.execute(
-        new ModifyDnRequest(
-          testLdapEntry.getDn(),
-          "cn=James Buchanan Jr.," + DnParser.substring(testLdapEntry.getDn(), 1)));
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-      response = modifyDn.execute(
-        new ModifyDnRequest(
-          "cn=James Buchanan Jr.," + DnParser.substring(testLdapEntry.getDn(), 1),
-          testLdapEntry.getDn()));
-      AssertJUnit.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    }
+    final ModifyDnOperation modifyDn = new ModifyDnOperation(TestUtils.createConnectionFactory());
+    ModifyDnResponse response = modifyDn.execute(
+      new ModifyDnRequest(
+        testLdapEntry.getDn(),
+        "cn=James Buchanan Jr.",
+        true));
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    response = modifyDn.execute(
+      new ModifyDnRequest(
+        "cn=James Buchanan Jr.," + DnParser.substring(testLdapEntry.getDn(), 1),
+        "cn=James Buchanan",
+        true));
+    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
   }
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"conn"})
+  @Test(groups = "conn")
   public void search()
     throws Exception
   {
-    try (Connection conn = TestUtils.createConnection()) {
-      conn.open();
-
-      final SearchOperation search = new SearchOperation(conn);
-      final SearchResult lr = search.execute(
-        new SearchRequest(DnParser.substring(testLdapEntry.getDn(), 1), new SearchFilter("(uid=15)"))).getResult();
-      AssertJUnit.assertEquals(testLdapEntry.getDn().toLowerCase(), lr.getEntry().getDn().toLowerCase());
-    }
+    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchResponse lr = search.execute(
+      new SearchRequest(DnParser.substring(testLdapEntry.getDn(), 1), "(uid=15)"));
+    Assert.assertEquals(lr.getEntry().getDn().toLowerCase(), testLdapEntry.getDn().toLowerCase());
   }
 
 
   /** @throws  Exception  On test failure. */
-  @Test(groups = {"conn"})
+  @Test(groups = "conn")
   public void strategyConnect()
     throws Exception
   {
@@ -140,37 +125,18 @@ public class ConnectionTest
     DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
 
     Connection conn = connFactory.getConnection();
-
     try {
       conn.open();
     } finally {
       conn.close();
     }
-    try {
-      conn.open();
-    } finally {
-      conn.close();
-    }
-    try {
-      conn.open();
-    } finally {
-      conn.close();
-    }
-
-    cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
-    cc.setConnectionStrategy(new DefaultConnectionStrategy());
-    connFactory = new DefaultConnectionFactory(cc);
     conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
       conn.close();
     }
-    try {
-      conn.open();
-    } finally {
-      conn.close();
-    }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
@@ -186,11 +152,13 @@ public class ConnectionTest
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
@@ -206,15 +174,204 @@ public class ConnectionTest
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
       conn.close();
     }
+    conn = connFactory.getConnection();
     try {
       conn.open();
     } finally {
       conn.close();
+    }
+  }
+
+
+  /**
+   * @return  ssl config
+   *
+   * @throws  Exception  On configuration error.
+   */
+  public SslConfig createSslConfig()
+    throws Exception
+  {
+    final X509CredentialConfig config = new X509CredentialConfig();
+    config.setTrustCertificates("file:target/test-classes/ldaptive.trust.crt");
+    return new SslConfig(config);
+  }
+
+
+  /**
+   * @param  url  to connect to
+   *
+   * @return  connection configuration
+   *
+   * @throws  Exception  On connection failure.
+   */
+  public ConnectionConfig createTLSConnectionConfig(final String url)
+    throws Exception
+  {
+    final ConnectionConfig cc = new ConnectionConfig(url);
+    cc.setUseStartTLS(true);
+    cc.setSslConfig(createSslConfig());
+    return cc;
+  }
+
+
+  /**
+   * @param  url  to connect to
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters("ldapTestHost")
+  @Test(groups = "conn")
+  public void startTLS(final String url)
+    throws Exception
+  {
+    // no trusted certificates
+    ConnectionConfig cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(null);
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // no trusted certificates
+    cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // no trusted certificates with hostname verification
+    cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // trust any
+    cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    }
+
+    cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new NoHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // trust any with hostname verification
+    cc = createTLSConnectionConfig(url);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    }
+  }
+
+
+  /**
+   * @param  url  to connect to
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters("ldapSslTestHost")
+  @Test(groups = "ssl")
+  public void ldaps(final String url)
+    throws Exception
+  {
+    final String ldapsUrl = url.replace("ldap://", "ldaps://");
+    // no trusted certificates
+    ConnectionConfig cc = new ConnectionConfig(ldapsUrl);
+    cc.setSslConfig(null);
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // no trusted certificates
+    cc = new ConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // no trusted certificates with hostname verification
+    cc = new ConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // trust any
+    cc = new ConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    }
+
+    // trust any with hostname verification failure
+    cc = new ConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new NoHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // trust any with hostname verification
+    cc = new ConnectionConfig(ldapsUrl);
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
     }
   }
 
@@ -228,21 +385,18 @@ public class ConnectionTest
    * @throws  Exception  On test failure.
    */
   @Parameters({ "ldapTestHost", "sleepTime" })
-  @AfterSuite(groups = {"conn"})
+  @AfterSuite(groups = "conn")
   public void sleep(final String host, final int sleepTime)
     throws Exception
   {
+    System.out.println("--BEGIN CONNECTION COUNT TEST--");
     Thread.sleep(sleepTime);
 
-    /*
-     * -- expected open connections --
-     * SearchOperationTest: 1
-     */
     final LdapURL ldapUrl = new LdapURL(host);
-    final String hostPrefix = ldapUrl.getEntry().getHostname().indexOf(".") != -1 ?
-      ldapUrl.getEntry().getHostname().substring(0, ldapUrl.getEntry().getHostname().indexOf(".")) :
-      ldapUrl.getEntry().getHostname();
+    final String hostPrefix = ldapUrl.getHostname().contains(".") ?
+      ldapUrl.getHostname().substring(0, ldapUrl.getHostname().indexOf(".")) :
+      ldapUrl.getHostname();
     final int openConns = TestUtils.countOpenConnections(hostPrefix);
-    AssertJUnit.assertEquals(1, openConns);
+    Assert.assertEquals(openConns, 0);
   }
 }
