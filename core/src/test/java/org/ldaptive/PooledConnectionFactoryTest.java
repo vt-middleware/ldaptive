@@ -4,13 +4,11 @@ package org.ldaptive;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.concurrent.DefaultThreadFactory;
-import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.pool.PoolConfig;
-import org.ldaptive.transport.netty.NettyConnectionFactoryTransport;
+import org.ldaptive.transport.netty.DefaultThreadPoolStrategy;
+import org.ldaptive.transport.netty.NettySocketType;
+import org.ldaptive.transport.netty.NettyTransport;
 import org.ldaptive.transport.netty.SimpleNettyServer;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -84,14 +82,7 @@ public class PooledConnectionFactoryTest
           })
           .build(),
         PoolConfig.builder().min(10).max(10).build(),
-        new NettyConnectionFactoryTransport(
-          NioSocketChannel.class,
-          new NioEventLoopGroup(
-            1,
-            new ThreadPerTaskExecutor(
-              new DefaultThreadFactory(getClass().getSimpleName() + "-io", true, Thread.NORM_PRIORITY))),
-          null,
-          null));
+        new NettyTransport(new DefaultThreadPoolStrategy(NettySocketType.NIO, getClass().getSimpleName(), 1)));
       try {
         factory.initialize();
         final SearchRequest request = SearchRequest.builder().filter("(objectClass=*)").build();

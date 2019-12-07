@@ -17,7 +17,8 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
 import org.ldaptive.transport.Transport;
-import org.ldaptive.transport.netty.ConnectionFactoryTransport;
+import org.ldaptive.transport.netty.NettyTransport;
+import org.ldaptive.transport.netty.StatefulThreadPoolStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -76,7 +77,7 @@ public class SyncReplRunner
 
 
   /**
-   * Creates a new sync repl runner. Uses a custom {@link ConnectionFactoryTransport} for processing I/O and messages.
+   * Creates a new sync repl runner. Uses a custom {@link StatefulThreadPoolStrategy} for processing I/O and messages.
    *
    * @param  config  sync repl connection configuration
    * @param  request  sync repl search request
@@ -111,7 +112,8 @@ public class SyncReplRunner
 
   /**
    * Returns a transport configured to use for sync repl. Uses it's own event loop groups with auto_read set to false.
-   * Detects whether Epoll or KQueue transports are available, otherwise uses NIO.
+   * Detects whether Epoll or KQueue transports are available, otherwise uses NIO. Note that for the purposes of this
+   * runner, the underlying thread pool is not expected to be shutdown as this runner expects to run forever.
    *
    * @return  transport
    */
@@ -119,12 +121,14 @@ public class SyncReplRunner
   {
     // message thread pool size must be >1 since exceptions are reported on the messages thread pool
     // startTLS and connection initializers will require additional threads
-    final ConnectionFactoryTransport transport = new ConnectionFactoryTransport(
+    final StatefulThreadPoolStrategy poolStrategy = new StatefulThreadPoolStrategy(
       SyncReplRunner.class.getSimpleName(),
       IO_WORKER_THREADS,
-      MESSAGE_WORKER_THREADS,
+      MESSAGE_WORKER_THREADS);
+    poolStrategy.setShutdownOnClose(false);
+    final NettyTransport transport = new NettyTransport(
+      poolStrategy,
       Collections.singletonMap(ChannelOption.AUTO_READ, false));
-    transport.setShutdownOnClose(false);
     return transport;
   }
 

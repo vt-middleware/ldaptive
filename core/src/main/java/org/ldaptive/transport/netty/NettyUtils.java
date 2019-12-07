@@ -28,20 +28,34 @@ public final class NettyUtils
 
 
   /**
-   * Returns the default socket channel type for this platform. See {@link Epoll#isAvailable()} and {@link
-   * KQueue#isAvailable()}.
+   * Returns the socket channel type for the supplied type.
    *
-   * @return  socket channel type
+   * @param  type  socket type enum
+   *
+   * @return  socket channel class type
    */
-  public static Class<? extends Channel> getDefaultSocketChannelType()
+  public static Class<? extends Channel> getSocketChannelType(final NettySocketType type)
   {
-    if (Epoll.isAvailable()) {
-      return EpollSocketChannel.class;
-    } else if (KQueue.isAvailable()) {
-      return KQueueSocketChannel.class;
+    final NettySocketType st;
+    if (type == NettySocketType.DEFAULT) {
+      st = NettySocketType.getDefaultSocketType();
     } else {
-      return NioSocketChannel.class;
+      st = type;
     }
+    final Class<? extends Channel> socketClass;
+    switch(st) {
+    case EPOLL:
+      socketClass = EpollSocketChannel.class;
+      break;
+    case KQUEUE:
+      socketClass = KQueueSocketChannel.class;
+      break;
+    case NIO:
+    default:
+      socketClass = NioSocketChannel.class;
+      break;
+    }
+    return socketClass;
   }
 
 
@@ -49,24 +63,39 @@ public final class NettyUtils
    * Returns the default event loop group for this platform. See {@link Epoll#isAvailable()} and {@link
    * KQueue#isAvailable()}. Set numThreads to zero to use the netty default.
    *
+   * @param  type  socket type enum
    * @param  name  of the thread pool
    * @param  numThreads  number of threads in the thread pool
+   *
    * @return  event loop group
    */
-  public static EventLoopGroup createDefaultEventLoopGroup(final String name, final int numThreads)
+  public static EventLoopGroup createEventLoopGroup(final NettySocketType type, final String name, final int numThreads)
   {
-    if (Epoll.isAvailable()) {
-      return new EpollEventLoopGroup(
-        numThreads,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
-    } else if (KQueue.isAvailable()) {
-      return new KQueueEventLoopGroup(
-        numThreads,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
+    final NettySocketType st;
+    if (type == NettySocketType.DEFAULT) {
+      st = NettySocketType.getDefaultSocketType();
     } else {
-      return new NioEventLoopGroup(
+      st = type;
+    }
+    final EventLoopGroup loopGroup;
+    switch(st) {
+    case EPOLL:
+      loopGroup = new EpollEventLoopGroup(
         numThreads,
         new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
+      break;
+    case KQUEUE:
+      loopGroup = new KQueueEventLoopGroup(
+        numThreads,
+        new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
+      break;
+    case NIO:
+    default:
+      loopGroup = new NioEventLoopGroup(
+        numThreads,
+        new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
+      break;
     }
+    return loopGroup;
   }
 }

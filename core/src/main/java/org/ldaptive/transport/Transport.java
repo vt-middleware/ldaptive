@@ -24,5 +24,5 @@ public interface Transport
 
 
   /** Free any resources associated with this transport. */
-  default void close() {}
+  void close();
 }
