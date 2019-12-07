@@ -229,7 +229,8 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
           if (answer.hasNext()) {
             logger.debug("multiple results found for user={} using filter={}", user, filter);
             if (!allowMultipleDns) {
-              throw new LdapException("Found more than (1) DN for: " + user);
+              throw new LdapException(
+                "Found " + result.entrySize() + " DNs for " + user + " : " + result.getEntryDns());
             }
           }
         } else {
