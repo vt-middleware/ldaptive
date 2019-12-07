@@ -28,6 +28,9 @@ if [[ "$VERSION" != *-SNAPSHOT ]]; then
   exit 0
 fi
 
+# Install git binary
+yum install -y git
+
 SHA=`git rev-parse --verify HEAD`
 echo "Publishing snapshot jar for revision ${SHA}"
 
