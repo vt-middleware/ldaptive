@@ -312,6 +312,14 @@ public class SearchOperationTest extends AbstractTest
       .scope(SearchScope.OBJECT).build();
     result = search.execute(objectRequest);
     TestUtils.assertEquals(expectedResult, result);
+
+    final SearchRequest subordinateRequest = SearchRequest.builder()
+      .dn(DnParser.substring(expectedResult.getEntry().getDn(), 2))
+      .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
+      .returnAttributes(returnAttrs.split("\\|"))
+      .scope(SearchScope.SUBORDINATE).build();
+    result = search.execute(subordinateRequest);
+    TestUtils.assertEquals(expectedResult, result);
   }
 
 

@@ -4,16 +4,28 @@ package org.ldaptive;
 /**
  * Enum to define the type of search scope.
  *
+ * <pre>
+   scope           ENUMERATED {
+     baseObject              (0),
+     singleLevel             (1),
+     wholeSubtree            (2),
+     subordinateSubtree      (3),
+     ...  }
+ * </pre>
+ *
  * @author  Middleware Services
  */
 public enum SearchScope {
 
-  /** object level search. */
+  /** base object search. */
   OBJECT,
 
-  /** one level search. */
+  /** single level search. */
   ONELEVEL,
 
-  /** subtree search. */
-  SUBTREE
+  /** whole subtree search. */
+  SUBTREE,
+
+  /** subordinate subtree search. See draft-sermersheim-ldap-subordinate-scope. */
+  SUBORDINATE
 }
