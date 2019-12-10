@@ -237,8 +237,13 @@
   <!-- Since ldapUrl is optional in some circumstances, it must be specified in the parent type -->
   <xsd:attributeGroup name="connectionConfigGroup">
     <xsd:attribute name="id" type="xsd:ID" use="optional"/>
+    <xsd:attribute name="autoReconnect" type="xsd:string" use="optional" default="true"/>
+    <xsd:attribute name="autoReplay" type="xsd:string" use="optional" default="true"/>
+    <xsd:attribute name="autoReconnectCondition" type="xsd:string" use="optional"/>
+    <xsd:attribute name="connectionStrategy" type="xsd:string" use="optional"/>
     <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="PT3S"/>
     <xsd:attribute name="responseTimeout" type="xsd:string" use="optional" default="PT3S"/>
+    <xsd:attribute name="reconnectTimeout" type="xsd:string" use="optional" default="PT30S"/>
     <xsd:attribute name="useStartTLS" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="trustCertificates" type="xsd:string" use="optional"/>
     <xsd:attribute name="authenticationCertificate" type="xsd:string" use="optional"/>
