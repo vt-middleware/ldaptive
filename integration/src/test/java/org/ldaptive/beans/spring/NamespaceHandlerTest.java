@@ -8,6 +8,7 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.PooledConnectionFactory;
+import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -492,7 +493,13 @@ public class NamespaceHandlerTest
   {
     Assert.assertNotNull(connectionConfig.getLdapUrl());
     Assert.assertTrue(connectionConfig.getUseStartTLS());
-    Assert.assertEquals(connectionConfig.getConnectTimeout(), Duration.ofSeconds(3));
+    Assert.assertEquals(connectionConfig.getConnectTimeout(), Duration.ofSeconds(5));
+    Assert.assertEquals(connectionConfig.getResponseTimeout(), Duration.ofSeconds(5));
+    Assert.assertEquals(connectionConfig.getReconnectTimeout(), Duration.ofMinutes(1));
+    Assert.assertFalse(connectionConfig.getAutoReconnect());
+    Assert.assertFalse(connectionConfig.getAutoReplay());
+    Assert.assertEquals(connectionConfig.getAutoReconnectCondition().getClass(), BackoffAutoReconnect.class);
+    Assert.assertEquals(connectionConfig.getConnectionStrategy().getClass(), RoundRobinConnectionStrategy.class);
     final CredentialConfig credentialConfig =  connectionConfig.getSslConfig().getCredentialConfig();
     if (credentialConfig instanceof X509CredentialConfig) {
       Assert.assertNotNull(((X509CredentialConfig) credentialConfig).getTrustCertificates());

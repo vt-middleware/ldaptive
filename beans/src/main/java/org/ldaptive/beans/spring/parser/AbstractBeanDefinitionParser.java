@@ -49,6 +49,23 @@ public abstract class AbstractBeanDefinitionParser extends AbstractSingleBeanDef
 
 
   /**
+   * Returns an object for the class type with the supplied name. Uses the no-arg constructor.
+   *
+   * @param  name  of the class to instantiate
+   *
+   * @return  class type
+   */
+  protected static Object parseClassName(final String name)
+  {
+    try {
+      return Class.forName(name).getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
+      throw new IllegalStateException("Could not create class " + name, e);
+    }
+  }
+
+
+  /**
    * Returns the first direct child element of the parent element with a name that matches any of the supplied names.
    *
    * @param  parent  element to inspect

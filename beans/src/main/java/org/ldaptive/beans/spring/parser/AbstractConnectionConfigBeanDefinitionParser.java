@@ -48,7 +48,30 @@ public abstract class AbstractConnectionConfigBeanDefinitionParser extends Abstr
       "parseDuration");
     responseTimeout.addConstructorArgValue(element.getAttribute("responseTimeout"));
     connectionConfig.addPropertyValue("responseTimeout", responseTimeout.getBeanDefinition());
+    final BeanDefinitionBuilder reconnectTimeout =  BeanDefinitionBuilder.rootBeanDefinition(
+      AbstractBeanDefinitionParser.class,
+      "parseDuration");
+    reconnectTimeout.addConstructorArgValue(element.getAttribute("reconnectTimeout"));
+    connectionConfig.addPropertyValue("reconnectTimeout", reconnectTimeout.getBeanDefinition());
     connectionConfig.addPropertyValue("useStartTLS", element.getAttribute("useStartTLS"));
+
+    connectionConfig.addPropertyValue("autoReconnect", element.getAttribute("autoReconnect"));
+    connectionConfig.addPropertyValue("autoReplay", element.getAttribute("autoReplay"));
+
+    if (element.hasAttribute("autoReconnectCondition")) {
+      final BeanDefinitionBuilder autoReconnectCondition =  BeanDefinitionBuilder.rootBeanDefinition(
+        AbstractBeanDefinitionParser.class,
+        "parseClassName");
+      autoReconnectCondition.addConstructorArgValue(element.getAttribute("autoReconnectCondition"));
+      connectionConfig.addPropertyValue("autoReconnectCondition", autoReconnectCondition.getBeanDefinition());
+    }
+    if (element.hasAttribute("connectionStrategy")) {
+      final BeanDefinitionBuilder connectionStrategy =  BeanDefinitionBuilder.rootBeanDefinition(
+        AbstractBeanDefinitionParser.class,
+        "parseClassName");
+      connectionStrategy.addConstructorArgValue(element.getAttribute("connectionStrategy"));
+      connectionConfig.addPropertyValue("connectionStrategy", connectionStrategy.getBeanDefinition());
+    }
 
     if (element.hasAttribute("trustCertificates") || element.hasAttribute("authenticationCertificate")) {
       final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);
