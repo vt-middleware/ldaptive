@@ -19,14 +19,6 @@
     </dependencySet>
     <dependencySet>
       <useProjectArtifact>false</useProjectArtifact>
-      <outputDirectory>wars</outputDirectory>
-      <useTransitiveDependencies>false</useTransitiveDependencies>
-      <includes>
-        <include>org.ldaptive:*:war</include>
-      </includes>
-    </dependencySet>
-    <dependencySet>
-      <useProjectArtifact>false</useProjectArtifact>
       <outputDirectory>sources</outputDirectory>
       <useTransitiveDependencies>false</useTransitiveDependencies>
       <includes>
@@ -42,34 +34,6 @@
         <include>**</include>
       </includes>
       <useDefaultExcludes>true</useDefaultExcludes>
-    </fileSet>
-    <fileSet>
-      <directory>target/bin</directory>
-      <outputDirectory>bin</outputDirectory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-      <includes>
-        <include>*.bat</include>
-        <include>*.config</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>target/bin</directory>
-      <outputDirectory>bin</outputDirectory>
-      <fileMode>0755</fileMode>
-      <useDefaultExcludes>true</useDefaultExcludes>
-      <excludes>
-        <exclude>*.bat</exclude>
-        <exclude>*.config</exclude>
-      </excludes>
-    </fileSet>
-    <fileSet>
-      <directory>target/lib</directory>
-      <outputDirectory>lib</outputDirectory>
-      <useDefaultExcludes>true</useDefaultExcludes>
-      <includes>
-        <include>commons-cli-*</include>
-        <include>slf4j-api-*</include>
-      </includes>
     </fileSet>
   </fileSets>
 </assembly>
