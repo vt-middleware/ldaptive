@@ -68,7 +68,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
-    <org.slf4j.version>1.7.28</org.slf4j.version>
+    <org.slf4j.version>1.7.29</org.slf4j.version>
     <io.netty.version>4.1.43.Final</io.netty.version>
     <org.springframework.version>5.2.2.RELEASE</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
@@ -412,7 +412,6 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
-        <inherited>false</inherited>
         <configuration>
           <rulesUri>file:src/main/versions/maven-version-rules.xml</rulesUri>
         </configuration>

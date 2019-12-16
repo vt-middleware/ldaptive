@@ -3,24 +3,25 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          comparisonMethod="maven"
          xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0
-                             http://mojo.codehaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
+                             https://www.mojohaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
   <rules>
     <!-- Pin this project to servlet spec 3 -->
     <rule groupId="javax.servlet" artifactId="javax.servlet-api">
       <ignoreVersions>
-        <ignoreVersion type="regex">^4.*$</ignoreVersion>
+        <ignoreVersion type="regex">^4\..*$</ignoreVersion>
       </ignoreVersions>
     </rule>
-    <!-- Pin this project to Spring 4 -->
-    <rule groupId="org.springframework">
-      <ignoreVersions>
-        <ignoreVersion type="regex">^5.*$</ignoreVersion>
-      </ignoreVersions>
-    </rule>
-    <!-- Pin this project to slf4j 1.7  -->
+    <!-- Pin this project to slf4j v1.7  -->
     <rule groupId="org.slf4j">
       <ignoreVersions>
         <ignoreVersion type="regex">^1\.8.*$</ignoreVersion>
+        <ignoreVersion type="regex">^2\.0.*$</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+    <!-- Pin this project to netty v4  -->
+    <rule groupId="io.netty" artifactId="netty-all">
+      <ignoreVersions>
+        <ignoreVersion type="regex">^5\..*$</ignoreVersion>
       </ignoreVersions>
     </rule>
   </rules>
