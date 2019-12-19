@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides methods common to property invokers.
@@ -44,25 +42,15 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       properties = PROPERTIES_CACHE.get(cacheKey);
     } else {
       properties = new HashMap<>();
+      // look for get, is, and initialize
       for (Method method : c.getMethods()) {
         if (!method.isBridge()) {
-          if (method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
-            final String mName = method.getName().substring(3);
-            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
-            if (properties.containsKey(pName)) {
-              final Method[] m = properties.get(pName);
-              m[1] = method;
-              properties.put(pName, m);
-            } else {
-              properties.put(pName, new Method[] {null, method});
-            }
-          } else if (method.getName().startsWith("get") && method.getParameterTypes().length == 0) {
+          if (method.getName().startsWith("get") && method.getParameterTypes().length == 0) {
             final String mName = method.getName().substring(3);
             final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
               m[0] = method;
-              properties.put(pName, m);
             } else {
               properties.put(pName, new Method[] {method, null});
             }
@@ -71,10 +59,9 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
             final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
             if (properties.containsKey(pName)) {
               final Method[] m = properties.get(pName);
-              // prefer any get method that may exist
+              // prefer the first method we find
               if (m[0] == null) {
                 m[0] = method;
-                properties.put(pName, m);
               }
             } else {
               properties.put(pName, new Method[] {method, null});
@@ -82,6 +69,21 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
           } else if ("initialize".equals(method.getName()) && method.getParameterTypes().length == 0) {
             final String pName = method.getName();
             properties.put(pName, new Method[] {method, method});
+          }
+        }
+      }
+      // look for setters
+      for (Method method : c.getMethods()) {
+        if (!method.isBridge()) {
+          if (method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
+            final String mName = method.getName().substring(3);
+            final String pName = mName.substring(0, 1).toLowerCase() + mName.substring(1);
+            if (properties.containsKey(pName)) {
+              final Method[] m = properties.get(pName);
+              if (m[0] != null && method.getParameterTypes()[0].equals(m[0].getReturnType())) {
+                m[1] = method;
+              }
+            }
           }
         }
       }
@@ -189,9 +191,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
         throw new IllegalArgumentException(e);
       }
     } catch (RuntimeException e) {
-      final Logger l = LoggerFactory.getLogger(AbstractPropertyInvoker.class);
-      l.error("Error instantiating type {}, with {}", type, className);
-      throw e;
+      throw new IllegalArgumentException("Error instantiating type " + type + " using  " + className, e);
     }
   }
 
@@ -401,9 +401,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
         throw new IllegalArgumentException(e);
       }
     } catch (RuntimeException e) {
-      final Logger l = LoggerFactory.getLogger(AbstractPropertyInvoker.class);
-      l.error("Error invoking {}, on {}, with params {}", method, object, arg);
-      throw e;
+      throw new IllegalArgumentException("Error invoking " + method + " on " + object + " with param " + arg, e);
     }
   }
 }

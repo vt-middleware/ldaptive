@@ -35,5 +35,31 @@
       </includes>
       <useDefaultExcludes>true</useDefaultExcludes>
     </fileSet>
+    <fileSet>
+      <directory>target/bin</directory>
+      <outputDirectory>bin</outputDirectory>
+      <useDefaultExcludes>true</useDefaultExcludes>
+      <includes>
+        <include>*.jsh</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>target/bin</directory>
+      <outputDirectory>bin</outputDirectory>
+      <fileMode>0755</fileMode>
+      <useDefaultExcludes>true</useDefaultExcludes>
+      <excludes>
+        <exclude>*.jsh</exclude>
+      </excludes>
+    </fileSet>
+    <fileSet>
+      <directory>target/lib</directory>
+      <outputDirectory>lib</outputDirectory>
+      <useDefaultExcludes>true</useDefaultExcludes>
+      <includes>
+        <include>slf4j-*</include>
+        <include>netty-all-*</include>
+      </includes>
+    </fileSet>
   </fileSets>
 </assembly>

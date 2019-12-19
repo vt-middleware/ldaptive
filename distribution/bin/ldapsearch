@@ -1,0 +1,10 @@
+#!/bin/bash
+
+PREFIX="."
+CLASSPATH="${PREFIX}:${PREFIX}/jars/ldaptive-${project.version}.jar"
+for JAR in `ls ${PREFIX}/lib/*.jar` ; do
+  CLASSPATH=${CLASSPATH}:$JAR
+done
+
+ARGS="$@"
+jshell --class-path ${CLASSPATH} -R-Dargs="${ARGS}" ${PREFIX}/bin/ldapsearch.jsh

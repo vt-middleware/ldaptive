@@ -1,8 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
-import org.ldaptive.FilterTemplate;
 import org.ldaptive.control.RequestControl;
+import org.ldaptive.filter.Filter;
+import org.ldaptive.filter.FilterParseException;
+import org.ldaptive.filter.FilterParser;
 
 /**
  * Handles properties for {@link org.ldaptive.SearchRequest}.
@@ -29,8 +31,12 @@ public class SearchRequestPropertyInvoker extends AbstractPropertyInvoker
   {
     Object newValue = value;
     if (type != String.class) {
-      if (FilterTemplate.class.isAssignableFrom(type)) {
-        newValue = new FilterTemplate(value);
+      if (Filter.class.isAssignableFrom(type)) {
+        try {
+          newValue = FilterParser.parse(value);
+        } catch (FilterParseException e) {
+          throw new IllegalArgumentException("Could not parse filter string '" + value + "'", e);
+        }
       } else if (RequestControl[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(RequestControl.class, value);
       } else {
