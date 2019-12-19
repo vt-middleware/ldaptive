@@ -465,6 +465,12 @@ public class SearchRequest extends AbstractRequestMessage
   @Override
   protected DEREncoder[] getRequestEncoders(final int id)
   {
+    if (baseDn == null) {
+      throw new NullPointerException("No baseDn defined in " + this);
+    }
+    if (searchFilter == null) {
+      throw new NullPointerException("No search filter defined in " + this);
+    }
     return new DEREncoder[] {
       new IntegerType(id),
       new ConstructedDEREncoder(
