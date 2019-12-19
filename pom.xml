@@ -68,8 +68,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
-    <org.slf4j.version>1.7.29</org.slf4j.version>
-    <io.netty.version>4.1.43.Final</io.netty.version>
+    <org.slf4j.version>1.7.30</org.slf4j.version>
+    <io.netty.version>4.1.44.Final</io.netty.version>
     <org.springframework.version>5.2.2.RELEASE</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.0.0</japicmp.oldVersion>
