@@ -1158,20 +1158,27 @@ public final class NettyConnection extends TransportConnection
         inboundException);
       if (connectionConfig.getAutoReconnect() && !isOpening() && !isClosing()) {
         LOGGER.trace("scheduling reconnect thread for connection {}", NettyConnection.this);
-        connectionExecutor.execute(
-          () -> {
-            if (reconnecting.compareAndSet(false, true)) {
-              try {
-                reconnect();
-              } catch (Exception e) {
-                LOGGER.warn("Reconnect attempt failed for {}", NettyConnection.this, e);
-              } finally {
-                reconnecting.set(false);
+        if (connectionExecutor != null && !connectionExecutor.isShutdown()) {
+          connectionExecutor.execute(
+            () -> {
+              if (reconnecting.compareAndSet(false, true)) {
+                try {
+                  reconnect();
+                } catch (Exception e) {
+                  LOGGER.warn("Reconnect attempt failed for {}", NettyConnection.this, e);
+                } finally {
+                  reconnecting.set(false);
+                }
+              } else {
+                LOGGER.debug("Ignoring reconnect attempt, reconnect already in progress for {}", NettyConnection.this);
               }
-            } else {
-              LOGGER.debug("Ignoring reconnect attempt, reconnect already in progress for {}", NettyConnection.this);
-            }
-          });
+            });
+        } else {
+          LOGGER.warn(
+            "Reconnect could not be scheduled on executor {} for {}",
+            connectionExecutor,
+            NettyConnection.this);
+        }
       } else {
         notifyOperationHandlesOfClose();
       }
