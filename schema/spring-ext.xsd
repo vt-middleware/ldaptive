@@ -15,9 +15,13 @@
   <xsd:element name="aggregate-authenticator" type="aggregateAuthenticatorType"/>
   <xsd:element name="pooled-connection-factory" type="pooledConnectionFactoryType"/>
   <xsd:element name="connection-factory" type="connectionFactoryType"/>
+  <xsd:element name="connection-pool" type="connectionPoolType"/>
   <xsd:element name="connection-config" type="connectionConfigType"/>
-  <xsd:element name="search-operation" type="searchOperationType"/>
-  <xsd:element name="search-operation-worker" type="searchOperationType"/>
+  <xsd:element name="search-executor" type="searchExecutorType"/>
+  <xsd:element name="parallel-search-executor" type="searchExecutorType"/>
+  <xsd:element name="parallel-pooled-search-executor" type="searchExecutorType"/>
+  <xsd:element name="aggregate-search-executor" type="searchExecutorType"/>
+  <xsd:element name="aggregate-pooled-search-executor" type="searchExecutorType"/>
 
   <!-- Authenticator configuration -->
   <xsd:complexType name="anonymousSearchAuthenticatorType">
@@ -114,6 +118,7 @@
   </xsd:complexType>
 
   <xsd:complexType name="baseAuthenticatorType">
+    <xsd:attribute name="provider" type="xsd:string" use="optional"/>
     <xsd:attribute name="ldapUrl" type="xsd:string" use="required"/>
     <xsd:attributeGroup ref="connectionPoolGroup"/>
     <xsd:attributeGroup ref="connectionConfigGroup"/>
@@ -179,7 +184,7 @@
     <xsd:attribute name="id" type="xsd:ID" use="optional"/>
   </xsd:complexType>
 
-  <!-- Standard ldaptive bean configuration for connection factories, pools, config, search operations -->
+  <!-- Standard ldaptive bean configuration for connection factories, pools, config, search executors -->
   <xsd:complexType name="pooledConnectionFactoryType">
     <xsd:complexContent>
       <xsd:extension base="connectionPoolType"/>
@@ -196,7 +201,9 @@
 
   <xsd:complexType name="connectionFactoryType">
     <xsd:complexContent>
-      <xsd:extension base="connectionConfigType"/>
+      <xsd:extension base="connectionConfigType">
+        <xsd:attribute name="provider" type="xsd:string" use="optional"/>
+      </xsd:extension>
     </xsd:complexContent>
   </xsd:complexType>
 
@@ -207,17 +214,16 @@
     <xsd:attributeGroup ref="connectionConfigGroup"/>
   </xsd:complexType>
 
-  <xsd:complexType name="searchOperationType">
+  <xsd:complexType name="searchExecutorType">
     <xsd:attribute name="id" type="xsd:ID" use="optional"/>
     <xsd:attribute name="baseDn" type="xsd:string" use="optional" default=""/>
-    <xsd:attribute name="searchScope" type="xsd:string" use="optional" default="SUBTREE"/>
-    <xsd:attribute name="derefAliases" type="xsd:string" use="optional" default="NEVER"/>
-    <xsd:attribute name="sizeLimit" type="xsd:string" use="optional"/>
-    <xsd:attribute name="timeLimit" type="xsd:string" use="optional"/>
-    <xsd:attribute name="typesOnly" type="xsd:string" use="optional" default="false"/>
-    <xsd:attribute name="filter" type="xsd:string" use="optional"/>
+    <xsd:attribute name="searchFilter" type="xsd:string" use="optional"/>
     <xsd:attribute name="returnAttributes" type="xsd:string" use="optional"/>
+    <xsd:attribute name="searchScope" type="xsd:string" use="optional" default="SUBTREE"/>
+    <xsd:attribute name="timeLimit" type="xsd:string" use="optional"/>
+    <xsd:attribute name="sizeLimit" type="xsd:string" use="optional"/>
     <xsd:attribute name="binaryAttributes" type="xsd:string" use="optional"/>
+    <xsd:attribute name="sortBehavior" type="xsd:string" use="optional" default="UNORDERED"/>
   </xsd:complexType>
 
   <xsd:attributeGroup name="connectionPoolGroup">
@@ -228,7 +234,6 @@
     <xsd:attribute name="validateOnCheckOut" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="validatePeriodically" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="validatePeriod" type="xsd:string" use="optional" default="PT5M"/>
-    <xsd:attribute name="validateTimeout" type="xsd:string" use="optional" default="PT5S"/>
     <xsd:attribute name="prunePeriod" type="xsd:string" use="optional" default="PT5M"/>
     <xsd:attribute name="idleTime" type="xsd:string" use="optional" default="PT10M"/>
     <xsd:attribute name="disablePooling" type="xsd:string" use="optional" default="false"/>
@@ -237,13 +242,8 @@
   <!-- Since ldapUrl is optional in some circumstances, it must be specified in the parent type -->
   <xsd:attributeGroup name="connectionConfigGroup">
     <xsd:attribute name="id" type="xsd:ID" use="optional"/>
-    <xsd:attribute name="autoReconnect" type="xsd:string" use="optional" default="true"/>
-    <xsd:attribute name="autoReplay" type="xsd:string" use="optional" default="true"/>
-    <xsd:attribute name="autoReconnectCondition" type="xsd:string" use="optional"/>
-    <xsd:attribute name="connectionStrategy" type="xsd:string" use="optional"/>
     <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="PT3S"/>
-    <xsd:attribute name="responseTimeout" type="xsd:string" use="optional" default="PT3S"/>
-    <xsd:attribute name="reconnectTimeout" type="xsd:string" use="optional" default="PT30S"/>
+    <xsd:attribute name="useSSL" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="useStartTLS" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="trustCertificates" type="xsd:string" use="optional"/>
     <xsd:attribute name="authenticationCertificate" type="xsd:string" use="optional"/>
