@@ -13,6 +13,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.ThreadPerTaskExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides utility methods for this package.
@@ -22,9 +24,19 @@ import io.netty.util.concurrent.ThreadPerTaskExecutor;
 public final class NettyUtils
 {
 
+  /** Logger for this class. */
+  private static final Logger LOGGER = LoggerFactory.getLogger(NettyUtils.class);
+
 
   /** Default constructor. */
   private NettyUtils() {}
+
+
+  // emit a log message for the detected transport type
+  static {
+    LOGGER.debug("Detecting Epoll transport: {}", Epoll.isAvailable());
+    LOGGER.debug("Detecting KQueue transport: {}", KQueue.isAvailable());
+  }
 
 
   /**
