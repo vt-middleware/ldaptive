@@ -133,7 +133,7 @@
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>7.0.0</version>
+        <version>7.1.0</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -255,7 +255,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.27</version>
+              <version>8.28</version>
             </dependency>
           </dependencies>
         </plugin>

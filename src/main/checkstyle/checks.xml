@@ -47,10 +47,7 @@
     <module name="JavadocType">
       <property name="authorFormat" value="\S+"/>
     </module>
-    <module name="JavadocMethod">
-      <property name="allowThrowsTagsForSubclasses" value="true"/>
-      <property name="allowUndeclaredRTE" value="true"/>
-    </module>
+    <module name="JavadocMethod"/>
     <module name="JavadocVariable"/>
     <module name="JavadocStyle">
       <property name="checkFirstSentence" value="false"/>
