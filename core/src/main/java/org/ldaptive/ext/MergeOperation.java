@@ -102,6 +102,7 @@ public class MergeOperation
       if (searchResult.getResultCode() != ResultCode.SUCCESS &&
           searchResult.getResultCode() != ResultCode.NO_SUCH_OBJECT) {
         throw new LdapException(
+          searchResult.getResultCode(),
           String.format(
             "Error searching for entry: %s, response did not return success or no_such_object: %s",
             sourceEntry,

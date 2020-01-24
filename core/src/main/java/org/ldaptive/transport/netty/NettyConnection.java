@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -270,7 +269,7 @@ public final class NettyConnection extends TransportConnection
           try {
             final Result result = operation(new StartTLSRequest());
             if (!result.isSuccess()) {
-              throw new ConnectException("StartTLS returned response: " + result);
+              throw new ConnectException(ResultCode.CONNECT_ERROR, "StartTLS returned response: " + result);
             }
           } catch (Exception e) {
             LOGGER.error("StartTLS failed on connection open for {}", this, e);
@@ -284,7 +283,9 @@ public final class NettyConnection extends TransportConnection
             try {
               final Result result = initializer.initialize(this);
               if (!result.isSuccess()) {
-                throw new ConnectException("Connection initializer returned response: " + result);
+                throw new ConnectException(
+                  ResultCode.CONNECT_ERROR,
+                  "Connection initializer returned response: " + result);
               }
             } catch (Exception e) {
               LOGGER.error("Connection initializer {} failed for {}", initializer, this, e);
@@ -301,7 +302,7 @@ public final class NettyConnection extends TransportConnection
       }
     } else {
       LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
-      throw new ConnectException("Open in progress");
+      throw new ConnectException(ResultCode.CONNECT_ERROR, "Open in progress");
     }
   }
 
@@ -329,7 +330,7 @@ public final class NettyConnection extends TransportConnection
       try {
         handler = createSslHandler(connectionConfig);
       } catch (SSLException e) {
-        throw new ConnectException(e);
+        throw new ConnectException(ResultCode.CONNECT_ERROR, e);
       }
     }
     final ClientInitializer initializer = new ClientInitializer(handler);
@@ -355,13 +356,13 @@ public final class NettyConnection extends TransportConnection
     }
     LOGGER.trace("bootstrap connect returned {} for {}", future, this);
     if (future.isCancelled()) {
-      throw new ConnectException("Connection cancelled");
+      throw new ConnectException(ResultCode.CONNECT_ERROR, "Connection cancelled");
     }
     if (!future.isSuccess()) {
       if (future.cause() != null) {
-        throw new ConnectException(future.cause());
+        throw new ConnectException(ResultCode.SERVER_DOWN, future.cause());
       } else {
-        throw new ConnectException("Connection could not be opened");
+        throw new ConnectException(ResultCode.SERVER_DOWN, "Connection could not be opened");
       }
     }
 
@@ -371,7 +372,7 @@ public final class NettyConnection extends TransportConnection
         waitForSSLHandshake(future.channel());
       } catch (SSLException e) {
         future.channel().close();
-        throw new ConnectException(e);
+        throw new ConnectException(ResultCode.CONNECT_ERROR, e);
       }
     }
 
@@ -486,7 +487,7 @@ public final class NettyConnection extends TransportConnection
   {
     throwIfClosed();
     if (channel.pipeline().get(SslHandler.class) != null) {
-      throw new ConnectException("SslHandler is already in use");
+      throw new ConnectException(ResultCode.LOCAL_ERROR, "SslHandler is already in use");
     }
     final DefaultExtendedOperationHandle handle = new DefaultExtendedOperationHandle(
       request,
@@ -496,17 +497,17 @@ public final class NettyConnection extends TransportConnection
     try {
       result = handle.execute();
     } catch (LdapException e) {
-      throw new ConnectException("StartTLS operation failed", e);
+      throw new ConnectException(ResultCode.CONNECT_ERROR, "StartTLS operation failed", e);
     }
     if (result.isSuccess()) {
       try {
         channel.pipeline().addFirst("ssl", createSslHandler(connectionConfig));
         waitForSSLHandshake(channel);
       } catch (SSLException e) {
-        throw new ConnectException(e);
+        throw new ConnectException(ResultCode.CONNECT_ERROR, e);
       }
     } else {
-      throw new ConnectException("StartTLS operation failed with result " + result);
+      throw new ConnectException(ResultCode.CONNECT_ERROR, "StartTLS operation failed with result " + result);
     }
     return result;
   }
@@ -562,7 +563,7 @@ public final class NettyConnection extends TransportConnection
   {
     throwIfClosed();
     if (!bindLock.writeLock().tryLock()) {
-      throw new LdapException("Operation in progress, cannot send bind request");
+      throw new LdapException(ResultCode.LOCAL_ERROR, "Operation in progress, cannot send bind request");
     }
     try {
       final SaslClient client = request.getSaslClient();
@@ -573,11 +574,11 @@ public final class NettyConnection extends TransportConnection
         if (e instanceof LdapException) {
           throw (LdapException) e;
         } else {
-          throw new LdapException(e);
+          throw new LdapException(ResultCode.LOCAL_ERROR, e);
         }
       }
       if (result == null) {
-        throw new LdapException("SASL operation failed");
+        throw new LdapException(ResultCode.LOCAL_ERROR, "SASL operation failed");
       }
       return result;
     } finally {
@@ -602,7 +603,7 @@ public final class NettyConnection extends TransportConnection
   {
     throwIfClosed();
     if (!bindLock.writeLock().tryLock()) {
-      throw new LdapException("Operation in progress, cannot send bind request");
+      throw new LdapException(ResultCode.LOCAL_ERROR, "Operation in progress, cannot send bind request");
     }
     try {
       final SaslClient client = request.getSaslClient();
@@ -628,7 +629,7 @@ public final class NettyConnection extends TransportConnection
           }
           return response;
         } catch (Exception e) {
-          throw new LdapException("SASL bind operation failed", e);
+          throw new LdapException(ResultCode.LOCAL_ERROR, "SASL bind operation failed", e);
         } finally {
           if (!saslSecurity) {
             defaultClient.dispose();
@@ -642,11 +643,11 @@ public final class NettyConnection extends TransportConnection
           if (e instanceof LdapException) {
             throw (LdapException) e;
           } else {
-            throw new LdapException(e);
+            throw new LdapException(ResultCode.LOCAL_ERROR, e);
           }
         }
         if (result == null) {
-          throw new LdapException("SASL GSSAPI operation failed");
+          throw new LdapException(ResultCode.LOCAL_ERROR, "SASL GSSAPI operation failed");
         }
         return result;
       }
@@ -675,7 +676,7 @@ public final class NettyConnection extends TransportConnection
       try {
         if (!isOpen()) {
           if (handle != null) {
-            handle.exception(new LdapException("Connection is not open"));
+            handle.exception(new LdapException(ResultCode.SERVER_DOWN, "Connection is not open"));
           }
         } else {
           if (bindLock.readLock().tryLock()) {
@@ -688,7 +689,7 @@ public final class NettyConnection extends TransportConnection
             }
           } else {
             if (handle != null) {
-              handle.exception(new LdapException("Bind in progress"));
+              handle.exception(new LdapException(ResultCode.LOCAL_ERROR, "Bind in progress"));
             }
           }
         }
@@ -697,7 +698,7 @@ public final class NettyConnection extends TransportConnection
       }
     } else {
       if (handle != null) {
-        handle.exception(new LdapException("Reconnect in progress"));
+        handle.exception(new LdapException(ResultCode.SERVER_DOWN, "Reconnect in progress"));
       }
     }
   }
@@ -783,7 +784,7 @@ public final class NettyConnection extends TransportConnection
       if (gotReconnectLock) {
         try {
           if (!isOpen()) {
-            handle.exception(new LdapException("Connection is closed, write aborted"));
+            handle.exception(new LdapException(ResultCode.SERVER_DOWN, "Connection is closed, write aborted"));
           } else {
             if (bindLock.readLock().tryLock()) {
               try {
@@ -793,11 +794,13 @@ public final class NettyConnection extends TransportConnection
                 handle.messageID(encodedRequest.getMessageID());
                 try {
                   if (pendingResponses.put(encodedRequest.getMessageID(), handle) != null) {
-                    throw new IllegalStateException("Request already exists for ID " + encodedRequest.getMessageID());
+                    throw new LdapException(
+                      ResultCode.ENCODING_ERROR,
+                      "Request already exists for ID " + encodedRequest.getMessageID());
                   }
                 } catch (LdapException e) {
                   if (inboundException != null) {
-                    throw new LdapException(e.getMessage(), inboundException);
+                    throw new LdapException(ResultCode.SERVER_DOWN, e.getMessage(), inboundException);
                   }
                   throw e;
                 }
@@ -818,17 +821,21 @@ public final class NettyConnection extends TransportConnection
                 bindLock.readLock().unlock();
               }
             } else {
-              handle.exception(new LdapException("Bind in progress"));
+              handle.exception(new LdapException(ResultCode.LOCAL_ERROR, "Bind in progress"));
             }
           }
         } finally {
           reconnectLock.readLock().unlock();
         }
       } else {
-        handle.exception(new LdapException("Reconnect in progress"));
+        handle.exception(new LdapException(ResultCode.SERVER_DOWN, "Reconnect in progress"));
       }
     } catch (Exception e) {
-      handle.exception(e);
+      if (e instanceof LdapException) {
+        handle.exception((LdapException) e);
+      } else {
+        handle.exception(new LdapException(ResultCode.LOCAL_ERROR, e));
+      }
     }
   }
 
@@ -912,13 +919,18 @@ public final class NettyConnection extends TransportConnection
       } else if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Notifying {} operation handles for {} of connection close", pendingResponses.size(), this);
       }
-      if (messageWorkerGroup != null) {
-        messageWorkerGroup.execute(() ->
-          pendingResponses.notifyOperationHandles(
-            Objects.requireNonNullElseGet(inboundException, () -> new LdapException("Connection closed"))));
+      final LdapException ex;
+      if (inboundException == null) {
+        ex = new LdapException(ResultCode.SERVER_DOWN, "Connection closed");
+      } else if (inboundException instanceof LdapException) {
+        ex = (LdapException) inboundException;
       } else {
-        pendingResponses.notifyOperationHandles(
-          Objects.requireNonNullElseGet(inboundException, () -> new LdapException("Connection closed")));
+        ex = new LdapException(ResultCode.SERVER_DOWN, inboundException);
+      }
+      if (messageWorkerGroup != null) {
+        messageWorkerGroup.execute(() -> pendingResponses.notifyOperationHandles(ex));
+      } else {
+        pendingResponses.notifyOperationHandles(ex);
       }
     }
   }
@@ -1049,7 +1061,7 @@ public final class NettyConnection extends TransportConnection
     throws LdapException
   {
     if (!isOpen()) {
-      throw new LdapException("Connection is closed");
+      throw new LdapException(ResultCode.SERVER_DOWN, "Connection is closed");
     }
   }
 
@@ -1314,11 +1326,12 @@ public final class NettyConnection extends TransportConnection
 
     @Override
     protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
+      throws LdapException
     {
       LOGGER.trace("received {} bytes", in.readableBytes());
       final ResponseParser parser = new ResponseParser();
       final Message message =  parser.parse(new NettyDERBuffer(in))
-        .orElseThrow(() -> new IllegalArgumentException("No response found"));
+        .orElseThrow(() -> new LdapException(ResultCode.DECODING_ERROR, "No response found"));
       out.add(message);
       if (ctx != null) {
         ctx.fireUserEventTriggered(MessageStatus.DECODED);
@@ -1454,7 +1467,8 @@ public final class NettyConnection extends TransportConnection
             LOGGER.debug("validating {} threw unexpected exception", NettyConnection.this, e);
           }
           if (!success) {
-            ctx.fireExceptionCaught(new LdapException("Connection validation failed for " + NettyConnection.this));
+            ctx.fireExceptionCaught(
+              new LdapException(ResultCode.SERVER_DOWN, "Connection validation failed for " + NettyConnection.this));
           }
         },
         connectionValidator.getValidatePeriod().toMillis(),

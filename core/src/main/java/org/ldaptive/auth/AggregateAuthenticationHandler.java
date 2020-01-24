@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.LdapException;
+import org.ldaptive.ResultCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +84,9 @@ public class AggregateAuthenticationHandler implements AuthenticationHandler
     final String[] labeledDn = criteria.getDn().split(":", 2);
     final AuthenticationHandler ah = authenticationHandlers.get(labeledDn[0]);
     if (ah == null) {
-      throw new LdapException("Could not find authentication handler for label: " + labeledDn[0]);
+      throw new LdapException(
+        ResultCode.PARAM_ERROR,
+        "Could not find authentication handler for label: " + labeledDn[0]);
     }
     return ah.authenticate(new AuthenticationCriteria(labeledDn[1], criteria.getAuthenticationRequest()));
   }

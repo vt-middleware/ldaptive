@@ -3,6 +3,7 @@ package org.ldaptive.filter;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.ldaptive.ResultCode;
 
 /**
  * Parses an LDAP search filter string using regular expressions.
@@ -159,7 +160,7 @@ public class RegexFilterFunction extends AbstractFilterFunction
             endsWith != null ? FilterUtils.parseAssertionValue(endsWith) : null,
             contains != null ? FilterUtils.parseAssertionValue(contains) : null);
         } catch (IllegalArgumentException e) {
-          throw new FilterParseException(e);
+          throw new FilterParseException(ResultCode.FILTER_ERROR, e);
         }
       }
     }
@@ -189,7 +190,7 @@ public class RegexFilterFunction extends AbstractFilterFunction
       try {
         return new ExtensibleFilter(rule, attr, FilterUtils.parseAssertionValue(value), dn);
       } catch (IllegalArgumentException e) {
-        throw new FilterParseException(e);
+        throw new FilterParseException(ResultCode.FILTER_ERROR, e);
       }
       // CheckStyle:MagicNumber ON
     }
@@ -276,7 +277,7 @@ public class RegexFilterFunction extends AbstractFilterFunction
     for (String s : values) {
       final Matcher m = ESCAPE_CHARS_PATTERN.matcher(s);
       if  (m.find()) {
-        throw new FilterParseException("Invalid filter syntax, contains unescaped characters");
+        throw new FilterParseException(ResultCode.FILTER_ERROR, "Invalid filter syntax, contains unescaped characters");
       }
     }
   }

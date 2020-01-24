@@ -11,6 +11,7 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.ResultCode;
 
 /**
  * Provides implementation common to compare authentication handlers.
@@ -133,7 +134,7 @@ public class CompareAuthenticationHandler extends AbstractAuthenticationHandler
       md.update(credential.getBytes());
       return md.digest();
     } catch (NoSuchAlgorithmException e) {
-      throw new LdapException(e);
+      throw new LdapException(ResultCode.AUTH_UNKNOWN, e);
     }
   }
 

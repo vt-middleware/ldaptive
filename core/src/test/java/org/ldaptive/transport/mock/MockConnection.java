@@ -20,6 +20,7 @@ import org.ldaptive.ModifyDnResponse;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ModifyResponse;
 import org.ldaptive.OperationHandle;
+import org.ldaptive.ResultCode;
 import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.UnbindRequest;
@@ -87,7 +88,7 @@ public final class MockConnection extends TransportConnection
     throws LdapException
   {
     if (!openPredicate.test(url)) {
-      throw new ConnectException("Cannot connect to " + url.getHostnameWithSchemeAndPort());
+      throw new ConnectException(ResultCode.CONNECT_ERROR, "Cannot connect to " + url.getHostnameWithSchemeAndPort());
     }
     ldapURL = url;
     open = true;

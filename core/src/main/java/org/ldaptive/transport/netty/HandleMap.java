@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldaptive.LdapException;
+import org.ldaptive.ResultCode;
 import org.ldaptive.extended.UnsolicitedNotification;
 import org.ldaptive.transport.DefaultOperationHandle;
 import org.slf4j.Logger;
@@ -97,7 +98,7 @@ final class HandleMap
     throws LdapException
   {
     if (!open) {
-      throw new LdapException("Connection is closed, could not store handle " + handle);
+      throw new LdapException(ResultCode.CONNECT_ERROR, "Connection is closed, could not store handle " + handle);
     }
     return pending.putIfAbsent(id, handle);
   }
@@ -161,11 +162,11 @@ final class HandleMap
 
   /**
    * Notifies all operation handles in the queue that an exception has occurred. See {@link
-   * DefaultOperationHandle#exception(Throwable)}. This method removes all handles from the queue.
+   * DefaultOperationHandle#exception(LdapException)}. This method removes all handles from the queue.
    *
    * @param  e  exception to provides to handles
    */
-  public void notifyOperationHandles(final Throwable e)
+  public void notifyOperationHandles(final LdapException e)
   {
     if (notificationLock.compareAndSet(false, true)) {
       try {
