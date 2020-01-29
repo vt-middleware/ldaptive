@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
+import org.ldaptive.ResultCode;
+
 /**
  * Base implementation to parse an LDAP search filter string.
  *
@@ -18,11 +20,15 @@ public abstract class AbstractFilterFunction implements FilterFunction
     // Check for balanced parentheses
     if (filter.startsWith("(")) {
       if (!filter.endsWith(")")) {
-        throw new FilterParseException("Unbalanced parentheses. Opening paren without closing paren.");
+        throw new FilterParseException(
+          ResultCode.FILTER_ERROR,
+          "Unbalanced parentheses. Opening paren without closing paren.");
       }
       balancedFilter = filter;
     } else if (filter.endsWith(")")) {
-      throw new FilterParseException("Unbalanced parentheses. Closing paren without opening paren.");
+      throw new FilterParseException(
+        ResultCode.FILTER_ERROR,
+        "Unbalanced parentheses. Closing paren without opening paren.");
     } else {
       // Allow entire filter strings without enclosing parentheses
       balancedFilter = "(".concat(filter).concat(")");
@@ -46,7 +52,9 @@ public abstract class AbstractFilterFunction implements FilterFunction
   {
     final int end = filter.length() - 1;
     if (filter.charAt(0) != '(' || filter.charAt(end) != ')') {
-      throw new FilterParseException("Filter must be surround by parentheses: '" + filter + "'");
+      throw new FilterParseException(
+        ResultCode.FILTER_ERROR,
+        "Filter must be surround by parentheses: '" + filter + "'");
     }
     int pos = 1;
     final Filter searchFilter;
@@ -68,7 +76,7 @@ public abstract class AbstractFilterFunction implements FilterFunction
       // attempt to match a non-set filter type
       searchFilter = parseFilterComp(filter);
       if (searchFilter == null) {
-        throw new FilterParseException("Could not determine filter type for '" + filter + "'");
+        throw new FilterParseException(ResultCode.FILTER_ERROR, "Could not determine filter type for '" + filter + "'");
       }
       break;
     }
@@ -94,13 +102,15 @@ public abstract class AbstractFilterFunction implements FilterFunction
     int pos = start;
     int closeIndex = findMatchingParenPosition(filter, pos);
     if (filter.charAt(pos) != '(' || closeIndex == -1 || closeIndex == end) {
-      throw new FilterParseException("Invalid filter syntax, missing parenthesis after " + set.getType());
+      throw new FilterParseException(
+        ResultCode.FILTER_ERROR,
+        "Invalid filter syntax, missing parenthesis after " + set.getType());
     }
     while (pos < end) {
       try {
         set.add(readNextComponent(filter.substring(pos, closeIndex + 1)));
       } catch (Exception e) {
-        throw new FilterParseException(e);
+        throw new FilterParseException(ResultCode.FILTER_ERROR, e);
       }
       pos = closeIndex + 1;
       if (pos < end) {
@@ -126,10 +136,10 @@ public abstract class AbstractFilterFunction implements FilterFunction
     throws FilterParseException
   {
     if (filter == null || filter.length() == 0) {
-      throw new FilterParseException("Filter cannot be null or empty");
+      throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter cannot be null or empty");
     }
     if (filter.charAt(start) != '(') {
-      throw new FilterParseException("Filter must begin with '('");
+      throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter must begin with '('");
     }
     int pos = start + 1;
     int parenCount = 1;

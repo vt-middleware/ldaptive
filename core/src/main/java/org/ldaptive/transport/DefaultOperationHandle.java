@@ -5,7 +5,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import org.ldaptive.AbandonRequest;
 import org.ldaptive.BindRequest;
@@ -13,6 +12,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.OperationHandle;
 import org.ldaptive.Request;
 import org.ldaptive.Result;
+import org.ldaptive.ResultCode;
 import org.ldaptive.UnbindRequest;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.CancelRequest;
@@ -155,7 +155,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       } else {
         if (!responseDone.await(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
           abandon(
-            new TimeoutException("No response received in " + responseTimeout.toMillis() + "ms for handle " + this));
+            new LdapException(
+              ResultCode.LDAP_TIMEOUT,
+              "No response received in " + responseTimeout.toMillis() + "ms for handle " + this));
           logger.trace("await abandoned handle {}", this);
         } else if (result != null && exception == null) {
           logger.trace("await received result {} for handle {}", result, this);
@@ -167,10 +169,12 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       }
     } catch (InterruptedException e) {
       logger.trace("await interrupted for handle {} waiting for response", this, e);
-      exception(e);
+      exception(new LdapException(ResultCode.LOCAL_ERROR, e));
     }
     if (exception == null) {
-      throw new IllegalStateException("Response completed for handle " + this + " without a result or exception");
+      throw new LdapException(
+        ResultCode.LOCAL_ERROR,
+        "Response completed for handle " + this + " without a result or exception");
     }
     throw exception;
   }
@@ -269,7 +273,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   @Override
   public void abandon()
   {
-    abandon(new LdapException("Request abandoned"));
+    abandon(new LdapException(ResultCode.USER_CANCELLED, "Request abandoned"));
   }
 
 
@@ -279,7 +283,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    *
    * @param  cause  the reason this request was abandoned
    */
-  public void abandon(final Throwable cause)
+  public void abandon(final LdapException cause)
   {
     if (sentTime == null) {
       logger.warn("Request has not been sent for {}.", this);
@@ -550,25 +554,19 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    *
    * @param  e  exception
    */
-  public void exception(final Throwable e)
+  public void exception(final LdapException e)
   {
     if (e == null) {
       throw new IllegalArgumentException("Exception cannot be null for handle " + this);
     }
-    final LdapException ldapEx;
-    if (e instanceof LdapException) {
-      ldapEx = (LdapException) e;
-    } else {
-      ldapEx = new LdapException(e);
-    }
     if (onException != null) {
       try {
-        onException.accept(ldapEx);
+        onException.accept(e);
       } catch (Exception ex) {
         logger.warn("Exception consumer {} in handle {} threw an exception", onException, this, ex);
       }
     }
-    exception = ldapEx;
+    exception = e;
     complete();
   }
 

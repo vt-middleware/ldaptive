@@ -12,6 +12,9 @@ public class LdapException extends Exception
   /** serialVersionUID. */
   private static final long serialVersionUID = 6812614366508784841L;
 
+  /** Optional result code associated with this exception. */
+  private final ResultCode resultCode;
+
 
   /**
    * Creates a new ldap exception based on the supplied result.
@@ -20,7 +23,7 @@ public class LdapException extends Exception
    */
   public LdapException(final Result result)
   {
-    this(formatResult(result));
+    this(result.getResultCode(), formatResult(result));
   }
 
 
@@ -31,7 +34,20 @@ public class LdapException extends Exception
    */
   public LdapException(final String msg)
   {
+    this(null, msg);
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  code result code describing this exception
+   * @param  msg  describing this exception
+   */
+  public LdapException(final ResultCode code, final String msg)
+  {
     super(msg);
+    resultCode = code;
   }
 
 
@@ -42,7 +58,20 @@ public class LdapException extends Exception
    */
   public LdapException(final Throwable e)
   {
+    this((ResultCode) null, e);
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  code result code describing this exception
+   * @param  e  underlying exception
+   */
+  public LdapException(final ResultCode code, final Throwable e)
+  {
     super(e);
+    resultCode = code;
   }
 
 
@@ -54,7 +83,32 @@ public class LdapException extends Exception
    */
   public LdapException(final String msg, final Throwable e)
   {
+    this(null, msg, e);
+  }
+
+
+  /**
+   * Creates a new ldap exception.
+   *
+   * @param  code result code describing this exception
+   * @param  msg  describing this exception
+   * @param  e  underlying exception
+   */
+  public LdapException(final ResultCode code, final String msg, final Throwable e)
+  {
     super(msg, e);
+    resultCode = code;
+  }
+
+
+  /**
+   * Returns the result code.
+   *
+   * @return  result code or null
+   */
+  public ResultCode getResultCode()
+  {
+    return resultCode;
   }
 
 

@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.ResultCode;
 
 /**
  * Provides utility methods for this package.
@@ -111,13 +112,15 @@ public final class FilterUtils
     for (int i = 0; i < value.length(); i++) {
       final char c = value.charAt(i);
       if (c == '\0' || c == '(' || c == ')') {
-        throw new FilterParseException("Assertion value contains unescaped characters");
+        throw new FilterParseException(ResultCode.FILTER_ERROR, "Assertion value contains unescaped characters");
       } else if (c == '\\') {
         final char[] hexValue = new char[]{value.charAt(++i), value.charAt(++i)};
         try {
           bytes.write(LdapUtils.hexDecode(hexValue));
         } catch (IOException e) {
-          throw new FilterParseException("Could not hex decode " + Arrays.toString(hexValue) + " in " + value);
+          throw new FilterParseException(
+            ResultCode.FILTER_ERROR,
+            "Could not hex decode " + Arrays.toString(hexValue) + " in " + value);
         }
       } else {
         bytes.write(c);

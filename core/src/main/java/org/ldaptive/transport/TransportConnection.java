@@ -11,6 +11,7 @@ import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.InitialRetryMetadata;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
+import org.ldaptive.ResultCode;
 import org.ldaptive.RetryMetadata;
 import org.ldaptive.UnbindRequest;
 import org.slf4j.Logger;
@@ -70,7 +71,7 @@ public abstract class TransportConnection implements Connection
     if (openLock.tryLock()) {
       try {
         if (isOpen()) {
-          throw new ConnectException("Connection is already open");
+          throw new ConnectException(ResultCode.CONNECT_ERROR, "Connection is already open");
         }
         final RetryMetadata metadata = new InitialRetryMetadata(lastSuccessfulOpen);
         LdapException lastThrown;
@@ -96,7 +97,7 @@ public abstract class TransportConnection implements Connection
       }
     } else {
       LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
-      throw new LdapException("Open in progress");
+      throw new LdapException(ResultCode.CONNECT_ERROR, "Open in progress");
     }
   }
 
@@ -125,7 +126,7 @@ public abstract class TransportConnection implements Connection
     if (openLock.tryLock()) {
       try {
         if (isOpen()) {
-          throw new ConnectException("Connection is already open");
+          throw new ConnectException(ResultCode.CONNECT_ERROR, "Connection is already open");
         }
         LdapException lastThrown = null;
         while (connectionConfig.getAutoReconnectCondition().test(metadata)) {
@@ -150,7 +151,7 @@ public abstract class TransportConnection implements Connection
       }
     } else {
       LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
-      throw new LdapException("Open in progress");
+      throw new LdapException(ResultCode.CONNECT_ERROR, "Open in progress");
     }
   }
 

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.ResultCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +85,7 @@ public class AggregateEntryResolver implements EntryResolver
     final String[] labeledDn = criteria.getDn().split(":", 2);
     final EntryResolver er = entryResolvers.get(labeledDn[0]);
     if (er == null) {
-      throw new LdapException("Could not find entry resolver for label: " + labeledDn[0]);
+      throw new LdapException(ResultCode.PARAM_ERROR, "Could not find entry resolver for label: " + labeledDn[0]);
     }
     return er.resolve(new AuthenticationCriteria(labeledDn[1], criteria.getAuthenticationRequest()), response);
   }

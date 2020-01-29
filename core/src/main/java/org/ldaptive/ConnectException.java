@@ -16,33 +16,36 @@ public class ConnectException extends LdapException
   /**
    * Creates a new connect exception.
    *
+   * @param  code result code describing this exception
    * @param  msg  describing this exception
    */
-  public ConnectException(final String msg)
+  public ConnectException(final ResultCode code, final String msg)
   {
-    super(msg);
+    super(code, msg);
   }
 
 
   /**
    * Creates a new connect exception.
    *
+   * @param  code result code describing this exception
    * @param  e  underlying exception
    */
-  public ConnectException(final Throwable e)
+  public ConnectException(final ResultCode code, final Throwable e)
   {
-    super(e);
+    super(code, e);
   }
 
 
   /**
    * Creates a new connect exception.
    *
+   * @param  code result code describing this exception
    * @param  msg  describing this exception
    * @param  e  underlying exception
    */
-  public ConnectException(final String msg, final Throwable e)
+  public ConnectException(final ResultCode code, final String msg, final Throwable e)
   {
-    super(msg, e);
+    super(code, msg, e);
   }
 }

@@ -2,6 +2,7 @@
 package org.ldaptive.filter;
 
 import org.ldaptive.LdapException;
+import org.ldaptive.ResultCode;
 
 /**
  * Exception that indicates an invalid filter string.
@@ -18,33 +19,36 @@ public class FilterParseException extends LdapException
   /**
    * Creates a new filter parse exception.
    *
+   * @param  code result code describing this exception
    * @param  msg  describing this exception
    */
-  public FilterParseException(final String msg)
+  public FilterParseException(final ResultCode code, final String msg)
   {
-    super(msg);
+    super(code, msg);
   }
 
 
   /**
    * Creates a new filter parse exception.
    *
+   * @param  code result code describing this exception
    * @param  e  underlying exception
    */
-  public FilterParseException(final Throwable e)
+  public FilterParseException(final ResultCode code, final Throwable e)
   {
-    super(e);
+    super(code, e);
   }
 
 
   /**
    * Creates a new filter parse exception.
    *
+   * @param  code result code describing this exception
    * @param  msg  describing this exception
    * @param  e  underlying exception
    */
-  public FilterParseException(final String msg, final Throwable e)
+  public FilterParseException(final ResultCode code, final String msg, final Throwable e)
   {
-    super(msg, e);
+    super(code, msg, e);
   }
 }

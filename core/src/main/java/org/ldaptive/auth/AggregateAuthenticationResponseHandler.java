@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.LdapException;
+import org.ldaptive.ResultCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,7 +84,7 @@ public class AggregateAuthenticationResponseHandler implements AuthenticationRes
     final String[] labeledDn = response.getResolvedDn().split(":", 2);
     final AuthenticationResponseHandler[] handlers = responseHandlers.get(labeledDn[0]);
     if (handlers == null) {
-      throw new LdapException("Could not find response handlers for label: " + labeledDn[0]);
+      throw new LdapException(ResultCode.PARAM_ERROR, "Could not find response handlers for label: " + labeledDn[0]);
     }
     if (handlers.length > 0) {
       for (AuthenticationResponseHandler ah : handlers) {
