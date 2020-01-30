@@ -263,6 +263,7 @@ public final class NettyConnection extends TransportConnection
             });
         }
         channel = connectInternal();
+        channel.closeFuture().addListener(closeListener);
         pendingResponses.open();
         // startTLS request must occur after the connection is ready
         if (connectionConfig.getUseStartTLS()) {
@@ -294,7 +295,6 @@ public final class NettyConnection extends TransportConnection
             }
           }
         }
-        channel.closeFuture().addListener(closeListener);
         connectTime = Instant.now();
         LOGGER.debug("Netty opened connection {}", this);
       } finally {

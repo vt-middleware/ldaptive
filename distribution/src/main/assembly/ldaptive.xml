@@ -58,7 +58,7 @@
       <useDefaultExcludes>true</useDefaultExcludes>
       <includes>
         <include>slf4j-*</include>
-        <include>netty-all-*</include>
+        <include>netty-*</include>
       </includes>
     </fileSet>
   </fileSets>
