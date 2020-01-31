@@ -70,7 +70,7 @@
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>1.7.30</org.slf4j.version>
     <io.netty.version>4.1.45.Final</io.netty.version>
-    <org.springframework.version>5.2.2.RELEASE</org.springframework.version>
+    <org.springframework.version>5.2.3.RELEASE</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.0.0</japicmp.oldVersion>
   </properties>
@@ -249,7 +249,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.28</version>
+              <version>8.29</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -276,7 +276,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>3.2.0</version>
+          <version>3.2.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -296,7 +296,7 @@
         <plugin>
           <groupId>com.github.siom79.japicmp</groupId>
           <artifactId>japicmp-maven-plugin</artifactId>
-          <version>0.14.2</version>
+          <version>0.14.3</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
