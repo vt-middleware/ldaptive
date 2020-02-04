@@ -187,4 +187,76 @@ public class SaslConfig extends AbstractConfig
       .append("securityStrength=").append(securityStrength).append(", ")
       .append("realm=").append(saslRealm).append("]").toString();
   }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static SaslConfig.Builder builder()
+  {
+    return new SaslConfig.Builder();
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+
+    private final SaslConfig object = new SaslConfig();
+
+
+    protected Builder() {}
+
+
+    public SaslConfig.Builder mechanism(final Mechanism mechanism)
+    {
+      object.setMechanism(mechanism);
+      return this;
+    }
+
+
+    public SaslConfig.Builder authorizationId(final String id)
+    {
+      object.setAuthorizationId(id);
+      return this;
+    }
+
+
+    public SaslConfig.Builder mutualAuthentication(final Boolean b)
+    {
+      object.setMutualAuthentication(b);
+      return this;
+    }
+
+
+    public SaslConfig.Builder qualityOfProtection(final QualityOfProtection... protections)
+    {
+      object.setQualityOfProtection(protections);
+      return this;
+    }
+
+
+    public SaslConfig.Builder securityStrength(final SecurityStrength strength)
+    {
+      object.setSecurityStrength(strength);
+      return this;
+    }
+
+
+    public SaslConfig.Builder realm(final String realm)
+    {
+      object.setRealm(realm);
+      return this;
+    }
+
+
+    public SaslConfig build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }
