@@ -29,25 +29,12 @@ public class BlockingConnectionPool extends AbstractConnectionPool
 
 
   /**
-   * Creates a new blocking pool. The pool config is initialized with the default values.
+   * Creates a new blocking pool.
    *
    * @param  cf  connection factory
    */
   public BlockingConnectionPool(final DefaultConnectionFactory cf)
   {
-    this(new PoolConfig(), cf);
-  }
-
-
-  /**
-   * Creates a new blocking pool.
-   *
-   * @param  pc  pool configuration
-   * @param  cf  connection factory
-   */
-  public BlockingConnectionPool(final PoolConfig pc, final DefaultConnectionFactory cf)
-  {
-    setPoolConfig(pc);
     setDefaultConnectionFactory(cf);
   }
 
@@ -99,7 +86,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
           logger.error("could not remove connection from list", e);
           throw new IllegalStateException("Pool is empty", e);
         }
-      } else if (active.size() < getPoolConfig().getMaxPoolSize()) {
+      } else if (active.size() < getMaxPoolSize()) {
         logger.trace("pool can grow, attempt to create active connection in pool of " +
           "size {}", active.size());
         create = true;
@@ -122,7 +109,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         poolLock.lock();
         try {
           logger.trace("create connection in pool of size {}", available.size() + active.size());
-          if (available.size() + active.size() == getPoolConfig().getMaxPoolSize()) {
+          if (available.size() + active.size() == getMaxPoolSize()) {
             logger.trace("pool at maximum size, create not allowed");
             b = false;
           }

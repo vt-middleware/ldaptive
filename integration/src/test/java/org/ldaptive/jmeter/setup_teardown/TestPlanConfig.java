@@ -13,7 +13,6 @@ import org.ldaptive.LdapURL;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.SingleConnectionFactory;
-import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.ssl.AllowAnyTrustManager;
 import org.ldaptive.ssl.SslConfig;
 import org.slf4j.Logger;
@@ -400,7 +399,8 @@ public final class TestPlanConfig
       final int maxPoolSize = properties.maxPoolSize();
       final PooledConnectionFactory factory = PooledConnectionFactory.builder()
         .config(config)
-        .config(PoolConfig.builder().min(minPoolSize).max(maxPoolSize).build())
+        .min(minPoolSize)
+        .max(maxPoolSize)
         .build();
       factory.initialize();
       return factory;

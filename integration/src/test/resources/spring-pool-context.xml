@@ -18,15 +18,11 @@
         class="org.ldaptive.pool.BlockingConnectionPool"
         init-method="initialize"
         p:blockWaitTime="PT5S"
-        p:validator-ref="compareValidator">
-    <constructor-arg index="0">
-      <bean class="org.ldaptive.pool.PoolConfig"
+        p:validator-ref="compareValidator"
         p:minPoolSize="5"
         p:maxPoolSize="20"
-        p:validatePeriodically="true"
-      />
-    </constructor-arg>
-    <constructor-arg index="1" ref="connectionFactory"/>
+        p:validatePeriodically="true">
+    <constructor-arg index="0" ref="connectionFactory"/>
   </bean>
 
   <bean id="compareValidator"

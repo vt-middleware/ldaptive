@@ -124,9 +124,9 @@ public class PropertiesTest
     }
 
     final PooledConnectionFactory resolverCf = (PooledConnectionFactory) dnResolver.getConnectionFactory();
-    Assert.assertEquals(resolverCf.getPoolConfig().getMinPoolSize(), 1);
-    Assert.assertEquals(resolverCf.getPoolConfig().getMaxPoolSize(), 3);
-    Assert.assertEquals(resolverCf.getPoolConfig().isValidatePeriodically(), true);
+    Assert.assertEquals(resolverCf.getMinPoolSize(), 1);
+    Assert.assertEquals(resolverCf.getMaxPoolSize(), 3);
+    Assert.assertEquals(resolverCf.isValidatePeriodically(), true);
     Assert.assertNotNull(resolverCf.getValidator());
 
     final IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) resolverCf.getPruneStrategy();
@@ -227,9 +227,9 @@ public class PropertiesTest
     }
 
     final PooledConnectionFactory resolverCf = (PooledConnectionFactory) dnResolver.getConnectionFactory();
-    Assert.assertEquals(resolverCf.getPoolConfig().getMinPoolSize(), 1);
-    Assert.assertEquals(resolverCf.getPoolConfig().getMaxPoolSize(), 3);
-    Assert.assertEquals(resolverCf.getPoolConfig().isValidatePeriodically(), true);
+    Assert.assertEquals(resolverCf.getMinPoolSize(), 1);
+    Assert.assertEquals(resolverCf.getMaxPoolSize(), 3);
+    Assert.assertEquals(resolverCf.isValidatePeriodically(), true);
     Assert.assertNotNull(resolverCf.getValidator());
 
     final IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) resolverCf.getPruneStrategy();

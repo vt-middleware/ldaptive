@@ -5,7 +5,6 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.pool.IdlePruneStrategy;
-import org.ldaptive.pool.PoolConfig;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
@@ -67,7 +66,11 @@ public abstract class AbstractConnectionFactoryBeanDefinitionParser extends Abst
     pool.addPropertyValue(
       "defaultConnectionFactory",
       parseDefaultConnectionFactory(null, element, includeConnectionInitializer).getBeanDefinition());
-    pool.addPropertyValue("poolConfig", parsePoolConfig(null, element).getBeanDefinition());
+
+    pool.addPropertyValue("minPoolSize", element.getAttribute("minPoolSize"));
+    pool.addPropertyValue("maxPoolSize", element.getAttribute("maxPoolSize"));
+    pool.addPropertyValue("validateOnCheckOut", element.getAttribute("validateOnCheckOut"));
+    pool.addPropertyValue("validatePeriodically", element.getAttribute("validatePeriodically"));
 
     final BeanDefinitionBuilder blockWaitTime =  BeanDefinitionBuilder.rootBeanDefinition(
       AbstractBeanDefinitionParser.class,
@@ -111,27 +114,5 @@ public abstract class AbstractConnectionFactoryBeanDefinitionParser extends Abst
       logger.info("No ldapUrl attribute found for element {}, pool not initialized.", name);
     }
     return pool;
-  }
-
-
-  /**
-   * Creates a pool config.
-   *
-   * @param  builder  bean definition builder to set properties on, may be null
-   * @param  element  containing configuration
-   *
-   * @return  pool config bean definition builder
-   */
-  protected BeanDefinitionBuilder parsePoolConfig(final BeanDefinitionBuilder builder, final Element element)
-  {
-    BeanDefinitionBuilder poolConfig = builder;
-    if (poolConfig == null) {
-      poolConfig = BeanDefinitionBuilder.genericBeanDefinition(PoolConfig.class);
-    }
-    poolConfig.addPropertyValue("minPoolSize", element.getAttribute("minPoolSize"));
-    poolConfig.addPropertyValue("maxPoolSize", element.getAttribute("maxPoolSize"));
-    poolConfig.addPropertyValue("validateOnCheckOut", element.getAttribute("validateOnCheckOut"));
-    poolConfig.addPropertyValue("validatePeriodically", element.getAttribute("validatePeriodically"));
-    return poolConfig;
   }
 }

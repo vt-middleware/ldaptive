@@ -10,7 +10,6 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestUtils;
 import org.ldaptive.concurrent.SearchOperationWorker;
-import org.ldaptive.pool.PoolConfig;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -62,7 +61,9 @@ public class SearchTemplatesOperationTest extends AbstractTest
     throws Exception
   {
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
-    final PooledConnectionFactory cf = new PooledConnectionFactory(cc, PoolConfig.builder().min(5).max(10).build());
+    final PooledConnectionFactory cf = new PooledConnectionFactory(cc);
+    cf.setMinPoolSize(5);
+    cf.setMaxPoolSize(10);
     cf.initialize();
 
     searchOperation = new SearchTemplatesOperation(

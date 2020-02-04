@@ -24,7 +24,6 @@ import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.SearchConnectionValidator;
 
 /**
  * Contains the base implementation for pooling connections. The main design objective for the supplied pooling
@@ -194,8 +193,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
 
 
   /**
-   * Initialize this pool for use. Once invoked the pool config is made immutable. See {@link
-   * PoolConfig#makeImmutable()}.
+   * Initialize this pool for use.
    *
    * @throws  IllegalStateException  if this pool has already been initialized, the pooling configuration is
    *                                 inconsistent or the pool does not contain at least one connection and it's minimum
@@ -209,16 +207,8 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
     }
     logger.debug("beginning pool initialization for {}", this);
 
-    getPoolConfig().makeImmutable();
-
     if (getPruneStrategy() == null) {
-      setPruneStrategy(new IdlePruneStrategy());
-      logger.debug("no prune strategy configured, using default prune strategy: {}", getPruneStrategy());
-    }
-
-    if (getValidator() == null) {
-      setValidator(new SearchConnectionValidator());
-      logger.debug("no validator strategy configured, using default validator strategy: {}", getValidator());
+      throw new IllegalStateException("No prune strategy configured");
     }
 
     available = new Queue<>(queueType);
@@ -226,11 +216,11 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
 
     IllegalStateException growException = null;
     try {
-      grow(getPoolConfig().getMinPoolSize(), true);
+      grow(getMinPoolSize(), true);
     } catch (IllegalStateException e) {
       growException = e;
     }
-    if (available.isEmpty() && getPoolConfig().getMinPoolSize() > 0) {
+    if (available.isEmpty() && getMinPoolSize() > 0) {
       if (failFastInitialize) {
         throw new IllegalStateException(
           "Could not initialize pool size",
@@ -263,7 +253,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
       TimeUnit.MILLISECONDS);
     logger.debug("prune pool task scheduled for {}", this);
 
-    if (getPoolConfig().isValidatePeriodically()) {
+    if (isValidatePeriodically()) {
       poolExecutor.scheduleAtFixedRate(
         () -> {
           logger.debug("begin validate task for {}", AbstractConnectionPool.this);
@@ -320,7 +310,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
       while (currentPoolSize < size && count < size * 2) {
         try {
           final PooledConnectionProxy pc = createAvailableConnection(throwOnFailure);
-          if (pc != null && getPoolConfig().isValidateOnCheckIn()) {
+          if (pc != null && isValidateOnCheckIn()) {
             if (validate(pc.getConnection())) {
               logger.trace("connection passed initialize validation: {}", pc);
             } else {
@@ -616,7 +606,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
       removeAvailableAndActiveConnection(pc);
       throw new PoolException("Activation of connection failed");
     }
-    if (getPoolConfig().isValidateOnCheckOut() && !validate(pc.getConnection())) {
+    if (isValidateOnCheckOut() && !validate(pc.getConnection())) {
       logger.warn("connection failed check out validation: {}", pc);
       removeAvailableAndActiveConnection(pc);
       throw new PoolException("Validation of connection failed");
@@ -640,7 +630,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
     }
 
     boolean valid = false;
-    if (getPoolConfig().isValidateOnCheckIn()) {
+    if (isValidateOnCheckIn()) {
       if (!validate(pc.getConnection())) {
         logger.warn("connection failed check in validation: {}", pc);
       } else {
@@ -658,7 +648,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
 
 
   /**
-   * Attempts to reduce the size of the pool back to it's configured minimum. {@link PoolConfig#setMinPoolSize(int)}.
+   * Attempts to reduce the size of the pool back to it's configured minimum.
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
@@ -669,7 +659,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
     poolLock.lock();
     try {
       if (!available.isEmpty()) {
-        final int minPoolSize = getPoolConfig().getMinPoolSize();
+        final int minPoolSize = getMinPoolSize();
         int currentPoolSize = active.size() + available.size();
         if (currentPoolSize > minPoolSize) {
           logger.debug("pruning available pool of size {} for {}", available.size(), this);
@@ -703,7 +693,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
 
 
   /**
-   * Attempts to validate all objects in the pool. {@link PoolConfig#setValidatePeriodically(boolean)}.
+   * Attempts to validate all connections in the pool.
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
@@ -765,7 +755,7 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
       } else {
         logger.debug("no available connections, no validation performed for {}", this);
       }
-      grow(getPoolConfig().getMinPoolSize());
+      grow(getMinPoolSize());
       logger.debug("pool size after validation is {}", available.size() + active.size());
     } finally {
       poolLock.unlock();
@@ -846,7 +836,11 @@ public abstract class AbstractConnectionPool extends AbstractPool implements Con
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("name=").append(getName()).append(", ")
-      .append("poolConfig=").append(getPoolConfig()).append(", ")
+      .append("minPoolSize=").append(getMinPoolSize()).append(", ")
+      .append("maxPoolSize=").append(getMaxPoolSize()).append(", ")
+      .append("validateOnCheckIn=").append(isValidateOnCheckIn()).append(", ")
+      .append("validateOnCheckOut=").append(isValidateOnCheckOut()).append(", ")
+      .append("validatePeriodically=").append(isValidatePeriodically()).append(", ")
       .append("activator=").append(getActivator()).append(", ")
       .append("passivator=").append(getPassivator()).append(", ")
       .append("validator=").append(getValidator()).append(", ")

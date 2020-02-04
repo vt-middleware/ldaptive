@@ -9,7 +9,6 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.concurrent.SearchOperationWorker;
-import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.transport.netty.NettyConnectionFactoryTransport;
 import org.ldaptive.transport.netty.SimpleNettyServer;
 import org.testng.Assert;
@@ -37,8 +36,7 @@ public class PooledConnectionFactoryTest
       final PooledConnectionFactory factory = new PooledConnectionFactory(
         ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
-          .build(),
-        PoolConfig.builder().build());
+          .build());
       try {
         factory.initialize();
       } finally {
@@ -83,7 +81,6 @@ public class PooledConnectionFactoryTest
             return metadata instanceof ClosedRetryMetadata && metadata.getAttempts() == 0;
           })
           .build(),
-        PoolConfig.builder().min(10).max(10).build(),
         new NettyConnectionFactoryTransport(
           NioSocketChannel.class,
           new NioEventLoopGroup(
@@ -92,6 +89,8 @@ public class PooledConnectionFactoryTest
               new DefaultThreadFactory(getClass().getSimpleName() + "-io", true, Thread.NORM_PRIORITY))),
           null,
           null));
+      factory.setMinPoolSize(10);
+      factory.setMaxPoolSize(10);
       try {
         factory.initialize();
         final SearchRequest request = SearchRequest.builder().filter("(objectClass=*)").build();

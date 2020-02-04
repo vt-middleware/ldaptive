@@ -8,7 +8,6 @@ import org.ldaptive.ConnectionValidator;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.pool.BlockingConnectionPool;
-import org.ldaptive.pool.PoolConfig;
 
 /**
  * Reads properties specific to {@link BlockingConnectionPool} and returns an initialized object of that type.
@@ -101,14 +100,6 @@ public final class BlockingConnectionPoolPropertySource extends AbstractProperty
       propertiesDomain,
       properties);
     cfPropSource.initialize();
-
-    PoolConfig pc = object.getPoolConfig();
-    if (pc == null) {
-      pc = new PoolConfig();
-      object.setPoolConfig(pc);
-    }
-    final PoolConfigPropertySource pcPropSource = new PoolConfigPropertySource(pc, propertiesDomain, properties);
-    pcPropSource.initialize();
 
     ConnectionValidator cv = object.getValidator();
     if (cv == null) {

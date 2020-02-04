@@ -13,7 +13,6 @@ import org.ldaptive.SearchScope;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.pool.IdlePruneStrategy;
-import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
@@ -160,12 +159,11 @@ public class NamespaceHandlerTest
     Assert.assertEquals(((IdlePruneStrategy) factory.getPruneStrategy()).getIdleTime(), Duration.ofMinutes(10));
     Assert.assertEquals(factory.getValidator().getClass(), SearchConnectionValidator.class);
 
-    final PoolConfig poolConfig = factory.getPoolConfig();
-    Assert.assertEquals(poolConfig.getMinPoolSize(), 3);
-    Assert.assertEquals(poolConfig.getMaxPoolSize(), 10);
+    Assert.assertEquals(factory.getMinPoolSize(), 3);
+    Assert.assertEquals(factory.getMaxPoolSize(), 10);
     Assert.assertEquals(factory.getValidator().getValidatePeriod(), Duration.ofMinutes(5));
-    Assert.assertFalse(poolConfig.isValidateOnCheckOut());
-    Assert.assertTrue(poolConfig.isValidatePeriodically());
+    Assert.assertFalse(factory.isValidateOnCheckOut());
+    Assert.assertTrue(factory.isValidatePeriodically());
 
     testConnectionConfig(factory.getConnectionConfig(), authType);
   }

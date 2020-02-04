@@ -5,7 +5,6 @@ import java.time.Duration;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ConnectionActivator;
 import org.ldaptive.pool.ConnectionPassivator;
-import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.pool.PruneStrategy;
 import org.ldaptive.transport.Transport;
 
@@ -22,7 +21,6 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
   public PooledConnectionFactory()
   {
     setDefaultConnectionFactory(new DefaultConnectionFactory());
-    setPoolConfig(new PoolConfig());
   }
 
 
@@ -34,7 +32,6 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
   public PooledConnectionFactory(final String ldapUrl)
   {
     setDefaultConnectionFactory(new DefaultConnectionFactory(ldapUrl));
-    setPoolConfig(new PoolConfig());
   }
 
 
@@ -46,7 +43,6 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
   public PooledConnectionFactory(final ConnectionConfig cc)
   {
     setDefaultConnectionFactory(new DefaultConnectionFactory(cc));
-    setPoolConfig(new PoolConfig());
   }
 
 
@@ -54,26 +50,11 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
    * Creates a new pooled connection factory.
    *
    * @param  cc  connection configuration
-   * @param  pc  pool configuration
-   */
-  public PooledConnectionFactory(final ConnectionConfig cc, final PoolConfig pc)
-  {
-    setDefaultConnectionFactory(new DefaultConnectionFactory(cc));
-    setPoolConfig(pc);
-  }
-
-
-  /**
-   * Creates a new pooled connection factory.
-   *
-   * @param  cc  connection configuration
-   * @param  pc  pool configuration
    * @param  t  transport
    */
-  public PooledConnectionFactory(final ConnectionConfig cc, final PoolConfig pc, final Transport t)
+  public PooledConnectionFactory(final ConnectionConfig cc, final Transport t)
   {
     setDefaultConnectionFactory(new DefaultConnectionFactory(cc, t));
-    setPoolConfig(pc);
   }
 
 
@@ -143,9 +124,37 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
     }
 
 
-    public Builder config(final PoolConfig pc)
+    public Builder min(final int size)
     {
-      object.setPoolConfig(pc);
+      object.setMinPoolSize(size);
+      return this;
+    }
+
+
+    public Builder max(final int size)
+    {
+      object.setMaxPoolSize(size);
+      return this;
+    }
+
+
+    public Builder validateOnCheckIn(final boolean b)
+    {
+      object.setValidateOnCheckIn(b);
+      return this;
+    }
+
+
+    public Builder validateOnCheckOut(final boolean b)
+    {
+      object.setValidateOnCheckOut(b);
+      return this;
+    }
+
+
+    public Builder validatePeriodically(final boolean b)
+    {
+      object.setValidatePeriodically(b);
       return this;
     }
 
@@ -195,6 +204,13 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
     public Builder pruneStrategy(final PruneStrategy strategy)
     {
       object.setPruneStrategy(strategy);
+      return this;
+    }
+
+
+    public Builder name(final String name)
+    {
+      object.setName(name);
       return this;
     }
 
