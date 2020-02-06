@@ -2,9 +2,7 @@ PooledConnectionFactory cf = PooledConnectionFactory.builder()
   .config(ConnectionConfig.builder()
     .url("ldap://directory.ldaptive.org")
     .build())
-  .config(PoolConfig.builder()
-    .validatePeriodically(true)
-    .build())
+  .validatePeriodically(true)
   .pruneStrategy(new IdlePruneStrategy(Duration.ofMinutes(15), Duration.ofMinutes(30)))
   .build();
 cf.initialize();

@@ -2,10 +2,8 @@ PooledConnectionFactory cf = PooledConnectionFactory.builder()
   .config(ConnectionConfig.builder()
     .url("ldap://directory.ldaptive.org")
     .build())
-  .config(PoolConfig.builder()
-    .min(2)
-    .max(5)
-    .build())
+  .min(2)
+  .max(5)
   .build();
 cf.initialize();
 try {

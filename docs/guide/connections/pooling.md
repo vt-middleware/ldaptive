@@ -6,7 +6,7 @@ redirect_from: "/docs/guide/connections/pooling/"
 
 # Pooling
 
-Pooling ldap connections provides a way to mitigate the overhead of creating LDAP connections. A connection pool configuration is controlled by a PoolConfig which has the following properties:
+Pooling ldap connections provides a way to mitigate the overhead of creating LDAP connections. A connection pool is controlled by the following properties:
 
 Name | Default Value | Description
 minPoolSize | 3 | size the pool should be initialized to and pruned to
@@ -14,7 +14,10 @@ maxPoolSize | 10 | maximum size the pool can grow to
 validateOnCheckIn | false | whether connections should be validated when returned to the pool
 validateOnCheckOut | false | whether connections should be validated when loaned out from the pool
 validatePeriodically | false | whether connections should be validated periodically when the pool is idle
-validateTimerPeriod | PT30M | period at which pool should be validated
+activator | null | class to activate connections as they are checked out of the pool for use
+passivator | null | class to passivate connections as they are returned to the pool
+validator | `SearchConnectionValidator` | class to validate that a connection is viable for use
+pruneStrategy | `IdlePruneStrategy` | class to remove unneeded connections from the pool
 
 Ldaptive provides a `PooledConnectionFactory` implementation which uses a blocking connection pool.
 
@@ -37,7 +40,7 @@ public interface Validator<T>
 
 Ldaptive provides the following validator implementations:
 
-### CompareValidator
+### CompareConnectionValidator
 
 Validates a connection by performing a compare operation. By default this validator performs a rootDSE compare on objectClass: top.
 
@@ -47,7 +50,7 @@ Validates a connection by performing a compare operation. By default this valida
 
 Validation is successful if the compare operation returns true.
 
-### SearchValidator
+### SearchConnectionValidator
 
 Validates a connection by performing a search operation. By default this validator performs an object level rootDSE search for _(objectClass=*)_.
 
