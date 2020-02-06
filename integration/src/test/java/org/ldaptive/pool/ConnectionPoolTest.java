@@ -87,22 +87,20 @@ public class ConnectionPoolTest extends AbstractTest
 
     final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
 
-    final PoolConfig blockingPc = new PoolConfig();
-    blockingPc.setMaxPoolSize(30);
-    blockingPc.setValidateOnCheckIn(true);
-    blockingPc.setValidateOnCheckOut(true);
-    blockingPc.setValidatePeriodically(true);
-    blockingPool = new BlockingConnectionPool(blockingPc, new DefaultConnectionFactory(cc));
+    blockingPool = new BlockingConnectionPool(new DefaultConnectionFactory(cc));
+    blockingPool.setMaxPoolSize(30);
+    blockingPool.setValidateOnCheckIn(true);
+    blockingPool.setValidateOnCheckOut(true);
+    blockingPool.setValidatePeriodically(true);
     blockingPool.setPruneStrategy(new IdlePruneStrategy(Duration.ofSeconds(5), Duration.ofSeconds(1)));
     blockingPool.setValidator(
       SearchConnectionValidator.builder().period(Duration.ofSeconds(5)).timeout(Duration.ofSeconds(5)).build());
 
-    final PoolConfig blockingTimeoutPc = new PoolConfig();
-    blockingTimeoutPc.setMaxPoolSize(30);
-    blockingTimeoutPc.setValidateOnCheckIn(true);
-    blockingTimeoutPc.setValidateOnCheckOut(true);
-    blockingTimeoutPc.setValidatePeriodically(true);
-    blockingTimeoutPool = new BlockingConnectionPool(blockingTimeoutPc, new DefaultConnectionFactory(cc));
+    blockingTimeoutPool = new BlockingConnectionPool(new DefaultConnectionFactory(cc));
+    blockingTimeoutPool.setMaxPoolSize(30);
+    blockingTimeoutPool.setValidateOnCheckIn(true);
+    blockingTimeoutPool.setValidateOnCheckOut(true);
+    blockingTimeoutPool.setValidatePeriodically(true);
     blockingTimeoutPool.setPruneStrategy(new IdlePruneStrategy(Duration.ofSeconds(5), Duration.ofSeconds(1)));
     blockingTimeoutPool.setBlockWaitTime(Duration.ofSeconds(1));
     blockingTimeoutPool.setValidator(
@@ -113,7 +111,7 @@ public class ConnectionPoolTest extends AbstractTest
     connStrategyCc.setConnectionStrategy(new RoundRobinConnectionStrategy());
     final DefaultConnectionFactory connStrategyCf = new DefaultConnectionFactory(connStrategyCc);
 
-    connStrategyPool = new BlockingConnectionPool(new PoolConfig(), connStrategyCf);
+    connStrategyPool = new BlockingConnectionPool(connStrategyCf);
   }
 
 
@@ -376,13 +374,6 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     try {
-      blockingPool.getPoolConfig().setMinPoolSize(8);
-      Assert.fail("Expected illegalstateexception to be thrown");
-    } catch (IllegalStateException e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
-    }
-
-    try {
       blockingPool.getDefaultConnectionFactory().getConnectionConfig().setConnectTimeout(Duration.ofSeconds(10));
       Assert.fail("Expected illegalstateexception to be thrown");
     } catch (IllegalStateException e) {
@@ -445,7 +436,7 @@ public class ConnectionPoolTest extends AbstractTest
   {
     Thread.sleep(10000);
     Assert.assertEquals(blockingPool.activeCount(), 0);
-    Assert.assertEquals(blockingPool.availableCount(), PoolConfig.DEFAULT_MIN_POOL_SIZE);
+    Assert.assertEquals(blockingPool.availableCount(), blockingPool.DEFAULT_MIN_POOL_SIZE);
   }
 
 
@@ -516,7 +507,7 @@ public class ConnectionPoolTest extends AbstractTest
   {
     Thread.sleep(10000);
     Assert.assertEquals(blockingTimeoutPool.activeCount(), 0);
-    Assert.assertEquals(blockingTimeoutPool.availableCount(), PoolConfig.DEFAULT_MIN_POOL_SIZE);
+    Assert.assertEquals(blockingTimeoutPool.availableCount(), blockingTimeoutPool.DEFAULT_MIN_POOL_SIZE);
   }
 
 

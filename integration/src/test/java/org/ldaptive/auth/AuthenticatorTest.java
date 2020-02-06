@@ -31,7 +31,6 @@ import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.SessionTrackingControl;
 import org.ldaptive.extended.ExtendedOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
-import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.velocity.TemplateSearchDnResolver;
 import org.ldaptive.velocity.UserContext;
 import org.testng.Assert;
@@ -113,7 +112,6 @@ public class AuthenticatorTest extends AbstractTest
       (DefaultConnectionFactory) ((ConnectionFactoryManager) ah).getConnectionFactory();
     final PooledConnectionFactory pcf = new PooledConnectionFactory();
     pcf.setDefaultConnectionFactory(cf);
-    pcf.setPoolConfig(new PoolConfig());
     pcf.initialize();
     pooledTLSAuth.setAuthenticationHandler(new SimpleBindAuthenticationHandler(pcf));
   }

@@ -4,7 +4,6 @@ package org.ldaptive;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-import org.ldaptive.pool.PoolConfig;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.testng.Assert;
@@ -41,7 +40,6 @@ public class ConfigTest
     return
       new Object[][] {
         new Object[] {new ConnectionConfig(), },
-        new Object[] {new PoolConfig(), },
         new Object[] {new SaslConfig(), },
         new Object[] {new SslConfig(), },
       };
