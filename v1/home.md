@@ -6,7 +6,7 @@ redirect_from: "/v1/home/"
 ---
 
 
-### The JNDI provider is broken in Java version 9 and later. It is recommend that you use the UnboundID provider with newer versions of Java and ldaptive v1.x
+### The JNDI provider is broken in Java version 9 and later. It is recommend that you upgrade ldaptive to v1.3.0 for newer versions of Java. By default this version uses UnboundID, if you're explicitly using the JNDI provider you should change to the UnboundID provider.
 See [https://bugs.openjdk.java.net/browse/JDK-8217606](https://bugs.openjdk.java.net/browse/JDK-8217606)
 
 
