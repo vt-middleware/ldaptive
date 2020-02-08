@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://www.ldaptive.org/schema/spring-ext"
+            xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            targetNamespace="http://www.ldaptive.org/schema/spring-ext"
+            elementFormDefault="qualified"
+            attributeFormDefault="unqualified">
+
+  <xsd:import namespace="http://www.springframework.org/schema/beans"/>
+
+  <xsd:element name="anonymous-search-authenticator" type="anonymousSearchAuthenticatorType"/>
+  <xsd:element name="bind-search-authenticator" type="bindSearchAuthenticatorType"/>
+  <xsd:element name="sasl-bind-search-authenticator" type="saslBindSearchAuthenticatorType"/>
+  <xsd:element name="direct-authenticator" type="directAuthenticatorType"/>
+  <xsd:element name="ad-authenticator" type="adAuthenticatorType"/>
+  <xsd:element name="aggregate-authenticator" type="aggregateAuthenticatorType"/>
+  <xsd:element name="pooled-connection-factory" type="pooledConnectionFactoryType"/>
+  <xsd:element name="connection-factory" type="connectionFactoryType"/>
+  <xsd:element name="connection-config" type="connectionConfigType"/>
+  <xsd:element name="search-operation" type="searchOperationType"/>
+  <xsd:element name="search-operation-worker" type="searchOperationType"/>
+
+  <!-- Authenticator configuration -->
+  <xsd:complexType name="anonymousSearchAuthenticatorType">
+    <xsd:complexContent>
+      <xsd:extension base="baseSearchAuthenticatorType">
+        <xsd:sequence>
+          <xsd:element name="authentication-response-handler" type="authenticationResponseHandlerType" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="bindSearchAuthenticatorType">
+    <xsd:complexContent>
+      <xsd:extension base="baseBindSearchAuthenticatorType">
+        <xsd:sequence>
+          <xsd:element name="authentication-response-handler" type="authenticationResponseHandlerType" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="saslBindSearchAuthenticatorType">
+    <xsd:complexContent>
+      <xsd:extension base="baseBindSearchAuthenticatorType">
+        <xsd:sequence>
+          <xsd:element name="authentication-response-handler" type="authenticationResponseHandlerType" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="mechanism" type="xsd:string" use="required"/>
+        <xsd:attribute name="authorizationId" type="xsd:string" use="optional"/>
+        <xsd:attribute name="mutualAuthentication" type="xsd:string" use="optional"/>
+        <xsd:attribute name="qualityOfProtection" type="xsd:string" use="optional"/>
+        <xsd:attribute name="securityStrength" type="xsd:string" use="optional"/>
+        <xsd:attribute name="realm" type="xsd:string" use="optional"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="directAuthenticatorType">
+    <xsd:complexContent>
+      <xsd:extension base="baseAuthenticatorType">
+        <xsd:sequence>
+          <xsd:element name="authentication-response-handler" type="authenticationResponseHandlerType" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+        <xsd:attribute name="format" type="xsd:string" use="required"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="adAuthenticatorType">
+    <xsd:complexContent>
+      <xsd:extension base="baseBindSearchAuthenticatorType">
+        <xsd:sequence>
+          <xsd:element name="authentication-response-handler" type="adAuthenticationResponseHandlerType" minOccurs="0" maxOccurs="1"/>
+        </xsd:sequence>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="aggregateAuthenticatorType">
+    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+      <xsd:element name="anonymous-search-authenticator" type="anonymousSearchAuthenticatorType"/>
+      <xsd:element name="bind-search-authenticator" type="bindSearchAuthenticatorType"/>
+      <xsd:element name="sasl-bind-search-authenticator" type="saslBindSearchAuthenticatorType"/>
+      <xsd:element name="direct-authenticator" type="directAuthenticatorType"/>
+      <xsd:element name="ad-authenticator" type="adAuthenticatorType"/>
+    </xsd:choice>
+    <xsd:attribute name="returnAttributes" type="xsd:string" use="optional"/>
+    <xsd:attribute name="allowMultipleDns" type="xsd:string" use="optional" default="false"/>
+    <xsd:attribute name="resolveEntryOnFailure" type="xsd:string" use="optional" default="false"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="baseBindSearchAuthenticatorType">
+    <xsd:complexContent>
+      <xsd:extension base="baseSearchAuthenticatorType">
+        <xsd:attribute name="bindDn" type="xsd:string" use="required"/>
+        <xsd:attribute name="bindCredential" type="xsd:string" use="optional"/>
+        <xsd:attribute name="resolveEntryWithBindCredentials" type="xsd:string" use="optional" default="false"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="baseSearchAuthenticatorType">
+    <xsd:complexContent>
+      <xsd:extension base="baseAuthenticatorType">
+        <xsd:attribute name="baseDn" type="xsd:string" use="required"/>
+        <xsd:attribute name="userFilter" type="xsd:string" use="required"/>
+        <xsd:attribute name="subtreeSearch" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="returnAttributes" type="xsd:string" use="optional"/>
+        <xsd:attribute name="allowMultipleDns" type="xsd:string" use="optional" default="false"/>
+        <xsd:attribute name="resolveEntryOnFailure" type="xsd:string" use="optional" default="false"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="baseAuthenticatorType">
+    <xsd:attribute name="ldapUrl" type="xsd:string" use="required"/>
+    <xsd:attributeGroup ref="connectionPoolGroup"/>
+    <xsd:attributeGroup ref="connectionConfigGroup"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="authenticationResponseHandlerType">
+    <xsd:choice>
+      <xsd:element name="password-policy-handler" type="passwordPolicyAuthenticationResponseHandlerType"/>
+      <xsd:element name="password-expiration-handler" type="passwordExpirationAuthenticationResponseHandlerType"/>
+      <xsd:element name="e-directory-handler" type="eDirectoryAuthenticationResponseHandlerType"/>
+      <xsd:element name="free-ipa-handler" type="freeIPAAuthenticationResponseHandlerType"/>
+    </xsd:choice>
+  </xsd:complexType>
+
+  <xsd:complexType name="adAuthenticationResponseHandlerType">
+    <xsd:sequence>
+      <xsd:element name="active-directory-handler" type="activeDirectoryAuthenticationResponseHandlerType"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="eDirectoryAuthenticationResponseHandlerType">
+    <xsd:complexContent>
+      <xsd:extension base="baseAuthenticationResponseHandlerType">
+        <xsd:attribute name="warningPeriod" type="xsd:string" use="optional"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="freeIPAAuthenticationResponseHandlerType">
+    <xsd:complexContent>
+      <xsd:extension base="baseAuthenticationResponseHandlerType">
+        <xsd:attribute name="expirationPeriod" type="xsd:string" use="optional"/>
+        <xsd:attribute name="warningPeriod" type="xsd:string" use="optional"/>
+        <xsd:attribute name="maxLoginFailures" type="xsd:string" use="optional"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="passwordPolicyAuthenticationResponseHandlerType">
+    <xsd:complexContent>
+      <xsd:extension base="baseAuthenticationResponseHandlerType">
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="passwordExpirationAuthenticationResponseHandlerType">
+    <xsd:complexContent>
+      <xsd:extension base="baseAuthenticationResponseHandlerType">
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="activeDirectoryAuthenticationResponseHandlerType">
+    <xsd:complexContent>
+      <xsd:extension base="baseAuthenticationResponseHandlerType">
+        <xsd:attribute name="expirationPeriod" type="xsd:string" use="optional"/>
+        <xsd:attribute name="warningPeriod" type="xsd:string" use="optional"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="baseAuthenticationResponseHandlerType">
+    <xsd:attribute name="id" type="xsd:ID" use="optional"/>
+  </xsd:complexType>
+
+  <!-- Standard ldaptive bean configuration for connection factories, pools, config, search operations -->
+  <xsd:complexType name="pooledConnectionFactoryType">
+    <xsd:complexContent>
+      <xsd:extension base="connectionPoolType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="connectionPoolType">
+    <xsd:complexContent>
+      <xsd:extension base="connectionFactoryType">
+        <xsd:attributeGroup ref="connectionPoolGroup"/>
+      </xsd:extension>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="connectionFactoryType">
+    <xsd:complexContent>
+      <xsd:extension base="connectionConfigType"/>
+    </xsd:complexContent>
+  </xsd:complexType>
+
+  <xsd:complexType name="connectionConfigType">
+    <xsd:attribute name="ldapUrl" type="xsd:string" use="optional"/>
+    <xsd:attribute name="bindDn" type="xsd:string" use="optional"/>
+    <xsd:attribute name="bindCredential" type="xsd:string" use="optional"/>
+    <xsd:attributeGroup ref="connectionConfigGroup"/>
+  </xsd:complexType>
+
+  <xsd:complexType name="searchOperationType">
+    <xsd:attribute name="id" type="xsd:ID" use="optional"/>
+    <xsd:attribute name="baseDn" type="xsd:string" use="optional" default=""/>
+    <xsd:attribute name="searchScope" type="xsd:string" use="optional" default="SUBTREE"/>
+    <xsd:attribute name="derefAliases" type="xsd:string" use="optional" default="NEVER"/>
+    <xsd:attribute name="sizeLimit" type="xsd:string" use="optional"/>
+    <xsd:attribute name="timeLimit" type="xsd:string" use="optional"/>
+    <xsd:attribute name="typesOnly" type="xsd:string" use="optional" default="false"/>
+    <xsd:attribute name="filter" type="xsd:string" use="optional"/>
+    <xsd:attribute name="returnAttributes" type="xsd:string" use="optional"/>
+    <xsd:attribute name="binaryAttributes" type="xsd:string" use="optional"/>
+  </xsd:complexType>
+
+  <xsd:attributeGroup name="connectionPoolGroup">
+    <xsd:attribute name="blockWaitTime" type="xsd:string" use="optional" default="PT3S"/>
+    <xsd:attribute name="failFastInitialize" type="xsd:string" use="optional" default="false"/>
+    <xsd:attribute name="minPoolSize" type="xsd:string" use="optional" default="3"/>
+    <xsd:attribute name="maxPoolSize" type="xsd:string" use="optional" default="10"/>
+    <xsd:attribute name="validateOnCheckOut" type="xsd:string" use="optional" default="false"/>
+    <xsd:attribute name="validatePeriodically" type="xsd:string" use="optional" default="true"/>
+    <xsd:attribute name="validatePeriod" type="xsd:string" use="optional" default="PT5M"/>
+    <xsd:attribute name="validateTimeout" type="xsd:string" use="optional" default="PT5S"/>
+    <xsd:attribute name="prunePeriod" type="xsd:string" use="optional" default="PT5M"/>
+    <xsd:attribute name="idleTime" type="xsd:string" use="optional" default="PT10M"/>
+    <xsd:attribute name="disablePooling" type="xsd:string" use="optional" default="false"/>
+  </xsd:attributeGroup>
+
+  <!-- Since ldapUrl is optional in some circumstances, it must be specified in the parent type -->
+  <xsd:attributeGroup name="connectionConfigGroup">
+    <xsd:attribute name="id" type="xsd:ID" use="optional"/>
+    <xsd:attribute name="autoReconnect" type="xsd:string" use="optional" default="true"/>
+    <xsd:attribute name="autoReplay" type="xsd:string" use="optional" default="true"/>
+    <xsd:attribute name="autoReconnectCondition" type="xsd:string" use="optional"/>
+    <xsd:attribute name="connectionStrategy" type="xsd:string" use="optional"/>
+    <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="PT3S"/>
+    <xsd:attribute name="responseTimeout" type="xsd:string" use="optional" default="PT3S"/>
+    <xsd:attribute name="reconnectTimeout" type="xsd:string" use="optional" default="PT30S"/>
+    <xsd:attribute name="useStartTLS" type="xsd:string" use="optional" default="true"/>
+    <xsd:attribute name="trustCertificates" type="xsd:string" use="optional"/>
+    <xsd:attribute name="authenticationCertificate" type="xsd:string" use="optional"/>
+    <xsd:attribute name="authenticationKey" type="xsd:string" use="optional"/>
+    <xsd:attribute name="trustStore" type="xsd:string" use="optional"/>
+    <xsd:attribute name="trustStorePassword" type="xsd:string" use="optional" default="changeit"/>
+    <xsd:attribute name="trustStoreType" type="xsd:string" use="optional" default="JKS"/>
+    <xsd:attribute name="trustStoreAliases" type="xsd:string" use="optional"/>
+    <xsd:attribute name="keyStore" type="xsd:string" use="optional"/>
+    <xsd:attribute name="keyStorePassword" type="xsd:string" use="optional" default="changeit"/>
+    <xsd:attribute name="keyStoreType" type="xsd:string" use="optional" default="JKS"/>
+    <xsd:attribute name="keyStoreAliases" type="xsd:string" use="optional"/>
+  </xsd:attributeGroup>
+</xsd:schema>
