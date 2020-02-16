@@ -1,6 +1,10 @@
 #!/bin/bash
 
+if [ -z "${TEST_GROUP}" ]; then
+  TEST_GROUP="core"
+fi
+
 docker-compose -f integration/docker-compose.yml down && \
   docker network prune -f && \
   docker-compose -f integration/docker-compose.yml pull && \
-  docker-compose -f integration/docker-compose.yml up --build --abort-on-container-exit
+  TEST_GROUP="${TEST_GROUP}" docker-compose -f integration/docker-compose.yml up --build --abort-on-container-exit

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 echo "172.28.1.11 ldap-test" >>/etc/hosts
 cat /etc/hosts

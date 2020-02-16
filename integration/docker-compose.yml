@@ -11,7 +11,7 @@ services:
       - BASE_DN=ou=test,dc=vt,dc=edu
       - BIND_DN=uid=1,ou=test,dc=vt,dc=edu
       - BIND_CREDENTIAL=VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2
-      - TEST_GROUP=core
+      - TEST_GROUP
     networks:
       ldap_net:
         ipv4_address: 172.28.1.10

@@ -456,17 +456,14 @@
         <include name="beans-spring" />
         <include name="validator" />
         <include name="conn" />
-
-        <!--
+      </define>
+      <define name="pooling">
         <include name="blockingpool" />
         <include name="blockingtimeoutpool" />
         <include name="connstrategypool" />
-        -->
-
-        <!--
+      </define>
+      <define name="authload">
         <include name="authload" />
-        -->
-
       </define>
       <run>
         <include name="${ldapTestGroup}"/>

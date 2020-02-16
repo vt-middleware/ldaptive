@@ -1,19 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 
 SSL_HOST=`echo ${HOST} |sed 's/389/636/'`
-MVN_CMD="-pl integration clean verify"
-if [ ! -z "${PROVIDER}" ]; then
-  MVN_CMD="-Pintegration,${PROVIDER} ${MVN_CMD}"
-else
-  MVN_CMD="-Pintegration ${MVN_CMD}"
-fi
+MVN_OPTS="-pl integration -Pintegration clean verify"
 
-mvn -Dmaven.javadoc.skip=true -B -V \
+mvn -Dmaven.javadoc.skip=true -B -V -e \
   -DldapTestHost=ldap://${HOST} \
   -DldapSslTestHost=ldaps://${SSL_HOST} \
   -DldapBaseDn="${BASE_DN}" \
   -DldapBindDn="${BIND_DN}" \
   -DldapBindCredential="${BIND_CREDENTIAL}" \
-  -DldapTestGroup=${TEST_GROUP} \
-  ${MVN_CMD}
-
+  -DldapTestGroup="${TEST_GROUP}" \
+  ${MVN_OPTS}
