@@ -14,6 +14,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DERPath;
 import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.extended.NoticeOfDisconnection;
@@ -27,6 +28,39 @@ import org.ldaptive.extended.SyncInfoMessage;
 public class ResponseParser
 {
 
+  /** Bind response DER path. */
+  private static final DERPath BIND_PATH = new DERPath("/SEQ/APP(1)");
+
+  /** Search entry DER path. */
+  private static final DERPath ENTRY_PATH = new DERPath("/SEQ/APP(4)");
+
+  /** Search response DER path. */
+  private static final DERPath SEARCH_PATH = new DERPath("/SEQ/APP(5)");
+
+  /** Modify response DER path. */
+  private static final DERPath MODIFY_PATH = new DERPath("/SEQ/APP(7)");
+
+  /** Add response DER path. */
+  private static final DERPath ADD_PATH = new DERPath("/SEQ/APP(9)");
+
+  /** Delete response DER path. */
+  private static final DERPath DELETE_PATH = new DERPath("/SEQ/APP(11)");
+
+  /** Modify DN response DER path. */
+  private static final DERPath MODIFY_DN_PATH = new DERPath("/SEQ/APP(13)");
+
+  /** Compare response DER path. */
+  private static final DERPath COMPARE_PATH = new DERPath("/SEQ/APP(15)");
+
+  /** Search reference result DER path. */
+  private static final DERPath SEARCH_REFERENCE_PATH = new DERPath("/SEQ/APP(19)");
+
+  /** Extended response DER path. */
+  private static final DERPath EXTENDED_PATH = new DERPath("/SEQ/APP(24)");
+
+  /** Intermediate response DER path. */
+  private static final DERPath INTERMEDIATE_PATH = new DERPath("/SEQ/APP(25)");
+
   /** Parser for decoding LDAP messages. */
   private final DERParser parser = new DERParser();
 
@@ -39,43 +73,43 @@ public class ResponseParser
    */
   public ResponseParser()
   {
-    parser.registerHandler("/SEQ/APP(1)", (p, e) -> {
+    parser.registerHandler(BIND_PATH, (p, e) -> {
       e.clear();
       message = new BindResponse(e);
     });
-    parser.registerHandler("/SEQ/APP(4)", (p, e) -> {
+    parser.registerHandler(ENTRY_PATH, (p, e) -> {
       e.clear();
       message = new LdapEntry(e);
     });
-    parser.registerHandler("/SEQ/APP(5)", (p, e) -> {
+    parser.registerHandler(SEARCH_PATH, (p, e) -> {
       e.clear();
       message = new SearchResponse(e);
     });
-    parser.registerHandler("/SEQ/APP(7)", (p, e) -> {
+    parser.registerHandler(MODIFY_PATH, (p, e) -> {
       e.clear();
       message = new ModifyResponse(e);
     });
-    parser.registerHandler("/SEQ/APP(9)", (p, e) -> {
+    parser.registerHandler(ADD_PATH, (p, e) -> {
       e.clear();
       message = new AddResponse(e);
     });
-    parser.registerHandler("/SEQ/APP(11)", (p, e) -> {
+    parser.registerHandler(DELETE_PATH, (p, e) -> {
       e.clear();
       message = new DeleteResponse(e);
     });
-    parser.registerHandler("/SEQ/APP(13)", (p, e) -> {
+    parser.registerHandler(MODIFY_DN_PATH, (p, e) -> {
       e.clear();
       message = new ModifyDnResponse(e);
     });
-    parser.registerHandler("/SEQ/APP(15)", (p, e) -> {
+    parser.registerHandler(COMPARE_PATH, (p, e) -> {
       e.clear();
       message = new CompareResponse(e);
     });
-    parser.registerHandler("/SEQ/APP(19)", (p, e) -> {
+    parser.registerHandler(SEARCH_REFERENCE_PATH, (p, e) -> {
       e.clear();
       message = new SearchResultReference(e);
     });
-    parser.registerHandler("/SEQ/APP(24)", (p, e) -> {
+    parser.registerHandler(EXTENDED_PATH, (p, e) -> {
       e.clear();
       final ExtendedResponse extRes = new ExtendedResponse(e);
       if (NoticeOfDisconnection.OID.equals(extRes.getResponseName())) {
@@ -84,7 +118,7 @@ public class ResponseParser
         message = extRes;
       }
     });
-    parser.registerHandler("/SEQ/APP(25)", (p, e) -> {
+    parser.registerHandler(INTERMEDIATE_PATH, (p, e) -> {
       e.clear();
       final IntermediateResponse intRes = new IntermediateResponse(e);
       if (SyncInfoMessage.OID.equals(intRes.getResponseName())) {

@@ -9,6 +9,7 @@ import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.BooleanType;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.ParseHandler;
 import org.ldaptive.asn1.UuidType;
 
@@ -49,6 +50,39 @@ public class SyncInfoMessage extends IntermediateResponse
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10321;
+
+  /** DER path to new cookie. */
+  private static final DERPath NEW_COOKIE_PATH = new DERPath("/CTX(0)");
+
+  /** DER path to refresh delete. */
+  private static final DERPath REFRESH_DELETE_PATH = new DERPath("/CTX(1)");
+
+  /** DER path to refresh delete cookie. */
+  private static final DERPath REFRESH_DELETE_COOKIE_PATH = new DERPath("/CTX(1)/OCTSTR[0]");
+
+  /** DER path to refresh delete done. */
+  private static final DERPath REFRESH_DELETE_DONE_PATH = new DERPath("/CTX(1)/BOOL[1]");
+
+  /** DER path to refresh present. */
+  private static final DERPath REFRESH_PRESENT_PATH = new DERPath("/CTX(2)");
+
+  /** DER path to refresh present cookie. */
+  private static final DERPath REFRESH_PRESENT_COOKIE_PATH = new DERPath("/CTX(2)/OCTSTR[0]");
+
+  /** DER path to refresh present done. */
+  private static final DERPath REFRESH_PRESENT_DONE_PATH = new DERPath("/CTX(2)/BOOL[1]");
+
+  /** DER path to sync ID set. */
+  private static final DERPath SYNC_ID_SET_PATH = new DERPath("/CTX(3)");
+
+  /** DER path to sync ID set cookie. */
+  private static final DERPath SYNC_ID_SET_COOKIE_PATH = new DERPath("/CTX(3)/OCTSTR[0]");
+
+  /** DER path to sync ID set deletes. */
+  private static final DERPath SYNC_ID_SET_DELETES_PATH = new DERPath("/CTX(3)/BOOL[1]");
+
+  /** DER path to sync ID set UUIDS. */
+  private static final DERPath SYNC_ID_SET_UUIDS_PATH = new DERPath("/CTX(3)/SET/OCTSTR");
 
   /** Types of request modes. */
   public enum Type {
@@ -109,17 +143,17 @@ public class SyncInfoMessage extends IntermediateResponse
   {
     return (parser, encoded) -> {
       final DERParser p = new DERParser();
-      p.registerHandler("/CTX(0)", new NewCookieHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(1)", new RefreshDeleteHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(1)/OCTSTR[0]", new RefreshDeleteCookieHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(1)/BOOL[1]", new RefreshDeleteDoneHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(2)", new RefreshPresentHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(2)/OCTSTR[0]", new RefreshPresentCookieHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(2)/BOOL[1]", new RefreshPresentDoneHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(3)", new SyncIdSetHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(3)/OCTSTR[0]", new SyncIdSetCookieHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(3)/BOOL[1]", new SyncIdSetDeletesHandler(SyncInfoMessage.this));
-      p.registerHandler("/CTX(3)/SET/OCTSTR", new SyncIdSetUuidsHandler(SyncInfoMessage.this));
+      p.registerHandler(NEW_COOKIE_PATH, new NewCookieHandler(SyncInfoMessage.this));
+      p.registerHandler(REFRESH_DELETE_PATH, new RefreshDeleteHandler(SyncInfoMessage.this));
+      p.registerHandler(REFRESH_DELETE_COOKIE_PATH, new RefreshDeleteCookieHandler(SyncInfoMessage.this));
+      p.registerHandler(REFRESH_DELETE_DONE_PATH, new RefreshDeleteDoneHandler(SyncInfoMessage.this));
+      p.registerHandler(REFRESH_PRESENT_PATH, new RefreshPresentHandler(SyncInfoMessage.this));
+      p.registerHandler(REFRESH_PRESENT_COOKIE_PATH, new RefreshPresentCookieHandler(SyncInfoMessage.this));
+      p.registerHandler(REFRESH_PRESENT_DONE_PATH, new RefreshPresentDoneHandler(SyncInfoMessage.this));
+      p.registerHandler(SYNC_ID_SET_PATH, new SyncIdSetHandler(SyncInfoMessage.this));
+      p.registerHandler(SYNC_ID_SET_COOKIE_PATH, new SyncIdSetCookieHandler(SyncInfoMessage.this));
+      p.registerHandler(SYNC_ID_SET_DELETES_PATH, new SyncIdSetDeletesHandler(SyncInfoMessage.this));
+      p.registerHandler(SYNC_ID_SET_UUIDS_PATH, new SyncIdSetUuidsHandler(SyncInfoMessage.this));
       p.parse(encoded);
     };
   }

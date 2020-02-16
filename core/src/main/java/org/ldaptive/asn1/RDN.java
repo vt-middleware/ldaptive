@@ -19,6 +19,9 @@ public class RDN implements DEREncoder
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 619;
 
+  /** DER path for RDN parsing. */
+  private static final DERPath RDN_PATH = new DERPath("/SEQ/SET");
+
   /** Attribute value assertions in this RDN. */
   private final AttributeValueAssertion[] attributeValueAssertions;
 
@@ -161,7 +164,7 @@ public class RDN implements DEREncoder
     final List<RDN> rdns = new ArrayList<>();
     final DERParser parser = new DERParser();
     parser.registerHandler(
-      "/SEQ/SET",
+      RDN_PATH,
       (p, e) -> {
         rdns.add(new RDN(AttributeValueAssertion.decode(e)));
         e.position(e.limit());

@@ -190,6 +190,15 @@ public abstract class AbstractMessage implements Message
   protected static class ControlParser
   {
 
+    /** DER path to criticality. */
+    private static final DERPath CRITICAL_PATH = new DERPath("/SEQ/BOOL");
+
+    /** DER path to OID. */
+    private static final DERPath OID_PATH = new DERPath("/SEQ/OCTSTR[0]");
+
+    /** DER path to value. */
+    private static final DERPath VALUE_PATH = new DERPath("/SEQ/OCTSTR[1]");
+
     /** Parser for decoding LDAP controls. */
     private final DERParser parser = new DERParser();
 
@@ -208,9 +217,9 @@ public abstract class AbstractMessage implements Message
      */
     public ControlParser()
     {
-      parser.registerHandler("/SEQ/BOOL", (p, e) -> critical = BooleanType.decode(e));
-      parser.registerHandler("/SEQ/OCTSTR[0]", (p, e) -> oid = OctetStringType.decode(e));
-      parser.registerHandler("/SEQ/OCTSTR[1]", (p, e) -> value = e.slice());
+      parser.registerHandler(CRITICAL_PATH, (p, e) -> critical = BooleanType.decode(e));
+      parser.registerHandler(OID_PATH, (p, e) -> oid = OctetStringType.decode(e));
+      parser.registerHandler(VALUE_PATH, (p, e) -> value = e.slice());
     }
 
 

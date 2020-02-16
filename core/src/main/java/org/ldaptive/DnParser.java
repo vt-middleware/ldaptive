@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.ParseHandler;
@@ -26,6 +27,9 @@ public final class DnParser
 
   /** Hexadecimal radix. */
   private static final int HEX_RADIX = 16;
+
+  /** DER path for hex values. */
+  private static final DERPath HEX_PATH = new DERPath("/OCTSTR[0]");
 
 
   /** Default constructor. */
@@ -187,7 +191,7 @@ public final class DnParser
       if (attrValue.startsWith("#")) {
         final DERParser parser = new DERParser();
         final OctetStringHandler handler = new OctetStringHandler();
-        parser.registerHandler("/OCTSTR[0]", handler);
+        parser.registerHandler(HEX_PATH, handler);
 
         final String hexData = attrValue.substring(1);
         parser.parse(new DefaultDERBuffer(decodeHexValue(hexData.toCharArray())));

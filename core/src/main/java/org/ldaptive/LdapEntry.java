@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
@@ -43,6 +44,12 @@ public class LdapEntry extends AbstractMessage
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10303;
 
+  /** DER path to LDAP DN. */
+  private static final DERPath LDAP_DN_PATH = new DERPath("/SEQ/APP(4)/OCTSTR[0]");
+
+  /** DER path to attributes. */
+  private static final DERPath ATTRIBUTES_PATH = new DERPath("/SEQ/APP(4)/SEQ/SEQ");
+
   /** LDAP DN of the entry. */
   private String ldapDn;
 
@@ -65,8 +72,8 @@ public class LdapEntry extends AbstractMessage
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
-    parser.registerHandler("/SEQ/APP(4)/OCTSTR[0]", new LdapDnHandler(this));
-    parser.registerHandler("/SEQ/APP(4)/SEQ/SEQ", new AttributesHandler(this));
+    parser.registerHandler(LDAP_DN_PATH, new LdapDnHandler(this));
+    parser.registerHandler(ATTRIBUTES_PATH, new AttributesHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
   }
@@ -367,6 +374,12 @@ public class LdapEntry extends AbstractMessage
   protected static class AttributeParser
   {
 
+    /** DER path to name. */
+    private static final DERPath NAME_PATH = new DERPath("/OCTSTR");
+
+    /** DER path to values. */
+    private static final DERPath VALUES_PATH = new DERPath("/SET/OCTSTR");
+
     /** Parser for decoding LDAP attributes. */
     private final DERParser parser = new DERParser();
 
@@ -382,8 +395,8 @@ public class LdapEntry extends AbstractMessage
      */
     public AttributeParser()
     {
-      parser.registerHandler("/OCTSTR", (p, e) -> name = OctetStringType.decode(e));
-      parser.registerHandler("/SET/OCTSTR", (p, e) -> values.add(ByteBuffer.wrap(e.getRemainingBytes())));
+      parser.registerHandler(NAME_PATH, (p, e) -> name = OctetStringType.decode(e));
+      parser.registerHandler(VALUES_PATH, (p, e) -> values.add(ByteBuffer.wrap(e.getRemainingBytes())));
     }
 
 

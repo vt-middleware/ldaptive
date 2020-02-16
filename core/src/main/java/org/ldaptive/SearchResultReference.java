@@ -9,6 +9,7 @@ import java.util.stream.Stream;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.OctetStringType;
 
 /**
@@ -29,6 +30,9 @@ public class SearchResultReference extends AbstractMessage
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10313;
 
+  /** DER path to referral URI. */
+  private static final DERPath REFERRAL_URI_PATH = new DERPath("/SEQ/APP(19)/OCTSTR");
+
   /** List of references. */
   private List<String> references = new ArrayList<>();
 
@@ -48,7 +52,7 @@ public class SearchResultReference extends AbstractMessage
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
-    parser.registerHandler("/SEQ/APP(19)/OCTSTR", new ReferralUriHandler(this));
+    parser.registerHandler(REFERRAL_URI_PATH, new ReferralUriHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
   }

@@ -7,6 +7,7 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.ParseHandler;
 
@@ -30,6 +31,12 @@ public class IntermediateResponse extends AbstractMessage
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10267;
 
+  /** DER path to response name. */
+  private static final DERPath RESPONSE_NAME_PATH = new DERPath("/SEQ/APP(25)/CTX(0)");
+
+  /** DER path to response value. */
+  private static final DERPath RESPONSE_VALUE_PATH = new DERPath("/SEQ/APP(25)/CTX(1)");
+
   /** Response name. */
   private String responseName;
 
@@ -52,8 +59,8 @@ public class IntermediateResponse extends AbstractMessage
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
-    parser.registerHandler("/SEQ/APP(25)/CTX(0)", new ResponseNameHandler(this));
-    parser.registerHandler("/SEQ/APP(25)/CTX(1)", getResponseValueParseHandler());
+    parser.registerHandler(RESPONSE_NAME_PATH, new ResponseNameHandler(this));
+    parser.registerHandler(RESPONSE_VALUE_PATH, getResponseValueParseHandler());
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
   }

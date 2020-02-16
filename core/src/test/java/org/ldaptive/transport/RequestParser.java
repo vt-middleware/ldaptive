@@ -7,6 +7,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.UnbindRequest;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DERPath;
 
 /**
  * Parses a buffer looking for an LDAP request message.
@@ -15,6 +16,36 @@ import org.ldaptive.asn1.DERParser;
  */
 public class RequestParser
 {
+
+  /** Bind request DER path. */
+  private static final DERPath BIND_PATH = new DERPath("/SEQ/APP(0)");
+
+  /** Unbind request DER path. */
+  private static final DERPath UNBIND_PATH = new DERPath("/SEQ/APP(2)");
+
+  /** Search request DER path. */
+  private static final DERPath SEARCH_PATH = new DERPath("/SEQ/APP(3)");
+
+  /** Modify request DER path. */
+  private static final DERPath MODIFY_PATH = new DERPath("/SEQ/APP(6)");
+
+  /** Add request DER path. */
+  private static final DERPath ADD_PATH = new DERPath("/SEQ/APP(8)");
+
+  /** Delete request DER path. */
+  private static final DERPath DELETE_PATH = new DERPath("/SEQ/APP(10)");
+
+  /** Modify DN request DER path. */
+  private static final DERPath MODIFY_DN_PATH = new DERPath("/SEQ/APP(12)");
+
+  /** Compare request DER path. */
+  private static final DERPath COMPARE_PATH = new DERPath("/SEQ/APP(14)");
+
+  /** Abandon request DER path. */
+  private static final DERPath ABANDON_PATH = new DERPath("/SEQ/APP(16)");
+
+  /** Extended request DER path. */
+  private static final DERPath EXTENDED_PATH = new DERPath("/SEQ/APP(23)");
 
   /** Parser for decoding LDAP messages. */
   private final DERParser parser = new DERParser();
@@ -28,44 +59,44 @@ public class RequestParser
    */
   public RequestParser()
   {
-    parser.registerHandler("/SEQ/APP(0)", (p, e) -> {
+    parser.registerHandler(BIND_PATH, (p, e) -> {
       e.clear();
       message = null;
     });
-    parser.registerHandler("/SEQ/APP(2)", (p, e) -> {
+    parser.registerHandler(UNBIND_PATH, (p, e) -> {
       e.clear();
       message = new UnbindRequest();
     });
-    parser.registerHandler("/SEQ/APP(3)", (p, e) -> {
+    parser.registerHandler(SEARCH_PATH, (p, e) -> {
       e.clear();
       // note that no decoding is occurring here
       message = new SearchRequest();
     });
-    parser.registerHandler("/SEQ/APP(6)", (p, e) -> {
+    parser.registerHandler(MODIFY_PATH, (p, e) -> {
       e.clear();
       message = null;
     });
-    parser.registerHandler("/SEQ/APP(8)", (p, e) -> {
+    parser.registerHandler(ADD_PATH, (p, e) -> {
       e.clear();
       message = null;
     });
-    parser.registerHandler("/SEQ/APP(10)", (p, e) -> {
+    parser.registerHandler(DELETE_PATH, (p, e) -> {
       e.clear();
       message = null;
     });
-    parser.registerHandler("/SEQ/APP(12)", (p, e) -> {
+    parser.registerHandler(MODIFY_DN_PATH, (p, e) -> {
       e.clear();
       message = null;
     });
-    parser.registerHandler("/SEQ/APP(14)", (p, e) -> {
+    parser.registerHandler(COMPARE_PATH, (p, e) -> {
       e.clear();
       message = null;
     });
-    parser.registerHandler("/SEQ/APP(16)", (p, e) -> {
+    parser.registerHandler(ABANDON_PATH, (p, e) -> {
       e.clear();
       message = null;
     });
-    parser.registerHandler("/SEQ/APP(23)", (p, e) -> {
+    parser.registerHandler(EXTENDED_PATH, (p, e) -> {
       e.clear();
       message = null;
     });

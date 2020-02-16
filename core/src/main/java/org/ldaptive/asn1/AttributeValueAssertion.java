@@ -16,6 +16,9 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 613;
 
+  /** DER path for parsing attribute value assertion. */
+  private static final DERPath PATH = new DERPath("/SEQ");
+
   /** OID of the attribute. */
   private final String attributeOid;
 
@@ -87,7 +90,7 @@ public class AttributeValueAssertion extends AbstractDERType implements DEREncod
     final List<AttributeValueAssertion> assertions = new ArrayList<>();
     final DERParser parser = new DERParser();
     parser.registerHandler(
-      "/SEQ",
+      PATH,
       (p, e) -> {
         if (UniversalDERTag.OID.getTagNo() != p.readTag(e).getTagNo()) {
           throw new IllegalArgumentException("Expected OID tag");

@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DERPath;
 
 /**
  * LDAP add response defined as:
@@ -22,6 +23,18 @@ public class AddResponse extends AbstractResult
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10211;
 
+  /** DER path to result code. */
+  private static final DERPath RESULT_CODE_PATH = new DERPath("/SEQ/APP(9)/ENUM[0]");
+
+  /** DER path to matched DN. */
+  private static final DERPath MATCHED_DN_PATH = new DERPath("/SEQ/APP(9)/OCTSTR[1]");
+
+  /** DER path to diagnostic message. */
+  private static final DERPath DIAGNOSTIC_MESSAGE_PATH = new DERPath("/SEQ/APP(9)/OCTSTR[2]");
+
+  /** DER path to referral. */
+  private static final DERPath REFERRAL_PATH = new DERPath("/SEQ/APP(9)/CTX(3)/OCTSTR[0]");
+
 
   /**
    * Default constructor.
@@ -38,10 +51,10 @@ public class AddResponse extends AbstractResult
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
-    parser.registerHandler("/SEQ/APP(9)/ENUM[0]", new ResultCodeHandler(this));
-    parser.registerHandler("/SEQ/APP(9)/OCTSTR[1]", new MatchedDNHandler(this));
-    parser.registerHandler("/SEQ/APP(9)/OCTSTR[2]", new DiagnosticMessageHandler(this));
-    parser.registerHandler("/SEQ/APP(9)/CTX(3)/OCTSTR[0]", new ReferralHandler(this));
+    parser.registerHandler(RESULT_CODE_PATH, new ResultCodeHandler(this));
+    parser.registerHandler(MATCHED_DN_PATH, new MatchedDNHandler(this));
+    parser.registerHandler(DIAGNOSTIC_MESSAGE_PATH, new DiagnosticMessageHandler(this));
+    parser.registerHandler(REFERRAL_PATH, new ReferralHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
   }
