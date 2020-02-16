@@ -72,7 +72,7 @@ public class DERPath
     for (UniversalDERTag tag : UniversalDERTag.values()) {
       validNames.append('|').append(tag.name());
     }
-    NODE_PATTERN = Pattern.compile(String.format("(%s)(\\[(\\d+)\\])?", validNames.toString()));
+    NODE_PATTERN = Pattern.compile(String.format("(%s)(?:\\[(\\d+)\\])?", validNames.toString()));
   }
 
   /** Describes the path as a FIFO set of nodes. */
@@ -208,7 +208,12 @@ public class DERPath
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, nodeStack);
+    int hc = HASH_CODE_SEED;
+    int index = 1;
+    for (Node n : nodeStack) {
+      hc += n.hashCode() * index++;
+    }
+    return hc;
   }
 
 
@@ -241,7 +246,7 @@ public class DERPath
     }
 
     final String name = matcher.group(1);
-    final String index = matcher.group(3);
+    final String index = matcher.group(2);
     if (index != null) {
       return new Node(name, Integer.parseInt(index));
     }
@@ -335,7 +340,9 @@ public class DERPath
     @Override
     public int hashCode()
     {
-      return LdapUtils.computeHashCode(HASH_CODE_SEED, name, childIndex);
+      int result = HASH_CODE_SEED + (name == null ? 0 : name.hashCode());
+      result = HASH_CODE_SEED * result + childIndex;
+      return result;
     }
 
 
