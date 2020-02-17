@@ -33,6 +33,40 @@ public class DERPathTest
 
   /** @throws  Exception  On test failure. */
   @Test(groups = "asn1")
+  public void testToNode()
+    throws Exception
+  {
+    Assert.assertEquals(DERPath.toNode("SEQ").getName(), "SEQ");
+    Assert.assertEquals(DERPath.toNode("SEQ").getChildIndex(), -1);
+    Assert.assertEquals(DERPath.toNode("APP(4)").getName(), "APP(4)");
+    Assert.assertEquals(DERPath.toNode("APP(4)").getChildIndex(), -1);
+    Assert.assertEquals(DERPath.toNode("ENUM[0]").getName(), "ENUM");
+    Assert.assertEquals(DERPath.toNode("ENUM[0]").getChildIndex(), 0);
+    Assert.assertEquals(DERPath.toNode("OCTSTR[1]").getName(), "OCTSTR");
+    Assert.assertEquals(DERPath.toNode("OCTSTR[1]").getChildIndex(), 1);
+    Assert.assertEquals(DERPath.toNode("INT[3]").getName(), "INT");
+    Assert.assertEquals(DERPath.toNode("INT[3]").getChildIndex(), 3);
+    Assert.assertEquals(DERPath.toNode("CTX(0)").getName(), "CTX(0)");
+    Assert.assertEquals(DERPath.toNode("CTX(0)").getChildIndex(), -1);
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "asn1")
+  public void testHashCode()
+    throws Exception
+  {
+    Assert.assertEquals(new DERPath("SEQ").hashCode(), new DERPath("SEQ").hashCode());
+    Assert.assertNotEquals(new DERPath("ENUM").hashCode(), new DERPath("INT").hashCode());
+    Assert.assertEquals(
+      new DERPath("APP(0)").pushNode("CTX(0)").hashCode(), new DERPath("APP(0)").pushNode("CTX(0)").hashCode());
+    Assert.assertNotEquals(
+      new DERPath("APP(0)").pushNode("CTX(0)").hashCode(), new DERPath("CTX(0)").pushNode("APP(0)").hashCode());
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "asn1")
   public void testEquals()
     throws Exception
   {

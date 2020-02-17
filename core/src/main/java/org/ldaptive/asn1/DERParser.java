@@ -31,18 +31,6 @@ public class DERParser
 
 
   /**
-   * See {@link #registerHandler(DERPath, ParseHandler)}.
-   *
-   * @param  path  to register
-   * @param  handler  to associate with the path
-   */
-  public void registerHandler(final String path, final ParseHandler handler)
-  {
-    registerHandler(new DERPath(path), handler);
-  }
-
-
-  /**
    * Registers the supplied handler to fire when the supplied path is encountered.
    *
    * @param  path  to register
