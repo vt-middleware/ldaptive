@@ -209,9 +209,8 @@ public class DERPath
   public int hashCode()
   {
     int hc = HASH_CODE_SEED;
-    int index = 1;
     for (Node n : nodeStack) {
-      hc += n.hashCode() * index++;
+      hc = HASH_CODE_SEED * hc + n.hashCode();
     }
     return hc;
   }

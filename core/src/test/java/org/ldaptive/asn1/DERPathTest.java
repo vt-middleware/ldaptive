@@ -53,6 +53,20 @@ public class DERPathTest
 
   /** @throws  Exception  On test failure. */
   @Test(groups = "asn1")
+  public void testHashCode()
+    throws Exception
+  {
+    Assert.assertEquals(new DERPath("SEQ").hashCode(), new DERPath("SEQ").hashCode());
+    Assert.assertNotEquals(new DERPath("ENUM").hashCode(), new DERPath("INT").hashCode());
+    Assert.assertEquals(
+      new DERPath("APP(0)").pushNode("CTX(0)").hashCode(), new DERPath("APP(0)").pushNode("CTX(0)").hashCode());
+    Assert.assertNotEquals(
+      new DERPath("APP(0)").pushNode("CTX(0)").hashCode(), new DERPath("CTX(0)").pushNode("APP(0)").hashCode());
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "asn1")
   public void testEquals()
     throws Exception
   {
