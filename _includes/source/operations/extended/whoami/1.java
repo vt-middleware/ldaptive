@@ -1,3 +1,5 @@
 ExtendedOperation whoami = new ExtendedOperation(new DefaultConnectionFactory("ldap://directory.ldaptive.org"));
-ExtendedResponse response = whoami.execute(new WhoAmIRequest());
-String authzId = WhoAmIResponseParser.parse(response);
+ExtendedResponse res = whoami.execute(new WhoAmIRequest());
+if (res.isSuccess()) {
+  String authzId = WhoAmIResponseParser.parse(res);
+}

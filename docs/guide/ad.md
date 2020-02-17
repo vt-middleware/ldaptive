@@ -48,6 +48,6 @@ objectSid: S-1-5-21-1051162837-3568060411-1686669321-1105
 
 ## Referrals
 
-If you are confident that all the referrals returned by the Active Directory can be followed then `SearchOperation#setSearchResultHandlers(new SearchReferralHandler())` can be used. Note that referrals often contain hostnames other than the server that is being searched. The authentication credentials for the original connection must be valid for any hosts supplied by the referrals. In addition, these hostnames must be DNS resolvable and reachable in order for the search to be successful. `javax.naming.CommunicationException` and `java.net.UnknownHostException` are commonly encountered when following referrals.
+If you are confident that all the referrals returned by the Active Directory can be followed then `SearchOperation#setSearchResultHandlers(new FollowSearchReferralHandler())` can be used. Note that referrals often contain hostnames other than the server that is being searched. The authentication credentials for the original connection must be valid for any hosts supplied by the referrals. In addition, these hostnames must be DNS resolvable and reachable in order for the search to be successful.
 
 Note that Active Directory will typically use referrals for any search bases that access domain DNS objects at the root level. e.g. dc=mydomain,dc=org.

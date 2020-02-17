@@ -12,3 +12,8 @@ Changes the attributes of an LDAP entry.
 {% include source/operations/modify/1.java %}
 {% endhighlight %}
 
+The operation can be configured to throw so the result code doesn't need to be checked.
+
+{% highlight java %}
+{% include source/operations/modify/2.java %}
+{% endhighlight %}

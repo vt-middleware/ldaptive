@@ -11,5 +11,3 @@ An LDAP server can include a referral result code for most operations. The most 
 {% highlight java %}
 {% include source/operations/referrals/1.java %}
 {% endhighlight %}
-
-Handlers are also provided for Add, Compare, Delete, ModifyDn and Modify operations.
