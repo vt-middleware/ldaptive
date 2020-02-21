@@ -40,11 +40,7 @@ public class BindSearchAuthenticatorBeanDefinitionParser extends AbstractSearchA
     final BeanDefinitionBuilder entryResolver;
     if (element.hasAttribute("resolveEntryWithBindCredentials") &&
         Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials"))) {
-      if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
-        entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
-      } else {
-        entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
-      }
+      entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
       entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
     } else {
       entryResolver = super.parseEntryResolver(element, connectionFactory);
