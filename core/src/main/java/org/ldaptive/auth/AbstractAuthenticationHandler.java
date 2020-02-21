@@ -76,7 +76,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     try {
       conn.open();
       response = authenticateInternal(conn, ac);
-    } catch (LdapException | RuntimeException e) {
+    } catch (Exception e) {
       closeConn = true;
       throw e;
     } finally {
