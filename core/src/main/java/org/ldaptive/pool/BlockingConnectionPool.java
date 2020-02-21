@@ -117,7 +117,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
           poolLock.unlock();
         }
         if (b) {
-          pc = createActiveConnection();
+          pc = createActiveConnection(false);
         }
       } finally {
         checkOutLock.unlock();

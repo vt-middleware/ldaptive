@@ -23,7 +23,6 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionValidator;
 import org.ldaptive.DefaultConnectionFactory;
-import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchConnectionValidator;
 import org.slf4j.Logger;
@@ -677,20 +676,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   /**
    * Create a new connection. If {@link #connectOnCreate} is true, the connection will be opened.
    *
-   * @return  pooled connection
-   */
-  protected PooledConnectionProxy createConnection()
-  {
-    return createConnection(false);
-  }
-
-
-  /**
-   * Create a new connection. If {@link #connectOnCreate} is true, the connection will be opened.
-   *
    * @param  throwOnFailure  whether to throw illegal state exception
    *
-   * @return  pooled connection
+   * @return  pooled connection or null
    *
    * @throws  IllegalStateException  if {@link #connectOnCreate} is true and the connection cannot be opened
    */
@@ -700,8 +688,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     if (connectOnCreate) {
       try {
         c.open();
-      } catch (LdapException e) {
+      } catch (Exception e) {
         logger.error("{} unable to connect to the ldap", this, e);
+        c.close();
         c = null;
         if (throwOnFailure) {
           throw new IllegalStateException("unable to connect to the ldap", e);
@@ -713,17 +702,6 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     } else {
       return null;
     }
-  }
-
-
-  /**
-   * Create a new connection and place it in the available pool.
-   *
-   * @return  connection that was placed in the available pool
-   */
-  protected PooledConnectionProxy createAvailableConnection()
-  {
-    return createAvailableConnection(false);
   }
 
 
@@ -752,17 +730,6 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       logger.warn("unable to create available connection");
     }
     return pc;
-  }
-
-
-  /**
-   * Create a new connection and place it in the active pool.
-   *
-   * @return  connection that was placed in the active pool
-   */
-  protected PooledConnectionProxy createActiveConnection()
-  {
-    return createActiveConnection(false);
   }
 
 
