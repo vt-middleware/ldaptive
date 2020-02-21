@@ -375,7 +375,12 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     throws LdapException
   {
     final Connection conn = getConnectionFactory().getConnection();
-    conn.open();
+    try {
+      conn.open();
+    } catch (Exception e) {
+      conn.close();
+      throw e;
+    }
     final SearchRequest req = configureRequest(baseDN, filter, returnAttributes);
     if (handlers != null) {
       return configureHandle(conn.operation(req)).onEntry(handlers).onComplete(conn::close).send();
@@ -399,7 +404,12 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     throws LdapException
   {
     final Connection conn = getConnectionFactory().getConnection();
-    conn.open();
+    try {
+      conn.open();
+    } catch (Exception e) {
+      conn.close();
+      throw e;
+    }
     return configureHandle(conn.operation(req)).onComplete(conn::close).send();
   }
 
@@ -415,7 +425,12 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     throws LdapException
   {
     final Connection conn = getConnectionFactory().getConnection();
-    conn.open();
+    try {
+      conn.open();
+    } catch (Exception e) {
+      conn.close();
+      throw e;
+    }
     final SearchRequest req = configureRequest(null, null, null);
     return configureHandle(conn.operation(req)).onComplete(conn::close).send();
   }
@@ -435,7 +450,12 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     throws LdapException
   {
     final Connection conn = factory.getConnection();
-    conn.open();
+    try {
+      conn.open();
+    } catch (Exception e) {
+      conn.close();
+      throw e;
+    }
     return conn.operation(req).onComplete(conn::close).send();
   }
 

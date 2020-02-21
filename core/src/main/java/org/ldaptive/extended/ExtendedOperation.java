@@ -64,7 +64,12 @@ public class ExtendedOperation extends AbstractOperation<ExtendedRequest, Extend
     throws LdapException
   {
     final Connection conn = getConnectionFactory().getConnection();
-    conn.open();
+    try {
+      conn.open();
+    } catch (Exception e) {
+      conn.close();
+      throw e;
+    }
     return configureHandle(conn.operation(request)).onComplete(conn::close).send();
   }
 
@@ -83,7 +88,12 @@ public class ExtendedOperation extends AbstractOperation<ExtendedRequest, Extend
     throws LdapException
   {
     final Connection conn = factory.getConnection();
-    conn.open();
+    try {
+      conn.open();
+    } catch (Exception e) {
+      conn.close();
+      throw e;
+    }
     return conn.operation(request).onComplete(conn::close).send();
   }
 
