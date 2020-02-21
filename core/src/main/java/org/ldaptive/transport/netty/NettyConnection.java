@@ -267,36 +267,37 @@ public final class NettyConnection extends TransportConnection
         pendingResponses.open();
         // startTLS request must occur after the connection is ready
         if (connectionConfig.getUseStartTLS()) {
-          try {
-            final Result result = operation(new StartTLSRequest());
-            if (!result.isSuccess()) {
-              throw new ConnectException(ResultCode.CONNECT_ERROR, "StartTLS returned response: " + result);
-            }
-          } catch (Exception e) {
-            LOGGER.error("StartTLS failed on connection open for {}", this, e);
-            close();
-            throw e;
+          final Result result = operation(new StartTLSRequest());
+          if (!result.isSuccess()) {
+            throw new ConnectException(ResultCode.CONNECT_ERROR, "StartTLS returned response: " + result);
           }
         }
         // initialize the connection
         if (connectionConfig.getConnectionInitializers() != null) {
           for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
-            try {
-              final Result result = initializer.initialize(this);
-              if (!result.isSuccess()) {
-                throw new ConnectException(
-                  ResultCode.CONNECT_ERROR,
-                  "Connection initializer returned response: " + result);
-              }
-            } catch (Exception e) {
-              LOGGER.error("Connection initializer {} failed for {}", initializer, this, e);
-              close();
-              throw e;
+            final Result result = initializer.initialize(this);
+            if (!result.isSuccess()) {
+              throw new ConnectException(
+                ResultCode.CONNECT_ERROR,
+                "Connection initializer returned response: " + result);
             }
           }
         }
         connectTime = Instant.now();
         LOGGER.debug("Netty opened connection {}", this);
+      } catch (Exception e) {
+        LOGGER.error("Connection open failed for {}", this, e);
+        try {
+          pendingResponses.close();
+          if (isOpen()) {
+            channel.closeFuture().removeListener(closeListener);
+            channel.close().addListener(new LogFutureListener());
+          }
+        } finally {
+          pendingResponses.clear();
+          channel = null;
+          throw e;
+        }
       } finally {
         openLock.unlock();
       }
@@ -884,19 +885,11 @@ public final class NettyConnection extends TransportConnection
         channel = null;
         connectTime = null;
         if (shutdownOnClose) {
-          try {
-            ioWorkerGroup.shutdownGracefully();
-            LOGGER.trace("Shutdown worker group {}", ioWorkerGroup);
-          } catch (Exception e) {
-            LOGGER.warn("Error shutting down the I/O worker group", e);
-          }
+          NettyUtils.shutdownGracefully(ioWorkerGroup);
+          LOGGER.trace("Shutdown worker group {}", ioWorkerGroup);
           if (messageWorkerGroup != null) {
-            try {
-              messageWorkerGroup.shutdownGracefully();
-              LOGGER.trace("Shutdown worker group {}", messageWorkerGroup);
-            } catch (Exception e) {
-              LOGGER.warn("Error shutting down the message worker group", e);
-            }
+            NettyUtils.shutdownGracefully(messageWorkerGroup);
+            LOGGER.trace("Shutdown worker group {}", messageWorkerGroup);
           }
         }
         closeLock.unlock();
