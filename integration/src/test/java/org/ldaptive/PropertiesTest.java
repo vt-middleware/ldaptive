@@ -12,6 +12,7 @@ import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.jaas.RoleResolver;
 import org.ldaptive.jaas.TestCallbackHandler;
+import org.ldaptive.pool.BindConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.props.AuthenticatorPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
@@ -133,7 +134,7 @@ public class PropertiesTest
     Assert.assertEquals(pruneStrategy.getPrunePeriod(), Duration.ofMinutes(1));
     Assert.assertEquals(pruneStrategy.getIdleTime(), Duration.ofMinutes(2));
     Assert.assertNotNull(resolverCf.getActivator());
-    Assert.assertNotNull(resolverCf.getPassivator());
+    Assert.assertEquals(resolverCf.getPassivator().getClass(), BindConnectionPassivator.class);
 
     final DefaultConnectionFactory resolverBaseCf = resolverCf.getDefaultConnectionFactory();
     final ConnectionConfig authCc = resolverBaseCf.getConnectionConfig();
