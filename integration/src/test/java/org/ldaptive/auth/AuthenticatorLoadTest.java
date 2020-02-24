@@ -29,12 +29,6 @@ import org.testng.annotations.Test;
 public class AuthenticatorLoadTest extends AbstractTest
 {
 
-  /** Invalid password test data. */
-  public static final String INVALID_PASSWD = "not-a-password";
-
-  /** Invalid filter test data. */
-  public static final String INVALID_FILTER = "(departmentNumber=1111)";
-
   /** Entries for auth tests. */
   private static final Map<String, LdapEntry[]> ENTRIES = new HashMap<>();
 
@@ -280,7 +274,7 @@ public class AuthenticatorLoadTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "authload", dataProvider = "auth-data", threadPoolSize = 50, invocationCount = 1000, timeOut = 60000)
+  @Test(groups = "authload", dataProvider = "auth-data", threadPoolSize = 10, invocationCount = 100, timeOut = 60000)
   public void authenticate(
     final String user,
     final String credential,
@@ -305,7 +299,7 @@ public class AuthenticatorLoadTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "authload", dataProvider = "auth-data", threadPoolSize = 50, invocationCount = 1000, timeOut = 60000)
+  @Test(groups = "authload", dataProvider = "auth-data", threadPoolSize = 10, invocationCount = 100, timeOut = 60000)
   public void authenticatePooled(
     final String user,
     final String credential,
