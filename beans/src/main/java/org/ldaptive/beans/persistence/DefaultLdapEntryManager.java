@@ -121,7 +121,7 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
     final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, attrs);
     final SearchOperation search = new SearchOperation(connectionFactory);
     final SearchResponse response = search.execute(request);
-    if (response.entrySize() == 0) {
+    if (!response.isSuccess() || response.entrySize() == 0) {
       throw new IllegalArgumentException(
         String.format("Unable to find ldap entry %s, no entries returned: %s", dn, response));
     }

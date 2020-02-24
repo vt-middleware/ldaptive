@@ -7,7 +7,6 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
 import org.ldaptive.Result;
-import org.ldaptive.ResultCode;
 import org.ldaptive.SimpleBindRequest;
 
 /**
@@ -45,7 +44,7 @@ public class SimpleBindAuthenticationHandler extends AbstractAuthenticationHandl
     final Result bindResult = c.operation(request).execute();
     return new AuthenticationHandlerResponse(
       bindResult,
-      ResultCode.SUCCESS == bindResult.getResultCode() ?
+      bindResult.isSuccess() ?
         AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS :
         AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE,
       c);

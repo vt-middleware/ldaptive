@@ -7,6 +7,7 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResponse;
 
 /**
  * Base class for search role resolver implementations.
@@ -37,7 +38,11 @@ public class SearchRoleResolver extends AbstractSearchOperationFactory implement
     throws LdapException
   {
     final SearchOperation op = createSearchOperation();
-    return LdapRole.toRoles(op.execute(request));
+    final SearchResponse result = op.execute(request);
+    if (!result.isSuccess()) {
+      throw new LdapException("Unsuccessful role search: " + result);
+    }
+    return LdapRole.toRoles(result);
   }
 
 

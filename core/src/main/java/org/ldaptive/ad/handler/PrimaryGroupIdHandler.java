@@ -121,8 +121,8 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
           .build();
 
         final SearchResponse result = getConnection().operation(sr).execute();
-        if (result.entrySize() == 0) {
-          logger.debug("could not find primary group for SID {}", groupSid);
+        if (!result.isSuccess() || result.entrySize() == 0) {
+          logger.debug("could not find primary group for SID {} with response {}", groupSid, result);
         } else {
           LdapAttribute memberOf = entry.getAttribute("memberOf");
           if (memberOf == null) {

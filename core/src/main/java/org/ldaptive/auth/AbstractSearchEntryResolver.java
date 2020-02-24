@@ -292,6 +292,11 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
     final SearchResponse result = performLdapSearch(criteria, response);
     logger.debug("resolved result={} for criteria={}", result, criteria);
 
+    if (!result.isSuccess()) {
+      throw new LdapException(
+        "Error resolving entry for " + criteria.getDn() + ". Unsuccessful search response: " + result);
+    }
+
     LdapEntry entry = null;
     final Iterator<LdapEntry> answer = result.getEntries().iterator();
     if (answer != null && answer.hasNext()) {

@@ -27,6 +27,9 @@ public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
     final ExtendedResponse whoamiRes = response.getConnection().operation(new WhoAmIRequest()).execute();
     logger.debug("whoami operation returned {}", whoamiRes);
 
+    if (!whoamiRes.isSuccess()) {
+      throw new LdapException("Unsuccessful WhoAmI operation: " + whoamiRes);
+    }
     final String authzId = WhoAmIResponseParser.parse(whoamiRes);
     if (authzId == null || !authzId.contains(":")) {
       throw new IllegalStateException("WhoAmI operation returned illegal authorization ID: '" + authzId + "'");

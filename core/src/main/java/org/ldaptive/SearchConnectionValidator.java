@@ -83,6 +83,7 @@ public class SearchConnectionValidator extends AbstractConnectionValidator
       final SearchOperationHandle h = conn.operation(searchRequest);
       try {
         final SearchResponse response = h.execute();
+        // note that validation doesn't require a SUCCESS result code
         return response.getResultCode() != null;
       } catch (Exception e) {
         logger.debug("Connection validator failed for {}", conn, e);

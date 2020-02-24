@@ -201,6 +201,9 @@ public final class SchemaFactory
     final SearchOperation search = new SearchOperation(factory);
     final SearchResponse result = search.execute(
       SearchRequest.builder().dn(dn).scope(SearchScope.OBJECT).filter(filter).returnAttributes(retAttrs).build());
+    if (!result.isSuccess()) {
+      throw new LdapException("Unsuccessful search for schema: " + result);
+    }
     return result.getEntry();
   }
 }

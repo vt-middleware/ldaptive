@@ -82,6 +82,7 @@ public class CompareConnectionValidator extends AbstractConnectionValidator
     if (conn != null) {
       try {
         final CompareResponse response = conn.operation(compareRequest).execute();
+        // note that validation doesn't require a TRUE result code
         return response.getResultCode() != null;
       } catch (Exception e) {
         logger.debug("validation failed for compare request {}", compareRequest, e);

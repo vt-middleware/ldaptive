@@ -122,7 +122,11 @@ public class RangeEntryHandler extends AbstractEntryHandler<SearchResponse> impl
           final SearchResponse result = getConnection().operation(sr).execute();
 
           // Add all attributes to the search result
-          entry.addAttributes(result.getEntry().getAttributes());
+          if (!result.isSuccess() || result.entrySize() == 0) {
+            logger.debug("could not find attribute ID: {} with response {}", nextAttrID, result);
+          } else {
+            entry.addAttributes(result.getEntry().getAttributes());
+          }
         } catch (LdapException e) {
           logger.warn("Error retrieving attribute ID: {}", nextAttrID, e);
         }
