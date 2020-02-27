@@ -89,7 +89,7 @@ echo "Committed new javadocs"
 echo "Updating schema"
 user_continue
 
-cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext.xsd
+#cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext.xsd
 cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext-${RELEASE_VERSION}.xsd
 git add schema
 git commit -a -m "Updated schema for ${RELEASE_VERSION} release."
