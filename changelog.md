@@ -6,7 +6,7 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
-## Version 2.0.0-RC2 - 07Feb2020
+## Version 2.0.0-RC3 - 27Feb2020
 
 Netty library refactoring.
 
