@@ -8,8 +8,8 @@ SearchDnResolver dnResolver = SearchDnResolver.builder()
   .filter("uid={user}")
   .build();
 SimpleBindAuthenticationHandler authHandler = new SimpleBindAuthenticationHandler(new DefaultConnectionFactory(connConfig));
-authHandler.setAuthenticationControls(new PasswordPolicyControl());
 Authenticator auth = new Authenticator(dnResolver, authHandler);
+auth.setRequestHandlers(new PasswordPolicyAuthenticationRequestHandler());
 auth.setResponseHandlers(new PasswordPolicyAuthenticationResponseHandler());
 AuthenticationResponse response = auth.authenticate(new AuthenticationRequest("dfisher", new Credential("password")));
 if (response.isSuccess()) {
