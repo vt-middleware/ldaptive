@@ -19,6 +19,8 @@ if (props == null || props.isEmpty() || props.containsKey("-h") || props.contain
   for (String key : props.stringPropertyNames()) {
     if (!key.contains(".")) {
       props.setProperty(PropertySource.PropertyDomain.LDAP.value().concat(key), (String) props.remove(key));
+    } else if (key.startsWith("system.") && key.length() > "system.".length()) {
+      System.setProperty(key.substring("system.".length()), (String) props.remove(key));
     }
   }
 }
@@ -38,6 +40,7 @@ if (props != null) {
   System.out.println("    baseDn=dc=ldaptive,dc=org");
   System.out.println("    bindDn=uid=dfisher,ou=people,dc=ldaptive,dc=org");
   System.out.println("    bindCredential=password");
+  System.out.println("    bindSaslConfig={mechanism=EXTERNAL}");
   System.out.println("    connectTimeout=PT5S");
   System.out.println("    credentialConfig={trustCertificates=file:/path/to/ca.pem}");
   System.out.println("    filter=(mail=dfisher@ldaptive.org)");
@@ -48,6 +51,7 @@ if (props != null) {
   System.out.println("    sizeLimit=1");
   System.out.println("    timeLimit=PT0S");
   System.out.println("    useStartTLS=true");
+  System.out.println("    system.javax.net.debug=all");
 }
 
 /exit
