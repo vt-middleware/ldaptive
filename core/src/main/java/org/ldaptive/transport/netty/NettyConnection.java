@@ -269,7 +269,9 @@ public final class NettyConnection extends TransportConnection
         if (connectionConfig.getUseStartTLS()) {
           final Result result = operation(new StartTLSRequest());
           if (!result.isSuccess()) {
-            throw new ConnectException(ResultCode.CONNECT_ERROR, "StartTLS returned response: " + result);
+            throw new ConnectException(
+              ResultCode.CONNECT_ERROR,
+              "StartTLS returned response: " + result + " for URL " + url);
           }
         }
         // initialize the connection
@@ -279,7 +281,7 @@ public final class NettyConnection extends TransportConnection
             if (!result.isSuccess()) {
               throw new ConnectException(
                 ResultCode.CONNECT_ERROR,
-                "Connection initializer returned response: " + result);
+                "Connection initializer " + initializer + " returned response: " + result + " for URL " + url);
             }
           }
         }
