@@ -651,26 +651,6 @@ public class FilterFunctionTest
   }
 
 
-  @Test
-  public void performance()
-    throws Exception
-  {
-    final String filter = "(cn=daniel*fisher)";
-    final DefaultFilterFunction defaultFunc = new DefaultFilterFunction();
-    final RegexFilterFunction regexFunc = new RegexFilterFunction();
-
-    long t1 = System.nanoTime();
-    defaultFunc.parse(filter);
-    t1 = System.nanoTime() - t1;
-    System.out.println(defaultFunc.getClass() + " performance time: " + t1 + "ns");
-
-    long t2 = System.nanoTime();
-    regexFunc.parse(filter);
-    t2 = System.nanoTime() - t2;
-    System.out.println(regexFunc.getClass() + " performance time: " + t2 + "ns");
-  }
-
-
   /**
    * @param  seed  to rand function.
    * @param generateBadData boolean which decides if the filter is a bad one.

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+mvn -pl benchmark -Pbenchmark -Dmaven.javadoc.skip=true clean package && \
+  java -jar benchmark/target/benchmarks.jar
