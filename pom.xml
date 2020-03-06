@@ -303,6 +303,11 @@
           <artifactId>versions-maven-plugin</artifactId>
           <version>2.7</version>
         </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-shade-plugin</artifactId>
+          <version>3.2.1</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -482,6 +487,12 @@
       <id>integration</id>
       <modules>
         <module>integration</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>benchmark</id>
+      <modules>
+        <module>benchmark</module>
       </modules>
     </profile>
     <profile>

@@ -12,4 +12,5 @@
   <suppress checks=".*" files="InetOrgPerson\.java" />
   <suppress checks=".*" files="OrganizationalPerson\.java" />
   <suppress checks=".*" files="MyObject\.java" />
+  <suppress checks=".*" files=".*_jmh.*\.java" />
 </suppressions>
