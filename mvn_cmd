@@ -15,7 +15,7 @@ function run_mvn() {
 
 case "$1" in
   clean)
-    run_mvn integration,benchmark,distribution clean
+    run_mvn integration,benchmark,profile,distribution clean
     ;;
   javadoc)
     run_mvn javadoc:javadoc
@@ -38,10 +38,10 @@ case "$1" in
     run_mvn distribution versions:set "-DnewVersion=${VERSION} -DgenerateBackupPoms=false"
     ;;
   versions-display-dependency)
-    run_mvn integration,benchmark,distribution versions:display-dependency-updates
+    run_mvn integration,benchmark,profile,distribution versions:display-dependency-updates
     ;;
   versions-display-plugin)
-    run_mvn integration,benchmark,distribution versions:display-plugin-updates
+    run_mvn integration,benchmark,profile,distribution versions:display-plugin-updates
     ;;
   deploy)
     LOCAL_REPO=${2}
