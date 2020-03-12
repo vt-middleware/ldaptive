@@ -20,9 +20,6 @@ import org.testng.annotations.Test;
 public class ResponseParserTest
 {
 
-  /** To test with. */
-  private final ResponseParser parser = new ResponseParser();
-
 
   /**
    * Parser test data.
@@ -106,6 +103,7 @@ public class ResponseParserTest
   public void parse(final byte[] berValue, final Message response)
     throws Exception
   {
+    final ResponseParser parser = new ResponseParser();
     Assert.assertEquals(parser.parse(new DefaultDERBuffer(berValue)).get(), response);
   }
 }
