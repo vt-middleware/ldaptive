@@ -140,7 +140,7 @@ public class DERParser
   private void parseTags(final DERBuffer encoded)
   {
     int index = 0;
-    while (encoded.position() < encoded.limit()) {
+    while (encoded.position() < encoded.limit() && !handlerMap.isEmpty()) {
       final DERTag tag = readTag(encoded);
       if (tag != null) {
         addTag(tag, index++);
