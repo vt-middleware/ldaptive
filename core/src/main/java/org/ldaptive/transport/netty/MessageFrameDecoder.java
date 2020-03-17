@@ -78,6 +78,10 @@ public class MessageFrameDecoder extends ByteToMessageDecoder
         return buffer.position() + len;
       }
       logger.trace("could not read entire message of length {} with buffer {}", len, buffer);
+    } catch (IndexOutOfBoundsException e) {
+      // it's possible to receive a multi-byte length without all the bytes
+      // don't log that outcome as a warning
+      logger.trace("Error reading message length with buffer {}", buffer, e);
     } catch (Exception e) {
       logger.warn("Error reading message length with buffer {}", buffer, e);
     }
