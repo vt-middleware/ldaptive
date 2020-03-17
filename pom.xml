@@ -496,6 +496,12 @@
       </modules>
     </profile>
     <profile>
+      <id>profile</id>
+      <modules>
+        <module>profile</module>
+      </modules>
+    </profile>
+    <profile>
       <id>distribution</id>
       <modules>
         <module>distribution</module>

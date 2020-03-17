@@ -1,0 +1,37 @@
+#!/bin/bash
+
+if [ -z "${PROFILE_CLASS}" ]; then
+  PROFILE_CLASS="org.ldaptive.SingleSearchOperationProfile"
+fi
+
+if [ -z "${THREAD_COUNT}" ]; then
+  THREAD_COUNT=50
+fi
+
+if [ -z "${THREAD_SLEEP}" ]; then
+  THREAD_SLEEP=10
+fi
+
+if [ -z "${ITERATIONS}" ]; then
+  ITERATIONS=-1
+fi
+
+if [ -z "${USE_YOURKIT}" ]; then
+  # jconsole options
+  export MAVEN_OPTS="-Djava.rmi.server.hostname=0.0.0.0 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10001 -Dcom.sun.management.jmxremote.rmi.port=9003 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -XX:NativeMemoryTracking=summary"
+else
+  # yourkit options
+  export MAVEN_OPTS="-agentpath:profile/yourkit_2019.8/bin/linux-x86-64/libyjpagent.so=port=10001,listen=all"
+fi
+
+echo ""
+echo "####################################"
+echo "# Attach profiler to localhost:10001"
+echo "####################################"
+echo ""
+
+mvn -Dmaven.javadoc.skip=true -B -V -e \
+  -DldapBaseDn="${BASE_DN}" \
+  -DldapBindDn="${BIND_DN}" \
+  -DldapBindCredential="${BIND_CREDENTIAL}" \
+  -pl profile -Pprofile clean compile exec:java -Dexec.mainClass=${PROFILE_CLASS} -Dexec.args="${PROFILE_CLASS} ${HOST} ${PORT} ${THREAD_COUNT} ${THREAD_SLEEP} ${ITERATIONS}"
