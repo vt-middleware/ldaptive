@@ -145,9 +145,9 @@ public class DERPath
 
 
   /**
-   * Examines the last node in the path without removing it.
+   * Examines the first node in the path without removing it.
    *
-   * @return  last node in the path or null if no nodes remain
+   * @return  first node in the path or null if no nodes remain
    */
   public String peekNode()
   {
