@@ -531,7 +531,7 @@ public final class NettyConnection extends TransportConnection
         } else {
           if (bindLock.readLock().tryLock()) {
             try {
-              final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
+              final EncodedRequest encodedRequest = new EncodedRequest(getAndIncrementMessageID(), request);
               channel.writeAndFlush(encodedRequest).addListener(
                 ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             } finally {
@@ -684,7 +684,7 @@ public final class NettyConnection extends TransportConnection
         } else {
           if (bindLock.readLock().tryLock()) {
             try {
-              final EncodedRequest encodedRequest = new EncodedRequest(messageID.getAndIncrement(), request);
+              final EncodedRequest encodedRequest = new EncodedRequest(getAndIncrementMessageID(), request);
               channel.writeAndFlush(encodedRequest).addListener(
                 ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
             } finally {
@@ -792,7 +792,7 @@ public final class NettyConnection extends TransportConnection
             if (bindLock.readLock().tryLock()) {
               try {
                 final EncodedRequest encodedRequest = new EncodedRequest(
-                  messageID.getAndIncrement(),
+                  getAndIncrementMessageID(),
                   handle.getRequest());
                 handle.messageID(encodedRequest.getMessageID());
                 try {
@@ -840,6 +840,42 @@ public final class NettyConnection extends TransportConnection
         handle.exception(new LdapException(ResultCode.LOCAL_ERROR, e));
       }
     }
+  }
+
+
+  /**
+   * Returns the value of the next message ID and increments the counter.
+   *
+   * @return  message ID
+   */
+  int getAndIncrementMessageID()
+  {
+    return messageID.getAndUpdate(i -> i < Integer.MAX_VALUE ? i + 1 : 1);
+  }
+
+
+  /**
+   * Returns the value of the next message ID.
+   *
+   * @return  message ID
+   */
+  int getMessageID()
+  {
+    return messageID.get();
+  }
+
+
+  /**
+   * Sets the value of the next message ID.
+   *
+   * @param  i  message ID
+   */
+  void setMessageID(final int i)
+  {
+    if (i < 1) {
+      throw new IllegalArgumentException("messageID must be greater than zero");
+    }
+    messageID.set(i);
   }
 
 

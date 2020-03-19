@@ -30,6 +30,53 @@ public class NettyConnectionTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = "netty")
+  public void messageID()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final NettyConnection conn = new NettyConnection(
+        ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          .build(),
+        NioSocketChannel.class,
+        new NioEventLoopGroup(
+          0,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+        null,
+        null,
+        true);
+      try {
+        conn.open();
+        Assert.assertTrue(conn.isOpen());
+        int id = conn.getMessageID();
+        Assert.assertEquals(id, 1);
+        conn.operation(new UnbindRequest());
+        Assert.assertEquals(conn.getMessageID(), id + 1);
+        conn.setMessageID(Integer.MAX_VALUE - 1);
+        conn.operation(new UnbindRequest());
+        id = conn.getMessageID();
+        Assert.assertEquals(id, Integer.MAX_VALUE);
+        conn.operation(new UnbindRequest());
+        id = conn.getMessageID();
+        Assert.assertEquals(id, 1);
+        conn.operation(new UnbindRequest());
+        Assert.assertEquals(conn.getMessageID(), id + 1);
+      } finally {
+        conn.close();
+        Assert.assertFalse(conn.isOpen());
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
   public void openAndClose()
     throws Exception
   {
