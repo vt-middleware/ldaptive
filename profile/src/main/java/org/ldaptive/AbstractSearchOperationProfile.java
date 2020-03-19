@@ -56,7 +56,20 @@ public abstract class AbstractSearchOperationProfile extends AbstractProfile
   @Override
   protected void doOperation(final Consumer<Object> consumer, final int uid)
   {
-    final SearchOperation search = new SearchOperation(connectionFactory);
+    doOperation(connectionFactory, consumer, uid);
+  }
+
+
+  /**
+   * Perform a search operation with the supplied connection factory.
+   *
+   * @param  cf  connection factory
+   * @param  consumer  to give result entry to
+   * @param  uid  to search for
+   */
+  protected void doOperation(final ConnectionFactory cf, final Consumer<Object> consumer, final int uid)
+  {
+    final SearchOperation search = new SearchOperation(cf);
     search.setThrowCondition(ResultPredicate.NOT_SUCCESS);
     search.setEntryHandlers(e -> {
       consumer.accept(e);
