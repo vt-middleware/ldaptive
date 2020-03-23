@@ -104,4 +104,17 @@ public class NettyConnectionFactoryTransport implements Transport
       }
     }
   }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("channelType=").append(channelType).append(", ")
+      .append("ioWorkerGroup=").append(ioWorkerGroup).append(", ")
+      .append("messageWorkerGroup=").append(messageWorkerGroup).append(", ")
+      .append("channelOptions=").append(channelOptions).append(", ")
+      .append("shutdownOnClose=").append(shutdownOnClose).append("]").toString();
+  }
 }

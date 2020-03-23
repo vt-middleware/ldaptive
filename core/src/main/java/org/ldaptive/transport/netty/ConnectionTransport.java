@@ -142,4 +142,15 @@ public class ConnectionTransport implements Transport
       channelOptions,
       true);
   }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("numIoThreads=").append(numIoThreads).append(", ")
+      .append("numMessageThreads=").append(numMessageThreads).append(", ")
+      .append("channelOptions=").append(channelOptions).append("]").toString();
+  }
 }

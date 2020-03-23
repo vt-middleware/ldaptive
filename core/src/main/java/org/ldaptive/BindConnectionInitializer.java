@@ -233,11 +233,10 @@ public class BindConnectionInitializer implements ConnectionInitializer
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
+    return new StringBuilder(getClass().getName()).append("@").append(hashCode()).append("::")
       .append("bindDn=").append(bindDn).append(", ")
       .append("bindSaslConfig=").append(bindSaslConfig).append(", ")
-      .append("bindControls=").append(Arrays.toString(bindControls)).append("]").toString();
+      .append("bindControls=").append(Arrays.toString(bindControls)).toString();
   }
 
 

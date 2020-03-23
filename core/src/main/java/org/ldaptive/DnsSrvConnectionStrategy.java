@@ -218,11 +218,4 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
     }
     return Collections.emptySet();
   }
-
-
-  @Override
-  public String toString()
-  {
-    return new StringBuilder("[").append(getClass().getName()).append("@").append(hashCode()).append("]").toString();
-  }
 }

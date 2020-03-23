@@ -435,7 +435,7 @@ public class ConnectionConfig extends AbstractConfig
   @Override
   public String toString()
   {
-    return new StringBuilder(
+    return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("ldapUrl=").append(ldapUrl).append(", ")
       .append("connectTimeout=").append(connectTimeout).append(", ")
@@ -448,7 +448,7 @@ public class ConnectionConfig extends AbstractConfig
       .append("useStartTLS=").append(useStartTLS).append(", ")
       .append("connectionInitializers=").append(Arrays.toString(connectionInitializers)).append(", ")
       .append("connectionStrategy=").append(connectionStrategy).append(", ")
-      .append("connectionValidator=").append(connectionValidator).toString();
+      .append("connectionValidator=").append(connectionValidator).append("]").toString();
   }
 
 

@@ -322,8 +322,7 @@ public class SslConfig extends AbstractConfig
       .append("enabledCipherSuites=").append(Arrays.toString(enabledCipherSuites)).append(", ")
       .append("enabledProtocols=").append(Arrays.toString(enabledProtocols)).append(", ")
       .append("handshakeCompletedListeners=").append(Arrays.toString(handshakeCompletedListeners)).append(", ")
-      .append("handshakeTimeout=").append(handshakeTimeout)
-      .append("]").toString();
+      .append("handshakeTimeout=").append(handshakeTimeout).append("]").toString();
   }
 
 
