@@ -44,6 +44,42 @@ services:
         max-size: "100M"
         max-file: "5"
 
+  ldap-test-2:
+    image: dhawes/ldap-test-openldap:latest
+    ports:
+      - "390:389"
+      - "10390:10389"
+      - "637:636"
+      - "10637:10636"
+      - "89:88"
+    networks:
+      ldap_net:
+        ipv4_address: 172.28.1.12
+    logging:
+      #driver: "json-file"
+      driver: "none"
+      options:
+        max-size: "100M"
+        max-file: "5"
+
+  ldap-test-3:
+    image: dhawes/ldap-test-openldap:latest
+    ports:
+      - "391:389"
+      - "10391:10389"
+      - "638:636"
+      - "10638:10636"
+      - "90:88"
+    networks:
+      ldap_net:
+        ipv4_address: 172.28.1.13
+    logging:
+      #driver: "json-file"
+      driver: "none"
+      options:
+        max-size: "100M"
+        max-file: "5"
+
 networks:
   ldap_net:
     ipam:

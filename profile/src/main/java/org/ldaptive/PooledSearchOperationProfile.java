@@ -18,7 +18,7 @@ public final class PooledSearchOperationProfile extends AbstractSearchOperationP
   {
     connectionFactory = PooledConnectionFactory.builder()
       .config(ConnectionConfig.builder()
-        .url(new LdapURL(host, port).getUrl())
+        .url(new LdapURL(host, port).getHostnameWithSchemeAndPort())
         .connectionInitializers(
           BindConnectionInitializer.builder()
             .dn(bindDn)

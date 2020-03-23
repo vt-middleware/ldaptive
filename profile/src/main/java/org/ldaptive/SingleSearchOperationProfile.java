@@ -15,7 +15,7 @@ public final class SingleSearchOperationProfile extends AbstractSearchOperationP
   {
     connectionFactory = SingleConnectionFactory.builder()
       .config(ConnectionConfig.builder()
-        .url(new LdapURL(host, port).getUrl())
+        .url(new LdapURL(host, port).getHostnameWithSchemeAndPort())
         .connectionInitializers(
           BindConnectionInitializer.builder()
             .dn(bindDn)

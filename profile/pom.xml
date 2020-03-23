@@ -40,6 +40,14 @@
               <key>org.ldaptive.transport</key>
               <value>org.ldaptive.transport.netty.SingletonTransport</value>
             </systemProperty>
+            <systemProperty>
+              <key>org.ldaptive.transport</key>
+              <value>org.ldaptive.transport.netty.ConnectionFactoryTransport</value>
+            </systemProperty>
+            <systemProperty>
+              <key>io.netty.eventLoopThreads</key>
+              <value>10</value>
+            </systemProperty>
           </systemProperties>
         </configuration>
         -->
