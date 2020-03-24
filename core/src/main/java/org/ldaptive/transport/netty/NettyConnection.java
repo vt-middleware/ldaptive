@@ -59,7 +59,6 @@ import org.ldaptive.ConnectionInitializer;
 import org.ldaptive.ConnectionValidator;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.DeleteResponse;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
@@ -1388,9 +1387,7 @@ public final class NettyConnection extends TransportConnection
         LOGGER.debug("Received response message {} for handle {}", msg, handle);
         if (handle != null) {
           if (msg instanceof LdapEntry) {
-            for (LdapAttribute a : ((LdapEntry) msg).getAttributes()) {
-              a.configureBinary(((SearchRequest) handle.getRequest()).getBinaryAttributes());
-            }
+            ((SearchRequest) handle.getRequest()).configureBinaryAttributes((LdapEntry) msg);
             ((DefaultSearchOperationHandle) handle).entry((LdapEntry) msg);
           } else if (msg instanceof SearchResultReference) {
             ((DefaultSearchOperationHandle) handle).reference((SearchResultReference) msg);

@@ -462,6 +462,22 @@ public class SearchRequest extends AbstractRequestMessage
   }
 
 
+  /**
+   * Invokes {@link LdapAttribute#configureBinary(String...)} for each attribute in the supplied entry using {@link
+   * #binaryAttributes}.
+   *
+   * @param  entry  to configure binary attributes for
+   */
+  public void configureBinaryAttributes(final LdapEntry entry)
+  {
+    if (binaryAttributes != null && binaryAttributes.length > 0) {
+      for (LdapAttribute a : entry.getAttributes()) {
+        a.configureBinary(binaryAttributes);
+      }
+    }
+  }
+
+
   @Override
   protected DEREncoder[] getRequestEncoders(final int id)
   {

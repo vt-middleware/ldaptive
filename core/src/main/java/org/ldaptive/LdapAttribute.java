@@ -137,8 +137,7 @@ public class LdapAttribute
 
 
   /**
-   * Checks whether {@link #DEFAULT_BINARY_ATTRIBUTES}, {@link #BINARY_ATTRIBUTES}, or attrNames matches the name of
-   * this attribute.  If a match is found this attribute is set as binary.
+   * Checks whether attrNames matches the name of this attribute.  If a match is found this attribute is set as binary.
    *
    * @param  attrNames  custom binary attribute names
    */
