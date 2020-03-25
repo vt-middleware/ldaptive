@@ -142,7 +142,11 @@ public final class NettyConnection extends TransportConnection
   /** Operation lock when a bind occurs. */
   private final ReentrantReadWriteLock bindLock = new ReentrantReadWriteLock();
 
-  /** Executor for scheduling various connection related tasks. */
+  /**
+   * Executor for scheduling various connection related tasks that cannot or should not be handled by the netty
+   * event loop groups. Reconnects in particular require a dedicated thread as the event loop group may be shared or may
+   * not be configured with enough threads to handle the task.
+   */
   private ExecutorService connectionExecutor;
 
   /** URL derived from the connection strategy. */
