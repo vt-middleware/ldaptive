@@ -33,7 +33,11 @@ if (props != null) {
 
   var factory = new DefaultConnectionFactory(config);
   var response = new SearchOperation(factory, request).execute();
-  new LdifWriter(new PrintWriter(System.out)).write(response);
+  if (!response.isSuccess()) {
+    System.out.println(response);
+  } else {
+    new LdifWriter(new PrintWriter(System.out)).write(response);
+  }
 } else {
   System.out.println("USAGE: jshell --class-path ... -R-Dargs=\"...\" ldapsearch.jsh");
   System.out.println("  where args includes");
