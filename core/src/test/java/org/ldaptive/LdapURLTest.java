@@ -234,6 +234,182 @@ public class LdapURLTest
             SearchScope.ONELEVEL,
             "(uid=dfisher)"),
         },
+        new Object[] {
+          "ldap://192.168.10.3",
+          new LdapURL(
+            "ldap",
+            "192.168.10.3",
+            389,
+            LdapURL.DEFAULT_BASE_DN,
+            LdapURL.DEFAULT_ATTRIBUTES,
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldaps://192.168.10.3",
+          new LdapURL(
+            "ldaps",
+            "192.168.10.3",
+            636,
+            LdapURL.DEFAULT_BASE_DN,
+            LdapURL.DEFAULT_ATTRIBUTES,
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldaps://192.168.10.3:10636",
+          new LdapURL(
+            "ldaps",
+            "192.168.10.3",
+            10636,
+            LdapURL.DEFAULT_BASE_DN,
+            LdapURL.DEFAULT_ATTRIBUTES,
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://192.168.10.3:10389/dc=ldaptive,dc=org",
+          new LdapURL(
+            "ldap",
+            "192.168.10.3",
+            10389,
+            "dc=ldaptive,dc=org",
+            LdapURL.DEFAULT_ATTRIBUTES,
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://192.168.10.3:10389/dc=ldaptive,dc=org?cn",
+          new LdapURL(
+            "ldap",
+            "192.168.10.3",
+            10389,
+            "dc=ldaptive,dc=org",
+            new String[] {"cn"},
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://192.168.10.3:10389/dc=ldaptive,dc=org?cn,sn",
+          new LdapURL(
+            "ldap",
+            "192.168.10.3",
+            10389,
+            "dc=ldaptive,dc=org",
+            new String[] {"cn", "sn"},
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://192.168.10.3:10389/dc=ldaptive,dc=org?cn,sn?one",
+          new LdapURL(
+            "ldap",
+            "192.168.10.3",
+            10389,
+            "dc=ldaptive,dc=org",
+            new String[] {"cn", "sn"},
+            SearchScope.ONELEVEL,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://192.168.10.3:10389/dc=ldaptive,dc=org?cn,sn?one?(uid=dfisher)",
+          new LdapURL(
+            "ldap",
+            "192.168.10.3",
+            10389,
+            "dc=ldaptive,dc=org",
+            new String[] {"cn", "sn"},
+            SearchScope.ONELEVEL,
+            "(uid=dfisher)"),
+        },
+        new Object[] {
+          "ldap://[2607:b400:90:6800:2000:0:0:64]",
+          new LdapURL(
+            "ldap",
+            "2607:b400:90:6800:2000:0:0:64",
+            389,
+            LdapURL.DEFAULT_BASE_DN,
+            LdapURL.DEFAULT_ATTRIBUTES,
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldaps://[2607:b400:90:6800:2000:0:0:64]",
+          new LdapURL(
+            "ldaps",
+            "2607:b400:90:6800:2000:0:0:64",
+            636,
+            LdapURL.DEFAULT_BASE_DN,
+            LdapURL.DEFAULT_ATTRIBUTES,
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://[2607:b400:90:6800:2000:0:0:64]:10389",
+          new LdapURL(
+            "ldap",
+            "2607:b400:90:6800:2000:0:0:64",
+            10389,
+            LdapURL.DEFAULT_BASE_DN,
+            LdapURL.DEFAULT_ATTRIBUTES,
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://[2607:b400:90:6800:2000:0:0:64]:10389/dc=ldaptive,dc=org",
+          new LdapURL(
+            "ldap",
+            "2607:b400:90:6800:2000:0:0:64",
+            10389,
+            "dc=ldaptive,dc=org",
+            LdapURL.DEFAULT_ATTRIBUTES,
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://[2607:b400:90:6800:2000:0:0:64]:10389/dc=ldaptive,dc=org?cn",
+          new LdapURL(
+            "ldap",
+            "2607:b400:90:6800:2000:0:0:64",
+            10389,
+            "dc=ldaptive,dc=org",
+            new String[] {"cn"},
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://[2607:b400:90:6800:2000:0:0:64]:10389/dc=ldaptive,dc=org?cn,sn",
+          new LdapURL(
+            "ldap",
+            "2607:b400:90:6800:2000:0:0:64",
+            10389,
+            "dc=ldaptive,dc=org",
+            new String[] {"cn", "sn"},
+            LdapURL.DEFAULT_SCOPE,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://[2607:b400:90:6800:2000:0:0:64]:10389/dc=ldaptive,dc=org?cn,sn?one",
+          new LdapURL(
+            "ldap",
+            "2607:b400:90:6800:2000:0:0:64",
+            10389,
+            "dc=ldaptive,dc=org",
+            new String[] {"cn", "sn"},
+            SearchScope.ONELEVEL,
+            LdapURL.DEFAULT_FILTER),
+        },
+        new Object[] {
+          "ldap://[2607:b400:90:6800:2000:0:0:64]:10389/dc=ldaptive,dc=org?cn,sn?one?(uid=dfisher)",
+          new LdapURL(
+            "ldap",
+            "2607:b400:90:6800:2000:0:0:64",
+            10389,
+            "dc=ldaptive,dc=org",
+            new String[] {"cn", "sn"},
+            SearchScope.ONELEVEL,
+            "(uid=dfisher)"),
+        },
       };
   }
   // CheckStyle:MethodLength ON

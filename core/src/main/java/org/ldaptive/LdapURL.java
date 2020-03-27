@@ -17,7 +17,7 @@ public class LdapURL
 
   /** Pattern to match LDAP URL. */
   protected static final Pattern URL_PATTERN = Pattern.compile(
-    "([lL][dD][aA][pP][sSiI]?)://([^:/]+)?" +
+    "([lL][dD][aA][pP][sSiI]?)://(\\[[0-9A-Fa-f:]+\\]|[^:/]+)?" +
       "(?::(\\d+))?" +
       "(?:/(?:([^?]+))?" +
       "(?:\\?([^?]*))?" +
