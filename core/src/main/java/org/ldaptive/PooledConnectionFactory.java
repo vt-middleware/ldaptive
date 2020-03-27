@@ -27,11 +27,34 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
   /**
    * Creates a new pooled connection factory.
    *
+   * @param  t  transport
+   */
+  public PooledConnectionFactory(final Transport t)
+  {
+    setDefaultConnectionFactory(new DefaultConnectionFactory(t));
+  }
+
+
+  /**
+   * Creates a new pooled connection factory.
+   *
    * @param  ldapUrl  to connect to
    */
   public PooledConnectionFactory(final String ldapUrl)
   {
     setDefaultConnectionFactory(new DefaultConnectionFactory(ldapUrl));
+  }
+
+
+  /**
+   * Creates a new pooled connection factory.
+   *
+   * @param  ldapUrl  to connect to
+   * @param  t  transport
+   */
+  public PooledConnectionFactory(final String ldapUrl, final Transport t)
+  {
+    setDefaultConnectionFactory(new DefaultConnectionFactory(ldapUrl, t));
   }
 
 

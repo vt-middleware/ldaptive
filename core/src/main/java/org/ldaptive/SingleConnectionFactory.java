@@ -8,7 +8,6 @@ import java.lang.reflect.Proxy;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.ldaptive.transport.Transport;
-import org.ldaptive.transport.TransportFactory;
 
 /**
  * Creates a single connection which is proxied for LDAP operations.
@@ -44,11 +43,34 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   /**
    * Creates a new single connection factory.
    *
+   * @param  t  transport
+   */
+  public SingleConnectionFactory(final Transport t)
+  {
+    super(t);
+  }
+
+
+  /**
+   * Creates a new single connection factory.
+   *
    * @param  ldapUrl  to connect to
    */
   public SingleConnectionFactory(final String ldapUrl)
   {
-    this(new ConnectionConfig(ldapUrl));
+    super(ldapUrl);
+  }
+
+
+  /**
+   * Creates a new single connection factory.
+   *
+   * @param  ldapUrl  to connect to
+   * @param  t  transport
+   */
+  public SingleConnectionFactory(final String ldapUrl, final Transport t)
+  {
+    super(ldapUrl, t);
   }
 
 
@@ -59,7 +81,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public SingleConnectionFactory(final ConnectionConfig cc)
   {
-    this(cc, TransportFactory.getTransport());
+    super(cc);
   }
 
 

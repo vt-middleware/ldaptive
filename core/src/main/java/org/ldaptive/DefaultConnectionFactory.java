@@ -27,7 +27,18 @@ public class DefaultConnectionFactory implements ConnectionFactory
   /** Default constructor. */
   public DefaultConnectionFactory()
   {
-    transport = TransportFactory.getTransport();
+    this(TransportFactory.getTransport());
+  }
+
+
+  /**
+   * Creates a new default connection factory.
+   *
+   * @param  t  transport
+   */
+  public DefaultConnectionFactory(final Transport t)
+  {
+    transport = t;
   }
 
 
@@ -39,6 +50,18 @@ public class DefaultConnectionFactory implements ConnectionFactory
   public DefaultConnectionFactory(final String ldapUrl)
   {
     this(new ConnectionConfig(ldapUrl));
+  }
+
+
+  /**
+   * Creates a new default connection factory.
+   *
+   * @param  ldapUrl  to connect to
+   * @param  t  transport
+   */
+  public DefaultConnectionFactory(final String ldapUrl, final Transport t)
+  {
+    this(new ConnectionConfig(ldapUrl), t);
   }
 
 

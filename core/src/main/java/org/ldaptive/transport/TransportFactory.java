@@ -21,19 +21,22 @@ public final class TransportFactory
   private static final Logger LOGGER = LoggerFactory.getLogger(TransportFactory.class);
 
   /** Custom transport constructor. */
-  private static Constructor<?> transportConstructor;
+  private static final Constructor<?> TRANSPORT_CONSTRUCTOR;
 
   static {
     // Initialize a custom transport if a system property is found
     final String transportClass = System.getProperty(TRANSPORT_PROPERTY);
     if (transportClass != null) {
       try {
+        // note that the number of IO threads can be controlled with the io.netty.eventLoopThreads system property
         LOGGER.info("Setting ldap transport to {}", transportClass);
-        transportConstructor = Class.forName(transportClass).getDeclaredConstructor();
+        TRANSPORT_CONSTRUCTOR = Class.forName(transportClass).getDeclaredConstructor();
       } catch (Exception e) {
         LOGGER.error("Error instantiating {}", transportClass, e);
         throw new IllegalStateException(e);
       }
+    } else {
+      TRANSPORT_CONSTRUCTOR = null;
     }
   }
 
@@ -50,11 +53,11 @@ public final class TransportFactory
    */
   public static Transport getTransport()
   {
-    if (transportConstructor != null) {
+    if (TRANSPORT_CONSTRUCTOR != null) {
       try {
-        return (Transport) transportConstructor.newInstance();
+        return (Transport) TRANSPORT_CONSTRUCTOR.newInstance();
       } catch (Exception e) {
-        LOGGER.error("Error creating new transport instance with {}", transportConstructor, e);
+        LOGGER.error("Error creating new transport instance with {}", TRANSPORT_CONSTRUCTOR, e);
         throw new IllegalStateException(e);
       }
     }
