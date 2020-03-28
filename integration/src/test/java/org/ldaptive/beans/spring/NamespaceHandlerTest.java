@@ -465,7 +465,7 @@ public class NamespaceHandlerTest
    */
   private void testPooledConnectionFactory(final PooledConnectionFactory factory, final AuthenticatorType authType)
   {
-    Assert.assertEquals(factory.getBlockWaitTime(), Duration.ofSeconds(3));
+    Assert.assertEquals(factory.getBlockWaitTime(), Duration.ofMinutes(1));
     Assert.assertFalse(factory.getFailFastInitialize());
     Assert.assertEquals(factory.getPruneStrategy().getPrunePeriod(), Duration.ofMinutes(5));
     Assert.assertEquals(((IdlePruneStrategy) factory.getPruneStrategy()).getIdleTime(), Duration.ofMinutes(10));

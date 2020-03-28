@@ -56,7 +56,7 @@
 
   <ldaptive:connection-config
     ldapUrl="ldap://directory.ldaptive.org"
-    connectTimeout="PT3S"
+    connectTimeout="PT1M"
     responseTimeout="PT7S"
     useStartTLS="true"
     bindDn="uid=admin,ou=accounts,dc=ldaptive,dc=org"

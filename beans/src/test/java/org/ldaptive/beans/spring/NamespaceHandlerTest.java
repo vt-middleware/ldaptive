@@ -153,7 +153,7 @@ public class NamespaceHandlerTest
    */
   private void testPooledConnectionFactory(final PooledConnectionFactory factory, final AuthenticatorType authType)
   {
-    Assert.assertEquals(factory.getBlockWaitTime(), Duration.ofSeconds(3));
+    Assert.assertEquals(factory.getBlockWaitTime(), Duration.ofMinutes(1));
     Assert.assertFalse(factory.getFailFastInitialize());
     Assert.assertEquals(factory.getPruneStrategy().getPrunePeriod(), Duration.ofMinutes(5));
     Assert.assertEquals(((IdlePruneStrategy) factory.getPruneStrategy()).getIdleTime(), Duration.ofMinutes(10));
@@ -179,7 +179,7 @@ public class NamespaceHandlerTest
   {
     Assert.assertNotNull(connectionConfig.getLdapUrl());
     Assert.assertTrue(connectionConfig.getUseStartTLS());
-    Assert.assertEquals(connectionConfig.getConnectTimeout(), Duration.ofSeconds(3));
+    Assert.assertEquals(connectionConfig.getConnectTimeout(), Duration.ofMinutes(1));
     Assert.assertEquals(connectionConfig.getResponseTimeout(), Duration.ofSeconds(7));
     final CredentialConfig credentialConfig =  connectionConfig.getSslConfig().getCredentialConfig();
     if (credentialConfig instanceof X509CredentialConfig) {
