@@ -117,6 +117,10 @@ public final class MockConnection extends TransportConnection
 
 
   @Override
+  protected void complete(final DefaultOperationHandle handle) {}
+
+
+  @Override
   public void operation(final AbandonRequest request)
   {
     throw new UnsupportedOperationException();

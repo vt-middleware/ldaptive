@@ -846,6 +846,13 @@ public final class NettyConnection extends TransportConnection
   }
 
 
+  @Override
+  protected void complete(final DefaultOperationHandle handle)
+  {
+    pendingResponses.remove(handle.getMessageID());
+  }
+
+
   /**
    * Returns the value of the next message ID and increments the counter.
    *

@@ -586,20 +586,30 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   private void complete()
   {
-    if (receivedTime != null) {
-      logger.warn("Operation already complete for handle {}", this);
-      return;
-    }
     try {
-      responseDone.countDown();
-    } finally {
-      receivedTime = Instant.now();
-      if (onComplete != null) {
-        try {
-          onComplete.execute();
-        } catch (Exception ex) {
-          logger.warn("Complete consumer {} in handle {} threw an exception", onComplete, this, ex);
+      if (receivedTime != null) {
+        logger.warn("Operation already complete for handle {}", this);
+        return;
+      }
+      try {
+        responseDone.countDown();
+      } finally {
+        receivedTime = Instant.now();
+        if (onComplete != null) {
+          try {
+            onComplete.execute();
+          } catch (Exception e) {
+            logger.warn("Complete consumer {} in handle {} threw an exception", onComplete, this, e);
+          }
         }
+      }
+    } finally {
+      try {
+        if (connection != null) {
+          connection.complete(this);
+        }
+      } catch (Exception e) {
+        logger.warn("Connection {} complete threw an exception for handle {}", connection, this, e);
       }
       connection = null;
     }

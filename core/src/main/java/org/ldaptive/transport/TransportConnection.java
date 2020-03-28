@@ -231,4 +231,13 @@ public abstract class TransportConnection implements Connection
    * @param  handle  for the operation write
    */
   protected abstract void write(DefaultOperationHandle handle);
+
+
+  /**
+   * Report that the supplied handle has completed. Allows the connection to cleanup any resources associated with the
+   * handle.
+   *
+   * @param  handle  that has completed
+   */
+  protected abstract void complete(DefaultOperationHandle handle);
 }
