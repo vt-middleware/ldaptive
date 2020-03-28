@@ -221,7 +221,7 @@
   </xsd:complexType>
 
   <xsd:attributeGroup name="connectionPoolGroup">
-    <xsd:attribute name="blockWaitTime" type="xsd:string" use="optional" default="PT3S"/>
+    <xsd:attribute name="blockWaitTime" type="xsd:string" use="optional" default="PT1M"/>
     <xsd:attribute name="failFastInitialize" type="xsd:string" use="optional" default="false"/>
     <xsd:attribute name="minPoolSize" type="xsd:string" use="optional" default="3"/>
     <xsd:attribute name="maxPoolSize" type="xsd:string" use="optional" default="10"/>
@@ -241,9 +241,9 @@
     <xsd:attribute name="autoReplay" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="autoReconnectCondition" type="xsd:string" use="optional"/>
     <xsd:attribute name="connectionStrategy" type="xsd:string" use="optional"/>
-    <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="PT3S"/>
-    <xsd:attribute name="responseTimeout" type="xsd:string" use="optional" default="PT3S"/>
-    <xsd:attribute name="reconnectTimeout" type="xsd:string" use="optional" default="PT30S"/>
+    <xsd:attribute name="connectTimeout" type="xsd:string" use="optional" default="PT1M"/>
+    <xsd:attribute name="responseTimeout" type="xsd:string" use="optional" default="PT1M"/>
+    <xsd:attribute name="reconnectTimeout" type="xsd:string" use="optional" default="PT2M"/>
     <xsd:attribute name="useStartTLS" type="xsd:string" use="optional" default="true"/>
     <xsd:attribute name="trustCertificates" type="xsd:string" use="optional"/>
     <xsd:attribute name="authenticationCertificate" type="xsd:string" use="optional"/>
