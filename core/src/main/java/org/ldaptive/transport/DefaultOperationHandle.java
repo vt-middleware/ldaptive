@@ -336,7 +336,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    *
    * @return  message ID
    */
-  public int getMessageID()
+  public Integer getMessageID()
   {
     return messageID;
   }

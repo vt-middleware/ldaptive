@@ -849,7 +849,9 @@ public final class NettyConnection extends TransportConnection
   @Override
   protected void complete(final DefaultOperationHandle handle)
   {
-    pendingResponses.remove(handle.getMessageID());
+    if (handle != null && handle.getMessageID() != null) {
+      pendingResponses.remove(handle.getMessageID());
+    }
   }
 
 
