@@ -53,6 +53,29 @@ public class SyncReplRunner
   /** Sync repl cookie manager. */
   private final CookieManager cookieManager;
 
+  /** Invoked when an exception is received. */
+  private final Consumer<Exception> onException = new Consumer<>() {
+    @Override
+    public void accept(final Exception e)
+    {
+      if (started) {
+        if (handlingException.compareAndSet(false, true)) {
+          try {
+            LOGGER.warn("Received exception '{}' for {}", e.getMessage(), this);
+            stop();
+            start();
+          } finally {
+            handlingException.set(false);
+          }
+        } else {
+          LOGGER.debug("Ignoring exception, restart already in progress for {}", this);
+        }
+      } else {
+        LOGGER.debug("Ignoring exception, runner not started for {}", this);
+      }
+    }
+  };
+
   /** Search operation handle. */
   private SyncReplClient syncReplClient;
 
@@ -192,23 +215,7 @@ public class SyncReplRunner
     syncReplClient.setOnEntry(onEntry);
     syncReplClient.setOnResult(onResult);
     syncReplClient.setOnMessage(onMessage);
-    syncReplClient.setOnException(e -> {
-      if (started) {
-        if (handlingException.compareAndSet(false, true)) {
-          try {
-            LOGGER.warn("Received exception '{}' for {}", e.getMessage(), this);
-            stop();
-            start();
-          } finally {
-            handlingException.set(false);
-          }
-        } else {
-          LOGGER.debug("Ignoring exception, restart already in progress for {}", this);
-        }
-      } else {
-        LOGGER.debug("Ignoring exception, runner not started for {}", this);
-      }
-    });
+    syncReplClient.setOnException(onException);
   }
 
 
