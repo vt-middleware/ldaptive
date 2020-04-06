@@ -103,6 +103,17 @@ public final class NettyUtils
    */
   public static void shutdownGracefully(final EventLoopGroup workerGroup)
   {
-    workerGroup.shutdownGracefully(DEFAULT_SHUTDOWN_QUIET_PERIOD, DEFAULT_SHUTDOWN_MAX_TIMEOUT, TimeUnit.MILLISECONDS);
+    workerGroup.shutdownGracefully(DEFAULT_SHUTDOWN_QUIET_PERIOD, DEFAULT_SHUTDOWN_MAX_TIMEOUT, TimeUnit.MILLISECONDS)
+      .addListener(f -> {
+        if (!f.isSuccess()) {
+          if (f.cause() != null) {
+            LOGGER.warn("Could not shutdown worker group {}", workerGroup, f.cause());
+          } else {
+            LOGGER.warn("Could not shutdown worker group {}", workerGroup);
+          }
+        } else {
+          LOGGER.trace("Worker group {} gracefully shutdown", workerGroup);
+        }
+      });
   }
 }
