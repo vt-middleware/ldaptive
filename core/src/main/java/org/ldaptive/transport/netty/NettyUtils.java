@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport.netty;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
@@ -26,7 +27,7 @@ public final class NettyUtils
 {
 
   /** Time in milliseconds for graceful shutdown quiet period. */
-  private static final long DEFAULT_SHUTDOWN_QUIET_PERIOD = 500;
+  private static final long DEFAULT_SHUTDOWN_QUIET_PERIOD = 0;
 
   /** Time in milliseconds for graceful shutdown max wait. */
   private static final long DEFAULT_SHUTDOWN_MAX_TIMEOUT = 1000;
@@ -103,8 +104,10 @@ public final class NettyUtils
    */
   public static void shutdownGracefully(final EventLoopGroup workerGroup)
   {
+    final CountDownLatch shutdownLatch = new CountDownLatch(1);
     workerGroup.shutdownGracefully(DEFAULT_SHUTDOWN_QUIET_PERIOD, DEFAULT_SHUTDOWN_MAX_TIMEOUT, TimeUnit.MILLISECONDS)
       .addListener(f -> {
+        shutdownLatch.countDown();
         if (!f.isSuccess()) {
           if (f.cause() != null) {
             LOGGER.warn("Could not shutdown worker group {}", workerGroup, f.cause());
@@ -115,5 +118,12 @@ public final class NettyUtils
           LOGGER.trace("Worker group {} gracefully shutdown", workerGroup);
         }
       });
+    try {
+      if (!shutdownLatch.await(DEFAULT_SHUTDOWN_MAX_TIMEOUT * 2, TimeUnit.MILLISECONDS)) {
+        LOGGER.warn("Shutdown max timeout was not honored for worker group {}", workerGroup);
+      }
+    } catch (InterruptedException e) {
+      LOGGER.warn("Interrupted during shutdown for worker group {}", workerGroup);
+    }
   }
 }
