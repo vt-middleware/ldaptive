@@ -2,8 +2,6 @@
 package org.ldaptive.jaas;
 
 import java.util.Map;
-import org.ldaptive.ConnectionFactoryManager;
-import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.Authenticator;
 import org.slf4j.Logger;
@@ -60,16 +58,7 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
       throw new UnsupportedOperationException("Could not initialize spring context");
     }
 
-    final Authenticator a = context.getBean("authenticator", Authenticator.class);
-    if (a.getDnResolver() instanceof ConnectionFactoryManager) {
-      final ConnectionFactoryManager cfm = (ConnectionFactoryManager) a.getDnResolver();
-      cfm.getConnectionFactory().close();
-    }
-
-    final AuthenticationHandler ah = a.getAuthenticationHandler();
-    if (ah instanceof ConnectionFactoryManager) {
-      final ConnectionFactoryManager cfm = (ConnectionFactoryManager) ah;
-      cfm.getConnectionFactory().close();
-    }
+    final Authenticator auth = context.getBean("authenticator", Authenticator.class);
+    auth.close();
   }
 }

@@ -2,6 +2,10 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Objects;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -247,6 +251,63 @@ public class Authenticator
     throws LdapException
   {
     return authenticate(resolveDn(request.getUser()), request);
+  }
+
+
+  /**
+   * Attempts to close any connection factories associated with this authenticator. Inspects the {@link #dnResolver},
+   * {@link #authenticationHandler} and {@link #entryResolver} for type {@link ConnectionFactoryManager}. If found,
+   * those underlying connection factories are closed. {@link AggregateDnResolver}, {@link
+   * AggregateAuthenticationHandler} and {@link AggregateEntryResolver} are handled as well.
+   *
+   * Note that custom components that contain connection factories but do not implement {@link ConnectionFactoryManager}
+   * <b>will not</b> be closed by this method.
+   */
+  public void close()
+  {
+    if (dnResolver instanceof ConnectionFactoryManager) {
+      closeConnectionFactoryManagers((ConnectionFactoryManager) dnResolver);
+    } else if (dnResolver instanceof AggregateDnResolver) {
+      final Map<String, DnResolver> resolvers = ((AggregateDnResolver) dnResolver).getDnResolvers();
+      if (resolvers != null) {
+        closeConnectionFactoryManagers(resolvers.values().toArray(new ConnectionFactoryManager[0]));
+      }
+    }
+    if (authenticationHandler instanceof ConnectionFactoryManager) {
+      closeConnectionFactoryManagers((ConnectionFactoryManager) authenticationHandler);
+    } else if (authenticationHandler instanceof AggregateAuthenticationHandler) {
+      final Map<String, AuthenticationHandler> handlers =
+        ((AggregateAuthenticationHandler) authenticationHandler).getAuthenticationHandlers();
+      if (handlers != null) {
+        closeConnectionFactoryManagers(handlers.values().toArray(new ConnectionFactoryManager[0]));
+      }
+    }
+    if (entryResolver instanceof ConnectionFactoryManager) {
+      closeConnectionFactoryManagers((ConnectionFactoryManager) entryResolver);
+    } else if (entryResolver instanceof AggregateEntryResolver) {
+      final Map<String, EntryResolver> resolvers = ((AggregateEntryResolver) entryResolver).getEntryResolvers();
+      if (resolvers != null) {
+        closeConnectionFactoryManagers(resolvers.values().toArray(new ConnectionFactoryManager[0]));
+      }
+    }
+  }
+
+
+  /**
+   * Attempts to close all the connection factories in the supplied collection.
+   *
+   * @param  managers  to close connection factories for
+   */
+  private void closeConnectionFactoryManagers(final ConnectionFactoryManager... managers)
+  {
+    if (managers != null) {
+      Arrays.stream(managers)
+        .filter(ConnectionFactoryManager.class::isInstance)
+        .map(ConnectionFactoryManager.class::cast)
+        .map(ConnectionFactoryManager::getConnectionFactory)
+        .filter(Objects::nonNull)
+        .forEach(ConnectionFactory::close);
+    }
   }
 
 

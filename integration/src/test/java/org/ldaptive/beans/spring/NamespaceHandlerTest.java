@@ -5,7 +5,6 @@ import java.time.Duration;
 import java.time.Period;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.RoundRobinConnectionStrategy;
@@ -17,12 +16,10 @@ import org.ldaptive.TestControl;
 import org.ldaptive.auth.AggregateAuthenticationHandler;
 import org.ldaptive.auth.AggregateAuthenticationResponseHandler;
 import org.ldaptive.auth.AggregateDnResolver;
-import org.ldaptive.auth.AggregateEntryResolver;
 import org.ldaptive.auth.AuthenticationHandler;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.DnResolver;
-import org.ldaptive.auth.EntryResolver;
 import org.ldaptive.auth.FormatDnResolver;
 import org.ldaptive.auth.SearchDnResolver;
 import org.ldaptive.auth.SimpleBindAuthenticationHandler;
@@ -109,40 +106,7 @@ public class NamespaceHandlerTest
    */
   private void closeConnectionPools(final Authenticator auth)
   {
-    try {
-      final AuthenticationHandler authHandler = auth.getAuthenticationHandler();
-      if (authHandler instanceof ConnectionFactoryManager) {
-        ((ConnectionFactoryManager) authHandler).getConnectionFactory().close();
-      } else if (authHandler instanceof AggregateAuthenticationHandler) {
-        ((AggregateAuthenticationHandler) authHandler).getAuthenticationHandlers().values().stream().filter(
-          handler -> handler instanceof ConnectionFactoryManager).forEach(
-            handler -> ((ConnectionFactoryManager) handler).getConnectionFactory().close());
-      }
-      final DnResolver dnResolver = auth.getDnResolver();
-      if (dnResolver instanceof ConnectionFactoryManager) {
-        ((ConnectionFactoryManager) dnResolver).getConnectionFactory().close();
-      } else if (dnResolver instanceof AggregateDnResolver) {
-        ((AggregateDnResolver) dnResolver).getDnResolvers().values().stream().filter(
-          resolver -> resolver instanceof ConnectionFactoryManager).forEach(
-            resolver -> ((ConnectionFactoryManager) resolver).getConnectionFactory().close());
-      }
-      final EntryResolver entryResolver = auth.getEntryResolver();
-      if (entryResolver instanceof ConnectionFactoryManager) {
-        if (((ConnectionFactoryManager) entryResolver).getConnectionFactory() != null) {
-          ((ConnectionFactoryManager) entryResolver).getConnectionFactory().close();
-        }
-      } else if (entryResolver instanceof AggregateEntryResolver) {
-        ((AggregateEntryResolver) entryResolver).getEntryResolvers().values().stream().filter(
-          resolver -> resolver instanceof ConnectionFactoryManager).forEach(
-            resolver -> {
-              if (((ConnectionFactoryManager) resolver).getConnectionFactory() != null) {
-                ((ConnectionFactoryManager) resolver).getConnectionFactory().close();
-              }
-            });
-      }
-    } catch (RuntimeException e) {
-      throw new RuntimeException("Error closing pools for " + auth, e);
-    }
+    auth.close();
   }
 
 

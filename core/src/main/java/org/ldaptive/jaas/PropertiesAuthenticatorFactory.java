@@ -3,9 +3,6 @@ package org.ldaptive.jaas;
 
 import java.util.HashMap;
 import java.util.Map;
-import org.ldaptive.ConnectionFactoryManager;
-import org.ldaptive.auth.AggregateAuthenticationHandler;
-import org.ldaptive.auth.AggregateDnResolver;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.props.AuthenticationRequestPropertySource;
@@ -81,24 +78,7 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory im
   {
     for (Map.Entry<String, Authenticator> e : CACHE.entrySet()) {
       final Authenticator a = e.getValue();
-      if (a.getDnResolver() instanceof ConnectionFactoryManager) {
-        ((ConnectionFactoryManager) a.getDnResolver()).getConnectionFactory().close();
-      } else if (a.getDnResolver() instanceof AggregateDnResolver) {
-        ((AggregateDnResolver) a.getDnResolver()).getDnResolvers().values().stream()
-          .filter(ConnectionFactoryManager.class::isInstance)
-          .map(ConnectionFactoryManager.class::cast)
-          .forEach(r -> r.getConnectionFactory().close());
-      }
-
-      if (a.getAuthenticationHandler() instanceof ConnectionFactoryManager) {
-        ((ConnectionFactoryManager) a.getAuthenticationHandler()).getConnectionFactory().close();
-      } else if (a.getAuthenticationHandler() instanceof AggregateAuthenticationHandler) {
-        final AggregateAuthenticationHandler ah = (AggregateAuthenticationHandler) a.getAuthenticationHandler();
-        ah.getAuthenticationHandlers().values().stream()
-          .filter(ConnectionFactoryManager.class::isInstance)
-          .map(ConnectionFactoryManager.class::cast)
-          .forEach(h -> h.getConnectionFactory().close());
-      }
+      a.close();
     }
   }
 }

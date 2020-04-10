@@ -190,11 +190,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     super.deleteLdapEntry(ENTRIES.get("9")[0].getDn());
     super.deleteLdapEntry(ENTRIES.get("10")[0].getDn());
 
-    final DnResolver dr = pooledTLSAuth.getDnResolver();
-    ((ConnectionFactoryManager) dr).getConnectionFactory().close();
-
-    final AuthenticationHandler ah = pooledTLSAuth.getAuthenticationHandler();
-    ((ConnectionFactoryManager) ah).getConnectionFactory().close();
+    pooledTLSAuth.close();
   }
 
 
