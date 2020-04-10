@@ -133,7 +133,7 @@
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcprov-jdk15on</artifactId>
-        <version>1.64</version>
+        <version>1.65</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -249,7 +249,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.30</version>
+              <version>8.31</version>
             </dependency>
           </dependencies>
         </plugin>
