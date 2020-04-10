@@ -1,10 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport.netty;
 
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
@@ -24,11 +27,27 @@ final class HandleMap
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(HandleMap.class);
 
+  /** Ldap netty transport system property. */
+  private static final String THROTTLE_REQUESTS_PROPERTY = "org.ldaptive.transport.netty.throttleRequests";
+
+  /** Ldap netty transport system property. */
+  private static final String THROTTLE_TIMEOUT_PROPERTY = "org.ldaptive.transport.netty.throttleTimeout";
+
+  /** If property is greater than zero, use the throttle semaphore. */
+  private static final int THROTTLE_REQUESTS = Integer.parseInt(System.getProperty(THROTTLE_REQUESTS_PROPERTY, "0"));
+
+  /** Maximum time to wait for the throttle semaphore. Default is 60 seconds. */
+  private static final Duration THROTTLE_TIMEOUT = Duration.ofSeconds(
+    Long.parseLong(System.getProperty(THROTTLE_TIMEOUT_PROPERTY, "60")));
+
   /** Map of message IDs to their operation handle. */
   private final Map<Integer, DefaultOperationHandle> pending = new ConcurrentHashMap<>();
 
   /** Only one notification can occur at a time. */
   private final AtomicBoolean notificationLock = new AtomicBoolean();
+
+  /** Semaphore to throttle incoming requests. */
+  private final Semaphore throttle;
 
   /** Whether this queue is currently accepting new handles. */
   private boolean open;
@@ -37,7 +56,14 @@ final class HandleMap
   /**
    * Creates a new handle map.
    */
-  HandleMap() {}
+  HandleMap()
+  {
+    if (THROTTLE_REQUESTS > 0) {
+      throttle = new Semaphore(THROTTLE_REQUESTS);
+    } else {
+      throttle = null;
+    }
+  }
 
 
   /**
@@ -80,7 +106,12 @@ final class HandleMap
    */
   public DefaultOperationHandle remove(final int id)
   {
-    return open ? pending.remove(id) : null;
+    if (open) {
+      final DefaultOperationHandle handle = pending.remove(id);
+      releaseThrottle(1);
+      return handle;
+    }
+    return null;
   }
 
 
@@ -100,6 +131,7 @@ final class HandleMap
     if (!open) {
       throw new LdapException(ResultCode.CONNECT_ERROR, "Connection is closed, could not store handle " + handle);
     }
+    acquireThrottle();
     return pending.putIfAbsent(id, handle);
   }
 
@@ -131,7 +163,41 @@ final class HandleMap
    */
   public void clear()
   {
+    releaseThrottle(pending.size());
     pending.clear();
+  }
+
+
+  /**
+   * Attempt to acquire the throttle semaphore. No-op if throttling is not enabled.
+   *
+   * @throws  LdapException  if the semaphore cannot be acquired or the thread is interrupted
+   */
+  private void acquireThrottle()
+    throws LdapException
+  {
+    if (throttle != null) {
+      try {
+        if (!throttle.tryAcquire(THROTTLE_TIMEOUT.toSeconds(), TimeUnit.SECONDS)) {
+          throw new LdapException(ResultCode.LOCAL_ERROR, "Could not acquire request semaphore");
+        }
+      } catch (InterruptedException e) {
+        throw new LdapException(ResultCode.LOCAL_ERROR, "Could not acquire request semaphore", e);
+      }
+    }
+  }
+
+
+  /**
+   * Release permits on the throttle semaphore. No-op if throttling is not enabled.
+   *
+   * @param  permits  number of permits to release
+   */
+  private void releaseThrottle(final int permits)
+  {
+    if (throttle != null) {
+      throttle.release(permits);
+    }
   }
 
 
@@ -148,6 +214,7 @@ final class HandleMap
           final DefaultOperationHandle h = i.next();
           if (h.getSentTime() != null && h.getReceivedTime() == null) {
             i.remove();
+            releaseThrottle(1);
             h.abandon();
           }
         }
@@ -174,6 +241,7 @@ final class HandleMap
         while (i.hasNext()) {
           final DefaultOperationHandle h = i.next();
           i.remove();
+          releaseThrottle(1);
           h.exception(e);
         }
       } finally {
@@ -214,6 +282,7 @@ final class HandleMap
     return new StringBuilder(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("open=").append(open).append(", ")
+      .append("throttle=").append(throttle).append(", ")
       .append("handles=").append(pending).toString();
   }
 }
