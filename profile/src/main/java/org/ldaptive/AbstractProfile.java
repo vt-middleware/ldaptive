@@ -98,6 +98,8 @@ public abstract class AbstractProfile
             o -> {
               if (o == null) {
                 System.out.println("RECEIVED NULL RESULT");
+              } else if (o instanceof Exception) {
+                System.out.println("RECEIVED EXCEPTION:: " + ((Exception) o).getMessage());
               } else {
                 COUNT.getAndIncrement();
               }

@@ -75,6 +75,9 @@ public abstract class AbstractSearchOperationProfile extends AbstractProfile
       consumer.accept(e);
       return e;
     });
+    search.setExceptionHandler(e -> {
+      consumer.accept(e);
+    });
     try {
       search.send(SearchRequest.builder()
         .dn(baseDn)
@@ -82,7 +85,7 @@ public abstract class AbstractSearchOperationProfile extends AbstractProfile
         .returnAttributes(ReturnAttributes.ALL_USER.value())
         .build());
     } catch (LdapException e) {
-      System.out.println("CAUGHT EXCEPTION:: " + e.getMessage());
+      consumer.accept(e);
     }
   }
 

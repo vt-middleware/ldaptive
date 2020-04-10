@@ -33,9 +33,9 @@
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
-        <!-- used to set custom transports
         <configuration>
           <systemProperties>
+            <!--
             <systemProperty>
               <key>org.ldaptive.transport</key>
               <value>org.ldaptive.transport.netty.SingletonTransport</value>
@@ -45,12 +45,16 @@
               <value>org.ldaptive.transport.netty.ConnectionFactoryTransport</value>
             </systemProperty>
             <systemProperty>
+              <key>org.ldaptive.transport.netty.throttleRequests</key>
+              <value>50</value>
+            </systemProperty>
+            <systemProperty>
               <key>io.netty.eventLoopThreads</key>
               <value>10</value>
             </systemProperty>
+            -->
           </systemProperties>
         </configuration>
-        -->
       </plugin>
     </plugins>
   </build>
