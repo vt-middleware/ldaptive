@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -68,20 +67,20 @@ public class RandomConnectionStrategyTest
     final RandomConnectionStrategy strategy = new RandomConnectionStrategy();
     strategy.initialize(actual, ldapURL -> true);
     Assert.assertEquals(
-      (Collection) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (Collection) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
+      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
     Assert.assertEquals(
-      (Collection) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (Collection) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
+      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
     Assert.assertEquals(
-      (Collection) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (Collection) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
+      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
     Assert.assertEquals(
-      (Collection) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (Collection) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
+      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
     Assert.assertEquals(
-      (Collection) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (Collection) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
+      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
   }
 
 
