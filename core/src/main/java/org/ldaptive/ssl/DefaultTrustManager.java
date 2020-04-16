@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ssl;
 
+import java.net.Socket;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.cert.CertificateException;
@@ -8,8 +9,10 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,14 +22,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class DefaultTrustManager implements X509TrustManager
+public class DefaultTrustManager extends X509ExtendedTrustManager
 {
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Default trust managers. */
-  private final X509TrustManager[] trustManagers;
+  private final X509ExtendedTrustManager[] trustManagers;
 
 
   /** Creates a new default trust manager. */
@@ -37,12 +40,56 @@ public class DefaultTrustManager implements X509TrustManager
       tmf.init((KeyStore) null);
 
       final TrustManager[] tm = tmf.getTrustManagers();
-      trustManagers = new X509TrustManager[tm.length];
+      trustManagers = new X509ExtendedTrustManager[tm.length];
       for (int i = 0; i < tm.length; i++) {
-        trustManagers[i] = (X509TrustManager) tm[i];
+        trustManagers[i] = (X509ExtendedTrustManager) tm[i];
       }
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
+    }
+  }
+
+
+  @Override
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType, final Socket socket)
+    throws CertificateException
+  {
+    for (X509ExtendedTrustManager tm : trustManagers) {
+      logger.trace("invoking checkClientTrusted for {}", tm);
+      tm.checkClientTrusted(chain, authType, socket);
+    }
+  }
+
+
+  @Override
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType, final Socket socket)
+    throws CertificateException
+  {
+    for (X509ExtendedTrustManager tm : trustManagers) {
+      logger.trace("invoking checkClientTrusted for {}", tm);
+      tm.checkServerTrusted(chain, authType, socket);
+    }
+  }
+
+
+  @Override
+  public void checkClientTrusted(final X509Certificate[] chain, final String authType, final SSLEngine engine)
+    throws CertificateException
+  {
+    for (X509ExtendedTrustManager tm : trustManagers) {
+      logger.trace("invoking checkClientTrusted for {}", tm);
+      tm.checkClientTrusted(chain, authType, engine);
+    }
+  }
+
+
+  @Override
+  public void checkServerTrusted(final X509Certificate[] chain, final String authType, final SSLEngine engine)
+    throws CertificateException
+  {
+    for (X509ExtendedTrustManager tm : trustManagers) {
+      logger.trace("invoking checkClientTrusted for {}", tm);
+      tm.checkServerTrusted(chain, authType, engine);
     }
   }
 

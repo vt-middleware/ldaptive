@@ -21,6 +21,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
 import io.netty.bootstrap.Bootstrap;
@@ -419,7 +420,9 @@ public final class NettyConnection extends TransportConnection
       engine.setEnabledCipherSuites(sc.getEnabledCipherSuites());
     }
     if (sc.getHostnameVerifier() == null) {
-      engine.getSSLParameters().setEndpointIdentificationAlgorithm("LDAPS");
+      final SSLParameters sslParams = engine.getSSLParameters();
+      sslParams.setEndpointIdentificationAlgorithm("LDAPS");
+      engine.setSSLParameters(sslParams);
     }
     final SslHandler handler = new SslHandler(engine);
     handler.setHandshakeTimeout(sc.getHandshakeTimeout().toMillis(), TimeUnit.MILLISECONDS);

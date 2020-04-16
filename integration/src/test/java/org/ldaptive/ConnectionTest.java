@@ -1,8 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.net.InetSocketAddress;
+import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 import org.ldaptive.ssl.AllowAnyTrustManager;
 import org.ldaptive.ssl.DefaultHostnameVerifier;
+import org.ldaptive.ssl.DefaultTrustManager;
 import org.ldaptive.ssl.NoHostnameVerifier;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
@@ -273,6 +276,7 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
     }
 
+    // trust any with hostname verification failure
     cc = createTLSConnectionConfig(url);
     cc.setSslConfig(new SslConfig());
     cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
@@ -290,6 +294,72 @@ public class ConnectionTest
     cc.setSslConfig(new SslConfig());
     cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
     cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    }
+
+    // trusted certificates with IP address hostname
+    final InetSocketAddress address = new InetSocketAddress(new LdapURL(url).getHostname(), new LdapURL(url).getPort());
+    cc = createTLSConnectionConfig("ldap://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // no trusted certificates with IP address hostname
+    cc = createTLSConnectionConfig("ldap://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(new SslConfig());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // default trust any with IP address hostname
+    cc = createTLSConnectionConfig("ldap://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new DefaultTrustManager());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // trust any with IP address hostname, allow any does not implement endpoint verification
+    cc = createTLSConnectionConfig("ldap://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    }
+
+    // trust any with IP address hostname
+    cc = createTLSConnectionConfig("ldap://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // trust any with any hostname verification
+    cc = createTLSConnectionConfig("ldap://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new AllowAnyHostnameVerifier());
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
@@ -369,6 +439,72 @@ public class ConnectionTest
     cc.setSslConfig(new SslConfig());
     cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
     cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    }
+
+    // trust with IP address hostname
+    final InetSocketAddress address = new InetSocketAddress(new LdapURL(url).getHostname(), new LdapURL(url).getPort());
+    cc = new ConnectionConfig("ldaps://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(createSslConfig());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // no trusted certificates with IP address hostname
+    cc = new ConnectionConfig("ldaps://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // default trust with IP address hostname
+    cc = new ConnectionConfig("ldaps://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new DefaultTrustManager());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // trust any with IP address hostname, allow any does not implement endpoint verification
+    cc = new ConnectionConfig("ldaps://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    }
+
+    // trust any with IP address hostname
+    cc = new ConnectionConfig("ldaps://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new DefaultHostnameVerifier());
+    try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Assert.fail("Should have thrown Exception, no exception thrown");
+    } catch (Exception e) {
+      Assert.assertNotNull(e);
+    }
+
+    // trust any with any hostname verification
+    cc = new ConnectionConfig("ldaps://" + address.getAddress().getHostAddress() + ":" + address.getPort());
+    cc.setSslConfig(new SslConfig());
+    cc.getSslConfig().setTrustManagers(new AllowAnyTrustManager());
+    cc.getSslConfig().setHostnameVerifier(new AllowAnyHostnameVerifier());
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
