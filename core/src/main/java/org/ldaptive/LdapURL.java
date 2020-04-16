@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -74,6 +75,13 @@ public class LdapURL
    * otherwise true.
    */
   private boolean active = true;
+
+  /** IP address resolved for this URL. */
+  private InetAddress ipAddress;
+
+
+  /** Private constructor. */
+  private LdapURL() {}
 
 
   /**
@@ -385,6 +393,52 @@ public class LdapURL
   }
 
 
+  /**
+   * Returns the resolved IP address.
+   *
+   * @return  resolved IP address for this URL.
+   */
+  public InetAddress getIpAddress()
+  {
+    return ipAddress;
+  }
+
+
+  /**
+   * Sets the resolved IP address.
+   *
+   * @param  address  IP address for this URL
+   */
+  void setIpAddress(final InetAddress address)
+  {
+    ipAddress = address;
+  }
+
+
+  /**
+   * Returns a new ldap URL initialized with the supplied URL.
+   *
+   * @param  ldapURL  ldap URL to read properties from
+   *
+   * @return  ldap URL
+   */
+  public static LdapURL copy(final LdapURL ldapURL)
+  {
+    final LdapURL url = new LdapURL();
+    url.scheme = ldapURL.scheme;
+    url.hostname = ldapURL.hostname;
+    url.port = ldapURL.port;
+    url.baseDn = ldapURL.baseDn;
+    url.attributes = ldapURL.attributes;
+    url.scope = ldapURL.scope;
+    url.filter = ldapURL.filter;
+    url.retryMetadata = ldapURL.retryMetadata;
+    url.active = ldapURL.active;
+    url.ipAddress = ldapURL.ipAddress;
+    return url;
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {
@@ -399,7 +453,8 @@ public class LdapURL
         LdapUtils.areEqual(baseDn, v.baseDn) &&
         LdapUtils.areEqual(attributes, v.attributes) &&
         LdapUtils.areEqual(scope, v.scope) &&
-        LdapUtils.areEqual(filter, v.filter);
+        LdapUtils.areEqual(filter, v.filter) &&
+        LdapUtils.areEqual(ipAddress, v.ipAddress);
     }
     return false;
   }
@@ -408,7 +463,16 @@ public class LdapURL
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, scheme, hostname, port, baseDn, attributes, scope, filter);
+    return LdapUtils.computeHashCode(
+      HASH_CODE_SEED,
+      scheme,
+      hostname,
+      port,
+      baseDn,
+      attributes,
+      scope,
+      filter,
+      ipAddress);
   }
 
 
@@ -423,7 +487,8 @@ public class LdapURL
       .append("baseDn=").append(baseDn).append(", ")
       .append("attributes=").append(Arrays.toString(attributes)).append(", ")
       .append("scope=").append(scope).append(", ")
-      .append("filter=").append(filter).append("]").toString();
+      .append("filter=").append(filter).append(", ")
+      .append("ipAddress=").append(ipAddress).append("]").toString();
   }
 
 

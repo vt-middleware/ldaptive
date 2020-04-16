@@ -345,7 +345,12 @@ public final class NettyConnection extends TransportConnection
 
     final CountDownLatch channelLatch = new CountDownLatch(1);
     LOGGER.trace("Connecting to bootstrap {} with URL {}", bootstrap, ldapURL);
-    final ChannelFuture future = bootstrap.connect(new InetSocketAddress(ldapURL.getHostname(), ldapURL.getPort()));
+    final ChannelFuture future;
+    if (ldapURL.getIpAddress() != null) {
+      future = bootstrap.connect(ldapURL.getIpAddress(), ldapURL.getPort());
+    } else {
+      future = bootstrap.connect(new InetSocketAddress(ldapURL.getHostname(), ldapURL.getPort()));
+    }
     future.addListener((ChannelFutureListener) f -> channelLatch.countDown());
     try {
       // wait until the connection future is complete
