@@ -77,7 +77,7 @@ public class LdapURL
   private boolean active = true;
 
   /** IP address resolved for this URL. */
-  private InetAddress ipAddress;
+  private InetAddress inetAddress;
 
 
   /** Private constructor. */
@@ -398,9 +398,9 @@ public class LdapURL
    *
    * @return  resolved IP address for this URL.
    */
-  public InetAddress getIpAddress()
+  public InetAddress getInetAddress()
   {
-    return ipAddress;
+    return inetAddress;
   }
 
 
@@ -409,9 +409,9 @@ public class LdapURL
    *
    * @param  address  IP address for this URL
    */
-  void setIpAddress(final InetAddress address)
+  void setInetAddress(final InetAddress address)
   {
-    ipAddress = address;
+    inetAddress = address;
   }
 
 
@@ -434,7 +434,7 @@ public class LdapURL
     url.filter = ldapURL.filter;
     url.retryMetadata = ldapURL.retryMetadata;
     url.active = ldapURL.active;
-    url.ipAddress = ldapURL.ipAddress;
+    url.inetAddress = ldapURL.inetAddress;
     return url;
   }
 
@@ -454,7 +454,7 @@ public class LdapURL
         LdapUtils.areEqual(attributes, v.attributes) &&
         LdapUtils.areEqual(scope, v.scope) &&
         LdapUtils.areEqual(filter, v.filter) &&
-        LdapUtils.areEqual(ipAddress, v.ipAddress);
+        LdapUtils.areEqual(inetAddress, v.inetAddress);
     }
     return false;
   }
@@ -472,7 +472,7 @@ public class LdapURL
       attributes,
       scope,
       filter,
-      ipAddress);
+      inetAddress);
   }
 
 
@@ -488,7 +488,7 @@ public class LdapURL
       .append("attributes=").append(Arrays.toString(attributes)).append(", ")
       .append("scope=").append(scope).append(", ")
       .append("filter=").append(filter).append(", ")
-      .append("ipAddress=").append(ipAddress).append("]").toString();
+      .append("inetAddress=").append(inetAddress).append("]").toString();
   }
 
 
