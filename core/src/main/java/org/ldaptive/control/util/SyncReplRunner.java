@@ -36,7 +36,7 @@ public class SyncReplRunner
   private static final Logger LOGGER = LoggerFactory.getLogger(SyncReplRunner.class);
 
   /** Number of I/O worker threads. */
-  private static final int IO_WORKER_THREADS = 1;
+  private static final int IO_WORKER_THREADS = 2;
 
   /** Number of message worker threads. */
   private static final int MESSAGE_WORKER_THREADS = 2;
@@ -140,6 +140,7 @@ public class SyncReplRunner
    */
   private static Transport createTransport()
   {
+    // io thread pool size must be >1 to send cancel requests when an exception occurs
     // message thread pool size must be >1 since exceptions are reported on the messages thread pool
     // startTLS and connection initializers will require additional threads
     final ConnectionFactoryTransport transport = new ConnectionFactoryTransport(
