@@ -25,7 +25,8 @@ import org.slf4j.LoggerFactory;
  * Class that executes a {@link SyncReplClient} and expects to run continuously, reconnecting if the server is
  * unavailable. Consumers must be registered to handle entries, results, and messages as they are returned from the
  * server. If a consumer throws an exception, the runner will be stopped and started, then the sync repl search
- * will execute again.
+ * will execute again. Consumers cannot execute blocking LDAP operations on the same connection because the next
+ * incoming message is not read until the consumer has completed.
  *
  * @author  Middleware Services
  */
@@ -36,7 +37,7 @@ public class SyncReplRunner
   private static final Logger LOGGER = LoggerFactory.getLogger(SyncReplRunner.class);
 
   /** Number of I/O worker threads. */
-  private static final int IO_WORKER_THREADS = 2;
+  private static final int IO_WORKER_THREADS = 1;
 
   /** Number of message worker threads. */
   private static final int MESSAGE_WORKER_THREADS = 2;

@@ -12,7 +12,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.control.SyncStateControl;
-import org.ldaptive.extended.ExtendedResponse;
+import org.ldaptive.extended.ExtendedOperationHandle;
 import org.ldaptive.extended.SyncInfoMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,17 +265,14 @@ public class SyncReplClient
 
 
   /**
-   * Invokes a cancel operation on the underlying search operation. See {@link
+   * Sends a cancel operation on the underlying search operation. See {@link
    * org.ldaptive.transport.DefaultOperationHandle#cancel()}.
    *
    * @return  cancel operation result
-   *
-   * @throws  LdapException  if the cancel operation fails
    */
-  public ExtendedResponse cancel()
-    throws LdapException
+  public ExtendedOperationHandle cancel()
   {
-    return handle.cancel().execute();
+    return handle.cancel().send();
   }
 
 
