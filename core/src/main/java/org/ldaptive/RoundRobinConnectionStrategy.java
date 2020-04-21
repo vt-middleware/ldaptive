@@ -47,8 +47,10 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy
       throw new IllegalStateException("Strategy is not initialized");
     }
     final List<LdapURL> urls = new ArrayList<>(ldapURLSet.getActiveUrls());
-    for (int i = 0; i < counter.get(); i++) {
-      urls.add(urls.remove(0));
+    if (urls.size() > 1) {
+      for (int i = 0; i < counter.get(); i++) {
+        urls.add(urls.remove(0));
+      }
     }
     urls.addAll(ldapURLSet.getInactiveUrls());
     counter.incrementAndGet();

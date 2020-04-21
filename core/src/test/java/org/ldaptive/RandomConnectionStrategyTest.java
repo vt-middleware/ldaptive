@@ -106,6 +106,24 @@ public class RandomConnectionStrategyTest
 
 
   @Test(groups = "conn")
+  public void noActiveUrls()
+    throws Exception
+  {
+    final RandomConnectionStrategy strategy = new RandomConnectionStrategy();
+    strategy.initialize(
+      "ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org",
+      ldapURL -> true);
+    strategy.failure(strategy.ldapURLSet.getActiveUrls().iterator().next());
+    strategy.failure(strategy.ldapURLSet.getActiveUrls().iterator().next());
+    strategy.failure(strategy.ldapURLSet.getActiveUrls().iterator().next());
+    strategy.iterator();
+    strategy.iterator();
+    strategy.iterator();
+    strategy.iterator();
+  }
+
+
+  @Test(groups = "conn")
   public void firstUrlInactive()
     throws Exception
   {
