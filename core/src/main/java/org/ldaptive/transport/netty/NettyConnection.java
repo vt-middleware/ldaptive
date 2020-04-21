@@ -294,6 +294,7 @@ public final class NettyConnection extends TransportConnection
       } catch (Exception e) {
         LOGGER.error("Connection open failed for {}", this, e);
         try {
+          notifyOperationHandlesOfClose();
           pendingResponses.close();
           if (isOpen()) {
             channel.closeFuture().removeListener(closeListener);
