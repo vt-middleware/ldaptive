@@ -10,15 +10,19 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Singleton which manages a single thread that periodically tests a list of LDAP URLs.
+ * Singleton which manages a single thread that periodically tests inactive LDAP URLs.
  *
  * @author  Middleware Services
  */
 public final class LdapURLActivatorService
 {
 
+  /** Ldap activator period system property. */
+  private static final String ACTIVATOR_PERIOD_PROPERTY = "org.ldaptive.urlActivatorPeriod";
+
   /** How often to test inactive connections. */
-  public static final Duration PERIOD = Duration.ofMinutes(5);
+  private static final Duration ACTIVATOR_PERIOD = Duration.ofMinutes(
+    Long.parseLong(System.getProperty(ACTIVATOR_PERIOD_PROPERTY, "5")));
 
   /** Instance of this singleton. */
   private static final LdapURLActivatorService INSTANCE = new LdapURLActivatorService();
@@ -42,8 +46,8 @@ public final class LdapURLActivatorService
       });
     executor.scheduleAtFixedRate(
       this::testInactiveUrls,
-      PERIOD.toMillis(),
-      PERIOD.toMillis(),
+      ACTIVATOR_PERIOD.toMillis(),
+      ACTIVATOR_PERIOD.toMillis(),
       TimeUnit.MILLISECONDS);
   }
 
@@ -56,6 +60,17 @@ public final class LdapURLActivatorService
   public static LdapURLActivatorService getInstance()
   {
     return INSTANCE;
+  }
+
+
+  /**
+   * Returns the activator period.
+   *
+   * @return  activator period
+   */
+  public static Duration getPeriod()
+  {
+    return ACTIVATOR_PERIOD;
   }
 
 
