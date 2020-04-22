@@ -1083,7 +1083,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
+    return new StringBuilder(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("name=").append(getName()).append(", ")
       .append("minPoolSize=").append(minPoolSize).append(", ")
@@ -1100,7 +1100,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       .append("failFastInitialize=").append(failFastInitialize).append(", ")
       .append("initialized=").append(initialized).append(", ")
       .append("availableCount=").append(availableCount()).append(", ")
-      .append("activeCount=").append(activeCount()).append("]").toString();
+      .append("activeCount=").append(activeCount()).toString();
   }
 
 
