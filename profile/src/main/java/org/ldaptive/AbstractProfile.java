@@ -1,6 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +16,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import org.ldaptive.handler.ResultPredicate;
 
 /**
  * Base class for profiling.
@@ -24,10 +26,25 @@ public abstract class AbstractProfile
 {
 
   /** Number to start with for UID creation. */
-  protected static final int UID_START = 1001;
+  protected static final int UID_START = 549801;
 
-  /** Number of operations performed. */
-  private static final AtomicInteger COUNT = new AtomicInteger();
+  /** Number of threads to execute searches. */
+  protected static int threadCount;
+
+  /** Time to sleep between search requests. */
+  protected static int threadSleep;
+
+  /** Number of searches to execute. */
+  protected static int iterations;
+
+  /** Number of searches requested. */
+  private static final AtomicInteger REQUEST_COUNT = new AtomicInteger();
+
+  /** Number of entries received. */
+  private static final AtomicInteger ENTRY_COUNT = new AtomicInteger();
+
+  /** Number of results received. */
+  private static final AtomicInteger RESULT_COUNT = new AtomicInteger();
 
 
   /**
@@ -44,16 +61,15 @@ public abstract class AbstractProfile
     final String clazz = args[0];
     final String host = args[1];
     final int port = Integer.parseInt(args[2]);
-    final int threadCount = Integer.parseInt(args[3]);
-    final int threadSleep = Integer.parseInt(args[4]);
-    final int iterations = Integer.parseInt(args[5]);
+    threadCount = Integer.parseInt(args[3]);
+    threadSleep = Integer.parseInt(args[4]);
+    iterations = Integer.parseInt(args[5]);
 
     final AbstractProfile test = createInstance(Class.forName(clazz));
     test.setBaseDn(System.getProperty("ldapBaseDn"));
     test.setBindDn(System.getProperty("ldapBindDn"));
     test.setBindCredential(System.getProperty("ldapBindCredential"));
     test.initialize(host, port);
-    test.createEntries(100);
 
     System.out.println();
     System.out.println("##############################");
@@ -67,22 +83,29 @@ public abstract class AbstractProfile
     if (iterations == -1) {
       final ScheduledExecutorService counter = Executors.newSingleThreadScheduledExecutor();
       counter.scheduleAtFixedRate(
-        () -> System.out.println("  " + LocalDateTime.now() + ": received " + COUNT + " results "),
+        () -> System.out.println(test.report()),
         10,
         10,
         TimeUnit.SECONDS);
       final Random r = new Random();
       while (true) {
-        final int uid = r.nextInt(100) + UID_START;
+        final int uid = r.nextInt(50) + UID_START;
         executor.submit(() -> test.doOperation(
           o -> {
             if (o == null) {
               System.out.println("RECEIVED NULL RESULT");
+            } else if (o instanceof Exception) {
+              System.out.println("RECEIVED EXCEPTION:: " + ((Exception) o).getMessage());
+            } else if (o instanceof Entry) {
+              ENTRY_COUNT.getAndIncrement();
+            } else if (o instanceof Result) {
+              RESULT_COUNT.getAndIncrement();
             } else {
-              COUNT.getAndIncrement();
+              System.out.println("RECEIVED UNEXPECTED TYPE: " + o);
             }
           },
           uid));
+        REQUEST_COUNT.getAndIncrement();
         if (threadSleep > 0) {
           Thread.sleep(threadSleep);
         }
@@ -92,7 +115,7 @@ public abstract class AbstractProfile
       final CountDownLatch latch = new CountDownLatch(iterations);
       final Random r = new Random();
       for (int i = 0; i < iterations; i++) {
-        final int uid = r.nextInt(100) + 1001;
+        final int uid = r.nextInt(50) + UID_START;
         callables.add(() -> {
           test.doOperation(
             o -> {
@@ -100,8 +123,10 @@ public abstract class AbstractProfile
                 System.out.println("RECEIVED NULL RESULT");
               } else if (o instanceof Exception) {
                 System.out.println("RECEIVED EXCEPTION:: " + ((Exception) o).getMessage());
-              } else {
-                COUNT.getAndIncrement();
+              } else if (o instanceof Entry) {
+                ENTRY_COUNT.getAndIncrement();
+              } else if (o instanceof Result) {
+                RESULT_COUNT.getAndIncrement();
               }
               latch.countDown();
             },
@@ -114,7 +139,9 @@ public abstract class AbstractProfile
       latch.await();
       t = System.currentTimeMillis() - t;
       System.out.println("##############################");
-      System.out.println("# End profile for " + test + " in " + t + "ms : " + COUNT + " results");
+      System.out.println(
+        "# End profile for " + test + " in " + t + "ms : " +
+          ENTRY_COUNT + "/" + RESULT_COUNT + "/" + REQUEST_COUNT + " results");
       System.out.println("##############################");
     }
 
@@ -149,14 +176,6 @@ public abstract class AbstractProfile
    * @param  port  to connect to
    */
   protected abstract void initialize(String host, int port);
-
-
-  /**
-   * Creates entries needed for searching.
-   *
-   * @param  count  number of entries to create
-   */
-  protected abstract void createEntries(int count);
 
 
   /**
@@ -199,35 +218,95 @@ public abstract class AbstractProfile
 
 
   /**
-   * Create LDAP entries.
+   * Return periodic report string.
    *
-   * @param  cf  connection factory to create entries with
-   * @param  start  uid to start creation at
-   * @param  count  number of entries to create
+   * @return  report string
    */
-  protected static void createEntries(final ConnectionFactory cf, final int start, final int count)
+  protected String report()
   {
-    final AddOperation create = AddOperation.builder()
-      .factory(cf)
-      .throwIf(ResultPredicate.NOT_SUCCESS)
-      .build();
-    for (int i = start; i < start + count; i++) {
-      try {
-        create.execute(
-          AddRequest.builder()
-            .dn(String.format("uid=%s,ou=test,dc=vt,dc=edu", i))
-            .attributes(
-              LdapAttribute.builder().name("uid").values(Integer.toString(i)).build(),
-              LdapAttribute.builder().name("cn").values("Test User").build(),
-              LdapAttribute.builder().name("givenName").values("Test").build(),
-              LdapAttribute.builder().name("sn").values("User").build(),
-              LdapAttribute.builder()
-                .name("objectClass").values("organizationalPerson", "person", "top", "inetOrgPerson").build(),
-              LdapAttribute.builder().name("userPassword").values(String.format("password%s", i)).build())
-            .build());
-      } catch (LdapException e) {
-        throw new IllegalStateException("Could not create entry", e);
+    return "  " + LocalDateTime.now() +
+      " [" + countOpenConnections() + "] " +
+      "received " + ENTRY_COUNT + "/" + RESULT_COUNT + "/" + REQUEST_COUNT + " results";
+  }
+
+
+  /**
+   * Returns the number of open connections to the supplied host. Uses 'netstat -al' to uncover open sockets.
+   *
+   * @return  number of open connections.
+   */
+  // CheckStyle:MagicNumber OFF
+  protected static int countOpenConnections()
+  {
+    try {
+      final String[] cmd = new String[] {"netstat", "-al"};
+      final Process p = new ProcessBuilder(cmd).start();
+      final BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+      String line;
+      final List<String> openConns = new ArrayList<>();
+      while ((line = br.readLine()) != null) {
+        if (line.matches("(.*)ESTABLISHED(.*)")) {
+          final String s = line.split("\\s+")[4];
+          openConns.add(s);
+        }
       }
+
+      int count = 0;
+      for (String o : openConns) {
+        if (o.contains("ldap")) {
+          count++;
+        }
+      }
+      return count;
+    } catch (IOException e) {
+      throw new IllegalStateException(e);
+    }
+  }
+  // CheckStyle:MagicNumber ON
+
+
+  /**
+   * Container for a search result.
+   */
+  public static class Result
+  {
+
+    /** Reference to result. */
+    private final Object result;
+
+
+    /**
+     * Create a new result.
+     *
+     * @param  o  result reference
+     */
+    public Result(final Object o)
+    {
+      result = o;
+    }
+  }
+
+
+  /**
+   * Container for a search entry.
+   */
+  public static class Entry
+  {
+
+    /**
+     * Reference to entry.
+     */
+    private final Object entry;
+
+
+    /**
+     * Create a new entry.
+     *
+     * @param o entry reference
+     */
+    public Entry(final Object o)
+    {
+      entry = o;
     }
   }
 }

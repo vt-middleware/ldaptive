@@ -24,7 +24,9 @@ services:
       ldap_net:
         ipv4_address: 172.28.1.10
     command: >
-      bash -c "cd /apps/ldaptive && profile/run"
+      bash -c "export DEBIAN_FRONTEND=noninteractive &&
+      apt-get update && apt-get install -y net-tools &&
+      cd /apps/ldaptive && profile/run"
 
   ldap-test:
     image: dhawes/ldap-test-openldap:latest

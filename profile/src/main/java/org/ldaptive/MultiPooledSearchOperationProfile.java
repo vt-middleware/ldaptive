@@ -23,17 +23,21 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
 
 
   @Override
+  // CheckStyle:MagicNumber OFF
   protected void initialize(final String host, final int port)
   {
     connectionFactory = PooledConnectionFactory.builder()
+      .name(host)
       .config(ConnectionConfig.builder()
         .url(new LdapURL(host, port).getHostnameWithSchemeAndPort())
+        .connectTimeout(Duration.ofSeconds(5))
         .connectionInitializers(
           BindConnectionInitializer.builder()
             .dn(bindDn)
             .credential(bindCredential)
             .build())
         .build())
+      .blockWaitTime(Duration.ofMillis(threadSleep > 0 ? threadSleep / 2 : 1))
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .validator(SearchConnectionValidator.builder()
@@ -43,14 +47,17 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
     ((PooledConnectionFactory) connectionFactory).initialize();
 
     connectionFactory2 = PooledConnectionFactory.builder()
+      .name(host + "-2")
       .config(ConnectionConfig.builder()
         .url(new LdapURL(host + "-2", port).getHostnameWithSchemeAndPort())
+        .connectTimeout(Duration.ofSeconds(5))
         .connectionInitializers(
           BindConnectionInitializer.builder()
             .dn(bindDn)
             .credential(bindCredential)
             .build())
         .build())
+      .blockWaitTime(Duration.ofMillis(threadSleep > 0 ? threadSleep / 2 : 1))
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .validator(SearchConnectionValidator.builder()
@@ -60,14 +67,17 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
     ((PooledConnectionFactory) connectionFactory2).initialize();
 
     connectionFactory3 = PooledConnectionFactory.builder()
+      .name(host + "-3")
       .config(ConnectionConfig.builder()
         .url(new LdapURL(host + "-3", port).getHostnameWithSchemeAndPort())
+        .connectTimeout(Duration.ofSeconds(5))
         .connectionInitializers(
           BindConnectionInitializer.builder()
             .dn(bindDn)
             .credential(bindCredential)
             .build())
         .build())
+      .blockWaitTime(Duration.ofMillis(threadSleep > 0 ? threadSleep / 2 : 1))
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .validator(SearchConnectionValidator.builder()
@@ -76,6 +86,7 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
       .build();
     ((PooledConnectionFactory) connectionFactory3).initialize();
   }
+  // CheckStyle:MagicNumber ON
 
 
   @Override
@@ -93,15 +104,6 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
     doOperation(connectionFactory, consumer, uid);
     doOperation(connectionFactory2, consumer, uid);
     doOperation(connectionFactory3, consumer, uid);
-  }
-
-
-  @Override
-  protected void createEntries(final int count)
-  {
-    createEntries(connectionFactory, UID_START, count);
-    createEntries(connectionFactory2, UID_START, count);
-    createEntries(connectionFactory3, UID_START, count);
   }
 
 

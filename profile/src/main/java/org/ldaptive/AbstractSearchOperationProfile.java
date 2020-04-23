@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.util.function.Consumer;
 import org.ldaptive.handler.ResultPredicate;
+import org.ldaptive.pool.PoolException;
 
 /**
  * Base class for profiling connection factories.
@@ -71,13 +72,12 @@ public abstract class AbstractSearchOperationProfile extends AbstractProfile
   {
     final SearchOperation search = new SearchOperation(cf);
     search.setThrowCondition(ResultPredicate.NOT_SUCCESS);
+    search.setResultHandlers(r -> consumer.accept(new Result(r)));
     search.setEntryHandlers(e -> {
-      consumer.accept(e);
+      consumer.accept(new Entry(e));
       return e;
     });
-    search.setExceptionHandler(e -> {
-      consumer.accept(e);
-    });
+    search.setExceptionHandler(e -> consumer.accept(e));
     try {
       search.send(SearchRequest.builder()
         .dn(baseDn)
@@ -85,15 +85,11 @@ public abstract class AbstractSearchOperationProfile extends AbstractProfile
         .returnAttributes(ReturnAttributes.ALL_USER.value())
         .build());
     } catch (LdapException e) {
-      consumer.accept(e);
+      // don't report pool exceptions
+      if (!(e instanceof PoolException)) {
+        consumer.accept(e);
+      }
     }
-  }
-
-
-  @Override
-  protected void createEntries(final int count)
-  {
-    createEntries(connectionFactory, UID_START, count);
   }
 
 

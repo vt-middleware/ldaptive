@@ -12,13 +12,14 @@ import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.ReturnAttributes;
+import org.ldaptive.RoundRobinConnectionStrategy;
 
 /**
  * Class for profiling {@link Authenticator}.
  *
  * @author  Middleware Services
  */
-public class AuthenticatorProfile extends AbstractProfile
+public class RoundRobinAuthenticatorProfile extends AbstractProfile
 {
 
   /** Default pool size. */
@@ -49,8 +50,14 @@ public class AuthenticatorProfile extends AbstractProfile
   {
     resolverConnectionFactory = PooledConnectionFactory.builder()
       .config(ConnectionConfig.builder()
-        .url(new LdapURL(host, port).getUrl())
+        .url(
+          String.format(
+            "%s %s %s",
+            new LdapURL(host, port).getHostnameWithSchemeAndPort(),
+            new LdapURL(host + "-2", port).getHostnameWithSchemeAndPort(),
+            new LdapURL(host + "-3", port).getHostnameWithSchemeAndPort()))
         .connectTimeout(Duration.ofSeconds(5))
+        .connectionStrategy(new RoundRobinConnectionStrategy())
         .connectionInitializers(
           BindConnectionInitializer.builder()
             .dn(bindDn)
@@ -64,14 +71,20 @@ public class AuthenticatorProfile extends AbstractProfile
     ((PooledConnectionFactory) resolverConnectionFactory).initialize();
 
     bindConnectionFactory = PooledConnectionFactory.builder()
-    .config(ConnectionConfig.builder()
-      .url(new LdapURL(host, port).getUrl())
-      .connectTimeout(Duration.ofSeconds(5))
-      .build())
-    .blockWaitTime(Duration.ofSeconds(5))
-    .min(POOL_SIZE)
-    .max(POOL_SIZE)
-    .build();
+      .config(ConnectionConfig.builder()
+        .url(
+          String.format(
+            "%s %s %s",
+            new LdapURL(host, port).getHostnameWithSchemeAndPort(),
+            new LdapURL(host + "-2", port).getHostnameWithSchemeAndPort(),
+            new LdapURL(host + "-3", port).getHostnameWithSchemeAndPort()))
+        .connectTimeout(Duration.ofSeconds(5))
+        .connectionStrategy(new RoundRobinConnectionStrategy())
+        .build())
+      .blockWaitTime(Duration.ofSeconds(5))
+      .min(POOL_SIZE)
+      .max(POOL_SIZE)
+      .build();
     ((PooledConnectionFactory) bindConnectionFactory).initialize();
 
     authenticator = Authenticator.builder()

@@ -14,7 +14,7 @@
 
   <category name="org.ldaptive"
             additivity="false">
-    <priority value="DEBUG"/>
+    <priority value="INFO"/>
     <appender-ref ref="CONSOLE"/>
   </category>
 

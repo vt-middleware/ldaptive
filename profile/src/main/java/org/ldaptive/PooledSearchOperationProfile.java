@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.time.Duration;
+
 /**
  * Class for profiling {@link PooledConnectionFactory}.
  *
@@ -14,20 +16,25 @@ public final class PooledSearchOperationProfile extends AbstractSearchOperationP
 
 
   @Override
+  // CheckStyle:MagicNumber OFF
   protected void initialize(final String host, final int port)
   {
     connectionFactory = PooledConnectionFactory.builder()
+      .name(host)
       .config(ConnectionConfig.builder()
         .url(new LdapURL(host, port).getHostnameWithSchemeAndPort())
+        .connectTimeout(Duration.ofSeconds(5))
         .connectionInitializers(
           BindConnectionInitializer.builder()
             .dn(bindDn)
             .credential(bindCredential)
             .build())
         .build())
+      .blockWaitTime(Duration.ofMillis(threadSleep > 0 ? threadSleep / 2 : 1))
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .build();
     ((PooledConnectionFactory) connectionFactory).initialize();
   }
+  // CheckStyle:MagicNumber ON
 }
