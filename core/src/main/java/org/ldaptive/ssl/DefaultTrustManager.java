@@ -9,8 +9,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 import javax.net.ssl.SSLEngine;
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -38,12 +38,9 @@ public class DefaultTrustManager extends X509ExtendedTrustManager
     try {
       final TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
       tmf.init((KeyStore) null);
-
-      final TrustManager[] tm = tmf.getTrustManagers();
-      trustManagers = new X509ExtendedTrustManager[tm.length];
-      for (int i = 0; i < tm.length; i++) {
-        trustManagers[i] = (X509ExtendedTrustManager) tm[i];
-      }
+      trustManagers = Stream.of(tmf.getTrustManagers())
+        .map(X509ExtendedTrustManager.class::cast)
+        .toArray(X509ExtendedTrustManager[]::new);
     } catch (GeneralSecurityException e) {
       throw new IllegalStateException(e);
     }

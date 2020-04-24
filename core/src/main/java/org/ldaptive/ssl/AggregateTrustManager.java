@@ -34,7 +34,7 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Trust managers to invoke. */
-  private final X509TrustManager[] trustManagers;
+  private final X509ExtendedTrustManager[] trustManagers;
 
   /** Whether to require all trust managers succeed. */
   private final Strategy trustStrategy;
@@ -66,7 +66,15 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     if (managers == null || managers.length == 0) {
       throw new NullPointerException("Trust managers cannot be empty or null");
     }
-    trustManagers = managers;
+    trustManagers = Stream.of(managers)
+      .map(tm -> {
+        if (tm instanceof X509ExtendedTrustManager) {
+          return (X509ExtendedTrustManager) tm;
+        } else {
+          return new X509ExtendedTrustManagerWrapper(tm, new DefaultHostnameVerifier());
+        }
+      })
+      .toArray(X509ExtendedTrustManager[]::new);
   }
 
 
@@ -97,13 +105,9 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     throws CertificateException
   {
     CertificateException certEx = null;
-    for (X509TrustManager tm : trustManagers) {
+    for (X509ExtendedTrustManager tm : trustManagers) {
       try {
-        if (tm instanceof X509ExtendedTrustManager) {
-          ((X509ExtendedTrustManager) tm).checkClientTrusted(chain, authType, socket);
-        } else {
-          tm.checkClientTrusted(chain, authType);
-        }
+        tm.checkClientTrusted(chain, authType, socket);
         logger.debug("checkClientTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
@@ -129,13 +133,9 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     throws CertificateException
   {
     CertificateException certEx = null;
-    for (X509TrustManager tm : trustManagers) {
+    for (X509ExtendedTrustManager tm : trustManagers) {
       try {
-        if (tm instanceof X509ExtendedTrustManager) {
-          ((X509ExtendedTrustManager) tm).checkClientTrusted(chain, authType, engine);
-        } else {
-          tm.checkClientTrusted(chain, authType);
-        }
+        tm.checkClientTrusted(chain, authType, engine);
         logger.debug("checkClientTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
@@ -161,7 +161,7 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     throws CertificateException
   {
     CertificateException certEx = null;
-    for (X509TrustManager tm : trustManagers) {
+    for (X509ExtendedTrustManager tm : trustManagers) {
       try {
         tm.checkClientTrusted(chain, authType);
         logger.debug("checkClientTrusted for {} succeeded", tm);
@@ -189,13 +189,9 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     throws CertificateException
   {
     CertificateException certEx = null;
-    for (X509TrustManager tm : trustManagers) {
+    for (X509ExtendedTrustManager tm : trustManagers) {
       try {
-        if (tm instanceof X509ExtendedTrustManager) {
-          ((X509ExtendedTrustManager) tm).checkServerTrusted(chain, authType, socket);
-        } else {
-          tm.checkServerTrusted(chain, authType);
-        }
+        tm.checkServerTrusted(chain, authType, socket);
         logger.debug("checkServerTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
@@ -221,13 +217,9 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     throws CertificateException
   {
     CertificateException certEx = null;
-    for (X509TrustManager tm : trustManagers) {
+    for (X509ExtendedTrustManager tm : trustManagers) {
       try {
-        if (tm instanceof X509ExtendedTrustManager) {
-          ((X509ExtendedTrustManager) tm).checkServerTrusted(chain, authType, engine);
-        } else {
-          tm.checkServerTrusted(chain, authType);
-        }
+        tm.checkServerTrusted(chain, authType, engine);
         logger.debug("checkServerTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
@@ -253,7 +245,7 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     throws CertificateException
   {
     CertificateException certEx = null;
-    for (X509TrustManager tm : trustManagers) {
+    for (X509ExtendedTrustManager tm : trustManagers) {
       try {
         tm.checkServerTrusted(chain, authType);
         logger.debug("checkServerTrusted for {} succeeded", tm);

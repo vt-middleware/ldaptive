@@ -9,7 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Adapts a {@link CertificateHostnameVerifier} for use as a {@link HostnameVerifier}.
+ * Adapts a {@link CertificateHostnameVerifier} for use as a {@link HostnameVerifier}. This component can only be used
+ * with a verified SSL session as it accesses the certificate from {@link SSLSession#getPeerCertificates()}.
  *
  * @author  Middleware Services
  */
@@ -38,19 +39,21 @@ public class HostnameVerifierAdapter implements HostnameVerifier
   public boolean verify(final String hostname, final SSLSession session)
   {
     boolean b = false;
-    try {
-      String name = null;
-      if (hostname != null) {
-        // if IPv6 strip off the "[]"
-        if (hostname.startsWith("[") && hostname.endsWith("]")) {
-          name = hostname.substring(1, hostname.length() - 1).trim();
-        } else {
-          name = hostname.trim();
+    if (session != null) {
+      try {
+        String name = null;
+        if (hostname != null) {
+          // if IPv6 strip off the "[]"
+          if (hostname.startsWith("[") && hostname.endsWith("]")) {
+            name = hostname.substring(1, hostname.length() - 1).trim();
+          } else {
+            name = hostname.trim();
+          }
         }
+        b = hostnameVerifier.verify(name, (X509Certificate) session.getPeerCertificates()[0]);
+      } catch (SSLPeerUnverifiedException e) {
+        logger.warn("Could not get certificate from SSL session {} for hostname {}", session, hostname, e);
       }
-      b = hostnameVerifier.verify(name, (X509Certificate) session.getPeerCertificates()[0]);
-    } catch (SSLPeerUnverifiedException e) {
-      logger.warn("Could not get certificate from SSL session {} for hostname {}", session, hostname, e);
     }
     return b;
   }

@@ -83,6 +83,7 @@ import org.ldaptive.sasl.DefaultSaslClientRequest;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslClient;
 import org.ldaptive.sasl.SaslClientRequest;
+import org.ldaptive.ssl.HostnameResolver;
 import org.ldaptive.ssl.HostnameVerifierAdapter;
 import org.ldaptive.ssl.SSLContextInitializer;
 import org.ldaptive.ssl.SslConfig;
@@ -480,7 +481,8 @@ public final class NettyConnection extends TransportConnection
       final HostnameVerifier verifier = new HostnameVerifierAdapter(
         connectionConfig.getSslConfig().getHostnameVerifier());
       final SSLSession session = handler.engine().getSession();
-      final String hostname = session.getPeerHost();
+      final HostnameResolver resolver = new HostnameResolver(session);
+      final String hostname  = resolver.resolve();
       if (!verifier.verify(hostname, session)) {
         throw new SSLPeerUnverifiedException("Hostname verification failed for " + hostname + " using " + verifier);
       }
