@@ -98,7 +98,7 @@ public final class NettyUtils
 
   /**
    * Invokes {@link EventLoopGroup#shutdownGracefully(long, long, TimeUnit)} on the supplied worker group. This method
-   * is asynchronous.
+   * blocks until shutdown is complete.
    *
    * @param  workerGroup  to shutdown
    */
