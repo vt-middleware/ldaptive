@@ -3,7 +3,6 @@ package org.ldaptive;
 
 import java.util.function.Consumer;
 import org.ldaptive.handler.ResultPredicate;
-import org.ldaptive.pool.PoolException;
 
 /**
  * Base class for profiling connection factories.
@@ -85,10 +84,7 @@ public abstract class AbstractSearchOperationProfile extends AbstractProfile
         .returnAttributes(ReturnAttributes.ALL_USER.value())
         .build());
     } catch (LdapException e) {
-      // don't report pool exceptions
-      if (!(e instanceof PoolException)) {
-        consumer.accept(e);
-      }
+      consumer.accept(e);
     }
   }
 

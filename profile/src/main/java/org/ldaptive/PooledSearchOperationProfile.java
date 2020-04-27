@@ -30,7 +30,7 @@ public final class PooledSearchOperationProfile extends AbstractSearchOperationP
             .credential(bindCredential)
             .build())
         .build())
-      .blockWaitTime(Duration.ofMillis(threadSleep > 0 ? threadSleep / 2 : 1))
+      .blockWaitTime(iterations > 0 ? Duration.ofSeconds(5) : Duration.ofMillis(threadSleep / 2))
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .build();

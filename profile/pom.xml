@@ -47,12 +47,16 @@
           <systemProperties>
             <!--
             <systemProperty>
-              <key>org.ldaptive.transport</key>
+              <key>org.ldaptive.transport.defaultConnectionFactory</key>
               <value>org.ldaptive.transport.netty.SingletonTransport</value>
             </systemProperty>
             <systemProperty>
-              <key>org.ldaptive.transport</key>
-              <value>org.ldaptive.transport.netty.ConnectionFactoryTransport</value>
+              <key>org.ldaptive.transport.pooledConnectionFactory</key>
+              <value>org.ldaptive.transport.netty.SingletonTransport</value>
+            </systemProperty>
+            <systemProperty>
+              <key>org.ldaptive.transport.singleConnectionFactory</key>
+              <value>org.ldaptive.transport.netty.SingletonTransport</value>
             </systemProperty>
             <systemProperty>
               <key>org.ldaptive.transport.netty.throttleRequests</key>

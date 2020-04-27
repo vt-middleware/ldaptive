@@ -16,6 +16,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import org.ldaptive.transport.netty.SingletonTransport;
 
 /**
  * Base class for profiling.
@@ -92,14 +93,12 @@ public abstract class AbstractProfile
         final int uid = r.nextInt(50) + UID_START;
         executor.submit(() -> test.doOperation(
           o -> {
-            if (o == null) {
-              System.out.println("RECEIVED NULL RESULT");
-            } else if (o instanceof Exception) {
-              System.out.println("RECEIVED EXCEPTION:: " + ((Exception) o).getMessage());
-            } else if (o instanceof Entry) {
+            if (o instanceof Entry) {
               ENTRY_COUNT.getAndIncrement();
             } else if (o instanceof Result) {
               RESULT_COUNT.getAndIncrement();
+            } else if (o instanceof Exception) {
+              System.out.println("RECEIVED EXCEPTION:: " + ((Exception) o).getMessage());
             } else {
               System.out.println("RECEIVED UNEXPECTED TYPE: " + o);
             }
@@ -119,18 +118,21 @@ public abstract class AbstractProfile
         callables.add(() -> {
           test.doOperation(
             o -> {
-              if (o == null) {
-                System.out.println("RECEIVED NULL RESULT");
-              } else if (o instanceof Exception) {
-                System.out.println("RECEIVED EXCEPTION:: " + ((Exception) o).getMessage());
-              } else if (o instanceof Entry) {
+              if (o instanceof Entry) {
                 ENTRY_COUNT.getAndIncrement();
               } else if (o instanceof Result) {
                 RESULT_COUNT.getAndIncrement();
+                latch.countDown();
+              } else if (o instanceof Exception) {
+                System.out.println("RECEIVED EXCEPTION:: " + ((Exception) o).getMessage());
+                latch.countDown();
+              } else {
+                System.out.println("RECEIVED UNEXPECTED TYPE: " + o);
+                latch.countDown();
               }
-              latch.countDown();
             },
             uid);
+          REQUEST_COUNT.getAndIncrement();
           return null;
         });
       }
@@ -148,6 +150,7 @@ public abstract class AbstractProfile
     test.shutdown();
     executor.shutdown();
     executor.awaitTermination(10, TimeUnit.SECONDS);
+    SingletonTransport.shutdown();
   }
   // CheckStyle:MagicNumber ON
 
