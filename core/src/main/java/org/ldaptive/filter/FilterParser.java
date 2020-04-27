@@ -2,6 +2,7 @@
 package org.ldaptive.filter;
 
 import java.lang.reflect.Constructor;
+import org.ldaptive.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,19 +25,13 @@ public final class FilterParser
   private static final FilterFunction FILTER_FUNCTION = getFilterFunction();
 
   /** Custom filter parser constructor. */
-  private static Constructor<?> filterFunctionConstructor;
+  private static final Constructor<?> FILTER_FUNCTION_CONSTRUCTOR;
 
   static {
     // Initialize a custom filter function if a system property is found
-    final String filterFunctionClass = System.getProperty(FILTER_FUNCTION_PROPERTY);
-    if (filterFunctionClass != null) {
-      try {
-        LOGGER.info("Setting ldap filter function to {}", filterFunctionClass);
-        filterFunctionConstructor = Class.forName(filterFunctionClass).getDeclaredConstructor();
-      } catch (Exception e) {
-        LOGGER.error("Error instantiating {}", filterFunctionClass, e);
-        throw new IllegalStateException(e);
-      }
+    FILTER_FUNCTION_CONSTRUCTOR = LdapUtils.createConstructorFromProperty(FILTER_FUNCTION_PROPERTY);
+    if (FILTER_FUNCTION_CONSTRUCTOR != null) {
+      LOGGER.info("Setting ldap filter function to {}", FILTER_FUNCTION_CONSTRUCTOR);
     }
   }
 
@@ -53,11 +48,11 @@ public final class FilterParser
    */
   public static FilterFunction getFilterFunction()
   {
-    if (filterFunctionConstructor != null) {
+    if (FILTER_FUNCTION_CONSTRUCTOR != null) {
       try {
-        return (FilterFunction) filterFunctionConstructor.newInstance();
+        return (FilterFunction) FILTER_FUNCTION_CONSTRUCTOR.newInstance();
       } catch (Exception e) {
-        LOGGER.error("Error creating new filter function instance with {}", filterFunctionConstructor, e);
+        LOGGER.error("Error creating new filter function instance with {}", FILTER_FUNCTION_CONSTRUCTOR, e);
         throw new IllegalStateException(e);
       }
     }
