@@ -2,12 +2,20 @@
 package org.ldaptive.transport;
 
 import java.lang.reflect.Constructor;
-import org.ldaptive.transport.netty.ConnectionTransport;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapUtils;
+import org.ldaptive.PooledConnectionFactory;
+import org.ldaptive.SingleConnectionFactory;
+import org.ldaptive.transport.netty.ConnectionFactoryTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Factory for creating connections.
+ * Factory for creating connection transports.
  *
  * @author  Middleware Services
  */
@@ -15,28 +23,38 @@ public final class TransportFactory
 {
 
   /** Ldap transport system property. */
-  private static final String TRANSPORT_PROPERTY = "org.ldaptive.transport";
+  private static final String DEFAULT_FACTORY_TRANSPORT_PROPERTY = "org.ldaptive.transport.defaultConnectionFactory";
+
+  /** Ldap transport system property. */
+  private static final String POOLED_FACTORY_TRANSPORT_PROPERTY = "org.ldaptive.transport.pooledConnectionFactory";
+
+  /** Ldap transport system property. */
+  private static final String SINGLE_FACTORY_TRANSPORT_PROPERTY = "org.ldaptive.transport.singleConnectionFactory";
 
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(TransportFactory.class);
 
-  /** Custom transport constructor. */
-  private static final Constructor<?> TRANSPORT_CONSTRUCTOR;
+  /** Map of connection factory class to transport constructor. */
+  private static final Map<Class<? extends ConnectionFactory>, Constructor<?>> TRANSPORT_OVERRIDE;
 
+  // initialize TRANSPORT_OVERRIDE
   static {
-    // Initialize a custom transport if a system property is found
-    final String transportClass = System.getProperty(TRANSPORT_PROPERTY);
-    if (transportClass != null) {
-      try {
-        // note that the number of IO threads can be controlled with the io.netty.eventLoopThreads system property
-        LOGGER.info("Setting ldap transport to {}", transportClass);
-        TRANSPORT_CONSTRUCTOR = Class.forName(transportClass).getDeclaredConstructor();
-      } catch (Exception e) {
-        LOGGER.error("Error instantiating {}", transportClass, e);
-        throw new IllegalStateException(e);
-      }
-    } else {
-      TRANSPORT_CONSTRUCTOR = null;
+    final Map<Class<? extends ConnectionFactory>, Constructor<?>> constructors = new HashMap<>(3);
+    final Constructor<?> defaultTransport = LdapUtils.createConstructorFromProperty(DEFAULT_FACTORY_TRANSPORT_PROPERTY);
+    if (defaultTransport != null) {
+      constructors.put(DefaultConnectionFactory.class, defaultTransport);
+    }
+    final Constructor<?> pooledTransport = LdapUtils.createConstructorFromProperty(POOLED_FACTORY_TRANSPORT_PROPERTY);
+    if (pooledTransport != null) {
+      constructors.put(PooledConnectionFactory.class, pooledTransport);
+    }
+    final Constructor<?> singleTransport = LdapUtils.createConstructorFromProperty(SINGLE_FACTORY_TRANSPORT_PROPERTY);
+    if (singleTransport != null) {
+      constructors.put(SingleConnectionFactory.class, singleTransport);
+    }
+    TRANSPORT_OVERRIDE = Collections.unmodifiableMap(constructors);
+    if (!TRANSPORT_OVERRIDE.isEmpty()) {
+      LOGGER.info("Transport override set to {}", TRANSPORT_OVERRIDE);
     }
   }
 
@@ -46,21 +64,23 @@ public final class TransportFactory
 
 
   /**
-   * The {@link #TRANSPORT_PROPERTY} property is checked and that class is loaded if provided. Otherwise a Netty
-   * transport is returned.
+   * The {@link #TRANSPORT_OVERRIDE} map is checked and that class is loaded if provided. Otherwise the default
+   * transport for the supplied class is provided.
    *
-   * @return  ldaptive transport
+   * @param  clazz  to return transport for
+   *
+   * @return  transport
    */
-  public static Transport getTransport()
+  public static Transport getTransport(final Class<? extends ConnectionFactory> clazz)
   {
-    if (TRANSPORT_CONSTRUCTOR != null) {
+    if (TRANSPORT_OVERRIDE.containsKey(clazz)) {
       try {
-        return (Transport) TRANSPORT_CONSTRUCTOR.newInstance();
+        return (Transport) TRANSPORT_OVERRIDE.get(clazz).newInstance();
       } catch (Exception e) {
-        LOGGER.error("Error creating new transport instance with {}", TRANSPORT_CONSTRUCTOR, e);
+        LOGGER.error("Error creating new transport instance with {}", TRANSPORT_OVERRIDE.get(clazz), e);
         throw new IllegalStateException(e);
       }
     }
-    return new ConnectionTransport(1);
+    return new ConnectionFactoryTransport();
   }
 }

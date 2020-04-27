@@ -7,6 +7,7 @@ import org.ldaptive.pool.ConnectionActivator;
 import org.ldaptive.pool.ConnectionPassivator;
 import org.ldaptive.pool.PruneStrategy;
 import org.ldaptive.transport.Transport;
+import org.ldaptive.transport.TransportFactory;
 
 /**
  * Creates connections for performing ldap operations.
@@ -20,7 +21,8 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
   /** Default constructor. */
   public PooledConnectionFactory()
   {
-    setDefaultConnectionFactory(new DefaultConnectionFactory());
+    setDefaultConnectionFactory(
+      new DefaultConnectionFactory(TransportFactory.getTransport(PooledConnectionFactory.class)));
   }
 
 
@@ -42,7 +44,8 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
    */
   public PooledConnectionFactory(final String ldapUrl)
   {
-    setDefaultConnectionFactory(new DefaultConnectionFactory(ldapUrl));
+    setDefaultConnectionFactory(
+      new DefaultConnectionFactory(ldapUrl, TransportFactory.getTransport(PooledConnectionFactory.class)));
   }
 
 
@@ -65,7 +68,8 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
    */
   public PooledConnectionFactory(final ConnectionConfig cc)
   {
-    setDefaultConnectionFactory(new DefaultConnectionFactory(cc));
+    setDefaultConnectionFactory(
+      new DefaultConnectionFactory(cc, TransportFactory.getTransport(PooledConnectionFactory.class)));
   }
 
 

@@ -27,7 +27,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
   /** Default constructor. */
   public DefaultConnectionFactory()
   {
-    this(TransportFactory.getTransport());
+    this(TransportFactory.getTransport(DefaultConnectionFactory.class));
   }
 
 
@@ -72,7 +72,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
    */
   public DefaultConnectionFactory(final ConnectionConfig cc)
   {
-    this(cc, TransportFactory.getTransport());
+    this(cc, TransportFactory.getTransport(DefaultConnectionFactory.class));
   }
 
 
