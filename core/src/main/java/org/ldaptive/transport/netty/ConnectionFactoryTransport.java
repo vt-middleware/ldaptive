@@ -109,4 +109,19 @@ public class ConnectionFactoryTransport extends NettyConnectionFactoryTransport
       NettyUtils.createDefaultEventLoopGroup(name.concat("-messages"), messageThreads),
       options);
   }
+
+
+  /** A {@link ConnectionFactoryTransport} configured with a single underlying thread. */
+  public static class SingleThread extends ConnectionFactoryTransport
+  {
+
+
+    /**
+     * Default constructor.
+     */
+    public SingleThread()
+    {
+      super(1);
+    }
+  }
 }

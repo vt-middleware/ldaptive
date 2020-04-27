@@ -153,4 +153,19 @@ public class ConnectionTransport implements Transport
       .append("numMessageThreads=").append(numMessageThreads).append(", ")
       .append("channelOptions=").append(channelOptions).append("]").toString();
   }
+
+
+  /** A {@link ConnectionTransport} configured with a single underlying thread. */
+  public static class SingleThread extends ConnectionTransport
+  {
+
+
+    /**
+     * Default constructor.
+     */
+    public SingleThread()
+    {
+      super(1);
+    }
+  }
 }
