@@ -32,10 +32,10 @@ public class SingletonTransport extends NettyConnectionFactoryTransport
 
 
   /**
-   * Invokes {@link EventLoopGroup#shutdownGracefully()} on the underlying worker group.
+   * Invokes {@link NettyUtils#shutdownGracefully(EventLoopGroup)} on the underlying worker group.
    */
   public static void shutdown()
   {
-    SHARED_WORKER_GROUP.shutdownGracefully();
+    NettyUtils.shutdownGracefully(SHARED_WORKER_GROUP);
   }
 }
