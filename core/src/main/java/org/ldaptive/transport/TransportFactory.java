@@ -11,6 +11,7 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.transport.netty.ConnectionFactoryTransport;
+import org.ldaptive.transport.netty.ConnectionTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,6 +82,12 @@ public final class TransportFactory
         throw new IllegalStateException(e);
       }
     }
-    return new ConnectionFactoryTransport();
+    final Transport transport;
+    if (SingleConnectionFactory.class.isAssignableFrom(clazz)) {
+      transport = new ConnectionTransport.SingleThread();
+    } else {
+      transport = new ConnectionFactoryTransport();
+    }
+    return transport;
   }
 }
