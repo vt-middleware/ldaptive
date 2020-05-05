@@ -10,7 +10,7 @@ ConnectionConfig.builder()
         final Duration sleepTime = Duration.ofSeconds(1).multipliedBy(metadata.getAttempts());
         Thread.sleep(sleepTime.toMillis());
       } catch (InterruptedException ie) {}
-        return true;
-      }
+      return true;
+    }
     return false;})
   .build();
