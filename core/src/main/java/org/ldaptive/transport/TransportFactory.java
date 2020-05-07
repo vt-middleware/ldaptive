@@ -24,9 +24,6 @@ public final class TransportFactory
 {
 
   /** Ldap transport system property. */
-  private static final String DEFAULT_FACTORY_TRANSPORT_PROPERTY = "org.ldaptive.transport.defaultConnectionFactory";
-
-  /** Ldap transport system property. */
   private static final String POOLED_FACTORY_TRANSPORT_PROPERTY = "org.ldaptive.transport.pooledConnectionFactory";
 
   /** Ldap transport system property. */
@@ -40,11 +37,7 @@ public final class TransportFactory
 
   // initialize TRANSPORT_OVERRIDE
   static {
-    final Map<Class<? extends ConnectionFactory>, Constructor<?>> constructors = new HashMap<>(3);
-    final Constructor<?> defaultTransport = LdapUtils.createConstructorFromProperty(DEFAULT_FACTORY_TRANSPORT_PROPERTY);
-    if (defaultTransport != null) {
-      constructors.put(DefaultConnectionFactory.class, defaultTransport);
-    }
+    final Map<Class<? extends ConnectionFactory>, Constructor<?>> constructors = new HashMap<>(2);
     final Constructor<?> pooledTransport = LdapUtils.createConstructorFromProperty(POOLED_FACTORY_TRANSPORT_PROPERTY);
     if (pooledTransport != null) {
       constructors.put(PooledConnectionFactory.class, pooledTransport);
@@ -83,10 +76,15 @@ public final class TransportFactory
       }
     }
     final Transport transport;
-    if (SingleConnectionFactory.class.isAssignableFrom(clazz)) {
+    if (PooledConnectionFactory.class.isAssignableFrom(clazz)) {
+      transport = new ConnectionFactoryTransport();
+    } else if (SingleConnectionFactory.class.isAssignableFrom(clazz)) {
+      transport = new ConnectionTransport.SingleThread();
+    } else if (DefaultConnectionFactory.class.isAssignableFrom(clazz)) {
       transport = new ConnectionTransport.SingleThread();
     } else {
-      transport = new ConnectionFactoryTransport();
+      // be conservative for unknown connection factory types
+      transport = new ConnectionTransport.SingleThread();
     }
     return transport;
   }

@@ -47,10 +47,6 @@
           <systemProperties>
             <!--
             <systemProperty>
-              <key>org.ldaptive.transport.defaultConnectionFactory</key>
-              <value>org.ldaptive.transport.netty.SingletonTransport</value>
-            </systemProperty>
-            <systemProperty>
               <key>org.ldaptive.transport.pooledConnectionFactory</key>
               <value>org.ldaptive.transport.netty.ConnectionTransport$SingleThread</value>
             </systemProperty>

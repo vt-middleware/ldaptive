@@ -32,7 +32,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Creates a new default connection factory.
+   * Creates a new default connection factory. Be sure to invoke {@link #close()} if the supplied transport has
+   * resources to cleanup.
    *
    * @param  t  transport
    */
@@ -54,7 +55,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Creates a new default connection factory.
+   * Creates a new default connection factory. Be sure to invoke {@link #close()} if the supplied transport has
+   * resources to cleanup.
    *
    * @param  ldapUrl  to connect to
    * @param  t  transport
@@ -77,7 +79,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   /**
-   * Creates a new default connection factory.
+   * Creates a new default connection factory. Be sure to invoke {@link #close()} if the supplied transport has
+   * resources to cleanup.
    *
    * @param  cc  connection configuration
    * @param  t  transport

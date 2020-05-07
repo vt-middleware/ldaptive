@@ -69,8 +69,9 @@ public abstract class AbstractTest
   public void deleteLdapEntry(final String dn)
     throws Exception
   {
-    if (entryExists(TestUtils.createSetupConnectionFactory(), LdapEntry.builder().dn(dn).build())) {
-      final DeleteOperation delete = new DeleteOperation(TestUtils.createSetupConnectionFactory());
+    final ConnectionFactory cf = TestUtils.createSetupConnectionFactory();
+    if (entryExists(cf, LdapEntry.builder().dn(dn).build())) {
+      final DeleteOperation delete = new DeleteOperation(cf);
       delete.execute(new DeleteRequest(dn));
     }
   }

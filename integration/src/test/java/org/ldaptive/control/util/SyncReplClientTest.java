@@ -85,7 +85,8 @@ public class SyncReplClientTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
+    final SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory();
+    try {
       final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
       final SyncReplClient client = new SyncReplClient(cf, false);
       final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
@@ -107,6 +108,8 @@ public class SyncReplClientTest extends AbstractTest
       final SyncDoneControl sdc = (SyncDoneControl) result.getControl(SyncDoneControl.OID);
       Assert.assertEquals(sdc.getRefreshDeletes(), true);
       Assert.assertNotNull(sdc.getCookie());
+    } finally {
+      cf.close();
     }
   }
 
@@ -134,7 +137,8 @@ public class SyncReplClientTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
+    final SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory();
+    try {
       final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
       final SyncReplClient client = new SyncReplClient(cf, true);
       final BlockingQueue<Object> queue = new LinkedBlockingDeque<>();
@@ -193,6 +197,8 @@ public class SyncReplClientTest extends AbstractTest
       final Result result = (Result) queue.take();
       Assert.assertNotNull(result);
       Assert.assertEquals(result.getResultCode(), ResultCode.CANCELED);
+    } finally {
+      cf.close();
     }
   }
 }

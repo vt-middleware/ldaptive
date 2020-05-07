@@ -124,4 +124,19 @@ public class ConnectionFactoryTransport extends NettyConnectionFactoryTransport
       super(1);
     }
   }
+
+
+  /** A {@link ConnectionFactoryTransport} configured with two underlying threads. */
+  public static class DualThread extends ConnectionFactoryTransport
+  {
+
+
+    /**
+     * Default constructor.
+     */
+    public DualThread()
+    {
+      super(2);
+    }
+  }
 }

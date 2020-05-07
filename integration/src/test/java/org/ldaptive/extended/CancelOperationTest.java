@@ -41,7 +41,8 @@ public class CancelOperationTest extends AbstractTest
       return;
     }
 
-    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
+    final SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory();
+    try {
       final SearchOperation search = new SearchOperation(cf);
       final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn);
       request.setControls(new SyncRequestControl(SyncRequestControl.Mode.REFRESH_AND_PERSIST, true));
@@ -60,6 +61,8 @@ public class CancelOperationTest extends AbstractTest
       final ExtendedResponse cancelResult = searchHandle.cancel().execute();
       Assert.assertEquals(result[0].getResultCode(), ResultCode.CANCELED);
       Assert.assertEquals(cancelResult.getResultCode(), ResultCode.SUCCESS);
+    } finally {
+      cf.close();
     }
   }
 }

@@ -168,4 +168,19 @@ public class ConnectionTransport implements Transport
       super(1);
     }
   }
+
+
+  /** A {@link ConnectionTransport} configured with two underlying threads. */
+  public static class DualThread extends ConnectionTransport
+  {
+
+
+    /**
+     * Default constructor.
+     */
+    public DualThread()
+    {
+      super(2);
+    }
+  }
 }

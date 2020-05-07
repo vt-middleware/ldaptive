@@ -428,7 +428,8 @@ public class SearchOperationTest extends AbstractTest
   public void pagedSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    try (SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory()) {
+    final SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory();
+    try {
       final PagedResultsControl prc = new PagedResultsControl(1, true);
       final SearchOperation search = new SearchOperation(cf);
       final String expected = TestUtils.readFileIntoString(ldifFile);
@@ -470,6 +471,8 @@ public class SearchOperationTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       Assert.assertNotNull(e);
+    } finally {
+      cf.close();
     }
   }
 
@@ -1985,15 +1988,14 @@ public class SearchOperationTest extends AbstractTest
   {
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
-    try (ConnectionFactory cf = TestUtils.createConnectionFactory()) {
-      final SearchOperationWorker op = new SearchOperationWorker();
-      op.getOperation().setConnectionFactory(cf);
-      op.getOperation().setRequest(SearchRequest.builder().dn(dn).build());
-      final Collection<SearchResponse> results = op.execute(
-        new FilterTemplate[]{new FilterTemplate(filter, filterParameters.split("\\|"))},
-        returnAttrs.split("\\|"));
-      Assert.assertEquals(results.size(), 1);
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), results.iterator().next());
-    }
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final SearchOperationWorker op = new SearchOperationWorker();
+    op.getOperation().setConnectionFactory(cf);
+    op.getOperation().setRequest(SearchRequest.builder().dn(dn).build());
+    final Collection<SearchResponse> results = op.execute(
+      new FilterTemplate[]{new FilterTemplate(filter, filterParameters.split("\\|"))},
+      returnAttrs.split("\\|"));
+    Assert.assertEquals(results.size(), 1);
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), results.iterator().next());
   }
 }
