@@ -37,10 +37,13 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
   private final String authorizationID;
 
   /** Realm. */
-  private final String realm;
+  private final String saslRealm;
 
   /** Password. */
   private final String password;
+
+  /** Whether the server must authenticate the client. */
+  private final Boolean mutualAuthentication;
 
   /** Boolean that ensures the {@link GssApiSaslClient} is only returned on the first request. */
   private final AtomicBoolean invokeOnce = new AtomicBoolean();
@@ -52,14 +55,16 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
    * @param  authID  to bind as
    * @param  authzID  authorization ID
    * @param  pass  password to bind with
-   * @param  r  realm
+   * @param  realm  SASL realm
+   * @param  mutual  mutual authentication
    * @param  qop  quality of protection
    */
   public GssApiBindRequest(
     final String authID,
     final String authzID,
     final String pass,
-    final String r,
+    final String realm,
+    final Boolean mutual,
     final QualityOfProtection... qop)
   {
     if (qop != null) {
@@ -76,7 +81,8 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
     authenticationID = authID;
     authorizationID = authzID;
     password = pass;
-    realm = r;
+    saslRealm = realm;
+    mutualAuthentication = mutual != null ? mutual : Boolean.TRUE;
     allowedQoP = qop != null ? qop : new QualityOfProtection[] {QualityOfProtection.AUTH};
   }
 
@@ -103,10 +109,10 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
         ((PasswordCallback) callback).setPassword(password.toCharArray());
       } else if (callback instanceof RealmCallback) {
         final RealmCallback rc = (RealmCallback) callback;
-        if (realm == null) {
+        if (saslRealm == null) {
           throw new IllegalStateException("Realm required, but none provided");
         } else {
-          rc.setText(realm);
+          rc.setText(saslRealm);
         }
       } else {
         throw new UnsupportedCallbackException(callback);
@@ -136,7 +142,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
     props.put(
       Sasl.QOP,
       Stream.of(allowedQoP).map(QualityOfProtection::string).collect(Collectors.joining(",")));
-    props.put(Sasl.SERVER_AUTH, "true");
+    props.put(Sasl.SERVER_AUTH, mutualAuthentication.toString());
     return props;
   }
 
@@ -148,6 +154,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
       .append("allowedQoP=").append(Arrays.toString(allowedQoP)).append(", ")
       .append("authenticationID=").append(authenticationID).append(", ")
       .append("authorizationID=").append(authorizationID).append(", ")
-      .append("realm=").append(realm).toString();
+      .append("mutualAuthentication=").append(mutualAuthentication).append(", ")
+      .append("realm=").append(saslRealm).toString();
   }
 }

@@ -1735,6 +1735,16 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
+    final ConnectionFactory cf = TestUtils.createDigestMd5ConnectionFactory();
+    ((BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializers()[0]).setBindCredential(
+      new Credential("wrong-password"));
+    try (Connection conn = cf.getConnection()) {
+      conn.open();
+      Assert.fail("DIGEST-MD5 should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), ConnectException.class);
+    }
+
     final String expected = TestUtils.readFileIntoString(ldifFile);
     final SearchOperation search = new SearchOperation(TestUtils.createDigestMd5ConnectionFactory());
     final SearchResponse result = search.execute(
@@ -1774,6 +1784,16 @@ public class SearchOperationTest extends AbstractTest
     // TODO ignore active directory until it's configured
     if (TestControl.isActiveDirectory()) {
       return;
+    }
+
+    final ConnectionFactory cf = TestUtils.createCramMd5ConnectionFactory();
+    ((BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializers()[0]).setBindCredential(
+      new Credential("wrong-password"));
+    try (Connection conn = cf.getConnection()) {
+      conn.open();
+      Assert.fail("CRAM-MD5 should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), ConnectException.class);
     }
 
     final String expected = TestUtils.readFileIntoString(ldifFile);

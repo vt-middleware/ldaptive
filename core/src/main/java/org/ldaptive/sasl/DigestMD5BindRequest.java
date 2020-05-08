@@ -3,6 +3,7 @@ package org.ldaptive.sasl;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -36,10 +37,13 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
   private final String authorizationID;
 
   /** Realm. */
-  private final String realm;
+  private final String saslRealm;
 
   /** Password. */
   private final String password;
+
+  /** Whether the server must authenticate the client. */
+  private final Boolean mutualAuthentication;
 
 
   /**
@@ -48,14 +52,16 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
    * @param  authID  to bind as
    * @param  authzID  authorization ID
    * @param  pass  password
-   * @param  r  realm
+   * @param  realm  SASL realm
+   * @param  mutual  mutual authentication
    * @param  qop  quality of protection
    */
   public DigestMD5BindRequest(
     final String authID,
     final String authzID,
     final String pass,
-    final String r,
+    final String realm,
+    final Boolean mutual,
     final QualityOfProtection... qop)
   {
     if (qop != null) {
@@ -72,7 +78,8 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
     authenticationID = authID;
     authorizationID = authzID;
     password = pass;
-    realm = r;
+    saslRealm = realm;
+    mutualAuthentication = mutual;
     allowedQoP = qop;
   }
 
@@ -88,7 +95,7 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
         ((PasswordCallback) callback).setPassword(password.toCharArray());
       } else if (callback instanceof RealmCallback) {
         final RealmCallback rc = (RealmCallback) callback;
-        if (realm == null) {
+        if (saslRealm == null) {
           final String defaultRealm = rc.getDefaultText();
           if (defaultRealm == null) {
             throw new IllegalStateException("Default realm required, but none provided");
@@ -96,16 +103,16 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
             rc.setText(defaultRealm);
           }
         } else {
-          rc.setText(realm);
+          rc.setText(saslRealm);
         }
       } else if (callback instanceof RealmChoiceCallback) {
         final RealmChoiceCallback rcc = (RealmChoiceCallback) callback;
-        if (realm == null) {
+        if (saslRealm == null) {
           throw new IllegalStateException(
             "Realm required, choose one of the following: " + Arrays.toString(rcc.getChoices()));
         } else if (rcc.getChoices() != null) {
           final int selectedIndex = IntStream.range(
-            0, rcc.getChoices().length).filter(i -> rcc.getChoices()[i].equals(realm)).findFirst().getAsInt();
+            0, rcc.getChoices().length).filter(i -> rcc.getChoices()[i].equals(saslRealm)).findFirst().getAsInt();
           rcc.setSelectedIndex(selectedIndex);
         }
       } else {
@@ -132,12 +139,19 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
   @Override
   public Map<String, ?> getSaslProperties()
   {
-    if (allowedQoP == null) {
+    if (allowedQoP == null && mutualAuthentication == null) {
       return null;
     }
-    return Collections.singletonMap(
-      Sasl.QOP,
-      Stream.of(allowedQoP).map(QualityOfProtection::string).collect(Collectors.joining(",")));
+    final Map<String, Object> props = new HashMap<>(2);
+    if (allowedQoP != null) {
+      props.put(
+        Sasl.QOP,
+        Stream.of(allowedQoP).map(QualityOfProtection::string).collect(Collectors.joining(",")));
+    }
+    if (mutualAuthentication != null) {
+      props.put(Sasl.SERVER_AUTH, mutualAuthentication.toString());
+    }
+    return Collections.unmodifiableMap(props);
   }
 
 
@@ -148,6 +162,7 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
       .append("allowedQoP=").append(Arrays.toString(allowedQoP)).append(", ")
       .append("authenticationID=").append(authenticationID).append(", ")
       .append("authorizationID=").append(authorizationID).append(", ")
-      .append("realm=").append(realm).toString();
+      .append("mutualAuthentication=").append(mutualAuthentication).append(", ")
+      .append("saslRealm=").append(saslRealm).toString();
   }
 }
