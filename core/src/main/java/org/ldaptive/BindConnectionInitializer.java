@@ -180,6 +180,7 @@ public class BindConnectionInitializer implements ConnectionInitializer
           bindCredential != null ? bindCredential.getString() : null,
           bindSaslConfig.getRealm(),
           bindSaslConfig.getMutualAuthentication(),
+          bindSaslConfig.getSecurityStrength(),
           bindSaslConfig.getQualityOfProtection()));
         break;
       case CRAM_MD5:

@@ -2,6 +2,7 @@
 package org.ldaptive.sasl;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -42,7 +43,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
   /** Password. */
   private final String password;
 
-  /** Whether the server must authenticate the client. */
+  /** Whether the server must authenticate to the client. */
   private final Boolean mutualAuthentication;
 
   /** Boolean that ensures the {@link GssApiSaslClient} is only returned on the first request. */
@@ -82,7 +83,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
     authorizationID = authzID;
     password = pass;
     saslRealm = realm;
-    mutualAuthentication = mutual != null ? mutual : Boolean.TRUE;
+    mutualAuthentication = mutual != null ? mutual : Boolean.FALSE;
     allowedQoP = qop != null ? qop : new QualityOfProtection[] {QualityOfProtection.AUTH};
   }
 
@@ -143,7 +144,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
       Sasl.QOP,
       Stream.of(allowedQoP).map(QualityOfProtection::string).collect(Collectors.joining(",")));
     props.put(Sasl.SERVER_AUTH, mutualAuthentication.toString());
-    return props;
+    return Collections.unmodifiableMap(props);
   }
 
 

@@ -44,18 +44,18 @@ public class PropertyValueParserTest
     o3.setPrunePeriod(Duration.ofMinutes(1));
     o3.setIdleTime(Duration.ofMinutes(2));
 
-    final String p4 = "org.ldaptive.sasl.SaslConfig" +
-      "{{mechanism=CRAM_MD5}{securityStrength=LOW}{qualityOfProtection=AUTH}}";
+    final String p4 = "org.ldaptive.sasl.SaslConfig{{mechanism=CRAM_MD5}}";
     final SaslConfig o4 = new SaslConfig();
     o4.setMechanism(Mechanism.CRAM_MD5);
-    o4.setSecurityStrength(SecurityStrength.LOW);
-    o4.setQualityOfProtection(QualityOfProtection.AUTH);
 
-    final String p5 = "{{mechanism=DIGEST_MD5}{authorizationId=test1}{mutualAuthentication=true}}";
+    final String p5 = "{{mechanism=DIGEST_MD5}" +
+      "{authorizationId=test1}{mutualAuthentication=true}{qualityOfProtection=AUTH}{securityStrength=HIGH,MEDIUM}}";
     final SaslConfig o5 = new SaslConfig();
     o5.setMechanism(Mechanism.DIGEST_MD5);
     o5.setAuthorizationId("test1");
     o5.setMutualAuthentication(true);
+    o5.setQualityOfProtection(QualityOfProtection.AUTH);
+    o5.setSecurityStrength(SecurityStrength.HIGH, SecurityStrength.MEDIUM);
 
     final String p6 = "{mechanism=EXTERNAL}";
     final SaslConfig o6 = new SaslConfig();

@@ -30,6 +30,9 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
   /** Quality of protection. */
   private final QualityOfProtection[] allowedQoP;
 
+  /** Security strength. */
+  private final SecurityStrength[] securityStrength;
+
   /** Authentication ID. */
   private final String authenticationID;
 
@@ -42,7 +45,7 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
   /** Password. */
   private final String password;
 
-  /** Whether the server must authenticate the client. */
+  /** Whether the server must authenticate to the client. */
   private final Boolean mutualAuthentication;
 
 
@@ -54,6 +57,7 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
    * @param  pass  password
    * @param  realm  SASL realm
    * @param  mutual  mutual authentication
+   * @param  strength  security strength
    * @param  qop  quality of protection
    */
   public DigestMD5BindRequest(
@@ -62,8 +66,20 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
     final String pass,
     final String realm,
     final Boolean mutual,
-    final QualityOfProtection... qop)
+    final SecurityStrength[] strength,
+    final QualityOfProtection[] qop)
   {
+    if (strength != null) {
+      if (strength.length == 0) {
+        throw new IllegalArgumentException("Security strength cannot be empty");
+      } else {
+        Stream.of(strength).forEach(s -> {
+          if (s == null) {
+            throw new IllegalArgumentException("Security strength cannot be null");
+          }
+        });
+      }
+    }
     if (qop != null) {
       if (qop.length == 0) {
         throw new IllegalArgumentException("QOP cannot be empty");
@@ -79,8 +95,10 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
     authorizationID = authzID;
     password = pass;
     saslRealm = realm;
-    mutualAuthentication = mutual;
-    allowedQoP = qop;
+    mutualAuthentication = mutual != null ? mutual : Boolean.FALSE;
+    securityStrength = strength != null ?
+      strength : new SecurityStrength[] {SecurityStrength.HIGH, SecurityStrength.MEDIUM, SecurityStrength.LOW};
+    allowedQoP = qop != null ? qop : new QualityOfProtection[] {QualityOfProtection.AUTH};
   }
 
 
@@ -139,18 +157,14 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
   @Override
   public Map<String, ?> getSaslProperties()
   {
-    if (allowedQoP == null && mutualAuthentication == null) {
-      return null;
-    }
-    final Map<String, Object> props = new HashMap<>(2);
-    if (allowedQoP != null) {
-      props.put(
-        Sasl.QOP,
-        Stream.of(allowedQoP).map(QualityOfProtection::string).collect(Collectors.joining(",")));
-    }
-    if (mutualAuthentication != null) {
-      props.put(Sasl.SERVER_AUTH, mutualAuthentication.toString());
-    }
+    final Map<String, Object> props = new HashMap<>(3);
+    props.put(
+      Sasl.QOP,
+      Stream.of(allowedQoP).map(QualityOfProtection::string).collect(Collectors.joining(",")));
+    props.put(
+      Sasl.STRENGTH,
+      Stream.of(securityStrength).map(s -> s.name().toLowerCase()).collect(Collectors.joining(",")));
+    props.put(Sasl.SERVER_AUTH, mutualAuthentication.toString());
     return Collections.unmodifiableMap(props);
   }
 
@@ -160,6 +174,7 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
   {
     return new StringBuilder(super.toString()).append(", ")
       .append("allowedQoP=").append(Arrays.toString(allowedQoP)).append(", ")
+      .append("securityStrength=").append(Arrays.toString(securityStrength)).append(", ")
       .append("authenticationID=").append(authenticationID).append(", ")
       .append("authorizationID=").append(authorizationID).append(", ")
       .append("mutualAuthentication=").append(mutualAuthentication).append(", ")

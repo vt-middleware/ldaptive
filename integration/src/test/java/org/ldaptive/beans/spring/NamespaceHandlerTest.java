@@ -488,8 +488,11 @@ public class NamespaceHandlerTest
         final SaslConfig sc = ci.getBindSaslConfig();
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getMechanism(), Mechanism.DIGEST_MD5);
-        Assert.assertEquals(sc.getQualityOfProtection()[0], QualityOfProtection.AUTH_INT);
-        Assert.assertEquals(sc.getSecurityStrength(), SecurityStrength.MEDIUM);
+        Assert.assertEquals(sc.getQualityOfProtection(), new QualityOfProtection[] {QualityOfProtection.AUTH_INT});
+        Assert.assertEquals(
+          sc.getSecurityStrength(),
+          new SecurityStrength[] {SecurityStrength.HIGH, SecurityStrength.MEDIUM});
+        Assert.assertEquals(sc.getMutualAuthentication(), Boolean.TRUE);
         break;
       default:
         throw new IllegalStateException("Unknown type");

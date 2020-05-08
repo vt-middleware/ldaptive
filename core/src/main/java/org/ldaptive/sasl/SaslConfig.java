@@ -25,7 +25,7 @@ public class SaslConfig extends AbstractConfig
   private QualityOfProtection[] qualityOfProtection;
 
   /** sasl security strength. */
-  private SecurityStrength securityStrength;
+  private SecurityStrength[] securityStrength;
 
   /** sasl realm. */
   private String saslRealm;
@@ -132,7 +132,7 @@ public class SaslConfig extends AbstractConfig
    *
    * @return  security strength
    */
-  public SecurityStrength getSecurityStrength()
+  public SecurityStrength[] getSecurityStrength()
   {
     return securityStrength;
   }
@@ -143,10 +143,10 @@ public class SaslConfig extends AbstractConfig
    *
    * @param  ss  security strength
    */
-  public void setSecurityStrength(final SecurityStrength ss)
+  public void setSecurityStrength(final SecurityStrength... ss)
   {
     checkImmutable();
-    logger.trace("setting securityStrength: {}", ss);
+    logger.trace("setting securityStrength: {}", Arrays.toString(ss));
     securityStrength = ss;
   }
 
@@ -184,7 +184,7 @@ public class SaslConfig extends AbstractConfig
       .append("authorizationId=").append(authorizationId).append(", ")
       .append("mutualAuthentication=").append(mutualAuthentication).append(", ")
       .append("qualityOfProtection=").append(Arrays.toString(qualityOfProtection)).append(", ")
-      .append("securityStrength=").append(securityStrength).append(", ")
+      .append("securityStrength=").append(Arrays.toString(securityStrength)).append(", ")
       .append("realm=").append(saslRealm).append("]").toString();
   }
 
@@ -239,9 +239,9 @@ public class SaslConfig extends AbstractConfig
     }
 
 
-    public SaslConfig.Builder securityStrength(final SecurityStrength strength)
+    public SaslConfig.Builder securityStrength(final SecurityStrength... strengths)
     {
-      object.setSecurityStrength(strength);
+      object.setSecurityStrength(strengths);
       return this;
     }
 

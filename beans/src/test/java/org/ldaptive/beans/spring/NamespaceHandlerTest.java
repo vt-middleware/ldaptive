@@ -207,7 +207,8 @@ public class NamespaceHandlerTest
         Assert.assertNotNull(sc);
         Assert.assertEquals(sc.getMechanism(), Mechanism.DIGEST_MD5);
         Assert.assertEquals(sc.getQualityOfProtection(), QualityOfProtection.AUTH_INT);
-        Assert.assertEquals(sc.getSecurityStrength(), SecurityStrength.MEDIUM);
+        Assert.assertEquals(sc.getSecurityStrength(), new SecurityStrength[] {SecurityStrength.MEDIUM});
+        Assert.assertEquals(sc.getMutualAuthentication(), Boolean.TRUE);
         break;
       default:
         throw new IllegalStateException("Unknown type");

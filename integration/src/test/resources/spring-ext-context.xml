@@ -85,6 +85,7 @@
     authorizationId="dn:uid=test4,${ldap.baseDn}"
     qualityOfProtection="${ldap.sasl.qualityOfProtection}"
     securityStrength="${ldap.sasl.securityStrength}"
+    mutualAuthentication="${ldap.sasl.mutualAuthentication}"
     ldapUrl="${ldap.url}"
     trustCertificates="classpath:/ldaptive.trust.crt"
     baseDn="${ldap.baseDn}"
