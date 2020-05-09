@@ -2,8 +2,13 @@
 package org.ldaptive.sasl;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.security.auth.callback.CallbackHandler;
+import javax.security.sasl.Sasl;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.transport.DefaultSaslClient;
 
@@ -71,6 +76,51 @@ public abstract class DefaultSaslClientRequest implements CallbackHandler
   public SaslClient getSaslClient()
   {
     return new DefaultSaslClient();
+  }
+
+
+  /**
+   * Creates SASL client properties from the supplied configuration.
+   *
+   * @param  config  SASL config
+   *
+   * @return  client properties
+   */
+  public static Map<String, ?> createProperties(final SaslConfig config)
+  {
+    final Map<String, Object> props = new HashMap<>();
+    // add raw properties first, other properties will override if a conflict exists
+    if (!config.getProperties().isEmpty()) {
+      props.putAll(config.getProperties());
+    }
+    if (config.getQualityOfProtection() != null) {
+      if (config.getQualityOfProtection().length == 0) {
+        throw new IllegalArgumentException("QOP cannot be empty");
+      }
+      props.put(
+        Sasl.QOP,
+        Stream.of(config.getQualityOfProtection()).peek(q -> {
+          if (q == null) {
+            throw new IllegalArgumentException("QOP cannot be null");
+          }
+        }).map(QualityOfProtection::string).collect(Collectors.joining(",")));
+    }
+    if (config.getSecurityStrength() != null) {
+      if (config.getSecurityStrength().length == 0) {
+        throw new IllegalArgumentException("Security strength cannot be empty");
+      }
+      props.put(
+        Sasl.STRENGTH,
+        Stream.of(config.getSecurityStrength()).peek(s -> {
+          if (s == null) {
+            throw new IllegalArgumentException("Security strength cannot be null");
+          }
+        }).map(s -> s.name().toLowerCase()).collect(Collectors.joining(",")));
+    }
+    if (config.getMutualAuthentication() != null) {
+      props.put(Sasl.SERVER_AUTH, config.getMutualAuthentication().toString());
+    }
+    return Collections.unmodifiableMap(props);
   }
 
 

@@ -2,6 +2,8 @@
 package org.ldaptive.sasl;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import org.ldaptive.AbstractConfig;
 
 /**
@@ -29,6 +31,9 @@ public class SaslConfig extends AbstractConfig
 
   /** sasl realm. */
   private String saslRealm;
+
+  /** sasl properties. */
+  private Map<String, Object> properties = new HashMap<>();
 
 
   /**
@@ -175,6 +180,29 @@ public class SaslConfig extends AbstractConfig
   }
 
 
+  /**
+   * Returns sasl properties.
+   *
+   * @return  properties
+   */
+  public Map<String, ?> getProperties()
+  {
+    return properties;
+  }
+
+
+  /**
+   * Sets a sasl property.
+   *
+   * @param  name  of the property
+   * @param  value  of the property
+   */
+  public void setProperty(final String name, final Object value)
+  {
+    properties.put(name, value);
+  }
+
+
   @Override
   public String toString()
   {
@@ -185,7 +213,8 @@ public class SaslConfig extends AbstractConfig
       .append("mutualAuthentication=").append(mutualAuthentication).append(", ")
       .append("qualityOfProtection=").append(Arrays.toString(qualityOfProtection)).append(", ")
       .append("securityStrength=").append(Arrays.toString(securityStrength)).append(", ")
-      .append("realm=").append(saslRealm).append("]").toString();
+      .append("realm=").append(saslRealm).append(", ")
+      .append("properties=").append(properties).append("]").toString();
   }
 
 
@@ -249,6 +278,13 @@ public class SaslConfig extends AbstractConfig
     public SaslConfig.Builder realm(final String realm)
     {
       object.setRealm(realm);
+      return this;
+    }
+
+
+    public SaslConfig.Builder property(final String name, final Object value)
+    {
+      object.setProperty(name, value);
       return this;
     }
 

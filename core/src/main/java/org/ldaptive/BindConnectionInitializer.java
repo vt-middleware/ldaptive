@@ -179,9 +179,7 @@ public class BindConnectionInitializer implements ConnectionInitializer
           bindSaslConfig.getAuthorizationId(),
           bindCredential != null ? bindCredential.getString() : null,
           bindSaslConfig.getRealm(),
-          bindSaslConfig.getMutualAuthentication(),
-          bindSaslConfig.getSecurityStrength(),
-          bindSaslConfig.getQualityOfProtection()));
+          DigestMD5BindRequest.createProperties(bindSaslConfig)));
         break;
       case CRAM_MD5:
         result = c.operation(new CramMD5BindRequest(
@@ -194,8 +192,7 @@ public class BindConnectionInitializer implements ConnectionInitializer
           bindSaslConfig.getAuthorizationId(),
           bindCredential != null ? bindCredential.getString() : null,
           bindSaslConfig.getRealm(),
-          bindSaslConfig.getMutualAuthentication(),
-          bindSaslConfig.getQualityOfProtection()));
+          GssApiBindRequest.createProperties(bindSaslConfig)));
         break;
       case SCRAM_SHA_1:
         result = c.operation(new ScramBindRequest(Mechanism.SCRAM_SHA_1, bindDn, bindCredential.getString()));

@@ -1,19 +1,14 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.sasl;
 
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.sasl.RealmCallback;
-import javax.security.sasl.Sasl;
 import org.ldaptive.transport.DefaultSaslClient;
 import org.ldaptive.transport.GssApiSaslClient;
 
@@ -28,9 +23,6 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
   /** GSSAPI SASL mechanism. */
   private static final Mechanism MECHANISM = Mechanism.GSSAPI;
 
-  /** Quality of protection. */
-  private final QualityOfProtection[] allowedQoP;
-
   /** Authentication ID. */
   private final String authenticationID;
 
@@ -40,11 +32,11 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
   /** Realm. */
   private final String saslRealm;
 
+  /** SASL client properties. */
+  private final Map<String, ?> saslProperties;
+
   /** Password. */
   private final String password;
-
-  /** Whether the server must authenticate to the client. */
-  private final Boolean mutualAuthentication;
 
   /** Boolean that ensures the {@link GssApiSaslClient} is only returned on the first request. */
   private final AtomicBoolean invokeOnce = new AtomicBoolean();
@@ -57,34 +49,20 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
    * @param  authzID  authorization ID
    * @param  pass  password to bind with
    * @param  realm  SASL realm
-   * @param  mutual  mutual authentication
-   * @param  qop  quality of protection
+   * @param  props  SASL client properties
    */
   public GssApiBindRequest(
     final String authID,
     final String authzID,
     final String pass,
     final String realm,
-    final Boolean mutual,
-    final QualityOfProtection... qop)
+    final Map<String, ?> props)
   {
-    if (qop != null) {
-      if (qop.length == 0) {
-        throw new IllegalArgumentException("QOP cannot be empty");
-      } else {
-        Stream.of(qop).forEach(q -> {
-          if (q == null) {
-            throw new IllegalArgumentException("QOP cannot be null");
-          }
-        });
-      }
-    }
     authenticationID = authID;
     authorizationID = authzID;
     password = pass;
     saslRealm = realm;
-    mutualAuthentication = mutual != null ? mutual : Boolean.FALSE;
-    allowedQoP = qop != null ? qop : new QualityOfProtection[] {QualityOfProtection.AUTH};
+    saslProperties = Collections.unmodifiableMap(props);
   }
 
 
@@ -139,12 +117,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
   @Override
   public Map<String, ?> getSaslProperties()
   {
-    final Map<String, Object> props = new HashMap<>(2);
-    props.put(
-      Sasl.QOP,
-      Stream.of(allowedQoP).map(QualityOfProtection::string).collect(Collectors.joining(",")));
-    props.put(Sasl.SERVER_AUTH, mutualAuthentication.toString());
-    return Collections.unmodifiableMap(props);
+    return saslProperties;
   }
 
 
@@ -152,10 +125,9 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
   public String toString()
   {
     return new StringBuilder(super.toString()).append(", ")
-      .append("allowedQoP=").append(Arrays.toString(allowedQoP)).append(", ")
       .append("authenticationID=").append(authenticationID).append(", ")
       .append("authorizationID=").append(authorizationID).append(", ")
-      .append("mutualAuthentication=").append(mutualAuthentication).append(", ")
-      .append("realm=").append(saslRealm).toString();
+      .append("realm=").append(saslRealm).append(", ")
+      .append("saslProperties=").append(saslProperties).toString();
   }
 }
