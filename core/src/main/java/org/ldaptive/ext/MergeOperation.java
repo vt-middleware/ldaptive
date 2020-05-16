@@ -21,6 +21,7 @@ import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
+import org.ldaptive.handler.ResultPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +50,9 @@ public class MergeOperation
   /** Connection factory. */
   private ConnectionFactory connectionFactory;
 
+  /** Function to test results. */
+  private ResultPredicate throwCondition;
+
 
   /**
    * Default constructor.
@@ -76,6 +80,18 @@ public class MergeOperation
   public void setConnectionFactory(final ConnectionFactory factory)
   {
     connectionFactory = factory;
+  }
+
+
+  public ResultPredicate getThrowCondition()
+  {
+    return throwCondition;
+  }
+
+
+  public void setThrowCondition(final ResultPredicate function)
+  {
+    throwCondition = function;
   }
 
 
@@ -117,13 +133,22 @@ public class MergeOperation
         } else {
           // entry does not exist, add it
           result = add(request, sourceEntry);
+          if (throwCondition != null) {
+            throwCondition.testAndThrow(result);
+          }
         }
       } else if (request.getDeleteEntry()) {
         // delete entry
         result = delete(request, sourceEntry);
+        if (throwCondition != null) {
+          throwCondition.testAndThrow(result);
+        }
       } else {
         // entry exists, merge attributes
         result = modify(request, sourceEntry, searchResult.getEntry());
+        if (throwCondition != null) {
+          throwCondition.testAndThrow(result);
+        }
       }
       return result;
     }

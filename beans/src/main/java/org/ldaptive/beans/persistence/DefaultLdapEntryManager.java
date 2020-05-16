@@ -19,6 +19,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.beans.LdapEntryMapper;
 import org.ldaptive.ext.MergeOperation;
 import org.ldaptive.ext.MergeRequest;
+import org.ldaptive.handler.ResultPredicate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -138,9 +139,30 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   public AddResponse add(final T object)
     throws LdapException
   {
+    return add(object, null);
+  }
+
+
+  /**
+   * Adds the supplied annotated object to an LDAP.
+   *
+   * @param  object  to add
+   * @param  predicate  to test the result and throw on failure
+   *
+   * @return  LDAP response from the add operation
+   *
+   * @throws  LdapException  if the add fails
+   */
+  public AddResponse add(final T object, final ResultPredicate predicate)
+    throws LdapException
+  {
     final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
-    return AddOperation.execute(connectionFactory, new AddRequest(entry.getDn(), entry.getAttributes()));
+    final AddOperation add = new AddOperation(connectionFactory);
+    if (predicate != null) {
+      add.setThrowCondition(predicate);
+    }
+    return add.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
   }
 
 
@@ -148,10 +170,29 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   public Result merge(final T object)
     throws LdapException
   {
+    return merge(object, null);
+  }
+
+
+  /**
+   * Merges the supplied annotated object in an LDAP. See {@link org.ldaptive.ext.MergeOperation}.
+   *
+   * @param  object  to merge
+   * @param  predicate  to test the result and throw on failure
+   *
+   * @return  LDAP response from the merge operation
+   *
+   * @throws  LdapException  if the merge fails
+   */
+  public Result merge(final T object, final ResultPredicate predicate)
+    throws LdapException
+  {
     final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
-
     final MergeOperation merge = new MergeOperation(connectionFactory);
+    if (predicate != null) {
+      merge.setThrowCondition(predicate);
+    }
     return merge.execute(new MergeRequest(entry));
   }
 
@@ -160,7 +201,28 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   public DeleteResponse delete(final T object)
     throws LdapException
   {
+    return delete(object, null);
+  }
+
+
+  /**
+   * Deletes the supplied annotated object from an LDAP.
+   *
+   * @param  object  to delete
+   * @param  predicate  to test the result and throw on failure
+   *
+   * @return  LDAP response from the delete operation
+   *
+   * @throws  LdapException  if the delete fails
+   */
+  public DeleteResponse delete(final T object, final ResultPredicate predicate)
+    throws LdapException
+  {
     final String dn = getLdapEntryMapper().mapDn(object);
-    return DeleteOperation.execute(connectionFactory, new DeleteRequest(dn));
+    final DeleteOperation delete = new DeleteOperation(connectionFactory);
+    if (predicate != null) {
+      delete.setThrowCondition(predicate);
+    }
+    return delete.execute(new DeleteRequest(dn));
   }
 }
