@@ -173,7 +173,7 @@ public class AggregateAuthenticatorBeanDefinitionParser
 
       int count = 0;
       for (Authenticator auth : authenticators) {
-        final String id = String.format("%s-%s", auth.hashCode(), String.valueOf(count++));
+        final String id = String.format("%s-%s", auth.hashCode(), count++);
         dnResolvers.put(id, auth.getDnResolver());
         authHandlers.put(id, auth.getAuthenticationHandler());
         if (auth.getEntryResolver() != null) {

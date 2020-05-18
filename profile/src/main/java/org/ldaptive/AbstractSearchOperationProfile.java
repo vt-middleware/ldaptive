@@ -76,7 +76,7 @@ public abstract class AbstractSearchOperationProfile extends AbstractProfile
       consumer.accept(new Entry(e));
       return e;
     });
-    search.setExceptionHandler(e -> consumer.accept(e));
+    search.setExceptionHandler(consumer::accept);
     try {
       search.send(SearchRequest.builder()
         .dn(baseDn)

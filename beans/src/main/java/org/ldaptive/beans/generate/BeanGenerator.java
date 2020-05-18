@@ -409,11 +409,7 @@ public class BeanGenerator
         final Class<?> syntaxType = getSyntaxType(
           mutator.getValue(),
           schema.getSyntax(mutator.getValue().getSyntaxOID(false)));
-        if (mutator.getValue().isSingleValued()) {
-          createMutators(definedClass, mutator.getKey(), syntaxType, false);
-        } else {
-          createMutators(definedClass, mutator.getKey(), syntaxType, true);
-        }
+        createMutators(definedClass, mutator.getKey(), syntaxType, !mutator.getValue().isSingleValued());
 
         // add attribute annotation
         final JAnnotationUse attrAnnotation = attrArray.annotate(org.ldaptive.beans.Attribute.class);
@@ -536,7 +532,7 @@ public class BeanGenerator
       fqClassName = String.format(
         "%s.%s",
         classPackage,
-        className.substring(0, 1).toUpperCase() + className.substring(1, className.length()));
+        className.substring(0, 1).toUpperCase() + className.substring(1));
     } else {
       fqClassName = String.format("%s.%s", classPackage, className);
     }
@@ -563,7 +559,7 @@ public class BeanGenerator
     final Class<?> syntaxType,
     final boolean multivalue)
   {
-    final String upperName = name.substring(0, 1).toUpperCase() + name.substring(1, name.length());
+    final String upperName = name.substring(0, 1).toUpperCase() + name.substring(1);
     if (multivalue) {
       final JClass detailClass = codeModel.ref(syntaxType);
       final JClass collectionClass = codeModel.ref(Collection.class);
