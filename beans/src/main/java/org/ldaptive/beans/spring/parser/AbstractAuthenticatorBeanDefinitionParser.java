@@ -76,7 +76,7 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
    * Creates an entry resolver.
    *
    * @param  element  containing configuration
-   * @param  connectionFactory  that was used for DN resolution
+   * @param  connectionFactory  for entry resolution or null to forgo wiring a connection factory
    *
    * @return  search entry resolver bean definition builder
    */
@@ -85,7 +85,9 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
     final BeanDefinitionBuilder connectionFactory)
   {
     final BeanDefinitionBuilder entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
-    entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
+    if (connectionFactory != null) {
+      entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
+    }
     setIfPresent(element, "binaryAttributes", entryResolver);
     return entryResolver;
   }

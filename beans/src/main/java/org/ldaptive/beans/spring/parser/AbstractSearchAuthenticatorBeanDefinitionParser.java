@@ -31,20 +31,22 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
       dnResolver = parseDnResolver(null, element, connectionFactory);
     }
 
-    final BeanDefinitionBuilder entryResolver;
-    if (Boolean.valueOf(element.getAttribute("disablePooling"))) {
-      final BeanDefinitionBuilder connectionFactory = parseDefaultConnectionFactory(
-        null,
-        element,
-        Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials")));
-      entryResolver = parseEntryResolver(element, connectionFactory);
-    } else {
-      final BeanDefinitionBuilder connectionFactory = parsePooledConnectionFactory(
-        null,
-        element.hasAttribute("id") ? element.getAttribute("id") + "-entry-resolver-pool" : "entry-resolver-pool",
-        element,
-        Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials")));
-      entryResolver = parseEntryResolver(element, connectionFactory);
+    BeanDefinitionBuilder entryResolver = null;
+    if (Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials"))) {
+      if (Boolean.valueOf(element.getAttribute("disablePooling"))) {
+        final BeanDefinitionBuilder connectionFactory = parseDefaultConnectionFactory(null, element, true);
+        entryResolver = parseEntryResolver(element, connectionFactory);
+      } else {
+        final BeanDefinitionBuilder connectionFactory = parsePooledConnectionFactory(
+          null,
+          element.hasAttribute("id") ? element.getAttribute("id") + "-entry-resolver-pool" : "entry-resolver-pool",
+          element,
+          true);
+        entryResolver = parseEntryResolver(element, connectionFactory);
+      }
+    } else if (element.hasAttribute("binaryAttributes")) {
+      // only wire a search entry resolver if binaryAttributes are configured
+      entryResolver = parseEntryResolver(element, null);
     }
 
     final BeanDefinitionBuilder authHandler = parseAuthHandler(element);
@@ -55,7 +57,9 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
 
     builder.addConstructorArgValue(dnResolver.getBeanDefinition());
     builder.addConstructorArgValue(authHandler.getBeanDefinition());
-    builder.addPropertyValue("entryResolver", entryResolver.getBeanDefinition());
+    if (entryResolver != null) {
+      builder.addPropertyValue("entryResolver", entryResolver.getBeanDefinition());
+    }
 
     setIfPresent(element, "returnAttributes", builder);
     setIfPresent(element, "resolveEntryOnFailure", builder);

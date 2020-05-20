@@ -154,8 +154,7 @@ public class NamespaceHandlerTest
       BindConnectionPassivator.class);
     // entry resolver
     final SearchEntryResolver entryResolver = (SearchEntryResolver) anonSearchAuthenticator.getEntryResolver();
-    Assert.assertNotNull(entryResolver);
-    Assert.assertNull(entryResolver.getConnectionFactory().getConnectionConfig().getConnectionInitializers());
+    Assert.assertNull(entryResolver);
 
     Assert.assertFalse(anonSearchAuthenticator.getResolveEntryOnFailure());
     Assert.assertNull(anonSearchAuthenticator.getResponseHandlers());
@@ -256,7 +255,7 @@ public class NamespaceHandlerTest
     // entry resolver
     final SearchEntryResolver entryResolver = (SearchEntryResolver) saslBindSearchAuthenticator.getEntryResolver();
     Assert.assertNotNull(entryResolver);
-    Assert.assertNull(entryResolver.getConnectionFactory().getConnectionConfig().getConnectionInitializers());
+    Assert.assertNull(entryResolver.getConnectionFactory());
     Assert.assertEquals(entryResolver.getBinaryAttributes(), new String[] {"jpegPhoto", "userCertificate"});
 
     Assert.assertFalse(saslBindSearchAuthenticator.getResolveEntryOnFailure());
@@ -293,7 +292,7 @@ public class NamespaceHandlerTest
     // entry resolver
     final SearchEntryResolver entryResolver = (SearchEntryResolver) directAuthenticator.getEntryResolver();
     Assert.assertNotNull(entryResolver);
-    Assert.assertNull(entryResolver.getConnectionFactory().getConnectionConfig().getConnectionInitializers());
+    Assert.assertNull(entryResolver.getConnectionFactory());
     Assert.assertEquals(entryResolver.getBinaryAttributes(), new String[] {"jpegPhoto", "userCertificate"});
 
     Assert.assertTrue(directAuthenticator.getResolveEntryOnFailure());
@@ -318,16 +317,18 @@ public class NamespaceHandlerTest
     Assert.assertNotNull(adAuthenticator);
     testBindConnectionPool(adAuthenticator);
     testSearchDnResolver(adAuthenticator, AuthenticatorType.AD);
+    // authentication handler
     final SimpleBindAuthenticationHandler authHandler =
       (SimpleBindAuthenticationHandler) adAuthenticator.getAuthenticationHandler();
     Assert.assertNotNull(authHandler);
     Assert.assertNull(authHandler.getConnectionFactory().getConnectionConfig().getConnectionInitializers());
+    // passivator
     Assert.assertNotEquals(
       ((PooledConnectionFactory) authHandler.getConnectionFactory()).getPassivator().getClass(),
       BindConnectionPassivator.class);
+    // entry resolver
     final SearchEntryResolver entryResolver = (SearchEntryResolver) adAuthenticator.getEntryResolver();
-    Assert.assertNotNull(entryResolver);
-    Assert.assertNull(entryResolver.getConnectionFactory().getConnectionConfig().getConnectionInitializers());
+    Assert.assertNull(entryResolver);
     Assert.assertNotNull(adAuthenticator.getResponseHandlers());
     Assert.assertFalse(adAuthenticator.getResolveEntryOnFailure());
     Assert.assertNotNull(adAuthenticator.getReturnAttributes());

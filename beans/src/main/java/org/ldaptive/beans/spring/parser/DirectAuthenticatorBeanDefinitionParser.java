@@ -46,21 +46,10 @@ public class DirectAuthenticatorBeanDefinitionParser extends AbstractAuthenticat
     builder.addConstructorArgValue(dnResolver.getBeanDefinition());
     builder.addConstructorArgValue(authHandler.getBeanDefinition());
 
-    final BeanDefinitionBuilder connectionFactory;
-    if (Boolean.valueOf(element.getAttribute("disablePooling"))) {
-      connectionFactory = parseDefaultConnectionFactory(
-        null,
-        element,
-        Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials")));
-    } else {
-      connectionFactory = parsePooledConnectionFactory(
-        null,
-        element.hasAttribute("id") ? element.getAttribute("id") + "-entry-resolver-pool" : "entry-resolver-pool",
-        element,
-        Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials")));
+    // only wire a search entry resolver if binaryAttributes are configured
+    if (element.hasAttribute("binaryAttributes")) {
+      builder.addPropertyValue("entryResolver", parseEntryResolver(element, null).getBeanDefinition());
     }
-    builder.addPropertyValue("entryResolver", parseEntryResolver(element, connectionFactory).getBeanDefinition());
-
     setIfPresent(element, "returnAttributes", builder);
     setIfPresent(element, "resolveEntryOnFailure", builder);
   }
