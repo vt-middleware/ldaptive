@@ -15,7 +15,7 @@ import org.ldaptive.ResultCode;
 public interface ResultPredicate extends Predicate<Result>
 {
 
-  /** Predicates that throws if the result code is not {@link ResultCode#SUCCESS}. */
+  /** Predicate that throws if the result code is not {@link ResultCode#SUCCESS}. */
   ResultPredicate NOT_SUCCESS = result -> !result.isSuccess();
 
 
