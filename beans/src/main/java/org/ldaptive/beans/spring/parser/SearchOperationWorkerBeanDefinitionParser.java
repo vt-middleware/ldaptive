@@ -48,6 +48,8 @@ public class SearchOperationWorkerBeanDefinitionParser extends SearchOperationBe
   {
     final BeanDefinitionBuilder searchOperation = BeanDefinitionBuilder.genericBeanDefinition(SearchOperation.class);
     searchOperation.addPropertyValue("request", parseSearchRequest(null, element).getBeanDefinition());
+    setObjectIfPresent(element, "exceptionHandler", searchOperation);
+    setObjectIfPresent(element, "throwCondition", searchOperation);
     builder.addPropertyValue("operation", searchOperation.getBeanDefinition());
   }
 }

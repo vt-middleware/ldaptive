@@ -38,6 +38,7 @@
     bindDn="${ldap.bindDn}"
     bindCredential="${ldap.bindCredential}"
     resolveEntryWithBindCredentials="true"
+    passivateBindPoolWithBindCredentials="true"
     connectTimeout="${ldap.connectTimeout}"
     responseTimeout="${ldap.responseTimeout}"
     reconnectTimeout="${ldap.reconnectTimeout}"
@@ -73,6 +74,8 @@
     autoReplay="${ldap.autoReplay}"
     autoReconnectCondition="${ldap.autoReconnectCondition}"
     connectionStrategy="${ldap.connectionStrategy}"
+    validateDn="ou=test"
+    validateFilter="(uid=*)"
     useStartTLS="${ldap.useStartTLS}">
     <ldaptive:authentication-response-handler>
       <ldaptive:password-policy-handler/>
@@ -90,6 +93,8 @@
     trustCertificates="classpath:/ldaptive.trust.crt"
     baseDn="${ldap.baseDn}"
     userFilter="(mail={user})"
+    returnAttributes="gn,sn,jpegPhoto,userCertificate"
+    binaryAttributes="jpegPhoto,userCertificate"
     bindDn="test3@vt.edu"
     bindCredential="password"
     connectTimeout="${ldap.connectTimeout}"
@@ -120,6 +125,9 @@
     ldapUrl="${ldap.url}"
     trustCertificates="${ldap.trustCertificates}"
     format="${ldap.dnFormat}"
+    passivateBindPool="true"
+    binaryAttributes="jpegPhoto,userCertificate"
+    resolveEntryOnFailure="true"
     connectTimeout="${ldap.connectTimeout}"
     responseTimeout="${ldap.responseTimeout}"
     reconnectTimeout="${ldap.reconnectTimeout}"
@@ -195,6 +203,7 @@
     timeLimit="${ldap.timeLimit}"
     sizeLimit="${ldap.sizeLimit}"
     binaryAttributes="jpegPhoto,userCertificate"
+    throwCondition="org.ldaptive.handler.TestResultPredicate"
   />
 
   <ldaptive:search-operation-worker
@@ -205,6 +214,7 @@
     timeLimit="${ldap.timeLimit}"
     sizeLimit="${ldap.sizeLimit}"
     binaryAttributes="jpegPhoto,userCertificate"
+    throwCondition="org.ldaptive.handler.TestResultPredicate"
   />
 
   <ldaptive:connection-config

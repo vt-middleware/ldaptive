@@ -2,7 +2,6 @@
 package org.ldaptive.beans.spring.parser;
 
 import org.ldaptive.auth.SearchDnResolver;
-import org.ldaptive.auth.SearchEntryResolver;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.w3c.dom.Element;
@@ -19,22 +18,33 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
   @Override
   protected void doParse(final Element element, final ParserContext context, final BeanDefinitionBuilder builder)
   {
-    String name = "search-pool";
-    if (element.hasAttribute("id")) {
-      name = element.getAttribute("id") + "-search-pool";
+    final BeanDefinitionBuilder dnResolver;
+    if (Boolean.valueOf(element.getAttribute("disablePooling"))) {
+      final BeanDefinitionBuilder connectionFactory = parseDefaultConnectionFactory(null, element, true);
+      dnResolver = parseDnResolver(null, element, connectionFactory);
+    } else {
+      final BeanDefinitionBuilder connectionFactory = parsePooledConnectionFactory(
+        null,
+        element.hasAttribute("id") ? element.getAttribute("id") + "-dn-resolver-pool" : "dn-resolver-pool",
+        element,
+        true);
+      dnResolver = parseDnResolver(null, element, connectionFactory);
     }
 
-    final BeanDefinitionBuilder connectionFactory;
-    final BeanDefinitionBuilder dnResolver;
-    if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
-      connectionFactory = parseDefaultConnectionFactory(null, element, true);
-      dnResolver = parseDnResolver(
-        BeanDefinitionBuilder.genericBeanDefinition(SearchDnResolver.class),
+    final BeanDefinitionBuilder entryResolver;
+    if (Boolean.valueOf(element.getAttribute("disablePooling"))) {
+      final BeanDefinitionBuilder connectionFactory = parseDefaultConnectionFactory(
+        null,
         element,
-        connectionFactory);
+        Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials")));
+      entryResolver = parseEntryResolver(element, connectionFactory);
     } else {
-      connectionFactory = parsePooledConnectionFactory(null, name, element, true);
-      dnResolver = parseDnResolver(null, element, connectionFactory);
+      final BeanDefinitionBuilder connectionFactory = parsePooledConnectionFactory(
+        null,
+        element.hasAttribute("id") ? element.getAttribute("id") + "-entry-resolver-pool" : "entry-resolver-pool",
+        element,
+        Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials")));
+      entryResolver = parseEntryResolver(element, connectionFactory);
     }
 
     final BeanDefinitionBuilder authHandler = parseAuthHandler(element);
@@ -45,12 +55,10 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
 
     builder.addConstructorArgValue(dnResolver.getBeanDefinition());
     builder.addConstructorArgValue(authHandler.getBeanDefinition());
-
-    final BeanDefinitionBuilder entryResolver = parseEntryResolver(element, connectionFactory);
     builder.addPropertyValue("entryResolver", entryResolver.getBeanDefinition());
 
     setIfPresent(element, "returnAttributes", builder);
-    builder.addPropertyValue("resolveEntryOnFailure", element.getAttribute("resolveEntryOnFailure"));
+    setIfPresent(element, "resolveEntryOnFailure", builder);
   }
 
 
@@ -78,23 +86,5 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
     dnResolver.addPropertyValue("allowMultipleDns", element.getAttribute("allowMultipleDns"));
     dnResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
     return dnResolver;
-  }
-
-
-  /**
-   * Creates an entry resolver.
-   *
-   * @param  element  containing configuration
-   * @param  connectionFactory  that was used for DN resolution
-   *
-   * @return  search entry resolver bean definition builder
-   */
-  protected BeanDefinitionBuilder parseEntryResolver(
-    final Element element,
-    final BeanDefinitionBuilder connectionFactory)
-  {
-    final BeanDefinitionBuilder entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
-    entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
-    return entryResolver;
   }
 }

@@ -123,4 +123,44 @@ public abstract class AbstractBeanDefinitionParser extends AbstractSingleBeanDef
       builder.addPropertyValue(property, element.getAttribute(attribute));
     }
   }
+
+
+  /**
+   * Sets a property by parsing a class with a default constructor if the given attribute exists on the element.
+   *
+   * @param  element  from which to obtain property
+   * @param  attribute  value for obtaining property
+   * @param  builder  to receive property
+   */
+  protected void setObjectIfPresent(
+    final Element element,
+    final String attribute,
+    final BeanDefinitionBuilder builder)
+  {
+    setObjectIfPresent(element, attribute, attribute, builder);
+  }
+
+
+  /**
+   * Sets a property by parsing a class with a default constructor if the given attribute exists on the element.
+   *
+   * @param  element  from which to obtain property
+   * @param  property  to set
+   * @param  attribute  value for obtaining property
+   * @param  builder  to receive property
+   */
+  protected void setObjectIfPresent(
+    final Element element,
+    final String attribute,
+    final String property,
+    final BeanDefinitionBuilder builder)
+  {
+    if (element.hasAttribute(attribute)) {
+      final BeanDefinitionBuilder clazz =  BeanDefinitionBuilder.rootBeanDefinition(
+        AbstractBeanDefinitionParser.class,
+        "parseClassName");
+      clazz.addConstructorArgValue(element.getAttribute(attribute));
+      builder.addPropertyValue(property, clazz.getBeanDefinition());
+    }
+  }
 }

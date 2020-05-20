@@ -58,20 +58,8 @@ public abstract class AbstractConnectionConfigBeanDefinitionParser extends Abstr
     connectionConfig.addPropertyValue("autoReconnect", element.getAttribute("autoReconnect"));
     connectionConfig.addPropertyValue("autoReplay", element.getAttribute("autoReplay"));
 
-    if (element.hasAttribute("autoReconnectCondition")) {
-      final BeanDefinitionBuilder autoReconnectCondition =  BeanDefinitionBuilder.rootBeanDefinition(
-        AbstractBeanDefinitionParser.class,
-        "parseClassName");
-      autoReconnectCondition.addConstructorArgValue(element.getAttribute("autoReconnectCondition"));
-      connectionConfig.addPropertyValue("autoReconnectCondition", autoReconnectCondition.getBeanDefinition());
-    }
-    if (element.hasAttribute("connectionStrategy")) {
-      final BeanDefinitionBuilder connectionStrategy =  BeanDefinitionBuilder.rootBeanDefinition(
-        AbstractBeanDefinitionParser.class,
-        "parseClassName");
-      connectionStrategy.addConstructorArgValue(element.getAttribute("connectionStrategy"));
-      connectionConfig.addPropertyValue("connectionStrategy", connectionStrategy.getBeanDefinition());
-    }
+    setObjectIfPresent(element, "autoReconnectCondition", connectionConfig);
+    setObjectIfPresent(element, "connectionStrategy", connectionConfig);
 
     if (element.hasAttribute("trustCertificates") || element.hasAttribute("authenticationCertificate")) {
       final BeanDefinitionBuilder sslConfig = BeanDefinitionBuilder.genericBeanDefinition(SslConfig.class);

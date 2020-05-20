@@ -1,7 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
+import org.ldaptive.SimpleBindRequest;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.auth.SearchEntryResolver;
 import org.ldaptive.auth.SimpleBindAuthenticationHandler;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
@@ -9,6 +11,7 @@ import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
 import org.ldaptive.control.PasswordPolicyControl;
+import org.ldaptive.pool.BindConnectionPassivator;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
 
@@ -38,22 +41,53 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
   protected BeanDefinitionBuilder parseAuthHandler(final Element element)
   {
     final BeanDefinitionBuilder authHandler;
-    if (element.getAttribute("disablePooling") != null && Boolean.valueOf(element.getAttribute("disablePooling"))) {
+    if (Boolean.valueOf(element.getAttribute("disablePooling"))) {
       authHandler = BeanDefinitionBuilder.genericBeanDefinition(SimpleBindAuthenticationHandler.class);
       authHandler.addPropertyValue(
         "connectionFactory",
         parseDefaultConnectionFactory(null, element, false).getBeanDefinition());
     } else {
-      String name = "bind-pool";
-      if (element.hasAttribute("id")) {
-        name = element.getAttribute("id") + "-bind-pool";
-      }
       authHandler = BeanDefinitionBuilder.genericBeanDefinition(SimpleBindAuthenticationHandler.class);
-      authHandler.addPropertyValue(
-        "connectionFactory",
-        parsePooledConnectionFactory(null, name, element, false).getBeanDefinition());
+      final BeanDefinitionBuilder connectionFactory = parsePooledConnectionFactory(
+        null,
+        element.hasAttribute("id") ? element.getAttribute("id") + "-bind-pool" : "bind-pool",
+        element,
+        false);
+      if (Boolean.valueOf(element.getAttribute("passivateBindPool"))) {
+        final BeanDefinitionBuilder passivator = BeanDefinitionBuilder.genericBeanDefinition(
+          BindConnectionPassivator.class);
+        connectionFactory.addPropertyValue("passivator", passivator.getBeanDefinition());
+      } else if (Boolean.valueOf(element.getAttribute("passivateBindPoolWithBindCredentials"))) {
+        final BeanDefinitionBuilder request = BeanDefinitionBuilder.genericBeanDefinition(SimpleBindRequest.class);
+        request.addPropertyValue("ldapDN", element.getAttribute("bindDn"));
+        request.addPropertyValue("password", element.getAttribute("bindCredential"));
+        final BeanDefinitionBuilder passivator = BeanDefinitionBuilder.genericBeanDefinition(
+          BindConnectionPassivator.class);
+        passivator.addPropertyValue("bindRequest", request.getBeanDefinition());
+        connectionFactory.addPropertyValue("passivator", passivator.getBeanDefinition());
+      }
+      authHandler.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
     }
     return authHandler;
+  }
+
+
+  /**
+   * Creates an entry resolver.
+   *
+   * @param  element  containing configuration
+   * @param  connectionFactory  that was used for DN resolution
+   *
+   * @return  search entry resolver bean definition builder
+   */
+  protected BeanDefinitionBuilder parseEntryResolver(
+    final Element element,
+    final BeanDefinitionBuilder connectionFactory)
+  {
+    final BeanDefinitionBuilder entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
+    entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
+    setIfPresent(element, "binaryAttributes", entryResolver);
+    return entryResolver;
   }
 
 

@@ -4,6 +4,7 @@ package org.ldaptive.beans.spring.parser;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.SearchConnectionValidator;
+import org.ldaptive.SearchRequest;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.w3c.dom.Element;
@@ -106,6 +107,16 @@ public abstract class AbstractConnectionFactoryBeanDefinitionParser extends Abst
     validateTimeout.addConstructorArgValue(element.getAttribute("validateTimeout"));
     validator.addPropertyValue("validatePeriod", validatePeriod.getBeanDefinition());
     validator.addPropertyValue("validateTimeout", validateTimeout.getBeanDefinition());
+    if (element.hasAttribute("validateDn") && element.hasAttribute("validateFilter")) {
+      final BeanDefinitionBuilder searchRequest = BeanDefinitionBuilder.genericBeanDefinition(SearchRequest.class);
+      searchRequest.addPropertyValue("baseDn", element.getAttribute("validateDn"));
+      final BeanDefinitionBuilder filter =  BeanDefinitionBuilder.rootBeanDefinition(
+        SearchOperationBeanDefinitionParser.class,
+        "parseFilter");
+      filter.addConstructorArgValue(element.getAttribute("validateFilter"));
+      searchRequest.addPropertyValue("filter", filter.getBeanDefinition());
+      validator.addPropertyValue("searchRequest", searchRequest.getBeanDefinition());
+    }
     pool.addPropertyValue("validator", validator.getBeanDefinition());
 
     if (element.hasAttribute("ldapUrl")) {

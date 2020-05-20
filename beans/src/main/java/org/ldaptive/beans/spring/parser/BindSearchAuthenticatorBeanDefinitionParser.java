@@ -1,10 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.spring.parser;
 
-import org.ldaptive.auth.SearchEntryResolver;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.Element;
@@ -29,22 +27,5 @@ public class BindSearchAuthenticatorBeanDefinitionParser extends AbstractSearchA
   {
     final String idAttrValue = element.getAttribute("id");
     return StringUtils.hasText(idAttrValue) ? idAttrValue : "bind-search-authenticator";
-  }
-
-
-  @Override
-  protected BeanDefinitionBuilder parseEntryResolver(
-    final Element element,
-    final BeanDefinitionBuilder connectionFactory)
-  {
-    final BeanDefinitionBuilder entryResolver;
-    if (element.hasAttribute("resolveEntryWithBindCredentials") &&
-        Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials"))) {
-      entryResolver = BeanDefinitionBuilder.genericBeanDefinition(SearchEntryResolver.class);
-      entryResolver.addPropertyValue("connectionFactory", connectionFactory.getBeanDefinition());
-    } else {
-      entryResolver = super.parseEntryResolver(element, connectionFactory);
-    }
-    return entryResolver;
   }
 }

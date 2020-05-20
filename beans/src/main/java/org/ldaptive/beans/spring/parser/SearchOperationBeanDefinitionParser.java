@@ -50,6 +50,8 @@ public class SearchOperationBeanDefinitionParser extends AbstractBeanDefinitionP
     final BeanDefinitionBuilder builder)
   {
     builder.addPropertyValue("request", parseSearchRequest(null, element).getBeanDefinition());
+    setObjectIfPresent(element, "exceptionHandler", builder);
+    setObjectIfPresent(element, "throwCondition", builder);
   }
 
 
