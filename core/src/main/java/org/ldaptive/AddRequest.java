@@ -65,7 +65,7 @@ public class AddRequest extends AbstractRequestMessage
   public AddRequest(final String dn, final Collection<LdapAttribute> attrs)
   {
     ldapDn = dn;
-    attributes = attrs.toArray(LdapAttribute[]::new);
+    attributes = attrs.toArray(new LdapAttribute[attrs.size()]);
   }
 
 
@@ -108,7 +108,7 @@ public class AddRequest extends AbstractRequestMessage
               new ConstructedDEREncoder(
                 UniversalDERTag.SET,
                   a.getBinaryValues().stream().map(
-                    OctetStringType::new).toArray(DEREncoder[]::new)))).toArray(DEREncoder[]::new))),
+                    OctetStringType::new).toArray(size -> new DEREncoder[size])))).toArray(size -> new DEREncoder[size]))),
     };
   }
 
@@ -191,7 +191,7 @@ public class AddRequest extends AbstractRequestMessage
      */
     public Builder attributes(final Collection<LdapAttribute> attrs)
     {
-      object.attributes = attrs.toArray(LdapAttribute[]::new);
+      object.attributes = attrs.toArray(new LdapAttribute[attrs.size()]);
       return self();
     }
   }

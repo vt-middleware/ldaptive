@@ -500,7 +500,7 @@ public class SearchRequest extends AbstractRequestMessage
         searchFilter.getEncoder(),
         new ConstructedDEREncoder(
           UniversalDERTag.SEQ,
-          Stream.of(returnAttributes).map(OctetStringType::new).toArray(DEREncoder[]::new))),
+          Stream.of(returnAttributes).map(OctetStringType::new).toArray(size -> new DEREncoder[size]))),
     };
   }
 
@@ -890,7 +890,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder returnAttributes(final Collection<String> attributes)
     {
-      object.setReturnAttributes(attributes.toArray(String[]::new));
+      object.setReturnAttributes(attributes.stream().toArray(size -> new String[size]));
       return self();
     }
 
@@ -918,7 +918,7 @@ public class SearchRequest extends AbstractRequestMessage
      */
     public Builder binaryAttributes(final Collection<String> attributes)
     {
-      object.setBinaryAttributes(attributes.toArray(String[]::new));
+      object.setBinaryAttributes(attributes.stream().toArray(size -> new String[size]));
       return self();
     }
   }

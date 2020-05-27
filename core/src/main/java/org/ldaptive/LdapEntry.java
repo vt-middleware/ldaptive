@@ -305,7 +305,7 @@ public class LdapEntry extends AbstractMessage
         mods.add(mod);
       }
     }
-    return mods.toArray(AttributeModification[]::new);
+    return mods.stream().toArray(size -> new AttributeModification[size]);
   }
 
 
@@ -355,10 +355,10 @@ public class LdapEntry extends AbstractMessage
       final AttributeParser p = new AttributeParser();
       p.parse(encoded);
 
-      if (p.getName().isEmpty()) {
+      if (!p.getName().isPresent()) {
         throw new IllegalArgumentException("Could not parse attribute");
       }
-      if (p.getValues().isEmpty()) {
+      if (!p.getValues().isPresent()) {
         getObject().addAttributes(LdapAttribute.builder().name(p.getName().get()).build());
       } else {
         getObject().addAttributes(

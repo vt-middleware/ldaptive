@@ -140,10 +140,13 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
       dnsResolvers = new HashMap<>();
       for (String url : urls.split(" ")) {
         final String[] dnsUrl = parseDnsUrl(url);
-        dnsResolvers.put(
-          new SRVDNSResolver(
-            Objects.requireNonNullElseGet(dnsContextFactory, () -> new DefaultDNSContextFactory(dnsUrl[0])), useSSL),
-          dnsUrl[1]);
+        if (dnsContextFactory == null) {
+            dnsResolvers.put(new SRVDNSResolver(new DefaultDNSContextFactory(dnsUrl[0]), useSSL), dnsUrl[1]);
+        } else {
+            dnsResolvers.put(
+              new SRVDNSResolver(dnsContextFactory, useSSL),
+              dnsUrl[1]);
+        }
       }
     } else {
       final String[] dnsUrl = parseDnsUrl(urls);

@@ -90,8 +90,10 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
     try {
       final Properties properties = new Properties();
       for (Reader r : readers) {
-        try (r) {
+        try {
           properties.load(r);
+        } finally {
+            r.close();
         }
       }
       return properties;

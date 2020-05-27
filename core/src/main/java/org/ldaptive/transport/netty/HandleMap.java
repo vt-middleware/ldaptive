@@ -178,7 +178,7 @@ final class HandleMap
   {
     if (throttle != null) {
       try {
-        if (!throttle.tryAcquire(THROTTLE_TIMEOUT.toSeconds(), TimeUnit.SECONDS)) {
+        if (!throttle.tryAcquire(THROTTLE_TIMEOUT.getSeconds(), TimeUnit.SECONDS)) {
           throw new LdapException(ResultCode.LOCAL_ERROR, "Could not acquire request semaphore");
         }
       } catch (InterruptedException e) {

@@ -81,7 +81,7 @@ public class PasswordModifyRequest extends ExtendedRequest
     }
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      l.toArray(DEREncoder[]::new));
+      l.stream().toArray(size -> new DEREncoder[size]));
     setRequestValue(se.encode());
   }
 }

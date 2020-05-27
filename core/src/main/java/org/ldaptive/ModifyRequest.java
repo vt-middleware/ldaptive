@@ -113,7 +113,7 @@ public class ModifyRequest extends AbstractRequestMessage
                 new ConstructedDEREncoder(
                   UniversalDERTag.SET,
                   getAttributeValueEncoders(m.getAttribute().getBinaryValues())))))
-            .toArray(DEREncoder[]::new))),
+            .toArray(size -> new DEREncoder[size]))),
     };
   }
 
@@ -130,7 +130,7 @@ public class ModifyRequest extends AbstractRequestMessage
     if (values == null || values.size() == 0) {
       return new DEREncoder[] {() -> EMPTY_BYTE};
     }
-    return values.stream().map(OctetStringType::new).toArray(DEREncoder[]::new);
+    return values.stream().map(OctetStringType::new).toArray(size -> new DEREncoder[size]);
   }
 
 
@@ -212,7 +212,7 @@ public class ModifyRequest extends AbstractRequestMessage
      */
     public Builder modificiations(final Collection<AttributeModification> mod)
     {
-      object.modifications = mod.toArray(AttributeModification[]::new);
+      object.modifications = mod.stream().toArray(size -> new AttributeModification[size]);
       return self();
     }
   }

@@ -210,7 +210,7 @@ public class MergeOperation
         final Result result = conn.operation(
           ModifyRequest.builder()
             .dn(target.getDn())
-            .modificiations(resultModifications.toArray(AttributeModification[]::new))
+            .modificiations(resultModifications.toArray(new AttributeModification[0]))
             .build()).execute();
         logger.info(
           "modified target entry {} with modifications {} from source entry " +

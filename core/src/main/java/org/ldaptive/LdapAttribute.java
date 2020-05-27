@@ -191,7 +191,7 @@ public class LdapAttribute
     if (attributeName.indexOf(";") > 0) {
       final String[] split = attributeName.split(";");
       if (split.length > 1) {
-        return IntStream.range(1, split.length).mapToObj(i -> split[i]).collect(Collectors.toUnmodifiableList());
+        return IntStream.range(1, split.length).mapToObj(i -> split[i]).collect(Collectors.toList());
       }
     }
     return Collections.emptyList();
@@ -214,7 +214,7 @@ public class LdapAttribute
     if (attributeValues.isEmpty()) {
       return Collections.emptySet();
     }
-    return attributeValues.stream().map(ByteBuffer::array).collect(Collectors.toUnmodifiableList());
+    return attributeValues.stream().map(ByteBuffer::array).collect(Collectors.toList());
   }
 
 
@@ -249,7 +249,7 @@ public class LdapAttribute
         return LdapUtils.base64Encode(v.array());
       }
       return new String(v.array(), StandardCharsets.UTF_8);
-    }).collect(Collectors.toUnmodifiableList());
+    }).collect(Collectors.toList());
   }
 
 
@@ -280,7 +280,7 @@ public class LdapAttribute
     return attributeValues.stream()
       .filter(Objects::nonNull)
       .map(ByteBuffer::array)
-      .map(func).collect(Collectors.toUnmodifiableList());
+      .map(func).collect(Collectors.toList());
   }
 
 

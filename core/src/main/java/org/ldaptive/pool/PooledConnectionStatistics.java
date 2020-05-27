@@ -32,7 +32,7 @@ public class PooledConnectionStatistics
   public PooledConnectionStatistics(final int i)
   {
     size = i;
-    availableStats = new LinkedList<>() {
+    availableStats = new LinkedList<Instant>() {
 
 
       @Override
@@ -49,7 +49,7 @@ public class PooledConnectionStatistics
         return b;
       }
     };
-    activeStats = new LinkedList<>() {
+    activeStats = new LinkedList<Instant>() {
 
 
       @Override

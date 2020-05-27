@@ -63,7 +63,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
       throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter '" + filter + "' does not contain an expression");
     }
     final Filter searchFilter;
-    filterBuffer = filterBuffer.limit(filterBuffer.limit() - 1).slice();
+    filterBuffer = ((CharBuffer) filterBuffer.limit(filterBuffer.limit() - 1)).slice();
     if (!filterBuffer.hasRemaining()) {
       throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter '" + filter + "' does not contain an expression");
     }
@@ -92,7 +92,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
             // substring or equality
             searchFilter = parseSubstringOrEquality(
               attribute.toString(),
-              filterBuffer.position(filterBuffer.position() - 1).slice());
+              ((CharBuffer) filterBuffer.position(filterBuffer.position() - 1)).slice());
           }
         }
         break;
@@ -100,7 +100,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
         if (filterBuffer.get() != '=') {
           searchFilter = parseExtensible(
             attribute.toString(),
-            filterBuffer.position(filterBuffer.position() - 1).slice());
+            ((CharBuffer) filterBuffer.position(filterBuffer.position() - 1)).slice());
         } else {
           try {
             searchFilter = new ExtensibleFilter(
@@ -177,7 +177,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
     }
     final int pos = cb.position() - 1;
     cb.position(pos);
-    final CharBuffer slice = cb.flip().slice();
+    final CharBuffer slice = ((CharBuffer) cb.flip()).slice();
     cb.limit(limit).position(pos);
     return slice;
   }
@@ -260,9 +260,9 @@ public class DefaultFilterFunction extends AbstractFilterFunction
             if (!buffers.containsKey("ANY")) {
               buffers.put("ANY", new ArrayList<>());
             }
-            buffers.get("ANY").add(cb.limit(pos - 1).reset().slice());
+            buffers.get("ANY").add(((CharBuffer) cb.limit(pos - 1).reset()).slice());
           } else {
-            buffers.put("INITIAL", Collections.singletonList(cb.limit(pos - 1).reset().slice()));
+            buffers.put("INITIAL", Collections.singletonList(((CharBuffer) cb.limit(pos - 1).reset()).slice()));
           }
           cb.limit(limit).position(pos);
           cb.mark();
@@ -314,7 +314,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
       matchingRule = null;
       if (remainingFilter.hasRemaining()) {
         if (remainingFilter.get() != '=') {
-          remainingFilter = remainingFilter.position(remainingFilter.position() - 1).slice();
+          remainingFilter = ((CharBuffer) remainingFilter.position(remainingFilter.position() - 1)).slice();
           matchingRule = sliceAtMatch(remainingFilter, ':');
         } else {
           remainingFilter.position(remainingFilter.position() - 1);
@@ -353,7 +353,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
       if (c == match) {
         final int pos = cb.position();
         cb.position(pos - 1);
-        final CharBuffer slice = cb.flip().slice();
+        final CharBuffer slice = ((CharBuffer) cb.flip()).slice();
         cb.limit(limit).position(pos);
         return slice;
       }

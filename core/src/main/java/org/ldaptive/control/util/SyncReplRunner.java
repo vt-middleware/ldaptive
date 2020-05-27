@@ -53,7 +53,7 @@ public class SyncReplRunner
   private final CookieManager cookieManager;
 
   /** Invoked when an exception is received. */
-  private final Consumer<Exception> onException = new Consumer<>() {
+  private final Consumer<Exception> onException = new Consumer<Exception>() {
     @Override
     public void accept(final Exception e)
     {

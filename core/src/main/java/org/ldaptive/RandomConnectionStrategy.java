@@ -24,7 +24,7 @@ public class RandomConnectionStrategy extends AbstractConnectionStrategy
       throw new IllegalStateException("Strategy is not initialized");
     }
     // CheckStyle:AnonInnerLength OFF
-    return new Iterator<>() {
+    return new Iterator<LdapURL>() {
       private final List<LdapURL> active = ldapURLSet.getActiveUrls().stream().collect(
         Collectors.collectingAndThen(
           Collectors.toCollection(ArrayList::new),

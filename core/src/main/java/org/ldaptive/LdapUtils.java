@@ -377,13 +377,17 @@ public final class LdapUtils
   public static byte[] readInputStream(final InputStream is)
     throws IOException
   {
+
     final ByteArrayOutputStream data = new ByteArrayOutputStream();
-    try (is; data) {
+    try {
       final byte[] buffer = new byte[READ_BUFFER_SIZE];
       int length;
       while ((length = is.read(buffer)) != -1) {
         data.write(buffer, 0, length);
       }
+    } finally {
+        data.close();
+        is.close();
     }
     return data.toByteArray();
   }
