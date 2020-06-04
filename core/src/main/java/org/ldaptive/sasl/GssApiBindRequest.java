@@ -70,7 +70,11 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
   public SaslClient getSaslClient()
   {
     if (invokeOnce.compareAndSet(false, true)) {
-      return new GssApiSaslClient();
+      if (saslProperties.containsKey(GssApiSaslClient.JAAS_NAME_PROPERTY)) {
+        return new GssApiSaslClient((String) saslProperties.get(GssApiSaslClient.JAAS_NAME_PROPERTY));
+      } else {
+        return new GssApiSaslClient();
+      }
     } else {
       return new DefaultSaslClient();
     }
