@@ -36,6 +36,12 @@ public final class NettyUtils
   private static final boolean USE_NIO = Boolean.valueOf(
     System.getProperty("org.ldaptive.transport.netty.useNio", "false"));
 
+  /** Whether Epoll is available. */
+  private static final boolean EPOLL_AVAILABLE;
+
+  /** Whether KQueue is available. */
+  private static final boolean KQUEUE_AVAILABLE;
+
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(NettyUtils.class);
 
@@ -44,10 +50,28 @@ public final class NettyUtils
   private NettyUtils() {}
 
 
-  // emit a log message for the detected transport type
   static {
-    LOGGER.debug("Detecting Epoll transport: {}", Epoll.isAvailable());
-    LOGGER.debug("Detecting KQueue transport: {}", KQueue.isAvailable());
+    boolean epollAvailable;
+    try {
+      Class.forName("io.netty.channel.epoll.Epoll");
+      epollAvailable = Epoll.isAvailable();
+    } catch (Exception e) {
+      LOGGER.debug("Error detecting Epoll: {}:{}", e.getClass(), e.getMessage());
+      epollAvailable = false;
+    }
+    EPOLL_AVAILABLE = epollAvailable;
+    LOGGER.debug("Detected Epoll transport: {}", EPOLL_AVAILABLE);
+
+    boolean kqueueAvailable;
+    try {
+      Class.forName("io.netty.channel.kqueue.KQueue");
+      kqueueAvailable = KQueue.isAvailable();
+    } catch (Exception e) {
+      LOGGER.debug("Error detecting KQueue: {}:{}", e.getClass(), e.getMessage());
+      kqueueAvailable = false;
+    }
+    KQUEUE_AVAILABLE = kqueueAvailable;
+    LOGGER.debug("Detected KQueue transport: {}", KQUEUE_AVAILABLE);
     LOGGER.debug("Overriding to use Nio transport: {}", USE_NIO);
   }
 
@@ -60,9 +84,9 @@ public final class NettyUtils
    */
   public static Class<? extends Channel> getDefaultSocketChannelType()
   {
-    if (Epoll.isAvailable() && !USE_NIO) {
+    if (EPOLL_AVAILABLE && !USE_NIO) {
       return EpollSocketChannel.class;
-    } else if (KQueue.isAvailable() && !USE_NIO) {
+    } else if (KQUEUE_AVAILABLE && !USE_NIO) {
       return KQueueSocketChannel.class;
     } else {
       return NioSocketChannel.class;
@@ -80,11 +104,11 @@ public final class NettyUtils
    */
   public static EventLoopGroup createDefaultEventLoopGroup(final String name, final int numThreads)
   {
-    if (Epoll.isAvailable() && !USE_NIO) {
+    if (EPOLL_AVAILABLE && !USE_NIO) {
       return new EpollEventLoopGroup(
         numThreads,
         new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
-    } else if (KQueue.isAvailable() && !USE_NIO) {
+    } else if (KQUEUE_AVAILABLE && !USE_NIO) {
       return new KQueueEventLoopGroup(
         numThreads,
         new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
