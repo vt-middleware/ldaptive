@@ -689,11 +689,11 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       try {
         c.open();
       } catch (Exception e) {
-        logger.error("{} unable to connect to the ldap", this, e);
+        logger.error("{} unable to open connection for pooling", this, e);
         c.close();
         c = null;
         if (throwOnFailure) {
-          throw new IllegalStateException("unable to connect to the ldap", e);
+          throw new IllegalStateException("unable to open connection for pooling", e);
         }
       }
     }
