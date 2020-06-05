@@ -88,7 +88,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
     for (Callback callback : callbacks) {
       if (callback instanceof NameCallback) {
         ((NameCallback) callback).setName(authenticationID);
-      } else if (callback instanceof PasswordCallback) {
+      } else if (callback instanceof PasswordCallback && password != null) {
         ((PasswordCallback) callback).setPassword(password.toCharArray());
       } else if (callback instanceof RealmCallback) {
         final RealmCallback rc = (RealmCallback) callback;
