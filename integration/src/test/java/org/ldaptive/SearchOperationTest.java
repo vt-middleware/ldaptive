@@ -1862,8 +1862,6 @@ public class SearchOperationTest extends AbstractTest
 
 
   /**
-   * @param  krb5Realm  kerberos realm
-   * @param  krb5Kdc  kerberos kdc
    * @param  dn  to search on.
    * @param  filter  to search with.
    * @param  filterParameters  to replace parameters in filter with.
@@ -1874,8 +1872,6 @@ public class SearchOperationTest extends AbstractTest
    */
   @Parameters(
     {
-      "krb5Realm",
-      "ldapTestHost",
       "gssApiSearchDn",
       "gssApiSearchFilter",
       "gssApiSearchFilterParameters",
@@ -1884,8 +1880,6 @@ public class SearchOperationTest extends AbstractTest
     })
   @Test(groups = "search")
   public void gssApiSearch(
-    final String krb5Realm,
-    final String krb5Kdc,
     final String dn,
     final String filter,
     final String filterParameters,
@@ -1898,12 +1892,8 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final LdapURL ldapUrl = new LdapURL(krb5Kdc);
-    System.setProperty("sun.security.krb5.debug", "true");
     System.setProperty("java.security.auth.login.config", "target/test-classes/ldap_jaas.config");
     System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
-    System.setProperty("java.security.krb5.realm", krb5Realm);
-    System.setProperty("java.security.krb5.kdc", ldapUrl.getHostname());
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
@@ -1918,11 +1908,8 @@ public class SearchOperationTest extends AbstractTest
       // ignore this test if not supported
       Assert.assertNotNull(e);
     } finally {
-      System.clearProperty("sun.security.krb5.debug");
       System.clearProperty("java.security.auth.login.config");
       System.clearProperty("javax.security.auth.useSubjectCredsOnly");
-      System.clearProperty("java.security.krb5.realm");
-      System.clearProperty("java.security.krb5.kdc");
     }
   }
 

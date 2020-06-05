@@ -336,8 +336,6 @@
   <parameter name="saslExternalSearchResults"
              value="/org/ldaptive/searchResults-2.ldif"/>
 
-  <parameter name="krb5Realm" value="VT.EDU"/>
-  <parameter name="krb5Kdc" value="${ldapTestHost}"/>
   <parameter name="gssApiSearchDn" value="${ldapBaseDn}"/>
   <parameter name="gssApiSearchFilter" value="(uid={0})"/>
   <parameter name="gssApiSearchFilterParameters" value="2"/>
