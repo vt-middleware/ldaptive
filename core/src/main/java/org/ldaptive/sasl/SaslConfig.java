@@ -192,6 +192,32 @@ public class SaslConfig extends AbstractConfig
 
 
   /**
+   * Sets sasl properties.
+   *
+   * @param  props  to set
+   */
+  public void setProperties(final Map<String, ?> props)
+  {
+    checkImmutable();
+    logger.trace("setting properties: {}", props);
+    properties.putAll(props);
+  }
+
+
+  /**
+   * Returns a sasl property.
+   *
+   * @param  name  of the property
+   *
+   * @return  property
+   */
+  public Object getProperty(final String name)
+  {
+    return properties.get(name);
+  }
+
+
+  /**
    * Sets a sasl property.
    *
    * @param  name  of the property
@@ -199,6 +225,8 @@ public class SaslConfig extends AbstractConfig
    */
   public void setProperty(final String name, final Object value)
   {
+    checkImmutable();
+    logger.trace("setting property: {}={}", name, value);
     properties.put(name, value);
   }
 

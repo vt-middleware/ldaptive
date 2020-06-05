@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Provides methods common to property invokers.
@@ -238,6 +240,8 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       newValue = value.split(",");
     } else if (Object[].class == type) {
       newValue = value.split(",");
+    } else if (Map.class == type) {
+      newValue = Stream.of(value.split(",")).map(s -> s.split("=")).collect(Collectors.toMap(v -> v[0], v -> v[1]));
     } else if (float.class == type || Float.class == type) {
       newValue = Float.parseFloat(value);
     } else if (int.class == type || Integer.class == type) {
