@@ -56,7 +56,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
     final String authzID,
     final String pass,
     final String realm,
-    final Map<String, ?> props)
+    final Map<String, Object> props)
   {
     authenticationID = authID;
     authorizationID = authzID;

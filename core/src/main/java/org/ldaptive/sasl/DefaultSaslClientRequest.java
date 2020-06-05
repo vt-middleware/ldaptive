@@ -86,7 +86,7 @@ public abstract class DefaultSaslClientRequest implements CallbackHandler
    *
    * @return  client properties
    */
-  public static Map<String, ?> createProperties(final SaslConfig config)
+  public static Map<String, Object> createProperties(final SaslConfig config)
   {
     final Map<String, Object> props = new HashMap<>();
     // add raw properties first, other properties will override if a conflict exists
