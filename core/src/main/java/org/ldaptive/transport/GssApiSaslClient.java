@@ -2,9 +2,11 @@
 package org.ldaptive.transport;
 
 import java.security.PrivilegedAction;
+import java.util.HashMap;
+import java.util.Map;
 import javax.security.auth.Subject;
-import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
+import javax.security.auth.spi.LoginModule;
 import org.ldaptive.BindResponse;
 import org.ldaptive.sasl.GssApiBindRequest;
 import org.ldaptive.sasl.SaslClient;
@@ -14,38 +16,8 @@ import org.slf4j.LoggerFactory;
 public class GssApiSaslClient implements SaslClient<GssApiBindRequest>
 {
 
-  /** SASL property to control the JAAS configuration name. */
-  public static final String JAAS_NAME_PROPERTY = "org.ldaptive.sasl.gssapi.jaasName";
-
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(GssApiSaslClient.class);
-
-  /** Default name of the JAAS configuration. */
-  private static final String DEFAULT_JAAS_NAME = "ldaptive-gssapi";
-
-  /** Name of the JAAS configuration. */
-  private final String jaasName;
-
-
-  /**
-   * Creates a new GSSAPI SASL client.
-   */
-  public GssApiSaslClient()
-  {
-    this(DEFAULT_JAAS_NAME);
-  }
-
-
-  /**
-   * Creates a new GSSAPI SASL client.
-   *
-   * @param  name  of the JAAS configuration. See {@link
-   * LoginContext#LoginContext(String, javax.security.auth.callback.CallbackHandler)}.
-   */
-  public GssApiSaslClient(final String name)
-  {
-    jaasName = name;
-  }
 
 
   /**
@@ -61,10 +33,27 @@ public class GssApiSaslClient implements SaslClient<GssApiBindRequest>
   public BindResponse bind(final TransportConnection conn, final GssApiBindRequest request)
     throws LoginException
   {
-    final LoginContext context = new LoginContext(jaasName, request);
-    context.login();
+    final LoginModule loginModule;
+    try {
+      loginModule = (LoginModule) Class.forName(request.getJaasLoginModule()).getDeclaredConstructor().newInstance();
+    } catch (Exception e) {
+      LOGGER.error("Error creating new instance of JAAS module for GSSAPI", e);
+      throw new LoginException(
+        "Could not instantiate JAAS module '" + request.getJaasLoginModule() + "' for GSSAPI");
+    }
+
+    LOGGER.debug("Invoking module {} for request {}", loginModule, request);
+    final Subject subject = new Subject();
+    final Map<String, String> state = new HashMap<>();
+    loginModule.initialize(subject, request, state, request.getJaasOptions());
+    if (loginModule.login()) {
+      loginModule.commit();
+    } else {
+      throw new LoginException("Login failed for " + request + " using " + loginModule);
+    }
+
     final BindResponse result = Subject.doAs(
-      context.getSubject(), (PrivilegedAction<BindResponse>) () -> {
+      subject, (PrivilegedAction<BindResponse>) () -> {
         try {
           return conn.operation(request);
         } catch (Exception e) {

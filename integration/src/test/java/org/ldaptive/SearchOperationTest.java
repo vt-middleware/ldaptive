@@ -1892,11 +1892,7 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    System.setProperty("java.security.auth.login.config", "target/test-classes/ldap_jaas.config");
-    System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
-
     final String expected = TestUtils.readFileIntoString(ldifFile);
-
     try {
       final SearchOperation search = new SearchOperation(TestUtils.createGssApiConnectionFactory());
       final SearchResponse result = search.execute(
@@ -1907,9 +1903,6 @@ public class SearchOperationTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
       Assert.assertNotNull(e);
-    } finally {
-      System.clearProperty("java.security.auth.login.config");
-      System.clearProperty("javax.security.auth.useSubjectCredsOnly");
     }
   }
 
