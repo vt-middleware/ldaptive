@@ -6,8 +6,8 @@ PooledConnectionFactory cf = PooledConnectionFactory.builder()
       .credential("service-password")
       .build())
     .build())
-  .min()
-  .max()
+  .min(3)
+  .max(6)
   .build();
 cf.initialize();
 // search operation performed as the service user
