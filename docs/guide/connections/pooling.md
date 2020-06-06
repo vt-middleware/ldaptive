@@ -29,12 +29,16 @@ Unlike a `DefaultConnectionFactory`, this implementation must be initialized bef
 
 ## Validation
 
-Ldaptive supports validating a connection on check out and check in. By default these operations do not occur, so if you desire this functionality you'll need to configure your pool appropriately. Connections that fail validation are evicted from the pool. The interface for validators looks like:
+Ldaptive supports validating a connection on check out and check in. By default a `SearchConnectionValidator` is used if validation is configured. Connections that fail validation are evicted from the pool. The interface for validators looks like:
 
 {% highlight java %}
-public interface Validator<T>
+public interface ConnectionValidator extends Function<Connection, Boolean>
 {
-  boolean validate(T t);
+  /** Returns the interval at which the validation task will be executed. */
+  Duration getValidatePeriod();
+
+  /** Returns the time at which a validate operation should be abandoned. */
+  Duration getValidateTimeout();
 }
 {% endhighlight %}
 
@@ -48,7 +52,7 @@ Validates a connection by performing a compare operation. By default this valida
 {% include source/connections/pooling/2.java %}
 {% endhighlight %}
 
-Validation is successful if the compare operation returns true.
+Validation is successful if the compare operation returns any result.
 
 ### SearchConnectionValidator
 
@@ -58,7 +62,7 @@ Validates a connection by performing a search operation. By default this validat
 {% include source/connections/pooling/3.java %}
 {% endhighlight %}
 
-Validation is successful if the search returns one or more results.
+Validation is successful if the search operation returns any result.
 
 ## Periodic Validation
 
@@ -73,11 +77,8 @@ You can also configure validation to occur when the pool is idle instead of duri
 Extra connections are removed from the pool using a *PruneStrategy*. The interface for prune strategy looks like:
 
 {% highlight java %}
-public interface PruneStrategy
+public interface PruneStrategy extends Function<PooledConnectionProxy, Boolean>
 {
-  /** Returns whether the supplied connection should be removed from the pool. */
-  boolean prune(PooledConnectionProxy conn);
-
   /** Returns the statistical sample size to store for this prune strategy. */
   int getStatisticsSize();
 
