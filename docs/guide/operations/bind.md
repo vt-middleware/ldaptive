@@ -16,7 +16,7 @@ Authenticates to the LDAP and if successful, changes the authentication context 
 {% include source/operations/bind/1.java %}
 {% endhighlight %}
 
-Note that the `DefaultConnectionFactory` implementation will close the connection when it is done and may not be suitable choice depending on your use case.
+Note that the `DefaultConnectionFactory` implementation will close the connection when the operation is complete and may not be a suitable choice depending on your use case.
 
 ## Anonymous Bind
 
@@ -24,9 +24,32 @@ Note that the `DefaultConnectionFactory` implementation will close the connectio
 {% include source/operations/bind/2.java %}
 {% endhighlight %}
 
-
 ## External Bind
 
 {% highlight java %}
 {% include source/operations/bind/3.java %}
+{% endhighlight %}
+
+## BindConnectionInitializer
+
+It is often desirable to bind as a specific principal immediately after a connection is opened. A `BindConnectionInitializer` is configured on a `ConnectionConfig` and can be used for this purpose.
+
+### Simple Bind initializer
+
+{% highlight java %}
+{% include source/operations/bind/4.java %}
+{% endhighlight %}
+
+### External Bind initializer
+
+{% highlight java %}
+{% include source/operations/bind/5.java %}
+{% endhighlight %}
+
+### GSSAPI Bind initializer
+
+Note that arbitrary SASL properties can be passed into the `SaslConfig` object. In addition, properties that are prefixed with _org.ldaptive.sasl.gssapi.jaas._ are passed to the JAAS module for GSSAPI.
+
+{% highlight java %}
+{% include source/operations/bind/6.java %}
 {% endhighlight %}
