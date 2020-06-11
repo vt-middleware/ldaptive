@@ -1,13 +1,16 @@
 @import url('pygment_trac.css');
 
+/* lora-regular - latin */
 @font-face {
-  font-family: 'Nauman';
-  src: url('Nauman-Regular-webfont.eot');
-  src: url('Nauman-Regular-webfont.eot?#iefix') format('embedded-opentype'),
-       url('Nauman-Regular-webfont.woff') format('woff'),
-       url('Nauman-Regular-webfont.ttf') format('truetype'),
-       url('Nauman-Regular-webfont.svg#naumanregular') format('svg');
-  font-weight: normal;
+  font-family: 'Lora';
+  src: url('lora-v15-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local(''),
+       url('lora-v15-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('lora-v15-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('lora-v15-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('lora-v15-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('lora-v15-latin-regular.svg#Lora') format('svg'); /* Legacy iOS */
+  font-weight: 400;
   font-style: normal;
 }
 
@@ -34,7 +37,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: Nauman, Verdana, Sans-Serif;
+  font-family: Lora, Verdana, Sans-Serif;
   font-weight: bold;
   font-style: normal;
   color: #445AA9;
@@ -139,7 +142,7 @@ td,th {
 
 #footer {
   margin: 24px 0;
-  font-family: Nauman, Verdana, Sans-Serif;
+  font-family: Lora, Verdana, Sans-Serif;
   font-size: 14px;
   line-height: 125%;
   text-align: center;
