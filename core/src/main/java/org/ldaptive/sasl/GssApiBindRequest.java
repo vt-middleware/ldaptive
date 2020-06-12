@@ -27,7 +27,16 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
   /** SASL property to control the JAAS configuration name. */
   private static final String JAAS_OPTIONS_PROPERTY_PREFIX = "org.ldaptive.sasl.gssapi.jaas.";
 
-  /** Login module class name for GSSAPI. */
+  /** Property for the JAAS entry name from a configuration file. */
+  public static final String JAAS_NAME_PROPERTY = JAAS_OPTIONS_PROPERTY_PREFIX + "name";
+
+  /** Default name of the JAAS configuration. */
+  private static final String DEFAULT_GSSAPI_JAAS_NAME = "ldaptive-gssapi";
+
+  /** Property for JAAS refreshConfig. */
+  public static final String JAAS_REFRESH_CONFIG_PROPERTY = JAAS_OPTIONS_PROPERTY_PREFIX + "refreshConfig";
+
+  /** Property for the login module class name for GSSAPI. */
   private static final String JAAS_LOGIN_MODULE_PROPERTY = JAAS_OPTIONS_PROPERTY_PREFIX + "loginModule";
 
   /** Default login module for GSSAPI. */
@@ -44,6 +53,15 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
 
   /** SASL client properties. */
   private final Map<String, ?> saslProperties;
+
+  /** Name of the JAAS configuration. */
+  private final String jaasName;
+
+  /**
+   * Whether to refresh the JAAS configuration prior to use.
+   * See {@link javax.security.auth.login.Configuration#refresh()}.
+   */
+  private final boolean jaasRefreshConfig;
 
   /** Class name of the JAAS login module to use for GSSAPI. */
   private final String jaasLoginModule;
@@ -86,13 +104,25 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
     jaasLoginModule = (String) props.getOrDefault(JAAS_LOGIN_MODULE_PROPERTY, DEFAULT_GSSAPI_LOGIN_MODULE);
     jaasOptions = props.entrySet().stream()
       .filter(e ->
-        e.getKey().startsWith(JAAS_OPTIONS_PROPERTY_PREFIX) && !e.getKey().equals(JAAS_LOGIN_MODULE_PROPERTY))
+        e.getKey().startsWith(JAAS_OPTIONS_PROPERTY_PREFIX) &&
+          !e.getKey().equals(JAAS_NAME_PROPERTY) &&
+          !e.getKey().equals(JAAS_LOGIN_MODULE_PROPERTY))
       .collect(
         Collectors.collectingAndThen(
           Collectors.toMap(
             e -> e.getKey().substring(JAAS_OPTIONS_PROPERTY_PREFIX.length()),
             e -> e.getValue()),
           Collections::unmodifiableMap));
+    if (props.get(JAAS_NAME_PROPERTY) == null) {
+      if (props.get(JAAS_LOGIN_MODULE_PROPERTY) == null && jaasOptions.isEmpty()) {
+        jaasName = DEFAULT_GSSAPI_JAAS_NAME;
+      } else {
+        jaasName = null;
+      }
+    } else {
+      jaasName = (String) props.get(JAAS_NAME_PROPERTY);
+    }
+    jaasRefreshConfig = Boolean.valueOf((String) props.getOrDefault(JAAS_REFRESH_CONFIG_PROPERTY, "false"));
   }
 
 
@@ -152,6 +182,29 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
 
 
   /**
+   * Returns the entry name in a JAAS configuration file.
+   *
+   * @return  JAAS configuration name
+   */
+  public String getJaasName()
+  {
+    return jaasName;
+  }
+
+
+  /**
+   * Returns whether to refresh the JAAS configuration prior to use. See {@link
+   * javax.security.auth.login.Configuration#refresh()}.
+   *
+   * @return  whether to refresh the JAAS config
+   */
+  public boolean getJaasRefreshConfig()
+  {
+    return jaasRefreshConfig;
+  }
+
+
+  /**
    * Returns the class name of the JAAS login module.
    *
    * @return  JAAS login module class name
@@ -181,6 +234,8 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
       .append("authorizationID=").append(authorizationID).append(", ")
       .append("realm=").append(saslRealm).append(", ")
       .append("saslProperties=").append(saslProperties).append(", ")
+      .append("jaasName=").append(jaasName).append(", ")
+      .append("jaasRefreshConfig=").append(jaasRefreshConfig).append(", ")
       .append("jaasLoginModule=").append(jaasLoginModule).append(", ")
       .append("jaasOptions=").append(jaasOptions).toString();
   }

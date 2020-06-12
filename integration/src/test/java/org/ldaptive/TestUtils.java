@@ -167,6 +167,17 @@ public final class TestUtils
 
 
   /**
+   * @return  connection factory
+   */
+  public static ConnectionFactory createGssApi2ConnectionFactory()
+  {
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi-2.properties"))
+      .build();
+  }
+
+
+  /**
    * @return  authenticator
    */
   public static Authenticator createSSLAuthenticator()
