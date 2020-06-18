@@ -133,6 +133,7 @@ public class SslConfig extends AbstractConfig
   public void setTrustManagers(final TrustManager... managers)
   {
     checkImmutable();
+    checkArrayContainsNull(managers);
     logger.trace("setting trustManagers: {}", Arrays.toString(managers));
     trustManagers = managers;
   }
@@ -181,6 +182,7 @@ public class SslConfig extends AbstractConfig
   public void setEnabledCipherSuites(final String... suites)
   {
     checkImmutable();
+    checkArrayContainsNull(suites);
     logger.trace("setting enabledCipherSuites: {}", Arrays.toString(suites));
     enabledCipherSuites = suites;
   }
@@ -205,6 +207,7 @@ public class SslConfig extends AbstractConfig
   public void setEnabledProtocols(final String... protocols)
   {
     checkImmutable();
+    checkArrayContainsNull(protocols);
     logger.trace("setting enabledProtocols: {}", Arrays.toString(protocols));
     enabledProtocols = protocols;
   }
@@ -229,6 +232,7 @@ public class SslConfig extends AbstractConfig
   public void setHandshakeCompletedListeners(final HandshakeCompletedListener... listeners)
   {
     checkImmutable();
+    checkArrayContainsNull(listeners);
     logger.trace("setting handshakeCompletedListeners: {}", Arrays.toString(handshakeCompletedListeners));
     handshakeCompletedListeners = listeners;
   }

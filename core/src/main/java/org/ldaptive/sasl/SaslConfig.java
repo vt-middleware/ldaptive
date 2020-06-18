@@ -127,6 +127,7 @@ public class SaslConfig extends AbstractConfig
   public void setQualityOfProtection(final QualityOfProtection... qop)
   {
     checkImmutable();
+    checkArrayContainsNull(qop);
     logger.trace("setting qualityOfProtection: {}", Arrays.toString(qop));
     qualityOfProtection = qop;
   }
@@ -151,6 +152,7 @@ public class SaslConfig extends AbstractConfig
   public void setSecurityStrength(final SecurityStrength... ss)
   {
     checkImmutable();
+    checkArrayContainsNull(ss);
     logger.trace("setting securityStrength: {}", Arrays.toString(ss));
     securityStrength = ss;
   }

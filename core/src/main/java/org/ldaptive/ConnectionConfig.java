@@ -353,6 +353,7 @@ public class ConnectionConfig extends AbstractConfig
   public void setConnectionInitializers(final ConnectionInitializer... initializers)
   {
     checkImmutable();
+    checkArrayContainsNull(initializers);
     logger.trace("setting connectionInitializers: {}", Arrays.toString(initializers));
     connectionInitializers = initializers;
   }

@@ -40,6 +40,25 @@ public abstract class AbstractConfig
 
 
   /**
+   * Verifies that an array does not contain a null element.
+   *
+   * @param  array  to verify
+   *
+   * @throws  IllegalArgumentException  if the array contains null
+   */
+  protected void checkArrayContainsNull(final Object[] array)
+  {
+    if (array != null) {
+      for (Object o : array) {
+        if (o == null) {
+          throw new IllegalArgumentException("Array element cannot be null");
+        }
+      }
+    }
+  }
+
+
+  /**
    * Verifies that a string is not null or empty.
    *
    * @param  s  to verify

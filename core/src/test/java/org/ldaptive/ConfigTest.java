@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,6 +72,34 @@ public class ConfigTest
           Assert.fail("Should have thrown IllegalStateException for " + method);
         } catch (Exception e) {
           Assert.assertEquals(e.getCause().getClass(), IllegalStateException.class);
+        }
+      }
+    }
+  }
+
+
+  /**
+   * @param  config  to test
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "config", dataProvider = "configs")
+  public void testArrayContainsNull(
+    // CheckStyle:IllegalType OFF
+    final AbstractConfig config)
+  // CheckStyle:IllegalType ON
+    throws Exception
+  {
+    for (Method method : config.getClass().getMethods()) {
+      if (method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
+        try {
+          final Class<?> type = method.getParameterTypes()[0];
+          if (type.isArray()) {
+            method.invoke(config, new Object[] {Array.newInstance(type.getComponentType(), 1)});
+            Assert.fail("Should have thrown IllegalArgumentException for " + method);
+          }
+        } catch (Exception e) {
+          Assert.assertEquals(e.getCause().getClass(), IllegalArgumentException.class);
         }
       }
     }
