@@ -8,7 +8,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import org.ldaptive.LdapUtils;
+import org.ldaptive.io.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +68,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
     try {
       final Reader[] readers = new Reader[paths.length];
       for (int i = 0; i < paths.length; i++) {
-        readers[i] = new InputStreamReader(LdapUtils.getResource(paths[i]));
+        readers[i] = new InputStreamReader(ResourceUtils.getResource(paths[i]));
       }
       return loadProperties(readers);
     } catch (IOException e) {

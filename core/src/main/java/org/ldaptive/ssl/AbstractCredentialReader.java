@@ -5,7 +5,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import org.ldaptive.LdapUtils;
+import org.ldaptive.io.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +30,7 @@ public abstract class AbstractCredentialReader<T> implements CredentialReader<T>
   public T read(final String path, final String... params)
     throws IOException, GeneralSecurityException
   {
-    try (InputStream is = LdapUtils.getResource(path)) {
+    try (InputStream is = ResourceUtils.getResource(path)) {
       logger.trace("Found resource at {}", path);
       final T credential = read(is, params);
       logger.debug("Successfully loaded credential {} from path {}", credential, path);

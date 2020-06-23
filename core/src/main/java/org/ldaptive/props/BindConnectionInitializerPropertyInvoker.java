@@ -3,8 +3,8 @@ package org.ldaptive.props;
 
 import java.io.IOException;
 import org.ldaptive.Credential;
-import org.ldaptive.LdapUtils;
 import org.ldaptive.control.RequestControl;
+import org.ldaptive.io.ResourceUtils;
 import org.ldaptive.sasl.SaslConfig;
 
 /**
@@ -49,9 +49,9 @@ public class BindConnectionInitializerPropertyInvoker extends AbstractPropertyIn
       } else if (RequestControl[].class.isAssignableFrom(type)) {
         newValue = createArrayTypeFromPropertyValue(RequestControl.class, value);
       } else if (Credential.class.isAssignableFrom(type)) {
-        if (LdapUtils.isResource(value)) {
+        if (ResourceUtils.isResource(value)) {
           try {
-            newValue = new Credential(LdapUtils.readInputStream(LdapUtils.getResource(value)));
+            newValue = new Credential(ResourceUtils.readResource(value));
           } catch (IOException e) {
             throw new IllegalArgumentException("Could not read resource: " + value, e);
           }
