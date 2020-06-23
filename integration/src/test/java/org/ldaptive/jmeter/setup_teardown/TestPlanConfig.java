@@ -10,9 +10,9 @@ import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
-import org.ldaptive.LdapUtils;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.SingleConnectionFactory;
+import org.ldaptive.io.ResourceUtils;
 import org.ldaptive.ssl.AllowAnyTrustManager;
 import org.ldaptive.ssl.SslConfig;
 import org.slf4j.Logger;
@@ -92,7 +92,7 @@ public final class TestPlanConfig
   {
     try {
       final Properties testRuntimeProps = new Properties();
-      testRuntimeProps.load(LdapUtils.getResource("classpath:/org/ldaptive/ldap.properties"));
+      testRuntimeProps.load(ResourceUtils.getResource("classpath:/org/ldaptive/ldap.properties"));
       properties = new JMeterRuntimeProperties(testRuntimeProps, context);
       switch (type) {
       case ALL:

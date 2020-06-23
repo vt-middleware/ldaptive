@@ -4,7 +4,6 @@ package org.ldaptive.io;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import org.ldaptive.LdapAttribute;
@@ -190,10 +189,10 @@ public class LdifReader implements SearchResultReader
       attr.addBinaryValues(LdapUtils.base64Decode(attrValue));
     } else if (isUrl) {
       final byte[] b;
-      if (LdapUtils.isResource(attrValue)) {
-        b = LdapUtils.readInputStream(LdapUtils.getResource(attrValue));
+      if (ResourceUtils.isResource(attrValue)) {
+        b = ResourceUtils.readResource(attrValue);
       } else {
-        b = LdapUtils.readURL(new URL(attrValue));
+        b = ResourceUtils.readResource(attrValue, new URLResourceLoader());
       }
       attr.addBinaryValues(b);
     } else {
