@@ -171,7 +171,7 @@ public class BindConnectionInitializer implements ConnectionInitializer
         result = c.operation(SaslBindRequest.builder()
           .mechanism(Mechanism.EXTERNAL.mechanism())
           .credentials(bindSaslConfig.getAuthorizationId() != null ? bindSaslConfig.getAuthorizationId() : "")
-          .controls().build()).execute();
+          .controls(bindControls).build()).execute();
         break;
       case DIGEST_MD5:
         result = c.operation(new DigestMD5BindRequest(
