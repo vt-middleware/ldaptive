@@ -223,7 +223,11 @@ public abstract class AbstractMessage implements Message
       parser.registerHandler(CRITICAL_PATH, (p, e) -> critical = BooleanType.decode(e));
       parser.registerHandler(OID_PATH, (p, e) -> oid = OctetStringType.decode(e));
       parser.registerHandler(VALUE_PATH, (p, e) -> value = e.slice());
-      parser.registerHandler(ALT_VALUE_PATH, (p, e) -> value = e.slice());
+      parser.registerHandler(ALT_VALUE_PATH, (p, e) -> {
+        if (value == null) {
+          value = e.slice();
+        }
+      });
     }
 
 

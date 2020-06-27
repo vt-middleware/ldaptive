@@ -29,7 +29,7 @@ public class SearchResponseTest
     return
       new Object[][] {
         new Object[] {
-          // success search result done response dirsync control
+          // success search result done response
           new byte[] {
             //preamble
             0x30, 0x0c, 0x02, 0x01, 0x02,
