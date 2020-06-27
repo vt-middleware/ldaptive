@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import org.ldaptive.ad.control.DirSyncControl;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.PasswordPolicyControl;
@@ -28,7 +29,7 @@ public class SearchResponseTest
     return
       new Object[][] {
         new Object[] {
-          // success search result done response
+          // success search result done response dirsync control
           new byte[] {
             //preamble
             0x30, 0x0c, 0x02, 0x01, 0x02,
@@ -44,6 +45,98 @@ public class SearchResponseTest
             .resultCode(ResultCode.SUCCESS)
             .matchedDN("")
             .diagnosticMessage("").build(),
+        },
+        new Object[] {
+          // success search result done response dirsync control
+          new byte[] {
+            //preamble
+            0x30, 0x3c, 0x02, 0x01, 0x02,
+            // search result done
+            0x65, 0x07,
+            // success result
+            0x0a, 0x01, 0x00,
+            // no matched DN
+            0x04, 0x00,
+            // no diagnostic message
+            0x04, 0x00,
+            // DirSyncControl
+            (byte) 0xa0, 0x2e,
+            // SEQ
+            0x30, 0x2c,
+            // OID  1.2.840.113556.1.4.841
+            0x04, 0x16, 0x31, 0x2e, 0x32, 0x2e, 0x38, 0x34, 0x30, 0x2e, 0x31, 0x31, 0x33, 0x35, 0x35, 0x36, 0x2e, 0x31,
+            0x2e, 0x34, 0x2e, 0x38, 0x34, 0x31,
+            // DirSyncControlValue
+            0x04, 0x12,
+            // SEQ
+            0x30, 0x10,
+            // flags
+            0x02, 0x01, 0x00,
+            // maxAttrCount
+            0x02, 0x01, 0x00,
+            // cookie
+            0x04, 0x08, (byte) 0xd6, (byte) 0x9b, 0x4f, (byte) 0xf2, (byte) 0x72, 0x01, 0x00, 0x00,
+          },
+          SearchResponse.builder().messageID(2)
+            .resultCode(ResultCode.SUCCESS)
+            .matchedDN("")
+            .diagnosticMessage("")
+            .controls(
+                new DirSyncControl(
+                  null,
+                  new byte[] {
+                    (byte) 0xd6, (byte) 0x9b, 0x4f, (byte) 0xf2, (byte) 0x72, 0x01, 0x00, 0x00,
+                  },
+                  0,
+                  false)
+                ).build(),
+        },
+        new Object[] {
+          // success search result done response criticality dirsync control
+          new byte[] {
+            //preamble
+            0x30, 0x3f, 0x02, 0x01, 0x02,
+            // search result done
+            0x65, 0x07,
+            // success result
+            0x0a, 0x01, 0x00,
+            // no matched DN
+            0x04, 0x00,
+            // no diagnostic message
+            0x04, 0x00,
+            // DirSyncControl
+            (byte) 0xa0, 0x31,
+            // SEQ
+            0x30, 0x2f,
+            // OID  1.2.840.113556.1.4.841
+            0x04, 0x16, 0x31, 0x2e, 0x32, 0x2e, 0x38, 0x34, 0x30, 0x2e, 0x31, 0x31, 0x33, 0x35, 0x35, 0x36, 0x2e, 0x31,
+            0x2e, 0x34, 0x2e, 0x38, 0x34, 0x31,
+            // Criticality true
+            0x01, 0x01, (byte) 0xff,
+            // DirSyncControlValue
+            0x04, 0x12,
+            // SEQ
+            0x30, 0x10,
+            // flags
+            0x02, 0x01, 0x00,
+            // maxAttrCount
+            0x02, 0x01, 0x00,
+            // cookie
+            0x04, 0x08, (byte) 0xd6, (byte) 0x9b, 0x4f, (byte) 0xf2, (byte) 0x72, 0x01, 0x00, 0x00,
+          },
+          SearchResponse.builder().messageID(2)
+            .resultCode(ResultCode.SUCCESS)
+            .matchedDN("")
+            .diagnosticMessage("")
+            .controls(
+                new DirSyncControl(
+                  null,
+                  new byte[] {
+                    (byte) 0xd6, (byte) 0x9b, 0x4f, (byte) 0xf2, (byte) 0x72, 0x01, 0x00, 0x00,
+                  },
+                  0,
+                  true)
+                ).build(),
         },
         new Object[] {
           // referral search result done response with referrals
@@ -114,7 +207,6 @@ public class SearchResponseTest
   {
     Assert.assertEquals(new SearchResponse(new DefaultDERBuffer(berValue)), response);
   }
-
 
   /**
    * Smoke tests for search response with one entry.
