@@ -335,7 +335,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   {
 
     /** DER path to result code. */
-    public static final DERPath PATH = new DERPath("/SEQ/INT[2]");
+    public static final DERPath PATH = new DERPath("/SEQ/ENUM[2]");
 
 
     /**
