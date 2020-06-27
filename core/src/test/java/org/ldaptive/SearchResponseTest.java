@@ -5,6 +5,8 @@ import org.ldaptive.ad.control.DirSyncControl;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.PasswordPolicyControl;
+import org.ldaptive.control.SortResponseControl;
+import org.ldaptive.control.VirtualListViewResponseControl;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -45,6 +47,98 @@ public class SearchResponseTest
             .resultCode(ResultCode.SUCCESS)
             .matchedDN("")
             .diagnosticMessage("").build(),
+        },
+        new Object[] {
+          // success search result done response with 2 response controls
+          new byte[] {
+            //preamble
+            0x30, 0x62, 0x02, 0x01, 0x02,
+            // search result done
+            0x65, 0x07,
+            // success result
+            0x0a, 0x01, 0x00,
+            // no matched DN
+            0x04, 0x00,
+            // no diagnostic message
+            0x04, 0x00,
+            (byte) 0xa0, 0x54,
+            // SEQ
+            0x30, 0x1f,
+            // sort response control OID
+            0x04, 0x16, 0x31, 0x2e, 0x32, 0x2e, 0x38, 0x34, 0x30, 0x2e, 0x31, 0x31, 0x33, 0x35, 0x35, 0x36, 0x2e, 0x31,
+            0x2e, 0x34, 0x2e, 0x34, 0x37, 0x34,
+            // sort response control value
+            0x04, 0x05, 0x30, 0x03, 0x0a, 0x01, 0x00,
+            // SEQ
+            0x30, 0x31,
+            // virtual list view response control OID
+            0x04, 0x18, 0x32, 0x2e, 0x31, 0x36, 0x2e, 0x38, 0x34, 0x30, 0x2e, 0x31, 0x2e, 0x31, 0x31, 0x33, 0x37, 0x33,
+            0x30, 0x2e, 0x33, 0x2e, 0x34, 0x2e, 0x31, 0x30,
+            // virtual list view response control value
+            0x04, 0x15, 0x30, 0x13, 0x02, 0x01, 0x03, 0x02, 0x01, 0x04, 0x0a, 0x01, 0x00, 0x04, 0x08, 0x50, 0x3d, 0x16,
+            (byte) 0xec, 0x13, 0x7f, 0x00, 0x00,
+          },
+          SearchResponse.builder().messageID(2)
+            .resultCode(ResultCode.SUCCESS)
+            .matchedDN("")
+            .diagnosticMessage("")
+            .controls(
+              new SortResponseControl(ResultCode.SUCCESS, false),
+              new VirtualListViewResponseControl(
+                3,
+                4,
+                ResultCode.SUCCESS,
+                new byte[] {
+                  0x50, 0x3d, 0x16, (byte) 0xec, 0x13, 0x7f, 0x00, 0x00,
+                })
+            ).build(),
+        },
+        new Object[] {
+          // success search result done response with 2 response controls, one is critical
+          new byte[] {
+            //preamble
+            0x30, 0x65, 0x02, 0x01, 0x02,
+            // search result done
+            0x65, 0x07,
+            // success result
+            0x0a, 0x01, 0x00,
+            // no matched DN
+            0x04, 0x00,
+            // no diagnostic message
+            0x04, 0x00,
+            (byte) 0xa0, 0x57,
+            // SEQ
+            0x30, 0x22,
+            // sort response control OID
+            0x04, 0x16, 0x31, 0x2e, 0x32, 0x2e, 0x38, 0x34, 0x30, 0x2e, 0x31, 0x31, 0x33, 0x35, 0x35, 0x36, 0x2e, 0x31,
+            0x2e, 0x34, 0x2e, 0x34, 0x37, 0x34,
+            // Criticality true
+            0x01, 0x01, (byte) 0xff,
+            // sort response control value
+            0x04, 0x05, 0x30, 0x03, 0x0a, 0x01, 0x00,
+            // SEQ
+            0x30, 0x31,
+            // virtual list view response control OID
+            0x04, 0x18, 0x32, 0x2e, 0x31, 0x36, 0x2e, 0x38, 0x34, 0x30, 0x2e, 0x31, 0x2e, 0x31, 0x31, 0x33, 0x37, 0x33,
+            0x30, 0x2e, 0x33, 0x2e, 0x34, 0x2e, 0x31, 0x30,
+            // virtual list view response control value
+            0x04, 0x15, 0x30, 0x13, 0x02, 0x01, 0x03, 0x02, 0x01, 0x04, 0x0a, 0x01, 0x00, 0x04, 0x08, 0x50, 0x3d, 0x16,
+            (byte) 0xec, 0x13, 0x7f, 0x00, 0x00,
+          },
+          SearchResponse.builder().messageID(2)
+            .resultCode(ResultCode.SUCCESS)
+            .matchedDN("")
+            .diagnosticMessage("")
+            .controls(
+              new SortResponseControl(ResultCode.SUCCESS, true),
+              new VirtualListViewResponseControl(
+                3,
+                4,
+                ResultCode.SUCCESS,
+                new byte[] {
+                  0x50, 0x3d, 0x16, (byte) 0xec, 0x13, 0x7f, 0x00, 0x00,
+                })
+            ).build(),
         },
         new Object[] {
           // success search result done response dirsync control
@@ -195,6 +289,7 @@ public class SearchResponseTest
       };
   }
 
+
   /**
    * @param  berValue  encoded response.
    * @param  response  expected decoded response.
@@ -207,6 +302,7 @@ public class SearchResponseTest
   {
     Assert.assertEquals(new SearchResponse(new DefaultDERBuffer(berValue)), response);
   }
+
 
   /**
    * Smoke tests for search response with one entry.

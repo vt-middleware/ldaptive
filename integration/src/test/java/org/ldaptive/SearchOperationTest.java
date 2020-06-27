@@ -28,6 +28,7 @@ import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.ProxyAuthorizationControl;
 import org.ldaptive.control.SortKey;
 import org.ldaptive.control.SortRequestControl;
+import org.ldaptive.control.SortResponseControl;
 import org.ldaptive.control.VirtualListViewRequestControl;
 import org.ldaptive.control.VirtualListViewResponseControl;
 import org.ldaptive.handler.CaseChangeEntryHandler;
@@ -532,8 +533,19 @@ public class SearchOperationTest extends AbstractTest
           TestUtils.convertLdifToResult(expected),
           result),
         0);
-      contextID =
-        ((VirtualListViewResponseControl) result.getControl(VirtualListViewResponseControl.OID)).getContextID();
+      final SortResponseControl srResCtl =
+        (SortResponseControl) result.getControl(SortResponseControl.OID);
+      Assert.assertNotNull(srResCtl);
+      Assert.assertEquals(srResCtl.getSortResult(), ResultCode.SUCCESS);
+
+      final VirtualListViewResponseControl vlvResCtl =
+        (VirtualListViewResponseControl) result.getControl(VirtualListViewResponseControl.OID);
+      Assert.assertNotNull(vlvResCtl);
+      Assert.assertEquals(vlvResCtl.getViewResult(), ResultCode.SUCCESS);
+      Assert.assertEquals(vlvResCtl.getTargetPosition(), 3);
+      Assert.assertEquals(vlvResCtl.getContentCount(), 4);
+      Assert.assertNotNull(vlvResCtl.getContextID());
+      contextID = vlvResCtl.getContextID();
 
       vlvrc = new VirtualListViewRequestControl("group4", 1, 1, contextID, true);
       request.setControls(src, vlvrc);

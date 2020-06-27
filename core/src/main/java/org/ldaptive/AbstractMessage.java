@@ -156,7 +156,7 @@ public abstract class AbstractMessage implements Message
   {
 
     /** DER path to controls. */
-    public static final DERPath PATH = new DERPath("/SEQ/CTX(0)");
+    public static final DERPath PATH = new DERPath("/SEQ/CTX(0)/SEQ");
 
 
     /**
@@ -191,22 +191,22 @@ public abstract class AbstractMessage implements Message
   {
 
     /** DER path to criticality. */
-    private static final DERPath CRITICAL_PATH = new DERPath("/SEQ/BOOL");
+    private static final DERPath CRITICAL_PATH = new DERPath("/BOOL[1]");
 
     /** DER path to OID. */
-    private static final DERPath OID_PATH = new DERPath("/SEQ/OCTSTR[0]");
+    private static final DERPath OID_PATH = new DERPath("/OCTSTR[0]");
 
     /** DER path to value. */
-    private static final DERPath VALUE_PATH = new DERPath("/SEQ/OCTSTR[1]");
+    private static final DERPath VALUE_PATH = new DERPath("/OCTSTR[1]");
 
     /** DER path to alternate value. */
-    private static final DERPath ALT_VALUE_PATH = new DERPath("/SEQ/OCTSTR[2]");
+    private static final DERPath ALT_VALUE_PATH = new DERPath("/OCTSTR[2]");
 
     /** Parser for decoding LDAP controls. */
     private final DERParser parser = new DERParser();
 
     /** Control criticality. */
-    private boolean critical;
+    private Boolean critical;
 
     /** Control oid. */
     private String oid;
