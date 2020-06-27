@@ -72,6 +72,20 @@
     <appender-ref ref="CONSOLE"/>
   </category>
 
+  <!-- uncomment for netty event logging
+  <category name="org.ldaptive.transport.netty.NettyConnection"
+            additivity="false">
+    <priority value="DEBUG"/>
+    <appender-ref ref="CONSOLE"/>
+  </category>
+
+  <category name="io.netty.handler.logging.LoggingHandler"
+            additivity="false">
+    <priority value="DEBUG"/>
+    <appender-ref ref="CONSOLE"/>
+  </category>
+  -->
+
   <category name="org.ldaptive.io"
             additivity="false">
     <priority value="DEBUG"/>
