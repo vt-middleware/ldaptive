@@ -74,6 +74,17 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
   /**
    * Creates a new session tracking control.
    *
+   * @param  critical  whether this control is critical
+   */
+  public SessionTrackingControl(final boolean critical)
+  {
+    super(OID, critical);
+  }
+
+
+  /**
+   * Creates a new session tracking control.
+   *
    * @param  sourceIP  session source ip
    * @param  sourceName  session source name
    * @param  oid  format OID
@@ -85,7 +96,27 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     final String oid,
     final String trackingIdentifier)
   {
-    super(OID);
+    this(sourceIP, sourceName, oid, trackingIdentifier, false);
+  }
+
+
+  /**
+   * Creates a new session tracking control.
+   *
+   * @param  sourceIP  session source ip
+   * @param  sourceName  session source name
+   * @param  oid  format OID
+   * @param  trackingIdentifier  session tracking identifier
+   * @param  critical  whether this control is critical
+   */
+  public SessionTrackingControl(
+    final String sourceIP,
+    final String sourceName,
+    final String oid,
+    final String trackingIdentifier,
+    final boolean critical)
+  {
+    super(OID, critical);
     setSessionSourceIp(sourceIP);
     setSessionSourceName(sourceName);
     setFormatOID(oid);

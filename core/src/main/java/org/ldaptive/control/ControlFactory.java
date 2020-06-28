@@ -92,6 +92,11 @@ public final class ControlFactory
       ctl.decode(encoded);
       break;
 
+    case SessionTrackingControl.OID:
+      ctl = new SessionTrackingControl(critical);
+      ctl.decode(encoded);
+      break;
+
     default:
       ctl = new GenericControl(oid, critical, encoded);
       break;
