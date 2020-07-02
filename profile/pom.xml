@@ -45,6 +45,10 @@
         <artifactId>exec-maven-plugin</artifactId>
         <configuration>
           <systemProperties>
+            <systemProperty>
+              <key>io.netty.leakDetectionLevel</key>
+              <value>paranoid</value>
+            </systemProperty>
             <!--
             <systemProperty>
               <key>org.ldaptive.transport.pooledConnectionFactory</key>
