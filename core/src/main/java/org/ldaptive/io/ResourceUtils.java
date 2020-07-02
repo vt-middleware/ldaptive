@@ -82,7 +82,7 @@ public final class ResourceUtils
    *
    * @return  input  stream to read the resource
    *
-   * @throws IOException  if the resource cannot be read
+   * @throws  IOException  if the resource cannot be read
    * @throws  IllegalArgumentException  if path is not supported
    */
   public static InputStream getResource(final String path, final ResourceLoader... loaders)
@@ -104,7 +104,7 @@ public final class ResourceUtils
    *
    * @return  input  stream to read the resource
    *
-   * @throws IOException  if the resource cannot be read
+   * @throws  IOException  if the resource cannot be read
    * @throws  IllegalArgumentException  if path is not supported
    */
   public static InputStream getResource(final String path)
@@ -126,7 +126,7 @@ public final class ResourceUtils
    *
    * @return  bytes  read from the resource
    *
-   * @throws IOException
+   * @throws  IOException  if the resource cannot be read
    */
   public static byte[] readResource(final String path, final ResourceLoader... loaders)
     throws IOException
@@ -143,7 +143,7 @@ public final class ResourceUtils
    *
    * @return  bytes  read from the resource
    *
-   * @throws IOException
+   * @throws  IOException  if the resource cannot be read
    */
   public static byte[] readResource(final String path)
     throws IOException
