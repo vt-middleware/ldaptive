@@ -112,7 +112,7 @@ public final class NettyConnection extends TransportConnection
   private static final RequestEncoder REQUEST_ENCODER = new RequestEncoder();
 
   /** Inbound handler to read the next message if autoRead is false. */
-  private static final InboundAutoReadEventHandler READ_NEXT_MESSAGE = new InboundAutoReadEventHandler();
+  private static final AutoReadEventHandler READ_NEXT_MESSAGE = new AutoReadEventHandler();
 
   /** Type of channel. */
   private final Class<? extends Channel> channelType;
@@ -1311,6 +1311,9 @@ public final class NettyConnection extends TransportConnection
       // outbound handlers are processed bottom to top
       ch.pipeline().addLast("frame_decoder", new MessageFrameDecoder());
       ch.pipeline().addLast("response_decoder", new MessageDecoder());
+      if (!ch.config().isAutoRead()) {
+        ch.pipeline().addLast("flow_control_handler", new AutoReadFlowControlHandler());
+      }
       if (messageWorkerGroup != null) {
         ch.pipeline().addLast(messageWorkerGroup, "message_handler", new InboundMessageHandler());
       } else {
@@ -1459,10 +1462,10 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
-   * Initiates a channel read when an LDAP message has been processed.
+   * Initiates a channel read when an LDAP message has been processed and auto read is false.
    */
   @ChannelHandler.Sharable
-  protected static class InboundAutoReadEventHandler extends SimpleUserEventChannelHandler<MessageStatus>
+  protected static class AutoReadEventHandler extends SimpleUserEventChannelHandler<MessageStatus>
   {
 
     /** Logger for this class. */
