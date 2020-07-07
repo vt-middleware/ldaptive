@@ -129,15 +129,15 @@ public class ConnectionTransport implements Transport
       return new NettyConnection(
         cc,
         getSocketChannelType(),
-        createEventLoopGroup(ConnectionTransport.class.getSimpleName(), numIoThreads),
-        createEventLoopGroup(ConnectionTransport.class.getSimpleName(), numMessageThreads),
+        createEventLoopGroup(getClass().getSimpleName() + "@" + hashCode() + "-io", numIoThreads),
+        createEventLoopGroup(getClass().getSimpleName() + "@" + hashCode() + "-messages", numMessageThreads),
         channelOptions,
         true);
     }
     return new NettyConnection(
       cc,
       getSocketChannelType(),
-      createEventLoopGroup(ConnectionTransport.class.getSimpleName(), numIoThreads),
+      createEventLoopGroup(getClass().getSimpleName() + "@" + hashCode() + "-io", numIoThreads),
       null,
       channelOptions,
       true);

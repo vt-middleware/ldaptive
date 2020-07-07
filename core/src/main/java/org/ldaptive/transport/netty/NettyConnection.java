@@ -262,7 +262,7 @@ public final class NettyConnection extends TransportConnection
         if (connectionExecutor == null) {
           connectionExecutor = Executors.newSingleThreadExecutor(
             r -> {
-              final Thread t = new Thread(r, getClass().getSimpleName() + "-" + hashCode());
+              final Thread t = new Thread(r, getClass().getSimpleName() + "@" + hashCode());
               t.setDaemon(true);
               return t;
             });

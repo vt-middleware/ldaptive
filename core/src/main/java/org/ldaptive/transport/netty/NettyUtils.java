@@ -107,15 +107,15 @@ public final class NettyUtils
     if (EPOLL_AVAILABLE && !USE_NIO) {
       return new EpollEventLoopGroup(
         numThreads,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
+        new ThreadPerTaskExecutor(new DefaultThreadFactory("ldaptive-" + name, true, Thread.NORM_PRIORITY)));
     } else if (KQUEUE_AVAILABLE && !USE_NIO) {
       return new KQueueEventLoopGroup(
         numThreads,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
+        new ThreadPerTaskExecutor(new DefaultThreadFactory("ldaptive-" + name, true, Thread.NORM_PRIORITY)));
     } else {
       return new NioEventLoopGroup(
         numThreads,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory(name, true, Thread.NORM_PRIORITY)));
+        new ThreadPerTaskExecutor(new DefaultThreadFactory("ldaptive-" + name, true, Thread.NORM_PRIORITY)));
     }
   }
 

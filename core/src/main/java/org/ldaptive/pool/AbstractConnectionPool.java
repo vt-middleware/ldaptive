@@ -516,7 +516,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
     poolExecutor = Executors.newSingleThreadScheduledExecutor(
       r -> {
-        final Thread t = new Thread(r, getClass().getSimpleName() + "-" + hashCode());
+        final Thread t = new Thread(r, getClass().getSimpleName() + "@" + hashCode());
         t.setDaemon(true);
         return t;
       });

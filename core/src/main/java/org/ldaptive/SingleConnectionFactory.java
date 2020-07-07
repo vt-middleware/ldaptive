@@ -171,7 +171,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       if (initializeExecutor == null) {
         initializeExecutor = Executors.newCachedThreadPool(
           r -> {
-            final Thread t = new Thread(r, getClass().getSimpleName() + "-" + hashCode());
+            final Thread t = new Thread(r, getClass().getSimpleName() + "@" + hashCode());
             t.setDaemon(true);
             return t;
           });

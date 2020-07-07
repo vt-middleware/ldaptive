@@ -58,7 +58,7 @@ public class ConnectionFactoryTransport extends NettyConnectionFactoryTransport
   {
     super(
       NettyUtils.getDefaultSocketChannelType(),
-      NettyUtils.createDefaultEventLoopGroup(name, ioThreads),
+      NettyUtils.createDefaultEventLoopGroup(name + "-io", ioThreads),
       null,
       options);
   }
@@ -105,8 +105,8 @@ public class ConnectionFactoryTransport extends NettyConnectionFactoryTransport
   {
     super(
       NettyUtils.getDefaultSocketChannelType(),
-      NettyUtils.createDefaultEventLoopGroup(name.concat("-io"), ioThreads),
-      NettyUtils.createDefaultEventLoopGroup(name.concat("-messages"), messageThreads),
+      NettyUtils.createDefaultEventLoopGroup(name + "-io", ioThreads),
+      NettyUtils.createDefaultEventLoopGroup(name + "-messages", messageThreads),
       options);
   }
 
@@ -121,7 +121,7 @@ public class ConnectionFactoryTransport extends NettyConnectionFactoryTransport
      */
     public SingleThread()
     {
-      super(1);
+      super(SingleThread.class.getSimpleName(), 1);
     }
   }
 
@@ -136,7 +136,7 @@ public class ConnectionFactoryTransport extends NettyConnectionFactoryTransport
      */
     public DualThread()
     {
-      super(2);
+      super(DualThread.class.getSimpleName(), 2);
     }
   }
 }
