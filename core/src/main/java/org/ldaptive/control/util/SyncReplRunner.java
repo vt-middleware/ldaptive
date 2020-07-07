@@ -141,7 +141,6 @@ public class SyncReplRunner
    */
   private static Transport createTransport()
   {
-    // io thread pool size must be >1 to send cancel requests when an exception occurs
     // message thread pool size must be >1 since exceptions are reported on the messages thread pool
     // startTLS and connection initializers will require additional threads
     final ConnectionFactoryTransport transport = new ConnectionFactoryTransport(
