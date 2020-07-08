@@ -253,9 +253,9 @@ public class SaslConfig extends AbstractConfig
    *
    * @return  new builder
    */
-  public static SaslConfig.Builder builder()
+  public static Builder builder()
   {
-    return new SaslConfig.Builder();
+    return new Builder();
   }
 
 
@@ -270,49 +270,49 @@ public class SaslConfig extends AbstractConfig
     protected Builder() {}
 
 
-    public SaslConfig.Builder mechanism(final Mechanism mechanism)
+    public Builder mechanism(final Mechanism mechanism)
     {
       object.setMechanism(mechanism);
       return this;
     }
 
 
-    public SaslConfig.Builder authorizationId(final String id)
+    public Builder authorizationId(final String id)
     {
       object.setAuthorizationId(id);
       return this;
     }
 
 
-    public SaslConfig.Builder mutualAuthentication(final Boolean b)
+    public Builder mutualAuthentication(final Boolean b)
     {
       object.setMutualAuthentication(b);
       return this;
     }
 
 
-    public SaslConfig.Builder qualityOfProtection(final QualityOfProtection... protections)
+    public Builder qualityOfProtection(final QualityOfProtection... protections)
     {
       object.setQualityOfProtection(protections);
       return this;
     }
 
 
-    public SaslConfig.Builder securityStrength(final SecurityStrength... strengths)
+    public Builder securityStrength(final SecurityStrength... strengths)
     {
       object.setSecurityStrength(strengths);
       return this;
     }
 
 
-    public SaslConfig.Builder realm(final String realm)
+    public Builder realm(final String realm)
     {
       object.setRealm(realm);
       return this;
     }
 
 
-    public SaslConfig.Builder property(final String name, final Object value)
+    public Builder property(final String name, final Object value)
     {
       object.setProperty(name, value);
       return this;
