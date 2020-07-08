@@ -172,7 +172,6 @@ public final class NettyConnection extends TransportConnection
    * @param  type  type of channel
    * @param  ioGroup  event loop group that handles I/O and supports the channel type, cannot be null
    * @param  messageGroup  event loop group that handles inbound messages, can be null
-   * @param  options  additional channel options
    * @param  shutdownGroups  whether to shutdown the event loop groups when the connection is closed
    */
   public NettyConnection(
@@ -180,7 +179,6 @@ public final class NettyConnection extends TransportConnection
     final Class<? extends Channel> type,
     final EventLoopGroup ioGroup,
     final EventLoopGroup messageGroup,
-    final Map<ChannelOption, Object> options,
     final boolean shutdownGroups)
   {
     super(config);
@@ -193,11 +191,39 @@ public final class NettyConnection extends TransportConnection
     channelOptions = new HashMap<>();
     channelOptions.put(ChannelOption.SO_KEEPALIVE, true);
     channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) config.getConnectTimeout().toMillis());
-    if (options != null && !options.isEmpty()) {
-      channelOptions.putAll(options);
+    if (config.getTransportOptions() != null && !config.getTransportOptions().isEmpty()) {
+      for (Map.Entry<String, ?> e : config.getTransportOptions().entrySet()) {
+        final ChannelOption<?> option = ChannelOption.valueOf(e.getKey());
+        final Object value = e.getValue();
+        if (value instanceof String) {
+          channelOptions.put(option, convertChannelOption((String) value));
+        } else {
+          channelOptions.put(option, value);
+        }
+      }
     }
     shutdownOnClose = shutdownGroups;
     pendingResponses = new HandleMap();
+  }
+
+
+  /**
+   * Performs a best effort at converting a channel option value to the correct type. Handles Boolean and Integer types.
+   *
+   * @param  value  to convert
+   *
+   * @return  converted value or the supplied value if no conversion occurred
+   */
+  private Object convertChannelOption(final String value)
+  {
+    if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
+      return Boolean.valueOf(value);
+    } else {
+      try {
+        return Integer.parseInt(value);
+      } catch (NumberFormatException ex) {}
+    }
+    return value;
   }
 
 
@@ -232,7 +258,6 @@ public final class NettyConnection extends TransportConnection
       channelType,
       ioWorkerGroup,
       messageWorkerGroup,
-      null,
       false);
     try {
       conn.open(url);
@@ -899,6 +924,17 @@ public final class NettyConnection extends TransportConnection
       throw new IllegalArgumentException("messageID must be greater than zero");
     }
     messageID.set(i);
+  }
+
+
+  /**
+   * Returns the channel options.
+   *
+   * @return  channel options
+   */
+  Map<ChannelOption, Object> getChannelOptions()
+  {
+    return channelOptions;
   }
 
 

@@ -1,9 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport.netty;
 
-import java.util.Map;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -36,19 +34,7 @@ public class NioConnectionTransport extends ConnectionTransport
    */
   public NioConnectionTransport(final int ioThreads)
   {
-    this(ioThreads, null);
-  }
-
-
-  /**
-   * Creates a new nio connection transport.
-   *
-   * @param  ioThreads  number of threads used for I/O in the event loop group
-   * @param  options  netty channel options
-   */
-  public NioConnectionTransport(final int ioThreads, final Map<ChannelOption, Object> options)
-  {
-    super(ioThreads, options);
+    super(ioThreads);
   }
 
 
@@ -60,23 +46,7 @@ public class NioConnectionTransport extends ConnectionTransport
    */
   public NioConnectionTransport(final int ioThreads, final int messageThreads)
   {
-    this(ioThreads, messageThreads, null);
-  }
-
-
-  /**
-   * Creates a new nio connection transport.
-   *
-   * @param  ioThreads  number of threads used for I/O in the event loop group
-   * @param  messageThreads  number of threads for LDAP message handling in the event loop group
-   * @param  options  netty channel options
-   */
-  public NioConnectionTransport(
-    final int ioThreads,
-    final int messageThreads,
-    final Map<ChannelOption, Object> options)
-  {
-    super(ioThreads, messageThreads, options);
+    super(ioThreads, messageThreads);
   }
 
 

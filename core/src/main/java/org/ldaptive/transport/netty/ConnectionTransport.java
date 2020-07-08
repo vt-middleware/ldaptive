@@ -1,9 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport.netty;
 
-import java.util.Map;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
@@ -30,9 +28,6 @@ public class ConnectionTransport implements Transport
   /** Number of message threads. */
   private int numMessageThreads = -1;
 
-  /** Override channel options. */
-  private final Map<ChannelOption, Object> channelOptions;
-
 
   /**
    * Creates a new connection transport.
@@ -50,20 +45,7 @@ public class ConnectionTransport implements Transport
    */
   public ConnectionTransport(final int ioThreads)
   {
-    this(ioThreads, null);
-  }
-
-
-  /**
-   * Creates a new connection transport.
-   *
-   * @param  ioThreads  number of threads used for I/O in the event loop group
-   * @param  options  netty channel options
-   */
-  public ConnectionTransport(final int ioThreads, final Map<ChannelOption, Object> options)
-  {
     numIoThreads = ioThreads;
-    channelOptions = options;
   }
 
 
@@ -75,25 +57,8 @@ public class ConnectionTransport implements Transport
    */
   public ConnectionTransport(final int ioThreads, final int messageThreads)
   {
-    this(ioThreads, messageThreads, null);
-  }
-
-
-  /**
-   * Creates a new connection transport.
-   *
-   * @param  ioThreads  number of threads used for I/O in the event loop group
-   * @param  messageThreads  number of threads for LDAP message handling in the event loop group
-   * @param  options  netty channel options
-   */
-  public ConnectionTransport(
-    final int ioThreads,
-    final int messageThreads,
-    final Map<ChannelOption, Object> options)
-  {
     numIoThreads = ioThreads;
     numMessageThreads = messageThreads;
-    channelOptions = options;
   }
 
 
@@ -131,7 +96,6 @@ public class ConnectionTransport implements Transport
         getSocketChannelType(),
         createEventLoopGroup(getClass().getSimpleName() + "@" + hashCode() + "-io", numIoThreads),
         createEventLoopGroup(getClass().getSimpleName() + "@" + hashCode() + "-messages", numMessageThreads),
-        channelOptions,
         true);
     }
     return new NettyConnection(
@@ -139,7 +103,6 @@ public class ConnectionTransport implements Transport
       getSocketChannelType(),
       createEventLoopGroup(getClass().getSimpleName() + "@" + hashCode() + "-io", numIoThreads),
       null,
-      channelOptions,
       true);
   }
 
@@ -150,8 +113,7 @@ public class ConnectionTransport implements Transport
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("numIoThreads=").append(numIoThreads).append(", ")
-      .append("numMessageThreads=").append(numMessageThreads).append(", ")
-      .append("channelOptions=").append(channelOptions).append("]").toString();
+      .append("numMessageThreads=").append(numMessageThreads).append("]").toString();
   }
 
 

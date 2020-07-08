@@ -87,7 +87,6 @@ public class PooledConnectionFactoryTest
             1,
             new ThreadPerTaskExecutor(
               new DefaultThreadFactory(getClass().getSimpleName() + "-io", true, Thread.NORM_PRIORITY))),
-          null,
           null));
       factory.setMinPoolSize(10);
       factory.setMaxPoolSize(10);

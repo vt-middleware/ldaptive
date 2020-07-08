@@ -1,9 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport.netty;
 
-import java.util.Map;
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
@@ -32,9 +30,6 @@ public class NettyConnectionFactoryTransport implements Transport
   /** Event loop group for message handling. */
   private final EventLoopGroup messageWorkerGroup;
 
-  /** Override channel options. */
-  private final Map<ChannelOption, Object> channelOptions;
-
   /** Whether to shutdown the event loop groups on {@link #close()}. */
   private boolean shutdownOnClose = true;
 
@@ -47,7 +42,7 @@ public class NettyConnectionFactoryTransport implements Transport
    */
   public NettyConnectionFactoryTransport(final Class<? extends Channel> type, final EventLoopGroup ioGroup)
   {
-    this(type, ioGroup, null, null);
+    this(type, ioGroup, null);
   }
 
 
@@ -57,18 +52,15 @@ public class NettyConnectionFactoryTransport implements Transport
    * @param  type  of channel
    * @param  ioGroup  event loop group to handle I/O
    * @param  messageGroup  event loop group to handle inbound messages, can be null
-   * @param  options  netty channel options
    */
   public NettyConnectionFactoryTransport(
     final Class<? extends Channel> type,
     final EventLoopGroup ioGroup,
-    final EventLoopGroup messageGroup,
-    final Map<ChannelOption, Object> options)
+    final EventLoopGroup messageGroup)
   {
     channelType = type;
     ioWorkerGroup = ioGroup;
     messageWorkerGroup = messageGroup;
-    channelOptions = options;
   }
 
 
@@ -86,7 +78,7 @@ public class NettyConnectionFactoryTransport implements Transport
   @Override
   public Connection create(final ConnectionConfig cc)
   {
-    return new NettyConnection(cc, channelType, ioWorkerGroup, messageWorkerGroup, channelOptions, false);
+    return new NettyConnection(cc, channelType, ioWorkerGroup, messageWorkerGroup, false);
   }
 
 
@@ -114,7 +106,6 @@ public class NettyConnectionFactoryTransport implements Transport
       .append("channelType=").append(channelType).append(", ")
       .append("ioWorkerGroup=").append(ioWorkerGroup).append(", ")
       .append("messageWorkerGroup=").append(messageWorkerGroup).append(", ")
-      .append("channelOptions=").append(channelOptions).append(", ")
       .append("shutdownOnClose=").append(shutdownOnClose).append("]").toString();
   }
 }

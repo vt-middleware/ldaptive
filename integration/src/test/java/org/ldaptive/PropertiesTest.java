@@ -2,6 +2,7 @@
 package org.ldaptive;
 
 import java.time.Duration;
+import java.util.Map;
 import java.util.function.Function;
 import javax.security.auth.login.LoginContext;
 import org.ldaptive.auth.AuthenticationRequest;
@@ -92,6 +93,9 @@ public class PropertiesTest
     Assert.assertEquals(cc.getConnectTimeout(), Duration.ofSeconds(8));
     Assert.assertFalse(cc.getUseStartTLS());
     Assert.assertEquals(cc.getConnectionStrategy().getClass(), RoundRobinConnectionStrategy.class);
+    Assert.assertEquals(
+      cc.getTransportOptions(),
+      Map.of("SO_LINGER", "false", "TCP_NODELAY", "false", "SO_RCVBUF", "1024", "AUTO_READ", "false"));
 
     final SearchRequest sr = new SearchRequest();
     final SearchRequestPropertySource srSource = new SearchRequestPropertySource(

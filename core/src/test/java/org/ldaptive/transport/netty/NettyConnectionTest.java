@@ -3,9 +3,11 @@ package org.ldaptive.transport.netty;
 
 import java.net.InetSocketAddress;
 import java.time.Duration;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -45,7 +47,6 @@ public class NettyConnectionTest
           0,
           new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
         null,
-        null,
         true);
       try {
         conn.open();
@@ -77,6 +78,36 @@ public class NettyConnectionTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = "netty")
+  public void transportOptions()
+    throws Exception
+  {
+    final NettyConnection conn = new NettyConnection(
+      ConnectionConfig.builder()
+        .url("ldap://localhost:10389")
+        .transportOption("AUTO_READ", "false")
+        .transportOption("TCP_NODELAY", true)
+        .transportOption("SO_SNDBUF", "1024")
+        .transportOption("SO_RCVBUF", 1024)
+        .build(),
+      NioSocketChannel.class,
+      new NioEventLoopGroup(
+        0,
+        new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+      null,
+      true);
+    final Map<ChannelOption, Object> options = conn.getChannelOptions();
+    Assert.assertNotNull(options);
+    Assert.assertEquals(options.get(ChannelOption.AUTO_READ), false);
+    Assert.assertEquals(options.get(ChannelOption.TCP_NODELAY), true);
+    Assert.assertEquals(options.get(ChannelOption.SO_SNDBUF), 1024);
+    Assert.assertEquals(options.get(ChannelOption.SO_RCVBUF), 1024);
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
   public void openAndClose()
     throws Exception
   {
@@ -91,7 +122,6 @@ public class NettyConnectionTest
         new NioEventLoopGroup(
           0,
           new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
-        null,
         null,
         true);
       try {
@@ -141,7 +171,6 @@ public class NettyConnectionTest
         new NioEventLoopGroup(
           0,
           new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
-        null,
         null,
         true);
       try {
@@ -199,7 +228,6 @@ public class NettyConnectionTest
           1,
           new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
         null,
-        null,
         true);
       try {
         conn.open();
@@ -255,7 +283,6 @@ public class NettyConnectionTest
         new NioEventLoopGroup(
           2,
           new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
-        null,
         null,
         true);
       try {

@@ -2,12 +2,10 @@
 package org.ldaptive.control.util;
 
 import java.time.Duration;
-import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import io.netty.channel.ChannelOption;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.InitialRetryMetadata;
 import org.ldaptive.LdapEntry;
@@ -130,6 +128,7 @@ public class SyncReplRunner
     connectionConfig = config;
     searchRequest = request;
     cookieManager = manager;
+    config.setTransportOption("AUTO_READ", false);
   }
 
 
@@ -146,8 +145,7 @@ public class SyncReplRunner
     final ConnectionFactoryTransport transport = new ConnectionFactoryTransport(
       SyncReplRunner.class.getSimpleName(),
       IO_WORKER_THREADS,
-      MESSAGE_WORKER_THREADS,
-      Collections.singletonMap(ChannelOption.AUTO_READ, false));
+      MESSAGE_WORKER_THREADS);
     transport.setShutdownOnClose(false);
     return transport;
   }

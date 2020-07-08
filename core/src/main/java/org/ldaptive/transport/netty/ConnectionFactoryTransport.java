@@ -1,9 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport.netty;
 
-import java.util.Map;
-import io.netty.channel.ChannelOption;
-
 /**
  * Creates netty connections using the best fit event loop group based on the operating system. See {@link
  * io.netty.channel.epoll.Epoll#isAvailable()} and {@link io.netty.channel.kqueue.KQueue#isAvailable()}. The event loop
@@ -43,24 +40,10 @@ public class ConnectionFactoryTransport extends NettyConnectionFactoryTransport
    */
   public ConnectionFactoryTransport(final String name, final int ioThreads)
   {
-    this(name, ioThreads, null);
-  }
-
-
-  /**
-   * Creates a new connection factory transport.
-   *
-   * @param  name  to assign the thread pool
-   * @param  ioThreads  number of threads used for I/O in the event loop group
-   * @param  options  netty channel options
-   */
-  public ConnectionFactoryTransport(final String name, final int ioThreads, final Map<ChannelOption, Object> options)
-  {
     super(
       NettyUtils.getDefaultSocketChannelType(),
       NettyUtils.createDefaultEventLoopGroup(name + "-io", ioThreads),
-      null,
-      options);
+      null);
   }
 
 
@@ -85,29 +68,10 @@ public class ConnectionFactoryTransport extends NettyConnectionFactoryTransport
    */
   public ConnectionFactoryTransport(final String name, final int ioThreads, final int messageThreads)
   {
-    this(name, ioThreads, messageThreads, null);
-  }
-
-
-  /**
-   * Creates a new connection factory transport.
-   *
-   * @param  name  to assign the thread pool
-   * @param  ioThreads  number of threads used for I/O in the event loop group
-   * @param  messageThreads  number of threads for LDAP message handling in the event loop group
-   * @param  options  netty channel options
-   */
-  public ConnectionFactoryTransport(
-    final String name,
-    final int ioThreads,
-    final int messageThreads,
-    final Map<ChannelOption, Object> options)
-  {
     super(
       NettyUtils.getDefaultSocketChannelType(),
       NettyUtils.createDefaultEventLoopGroup(name + "-io", ioThreads),
-      NettyUtils.createDefaultEventLoopGroup(name + "-messages", messageThreads),
-      options);
+      NettyUtils.createDefaultEventLoopGroup(name + "-messages", messageThreads));
   }
 
 

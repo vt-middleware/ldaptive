@@ -3,6 +3,8 @@ package org.ldaptive;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Predicate;
 import org.ldaptive.ssl.SslConfig;
 
@@ -91,6 +93,9 @@ public class ConnectionConfig extends AbstractConfig
 
   /** Connection validator. */
   private ConnectionValidator connectionValidator;
+
+  /** Transport options. */
+  private final Map<String, Object> transportOptions = new HashMap<>();
 
 
   /** Default constructor. */
@@ -408,6 +413,57 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
+   * Returns transport options.
+   *
+   * @return  transport options
+   */
+  public Map<String, ?> getTransportOptions()
+  {
+    return transportOptions;
+  }
+
+
+  /**
+   * Sets transport options.
+   *
+   * @param  options  to set
+   */
+  public void setTransportOptions(final Map<String, ?> options)
+  {
+    checkImmutable();
+    logger.trace("setting transport options: {}", options);
+    transportOptions.putAll(options);
+  }
+
+
+  /**
+   * Returns a transport option.
+   *
+   * @param  id  transport option id
+   *
+   * @return  transport option
+   */
+  public Object getTransportOption(final String id)
+  {
+    return transportOptions.get(id);
+  }
+
+
+  /**
+   * Sets a transport option.
+   *
+   * @param  id  of the transport option
+   * @param  value  of the transport option
+   */
+  public void setTransportOption(final String id, final Object value)
+  {
+    checkImmutable();
+    logger.trace("setting transport options: {}={}", id, value);
+    transportOptions.put(id, value);
+  }
+
+
+  /**
    * Returns a new connection config initialized with the supplied config.
    *
    * @param  config  connection config to read properties from
@@ -429,6 +485,7 @@ public class ConnectionConfig extends AbstractConfig
     cc.setConnectionInitializers(config.getConnectionInitializers());
     cc.setConnectionStrategy(config.getConnectionStrategy());
     cc.setConnectionValidator(config.getConnectionValidator());
+    cc.setTransportOptions(config.getTransportOptions());
     return cc;
   }
 
@@ -449,7 +506,8 @@ public class ConnectionConfig extends AbstractConfig
       .append("useStartTLS=").append(useStartTLS).append(", ")
       .append("connectionInitializers=").append(Arrays.toString(connectionInitializers)).append(", ")
       .append("connectionStrategy=").append(connectionStrategy).append(", ")
-      .append("connectionValidator=").append(connectionValidator).append("]").toString();
+      .append("connectionValidator=").append(connectionValidator).append(", ")
+      .append("transportOptions=").append(transportOptions).append("]").toString();
   }
 
 
@@ -554,6 +612,13 @@ public class ConnectionConfig extends AbstractConfig
     public Builder connectionValidator(final ConnectionValidator validator)
     {
       object.setConnectionValidator(validator);
+      return this;
+    }
+
+
+    public Builder transportOption(final String id, final Object value)
+    {
+      object.setTransportOption(id, value);
       return this;
     }
 
