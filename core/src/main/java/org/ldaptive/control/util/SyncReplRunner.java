@@ -128,7 +128,6 @@ public class SyncReplRunner
     connectionConfig = config;
     searchRequest = request;
     cookieManager = manager;
-    config.setTransportOption("AUTO_READ", false);
   }
 
 
@@ -338,6 +337,7 @@ public class SyncReplRunner
     final Duration wait)
   {
     final ConnectionConfig newConfig = ConnectionConfig.copy(cc);
+    newConfig.setTransportOption("AUTO_READ", false);
     newConfig.setAutoReconnect(false);
     newConfig.setAutoReconnectCondition(metadata -> {
       if (metadata instanceof InitialRetryMetadata) {
