@@ -410,7 +410,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
       conn.close();
       throw e;
     }
-    return configureHandle(conn.operation(req)).onComplete(conn::close).send();
+    return configureHandle(conn.operation(configureRequest(req))).onComplete(conn::close).send();
   }
 
 
@@ -713,7 +713,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   {
     try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
-      return configureHandle(conn.operation(req)).execute();
+      return configureHandle(conn.operation(configureRequest(req))).execute();
     }
   }
 
@@ -782,7 +782,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     if (returnAttributes != null) {
       builder.returnAttributes(returnAttributes);
     }
-    return builder.build();
+    return configureRequest(builder.build());
   }
 
 
@@ -819,6 +819,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   public static SearchOperation copy(final SearchOperation operation)
   {
     final SearchOperation op = new SearchOperation();
+    op.setRequestHandlers(operation.getRequestHandlers());
     op.setResultHandlers(operation.getResultHandlers());
     op.setControlHandlers(operation.getControlHandlers());
     op.setReferralHandlers(operation.getReferralHandlers());

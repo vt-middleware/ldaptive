@@ -47,7 +47,7 @@ public class AddOperation extends AbstractOperation<AddRequest, AddResponse>
       conn.close();
       throw e;
     }
-    return configureHandle(conn.operation(request)).onComplete(conn::close).send();
+    return configureHandle(conn.operation(configureRequest(request))).onComplete(conn::close).send();
   }
 
 
@@ -92,7 +92,7 @@ public class AddOperation extends AbstractOperation<AddRequest, AddResponse>
   {
     try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
-      return configureHandle(conn.operation(request)).execute();
+      return configureHandle(conn.operation(configureRequest(request))).execute();
     }
   }
 

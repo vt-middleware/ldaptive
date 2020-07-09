@@ -47,7 +47,7 @@ public class ModifyDnOperation extends AbstractOperation<ModifyDnRequest, Modify
       conn.close();
       throw e;
     }
-    return configureHandle(conn.operation(request)).onComplete(conn::close).send();
+    return configureHandle(conn.operation(configureRequest(request))).onComplete(conn::close).send();
   }
 
 
@@ -91,7 +91,7 @@ public class ModifyDnOperation extends AbstractOperation<ModifyDnRequest, Modify
   {
     try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
-      return configureHandle(conn.operation(request)).execute();
+      return configureHandle(conn.operation(configureRequest(request))).execute();
     }
   }
 

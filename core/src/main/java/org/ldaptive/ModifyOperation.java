@@ -47,7 +47,7 @@ public class ModifyOperation extends AbstractOperation<ModifyRequest, ModifyResp
       conn.close();
       throw e;
     }
-    return configureHandle(conn.operation(request)).onComplete(conn::close).send();
+    return configureHandle(conn.operation(configureRequest(request))).onComplete(conn::close).send();
   }
 
 
@@ -91,7 +91,7 @@ public class ModifyOperation extends AbstractOperation<ModifyRequest, ModifyResp
   {
     try (Connection conn = getConnectionFactory().getConnection()) {
       conn.open();
-      return configureHandle(conn.operation(request)).execute();
+      return configureHandle(conn.operation(configureRequest(request))).execute();
     }
   }
 

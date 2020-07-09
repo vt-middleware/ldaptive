@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.RequestHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
 import org.ldaptive.handler.ResultPredicate;
@@ -23,6 +24,9 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
 
   /** Connection factory. */
   private ConnectionFactory connectionFactory;
+
+  /** Functions to handle requests. */
+  private RequestHandler<Q>[] requestHandlers;
 
   /** Functions to handle response results. */
   private ResultHandler[] resultHandlers;
@@ -72,6 +76,18 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
   public void setConnectionFactory(final ConnectionFactory factory)
   {
     connectionFactory = factory;
+  }
+
+
+  public RequestHandler<Q>[] getRequestHandlers()
+  {
+    return requestHandlers;
+  }
+
+
+  public void setRequestHandlers(final RequestHandler<Q>... handlers)
+  {
+    requestHandlers = handlers;
   }
 
 
@@ -160,6 +176,27 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
 
 
   /**
+   * Applies any configured request handlers to the supplied request. Returns the supplied request unaltered if no
+   * request handlers are configured.
+   *
+   * @param  request  to configure
+   *
+   * @return  configured request
+   */
+  protected Q configureRequest(final Q request)
+  {
+    if (requestHandlers == null || requestHandlers.length == 0) {
+      return request;
+    }
+    Q newRequest = request;
+    for (RequestHandler<Q> h : requestHandlers) {
+      newRequest = h.apply(newRequest);
+    }
+    return newRequest;
+  }
+
+
+  /**
    * Adds configured functions to the supplied handle.
    *
    * @param  handle  to configure
@@ -185,6 +222,7 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
     return new StringBuilder(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("connectionFactory=").append(connectionFactory).append(", ")
+      .append("requestHandlers=").append(Arrays.toString(requestHandlers)).append(", ")
       .append("resultHandlers=").append(Arrays.toString(resultHandlers)).append(", ")
       .append("controlHandlers=").append(Arrays.toString(controlHandlers)).append(", ")
       .append("referralHandlers=").append(Arrays.toString(referralHandlers)).append(", ")
@@ -237,6 +275,20 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
     public B factory(final ConnectionFactory factory)
     {
       object.setConnectionFactory(factory);
+      return self();
+    }
+
+
+    /**
+     * Sets the functions to execute before a request is sent.
+     *
+     * @param  handlers  to execute on a request
+     *
+     * @return  this builder
+     */
+    public B onRequest(final RequestHandler... handlers)
+    {
+      object.setRequestHandlers(handlers);
       return self();
     }
 
