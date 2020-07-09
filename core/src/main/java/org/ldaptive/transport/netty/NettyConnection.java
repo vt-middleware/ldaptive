@@ -329,8 +329,8 @@ public final class NettyConnection extends TransportConnection
         } finally {
           pendingResponses.clear();
           channel = null;
-          throw e;
         }
+        throw e;
       } finally {
         openLock.unlock();
       }
