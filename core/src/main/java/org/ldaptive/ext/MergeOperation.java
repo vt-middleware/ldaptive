@@ -96,11 +96,11 @@ public class MergeOperation
 
 
   /**
-   * Executes an add request. See {@link OperationHandle#execute()}.
+   * Executes a merge request. See {@link OperationHandle#execute()}.
    *
-   * @param  request  add request
+   * @param  request  merge request
    *
-   * @return  add result
+   * @return  merge result
    *
    * @throws  LdapException  if the connection cannot be opened
    */
@@ -132,20 +132,20 @@ public class MergeOperation
           result = null;
         } else {
           // entry does not exist, add it
-          result = add(request, sourceEntry);
+          result = add(conn, request, sourceEntry);
           if (throwCondition != null) {
             throwCondition.testAndThrow(result);
           }
         }
       } else if (request.getDeleteEntry()) {
         // delete entry
-        result = delete(request, sourceEntry);
+        result = delete(conn, request, sourceEntry);
         if (throwCondition != null) {
           throwCondition.testAndThrow(result);
         }
       } else {
         // entry exists, merge attributes
-        result = modify(request, sourceEntry, searchResult.getEntry());
+        result = modify(conn, request, sourceEntry, searchResult.getEntry());
         if (throwCondition != null) {
           throwCondition.testAndThrow(result);
         }
@@ -160,6 +160,7 @@ public class MergeOperation
    * executes a {@link ModifyOperation} with those results. If no modifications are necessary, no operation is
    * performed.
    *
+   * @param  conn  connection to perform operation on
    * @param  request  merge request
    * @param  source  ldap entry to merge into the LDAP
    * @param  target  ldap entry that exists in the LDAP
@@ -168,7 +169,11 @@ public class MergeOperation
    *
    * @throws  LdapException  if an error occurs executing the modify operation
    */
-  protected Result modify(final MergeRequest request, final LdapEntry source, final LdapEntry target)
+  protected Result modify(
+    final Connection conn,
+    final MergeRequest request,
+    final LdapEntry source,
+    final LdapEntry target)
     throws LdapException
   {
     final AttributeModification[] modifications = LdapEntry.computeModifications(source, target);
@@ -202,12 +207,11 @@ public class MergeOperation
           source,
           request);
 
-        final Result result = ModifyOperation.execute(
-          connectionFactory,
+        final Result result = conn.operation(
           ModifyRequest.builder()
             .dn(target.getDn())
             .modificiations(resultModifications.toArray(AttributeModification[]::new))
-            .build());
+            .build()).execute();
         logger.info(
           "modified target entry {} with modifications {} from source entry " +
           "{} for request {}",
@@ -231,6 +235,7 @@ public class MergeOperation
   /**
    * Executes an {@link AddOperation} for the supplied entry.
    *
+   * @param  conn  connection to perform operation on
    * @param  request  merge request
    * @param  entry  to add to the LDAP
    *
@@ -238,15 +243,14 @@ public class MergeOperation
    *
    * @throws  LdapException  if an error occurs executing the add operation
    */
-  protected Result add(final MergeRequest request, final LdapEntry entry)
+  protected Result add(final Connection conn, final MergeRequest request, final LdapEntry entry)
     throws LdapException
   {
-    final Result result = AddOperation.execute(
-      connectionFactory,
+    final Result result = conn.operation(
       AddRequest.builder()
         .dn(entry.getDn())
         .attributes(entry.getAttributes())
-        .build());
+        .build()).execute();
     logger.info("added entry {} for request {}", entry, request);
     return result;
   }
@@ -255,6 +259,7 @@ public class MergeOperation
   /**
    * Executes a {@link DeleteOperation} for the supplied entry.
    *
+   * @param  conn  connection to perform operation on
    * @param  request  merge request
    * @param  entry  to delete from the LDAP
    *
@@ -262,10 +267,10 @@ public class MergeOperation
    *
    * @throws  LdapException  if an error occurs executing the deleting operation
    */
-  protected Result delete(final MergeRequest request, final LdapEntry entry)
+  protected Result delete(final Connection conn, final MergeRequest request, final LdapEntry entry)
     throws LdapException
   {
-    final Result result = DeleteOperation.execute(connectionFactory, new DeleteRequest(entry.getDn()));
+    final Result result = conn.operation(new DeleteRequest(entry.getDn())).execute();
     logger.info("delete entry {} for request {}", entry, request);
     return result;
   }
