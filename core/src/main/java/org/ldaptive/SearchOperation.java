@@ -765,7 +765,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    *
    * @return  configured search request
    */
-  protected SearchRequest configureRequest(
+  private SearchRequest configureRequest(
     final String baseDN,
     final Filter filter,
     final String[] returnAttributes)
