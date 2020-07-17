@@ -53,6 +53,9 @@ public abstract class TransportConnection implements Connection
    */
   public TransportConnection(final ConnectionConfig config)
   {
+    if (config == null) {
+      throw new NullPointerException("Connection config cannot be null");
+    }
     connectionConfig = config;
     connectionStrategy = connectionConfig.getConnectionStrategy();
     synchronized (connectionStrategy) {
@@ -100,15 +103,6 @@ public abstract class TransportConnection implements Connection
       throw new LdapException(ResultCode.CONNECT_ERROR, "Open in progress");
     }
   }
-
-
-  /**
-   * Returns the URL that was selected for this connection. The existence of this value does not indicate a current
-   * established connection.
-   *
-   * @return  LDAP URL
-   */
-  public abstract LdapURL getLdapURL();
 
 
   /**

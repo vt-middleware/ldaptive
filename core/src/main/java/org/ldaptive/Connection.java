@@ -131,6 +131,15 @@ public interface Connection extends AutoCloseable
 
 
   /**
+   * Returns the URL that was selected for this connection. The existence of this value does not indicate a current
+   * established connection.
+   *
+   * @return  LDAP URL
+   */
+  LdapURL getLdapURL();
+
+
+  /**
    * Returns whether this connection is open.
    *
    * @return  whether this connection is open

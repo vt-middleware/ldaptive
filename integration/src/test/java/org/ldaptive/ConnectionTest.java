@@ -121,6 +121,25 @@ public class ConnectionTest
 
   /** @throws  Exception  On test failure. */
   @Test(groups = "conn")
+  public void getLdapURL()
+    throws Exception
+  {
+    final ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setLdapUrl(cc.getLdapUrl().concat("/dc=ldaptive,dc=org?cn,sn?one?(uid=dfisher)"));
+    final DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
+
+    final Connection conn = connFactory.getConnection();
+    try {
+      conn.open();
+      Assert.assertTrue(conn.getLdapURL().getUrl().endsWith("/dc=ldaptive,dc=org?cn,sn?one?(uid=dfisher)"));
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "conn")
   public void strategyConnect()
     throws Exception
   {

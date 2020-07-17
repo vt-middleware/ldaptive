@@ -15,6 +15,7 @@ import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.ClosedRetryMetadata;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
+import org.ldaptive.SearchScope;
 import org.ldaptive.UnbindRequest;
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -101,6 +102,48 @@ public class NettyConnectionTest
     Assert.assertEquals(options.get(ChannelOption.TCP_NODELAY), true);
     Assert.assertEquals(options.get(ChannelOption.SO_SNDBUF), 1024);
     Assert.assertEquals(options.get(ChannelOption.SO_RCVBUF), 1024);
+  }
+
+
+  @Test(groups = "netty")
+  public void getLdapURL()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final NettyConnection conn = new NettyConnection(
+        ConnectionConfig.builder()
+          .url(
+            "ldap://" + address.getHostName() + ":" + address.getPort() + "/dc=ldaptive,dc=org?cn,sn?one?(uid=dfisher)")
+          .build(),
+        NioSocketChannel.class,
+        new NioEventLoopGroup(
+          0,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+        null,
+        true);
+      try {
+        conn.open();
+        Assert.assertNotNull(conn.getLdapURL());
+        Assert.assertEquals(conn.getLdapURL().getScheme(), "ldap");
+        Assert.assertEquals(conn.getLdapURL().getHostname(), address.getHostName());
+        Assert.assertEquals(conn.getLdapURL().getPort(), address.getPort());
+        Assert.assertFalse(conn.getLdapURL().isDefaultBaseDn());
+        Assert.assertEquals(conn.getLdapURL().getBaseDn(), "dc=ldaptive,dc=org");
+        Assert.assertFalse(conn.getLdapURL().isDefaultAttributes());
+        Assert.assertEquals(conn.getLdapURL().getAttributes(), new String[] {"cn", "sn"});
+        Assert.assertFalse(conn.getLdapURL().isDefaultScope());
+        Assert.assertEquals(conn.getLdapURL().getScope(), SearchScope.ONELEVEL);
+        Assert.assertFalse(conn.getLdapURL().isDefaultFilter());
+        Assert.assertEquals(conn.getLdapURL().getFilter(), "(uid=dfisher)");
+      } finally {
+        conn.close();
+        Assert.assertFalse(conn.isOpen());
+      }
+    } finally {
+      server.stop();
+    }
   }
 
 
