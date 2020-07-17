@@ -85,6 +85,7 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
   }
 
 
+  @SuppressWarnings("unchecked")
   public void setRequestHandlers(final RequestHandler<Q>... handlers)
   {
     requestHandlers = handlers;
@@ -286,6 +287,7 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
      *
      * @return  this builder
      */
+    @SuppressWarnings("unchecked")
     public B onRequest(final RequestHandler... handlers)
     {
       object.setRequestHandlers(handlers);
