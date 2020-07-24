@@ -7,9 +7,9 @@ function run_mvn() {
   PHASES=$2
   SWITCH=$3
   if [ -z "${SWITCH}" ]; then
-    ${MVN} -U -P${PROFILES} ${PHASES}
+    ${MVN} -B -U -P${PROFILES} ${PHASES}
   else
-    ${MVN} -U -P${PROFILES} ${PHASES} ${SWITCH}
+    ${MVN} -B -U -P${PROFILES} ${PHASES} ${SWITCH}
   fi
 }
 

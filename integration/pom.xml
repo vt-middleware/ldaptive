@@ -167,7 +167,7 @@
                 <resource>
                   <directory>${project.build.directory}</directory>
                   <includes>
-                    <include>${project.artifactId}-${project.version}-tests.jar</include>
+                    <include>${project.artifactId}-tests.jar</include>
                   </includes>
                 </resource>
               </resources>
