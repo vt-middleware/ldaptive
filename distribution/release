@@ -8,14 +8,16 @@ function user_continue() {
   fi
 }
 
-if [ "$#" -ne 3 ]; then
-  echo "USAGE: `basename $0` <branch> <release-version> <next-version>"
+if [ "$#" -ne 5 ]; then
+  echo "USAGE: `basename $0` <branch> <release-version> <next-version> <sonatype-user> <sonatype-passwd>"
   exit
 fi
 
 BRANCH="${1}"
 RELEASE_VERSION="${2}"
 NEXT_VERSION="${3}"
+SONATYPE_USER="${4}"
+SONATYPE_PASSWORD="${5}"
 echo "================================================================="
 echo "BEGIN RELEASE"
 echo "BRANCH TO TAG:   ${BRANCH}"
@@ -89,7 +91,7 @@ echo "Committed new javadocs"
 echo "Updating schema"
 user_continue
 
-#cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext.xsd
+cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext.xsd
 cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext-${RELEASE_VERSION}.xsd
 git add schema
 git commit -a -m "Updated schema for ${RELEASE_VERSION} release."
@@ -108,5 +110,25 @@ echo "Committed new release binaries"
 # push changes to the server
 git push origin gh-pages
 
-echo "Finished release ${RELEASE_VERSION} for ldaptive"
+# upload bundle jars to sonatype
+echo "Uploading bundle jars to sonatype"
+user_continue
+
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@target/ldaptive-parent-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@core/target/ldaptive-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@json/target/ldaptive-json-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@beans/target/ldaptive-beans-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@templates/target/ldaptive-templates-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+
+echo "Finished release ${RELEASE_VERSION} for ldaptive."
 
