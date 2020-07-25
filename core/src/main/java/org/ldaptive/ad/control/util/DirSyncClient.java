@@ -12,6 +12,12 @@ import org.ldaptive.ad.control.ShowDeletedControl;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.util.CookieManager;
 import org.ldaptive.control.util.DefaultCookieManager;
+import org.ldaptive.handler.ExceptionHandler;
+import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.handler.ResultHandler;
+import org.ldaptive.handler.ResultPredicate;
+import org.ldaptive.handler.SearchReferenceHandler;
+import org.ldaptive.handler.SearchResultHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +43,24 @@ public class DirSyncClient
 
   /** ExtendedDn flags. */
   private ExtendedDnControl.Flag extendedDnFlag = ExtendedDnControl.Flag.STANDARD;
+
+  /** Functions to handle response results. */
+  private ResultHandler[] resultHandlers;
+
+  /** Function to handle exceptions. */
+  private ExceptionHandler exceptionHandler;
+
+  /** Function to test results. */
+  private ResultPredicate throwCondition;
+
+  /** Functions to handle response entries. */
+  private LdapEntryHandler[] entryHandlers;
+
+  /** Functions to handle response references. */
+  private SearchReferenceHandler[] referenceHandlers;
+
+  /** Functions to handle response results. */
+  private SearchResultHandler[] searchResultHandlers;
 
 
   /**
@@ -74,6 +98,78 @@ public class DirSyncClient
     factory = cf;
     dirSyncFlags = dsFlags;
     maxAttributeCount = count;
+  }
+
+
+  public ResultHandler[] getResultHandlers()
+  {
+    return resultHandlers;
+  }
+
+
+  public void setResultHandlers(final ResultHandler... handlers)
+  {
+    resultHandlers = handlers;
+  }
+
+
+  public ExceptionHandler getExceptionHandler()
+  {
+    return exceptionHandler;
+  }
+
+
+  public void setExceptionHandler(final ExceptionHandler handler)
+  {
+    exceptionHandler = handler;
+  }
+
+
+  public ResultPredicate getThrowCondition()
+  {
+    return throwCondition;
+  }
+
+
+  public void setThrowCondition(final ResultPredicate function)
+  {
+    throwCondition = function;
+  }
+
+
+  public LdapEntryHandler[] getEntryHandlers()
+  {
+    return entryHandlers;
+  }
+
+
+  public void setEntryHandlers(final LdapEntryHandler... handlers)
+  {
+    entryHandlers = handlers;
+  }
+
+
+  public SearchReferenceHandler[] getReferenceHandlers()
+  {
+    return referenceHandlers;
+  }
+
+
+  public void setReferenceHandlers(final SearchReferenceHandler... handlers)
+  {
+    referenceHandlers = handlers;
+  }
+
+
+  public SearchResultHandler[] getSearchResultHandlers()
+  {
+    return searchResultHandlers;
+  }
+
+
+  public void setSearchResultHandlers(final SearchResultHandler... handlers)
+  {
+    searchResultHandlers = handlers;
   }
 
 
@@ -172,7 +268,7 @@ public class DirSyncClient
     throws LdapException
   {
     request.setControls(createRequestControls(manager.readCookie()));
-    final SearchOperation search = new SearchOperation(factory);
+    final SearchOperation search = createSearchOperation();
     final SearchResponse result = search.execute(request);
     final byte[] cookie = getDirSyncCookie(result);
     if (cookie != null) {
@@ -238,7 +334,7 @@ public class DirSyncClient
   {
     SearchResponse response = null;
     final SearchResponse combinedResponse = new SearchResponse();
-    final SearchOperation search = new SearchOperation(factory);
+    final SearchOperation search = createSearchOperation();
     byte[] cookie = manager.readCookie();
     long flags;
     do {
@@ -257,6 +353,24 @@ public class DirSyncClient
     response.addEntries(combinedResponse.getEntries());
     response.addReferences(combinedResponse.getReferences());
     return response;
+  }
+
+
+  /**
+   * Creates a new search operation configured with the properties on this client.
+   *
+   * @return  new search operation
+   */
+  protected SearchOperation createSearchOperation()
+  {
+    final SearchOperation search = new SearchOperation(factory);
+    search.setResultHandlers(resultHandlers);
+    search.setExceptionHandler(exceptionHandler);
+    search.setThrowCondition(throwCondition);
+    search.setEntryHandlers(entryHandlers);
+    search.setReferenceHandlers(referenceHandlers);
+    search.setSearchResultHandlers(searchResultHandlers);
+    return search;
   }
 
 

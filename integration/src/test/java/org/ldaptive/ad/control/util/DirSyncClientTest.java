@@ -9,6 +9,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.ad.control.DirSyncControl;
+import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -87,6 +88,7 @@ public class DirSyncClientTest extends AbstractTest
     final DirSyncClient client = new DirSyncClient(
       TestUtils.createConnectionFactory(),
       new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
+    client.setEntryHandlers(new ObjectGuidHandler());
 
     final SearchRequest request = new SearchRequest(dn.substring(dn.indexOf(",") + 1), filter, "uid");
     final SearchResponse response = client.execute(request);
@@ -118,6 +120,7 @@ public class DirSyncClientTest extends AbstractTest
     final DirSyncClient client = new DirSyncClient(
       TestUtils.createConnectionFactory(),
       new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
+    client.setEntryHandlers(new ObjectGuidHandler());
 
     final SearchRequest request = new SearchRequest(dn.substring(dn.indexOf(",") + 1), filter, "uid");
     final SearchResponse response = client.executeToCompletion(request);
