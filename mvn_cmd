@@ -3,6 +3,16 @@
 MVN=mvn
 
 function run_mvn() {
+  PHASES=$1
+  SWITCH=$2
+  if [ -z "${SWITCH}" ]; then
+    ${MVN} -B -U ${PHASES}
+  else
+    ${MVN} -B -U ${PHASES} ${SWITCH}
+  fi
+}
+
+function run_mvn_profile() {
   PROFILES=$1
   PHASES=$2
   SWITCH=$3
@@ -15,19 +25,19 @@ function run_mvn() {
 
 case "$1" in
   clean)
-    run_mvn integration,benchmark,profile,distribution clean
+    run_mvn_profile integration,benchmark,profile,distribution clean
     ;;
   javadoc)
     run_mvn javadoc:javadoc
     ;;
   package)
-    run_mvn distribution package
+    run_mvn_profile distribution package
     ;;
   verify)
-    run_mvn distribution verify
+    run_mvn_profile distribution verify
     ;;
   install)
-    run_mvn distribution install
+    run_mvn_profile distribution install
     ;;
   versions-set)
     VERSION=${2}
@@ -35,13 +45,13 @@ case "$1" in
       echo "USAGE: `basename $0` versions-set <version>"
       exit 1
     fi
-    run_mvn distribution versions:set "-DnewVersion=${VERSION} -DgenerateBackupPoms=false"
+    run_mvn_profile distribution versions:set "-DnewVersion=${VERSION} -DgenerateBackupPoms=false"
     ;;
   versions-display-dependency)
-    run_mvn integration,benchmark,profile,distribution versions:display-dependency-updates
+    run_mvn_profile integration,benchmark,profile,distribution versions:display-dependency-updates
     ;;
   versions-display-plugin)
-    run_mvn integration,benchmark,profile,distribution versions:display-plugin-updates
+    run_mvn_profile integration,benchmark,profile,distribution versions:display-plugin-updates
     ;;
   deploy)
     LOCAL_REPO=${2}
@@ -53,7 +63,7 @@ case "$1" in
     run_mvn deploy "-DaltDeploymentRepository=snapshot::default::file://${LOCAL_REPO}"
     ;;
   bundle-create)
-    run_mvn distribution repository:bundle-create -Dsign=true
+    run_mvn_profile distribution repository:bundle-create -Dsign=true
     ;;
   *)
     if [ -n "$1" ]; then
