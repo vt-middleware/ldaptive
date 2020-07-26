@@ -6,9 +6,9 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
-## Version 2.0.0-RC4 - 10Apr2020
+## Version 2.0.0 - 26Jul2020
 
-Netty library refactoring.
+Initial v2 release based on Netty. Java 11 required.
 
 ## Version 1.2.4 - 18Jan2019
 
