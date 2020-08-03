@@ -13,9 +13,6 @@ Developers need LDAP integration for their products, but the JNDI API is cumbers
 
 ### version [2.0.0] is now available in maven central.
 
-### [v1 docs](v1/) are still available.
-Note that the JNDI provider is broken in Java versions 9 through 13. If you're upgrading to Java 11 or greater you should upgrade ldaptive to v1.3.0 and make sure you're not explicitly using the JNDI provider.
-
 ## Features
 * Netty based asynchronous networking
 * Reactive API
@@ -72,3 +69,6 @@ For more details on authentication, see the [authentication documentation](docs/
 * Transcoders have been moved to the `transcode` package.
 * `SearchFilter` has been renamed `FilterTemplate`.
 * Exceptions occur for I/O or configuration related problems, not LDAP server messages. To configure exception behavior see `setThrowCondition` on operations and `throwIf` on handles.
+
+### [v1 docs](v1/) are still available.
+
