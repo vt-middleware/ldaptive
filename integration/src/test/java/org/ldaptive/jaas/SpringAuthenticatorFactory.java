@@ -35,7 +35,7 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
   public Authenticator createAuthenticator(final Map<String, ?> jaasOptions)
   {
     if (context == null) {
-      throw new UnsupportedOperationException("Could not initialize spring context");
+      throw new IllegalStateException("Could not initialize spring context");
     }
     return context.getBean("authenticator", Authenticator.class);
   }
@@ -45,7 +45,7 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
   public AuthenticationRequest createAuthenticationRequest(final Map<String, ?> jaasOptions)
   {
     if (context == null) {
-      throw new UnsupportedOperationException("Could not initialize spring context");
+      throw new IllegalStateException("Could not initialize spring context");
     }
     return context.getBean("authenticationRequest", AuthenticationRequest.class);
   }
@@ -55,7 +55,7 @@ public class SpringAuthenticatorFactory implements AuthenticatorFactory
   public static void close()
   {
     if (context == null) {
-      throw new UnsupportedOperationException("Could not initialize spring context");
+      throw new IllegalStateException("Could not initialize spring context");
     }
 
     final Authenticator auth = context.getBean("authenticator", Authenticator.class);

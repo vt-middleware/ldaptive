@@ -41,19 +41,23 @@
   <bean id="drConnectionFactory"
     class="org.ldaptive.PooledConnectionFactory"
         init-method="initialize"
-        p:poolConfig-ref="poolConfig"
-        p:connectionConfig-ref="connectionConfig" />
+        p:minPoolSize="5"
+        p:maxPoolSize="20"
+        p:validator-ref="connectionValidator"
+        p:connectionConfig-ref="connectionConfig"
+  />
 
   <bean id="ahConnectionFactory"
     class="org.ldaptive.PooledConnectionFactory"
         init-method="initialize"
-        p:poolConfig-ref="poolConfig"
-        p:connectionConfig-ref="connectionConfig" />
+        p:minPoolSize="5"
+        p:maxPoolSize="20"
+        p:validator-ref="connectionValidator"
+        p:connectionConfig-ref="connectionConfig"
+  />
 
-  <bean id="poolConfig"
-    class="org.ldaptive.pool.PoolConfig"
-    p:minPoolSize="5"
-    p:maxPoolSize="20"
+  <bean id="connectionValidator"
+    class="org.ldaptive.SearchConnectionValidator"
     p:validatePeriod="PT30S"
   />
 
