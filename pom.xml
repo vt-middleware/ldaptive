@@ -14,15 +14,6 @@
     <system>GitHub</system>
     <url>https://github.com/vt-middleware/ldaptive/issues</url>
   </issueManagement>
-  <mailingLists>
-    <mailingList>
-      <name>ldaptive</name>
-      <subscribe>ldaptive+subscribe@googlegroups.com</subscribe>
-      <unsubscribe>ldaptive+unsubscribe@googlegroups.com</unsubscribe>
-      <post>ldaptive@googlegroups.com</post>
-      <archive>http://groups.google.com/group/ldaptive</archive>
-    </mailingList>
-  </mailingLists>
   <licenses>
     <license>
       <name>Apache 2</name>
