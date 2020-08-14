@@ -12,7 +12,7 @@ import java.util.Map;
 import org.ldaptive.ResultCode;
 
 /**
- * Parses an LDAP search filter string using regular expressions.
+ * Parses an LDAP search filter string.
  *
  * @author  Middleware Services
  */
