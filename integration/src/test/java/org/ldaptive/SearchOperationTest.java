@@ -24,6 +24,7 @@ import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.concurrent.SearchOperationWorker;
+import org.ldaptive.control.MatchedValuesRequestControl;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.ProxyAuthorizationControl;
 import org.ldaptive.control.SortKey;
@@ -618,6 +619,126 @@ public class SearchOperationTest extends AbstractTest
         Assert.assertEquals(e.getAttribute("uid").getStringValue(), String.valueOf(2000 + i));
         i--;
       }
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported by the directory
+      Assert.assertNotNull(e);
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters(
+    {
+      "matchedValuesSearchDn",
+      "matchedValuesSearchFilter"
+    })
+  @Test(groups = "search")
+  public void matchValuesSearch(final String dn, final String filter)
+    throws Exception
+  {
+    try {
+      final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+
+      // test mail presence
+      SearchRequest request = SearchRequest.builder()
+        .dn(dn)
+        .filter(filter)
+        .controls(new MatchedValuesRequestControl(
+          new String[] {"(mail=*)"}, true))
+        .build();
+      SearchResponse result = search.execute(request);
+      if (result.getResultCode() == ResultCode.UNAVAILABLE_CRITICAL_EXTENSION) {
+        // ignore this test if not supported by the server
+        throw new UnsupportedOperationException("LDAP server does not support this control");
+      }
+      Assert.assertEquals(result.entrySize(), 1);
+      Assert.assertEquals(result.getEntry().size(), 1);
+      LdapAttribute attr = result.getEntry().getAttribute();
+      Assert.assertEquals(attr.getName(), "mail");
+      Assert.assertEqualsNoOrder(
+        attr.getStringValues().toArray(new String[0]),
+        new String[] {"jadams@ldaptive.org", "john.adams@ldaptive.org", "adams@ldaptive.org"});
+
+      // test mail equality
+      request = SearchRequest.builder()
+        .dn(dn)
+        .filter(filter)
+        .controls(new MatchedValuesRequestControl(
+          new String[] {"(mail=john.adams@ldaptive.org)"}, true))
+        .build();
+      result = search.execute(request);
+      if (result.getResultCode() == ResultCode.UNAVAILABLE_CRITICAL_EXTENSION) {
+        // ignore this test if not supported by the server
+        throw new UnsupportedOperationException("LDAP server does not support this control");
+      }
+      Assert.assertEquals(result.entrySize(), 1);
+      Assert.assertEquals(result.getEntry().size(), 1);
+      attr = result.getEntry().getAttribute();
+      Assert.assertEquals(attr.getName(), "mail");
+      Assert.assertEquals(attr.size(), 1);
+      Assert.assertEquals(attr.getStringValue(), "john.adams@ldaptive.org");
+
+      // test mail substring
+      request = SearchRequest.builder()
+        .dn(dn)
+        .filter(filter)
+        .controls(new MatchedValuesRequestControl(
+          new String[] {"(mail=j*adams*)"}, true))
+        .build();
+      result = search.execute(request);
+      if (result.getResultCode() == ResultCode.UNAVAILABLE_CRITICAL_EXTENSION) {
+        // ignore this test if not supported by the server
+        throw new UnsupportedOperationException("LDAP server does not support this control");
+      }
+      Assert.assertEquals(result.entrySize(), 1);
+      Assert.assertEquals(result.getEntry().size(), 1);
+      attr = result.getEntry().getAttribute();
+      Assert.assertEquals(attr.getName(), "mail");
+      Assert.assertEqualsNoOrder(
+        attr.getStringValues().toArray(new String[0]),
+        new String[] {"jadams@ldaptive.org", "john.adams@ldaptive.org"});
+
+      // test mail extensible
+      request = SearchRequest.builder()
+        .dn(dn)
+        .filter(filter)
+        .controls(new MatchedValuesRequestControl(
+          new String[] {"(mail:caseExactIA5Match:=john.adams@ldaptive.org)"},
+          true))
+        .build();
+      result = search.execute(request);
+      if (result.getResultCode() == ResultCode.UNAVAILABLE_CRITICAL_EXTENSION) {
+        // ignore this test if not supported by the server
+        throw new UnsupportedOperationException("LDAP server does not support this control");
+      }
+      Assert.assertEquals(result.entrySize(), 1);
+      Assert.assertEquals(result.getEntry().size(), 1);
+      attr = result.getEntry().getAttribute();
+      Assert.assertEquals(attr.getName(), "mail");
+      Assert.assertEquals(attr.size(), 1);
+      Assert.assertEquals(attr.getStringValue(), "john.adams@ldaptive.org");
+
+      // test multiple filters
+      request = SearchRequest.builder()
+        .dn(dn)
+        .filter(filter)
+        .controls(new MatchedValuesRequestControl("(mail=john.adams@ldaptive.org)", "(sn=Adams)"))
+        .build();
+      result = search.execute(request);
+      if (result.getResultCode() == ResultCode.UNAVAILABLE_CRITICAL_EXTENSION) {
+        // ignore this test if not supported by the server
+        throw new UnsupportedOperationException("LDAP server does not support this control");
+      }
+      Assert.assertEquals(result.entrySize(), 1);
+      Assert.assertEquals(result.getEntry().size(), 2);
+      Assert.assertEquals(result.getEntry().getAttribute("mail").getStringValue(), "john.adams@ldaptive.org");
+      Assert.assertEquals(result.getEntry().getAttribute("sn").getStringValue(), "Adams");
+
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
       Assert.assertNotNull(e);
