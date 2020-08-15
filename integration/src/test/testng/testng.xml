@@ -244,6 +244,9 @@
   <parameter name="sortSearchDn" value="${ldapBaseDn}"/>
   <parameter name="sortSearchFilter" value="(|(uugid=group2)(uugid=group3)(uugid=group4)(uugid=group5))"/>
 
+  <parameter name="matchedValuesSearchDn" value="${ldapBaseDn}"/>
+  <parameter name="matchedValuesSearchFilter" value="(uid=2)"/>
+
   <parameter name="proxyAuthzFrom" value="${ldapBindDn}"/>
   <parameter name="proxyAuthzTo" value="CN=John Adams,${ldapBaseDn}"/>
   <parameter name="proxyAuthzSearchDn" value="${ldapBaseDn}"/>

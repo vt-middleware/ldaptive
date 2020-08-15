@@ -245,7 +245,7 @@ public final class NettyConnection extends TransportConnection
     bootstrap.channel(channelType);
     channelOptions.forEach(bootstrap::option);
     bootstrap.handler(initializer);
-    LOGGER.trace("Created netty bootstrap {} with worker group {}", bootstrap, ioWorkerGroup);
+    LOGGER.trace("Created netty bootstrap {} with worker group {} for {}", bootstrap, ioWorkerGroup, this);
     return bootstrap;
   }
 

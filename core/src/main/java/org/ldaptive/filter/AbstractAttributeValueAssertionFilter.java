@@ -41,6 +41,28 @@ public abstract class AbstractAttributeValueAssertionFilter implements Filter
   }
 
 
+  /**
+   * Returns the attribute description.
+   *
+   * @return  attribute description
+   */
+  public String getAttributeDesc()
+  {
+    return attributeDesc;
+  }
+
+
+  /**
+   * Returns the assertion value.
+   *
+   * @return  assertion value
+   */
+  public byte[] getAssertionValue()
+  {
+    return assertionValue;
+  }
+
+
   @Override
   public DEREncoder getEncoder()
   {

@@ -28,8 +28,8 @@ public class ExtensibleFilter implements Filter
   /** Attribute description. */
   private final String attributeDesc;
 
-  /** Attribute assertion. */
-  private final byte[] assertion;
+  /** Attribute value. */
+  private final byte[] assertionValue;
 
   /** DN attributes. */
   private final boolean dnAttributes;
@@ -93,8 +93,52 @@ public class ExtensibleFilter implements Filter
     }
     matchingRuleID = matchingRule;
     attributeDesc = type;
-    assertion = value;
+    assertionValue = value;
     dnAttributes = dnAttrs;
+  }
+
+
+  /**
+   * Returns the matching rule id.
+   *
+   * @return  matching rule id
+   */
+  public String getMatchingRuleID()
+  {
+    return matchingRuleID;
+  }
+
+
+  /**
+   * Returns the attribute description.
+   *
+   * @return  attribute description
+   */
+  public String getAttributeDesc()
+  {
+    return attributeDesc;
+  }
+
+
+  /**
+   * Returns the assertion value.
+   *
+   * @return  assertion value
+   */
+  public byte[] getAssertionValue()
+  {
+    return assertionValue;
+  }
+
+
+  /**
+   * Returns whether matching should occur against attributes of the DN.
+   *
+   * @return  whether to match against DN attributes
+   */
+  public boolean getDnAttributes()
+  {
+    return dnAttributes;
   }
 
 
@@ -105,7 +149,7 @@ public class ExtensibleFilter implements Filter
     final DEREncoder[] encoders = new DEREncoder[4];
     encoders[0] = matchingRuleID != null ? new OctetStringType(new ContextDERTag(1, false), matchingRuleID) : null;
     encoders[1] = attributeDesc != null ? new OctetStringType(new ContextDERTag(2, false), attributeDesc) : null;
-    encoders[2] = assertion != null ? new OctetStringType(new ContextDERTag(3, false), assertion) : null;
+    encoders[2] = assertionValue != null ? new OctetStringType(new ContextDERTag(3, false), assertionValue) : null;
     encoders[3] = dnAttributes ? new BooleanType(new ContextDERTag(4, false), true) : null;
     // CheckStyle:MagicNumber ON
     return new ConstructedDEREncoder(
@@ -124,7 +168,7 @@ public class ExtensibleFilter implements Filter
       final ExtensibleFilter v = (ExtensibleFilter) o;
       return LdapUtils.areEqual(matchingRuleID, v.matchingRuleID) &&
         LdapUtils.areEqual(attributeDesc, v.attributeDesc) &&
-        LdapUtils.areEqual(assertion, v.assertion) &&
+        LdapUtils.areEqual(assertionValue, v.assertionValue) &&
         LdapUtils.areEqual(dnAttributes, v.dnAttributes);
     }
     return false;
@@ -138,7 +182,7 @@ public class ExtensibleFilter implements Filter
       HASH_CODE_SEED,
       matchingRuleID,
       attributeDesc,
-      assertion,
+      assertionValue,
       dnAttributes);
   }
 
@@ -150,8 +194,8 @@ public class ExtensibleFilter implements Filter
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("matchingRuleID=").append(matchingRuleID).append(", ")
       .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("assertion=").append(
-        assertion == null ? null : new String(assertion, StandardCharsets.UTF_8)).append(", ")
+      .append("assertionValue=").append(
+        assertionValue == null ? null : new String(assertionValue, StandardCharsets.UTF_8)).append(", ")
       .append("dnAttributes=").append(dnAttributes).toString();
   }
 }

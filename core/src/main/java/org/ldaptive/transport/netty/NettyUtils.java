@@ -122,7 +122,8 @@ public final class NettyUtils
 
   /**
    * Invokes {@link EventLoopGroup#shutdownGracefully(long, long, TimeUnit)} on the supplied worker group. This method
-   * blocks until shutdown is complete.
+   * blocks for twice the {@link #DEFAULT_SHUTDOWN_MAX_TIMEOUT} waiting for the shutdown to be done. If the future is
+   * not invoked in that timeframe a warning is logged.
    *
    * @param  workerGroup  to shutdown
    */

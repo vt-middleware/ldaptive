@@ -36,6 +36,17 @@ public class PresenceFilter implements Filter
   }
 
 
+  /**
+   * Returns the attribute description.
+   *
+   * @return  attribute description
+   */
+  public String getAttributeDesc()
+  {
+    return attributeDesc;
+  }
+
+
   @Override
   public DEREncoder getEncoder()
   {

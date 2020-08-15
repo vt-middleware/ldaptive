@@ -5,6 +5,8 @@ displayName: John Adams
 givenName: John
 initials: JA
 mail: jadams@ldaptive.org
+mail: john.adams@ldaptive.org
+mail: adams@ldaptive.org
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person

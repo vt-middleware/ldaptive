@@ -100,6 +100,50 @@ public class SubstringFilter implements Filter
 
 
   /**
+   * Returns the attribute description.
+   *
+   * @return  attribute description
+   */
+  public String getAttributeDesc()
+  {
+    return attributeDesc;
+  }
+
+
+  /**
+   * Returns the initial substring assertion.
+   *
+   * @return  initial substring assertion
+   */
+  public byte[] getSubInitial()
+  {
+    return subInitial;
+  }
+
+
+  /**
+   * Returns the any substring assertion.
+   *
+   * @return  any substring assertion
+   */
+  public byte[][] getSubAny()
+  {
+    return subAny;
+  }
+
+
+  /**
+   * Returns the final substring assertion.
+   *
+   * @return  final substring assertion
+   */
+  public byte[] getSubFinal()
+  {
+    return subFinal;
+  }
+
+
+  /**
    * Returns the number of assertions in this substring filter.
    *
    * @return  assesrtion count
