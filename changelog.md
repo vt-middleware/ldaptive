@@ -6,6 +6,12 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.0.1-SNAPSHOT
+
+Issue | Description
+:---- | :----------
+[ldaptive-3]({{ site.issueURL }}3) | Add support for the matched values request control.
+
 ## Version 2.0.0 - 26Jul2020
 
 Initial v2 release based on Netty. Java 11 required.
