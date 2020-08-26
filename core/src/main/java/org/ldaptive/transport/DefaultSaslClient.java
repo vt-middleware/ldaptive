@@ -64,6 +64,9 @@ public class DefaultSaslClient implements SaslClient<DefaultSaslClientRequest>
 
       byte[] bytes = client.hasInitialResponse() ? client.evaluateChallenge(new byte[0]) : null;
       response = conn.operation(request.createBindRequest(bytes)).execute();
+      if (ResultCode.SASL_BIND_IN_PROGRESS != response.getResultCode()) {
+        return response;
+      }
       while (!client.isComplete() &&
         (ResultCode.SASL_BIND_IN_PROGRESS == response.getResultCode() ||
           ResultCode.SUCCESS == response.getResultCode())) {
@@ -101,10 +104,13 @@ public class DefaultSaslClient implements SaslClient<DefaultSaslClientRequest>
   /**
    * Returns the QOP for this client. See {@link javax.security.sasl.SaslClient#getNegotiatedProperty(String)}.
    *
-   * @return  QOP
+   * @return  QOP or null if the underlying sasl client has not completed
    */
   public QualityOfProtection getQualityOfProtection()
   {
+    if (!client.isComplete()) {
+      return null;
+    }
     return QualityOfProtection.fromString((String) client.getNegotiatedProperty(Sasl.QOP));
   }
 
