@@ -19,6 +19,7 @@ public class LdapURLActivatorServiceTest
    */
   @Test
   public void retryInactiveUrls()
+    throws Exception
   {
     final ActivePassiveConnectionStrategy strategy = new ActivePassiveConnectionStrategy();
     strategy.setRetryCondition(url -> Instant.now().isAfter(url.getRetryMetadata().getFailureTime()));
@@ -33,6 +34,8 @@ public class LdapURLActivatorServiceTest
     final LdapURL url = strategy.iterator().next();
     strategy.failure(url);
     Assert.assertEquals(activator.getInactiveUrls().size(), 1);
+    // sleep here to guarantee the retry condition succeeds
+    Thread.sleep(1);
     activator.testInactiveUrls();
     Assert.assertEquals(activator.getInactiveUrls().size(), 0);
     activator.testInactiveUrls();
