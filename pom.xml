@@ -517,6 +517,24 @@
       </modules>
     </profile>
     <profile>
+      <!--
+      This profile requires a toolchains.xml file in $HOME/.m2
+      <?xml version="1.0" encoding="UTF8"?>
+      <toolchains>
+        <toolchain>
+          <type>jdk</type>
+          <provides>
+            <version>1.8</version>
+            <vendor>oracle</vendor>
+          </provides>
+          <configuration>
+            <jdkHome>/path/to/your/jdk8</jdkHome>
+          </configuration>
+        </toolchain>
+      </toolchains>
+
+      To execute this profile run: mvn -P-jdk11,jdk8
+      -->
       <id>jdk8</id>
       <build>
         <plugins>
@@ -564,7 +582,7 @@
               </execution>
               <execution>
                 <id>reverse-patch-jdk8-source</id>
-                <phase>process-classes</phase>
+                <phase>process-test-classes</phase>
                 <goals>
                   <goal>exec</goal>
                 </goals>
@@ -599,18 +617,6 @@
               <source>1.8</source>
               <target>1.8</target>
             </configuration>
-            <executions>
-              <execution>
-                <id>default-testCompile</id>
-                <phase>test-compile</phase>
-                <goals>
-                  <goal>testCompile</goal>
-                </goals>
-                <configuration>
-                  <skip>true</skip>
-                </configuration>
-              </execution>
-            </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>

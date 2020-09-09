@@ -38,11 +38,11 @@
 -            Objects.requireNonNullElseGet(dnsContextFactory, () -> new DefaultDNSContextFactory(dnsUrl[0])), useSSL),
 -          dnsUrl[1]);
 +        if (dnsContextFactory == null) {
-+            dnsResolvers.put(new SRVDNSResolver(new DefaultDNSContextFactory(dnsUrl[0]), useSSL), dnsUrl[1]);
++          dnsResolvers.put(new SRVDNSResolver(new DefaultDNSContextFactory(dnsUrl[0]), useSSL), dnsUrl[1]);
 +        } else {
-+            dnsResolvers.put(
-+              new SRVDNSResolver(dnsContextFactory, useSSL),
-+              dnsUrl[1]);
++          dnsResolvers.put(
++            new SRVDNSResolver(dnsContextFactory, useSSL),
++            dnsUrl[1]);
 +        }
        }
      } else {
@@ -125,8 +125,8 @@
          data.write(buffer, 0, length);
        }
 +    } finally {
-+        data.close();
-+        is.close();
++      data.close();
++      is.close();
      }
      return data.toByteArray();
    }
@@ -211,7 +211,7 @@
            bytes.write(encoder.encode());
          }
 +      } finally {
-+          bytes.close();
++        bytes.close();
        }
      } catch (IOException e) {
        throw new IllegalStateException("Encode failed", e);
@@ -346,7 +346,7 @@
 +        try {
            properties.load(r);
 +        } finally {
-+            r.close();
++          r.close();
          }
        }
        return properties;
@@ -361,3 +361,45 @@
            throw new LdapException(ResultCode.LOCAL_ERROR, "Could not acquire request semaphore");
          }
        } catch (InterruptedException e) {
+--- core/src/test/java/org/ldaptive/LdapEntryTest.java
++++ core/src/test/java/org/ldaptive/LdapEntryTest.java
+@@ -187,7 +187,7 @@ public class LdapEntryTest
+     final LdapEntry le = new LdapEntry();
+     le.addAttributes(attr2, attr1);
+
+-    final LdapAttribute[] attrs = le.getAttributes().toArray(LdapAttribute[]::new);
++    final LdapAttribute[] attrs = le.getAttributes().toArray(new LdapAttribute[le.getAttributes().size()]);
+     Assert.assertEquals(attr2, attrs[0]);
+     Assert.assertEquals(attr1, attrs[1]);
+     le.clear();
+--- core/src/test/java/org/ldaptive/RandomConnectionStrategyTest.java
++++ core/src/test/java/org/ldaptive/RandomConnectionStrategyTest.java
+@@ -132,7 +132,7 @@ public class RandomConnectionStrategyTest
+     cc.setLdapUrl("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org");
+     cc.setConnectionStrategy(strategy);
+     final MockConnection conn = new MockConnection(cc);
+-    conn.setOpenPredicate(new Predicate<>() {
++    conn.setOpenPredicate(new Predicate<LdapURL>() {
+       private int count;
+
+       @Override
+@@ -183,7 +183,7 @@ public class RandomConnectionStrategyTest
+     cc.setLdapUrl("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org");
+     cc.setConnectionStrategy(strategy);
+     final MockConnection conn = new MockConnection(cc);
+-    conn.setOpenPredicate(new Predicate<>() {
++    conn.setOpenPredicate(new Predicate<LdapURL>() {
+       private int count;
+
+       @Override
+--- core/src/test/java/org/ldaptive/SearchResponseTest.java
++++ core/src/test/java/org/ldaptive/SearchResponseTest.java
+@@ -359,7 +359,7 @@ public class SearchResponseTest
+     final SearchResponse sr = new SearchResponse();
+     sr.addEntries(entry2, entry1);
+
+-    final LdapEntry[] entries = sr.getEntries().toArray(LdapEntry[]::new);
++    final LdapEntry[] entries = sr.getEntries().toArray(new LdapEntry[sr.entrySize()]);
+     Assert.assertEquals(entry2, entries[0]);
+     Assert.assertEquals(entry1, entries[1]);
+   }
