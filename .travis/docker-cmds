@@ -1,7 +1,14 @@
 #!/bin/bash
 
+JAVA_VER=$(java -version 2>&1 |head -1 |cut -d'"' -f2 |cut -d'_' -f1)
+if [[ ${JAVA_VER} == "1.8.0" ]]; then
+  MVN_CMD="mvn -P-jdk11,jdk8"
+else
+  MVN_CMD="mvn"
+fi
+
 # execute maven in docker
-mvn install -Dmaven.javadoc.skip=true -B -V
+${MVN_CMD} install -Dmaven.javadoc.skip=true -B -V
 ret_code=$?
 if [ $ret_code != 0 ]; then
   echo "Maven install failed with error code ${ret_code}"

@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
-import java.util.Map;
+import java.util.Collections;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.MockConnectionFactory;
 import org.testng.Assert;
@@ -50,13 +50,14 @@ public class AuthenticatorTest
     final Authenticator auth = new Authenticator();
     auth.setDnResolver(
       new AggregateDnResolver(
-        Map.of("1", new SearchDnResolver(new MockConnectionFactory(new ConnectionConfig())))));
+        Collections.singletonMap("1", new SearchDnResolver(new MockConnectionFactory(new ConnectionConfig())))));
     auth.setAuthenticationHandler(
       new AggregateAuthenticationHandler(
-        Map.of("1", new SimpleBindAuthenticationHandler(new MockConnectionFactory(new ConnectionConfig())))));
+        Collections.singletonMap(
+          "1", new SimpleBindAuthenticationHandler(new MockConnectionFactory(new ConnectionConfig())))));
     auth.setEntryResolver(
       new AggregateEntryResolver(
-        Map.of("1", new SearchEntryResolver(new MockConnectionFactory(new ConnectionConfig())))));
+        Collections.singletonMap("1", new SearchEntryResolver(new MockConnectionFactory(new ConnectionConfig())))));
     auth.close();
 
     Assert.assertFalse(

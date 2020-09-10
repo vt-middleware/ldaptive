@@ -1,0 +1,405 @@
+--- core/src/main/java/org/ldaptive/AddRequest.java
++++ core/src/main/java/org/ldaptive/AddRequest.java
+@@ -65,7 +65,7 @@ public AddRequest(final String dn, final LdapAttribute... attrs)
+   public AddRequest(final String dn, final Collection<LdapAttribute> attrs)
+   {
+     ldapDn = dn;
+-    attributes = attrs.toArray(LdapAttribute[]::new);
++    attributes = attrs.toArray(new LdapAttribute[attrs.size()]);
+   }
+ 
+ 
+@@ -108,7 +108,7 @@ public String getDn()
+               new ConstructedDEREncoder(
+                 UniversalDERTag.SET,
+                   a.getBinaryValues().stream().map(
+-                    OctetStringType::new).toArray(DEREncoder[]::new)))).toArray(DEREncoder[]::new))),
++                    OctetStringType::new).toArray(size -> new DEREncoder[size])))).toArray(size -> new DEREncoder[size]))),
+     };
+   }
+ 
+@@ -191,7 +191,7 @@ public Builder attributes(final LdapAttribute... attrs)
+      */
+     public Builder attributes(final Collection<LdapAttribute> attrs)
+     {
+-      object.attributes = attrs.toArray(LdapAttribute[]::new);
++      object.attributes = attrs.toArray(new LdapAttribute[attrs.size()]);
+       return self();
+     }
+   }
+--- core/src/main/java/org/ldaptive/DnsSrvConnectionStrategy.java
++++ core/src/main/java/org/ldaptive/DnsSrvConnectionStrategy.java
+@@ -140,10 +140,13 @@ public void populate(final String urls, final LdapURLSet urlSet)
+       dnsResolvers = new HashMap<>();
+       for (String url : urls.split(" ")) {
+         final String[] dnsUrl = parseDnsUrl(url);
+-        dnsResolvers.put(
+-          new SRVDNSResolver(
+-            Objects.requireNonNullElseGet(dnsContextFactory, () -> new DefaultDNSContextFactory(dnsUrl[0])), useSSL),
+-          dnsUrl[1]);
++        if (dnsContextFactory == null) {
++          dnsResolvers.put(new SRVDNSResolver(new DefaultDNSContextFactory(dnsUrl[0]), useSSL), dnsUrl[1]);
++        } else {
++          dnsResolvers.put(
++            new SRVDNSResolver(dnsContextFactory, useSSL),
++            dnsUrl[1]);
++        }
+       }
+     } else {
+       final String[] dnsUrl = parseDnsUrl(urls);
+--- core/src/main/java/org/ldaptive/LdapAttribute.java
++++ core/src/main/java/org/ldaptive/LdapAttribute.java
+@@ -191,7 +191,7 @@ public String getName(final boolean withOptions)
+     if (attributeName.indexOf(";") > 0) {
+       final String[] split = attributeName.split(";");
+       if (split.length > 1) {
+-        return IntStream.range(1, split.length).mapToObj(i -> split[i]).collect(Collectors.toUnmodifiableList());
++        return IntStream.range(1, split.length).mapToObj(i -> split[i]).collect(Collectors.toList());
+       }
+     }
+     return Collections.emptyList();
+@@ -214,7 +214,7 @@ public String getName(final boolean withOptions)
+     if (attributeValues.isEmpty()) {
+       return Collections.emptySet();
+     }
+-    return attributeValues.stream().map(ByteBuffer::array).collect(Collectors.toUnmodifiableList());
++    return attributeValues.stream().map(ByteBuffer::array).collect(Collectors.toList());
+   }
+ 
+ 
+@@ -249,7 +249,7 @@ public String getStringValue()
+         return LdapUtils.base64Encode(v.array());
+       }
+       return new String(v.array(), StandardCharsets.UTF_8);
+-    }).collect(Collectors.toUnmodifiableList());
++    }).collect(Collectors.toList());
+   }
+ 
+ 
+@@ -280,7 +280,7 @@ public String getStringValue()
+     return attributeValues.stream()
+       .filter(Objects::nonNull)
+       .map(ByteBuffer::array)
+-      .map(func).collect(Collectors.toUnmodifiableList());
++      .map(func).collect(Collectors.toList());
+   }
+ 
+ 
+--- core/src/main/java/org/ldaptive/LdapEntry.java
++++ core/src/main/java/org/ldaptive/LdapEntry.java
+@@ -305,7 +305,7 @@ public static LdapEntry sort(final LdapEntry le)
+         mods.add(mod);
+       }
+     }
+-    return mods.toArray(AttributeModification[]::new);
++    return mods.stream().toArray(size -> new AttributeModification[size]);
+   }
+ 
+ 
+@@ -355,10 +355,10 @@ public void handle(final DERParser parser, final DERBuffer encoded)
+       final AttributeParser p = new AttributeParser();
+       p.parse(encoded);
+ 
+-      if (p.getName().isEmpty()) {
++      if (!p.getName().isPresent()) {
+         throw new IllegalArgumentException("Could not parse attribute");
+       }
+-      if (p.getValues().isEmpty()) {
++      if (!p.getValues().isPresent()) {
+         getObject().addAttributes(LdapAttribute.builder().name(p.getName().get()).build());
+       } else {
+         getObject().addAttributes(
+--- core/src/main/java/org/ldaptive/LdapUtils.java
++++ core/src/main/java/org/ldaptive/LdapUtils.java
+@@ -377,13 +377,17 @@ public static boolean shouldBase64Encode(final byte[] value)
+   public static byte[] readInputStream(final InputStream is)
+     throws IOException
+   {
++
+     final ByteArrayOutputStream data = new ByteArrayOutputStream();
+-    try (is; data) {
++    try {
+       final byte[] buffer = new byte[READ_BUFFER_SIZE];
+       int length;
+       while ((length = is.read(buffer)) != -1) {
+         data.write(buffer, 0, length);
+       }
++    } finally {
++      data.close();
++      is.close();
+     }
+     return data.toByteArray();
+   }
+--- core/src/main/java/org/ldaptive/ModifyRequest.java
++++ core/src/main/java/org/ldaptive/ModifyRequest.java
+@@ -113,7 +113,7 @@ public String getDn()
+                 new ConstructedDEREncoder(
+                   UniversalDERTag.SET,
+                   getAttributeValueEncoders(m.getAttribute().getBinaryValues())))))
+-            .toArray(DEREncoder[]::new))),
++            .toArray(size -> new DEREncoder[size]))),
+     };
+   }
+ 
+@@ -130,7 +130,7 @@ public String getDn()
+     if (values == null || values.size() == 0) {
+       return new DEREncoder[] {() -> EMPTY_BYTE};
+     }
+-    return values.stream().map(OctetStringType::new).toArray(DEREncoder[]::new);
++    return values.stream().map(OctetStringType::new).toArray(size -> new DEREncoder[size]);
+   }
+ 
+ 
+@@ -212,7 +212,7 @@ public Builder modificiations(final AttributeModification... mod)
+      */
+     public Builder modificiations(final Collection<AttributeModification> mod)
+     {
+-      object.modifications = mod.toArray(AttributeModification[]::new);
++      object.modifications = mod.stream().toArray(size -> new AttributeModification[size]);
+       return self();
+     }
+   }
+--- core/src/main/java/org/ldaptive/RandomConnectionStrategy.java
++++ core/src/main/java/org/ldaptive/RandomConnectionStrategy.java
+@@ -24,7 +24,7 @@
+       throw new IllegalStateException("Strategy is not initialized");
+     }
+     // CheckStyle:AnonInnerLength OFF
+-    return new Iterator<>() {
++    return new Iterator<LdapURL>() {
+       private final List<LdapURL> active = ldapURLSet.getActiveUrls().stream().collect(
+         Collectors.collectingAndThen(
+           Collectors.toCollection(ArrayList::new),
+--- core/src/main/java/org/ldaptive/SearchRequest.java
++++ core/src/main/java/org/ldaptive/SearchRequest.java
+@@ -500,7 +500,7 @@ public void configureBinaryAttributes(final LdapEntry entry)
+         searchFilter.getEncoder(),
+         new ConstructedDEREncoder(
+           UniversalDERTag.SEQ,
+-          Stream.of(returnAttributes).map(OctetStringType::new).toArray(DEREncoder[]::new))),
++          Stream.of(returnAttributes).map(OctetStringType::new).toArray(size -> new DEREncoder[size]))),
+     };
+   }
+ 
+@@ -890,7 +890,7 @@ public Builder returnAttributes(final String... attributes)
+      */
+     public Builder returnAttributes(final Collection<String> attributes)
+     {
+-      object.setReturnAttributes(attributes.toArray(String[]::new));
++      object.setReturnAttributes(attributes.stream().toArray(size -> new String[size]));
+       return self();
+     }
+ 
+@@ -918,7 +918,7 @@ public Builder binaryAttributes(final String... attributes)
+      */
+     public Builder binaryAttributes(final Collection<String> attributes)
+     {
+-      object.setBinaryAttributes(attributes.toArray(String[]::new));
++      object.setBinaryAttributes(attributes.stream().toArray(size -> new String[size]));
+       return self();
+     }
+   }
+--- core/src/main/java/org/ldaptive/asn1/ConstructedDEREncoder.java
++++ core/src/main/java/org/ldaptive/asn1/ConstructedDEREncoder.java
+@@ -40,10 +40,12 @@ public ConstructedDEREncoder(final DERTag tag, final DEREncoder... encoders)
+   {
+     final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+     try {
+-      try (bytes) {
++      try {
+         for (DEREncoder encoder : derEncoders) {
+           bytes.write(encoder.encode());
+         }
++      } finally {
++        bytes.close();
+       }
+     } catch (IOException e) {
+       throw new IllegalStateException("Encode failed", e);
+--- core/src/main/java/org/ldaptive/control/util/SyncReplRunner.java
++++ core/src/main/java/org/ldaptive/control/util/SyncReplRunner.java
+@@ -53,7 +53,7 @@
+   private final CookieManager cookieManager;
+ 
+   /** Invoked when an exception is received. */
+-  private final Consumer<Exception> onException = new Consumer<>() {
++  private final Consumer<Exception> onException = new Consumer<Exception>() {
+     @Override
+     public void accept(final Exception e)
+     {
+--- core/src/main/java/org/ldaptive/ext/MergeOperation.java
++++ core/src/main/java/org/ldaptive/ext/MergeOperation.java
+@@ -210,7 +210,7 @@ protected Result modify(
+         final Result result = conn.operation(
+           ModifyRequest.builder()
+             .dn(target.getDn())
+-            .modificiations(resultModifications.toArray(AttributeModification[]::new))
++            .modificiations(resultModifications.toArray(new AttributeModification[0]))
+             .build()).execute();
+         logger.info(
+           "modified target entry {} with modifications {} from source entry " +
+--- core/src/main/java/org/ldaptive/extended/PasswordModifyRequest.java
++++ core/src/main/java/org/ldaptive/extended/PasswordModifyRequest.java
+@@ -81,7 +81,7 @@ public PasswordModifyRequest(final String identity, final String oldPass, final
+     }
+     final ConstructedDEREncoder se = new ConstructedDEREncoder(
+       UniversalDERTag.SEQ,
+-      l.toArray(DEREncoder[]::new));
++      l.stream().toArray(size -> new DEREncoder[size]));
+     setRequestValue(se.encode());
+   }
+ }
+--- core/src/main/java/org/ldaptive/filter/DefaultFilterFunction.java
++++ core/src/main/java/org/ldaptive/filter/DefaultFilterFunction.java
+@@ -63,7 +63,7 @@ protected Filter parseFilterComp(final String filter)
+       throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter '" + filter + "' does not contain an expression");
+     }
+     final Filter searchFilter;
+-    filterBuffer = filterBuffer.limit(filterBuffer.limit() - 1).slice();
++    filterBuffer = ((CharBuffer) filterBuffer.limit(filterBuffer.limit() - 1)).slice();
+     if (!filterBuffer.hasRemaining()) {
+       throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter '" + filter + "' does not contain an expression");
+     }
+@@ -92,7 +92,7 @@ protected Filter parseFilterComp(final String filter)
+             // substring or equality
+             searchFilter = parseSubstringOrEquality(
+               attribute.toString(),
+-              filterBuffer.position(filterBuffer.position() - 1).slice());
++              ((CharBuffer) filterBuffer.position(filterBuffer.position() - 1)).slice());
+           }
+         }
+         break;
+@@ -100,7 +100,7 @@ protected Filter parseFilterComp(final String filter)
+         if (filterBuffer.get() != '=') {
+           searchFilter = parseExtensible(
+             attribute.toString(),
+-            filterBuffer.position(filterBuffer.position() - 1).slice());
++            ((CharBuffer) filterBuffer.position(filterBuffer.position() - 1)).slice());
+         } else {
+           try {
+             searchFilter = new ExtensibleFilter(
+@@ -177,7 +177,7 @@ private CharBuffer readAttribute(final CharBuffer cb)
+     }
+     final int pos = cb.position() - 1;
+     cb.position(pos);
+-    final CharBuffer slice = cb.flip().slice();
++    final CharBuffer slice = ((CharBuffer) cb.flip()).slice();
+     cb.limit(limit).position(pos);
+     return slice;
+   }
+@@ -260,9 +260,9 @@ private Filter parseSubstringOrEquality(final String attribute, final CharBuffer
+             if (!buffers.containsKey("ANY")) {
+               buffers.put("ANY", new ArrayList<>());
+             }
+-            buffers.get("ANY").add(cb.limit(pos - 1).reset().slice());
++            buffers.get("ANY").add(((CharBuffer) cb.limit(pos - 1).reset()).slice());
+           } else {
+-            buffers.put("INITIAL", Collections.singletonList(cb.limit(pos - 1).reset().slice()));
++            buffers.put("INITIAL", Collections.singletonList(((CharBuffer) cb.limit(pos - 1).reset()).slice()));
+           }
+           cb.limit(limit).position(pos);
+           cb.mark();
+@@ -314,7 +314,7 @@ private ExtensibleFilter parseExtensible(final String attribute, final CharBuffe
+       matchingRule = null;
+       if (remainingFilter.hasRemaining()) {
+         if (remainingFilter.get() != '=') {
+-          remainingFilter = remainingFilter.position(remainingFilter.position() - 1).slice();
++          remainingFilter = ((CharBuffer) remainingFilter.position(remainingFilter.position() - 1)).slice();
+           matchingRule = sliceAtMatch(remainingFilter, ':');
+         } else {
+           remainingFilter.position(remainingFilter.position() - 1);
+@@ -353,7 +353,7 @@ private CharBuffer sliceAtMatch(final CharBuffer cb, final char match)
+       if (c == match) {
+         final int pos = cb.position();
+         cb.position(pos - 1);
+-        final CharBuffer slice = cb.flip().slice();
++        final CharBuffer slice = ((CharBuffer) cb.flip()).slice();
+         cb.limit(limit).position(pos);
+         return slice;
+       }
+--- core/src/main/java/org/ldaptive/pool/PooledConnectionStatistics.java
++++ core/src/main/java/org/ldaptive/pool/PooledConnectionStatistics.java
+@@ -32,7 +32,7 @@
+   public PooledConnectionStatistics(final int i)
+   {
+     size = i;
+-    availableStats = new LinkedList<>() {
++    availableStats = new LinkedList<Instant>() {
+ 
+ 
+       @Override
+@@ -49,7 +49,7 @@ public boolean add(final Instant e)
+         return b;
+       }
+     };
+-    activeStats = new LinkedList<>() {
++    activeStats = new LinkedList<Instant>() {
+ 
+ 
+       @Override
+--- core/src/main/java/org/ldaptive/props/AbstractPropertySource.java
++++ core/src/main/java/org/ldaptive/props/AbstractPropertySource.java
+@@ -90,8 +90,10 @@ protected static Properties loadProperties(final Reader... readers)
+     try {
+       final Properties properties = new Properties();
+       for (Reader r : readers) {
+-        try (r) {
++        try {
+           properties.load(r);
++        } finally {
++          r.close();
+         }
+       }
+       return properties;
+--- core/src/main/java/org/ldaptive/transport/netty/HandleMap.java
++++ core/src/main/java/org/ldaptive/transport/netty/HandleMap.java
+@@ -178,7 +178,7 @@ private void acquireThrottle()
+   {
+     if (throttle != null) {
+       try {
+-        if (!throttle.tryAcquire(THROTTLE_TIMEOUT.toSeconds(), TimeUnit.SECONDS)) {
++        if (!throttle.tryAcquire(THROTTLE_TIMEOUT.getSeconds(), TimeUnit.SECONDS)) {
+           throw new LdapException(ResultCode.LOCAL_ERROR, "Could not acquire request semaphore");
+         }
+       } catch (InterruptedException e) {
+--- core/src/test/java/org/ldaptive/LdapEntryTest.java
++++ core/src/test/java/org/ldaptive/LdapEntryTest.java
+@@ -187,7 +187,7 @@ public class LdapEntryTest
+     final LdapEntry le = new LdapEntry();
+     le.addAttributes(attr2, attr1);
+
+-    final LdapAttribute[] attrs = le.getAttributes().toArray(LdapAttribute[]::new);
++    final LdapAttribute[] attrs = le.getAttributes().toArray(new LdapAttribute[le.getAttributes().size()]);
+     Assert.assertEquals(attr2, attrs[0]);
+     Assert.assertEquals(attr1, attrs[1]);
+     le.clear();
+--- core/src/test/java/org/ldaptive/RandomConnectionStrategyTest.java
++++ core/src/test/java/org/ldaptive/RandomConnectionStrategyTest.java
+@@ -132,7 +132,7 @@ public class RandomConnectionStrategyTest
+     cc.setLdapUrl("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org");
+     cc.setConnectionStrategy(strategy);
+     final MockConnection conn = new MockConnection(cc);
+-    conn.setOpenPredicate(new Predicate<>() {
++    conn.setOpenPredicate(new Predicate<LdapURL>() {
+       private int count;
+
+       @Override
+@@ -183,7 +183,7 @@ public class RandomConnectionStrategyTest
+     cc.setLdapUrl("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org");
+     cc.setConnectionStrategy(strategy);
+     final MockConnection conn = new MockConnection(cc);
+-    conn.setOpenPredicate(new Predicate<>() {
++    conn.setOpenPredicate(new Predicate<LdapURL>() {
+       private int count;
+
+       @Override
+--- core/src/test/java/org/ldaptive/SearchResponseTest.java
++++ core/src/test/java/org/ldaptive/SearchResponseTest.java
+@@ -359,7 +359,7 @@ public class SearchResponseTest
+     final SearchResponse sr = new SearchResponse();
+     sr.addEntries(entry2, entry1);
+
+-    final LdapEntry[] entries = sr.getEntries().toArray(LdapEntry[]::new);
++    final LdapEntry[] entries = sr.getEntries().toArray(new LdapEntry[sr.entrySize()]);
+     Assert.assertEquals(entry2, entries[0]);
+     Assert.assertEquals(entry1, entries[1]);
+   }
