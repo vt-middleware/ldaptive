@@ -29,7 +29,17 @@ if [[ "$VERSION" != *-SNAPSHOT ]]; then
 fi
 
 # Install git binary
-yum install -y git
+if ! command -v git &> /dev/null
+then
+  if command -v apt-get &> /dev/null
+    apt-get update && apt-get install -y git
+  elif command -v yum &> /dev/null
+    yum install -y git
+  else
+    echo "git could not be installed"
+    exit 1
+  fi
+fi
 
 SHA=`git rev-parse --verify HEAD`
 echo "Publishing snapshot jar for revision ${SHA}"

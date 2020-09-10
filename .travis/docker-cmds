@@ -7,6 +7,19 @@ else
   MVN_CMD="mvn"
 fi
 
+# Install patch binary
+if ! command -v patch &> /dev/null
+then
+  if command -v apt-get &> /dev/null
+    apt-get update && apt-get install -y patch
+  elif command -v yum &> /dev/null
+    yum install -y patch
+  else
+    echo "patch could not be installed"
+    exit 1
+  fi
+fi
+
 # execute maven in docker
 ${MVN_CMD} install -Dmaven.javadoc.skip=true -B -V
 ret_code=$?
