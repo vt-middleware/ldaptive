@@ -29,10 +29,13 @@ if [[ "$VERSION" != *-SNAPSHOT ]]; then
 fi
 
 # Install git binary
-if [ ! command -v git &> /dev/null ]; then
-  if [ command -v apt-get &> /dev/null ]; then
+if ! command -v git &> /dev/null
+then
+  if command -v apt-get &> /dev/null
+  then
     apt-get update && apt-get install -y git
-  elif [ command -v yum &> /dev/null ]; then
+  elif command -v yum &> /dev/null
+  then
     yum install -y git
   else
     echo "git could not be installed"

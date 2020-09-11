@@ -8,10 +8,13 @@ else
 fi
 
 # Install patch binary
-if [ ! command -v patch &> /dev/null ]; then
-  if [ command -v apt-get &> /dev/null ]; then
+if ! command -v patch &> /dev/null
+then
+  if command -v apt-get &> /dev/null
+  then
     apt-get update && apt-get install -y patch
-  elif [ command -v yum &> /dev/null ]; then
+  elif command -v yum &> /dev/null
+  then
     yum install -y patch
   else
     echo "patch could not be installed"
