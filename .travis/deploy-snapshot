@@ -59,15 +59,8 @@ REPO_URL="https://github.com/vt-middleware/${REPO_NAME}.git"
 # Clone the maven repo
 git clone $REPO_URL
 
-JAVA_VER=$(java -version 2>&1 |head -1 |cut -d'"' -f2 |cut -d'_' -f1)
-if [[ ${JAVA_VER} == "1.8.0" ]]; then
-  MVN_CMD="mvn -P-jdk11,jdk8"
-else
-  MVN_CMD="mvn"
-fi
-
 # Deploy the artifact to the maven repo
-${MVN_CMD} deploy -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_NAME}
+mvn deploy -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_NAME}
 
 # Push changes to the maven repo
 cd $REPO_NAME
