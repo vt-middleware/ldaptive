@@ -60,8 +60,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>1.7.30</org.slf4j.version>
-    <io.netty.version>4.1.51.Final</io.netty.version>
-    <org.springframework.version>5.2.8.RELEASE</org.springframework.version>
+    <io.netty.version>4.1.52.Final</io.netty.version>
+    <org.springframework.version>5.2.9.RELEASE</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.0.0</japicmp.oldVersion>
   </properties>
@@ -240,7 +240,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.35</version>
+              <version>8.36.1</version>
             </dependency>
           </dependencies>
         </plugin>
