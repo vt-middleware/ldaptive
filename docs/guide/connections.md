@@ -69,7 +69,6 @@ If you have a implementation of javax.net.ssl.TrustManager it can be added direc
 
 - AggregateTrustManager - combines multiple trust managers allowing the use of all trust managers or any trust manager to pass validation
 - DefaultTrustManager - the default JVM trust managers
-- HostnameVerifyingTrustManager - custom trust manager based on certificate hostname
 - AllowAnyTrustManager - trusts any client or server
 
 Note that if you provide both trust managers and a credential config to the SslConfig, all trust managers will be required.
