@@ -124,7 +124,7 @@
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcprov-jdk15on</artifactId>
-        <version>1.66</version>
+        <version>1.67</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -240,7 +240,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.36.2</version>
+              <version>8.37</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -292,7 +292,7 @@
         <plugin>
           <groupId>com.github.siom79.japicmp</groupId>
           <artifactId>japicmp-maven-plugin</artifactId>
-          <version>0.14.3</version>
+          <version>0.14.4</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
