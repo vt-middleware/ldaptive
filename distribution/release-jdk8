@@ -1,0 +1,55 @@
+#!/bin/bash
+
+function user_continue() {
+  read -p "Do you want to continue? [y/n]" -n 1 -r
+  echo
+  if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+    exit 1
+  fi
+}
+
+if [ "$#" -ne 3 ]; then
+  echo "USAGE: `basename $0` <release-version> <sonatype-user> <sonatype-passwd>"
+  exit
+fi
+
+RELEASE_VERSION="${1}"
+SONATYPE_USER="${2}"
+SONATYPE_PASSWORD="${3}"
+echo "================================================================="
+echo "This script will clone the release tag v${RELEASE_VERSION} and build the JDK8 binaries"
+echo "================================================================="
+user_continue
+
+# checkout the release tag
+mkdir -p target
+git clone --depth 1 --branch v${RELEASE_VERSION} git@github.com:vt-middleware/ldaptive.git target/ldaptive-jdk8-build
+pushd target/ldaptive-jdk8-build
+
+# build the bundle
+./mvn_cmd --with-jdk8 clean
+./mvn_cmd --with-jdk8 package
+./mvn_cmd --with-jdk8 bundle-create
+
+# upload bundle jars to sonatype
+echo "Uploading bundle jars to sonatype"
+user_continue
+
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@jdk8/target/ldaptive-parent-jdk8-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@jdk8/core/target/ldaptive-jdk8-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@jdk8/json/target/ldaptive-json-jdk8-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@jdk8/beans/target/ldaptive-beans-jdk8-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@jdk8/templates/target/ldaptive-templates-jdk8-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+
+popd
+echo "Finished JDK8 release ${RELEASE_VERSION} for ldaptive."
