@@ -6,7 +6,7 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
-## Version 2.0.1-SNAPSHOT
+## Version 2.0.1 - 09Nov2020
 
 Issue | Description
 :---- | :----------
