@@ -11,7 +11,7 @@ Ldaptive is a simple, extensible Java API for interacting with LDAP servers. It 
 ## Rationale
 Developers need LDAP integration for their products, but the JNDI API is cumbersome and takes a great deal of resources to learn and use. In addition, most applications only require a subset of LDAP functionality: search and authentication.
 
-### version [2.0.0] is now available in maven central.
+### version 2 is now available in maven central.
 
 ## Features
 * Netty based asynchronous networking
