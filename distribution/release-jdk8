@@ -28,7 +28,7 @@ pushd target/ldaptive-jdk8-build
 
 # build the bundle
 ./mvn_cmd --with-jdk8 clean
-./mvn_cmd --with-jdk8 package
+./mvn_cmd --with-jdk8 install
 ./mvn_cmd --with-jdk8 bundle-create
 
 # upload bundle jars to sonatype
