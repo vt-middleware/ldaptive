@@ -69,7 +69,7 @@ public class IdlePruneStrategy implements PruneStrategy
   @Override
   public Boolean apply(final PooledConnectionProxy conn)
   {
-    final Instant timeAvailable = conn.getPooledConnectionStatistics().getLastAvailableState();
+    final Instant timeAvailable = conn.getPooledConnectionStatistics().getLastAvailableStat();
     logger.trace("evaluating timestamp {} for connection {}", timeAvailable, conn);
     return timeAvailable.plus(idleTime).isBefore(Instant.now());
   }
