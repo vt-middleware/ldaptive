@@ -1,6 +1,6 @@
 try {
   DeleteOperation.builder()
-    .factory(getConnectionFactory())
+    .factory(new DefaultConnectionFactory("ldap://directory.ldaptive.org"))
     .throwIf(ResultPredicate.NOT_SUCCESS)
     .build()
     .execute(DeleteRequest.builder()

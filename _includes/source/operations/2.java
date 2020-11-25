@@ -1,5 +1,5 @@
 DeleteOperation.builder()
-  .factory(getConnectionFactory())
+  .factory(new DefaultConnectionFactory("ldap://directory.ldaptive.org"))
   .onResult(result -> {
     if (!result.equals(ResultCode.SUCCESS)) {
       // delete operation was not successful
