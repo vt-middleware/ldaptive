@@ -4,7 +4,7 @@ package org.ldaptive.control;
 import org.ldaptive.LdapUtils;
 
 /**
- * Request control for authorization identify. See RFC 3829.
+ * Request control for authorization identity. See RFC 3829.
  *
  * @author  Middleware Services
  */
