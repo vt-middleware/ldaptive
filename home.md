@@ -8,9 +8,6 @@ redirect_from: "/home/"
 # LDAP library for Java.
 Ldaptive is a simple, extensible Java API for interacting with LDAP servers. It was designed to provide easy LDAP integration for application developers.
 
-## Rationale
-Developers need LDAP integration for their products, but the JNDI API is cumbersome and takes a great deal of resources to learn and use. In addition, most applications only require a subset of LDAP functionality: search and authentication.
-
 ### version 2 is now available in maven central.
 
 ## Features
@@ -22,16 +19,19 @@ Developers need LDAP integration for their products, but the JNDI API is cumbers
 * SSL/startTLS support with easy configuration of trust and key material
 * Input/output of LDIF
 * Supported controls:
+  * Authorization Identity (RFC 3829)
+  * Content Synchronization (RFC 4533)
+  * Entry Change Notification (draft-ietf-ldapext-psearch-03)
   * ManageDsaIT (RFC 3296)
-  * Paged results (RFC 2696)
-  * Virtual List View (draft-ietf-ldapext-ldapv3-vlv-09)
-  * Server side sorting (RFC 2891)
-  * Content synchronization (RFC 4533)
-  * Proxy Authorization (RFC 4370)
+  * Matched Values (RFC 3876)
+  * Paged Results (RFC 2696)
+  * Password Policy (draft-behera-ldap-password-policy-10 and draft-vchu-ldap-pwd-policy-00)
   * Persistent Search (draft-ietf-ldapext-psearch-03)
-  * Password policy (draft-behera-ldap-password-policy-10 and draft-vchu-ldap-pwd-policy-00)
-  * Session tracking (draft-wahl-ldap-session-03)
-  * Tree delete (draft-armijo-ldap-treedelete)
+  * Proxy Authorization (RFC 4370)
+  * Server Side Sorting (RFC 2891)
+  * Session Tracking (draft-wahl-ldap-session-03)
+  * Tree Delete (draft-armijo-ldap-treedelete)
+  * Virtual List View (draft-ietf-ldapext-ldapv3-vlv-09)
 
 ## Quick Start Guide
 
