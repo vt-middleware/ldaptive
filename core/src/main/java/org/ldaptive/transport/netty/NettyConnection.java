@@ -1406,6 +1406,21 @@ public final class NettyConnection extends TransportConnection
     {
       out.writeBytes(msg.getEncoded());
     }
+
+
+    @Override
+    protected ByteBuf allocateBuffer(
+      final ChannelHandlerContext ctx,
+      final EncodedRequest msg,
+      final boolean preferDirect)
+    {
+      final int msgSize = msg.getEncoded().length;
+      if (preferDirect) {
+        return ctx.alloc().ioBuffer(msgSize);
+      } else {
+        return ctx.alloc().heapBuffer(msgSize);
+      }
+    }
   }
 
 
