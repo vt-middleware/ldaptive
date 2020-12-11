@@ -26,7 +26,7 @@ public class MessageFrameDecoder extends ByteToMessageDecoder
   @Override
   protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
   {
-    logger.trace("decoding {} bytes from {}", in.readableBytes(), in);
+    logger.trace("decoding {} bytes from {} on {}", in.readableBytes(), in, ctx);
     if (in.readableBytes() <= 2) {
       return;
     }
@@ -38,12 +38,12 @@ public class MessageFrameDecoder extends ByteToMessageDecoder
       final DERBuffer buffer = new NettyDERBuffer(in.readSlice(in.readableBytes()));
       len = readMessageLength(buffer);
     } finally {
-      logger.trace("decoded message length of {} for {}", len, in);
+      logger.trace("decoded message length of {} for {} on {}", len, in, ctx);
       // return the reader and writer indexes back to their initial position
       in.setIndex(readerIdx, writerIdx);
     }
     if (len > 0) {
-      logger.trace("read enough bytes from {} to decode message", in);
+      logger.trace("read enough bytes from {} to decode message on {}", in, ctx);
       out.add(in.readRetainedSlice(len));
       if (ctx != null) {
         ctx.fireUserEventTriggered(NettyConnection.MessageStatus.READ);
