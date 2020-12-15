@@ -245,7 +245,7 @@ public final class NettyConnection extends TransportConnection
     bootstrap.channel(channelType);
     channelOptions.forEach(bootstrap::option);
     bootstrap.handler(initializer);
-    LOGGER.trace("Created netty bootstrap {} with worker group {} for {}", bootstrap, ioWorkerGroup, this);
+    LOGGER.trace("created netty bootstrap {} with worker group {} for {}", bootstrap, ioWorkerGroup, this);
     return bootstrap;
   }
 
@@ -279,7 +279,7 @@ public final class NettyConnection extends TransportConnection
     if (isOpen()) {
       throw new IllegalStateException("Connection is already open");
     }
-    LOGGER.trace("Netty opening connection {}", this);
+    LOGGER.trace("opening connection {}", this);
     if (openLock.tryLock()) {
       try {
         inboundException = null;
@@ -371,7 +371,7 @@ public final class NettyConnection extends TransportConnection
     final Bootstrap bootstrap = createBootstrap(initializer);
 
     final CountDownLatch channelLatch = new CountDownLatch(1);
-    LOGGER.trace("Connecting to bootstrap {} with URL {}", bootstrap, ldapURL);
+    LOGGER.trace("connecting to bootstrap {} with URL {} for {}", bootstrap, ldapURL, this);
     final ChannelFuture future;
     if (ldapURL.getInetAddress() != null) {
       future = bootstrap.connect(ldapURL.getInetAddress(), ldapURL.getPort());
@@ -415,9 +415,6 @@ public final class NettyConnection extends TransportConnection
       }
     }
 
-    if (!future.channel().config().isAutoRead()) {
-      future.channel().read();
-    }
     return future.channel();
   }
 
@@ -559,9 +556,9 @@ public final class NettyConnection extends TransportConnection
   protected void operation(final UnbindRequest request)
   {
     if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("Unbind request {} with pending responses {}", request, pendingResponses);
+      LOGGER.trace("Unbind request {} with pending responses {} for {}", request, pendingResponses, this);
     } else if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Unbind request {} with {} pending responses", request, pendingResponses.size());
+      LOGGER.debug("Unbind request {} with {} pending responses for {}", request, pendingResponses.size(), this);
     }
     if (reconnectLock.readLock().tryLock()) {
       try {
@@ -855,9 +852,10 @@ public final class NettyConnection extends TransportConnection
                   });
                 if (LOGGER.isTraceEnabled() && channel.eventLoop() instanceof SingleThreadEventLoop) {
                   LOGGER.trace(
-                    "Event loop group {} has {} pending tasks",
+                    "event loop group {} has {} pending tasks for {}",
                     channel.eventLoop().parent(),
-                    ((SingleThreadEventLoop) channel.eventLoop()).pendingTasks());
+                    ((SingleThreadEventLoop) channel.eventLoop()).pendingTasks(),
+                    this);
                 }
               } finally {
                 bindLock.readLock().unlock();
@@ -947,7 +945,7 @@ public final class NettyConnection extends TransportConnection
   @Override
   public void close(final RequestControl... controls)
   {
-    LOGGER.trace("Closing connection {}", this);
+    LOGGER.trace("closing connection {}", this);
     if (closeLock.tryLock()) {
       try {
         pendingResponses.close();
@@ -983,10 +981,10 @@ public final class NettyConnection extends TransportConnection
         connectTime = null;
         if (shutdownOnClose) {
           NettyUtils.shutdownGracefully(ioWorkerGroup);
-          LOGGER.trace("Shutdown worker group {}", ioWorkerGroup);
+          LOGGER.trace("shutdown worker group {} for {}", ioWorkerGroup, this);
           if (messageWorkerGroup != null) {
             NettyUtils.shutdownGracefully(messageWorkerGroup);
-            LOGGER.trace("Shutdown worker group {}", messageWorkerGroup);
+            LOGGER.trace("shutdown worker group {} for {}", messageWorkerGroup, this);
           }
         }
         closeLock.unlock();
@@ -1005,9 +1003,9 @@ public final class NettyConnection extends TransportConnection
   {
     if (pendingResponses.size() > 0) {
       if (LOGGER.isTraceEnabled()) {
-        LOGGER.trace("Notifying operation handles {} for {} of connection close", pendingResponses, this);
+        LOGGER.trace("Notifying operation handles {} of connection close for {}", pendingResponses, this);
       } else if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug("Notifying {} operation handles for {} of connection close", pendingResponses.size(), this);
+        LOGGER.debug("Notifying {} operation handles of connection close for {}", pendingResponses.size(), this);
       }
       final LdapException ex;
       if (inboundException == null) {
@@ -1041,7 +1039,7 @@ public final class NettyConnection extends TransportConnection
       notifyOperationHandlesOfClose();
       return;
     }
-    LOGGER.trace("Reconnecting connection {}", this);
+    LOGGER.trace("reconnecting connection {}", this);
     if (!reconnectLock.isWriteLocked()) {
       boolean gotReconnectLock;
       try {
@@ -1229,9 +1227,9 @@ public final class NettyConnection extends TransportConnection
     public void operationComplete(final ChannelFuture future)
     {
       if (future.isSuccess()) {
-        LOGGER.trace("Operation channel success on {}", NettyConnection.this);
+        LOGGER.trace("operation channel success for {}", NettyConnection.this);
       } else {
-        LOGGER.warn("Operation channel error on {}", NettyConnection.this, future.cause());
+        LOGGER.warn("operation channel error for {}", NettyConnection.this, future.cause());
       }
     }
   }
@@ -1259,7 +1257,7 @@ public final class NettyConnection extends TransportConnection
         inboundException != null ? inboundException.getClass() : null,
         inboundException);
       if (connectionConfig.getAutoReconnect() && !isOpening() && !isClosing()) {
-        LOGGER.trace("scheduling reconnect thread for connection {}", NettyConnection.this);
+        LOGGER.trace("scheduling reconnect thread for {}", NettyConnection.this);
         if (connectionExecutor != null && !connectionExecutor.isShutdown()) {
           connectionExecutor.execute(
             () -> {
@@ -1342,6 +1340,8 @@ public final class NettyConnection extends TransportConnection
       }
       if (LOGGER.isDebugEnabled()) {
         ch.pipeline().addLast("logger", new LoggingHandler(LogLevel.DEBUG));
+      } else if (LOGGER.isTraceEnabled()) {
+        ch.pipeline().addLast("logger", new LoggingHandler(LogLevel.TRACE));
       }
       // inbound handlers are processed top to bottom
       // outbound handlers are processed bottom to top
@@ -1400,10 +1400,14 @@ public final class NettyConnection extends TransportConnection
   protected static class RequestEncoder extends MessageToByteEncoder<EncodedRequest>
   {
 
+    /** Logger for this class. */
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
 
     @Override
     protected void encode(final ChannelHandlerContext ctx, final EncodedRequest msg, final ByteBuf out)
     {
+      logger.trace("encoding message {} on {}", msg, ctx);
       out.writeBytes(msg.getEncoded());
     }
 
@@ -1436,11 +1440,12 @@ public final class NettyConnection extends TransportConnection
     protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
       throws LdapException
     {
-      LOGGER.trace("received {} bytes", in.readableBytes());
+      LOGGER.trace("received {} bytes on {}", in.readableBytes(), ctx);
       final ResponseParser parser = new ResponseParser();
       final Message message =  parser.parse(new NettyDERBuffer(in))
         .orElseThrow(() -> new LdapException(ResultCode.DECODING_ERROR, "No response found"));
       out.add(message);
+      LOGGER.trace("decoded response message {} on {}", message, ctx);
       if (ctx != null) {
         ctx.fireUserEventTriggered(MessageStatus.DECODED);
       }
@@ -1460,6 +1465,7 @@ public final class NettyConnection extends TransportConnection
     @SuppressWarnings("unchecked")
     protected void channelRead0(final ChannelHandlerContext ctx, final Message msg)
     {
+      LOGGER.trace("channel read message {} on {}", msg, ctx);
       try {
         final DefaultOperationHandle handle = pendingResponses.get(msg.getMessageID());
         LOGGER.debug("Received response message {} for handle {}", msg, handle);
@@ -1513,7 +1519,8 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
-   * Initiates a channel read when an LDAP message has been processed and auto read is false.
+   * Initiates a channel read when an LDAP message has been processed and auto read is false. This handler also
+   * initiates a channel read when it becomes active to bootstrap the initial read.
    */
   @ChannelHandler.Sharable
   protected static class AutoReadEventHandler extends SimpleUserEventChannelHandler<MessageStatus>
@@ -1524,10 +1531,23 @@ public final class NettyConnection extends TransportConnection
 
 
     @Override
+    public void channelActive(final ChannelHandlerContext ctx)
+      throws Exception
+    {
+      logger.trace("channel active on {}", ctx);
+      // invoking ctx.channel().read() starts at the tail of the pipeline
+      ctx.channel().read();
+      ctx.fireChannelActive();
+    }
+
+
+    @Override
     protected void eventReceived(final ChannelHandlerContext ctx, final MessageStatus evt)
     {
-      logger.trace("Received event {}", evt);
-      if (MessageStatus.COMPLETE == evt && !ctx.channel().config().isAutoRead()) {
+      logger.trace("received event {} on {}", evt, ctx);
+      if (MessageStatus.COMPLETE == evt) {
+        logger.trace("invoking read on {}", ctx);
+        // invoking ctx.read() starts at this handler
         ctx.read();
       }
     }
@@ -1562,6 +1582,7 @@ public final class NettyConnection extends TransportConnection
     @Override
     public void channelActive(final ChannelHandlerContext ctx)
     {
+      LOGGER.trace("channel active on {}", ctx);
       sf = ctx.executor().scheduleAtFixedRate(
         () -> {
           final java.util.concurrent.Future<Boolean> f = connectionExecutor.submit(
@@ -1580,15 +1601,18 @@ public final class NettyConnection extends TransportConnection
         connectionValidator.getValidatePeriod().toMillis(),
         connectionValidator.getValidatePeriod().toMillis(),
         TimeUnit.MILLISECONDS);
+      ctx.fireChannelActive();
     }
 
 
     @Override
     public void channelInactive(final ChannelHandlerContext ctx)
     {
+      LOGGER.trace("channel inactive on {}", ctx);
       if (sf != null) {
         sf.cancel(true);
       }
+      ctx.fireChannelInactive();
     }
   }
 

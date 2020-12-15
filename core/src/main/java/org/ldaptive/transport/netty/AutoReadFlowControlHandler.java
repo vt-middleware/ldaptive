@@ -28,10 +28,10 @@ public class AutoReadFlowControlHandler extends ChannelDuplexHandler
   public void channelRead(final ChannelHandlerContext ctx, final Object msg)
     throws Exception
   {
-    if (!ctx.channel().config().isAutoRead()) {
-      logger.trace("channelRead with message count of {}", messageCount);
-      messageCount.incrementAndGet();
-    }
+    // increments the message count which blocks further reads until all inbound messages have been processed
+    logger.trace("channel read with message count of {} on {}", messageCount, ctx);
+    messageCount.incrementAndGet();
+    logger.trace("invoking fireChannelRead with message count {} for {} on {}", messageCount, msg, ctx);
     ctx.fireChannelRead(msg);
   }
 
@@ -40,12 +40,10 @@ public class AutoReadFlowControlHandler extends ChannelDuplexHandler
   public void read(final ChannelHandlerContext ctx)
     throws Exception
   {
-    if (!ctx.channel().config().isAutoRead()) {
-      logger.trace("read with message count of {}", messageCount);
-      if (messageCount.updateAndGet(i -> i > 0 ? i - 1 : 0) == 0) {
-        ctx.read();
-      }
-    } else {
+    // prevents outbound handlers from reading more data until all inbound messages have been read
+    logger.trace("read with message count of {} on {}", messageCount, ctx);
+    if (messageCount.updateAndGet(i -> i > 0 ? i - 1 : 0) == 0) {
+      logger.trace("invoking read with message count {} on {}", messageCount, ctx);
       ctx.read();
     }
   }

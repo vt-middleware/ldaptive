@@ -43,13 +43,14 @@ public class MessageFrameDecoder extends ByteToMessageDecoder
       in.setIndex(readerIdx, writerIdx);
     }
     if (len > 0) {
-      logger.trace("read enough bytes from {} to decode message on {}", in, ctx);
-      out.add(in.readRetainedSlice(len));
+      final ByteBuf retained = in.readRetainedSlice(len);
+      logger.trace("read enough bytes from {} to decode message {} on {}", in, retained, ctx);
+      out.add(retained);
       if (ctx != null) {
         ctx.fireUserEventTriggered(NettyConnection.MessageStatus.READ);
       }
     } else {
-      logger.trace("could not read enough bytes from {} to decode message", in);
+      logger.trace("could not read enough bytes from {} to decode message on {}", in, ctx);
     }
   }
 

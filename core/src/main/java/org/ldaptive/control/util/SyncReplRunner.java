@@ -38,7 +38,7 @@ public class SyncReplRunner
   private static final int IO_WORKER_THREADS = 1;
 
   /** Number of message worker threads. */
-  private static final int MESSAGE_WORKER_THREADS = 2;
+  private static final int MESSAGE_WORKER_THREADS = 4;
 
   /** Connection transport. */
   private final Transport connectionTransport;
@@ -139,7 +139,8 @@ public class SyncReplRunner
    */
   private static Transport createTransport()
   {
-    // message thread pool size must be >1 since exceptions are reported on the messages thread pool
+    // message thread pool size must be >2 since exceptions are reported on the messages thread pool and flow control
+    // requires a thread to signal reads and pass user events
     // startTLS and connection initializers will require additional threads
     final ConnectionFactoryTransport transport = new ConnectionFactoryTransport(
       SyncReplRunner.class.getSimpleName(),
