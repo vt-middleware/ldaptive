@@ -6,6 +6,12 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.0.2-SNAPSHOT
+
+Issue | Description
+:---- | :----------
+[ldaptive-186]({{ site.issueURL }}186) | SyncReplRunner thread exhaustion.
+
 ## Version 2.0.1 - 09Nov2020
 
 Issue | Description
