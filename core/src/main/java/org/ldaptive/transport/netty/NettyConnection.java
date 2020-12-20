@@ -1256,7 +1256,12 @@ public final class NettyConnection extends TransportConnection
         future,
         inboundException != null ? inboundException.getClass() : null,
         inboundException);
-      if (connectionConfig.getAutoReconnect() && !isOpening() && !isClosing()) {
+      // connection factories that shutdown event loops on close (DefaultConnectionFactory)
+      // do not support auto reconnect
+      if (connectionConfig.getAutoReconnect() && shutdownOnClose) {
+        LOGGER.warn("Auto reconnect cannot be used when shutdownOnClose is true for {}", NettyConnection.this);
+      }
+      if (connectionConfig.getAutoReconnect() && !shutdownOnClose && !isOpening() && !isClosing()) {
         LOGGER.trace("scheduling reconnect thread for {}", NettyConnection.this);
         if (connectionExecutor != null && !connectionExecutor.isShutdown()) {
           connectionExecutor.execute(
