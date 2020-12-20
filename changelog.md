@@ -10,6 +10,7 @@ redirect_from: "/changelog/"
 
 Issue | Description
 :---- | :----------
+[ldaptive-187]({{ site.issueURL }}187) | Auto reconnect fails for DefaultConnectionFactory.
 [ldaptive-186]({{ site.issueURL }}186) | SyncReplRunner thread exhaustion.
 
 ## Version 2.0.1 - 09Nov2020
