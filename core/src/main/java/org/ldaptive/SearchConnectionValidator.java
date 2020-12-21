@@ -2,8 +2,7 @@
 package org.ldaptive;
 
 import java.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.function.Consumer;
 
 /**
  * Validates a connection is healthy by performing a search operation. Validation is considered successful if the search
@@ -13,9 +12,6 @@ import org.slf4j.LoggerFactory;
  */
 public class SearchConnectionValidator extends AbstractConnectionValidator
 {
-
-  /** Logger for this class. */
-  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Search request to perform validation with. */
   private SearchRequest searchRequest;
@@ -77,19 +73,20 @@ public class SearchConnectionValidator extends AbstractConnectionValidator
 
 
   @Override
-  public Boolean apply(final Connection conn)
+  public void applyAsync(final Connection conn, final Consumer<Boolean> function)
   {
-    if (conn != null) {
+    if (conn == null) {
+      function.accept(false);
+    } else {
       final SearchOperationHandle h = conn.operation(searchRequest);
-      try {
-        final SearchResponse response = h.execute();
-        // note that validation doesn't require a SUCCESS result code
-        return response.getResultCode() != null;
-      } catch (Exception e) {
+      // note that validation doesn't require a SUCCESS result code
+      h.onResult(r -> function.accept(r.getResultCode() != null));
+      h.onException(e -> {
         logger.debug("Connection validator failed for {}", conn, e);
-      }
+        function.accept(false);
+      });
+      h.send();
     }
-    return false;
   }
 
 

@@ -7,17 +7,22 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.ClosedRetryMetadata;
+import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.ConnectionValidator;
 import org.ldaptive.LdapURL;
 import org.ldaptive.SearchScope;
 import org.ldaptive.UnbindRequest;
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -27,6 +32,35 @@ import org.testng.annotations.Test;
  */
 public class NettyConnectionTest
 {
+
+
+  /**
+   * Returns thread pools of size 1, 2 and default.
+   *
+   * @return  thread pools
+   */
+  @DataProvider(name = "threadPools")
+  public Object[][] createThreadPools()
+  {
+    return
+      new Object[][] {
+        new Object[] {
+          new NioEventLoopGroup(
+            0,
+            new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+        },
+        new Object[] {
+          new NioEventLoopGroup(
+            1,
+            new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+        },
+        new Object[] {
+          new NioEventLoopGroup(
+            2,
+            new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+        },
+      };
+  }
 
 
   /**
@@ -181,10 +215,11 @@ public class NettyConnectionTest
 
 
   /**
+   * @param  eventLoopGroup  to supply to the connection
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "netty")
-  public void openAndReconnectDefaultThreads()
+  @Test(dataProvider = "threadPools", groups = "netty")
+  public void openAndReconnect(final NioEventLoopGroup eventLoopGroup)
     throws Exception
   {
     final CountDownLatch openLatch = new CountDownLatch(2);
@@ -211,11 +246,9 @@ public class NettyConnectionTest
       final NettyConnection conn = new NettyConnection(
         connConfig,
         NioSocketChannel.class,
-        new NioEventLoopGroup(
-          0,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+        eventLoopGroup,
         null,
-        true);
+        false);
       try {
         conn.open();
         Assert.assertTrue(conn.isOpen());
@@ -237,51 +270,65 @@ public class NettyConnectionTest
 
 
   /**
+   * @param  eventLoopGroup  to supply to the connection
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "netty")
-  public void openAndReconnectOneThread()
+  @Test(dataProvider = "threadPools", groups = "netty")
+  public void connectionValidator(final NioEventLoopGroup eventLoopGroup)
     throws Exception
   {
-    final CountDownLatch openLatch = new CountDownLatch(2);
-    final SimpleNettyServer server = new SimpleNettyServer(
-      ctx -> openLatch.countDown(),
-      (ctx, msg) -> {
-        if (msg instanceof UnbindRequest) {
-          ctx.fireUserEventTriggered(SimpleNettyServer.Event.DISCONNECT);
-        }
-      },
-      null);
+    final CountDownLatch validateLatch = new CountDownLatch(1);
+    final SimpleNettyServer server = new SimpleNettyServer();
     try {
       final InetSocketAddress address = server.start();
-      final AtomicBoolean reconnectAttempted = new AtomicBoolean();
-      final ConnectionConfig connConfig = ConnectionConfig.builder()
-        .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
-        .autoReconnect(true)
-        .autoReconnectCondition(metadata -> {
-          Assert.assertEquals(metadata.getAttempts(), 0);
-          reconnectAttempted.set(true);
-          return metadata instanceof ClosedRetryMetadata && metadata.getAttempts() == 0;
-        })
-        .build();
       final NettyConnection conn = new NettyConnection(
-        connConfig,
+        ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          // CheckStyle:AnonInnerLength OFF
+          .connectionValidator(new ConnectionValidator() {
+            @Override
+            public void applyAsync(final Connection conn, final Consumer<Boolean> function)
+            {
+              validateLatch.countDown();
+              function.accept(true);
+            }
+
+            @Override
+            public Supplier<Boolean> applyAsync(final Connection conn)
+            {
+              throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public Duration getValidatePeriod()
+            {
+              return Duration.ofSeconds(5);
+            }
+
+            @Override
+            public Duration getValidateTimeout()
+            {
+              return Duration.ofSeconds(1);
+            }
+
+            @Override
+            public Boolean apply(final Connection conn)
+            {
+              throw new UnsupportedOperationException();
+            }
+          })
+          // CheckStyle:AnonInnerLength ON
+          .build(),
         NioSocketChannel.class,
-        new NioEventLoopGroup(
-          1,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+        eventLoopGroup,
         null,
-        true);
+        false);
       try {
         conn.open();
         Assert.assertTrue(conn.isOpen());
-        // unbind will cause the server to disconnect
-        conn.operation(new UnbindRequest());
-        if (!openLatch.await(Duration.ofMinutes(1).toMillis(), TimeUnit.MILLISECONDS)) {
-          Assert.fail("Connection did not reconnect");
+        if (!validateLatch.await(Duration.ofMinutes(1).toMillis(), TimeUnit.MILLISECONDS)) {
+          Assert.fail("Connection validator did not execute");
         }
-        Assert.assertTrue(reconnectAttempted.get());
-        Assert.assertTrue(conn.isOpen());
       } finally {
         conn.close();
         Assert.assertFalse(conn.isOpen());
@@ -293,50 +340,69 @@ public class NettyConnectionTest
 
 
   /**
+   * @param  eventLoopGroup  to supply to the connection
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "netty")
-  public void openAndReconnectTwoThreads()
+  @Test(dataProvider = "threadPools", groups = "netty")
+  public void connectionValidatorReconnect(final NioEventLoopGroup eventLoopGroup)
     throws Exception
   {
-    final CountDownLatch openLatch = new CountDownLatch(2);
-    final SimpleNettyServer server = new SimpleNettyServer(
-      ctx -> openLatch.countDown(),
-      (ctx, msg) -> {
-        if (msg instanceof UnbindRequest) {
-          ctx.fireUserEventTriggered(SimpleNettyServer.Event.DISCONNECT);
-        }
-      },
-      null);
+    final CountDownLatch validateLatch = new CountDownLatch(2);
+    final SimpleNettyServer server = new SimpleNettyServer();
     try {
       final InetSocketAddress address = server.start();
-      final AtomicBoolean reconnectAttempted = new AtomicBoolean();
-      final ConnectionConfig connConfig = ConnectionConfig.builder()
-        .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
-        .autoReconnect(true)
-        .autoReconnectCondition(metadata -> {
-          Assert.assertEquals(metadata.getAttempts(), 0);
-          reconnectAttempted.set(true);
-          return metadata instanceof ClosedRetryMetadata && metadata.getAttempts() == 0;
-        })
-        .build();
       final NettyConnection conn = new NettyConnection(
-        connConfig,
+        ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          // CheckStyle:AnonInnerLength OFF
+          .connectionValidator(new ConnectionValidator() {
+            @Override
+            public void applyAsync(final Connection conn, final Consumer<Boolean> function)
+            {
+              if (validateLatch.getCount() == 2) {
+                function.accept(false);
+              } else {
+                function.accept(true);
+              }
+              validateLatch.countDown();
+            }
+
+            @Override
+            public Supplier<Boolean> applyAsync(final Connection conn)
+            {
+              throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public Duration getValidatePeriod()
+            {
+              return Duration.ofSeconds(5);
+            }
+
+            @Override
+            public Duration getValidateTimeout()
+            {
+              return Duration.ofSeconds(1);
+            }
+
+            @Override
+            public Boolean apply(final Connection conn)
+            {
+              throw new UnsupportedOperationException();
+            }
+          })
+          // CheckStyle:AnonInnerLength ON
+          .build(),
         NioSocketChannel.class,
-        new NioEventLoopGroup(
-          2,
-          new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+        eventLoopGroup,
         null,
-        true);
+        false);
       try {
         conn.open();
         Assert.assertTrue(conn.isOpen());
-        // unbind will cause the server to disconnect
-        conn.operation(new UnbindRequest());
-        if (!openLatch.await(Duration.ofMinutes(1).toMillis(), TimeUnit.MILLISECONDS)) {
-          Assert.fail("Connection did not reconnect");
+        if (!validateLatch.await(Duration.ofMinutes(1).toMillis(), TimeUnit.MILLISECONDS)) {
+          Assert.fail("Connection validator did not execute");
         }
-        Assert.assertTrue(reconnectAttempted.get());
         Assert.assertTrue(conn.isOpen());
       } finally {
         conn.close();

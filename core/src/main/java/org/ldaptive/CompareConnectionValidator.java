@@ -2,8 +2,7 @@
 package org.ldaptive;
 
 import java.time.Duration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.function.Consumer;
 
 /**
  * Validates a connection is healthy by performing a compare operation. Validation is considered successful if the
@@ -13,9 +12,6 @@ import org.slf4j.LoggerFactory;
  */
 public class CompareConnectionValidator extends AbstractConnectionValidator
 {
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Compare request to perform validation with. */
   private CompareRequest compareRequest;
@@ -77,18 +73,20 @@ public class CompareConnectionValidator extends AbstractConnectionValidator
 
 
   @Override
-  public Boolean apply(final Connection conn)
+  public void applyAsync(final Connection conn, final Consumer<Boolean> function)
   {
-    if (conn != null) {
-      try {
-        final CompareResponse response = conn.operation(compareRequest).execute();
-        // note that validation doesn't require a TRUE result code
-        return response.getResultCode() != null;
-      } catch (Exception e) {
-        logger.debug("validation failed for compare request {}", compareRequest, e);
-      }
+    if (conn == null) {
+      function.accept(false);
+    } else {
+      final CompareOperationHandle h = conn.operation(compareRequest);
+      // note that validation doesn't require a TRUE result code
+      h.onResult(r -> function.accept(r.getResultCode() != null));
+      h.onException(e -> {
+        logger.debug("Connection validator failed for {}", conn, e);
+        function.accept(false);
+      });
+      h.send();
     }
-    return false;
   }
 
 
