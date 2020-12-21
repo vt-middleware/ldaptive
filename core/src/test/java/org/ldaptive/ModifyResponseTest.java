@@ -29,7 +29,7 @@ public class ModifyResponseTest
           new byte[] {
             //preamble
             0x30, 0x0c, 0x02, 0x01, 0x02,
-            // compare response
+            // modify response
             0x67, 0x07,
             // success
             0x0a, 0x01, 0x00,
