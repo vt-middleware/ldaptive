@@ -4,6 +4,7 @@ package org.ldaptive.transport.netty;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import io.netty.bootstrap.ServerBootstrap;
@@ -20,8 +21,11 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.MessageToByteEncoder;
 import org.ldaptive.Request;
+import org.ldaptive.Result;
 import org.ldaptive.transport.RequestParser;
+import org.ldaptive.transport.ResponseEncoder;
 
 /**
  * Simple server for testing TCP connections.
@@ -37,6 +41,9 @@ public class SimpleNettyServer
     DISCONNECT,
   }
 
+  /** Incrementing response message id. */
+  private final AtomicInteger messageID = new AtomicInteger(1);
+
   /** Open notifications. */
   private Consumer<ChannelHandlerContext> onOpen;
 
@@ -48,6 +55,9 @@ public class SimpleNettyServer
 
   /** Channel future. */
   private ChannelFuture channelFuture;
+
+  /** Socket address. */
+  private InetSocketAddress socketAddress;
 
 
   /** Default constructor. */
@@ -99,7 +109,9 @@ public class SimpleNettyServer
     // CheckStyle:AnonInnerLength OFF
     bootstrap.group(bossGroup, workerGroup)
       .channel(NioServerSocketChannel.class)
-      .localAddress("localhost", 0)
+      .localAddress(
+        socketAddress == null ? "localhost" : socketAddress.getAddress().getHostAddress(),
+        socketAddress == null ? 0 : socketAddress.getPort())
       .childHandler(new ChannelInitializer<SocketChannel>() {
         @Override
         protected void initChannel(final SocketChannel ch)
@@ -157,6 +169,14 @@ public class SimpleNettyServer
               cause.printStackTrace();
             }
           });
+          ch.pipeline().addLast("response_encoder", new MessageToByteEncoder<Result>() {
+            @Override
+            protected void encode(final ChannelHandlerContext ctx, final Result msg, final ByteBuf out)
+              throws Exception
+            {
+              out.writeBytes(ResponseEncoder.encode(msg));
+            }
+          });
         }
       })
       .childOption(ChannelOption.SO_KEEPALIVE, true);
@@ -171,7 +191,8 @@ public class SimpleNettyServer
       workerGroup.shutdownGracefully();
       bossGroup.shutdownGracefully();
     });
-    return (InetSocketAddress) channelFuture.channel().localAddress();
+    socketAddress = (InetSocketAddress) channelFuture.channel().localAddress();
+    return socketAddress;
   }
 
 
