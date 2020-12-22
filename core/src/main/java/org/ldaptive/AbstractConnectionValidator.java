@@ -2,6 +2,12 @@
 package org.ldaptive;
 
 import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for connection validator implementations.
@@ -16,6 +22,9 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
 
   /** Default per connection validate timeout, value is 5 seconds. */
   public static final Duration DEFAULT_VALIDATE_TIMEOUT = Duration.ofSeconds(5);
+
+  /** Logger for this class. */
+  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Validation period. */
   private Duration validatePeriod;
@@ -52,6 +61,41 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
       throw new IllegalArgumentException("Timeout cannot be null or negative");
     }
     validateTimeout = timeout;
+  }
+
+
+  @Override
+  public Boolean apply(final Connection conn)
+  {
+    if (conn == null) {
+      return false;
+    }
+    return applyAsync(conn).get();
+  }
+
+
+  @Override
+  public Supplier<Boolean> applyAsync(final Connection conn)
+  {
+    final CountDownLatch latch = new CountDownLatch(1);
+    final AtomicBoolean result = new AtomicBoolean();
+    applyAsync(conn, value -> {
+      result.set(value);
+      latch.countDown();
+    });
+    return () -> {
+      try {
+        if (Duration.ZERO.equals(getValidateTimeout())) {
+          // this configuration depends on the connection config response timeout for its wait behavior
+          latch.await();
+        } else {
+          latch.await(getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
+        }
+      } catch (Exception e) {
+        logger.debug("validating {} threw unexpected exception", conn, e);
+      }
+      return result.get();
+    };
   }
 
 

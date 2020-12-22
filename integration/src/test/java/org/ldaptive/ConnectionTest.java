@@ -2,6 +2,7 @@
 package org.ldaptive;
 
 import java.net.InetSocketAddress;
+import java.time.Duration;
 import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 import org.ldaptive.ssl.AllowAnyTrustManager;
 import org.ldaptive.ssl.CustomTrustManager;
@@ -208,6 +209,150 @@ public class ConnectionTest
       conn.open();
     } finally {
       conn.close();
+    }
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "conn")
+  public void validateConnectionDefaultSearch()
+    throws Exception
+  {
+    final ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionValidator(SearchConnectionValidator.builder()
+      .timeout(Duration.ofSeconds(3))
+      .period(Duration.ofSeconds(5))
+      .build());
+    final DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
+
+    final Connection conn = connFactory.getConnection();
+    try {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "conn")
+  public void validateConnectionSingleSearch()
+    throws Exception
+  {
+    final ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionValidator(SearchConnectionValidator.builder()
+      .timeout(Duration.ofSeconds(3))
+      .period(Duration.ofSeconds(5))
+      .build());
+    final SingleConnectionFactory connFactory = new SingleConnectionFactory(cc);
+    connFactory.initialize();
+
+    final Connection conn = connFactory.getConnection();
+    try {
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    } finally {
+      connFactory.close();
+    }
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "conn")
+  public void validateConnectionPooledSearch()
+    throws Exception
+  {
+    final ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionValidator(SearchConnectionValidator.builder()
+      .timeout(Duration.ofSeconds(3))
+      .period(Duration.ofSeconds(5))
+      .build());
+    final PooledConnectionFactory connFactory = new PooledConnectionFactory(cc);
+    connFactory.initialize();
+
+    final Connection conn = connFactory.getConnection();
+    try {
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    } finally {
+      connFactory.close();
+    }
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "conn")
+  public void validateConnectionDefaultCompare()
+    throws Exception
+  {
+    final ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionValidator(CompareConnectionValidator.builder()
+      .timeout(Duration.ofSeconds(3))
+      .period(Duration.ofSeconds(5))
+      .build());
+    final DefaultConnectionFactory connFactory = new DefaultConnectionFactory(cc);
+
+    final Connection conn = connFactory.getConnection();
+    try {
+      conn.open();
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    } finally {
+      conn.close();
+    }
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "conn")
+  public void validateConnectionSingleCompare()
+    throws Exception
+  {
+    final ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionValidator(CompareConnectionValidator.builder()
+      .timeout(Duration.ofSeconds(3))
+      .period(Duration.ofSeconds(5))
+      .build());
+    final SingleConnectionFactory connFactory = new SingleConnectionFactory(cc);
+    connFactory.initialize();
+
+    final Connection conn = connFactory.getConnection();
+    try {
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    } finally {
+      connFactory.close();
+    }
+  }
+
+
+  /** @throws  Exception  On test failure. */
+  @Test(groups = "conn")
+  public void validateConnectionPooledCompare()
+    throws Exception
+  {
+    final ConnectionConfig cc = TestUtils.readConnectionConfig("classpath:/org/ldaptive/ldap.conn.properties");
+    cc.setConnectionValidator(CompareConnectionValidator.builder()
+      .timeout(Duration.ofSeconds(3))
+      .period(Duration.ofSeconds(5))
+      .build());
+    final PooledConnectionFactory connFactory = new PooledConnectionFactory(cc);
+    connFactory.initialize();
+
+    final Connection conn = connFactory.getConnection();
+    try {
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
+    } finally {
+      connFactory.close();
     }
   }
 

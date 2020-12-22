@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.time.Duration;
 import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
@@ -19,7 +20,9 @@ public class SearchConnectionValidatorTest extends AbstractTest
   public void defaultSettings()
     throws Exception
   {
-    final SearchConnectionValidator validator = new SearchConnectionValidator();
+    final SearchConnectionValidator validator = SearchConnectionValidator.builder()
+      .timeout(Duration.ofSeconds(1))
+      .build();
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
     final Connection c = cf.getConnection();
     try (c) {
@@ -40,18 +43,40 @@ public class SearchConnectionValidatorTest extends AbstractTest
   public void customSettings(final String searchDn)
     throws Exception
   {
+    final SearchConnectionValidator validator1 = SearchConnectionValidator.builder()
+      .request(new SearchRequest(searchDn, "(cn=*)"))
+      .build();
+    final SearchConnectionValidator validator2 = SearchConnectionValidator.builder()
+      .request(new SearchRequest(searchDn, "(dne=*)"))
+      .build();
     final ConnectionFactory cf = TestUtils.createConnectionFactory();
     final Connection c = cf.getConnection();
-    final SearchConnectionValidator validator1 = new SearchConnectionValidator(new SearchRequest(searchDn, "(cn=*)"));
-    final SearchConnectionValidator validator2 = new SearchConnectionValidator(new SearchRequest(searchDn, "(dne=*)"));
-    try {
+    try (c) {
       c.open();
       Assert.assertTrue(validator1.apply(c));
       Assert.assertTrue(validator2.apply(c));
-    } finally {
-      c.close();
     }
     Assert.assertFalse(validator1.apply(c));
     Assert.assertFalse(validator2.apply(c));
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "validator")
+  public void applyAsync()
+    throws Exception
+  {
+    final SearchConnectionValidator validator = SearchConnectionValidator.builder()
+      .timeout(Duration.ofSeconds(1))
+      .build();
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final Connection c = cf.getConnection();
+    try (c) {
+      c.open();
+      Assert.assertTrue(validator.applyAsync(c).get());
+    }
+    Assert.assertFalse(validator.applyAsync(c).get());
   }
 }

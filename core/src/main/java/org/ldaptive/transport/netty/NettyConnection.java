@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -1587,21 +1588,27 @@ public final class NettyConnection extends TransportConnection
     @Override
     public void channelActive(final ChannelHandlerContext ctx)
     {
+      // this implementation could also be done with user events
+      // while that may be cleaner it does introduce a dependency on the message thread pool which should be avoided
       LOGGER.trace("channel active on {}", ctx);
       sf = ctx.executor().scheduleAtFixedRate(
         () -> {
-          final java.util.concurrent.Future<Boolean> f = connectionExecutor.submit(
-            () -> connectionValidator.apply(NettyConnection.this));
-          boolean success = false;
-          try {
-            success = f.get(connectionValidator.getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
-          } catch (Exception e) {
-            LOGGER.debug("validating {} threw unexpected exception", NettyConnection.this, e);
-          }
-          if (!success) {
-            ctx.fireExceptionCaught(
-              new LdapException(ResultCode.SERVER_DOWN, "Connection validation failed for " + NettyConnection.this));
-          }
+          final AtomicReference<Boolean> result = new AtomicReference<>();
+          ctx.executor().submit(() -> connectionValidator.applyAsync(NettyConnection.this, result::set));
+          ctx.executor().schedule(
+            () -> {
+              LOGGER.trace("connection validation returned {} for {}", result.get(), NettyConnection.this);
+              final boolean success = result.updateAndGet(b -> b == null ? false : b);
+              if (!success) {
+                ctx.fireExceptionCaught(
+                  new LdapException(
+                    ResultCode.SERVER_DOWN,
+                    "Connection validation failed for " + NettyConnection.this));
+              }
+            },
+            Duration.ZERO.equals(connectionValidator.getValidateTimeout()) ?
+              connectionConfig.getResponseTimeout().toMillis() : connectionValidator.getValidateTimeout().toMillis(),
+            TimeUnit.MILLISECONDS);
         },
         connectionValidator.getValidatePeriod().toMillis(),
         connectionValidator.getValidatePeriod().toMillis(),
