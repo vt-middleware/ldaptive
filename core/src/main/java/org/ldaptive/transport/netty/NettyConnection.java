@@ -1593,22 +1593,24 @@ public final class NettyConnection extends TransportConnection
       LOGGER.trace("channel active on {}", ctx);
       sf = ctx.executor().scheduleAtFixedRate(
         () -> {
-          final AtomicReference<Boolean> result = new AtomicReference<>();
-          ctx.executor().submit(() -> connectionValidator.applyAsync(NettyConnection.this, result::set));
-          ctx.executor().schedule(
-            () -> {
-              LOGGER.trace("connection validation returned {} for {}", result.get(), NettyConnection.this);
-              final boolean success = result.updateAndGet(b -> b == null ? false : b);
-              if (!success) {
-                ctx.fireExceptionCaught(
-                  new LdapException(
-                    ResultCode.SERVER_DOWN,
-                    "Connection validation failed for " + NettyConnection.this));
-              }
-            },
-            Duration.ZERO.equals(connectionValidator.getValidateTimeout()) ?
-              connectionConfig.getResponseTimeout().toMillis() : connectionValidator.getValidateTimeout().toMillis(),
-            TimeUnit.MILLISECONDS);
+          if (ctx != null && !ctx.executor().isShuttingDown()) {
+            final AtomicReference<Boolean> result = new AtomicReference<>();
+            ctx.executor().submit(() -> connectionValidator.applyAsync(NettyConnection.this, result::set));
+            ctx.executor().schedule(
+              () -> {
+                LOGGER.trace("connection validation returned {} for {}", result.get(), NettyConnection.this);
+                final boolean success = result.updateAndGet(b -> b == null ? false : b);
+                if (!success) {
+                  ctx.fireExceptionCaught(
+                    new LdapException(
+                      ResultCode.SERVER_DOWN,
+                      "Connection validation failed for " + NettyConnection.this));
+                }
+              },
+              Duration.ZERO.equals(connectionValidator.getValidateTimeout()) ?
+                connectionConfig.getResponseTimeout().toMillis() : connectionValidator.getValidateTimeout().toMillis(),
+              TimeUnit.MILLISECONDS);
+          }
         },
         connectionValidator.getValidatePeriod().toMillis(),
         connectionValidator.getValidatePeriod().toMillis(),
