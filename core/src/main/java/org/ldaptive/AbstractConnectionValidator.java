@@ -2,9 +2,9 @@
 package org.ldaptive;
 
 import java.time.Duration;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,21 +77,24 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
   @Override
   public Supplier<Boolean> applyAsync(final Connection conn)
   {
-    final BlockingQueue<Boolean> queue = new ArrayBlockingQueue<>(1);
-    applyAsync(conn, queue::add);
+    final CountDownLatch latch = new CountDownLatch(1);
+    final AtomicBoolean result = new AtomicBoolean();
+    applyAsync(conn, value -> {
+      result.set(value);
+      latch.countDown();
+    });
     return () -> {
-      Boolean validateResult = null;
       try {
         if (Duration.ZERO.equals(getValidateTimeout())) {
-          // this configuration depends on the connection config response timeout for it's wait behavior
-          validateResult = queue.take();
+          // this configuration depends on the connection config response timeout for its wait behavior
+          latch.await();
         } else {
-          validateResult = queue.poll(getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
+          latch.await(getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
         }
       } catch (Exception e) {
         logger.debug("validating {} threw unexpected exception", conn, e);
       }
-      return validateResult != null && validateResult.booleanValue();
+      return result.get();
     };
   }
 
