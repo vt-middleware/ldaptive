@@ -10,6 +10,7 @@ redirect_from: "/changelog/"
 
 Issue | Description
 :---- | :----------
+[ldaptive-188]({{ site.issueURL }}188) | Connection validator can't block in netty pipeline.
 [ldaptive-187]({{ site.issueURL }}187) | Auto reconnect fails for DefaultConnectionFactory.
 [ldaptive-186]({{ site.issueURL }}186) | SyncReplRunner thread exhaustion.
 
