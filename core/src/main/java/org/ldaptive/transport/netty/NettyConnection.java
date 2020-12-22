@@ -1597,8 +1597,8 @@ public final class NettyConnection extends TransportConnection
           ctx.executor().submit(() -> connectionValidator.applyAsync(NettyConnection.this, result::set));
           ctx.executor().schedule(
             () -> {
+              LOGGER.trace("connection validation returned {} for {}", result.get(), NettyConnection.this);
               final boolean success = result.updateAndGet(b -> b == null ? false : b);
-              LOGGER.trace("connection validation returned {} for {}", success, NettyConnection.this);
               if (!success) {
                 ctx.fireExceptionCaught(
                   new LdapException(
