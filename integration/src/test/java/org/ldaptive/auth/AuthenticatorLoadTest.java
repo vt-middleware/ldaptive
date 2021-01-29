@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.AbstractTest;
@@ -11,6 +12,9 @@ import org.ldaptive.Credential;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.PooledConnectionFactory;
+import org.ldaptive.ReturnAttributes;
+import org.ldaptive.SearchConnectionValidator;
+import org.ldaptive.SearchRequest;
 import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.ad.extended.FastBindConnectionInitializer;
@@ -110,6 +114,12 @@ public class AuthenticatorLoadTest extends AbstractTest
     DefaultConnectionFactory drcf = (DefaultConnectionFactory)
       ((ConnectionFactoryManager) pooledTLSAuth.getDnResolver()).getConnectionFactory();
     PooledConnectionFactory drFactory = new PooledConnectionFactory();
+    drFactory.setValidatePeriodically(true);
+    drFactory.setValidator(
+      new SearchConnectionValidator(
+        Duration.ofSeconds(5),
+        Duration.ofSeconds(5),
+        SearchRequest.objectScopeSearchRequest("", ReturnAttributes.NONE.value())));
     drFactory.setDefaultConnectionFactory(drcf);
     drFactory.initialize();
     SearchDnResolver dr = new SearchDnResolver(drFactory);
@@ -124,6 +134,12 @@ public class AuthenticatorLoadTest extends AbstractTest
     ahcf.setConnectionConfig(ahcc);
 
     PooledConnectionFactory ahFactory = new PooledConnectionFactory();
+    ahFactory.setValidatePeriodically(true);
+    ahFactory.setValidator(
+      new SearchConnectionValidator(
+        Duration.ofSeconds(5),
+        Duration.ofSeconds(5),
+        SearchRequest.objectScopeSearchRequest("", ReturnAttributes.NONE.value())));
     ahFactory.setDefaultConnectionFactory(ahcf);
     ahFactory.initialize();
     pooledTLSAuth.setAuthenticationHandler(new SimpleBindAuthenticationHandler(ahFactory));
@@ -139,6 +155,12 @@ public class AuthenticatorLoadTest extends AbstractTest
       // initialize the pooled ad authenticator
       drcf = (DefaultConnectionFactory) ((SearchDnResolver) pooledADFastBind.getDnResolver()).getConnectionFactory();
       drFactory = new PooledConnectionFactory();
+      drFactory.setValidatePeriodically(true);
+      drFactory.setValidator(
+        new SearchConnectionValidator(
+          Duration.ofSeconds(5),
+          Duration.ofSeconds(5),
+          SearchRequest.objectScopeSearchRequest("", ReturnAttributes.NONE.value())));
       drFactory.setDefaultConnectionFactory(drcf);
       drFactory.initialize();
       dr = new SearchDnResolver(drFactory);
@@ -151,6 +173,12 @@ public class AuthenticatorLoadTest extends AbstractTest
       ahcc = ConnectionConfig.copy(ahcf.getConnectionConfig());
       ahcc.setConnectionInitializers(new FastBindConnectionInitializer());
       ahFactory = new PooledConnectionFactory();
+      ahFactory.setValidatePeriodically(true);
+      ahFactory.setValidator(
+        new SearchConnectionValidator(
+          Duration.ofSeconds(5),
+          Duration.ofSeconds(5),
+          SearchRequest.objectScopeSearchRequest("", ReturnAttributes.NONE.value())));
       ahFactory.setDefaultConnectionFactory(ahcf);
       ahFactory.initialize();
       pooledADFastBind.setAuthenticationHandler(new SimpleBindAuthenticationHandler(ahFactory));
@@ -211,10 +239,22 @@ public class AuthenticatorLoadTest extends AbstractTest
           "cn=John Adams",
         },
         {
+          "jadams@ldaptive.org",
+          "wrongpass",
+          null,
+          null,
+        },
+        {
           "tjefferson@ldaptive.org",
           "password3",
           "givenName|sn",
           "givenName=Thomas|sn=Jefferson",
+        },
+        {
+          "tjefferson@ldaptive.org",
+          "wrongpass",
+          null,
+          null,
         },
         {
           "jmadison@ldaptive.org",
@@ -223,10 +263,22 @@ public class AuthenticatorLoadTest extends AbstractTest
           "givenName=James|sn=Madison",
         },
         {
+          "jmadison@ldaptive.org",
+          "wrongpass",
+          null,
+          null,
+        },
+        {
           "jmonroe@ldaptive.org",
           "password5",
           "givenName|sn",
           "givenName=James|sn=Monroe",
+        },
+        {
+          "jmonroe@ldaptive.org",
+          "wrongpass",
+          null,
+          null,
         },
         {
           "jqadams@ldaptive.org",
@@ -235,10 +287,22 @@ public class AuthenticatorLoadTest extends AbstractTest
           "cn=John Quincy Adams",
         },
         {
+          "jqadams@ldaptive.org",
+          "wrongpass",
+          null,
+          null,
+        },
+        {
           "ajackson@ldaptive.org",
           "password7",
           "givenName|sn",
           "givenName=Andrew|sn=Jackson",
+        },
+        {
+          "ajackson@ldaptive.org",
+          "wrongpass",
+          null,
+          null,
         },
         {
           "mvburen@ldaptive.org",
@@ -247,16 +311,34 @@ public class AuthenticatorLoadTest extends AbstractTest
           "givenName=Martin|sn=Buren",
         },
         {
+          "mvburen@ldaptive.org",
+          "wrongpass",
+          null,
+          null,
+        },
+        {
           "whharrison@ldaptive.org",
           "password9",
           "givenName|sn",
           "givenName=William|sn=Harrison",
         },
         {
+          "whharrison@ldaptive.org",
+          "wrongpass",
+          null,
+          null,
+        },
+        {
           "jtyler@ldaptive.org",
           "password10",
           "givenName|sn",
           "givenName=John|sn=Tyler",
+        },
+        {
+          "jtyler@ldaptive.org",
+          "wrongpass",
+          null,
+          null,
         },
       };
   }
@@ -278,6 +360,12 @@ public class AuthenticatorLoadTest extends AbstractTest
     final String expectedAttrs)
     throws Exception
   {
+    if (returnAttrs == null) {
+      final AuthenticationResponse response = singleTLSAuth.authenticate(
+        new AuthenticationRequest(user, new Credential(credential)));
+      Assert.assertFalse(response.isSuccess());
+      return;
+    }
     // test auth with return attributes
     final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = singleTLSAuth.authenticate(
@@ -303,6 +391,12 @@ public class AuthenticatorLoadTest extends AbstractTest
     final String expectedAttrs)
     throws Exception
   {
+    if (returnAttrs == null) {
+      final AuthenticationResponse response = singleTLSAuth.authenticate(
+        new AuthenticationRequest(user, new Credential(credential)));
+      Assert.assertFalse(response.isSuccess());
+      return;
+    }
     // test auth with return attributes
     final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = pooledTLSAuth.authenticate(
@@ -332,6 +426,12 @@ public class AuthenticatorLoadTest extends AbstractTest
       return;
     }
 
+    if (returnAttrs == null) {
+      final AuthenticationResponse response = singleTLSAuth.authenticate(
+        new AuthenticationRequest(user, new Credential(credential)));
+      Assert.assertFalse(response.isSuccess());
+      return;
+    }
     // test auth with fast bind
     final AuthenticationResponse response = singleADFastBind.authenticate(
       new AuthenticationRequest(user, new Credential(credential)));
@@ -359,6 +459,12 @@ public class AuthenticatorLoadTest extends AbstractTest
       return;
     }
 
+    if (returnAttrs == null) {
+      final AuthenticationResponse response = singleTLSAuth.authenticate(
+        new AuthenticationRequest(user, new Credential(credential)));
+      Assert.assertFalse(response.isSuccess());
+      return;
+    }
     // test auth with return attributes
     final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = pooledADFastBind.authenticate(
