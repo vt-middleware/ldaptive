@@ -1040,6 +1040,11 @@ public final class NettyConnection extends TransportConnection
       notifyOperationHandlesOfClose();
       return;
     }
+    if (isClosing()) {
+      LOGGER.debug("Close in progress, ignoring reconnect for connection {}", this);
+      notifyOperationHandlesOfClose();
+      return;
+    }
     LOGGER.trace("reconnecting connection {}", this);
     if (!reconnectLock.isWriteLocked()) {
       boolean gotReconnectLock;
@@ -1257,12 +1262,7 @@ public final class NettyConnection extends TransportConnection
         future,
         inboundException != null ? inboundException.getClass() : null,
         inboundException);
-      // connection factories that shutdown event loops on close (DefaultConnectionFactory)
-      // do not support auto reconnect
-      if (connectionConfig.getAutoReconnect() && shutdownOnClose) {
-        LOGGER.warn("Auto reconnect cannot be used when shutdownOnClose is true for {}", NettyConnection.this);
-      }
-      if (connectionConfig.getAutoReconnect() && !shutdownOnClose && !isOpening() && !isClosing()) {
+      if (connectionConfig.getAutoReconnect() && !isOpening() && !isClosing()) {
         LOGGER.trace("scheduling reconnect thread for {}", NettyConnection.this);
         if (connectionExecutor != null && !connectionExecutor.isShutdown()) {
           connectionExecutor.execute(

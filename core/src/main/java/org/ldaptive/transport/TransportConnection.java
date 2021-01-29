@@ -130,7 +130,7 @@ public abstract class TransportConnection implements Connection
             break;
           } catch (LdapException e) {
             lastThrown = e;
-            LOGGER.debug("Error reopening connection for strategy {}", connectionStrategy, e);
+            LOGGER.debug("Error reopening connection {} using strategy {}", this, connectionStrategy, e);
           }
         }
         if (lastThrown != null) {
@@ -139,7 +139,7 @@ public abstract class TransportConnection implements Connection
         if (isOpen()) {
           lastSuccessfulOpen = Instant.now();
         }
-        LOGGER.debug("Strategy {} finished reopen for connection {}", connectionStrategy, this);
+        LOGGER.debug("Finished reopen for connection {} using strategy {}", this, connectionStrategy);
       } finally {
         openLock.unlock();
       }
