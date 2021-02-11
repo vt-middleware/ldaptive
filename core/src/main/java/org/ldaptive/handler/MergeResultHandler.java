@@ -6,13 +6,13 @@ import org.ldaptive.SearchResponse;
 import java.util.Arrays;
 import java.util.Objects;
 /**
- * Joins the values of the attributes in all entries into a single entry.
+ * Merges the values of the attributes in all entries into a single entry.
  *
  * @author  Middleware Services
  */
-public class JoinEntriesResultHandler extends AbstractEntryHandler<SearchResponse> implements SearchResultHandler {
+public class MergeResultHandler extends AbstractEntryHandler<SearchResponse> implements SearchResultHandler {
 
-    public JoinEntriesResultHandler() {
+    public MergeResultHandler() {
     }
 
     @Override

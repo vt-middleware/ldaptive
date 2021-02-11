@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Unit test for {@link JoinEntriesResultHandler}.
+ * Unit test for {@link MergeResultHandler}.
  *
  * @author  Miguel Martinez de Espronceda
  */
-public class JoinEntriesHandlerTest {
+public class MergeHandlerTest {
 
 
     /**
@@ -71,7 +71,7 @@ public class JoinEntriesHandlerTest {
 
     @Test(groups="handlers", dataProvider = "entries")
     public void apply(final LdapEntry[] actual, final LdapEntry[] expected) {
-        final JoinEntriesResultHandler handler = new JoinEntriesResultHandler();
+        final MergeResultHandler handler = new MergeResultHandler();
         final SearchResponse response = new SearchResponse();
         response.addEntries(actual);
         Assert.assertEquals(
