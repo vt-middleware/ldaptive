@@ -60,7 +60,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>1.7.30</org.slf4j.version>
-    <io.netty.version>4.1.55.Final</io.netty.version>
+    <io.netty.version>4.1.59.Final</io.netty.version>
     <org.springframework.version>5.2.12.RELEASE</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.0.0</japicmp.oldVersion>
@@ -124,7 +124,7 @@
       <dependency>
         <groupId>org.bouncycastle</groupId>
         <artifactId>bcprov-jdk15on</artifactId>
-        <version>1.67</version>
+        <version>1.68</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -235,7 +235,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.1.1</version>
+          <version>3.1.2</version>
           <dependencies>
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
@@ -292,7 +292,7 @@
         <plugin>
           <groupId>com.github.siom79.japicmp</groupId>
           <artifactId>japicmp-maven-plugin</artifactId>
-          <version>0.14.4</version>
+          <version>0.15.2</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
