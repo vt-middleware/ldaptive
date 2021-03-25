@@ -1,13 +1,11 @@
 package org.ldaptive.ssl;
 
-import org.apache.tools.ant.util.FileUtils;
 import org.junit.Test;
 import org.ldaptive.LdapUtils;
 import org.testng.Assert;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.util.stream.Collectors;
@@ -43,12 +41,12 @@ public class X509CertificatesCredentialReaderTest {
     @Test
     public void verifyMultipleCertificatesSeparated() throws Exception {
         final File cert1 = File.createTempFile("cert1", ".pem");
-        try (OutputStream writer = FileUtils.newOutputStream(cert1.toPath(), false)) {
+        try (OutputStream writer = new FileOutputStream(cert1)) {
             writer.write(LdapUtils.base64Decode(MW_CERT));
             writer.flush();
         }
         final File cert2 = File.createTempFile("cert2", ".pem");
-        try (OutputStream writer = FileUtils.newOutputStream(cert2.toPath(), false)) {
+        try (OutputStream writer = new FileOutputStream(cert2)) {
             writer.write(LdapUtils.base64Decode(MW_CERT));
             writer.flush();
         }
