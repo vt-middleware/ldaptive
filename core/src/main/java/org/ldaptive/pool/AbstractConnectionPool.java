@@ -155,7 +155,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   public void setMinPoolSize(final int size)
   {
     if (size < 0) {
-      throw new IllegalArgumentException("Minimum pool size must be greater than 0");
+      throw new IllegalArgumentException("Minimum pool size must be greater than or equal to 0");
     }
     logger.trace("setting minPoolSize: {}", size);
     minPoolSize = size;
@@ -181,8 +181,8 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    */
   public void setMaxPoolSize(final int size)
   {
-    if (size < 0) {
-      throw new IllegalArgumentException("Maximum pool size must be greater than 0");
+    if (size < 1) {
+      throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 1");
     }
     logger.trace("setting maxPoolSize: {}", size);
     maxPoolSize = size;
@@ -853,12 +853,12 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     if (!activator.apply(pc.getConnection())) {
       logger.warn("connection failed activation: {}", pc);
       removeAvailableAndActiveConnection(pc);
-      throw new PoolException("Activation of connection failed");
+      throw new ActivationException("Activation of connection failed");
     }
     if (validateOnCheckOut && !validator.apply(pc.getConnection())) {
       logger.warn("connection failed check out validation: {}", pc);
       removeAvailableAndActiveConnection(pc);
-      throw new PoolException("Validation of connection failed");
+      throw new ValidationException("Validation of connection failed");
     }
   }
 

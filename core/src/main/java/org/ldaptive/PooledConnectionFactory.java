@@ -5,17 +5,23 @@ import java.time.Duration;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.ldaptive.pool.ConnectionActivator;
 import org.ldaptive.pool.ConnectionPassivator;
+import org.ldaptive.pool.PoolException;
 import org.ldaptive.pool.PruneStrategy;
+import org.ldaptive.pool.ValidationException;
+import org.ldaptive.pool.ValidationExceptionHandler;
 import org.ldaptive.transport.Transport;
 import org.ldaptive.transport.TransportFactory;
 
 /**
- * Creates connections for performing ldap operations.
+ * Creates connections for performing ldap operations and manages those connections as a pool.
  *
  * @author  Middleware Services
  */
 public class PooledConnectionFactory extends BlockingConnectionPool implements ConnectionFactory
 {
+
+  /** Validation exception handler. */
+  private ValidationExceptionHandler validationExceptionHandler = new RetryValidationExceptionHandler();
 
 
   /** Default constructor. */
@@ -105,6 +111,28 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
 
 
   /**
+   * Returns the validation exception handler.
+   *
+   * @return  validation exception handler
+   */
+  public ValidationExceptionHandler getValidationExceptionHandler()
+  {
+    return validationExceptionHandler;
+  }
+
+
+  /**
+   * Sets the validation exception handler.
+   *
+   * @param  handler  validation exception handler
+   */
+  public void setValidationExceptionHandler(final ValidationExceptionHandler handler)
+  {
+    validationExceptionHandler = handler;
+  }
+
+
+  /**
    * Returns the ldap transport.
    *
    * @return  ldap transport
@@ -116,10 +144,38 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
 
 
   @Override
+  public Connection getConnection()
+    throws PoolException
+  {
+    try {
+      return super.getConnection();
+    } catch (ValidationException e) {
+      if (validationExceptionHandler != null) {
+        logger.warn("Connection could not be validated, invoking handler {}", validationExceptionHandler, e);
+        final Connection conn = validationExceptionHandler.apply(e);
+        if (conn != null) {
+          return conn;
+        }
+      }
+      throw e;
+    }
+  }
+
+
+  @Override
   public void close()
   {
     super.close();
     getDefaultConnectionFactory().close();
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder("[").append(
+      super.toString()).append(", ")
+      .append("validationExceptionHandler=").append(validationExceptionHandler).append("]").toString();
   }
 
 
@@ -228,6 +284,13 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
     }
 
 
+    public Builder validationExceptionHandler(final ValidationExceptionHandler handler)
+    {
+      object.setValidationExceptionHandler(handler);
+      return this;
+    }
+
+
     public Builder pruneStrategy(final PruneStrategy strategy)
     {
       object.setPruneStrategy(strategy);
@@ -248,4 +311,32 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
     }
   }
   // CheckStyle:ON
+
+
+  /**
+   * Validation exception handler that attempts to retrieve another connection. This implementation makes {@link
+   * #getMaxPoolSize()} attempts before giving up.
+   */
+  public class RetryValidationExceptionHandler implements ValidationExceptionHandler
+  {
+
+
+    @Override
+    public Connection apply(final ValidationException e)
+    {
+      // limit to max pool size since a validation exception has already occurred
+      // this should guarantee you force at least one new connection to be created
+      for (int i = 0; i < getMaxPoolSize(); i++) {
+        try {
+          return PooledConnectionFactory.super.getConnection();
+        } catch (ValidationException ex) {
+          logger.warn("Validation exception handler failed on retry {}", i, ex);
+        } catch (Exception ex) {
+          logger.warn("Validation exception handler failed", ex);
+          break;
+        }
+      }
+      return null;
+    }
+  }
 }
