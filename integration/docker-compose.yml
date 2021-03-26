@@ -1,8 +1,8 @@
-version: "3.7"
+version: "3.8"
 
 services:
   ldaptive:
-    image: maven:3.6-jdk-11
+    build: .
     volumes:
       - $HOME/.m2:/root/.m2
       - $PWD:/apps/ldaptive
@@ -17,12 +17,14 @@ services:
         ipv4_address: 172.28.1.10
     command: >
       bash -c "export DEBIAN_FRONTEND=noninteractive &&
-      apt-get update && apt-get install -y net-tools krb5-user &&
+      /apps/ldaptive/integration/wait_for_ldap &&
       /apps/ldaptive/integration/krb5_init &&
       cd /apps/ldaptive && integration/run"
 
   ldap-test:
     image: dhawes/ldap-test-openldap:latest
+    environment:
+      - DEBUG=-d 0
     ports:
       - "389:389"
       - "10389:10389"
@@ -33,8 +35,8 @@ services:
       ldap_net:
         ipv4_address: 172.28.1.11
     logging:
-      #driver: "json-file"
-      driver: "none"
+      driver: "json-file"
+      #driver: "none"
       options:
         max-size: "100M"
         max-file: "5"
