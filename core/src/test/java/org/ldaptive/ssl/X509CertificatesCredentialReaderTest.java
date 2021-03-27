@@ -16,7 +16,8 @@ import java.util.stream.Stream;
  *
  * @author  Misagh Moayyed
  */
-public class X509CertificatesCredentialReaderTest {
+public class X509CertificatesCredentialReaderTest
+{
     private static final String MW_CERT =
         "MIIDhzCCAvCgAwIBAgIJAPpeFAkJP5xgMA0GCSqGSIb3DQEBBQUAMIGKMQswCQYD" +
         "VQQGEwJVUzERMA8GA1UECBMIVmlyZ2luaWExEzARBgNVBAcTCkJsYWNrc2J1cmcx" +
@@ -39,7 +40,8 @@ public class X509CertificatesCredentialReaderTest {
         "fIKCXuG4dZ6nn3RbjlKhXzHYADmJzdQNIC3M9eDQBEYmMy8+mV+ErVebBg==";
     
     @Test
-    public void verifyMultipleCertificatesSeparated() throws Exception {
+    public void verifyMultipleCertificatesSeparated() throws Exception
+    {
         final File cert1 = File.createTempFile("cert1", ".pem");
         try (OutputStream writer = new FileOutputStream(cert1)) {
             writer.write(LdapUtils.base64Decode(MW_CERT));
@@ -51,7 +53,9 @@ public class X509CertificatesCredentialReaderTest {
             writer.flush();
         }
         final X509CertificatesCredentialReader reader = new X509CertificatesCredentialReader();
-        final String paths = Stream.of(cert1, cert2).map(file -> "file:" + file.getAbsolutePath()).collect(Collectors.joining(","));
+        final String paths = Stream.of(cert1, cert2)
+            .map(file -> "file:" + file.getAbsolutePath())
+            .collect(Collectors.joining(","));
         final X509Certificate[] certificates = reader.read(paths);
         Assert.assertEquals(2, certificates.length);
     }
