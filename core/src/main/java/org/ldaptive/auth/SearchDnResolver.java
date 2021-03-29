@@ -216,10 +216,10 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   public void setResolveFromAttribute(final String attributeToUse) {
     logger.trace("setting attributeToUse: {}", attributeToUse);
 
-    // Only present if not null and not empty
-    boolean isPresent = this.resolveFromAttribute != null && this.resolveFromAttribute.isEmpty();
-
-    this.resolveFromAttribute = isPresent ? attributeToUse : null;
+    if (attributeToUse == null || attributeToUse.isEmpty())
+      this.resolveFromAttribute = null;
+    else
+      this.resolveFromAttribute = attributeToUse;
   }
 
   /**
@@ -289,15 +289,15 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   {
     String dn = entry.getDn();
 
-    if (resolveFromAttribute != null && ! resolveFromAttribute.isBlank()) {
+    if (resolveFromAttribute != null) {
       LdapAttribute attr = entry.getAttribute(resolveFromAttribute);
 
-      if (attr.size() == 1) {
-        logger.info("Too much values in dn: " + dn + " resolveDnFromAttribute: " + resolveFromAttribute + ": skipping");
-    } else if(attr.isBinary()) {
-        logger.info("ResolveDnFromAttribute: " + resolveFromAttribute + " in dn: " + dn + " is binary: skipping");
+      if (attr.size() != 1) {
+        logger.info("Skipping candidate as it does not meet cardinality (must contain a single value), in dn: " + dn + " resolveDnFromAttribute: " + resolveFromAttribute);
+      } else if(attr.isBinary()) {
+        logger.info("Skipping candidate as it is binary, in dn: " + dn + " resolveDnFromAttribute: " + resolveFromAttribute);
       } else {
-        return attr.getStringValue();
+        dn = attr.getStringValue();
       }
     }
 
