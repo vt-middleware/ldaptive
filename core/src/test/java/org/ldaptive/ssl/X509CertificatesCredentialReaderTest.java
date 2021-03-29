@@ -7,9 +7,9 @@ import java.io.OutputStream;
 import java.security.cert.X509Certificate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.junit.Test;
 import org.ldaptive.LdapUtils;
 import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * Unit test for {@link X509CertificatesCredentialReader}.

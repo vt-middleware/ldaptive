@@ -271,9 +271,9 @@ public class StringCustomObject implements CustomObject
       @Attribute(name = "typeList1", property = "typeList1"),
       @Attribute(name = "typeList2", property = "typeList2"),
       @Attribute(
-        name = "transcoded", property = "transcoded", transcoder = "org.ldaptive.beans.reflect.CustomObject$" +
-          "PrefixStringValueTranscoder"
-      ),
+        name = "transcoded",
+        property = "transcoded",
+        transcoder = "org.ldaptive.beans.reflect.CustomObject$PrefixStringValueTranscoder"),
       @Attribute(name = "nullArray1", property = "nullArray1"),
       @Attribute(name = "nullList1", property = "nullList1")})
   public static class Default extends StringCustomObject {}
@@ -298,9 +298,9 @@ public class StringCustomObject implements CustomObject
       @Attribute(name = "typeList1", property = "typeList1"),
       @Attribute(name = "typeList2", property = "typeList2"),
       @Attribute(
-        name = "transcoded", property = "transcoded", transcoder = "new org.ldaptive.beans.reflect.CustomObject$" +
-          "PrefixStringValueTranscoder(1)"
-      ),
+        name = "transcoded",
+        property = "transcoded",
+        transcoder = "new org.ldaptive.beans.reflect.CustomObject$PrefixStringValueTranscoder(1)"),
       @Attribute(name = "nullArray1", property = "nullArray1"),
       @Attribute(name = "nullList1", property = "nullList1")})
   public static class Spring extends StringCustomObject

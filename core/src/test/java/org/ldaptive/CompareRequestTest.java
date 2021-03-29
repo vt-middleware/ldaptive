@@ -65,6 +65,7 @@ public class CompareRequestTest
   @Test
   public void testToString()
   {
+    // CheckStyle:Indentation OFF
     Assert.assertEquals(
       CompareRequest.builder().build().toString().split("::")[1],
       "controls=null, dn=null, attributeDesc=null, assertionValue=null");
@@ -92,5 +93,6 @@ public class CompareRequestTest
     Assert.assertEquals(
       new CompareRequest("uid=1", "name", "value").toString().split("::")[1],
       "controls=null, dn=uid=1, attributeDesc=name, assertionValue=value");
+    // CheckStyle:Indentation ON
   }
 }
