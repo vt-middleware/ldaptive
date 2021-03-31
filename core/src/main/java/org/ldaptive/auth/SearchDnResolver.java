@@ -216,10 +216,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   public void setResolveFromAttribute(final String attributeToUse) {
     logger.trace("setting attributeToUse: {}", attributeToUse);
 
-    if (attributeToUse == null || attributeToUse.isEmpty())
-      this.resolveFromAttribute = null;
-    else
-      this.resolveFromAttribute = attributeToUse;
+    this.resolveFromAttribute = attributeToUse;
   }
 
   /**
@@ -287,21 +284,31 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   protected String resolveDn(final LdapEntry entry)
   {
-    String dn = entry.getDn();
+    if (resolveFromAttribute != null)
+      return performResolveFromAttribute(entry);
 
-    if (resolveFromAttribute != null) {
-      LdapAttribute attr = entry.getAttribute(resolveFromAttribute);
+    return entry.getDn();
+  }
 
-      if (attr.size() != 1) {
-        logger.info("Skipping candidate as it does not meet cardinality (must contain a single value), in dn: " + dn + " resolveDnFromAttribute: " + resolveFromAttribute);
-      } else if(attr.isBinary()) {
-        logger.info("Skipping candidate as it is binary, in dn: " + dn + " resolveDnFromAttribute: " + resolveFromAttribute);
-      } else {
-        dn = attr.getStringValue();
-      }
+  /**
+   * Resolve DN from attribute pointed in the resolveFromAttribute property.
+   * @param entry
+   * @return first and singled value in resolveFromAttribute, or null if not valid
+   */
+  protected String performResolveFromAttribute(LdapEntry entry) {
+    LdapAttribute attr = entry.getAttribute(resolveFromAttribute);
+
+    if (attr.size() != 1) {
+      logger.warn("Skipping candidate as it does not meet cardinality (must contain a single value), in dn: {} resolveDnFromAttribute: {}", entry.getDn(), resolveFromAttribute);
+      return null;
     }
 
-    return dn;
+    if (attr.isBinary()) {
+      logger.warn("Skipping candidate as it is binary, in dn: {} resolveDnFromAttribute: {}", entry.getDn(), resolveFromAttribute);
+      return null;
+    }
+
+    return attr.getStringValue();
   }
 
 
