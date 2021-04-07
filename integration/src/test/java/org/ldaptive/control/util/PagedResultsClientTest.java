@@ -34,12 +34,11 @@ public class PagedResultsClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "createEntry22",
-      "createEntry23",
-      "createEntry25"
-    })
+  @Parameters({
+    "createEntry22",
+    "createEntry23",
+    "createEntry25"
+  })
   @BeforeClass(groups = "control-util")
   public void createLdapEntry(final String ldifFile1, final String ldifFile2, final String ldifFile3)
     throws Exception
@@ -71,11 +70,10 @@ public class PagedResultsClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "prSearchDn",
-      "prSearchFilter"
-    })
+  @Parameters({
+    "prSearchDn",
+    "prSearchFilter"
+  })
   @Test(groups = "control-util")
   public void execute(final String dn, final String filter)
     throws Exception
@@ -116,11 +114,10 @@ public class PagedResultsClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "prSearchDn",
-      "prSearchFilter"
-    })
+  @Parameters({
+    "prSearchDn",
+    "prSearchFilter"
+  })
   @Test(groups = "control-util")
   public void executeToCompletion(final String dn, final String filter)
     throws Exception

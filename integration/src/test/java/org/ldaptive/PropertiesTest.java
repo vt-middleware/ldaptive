@@ -70,11 +70,7 @@ public class PropertiesTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "ldapBindDn",
-      "ldapTestHost"
-    })
+  @Parameters({"ldapBindDn", "ldapTestHost"})
   @Test(groups = "props")
   public void parserProperties(final String bindDn, final String host)
     throws Exception
@@ -167,11 +163,7 @@ public class PropertiesTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "ldapBindDn",
-      "ldapTestHost"
-    })
+  @Parameters({"ldapBindDn", "ldapTestHost"})
   @Test(groups = "props")
   public void jaasProperties(final String bindDn, final String host)
     throws Exception

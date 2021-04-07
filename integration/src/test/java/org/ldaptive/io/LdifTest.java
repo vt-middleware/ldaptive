@@ -59,11 +59,7 @@ public class LdifTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "ldifSearchDn",
-      "ldifSearchFilter"
-    })
+  @Parameters({"ldifSearchDn", "ldifSearchFilter"})
   @Test(groups = "ldif")
   public void searchAndCompareLdif(final String dn, final String filter)
     throws Exception
@@ -97,11 +93,7 @@ public class LdifTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "multipleLdifResultsIn",
-      "multipleLdifResultsOut"
-    })
+  @Parameters({"multipleLdifResultsIn", "multipleLdifResultsOut"})
   @Test(groups = "ldif")
   public void readAndCompareMultipleLdif(final String ldifFileIn, final String ldifFileOut)
     throws Exception

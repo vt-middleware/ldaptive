@@ -84,18 +84,17 @@ public class AuthenticatorLoadTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "createEntry2",
-      "createEntry3",
-      "createEntry4",
-      "createEntry5",
-      "createEntry6",
-      "createEntry7",
-      "createEntry8",
-      "createEntry9",
-      "createEntry10"
-    })
+  @Parameters({
+    "createEntry2",
+    "createEntry3",
+    "createEntry4",
+    "createEntry5",
+    "createEntry6",
+    "createEntry7",
+    "createEntry8",
+    "createEntry9",
+    "createEntry10"
+  })
   @BeforeClass(groups = "authload")
   // CheckStyle:ParameterNumber OFF
   public void createAuthEntry(

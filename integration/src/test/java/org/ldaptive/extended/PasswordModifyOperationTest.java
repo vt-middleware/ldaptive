@@ -63,12 +63,7 @@ public class PasswordModifyOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "passwordModifyDn",
-      "passwordModifyOldPass",
-      "passwordModifyNewPass"
-    })
+  @Parameters({"passwordModifyDn", "passwordModifyOldPass", "passwordModifyNewPass"})
   @Test(groups = "extended")
   public void modify(final String dn, final String oldPass, final String newPass)
     throws Exception

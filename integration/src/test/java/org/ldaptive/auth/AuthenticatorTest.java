@@ -403,13 +403,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateDn",
-      "authenticateDnCredential",
-      "authenticateDnReturnAttrs",
-      "authenticateDnResults"
-    })
+  @Parameters({
+    "authenticateDn",
+    "authenticateDnCredential",
+    "authenticateDnReturnAttrs",
+    "authenticateDnResults"
+  })
   @Test(
     groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
@@ -439,13 +438,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateDn",
-      "authenticateDnCredential",
-      "authenticateDnReturnAttrs",
-      "authenticateDnResults"
-    })
+  @Parameters({
+    "authenticateDn",
+    "authenticateDnCredential",
+    "authenticateDnReturnAttrs",
+    "authenticateDnResults"
+  })
   @Test(
     groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
@@ -479,13 +477,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateDn",
-      "authenticateDnCredential",
-      "authenticateDnFilter",
-      "authenticateDnFilterParameters"
-    })
+  @Parameters({
+    "authenticateDn",
+    "authenticateDnCredential",
+    "authenticateDnFilter",
+    "authenticateDnFilterParameters"
+  })
   @Test(groups = "auth")
   public void authenticateDnHandler(
     final String dn,
@@ -524,13 +521,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(
     groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
@@ -583,13 +579,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(
     groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
@@ -626,14 +621,13 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateFilter",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateFilter",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(
     groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
@@ -670,14 +664,13 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateFilter",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateFilter",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(groups = "auth")
   public void authenticateVelocity(
       final String user,
@@ -730,13 +723,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(groups = "auth")
   public void authenticateAggregate(
     final String user,
@@ -822,12 +814,11 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateReturnAttrs"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs"
+  })
   @Test(groups = "auth")
   public void authenticateInvalidInput(final String user, final String credential, final String returnAttrs)
     throws Exception
@@ -872,13 +863,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(groups = "auth")
   public void authenticateReturnAttributes(
     final String user,
@@ -945,11 +935,10 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateSpecialCharsUser2",
-      "authenticateSpecialCharsCredential2"
-    })
+  @Parameters({
+    "authenticateSpecialCharsUser2",
+    "authenticateSpecialCharsCredential2"
+  })
   @Test(groups = "auth")
   public void authenticateSpecialChars2(final String user, final String credential)
     throws Exception
@@ -987,11 +976,10 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateSpecialCharsUser3",
-      "authenticateSpecialCharsCredential3"
-    })
+  @Parameters({
+    "authenticateSpecialCharsUser3",
+    "authenticateSpecialCharsCredential3"
+  })
   @Test(groups = "auth")
   public void authenticateSpecialChars3(final String user, final String credential)
     throws Exception
@@ -1015,13 +1003,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(
     groups = "auth", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
@@ -1060,13 +1047,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(groups = "auth")
   public void authenticateWhoAmI(
     final String user,
@@ -1102,13 +1088,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(groups = "auth")
   public void authenticateAuthorizationIdentity(
     final String user,
@@ -1146,13 +1131,12 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential",
-      "authenticateReturnAttrs",
-      "authenticateResults"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
   @Test(groups = "auth")
   public void authenticateSessionTracking(
     final String user,
@@ -1191,11 +1175,10 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential"
+  })
   @AfterClass(groups = {"auth", "authAccountState"})
   public void authenticatePasswordPolicy(final String user, final String credential)
     throws Exception
@@ -1335,11 +1318,10 @@ public class AuthenticatorTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "authenticateUser",
-      "authenticateCredential"
-    })
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential"
+  })
   @AfterClass(groups = {"auth", "authAccountState"})
   public void authenticateActiveDirectory(final String user, final String credential)
     throws Exception

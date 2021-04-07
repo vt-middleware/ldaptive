@@ -35,12 +35,11 @@ public class VirtualListViewClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "createEntry19",
-      "createEntry20",
-      "createEntry21"
-    })
+  @Parameters({
+    "createEntry19",
+    "createEntry20",
+    "createEntry21"
+  })
   @BeforeClass(groups = "control-util")
   public void createLdapEntry(final String ldifFile1, final String ldifFile2, final String ldifFile3)
     throws Exception
@@ -72,11 +71,10 @@ public class VirtualListViewClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "vlvSearchDn",
-      "vlvSearchFilter"
-    })
+  @Parameters({
+    "vlvSearchDn",
+    "vlvSearchFilter"
+  })
   @Test(groups = "control-util")
   public void execute(final String dn, final String filter)
     throws Exception

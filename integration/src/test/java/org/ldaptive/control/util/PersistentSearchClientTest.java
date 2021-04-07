@@ -73,12 +73,11 @@ public class PersistentSearchClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "persistentSearchDn",
-      "persistentSearchReturnAttrs",
-      "persistentSearchResults"
-    })
+  @Parameters({
+    "persistentSearchDn",
+    "persistentSearchReturnAttrs",
+    "persistentSearchResults"
+  })
   @Test(groups = "control-util")
   public void persistentSearch(final String dn, final String returnAttrs, final String ldifFile)
     throws Exception

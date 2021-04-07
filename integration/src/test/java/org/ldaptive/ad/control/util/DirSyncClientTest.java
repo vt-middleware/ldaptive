@@ -35,12 +35,11 @@ public class DirSyncClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "createEntry27",
-      "createEntry28",
-      "createEntry29"
-    })
+  @Parameters({
+    "createEntry27",
+    "createEntry28",
+    "createEntry29"
+  })
   @BeforeClass(groups = "control-util")
   public void createLdapEntry(final String ldifFile1, final String ldifFile2, final String ldifFile3)
     throws Exception
@@ -72,11 +71,10 @@ public class DirSyncClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "dsSearchDn",
-      "dsSearchFilter"
-    })
+  @Parameters({
+    "dsSearchDn",
+    "dsSearchFilter"
+  })
   @Test(groups = "control-util")
   public void execute(final String dn, final String filter)
     throws Exception
@@ -104,11 +102,10 @@ public class DirSyncClientTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "dsSearchDn",
-      "dsSearchFilter"
-    })
+  @Parameters({
+    "dsSearchDn",
+    "dsSearchFilter"
+  })
   @Test(groups = "control-util")
   public void executeToCompletion(final String dn, final String filter)
     throws Exception

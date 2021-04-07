@@ -98,13 +98,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "createGroup2",
-      "createGroup3",
-      "createGroup4",
-      "createGroup5"
-    })
+  @Parameters({
+    "createGroup2",
+    "createGroup3",
+    "createGroup4",
+    "createGroup5"
+  })
   @BeforeClass(groups = "search", dependsOnGroups = "searchInit")
   public void createGroupEntry(
     final String ldifFile2,
@@ -187,14 +186,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchDn",
-      "searchFilter",
-      "searchFilterParameters",
-      "searchReturnAttrs",
-      "searchResults"
-    })
+  @Parameters({
+    "searchDn",
+    "searchFilter",
+    "searchFilterParameters",
+    "searchReturnAttrs",
+    "searchResults"
+  })
   @Test(
     groups = "search", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
@@ -273,13 +271,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchFilter",
-      "searchFilterParameters",
-      "searchReturnAttrs",
-      "searchResults"
-    })
+  @Parameters({
+    "searchFilter",
+    "searchFilterParameters",
+    "searchReturnAttrs",
+    "searchResults"
+  })
   @Test(groups = "search")
   public void searchScopes(
     final String filter,
@@ -333,13 +330,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchDn",
-      "searchFilter",
-      "searchFilterParameters",
-      "searchResults"
-    })
+  @Parameters({
+    "searchDn",
+    "searchFilter",
+    "searchFilterParameters",
+    "searchResults"
+  })
   @Test(groups = "search")
   public void returnAttributesSearch(
     final String dn,
@@ -419,13 +415,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "pagedSearchDn",
-      "pagedSearchFilter",
-      "pagedSearchReturnAttrs",
-      "pagedSearchResults"
-    })
+  @Parameters({
+    "pagedSearchDn",
+    "pagedSearchFilter",
+    "pagedSearchReturnAttrs",
+    "pagedSearchResults"
+  })
   @Test(groups = "search")
   public void pagedSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
@@ -487,13 +482,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "virtualListViewSearchDn",
-      "virtualListViewSearchFilter",
-      "virtualListViewSearchReturnAttrs",
-      "virtualListViewSearchResults"
-    })
+  @Parameters({
+    "virtualListViewSearchDn",
+    "virtualListViewSearchFilter",
+    "virtualListViewSearchReturnAttrs",
+    "virtualListViewSearchResults"
+  })
   @Test(groups = "search")
   public void virtualListViewSearch(
     final String dn,
@@ -571,11 +565,10 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "sortSearchDn",
-      "sortSearchFilter"
-    })
+  @Parameters({
+    "sortSearchDn",
+    "sortSearchFilter"
+  })
   @Test(groups = "search")
   public void sortedSearch(final String dn, final String filter)
     throws Exception
@@ -632,11 +625,10 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "matchedValuesSearchDn",
-      "matchedValuesSearchFilter"
-    })
+  @Parameters({
+    "matchedValuesSearchDn",
+    "matchedValuesSearchFilter"
+  })
   @Test(groups = "search")
   public void matchValuesSearch(final String dn, final String filter)
     throws Exception
@@ -754,13 +746,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "proxyAuthzFrom",
-      "proxyAuthzTo",
-      "proxyAuthzSearchDn",
-      "proxyAuthzSearchFilter"
-    })
+  @Parameters({
+    "proxyAuthzFrom",
+    "proxyAuthzTo",
+    "proxyAuthzSearchDn",
+    "proxyAuthzSearchFilter"
+  })
   @Test(groups = "search")
   public void proxyAuthzSearch(final String authzFrom, final String authzTo, final String dn, final String filter)
     throws Exception
@@ -832,14 +823,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "recursiveSearchDn",
-      "recursiveSearchFilter",
-      "recursiveSearchFilterParameters",
-      "recursiveSearchReturnAttrs",
-      "recursiveHandlerResults"
-    })
+  @Parameters({
+    "recursiveSearchDn",
+    "recursiveSearchFilter",
+    "recursiveSearchFilterParameters",
+    "recursiveSearchReturnAttrs",
+    "recursiveHandlerResults"
+  })
   @Test(groups = "search")
   public void recursiveHandlerSearch(
     final String dn,
@@ -878,13 +868,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "recursiveSearch2Dn",
-      "recursiveSearch2Filter",
-      "recursiveSearch2ReturnAttrs",
-      "recursiveHandlerResults2"
-    })
+  @Parameters({
+    "recursiveSearch2Dn",
+    "recursiveSearch2Filter",
+    "recursiveSearch2ReturnAttrs",
+    "recursiveHandlerResults2"
+  })
   @Test(groups = "search")
   public void recursiveHandlerSearch2(
     final String dn,
@@ -921,13 +910,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "mergeSearchDn",
-      "mergeSearchFilter",
-      "mergeSearchReturnAttrs",
-      "mergeSearchResults"
-    })
+  @Parameters({
+    "mergeSearchDn",
+    "mergeSearchFilter",
+    "mergeSearchReturnAttrs",
+    "mergeSearchResults"
+  })
   @Test(groups = "search")
   public void mergeSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
@@ -961,13 +949,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "mergeDuplicateSearchDn",
-      "mergeDuplicateSearchFilter",
-      "mergeDuplicateReturnAttrs",
-      "mergeDuplicateSearchResults"
-    })
+  @Parameters({
+    "mergeDuplicateSearchDn",
+    "mergeDuplicateSearchFilter",
+    "mergeDuplicateReturnAttrs",
+    "mergeDuplicateSearchResults"
+  })
   @Test(groups = "search")
   public void mergeDuplicateSearch(
     final String dn,
@@ -1005,13 +992,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "mergeAttributeSearchDn",
-      "mergeAttributeSearchFilter",
-      "mergeAttributeReturnAttrs",
-      "mergeAttributeSearchResults"
-    })
+  @Parameters({
+    "mergeAttributeSearchDn",
+    "mergeAttributeSearchFilter",
+    "mergeAttributeReturnAttrs",
+    "mergeAttributeSearchResults"
+  })
   @Test(groups = "search")
   public void mergeAttributeSearch(
     final String dn,
@@ -1046,13 +1032,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "binarySearchDn",
-      "binarySearchFilter",
-      "binarySearchReturnAttr",
-      "binarySearchResult"
-    })
+  @Parameters({
+    "binarySearchDn",
+    "binarySearchFilter",
+    "binarySearchReturnAttr",
+    "binarySearchResult"
+  })
   @Test(groups = "search")
   public void binarySearch(final String dn, final String filter, final String returnAttr, final String base64Value)
     throws Exception
@@ -1103,14 +1088,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchDn",
-      "searchFilter",
-      "searchFilterParameters",
-      "searchReturnAttrs",
-      "searchResults"
-    })
+  @Parameters({
+    "searchDn",
+    "searchFilter",
+    "searchFilterParameters",
+    "searchReturnAttrs",
+    "searchResults"
+  })
   @Test(groups = "search")
   public void caseChangeSearch(
     final String dn,
@@ -1218,13 +1202,12 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "rangeSearchDn",
-      "rangeSearchFilter",
-      "rangeSearchReturnAttrs",
-      "rangeHandlerResults"
-    })
+  @Parameters({
+    "rangeSearchDn",
+    "rangeSearchFilter",
+    "rangeSearchReturnAttrs",
+    "rangeHandlerResults"
+  })
   @Test(groups = "search")
   public void rangeHandlerSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
@@ -1263,11 +1246,10 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "statsSearchDn",
-      "statsSearchFilter"
-    })
+  @Parameters({
+    "statsSearchDn",
+    "statsSearchFilter"
+  })
   @Test(groups = "search")
   public void getStatsSearch(final String dn, final String filter)
     throws Exception
@@ -1303,12 +1285,11 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "miscADControlsHost",
-      "miscADControlsDn",
-      "miscADControlsFilter"
-    })
+  @Parameters({
+    "miscADControlsHost",
+    "miscADControlsDn",
+    "miscADControlsFilter"
+  })
   @Test(groups = "search")
   public void miscADControlsSearch(final String host, final String dn, final String filter)
     throws Exception
@@ -1355,16 +1336,15 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "specialCharSearchDn",
-      "specialCharSearchFilter",
-      "specialCharSearchFilterParameters",
-      "specialCharBinarySearchFilter",
-      "specialCharBinarySearchFilterParameters",
-      "specialCharReturnAttrs",
-      "specialCharSearchResults"
-    })
+  @Parameters({
+    "specialCharSearchDn",
+    "specialCharSearchFilter",
+    "specialCharSearchFilterParameters",
+    "specialCharBinarySearchFilter",
+    "specialCharBinarySearchFilterParameters",
+    "specialCharReturnAttrs",
+    "specialCharSearchResults"
+  })
   @Test(groups = "search")
   public void specialCharsSearch(
     final String dn,
@@ -1402,11 +1382,10 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "quotedBaseDn",
-      "quotedBaseDnSearchResults"
-    })
+  @Parameters({
+    "quotedBaseDn",
+    "quotedBaseDnSearchResults"
+  })
   @Test(groups = "search")
   public void quoteInBaseDn(final String dn, final String ldifFile)
     throws Exception
@@ -1427,12 +1406,11 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "rewriteSearchDn",
-      "rewriteSearchFilter",
-      "rewriteSearchResults"
-    })
+  @Parameters({
+    "rewriteSearchDn",
+    "rewriteSearchFilter",
+    "rewriteSearchResults"
+  })
   @Test(groups = "search")
   public void rewriteSearch(final String dn, final String filter, final String ldifFile)
     throws Exception
@@ -1465,12 +1443,11 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchExceededDn",
-      "searchExceededFilter",
-      "searchExceededResultsSize"
-    })
+  @Parameters({
+    "searchExceededDn",
+    "searchExceededFilter",
+    "searchExceededResultsSize"
+  })
   @Test(groups = "search")
   public void searchExceeded(final String dn, final String filter, final int resultsSize)
     throws Exception
@@ -1499,11 +1476,10 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchReferralDn",
-      "searchReferralFilter"
-    })
+  @Parameters({
+    "searchReferralDn",
+    "searchReferralFilter"
+  })
   @Test(groups = "search")
   public void searchReferral(final String dn, final String filter)
     throws Exception
@@ -1603,11 +1579,10 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchReferenceDn",
-      "searchReferenceFilter"
-    })
+  @Parameters({
+    "searchReferenceDn",
+    "searchReferenceFilter"
+  })
   @Test(groups = "search")
   public void searchReference(final String dn, final String filter)
     throws Exception
@@ -1710,11 +1685,10 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchActiveDirectoryDn",
-      "searchActiveDirectoryFilter"
-    })
+  @Parameters({
+    "searchActiveDirectoryDn",
+    "searchActiveDirectoryFilter"
+  })
   @Test(groups = "search")
   public void searchActiveDirectory(final String dn, final String filter)
     throws Exception
@@ -1766,12 +1740,11 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "getAttributesDn",
-      "getAttributesReturnAttrs",
-      "getAttributesResults"
-    })
+  @Parameters({
+    "getAttributesDn",
+    "getAttributesReturnAttrs",
+    "getAttributesResults"
+  })
   @Test(
     groups = "search", threadPoolSize = TEST_THREAD_POOL_SIZE, invocationCount = TEST_INVOCATION_COUNT,
     timeOut = TEST_TIME_OUT)
@@ -1792,12 +1765,11 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "getAttributesBase64Dn",
-      "getAttributesBase64ReturnAttrs",
-      "getAttributesBase64Results"
-    })
+  @Parameters({
+    "getAttributesBase64Dn",
+    "getAttributesBase64ReturnAttrs",
+    "getAttributesBase64Results"
+  })
   @Test(groups = "search")
   public void getAttributesBase64(final String dn, final String returnAttrs, final String results)
     throws Exception
@@ -1846,14 +1818,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "digestMd5SearchDn",
-      "digestMd5SearchFilter",
-      "digestMd5SearchFilterParameters",
-      "digestMd5SearchReturnAttrs",
-      "digestMd5SearchResults"
-    })
+  @Parameters({
+    "digestMd5SearchDn",
+    "digestMd5SearchFilter",
+    "digestMd5SearchFilterParameters",
+    "digestMd5SearchReturnAttrs",
+    "digestMd5SearchResults"
+  })
   @Test(groups = "search")
   public void digestMd5Search(
     final String dn,
@@ -1897,14 +1868,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "cramMd5SearchDn",
-      "cramMd5SearchFilter",
-      "cramMd5SearchFilterParameters",
-      "cramMd5SearchReturnAttrs",
-      "cramMd5SearchResults"
-    })
+  @Parameters({
+    "cramMd5SearchDn",
+    "cramMd5SearchFilter",
+    "cramMd5SearchFilterParameters",
+    "cramMd5SearchReturnAttrs",
+    "cramMd5SearchResults"
+  })
   @Test(groups = "search")
   public void cramMd5Search(
     final String dn,
@@ -1957,14 +1927,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "saslExternalSearchDn",
-      "saslExternalSearchFilter",
-      "saslExternalSearchFilterParameters",
-      "saslExternalSearchReturnAttrs",
-      "saslExternalSearchResults"
-    })
+  @Parameters({
+    "saslExternalSearchDn",
+    "saslExternalSearchFilter",
+    "saslExternalSearchFilterParameters",
+    "saslExternalSearchReturnAttrs",
+    "saslExternalSearchResults"
+  })
   @Test(groups = "search")
   public void saslExternalSearch(
     final String dn,
@@ -2003,14 +1972,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "gssApiSearchDn",
-      "gssApiSearchFilter",
-      "gssApiSearchFilterParameters",
-      "gssApiSearchReturnAttrs",
-      "gssApiSearchResults"
-    })
+  @Parameters({
+    "gssApiSearchDn",
+    "gssApiSearchFilter",
+    "gssApiSearchFilterParameters",
+    "gssApiSearchReturnAttrs",
+    "gssApiSearchResults"
+  })
   @Test(groups = "search")
   public void gssApiSearch(
     final String dn,
@@ -2049,14 +2017,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "gssApiSearchDn",
-      "gssApiSearchFilter",
-      "gssApiSearchFilterParameters",
-      "gssApiSearchReturnAttrs",
-      "gssApiSearchResults"
-    })
+  @Parameters({
+    "gssApiSearchDn",
+    "gssApiSearchFilter",
+    "gssApiSearchFilterParameters",
+    "gssApiSearchReturnAttrs",
+    "gssApiSearchResults"
+  })
   @Test(groups = "search")
   public void gssApiSearch2(
     final String dn,
@@ -2101,14 +2068,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchDn",
-      "searchFilter",
-      "searchFilterParameters",
-      "searchReturnAttrs",
-      "searchResults"
-    })
+  @Parameters({
+    "searchDn",
+    "searchFilter",
+    "searchFilterParameters",
+    "searchReturnAttrs",
+    "searchResults"
+  })
   @Test(groups = "search")
   public void pooledSearch(
     final String dn,
@@ -2154,14 +2120,13 @@ public class SearchOperationTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchDn",
-      "searchFilter",
-      "searchFilterParameters",
-      "searchReturnAttrs",
-      "searchResults"
-    })
+  @Parameters({
+    "searchDn",
+    "searchFilter",
+    "searchFilterParameters",
+    "searchReturnAttrs",
+    "searchResults"
+  })
   @Test(groups = "search")
   public void searchWorker(
     final String dn,

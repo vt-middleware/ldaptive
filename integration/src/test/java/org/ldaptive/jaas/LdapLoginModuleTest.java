@@ -73,13 +73,12 @@ public class LdapLoginModuleTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "createGroup6",
-      "createGroup7",
-      "createGroup8",
-      "createGroup9"
-    })
+  @Parameters({
+    "createGroup6",
+    "createGroup7",
+    "createGroup8",
+    "createGroup9"
+  })
   @BeforeClass(groups = "jaas", dependsOnGroups = "jaasInit")
   public void createGroupEntry(
     final String ldifFile6,

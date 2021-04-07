@@ -51,13 +51,12 @@ public class SearchResultTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "toSearchResultsDn",
-      "toSearchResultsFilter",
-      "toSearchResultsAttrs",
-      "toSearchResultsResults"
-    })
+  @Parameters({
+    "toSearchResultsDn",
+    "toSearchResultsFilter",
+    "toSearchResultsAttrs",
+    "toSearchResultsResults"
+  })
   @Test(groups = "bean")
   public void toSearchResults(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception

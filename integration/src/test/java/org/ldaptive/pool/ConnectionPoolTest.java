@@ -70,11 +70,7 @@ public class ConnectionPoolTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "ldapTestHost",
-      "ldapBaseDn"
-    })
+  @Parameters({"ldapTestHost", "ldapBaseDn"})
   @BeforeClass(
     groups = {
       "blockingpool",
@@ -128,18 +124,17 @@ public class ConnectionPoolTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "createEntry2",
-      "createEntry3",
-      "createEntry4",
-      "createEntry5",
-      "createEntry6",
-      "createEntry7",
-      "createEntry8",
-      "createEntry9",
-      "createEntry10"
-    })
+  @Parameters({
+    "createEntry2",
+    "createEntry3",
+    "createEntry4",
+    "createEntry5",
+    "createEntry6",
+    "createEntry7",
+    "createEntry8",
+    "createEntry9",
+    "createEntry10"
+  })
   @BeforeClass(
     groups = {
       "blockingpool",
@@ -196,18 +191,17 @@ public class ConnectionPoolTest extends AbstractTest
    *
    * @throws  Exception  On test failure.
    */
-  @Parameters(
-    {
-      "searchResults2",
-      "searchResults3",
-      "searchResults4",
-      "searchResults5",
-      "searchResults6",
-      "searchResults7",
-      "searchResults8",
-      "searchResults9",
-      "searchResults10"
-    })
+  @Parameters({
+    "searchResults2",
+    "searchResults3",
+    "searchResults4",
+    "searchResults5",
+    "searchResults6",
+    "searchResults7",
+    "searchResults8",
+    "searchResults9",
+    "searchResults10"
+  })
   @BeforeClass(
     groups = {
       "blockingpool",
