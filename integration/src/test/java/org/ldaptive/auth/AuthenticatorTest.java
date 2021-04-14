@@ -31,6 +31,7 @@ import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.SessionTrackingControl;
 import org.ldaptive.extended.ExtendedOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
+import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.velocity.TemplateSearchDnResolver;
 import org.ldaptive.velocity.UserContext;
 import org.testng.Assert;
@@ -392,6 +393,24 @@ public class AuthenticatorTest extends AbstractTest
     Assert.assertEquals(
       auth.resolveDn(new User(user)).toLowerCase().split(":")[1],
       testLdapEntry.getDn().toLowerCase());
+  }
+
+
+  /**
+   * @param  user  to get dn for.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters("getDnUser")
+  @Test(groups = "auth")
+  public void resolveDnFromAttribute(final String user)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(true);
+    final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
+    resolver.setResolveFromAttribute("entryDN");
+    resolver.setEntryHandlers(new DnAttributeEntryHandler());
+    Assert.assertEquals(auth.resolveDn(new User(user)).toLowerCase(), testLdapEntry.getDn().toLowerCase());
   }
 
 
