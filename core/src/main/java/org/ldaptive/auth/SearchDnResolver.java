@@ -7,6 +7,7 @@ import org.ldaptive.AbstractSearchOperationFactory;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DerefAliases;
 import org.ldaptive.FilterTemplate;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
@@ -41,6 +42,8 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   /** How to handle aliases. */
   private DerefAliases derefAliases = DerefAliases.NEVER;
 
+  /** Resolve DN from alternative attribute name */
+  private String resolveFromAttribute;
 
   /** Default constructor. */
   public SearchDnResolver() {}
@@ -196,6 +199,25 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
     derefAliases = da;
   }
 
+  /**
+   * Gets an attribute to use to resolve the DN,if the attribute is not present, the resolution fails back on the
+   * entry's DN
+   *
+   * @return the attribue
+   */
+  public String getResolveFromAttribute() {
+    return resolveFromAttribute;
+  }
+
+  /**
+   * Setsthe attribute to use to resolve the DN. If null, the resolver will take the entry's DN
+   * @param attributeToUse
+   */
+  public void setResolveFromAttribute(final String attributeToUse) {
+    logger.trace("setting attributeToUse: {}", attributeToUse);
+
+    this.resolveFromAttribute = attributeToUse;
+  }
 
   /**
    * Attempts to find the DN for the supplied user. {@link #createFilterTemplate(User)} ()} is used to create the search
@@ -262,7 +284,31 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   protected String resolveDn(final LdapEntry entry)
   {
+    if (resolveFromAttribute != null)
+      return performResolveFromAttribute(entry);
+
     return entry.getDn();
+  }
+
+  /**
+   * Resolve DN from attribute pointed in the resolveFromAttribute property.
+   * @param entry
+   * @return first and singled value in resolveFromAttribute, or null if not valid
+   */
+  protected String performResolveFromAttribute(LdapEntry entry) {
+    LdapAttribute attr = entry.getAttribute(resolveFromAttribute);
+
+    if (attr.size() != 1) {
+      logger.warn("Skipping candidate as it does not meet cardinality (must contain a single value), in dn: {} resolveDnFromAttribute: {}", entry.getDn(), resolveFromAttribute);
+      return null;
+    }
+
+    if (attr.isBinary()) {
+      logger.warn("Skipping candidate as it is binary, in dn: {} resolveDnFromAttribute: {}", entry.getDn(), resolveFromAttribute);
+      return null;
+    }
+
+    return attr.getStringValue();
   }
 
 
@@ -307,10 +353,12 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   protected SearchRequest createSearchRequest(final FilterTemplate template)
   {
+    String[] returnAttributes = resolveFromAttribute == null ? ReturnAttributes.NONE.value() : new String[]{resolveFromAttribute};
+
     return SearchRequest.builder()
       .dn(baseDn)
       .filter(template)
-      .returnAttributes(ReturnAttributes.NONE.value())
+      .returnAttributes(returnAttributes)
       .scope(subtreeSearch ? SearchScope.SUBTREE : SearchScope.ONELEVEL)
       .aliases(derefAliases)
       .build();
@@ -346,7 +394,8 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
       .append("userFilterParameters=").append(Arrays.toString(userFilterParameters)).append(", ")
       .append("allowMultipleDns=").append(allowMultipleDns).append(", ")
       .append("subtreeSearch=").append(subtreeSearch).append(", ")
-      .append("derefAliases=").append(derefAliases).append("]").toString();
+      .append("derefAliases=").append(derefAliases).append(", ")
+      .append("resolveDnFromAttribute=").append(resolveFromAttribute).append("]").toString();
   }
 
 
@@ -469,6 +518,17 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
     public Builder aliases(final DerefAliases aliases)
     {
       object.setDerefAliases(aliases);
+      return this;
+    }
+
+    /**
+     * Sets the attribute to use to resolve the DN
+     * @param attributeToUse attribute to use
+     * @return this builder
+     */
+    public Builder resolveFromAttribute(final String attributeToUse)
+    {
+      object.setResolveFromAttribute(attributeToUse);
       return this;
     }
 
