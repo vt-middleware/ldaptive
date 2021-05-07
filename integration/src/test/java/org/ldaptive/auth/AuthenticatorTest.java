@@ -1073,6 +1073,57 @@ public class AuthenticatorTest extends AbstractTest
     "authenticateResults"
   })
   @Test(groups = "auth")
+  public void authenticateSearchEntryWithCompareAuthenticationHandler(
+    final String user,
+    final String credential,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final Authenticator auth = createTLSAuthenticator(true);
+    final SimpleBindAuthenticationHandler ah = (SimpleBindAuthenticationHandler) auth.getAuthenticationHandler();
+    auth.setAuthenticationHandler(new CompareAuthenticationHandler(ah.getConnectionFactory()));
+    final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
+    final SearchEntryResolver entryResolver = new SearchEntryResolver();
+    entryResolver.setUserFilter(dnResolver.getUserFilter());
+    entryResolver.setBaseDn(dnResolver.getBaseDn());
+    entryResolver.setSubtreeSearch(dnResolver.getSubtreeSearch());
+    auth.setEntryResolver(entryResolver);
+
+    AuthenticationResponse response = auth.authenticate(
+      new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
+    Assert.assertFalse(response.isSuccess());
+    Assert.assertEquals(
+      response.getAuthenticationResultCode(),
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
+    Assert.assertEquals(response.getResultCode(), ResultCode.COMPARE_FALSE);
+
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
+    Assert.assertTrue(response.isSuccess());
+    Assert.assertEquals(
+      response.getAuthenticationResultCode(),
+      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    Assert.assertEquals(response.getResultCode(), ResultCode.COMPARE_TRUE);
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+  }
+
+
+  /**
+   * @param  user  to authenticate.
+   * @param  credential  to authenticate with.
+   * @param  returnAttrs  to search for.
+   * @param  ldifFile  to expect from the search.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "authenticateUser",
+    "authenticateCredential",
+    "authenticateReturnAttrs",
+    "authenticateResults"
+  })
+  @Test(groups = "auth")
   public void authenticateWhoAmI(
     final String user,
     final String credential,

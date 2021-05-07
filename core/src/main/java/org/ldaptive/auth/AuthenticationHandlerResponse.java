@@ -59,10 +59,13 @@ public class AuthenticationHandlerResponse extends AbstractResult
     return connection;
   }
 
+
   @Override
-  public boolean isSuccess() {
-    return getAuthenticationResultCode() == AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS;
+  public boolean isSuccess()
+  {
+    return AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS == authenticationResultCode;
   }
+
 
   @Override
   public boolean equals(final Object o)
