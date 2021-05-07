@@ -61,7 +61,7 @@
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>1.7.30</org.slf4j.version>
     <io.netty.version>4.1.63.Final</io.netty.version>
-    <org.springframework.version>5.2.12.RELEASE</org.springframework.version>
+    <org.springframework.version>5.2.14.RELEASE</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.0.0</japicmp.oldVersion>
   </properties>
@@ -240,7 +240,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.41.1</version>
+              <version>8.42</version>
             </dependency>
           </dependencies>
         </plugin>
