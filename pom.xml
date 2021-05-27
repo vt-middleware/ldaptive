@@ -62,7 +62,7 @@
     <org.slf4j.version>1.7.30</org.slf4j.version>
     <io.netty.version>4.1.63.Final</io.netty.version>
     <org.springframework.version>5.2.14.RELEASE</org.springframework.version>
-    <japicmp.enabled>true</japicmp.enabled>
+    <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.0.0</japicmp.oldVersion>
   </properties>
 

@@ -38,6 +38,11 @@ public class BeanGeneratorTest
           "org.ldaptive.beans.schema.allschema",
           new String[] {"inetOrgPerson"},
         },
+        new Object[] {
+          SchemaFactory.createSchema(BeanGeneratorTest.class.getResourceAsStream("/opendj_schema.ldif")),
+          "org.ldaptive.beans.schema.opendj",
+          new String[] {"inetOrgPerson", "groupOfUniqueNames"},
+        },
       };
   }
 

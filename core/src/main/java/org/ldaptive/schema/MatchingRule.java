@@ -1,8 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.text.ParseException;
+import java.nio.CharBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
@@ -27,17 +28,6 @@ public class MatchingRule extends AbstractNamedSchemaElement
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1117;
-
-  /** Pattern to match definitions. */
-  private static final Pattern DEFINITION_PATTERN = Pattern.compile(
-    WSP_REGEX + "\\(" +
-      WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
-      WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']*)')?" +
-      WSP_REGEX + "(OBSOLETE)?" +
-      WSP_REGEX + "(?:SYNTAX (" + NO_WSP_REGEX + "))?" +
-      WSP_REGEX + "(?:(X-[^ ]+.*))?" +
-      WSP_REGEX + "\\)" + WSP_REGEX);
 
   /** OID. */
   private final String oid;
@@ -126,36 +116,12 @@ public class MatchingRule extends AbstractNamedSchemaElement
    *
    * @return  matching rule
    *
-   * @throws  ParseException  if the supplied definition is invalid
+   * @throws  SchemaParseException  if the supplied definition is invalid
    */
   public static MatchingRule parse(final String definition)
-    throws ParseException
+    throws SchemaParseException
   {
-    final Matcher m = DEFINITION_PATTERN.matcher(definition);
-    if (!m.matches()) {
-      throw new ParseException("Invalid matching rule definition: " + definition, definition.length());
-    }
-
-    final MatchingRule mrd = new MatchingRule(m.group(1).trim());
-
-    // CheckStyle:MagicNumber OFF
-    // parse names
-    if (m.group(2) != null) {
-      mrd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
-    } else if (m.group(3) != null) {
-      mrd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
-    }
-
-    mrd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
-    mrd.setObsolete(m.group(5) != null);
-    mrd.setSyntaxOID(m.group(6) != null ? m.group(6).trim() : null);
-
-    // parse extensions
-    if (m.group(7) != null) {
-      mrd.setExtensions(Extensions.parse(m.group(7).trim()));
-    }
-    return mrd;
-    // CheckStyle:MagicNumber ON
+    return SchemaParser.parse(MatchingRule.class, definition);
   }
 
 
@@ -231,5 +197,104 @@ public class MatchingRule extends AbstractNamedSchemaElement
       .append("obsolete=").append(isObsolete()).append(", ")
       .append("syntaxOID=").append(syntaxOID).append(", ")
       .append("extensions=").append(getExtensions()).append("]").toString();
+  }
+
+
+  /** Parses a matching rule definition using a char buffer. */
+  public static class DefaultDefinitionFunction extends AbstractDefaultDefinitionFunction<MatchingRule>
+  {
+
+
+    @Override
+    public MatchingRule parse(final String definition)
+      throws SchemaParseException
+    {
+      final CharBuffer buffer = validate(definition);
+      skipSpaces(buffer);
+      final MatchingRule mr = new MatchingRule(readUntilSpace(buffer));
+      final Extensions exts = new Extensions();
+      while (buffer.hasRemaining()) {
+        skipSpaces(buffer);
+        final String token = readUntilSpace(buffer);
+        skipSpaces(buffer);
+        switch (token) {
+        case "NAME":
+          mr.setNames(readQDStrings(buffer));
+          break;
+        case "DESC":
+          mr.setDescription(readQDString(buffer));
+          break;
+        case "OBSOLETE":
+          mr.setObsolete(true);
+          break;
+        case "SYNTAX":
+          mr.setSyntaxOID(readUntilSpace(buffer));
+          break;
+        case "":
+          break;
+        default:
+          if (!token.startsWith("X-")) {
+            throw new SchemaParseException(
+              "Definition '" + definition + "' contains invalid extension '" + token + "'");
+          }
+          skipSpaces(buffer);
+          exts.addExtension(token, List.of(readQDStrings(buffer)));
+          break;
+        }
+      }
+      if (!exts.isEmpty()) {
+        mr.setExtensions(exts);
+      }
+      return mr;
+    }
+  }
+
+
+  /** Parses a matching rule definition using a regular expression. */
+  public static class RegexDefinitionFunction extends AbstractRegexDefinitionFunction<MatchingRule>
+  {
+
+    /** Pattern to match definitions. */
+    private static final Pattern DEFINITION_PATTERN = Pattern.compile(
+      WSP_REGEX + "\\(" +
+        WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
+        WSP_REGEX + "(?:NAME" + ONE_WSP_REGEX + "(?:'([^']+)'|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:DESC" + ONE_WSP_REGEX + "'([^']*)')?" +
+        WSP_REGEX + "(OBSOLETE)?" +
+        WSP_REGEX + "(?:SYNTAX" + ONE_WSP_REGEX + "(" + NO_WSP_REGEX + "))?" +
+        WSP_REGEX + "(?:(X-[^ ]+.*))?" +
+        WSP_REGEX + "\\)" + WSP_REGEX);
+
+
+    @Override
+    public MatchingRule parse(final String definition)
+      throws SchemaParseException
+    {
+      final Matcher m = DEFINITION_PATTERN.matcher(definition);
+      if (!m.matches()) {
+        throw new SchemaParseException("Invalid matching rule definition: " + definition);
+      }
+
+      final MatchingRule mrd = new MatchingRule(m.group(1).trim());
+
+      // CheckStyle:MagicNumber OFF
+      // parse names
+      if (m.group(2) != null) {
+        mrd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
+      } else if (m.group(3) != null) {
+        mrd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
+      }
+
+      mrd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      mrd.setObsolete(m.group(5) != null);
+      mrd.setSyntaxOID(m.group(6) != null ? m.group(6).trim() : null);
+
+      // parse extensions
+      if (m.group(7) != null) {
+        mrd.setExtensions(parseExtensions(m.group(7).trim()));
+      }
+      return mrd;
+      // CheckStyle:MagicNumber ON
+    }
   }
 }

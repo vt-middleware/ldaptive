@@ -28,10 +28,12 @@ public class SyntaxTest
         new Object[] {
           new Syntax("1.3.6.1.4.1.1466.115.121.1.5", null, null),
           "( 1.3.6.1.4.1.1466.115.121.1.5 )",
+          new DefinitionFunction[] {new Syntax.DefaultDefinitionFunction(), new Syntax.RegexDefinitionFunction()},
         },
         new Object[] {
           new Syntax("1.3.6.1.4.1.1466.115.121.1.5", "Binary", null),
           "( 1.3.6.1.4.1.1466.115.121.1.5 DESC 'Binary' )",
+          new DefinitionFunction[] {new Syntax.DefaultDefinitionFunction(), new Syntax.RegexDefinitionFunction()},
         },
         new Object[] {
           new Syntax(
@@ -39,6 +41,7 @@ public class SyntaxTest
             "Binary",
             new Extensions("X-NOT-HUMAN-READABLE", Collections.singletonList("TRUE"))),
           "( 1.3.6.1.4.1.1466.115.121.1.5 DESC 'Binary' X-NOT-HUMAN-READABLE 'TRUE' )",
+          new DefinitionFunction[] {new Syntax.DefaultDefinitionFunction(), new Syntax.RegexDefinitionFunction()},
         },
       };
   }
@@ -47,16 +50,20 @@ public class SyntaxTest
   /**
    * @param  attributeSyntax  to compare
    * @param  definition  to parse
+   * @param  functions  to parse the definition
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "schema", dataProvider = "definitions")
-  public void parse(final Syntax attributeSyntax, final String definition)
+  public void parse(
+    final Syntax attributeSyntax, final String definition, final DefinitionFunction<Syntax>[] functions)
     throws Exception
   {
-    final Syntax parsed = Syntax.parse(definition);
-    Assert.assertEquals(attributeSyntax, parsed);
-    Assert.assertEquals(definition, parsed.format());
-    Assert.assertEquals(attributeSyntax.format(), parsed.format());
+    for (DefinitionFunction<Syntax> func : functions) {
+      final Syntax parsed = func.parse(definition);
+      Assert.assertEquals(attributeSyntax, parsed);
+      Assert.assertEquals(definition, parsed.format());
+      Assert.assertEquals(attributeSyntax.format(), parsed.format());
+    }
   }
 }

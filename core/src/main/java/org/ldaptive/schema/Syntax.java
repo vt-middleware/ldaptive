@@ -1,7 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.text.ParseException;
+import java.nio.CharBuffer;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
@@ -23,14 +24,6 @@ public class Syntax extends AbstractSchemaElement
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1129;
-
-  /** Pattern to match definitions. */
-  private static final Pattern DEFINITION_PATTERN = Pattern.compile(
-    WSP_REGEX + "\\(" +
-      WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
-      WSP_REGEX + "(?:DESC '([^']+)')?" +
-      WSP_REGEX + "(?:(X-[^ ]+.*))?" +
-      WSP_REGEX + "\\)" + WSP_REGEX);
 
   /** OID. */
   private final String oid;
@@ -82,27 +75,12 @@ public class Syntax extends AbstractSchemaElement
    *
    * @return  attribute syntax
    *
-   * @throws  ParseException  if the supplied definition is invalid
+   * @throws  SchemaParseException  if the supplied definition is invalid
    */
   public static Syntax parse(final String definition)
-    throws ParseException
+    throws SchemaParseException
   {
-    final Matcher m = DEFINITION_PATTERN.matcher(definition);
-    if (!m.matches()) {
-      throw new ParseException("Invalid attribute syntax definition: " + definition, definition.length());
-    }
-
-    final Syntax asd = new Syntax(m.group(1).trim());
-
-    // CheckStyle:MagicNumber OFF
-    asd.setDescription(m.group(2) != null ? m.group(2).trim() : null);
-
-    // parse extensions
-    if (m.group(3) != null) {
-      asd.setExtensions(Extensions.parse(m.group(3).trim()));
-    }
-    return asd;
-    // CheckStyle:MagicNumber ON
+    return SchemaParser.parse(Syntax.class, definition);
   }
 
 
@@ -154,5 +132,84 @@ public class Syntax extends AbstractSchemaElement
       .append("oid=").append(oid).append(", ")
       .append("description=").append(getDescription()).append(", ")
       .append("extensions=").append(getExtensions()).append("]").toString();
+  }
+
+
+  /**
+   * Parses a syntax definition using a char buffer.
+   */
+  public static class DefaultDefinitionFunction extends AbstractDefaultDefinitionFunction<Syntax>
+  {
+
+    @Override
+    public Syntax parse(final String definition)
+      throws SchemaParseException
+    {
+      final CharBuffer buffer = validate(definition);
+      skipSpaces(buffer);
+      final Syntax s = new Syntax(readUntilSpace(buffer));
+      final Extensions exts = new Extensions();
+      while (buffer.hasRemaining()) {
+        skipSpaces(buffer);
+        final String token = readUntilSpace(buffer);
+        skipSpaces(buffer);
+        switch (token) {
+        case "DESC":
+          s.setDescription(readQDString(buffer));
+          break;
+        case "":
+          break;
+        default:
+          if (!token.startsWith("X-")) {
+            throw new SchemaParseException(
+              "Definition '" + definition + "' contains invalid extension '" + token + "'");
+          }
+          skipSpaces(buffer);
+          exts.addExtension(token, List.of(readQDStrings(buffer)));
+          break;
+        }
+      }
+      if (!exts.isEmpty()) {
+        s.setExtensions(exts);
+      }
+      return s;
+    }
+  }
+
+
+  /** Parses a syntax definition using a regular expression. */
+  public static class RegexDefinitionFunction extends AbstractRegexDefinitionFunction<Syntax>
+  {
+
+    /** Pattern to match definitions. */
+    private static final Pattern DEFINITION_PATTERN = Pattern.compile(
+      WSP_REGEX + "\\(" +
+        WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
+        WSP_REGEX + "(?:DESC '([^']+)')?" +
+        WSP_REGEX + "(?:(X-[^ ]+.*))?" +
+        WSP_REGEX + "\\)" + WSP_REGEX);
+
+
+    @Override
+    public Syntax parse(final String definition)
+      throws SchemaParseException
+    {
+      final Matcher m = DEFINITION_PATTERN.matcher(definition);
+      if (!m.matches()) {
+        throw new SchemaParseException("Invalid attribute syntax definition: " + definition);
+      }
+
+      final Syntax asd = new Syntax(m.group(1).trim());
+
+      // CheckStyle:MagicNumber OFF
+      asd.setDescription(m.group(2) != null ? m.group(2).trim() : null);
+
+      // parse extensions
+      if (m.group(3) != null) {
+        asd.setExtensions(parseExtensions(m.group(3).trim()));
+      }
+      return asd;
+      // CheckStyle:MagicNumber ON
+    }
   }
 }

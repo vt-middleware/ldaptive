@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema.transcode;
 
-import java.text.ParseException;
+import org.ldaptive.schema.SchemaParseException;
 import org.ldaptive.schema.Syntax;
 
 /**
@@ -18,7 +18,7 @@ public class SyntaxValueTranscoder extends AbstractSchemaElementValueTranscoder<
   {
     try {
       return Syntax.parse(value);
-    } catch (ParseException e) {
+    } catch (SchemaParseException e) {
       throw new IllegalArgumentException("Could not transcode attribute syntax", e);
     }
   }

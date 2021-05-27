@@ -9,12 +9,6 @@ package org.ldaptive.schema;
 public abstract class AbstractSchemaElement implements SchemaElement
 {
 
-  /** Regex to match zero or more spaces. */
-  protected static final String WSP_REGEX = "[ ]*";
-
-  /** Regex to match one or more non spaces. */
-  protected static final String NO_WSP_REGEX = "[^ ]+";
-
   /** Description. */
   private String description;
 

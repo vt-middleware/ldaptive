@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema.transcode;
 
-import java.text.ParseException;
 import org.ldaptive.schema.DITContentRule;
+import org.ldaptive.schema.SchemaParseException;
 
 /**
  * Decodes and encodes a DIT content rule for use in an ldap attribute value.
@@ -18,7 +18,7 @@ public class DITContentRuleValueTranscoder extends AbstractSchemaElementValueTra
   {
     try {
       return DITContentRule.parse(value);
-    } catch (ParseException e) {
+    } catch (SchemaParseException e) {
       throw new IllegalArgumentException("Could not transcode DIT content rule", e);
     }
   }

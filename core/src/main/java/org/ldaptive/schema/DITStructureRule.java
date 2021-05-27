@@ -1,8 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.text.ParseException;
+import java.nio.CharBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
@@ -28,18 +29,6 @@ public class DITStructureRule extends AbstractNamedSchemaElement
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1153;
-
-  /** Pattern to match definitions. */
-  private static final Pattern DEFINITION_PATTERN = Pattern.compile(
-    WSP_REGEX + "\\(" +
-      WSP_REGEX + "(\\p{Digit}+)" +
-      WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']*)')?" +
-      WSP_REGEX + "(OBSOLETE)?" +
-      WSP_REGEX + "(?:FORM (" + NO_WSP_REGEX + "))?" +
-      WSP_REGEX + "(?:SUP (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:(X-[^ ]+.*))?" +
-      WSP_REGEX + "\\)" + WSP_REGEX);
 
   /** ID. */
   private final int id;
@@ -156,43 +145,12 @@ public class DITStructureRule extends AbstractNamedSchemaElement
    *
    * @return  DIT structure rule
    *
-   * @throws  ParseException  if the supplied definition is invalid
+   * @throws  SchemaParseException  if the supplied definition is invalid
    */
   public static DITStructureRule parse(final String definition)
-    throws ParseException
+    throws SchemaParseException
   {
-    final Matcher m = DEFINITION_PATTERN.matcher(definition);
-    if (!m.matches()) {
-      throw new ParseException("Invalid DIT structure rule definition: " + definition, definition.length());
-    }
-
-    final DITStructureRule dsrd = new DITStructureRule(Integer.parseInt(m.group(1).trim()));
-
-    // CheckStyle:MagicNumber OFF
-    // parse names
-    if (m.group(2) != null) {
-      dsrd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
-    } else if (m.group(3) != null) {
-      dsrd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
-    }
-
-    dsrd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
-    dsrd.setObsolete(m.group(5) != null);
-    dsrd.setNameForm(m.group(6) != null ? m.group(6).trim() : null);
-
-    // parse superior rules
-    if (m.group(7) != null) {
-      dsrd.setSuperiorRules(SchemaUtils.parseNumbers(m.group(7).trim()));
-    } else if (m.group(8) != null) {
-      dsrd.setSuperiorRules(SchemaUtils.parseNumbers(m.group(8).trim()));
-    }
-
-    // parse extensions
-    if (m.group(9) != null) {
-      dsrd.setExtensions(Extensions.parse(m.group(9).trim()));
-    }
-    return dsrd;
-    // CheckStyle:MagicNumber ON
+    return SchemaParser.parse(DITStructureRule.class, definition);
   }
 
 
@@ -274,5 +232,115 @@ public class DITStructureRule extends AbstractNamedSchemaElement
       .append("nameForm=").append(nameForm).append(", ")
       .append("superiorRules=").append(Arrays.toString(superiorRules)).append(", ")
       .append("extensions=").append(getExtensions()).append("]").toString();
+  }
+
+
+  /** Parses a DIT structure rule definition using a char buffer. */
+  public static class DefaultDefinitionFunction extends AbstractDefaultDefinitionFunction<DITStructureRule>
+  {
+
+
+    @Override
+    public DITStructureRule parse(final String definition)
+      throws SchemaParseException
+    {
+      final CharBuffer buffer = validate(definition);
+      skipSpaces(buffer);
+      final DITStructureRule dsr = new DITStructureRule(readRuleID(buffer));
+      final Extensions exts = new Extensions();
+      while (buffer.hasRemaining()) {
+        skipSpaces(buffer);
+        final String token = readUntilSpace(buffer);
+        skipSpaces(buffer);
+        switch (token) {
+        case "NAME":
+          dsr.setNames(readQDStrings(buffer));
+          break;
+        case "DESC":
+          dsr.setDescription(readQDString(buffer));
+          break;
+        case "OBSOLETE":
+          dsr.setObsolete(true);
+          break;
+        case "FORM":
+          dsr.setNameForm(readUntilSpace(buffer));
+          break;
+        case "SUP":
+          dsr.setSuperiorRules(readRuleIDs(buffer));
+          break;
+        case "":
+          break;
+        default:
+          if (!token.startsWith("X-")) {
+            throw new SchemaParseException(
+              "Definition '" + definition + "' contains invalid extension '" + token + "'");
+          }
+          skipSpaces(buffer);
+          exts.addExtension(token, List.of(readQDStrings(buffer)));
+          break;
+        }
+      }
+      if (!exts.isEmpty()) {
+        dsr.setExtensions(exts);
+      }
+      return dsr;
+    }
+  }
+
+
+  /** Parses a DIT structure rule definition using a regular expression. */
+  public static class RegexDefinitionFunction extends AbstractRegexDefinitionFunction<DITStructureRule>
+  {
+
+    /** Pattern to match definitions. */
+    private static final Pattern DEFINITION_PATTERN = Pattern.compile(
+      WSP_REGEX + "\\(" +
+        WSP_REGEX + "(\\p{Digit}+)" +
+        WSP_REGEX + "(?:NAME" + ONE_WSP_REGEX + "(?:'([^']+)'|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:DESC" + ONE_WSP_REGEX + "'([^']*)')?" +
+        WSP_REGEX + "(OBSOLETE)?" +
+        WSP_REGEX + "(?:FORM" + ONE_WSP_REGEX + "(" + NO_WSP_REGEX + "))?" +
+        WSP_REGEX + "(?:SUP" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:(X-[^ ]+.*))?" +
+        WSP_REGEX + "\\)" + WSP_REGEX);
+
+
+    @Override
+    public DITStructureRule parse(final String definition)
+      throws SchemaParseException
+    {
+      final Matcher m = DEFINITION_PATTERN.matcher(definition);
+      if (!m.matches()) {
+        throw new SchemaParseException("Invalid DIT structure rule definition: " + definition);
+      }
+
+      final DITStructureRule dsrd = new DITStructureRule(Integer.parseInt(m.group(1).trim()));
+
+      // CheckStyle:MagicNumber OFF
+      // parse names
+      if (m.group(2) != null) {
+        dsrd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
+      } else if (m.group(3) != null) {
+        dsrd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
+      }
+
+      dsrd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      dsrd.setObsolete(m.group(5) != null);
+      dsrd.setNameForm(m.group(6) != null ? m.group(6).trim() : null);
+
+      // parse superior rules
+      if (m.group(7) != null) {
+        dsrd.setSuperiorRules(SchemaUtils.parseNumbers(m.group(7).trim()));
+      } else if (m.group(8) != null) {
+        dsrd.setSuperiorRules(SchemaUtils.parseNumbers(m.group(8).trim()));
+      }
+
+      // parse extensions
+      if (m.group(9) != null) {
+        dsrd.setExtensions(parseExtensions(m.group(9).trim()));
+      }
+      return dsrd;
+      // CheckStyle:MagicNumber ON
+    }
   }
 }

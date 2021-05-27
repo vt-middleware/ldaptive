@@ -27,14 +27,26 @@ public class MatchingRuleTest
         new Object[] {
           new MatchingRule("1.3.6.1.1.16.3", null, null, false, null, null),
           "( 1.3.6.1.1.16.3 )",
+          new DefinitionFunction[] {
+            new MatchingRule.DefaultDefinitionFunction(),
+            new MatchingRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new MatchingRule("1.3.6.1.1.16.3", new String[] {"UUIDOrderingMatch"}, null, false, null, null),
           "( 1.3.6.1.1.16.3 NAME 'UUIDOrderingMatch' )",
+          new DefinitionFunction[] {
+            new MatchingRule.DefaultDefinitionFunction(),
+            new MatchingRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new MatchingRule("1.3.6.1.1.16.3", new String[] {"UUIDOrderingMatch"}, null, false, "1.3.6.1.1.16.1", null),
           "( 1.3.6.1.1.16.3 NAME 'UUIDOrderingMatch' SYNTAX 1.3.6.1.1.16.1 )",
+          new DefinitionFunction[] {
+            new MatchingRule.DefaultDefinitionFunction(),
+            new MatchingRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new MatchingRule(
@@ -45,6 +57,10 @@ public class MatchingRuleTest
             "1.3.6.1.4.1.1466.115.121.1.24",
             null),
           "( 2.5.13.27 NAME 'generalizedTimeMatch' SYNTAX 1.3.6.1.4.1.1466.115.121.1.24 )",
+          new DefinitionFunction[] {
+            new MatchingRule.DefaultDefinitionFunction(),
+            new MatchingRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new MatchingRule(
@@ -55,6 +71,10 @@ public class MatchingRuleTest
             "1.3.6.1.4.1.1466.115.121.1.15",
             null),
           "( 2.5.13.6 NAME 'caseExactOrderingMatch' SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 )",
+          new DefinitionFunction[] {
+            new MatchingRule.DefaultDefinitionFunction(),
+            new MatchingRule.RegexDefinitionFunction(),
+          },
         },
       };
   }
@@ -63,16 +83,20 @@ public class MatchingRuleTest
   /**
    * @param  matchingRule  to compare
    * @param  definition  to parse
+   * @param  functions  to parse the definition
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "schema", dataProvider = "definitions")
-  public void parse(final MatchingRule matchingRule, final String definition)
+  public void parse(
+    final MatchingRule matchingRule, final String definition, final DefinitionFunction<MatchingRule>[] functions)
     throws Exception
   {
-    final MatchingRule parsed = MatchingRule.parse(definition);
-    Assert.assertEquals(matchingRule, parsed);
-    Assert.assertEquals(definition, parsed.format());
-    Assert.assertEquals(matchingRule.format(), parsed.format());
+    for (DefinitionFunction<MatchingRule> func : functions) {
+      final MatchingRule parsed = func.parse(definition);
+      Assert.assertEquals(matchingRule, parsed);
+      Assert.assertEquals(definition, parsed.format());
+      Assert.assertEquals(matchingRule.format(), parsed.format());
+    }
   }
 }

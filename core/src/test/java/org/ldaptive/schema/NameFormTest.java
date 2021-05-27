@@ -28,6 +28,7 @@ public class NameFormTest
         new Object[] {
           new NameForm("1.3.6.1.1.10.15.1", null, null, false, null, null, null, null),
           "( 1.3.6.1.1.10.15.1 )",
+          new DefinitionFunction[] {new NameForm.DefaultDefinitionFunction(), new NameForm.RegexDefinitionFunction()},
         },
         new Object[] {
           new NameForm(
@@ -40,6 +41,7 @@ public class NameFormTest
             null,
             null),
           "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' )",
+          new DefinitionFunction[] {new NameForm.DefaultDefinitionFunction(), new NameForm.RegexDefinitionFunction()},
         },
         new Object[] {
           new NameForm(
@@ -52,6 +54,7 @@ public class NameFormTest
             null,
             null),
           "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' OC uddiBusinessEntity )",
+          new DefinitionFunction[] {new NameForm.DefaultDefinitionFunction(), new NameForm.RegexDefinitionFunction()},
         },
         new Object[] {
           new NameForm(
@@ -64,6 +67,7 @@ public class NameFormTest
             null,
             null),
           "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' OC uddiBusinessEntity MUST uddiBusinessKey )",
+          new DefinitionFunction[] {new NameForm.DefaultDefinitionFunction(), new NameForm.RegexDefinitionFunction()},
         },
         new Object[] {
           new NameForm(
@@ -77,6 +81,7 @@ public class NameFormTest
             new Extensions("X-ORIGIN", Collections.singletonList("RFC 4403"))),
           "( 1.3.6.1.1.10.15.1 NAME 'uddiBusinessEntityNameForm' OC uddiBusinessEntity MUST uddiBusinessKey " +
             "X-ORIGIN 'RFC 4403' )",
+          new DefinitionFunction[] {new NameForm.DefaultDefinitionFunction(), new NameForm.RegexDefinitionFunction()},
         },
       };
   }
@@ -85,16 +90,19 @@ public class NameFormTest
   /**
    * @param  nameForm  to compare
    * @param  definition  to parse
+   * @param  functions  to parse the definition
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "schema", dataProvider = "definitions")
-  public void parse(final NameForm nameForm, final String definition)
+  public void parse(final NameForm nameForm, final String definition, final DefinitionFunction<NameForm>[] functions)
     throws Exception
   {
-    final NameForm parsed = NameForm.parse(definition);
-    Assert.assertEquals(nameForm, parsed);
-    Assert.assertEquals(definition, parsed.format());
-    Assert.assertEquals(nameForm.format(), parsed.format());
+    for (DefinitionFunction<NameForm> func : functions) {
+      final NameForm parsed = func.parse(definition);
+      Assert.assertEquals(nameForm, parsed);
+      Assert.assertEquals(definition, parsed.format());
+      Assert.assertEquals(nameForm.format(), parsed.format());
+    }
   }
 }

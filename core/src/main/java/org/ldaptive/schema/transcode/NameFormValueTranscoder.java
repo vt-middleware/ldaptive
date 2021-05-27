@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema.transcode;
 
-import java.text.ParseException;
 import org.ldaptive.schema.NameForm;
+import org.ldaptive.schema.SchemaParseException;
 
 /**
  * Decodes and encodes a name form for use in an ldap attribute value.
@@ -18,7 +18,7 @@ public class NameFormValueTranscoder extends AbstractSchemaElementValueTranscode
   {
     try {
       return NameForm.parse(value);
-    } catch (ParseException e) {
+    } catch (SchemaParseException e) {
       throw new IllegalArgumentException("Could not transcode name form", e);
     }
   }

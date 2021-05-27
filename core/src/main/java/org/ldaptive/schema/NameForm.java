@@ -1,8 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.text.ParseException;
+import java.nio.CharBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
@@ -29,19 +30,6 @@ public class NameForm extends AbstractNamedSchemaElement
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1163;
-
-  /** Pattern to match definitions. */
-  private static final Pattern DEFINITION_PATTERN = Pattern.compile(
-    WSP_REGEX + "\\(" +
-      WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
-      WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']*)')?" +
-      WSP_REGEX + "(OBSOLETE)?" +
-      WSP_REGEX + "(?:OC (" + NO_WSP_REGEX + "))?" +
-      WSP_REGEX + "(?:MUST (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:MAY (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:(X-[^ ]+.*))?" +
-      WSP_REGEX + "\\)" + WSP_REGEX);
 
   /** OID. */
   private final String oid;
@@ -186,50 +174,12 @@ public class NameForm extends AbstractNamedSchemaElement
    *
    * @return  name form
    *
-   * @throws  ParseException  if the supplied definition is invalid
+   * @throws  SchemaParseException  if the supplied definition is invalid
    */
   public static NameForm parse(final String definition)
-    throws ParseException
+    throws SchemaParseException
   {
-    final Matcher m = DEFINITION_PATTERN.matcher(definition);
-    if (!m.matches()) {
-      throw new ParseException("Invalid name form definition: " + definition, definition.length());
-    }
-
-    final NameForm nfd = new NameForm(m.group(1).trim());
-
-    // CheckStyle:MagicNumber OFF
-    // parse names
-    if (m.group(2) != null) {
-      nfd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
-    } else if (m.group(3) != null) {
-      nfd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
-    }
-
-    nfd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
-    nfd.setObsolete(m.group(5) != null);
-    nfd.setStructuralClass(m.group(6) != null ? m.group(6).trim() : null);
-
-    // parse required attributes
-    if (m.group(7) != null) {
-      nfd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(7).trim()));
-    } else if (m.group(8) != null) {
-      nfd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(8).trim()));
-    }
-
-    // parse optional attributes
-    if (m.group(9) != null) {
-      nfd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(9).trim()));
-    } else if (m.group(10) != null) {
-      nfd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(10).trim()));
-    }
-
-    // parse extensions
-    if (m.group(11) != null) {
-      nfd.setExtensions(Extensions.parse(m.group(11).trim()));
-    }
-    return nfd;
-    // CheckStyle:MagicNumber ON
+    return SchemaParser.parse(NameForm.class, definition);
   }
 
 
@@ -319,5 +269,126 @@ public class NameForm extends AbstractNamedSchemaElement
       .append("requiredAttributes=").append(Arrays.toString(requiredAttributes)).append(", ")
       .append("optionalAttributes=").append(Arrays.toString(optionalAttributes)).append(", ")
       .append("extensions=").append(getExtensions()).append("]").toString();
+  }
+
+
+  /** Parses a name form definition using a char buffer. */
+  public static class DefaultDefinitionFunction extends AbstractDefaultDefinitionFunction<NameForm>
+  {
+
+
+    @Override
+    public NameForm parse(final String definition)
+      throws SchemaParseException
+    {
+      final CharBuffer buffer = validate(definition);
+      skipSpaces(buffer);
+      final NameForm nf = new NameForm(readUntilSpace(buffer));
+      final Extensions exts = new Extensions();
+      while (buffer.hasRemaining()) {
+        skipSpaces(buffer);
+        final String token = readUntilSpace(buffer);
+        skipSpaces(buffer);
+        switch (token) {
+        case "NAME":
+          nf.setNames(readQDStrings(buffer));
+          break;
+        case "DESC":
+          nf.setDescription(readQDString(buffer));
+          break;
+        case "OBSOLETE":
+          nf.setObsolete(true);
+          break;
+        case "OC":
+          nf.setStructuralClass(readOID(buffer));
+          break;
+        case "MUST":
+          nf.setRequiredAttributes(readOIDs(buffer));
+          break;
+        case "MAY":
+          nf.setOptionalAttributes(readOIDs(buffer));
+          break;
+        case "":
+          break;
+        default:
+          if (!token.startsWith("X-")) {
+            throw new SchemaParseException(
+              "Definition '" + definition + "' contains invalid extension '" + token + "'");
+          }
+          skipSpaces(buffer);
+          exts.addExtension(token, List.of(readQDStrings(buffer)));
+          break;
+        }
+      }
+      if (!exts.isEmpty()) {
+        nf.setExtensions(exts);
+      }
+      return nf;
+    }
+  }
+
+
+  /** Parses a name form definition using a regular expression. */
+  public static class RegexDefinitionFunction extends AbstractRegexDefinitionFunction<NameForm>
+  {
+
+    /** Pattern to match definitions. */
+    private static final Pattern DEFINITION_PATTERN = Pattern.compile(
+      WSP_REGEX + "\\(" +
+        WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
+        WSP_REGEX + "(?:NAME" + ONE_WSP_REGEX + "(?:'([^']+)'|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:DESC" + ONE_WSP_REGEX + "'([^']*)')?" +
+        WSP_REGEX + "(OBSOLETE)?" +
+        WSP_REGEX + "(?:OC" + ONE_WSP_REGEX + "(" + NO_WSP_REGEX + "))?" +
+        WSP_REGEX + "(?:MUST" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:MAY" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:(X-[^ ]+.*))?" +
+        WSP_REGEX + "\\)" + WSP_REGEX);
+
+
+    @Override
+    public NameForm parse(final String definition)
+      throws SchemaParseException
+    {
+      final Matcher m = DEFINITION_PATTERN.matcher(definition);
+      if (!m.matches()) {
+        throw new SchemaParseException("Invalid name form definition: " + definition);
+      }
+
+      final NameForm nfd = new NameForm(m.group(1).trim());
+
+      // CheckStyle:MagicNumber OFF
+      // parse names
+      if (m.group(2) != null) {
+        nfd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
+      } else if (m.group(3) != null) {
+        nfd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
+      }
+
+      nfd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      nfd.setObsolete(m.group(5) != null);
+      nfd.setStructuralClass(m.group(6) != null ? m.group(6).trim() : null);
+
+      // parse required attributes
+      if (m.group(7) != null) {
+        nfd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(7).trim()));
+      } else if (m.group(8) != null) {
+        nfd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(8).trim()));
+      }
+
+      // parse optional attributes
+      if (m.group(9) != null) {
+        nfd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(9).trim()));
+      } else if (m.group(10) != null) {
+        nfd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(10).trim()));
+      }
+
+      // parse extensions
+      if (m.group(11) != null) {
+        nfd.setExtensions(parseExtensions(m.group(11).trim()));
+      }
+      return nfd;
+      // CheckStyle:MagicNumber ON
+    }
   }
 }

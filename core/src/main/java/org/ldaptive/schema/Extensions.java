@@ -2,14 +2,11 @@
 package org.ldaptive.schema;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -19,10 +16,6 @@ import org.ldaptive.LdapUtils;
  */
 public class Extensions
 {
-
-  /** Pattern to match attribute type definitions. */
-  protected static final Pattern DEFINITION_PATTERN = Pattern.compile(
-    "(?:(X-[^ ]+)[ ]*(?:'([^']+)'|\\(([^\\)]+)\\))?)+");
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1171;
@@ -123,31 +116,24 @@ public class Extensions
 
 
   /**
-   * Parses the supplied definition string and creates an initialized extension.
+   * Returns the number of extensions in the underlying map.
    *
-   * @param  definition  to parse
-   *
-   * @return  extension
+   * @return  number of extensions
    */
-  public static Extensions parse(final String definition)
+  public int size()
   {
-    final Matcher m = DEFINITION_PATTERN.matcher(definition);
-    final Extensions exts = new Extensions();
-    while (m.find()) {
-      final String name = m.group(1).trim();
-      final List<String> values = new ArrayList<>(1);
+    return extensions.size();
+  }
 
-      // CheckStyle:MagicNumber OFF
-      if (m.group(2) != null) {
-        values.add(m.group(2).trim());
-      } else if (m.group(3) != null) {
-        values.addAll(Arrays.asList(SchemaUtils.parseDescriptors(m.group(3).trim())));
-      }
-      // CheckStyle:MagicNumber ON
-      exts.addExtension(name, values);
-    }
 
-    return exts;
+  /**
+   * Returns whether the number of extensions is zero.
+   *
+   * @return  whether the number of extensions is zero
+   */
+  public boolean isEmpty()
+  {
+    return extensions.isEmpty();
   }
 
 

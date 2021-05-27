@@ -1,8 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.text.ParseException;
+import java.nio.CharBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
@@ -30,20 +31,6 @@ public class ObjectClass extends AbstractNamedSchemaElement
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1109;
-
-  /** Pattern to match definitions. */
-  private static final Pattern DEFINITION_PATTERN = Pattern.compile(
-    WSP_REGEX + "\\(" +
-      WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
-      WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']*)')?" +
-      WSP_REGEX + "(OBSOLETE)?" +
-      WSP_REGEX + "(?:SUP (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(\\p{Alpha}+)?" +
-      WSP_REGEX + "(?:MUST (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:MAY (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:(X-[^ ]+.*))?" +
-      WSP_REGEX + "\\)" + WSP_REGEX);
 
   /** OID. */
   private final String oid;
@@ -216,60 +203,12 @@ public class ObjectClass extends AbstractNamedSchemaElement
    *
    * @return  object class
    *
-   * @throws  ParseException  if the supplied definition is invalid
+   * @throws  SchemaParseException  if the supplied definition is invalid
    */
   public static ObjectClass parse(final String definition)
-    throws ParseException
+    throws SchemaParseException
   {
-    final Matcher m = DEFINITION_PATTERN.matcher(definition);
-    if (!m.matches()) {
-      throw new ParseException("Invalid object class definition: " + definition, definition.length());
-    }
-
-    final ObjectClass ocd = new ObjectClass(m.group(1).trim());
-
-    // CheckStyle:MagicNumber OFF
-    // parse names
-    if (m.group(2) != null) {
-      ocd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
-    } else if (m.group(3) != null) {
-      ocd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
-    }
-
-    ocd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
-    ocd.setObsolete(m.group(5) != null);
-
-    // parse superior classes
-    if (m.group(6) != null) {
-      ocd.setSuperiorClasses(SchemaUtils.parseOIDs(m.group(6).trim()));
-    } else if (m.group(7) != null) {
-      ocd.setSuperiorClasses(SchemaUtils.parseOIDs(m.group(7).trim()));
-    }
-
-    if (m.group(8) != null) {
-      ocd.setObjectClassType(ObjectClassType.valueOf(m.group(8).trim()));
-    }
-
-    // parse required attributes
-    if (m.group(9) != null) {
-      ocd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(9).trim()));
-    } else if (m.group(10) != null) {
-      ocd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(10).trim()));
-    }
-
-    // parse optional attributes
-    if (m.group(11) != null) {
-      ocd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(11).trim()));
-    } else if (m.group(12) != null) {
-      ocd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(12).trim()));
-    }
-
-    // parse extensions
-    if (m.group(13) != null) {
-      ocd.setExtensions(Extensions.parse(m.group(13).trim()));
-    }
-    return ocd;
-    // CheckStyle:MagicNumber ON
+    return SchemaParser.parse(ObjectClass.class, definition);
   }
 
 
@@ -366,5 +305,146 @@ public class ObjectClass extends AbstractNamedSchemaElement
       .append("requiredAttributes=").append(Arrays.toString(requiredAttributes)).append(", ")
       .append("optionalAttributes=").append(Arrays.toString(optionalAttributes)).append(", ")
       .append("extensions=").append(getExtensions()).append("]").toString();
+  }
+
+
+  /** Parses an object class definition using a char buffer. */
+  public static class DefaultDefinitionFunction extends AbstractDefaultDefinitionFunction<ObjectClass>
+  {
+
+
+    @Override
+    public ObjectClass parse(final String definition)
+      throws SchemaParseException
+    {
+      final CharBuffer buffer = validate(definition);
+      skipSpaces(buffer);
+      final ObjectClass oc = new ObjectClass(readUntilSpace(buffer));
+      final Extensions exts = new Extensions();
+      while (buffer.hasRemaining()) {
+        skipSpaces(buffer);
+        final String token = readUntilSpace(buffer);
+        skipSpaces(buffer);
+        switch (token) {
+        case "NAME":
+          oc.setNames(readQDStrings(buffer));
+          break;
+        case "DESC":
+          oc.setDescription(readQDString(buffer));
+          break;
+        case "OBSOLETE":
+          oc.setObsolete(true);
+          break;
+        case "SUP":
+          oc.setSuperiorClasses(readOIDs(buffer));
+          break;
+        case "ABSTRACT":
+          oc.setObjectClassType(ObjectClassType.ABSTRACT);
+          break;
+        case "STRUCTURAL":
+          oc.setObjectClassType(ObjectClassType.STRUCTURAL);
+          break;
+        case "AUXILIARY":
+          oc.setObjectClassType(ObjectClassType.AUXILIARY);
+          break;
+        case "MUST":
+          oc.setRequiredAttributes(readOIDs(buffer));
+          break;
+        case "MAY":
+          oc.setOptionalAttributes(readOIDs(buffer));
+          break;
+        case "":
+          break;
+        default:
+          if (!token.startsWith("X-")) {
+            throw new SchemaParseException(
+              "Definition '" + definition + "' contains invalid extension '" + token + "'");
+          }
+          skipSpaces(buffer);
+          exts.addExtension(token, List.of(readQDStrings(buffer)));
+          break;
+        }
+      }
+      if (!exts.isEmpty()) {
+        oc.setExtensions(exts);
+      }
+      return oc;
+    }
+  }
+
+
+  /** Parses an object class definition using a regular expression. */
+  public static class RegexDefinitionFunction extends AbstractRegexDefinitionFunction<ObjectClass>
+  {
+
+    /** Pattern to match definitions. */
+    private static final Pattern DEFINITION_PATTERN = Pattern.compile(
+      WSP_REGEX + "\\(" +
+        WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
+        WSP_REGEX + "(?:NAME" + ONE_WSP_REGEX + "(?:'([^']+)'|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:DESC" + ONE_WSP_REGEX + "'([^']*)')?" +
+        WSP_REGEX + "(OBSOLETE)?" +
+        WSP_REGEX + "(?:SUP" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(\\p{Alpha}+)?" +
+        WSP_REGEX + "(?:MUST" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:MAY" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:(X-[^ ]+.*))?" +
+        WSP_REGEX + "\\)" + WSP_REGEX);
+
+
+    @Override
+    public ObjectClass parse(final String definition)
+      throws SchemaParseException
+    {
+      final Matcher m = DEFINITION_PATTERN.matcher(definition);
+      if (!m.matches()) {
+        throw new SchemaParseException("Invalid object class definition: " + definition);
+      }
+
+      final ObjectClass ocd = new ObjectClass(m.group(1).trim());
+
+      // CheckStyle:MagicNumber OFF
+      // parse names
+      if (m.group(2) != null) {
+        ocd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
+      } else if (m.group(3) != null) {
+        ocd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
+      }
+
+      ocd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      ocd.setObsolete(m.group(5) != null);
+
+      // parse superior classes
+      if (m.group(6) != null) {
+        ocd.setSuperiorClasses(SchemaUtils.parseOIDs(m.group(6).trim()));
+      } else if (m.group(7) != null) {
+        ocd.setSuperiorClasses(SchemaUtils.parseOIDs(m.group(7).trim()));
+      }
+
+      if (m.group(8) != null) {
+        ocd.setObjectClassType(ObjectClassType.valueOf(m.group(8).trim()));
+      }
+
+      // parse required attributes
+      if (m.group(9) != null) {
+        ocd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(9).trim()));
+      } else if (m.group(10) != null) {
+        ocd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(10).trim()));
+      }
+
+      // parse optional attributes
+      if (m.group(11) != null) {
+        ocd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(11).trim()));
+      } else if (m.group(12) != null) {
+        ocd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(12).trim()));
+      }
+
+      // parse extensions
+      if (m.group(13) != null) {
+        ocd.setExtensions(parseExtensions(m.group(13).trim()));
+      }
+      return ocd;
+      // CheckStyle:MagicNumber ON
+    }
   }
 }

@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema.transcode;
 
-import java.text.ParseException;
 import org.ldaptive.schema.DITStructureRule;
+import org.ldaptive.schema.SchemaParseException;
 
 /**
  * Decodes and encodes a DIT structure rule for use in an ldap attribute value.
@@ -18,7 +18,7 @@ public class DITStructureRuleValueTranscoder extends AbstractSchemaElementValueT
   {
     try {
       return DITStructureRule.parse(value);
-    } catch (ParseException e) {
+    } catch (SchemaParseException e) {
       throw new IllegalArgumentException("Could not transcode DIT structure rule", e);
     }
   }

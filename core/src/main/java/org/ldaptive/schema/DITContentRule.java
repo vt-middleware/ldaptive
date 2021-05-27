@@ -1,8 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.text.ParseException;
+import java.nio.CharBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
@@ -30,20 +31,6 @@ public class DITContentRule extends AbstractNamedSchemaElement
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1151;
-
-  /** Pattern to match definitions. */
-  private static final Pattern DEFINITION_PATTERN = Pattern.compile(
-    WSP_REGEX + "\\(" +
-      WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
-      WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']*)')?" +
-      WSP_REGEX + "(OBSOLETE)?" +
-      WSP_REGEX + "(?:AUX (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:MUST (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:MAY (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:NOT (?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:(X-[^ ]+.*))?" +
-      WSP_REGEX + "\\)" + WSP_REGEX);
 
   /** OID. */
   private final String oid;
@@ -216,63 +203,12 @@ public class DITContentRule extends AbstractNamedSchemaElement
    *
    * @return  DIT content rule
    *
-   * @throws  ParseException  if the supplied definition is invalid
+   * @throws  SchemaParseException  if the supplied definition is invalid
    */
   public static DITContentRule parse(final String definition)
-    throws ParseException
+    throws SchemaParseException
   {
-    final Matcher m = DEFINITION_PATTERN.matcher(definition);
-    if (!m.matches()) {
-      throw new ParseException("Invalid DIT content rule definition: " + definition, definition.length());
-    }
-
-    final DITContentRule dcrd = new DITContentRule(m.group(1).trim());
-
-    // CheckStyle:MagicNumber OFF
-    // parse names
-    if (m.group(2) != null) {
-      dcrd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
-    } else if (m.group(3) != null) {
-      dcrd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
-    }
-
-    dcrd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
-    dcrd.setObsolete(m.group(5) != null);
-
-    // parse auxiliary classes
-    if (m.group(6) != null) {
-      dcrd.setAuxiliaryClasses(SchemaUtils.parseOIDs(m.group(6).trim()));
-    } else if (m.group(7) != null) {
-      dcrd.setAuxiliaryClasses(SchemaUtils.parseOIDs(m.group(7).trim()));
-    }
-
-    // parse required attributes
-    if (m.group(9) != null) {
-      dcrd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(9).trim()));
-    } else if (m.group(10) != null) {
-      dcrd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(10).trim()));
-    }
-
-    // parse optional attributes
-    if (m.group(11) != null) {
-      dcrd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(11).trim()));
-    } else if (m.group(12) != null) {
-      dcrd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(12).trim()));
-    }
-
-    // parse restricted attributes
-    if (m.group(11) != null) {
-      dcrd.setRestrictedAttributes(SchemaUtils.parseOIDs(m.group(11).trim()));
-    } else if (m.group(12) != null) {
-      dcrd.setRestrictedAttributes(SchemaUtils.parseOIDs(m.group(12).trim()));
-    }
-
-    // parse extensions
-    if (m.group(13) != null) {
-      dcrd.setExtensions(Extensions.parse(m.group(13).trim()));
-    }
-    return dcrd;
-    // CheckStyle:MagicNumber ON
+    return SchemaParser.parse(DITContentRule.class, definition);
   }
 
 
@@ -370,5 +306,143 @@ public class DITContentRule extends AbstractNamedSchemaElement
       .append("optionalAttributes=").append(Arrays.toString(optionalAttributes)).append(", ")
       .append("restrictedAttributes=").append(Arrays.toString(restrictedAttributes)).append(", ")
       .append("extensions=").append(getExtensions()).append("]").toString();
+  }
+
+
+  /** Parses a DIT content rule definition using a char buffer. */
+  public static class DefaultDefinitionFunction extends AbstractDefaultDefinitionFunction<DITContentRule>
+  {
+
+
+    @Override
+    public DITContentRule parse(final String definition)
+      throws SchemaParseException
+    {
+      final CharBuffer buffer = validate(definition);
+      skipSpaces(buffer);
+      final DITContentRule dcr = new DITContentRule(readUntilSpace(buffer));
+      final Extensions exts = new Extensions();
+      while (buffer.hasRemaining()) {
+        skipSpaces(buffer);
+        final String token = readUntilSpace(buffer);
+        skipSpaces(buffer);
+        switch (token) {
+        case "NAME":
+          dcr.setNames(readQDStrings(buffer));
+          break;
+        case "DESC":
+          dcr.setDescription(readQDString(buffer));
+          break;
+        case "OBSOLETE":
+          dcr.setObsolete(true);
+          break;
+        case "AUX":
+          dcr.setAuxiliaryClasses(readOIDs(buffer));
+          break;
+        case "MUST":
+          dcr.setRequiredAttributes(readOIDs(buffer));
+          break;
+        case "MAY":
+          dcr.setOptionalAttributes(readOIDs(buffer));
+          break;
+        case "NOT":
+          dcr.setRestrictedAttributes(readOIDs(buffer));
+          break;
+        case "":
+          break;
+        default:
+          if (!token.startsWith("X-")) {
+            throw new SchemaParseException(
+              "Definition '" + definition + "' contains invalid extension '" + token + "'");
+          }
+          skipSpaces(buffer);
+          exts.addExtension(token, List.of(readQDStrings(buffer)));
+          break;
+        }
+      }
+      if (!exts.isEmpty()) {
+        dcr.setExtensions(exts);
+      }
+      return dcr;
+    }
+  }
+
+
+  /** Parses a DIT content rule definition using a regular expression. */
+  public static class RegexDefinitionFunction extends AbstractRegexDefinitionFunction<DITContentRule>
+  {
+
+    /** Pattern to match definitions. */
+    private static final Pattern DEFINITION_PATTERN = Pattern.compile(
+      WSP_REGEX + "\\(" +
+        WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
+        WSP_REGEX + "(?:NAME" + ONE_WSP_REGEX + "(?:'([^']+)'|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:DESC" + ONE_WSP_REGEX + "'([^']*)')?" +
+        WSP_REGEX + "(OBSOLETE)?" +
+        WSP_REGEX + "(?:AUX" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:MUST" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:MAY" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:NOT" + ONE_WSP_REGEX + "(?:(" + NO_WSP_REGEX + ")|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:(X-[^ ]+.*))?" +
+        WSP_REGEX + "\\)" + WSP_REGEX);
+
+
+    @Override
+    public DITContentRule parse(final String definition)
+      throws SchemaParseException
+    {
+      final Matcher m = DEFINITION_PATTERN.matcher(definition);
+      if (!m.matches()) {
+        throw new SchemaParseException("Invalid DIT content rule definition: " + definition);
+      }
+
+      final DITContentRule dcrd = new DITContentRule(m.group(1).trim());
+
+      // CheckStyle:MagicNumber OFF
+      // parse names
+      if (m.group(2) != null) {
+        dcrd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
+      } else if (m.group(3) != null) {
+        dcrd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
+      }
+
+      dcrd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      dcrd.setObsolete(m.group(5) != null);
+
+      // parse auxiliary classes
+      if (m.group(6) != null) {
+        dcrd.setAuxiliaryClasses(SchemaUtils.parseOIDs(m.group(6).trim()));
+      } else if (m.group(7) != null) {
+        dcrd.setAuxiliaryClasses(SchemaUtils.parseOIDs(m.group(7).trim()));
+      }
+
+      // parse required attributes
+      if (m.group(9) != null) {
+        dcrd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(9).trim()));
+      } else if (m.group(10) != null) {
+        dcrd.setRequiredAttributes(SchemaUtils.parseOIDs(m.group(10).trim()));
+      }
+
+      // parse optional attributes
+      if (m.group(11) != null) {
+        dcrd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(11).trim()));
+      } else if (m.group(12) != null) {
+        dcrd.setOptionalAttributes(SchemaUtils.parseOIDs(m.group(12).trim()));
+      }
+
+      // parse restricted attributes
+      if (m.group(11) != null) {
+        dcrd.setRestrictedAttributes(SchemaUtils.parseOIDs(m.group(11).trim()));
+      } else if (m.group(12) != null) {
+        dcrd.setRestrictedAttributes(SchemaUtils.parseOIDs(m.group(12).trim()));
+      }
+
+      // parse extensions
+      if (m.group(13) != null) {
+        dcrd.setExtensions(parseExtensions(m.group(13).trim()));
+      }
+      return dcrd;
+      // CheckStyle:MagicNumber ON
+    }
   }
 }

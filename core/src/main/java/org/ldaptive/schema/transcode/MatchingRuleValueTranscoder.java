@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema.transcode;
 
-import java.text.ParseException;
 import org.ldaptive.schema.MatchingRule;
+import org.ldaptive.schema.SchemaParseException;
 
 /**
  * Decodes and encodes a matching rule for use in an ldap attribute value.
@@ -18,7 +18,7 @@ public class MatchingRuleValueTranscoder extends AbstractSchemaElementValueTrans
   {
     try {
       return MatchingRule.parse(value);
-    } catch (ParseException e) {
+    } catch (SchemaParseException e) {
       throw new IllegalArgumentException("Could not transcode matching rule", e);
     }
   }

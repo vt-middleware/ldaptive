@@ -1,8 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.text.ParseException;
+import java.nio.CharBuffer;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
@@ -35,25 +36,6 @@ public class AttributeType extends AbstractNamedSchemaElement
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1103;
-
-  /** Pattern to match definitions. */
-  private static final Pattern DEFINITION_PATTERN = Pattern.compile(
-    WSP_REGEX + "\\(" +
-      WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
-      WSP_REGEX + "(?:NAME (?:'([^']+)'|\\(([^\\)]+)\\)))?" +
-      WSP_REGEX + "(?:DESC '([^']*)')?" +
-      WSP_REGEX + "(OBSOLETE)?" +
-      WSP_REGEX + "(?:SUP (" + NO_WSP_REGEX + "))?" +
-      WSP_REGEX + "(?:EQUALITY (" + NO_WSP_REGEX + "))?" +
-      WSP_REGEX + "(?:ORDERING (" + NO_WSP_REGEX + "))?" +
-      WSP_REGEX + "(?:SUBSTR (" + NO_WSP_REGEX + "))?" +
-      WSP_REGEX + "(?:SYNTAX (" + NO_WSP_REGEX + "))?" +
-      WSP_REGEX + "(SINGLE-VALUE)?" +
-      WSP_REGEX + "(COLLECTIVE)?" +
-      WSP_REGEX + "(NO-USER-MODIFICATION)?" +
-      WSP_REGEX + "(?:USAGE (\\p{Alpha}+))?" +
-      WSP_REGEX + "(?:(X-[^ ]+.*))?" +
-      WSP_REGEX + "\\)" + WSP_REGEX);
 
   /** OID. */
   private final String oid;
@@ -401,46 +383,12 @@ public class AttributeType extends AbstractNamedSchemaElement
    *
    * @return  attribute type
    *
-   * @throws  ParseException  if the supplied definition is invalid
+   * @throws  SchemaParseException  if the supplied definition is invalid
    */
   public static AttributeType parse(final String definition)
-    throws ParseException
+    throws SchemaParseException
   {
-    final Matcher m = DEFINITION_PATTERN.matcher(definition);
-    if (!m.matches()) {
-      throw new ParseException("Invalid attribute type definition: " + definition, definition.length());
-    }
-
-    final AttributeType atd = new AttributeType(m.group(1).trim());
-
-    // CheckStyle:MagicNumber OFF
-    // parse names
-    if (m.group(2) != null) {
-      atd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
-    } else if (m.group(3) != null) {
-      atd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
-    }
-
-    atd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
-    atd.setObsolete(m.group(5) != null);
-    atd.setSuperiorType(m.group(6) != null ? m.group(6).trim() : null);
-    atd.setEqualityMatchingRule(m.group(7) != null ? m.group(7).trim() : null);
-    atd.setOrderingMatchingRule(m.group(8) != null ? m.group(8).trim() : null);
-    atd.setSubstringMatchingRule(m.group(9) != null ? m.group(9).trim() : null);
-    atd.setSyntaxOID(m.group(10) != null ? m.group(10).trim() : null);
-    atd.setSingleValued(m.group(11) != null);
-    atd.setCollective(m.group(12) != null);
-    atd.setNoUserModification(m.group(13) != null);
-    if (m.group(14) != null) {
-      atd.setUsage(AttributeUsage.parse(m.group(14).trim()));
-    }
-
-    // parse extensions
-    if (m.group(15) != null) {
-      atd.setExtensions(Extensions.parse(m.group(15).trim()));
-    }
-    return atd;
-    // CheckStyle:MagicNumber ON
+    return SchemaParser.parse(AttributeType.class, definition);
   }
 
 
@@ -564,5 +512,146 @@ public class AttributeType extends AbstractNamedSchemaElement
       .append("noUserModification=").append(noUserModification).append(", ")
       .append("usage=").append(usage).append(", ")
       .append("extensions=").append(getExtensions()).append("]").toString();
+  }
+
+
+  /** Parses an attribute type definition using a char buffer. */
+  public static class DefaultDefinitionFunction extends AbstractDefaultDefinitionFunction<AttributeType>
+  {
+
+
+    @Override
+    public AttributeType parse(final String definition)
+      throws SchemaParseException
+    {
+      final CharBuffer buffer = validate(definition);
+      skipSpaces(buffer);
+      final AttributeType atd = new AttributeType(readUntilSpace(buffer));
+      final Extensions exts = new Extensions();
+      while (buffer.hasRemaining()) {
+        skipSpaces(buffer);
+        final String token = readUntilSpace(buffer);
+        skipSpaces(buffer);
+        switch (token) {
+        case "NAME":
+          atd.setNames(readQDStrings(buffer));
+          break;
+        case "DESC":
+          atd.setDescription(readQDString(buffer));
+          break;
+        case "OBSOLETE":
+          atd.setObsolete(true);
+          break;
+        case "SUP":
+          atd.setSuperiorType(readOID(buffer));
+          break;
+        case "EQUALITY":
+          atd.setEqualityMatchingRule(readOID(buffer));
+          break;
+        case "ORDERING":
+          atd.setOrderingMatchingRule(readOID(buffer));
+          break;
+        case "SUBSTR":
+          atd.setSubstringMatchingRule(readOID(buffer));
+          break;
+        case "SYNTAX":
+          atd.setSyntaxOID(readUntilSpace(buffer));
+          break;
+        case "SINGLE-VALUE":
+          atd.setSingleValued(true);
+          break;
+        case "COLLECTIVE":
+          atd.setCollective(true);
+          break;
+        case "NO-USER-MODIFICATION":
+          atd.setNoUserModification(true);
+          break;
+        case "USAGE":
+          atd.setUsage(AttributeUsage.parse(readUntilSpace(buffer)));
+          break;
+        case "":
+          break;
+        default:
+          if (!token.startsWith("X-")) {
+            throw new SchemaParseException(
+              "Definition '" + definition + "' contains invalid extension '" + token + "'");
+          }
+          skipSpaces(buffer);
+          exts.addExtension(token, List.of(readQDStrings(buffer)));
+          break;
+        }
+      }
+      if (!exts.isEmpty()) {
+        atd.setExtensions(exts);
+      }
+      return atd;
+    }
+  }
+
+
+  /** Parses an attribute type definition using a regular expression. */
+  public static class RegexDefinitionFunction extends AbstractRegexDefinitionFunction<AttributeType>
+  {
+
+    /** Pattern to match definitions. */
+    private static final Pattern DEFINITION_PATTERN = Pattern.compile(
+      WSP_REGEX + "\\(" +
+        WSP_REGEX + "(" + NO_WSP_REGEX + ")" +
+        WSP_REGEX + "(?:NAME" + ONE_WSP_REGEX + "(?:'([^']+)'|\\(([^\\)]+)\\)))?" +
+        WSP_REGEX + "(?:DESC" + ONE_WSP_REGEX + "'([^']*)')?" +
+        WSP_REGEX + "(OBSOLETE)?" +
+        WSP_REGEX + "(?:SUP" + ONE_WSP_REGEX + "(" + NO_WSP_REGEX + "))?" +
+        WSP_REGEX + "(?:EQUALITY" + ONE_WSP_REGEX + "(" + NO_WSP_REGEX + "))?" +
+        WSP_REGEX + "(?:ORDERING" + ONE_WSP_REGEX + "(" + NO_WSP_REGEX + "))?" +
+        WSP_REGEX + "(?:SUBSTR" + ONE_WSP_REGEX + "(" + NO_WSP_REGEX + "))?" +
+        WSP_REGEX + "(?:SYNTAX" + ONE_WSP_REGEX + "(" + NO_WSP_REGEX + "))?" +
+        WSP_REGEX + "(SINGLE-VALUE)?" +
+        WSP_REGEX + "(COLLECTIVE)?" +
+        WSP_REGEX + "(NO-USER-MODIFICATION)?" +
+        WSP_REGEX + "(?:USAGE" + ONE_WSP_REGEX + "(\\p{Alpha}+))?" +
+        WSP_REGEX + "(?:(X-[^ ]+.*))?" +
+        WSP_REGEX + "\\)" + WSP_REGEX);
+
+
+    @Override
+    public AttributeType parse(final String definition)
+      throws SchemaParseException
+    {
+      final Matcher m = DEFINITION_PATTERN.matcher(definition);
+      if (!m.matches()) {
+        throw new SchemaParseException("Invalid attribute type definition: " + definition);
+      }
+
+      final AttributeType atd = new AttributeType(m.group(1).trim());
+
+      // CheckStyle:MagicNumber OFF
+      // parse names
+      if (m.group(2) != null) {
+        atd.setNames(SchemaUtils.parseDescriptors(m.group(2).trim()));
+      } else if (m.group(3) != null) {
+        atd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
+      }
+
+      atd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      atd.setObsolete(m.group(5) != null);
+      atd.setSuperiorType(m.group(6) != null ? m.group(6).trim() : null);
+      atd.setEqualityMatchingRule(m.group(7) != null ? m.group(7).trim() : null);
+      atd.setOrderingMatchingRule(m.group(8) != null ? m.group(8).trim() : null);
+      atd.setSubstringMatchingRule(m.group(9) != null ? m.group(9).trim() : null);
+      atd.setSyntaxOID(m.group(10) != null ? m.group(10).trim() : null);
+      atd.setSingleValued(m.group(11) != null);
+      atd.setCollective(m.group(12) != null);
+      atd.setNoUserModification(m.group(13) != null);
+      if (m.group(14) != null) {
+        atd.setUsage(AttributeUsage.parse(m.group(14).trim()));
+      }
+
+      // parse extensions
+      if (m.group(15) != null) {
+        atd.setExtensions(parseExtensions(m.group(15).trim()));
+      }
+      return atd;
+      // CheckStyle:MagicNumber ON
+    }
   }
 }

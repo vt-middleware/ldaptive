@@ -28,10 +28,18 @@ public class ObjectClassTest
         new Object[] {
           new ObjectClass("2.5.6.0", null, null, false, null, null, null, null, null),
           "( 2.5.6.0 )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass("2.5.6.0", new String[] {"top"}, null, false, null, null, null, null, null),
           "( 2.5.6.0 NAME 'top' )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass(
@@ -45,6 +53,10 @@ public class ObjectClassTest
             null,
             null),
           "( 2.5.6.0 NAME 'top' DESC 'top of the superclass chain' )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass(
@@ -58,6 +70,10 @@ public class ObjectClassTest
             null,
             null),
           "( 2.5.6.0 NAME 'top' DESC 'top of the superclass chain' ABSTRACT )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass(
@@ -71,6 +87,10 @@ public class ObjectClassTest
             null,
             null),
           "( 2.5.6.0 NAME 'top' DESC 'top of the superclass chain' ABSTRACT MUST objectClass )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass(
@@ -85,6 +105,10 @@ public class ObjectClassTest
             null),
           "( 1.3.6.1.4.1.1466.101.120.111 NAME 'extensibleObject' DESC 'RFC4512: extensible object' SUP top " +
             "AUXILIARY )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass(
@@ -98,6 +122,10 @@ public class ObjectClassTest
             null,
             null),
           "( 2.5.6.1 NAME 'alias' DESC 'RFC4512: an alias' SUP top STRUCTURAL MUST aliasedObjectName )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass(
@@ -112,6 +140,10 @@ public class ObjectClassTest
             null),
           "( 1.3.6.1.4.1.4203.1.4.1 NAME ( 'OpenLDAProotDSE' 'LDAProotDSE' ) DESC 'OpenLDAP Root DSE object' SUP top " +
             "STRUCTURAL MAY cn )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass(
@@ -125,6 +157,10 @@ public class ObjectClassTest
             null,
             null),
           "( 2.5.17.0 NAME 'subentry' DESC 'RFC3672: subentry' SUP top STRUCTURAL MUST ( cn $ subtreeSpecification ) )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass(
@@ -159,6 +195,10 @@ public class ObjectClassTest
             "mailAutoReplyMode $ mailAutoReplyText $ mailDeliveryOption $ mailForwardingAddress $ mailMessageStore $ " +
             "mailProgramDeliveryInfo $ mailQuota $ multiLineDescription $ uid $ userPassword ) " +
             "X-ORIGIN 'Netscape Messaging Server 4.x' )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new ObjectClass(
@@ -198,6 +238,10 @@ public class ObjectClassTest
             "destinationIndicator $ preferredDeliveryMethod $ telexNumber $ teletexTerminalIdentifier $ " +
             "telephoneNumber $ internationaliSDNNumber $ facsimileTelephoneNumber $ street $ postOfficeBox $ " +
             "postalCode $ postalAddress $ physicalDeliveryOfficeName $ st $ l $ description ) )",
+          new DefinitionFunction[] {
+            new ObjectClass.DefaultDefinitionFunction(),
+            new ObjectClass.RegexDefinitionFunction(),
+          },
         },
       };
   }
@@ -206,16 +250,20 @@ public class ObjectClassTest
   /**
    * @param  objectClass  to compare
    * @param  definition  to parse
+   * @param  functions  to parse the definition
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "schema", dataProvider = "definitions")
-  public void parse(final ObjectClass objectClass, final String definition)
+  public void parse(
+    final ObjectClass objectClass, final String definition, final DefinitionFunction<ObjectClass>[] functions)
     throws Exception
   {
-    final ObjectClass parsed = ObjectClass.parse(definition);
-    Assert.assertEquals(objectClass, parsed);
-    Assert.assertEquals(definition, parsed.format());
-    Assert.assertEquals(objectClass.format(), parsed.format());
+    for (DefinitionFunction<ObjectClass> func : functions) {
+      final ObjectClass parsed = func.parse(definition);
+      Assert.assertEquals(objectClass, parsed);
+      Assert.assertEquals(definition, parsed.format());
+      Assert.assertEquals(objectClass.format(), parsed.format());
+    }
   }
 }

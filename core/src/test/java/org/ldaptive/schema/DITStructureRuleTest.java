@@ -28,10 +28,18 @@ public class DITStructureRuleTest
         new Object[] {
           new DITStructureRule(2, null, null, false, null, null, null),
           "( 2 )",
+          new DefinitionFunction[] {
+            new DITStructureRule.DefaultDefinitionFunction(),
+            new DITStructureRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new DITStructureRule(2, new String[] {"uddiContactStructureRule"}, null, false, null, null, null),
           "( 2 NAME 'uddiContactStructureRule' )",
+          new DefinitionFunction[] {
+            new DITStructureRule.DefaultDefinitionFunction(),
+            new DITStructureRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new DITStructureRule(
@@ -43,6 +51,10 @@ public class DITStructureRuleTest
             null,
             null),
           "( 2 NAME 'uddiContactStructureRule' FORM uddiContactNameForm )",
+          new DefinitionFunction[] {
+            new DITStructureRule.DefaultDefinitionFunction(),
+            new DITStructureRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new DITStructureRule(
@@ -54,6 +66,10 @@ public class DITStructureRuleTest
             new int[] {1},
             null),
           "( 2 NAME 'uddiContactStructureRule' FORM uddiContactNameForm SUP 1 )",
+          new DefinitionFunction[] {
+            new DITStructureRule.DefaultDefinitionFunction(),
+            new DITStructureRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new DITStructureRule(
@@ -65,10 +81,18 @@ public class DITStructureRuleTest
             new int[] {1},
             new Extensions("X-ORIGIN", Collections.singletonList("RFC 4403"))),
           "( 2 NAME 'uddiContactStructureRule' FORM uddiContactNameForm SUP 1 X-ORIGIN 'RFC 4403' )",
+          new DefinitionFunction[] {
+            new DITStructureRule.DefaultDefinitionFunction(),
+            new DITStructureRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new DITStructureRule(1, new String[] {"domainStructureRule"}, null, false, "domainNameForm", null, null),
           "( 1 NAME 'domainStructureRule' FORM domainNameForm )",
+          new DefinitionFunction[] {
+            new DITStructureRule.DefaultDefinitionFunction(),
+            new DITStructureRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new DITStructureRule(
@@ -80,6 +104,10 @@ public class DITStructureRuleTest
             new int[] {1},
             null),
           "( 2 NAME 'organizationalUnitStructureRule' FORM organizationalUnitNameForm SUP 1 )",
+          new DefinitionFunction[] {
+            new DITStructureRule.DefaultDefinitionFunction(),
+            new DITStructureRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new DITStructureRule(
@@ -91,6 +119,10 @@ public class DITStructureRuleTest
             new int[] {2},
             null),
           "( 3 NAME 'inetOrgPersonStructureRule' FORM inetOrgPersonNameForm SUP 2 )",
+          new DefinitionFunction[] {
+            new DITStructureRule.DefaultDefinitionFunction(),
+            new DITStructureRule.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new DITStructureRule(
@@ -102,6 +134,10 @@ public class DITStructureRuleTest
             new int[] {2, 3},
             null),
           "( 4 NAME 'groupOfNamesStructureRule' FORM groupOfNamesNameForm SUP ( 2 3 ) )",
+          new DefinitionFunction[] {
+            new DITStructureRule.DefaultDefinitionFunction(),
+            new DITStructureRule.RegexDefinitionFunction(),
+          },
         },
       };
   }
@@ -110,16 +146,22 @@ public class DITStructureRuleTest
   /**
    * @param  structureRule  to compare
    * @param  definition  to parse
+   * @param  functions  to parse the definition
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "schema", dataProvider = "definitions")
-  public void parse(final DITStructureRule structureRule, final String definition)
+  public void parse(
+    final DITStructureRule structureRule,
+    final String definition,
+    final DefinitionFunction<DITStructureRule>[] functions)
     throws Exception
   {
-    final DITStructureRule parsed = DITStructureRule.parse(definition);
-    Assert.assertEquals(structureRule, parsed);
-    Assert.assertEquals(definition, parsed.format());
-    Assert.assertEquals(structureRule.format(), parsed.format());
+    for (DefinitionFunction<DITStructureRule> func : functions) {
+      final DITStructureRule parsed = func.parse(definition);
+      Assert.assertEquals(structureRule, parsed);
+      Assert.assertEquals(definition, parsed.format());
+      Assert.assertEquals(structureRule.format(), parsed.format());
+    }
   }
 }

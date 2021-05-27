@@ -27,10 +27,18 @@ public class MatchingRuleUseTest
         new Object[] {
           new MatchingRuleUse("1.2.840.113556.1.4.804", null, null, false, null, null),
           "( 1.2.840.113556.1.4.804 )",
+          new DefinitionFunction[] {
+            new MatchingRuleUse.DefaultDefinitionFunction(),
+            new MatchingRuleUse.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new MatchingRuleUse("1.2.840.113556.1.4.804", new String[] {"integerBitOrMatch"}, null, false, null, null),
           "( 1.2.840.113556.1.4.804 NAME 'integerBitOrMatch' )",
+          new DefinitionFunction[] {
+            new MatchingRuleUse.DefaultDefinitionFunction(),
+            new MatchingRuleUse.RegexDefinitionFunction(),
+          },
         },
         new Object[] {
           new MatchingRuleUse(
@@ -79,6 +87,10 @@ public class MatchingRuleUseTest
             "olcSockbufMaxIncoming $ olcSockbufMaxIncomingAuth $ olcThreads $ olcToolThreads $ olcWriteTimeout $ " +
             "olcDbCacheFree $ olcDbCacheSize $ olcDbDNcacheSize $ olcDbIDLcacheSize $ olcDbSearchStack $ " +
             "olcDbShmKey $ olcDbMaxReaders $ olcDbMaxSize $ mailPreferenceOption ) )",
+          new DefinitionFunction[] {
+            new MatchingRuleUse.DefaultDefinitionFunction(),
+            new MatchingRuleUse.RegexDefinitionFunction(),
+          },
         },
       };
   }
@@ -87,16 +99,20 @@ public class MatchingRuleUseTest
   /**
    * @param  matchingRule  to compare
    * @param  definition  to parse
+   * @param  functions  to parse the definition
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "schema", dataProvider = "definitions")
-  public void parse(final MatchingRuleUse matchingRule, final String definition)
+  public void parse(
+    final MatchingRuleUse matchingRule, final String definition, final DefinitionFunction<MatchingRuleUse>[] functions)
     throws Exception
   {
-    final MatchingRuleUse parsed = MatchingRuleUse.parse(definition);
-    Assert.assertEquals(matchingRule, parsed);
-    Assert.assertEquals(definition, parsed.format());
-    Assert.assertEquals(matchingRule.format(), parsed.format());
+    for (DefinitionFunction<MatchingRuleUse> func : functions) {
+      final MatchingRuleUse parsed = func.parse(definition);
+      Assert.assertEquals(matchingRule, parsed);
+      Assert.assertEquals(definition, parsed.format());
+      Assert.assertEquals(matchingRule.format(), parsed.format());
+    }
   }
 }
