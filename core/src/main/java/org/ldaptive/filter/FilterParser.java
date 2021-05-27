@@ -42,7 +42,7 @@ public final class FilterParser
 
   /**
    * The {@link #FILTER_FUNCTION_PROPERTY} property is checked and that class is loaded if provided. Otherwise the
-   * {@link RegexFilterFunction} is returned.
+   * {@link DefaultFilterFunction} is returned.
    *
    * @return  default filter function
    */
