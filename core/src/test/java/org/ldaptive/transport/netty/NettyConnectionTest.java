@@ -258,6 +258,12 @@ public class NettyConnectionTest
           Assert.fail("Connection did not reconnect");
         }
         Assert.assertTrue(reconnectAttempted.get());
+        // it may take a few seconds for the connection to reestablish
+        int isOpenCount = 0;
+        while (!conn.isOpen() && isOpenCount < 10) {
+          Thread.sleep(1000);
+          isOpenCount++;
+        }
         Assert.assertTrue(conn.isOpen());
       } finally {
         conn.close();
