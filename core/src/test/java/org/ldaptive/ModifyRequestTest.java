@@ -27,7 +27,7 @@ public class ModifyRequestTest
         new Object[] {
           ModifyRequest.builder()
             .dn("uid=jdoe,ou=People,dc=example,dc=com")
-            .modificiations(
+            .modifications(
               new AttributeModification(AttributeModification.Type.DELETE, new LdapAttribute("givenName", "John")),
               new AttributeModification(AttributeModification.Type.ADD, new LdapAttribute("givenName", "Jonathan")),
               new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute("cn", "Jonathan Doe")))
@@ -56,7 +56,7 @@ public class ModifyRequestTest
         new Object[] {
           ModifyRequest.builder()
             .dn("uid=1,ou=test,dc=vt,dc=edu")
-            .modificiations(new AttributeModification(AttributeModification.Type.DELETE, new LdapAttribute("authzTo")))
+            .modifications(new AttributeModification(AttributeModification.Type.DELETE, new LdapAttribute("authzTo")))
             .build(),
           new byte[] {
             // preamble
