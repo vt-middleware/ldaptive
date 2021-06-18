@@ -12,7 +12,7 @@ public class SchemaParseException extends LdapException
 {
 
   /** serialVersionUID. */
-  private static final long serialVersionUID = -5214120370570326233L;;
+  private static final long serialVersionUID = -5214120370570326233L;
 
 
   /**

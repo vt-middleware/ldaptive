@@ -66,7 +66,7 @@ public final class SslConfigPropertySource extends AbstractPropertySource<SslCon
 
 
   /**
-   * Creates a new sssl config property source.
+   * Creates a new ssl config property source.
    *
    * @param  config  ssl config to invoke properties on
    * @param  domain  that properties are in

@@ -331,7 +331,7 @@ public class Schema
   /**
    * Returns the matching rule uses.
    *
-   * @return  matching rule ueses
+   * @return  matching rule uses
    */
   public Collection<MatchingRuleUse> getMatchingRuleUses()
   {

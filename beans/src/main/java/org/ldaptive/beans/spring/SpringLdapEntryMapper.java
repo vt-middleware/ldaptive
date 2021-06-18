@@ -61,7 +61,7 @@ public class SpringLdapEntryMapper<T> extends AbstractLdapEntryMapper<T>
    *
    * @param  object  to supply to the evaluation context
    *
-   * @return  evalutation context
+   * @return  evaluation context
    */
   protected EvaluationContext createEvaluationContext(final Object object)
   {

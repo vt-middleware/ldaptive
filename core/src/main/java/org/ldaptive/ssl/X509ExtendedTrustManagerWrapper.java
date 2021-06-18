@@ -49,7 +49,7 @@ public class X509ExtendedTrustManagerWrapper extends X509ExtendedTrustManager
    * @param  session  to extract hostname from
    * @param  cert  to verify hostname against
    *
-   * @throws  CertificateException  if tthe hostname cannot be verified
+   * @throws  CertificateException  if the hostname cannot be verified
    */
   protected void verifyHostname(final SSLSession session, final X509Certificate cert)
     throws CertificateException

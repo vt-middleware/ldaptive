@@ -72,7 +72,7 @@ public class DERPath
     for (UniversalDERTag tag : UniversalDERTag.values()) {
       validNames.append('|').append(tag.name());
     }
-    NODE_PATTERN = Pattern.compile(String.format("(%s)(?:\\[(\\d+)\\])?", validNames.toString()));
+    NODE_PATTERN = Pattern.compile(String.format("(%s)(?:\\[(\\d+)\\])?", validNames));
   }
 
   /** Describes the path as a FIFO set of nodes. */

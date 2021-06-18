@@ -130,7 +130,7 @@ public class AggregateAuthenticatorBeanDefinitionParser
 
 
     /**
-     * Sets whether the aggrgate authenticator will allow multiple DNs.
+     * Sets whether the aggregate authenticator will allow multiple DNs.
      *
      * @param  b  whether multiple DNs are allowed
      */

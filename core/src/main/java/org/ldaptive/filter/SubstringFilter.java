@@ -146,7 +146,7 @@ public class SubstringFilter implements Filter
   /**
    * Returns the number of assertions in this substring filter.
    *
-   * @return  assesrtion count
+   * @return  assertion count
    */
   private int getAssertionCount()
   {

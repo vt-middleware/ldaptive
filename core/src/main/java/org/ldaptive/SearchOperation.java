@@ -159,7 +159,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   /**
    * Sends a search request. See {@link SearchOperationHandle#send()}.
    *
-   * @param  template  filter tempalte
+   * @param  template  filter template
    *
    * @return  search operation handle
    *
@@ -177,7 +177,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    * Sends a search request. See {@link SearchOperationHandle#send()}.
    *
    * @param  filter  search filter
-\   *
+   *
    * @return  search operation handle
    *
    * @throws  LdapException  if the connection cannot be opened
