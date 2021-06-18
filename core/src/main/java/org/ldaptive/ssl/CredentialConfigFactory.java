@@ -8,6 +8,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.cert.X509Certificate;
+import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -121,19 +122,39 @@ public final class CredentialConfigFactory
     final String[] keyStoreAliases)
   {
     return
-      () -> {
-        final KeyStoreSSLContextInitializer sslInit = new KeyStoreSSLContextInitializer();
-        if (trustStore != null) {
-          sslInit.setTrustKeystore(trustStore);
-          sslInit.setTrustAliases(trustStoreAliases);
+      // CheckStyle:AnonInnerLength OFF
+      new CredentialConfig() {
+        @Override
+        public SSLContextInitializer createSSLContextInitializer()
+          throws GeneralSecurityException
+        {
+          final KeyStoreSSLContextInitializer sslInit = new KeyStoreSSLContextInitializer();
+          if (trustStore != null) {
+            sslInit.setTrustKeystore(trustStore);
+            sslInit.setTrustAliases(trustStoreAliases);
+          }
+          if (keyStore != null) {
+            sslInit.setAuthenticationKeystore(keyStore);
+            sslInit.setAuthenticationPassword(keyStorePassword != null ? keyStorePassword.toCharArray() : null);
+            sslInit.setAuthenticationAliases(keyStoreAliases);
+          }
+          return sslInit;
         }
-        if (keyStore != null) {
-          sslInit.setAuthenticationKeystore(keyStore);
-          sslInit.setAuthenticationPassword(keyStorePassword != null ? keyStorePassword.toCharArray() : null);
-          sslInit.setAuthenticationAliases(keyStoreAliases);
+
+        @Override
+        public String toString()
+        {
+          return new StringBuilder("[").append(
+            getClass().getName()).append("@").append(hashCode()).append("::")
+            .append("trustStore=").append(trustStore).append(", ")
+            .append("trustStoreAliases=").append(Arrays.toString(trustStoreAliases)).append(", ")
+            .append("keyStore=").append(keyStore).append(", ")
+            .append("keyStorePassword=").append(keyStorePassword != null ? "suppressed" : null).append(", ")
+            .append("keyStoreAliases=").append(Arrays.toString(keyStoreAliases))
+            .append("]").toString();
         }
-        return sslInit;
       };
+    // CheckStyle:AnonInnerLength ON
   }
 
 
@@ -181,19 +202,40 @@ public final class CredentialConfigFactory
     final PrivateKey authenticationKey)
   {
     return
-      () -> {
-        final X509SSLContextInitializer sslInit = new X509SSLContextInitializer();
-        if (trustCertificates != null) {
-          sslInit.setTrustCertificates(trustCertificates);
+      // CheckStyle:AnonInnerLength OFF
+      new CredentialConfig() {
+        @Override
+        public SSLContextInitializer createSSLContextInitializer()
+          throws GeneralSecurityException
+        {
+          final X509SSLContextInitializer sslInit = new X509SSLContextInitializer();
+          if (trustCertificates != null) {
+            sslInit.setTrustCertificates(trustCertificates);
+          }
+          if (authenticationCertificate != null) {
+            sslInit.setAuthenticationCertificate(authenticationCertificate);
+          }
+          if (authenticationKey != null) {
+            sslInit.setAuthenticationKey(authenticationKey);
+          }
+          return sslInit;
         }
-        if (authenticationCertificate != null) {
-          sslInit.setAuthenticationCertificate(authenticationCertificate);
+
+        @Override
+        public String toString()
+        {
+          return new StringBuilder("[").append(
+            getClass().getName()).append("@").append(hashCode()).append("::")
+            .append("trustCertificates=")
+            .append(trustCertificates != null ? "suppressed" : null).append(", ")
+            .append("authenticationCertificate=")
+            .append(authenticationCertificate != null ? "suppressed" : null).append(", ")
+            .append("authenticationKey=")
+            .append(authenticationKey != null ? "suppressed" : null)
+            .append("]").toString();
         }
-        if (authenticationKey != null) {
-          sslInit.setAuthenticationKey(authenticationKey);
-        }
-        return sslInit;
       };
+    // CheckStyle:AnonInnerLength ON
   }
 
 
@@ -207,19 +249,33 @@ public final class CredentialConfigFactory
   public static CredentialConfig createX509CredentialConfig(final String trustCertificates)
   {
     return
-      () -> {
-        final X509SSLContextInitializer sslInit = new X509SSLContextInitializer();
-        try {
-          if (trustCertificates != null) {
-            final X509CertificatesCredentialReader certsReader = new X509CertificatesCredentialReader();
-            final InputStream trustCertStream = new ByteArrayInputStream(LdapUtils.utf8Encode(trustCertificates));
-            sslInit.setTrustCertificates(certsReader.read(trustCertStream));
-            trustCertStream.close();
+      new CredentialConfig() {
+        @Override
+        public SSLContextInitializer createSSLContextInitializer()
+          throws GeneralSecurityException
+        {
+          final X509SSLContextInitializer sslInit = new X509SSLContextInitializer();
+          try {
+            if (trustCertificates != null) {
+              final X509CertificatesCredentialReader certsReader = new X509CertificatesCredentialReader();
+              final InputStream trustCertStream = new ByteArrayInputStream(LdapUtils.utf8Encode(trustCertificates));
+              sslInit.setTrustCertificates(certsReader.read(trustCertStream));
+              trustCertStream.close();
+            }
+          } catch (IOException e) {
+            throw new GeneralSecurityException(e);
           }
-        } catch (IOException e) {
-          throw new GeneralSecurityException(e);
+          return sslInit;
         }
-        return sslInit;
+
+        @Override
+        public String toString()
+        {
+          return new StringBuilder("[").append(
+            getClass().getName()).append("@").append(hashCode()).append("::")
+            .append("trustCertificates=").append(trustCertificates != null ? "suppressed" : null)
+            .append("]").toString();
+        }
       };
   }
 }
