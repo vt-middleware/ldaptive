@@ -3,7 +3,7 @@
 export LDAPTLS_REQCERT=never
 export LDAP_CONNECT="-H ldap://ldap-test -x -D ${BIND_DN} -w ${BIND_CREDENTIAL}"
 LDAP_RETRIES=30
-until [ `ldapcompare ${LDAP_CONNECT} uid=1,ou=test,dc=vt,dc=edu uid:1` == "TRUE" ] || [ "$LDAP_RETRIES" -eq 0 ]; do
+until [[ `ldapcompare ${LDAP_CONNECT} uid=1,ou=test,dc=vt,dc=edu uid:1` == "TRUE" ]] || [ "$LDAP_RETRIES" -eq 0 ]; do
   echo "Waiting for openldap server: $((LDAP_RETRIES--))"
   sleep 1
 done
