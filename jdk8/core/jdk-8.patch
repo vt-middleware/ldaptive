@@ -1,3 +1,4 @@
+
 --- core/src/main/java/org/ldaptive/AddRequest.java
 +++ core/src/main/java/org/ldaptive/AddRequest.java
 @@ -65,7 +65,7 @@ public AddRequest(final String dn, final LdapAttribute... attrs)
@@ -157,9 +158,18 @@
    }
  
  
-@@ -212,7 +212,7 @@ public Builder modificiations(final AttributeModification... mod)
-      */
+@@ -232,7 +232,7 @@ public class ModifyRequest extends AbstractRequestMessage
+     @Deprecated
      public Builder modificiations(final Collection<AttributeModification> mod)
+     {
+-      object.modifications = mod.toArray(AttributeModification[]::new);
++      object.modifications = mod.stream().toArray(size -> new AttributeModification[size]);
+       return self();
+     }
+
+@@ -246,7 +246,7 @@ public class ModifyRequest extends AbstractRequestMessage
+      */
+     public Builder modifications(final Collection<AttributeModification> mod)
      {
 -      object.modifications = mod.toArray(AttributeModification[]::new);
 +      object.modifications = mod.stream().toArray(size -> new AttributeModification[size]);
@@ -239,8 +249,8 @@
          final Result result = conn.operation(
            ModifyRequest.builder()
              .dn(target.getDn())
--            .modificiations(resultModifications.toArray(AttributeModification[]::new))
-+            .modificiations(resultModifications.toArray(new AttributeModification[0]))
+-            .modifications(resultModifications.toArray(AttributeModification[]::new))
++            .modifications(resultModifications.toArray(new AttributeModification[0]))
              .build()).execute();
          logger.info(
            "modified target entry {} with modifications {} from source entry " +
@@ -357,6 +367,242 @@
          }
        }
        return properties;
+--- core/src/main/java/org/ldaptive/schema/AbstractDefaultDefinitionFunction.java
++++ core/src/main/java/org/ldaptive/schema/AbstractDefaultDefinitionFunction.java
+@@ -44,7 +44,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
+     if (!buffer.hasRemaining()) {
+       throw new SchemaParseException("Definition '" + definition + "' does not contain an expression");
+     }
+-    buffer = buffer.limit(buffer.limit() - 1).slice();
++    buffer = ((CharBuffer) buffer.limit(buffer.limit() - 1)).slice();
+     if (!buffer.hasRemaining()) {
+       throw new SchemaParseException("Definition '" + definition + "' does not contain an expression");
+     }
+@@ -82,7 +82,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
+     }
+     char c = cb.get();
+     if (c != '(') {
+-      return new String[] {readOID(cb.position(cb.position() - 1))};
++      return new String[] {readOID((CharBuffer) cb.position(cb.position() - 1))};
+     }
+     if (!cb.hasRemaining()) {
+       throw new IllegalArgumentException("Cannot read oids with empty content");
+@@ -95,7 +95,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
+       throw new IllegalArgumentException("oids must end with a close paren");
+     }
+     final int endPos = cb.position() - 1;
+-    final CharBuffer slice = cb.limit(endPos).position(startPos).slice();
++    final CharBuffer slice = ((CharBuffer) cb.limit(endPos).position(startPos)).slice();
+     cb.limit(limit).position(endPos + 1);
+     final String[] oids = SchemaUtils.parseOIDs(slice.toString().trim());
+     if (oids.length == 0) {
+@@ -134,7 +134,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
+     }
+     char c = cb.get();
+     if (c != '(') {
+-      return new int[] {readRuleID(cb.position(cb.position() - 1))};
++      return new int[] {readRuleID((CharBuffer) cb.position(cb.position() - 1))};
+     }
+     if (!cb.hasRemaining()) {
+       throw new IllegalArgumentException("Cannot read ruleids with empty content");
+@@ -147,7 +147,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
+       throw new IllegalArgumentException("ruleids must end with a close paren");
+     }
+     final int endPos = cb.position() - 1;
+-    final CharBuffer slice = cb.limit(endPos).position(startPos).slice();
++    final CharBuffer slice = ((CharBuffer) cb.limit(endPos).position(startPos)).slice();
+     cb.limit(limit).position(endPos + 1);
+     final int[] ids = SchemaUtils.parseNumbers(slice.toString().trim());
+     if (ids.length == 0) {
+@@ -185,7 +185,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
+       throw new IllegalArgumentException("qdstring must end with a single quote");
+     }
+     final int endPos = cb.position() - 1;
+-    final CharBuffer slice = cb.limit(endPos).position(startPos).slice();
++    final CharBuffer slice = ((CharBuffer) cb.limit(endPos).position(startPos)).slice();
+     cb.limit(limit).position(endPos + 1);
+     return slice.toString();
+   }
+@@ -207,7 +207,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
+     }
+     char c = cb.get();
+     if (c == '\'') {
+-      return new String[] {readQDString(cb.position(cb.position() - 1))};
++      return new String[] {readQDString((CharBuffer) cb.position(cb.position() - 1))};
+     } else if (c != '(') {
+       throw new IllegalArgumentException("qdstrings must start with a single quote or an open paren");
+     }
+@@ -228,7 +228,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
+           throw new IllegalArgumentException("qdstring must end with a single quote");
+         }
+         final int endPos = cb.position() - 1;
+-        final CharBuffer slice = cb.limit(endPos).position(startValue).slice();
++        final CharBuffer slice = ((CharBuffer) cb.limit(endPos).position(startValue)).slice();
+         cb.limit(limit).position(endPos + 1);
+         values.add(slice.toString());
+       }
+@@ -260,7 +260,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
+     final int limit = cb.limit();
+     readUntil(cb, ' ');
+     final int endPos = cb.position() - 1;
+-    final CharBuffer slice = cb.limit(endPos).position(startPos).slice();
++    final CharBuffer slice = ((CharBuffer) cb.limit(endPos).position(startPos)).slice();
+     cb.limit(limit).position(endPos);
+     return slice.toString();
+   }
+--- core/src/main/java/org/ldaptive/schema/AttributeType.java
++++ core/src/main/java/org/ldaptive/schema/AttributeType.java
+@@ -3,7 +3,6 @@ package org.ldaptive.schema;
+
+ import java.nio.CharBuffer;
+ import java.util.Arrays;
+-import java.util.List;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import org.ldaptive.LdapUtils;
+@@ -577,7 +576,7 @@ public class AttributeType extends AbstractNamedSchemaElement
+               "Definition '" + definition + "' contains invalid extension '" + token + "'");
+           }
+           skipSpaces(buffer);
+-          exts.addExtension(token, List.of(readQDStrings(buffer)));
++          exts.addExtension(token, Arrays.asList(readQDStrings(buffer)));
+           break;
+         }
+       }
+--- core/src/main/java/org/ldaptive/schema/DITContentRule.java
++++ core/src/main/java/org/ldaptive/schema/DITContentRule.java
+@@ -3,7 +3,6 @@ package org.ldaptive.schema;
+
+ import java.nio.CharBuffer;
+ import java.util.Arrays;
+-import java.util.List;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import org.ldaptive.LdapUtils;
+@@ -356,7 +355,7 @@ public class DITContentRule extends AbstractNamedSchemaElement
+               "Definition '" + definition + "' contains invalid extension '" + token + "'");
+           }
+           skipSpaces(buffer);
+-          exts.addExtension(token, List.of(readQDStrings(buffer)));
++          exts.addExtension(token, Arrays.asList(readQDStrings(buffer)));
+           break;
+         }
+       }
+--- core/src/main/java/org/ldaptive/schema/DITStructureRule.java
++++ core/src/main/java/org/ldaptive/schema/DITStructureRule.java
+@@ -3,7 +3,6 @@ package org.ldaptive.schema;
+
+ import java.nio.CharBuffer;
+ import java.util.Arrays;
+-import java.util.List;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import org.ldaptive.LdapUtils;
+@@ -276,7 +275,7 @@ public class DITStructureRule extends AbstractNamedSchemaElement
+               "Definition '" + definition + "' contains invalid extension '" + token + "'");
+           }
+           skipSpaces(buffer);
+-          exts.addExtension(token, List.of(readQDStrings(buffer)));
++          exts.addExtension(token, Arrays.asList(readQDStrings(buffer)));
+           break;
+         }
+       }
+--- core/src/main/java/org/ldaptive/schema/MatchingRule.java
++++ core/src/main/java/org/ldaptive/schema/MatchingRule.java
+@@ -3,7 +3,6 @@ package org.ldaptive.schema;
+
+ import java.nio.CharBuffer;
+ import java.util.Arrays;
+-import java.util.List;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import org.ldaptive.LdapUtils;
+@@ -238,7 +237,7 @@ public class MatchingRule extends AbstractNamedSchemaElement
+               "Definition '" + definition + "' contains invalid extension '" + token + "'");
+           }
+           skipSpaces(buffer);
+-          exts.addExtension(token, List.of(readQDStrings(buffer)));
++          exts.addExtension(token, Arrays.asList(readQDStrings(buffer)));
+           break;
+         }
+       }
+--- core/src/main/java/org/ldaptive/schema/MatchingRuleUse.java
++++ core/src/main/java/org/ldaptive/schema/MatchingRuleUse.java
+@@ -3,7 +3,6 @@ package org.ldaptive.schema;
+
+ import java.nio.CharBuffer;
+ import java.util.Arrays;
+-import java.util.List;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import org.ldaptive.LdapUtils;
+@@ -239,7 +238,7 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
+               "Definition '" + definition + "' contains invalid extension '" + token + "'");
+           }
+           skipSpaces(buffer);
+-          exts.addExtension(token, List.of(readQDStrings(buffer)));
++          exts.addExtension(token, Arrays.asList(readQDStrings(buffer)));
+           break;
+         }
+       }
+--- core/src/main/java/org/ldaptive/schema/NameForm.java
++++ core/src/main/java/org/ldaptive/schema/NameForm.java
+@@ -3,7 +3,6 @@ package org.ldaptive.schema;
+
+ import java.nio.CharBuffer;
+ import java.util.Arrays;
+-import java.util.List;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import org.ldaptive.LdapUtils;
+@@ -316,7 +315,7 @@ public class NameForm extends AbstractNamedSchemaElement
+               "Definition '" + definition + "' contains invalid extension '" + token + "'");
+           }
+           skipSpaces(buffer);
+-          exts.addExtension(token, List.of(readQDStrings(buffer)));
++          exts.addExtension(token, Arrays.asList(readQDStrings(buffer)));
+           break;
+         }
+       }
+--- core/src/main/java/org/ldaptive/schema/ObjectClass.java
++++ core/src/main/java/org/ldaptive/schema/ObjectClass.java
+@@ -3,7 +3,6 @@ package org.ldaptive.schema;
+
+ import java.nio.CharBuffer;
+ import java.util.Arrays;
+-import java.util.List;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import org.ldaptive.LdapUtils;
+@@ -361,7 +360,7 @@ public class ObjectClass extends AbstractNamedSchemaElement
+               "Definition '" + definition + "' contains invalid extension '" + token + "'");
+           }
+           skipSpaces(buffer);
+-          exts.addExtension(token, List.of(readQDStrings(buffer)));
++          exts.addExtension(token, Arrays.asList(readQDStrings(buffer)));
+           break;
+         }
+       }
+--- core/src/main/java/org/ldaptive/schema/Syntax.java
++++ core/src/main/java/org/ldaptive/schema/Syntax.java
+@@ -2,7 +2,7 @@
+ package org.ldaptive.schema;
+
+ import java.nio.CharBuffer;
+-import java.util.List;
++import java.util.Arrays;
+ import java.util.regex.Matcher;
+ import java.util.regex.Pattern;
+ import org.ldaptive.LdapUtils;
+@@ -165,7 +165,7 @@ public class Syntax extends AbstractSchemaElement
+               "Definition '" + definition + "' contains invalid extension '" + token + "'");
+           }
+           skipSpaces(buffer);
+-          exts.addExtension(token, List.of(readQDStrings(buffer)));
++          exts.addExtension(token, Arrays.asList(readQDStrings(buffer)));
+           break;
+         }
+       }
 --- core/src/main/java/org/ldaptive/transport/netty/HandleMap.java
 +++ core/src/main/java/org/ldaptive/transport/netty/HandleMap.java
 @@ -178,7 +178,7 @@ private void acquireThrottle()
