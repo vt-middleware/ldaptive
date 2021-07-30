@@ -20,17 +20,17 @@ echo "BEGIN PUBLISH SNAPSHOT for revision ${SHA} at ${REPO_PATH}"
 echo "================================================================="
 user_continue
 
-# update pom to release version
-./mvn_cmd clean
-mvn package -Dmaven.javadoc.skip=true -B -V
+# Build snapshot jars
+./mvn_cmd --with-jdk8 clean
+mvn package -Pjdk8 -Dmaven.javadoc.skip=true -B -V
 
-# Clone the maven repo
+# Pull latest from the maven repo
 pushd ${REPO_PATH}
 git pull
 popd
 
 # Deploy the artifact to the maven repo
-mvn deploy -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_PATH}
+mvn deploy -Pjdk8 -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_PATH}
 
 # Push changes to the maven repo
 pushd ${REPO_PATH}
