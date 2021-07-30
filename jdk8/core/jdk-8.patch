@@ -156,18 +156,9 @@
 -    return values.stream().map(OctetStringType::new).toArray(DEREncoder[]::new);
 +    return values.stream().map(OctetStringType::new).toArray(size -> new DEREncoder[size]);
    }
- 
- 
-@@ -232,7 +232,7 @@ public class ModifyRequest extends AbstractRequestMessage
-     @Deprecated
-     public Builder modificiations(final Collection<AttributeModification> mod)
-     {
--      object.modifications = mod.toArray(AttributeModification[]::new);
-+      object.modifications = mod.stream().toArray(size -> new AttributeModification[size]);
-       return self();
-     }
 
-@@ -246,7 +246,7 @@ public class ModifyRequest extends AbstractRequestMessage
+
+@@ -212,7 +212,7 @@ public class ModifyRequest extends AbstractRequestMessage
       */
      public Builder modifications(final Collection<AttributeModification> mod)
      {

@@ -81,20 +81,6 @@ public class PooledConnectionStatistics
 
 
   /**
-   * Use {@link #getLastAvailableStat()}.
-   *
-   * @return  millisecond timestamp
-   *
-   * @deprecated  use {@link #getLastAvailableStat()}
-   */
-  @Deprecated
-  public Instant getLastAvailableState()
-  {
-    return getLastAvailableStat();
-  }
-
-
-  /**
    * Returns the last timestamp at which this connection was made available.
    *
    * @return  millisecond timestamp

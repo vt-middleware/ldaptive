@@ -195,44 +195,10 @@ public class ModifyRequest extends AbstractRequestMessage
      * @param  mod  modifications
      *
      * @return  this builder
-     *
-     * @deprecated  use {@link #modifications(AttributeModification...)}
-     */
-    @Deprecated
-    public Builder modificiations(final AttributeModification... mod)
-    {
-      object.modifications = mod;
-      return self();
-    }
-
-
-    /**
-     * Sets the modifications.
-     *
-     * @param  mod  modifications
-     *
-     * @return  this builder
      */
     public Builder modifications(final AttributeModification... mod)
     {
       object.modifications = mod;
-      return self();
-    }
-
-
-    /**
-     * Sets the modifications.
-     *
-     * @param  mod  modifications
-     *
-     * @return  this builder
-     *
-     * @deprecated  use {@link #modifications(Collection)}
-     */
-    @Deprecated
-    public Builder modificiations(final Collection<AttributeModification> mod)
-    {
-      object.modifications = mod.toArray(AttributeModification[]::new);
       return self();
     }
 
