@@ -1,8 +1,8 @@
-version: "3.7"
+version: "3.8"
 
 services:
   ldaptive:
-    image: maven:3.6-jdk-11
+    build: .
     ports:
       - 9003:9003
       - 10001:10001
@@ -25,7 +25,6 @@ services:
         ipv4_address: 172.28.1.10
     command: >
       bash -c "export DEBIAN_FRONTEND=noninteractive &&
-      apt-get update && apt-get install -y net-tools &&
       cd /apps/ldaptive && profile/run"
 
   ldap-test:
