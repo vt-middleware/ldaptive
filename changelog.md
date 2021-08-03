@@ -6,12 +6,17 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
-## Version 2.0.2-SNAPSHOT
+## Version 2.1.0 - 02Aug2021
 
 Issue | Description
 :---- | :----------
+[ldaptive-199]({{ site.issueURL }}199) | Mis-spelled methods in ModifyRequest.Builder.
+[ldaptive-197]({{ site.issueURL }}197) | CompareAuthenticationHandler skips entry resolution.
+[ldaptive-196]({{ site.issueURL }}196) | Change default schema parser to use a CharBuffer.
+[ldaptive-194]({{ site.issueURL }}194) | Update CredentialReader to support multiple paths.
+[ldaptive-192]({{ site.issueURL }}192) | Update SearchDnResolver to support an attribute entry.
+[ldaptive-191]({{ site.issueURL }}191) | Add MergeResultHandler.
 [ldaptive-188]({{ site.issueURL }}188) | Connection validator can't block in netty pipeline.
-[ldaptive-187]({{ site.issueURL }}187) | Auto reconnect fails for DefaultConnectionFactory.
 [ldaptive-186]({{ site.issueURL }}186) | SyncReplRunner thread exhaustion.
 
 ## Version 2.0.1 - 09Nov2020
