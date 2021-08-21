@@ -72,4 +72,12 @@ public interface ConnectionStrategy extends Iterable<LdapURL>
    * @param  url  which was could not be connected to
    */
   void failure(LdapURL url);
+
+
+  /**
+   * Create a deep copy of this strategy.
+   *
+   * @return  new instance of this connection strategy
+   */
+  ConnectionStrategy newInstance();
 }

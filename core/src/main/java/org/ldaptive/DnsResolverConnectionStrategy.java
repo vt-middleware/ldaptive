@@ -159,4 +159,14 @@ public class DnsResolverConnectionStrategy extends AbstractConnectionStrategy
     }
     expirationTime = Instant.now().plus(dnsTtl);
   }
+
+
+  @Override
+  public DnsResolverConnectionStrategy newInstance()
+  {
+    final DnsResolverConnectionStrategy strategy = new DnsResolverConnectionStrategy(iterFunction, dnsTtl);
+    strategy.setResolverFunction(resolverFunction);
+    strategy.setRetryCondition(getRetryCondition());
+    return strategy;
+  }
 }
