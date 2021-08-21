@@ -475,7 +475,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *                                 size is greater than zero
    */
   @Override
-  public void initialize()
+  public synchronized void initialize()
   {
     if (initialized) {
       throw new IllegalStateException("Pool has already been initialized");
@@ -620,7 +620,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    * @throws  IllegalStateException  if this pool has not been initialized
    */
   @Override
-  public void close()
+  public synchronized void close()
   {
     throwIfNotInitialized();
     logger.debug("closing connection pool of size {} for {}", available.size() + active.size(), this);
