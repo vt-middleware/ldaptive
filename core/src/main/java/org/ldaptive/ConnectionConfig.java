@@ -483,7 +483,8 @@ public class ConnectionConfig extends AbstractConfig
     cc.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
     cc.setUseStartTLS(config.getUseStartTLS());
     cc.setConnectionInitializers(config.getConnectionInitializers());
-    cc.setConnectionStrategy(config.getConnectionStrategy());
+    cc.setConnectionStrategy(
+      config.getConnectionStrategy() != null ? config.getConnectionStrategy().newInstance() : null);
     cc.setConnectionValidator(config.getConnectionValidator());
     cc.setTransportOptions(config.getTransportOptions());
     return cc;

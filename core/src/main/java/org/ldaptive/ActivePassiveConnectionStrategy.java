@@ -47,4 +47,13 @@ public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
     }
     return new DefaultLdapURLIterator(ldapURLSet.getUrls());
   }
+
+
+  @Override
+  public ActivePassiveConnectionStrategy newInstance()
+  {
+    final ActivePassiveConnectionStrategy strategy = new ActivePassiveConnectionStrategy(iterFunction);
+    strategy.setRetryCondition(getRetryCondition());
+    return strategy;
+  }
 }

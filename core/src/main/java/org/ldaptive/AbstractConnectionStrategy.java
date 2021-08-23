@@ -93,7 +93,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   /**
    * Sets the retry condition which determines whether an attempt should be made to activate a URL.
    *
-   * @param  condition  that determines whether to active a URL
+   * @param  condition  that determines whether to test an inactive URL
    */
   public void setRetryCondition(final Predicate<LdapURL> condition)
   {
@@ -115,6 +115,18 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
     url.deactivate();
     url.getRetryMetadata().recordFailure(Instant.now());
     LdapURLActivatorService.getInstance().registerUrl(url);
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return new StringBuilder("[").append(
+      getClass().getName()).append("@").append(hashCode()).append("::")
+      .append("ldapURLSet=").append(ldapURLSet).append(", ")
+      .append("activateCondition=").append(activateCondition).append(", ")
+      .append("retryCondition=").append(retryCondition).append(", ")
+      .append("initialized=").append(initialized).append("]").toString();
   }
 
 

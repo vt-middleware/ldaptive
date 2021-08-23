@@ -218,4 +218,13 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
     }
     return Collections.emptySet();
   }
+
+
+  @Override
+  public DnsSrvConnectionStrategy newInstance()
+  {
+    final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy(dnsContextFactory, srvTtl, useSSL);
+    strategy.setRetryCondition(getRetryCondition());
+    return strategy;
+  }
 }

@@ -64,4 +64,13 @@ public class RandomConnectionStrategy extends AbstractConnectionStrategy
     };
     // CheckStyle:AnonInnerLength ON
   }
+
+
+  @Override
+  public RandomConnectionStrategy newInstance()
+  {
+    final RandomConnectionStrategy strategy = new RandomConnectionStrategy();
+    strategy.setRetryCondition(getRetryCondition());
+    return strategy;
+  }
 }

@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 
 /**
- * Connection strategy that reorders it's URLs based on the number of times it's been invoked.
+ * Connection strategy that reorders its URLs based on the number of times it's been invoked.
  *
  * @author  Middleware Services
  */
@@ -58,5 +58,14 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy
       return iterFunction.apply(ldapURLSet.getUrls());
     }
     return new DefaultLdapURLIterator(urls);
+  }
+
+
+  @Override
+  public RoundRobinConnectionStrategy newInstance()
+  {
+    final RoundRobinConnectionStrategy strategy = new RoundRobinConnectionStrategy(iterFunction);
+    strategy.setRetryCondition(getRetryCondition());
+    return strategy;
   }
 }
