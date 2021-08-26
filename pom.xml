@@ -59,9 +59,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
-    <org.slf4j.version>1.7.31</org.slf4j.version>
-    <io.netty.version>4.1.65.Final</io.netty.version>
-    <org.springframework.version>5.2.14.RELEASE</org.springframework.version>
+    <org.slf4j.version>1.7.32</org.slf4j.version>
+    <io.netty.version>4.1.67.Final</io.netty.version>
+    <org.springframework.version>5.3.9</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.1.0</japicmp.oldVersion>
   </properties>
@@ -167,7 +167,7 @@
       <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
-        <version>2.8.7</version>
+        <version>2.8.8</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>
@@ -212,6 +212,8 @@
           <artifactId>maven-site-plugin</artifactId>
           <version>3.9.1</version>
         </plugin>
+        <!-- Note that v3.0.0 breaks <enforceBytecodeVersion/>
+             See https://github.com/mojohaus/extra-enforcer-rules/issues/131#issuecomment-890329715 -->
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
@@ -240,7 +242,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>8.42</version>
+              <version>8.45.1</version>
             </dependency>
           </dependencies>
         </plugin>
