@@ -191,7 +191,9 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         } else {
           if (!poolNotEmpty.await(blockWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
             logger.debug("block time exceeded, throwing exception");
-            throw new BlockingTimeoutException("Block time exceeded");
+            throw new BlockingTimeoutException(
+              "Block time of " + blockWaitTime + " exceeded for pool " + getName() +
+                " with max size of " + getMaxPoolSize());
           }
         }
         logger.trace("notified to continue...");
