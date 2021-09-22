@@ -466,7 +466,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   protected void throwIfNotInitialized()
   {
     if (!initialized) {
-      throw new IllegalStateException("Pool " + getName() + " has not been initialized");
+      throw new IllegalStateException("Pool " + getName() + " is not initialized");
     }
   }
 
