@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
@@ -45,6 +46,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   /** Default max pool size, value is {@value}. */
   public static final int DEFAULT_MAX_POOL_SIZE = 10;
 
+  /** ID used for pool name. */
+  private static final AtomicInteger POOL_ID = new AtomicInteger();
+
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -64,7 +68,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   protected Queue<PooledConnectionProxy> active;
 
   /** Pool name. */
-  private String name;
+  private String name = "ldaptive-pool-" + POOL_ID.incrementAndGet();
 
   /** Minimum pool size. */
   private int minPoolSize = DEFAULT_MIN_POOL_SIZE;
@@ -155,7 +159,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   public void setMinPoolSize(final int size)
   {
     if (size < 0) {
-      throw new IllegalArgumentException("Minimum pool size must be greater than 0");
+      throw new IllegalArgumentException("Minimum pool size must be greater than or equal to 0 for pool " + getName());
     }
     logger.trace("setting minPoolSize: {}", size);
     minPoolSize = size;
@@ -181,8 +185,8 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    */
   public void setMaxPoolSize(final int size)
   {
-    if (size < 0) {
-      throw new IllegalArgumentException("Maximum pool size must be greater than 0");
+    if (size < 1) {
+      throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 1 for pool " + getName());
     }
     logger.trace("setting maxPoolSize: {}", size);
     maxPoolSize = size;
@@ -462,7 +466,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   protected void throwIfNotInitialized()
   {
     if (!initialized) {
-      throw new IllegalStateException("Pool has not been initialized");
+      throw new IllegalStateException("Pool " + getName() + " has not been initialized");
     }
   }
 
@@ -478,18 +482,18 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   public synchronized void initialize()
   {
     if (initialized) {
-      throw new IllegalStateException("Pool has already been initialized");
+      throw new IllegalStateException("Pool " + getName() + " has already been initialized");
     }
     logger.debug("beginning pool initialization for {}", this);
 
     if (pruneStrategy == null) {
-      throw new IllegalStateException("No prune strategy configured");
+      throw new IllegalStateException("No prune strategy configured for pool " + getName());
     }
     if (activator == null) {
-      throw new IllegalStateException("No activator configured");
+      throw new IllegalStateException("No activator configured for pool " + getName());
     }
     if (passivator == null) {
-      throw new IllegalStateException("No passivator configured");
+      throw new IllegalStateException("No passivator configured for pool " + getName());
     }
 
     available = new Queue<>(queueType);
@@ -504,7 +508,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     if (available.isEmpty() && minPoolSize > 0) {
       if (failFastInitialize) {
         throw new IllegalStateException(
-          "Could not initialize pool size",
+          "Could not initialize pool size for pool " + getName(),
           growException != null ? growException.getCause() : null);
       } else {
         logger.warn("Could not initialize pool size, pool is empty");
@@ -691,7 +695,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
         c.close();
         c = null;
         if (throwOnFailure) {
-          throw new IllegalStateException("unable to open connection for pooling", e);
+          throw new IllegalStateException("Unable to open connection for pool " + getName(), e);
         }
       }
     }
@@ -853,12 +857,12 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     if (!activator.apply(pc.getConnection())) {
       logger.warn("connection failed activation: {}", pc);
       removeAvailableAndActiveConnection(pc);
-      throw new PoolException("Activation of connection failed");
+      throw new PoolException("Activation of connection failed for pool " + getName());
     }
     if (validateOnCheckOut && !validator.apply(pc.getConnection())) {
       logger.warn("connection failed check out validation: {}", pc);
       removeAvailableAndActiveConnection(pc);
-      throw new PoolException("Validation of connection failed");
+      throw new PoolException("Validation of connection failed for pool " + getName());
     }
   }
 
