@@ -86,7 +86,7 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
     return () -> {
       try {
         if (Duration.ZERO.equals(getValidateTimeout())) {
-          // this configuration depends on the connection config response timeout for its wait behavior
+          // waits indefinitely for the validation response
           latch.await();
         } else {
           latch.await(getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
