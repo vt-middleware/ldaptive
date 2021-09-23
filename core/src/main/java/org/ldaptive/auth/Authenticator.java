@@ -4,7 +4,6 @@ package org.ldaptive.auth;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
@@ -306,7 +305,14 @@ public class Authenticator
         .map(ConnectionFactoryManager.class::cast)
         .map(ConnectionFactoryManager::getConnectionFactory)
         .filter(Objects::nonNull)
-        .forEach(ConnectionFactory::close);
+        .forEach(cf -> {
+          try {
+            cf.close();
+          } catch (Exception e) {
+            // use debug as exception may be expected if connection factories are shared among authenticator components
+            logger.debug("Error closing connection factory {}", cf, e);
+          }
+        });
     }
   }
 
