@@ -297,7 +297,7 @@
             <artifact>org.ldaptive:ldaptive:${project.version}</artifact>
             <artifact>kg.apc:jmeter-plugins-graphs-vs:2.0</artifact>
             <artifact>kg.apc:jmeter-plugins-graphs-composite:2.0</artifact>
-            <artifact>org.springframework:spring-core:jar:5.1.9.RELEASE</artifact>
+            <artifact>org.springframework:spring-core:${org.springframework.version}</artifact>
           </jmeterExtensions>
         </configuration>
       </plugin>
