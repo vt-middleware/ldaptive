@@ -2,7 +2,9 @@ version: "3.8"
 
 services:
   ldaptive:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile-jdk11
     volumes:
       - $HOME/.m2:/root/.m2
       - $PWD:/apps/ldaptive

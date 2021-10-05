@@ -1,0 +1,4 @@
+FROM maven:3.8-amazoncorretto-17
+RUN yum install -y net-tools openldap-clients krb5-workstation && \
+  rm -rf /var/cache/yum/* && \
+  yum clean all

@@ -1,0 +1,52 @@
+version: "3.8"
+
+services:
+  ldaptive:
+    build:
+      context: .
+      dockerfile: Dockerfile-jdk17
+    volumes:
+      - $HOME/.m2:/root/.m2
+      - $PWD:/apps/ldaptive
+    environment:
+      - HOST=ldap-test:389
+      - BASE_DN=ou=test,dc=vt,dc=edu
+      - BIND_DN=uid=1,ou=test,dc=vt,dc=edu
+      - BIND_CREDENTIAL=VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2
+      - TEST_GROUP
+    networks:
+      ldap_net:
+        ipv4_address: 172.28.1.10
+    command: >
+      bash -c "export DEBIAN_FRONTEND=noninteractive &&
+      /apps/ldaptive/integration/wait_for_ldap &&
+      /apps/ldaptive/integration/krb5_init &&
+      cd /apps/ldaptive && integration/run"
+
+  ldap-test:
+    image: dhawes/ldap-test-openldap:latest
+    environment:
+      - DEBUG=-d 0
+    ports:
+      - "389:389"
+      - "10389:10389"
+      - "636:636"
+      - "10636:10636"
+      - "88:88"
+    networks:
+      ldap_net:
+        ipv4_address: 172.28.1.11
+    logging:
+      driver: "json-file"
+      #driver: "none"
+      options:
+        max-size: "100M"
+        max-file: "5"
+
+networks:
+  ldap_net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
+

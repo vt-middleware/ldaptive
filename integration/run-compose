@@ -4,7 +4,12 @@ if [ -z "${TEST_GROUP}" ]; then
   TEST_GROUP="core"
 fi
 
-docker-compose -f integration/docker-compose.yml down && \
+if [ -z "${JDK}" ]; then
+  JDK="11"
+fi
+COMPOSE_FILE="integration/docker-compose-jdk${JDK}.yml"
+
+docker-compose -f ${COMPOSE_FILE} down && \
   docker network prune -f && \
-  docker-compose -f integration/docker-compose.yml pull && \
-  TEST_GROUP="${TEST_GROUP}" docker-compose -f integration/docker-compose.yml up --build --abort-on-container-exit
+  docker-compose -f ${COMPOSE_FILE} pull && \
+  TEST_GROUP="${TEST_GROUP}" docker-compose -f ${COMPOSE_FILE} up --build --abort-on-container-exit

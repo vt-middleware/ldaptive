@@ -22,9 +22,6 @@ public class DefaultHostnameVerifierTest
   /** Instance of the default hostname verifier. */
   private static final DefaultHostnameVerifier DEFAULT_VERIFIER = new DefaultHostnameVerifier();
 
-  /** Instance of the default startTLS hostname verifier. */
-  private static final SunTLSHostnameVerifier SUN_VERIFIER = new SunTLSHostnameVerifier();
-
   /** Certificate with CN=a.foo.com. */
   private static final String A_FOO_COM_CERT =
     "MIIDrzCCApegAwIBAgIJAK+nL4I3GkjeMA0GCSqGSIb3DQEBBQUAMEMxEjAQBgNV" +
@@ -389,20 +386,5 @@ public class DefaultHostnameVerifierTest
     throws Exception
   {
     Assert.assertEquals(DEFAULT_VERIFIER.verify(hostname, cert), pass);
-  }
-
-
-  /**
-   * @param  hostname  to match against the cert
-   * @param  cert  to extract hostname from
-   * @param  pass  whether the verify should succeed
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(groups = "ssl", dataProvider = "certificates")
-  public void verifySun(final String hostname, final X509Certificate cert, final boolean pass)
-    throws Exception
-  {
-    Assert.assertEquals(SUN_VERIFIER.verify(hostname, cert), pass);
   }
 }
