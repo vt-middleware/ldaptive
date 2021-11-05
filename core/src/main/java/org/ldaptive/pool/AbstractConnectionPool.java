@@ -154,7 +154,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   /**
    * Sets the min pool size.
    *
-   * @param  size  min pool size
+   * @param  size  min pool size, greater than or equal to zero
    */
   public void setMinPoolSize(final int size)
   {
@@ -181,12 +181,13 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   /**
    * Sets the max pool size.
    *
-   * @param  size  max pool size
+   * @param  size  max pool size, greater than or equal to zero
    */
   public void setMaxPoolSize(final int size)
   {
-    if (size < 1) {
-      throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 1 for pool " + getName());
+    // allow a max size of zero for configurations that need to create a pool but don't want it to function
+    if (size < 0) {
+      throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 0 for pool " + getName());
     }
     logger.trace("setting maxPoolSize: {}", size);
     maxPoolSize = size;
