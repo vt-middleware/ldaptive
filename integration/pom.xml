@@ -40,8 +40,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -80,6 +80,12 @@
       <artifactId>ApacheJMeter_java</artifactId>
       <version>5.2.1</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.logging.log4j</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>rhino</groupId>
@@ -203,12 +209,6 @@
           <!-- sometimes useful if testng runs out of memory
           <disableXmlReport>true</disableXmlReport>
           -->
-          <systemProperties>
-            <property>
-              <name>log4j.configuration</name>
-              <value>log4j.xml</value>
-            </property>
-          </systemProperties>
         </configuration>
       </plugin>
       <plugin>

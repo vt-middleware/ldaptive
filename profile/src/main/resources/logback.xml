@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{40} - %msg%n%ex{5}</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.ldaptive" level="INFO" />
+  <logger name="org.ldaptive.ad" level="INFO" />
+  <logger name="org.ldaptive.async" level="INFO" />
+  <logger name="org.ldaptive.auth" level="INFO" />
+  <logger name="org.ldaptive.beans" level="INFO" />
+  <logger name="org.ldaptive.jaas" level="INFO" />
+  <logger name="org.ldaptive.pool" level="INFO" />
+  <logger name="org.ldaptive.props" level="INFO" />
+  <logger name="org.ldaptive.ssl" level="INFO" />
+  <logger name="org.ldaptive.transport" level="INFO" />
+  <logger name="org.ldaptive.io" level="INFO" />
+  <logger name="io.netty.channel" level="INFO" />
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+</configuration>
