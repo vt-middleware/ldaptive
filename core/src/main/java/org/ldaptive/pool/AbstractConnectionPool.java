@@ -512,10 +512,10 @@ public abstract class AbstractConnectionPool implements ConnectionPool
           "Could not initialize pool size for pool " + getName(),
           growException != null ? growException.getCause() : null);
       } else {
-        logger.warn("Could not initialize pool size, pool is empty");
+        logger.warn("Could not initialize pool size (pool is empty) for {}", this);
       }
     }
-    logger.debug("initialized available queue: {}", available);
+    logger.debug("Initialized available queue {} for {}", available, this);
 
     poolExecutor = Executors.newSingleThreadScheduledExecutor(
       r -> {
@@ -526,38 +526,38 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
     poolExecutor.scheduleAtFixedRate(
       () -> {
-        logger.debug("begin prune task for {}", AbstractConnectionPool.this);
+        logger.debug("Begin prune task for {}", AbstractConnectionPool.this);
         try {
           prune();
         } catch (Exception e) {
-          logger.error("prune task failed for {}", AbstractConnectionPool.this);
+          logger.error("Prune task failed for {}", AbstractConnectionPool.this);
         }
-        logger.debug("end prune task for {}", AbstractConnectionPool.this);
+        logger.debug("End prune task for {}", AbstractConnectionPool.this);
       },
       pruneStrategy.getPrunePeriod().toMillis(),
       pruneStrategy.getPrunePeriod().toMillis(),
       TimeUnit.MILLISECONDS);
-    logger.debug("prune pool task scheduled for {}", this);
+    logger.debug("Prune pool task scheduled for {}", this);
 
     if (validatePeriodically) {
       poolExecutor.scheduleAtFixedRate(
         () -> {
-          logger.debug("begin validate task for {}", AbstractConnectionPool.this);
+          logger.debug("Begin validate task for {}", AbstractConnectionPool.this);
           try {
             validate();
           } catch (Exception e) {
-            logger.error("validation task failed for {}", AbstractConnectionPool.this);
+            logger.error("Validation task failed for {}", AbstractConnectionPool.this);
           }
-          logger.debug("end validate task for {}", AbstractConnectionPool.this);
+          logger.debug("End validate task for {}", AbstractConnectionPool.this);
         },
         validator.getValidatePeriod().toMillis(),
         validator.getValidatePeriod().toMillis(),
         TimeUnit.MILLISECONDS);
-      logger.debug("validate pool task scheduled for {}", this);
+      logger.debug("Validate pool task scheduled for {}", this);
     }
 
     initialized = true;
-    logger.info("pool initialized {}", this);
+    logger.info("Pool initialized for {}", this);
   }
 
 
@@ -592,15 +592,15 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     try {
       IllegalStateException lastThrown = null;
       int currentPoolSize = active.size() + available.size();
-      logger.debug("checking connection pool size >= {} for {}", size, this);
+      logger.debug("Checking connection pool size >= {} for {}", size, this);
       while (currentPoolSize < size && count < size * 2) {
         try {
           final PooledConnectionProxy pc = createAvailableConnection(throwOnFailure);
           if (pc != null && validateOnCheckIn) {
             if (validator.apply(pc.getConnection())) {
-              logger.trace("connection passed initialize validation: {}", pc);
+              logger.trace("connection {} passed initialize validation", pc);
             } else {
-              logger.warn("connection failed initialize validation: {}", pc);
+              logger.warn("Failed check in validation on {} with {} for {}", pc.getConnection(), validator, this);
               removeAvailableConnection(pc);
             }
           }
@@ -628,26 +628,25 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   public synchronized void close()
   {
     throwIfNotInitialized();
-    logger.debug("closing connection pool of size {} for {}", available.size() + active.size(), this);
+    logger.debug("Closing {} of size {} for {}", this, available.size() + active.size());
     poolLock.lock();
     try {
       while (!available.isEmpty()) {
         final PooledConnectionProxy pc = available.remove();
         pc.getConnection().close();
-        logger.trace("destroyed connection: {}", pc);
+        logger.trace("removed {} from {}", pc, this);
       }
       while (!active.isEmpty()) {
         final PooledConnectionProxy pc = active.remove();
         pc.getConnection().close();
-        logger.trace("destroyed connection: {}", pc);
+        logger.trace("removed {} from {}", pc, this);
       }
-      logger.debug("pool closed");
     } finally {
       poolLock.unlock();
     }
 
     poolExecutor.shutdown();
-    logger.info("pool closed {}", this);
+    logger.info("Pool {} closed", this);
     initialized = false;
   }
 
@@ -692,7 +691,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       try {
         c.open();
       } catch (Exception e) {
-        logger.error("{} unable to open connection for pooling", this, e);
+        logger.error("Unable to open connection for {}}", this, e);
         c.close();
         c = null;
         if (throwOnFailure) {
@@ -725,12 +724,12 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       try {
         available.add(pc);
         pc.getPooledConnectionStatistics().addAvailableStat();
-        logger.info("added available connection: {}", pc);
+        logger.info("Added available connection {} for {}", pc.getConnection(), this);
       } finally {
         poolLock.unlock();
       }
     } else {
-      logger.warn("unable to create available connection");
+      logger.warn("Unable to create available connection for {}", this);
     }
     return pc;
   }
@@ -753,12 +752,12 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       try {
         active.add(pc);
         pc.getPooledConnectionStatistics().addActiveStat();
-        logger.info("added active connection: {}", pc);
+        logger.info("Added active connection {} for {}", pc.getConnection(), this);
       } finally {
         poolLock.unlock();
       }
     } else {
-      logger.warn("unable to create active connection");
+      logger.warn("Unable to create active connection for {}", this);
     }
     return pc;
   }
@@ -777,14 +776,14 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       if (available.remove(pc)) {
         destroy = true;
       } else {
-        logger.warn("attempt to remove unknown available connection: {}", pc);
+        logger.warn("Attempt to remove unknown available connection {} from {}", pc.getConnection(), this);
       }
     } finally {
       poolLock.unlock();
     }
     if (destroy) {
       pc.getConnection().close();
-      logger.info("destroyed connection: {}", pc);
+      logger.info("Removed {} from {}", pc.getConnection(), this);
     }
   }
 
@@ -802,14 +801,14 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       if (active.remove(pc)) {
         destroy = true;
       } else {
-        logger.warn("attempt to remove unknown active connection: {}", pc);
+        logger.warn("Attempt to remove unknown active connection {} from {}", pc.getConnection(), this);
       }
     } finally {
       poolLock.unlock();
     }
     if (destroy) {
       pc.getConnection().close();
-      logger.info("destroyed connection: {}", pc);
+      logger.info("Removed {} from {}", pc.getConnection(), this);
     }
   }
 
@@ -827,19 +826,19 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       if (available.remove(pc)) {
         destroy = true;
       } else {
-        logger.trace("attempt to remove unknown available connection: {}", pc);
+        logger.trace("attempt to remove unknown available connection {} from {}", pc, this);
       }
       if (active.remove(pc)) {
         destroy = true;
       } else {
-        logger.trace("attempt to remove unknown active connection: {}", pc);
+        logger.trace("attempt to remove unknown active connection {} from {}", pc, this);
       }
     } finally {
       poolLock.unlock();
     }
     if (destroy) {
       pc.getConnection().close();
-      logger.info("destroyed connection: {}", pc);
+      logger.info("Removed {} from {}", pc.getConnection(), this);
     }
   }
 
@@ -856,12 +855,12 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     throws PoolException
   {
     if (!activator.apply(pc.getConnection())) {
-      logger.warn("connection failed activation: {}", pc);
+      logger.warn("Failed activation on {} with {} for {}", pc.getConnection(), activator, this);
       removeAvailableAndActiveConnection(pc);
       throw new ActivationException("Activation of connection failed for pool " + getName());
     }
     if (validateOnCheckOut && !validator.apply(pc.getConnection())) {
-      logger.warn("connection failed check out validation: {}", pc);
+      logger.warn("Failed check out validation on {} with {} for {}", pc.getConnection(), validator, this);
       removeAvailableAndActiveConnection(pc);
       throw new ValidationException("Validation of connection failed for pool " + getName());
     }
@@ -879,14 +878,14 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   protected boolean validateAndPassivateConnection(final PooledConnectionProxy pc)
   {
     if (!pc.getConnection().isOpen()) {
-      logger.warn("connection not open: {}", pc);
+      logger.warn("Failed validation on {} for {}, not open", pc.getConnection(), this);
       return false;
     }
 
     boolean valid = false;
     if (validateOnCheckIn) {
       if (!validator.apply(pc.getConnection())) {
-        logger.warn("connection failed check in validation: {}", pc);
+        logger.warn("Failed check in validation on {} with {} for {}", pc.getConnection(), validator, this);
       } else {
         valid = true;
       }
@@ -895,7 +894,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     }
     if (valid && !passivator.apply(pc.getConnection())) {
       valid = false;
-      logger.warn("connection failed passivation: {}", pc);
+      logger.warn("Failed passivation on {} with {} for {}", pc.getConnection(), passivator, this);
     }
     return valid;
   }
@@ -909,13 +908,13 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   public void prune()
   {
     throwIfNotInitialized();
-    logger.trace("waiting for pool lock to prune {}", poolLock.getQueueLength());
+    logger.trace("waiting for pool lock to prune {} for {}", poolLock.getQueueLength(), this);
     poolLock.lock();
     try {
       if (!available.isEmpty()) {
         int currentPoolSize = active.size() + available.size();
         if (currentPoolSize > minPoolSize) {
-          logger.debug("pruning available pool of size {} for {}", available.size(), this);
+          logger.debug("Pruning available pool of size {} for {}", available.size(), this);
 
           final int numConnToPrune = available.size();
           final Iterator<PooledConnectionProxy> connIter = available.iterator();
@@ -924,20 +923,20 @@ public abstract class AbstractConnectionPool implements ConnectionPool
             if (pruneStrategy.apply(pc)) {
               connIter.remove();
               pc.getConnection().close();
-              logger.trace("destroyed connection: {}", pc);
+              logger.trace("prune removed {} from {}", pc, this);
               currentPoolSize--;
             }
           }
           if (numConnToPrune == available.size()) {
-            logger.debug("prune strategy did not remove any connections");
+            logger.debug("Prune strategy did not remove any connections for {}", this);
           } else {
-            logger.info("available pool size pruned to {}", available.size());
+            logger.info("Available pool size pruned to {} for {}", available.size(), this);
           }
         } else {
-          logger.debug("pool size is {}, no connections pruned for {}", currentPoolSize, this);
+          logger.debug("Pool size is {}, no connections pruned for {}", currentPoolSize, this);
         }
       } else {
-        logger.debug("no available connections, no connections pruned for {}", this);
+        logger.debug("No available connections, no connections pruned for {}", this);
       }
     } finally {
       poolLock.unlock();
@@ -956,35 +955,40 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     poolLock.lock();
     try {
       if (!available.isEmpty()) {
-        logger.debug("validate available pool of size {} for {}", available.size(), this);
+        logger.debug("Validate available pool of size {} for {}", available.size(), this);
 
         final List<PooledConnectionProxy> remove = new ArrayList<>();
         final Map<PooledConnectionProxy, Supplier<Boolean>> results = new HashMap<>(available.size());
         for (PooledConnectionProxy pc : available) {
-          logger.trace("validating {}", pc);
+          logger.trace("validating {} for {}", pc, this);
           results.put(pc, validator.applyAsync(pc.getConnection()));
         }
         for (Map.Entry<PooledConnectionProxy, Supplier<Boolean>> entry : results.entrySet()) {
           // blocks until a result is received
           final Boolean validateResult = entry.getValue().get();
           if (validateResult != null && validateResult.booleanValue()) {
-            logger.trace("{} passed validation", entry.getKey());
+            logger.trace("passed validation on {} with {} for {}", entry.getKey(), validator, this);
           } else {
-            logger.warn("{} failed validation", entry.getKey());
+            logger.warn(
+              "Failed validation on {} with {} for {}, {}",
+              entry.getKey().getConnection(),
+              validator,
+              this,
+              validateResult == null ? "validator timeout exceeded" : "validator returned false");
             remove.add(entry.getKey());
           }
         }
         for (PooledConnectionProxy pc : remove) {
-          logger.trace("removing {} from the pool", pc);
+          logger.trace("validate removing {} from {}", pc, this);
           available.remove(pc);
           pc.getConnection().close();
-          logger.trace("destroyed connection: {}", pc);
+          logger.trace("validate removed {} from {}", pc, this);
         }
       } else {
-        logger.debug("no available connections, no validation performed for {}", this);
+        logger.debug("No available connections, no validation performed for {}", this);
       }
       grow(minPoolSize);
-      logger.debug("pool size after validation is {}", available.size() + active.size());
+      logger.debug("Pool size after validation is {} for {}", available.size() + active.size(), this);
     } finally {
       poolLock.unlock();
     }
@@ -1160,6 +1164,17 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     public int hashCode()
     {
       return LdapUtils.computeHashCode(HASH_CODE_SEED, conn);
+    }
+
+
+    @Override
+    public String toString()
+    {
+      return new StringBuilder(
+        getClass().getName()).append("@").append(hashCode()).append("::")
+        .append("conn=").append(conn).append(", ")
+        .append("createdTime=").append(createdTime).append(", ")
+        .append("statistics=").append(statistics).toString();
     }
 
 

@@ -10,7 +10,7 @@ import org.ldaptive.DefaultConnectionFactory;
 /**
  * Implements a pool of connections that has a set minimum and maximum size. The pool will not grow beyond the maximum
  * size and when the pool is exhausted, requests for new connections will block. The length of time the pool will block
- * is determined by {@link #getBlockWaitTime()}. By default the pool will block for 1 minute and there is no guarantee
+ * is determined by {@link #getBlockWaitTime()}. By default, the pool will block for 1 minute and there is no guarantee
  * that waiting threads will be serviced in the order in which they made their request. This implementation should be
  * used when you need to control the <em>exact</em> number of connections that can be created. See {@link
  * AbstractConnectionPool}.
