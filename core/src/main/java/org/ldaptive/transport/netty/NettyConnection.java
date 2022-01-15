@@ -701,16 +701,24 @@ public final class NettyConnection extends TransportConnection
   public void operation(final AbandonRequest request)
   {
     final DefaultOperationHandle handle = pendingResponses.remove(request.getMessageID());
-    if (handle == null) {
+    if (handle == null && pendingResponses.isOpen()) {
       LOGGER.warn(
         "Attempt to abandon message {} that no longer exists for {}",
         request.getMessageID(),
         NettyConnection.this);
     }
     if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("Abandon handle {} with pending responses {}", handle, pendingResponses);
+      LOGGER.trace(
+        "Abandon {} {} with pending responses {}",
+        handle != null ? "handle" : "messageID",
+        handle != null ? handle : request.getMessageID(),
+        pendingResponses);
     } else if (LOGGER.isDebugEnabled()) {
-      LOGGER.debug("Abandon handle {} with {} pending responses", handle, pendingResponses.size());
+      LOGGER.debug(
+        "Abandon {} {} with {} pending responses",
+        handle != null ? "handle" : "messageID",
+        handle != null ? handle : request.getMessageID(),
+        pendingResponses.size());
     }
     if (reconnectLock.readLock().tryLock()) {
       try {

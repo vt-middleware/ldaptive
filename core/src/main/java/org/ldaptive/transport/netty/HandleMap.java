@@ -85,6 +85,17 @@ final class HandleMap
 
 
   /**
+   * Returns whether this handle map is open.
+   *
+   * @return  is open
+   */
+  public boolean isOpen()
+  {
+    return open;
+  }
+
+
+  /**
    * Returns the operation handle for the supplied message id. Returns null if this queue is not open.
    *
    * @param  id  message id
@@ -203,7 +214,7 @@ final class HandleMap
 
   /**
    * Invokes {@link DefaultOperationHandle#abandon()} for all handles that have sent a request but not received a
-   * response.
+   * response. This method removes all handles from the queue.
    */
   public void abandonRequests()
   {
