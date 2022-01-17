@@ -6,6 +6,8 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -244,6 +246,84 @@ public class PooledConnectionFactoryTest
         Assert.assertEquals(factory.availableCount(), 2);
         factory.validate();
         Assert.assertEquals(factory.availableCount(), 2);
+      } finally {
+        factory.close();
+        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
+  public void validateOnCheckout()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final AtomicInteger validateCount = new AtomicInteger();
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+        .config(ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          .build())
+        .min(0)
+        .validator(new ConnectionValidator() {
+          @Override
+          public void applyAsync(final Connection conn, final Consumer<Boolean> function) {}
+
+          @Override
+          public Supplier<Boolean> applyAsync(final Connection conn)
+          {
+            return () -> false;
+          }
+
+          @Override
+          public Duration getValidatePeriod()
+          {
+            return Duration.ofMinutes(5);
+          }
+
+          @Override
+          public Duration getValidateTimeout()
+          {
+            return Duration.ofSeconds(5);
+          }
+
+          @Override
+          public Boolean apply(final Connection connection)
+          {
+            return validateCount.getAndIncrement() != 1;
+          }
+        })
+        .validateOnCheckOut(true)
+        .build();
+      factory.setValidationExceptionHandler(factory.new RetryValidationExceptionHandler());
+      try {
+        factory.initialize();
+        Assert.assertEquals(factory.availableCount(), 0);
+        Assert.assertEquals(factory.activeCount(), 0);
+        Assert.assertEquals(validateCount.intValue(), 0);
+        Connection c1 = factory.getConnection();
+        Assert.assertEquals(factory.availableCount(), 0);
+        Assert.assertEquals(factory.activeCount(), 1);
+        Assert.assertEquals(validateCount.intValue(), 1);
+        c1.close();
+        Assert.assertEquals(factory.availableCount(), 1);
+        Assert.assertEquals(factory.activeCount(), 0);
+
+        // getConnection should result in a ValidationException, which results in another call to getConnection
+        c1 = factory.getConnection();
+        Assert.assertEquals(factory.availableCount(), 0);
+        Assert.assertEquals(factory.activeCount(), 1);
+        Assert.assertEquals(validateCount.intValue(), 3);
+        c1.close();
+        Assert.assertEquals(factory.availableCount(), 1);
+        Assert.assertEquals(factory.activeCount(), 0);
       } finally {
         factory.close();
         Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);

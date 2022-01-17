@@ -858,12 +858,12 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     if (!activator.apply(pc.getConnection())) {
       logger.warn("connection failed activation: {}", pc);
       removeAvailableAndActiveConnection(pc);
-      throw new PoolException("Activation of connection failed for pool " + getName());
+      throw new ActivationException("Activation of connection failed for pool " + getName());
     }
     if (validateOnCheckOut && !validator.apply(pc.getConnection())) {
       logger.warn("connection failed check out validation: {}", pc);
       removeAvailableAndActiveConnection(pc);
-      throw new PoolException("Validation of connection failed for pool " + getName());
+      throw new ValidationException("Validation of connection failed for pool " + getName());
     }
   }
 

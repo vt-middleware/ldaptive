@@ -167,6 +167,25 @@
        return self();
      }
    }
+--- core/src/main/java/org/ldaptive/PooledConnectionFactory.java
++++ core/src/main/java/org/ldaptive/PooledConnectionFactory.java
+@@ -333,8 +333,14 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
+      */
+     public RetryValidationExceptionHandler()
+     {
+-      this((count, time) ->
+-        count <= getMaxPoolSize() && !getBlockWaitTime().minus(Duration.between(time, Instant.now())).isNegative());
++      this(new BiPredicate<Integer, Instant>() {
++        @Override
++        public boolean test(final Integer count, final Instant time)
++        {
++          return count <= getMaxPoolSize() &&
++                 !getBlockWaitTime().minus(Duration.between(time, Instant.now())).isNegative();
++        }
++      });
+     }
+
+
 --- core/src/main/java/org/ldaptive/RandomConnectionStrategy.java
 +++ core/src/main/java/org/ldaptive/RandomConnectionStrategy.java
 @@ -24,7 +24,7 @@
