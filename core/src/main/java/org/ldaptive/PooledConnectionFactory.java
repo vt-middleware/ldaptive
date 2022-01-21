@@ -334,7 +334,7 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
     public RetryValidationExceptionHandler()
     {
       this((count, time) ->
-        count <= getMaxPoolSize() && !getBlockWaitTime().minus(Duration.between(time, Instant.now())).isNegative());
+        count <= getMaxPoolSize() + 1 && !getBlockWaitTime().minus(Duration.between(time, Instant.now())).isNegative());
     }
 
 
