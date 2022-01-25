@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.apache.velocity.app.event.ReferenceInsertionEventHandler;
+import org.apache.velocity.context.Context;
 import org.ldaptive.FilterTemplate;
 
 /**
@@ -19,7 +20,7 @@ public class EscapingReferenceInsertionEventHandler implements ReferenceInsertio
 
 
   @Override
-  public Object referenceInsert(final String reference, final Object value)
+  public Object referenceInsert(final Context context, final String reference, final Object value)
   {
     Object output = null;
     if (value != null) {
