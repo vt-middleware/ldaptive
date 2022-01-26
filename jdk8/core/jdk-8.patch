@@ -263,7 +263,7 @@
 +            .modifications(resultModifications.toArray(new AttributeModification[0]))
              .build()).execute();
          logger.info(
-           "modified target entry {} with modifications {} from source entry " +
+           "Modified target entry {} with modifications {} from source entry " +
 --- core/src/main/java/org/ldaptive/extended/PasswordModifyRequest.java
 +++ core/src/main/java/org/ldaptive/extended/PasswordModifyRequest.java
 @@ -81,7 +81,7 @@ public PasswordModifyRequest(final String identity, final String oldPass, final

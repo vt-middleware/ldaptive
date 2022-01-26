@@ -331,7 +331,7 @@ public class Authenticator
   protected AuthenticationResponse authenticate(final String dn, final AuthenticationRequest request)
     throws LdapException
   {
-    logger.debug("authenticate dn={} with request={}", dn, request);
+    logger.trace("authenticate dn={} with request={}", dn, request);
 
     final AuthenticationResponse invalidInput = validateInput(dn, request);
     if (invalidInput != null) {
@@ -364,7 +364,7 @@ public class Authenticator
       }
     }
 
-    logger.debug("authenticate response={} for dn={} with request={}", response, dn, processedRequest);
+    logger.debug("Authenticate response={} for dn={} with request={}", response, dn, processedRequest);
     return authResponse;
   }
 

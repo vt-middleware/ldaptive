@@ -97,7 +97,7 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
     final LdapAttribute objectSid = entry.getAttribute("objectSid");
     final LdapAttribute primaryGroupId = entry.getAttribute("primaryGroupID");
 
-    logger.debug("found objectSid {} and primaryGroupID {}", objectSid, primaryGroupId);
+    logger.debug("Found objectSid {} and primaryGroupID {}", objectSid, primaryGroupId);
     if (objectSid != null && primaryGroupId != null) {
       final String sid;
       if (objectSid.isBinary()) {
@@ -108,7 +108,7 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
 
       final String groupSid = sid.substring(0, sid.lastIndexOf('-') + 1) + primaryGroupId.getStringValue();
       logger.debug(
-        "created primary group SID {} from object SID {} and primaryGroupID {}",
+        "Created primary group SID {} from object SID {} and primaryGroupID {}",
         groupSid,
         sid,
         primaryGroupId.getStringValue());
@@ -122,7 +122,7 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
 
         final SearchResponse result = getConnection().operation(sr).execute();
         if (!result.isSuccess() || result.entrySize() == 0) {
-          logger.debug("could not find primary group for SID {} with response {}", groupSid, result);
+          logger.debug("Could not find primary group for SID {} with response {}", groupSid, result);
         } else {
           LdapAttribute memberOf = entry.getAttribute("memberOf");
           if (memberOf == null) {

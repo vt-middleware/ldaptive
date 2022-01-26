@@ -88,11 +88,11 @@ public class NettyConnectionFactoryTransport implements Transport
     if (shutdownOnClose) {
       if (!ioWorkerGroup.isShutdown()) {
         NettyUtils.shutdownGracefully(ioWorkerGroup);
-        logger.trace("Shutdown worker group {}", ioWorkerGroup);
+        logger.trace("shutdown worker group {}", ioWorkerGroup);
       }
       if (messageWorkerGroup != null && !messageWorkerGroup.isShutdown()) {
         NettyUtils.shutdownGracefully(messageWorkerGroup);
-        logger.trace("Shutdown worker group {}", messageWorkerGroup);
+        logger.trace("shutdown worker group {}", messageWorkerGroup);
       }
     }
   }

@@ -71,7 +71,7 @@ public class BindConnectionPassivator implements ConnectionPassivator
         final Result result = conn.operation(bindRequest).execute();
         return result.isSuccess();
       } catch (Exception e) {
-        logger.debug("passivation failed for bind request {}", bindRequest, e);
+        logger.debug("Passivation failed for bind request {}", bindRequest, e);
       }
     }
     return false;

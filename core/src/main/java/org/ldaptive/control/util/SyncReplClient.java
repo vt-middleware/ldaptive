@@ -166,7 +166,7 @@ public class SyncReplClient
 
     final SearchOperation search = new SearchOperation(factory, request);
     search.setResultHandlers(result -> {
-      logger.debug("received {}", result);
+      logger.debug("Received {}", result);
       receivedResult = true;
       if (result.getControl(SyncDoneControl.OID) != null) {
         final SyncDoneControl syncDoneControl = (SyncDoneControl) result.getControl(SyncDoneControl.OID);
@@ -191,7 +191,7 @@ public class SyncReplClient
       }
     });
     search.setExceptionHandler(e -> {
-      logger.debug("received exception", e);
+      logger.debug("Received exception", e);
       try {
         onException.accept(e);
       } catch (Exception ex) {
@@ -199,7 +199,7 @@ public class SyncReplClient
       }
     });
     search.setEntryHandlers(entry -> {
-      logger.debug("received {}", entry);
+      logger.debug("Received {}", entry);
       if (entry.getControl(SyncStateControl.OID) != null) {
         final SyncStateControl syncStateControl = (SyncStateControl) entry.getControl(SyncStateControl.OID);
         final byte[] cookie = syncStateControl.getCookie();
@@ -225,7 +225,7 @@ public class SyncReplClient
     });
     search.setIntermediateResponseHandlers(response -> {
       if (SyncInfoMessage.OID.equals(response.getResponseName())) {
-        logger.debug("received {}", response);
+        logger.debug("Received {}", response);
         final SyncInfoMessage message = (SyncInfoMessage) response;
         if (message.getCookie() != null) {
           try {

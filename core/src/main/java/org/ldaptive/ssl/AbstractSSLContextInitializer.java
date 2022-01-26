@@ -68,7 +68,7 @@ public abstract class AbstractSSLContextInitializer implements SSLContextInitial
     final KeyManager[] km = getKeyManagers();
     final TrustManager[] tm = getTrustManagers();
     logger.trace(
-      "Initialize SSLContext with keyManagers={} and trustManagers={}", Arrays.toString(km), Arrays.toString(tm));
+      "initialize SSLContext with keyManagers={} and trustManagers={}", Arrays.toString(km), Arrays.toString(tm));
     final SSLContext ctx = SSLContext.getInstance(protocol);
     ctx.init(km, tm, null);
     return ctx;

@@ -90,14 +90,13 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
   @Override
   public boolean verify(final String hostname, final X509Certificate cert)
   {
-    logger.debug("verifying hostname={} against cert={}", hostname, cert.getSubjectX500Principal());
-
     final boolean b;
     if (LdapUtils.isIPAddress(hostname)) {
       b = verifyIP(hostname, cert);
     } else {
       b = verifyDNS(hostname, cert);
     }
+    logger.debug("Verify is {} with hostname={} against cert={}", b, hostname, cert.getSubjectX500Principal());
     return b;
   }
 
@@ -116,10 +115,10 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
   protected boolean verifyIP(final String ip, final X509Certificate cert)
   {
     final String[] subjAltNames = getSubjectAltNames(cert, SubjectAltNameType.IP_ADDRESS);
-    logger.debug("verifyIP using subjectAltNames={}", Arrays.toString(subjAltNames));
+    logger.trace("verifyIP using subjectAltNames={}", Arrays.toString(subjAltNames));
     for (String name : subjAltNames) {
       if (ip.equalsIgnoreCase(name)) {
-        logger.debug("verifyIP found hostname match: {}", name);
+        logger.trace("verifyIP found hostname match: {}", name);
         return true;
       }
     }
@@ -148,23 +147,23 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
   {
     boolean verified = false;
     final String[] subjAltNames = getSubjectAltNames(cert, SubjectAltNameType.DNS_NAME);
-    logger.debug("verifyDNS using subjectAltNames={}", Arrays.toString(subjAltNames));
+    logger.trace("verifyDNS using subjectAltNames={}", Arrays.toString(subjAltNames));
     if (subjAltNames.length > 0) {
       // if subject alt names exist, one must match
       for (String name : subjAltNames) {
         if (isMatch(hostname, name)) {
-          logger.debug("verifyDNS found hostname match: {}", name);
+          logger.trace("verifyDNS found hostname match: {}", name);
           verified = true;
           break;
         }
       }
     } else {
       final String[] cns = getCNs(cert);
-      logger.debug("verifyDNS using CN={}", Arrays.toString(cns));
+      logger.trace("verifyDNS using CN={}", Arrays.toString(cns));
       if (cns.length > 0) {
         // the most specific CN refers to the last CN
         if (isMatch(hostname, cns[cns.length - 1])) {
-          logger.debug("verifyDNS found hostname match: {}", cns[cns.length - 1]);
+          logger.trace("verifyDNS found hostname match: {}", cns[cns.length - 1]);
           verified = true;
         }
       }

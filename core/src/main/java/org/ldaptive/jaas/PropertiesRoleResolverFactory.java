@@ -32,16 +32,16 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory imp
       synchronized (CACHE) {
         if (!CACHE.containsKey(cacheId)) {
           rr = createRoleResolverInternal(jaasOptions);
-          logger.trace("Created role resolver: {}", rr);
+          logger.trace("created role resolver: {}", rr);
           CACHE.put(cacheId, rr);
         } else {
           rr = CACHE.get(cacheId);
-          logger.trace("Retrieved role resolver from CACHE: {}", rr);
+          logger.trace("retrieved role resolver from CACHE: {}", rr);
         }
       }
     } else {
       rr = createRoleResolverInternal(jaasOptions);
-      logger.trace("Created role resolver {} from {}", rr, jaasOptions);
+      logger.trace("created role resolver {} from {}", rr, jaasOptions);
     }
     return rr;
   }
@@ -96,7 +96,7 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory imp
       PropertyDomain.AUTH,
       createProperties(jaasOptions));
     source.initialize();
-    logger.trace("Created search request {} from {}", sr, jaasOptions);
+    logger.trace("created search request {} from {}", sr, jaasOptions);
     return sr;
   }
 

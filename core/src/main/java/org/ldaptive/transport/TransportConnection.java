@@ -167,7 +167,7 @@ public abstract class TransportConnection implements Connection
       strategyProducedUrls = true;
       try {
         LOGGER.trace(
-          "Attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);
+          "attempting connection to {} for strategy {}", url.getHostnameWithSchemeAndPort(), connectionStrategy);
         open(url);
         connectionStrategy.success(url);
         metadata.recordSuccess(Instant.now());

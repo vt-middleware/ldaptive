@@ -162,7 +162,7 @@ public final class DnParser
    */
   public static List<LdapAttribute> convertDnToAttributes(final String dn)
   {
-    LOGGER.debug("parsing DN: {}", dn);
+    LOGGER.trace("parsing DN: {}", dn);
 
     final List<LdapAttribute> attributes = new ArrayList<>();
     if (dn.isEmpty()) {
@@ -201,7 +201,7 @@ public final class DnParser
       }
       pos = endAttrValuePos + 1;
     }
-    LOGGER.debug("parsed DN into: {}", attributes);
+    LOGGER.debug("Parsed DN into: {}", attributes);
     return attributes;
   }
 

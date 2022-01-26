@@ -108,12 +108,12 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     for (X509ExtendedTrustManager tm : trustManagers) {
       try {
         tm.checkClientTrusted(chain, authType, socket);
-        logger.debug("checkClientTrusted for {} succeeded", tm);
+        logger.trace("checkClientTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
         }
       } catch (CertificateException e) {
-        logger.debug("checkClientTrusted for {} failed", tm);
+        logger.trace("checkClientTrusted for {} failed", tm);
         if (trustStrategy == Strategy.ALL) {
           throw e;
         }
@@ -136,12 +136,12 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     for (X509ExtendedTrustManager tm : trustManagers) {
       try {
         tm.checkClientTrusted(chain, authType, engine);
-        logger.debug("checkClientTrusted for {} succeeded", tm);
+        logger.trace("checkClientTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
         }
       } catch (CertificateException e) {
-        logger.debug("checkClientTrusted for {} failed", tm);
+        logger.trace("checkClientTrusted for {} failed", tm);
         if (trustStrategy == Strategy.ALL) {
           throw e;
         }
@@ -164,12 +164,12 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     for (X509ExtendedTrustManager tm : trustManagers) {
       try {
         tm.checkClientTrusted(chain, authType);
-        logger.debug("checkClientTrusted for {} succeeded", tm);
+        logger.trace("checkClientTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
         }
       } catch (CertificateException e) {
-        logger.debug("checkClientTrusted for {} failed", tm);
+        logger.trace("checkClientTrusted for {} failed", tm);
         if (trustStrategy == Strategy.ALL) {
           throw e;
         }
@@ -192,12 +192,12 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     for (X509ExtendedTrustManager tm : trustManagers) {
       try {
         tm.checkServerTrusted(chain, authType, socket);
-        logger.debug("checkServerTrusted for {} succeeded", tm);
+        logger.trace("checkServerTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
         }
       } catch (CertificateException e) {
-        logger.debug("checkServerTrusted for {} failed", tm);
+        logger.trace("checkServerTrusted for {} failed", tm);
         if (trustStrategy == Strategy.ALL) {
           throw e;
         }
@@ -220,12 +220,12 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     for (X509ExtendedTrustManager tm : trustManagers) {
       try {
         tm.checkServerTrusted(chain, authType, engine);
-        logger.debug("checkServerTrusted for {} succeeded", tm);
+        logger.trace("checkServerTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
         }
       } catch (CertificateException e) {
-        logger.debug("checkServerTrusted for {} failed", tm);
+        logger.trace("checkServerTrusted for {} failed", tm);
         if (trustStrategy == Strategy.ALL) {
           throw e;
         }
@@ -248,12 +248,12 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     for (X509ExtendedTrustManager tm : trustManagers) {
       try {
         tm.checkServerTrusted(chain, authType);
-        logger.debug("checkServerTrusted for {} succeeded", tm);
+        logger.trace("checkServerTrusted for {} succeeded", tm);
         if (trustStrategy == Strategy.ANY) {
           return;
         }
       } catch (CertificateException e) {
-        logger.debug("checkServerTrusted for {} failed", tm);
+        logger.trace("checkServerTrusted for {} failed", tm);
         if (trustStrategy == Strategy.ALL) {
           throw e;
         }

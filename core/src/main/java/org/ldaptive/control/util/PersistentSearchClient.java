@@ -128,7 +128,7 @@ public class PersistentSearchClient
     request.setControls(new PersistentSearchRequestControl(changeTypes, changesOnly, returnEcs, true));
     final SearchOperation search = new SearchOperation(factory, request);
     search.setResultHandlers(result -> {
-      logger.debug("received {}", result);
+      logger.debug("Received {}", result);
       try {
         onResult.accept(result);
       } catch (Exception e) {
@@ -141,7 +141,7 @@ public class PersistentSearchClient
       }
     });
     search.setExceptionHandler(e -> {
-      logger.debug("received exception:", e);
+      logger.debug("Received exception:", e);
       try {
         onException.accept(e);
       } catch (Exception ex) {
@@ -149,7 +149,7 @@ public class PersistentSearchClient
       }
     });
     search.setEntryHandlers(entry -> {
-      logger.debug("received {}", entry);
+      logger.debug("Received {}", entry);
       try {
         onEntry.accept(entry);
       } catch (Exception e) {

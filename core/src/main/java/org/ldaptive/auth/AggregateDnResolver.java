@@ -161,7 +161,7 @@ public class AggregateDnResolver implements DnResolver
           }
           return null;
         });
-      logger.debug("submitted DN resolver {}", entry.getValue());
+      logger.debug("Submitted DN resolver {}", entry.getValue());
     }
     for (int i = 1; i <= dnResolvers.size(); i++) {
       try {
@@ -185,7 +185,7 @@ public class AggregateDnResolver implements DnResolver
     if (results.size() > 1 && !allowMultipleDns) {
       throw new LdapException("Found more than (1) DN for: " + user);
     }
-    logger.debug("resolved aggregate DN {}", results);
+    logger.debug("Resolved aggregate DN {}", results);
     return results.isEmpty() ? null : results.get(0);
   }
 

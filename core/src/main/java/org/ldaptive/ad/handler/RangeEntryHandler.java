@@ -123,7 +123,7 @@ public class RangeEntryHandler extends AbstractEntryHandler<SearchResponse> impl
 
           // Add all attributes to the search result
           if (!result.isSuccess() || result.entrySize() == 0) {
-            logger.debug("could not find attribute ID: {} with response {}", nextAttrID, result);
+            logger.debug("Could not find attribute ID: {} with response {}", nextAttrID, result);
           } else {
             entry.addAttributes(result.getEntry().getAttributes());
           }

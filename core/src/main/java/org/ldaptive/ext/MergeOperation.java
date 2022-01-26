@@ -128,7 +128,7 @@ public class MergeOperation
       final Result result;
       if (searchResult.entrySize() == 0) {
         if (request.getDeleteEntry()) {
-          logger.info("target entry does not exist, no delete performed for request {}", request);
+          logger.info("Target entry does not exist, no delete performed for request {}", request);
           result = null;
         } else {
           // entry does not exist, add it
@@ -200,7 +200,7 @@ public class MergeOperation
       }
       if (!resultModifications.isEmpty()) {
         logger.info(
-          "modifying target entry {} with modifications {} from source entry " +
+          "Modifying target entry {} with modifications {} from source entry " +
           "{} for request {}",
           target,
           resultModifications,
@@ -213,7 +213,7 @@ public class MergeOperation
             .modifications(resultModifications.toArray(AttributeModification[]::new))
             .build()).execute();
         logger.info(
-          "modified target entry {} with modifications {} from source entry " +
+          "Modified target entry {} with modifications {} from source entry " +
           "{} for request {}",
           target,
           resultModifications,
@@ -223,7 +223,7 @@ public class MergeOperation
       }
     }
     logger.info(
-      "target entry {} equals source entry {}, no modification performed for " +
+      "Target entry {} equals source entry {}, no modification performed for " +
       "request {}",
       target,
       source,
@@ -251,7 +251,7 @@ public class MergeOperation
         .dn(entry.getDn())
         .attributes(entry.getAttributes())
         .build()).execute();
-    logger.info("added entry {} for request {}", entry, request);
+    logger.info("Added entry {} for request {}", entry, request);
     return result;
   }
 
@@ -271,7 +271,7 @@ public class MergeOperation
     throws LdapException
   {
     final Result result = conn.operation(new DeleteRequest(entry.getDn())).execute();
-    logger.info("delete entry {} for request {}", entry, request);
+    logger.info("Delete entry {} for request {}", entry, request);
     return result;
   }
 }

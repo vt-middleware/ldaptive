@@ -102,7 +102,7 @@ public abstract class AbstractLoginModule implements LoginModule
     final Map<String, ?> state,
     final Map<String, ?> options)
   {
-    logger.trace("Begin initialize");
+    logger.trace("begin initialize");
     subject = subj;
     callbackHandler = handler;
     sharedState = state;
@@ -184,7 +184,7 @@ public abstract class AbstractLoginModule implements LoginModule
   public boolean commit()
     throws LoginException
   {
-    logger.trace("Begin commit");
+    logger.trace("begin commit");
     if (!loginSuccess) {
       logger.debug("Login failed");
       return false;
@@ -221,7 +221,7 @@ public abstract class AbstractLoginModule implements LoginModule
   public boolean abort()
     throws LoginException
   {
-    logger.trace("Begin abort");
+    logger.trace("begin abort");
     if (!loginSuccess) {
       return false;
     } else if (!commitSuccess) {
@@ -238,7 +238,7 @@ public abstract class AbstractLoginModule implements LoginModule
   public boolean logout()
     throws LoginException
   {
-    logger.trace("Begin logout");
+    logger.trace("begin logout");
     if (subject.isReadOnly()) {
       clearState();
       throw new LoginException("Subject is read-only.");
@@ -303,7 +303,7 @@ public abstract class AbstractLoginModule implements LoginModule
     throws LoginException
   {
     logger.trace(
-      "Begin getCredentials: useFistPass = {}, tryFistPass = {}, " +
+      "begin getCredentials: useFistPass = {}, tryFistPass = {}, " +
       "useCallback = {}, callbackhandler class = {}, " +
       "name callback class = {}, password callback class = {}",
       useFirstPass,

@@ -29,7 +29,7 @@ public class AuthorizationIdentityEntryResolver extends AbstractSearchEntryResol
     if (ctrl == null) {
       throw new IllegalStateException("Authorization Identity Response Control not found");
     }
-    logger.debug("found authorization identity response control {}", ctrl);
+    logger.debug("Found authorization identity response control {}", ctrl);
 
     final String authzId = ctrl.getAuthorizationId();
     final String dn = authzId.split(":", 2)[1].trim();

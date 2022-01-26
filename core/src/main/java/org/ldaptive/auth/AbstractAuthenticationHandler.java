@@ -68,7 +68,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
   public AuthenticationHandlerResponse authenticate(final AuthenticationCriteria ac)
     throws LdapException
   {
-    logger.debug("authenticate criteria={}", ac);
+    logger.trace("authenticate criteria={}", ac);
 
     final AuthenticationHandlerResponse response;
     final Connection conn = factory.getConnection();
@@ -84,7 +84,7 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
         conn.close();
       }
     }
-    logger.debug("authenticate response={} for criteria={}", response, ac);
+    logger.debug("Authenticate response={} for criteria={}", response, ac);
     return response;
   }
 

@@ -236,7 +236,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   public String resolve(final User user)
     throws LdapException
   {
-    logger.debug("resolve user={}", user);
+    logger.trace("resolve user={}", user);
 
     String dn = null;
     if (user != null) {
@@ -257,14 +257,14 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
         if (answer != null && answer.hasNext()) {
           dn = resolveDn(answer.next());
           if (answer.hasNext()) {
-            logger.debug("multiple results found for user={} using filter={}", user, filter);
+            logger.debug("Multiple results found for user={} using filter={}", user, filter);
             if (!allowMultipleDns) {
               throw new LdapException(
                 "Found " + result.entrySize() + " DNs for " + user + " : " + result.getEntryDns());
             }
           }
         } else {
-          logger.info("search for user={} failed using filter={}", user, filter);
+          logger.info("Search for user={} failed using filter={}", user, filter);
         }
       } else {
         logger.error("DN filter template not found, no search performed");
@@ -272,7 +272,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
     } else {
       logger.warn("DN resolution cannot occur, user is null");
     }
-    logger.debug("resolved dn={} for user={}", dn, user);
+    logger.debug("Resolved dn={} for user={}", dn, user);
     return dn;
   }
 
@@ -330,7 +330,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
     final FilterTemplate filter = new FilterTemplate();
     if (user != null && user.getIdentifier() != null && !"".equals(user.getIdentifier())) {
       if (userFilter != null) {
-        logger.debug("searching for DN using userFilter");
+        logger.debug("Searching for DN using userFilter");
         filter.setFilter(userFilter);
         if (userFilterParameters != null) {
           filter.setParameters(userFilterParameters);

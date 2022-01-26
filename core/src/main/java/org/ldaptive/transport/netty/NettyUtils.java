@@ -140,7 +140,7 @@ public final class NettyUtils
             LOGGER.warn("Could not shutdown worker group {}", workerGroup);
           }
         } else {
-          LOGGER.trace("Worker group {} gracefully shutdown", workerGroup);
+          LOGGER.trace("worker group {} gracefully shutdown", workerGroup);
         }
       });
     try {

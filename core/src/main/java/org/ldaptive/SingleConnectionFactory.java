@@ -207,7 +207,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
           new Class[] {Connection.class},
           new ConnectionProxy(connection));
         initialized = true;
-        logger.info("factory initialized {}", this);
+        logger.info("Factory initialized {}", this);
       } catch (LdapException e) {
         if (failFastInitialize) {
           throw e;

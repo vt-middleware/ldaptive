@@ -29,16 +29,16 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory im
       synchronized (CACHE) {
         if (!CACHE.containsKey(cacheId)) {
           a = createAuthenticatorInternal(jaasOptions);
-          logger.trace("Created authenticator: {}", a);
+          logger.trace("created authenticator: {}", a);
           CACHE.put(cacheId, a);
         } else {
           a = CACHE.get(cacheId);
-          logger.trace("Retrieved authenticator from CACHE: {}", a);
+          logger.trace("retrieved authenticator from CACHE: {}", a);
         }
       }
     } else {
       a = createAuthenticatorInternal(jaasOptions);
-      logger.trace("Created authenticator {} from {}", a, jaasOptions);
+      logger.trace("created authenticator {} from {}", a, jaasOptions);
     }
     return a;
   }
@@ -68,7 +68,7 @@ public class PropertiesAuthenticatorFactory extends AbstractPropertiesFactory im
       ar,
       createProperties(jaasOptions));
     source.initialize();
-    logger.trace("Created authentication request {} from {}", ar, jaasOptions);
+    logger.trace("created authentication request {} from {}", ar, jaasOptions);
     return ar;
   }
 

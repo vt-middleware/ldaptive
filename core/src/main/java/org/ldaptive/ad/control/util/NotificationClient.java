@@ -85,7 +85,7 @@ public class NotificationClient
     request.setControls(new NotificationControl());
     final SearchOperation search = new SearchOperation(factory, request);
     search.setResultHandlers(result -> {
-      logger.debug("received {}", result);
+      logger.debug("Received {}", result);
       try {
         queue.put(new NotificationItem(result));
       } catch (InterruptedException e) {
@@ -93,7 +93,7 @@ public class NotificationClient
       }
     });
     search.setExceptionHandler(e -> {
-      logger.debug("received exception", e);
+      logger.debug("Received exception", e);
       try {
         queue.put(new NotificationItem(e));
       } catch (InterruptedException ex) {
@@ -101,7 +101,7 @@ public class NotificationClient
       }
     });
     search.setEntryHandlers(entry -> {
-      logger.debug("received {}", entry);
+      logger.debug("Received {}", entry);
       try {
         queue.put(new NotificationItem(entry));
       } catch (InterruptedException e) {

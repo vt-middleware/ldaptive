@@ -557,7 +557,7 @@ public final class NettyConnection extends TransportConnection
   protected void operation(final UnbindRequest request)
   {
     if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("Unbind request {} with pending responses {} for {}", request, pendingResponses, this);
+      LOGGER.trace("unbind request {} with pending responses {} for {}", request, pendingResponses, this);
     } else if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Unbind request {} with {} pending responses for {}", request, pendingResponses.size(), this);
     }
@@ -709,7 +709,7 @@ public final class NettyConnection extends TransportConnection
     }
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace(
-        "Abandon {} {} with pending responses {}",
+        "abandon {} {} with pending responses {}",
         handle != null ? "handle" : "messageID",
         handle != null ? handle : request.getMessageID(),
         pendingResponses);
@@ -816,7 +816,7 @@ public final class NettyConnection extends TransportConnection
   protected void write(final DefaultOperationHandle handle)
   {
     if (LOGGER.isTraceEnabled()) {
-      LOGGER.trace("Write handle {} with pending responses {}", handle, pendingResponses);
+      LOGGER.trace("write handle {} with pending responses {}", handle, pendingResponses);
     } else if (LOGGER.isDebugEnabled()) {
       LOGGER.debug("Write handle {} with {} pending responses", handle, pendingResponses.size());
     }
@@ -967,7 +967,7 @@ public final class NettyConnection extends TransportConnection
           // abandon outstanding requests
           if (pendingResponses.size() > 0) {
             if (LOGGER.isTraceEnabled()) {
-              LOGGER.trace("Abandoning requests {} for {} to close connection", pendingResponses, this);
+              LOGGER.trace("abandoning requests {} for {} to close connection", pendingResponses, this);
             } else if (LOGGER.isInfoEnabled()) {
               LOGGER.info("Abandoning {} requests for {} to close connection", pendingResponses.size(), this);
             }
@@ -1012,7 +1012,7 @@ public final class NettyConnection extends TransportConnection
   {
     if (pendingResponses.size() > 0) {
       if (LOGGER.isTraceEnabled()) {
-        LOGGER.trace("Notifying operation handles {} of connection close for {}", pendingResponses, this);
+        LOGGER.trace("notifying operation handles {} of connection close for {}", pendingResponses, this);
       } else if (LOGGER.isDebugEnabled()) {
         LOGGER.debug("Notifying {} operation handles of connection close for {}", pendingResponses.size(), this);
       }
@@ -1073,9 +1073,9 @@ public final class NettyConnection extends TransportConnection
         try {
           try {
             reopen(new ClosedRetryMetadata(lastSuccessfulOpen, inboundException));
-            LOGGER.info("auto reconnect finished for connection {}", this);
+            LOGGER.info("Auto reconnect finished for connection {}", this);
           } catch (Exception e) {
-            LOGGER.debug("auto reconnect failed for connection {}", this, e);
+            LOGGER.debug("Auto reconnect failed for connection {}", this, e);
           }
           // replay operations that have been sent, but have not received a response
           // notify all other operations

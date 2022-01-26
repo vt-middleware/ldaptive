@@ -237,7 +237,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
   {
     final FilterTemplate filter = new FilterTemplate();
     if (userFilter != null) {
-      logger.debug("searching for entry using userFilter");
+      logger.debug("Searching for entry using userFilter");
       filter.setFilter(userFilter);
       if (userFilterParameters != null) {
         filter.setParameters(userFilterParameters);
@@ -247,7 +247,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
       filter.setParameter("context", ac.getAuthenticationRequest().getUser().getContext());
       filter.setParameter("dn", ac.getDn());
     } else {
-      logger.error("Invalid userFilter, cannot be null or empty.");
+      logger.error("Invalid userFilter, cannot be null.");
     }
     return filter;
   }
@@ -287,10 +287,10 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
   public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response)
     throws LdapException
   {
-    logger.debug("resolve criteria={}", criteria);
+    logger.trace("resolve criteria={}", criteria);
 
     final SearchResponse result = performLdapSearch(criteria, response);
-    logger.debug("resolved result={} for criteria={}", result, criteria);
+    logger.debug("Resolved result={} for criteria={}", result, criteria);
 
     if (!result.isSuccess()) {
       throw new LdapException(
@@ -302,7 +302,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
     if (answer != null && answer.hasNext()) {
       entry = answer.next();
       if (answer.hasNext()) {
-        logger.debug("multiple results found for user={}", criteria.getDn());
+        logger.debug("Multiple results found for user={}", criteria.getDn());
         if (!allowMultipleEntries) {
           throw new LdapException("Found more than (1) entry for: " + criteria.getDn());
         }

@@ -485,7 +485,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     if (initialized) {
       throw new IllegalStateException("Pool " + getName() + " has already been initialized");
     }
-    logger.debug("beginning pool initialization for {}", this);
+    logger.debug("Beginning pool initialization for {}", this);
 
     if (pruneStrategy == null) {
       throw new IllegalStateException("No prune strategy configured for pool " + getName());

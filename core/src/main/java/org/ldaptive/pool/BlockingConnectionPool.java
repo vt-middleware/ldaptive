@@ -83,7 +83,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
           logger.trace("retrieve available connection from pool of size {}", available.size());
           pc = retrieveAvailableConnection();
         } catch (NoSuchElementException e) {
-          logger.error("could not remove connection from list", e);
+          logger.error("Could not retrieve available connection", e);
           throw new IllegalStateException("Pool is empty", e);
         }
       } else if (active.size() < getMaxPoolSize()) {
@@ -127,7 +127,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
           logger.error("Could not service check out request");
           throw new PoolExhaustedException("Pool is empty and connection creation failed");
         }
-        logger.debug("create failed, block until connection is available");
+        logger.debug("Create failed, block until connection is available");
         pc = blockAvailableConnection();
       } else {
         logger.trace("created new active connection: {}", pc);
@@ -185,26 +185,26 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     poolLock.lock();
     try {
       while (pc == null) {
-        logger.trace("available pool is empty, waiting...");
+        logger.trace("available pool is empty, waiting for pool not empty");
         if (Duration.ZERO.equals(blockWaitTime)) {
           poolNotEmpty.await();
         } else {
           if (!poolNotEmpty.await(blockWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
-            logger.debug("block time exceeded, throwing exception");
+            logger.debug("Block time of {} exceeded, throwing exception", blockWaitTime);
             throw new BlockingTimeoutException(
               "Block time of " + blockWaitTime + " exceeded for pool " + getName() +
                 " with max size of " + getMaxPoolSize());
           }
         }
-        logger.trace("notified to continue...");
+        logger.trace("notified to continue for pool not empty");
         try {
           pc = retrieveAvailableConnection();
         } catch (NoSuchElementException e) {
-          logger.trace("notified to continue but pool was empty");
+          logger.trace("notified to continue for pool not empty but pool was empty");
         }
       }
     } catch (InterruptedException e) {
-      logger.error("waiting for available connection interrupted", e);
+      logger.error("Waiting for available connection interrupted", e);
       throw new PoolException("Interrupted while waiting for an available connection", e);
     } finally {
       poolLock.unlock();

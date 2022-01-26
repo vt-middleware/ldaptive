@@ -92,7 +92,7 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
           latch.await(getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
         }
       } catch (Exception e) {
-        logger.debug("validating {} threw unexpected exception", conn, e);
+        logger.debug("Validating {} threw unexpected exception", conn, e);
       }
       return result.get();
     };

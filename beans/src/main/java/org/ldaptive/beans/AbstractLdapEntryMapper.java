@@ -85,7 +85,7 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
         }
       }
     }
-    logger.debug("mapped {} to {}", source, dest);
+    logger.debug("Mapped {} to {}", source, dest);
   }
 
 
@@ -108,6 +108,6 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
         }
       }
     });
-    logger.debug("mapped {} to {}", source, dest);
+    logger.debug("Mapped {} to {}", source, dest);
   }
 }
