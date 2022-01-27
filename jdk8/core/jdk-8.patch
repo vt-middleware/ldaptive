@@ -174,12 +174,12 @@
      public RetryValidationExceptionHandler()
      {
 -      this((count, time) ->
--        count <= getMaxPoolSize() && !getBlockWaitTime().minus(Duration.between(time, Instant.now())).isNegative());
+-        count <= getMaxPoolSize() + 1 && !getBlockWaitTime().minus(Duration.between(time, Instant.now())).isNegative());
 +      this(new BiPredicate<Integer, Instant>() {
 +        @Override
 +        public boolean test(final Integer count, final Instant time)
 +        {
-+          return count <= getMaxPoolSize() &&
++          return count <= getMaxPoolSize() + 1 &&
 +                 !getBlockWaitTime().minus(Duration.between(time, Instant.now())).isNegative();
 +        }
 +      });
