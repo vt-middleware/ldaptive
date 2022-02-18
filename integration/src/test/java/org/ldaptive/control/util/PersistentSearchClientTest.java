@@ -7,7 +7,6 @@ import java.util.concurrent.LinkedBlockingDeque;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.DnParser;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ModifyDnOperation;
@@ -23,6 +22,7 @@ import org.ldaptive.TestControl;
 import org.ldaptive.TestUtils;
 import org.ldaptive.control.EntryChangeNotificationControl;
 import org.ldaptive.control.PersistentSearchChangeType;
+import org.ldaptive.dn.Dn;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -118,10 +118,10 @@ public class PersistentSearchClientTest extends AbstractTest
     TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
 
     // modify dn
-    final String modDn = "CN=PSC," + DnParser.substring(dn, 1);
+    final String modDn = Dn.builder().add("CN=PSC").add(new Dn(dn).subDN(1)).build().format();
     final LdapAttribute cn = expectedResult.getEntry().getAttribute("cn");
     final ModifyDnOperation modifyDn = new ModifyDnOperation(cf);
-    modifyDn.execute(new ModifyDnRequest(dn, DnParser.substring(modDn, 0, 1), true));
+    modifyDn.execute(new ModifyDnRequest(dn, new Dn(modDn).getRDN().format(), true));
     entry = (LdapEntry) queue.take();
     Assert.assertNotNull(entry);
     ecnc = (EntryChangeNotificationControl) entry.getControl(EntryChangeNotificationControl.OID);
@@ -131,7 +131,7 @@ public class PersistentSearchClientTest extends AbstractTest
     TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
 
     // modify dn back
-    modifyDn.execute(new ModifyDnRequest(modDn, DnParser.substring(dn, 0, 1), true));
+    modifyDn.execute(new ModifyDnRequest(modDn, new Dn(dn).getRDN().format(), true));
     entry = (LdapEntry) queue.take();
     Assert.assertNotNull(entry);
     ecnc = (EntryChangeNotificationControl) entry.getControl(EntryChangeNotificationControl.OID);

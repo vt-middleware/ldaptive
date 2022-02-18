@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.net.InetSocketAddress;
 import java.time.Duration;
+import org.ldaptive.dn.Dn;
 import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 import org.ldaptive.ssl.AllowAnyTrustManager;
 import org.ldaptive.ssl.CustomTrustManager;
@@ -101,7 +102,7 @@ public class ConnectionTest
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     response = modifyDn.execute(
       new ModifyDnRequest(
-        "cn=James Buchanan Jr.," + DnParser.substring(testLdapEntry.getDn(), 1),
+        Dn.builder().add("cn=James Buchanan Jr.").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format(),
         "cn=James Buchanan",
         true));
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
@@ -115,7 +116,7 @@ public class ConnectionTest
   {
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
     final SearchResponse lr = search.execute(
-      new SearchRequest(DnParser.substring(testLdapEntry.getDn(), 1), "(uid=15)"));
+      new SearchRequest(new Dn(testLdapEntry.getDn()).subDN(1).format(), "(uid=15)"));
     Assert.assertEquals(lr.getEntry().getDn().toLowerCase(), testLdapEntry.getDn().toLowerCase());
   }
 

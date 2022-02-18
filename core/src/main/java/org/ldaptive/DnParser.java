@@ -18,7 +18,10 @@ import org.slf4j.LoggerFactory;
  * generous as possible in the format of allowed DNs.
  *
  * @author  Middleware Services
+ *
+ * @deprecated  Use an implementation of {@link org.ldaptive.dn.DnParser}
  */
+@Deprecated
 public final class DnParser
 {
 

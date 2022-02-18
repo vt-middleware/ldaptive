@@ -10,12 +10,12 @@ import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.DnParser;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.TestUtils;
+import org.ldaptive.dn.Dn;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -107,8 +107,8 @@ public class LdapLoginModuleTest extends AbstractTest
           AttributeModification.Type.ADD,
           new LdapAttribute(
             "member",
-            "cn=John Tyler," + DnParser.substring(testLdapEntry.getDn(), 1),
-            "cn=Group 7," + DnParser.substring(testLdapEntry.getDn(), 1)))));
+            Dn.builder().add("cn=John Tyler").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format(),
+            Dn.builder().add("cn=Group 7").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format()))));
     modify.execute(
       new ModifyRequest(
         GROUP_ENTRIES.get("7")[0].getDn(),
@@ -116,14 +116,16 @@ public class LdapLoginModuleTest extends AbstractTest
           AttributeModification.Type.ADD,
           new LdapAttribute(
             "member",
-            "cn=Group 8," + DnParser.substring(testLdapEntry.getDn(), 1),
-            "cn=Group 9," + DnParser.substring(testLdapEntry.getDn(), 1)))));
+            Dn.builder().add("cn=Group 8").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format(),
+            Dn.builder().add("cn=Group 9").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format()))));
     modify.execute(
       new ModifyRequest(
         GROUP_ENTRIES.get("8")[0].getDn(),
         new AttributeModification(
           AttributeModification.Type.ADD,
-          new LdapAttribute("member", "cn=Group 7," + DnParser.substring(testLdapEntry.getDn(), 1)))));
+          new LdapAttribute(
+            "member",
+            Dn.builder().add("cn=Group 7").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format()))));
   }
 
 

@@ -493,7 +493,7 @@ public class LdapURL
 
 
   /**
-   * Matches the supplied url against a pattern and reads it's components.
+   * Matches the supplied url against a pattern and reads its components.
    *
    * @param  url  to parse
    */

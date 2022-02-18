@@ -32,6 +32,7 @@ import org.ldaptive.control.SortRequestControl;
 import org.ldaptive.control.SortResponseControl;
 import org.ldaptive.control.VirtualListViewRequestControl;
 import org.ldaptive.control.VirtualListViewResponseControl;
+import org.ldaptive.dn.Dn;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
 import org.ldaptive.handler.DnAttributeEntryHandler;
@@ -123,7 +124,7 @@ public class SearchOperationTest extends AbstractTest
       super.createLdapEntry(e.getValue()[0]);
     }
 
-    final String baseDn = DnParser.substring(GROUP_ENTRIES.get("2")[0].getDn(), 1);
+    final String baseDn = new Dn(GROUP_ENTRIES.get("2")[0].getDn()).subDN(1).format();
     // setup group relationships
     final ModifyOperation modify = new ModifyOperation(TestUtils.createSetupConnectionFactory());
     modify.execute(
@@ -289,7 +290,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
 
     final SearchRequest subtreeRequest = SearchRequest.builder()
-      .dn(DnParser.substring(expectedResult.getEntry().getDn(), 2))
+      .dn(new Dn(expectedResult.getEntry().getDn()).subDN(2).format())
       .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBTREE).build();
@@ -297,7 +298,7 @@ public class SearchOperationTest extends AbstractTest
     TestUtils.assertEquals(expectedResult, result);
 
     final SearchRequest onelevelRequest = SearchRequest.builder()
-      .dn(DnParser.substring(expectedResult.getEntry().getDn(), 1))
+      .dn(new Dn(expectedResult.getEntry().getDn()).subDN(1).format())
       .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.ONELEVEL).build();
@@ -313,7 +314,7 @@ public class SearchOperationTest extends AbstractTest
     TestUtils.assertEquals(expectedResult, result);
 
     final SearchRequest subordinateRequest = SearchRequest.builder()
-      .dn(DnParser.substring(expectedResult.getEntry().getDn(), 2))
+      .dn(new Dn(expectedResult.getEntry().getDn()).subDN(2).format())
       .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBORDINATE).build();
@@ -1489,7 +1490,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     // expects a referral on the dn ou=referrals
-    final String referralDn = "ou=referrals," + DnParser.substring(dn, 1);
+    final String referralDn = Dn.builder().add("ou=referrals").add(new Dn(dn).subDN(1)).build().format();
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
@@ -1522,7 +1523,8 @@ public class SearchOperationTest extends AbstractTest
     // chase referrals
 
     // default limit
-    final String chaseReferralDn = "cn=0,ou=referrals-chase," + DnParser.substring(dn, 1);
+    final String chaseReferralDn =
+      Dn.builder().add("cn=0,ou=referrals-chase").add(new Dn(dn).subDN(1)).build().format();
     request.setBaseDn(chaseReferralDn);
     request.setSearchScope(SearchScope.SUBTREE);
     request.setFilter("uupid=dhawes");
@@ -1594,7 +1596,7 @@ public class SearchOperationTest extends AbstractTest
     final List<String> refs = new ArrayList<>();
 
     // expects a referral on the root dn
-    final String referralDn = DnParser.substring(dn, 1);
+    final String referralDn = new Dn(dn).subDN(1).format();
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
@@ -1634,7 +1636,7 @@ public class SearchOperationTest extends AbstractTest
     // chase search references
 
     // default limit
-    final String referenceDn = "ou=references-chase," + DnParser.substring(dn, 1);
+    final String referenceDn = Dn.builder().add("ou=references-chase").add(new Dn(dn).subDN(1)).build().format();
     request.setBaseDn(referenceDn);
     request.setSearchScope(SearchScope.ONELEVEL);
     request.setFilter("uupid=dhawes");
@@ -1700,7 +1702,7 @@ public class SearchOperationTest extends AbstractTest
     final List<String> refs = new ArrayList<>();
 
     // expects a referral on the root dn
-    final String referralDn = DnParser.substring(dn, 1);
+    final String referralDn = new Dn(dn).subDN(1).format();
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
