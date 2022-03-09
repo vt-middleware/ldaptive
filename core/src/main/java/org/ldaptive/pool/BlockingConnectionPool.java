@@ -219,7 +219,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     throwIfNotInitialized();
 
     final PooledConnectionProxy pc = retrieveConnectionProxy(c);
-    final boolean valid = validateAndPassivateConnection(pc);
+    final boolean valid = passivateAndValidateConnection(pc);
     logger.trace("waiting on pool lock for check in {}", poolLock.getQueueLength());
     poolLock.lock();
     try {

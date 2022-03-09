@@ -596,11 +596,8 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       while (currentPoolSize < size && count < size * 2) {
         try {
           final PooledConnectionProxy pc = createAvailableConnection(throwOnFailure);
-          if (pc != null && validateOnCheckIn) {
-            if (validator.apply(pc.getConnection())) {
-              logger.trace("connection {} passed initialize validation", pc);
-            } else {
-              logger.warn("Failed check in validation on {} with {} for {}", pc.getConnection(), validator, this);
+          if (pc != null && connectOnCreate) {
+            if (!passivateAndValidateConnection(pc)) {
               removeAvailableConnection(pc);
             }
           }
@@ -845,11 +842,12 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
   /**
    * Attempts to activate and validate a connection. Performed before a connection is returned from {@link
-   * #getConnection()}.
+   * #getConnection()}. Validation only occurs if {@link #validateOnCheckOut} is true. If a connection fails either
+   * activation or validation it is removed from the pool.
    *
    * @param  pc  connection
    *
-   * @throws  PoolException  if activation or validation fails
+   * @throws  PoolException  if either activation or validation fails
    */
   protected void activateAndValidateConnection(final PooledConnectionProxy pc)
     throws PoolException
@@ -868,14 +866,31 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
 
   /**
-   * Attempts to validate and passivate a connection. Performed when a connection is given to {@link
-   * #putConnection(Connection)}.
+   * See {@link #passivateAndValidateConnection(PooledConnectionProxy)}.
    *
    * @param  pc  connection
    *
-   * @return  whether both validate and passivation succeeded
+   * @return  whether both passivation and validation succeeded
+   *
+   * @deprecated  use {@link #passivateAndValidateConnection(PooledConnectionProxy)} instead
    */
+  @Deprecated
   protected boolean validateAndPassivateConnection(final PooledConnectionProxy pc)
+  {
+    return passivateAndValidateConnection(pc);
+  }
+
+
+  /**
+   * Attempts to passivate and validate a connection. Performed when a connection is given to {@link
+   * #putConnection(Connection)} and when a new connection enters the pool. Validation only occurs if {@link
+   * #validateOnCheckIn} is true.
+   *
+   * @param  pc  connection
+   *
+   * @return  whether both passivation and validation succeeded
+   */
+  protected boolean passivateAndValidateConnection(final PooledConnectionProxy pc)
   {
     if (!pc.getConnection().isOpen()) {
       logger.warn("Failed validation on {} for {}, not open", pc.getConnection(), this);
@@ -883,17 +898,18 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     }
 
     boolean valid = false;
-    if (validateOnCheckIn) {
-      if (!validator.apply(pc.getConnection())) {
-        logger.warn("Failed check in validation on {} with {} for {}", pc.getConnection(), validator, this);
+    if (passivator.apply(pc.getConnection())) {
+      if (validateOnCheckIn) {
+        if (validator.apply(pc.getConnection())) {
+          logger.trace("connection {} passed initialize validation", pc);
+          valid = true;
+        } else {
+          logger.warn("Failed check in validation on {} with {} for {}", pc.getConnection(), validator, this);
+        }
       } else {
         valid = true;
       }
     } else {
-      valid = true;
-    }
-    if (valid && !passivator.apply(pc.getConnection())) {
-      valid = false;
       logger.warn("Failed passivation on {} with {} for {}", pc.getConnection(), passivator, this);
     }
     return valid;
