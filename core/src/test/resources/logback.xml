@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{40} - %msg%n%ex{5}</pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.ldaptive" level="DEBUG" />
+
+  <!-- uncomment for netty event logging
+  <logger name="org.ldaptive.transport.netty.NettyConnection" level="DEBUG" />
+  <logger name="io.netty.handler.logging.LoggingHandler" level="DEBUG" />
+  -->
+
+  <logger name="org.springframework" level="ERROR" />
+  <logger name="io.netty.channel" level="DEBUG" />
+
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+  </root>
+
+</configuration>
