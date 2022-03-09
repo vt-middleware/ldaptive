@@ -75,6 +75,18 @@ public class DnsSrvConnectionStrategyTest
 
 
   /**
+   * Unit test for {@link DnsSrvConnectionStrategy#parseUrl(String)}.
+   */
+  @Test
+  public void parseLdapUrl()
+  {
+    final DnsSrvConnectionStrategy strategy = new DnsSrvConnectionStrategy();
+    Assert.assertEquals(
+      strategy.parseUrl("ldap:///DC=mycompany,DC=org"), new String[] {null, "_ldap._tcp.mycompany.org"});
+  }
+
+
+  /**
    * Unit test for {@link DnsSrvConnectionStrategy#iterator()}.
    */
   @Test

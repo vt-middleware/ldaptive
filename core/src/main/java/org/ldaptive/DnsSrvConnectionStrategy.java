@@ -11,7 +11,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.ldaptive.dn.Dn;
 import org.ldaptive.dns.DNSContextFactory;
+import org.ldaptive.dns.DNSDomainFunction;
 import org.ldaptive.dns.DefaultDNSContextFactory;
 import org.ldaptive.dns.SRVDNSResolver;
 import org.ldaptive.dns.SRVRecord;
@@ -139,14 +141,14 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
     } else if (urls.contains(" ")) {
       dnsResolvers = new HashMap<>();
       for (String url : urls.split(" ")) {
-        final String[] dnsUrl = parseDnsUrl(url);
+        final String[] dnsUrl = parseUrl(url);
         dnsResolvers.put(
           new SRVDNSResolver(
             Objects.requireNonNullElseGet(dnsContextFactory, () -> new DefaultDNSContextFactory(dnsUrl[0])), useSSL),
           dnsUrl[1]);
       }
     } else {
-      final String[] dnsUrl = parseDnsUrl(urls);
+      final String[] dnsUrl = parseUrl(urls);
       if (dnsContextFactory == null) {
         dnsResolvers = Collections.singletonMap(
           new SRVDNSResolver(new DefaultDNSContextFactory(dnsUrl[0]), useSSL), dnsUrl[1]);
@@ -162,6 +164,33 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
       expirationTime = Instant.now().plus(srvTtl);
     }
     return srvRecords;
+  }
+
+
+  /**
+   * Parses the supplied URL. If the URL has an ldap scheme, it is inspected for a baseDN which will be used as the
+   * domain. Otherwise, the URL is assumed to have a dns scheme.
+   *
+   * @param  url  to parse
+   *
+   * @return  array containing the DNS URL and the record name in that order
+   */
+  protected String[] parseUrl(final String url)
+  {
+    final LdapURL ldapURL;
+    try {
+      ldapURL = new LdapURL(url);
+    } catch (Exception e) {
+      return parseDnsUrl(url);
+    }
+    if (ldapURL.getBaseDn() == null || ldapURL.getBaseDn().isEmpty()) {
+      throw new IllegalArgumentException("LDAP URL " + url + " must contain a base DN");
+    }
+    final String domain = new DNSDomainFunction().apply(new Dn(ldapURL.getBaseDn()));
+    if (domain.isEmpty()) {
+      throw new IllegalArgumentException("Base DN " + ldapURL.getBaseDn() + " could not be converted to a domain");
+    }
+    return new String[] {null, "_ldap._tcp.".concat(domain)};
   }
 
 
