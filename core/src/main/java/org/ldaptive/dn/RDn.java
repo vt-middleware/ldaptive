@@ -61,7 +61,7 @@ public class RDn
     if (rdns.size() > 1) {
       throw new IllegalArgumentException("Invalid RDN: multiple RDNs found in " + rdn);
     }
-    nameValues = rdns.get(0).getNameValues();
+    nameValues = Collections.unmodifiableSet(rdns.get(0).getNameValues());
   }
 
 

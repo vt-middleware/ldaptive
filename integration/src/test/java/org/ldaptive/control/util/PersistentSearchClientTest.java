@@ -118,10 +118,10 @@ public class PersistentSearchClientTest extends AbstractTest
     TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
 
     // modify dn
-    final String modDn = Dn.builder().add("CN=PSC").add(new Dn(dn).subDN(1)).build().format();
+    final String modDn = Dn.builder().add("CN=PSC").add(new Dn(dn).subDn(1)).build().format();
     final LdapAttribute cn = expectedResult.getEntry().getAttribute("cn");
     final ModifyDnOperation modifyDn = new ModifyDnOperation(cf);
-    modifyDn.execute(new ModifyDnRequest(dn, new Dn(modDn).getRDN().format(), true));
+    modifyDn.execute(new ModifyDnRequest(dn, new Dn(modDn).getRDn().format(), true));
     entry = (LdapEntry) queue.take();
     Assert.assertNotNull(entry);
     ecnc = (EntryChangeNotificationControl) entry.getControl(EntryChangeNotificationControl.OID);
@@ -131,7 +131,7 @@ public class PersistentSearchClientTest extends AbstractTest
     TestUtils.assertEquals(expectedResult.getEntry(), createCompareEntry(expectedResult.getEntry(), entry));
 
     // modify dn back
-    modifyDn.execute(new ModifyDnRequest(modDn, new Dn(dn).getRDN().format(), true));
+    modifyDn.execute(new ModifyDnRequest(modDn, new Dn(dn).getRDn().format(), true));
     entry = (LdapEntry) queue.take();
     Assert.assertNotNull(entry);
     ecnc = (EntryChangeNotificationControl) entry.getControl(EntryChangeNotificationControl.OID);

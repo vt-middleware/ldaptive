@@ -124,7 +124,7 @@ public class SearchOperationTest extends AbstractTest
       super.createLdapEntry(e.getValue()[0]);
     }
 
-    final String baseDn = new Dn(GROUP_ENTRIES.get("2")[0].getDn()).subDN(1).format();
+    final String baseDn = new Dn(GROUP_ENTRIES.get("2")[0].getDn()).subDn(1).format();
     // setup group relationships
     final ModifyOperation modify = new ModifyOperation(TestUtils.createSetupConnectionFactory());
     modify.execute(
@@ -290,7 +290,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
 
     final SearchRequest subtreeRequest = SearchRequest.builder()
-      .dn(new Dn(expectedResult.getEntry().getDn()).subDN(2).format())
+      .dn(new Dn(expectedResult.getEntry().getDn()).subDn(2).format())
       .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBTREE).build();
@@ -298,7 +298,7 @@ public class SearchOperationTest extends AbstractTest
     TestUtils.assertEquals(expectedResult, result);
 
     final SearchRequest onelevelRequest = SearchRequest.builder()
-      .dn(new Dn(expectedResult.getEntry().getDn()).subDN(1).format())
+      .dn(new Dn(expectedResult.getEntry().getDn()).subDn(1).format())
       .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.ONELEVEL).build();
@@ -314,7 +314,7 @@ public class SearchOperationTest extends AbstractTest
     TestUtils.assertEquals(expectedResult, result);
 
     final SearchRequest subordinateRequest = SearchRequest.builder()
-      .dn(new Dn(expectedResult.getEntry().getDn()).subDN(2).format())
+      .dn(new Dn(expectedResult.getEntry().getDn()).subDn(2).format())
       .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBORDINATE).build();
@@ -1490,7 +1490,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     // expects a referral on the dn ou=referrals
-    final String referralDn = Dn.builder().add("ou=referrals").add(new Dn(dn).subDN(1)).build().format();
+    final String referralDn = Dn.builder().add("ou=referrals").add(new Dn(dn).subDn(1)).build().format();
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
@@ -1524,7 +1524,7 @@ public class SearchOperationTest extends AbstractTest
 
     // default limit
     final String chaseReferralDn =
-      Dn.builder().add("cn=0,ou=referrals-chase").add(new Dn(dn).subDN(1)).build().format();
+      Dn.builder().add("cn=0,ou=referrals-chase").add(new Dn(dn).subDn(1)).build().format();
     request.setBaseDn(chaseReferralDn);
     request.setSearchScope(SearchScope.SUBTREE);
     request.setFilter("uupid=dhawes");
@@ -1596,7 +1596,7 @@ public class SearchOperationTest extends AbstractTest
     final List<String> refs = new ArrayList<>();
 
     // expects a referral on the root dn
-    final String referralDn = new Dn(dn).subDN(1).format();
+    final String referralDn = new Dn(dn).subDn(1).format();
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);
@@ -1636,7 +1636,7 @@ public class SearchOperationTest extends AbstractTest
     // chase search references
 
     // default limit
-    final String referenceDn = Dn.builder().add("ou=references-chase").add(new Dn(dn).subDN(1)).build().format();
+    final String referenceDn = Dn.builder().add("ou=references-chase").add(new Dn(dn).subDn(1)).build().format();
     request.setBaseDn(referenceDn);
     request.setSearchScope(SearchScope.ONELEVEL);
     request.setFilter("uupid=dhawes");
@@ -1702,7 +1702,7 @@ public class SearchOperationTest extends AbstractTest
     final List<String> refs = new ArrayList<>();
 
     // expects a referral on the root dn
-    final String referralDn = new Dn(dn).subDN(1).format();
+    final String referralDn = new Dn(dn).subDn(1).format();
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(referralDn);
     request.setSearchScope(SearchScope.ONELEVEL);

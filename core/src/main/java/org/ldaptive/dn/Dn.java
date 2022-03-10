@@ -83,7 +83,7 @@ public class Dn
    *
    * @return  first RDN
    */
-  public RDn getRDN()
+  public RDn getRDn()
   {
     if (rdnComponents.size() == 0) {
       return null;
@@ -97,7 +97,7 @@ public class Dn
    *
    * @return  RDNs
    */
-  public List<RDn> getRDNs()
+  public List<RDn> getRDns()
   {
     return rdnComponents;
   }
@@ -110,7 +110,7 @@ public class Dn
    */
   public void add(final Dn dn)
   {
-    dn.getRDNs().stream().forEach(rdn -> rdnComponents.add(rdn));
+    dn.getRDns().stream().forEach(rdn -> rdnComponents.add(rdn));
   }
 
 
@@ -144,9 +144,9 @@ public class Dn
    *
    * @return  DN with sub-components of this DN
    */
-  public Dn subDN(final int index)
+  public Dn subDn(final int index)
   {
-    return subDN(index, rdnComponents.size());
+    return subDn(index, rdnComponents.size());
   }
 
 
@@ -158,7 +158,7 @@ public class Dn
    *
    * @return  DN with sub-components of this DN
    */
-  public Dn subDN(final int beginIndex, final int endIndex)
+  public Dn subDn(final int beginIndex, final int endIndex)
   {
     return new Dn(IntStream
       .range(0, rdnComponents.size())

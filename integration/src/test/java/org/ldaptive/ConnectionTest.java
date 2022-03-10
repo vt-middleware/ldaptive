@@ -102,7 +102,7 @@ public class ConnectionTest
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     response = modifyDn.execute(
       new ModifyDnRequest(
-        Dn.builder().add("cn=James Buchanan Jr.").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format(),
+        Dn.builder().add("cn=James Buchanan Jr.").add(new Dn(testLdapEntry.getDn()).subDn(1)).build().format(),
         "cn=James Buchanan",
         true));
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
@@ -116,7 +116,7 @@ public class ConnectionTest
   {
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
     final SearchResponse lr = search.execute(
-      new SearchRequest(new Dn(testLdapEntry.getDn()).subDN(1).format(), "(uid=15)"));
+      new SearchRequest(new Dn(testLdapEntry.getDn()).subDn(1).format(), "(uid=15)"));
     Assert.assertEquals(lr.getEntry().getDn().toLowerCase(), testLdapEntry.getDn().toLowerCase());
   }
 

@@ -100,7 +100,7 @@ public class PropertiesTest
       "classpath:/org/ldaptive/ldap.parser.properties");
     srSource.initialize();
 
-    Assert.assertEquals(sr.getBaseDn().toLowerCase(), new Dn(bindDn).subDN(1).format().toLowerCase());
+    Assert.assertEquals(sr.getBaseDn().toLowerCase(), new Dn(bindDn).subDn(1).format().toLowerCase());
     Assert.assertEquals(sr.getSearchScope(), SearchScope.OBJECT);
     Assert.assertEquals(sr.getTimeLimit(), Duration.ofSeconds(5));
     Assert.assertEquals(sr.getBinaryAttributes()[0], "jpegPhoto");
@@ -206,7 +206,7 @@ public class PropertiesTest
     Assert.assertTrue(cc.getUseStartTLS());
     Assert.assertEquals(cc.getConnectionStrategy().getClass(), RoundRobinConnectionStrategy.class);
 
-    Assert.assertEquals(searchRequest.getBaseDn().toLowerCase(), new Dn(bindDn).subDN(1).format().toLowerCase());
+    Assert.assertEquals(searchRequest.getBaseDn().toLowerCase(), new Dn(bindDn).subDn(1).format().toLowerCase());
     Assert.assertEquals(searchRequest.getSearchScope(), SearchScope.OBJECT);
     Assert.assertEquals(searchRequest.getTimeLimit(), Duration.ofSeconds(5));
     Assert.assertEquals(searchRequest.getBinaryAttributes()[0], "jpegPhoto");

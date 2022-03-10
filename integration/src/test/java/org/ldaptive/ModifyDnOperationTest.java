@@ -66,7 +66,7 @@ public class ModifyDnOperationTest extends AbstractTest
     Assert.assertTrue(search.execute(SearchRequest.objectScopeSearchRequest(oldDn)).entrySize() > 0);
 
     final ModifyDnOperation modifyDn = new ModifyDnOperation(TestUtils.createConnectionFactory());
-    ModifyDnResponse response = modifyDn.execute(new ModifyDnRequest(oldDn, new Dn(newDn).getRDN().format(), true));
+    ModifyDnResponse response = modifyDn.execute(new ModifyDnRequest(oldDn, new Dn(newDn).getRDn().format(), true));
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     modifyDnLdapEntry = search.execute(SearchRequest.objectScopeSearchRequest(newDn)).getEntry();
     Assert.assertNotNull(modifyDnLdapEntry);
@@ -76,7 +76,7 @@ public class ModifyDnOperationTest extends AbstractTest
     } catch (Exception e) {
       Assert.fail("Should have thrown LdapException, threw " + e);
     }
-    response = modifyDn.execute(new ModifyDnRequest(newDn, new Dn(oldDn).getRDN().format(), true));
+    response = modifyDn.execute(new ModifyDnRequest(newDn, new Dn(oldDn).getRDn().format(), true));
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     Assert.assertTrue(search.execute(SearchRequest.objectScopeSearchRequest(oldDn)).entrySize() > 0);
     try {

@@ -107,8 +107,8 @@ public class LdapLoginModuleTest extends AbstractTest
           AttributeModification.Type.ADD,
           new LdapAttribute(
             "member",
-            Dn.builder().add("cn=John Tyler").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format(),
-            Dn.builder().add("cn=Group 7").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format()))));
+            Dn.builder().add("cn=John Tyler").add(new Dn(testLdapEntry.getDn()).subDn(1)).build().format(),
+            Dn.builder().add("cn=Group 7").add(new Dn(testLdapEntry.getDn()).subDn(1)).build().format()))));
     modify.execute(
       new ModifyRequest(
         GROUP_ENTRIES.get("7")[0].getDn(),
@@ -116,8 +116,8 @@ public class LdapLoginModuleTest extends AbstractTest
           AttributeModification.Type.ADD,
           new LdapAttribute(
             "member",
-            Dn.builder().add("cn=Group 8").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format(),
-            Dn.builder().add("cn=Group 9").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format()))));
+            Dn.builder().add("cn=Group 8").add(new Dn(testLdapEntry.getDn()).subDn(1)).build().format(),
+            Dn.builder().add("cn=Group 9").add(new Dn(testLdapEntry.getDn()).subDn(1)).build().format()))));
     modify.execute(
       new ModifyRequest(
         GROUP_ENTRIES.get("8")[0].getDn(),
@@ -125,7 +125,7 @@ public class LdapLoginModuleTest extends AbstractTest
           AttributeModification.Type.ADD,
           new LdapAttribute(
             "member",
-            Dn.builder().add("cn=Group 7").add(new Dn(testLdapEntry.getDn()).subDN(1)).build().format()))));
+            Dn.builder().add("cn=Group 7").add(new Dn(testLdapEntry.getDn()).subDn(1)).build().format()))));
   }
 
 
