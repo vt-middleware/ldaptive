@@ -164,15 +164,37 @@ public class DefaultConnectionFactory implements ConnectionFactory
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @param  t  transport
+   *
+   * @return  new builder
+   */
+  public static Builder builder(final Transport t)
+  {
+    return new Builder(t);
+  }
+
+
   // CheckStyle:OFF
   public static class Builder
   {
 
 
-    private final DefaultConnectionFactory object = new DefaultConnectionFactory();
+    private final DefaultConnectionFactory object;
 
 
-    protected Builder() {}
+    protected Builder()
+    {
+      object = new DefaultConnectionFactory();
+    }
+
+
+    protected Builder(final Transport t)
+    {
+      object = new DefaultConnectionFactory(t);
+    }
 
 
     public Builder config(final ConnectionConfig cc)

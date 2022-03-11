@@ -334,14 +334,36 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @param  t  transport
+   *
+   * @return  new builder
+   */
+  public static Builder builder(final Transport t)
+  {
+    return new Builder(t);
+  }
+
+
   // CheckStyle:OFF
   public static class Builder extends DefaultConnectionFactory.Builder
   {
 
-    private final SingleConnectionFactory object = new SingleConnectionFactory();
+    private final SingleConnectionFactory object;
 
 
-    protected Builder() {}
+    protected Builder()
+    {
+      object = new SingleConnectionFactory();
+    }
+
+
+    protected Builder(final Transport transport)
+    {
+      object = new SingleConnectionFactory(transport);
+    }
 
 
     public Builder config(final ConnectionConfig cc)

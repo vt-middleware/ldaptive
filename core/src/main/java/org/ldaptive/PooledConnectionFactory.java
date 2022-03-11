@@ -194,14 +194,36 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
   }
 
 
+  /**
+   * Creates a builder for this class.
+   *
+   * @param  t  transport
+   *
+   * @return  new builder
+   */
+  public static Builder builder(final Transport t)
+  {
+    return new Builder(t);
+  }
+
+
   // CheckStyle:OFF
   public static class Builder
   {
 
-    private final PooledConnectionFactory object = new PooledConnectionFactory();
+    private final PooledConnectionFactory object;
 
 
-    protected Builder() {}
+    protected Builder()
+    {
+      object = new PooledConnectionFactory();
+    }
+
+
+    protected Builder(final Transport t)
+    {
+      object = new PooledConnectionFactory(t);
+    }
 
 
     public Builder config(final ConnectionConfig cc)
