@@ -342,11 +342,8 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
       while (currentPoolSize < size && count < size * 2) {
         try {
           final PooledConnectionProxy pc = createAvailableConnection(throwOnFailure);
-          if (pc != null && getPoolConfig().isValidateOnCheckIn()) {
-            if (validate(pc.getConnection())) {
-              logger.trace("connection passed initialize validation: {}", pc);
-            } else {
-              logger.warn("connection failed initialize validation: {}", pc);
+          if (pc != null && connectOnCreate) {
+            if (!validateAndPassivateConnection(pc)) {
               removeAvailableConnection(pc);
             }
           }
@@ -669,17 +666,18 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
     }
 
     boolean valid = false;
-    if (getPoolConfig().isValidateOnCheckIn()) {
-      if (!validate(pc.getConnection())) {
-        logger.warn("connection failed check in validation: {}", pc);
+    if (passivate(pc.getConnection())) {
+      if (getPoolConfig().isValidateOnCheckIn()) {
+        if (validate(pc.getConnection())) {
+          logger.trace("connection passed initialize validation: {}", pc);
+          valid = true;
+        } else {
+          logger.warn("connection failed check in validation: {}", pc);
+        }
       } else {
         valid = true;
       }
     } else {
-      valid = true;
-    }
-    if (valid && !passivate(pc.getConnection())) {
-      valid = false;
       logger.warn("connection failed passivation: {}", pc);
     }
     return valid;
