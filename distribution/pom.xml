@@ -129,7 +129,7 @@
             <configuration>
               <includeGroupIds>org.ldaptive</includeGroupIds>
               <includeClassifiers>sources</includeClassifiers>
-              <outputDirectory>${project.build.directory}/sources</outputDirectory>
+              <outputDirectory>${project.build.directory}/dist-sources</outputDirectory>
             </configuration>
           </execution>
           <execution>

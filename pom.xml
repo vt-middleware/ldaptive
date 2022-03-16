@@ -386,7 +386,7 @@
               <goal>jar</goal>
             </goals>
             <configuration>
-              <sourcepath>${project.build.sourceDirectory}:${project.build.directory}/sources</sourcepath>
+              <sourcepath>${project.build.sourceDirectory}:${project.build.directory}/dist-sources</sourcepath>
             </configuration>
           </execution>
         </executions>

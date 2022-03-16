@@ -666,3 +666,13 @@
      Assert.assertEquals(entry2, entries[0]);
      Assert.assertEquals(entry1, entries[1]);
    }
+--- core/src/main/java/org/ldaptive/dn/RDn.java
++++ core/src/main/java/org/ldaptive/dn/RDn.java
+@@ -97,7 +97,7 @@ public class RDn
+    */
+   public RDn(final String attributeName, final String attributeValue)
+   {
+-    nameValues = Set.of(new NameValue(attributeName, attributeValue));
++    nameValues = Collections.singleton(new NameValue(attributeName, attributeValue));
+   }
+
