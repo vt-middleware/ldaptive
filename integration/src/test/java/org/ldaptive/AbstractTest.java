@@ -4,6 +4,7 @@ package org.ldaptive;
 import java.security.Security;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ldaptive.ad.UnicodePwdAttribute;
+import org.ldaptive.dn.Dn;
 
 /**
  * Contains functions common to all tests.
@@ -91,6 +92,6 @@ public abstract class AbstractTest
     throws Exception
   {
     final CompareOperation compare = new CompareOperation(cf);
-    return compare.execute(new CompareRequest(entry.getDn(), "CN", DnParser.getValue(entry.getDn(), "CN"))).isTrue();
+    return compare.execute(new CompareRequest(entry.getDn(), "CN", new Dn(entry.getDn()).getValue("CN"))).isTrue();
   }
 }
