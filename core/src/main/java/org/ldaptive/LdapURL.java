@@ -108,11 +108,11 @@ public class LdapURL
 
 
   /**
-   * Creates a new entry.
+   * Creates a new ldap url.
    *
-   * @param  scheme  entryScheme
-   * @param  hostname  entryHostname
-   * @param  port  entryPort
+   * @param  scheme  url scheme
+   * @param  hostname  url hostname
+   * @param  port  url port
    * @param  baseDn  base DN
    * @param  attributes  attributes
    * @param  scope  search scope
@@ -141,9 +141,9 @@ public class LdapURL
 
 
   /**
-   * Returns the entryScheme.
+   * Returns the scheme.
    *
-   * @return  entryScheme
+   * @return  scheme
    */
   public String getScheme()
   {
@@ -152,9 +152,9 @@ public class LdapURL
 
 
   /**
-   * Returns the entryHostname.
+   * Returns the hostname.
    *
-   * @return  entryHostname
+   * @return  hostname
    */
   public String getHostname()
   {
@@ -163,9 +163,9 @@ public class LdapURL
 
 
   /**
-   * Returns the entryPort.
+   * Returns the port. If no port was supplied, returns the default port for the scheme.
    *
-   * @return  entryPort
+   * @return  port
    */
   public int getPort()
   {
@@ -177,9 +177,9 @@ public class LdapURL
 
 
   /**
-   * Returns whether a port was supplied in this entry.
+   * Returns false if a port was supplied in this url.
    *
-   * @return  whether a port was supplied in this entry
+   * @return  false if a port was supplied in this url
    */
   public boolean isDefaultPort()
   {
@@ -199,9 +199,9 @@ public class LdapURL
 
 
   /**
-   * Returns whether a base DN was supplied in this entry.
+   * Returns whether a base DN was supplied in this url.
    *
-   * @return  whether a base DN was supplied in this entry
+   * @return  whether a base DN was supplied in this url
    */
   public boolean isDefaultBaseDn()
   {
@@ -221,9 +221,9 @@ public class LdapURL
 
 
   /**
-   * Returns whether attributes were supplied in this entry.
+   * Returns whether attributes were supplied in this url.
    *
-   * @return  whether a attributes were supplied in this entry
+   * @return  whether a attributes were supplied in this url
    */
   public boolean isDefaultAttributes()
   {
@@ -243,9 +243,9 @@ public class LdapURL
 
 
   /**
-   * Returns whether a scope was supplied in this entry.
+   * Returns whether a scope was supplied in this url.
    *
-   * @return  whether a scope was supplied in this entry
+   * @return  whether a scope was supplied in this url
    */
   public boolean isDefaultScope()
   {
@@ -265,9 +265,9 @@ public class LdapURL
 
 
   /**
-   * Returns whether a filter was supplied in this entry.
+   * Returns whether a filter was supplied in this url.
    *
-   * @return  whether a filter was supplied in this entry
+   * @return  whether a filter was supplied in this url
    */
   public boolean isDefaultFilter()
   {
