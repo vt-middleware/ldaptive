@@ -12,7 +12,10 @@ import org.ldaptive.transcode.ValueTranscoder;
  * A set of attribute value assertions.
  *
  * @author  Middleware Services
+ *
+ * @deprecated Use {@link org.ldaptive.dn.RDn}
  */
+@Deprecated
 public class RDN implements DEREncoder
 {
 

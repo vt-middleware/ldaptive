@@ -1,19 +1,21 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.asn1;
+package org.ldaptive.ssl;
 
-import java.nio.charset.StandardCharsets;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.asn1.DefaultDERBuffer;
+import org.ldaptive.dn.Dn;
+import org.ldaptive.dn.NameValue;
+import org.ldaptive.dn.RDn;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for {@link DN}.
+ * Unit test for {@link X509DnDecoder}.
  *
  * @author  Middleware Services
  */
-@SuppressWarnings("deprecation")
-public class DNTest
+public class X509DnDecoderTest
 {
 
 
@@ -25,7 +27,7 @@ public class DNTest
    * @throws  Exception  On test failure.
    */
   // CheckStyle:MethodLength OFF
-  @DataProvider(name = "dns")
+  @DataProvider(name = "DNs")
   public Object[][] createData()
     throws Exception
   {
@@ -55,21 +57,10 @@ public class DNTest
             (byte) 0x19, (byte) 0x16, (byte) 0x03, (byte) 0x6F, (byte) 0x72,
             (byte) 0x67,
           },
-          new DN(
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
-                  "www.ldaptive.org".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR,
-                  "ldaptive".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "org".getBytes(StandardCharsets.UTF_8))))),
+          new Dn(
+            new RDn(new NameValue("2.5.4.3", "www.ldaptive.org")),
+            new RDn(new NameValue("0.9.2342.19200300.100.1.25", "ldaptive")),
+            new RDn(new NameValue("0.9.2342.19200300.100.1.25", "org"))),
         },
         // DC=org, DC=ldaptive, UID=7 + CN=www.ldaptive.org
         // BER 30:5B:31:2A:30:0F:06:0A:09:92:26:89:93:F2:2C:64:01:01:13:01:37:30
@@ -99,24 +90,12 @@ public class DNTest
             (byte) 0x64, (byte) 0x01, (byte) 0x19, (byte) 0x16, (byte) 0x03,
             (byte) 0x6F, (byte) 0x72, (byte) 0x67,
           },
-          new DN(
-            new RDN(
-              new AttributeValueAssertion(
-                "0.9.2342.19200300.100.1.1",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "7".getBytes(StandardCharsets.UTF_8))),
-              new AttributeValueAssertion(
-                "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
-                  "www.ldaptive.org".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR,
-                  "ldaptive".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "org".getBytes(StandardCharsets.UTF_8))))),
+          new Dn(
+            new RDn(
+              new NameValue("0.9.2342.19200300.100.1.1", "7"),
+              new NameValue("2.5.4.3", "www.ldaptive.org")),
+            new RDn(new NameValue("0.9.2342.19200300.100.1.25", "ldaptive")),
+            new RDn(new NameValue("0.9.2342.19200300.100.1.25", "org"))),
         },
         // O="CN=www.apache.org, foo", CN=www.example.org
         // BER 30:3B:31:18:30:16:06:03:55:04:03:13:0F:77:77:77:2E:65:78:61:6D:70
@@ -138,18 +117,9 @@ public class DNTest
             (byte) 0x67, (byte) 0x2C, (byte) 0x20, (byte) 0x66, (byte) 0x6F,
             (byte) 0x6F,
           },
-          new DN(
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
-                  "www.example.org".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.10",
-                new AttributeValueAssertion.Value(
-                  UniversalDERTag.PRINTSTR,
-                  "CN=www.apache.org, foo".getBytes(StandardCharsets.UTF_8))))),
+          new Dn(
+            new RDn(new NameValue("2.5.4.3", "www.example.org")),
+            new RDn(new NameValue("2.5.4.10", "CN=www.apache.org, foo"))),
         },
         // O="foo, CN=www.apache.org,", CN=www.example.org
         // BER 30:3C:31:18:30:16:06:03:55:04:03:13:0F:77:77:77:2E:65:78:61:6D:70
@@ -171,18 +141,9 @@ public class DNTest
             (byte) 0x68, (byte) 0x65, (byte) 0x2E, (byte) 0x6F, (byte) 0x72,
             (byte) 0x67, (byte) 0x2C,
           },
-          new DN(
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
-                  "www.example.org".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.10",
-                new AttributeValueAssertion.Value(
-                  UniversalDERTag.PRINTSTR,
-                  "foo, CN=www.apache.org,".getBytes(StandardCharsets.UTF_8))))),
+          new Dn(
+            new RDn(new NameValue("2.5.4.3", "www.example.org")),
+            new RDn(new NameValue("2.5.4.10", "foo, CN=www.apache.org,"))),
         },
         // CN=login.live.com, OU=Passport, O=Microsoft Corporation,
         // STREET=One Microsoft Way, L=Redmond, ST=Washington,
@@ -206,68 +167,24 @@ public class DNTest
         new Object[] {
           LdapUtils.base64Decode(
             "MIQAAAEPMRMwEQYLKwYBBAGCNzwCAQMTAlVTMRswGQYLKwYBBAGCNzwCAQITCldh" +
-            "c2hpbmd0b24xGzAZBgNVBA8TElYxLjAsIENsYXVzZSA1LihiKTESMBAGA1UEBRMJ" +
-            "NjAwNDEzNDg1MQswCQYDVQQGEwJVUzEOMAwGA1UEERQFOTgwNTIxEzARBgNVBAgT" +
-            "Cldhc2hpbmd0b24xEDAOBgNVBAcUB1JlZG1vbmQxGjAYBgNVBAkUEU9uZSBNaWNy" +
-            "b3NvZnQgV2F5MR4wHAYDVQQKFBVNaWNyb3NvZnQgQ29ycG9yYXRpb24xETAPBgNV" +
-            "BAsUCFBhc3Nwb3J0MRcwFQYDVQQDFA5sb2dpbi5saXZlLmNvbQ=="),
-          new DN(
-            new RDN(
-              new AttributeValueAssertion(
-                "1.3.6.1.4.1.311.60.2.1.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "US".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "1.3.6.1.4.1.311.60.2.1.2",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
-                  "Washington".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.15",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
-                  "V1.0, Clause 5.(b)".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.5",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
-                  "600413485".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.6",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "US".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.17",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "98052".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.8",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
-                  "Washington".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.7",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR, "Redmond".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.9",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR,
-                  "One Microsoft Way".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.10",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR,
-                  "Microsoft Corporation".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.11",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR,
-                  "Passport".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.T61STR,
-                  "login.live.com".getBytes(StandardCharsets.UTF_8))))),
+              "c2hpbmd0b24xGzAZBgNVBA8TElYxLjAsIENsYXVzZSA1LihiKTESMBAGA1UEBRMJ" +
+              "NjAwNDEzNDg1MQswCQYDVQQGEwJVUzEOMAwGA1UEERQFOTgwNTIxEzARBgNVBAgT" +
+              "Cldhc2hpbmd0b24xEDAOBgNVBAcUB1JlZG1vbmQxGjAYBgNVBAkUEU9uZSBNaWNy" +
+              "b3NvZnQgV2F5MR4wHAYDVQQKFBVNaWNyb3NvZnQgQ29ycG9yYXRpb24xETAPBgNV" +
+              "BAsUCFBhc3Nwb3J0MRcwFQYDVQQDFA5sb2dpbi5saXZlLmNvbQ=="),
+          new Dn(
+            new RDn(new NameValue("1.3.6.1.4.1.311.60.2.1.3", "US")),
+            new RDn(new NameValue("1.3.6.1.4.1.311.60.2.1.2", "Washington")),
+            new RDn(new NameValue("2.5.4.15", "V1.0, Clause 5.(b)")),
+            new RDn(new NameValue("2.5.4.5", "600413485")),
+            new RDn(new NameValue("2.5.4.6", "US")),
+            new RDn(new NameValue("2.5.4.17", "98052")),
+            new RDn(new NameValue("2.5.4.8", "Washington")),
+            new RDn(new NameValue("2.5.4.7", "Redmond")),
+            new RDn(new NameValue("2.5.4.9", "One Microsoft Way")),
+            new RDn(new NameValue("2.5.4.10", "Microsoft Corporation")),
+            new RDn(new NameValue("2.5.4.11", "Passport")),
+            new RDn(new NameValue("2.5.4.3", "login.live.com"))),
         },
         // C=US, DC=edu, DC=vt, ST=Virginia, L=Blacksburg,
         // O=Virginia Polytechnic Institute and State University,
@@ -288,59 +205,22 @@ public class DNTest
         new Object[] {
           LdapUtils.base64Decode(
             "MIQAAAD6MRkwFwYDVQQDDBBnbGlkZXIuY2MudnQuZWR1MRYwFAYDVQQFEw0xMjQ4" +
-            "MTEwNjU3OTYxMQ0wCwYDVQQLDARTRVRJMRowGAYDVQQLDBFNaWRkbGV3YXJlLUNs" +
-            "aWVudDE8MDoGA1UECgwzVmlyZ2luaWEgUG9seXRlY2huaWMgSW5zdGl0dXRlIGFu" +
-            "ZCBTdGF0ZSBVbml2ZXJzaXR5MRMwEQYDVQQHDApCbGFja3NidXJnMREwDwYDVQQI" +
-            "DAhWaXJnaW5pYTESMBAGCgmSJomT8ixkARkWAnZ0MRMwEQYKCZImiZPyLGQBGRYD" +
-            "ZWR1MQswCQYDVQQGEwJVUw=="),
-          new DN(
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.3",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR,
-                  "glider.cc.vt.edu".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.5",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR,
-                  "1248110657961".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.11",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR, "SETI".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.11",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR,
-                  "Middleware-Client".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.10",
-                new AttributeValueAssertion.Value(
-                  UniversalDERTag.UTF8STR,
-                  "Virginia Polytechnic Institute and State University".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.7",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR,
-                  "Blacksburg".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.8",
-                new AttributeValueAssertion.Value(UniversalDERTag.UTF8STR,
-                  "Virginia".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "vt".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "0.9.2342.19200300.100.1.25",
-                new AttributeValueAssertion.Value(UniversalDERTag.IA5STR, "edu".getBytes(StandardCharsets.UTF_8)))),
-            new RDN(
-              new AttributeValueAssertion(
-                "2.5.4.6",
-                new AttributeValueAssertion.Value(UniversalDERTag.PRINTSTR, "US".getBytes(StandardCharsets.UTF_8))))),
+              "MTEwNjU3OTYxMQ0wCwYDVQQLDARTRVRJMRowGAYDVQQLDBFNaWRkbGV3YXJlLUNs" +
+              "aWVudDE8MDoGA1UECgwzVmlyZ2luaWEgUG9seXRlY2huaWMgSW5zdGl0dXRlIGFu" +
+              "ZCBTdGF0ZSBVbml2ZXJzaXR5MRMwEQYDVQQHDApCbGFja3NidXJnMREwDwYDVQQI" +
+              "DAhWaXJnaW5pYTESMBAGCgmSJomT8ixkARkWAnZ0MRMwEQYKCZImiZPyLGQBGRYD" +
+              "ZWR1MQswCQYDVQQGEwJVUw=="),
+          new Dn(
+            new RDn(new NameValue("2.5.4.3", "glider.cc.vt.edu")),
+            new RDn(new NameValue("2.5.4.5", "1248110657961")),
+            new RDn(new NameValue("2.5.4.11", "SETI")),
+            new RDn(new NameValue("2.5.4.11", "Middleware-Client")),
+            new RDn(new NameValue("2.5.4.10", "Virginia Polytechnic Institute and State University")),
+            new RDn(new NameValue("2.5.4.7", "Blacksburg")),
+            new RDn(new NameValue("2.5.4.8", "Virginia")),
+            new RDn(new NameValue("0.9.2342.19200300.100.1.25", "vt")),
+            new RDn(new NameValue("0.9.2342.19200300.100.1.25", "edu")),
+            new RDn(new NameValue("2.5.4.6", "US"))),
         },
       };
   }
@@ -353,24 +233,11 @@ public class DNTest
    *
    * @throws  Exception  On test failure.
    */
-  @Test(groups = "asn1", dataProvider = "dns")
-  public void decode(final byte[] bytes, final DN expected)
+  @Test(groups = "ssl", dataProvider = "DNs")
+  public void decode(final byte[] bytes, final Dn expected)
     throws Exception
   {
-    Assert.assertEquals(DN.decode(new DefaultDERBuffer(bytes)), expected);
-  }
-
-
-  /**
-   * @param  expected  bytes to compare.
-   * @param  sequence  to encode.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(groups = "asn1", dataProvider = "dns")
-  public void encode(final byte[] expected, final DN sequence)
-    throws Exception
-  {
-    Assert.assertEquals(sequence.encode(), expected);
+    final X509DnDecoder decoder = new X509DnDecoder();
+    Assert.assertEquals(decoder.apply(new DefaultDERBuffer(bytes)), expected);
   }
 }

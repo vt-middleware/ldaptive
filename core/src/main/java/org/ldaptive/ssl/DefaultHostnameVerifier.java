@@ -10,10 +10,10 @@ import java.util.List;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLSession;
 import org.ldaptive.LdapUtils;
-import org.ldaptive.asn1.DN;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.ldaptive.asn1.RDN;
-import org.ldaptive.transcode.StringValueTranscoder;
+import org.ldaptive.dn.Dn;
+import org.ldaptive.dn.NameValue;
+import org.ldaptive.dn.RDn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -212,12 +212,13 @@ public class DefaultHostnameVerifier implements HostnameVerifier, CertificateHos
     final List<String> names = new ArrayList<>();
     final byte[] encodedDn = cert.getSubjectX500Principal().getEncoded();
     if (encodedDn != null && encodedDn.length > 0) {
-      final DN dn = DN.decode(new DefaultDERBuffer(encodedDn));
-      for (RDN rdn : dn.getRDNs()) {
+      final X509DnDecoder decoder = new X509DnDecoder();
+      final Dn dn = decoder.apply(new DefaultDERBuffer(encodedDn));
+      for (RDn rdn : dn.getRDns()) {
         // for multi value RDNs the first value is used
-        final String value = rdn.getAttributeValue("2.5.4.3", new StringValueTranscoder());
-        if (value != null) {
-          names.add(value);
+        final NameValue nameValue = rdn.getNameValue("2.5.4.3");
+        if (nameValue != null) {
+          names.add(nameValue.getStringValue());
         }
       }
     }

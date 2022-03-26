@@ -11,7 +11,10 @@ import org.ldaptive.LdapUtils;
  * A sequence of RDN values.
  *
  * @author  Middleware Services
+ *
+ * @deprecated Use {@link org.ldaptive.dn.Dn}
  */
+@Deprecated
 public class DN implements DEREncoder
 {
 

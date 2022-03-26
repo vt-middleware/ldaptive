@@ -127,6 +127,33 @@ public class RDn
 
 
   /**
+   * Returns the name values that match the supplied name.
+   *
+   * @param  name  to match
+   *
+   * @return  name values
+   */
+  public Set<NameValue> getNameValues(final String name)
+  {
+    return nameValues.stream().filter(nv -> nv.hasName(name))
+      .collect(Collectors.collectingAndThen(Collectors.toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
+  }
+
+
+  /**
+   * Returns a single name value that matches the supplied name. See {@link #getNameValues(String)}.
+   *
+   * @param  name  to match
+   *
+   * @return  name value
+   */
+  public NameValue getNameValue(final String name)
+  {
+    return getNameValues(name).stream().findFirst().orElse(null);
+  }
+
+
+  /**
    * Returns the number of name value pairs in this RDN.
    *
    * @return  RDN size

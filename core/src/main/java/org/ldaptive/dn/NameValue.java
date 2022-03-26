@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.dn;
 
+import java.nio.ByteBuffer;
+import java.util.function.Function;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -17,7 +19,7 @@ public class NameValue
   private final String attributeName;
 
   /** Attribute value. */
-  private final String attributeValue;
+  private final ByteBuffer attributeValue;
 
 
   /**
@@ -28,8 +30,20 @@ public class NameValue
    */
   public NameValue(final String name, final String value)
   {
+    this(name, LdapUtils.utf8Encode(value));
+  }
+
+
+  /**
+   * Creates a new name value.
+   *
+   * @param  name  of the attribute
+   * @param  value  of the attribute
+   */
+  public NameValue(final String name, final byte[] value)
+  {
     attributeName = name;
-    attributeValue = value;
+    attributeValue = value != null ? ByteBuffer.wrap(value) : null;
   }
 
 
@@ -38,20 +52,27 @@ public class NameValue
    *
    * @return  attribute name
    */
-  public String getAttributeName()
+  public String getName()
   {
     return attributeName;
   }
 
 
-  /**
-   * Returns the attribute value.
-   *
-   * @return  attribute value
-   */
-  public String getAttributeValue()
+  public byte[] getBinaryValue()
   {
-    return attributeValue;
+    return attributeValue != null ? attributeValue.array() : null;
+  }
+
+
+  public String getStringValue()
+  {
+    return attributeValue != null ? LdapUtils.utf8Encode(attributeValue.array()) : null;
+  }
+
+
+  public <T> T getValue(final Function<byte[], T> func)
+  {
+    return attributeValue != null ? func.apply(attributeValue.array()) : null;
   }
 
 
@@ -76,7 +97,8 @@ public class NameValue
   public String format()
   {
     final StringBuilder sb = new StringBuilder();
-    sb.append(attributeName).append("=").append(attributeValue);
+    sb.append(attributeName)
+      .append("=").append(LdapUtils.utf8Encode(attributeValue != null ? attributeValue.array() : null));
     return sb.toString();
   }
 
@@ -89,7 +111,9 @@ public class NameValue
     }
     if (o instanceof NameValue) {
       final NameValue v = (NameValue) o;
-      return LdapUtils.areEqual(attributeName, v.attributeName) &&
+      return LdapUtils.areEqual(
+        attributeName != null ? attributeName.toLowerCase() : null,
+        v.attributeName != null ? v.attributeName.toLowerCase() : null) &&
         LdapUtils.areEqual(attributeValue, v.attributeValue);
     }
     return false;
@@ -99,7 +123,11 @@ public class NameValue
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeName, attributeValue);
+    return
+      LdapUtils.computeHashCode(
+        HASH_CODE_SEED,
+        attributeName != null ? attributeName.toLowerCase() : null,
+        attributeValue);
   }
 
 
@@ -109,6 +137,6 @@ public class NameValue
     return new StringBuilder(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("name=").append(attributeName).append(", ")
-      .append("value=").append(attributeValue).toString();
+      .append("value=").append(getStringValue()).toString();
   }
 }

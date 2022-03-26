@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
  *
  * @author  Middleware Services
  */
+@SuppressWarnings("deprecation")
 public class DnParserTest
 {
 

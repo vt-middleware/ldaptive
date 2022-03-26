@@ -179,7 +179,7 @@ public class Dn
   {
     return rdnComponents.stream()
       .filter(rdn -> rdn.getNameValue().hasName(name))
-      .map(rdn -> rdn.getNameValue().getAttributeValue())
+      .map(rdn -> rdn.getNameValue().getStringValue())
       .collect(Collectors.toList());
   }
 

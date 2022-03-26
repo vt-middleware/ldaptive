@@ -21,7 +21,7 @@ public class DNSDomainFunction implements Function<Dn, String>
     final StringBuilder domain = new StringBuilder();
     for (RDn rdn : dn.getRDns()) {
       if (rdn.size() == 1 && rdn.getNameValue().hasName("DC")) {
-        final String attrValue = rdn.getNameValue().getAttributeValue();
+        final String attrValue = rdn.getNameValue().getStringValue();
         // ignore empty DC components or any component containing a single dot
         if (attrValue != null && !attrValue.isEmpty() && !".".equals(attrValue)) {
           if (domain.length() > 0) {
