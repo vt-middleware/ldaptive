@@ -309,6 +309,7 @@ public class SyncInfoMessage extends IntermediateResponse
         getMessageID(),
         getControls(),
         getResponseName(),
+        getResponseValue(),
         messageType,
         cookie,
         refreshDone,

@@ -199,7 +199,9 @@ public class DERPath
     }
     if (o instanceof DERPath) {
       final DERPath v = (DERPath) o;
-      return LdapUtils.areEqual(nodeStack.toArray(), v.nodeStack.toArray());
+      return LdapUtils.areEqual(
+        nodeStack != null ? nodeStack.toArray() : null,
+        v.nodeStack != null ? v.nodeStack.toArray() : null);
     }
     return false;
   }
@@ -209,8 +211,10 @@ public class DERPath
   public int hashCode()
   {
     int hc = HASH_CODE_SEED;
-    for (Node n : nodeStack) {
-      hc = HASH_CODE_SEED * hc + n.hashCode();
+    if (nodeStack != null && !nodeStack.isEmpty()) {
+      for (Node n : nodeStack) {
+        hc = HASH_CODE_SEED * hc + n.hashCode();
+      }
     }
     return hc;
   }
@@ -219,6 +223,9 @@ public class DERPath
   @Override
   public String toString()
   {
+    if (nodeStack == null) {
+      return "";
+    }
     final StringBuilder sb = new StringBuilder(nodeStack.size() * 10);
     for (Node node : nodeStack) {
       sb.append(PATH_SEPARATOR);

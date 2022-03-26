@@ -99,14 +99,18 @@ public class PasswordExpiringControl extends AbstractControl implements Response
     if (o == this) {
       return true;
     }
-    return o instanceof PasswordExpiringControl && super.equals(o);
+    if (o instanceof PasswordExpiringControl && super.equals(o)) {
+      final PasswordExpiringControl v = (PasswordExpiringControl) o;
+      return LdapUtils.areEqual(timeBeforeExpiration, v.timeBeforeExpiration);
+    }
+    return false;
   }
 
 
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality());
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getOID(), getCriticality(), timeBeforeExpiration);
   }
 
 

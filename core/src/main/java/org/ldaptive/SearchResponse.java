@@ -289,7 +289,7 @@ public class SearchResponse extends AbstractResult
         getMatchedDN(),
         getDiagnosticMessage(),
         getReferralURLs(),
-        resultEntries.values(),
+        resultEntries,
         resultReferences);
   }
 
@@ -299,7 +299,7 @@ public class SearchResponse extends AbstractResult
   {
     return new StringBuilder(
       super.toString()).append(", ")
-      .append("entries=").append(resultEntries.values()).append(", ")
+      .append("entries=").append(resultEntries != null ? resultEntries.values() : null).append(", ")
       .append("references=").append(resultReferences).toString();
   }
 

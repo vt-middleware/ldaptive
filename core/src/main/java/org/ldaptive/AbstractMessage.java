@@ -58,7 +58,7 @@ public abstract class AbstractMessage implements Message
   @Override
   public ResponseControl[] getControls()
   {
-    return controls.toArray(new ResponseControl[0]);
+    return controls != null ? controls.toArray(new ResponseControl[0]) : null;
   }
 
 

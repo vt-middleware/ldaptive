@@ -3,8 +3,8 @@ package org.ldaptive.dns;
 
 import java.util.Iterator;
 import java.util.Set;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Ignore;
@@ -18,9 +18,6 @@ import org.testng.annotations.Test;
  */
 public class SRVDNSResolverTest
 {
-
-  /** Class logger. */
-  private final Logger logger = LoggerFactory.getLogger(SRVDNSResolverTest.class);
 
   /** DNS context factory. */
   private DNSContextFactory contextFactory;
@@ -151,5 +148,17 @@ public class SRVDNSResolverTest
     final String recordName = System.getProperty("SRVDNSResolverTest.name");
     final Set<SRVRecord> records = resolver.resolve(recordName);
     Assert.assertTrue(records.size() > 0);
+  }
+
+
+  /**
+   * Unit test for {@link SRVRecord#equals(Object)}.
+   */
+  @Test
+  public void srvRecord()
+  {
+    EqualsVerifier.forClass(SRVRecord.class)
+      .suppress(Warning.STRICT_INHERITANCE)
+      .verify();
   }
 }

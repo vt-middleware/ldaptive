@@ -236,6 +236,9 @@ public class LdapAttributeTest
     Assert.assertEquals(
       LdapAttribute.builder().name("uid").values("1", "2", "3").build(),
       LdapAttribute.builder().name("uid").values("1", "2", "3").build());
+    Assert.assertEquals(
+      LdapAttribute.builder().name("uid").values("1", "2", "3").build(),
+      LdapAttribute.builder().name("UID").values("1", "2", "3").build());
     Assert.assertNotEquals(
       LdapAttribute.builder().name("uuid").values("1").build(),
       LdapAttribute.builder().name("uid").values("1").build());

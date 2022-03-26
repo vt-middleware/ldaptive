@@ -82,7 +82,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
 
   public String[] getReferralURLs()
   {
-    return referralURLs.toArray(new String[0]);
+    return referralURLs != null ? referralURLs.toArray(new String[0]) : null;
   }
 
 

@@ -82,7 +82,8 @@ public abstract class AbstractAttributeValueAssertionFilter implements Filter
     }
     if (o instanceof AbstractAttributeValueAssertionFilter) {
       final AbstractAttributeValueAssertionFilter v = (AbstractAttributeValueAssertionFilter) o;
-      return LdapUtils.areEqual(attributeDesc, v.attributeDesc) &&
+      return LdapUtils.areEqual(filterType, v.filterType) &&
+        LdapUtils.areEqual(attributeDesc, v.attributeDesc) &&
         LdapUtils.areEqual(assertionValue, v.assertionValue);
     }
     return false;

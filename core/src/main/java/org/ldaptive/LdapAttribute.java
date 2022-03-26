@@ -125,12 +125,22 @@ public class LdapAttribute
   }
 
 
+  /**
+   * Returns whether this ldap attribute is binary.
+   *
+   * @return  whether this ldap attribute is binary
+   */
   public boolean isBinary()
   {
     return binary;
   }
 
 
+  /**
+   * Sets whether this ldap attribute is binary.
+   *
+   * @param  b  whether this ldap attribute is binary
+   */
   public void setBinary(final boolean b)
   {
     binary = b;
@@ -158,6 +168,11 @@ public class LdapAttribute
   }
 
 
+  /**
+   * Returns the attribute description with options.
+   *
+   * @return  attribute description
+   */
   public String getName()
   {
     return attributeName;
@@ -199,6 +214,11 @@ public class LdapAttribute
   }
 
 
+  /**
+   * Returns a single byte array value of this attribute.
+   *
+   * @return  single byte array attribute value or null if this attribute is empty
+   */
   public byte[] getBinaryValue()
   {
     return attributeValues.isEmpty() ? null : attributeValues.iterator().next().array();
@@ -230,7 +250,7 @@ public class LdapAttribute
       return null;
     }
     final ByteBuffer val = attributeValues.iterator().next();
-    return binary ? LdapUtils.base64Encode(val.array()) : new String(val.array(), StandardCharsets.UTF_8);
+    return binary ? LdapUtils.base64Encode(val.array()) : LdapUtils.utf8Encode(val.array());
   }
 
 
@@ -549,7 +569,11 @@ public class LdapAttribute
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeName, attributeValues);
+    return
+      LdapUtils.computeHashCode(
+        HASH_CODE_SEED,
+        attributeName != null ? attributeName.toLowerCase() : null,
+        attributeValues);
   }
 
 

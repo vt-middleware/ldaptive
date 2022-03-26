@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -137,5 +139,14 @@ public class DERPathTest
     throws Exception
   {
     Assert.assertTrue(new DERPath(testPath).equals(new DERPath(expected)));
+  }
+
+
+  @Test
+  public void testEqualsContract()
+  {
+    EqualsVerifier.forClass(DERPath.class)
+      .suppress(Warning.STRICT_INHERITANCE)
+      .verify();
   }
 }

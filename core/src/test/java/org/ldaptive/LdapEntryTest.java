@@ -277,6 +277,21 @@ public class LdapEntryTest
           LdapAttribute.builder().name("givenName").values("Steve").build(),
           LdapAttribute.builder().name("sn").values("McQueen").build())
         .build());
+    Assert.assertEquals(
+      LdapEntry.builder()
+        .dn("uid=1,dc=ldaptive,dc=org")
+        .attributes(
+          LdapAttribute.builder().name("uid").values("1").build(),
+          LdapAttribute.builder().name("givenName").values("Steve").build(),
+          LdapAttribute.builder().name("sn").values("McQueen").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("UID=1,dc=ldaptive,dc=org")
+        .attributes(
+          LdapAttribute.builder().name("uid").values("1").build(),
+          LdapAttribute.builder().name("givenName").values("Steve").build(),
+          LdapAttribute.builder().name("SN").values("McQueen").build())
+        .build());
     Assert.assertNotEquals(
       LdapEntry.builder()
         .dn("uid=2,dc=ldaptive,dc=org")

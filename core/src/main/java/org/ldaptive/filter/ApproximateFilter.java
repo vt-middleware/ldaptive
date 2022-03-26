@@ -57,6 +57,6 @@ public class ApproximateFilter extends AbstractAttributeValueAssertionFilter
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeDesc, assertionValue);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, filterType, attributeDesc, assertionValue);
   }
 }

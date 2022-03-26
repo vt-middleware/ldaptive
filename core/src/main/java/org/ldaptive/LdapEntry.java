@@ -79,18 +79,33 @@ public class LdapEntry extends AbstractMessage
   }
 
 
+  /**
+   * Returns the ldap DN.
+   *
+   * @return  ldap DN
+   */
   public String getDn()
   {
     return ldapDn;
   }
 
 
+  /**
+   * Sets the ldap DN.
+   *
+   * @param  dn  ldap DN
+   */
   public void setDn(final String dn)
   {
     ldapDn = dn;
   }
 
 
+  /**
+   * Returns the ldap attributes.
+   *
+   * @return  ldap attributes
+   */
   public Collection<LdapAttribute> getAttributes()
   {
     return attributes.values();
