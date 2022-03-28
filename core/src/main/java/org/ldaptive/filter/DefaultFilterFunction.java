@@ -79,7 +79,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
           ResultCode.FILTER_ERROR,
           "Invalid attribute description for filter '" + filter + "'");
       }
-      switch(filterBuffer.get()) {
+      switch (filterBuffer.get()) {
       case '=':
         if (!filterBuffer.hasRemaining()) {
           // empty equality

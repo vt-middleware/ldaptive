@@ -166,7 +166,7 @@ public class BindConnectionInitializer implements ConnectionInitializer
   {
     final Result result;
     if (bindSaslConfig != null) {
-      switch(bindSaslConfig.getMechanism()) {
+      switch (bindSaslConfig.getMechanism()) {
       case EXTERNAL:
         result = c.operation(SaslBindRequest.builder()
           .mechanism(Mechanism.EXTERNAL.mechanism())

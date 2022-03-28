@@ -567,7 +567,7 @@ public class NamespaceHandlerTest
     if (authType != null) {
       final BindConnectionInitializer ci = connectionConfig.getConnectionInitializers() != null ?
         (BindConnectionInitializer) connectionConfig.getConnectionInitializers()[0] : null;
-      switch(authType) {
+      switch (authType) {
       case ANON_SEARCH:
       case DIRECT:
         Assert.assertNull(ci);
