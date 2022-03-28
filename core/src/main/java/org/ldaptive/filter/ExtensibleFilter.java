@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 import java.util.stream.Stream;
 import org.ldaptive.LdapUtils;
@@ -44,7 +43,7 @@ public class ExtensibleFilter implements Filter
    */
   public ExtensibleFilter(final String matchingRule, final String type, final String value)
   {
-    this(matchingRule, type, value.getBytes(StandardCharsets.UTF_8), false);
+    this(matchingRule, type, LdapUtils.utf8Encode(value, false), false);
   }
 
 
@@ -58,7 +57,7 @@ public class ExtensibleFilter implements Filter
    */
   public ExtensibleFilter(final String matchingRule, final String type, final String value, final boolean dnAttrs)
   {
-    this(matchingRule, type, value.getBytes(StandardCharsets.UTF_8), dnAttrs);
+    this(matchingRule, type, LdapUtils.utf8Encode(value, false), dnAttrs);
   }
 
 
@@ -194,8 +193,7 @@ public class ExtensibleFilter implements Filter
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("matchingRuleID=").append(matchingRuleID).append(", ")
       .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("assertionValue=").append(
-        assertionValue == null ? null : new String(assertionValue, StandardCharsets.UTF_8)).append(", ")
+      .append("assertionValue=").append(LdapUtils.utf8Encode(assertionValue)).append(", ")
       .append("dnAttributes=").append(dnAttributes).toString();
   }
 }

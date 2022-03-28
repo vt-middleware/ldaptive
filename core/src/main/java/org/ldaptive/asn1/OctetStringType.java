@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import java.nio.charset.StandardCharsets;
+import org.ldaptive.LdapUtils;
 
 /**
  * Converts strings to and from their DER encoded format.
@@ -22,7 +22,7 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public OctetStringType(final String item)
   {
-    this(item.getBytes(StandardCharsets.UTF_8));
+    this(LdapUtils.utf8Encode(item, false));
   }
 
 
@@ -48,7 +48,7 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public OctetStringType(final DERTag tag, final String item)
   {
-    this(tag, item.getBytes(StandardCharsets.UTF_8));
+    this(tag, LdapUtils.utf8Encode(item, false));
   }
 
 
@@ -88,7 +88,7 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public static String decode(final DERBuffer encoded)
   {
-    return new String(encoded.getRemainingBytes(), StandardCharsets.UTF_8);
+    return LdapUtils.utf8Encode(encoded.getRemainingBytes(), false);
   }
 
 
@@ -101,6 +101,6 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    */
   public static byte[] toBytes(final String s)
   {
-    return s.getBytes(StandardCharsets.UTF_8);
+    return LdapUtils.utf8Encode(s, false);
   }
 }

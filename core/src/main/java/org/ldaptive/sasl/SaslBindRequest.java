@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.sasl;
 
-import java.nio.charset.StandardCharsets;
 import org.ldaptive.AbstractRequestMessage;
 import org.ldaptive.BindRequest;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ApplicationDERTag;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextDERTag;
@@ -57,7 +57,7 @@ public class SaslBindRequest extends AbstractRequestMessage implements BindReque
    */
   public SaslBindRequest(final String mechanism, final String credentials)
   {
-    this(mechanism, credentials != null ? credentials.getBytes(StandardCharsets.UTF_8) : null);
+    this(mechanism, LdapUtils.utf8Encode(credentials));
   }
 
 
@@ -179,7 +179,7 @@ public class SaslBindRequest extends AbstractRequestMessage implements BindReque
      */
     public Builder credentials(final String credentials)
     {
-      object.saslCredentials = credentials != null ? credentials.getBytes(StandardCharsets.UTF_8) : null;
+      object.saslCredentials = LdapUtils.utf8Encode(credentials);
       return self();
     }
   }

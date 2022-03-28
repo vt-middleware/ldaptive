@@ -2,7 +2,6 @@
 package org.ldaptive;
 
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -269,7 +268,7 @@ public class LdapAttribute
       if (binary) {
         return LdapUtils.base64Encode(v.array());
       }
-      return new String(v.array(), StandardCharsets.UTF_8);
+      return LdapUtils.utf8Encode(v.array(), false);
     }).collect(Collectors.toUnmodifiableList());
   }
 
@@ -344,7 +343,7 @@ public class LdapAttribute
             throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
           }
         }
-        return v.getBytes(StandardCharsets.UTF_8);
+        return LdapUtils.utf8Encode(v, false);
       })
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
@@ -369,7 +368,7 @@ public class LdapAttribute
             throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
           }
         }
-        return v.getBytes(StandardCharsets.UTF_8);
+        return LdapUtils.utf8Encode(v, false);
       })
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
@@ -476,7 +475,7 @@ public class LdapAttribute
             throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
           }
         }
-        return v.getBytes(StandardCharsets.UTF_8);
+        return LdapUtils.utf8Encode(v, false);
       })
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
@@ -501,7 +500,7 @@ public class LdapAttribute
             throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
           }
         }
-        return v.getBytes(StandardCharsets.UTF_8);
+        return LdapUtils.utf8Encode(v, false);
       })
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)

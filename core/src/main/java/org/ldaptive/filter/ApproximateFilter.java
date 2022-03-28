@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import java.nio.charset.StandardCharsets;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -28,7 +27,7 @@ public class ApproximateFilter extends AbstractAttributeValueAssertionFilter
    */
   public ApproximateFilter(final String name, final String value)
   {
-    super(Type.APPROXIMATE_MATCH, name, value.getBytes(StandardCharsets.UTF_8));
+    super(Type.APPROXIMATE_MATCH, name, LdapUtils.utf8Encode(value, false));
   }
 
 

@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
-import java.nio.charset.StandardCharsets;
+import org.ldaptive.LdapUtils;
 
 /**
  * Utility class for parsing the responseValue from a whoami extended operation.
@@ -27,6 +27,6 @@ public final class WhoAmIResponseParser
    */
   public static String parse(final ExtendedResponse response)
   {
-    return new String(response.getResponseValue(), StandardCharsets.UTF_8);
+    return LdapUtils.utf8Encode(response.getResponseValue(), false);
   }
 }

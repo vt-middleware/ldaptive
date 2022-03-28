@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport;
 
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -50,7 +49,7 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
 
     final BindResponse serverFirstResult = conn.operation(
       new SaslBindRequest(
-        request.getMechanism().mechanism(), clientFirstMessage.encode().getBytes(StandardCharsets.UTF_8))).execute();
+        request.getMechanism().mechanism(), LdapUtils.utf8Encode(clientFirstMessage.encode(), false))).execute();
 
     if (serverFirstResult.getResultCode() != ResultCode.SASL_BIND_IN_PROGRESS) {
       if (serverFirstResult.isSuccess()) {
@@ -69,7 +68,7 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
 
     final BindResponse serverFinalResult = conn.operation(
       new SaslBindRequest(
-        request.getMechanism().mechanism(), clientFinalMessage.encode().getBytes(StandardCharsets.UTF_8))).execute();
+        request.getMechanism().mechanism(), LdapUtils.utf8Encode(clientFinalMessage.encode(), false))).execute();
 
     final ServerFinalMessage serverFinalMessage = new ServerFinalMessage(
       request.getMechanism(),
@@ -162,7 +161,7 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
     private static final byte[] INTEGER_ONE = {0x00, 0x00, 0x00, 0x01, };
 
     /** Bytes for the client key hmac. */
-    private static final byte[] CLIENT_KEY_INIT = "Client Key".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] CLIENT_KEY_INIT = LdapUtils.utf8Encode("Client Key");
 
     /** Scram SASL mechanism. */
     private final Mechanism mechanism;
@@ -230,7 +229,7 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
       final byte[] storedKey = createDigest(mechanism.properties()[0], clientKey);
 
       final byte[] clientSignature =
-        createMac(mechanism.properties()[1], storedKey).doFinal(message.getBytes(StandardCharsets.UTF_8));
+        createMac(mechanism.properties()[1], storedKey).doFinal(LdapUtils.utf8Encode(message, false));
 
       final byte[] clientProof = new byte[clientKey.length];
       for (int i = 0; i < clientProof.length; i++) {
@@ -258,7 +257,7 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
       final int iterations)
     {
       // create an HMAC using the UTF-8 password
-      final Mac mac = createMac(algorithm, password.getBytes(StandardCharsets.UTF_8));
+      final Mac mac = createMac(algorithm, LdapUtils.utf8Encode(password, false));
 
       // Per the RFC, seed the salt with the bytes of integer 1
       byte[] bytes = Arrays.copyOf(salt, salt.length + INTEGER_ONE.length);
@@ -312,7 +311,7 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
         throw new IllegalArgumentException("Bind response missing server SASL credentials");
       }
 
-      message = new String(result.getServerSaslCreds(), StandardCharsets.UTF_8);
+      message = LdapUtils.utf8Encode(result.getServerSaslCreds(), false);
       final Map<String, String> attributes = Stream.of(message.split(","))
         .map(s -> s.split("=", 2)).collect(Collectors.toMap(attr -> attr[0], attr -> attr[1]));
 
@@ -369,7 +368,7 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
   {
 
     /** Bytes for the server key hmac. */
-    private static final byte[] SERVER_KEY_INIT = "Server Key".getBytes(StandardCharsets.UTF_8);
+    private static final byte[] SERVER_KEY_INIT = LdapUtils.utf8Encode("Server Key");
 
     /** Server SASL credentials. */
     private final String message;
@@ -394,7 +393,7 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
         throw new IllegalArgumentException("Bind response missing server SASL credentials");
       }
 
-      message = new String(result.getServerSaslCreds(), StandardCharsets.UTF_8);
+      message = LdapUtils.utf8Encode(result.getServerSaslCreds(), false);
       final Map<String, String> attributes = Stream.of(message.split(","))
         .map(s -> s.split("=", 2)).collect(Collectors.toMap(attr -> attr[0], attr -> attr[1]));
 
@@ -415,8 +414,8 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
         final byte[] serverKey =
           createMac(mech.properties()[1], clientFinalMessage.getSaltedPassword()).doFinal(SERVER_KEY_INIT);
         final String expectedServerSignature = LdapUtils.base64Encode(
-          createMac(
-            mech.properties()[1], serverKey).doFinal(clientFinalMessage.getMessage().getBytes(StandardCharsets.UTF_8)));
+          createMac(mech.properties()[1], serverKey).doFinal(
+            LdapUtils.utf8Encode(clientFinalMessage.getMessage(), false)));
         if (!expectedServerSignature.equals(serverSignature)) {
           throw new IllegalArgumentException("Invalid SASL credentials, incorrect server verification");
         }

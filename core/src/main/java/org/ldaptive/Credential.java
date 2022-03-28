@@ -1,8 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.charset.StandardCharsets;
-
 /**
  * Provides convenience methods for converting the various types of passwords into a byte array.
  *
@@ -22,7 +20,10 @@ public class Credential
    */
   public Credential(final String password)
   {
-    bytes = password.getBytes(StandardCharsets.UTF_8);
+    if (password == null) {
+      throw new NullPointerException("Password cannot be null");
+    }
+    bytes = LdapUtils.utf8Encode(password, false);
   }
 
 
@@ -33,7 +34,10 @@ public class Credential
    */
   public Credential(final char[] password)
   {
-    bytes = new String(password).getBytes(StandardCharsets.UTF_8);
+    if (password == null) {
+      throw new NullPointerException("Password cannot be null");
+    }
+    bytes = LdapUtils.utf8Encode(new String(password), false);
   }
 
 
@@ -44,6 +48,9 @@ public class Credential
    */
   public Credential(final byte[] password)
   {
+    if (password == null) {
+      throw new NullPointerException("Password cannot be null");
+    }
     bytes = password;
   }
 
@@ -66,7 +73,7 @@ public class Credential
    */
   public String getString()
   {
-    return new String(bytes, StandardCharsets.UTF_8);
+    return LdapUtils.utf8Encode(bytes, false);
   }
 
 
@@ -86,6 +93,6 @@ public class Credential
   {
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("bytes=").append(new String(bytes, StandardCharsets.UTF_8)).append("]").toString();
+      .append("bytes=").append(LdapUtils.utf8Encode(bytes)).append("]").toString();
   }
 }

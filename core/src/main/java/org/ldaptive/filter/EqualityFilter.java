@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import java.nio.charset.StandardCharsets;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -24,7 +23,7 @@ public class EqualityFilter extends AbstractAttributeValueAssertionFilter
    */
   public EqualityFilter(final String name, final String value)
   {
-    super(Type.EQUALITY, name, value.getBytes(StandardCharsets.UTF_8));
+    super(Type.EQUALITY, name, LdapUtils.utf8Encode(value, false));
   }
 
 

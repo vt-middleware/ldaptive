@@ -85,6 +85,25 @@ public final class LdapUtils
    */
   public static String utf8Encode(final byte[] value)
   {
+    return utf8Encode(value, true);
+  }
+
+
+  /**
+   * This will convert the supplied value to a UTF-8 encoded string.
+   *
+   * @param  value  to UTF-8 encode
+   * @param  allowNull  whether to throw {@link NullPointerException} if value is null
+   *
+   * @return  UTF-8 encoded value
+   *
+   * @throws  NullPointerException  if allowNull is false and value is null
+   */
+  public static String utf8Encode(final byte[] value, final boolean allowNull)
+  {
+    if (!allowNull && value == null) {
+      throw new NullPointerException("Cannot UTF-8 encode null value");
+    }
     return value != null ? new String(value, StandardCharsets.UTF_8) : null;
   }
 
@@ -98,6 +117,25 @@ public final class LdapUtils
    */
   public static byte[] utf8Encode(final String value)
   {
+    return utf8Encode(value, true);
+  }
+
+
+  /**
+   * This will convert the supplied value to a UTF-8 encoded byte array.
+   *
+   * @param  value  to UTF-8 encode
+   * @param  allowNull  whether to throw {@link NullPointerException} if value is null
+   *
+   * @return  UTF-8 encoded value
+   *
+   * @throws  NullPointerException  if allowNull is false and value is null
+   */
+  public static byte[] utf8Encode(final String value, final boolean allowNull)
+  {
+    if (!allowNull && value == null) {
+      throw new NullPointerException("Cannot UTF-8 encode null value");
+    }
     return value != null ? value.getBytes(StandardCharsets.UTF_8) : null;
   }
 

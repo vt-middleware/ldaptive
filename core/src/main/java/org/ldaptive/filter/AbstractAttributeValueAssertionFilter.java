@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import java.nio.charset.StandardCharsets;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextDERTag;
@@ -102,7 +101,6 @@ public abstract class AbstractAttributeValueAssertionFilter implements Filter
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("filterType=").append(filterType).append(", ")
       .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("assertionValue=").append(
-        assertionValue == null ? null : new String(assertionValue, StandardCharsets.UTF_8)).toString();
+      .append("assertionValue=").append(LdapUtils.utf8Encode(assertionValue)).toString();
   }
 }

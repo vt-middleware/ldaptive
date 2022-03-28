@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.ldaptive.LdapUtils;
@@ -70,12 +69,12 @@ public class SubstringFilter implements Filter
     if (contains != null) {
       containsBytes = new byte[contains.length][];
       for (int i = 0; i < contains.length; i++) {
-        containsBytes[i] = contains[i].getBytes(StandardCharsets.UTF_8);
+        containsBytes[i] = LdapUtils.utf8Encode(contains[i], false);
       }
     }
-    subInitial = startsWith != null ? startsWith.getBytes(StandardCharsets.UTF_8) : null;
+    subInitial = LdapUtils.utf8Encode(startsWith);
     subAny = containsBytes;
-    subFinal = endsWith != null ? endsWith.getBytes(StandardCharsets.UTF_8) : null;
+    subFinal = LdapUtils.utf8Encode(endsWith);
   }
 
 
@@ -223,14 +222,10 @@ public class SubstringFilter implements Filter
     return new StringBuilder(
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("subInitial=").append(
-        subInitial == null ? null : new String(subInitial, StandardCharsets.UTF_8)).append(", ")
+      .append("subInitial=").append(LdapUtils.utf8Encode(subInitial)).append(", ")
       .append("subAny=").append(
         subAny == null ? null :
-          Stream.of(subAny)
-            .map(b -> b == null ? null : new String(b, StandardCharsets.UTF_8))
-            .collect(Collectors.toList())).append(", ")
-      .append("subFinal=").append(
-        subFinal == null ? null : new String(subFinal, StandardCharsets.UTF_8)).toString();
+          Stream.of(subAny).map(LdapUtils::utf8Encode).collect(Collectors.toList())).append(", ")
+      .append("subFinal=").append(LdapUtils.utf8Encode(subFinal)).toString();
   }
 }

@@ -3,7 +3,6 @@ package org.ldaptive.filter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
@@ -31,7 +30,7 @@ public final class FilterUtils
   public static String escape(final String s)
   {
     final StringBuilder sb = new StringBuilder(s.length());
-    final byte[] utf8 = s.getBytes(StandardCharsets.UTF_8);
+    final byte[] utf8 = LdapUtils.utf8Encode(s, false);
     // CheckStyle:MagicNumber OFF
     // optimize if ASCII
     if (s.length() == utf8.length) {

@@ -42,7 +42,7 @@
 @@ -140,10 +139,11 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
        dnsResolvers = new HashMap<>();
        for (String url : urls.split(" ")) {
-         final String[] dnsUrl = parseDnsUrl(url);
+         final String[] dnsUrl = parseUrl(url);
 -        dnsResolvers.put(
 -          new SRVDNSResolver(
 -            Objects.requireNonNullElseGet(dnsContextFactory, () -> new DefaultDNSContextFactory(dnsUrl[0])), useSSL),
@@ -54,10 +54,10 @@
 +        }
        }
      } else {
-       final String[] dnsUrl = parseDnsUrl(urls);
+       final String[] dnsUrl = parseUrl(urls);
 --- core/src/main/java/org/ldaptive/LdapAttribute.java
 +++ core/src/main/java/org/ldaptive/LdapAttribute.java
-@@ -191,7 +191,7 @@ public String getName(final boolean withOptions)
+@@ -206,7 +206,7 @@ public class LdapAttribute
      if (attributeName.indexOf(";") > 0) {
        final String[] split = attributeName.split(";");
        if (split.length > 1) {
@@ -66,7 +66,7 @@
        }
      }
      return Collections.emptyList();
-@@ -214,7 +214,7 @@ public String getName(final boolean withOptions)
+@@ -234,7 +234,7 @@ public class LdapAttribute
      if (attributeValues.isEmpty()) {
        return Collections.emptySet();
      }
@@ -75,16 +75,16 @@
    }
  
  
-@@ -249,7 +249,7 @@ public String getStringValue()
+@@ -269,7 +269,7 @@ public class LdapAttribute
          return LdapUtils.base64Encode(v.array());
        }
-       return new String(v.array(), StandardCharsets.UTF_8);
+       return LdapUtils.utf8Encode(v.array(), false);
 -    }).collect(Collectors.toUnmodifiableList());
 +    }).collect(Collectors.toList());
    }
  
  
-@@ -280,7 +280,7 @@ public String getStringValue()
+@@ -300,7 +300,7 @@ public class LdapAttribute
      return attributeValues.stream()
        .filter(Objects::nonNull)
        .map(ByteBuffer::array)

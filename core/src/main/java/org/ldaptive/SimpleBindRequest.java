@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.charset.StandardCharsets;
 import org.ldaptive.asn1.ApplicationDERTag;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextType;
@@ -65,7 +64,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
    */
   protected void setLdapDN(final String name)
   {
-    if (name == null || name.length() == 0) {
+    if (name == null || name.isEmpty()) {
       throw new IllegalArgumentException("name cannot be null or empty");
     }
     ldapDN = name;
@@ -81,7 +80,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
    */
   protected void setPassword(final String pass)
   {
-    if (pass == null || pass.length() == 0) {
+    if (pass == null || pass.isEmpty()) {
       throw new IllegalArgumentException("password cannot be null or empty");
     }
     password = pass;
@@ -97,7 +96,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
         new ApplicationDERTag(PROTOCOL_OP, true),
         new IntegerType(VERSION),
         new OctetStringType(ldapDN),
-        new ContextType(0, password.getBytes(StandardCharsets.UTF_8))),
+        new ContextType(0, LdapUtils.utf8Encode(password, false))),
     };
   }
 
