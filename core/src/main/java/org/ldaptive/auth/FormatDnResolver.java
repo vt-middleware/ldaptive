@@ -2,8 +2,9 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapException;
+import org.ldaptive.dn.AttributeValueEscaper;
+import org.ldaptive.dn.DefaultAttributeValueEscaper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +18,9 @@ public class FormatDnResolver implements DnResolver
 
   /** log for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+  /** attribute value escaper. */
+  private final AttributeValueEscaper attributeValueEscaper = new DefaultAttributeValueEscaper();
 
   /** format of DN. */
   private String formatString;
@@ -101,7 +105,7 @@ public class FormatDnResolver implements DnResolver
 
 
   /**
-   * Returns whether the user input will be escaped. See {@link LdapAttribute#escapeValue(String)}.
+   * Returns whether the user input will be escaped using {@link #attributeValueEscaper}.
    *
    * @return  whether the user input will be escaped.
    */
@@ -112,7 +116,7 @@ public class FormatDnResolver implements DnResolver
 
 
   /**
-   * Sets whether the user input will be escaped. See {@link LdapAttribute#escapeValue(String)}.
+   * Sets whether the user input will be escaped using {@link #attributeValueEscaper}.
    *
    * @param  b  whether the user input will be escaped.
    */
@@ -135,9 +139,12 @@ public class FormatDnResolver implements DnResolver
   public String resolve(final User user)
     throws LdapException
   {
+    if (formatString == null) {
+      throw new IllegalStateException("Format string cannot be null");
+    }
     String dn = null;
     if (user != null && user.getIdentifier() != null && !"".equals(user.getIdentifier())) {
-      final String escapedUser = escapeUser ? LdapAttribute.escapeValue(user.getIdentifier()) : user.getIdentifier();
+      final String escapedUser = escapeUser ? attributeValueEscaper.escape(user.getIdentifier()) : user.getIdentifier();
       logger.debug("Formatting DN for {} with {}", escapedUser, formatString);
       if (formatArgs != null && formatArgs.length > 0) {
         final Object[] args = new Object[formatArgs.length + 1];

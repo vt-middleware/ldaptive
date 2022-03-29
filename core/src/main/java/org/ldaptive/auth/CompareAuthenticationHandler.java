@@ -14,7 +14,8 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 
 /**
- * Provides implementation common to compare authentication handlers.
+ * Provides an LDAP authentication implementation that uses a compare operation against the userPassword attribute. The
+ * default password scheme used is 'SHA'.
  *
  * @author  Middleware Services
  */
