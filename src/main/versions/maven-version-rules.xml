@@ -12,6 +12,12 @@
         <ignoreVersion type="regex">^2\.0.*$</ignoreVersion>
       </ignoreVersions>
     </rule>
+    <!-- Pin this project to logback v1.2  -->
+    <rule groupId="ch.qos.logback">
+      <ignoreVersions>
+        <ignoreVersion type="regex">^1\.3.*$</ignoreVersion>
+      </ignoreVersions>
+    </rule>
     <!-- Pin this project to netty v4  -->
     <rule groupId="io.netty">
       <ignoreVersions>
