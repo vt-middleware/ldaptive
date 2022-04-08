@@ -13,11 +13,35 @@ if [ "$#" -ne 5 ]; then
   exit
 fi
 
+if [ ! -f "distribution/release" ]; then
+  echo "Script must be executed in the root directory of this project"
+  exit
+fi
+
 BRANCH="${1}"
 RELEASE_VERSION="${2}"
+if [[ ! "${RELEASE_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "<release-version> must be of the form 'MAJOR.MINOR.REVISION'"
+  exit
+fi
 NEXT_VERSION="${3}"
+if [[ ! "${NEXT_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$ ]]; then
+  echo "<next-version> must be of the form 'MAJOR.MINOR.REVISION-SNAPSHOT'"
+  exit
+fi
 SONATYPE_USER="${4}"
 SONATYPE_PASSWORD="${5}"
+
+if [ -z $(git config --get user.signingkey) ]; then
+  echo "Git signing must be enabled. Add user.signingkey to ~/.gitconfig"
+  exit
+fi
+
+if [ $(git tag -l | grep "$RELEASE_VERSION") ]; then
+  echo "Tag ${RELEASE_VERSION} already exists"
+  exit
+fi
+
 echo "================================================================="
 echo "BEGIN RELEASE"
 echo "BRANCH TO TAG:   ${BRANCH}"
@@ -36,7 +60,7 @@ user_continue
 git commit -a -m "Update version for ${RELEASE_VERSION} release."
 
 # tag the release version
-git tag -a v${RELEASE_VERSION} -m "Tagging ${RELEASE_VERSION} release."
+git tag -s v${RELEASE_VERSION} -m "Tagging ${RELEASE_VERSION} release."
 echo "Tagged release ${RELEASE_VERSION}"
 
 # update pom to the next version
