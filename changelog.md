@@ -6,6 +6,15 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.1.1 - 16Apr2022
+
+Issue | Description
+:---- | :----------
+[ldaptive-206]({{ site.issueURL }}206) | Add formal package for DN parsing.
+[ldaptive-203]({{ site.issueURL }}203) | Add support for draft-ietf-ldapext-locate in DnsSrvConnectionStrategy.
+[ldaptive-202]({{ site.issueURL }}202) | Add ValidationExceptionHandler to pooling config.
+[ldaptive-200]({{ site.issueURL }}200) | Deep copy connection strategy.
+
 ## Version 2.1.0 - 02Aug2021
 
 Issue | Description

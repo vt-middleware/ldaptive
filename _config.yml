@@ -2,7 +2,7 @@ gems:
   - jekyll-redirect-from
 
 version:
-  - 2.1.0
+  - 2.1.1
 
 version_v1:
   - 1.2.4
