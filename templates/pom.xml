@@ -13,6 +13,10 @@
     <version>2.1.2-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <module.name>org.ldaptive.templates</module.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.ldaptive</groupId>

@@ -15,6 +15,7 @@
 
   <properties>
     <source.dir>../../templates/src</source.dir>
+    <module.name>org.ldaptive.jdk8.templates</module.name>
   </properties>
 
   <dependencies>

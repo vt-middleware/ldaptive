@@ -15,6 +15,7 @@
 
   <properties>
     <source.dir>../../json/src</source.dir>
+    <module.name>org.ldaptive.jdk8.json</module.name>
   </properties>
 
   <dependencies>

@@ -15,6 +15,7 @@
 
   <properties>
     <source.dir>../../beans/src</source.dir>
+    <module.name>org.ldaptive.jdk8.beans</module.name>
   </properties>
 
   <dependencies>

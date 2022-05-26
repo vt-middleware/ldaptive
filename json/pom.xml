@@ -13,6 +13,10 @@
     <version>2.1.2-SNAPSHOT</version>
   </parent>
 
+  <properties>
+    <module.name>org.ldaptive.json</module.name>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.ldaptive</groupId>

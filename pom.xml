@@ -381,6 +381,11 @@
           <doctitle>Ldaptive ${project.version} API</doctitle>
           <windowtitle>Ldaptive ${project.version} API</windowtitle>
           <bottom><![CDATA[<i>Copyright &#169; 2003-2022 Virginia Tech. All Rights Reserved.</i>]]></bottom>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
         </configuration>
         <executions>
           <execution>
@@ -398,6 +403,13 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
         <executions>
           <execution>
             <id>source</id>
@@ -414,6 +426,9 @@
         <configuration>
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+            <manifestEntries>
+              <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
+            </manifestEntries>
           </archive>
           <skipIfEmpty>true</skipIfEmpty>
         </configuration>
