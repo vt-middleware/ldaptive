@@ -15,6 +15,7 @@
 
   <properties>
     <module.name>org.ldaptive.integration</module.name>
+    <jmeter.version>5.4.3</jmeter.version>
   </properties>
 
   <dependencies>
@@ -82,7 +83,7 @@
     <dependency>
       <groupId>org.apache.jmeter</groupId>
       <artifactId>ApacheJMeter_java</artifactId>
-      <version>5.2.1</version>
+      <version>${jmeter.version}</version>
       <scope>test</scope>
       <exclusions>
         <exclusion>
@@ -94,7 +95,7 @@
     <dependency>
       <groupId>rhino</groupId>
       <artifactId>js</artifactId>
-       <version>1.7R2</version>
+      <version>1.7R2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -165,24 +166,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
         <executions>
-          <execution>
-            <id>copy-integration-jar-to-jmeter-ext</id>
-            <phase>pre-integration-test</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/jmeter/lib/ext</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}</directory>
-                  <includes>
-                    <include>${project.artifactId}-tests.jar</include>
-                  </includes>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
           <execution>
             <id>copy-testng</id>
             <phase>validate</phase>
@@ -257,8 +240,16 @@
       <plugin>
         <groupId>com.lazerycode.jmeter</groupId>
         <artifactId>jmeter-maven-plugin</artifactId>
-        <version>2.9.0</version>
+        <version>3.5.0</version>
         <executions>
+          <!-- Generate JMeter configuration -->
+          <execution>
+            <id>configuration</id>
+            <phase>pre-integration-test</phase>
+            <goals>
+              <goal>configure</goal>
+            </goals>
+          </execution>
           <!-- Run JMeter tests -->
           <execution>
             <id>jmeter-tests</id>
@@ -275,6 +266,7 @@
           </execution>
         </executions>
         <configuration>
+          <jmeterVersion>${jmeter.version}</jmeterVersion>
           <errorRateThresholdInPercent>1</errorRateThresholdInPercent>
           <generateReports>true</generateReports>
           <propertiesReportGenerator>
@@ -303,6 +295,9 @@
             <artifact>kg.apc:jmeter-plugins-graphs-composite:2.0</artifact>
             <artifact>org.springframework:spring-core:${org.springframework.version}</artifact>
           </jmeterExtensions>
+          <testPlanLibraries>
+            <artifact>org.ldaptive:ldaptive-integration:jar:tests:${project.version}</artifact>
+          </testPlanLibraries>
         </configuration>
       </plugin>
       <plugin>
