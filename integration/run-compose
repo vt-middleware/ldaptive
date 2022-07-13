@@ -9,7 +9,7 @@ if [ -z "${JDK}" ]; then
 fi
 COMPOSE_FILE="integration/docker-compose-jdk${JDK}.yml"
 
-docker-compose -f ${COMPOSE_FILE} down && \
+docker compose -f ${COMPOSE_FILE} down && \
   docker network prune -f && \
-  docker-compose -f ${COMPOSE_FILE} pull && \
-  TEST_GROUP="${TEST_GROUP}" docker-compose -f ${COMPOSE_FILE} up --build --abort-on-container-exit
+  docker compose -f ${COMPOSE_FILE} pull && \
+  TEST_GROUP="${TEST_GROUP}" docker compose -f ${COMPOSE_FILE} up --build --abort-on-container-exit --attach ldaptive

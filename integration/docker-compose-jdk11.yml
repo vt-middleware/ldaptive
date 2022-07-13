@@ -38,7 +38,6 @@ services:
         ipv4_address: 172.28.1.11
     logging:
       driver: "json-file"
-      #driver: "none"
       options:
         max-size: "100M"
         max-file: "5"
