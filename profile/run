@@ -2,6 +2,12 @@
 
 if [ -z "${PROFILE_CLASS}" ]; then
   PROFILE_CLASS="org.ldaptive.SingleSearchOperationProfile"
+  #PROFILE_CLASS="org.ldaptive.PooledSearchOperationProfile"
+  #PROFILE_CLASS="org.ldaptive.DefaultSearchOperationProfile"
+  #PROFILE_CLASS="org.ldaptive.RoundRobinPooledSearchOperationProfile"
+  #PROFILE_CLASS="org.ldaptive.MultiPooledSearchOperationProfile"
+  #PROFILE_CLASS="org.ldaptive.auth.AuthenticatorProfile"
+  #PROFILE_CLASS="org.ldaptive.auth.RoundRobinAuthenticatorProfile"
 fi
 
 if [ -z "${THREAD_COUNT}" ]; then

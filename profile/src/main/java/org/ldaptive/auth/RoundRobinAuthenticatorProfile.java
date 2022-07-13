@@ -130,7 +130,7 @@ public class RoundRobinAuthenticatorProfile extends AbstractProfile
 
 
   @Override
-  protected void doOperation(final Consumer<Object> consumer, final int uid)
+  protected int doOperation(final Consumer<Object> consumer, final int uid)
   {
     try {
       final AuthenticationResponse result = authenticator.authenticate(
@@ -142,6 +142,7 @@ public class RoundRobinAuthenticatorProfile extends AbstractProfile
     } catch (LdapException e) {
       consumer.accept(e);
     }
+    return 1;
   }
 
 

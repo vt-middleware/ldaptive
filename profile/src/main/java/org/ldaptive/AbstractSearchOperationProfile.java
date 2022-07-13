@@ -54,9 +54,10 @@ public abstract class AbstractSearchOperationProfile extends AbstractProfile
 
 
   @Override
-  protected void doOperation(final Consumer<Object> consumer, final int uid)
+  protected int doOperation(final Consumer<Object> consumer, final int uid)
   {
     doOperation(connectionFactory, consumer, uid);
+    return 1;
   }
 
 

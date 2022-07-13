@@ -37,7 +37,7 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
             .credential(bindCredential)
             .build())
         .build())
-      .blockWaitTime(iterations > 0 ? Duration.ofSeconds(5) : Duration.ofMillis(threadSleep / 2))
+      .blockWaitTime(iterations > 0 ? Duration.ofSeconds(5) : Duration.ofSeconds(threadSleep / 2))
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .validator(SearchConnectionValidator.builder()
@@ -57,7 +57,7 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
             .credential(bindCredential)
             .build())
         .build())
-      .blockWaitTime(iterations > 0 ? Duration.ofSeconds(5) : Duration.ofMillis(threadSleep / 2))
+      .blockWaitTime(iterations > 0 ? Duration.ofSeconds(5) : Duration.ofSeconds(threadSleep / 2))
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .validator(SearchConnectionValidator.builder()
@@ -77,7 +77,7 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
             .credential(bindCredential)
             .build())
         .build())
-      .blockWaitTime(iterations > 0 ? Duration.ofSeconds(5) : Duration.ofMillis(threadSleep / 2))
+      .blockWaitTime(iterations > 0 ? Duration.ofSeconds(5) : Duration.ofSeconds(threadSleep / 2))
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .validator(SearchConnectionValidator.builder()
@@ -99,12 +99,15 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
 
 
   @Override
-  protected void doOperation(final Consumer<Object> consumer, final int uid)
+  // CheckStyle:MagicNumber OFF
+  protected int doOperation(final Consumer<Object> consumer, final int uid)
   {
     doOperation(connectionFactory, consumer, uid);
     doOperation(connectionFactory2, consumer, uid);
     doOperation(connectionFactory3, consumer, uid);
+    return 3;
   }
+  // CheckStyle:MagicNumber ON
 
 
   @Override

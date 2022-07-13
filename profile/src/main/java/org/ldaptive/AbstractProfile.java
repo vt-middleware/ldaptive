@@ -91,20 +91,22 @@ public abstract class AbstractProfile
       final Random r = new Random();
       while (true) {
         final int uid = r.nextInt(50) + UID_START;
-        executor.submit(() -> test.doOperation(
-          o -> {
-            if (o instanceof Entry) {
-              ENTRY_COUNT.getAndIncrement();
-            } else if (o instanceof Result) {
-              RESULT_COUNT.getAndIncrement();
-            } else if (o instanceof Exception) {
-              System.out.println("RECEIVED EXCEPTION:: " + ((Exception) o).getMessage());
-            } else {
-              System.out.println("RECEIVED UNEXPECTED TYPE: " + o);
-            }
-          },
-          uid));
-        REQUEST_COUNT.getAndIncrement();
+        executor.submit(() -> {
+          final int reqCount = test.doOperation(
+            o -> {
+              if (o instanceof Entry) {
+                ENTRY_COUNT.getAndIncrement();
+              } else if (o instanceof Result) {
+                RESULT_COUNT.getAndIncrement();
+              } else if (o instanceof Exception) {
+                System.out.println("RECEIVED EXCEPTION:: " + ((Exception) o).getMessage());
+              } else {
+                System.out.println("RECEIVED UNEXPECTED TYPE: " + o);
+              }
+            },
+            uid);
+          REQUEST_COUNT.addAndGet(reqCount);
+        });
         if (threadSleep > 0) {
           Thread.sleep(threadSleep);
         }
@@ -116,7 +118,7 @@ public abstract class AbstractProfile
       for (int i = 0; i < iterations; i++) {
         final int uid = r.nextInt(50) + UID_START;
         callables.add(() -> {
-          test.doOperation(
+          final int reqCount = test.doOperation(
             o -> {
               if (o instanceof Entry) {
                 ENTRY_COUNT.getAndIncrement();
@@ -132,7 +134,7 @@ public abstract class AbstractProfile
               }
             },
             uid);
-          REQUEST_COUNT.getAndIncrement();
+          REQUEST_COUNT.addAndGet(reqCount);
           return null;
         });
       }
@@ -210,8 +212,10 @@ public abstract class AbstractProfile
    *
    * @param  consumer  to collect results
    * @param  uid  to perform operation on
+   *
+   * @return  number of requests submitted
    */
-  protected abstract void doOperation(Consumer<Object> consumer, int uid);
+  protected abstract int doOperation(Consumer<Object> consumer, int uid);
 
 
   /**
