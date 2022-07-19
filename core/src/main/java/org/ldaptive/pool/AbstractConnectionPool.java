@@ -218,9 +218,9 @@ public abstract class AbstractConnectionPool extends AbstractPool<Connection> im
          getPoolConfig().isValidateOnCheckOut()) && getValidator() == null) {
       throw new IllegalStateException("Validation is enabled, but no validator has been configured");
     }
-    if ((!getPoolConfig().isValidatePeriodically() &&
-         !getPoolConfig().isValidateOnCheckIn() &&
-         !getPoolConfig().isValidateOnCheckOut()) && getValidator() != null) {
+    if (!getPoolConfig().isValidatePeriodically() &&
+        !getPoolConfig().isValidateOnCheckIn() &&
+        !getPoolConfig().isValidateOnCheckOut() && getValidator() != null) {
       throw new IllegalStateException("Validator configured, but no validate flag has been set");
     }
 
