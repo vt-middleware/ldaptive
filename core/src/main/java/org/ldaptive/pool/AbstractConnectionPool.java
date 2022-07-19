@@ -585,33 +585,40 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    */
   protected void grow(final int size, final boolean throwOnFailure)
   {
-    logger.trace("waiting for pool lock to initialize pool {}", poolLock.getQueueLength());
-
-    int count = 0;
-    poolLock.lock();
-    try {
-      IllegalStateException lastThrown = null;
-      int currentPoolSize = active.size() + available.size();
-      logger.debug("Checking connection pool size >= {} for {}", size, this);
-      while (currentPoolSize < size && count < size * 2) {
+    if (checkOutLock.tryLock()) {
+      try {
+        int count = 0;
+        logger.trace("waiting for pool lock to initialize pool {}", poolLock.getQueueLength());
+        poolLock.lock();
         try {
-          final PooledConnectionProxy pc = createAvailableConnection(throwOnFailure);
-          if (pc != null && connectOnCreate) {
-            if (!passivateAndValidateConnection(pc)) {
-              removeAvailableConnection(pc);
+          IllegalStateException lastThrown = null;
+          int currentPoolSize = active.size() + available.size();
+          logger.debug("Checking connection pool size >= {} for {}", size, this);
+          while (currentPoolSize < size && count < size * 2) {
+            try {
+              final PooledConnectionProxy pc = createAvailableConnection(throwOnFailure);
+              if (pc != null && connectOnCreate) {
+                if (!passivateAndValidateConnection(pc)) {
+                  removeAvailableConnection(pc);
+                }
+              }
+            } catch (IllegalStateException e) {
+              lastThrown = e;
             }
+            currentPoolSize = active.size() + available.size();
+            count++;
           }
-        } catch (IllegalStateException e) {
-          lastThrown = e;
+          if (lastThrown != null && currentPoolSize < size) {
+            throw lastThrown;
+          }
+        } finally {
+          poolLock.unlock();
         }
-        currentPoolSize = active.size() + available.size();
-        count++;
+      } finally {
+        checkOutLock.unlock();
       }
-      if (lastThrown != null && currentPoolSize < size) {
-        throw lastThrown;
-      }
-    } finally {
-      poolLock.unlock();
+    } else {
+      logger.debug("Grow no-op, checkout is creating a connection for {}", this);
     }
   }
 

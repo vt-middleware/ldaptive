@@ -103,24 +103,33 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       // block here until create occurs without locking the whole pool
       // if the pool is already maxed or creates are failing,
       // block until a connection is available
-      checkOutLock.lock();
       try {
-        boolean b = true;
-        poolLock.lock();
+        if (!checkOutLock.tryLock(blockWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
+          logger.debug("Block time of {} exceeded, throwing exception", blockWaitTime);
+          throw new BlockingTimeoutException(
+            "Block time of " + blockWaitTime + " exceeded waiting for check out on pool " + getName() +
+              " with max size of " + getMaxPoolSize());
+        }
         try {
-          logger.trace("create connection in pool of size {}", available.size() + active.size());
-          if (available.size() + active.size() == getMaxPoolSize()) {
-            logger.trace("pool at maximum size, create not allowed");
-            b = false;
+          boolean b = true;
+          poolLock.lock();
+          try {
+            logger.trace("create connection in pool of size {}", available.size() + active.size());
+            if (available.size() + active.size() == getMaxPoolSize()) {
+              logger.trace("pool at maximum size, create not allowed");
+              b = false;
+            }
+          } finally {
+            poolLock.unlock();
+          }
+          if (b) {
+            pc = createActiveConnection(false);
           }
         } finally {
-          poolLock.unlock();
+          checkOutLock.unlock();
         }
-        if (b) {
-          pc = createActiveConnection(false);
-        }
-      } finally {
-        checkOutLock.unlock();
+      } catch (InterruptedException e) {
+        throw new PoolException("Interrupted while waiting to create a connection", e);
       }
       if (pc == null) {
         if (available.isEmpty() && active.isEmpty()) {
@@ -192,7 +201,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
           if (!poolNotEmpty.await(blockWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
             logger.debug("Block time of {} exceeded, throwing exception", blockWaitTime);
             throw new BlockingTimeoutException(
-              "Block time of " + blockWaitTime + " exceeded for pool " + getName() +
+              "Block time of " + blockWaitTime + " exceeded waiting for connection on pool " + getName() +
                 " with max size of " + getMaxPoolSize());
           }
         }
