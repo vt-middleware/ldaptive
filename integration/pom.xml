@@ -15,7 +15,7 @@
 
   <properties>
     <module.name>org.ldaptive.integration</module.name>
-    <jmeter.version>5.4.3</jmeter.version>
+    <jmeter.version>5.5</jmeter.version>
   </properties>
 
   <dependencies>
@@ -240,7 +240,7 @@
       <plugin>
         <groupId>com.lazerycode.jmeter</groupId>
         <artifactId>jmeter-maven-plugin</artifactId>
-        <version>3.5.0</version>
+        <version>3.6.0</version>
         <executions>
           <!-- Generate JMeter configuration -->
           <execution>

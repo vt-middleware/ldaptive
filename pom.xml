@@ -56,8 +56,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>1.7.36</org.slf4j.version>
-    <io.netty.version>4.1.77.Final</io.netty.version>
-    <org.springframework.version>5.3.20</org.springframework.version>
+    <io.netty.version>4.1.79.Final</io.netty.version>
+    <org.springframework.version>5.3.22</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.1.0</japicmp.oldVersion>
   </properties>
@@ -109,7 +109,7 @@
       <dependency>
         <groupId>org.testng</groupId>
         <artifactId>testng</artifactId>
-        <version>7.5</version>
+        <version>7.6.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -197,12 +197,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-deploy-plugin</artifactId>
-          <version>3.0.0-M2</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-install-plugin</artifactId>
-          <version>3.0.0-M1</version>
+          <version>3.0.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -212,7 +212,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -237,7 +237,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>10.2</version>
+              <version>10.3.1</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -252,7 +252,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-toolchains-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
@@ -262,7 +262,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>3.1.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -282,12 +282,12 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>5.1.6</version>
+          <version>5.1.7</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.3.0</version>
+          <version>3.4.1</version>
         </plugin>
         <plugin>
           <groupId>com.github.siom79.japicmp</groupId>
