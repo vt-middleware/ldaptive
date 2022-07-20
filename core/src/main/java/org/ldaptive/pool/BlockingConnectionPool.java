@@ -127,24 +127,31 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       // block here until create occurs without locking the whole pool
       // if the pool is already maxed or creates are failing,
       // block until a connection is available
-      checkOutLock.lock();
       try {
-        boolean b = true;
-        poolLock.lock();
+        if (!checkOutLock.tryLock(blockWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
+          logger.debug("block time exceeded, throwing exception");
+          throw new BlockingTimeoutException("Block time exceeded");
+        }
         try {
-          logger.trace("create connection in pool of size {}", available.size() + active.size());
-          if (available.size() + active.size() == getPoolConfig().getMaxPoolSize()) {
-            logger.trace("pool at maximum size, create not allowed");
-            b = false;
+          boolean b = true;
+          poolLock.lock();
+          try {
+            logger.trace("create connection in pool of size {}", available.size() + active.size());
+            if (available.size() + active.size() == getPoolConfig().getMaxPoolSize()) {
+              logger.trace("pool at maximum size, create not allowed");
+              b = false;
+            }
+          } finally {
+            poolLock.unlock();
+          }
+          if (b) {
+            pc = createActiveConnection();
           }
         } finally {
-          poolLock.unlock();
+          checkOutLock.unlock();
         }
-        if (b) {
-          pc = createActiveConnection();
-        }
-      } finally {
-        checkOutLock.unlock();
+      } catch (InterruptedException e) {
+        throw new PoolException("Interrupted while waiting to create a connection", e);
       }
       if (pc == null) {
         if (available.isEmpty() && active.isEmpty()) {
