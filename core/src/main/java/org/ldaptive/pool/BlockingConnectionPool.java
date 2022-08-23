@@ -128,9 +128,13 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       // if the pool is already maxed or creates are failing,
       // block until a connection is available
       try {
-        if (!checkOutLock.tryLock(blockWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
-          logger.debug("block time exceeded, throwing exception");
-          throw new BlockingTimeoutException("Block time exceeded");
+        if (blockWaitTime != null) {
+          if (!checkOutLock.tryLock(blockWaitTime.toMillis(), TimeUnit.MILLISECONDS)) {
+            logger.debug("block time exceeded, throwing exception");
+            throw new BlockingTimeoutException("Block time exceeded");
+          }
+        } else {
+          checkOutLock.lock();
         }
         try {
           boolean b = true;
