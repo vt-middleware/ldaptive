@@ -8,14 +8,40 @@ function user_continue() {
   fi
 }
 
-if [ "$#" -ne 3 ]; then
-  echo "USAGE: `basename $0` <branch> <release-version> <next-version>"
+if [ "$#" -ne 5 ]; then
+  echo "USAGE: `basename $0` <branch> <release-version> <next-version> <sonatype-user> <sonatype-passwd>"
+  exit
+fi
+
+if [ ! -f "distribution/release" ]; then
+  echo "Script must be executed in the root directory of this project"
   exit
 fi
 
 BRANCH="${1}"
 RELEASE_VERSION="${2}"
+if [[ ! "${RELEASE_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "<release-version> must be of the form 'MAJOR.MINOR.REVISION'"
+  exit
+fi
 NEXT_VERSION="${3}"
+if [[ ! "${NEXT_VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+-SNAPSHOT$ ]]; then
+  echo "<next-version> must be of the form 'MAJOR.MINOR.REVISION-SNAPSHOT'"
+  exit
+fi
+SONATYPE_USER="${4}"
+SONATYPE_PASSWORD="${5}"
+
+if [ -z $(git config --get user.signingkey) ]; then
+  echo "Git signing must be enabled. Add user.signingkey to ~/.gitconfig"
+  exit
+fi
+
+if [ $(git tag -l | grep "$RELEASE_VERSION") ]; then
+  echo "Tag ${RELEASE_VERSION} already exists"
+  exit
+fi
+
 echo "================================================================="
 echo "BEGIN RELEASE"
 echo "BRANCH TO TAG:   ${BRANCH}"
@@ -34,7 +60,7 @@ user_continue
 git commit -a -m "Update version for ${RELEASE_VERSION} release."
 
 # tag the release version
-git tag -a v${RELEASE_VERSION} -m "Tagging ${RELEASE_VERSION} release."
+git tag -s v${RELEASE_VERSION} -m "Tagging ${RELEASE_VERSION} release."
 echo "Tagged release ${RELEASE_VERSION}"
 
 # update pom to the next version
@@ -66,14 +92,6 @@ user_continue
 
 git checkout gh-pages
 git pull origin gh-pages
-# remove root directory javadocs
-git rm -r javadocs/org javadocs/*.html javadocs/*.css javadocs/*.js javadocs/package-list
-# add new javadocs to root directory
-cp distribution/target/ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar javadocs
-pushd javadocs
-jar xf ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar
-rm -rf META-INF ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar
-popd
 # add new javadocs to release version directory
 mkdir javadocs/${RELEASE_VERSION}
 cp distribution/target/ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar javadocs/${RELEASE_VERSION}
@@ -89,7 +107,6 @@ echo "Committed new javadocs"
 echo "Updating schema"
 user_continue
 
-cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext.xsd
 cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext-${RELEASE_VERSION}.xsd
 git add schema
 git commit -a -m "Updated schema for ${RELEASE_VERSION} release."
@@ -108,5 +125,40 @@ echo "Committed new release binaries"
 # push changes to the server
 git push origin gh-pages
 
-echo "Finished release ${RELEASE_VERSION} for ldaptive"
+# upload bundle jars to sonatype
+echo "Uploading bundle jars to sonatype"
+user_continue
+
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@target/ldaptive-parent-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@core/target/ldaptive-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@json/target/ldaptive-json-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@beans/target/ldaptive-beans-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@templates/target/ldaptive-templates-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@apache-provider/target/ldaptive-apache-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@jldap-provider/target/ldaptive-jldap-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@opendj-provider/target/ldaptive-opendj-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@webapp/target/ldaptive-webapp-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
+  -F "file=@ldapi/target/ldaptive-ldapi-"${RELEASE_VERSION}"-bundle.jar" \
+  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+
+echo "Finished release ${RELEASE_VERSION} for ldaptive."
 
