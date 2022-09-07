@@ -142,7 +142,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
 
   /**
    * Sets whether DN resolution should fail if multiple DNs are found. If false an exception will be thrown if {@link
-   * #resolve(User)} finds more than one DN matching it's filter. Otherwise the first DN found is returned.
+   * #resolve(User)} finds more than one DN matching its filter. Otherwise, the first DN found is returned.
    *
    * @param  b  whether multiple DNs are allowed
    */
@@ -166,7 +166,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
 
   /**
    * Sets whether subtree searching will be used. If true, the DN used for authenticating will be searched for over the
-   * entire {@link #getBaseDn()}. Otherwise the DN will be searched for in the {@link #getBaseDn()} context.
+   * entire {@link #getBaseDn()}. Otherwise, the DN will be searched for in the {@link #getBaseDn()} context.
    *
    * @param  b  whether the DN will be searched for over the entire base
    */
@@ -222,7 +222,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   }
 
   /**
-   * Attempts to find the DN for the supplied user. {@link #createFilterTemplate(User)} ()} is used to create the search
+   * Attempts to find the DN for the supplied user. {@link #createFilterTemplate(User)} is used to create the search
    * filter. If more than one entry matches the search, the result is controlled by {@link
    * #setAllowMultipleDns(boolean)}.
    *

@@ -73,7 +73,7 @@ public enum AttributeUsage {
   /**
    * Returns the attribute usage for the supplied string name.
    *
-   * @param  s  case insensitive name to find attribute usage for
+   * @param  s  case-insensitive name to find attribute usage for
    *
    * @return  attribute usage or null if name cannot be found
    */

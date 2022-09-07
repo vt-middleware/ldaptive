@@ -228,7 +228,7 @@ public abstract class TransportConnection implements Connection
 
 
   /**
-   * Report that the supplied handle has completed. Allows the connection to cleanup any resources associated with the
+   * Report that the supplied handle has completed. Allows the connection to clean up any resources associated with the
    * handle.
    *
    * @param  handle  that has completed

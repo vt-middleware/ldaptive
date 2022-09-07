@@ -12,7 +12,7 @@ import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
 /**
  * Attempts to parse the authentication response and set the account state using data associated with eDirectory. The
  * {@link org.ldaptive.auth.Authenticator} should be configured to return 'passwordExpirationTime' and
- * 'loginGraceRemaining' attributes so they can be consumed by this handler. If this handler is assigned a {@link
+ * 'loginGraceRemaining' attributes, so they can be consumed by this handler. If this handler is assigned a {@link
  * #warningPeriod}, this handler will only emit warnings during that window before password expiration. Otherwise,
  * a warning is always emitted if passwordExpirationTime is set.
  *

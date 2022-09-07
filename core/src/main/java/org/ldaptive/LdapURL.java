@@ -223,7 +223,7 @@ public class LdapURL
   /**
    * Returns whether attributes were supplied in this url.
    *
-   * @return  whether a attributes were supplied in this url
+   * @return  whether an attributes were supplied in this url
    */
   public boolean isDefaultAttributes()
   {

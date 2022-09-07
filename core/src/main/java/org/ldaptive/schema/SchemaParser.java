@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 public final class SchemaParser
 {
 
-  /** Schema schema function system property. */
+  /** Schema function system property. */
   private static final String SCHEMA_FUNCTION_PROPERTY = "org.ldaptive.schema.function";
 
   /** Logger for this class. */
@@ -41,7 +41,7 @@ public final class SchemaParser
 
 
   /**
-   * The {@link #SCHEMA_FUNCTION_PROPERTY} property is checked and that class is loaded if provided. Otherwise the
+   * The {@link #SCHEMA_FUNCTION_PROPERTY} property is checked and that class is loaded if provided. Otherwise, the
    * {@link DefaultSchemaFunction} is returned.
    *
    * @return  default filter function

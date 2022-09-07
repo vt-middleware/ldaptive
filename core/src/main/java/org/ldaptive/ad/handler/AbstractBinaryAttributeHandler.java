@@ -9,7 +9,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.handler.AbstractEntryHandler;
 
 /**
- * Base class for entry handlers that convert a binary attribute to it's string form.
+ * Base class for entry handlers that convert a binary attribute to its string form.
  *
  * @param  <T>  type of object to handle
  *
@@ -73,7 +73,7 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractEntryHan
 
 
   /**
-   * Converts the supplied binary value to it's string form.
+   * Converts the supplied binary value to its string form.
    *
    * @param  value  to convert
    *

@@ -30,7 +30,7 @@ public abstract class AbstractDERType
 
 
   /**
-   * DER encode the supplied items with the tag associated with this type. If the length is greater than 127 bytes the
+   * DER encodes the supplied items with the tag associated with this type. If the length is greater than 127 bytes the
    * long form is always expressed using 4 bytes.
    *
    * @param  items  to encode

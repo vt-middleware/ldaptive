@@ -19,7 +19,7 @@ public final class GlobalIdentifier
 
 
   /**
-   * Converts the supplied GUID to it's string format.
+   * Converts the supplied GUID to its string format.
    *
    * @param  guid  to convert
    *
@@ -61,7 +61,7 @@ public final class GlobalIdentifier
 
 
   /**
-   * Converts the supplied GUID to it's binary format.
+   * Converts the supplied GUID to its binary format.
    *
    * @param  guid  to convert
    *

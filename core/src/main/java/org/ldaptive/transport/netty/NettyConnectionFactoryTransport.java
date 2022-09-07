@@ -30,7 +30,7 @@ public class NettyConnectionFactoryTransport implements Transport
   /** Event loop group for message handling. */
   private final EventLoopGroup messageWorkerGroup;
 
-  /** Whether to shutdown the event loop groups on {@link #close()}. */
+  /** Whether to shut down the event loop groups on {@link #close()}. */
   private boolean shutdownOnClose = true;
 
 
@@ -65,9 +65,9 @@ public class NettyConnectionFactoryTransport implements Transport
 
 
   /**
-   * Sets whether to shutdown the event loop groups on close.
+   * Sets whether to shut down the event loop groups on close.
    *
-   * @param  b  whether to shutdown on close
+   * @param  b  whether to shut down on close
    */
   public void setShutdownOnClose(final boolean b)
   {

@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Attempts to parse the authentication response and set the account state using data associated with FreeIPA. The
  * {@link org.ldaptive.auth.Authenticator} should be configured to return 'krbPasswordExpiration',
- * 'krbLoginFailedCount' and 'krbLastPwdChange' attributes so they can be consumed by this handler.
+ * 'krbLoginFailedCount' and 'krbLastPwdChange' attributes, so they can be consumed by this handler.
  *
  * @author  tduehr
  */

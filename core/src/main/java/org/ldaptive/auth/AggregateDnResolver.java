@@ -117,7 +117,7 @@ public class AggregateDnResolver implements DnResolver
 
   /**
    * Sets whether DN resolution should fail if multiple DNs are found If false an exception will be thrown if {@link
-   * #resolve(User)} finds that more than one DN resolver returns a DN. Otherwise the first DN found is returned.
+   * #resolve(User)} finds that more than one DN resolver returns a DN. Otherwise, the first DN found is returned.
    *
    * @param  b  whether multiple DNs are allowed
    */

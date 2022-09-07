@@ -7,8 +7,8 @@ import org.ldaptive.ad.SecurityIdentifier;
 import org.ldaptive.handler.LdapEntryHandler;
 
 /**
- * Processes an objectSid attribute by converting it from binary to it's string form. See
- * http://msdn.microsoft.com/en-us/library/windows/desktop/ ms679024(v=vs.85).aspx.
+ * Processes an objectSid attribute by converting it from binary to its string form. See
+ * http://msdn.microsoft.com/en-us/library/windows/desktop/ms679024(v=vs.85).aspx.
  *
  * @author  Middleware Services
  */

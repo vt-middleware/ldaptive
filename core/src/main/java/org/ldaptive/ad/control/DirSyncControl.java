@@ -382,7 +382,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
 
 
     /**
-     * Creates a new max attr handler handler.
+     * Creates a new max attr count handler.
      *
      * @param  control  to configure
      */

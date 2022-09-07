@@ -58,7 +58,7 @@ public final class TransportFactory
 
 
   /**
-   * The {@link #TRANSPORT_OVERRIDE} map is checked and that class is loaded if provided. Otherwise the default
+   * The {@link #TRANSPORT_OVERRIDE} map is checked and that class is loaded if provided. Otherwise, the default
    * transport for the supplied class is provided.
    *
    * @param  clazz  to return transport for

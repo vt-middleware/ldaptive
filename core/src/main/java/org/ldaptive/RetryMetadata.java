@@ -39,7 +39,7 @@ public interface RetryMetadata
   /**
    * Records a connection success at the given instant.
    *
-   * @param  time  Point in time where connection was opened.
+   * @param  time  Point in time when connection was opened.
    */
   void recordSuccess(Instant time);
 
@@ -47,7 +47,7 @@ public interface RetryMetadata
   /**
    * Records a connection failure at the given instant.
    *
-   * @param  time  Point in time where connection failed.
+   * @param  time  Point in time when connection failed.
    */
   void recordFailure(Instant time);
 }

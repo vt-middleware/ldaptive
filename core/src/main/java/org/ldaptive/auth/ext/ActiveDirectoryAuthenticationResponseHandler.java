@@ -12,9 +12,9 @@ import org.ldaptive.auth.AuthenticationResponseHandler;
 /**
  * Attempts to parse the authentication response message and set the account state using data associated with active
  * directory. If this handler is assigned a {@link #expirationPeriod}, then the {@link org.ldaptive.auth.Authenticator}
- * should be configured to return the 'pwdLastSet' attribute so it can be consumed by this handler. This will cause the
+ * should be configured to return the 'pwdLastSet' attribute, so it can be consumed by this handler. This will cause the
  * handler to emit a warning for the pwdLastSet value plus the expiration amount. The scope of that warning can be
- * further narrowed by providing a {@link #warningPeriod}. By default if the msDS-UserPasswordExpiryTimeComputed
+ * further narrowed by providing a {@link #warningPeriod}. By default, if the msDS-UserPasswordExpiryTimeComputed
  * attribute is found, expirationPeriod is ignored.
  *
  * @author  Middleware Services

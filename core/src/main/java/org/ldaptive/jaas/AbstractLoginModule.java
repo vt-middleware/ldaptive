@@ -290,7 +290,7 @@ public abstract class AbstractLoginModule implements LoginModule
 
   /**
    * Attempts to retrieve credentials for the supplied name and password callbacks. If useFirstPass or tryFirstPass is
-   * set, then name and password data is retrieved from shared state. Otherwise a callback handler is used to get the
+   * set, then name and password data is retrieved from shared state. Otherwise, a callback handler is used to get the
    * data. Set useCallback to force a callback handler to be used.
    *
    * @param  nameCb  to set name for

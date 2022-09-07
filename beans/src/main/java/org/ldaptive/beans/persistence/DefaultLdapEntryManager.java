@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Default implementation of an ldap entry manager. Uses an {@link LdapEntryMapper} to convert objects to entries, then
- * invokes LDAP operations with those objects. By default all attributes are requested using both the '*' and '+'
+ * invokes LDAP operations with those objects. By default, all attributes are requested using both the '*' and '+'
  * syntaxes. For attributes that must be requested by name, use {@link #DefaultLdapEntryManager(LdapEntryMapper,
  * ConnectionFactory, String[])}.
  *

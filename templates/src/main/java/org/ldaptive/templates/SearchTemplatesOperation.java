@@ -80,9 +80,9 @@ public class SearchTemplatesOperation
 
 
   /**
-   * Sets the execute templates.
+   * Sets the search templates.
    *
-   * @param  templates  execute templates
+   * @param  templates  search templates
    */
   public void setSearchTemplates(final SearchTemplates[] templates)
   {

@@ -151,7 +151,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
 
 
   /**
-   * Converts the supplied value to the target type. If a custom transcoder has been configured it is used. Otherwise
+   * Converts the supplied value to the target type. If a custom transcoder has been configured it is used. Otherwise,
    * the type converter from the evaluation context is used.
    *
    * @param  <T>  either String or byte[]
@@ -243,7 +243,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
 
 
   /**
-   * Creates a best fit collection for the supplied type.
+   * Creates the best fit collection for the supplied type.
    *
    * @param  <T>  collection type
    * @param  type  of collection to create

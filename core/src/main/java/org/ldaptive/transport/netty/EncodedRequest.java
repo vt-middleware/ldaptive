@@ -5,7 +5,7 @@ import org.ldaptive.LdapUtils;
 import org.ldaptive.Request;
 
 /**
- * Wrapper object that stores an encoded request with it's message ID.
+ * Wrapper object that stores an encoded request with its message ID.
  *
  * @author  Middleware Services
  */

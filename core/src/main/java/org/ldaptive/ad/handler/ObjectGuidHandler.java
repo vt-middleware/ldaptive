@@ -7,7 +7,7 @@ import org.ldaptive.ad.GlobalIdentifier;
 import org.ldaptive.handler.LdapEntryHandler;
 
 /**
- * Processes an objectGuid attribute by converting it from binary to it's string form.
+ * Processes an objectGuid attribute by converting it from binary to its string form.
  *
  * @author  Middleware Services
  */

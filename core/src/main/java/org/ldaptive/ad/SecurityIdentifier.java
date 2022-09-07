@@ -20,7 +20,7 @@ public final class SecurityIdentifier
 
 
   /**
-   * Converts the supplied SID to it's string format.
+   * Converts the supplied SID to its string format.
    *
    * @param  sid  to convert
    *
@@ -66,7 +66,7 @@ public final class SecurityIdentifier
 
 
   /**
-   * Converts the supplied SID to it's binary format.
+   * Converts the supplied SID to its binary format.
    *
    * @param  sid  to convert
    *
