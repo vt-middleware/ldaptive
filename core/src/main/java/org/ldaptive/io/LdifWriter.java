@@ -3,6 +3,7 @@ package org.ldaptive.io;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.Collection;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
@@ -100,14 +101,20 @@ public class LdifWriter implements SearchResultWriter
 
     for (LdapAttribute attr : entry.getAttributes()) {
       final String attrName = attr.getName();
-      for (String attrValue : attr.getStringValues()) {
-        if (attr.isBinary()) {
-          entryLdif.append(attrName).append(":: ").append(attrValue).append(LINE_SEPARATOR);
-        } else if (LdapUtils.shouldBase64Encode(attrValue)) {
-          entryLdif.append(attrName).append(":: ").append(LdapUtils.base64Encode(attrValue)).append(LINE_SEPARATOR);
-        } else {
-          entryLdif.append(attrName).append(": ").append(attrValue).append(LINE_SEPARATOR);
-        }
+      final Collection<String> ldifLines = attr.getValues(
+        bytes -> {
+          final StringBuffer sb = new StringBuffer(attrName);
+          if (attr.isBinary()) {
+            sb.append(":: ").append(LdapUtils.base64Encode(bytes)).append(LINE_SEPARATOR);
+          } else if (LdapUtils.shouldBase64Encode(bytes)) {
+            sb.append(":: ").append(LdapUtils.base64Encode(bytes)).append(LINE_SEPARATOR);
+          } else {
+            sb.append(": ").append(LdapUtils.utf8Encode(bytes)).append(LINE_SEPARATOR);
+          }
+          return sb.toString();
+        });
+      for (String line : ldifLines) {
+        entryLdif.append(line);
       }
     }
 
