@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import org.ldaptive.LdapUtils;
@@ -113,7 +113,7 @@ public class SyncInfoMessage extends IntermediateResponse
   private boolean refreshDeletes;
 
   /** entry uuids. */
-  private Set<UUID> entryUuids = new HashSet<>();
+  private final Set<UUID> entryUuids = new LinkedHashSet<>();
 
 
   /**
@@ -278,7 +278,7 @@ public class SyncInfoMessage extends IntermediateResponse
    */
   public void setEntryUuids(final Set<UUID> uuids)
   {
-    entryUuids = uuids;
+    entryUuids.addAll(uuids);
   }
 
 
