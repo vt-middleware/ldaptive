@@ -12,6 +12,7 @@ import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.ParseHandler;
 import org.ldaptive.asn1.UuidType;
+import org.ldaptive.control.ResponseControl;
 
 /**
  * Intermediate response message for LDAP content synchronization. See RFC 4533. Message is defined as:
@@ -113,13 +114,16 @@ public class SyncInfoMessage extends IntermediateResponse
   private boolean refreshDeletes;
 
   /** entry uuids. */
-  private final Set<UUID> entryUuids = new LinkedHashSet<>();
+  private Set<UUID> entryUuids = new LinkedHashSet<>();
 
 
   /**
    * Default constructor.
    */
-  protected SyncInfoMessage() {}
+  protected SyncInfoMessage()
+  {
+    setResponseName(OID);
+  }
 
 
   /**
@@ -129,15 +133,15 @@ public class SyncInfoMessage extends IntermediateResponse
    */
   public SyncInfoMessage(final DERBuffer buffer)
   {
-    super(buffer);
+    final DERParser parser = new DERParser();
+    parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
+    parser.registerHandler(ResponseNameHandler.PATH, new ResponseNameHandler(this));
+    parser.registerHandler(ResponseValueHandler.PATH, getResponseValueParseHandler());
+    parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
+    parser.parse(buffer);
   }
 
 
-  /**
-   * Returns the parse handler for the response value.
-   *
-   * @return  parse handler
-   */
   @Override
   protected ParseHandler getResponseValueParseHandler()
   {
@@ -275,10 +279,13 @@ public class SyncInfoMessage extends IntermediateResponse
    * Sets the entry uuids.
    *
    * @param  uuids  entry uuids
+   *
+   * @deprecated  use {@link #addEntryUuids(UUID...)}
    */
+  @Deprecated
   public void setEntryUuids(final Set<UUID> uuids)
   {
-    entryUuids.addAll(uuids);
+    entryUuids = uuids;
   }
 
 
@@ -641,6 +648,22 @@ public class SyncInfoMessage extends IntermediateResponse
     protected Builder self()
     {
       return this;
+    }
+
+
+    @Override
+    public Builder messageID(final int id)
+    {
+      object.setMessageID(id);
+      return self();
+    }
+
+
+    @Override
+    public Builder controls(final ResponseControl... controls)
+    {
+      object.addControls(controls);
+      return self();
     }
 
 

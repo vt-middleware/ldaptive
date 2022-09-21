@@ -59,7 +59,7 @@
     <io.netty.version>4.1.82.Final</io.netty.version>
     <org.springframework.version>5.3.23</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
-    <japicmp.oldVersion>2.1.0</japicmp.oldVersion>
+    <japicmp.oldVersion>2.1.1</japicmp.oldVersion>
   </properties>
 
   <modules>

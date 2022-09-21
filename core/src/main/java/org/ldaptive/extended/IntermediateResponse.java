@@ -31,12 +31,6 @@ public class IntermediateResponse extends AbstractMessage
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10267;
 
-  /** DER path to response name. */
-  private static final DERPath RESPONSE_NAME_PATH = new DERPath("/SEQ/APP(25)/CTX(0)");
-
-  /** DER path to response value. */
-  private static final DERPath RESPONSE_VALUE_PATH = new DERPath("/SEQ/APP(25)/CTX(1)");
-
   /** Response name. */
   private String responseName;
 
@@ -59,8 +53,8 @@ public class IntermediateResponse extends AbstractMessage
   {
     final DERParser parser = new DERParser();
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
-    parser.registerHandler(RESPONSE_NAME_PATH, new ResponseNameHandler(this));
-    parser.registerHandler(RESPONSE_VALUE_PATH, getResponseValueParseHandler());
+    parser.registerHandler(ResponseNameHandler.PATH, new ResponseNameHandler(this));
+    parser.registerHandler(ResponseValueHandler.PATH, new ResponseValueHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
   }
@@ -70,7 +64,12 @@ public class IntermediateResponse extends AbstractMessage
    * Returns the parse handler for the response value.
    *
    * @return  parse handler
+   *
+   * @deprecated  this method was originally intended for use by subclasses to reduce the complexity of parsing.
+   *              Unfortunately performing parsing as part of class construction can have side effects. Most notably,
+   *              subclasses that do variable initialization will overwrite the results of the parsing.
    */
+  @Deprecated
   protected ParseHandler getResponseValueParseHandler()
   {
     return new ResponseValueHandler(this);
@@ -143,6 +142,9 @@ public class IntermediateResponse extends AbstractMessage
   protected static class ResponseNameHandler extends AbstractParseHandler<IntermediateResponse>
   {
 
+    /** DER path to response name. */
+    public static final DERPath PATH = new DERPath("/SEQ/APP(25)/CTX(0)");
+
 
     /**
      * Creates a new response name handler.
@@ -168,6 +170,9 @@ public class IntermediateResponse extends AbstractMessage
   /** Parse handler implementation for the response value. */
   protected static class ResponseValueHandler extends AbstractParseHandler<IntermediateResponse>
   {
+
+    /** DER path to response value. */
+    public static final DERPath PATH = new DERPath("/SEQ/APP(25)/CTX(1)");
 
 
     /**
