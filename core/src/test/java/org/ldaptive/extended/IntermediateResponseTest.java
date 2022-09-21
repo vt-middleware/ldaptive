@@ -28,7 +28,7 @@ public class IntermediateResponseTest
       new Object[][] {
         new Object[] {
           new byte[] {
-            //preamble
+            // preamble
             0x30, 0x2c, 0x02, 0x01, 0x02,
             // intermediate response
             0x79, 0x27,
