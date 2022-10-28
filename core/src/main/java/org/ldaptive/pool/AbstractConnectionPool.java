@@ -632,7 +632,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   public synchronized void close()
   {
     throwIfNotInitialized();
-    logger.debug("Closing {} of size {} for {}", this, available.size() + active.size());
+    logger.debug("Closing {} of size {}", this, available.size() + active.size());
     poolLock.lock();
     try {
       while (!available.isEmpty()) {
