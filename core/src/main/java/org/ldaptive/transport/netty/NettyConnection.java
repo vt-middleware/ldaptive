@@ -492,13 +492,16 @@ public final class NettyConnection extends TransportConnection
       throw new SSLException("SSL handshake cancelled");
     }
     if (!sslFuture.isSuccess()) {
-      if (inboundException != null) {
-        throw new SSLException(inboundException);
-      } else if (sslFuture.cause() != null) {
-        throw new SSLException(sslFuture.cause());
+      final SSLException sslEx;
+      if (sslFuture.cause() != null) {
+        sslEx = new SSLException(sslFuture.cause());
       } else {
-        throw new SSLException("SSL handshake failure");
+        sslEx = new SSLException("SSL handshake failure");
       }
+      if (inboundException != null) {
+        sslEx.addSuppressed(inboundException);
+      }
+      throw sslEx;
     }
     if (connectionConfig.getSslConfig() != null && connectionConfig.getSslConfig().getHostnameVerifier() != null) {
       final HostnameVerifier verifier = new HostnameVerifierAdapter(
