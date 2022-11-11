@@ -81,10 +81,11 @@
         <artifactId>slf4j-nop</artifactId>
         <version>${org.slf4j.version}</version>
       </dependency>
+      <!-- Remain on version 1.2.x until slf4j is updated to 2.x -->
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.4.1</version>
+        <version>1.2.11</version>
       </dependency>
       <dependency>
         <groupId>org.ldaptive</groupId>
