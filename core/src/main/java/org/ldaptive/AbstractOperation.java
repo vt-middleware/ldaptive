@@ -394,9 +394,9 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
 
 
     /**
-     * Returns the message.
+     * Returns the operation.
      *
-     * @return  message
+     * @return  operation
      */
     public T build()
     {

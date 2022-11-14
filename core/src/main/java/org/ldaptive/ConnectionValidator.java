@@ -45,7 +45,7 @@ public interface ConnectionValidator extends Function<Connection, Boolean>
 
 
   /**
-   * Returns the time at which a validate operation should be abandoned.
+   * Returns the duration at which a validate operation should be abandoned.
    *
    * @return  validation timeout
    */

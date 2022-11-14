@@ -55,6 +55,11 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
   }
 
 
+  /**
+   * Sets the validate timeout.
+   *
+   * @param  timeout  to set
+   */
   public void setValidateTimeout(final Duration timeout)
   {
     if (timeout == null || timeout.isNegative()) {
@@ -160,9 +165,9 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
 
 
     /**
-     * Returns the message.
+     * Returns the connection validator.
      *
-     * @return  message
+     * @return  connection validator
      */
     public T build()
     {

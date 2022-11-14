@@ -35,8 +35,8 @@ public class Queue<T> implements Iterable<T>
 
 
   /**
-   * Adds an object to the queue based on the queue type. See {@link Deque#offerFirst(Object)} and {@link
-   * Deque#offerLast(Object)}.
+   * Adds an object to the queue based on the queue type. See {@link Deque#addFirst(Object)} and {@link
+   * Deque#addLast(Object)}.
    *
    * @param  t  to add
    */
