@@ -142,6 +142,8 @@ public class SyncInfoMessage extends IntermediateResponse
   }
 
 
+  // Once the deprecated parent method is removed, this method will no longer produce a warning
+  @SuppressWarnings("deprecation")
   @Override
   protected ParseHandler getResponseValueParseHandler()
   {
