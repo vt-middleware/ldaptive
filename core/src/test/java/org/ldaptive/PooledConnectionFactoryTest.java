@@ -13,6 +13,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.concurrent.SearchOperationWorker;
+import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.transport.netty.NettyConnectionFactoryTransport;
 import org.ldaptive.transport.netty.SimpleNettyServer;
 import org.testng.Assert;
@@ -41,6 +42,7 @@ public class PooledConnectionFactoryTest
         ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build());
+      factory.setName("pooled-connection-factory-test-open-and-close");
       try {
         factory.initialize();
       } finally {
@@ -93,6 +95,7 @@ public class PooledConnectionFactoryTest
             new ThreadPerTaskExecutor(
               new DefaultThreadFactory(getClass().getSimpleName() + "-io", true, Thread.NORM_PRIORITY))),
           null));
+      factory.setName("pooled-connection-factory-test-open-and-reconnect");
       factory.setMinPoolSize(10);
       factory.setMaxPoolSize(10);
       try {
@@ -139,6 +142,7 @@ public class PooledConnectionFactoryTest
         .validator(SearchConnectionValidator.builder()
           .build())
         .build();
+      factory.setName("pooled-connection-factory-test-validate-periodically");
       try {
         factory.initialize();
         Assert.assertEquals(factory.availableCount(), 3);
@@ -165,6 +169,7 @@ public class PooledConnectionFactoryTest
     try {
       final InetSocketAddress address = server.start();
       final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+        .name("pooled-connection-factory-test-validate-periodically-restart")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -217,6 +222,7 @@ public class PooledConnectionFactoryTest
     try {
       final InetSocketAddress address = server.start();
       final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+        .name("pooled-connection-factory-test-validate-periodically-with-timeout")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -268,6 +274,7 @@ public class PooledConnectionFactoryTest
       final InetSocketAddress address = server.start();
       final AtomicInteger validateCount = new AtomicInteger();
       final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+        .name("pooled-connection-factory-test-validate-one-checkout")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -324,6 +331,189 @@ public class PooledConnectionFactoryTest
         c1.close();
         Assert.assertEquals(factory.availableCount(), 1);
         Assert.assertEquals(factory.activeCount(), 0);
+      } finally {
+        factory.close();
+        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
+  public void pruneBelowMin()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+        .name("pooled-connection-factory-test-prune-below-min")
+        .config(ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          .build())
+        .min(2)
+        .max(5)
+        .pruneStrategy(IdlePruneStrategy.builder()
+          .idle(Duration.ofMillis(25))
+          .build())
+        .build();
+      try {
+        factory.initialize();
+        Assert.assertEquals(factory.availableCount(), 2);
+        final Connection c1 = factory.getConnection();
+        c1.close();
+        Thread.sleep(50);
+        factory.prune();
+        Assert.assertEquals(factory.availableCount(), 2);
+      } finally {
+        factory.close();
+        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
+  public void pruneAboveMin()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+        .name("pooled-connection-factory-test-prune-above-min")
+        .config(ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          .build())
+        .min(2)
+        .max(5)
+        .pruneStrategy(IdlePruneStrategy.builder()
+          .idle(Duration.ofMillis(25))
+          .build())
+        .build();
+      try {
+        factory.initialize();
+        Assert.assertEquals(factory.availableCount(), 2);
+        final Connection c1 = factory.getConnection();
+        final Connection c2 = factory.getConnection();
+        final Connection c3 = factory.getConnection();
+        c1.close();
+        c2.close();
+        c3.close();
+        Assert.assertEquals(factory.availableCount(), 3);
+        Thread.sleep(50);
+        factory.prune();
+        Assert.assertEquals(factory.availableCount(), 2);
+      } finally {
+        factory.close();
+        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
+  public void pruneAllActive()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+        .name("pooled-connection-factory-test-prune-all-active")
+        .config(ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          .build())
+        .min(2)
+        .max(5)
+        .pruneStrategy(IdlePruneStrategy.builder()
+          .idle(Duration.ofMillis(25))
+          .build())
+        .build();
+      try {
+        factory.initialize();
+        Assert.assertEquals(factory.availableCount(), 2);
+        final Connection c1 = factory.getConnection();
+        final Connection c2 = factory.getConnection();
+        final Connection c3 = factory.getConnection();
+        Assert.assertEquals(factory.availableCount(), 0);
+        Assert.assertEquals(factory.activeCount(), 3);
+        Thread.sleep(50);
+        factory.prune();
+        Assert.assertEquals(factory.availableCount(), 0);
+        Assert.assertEquals(factory.activeCount(), 3);
+        c1.close();
+        c2.close();
+        c3.close();
+        Assert.assertEquals(factory.availableCount(), 3);
+        Assert.assertEquals(factory.activeCount(), 0);
+      } finally {
+        factory.close();
+        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
+  public void pruneActiveAboveMin()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+        .name("pooled-connection-factory-test-prune-active-above-min")
+        .config(ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          .build())
+        .min(2)
+        .max(5)
+        .pruneStrategy(IdlePruneStrategy.builder()
+          .idle(Duration.ofMillis(25))
+          .build())
+        .build();
+      try {
+        factory.initialize();
+        Assert.assertEquals(factory.availableCount(), 2);
+        final Connection c1 = factory.getConnection();
+        final Connection c2 = factory.getConnection();
+        final Connection c3 = factory.getConnection();
+        final Connection c4 = factory.getConnection();
+        final Connection c5 = factory.getConnection();
+        Assert.assertEquals(factory.availableCount(), 0);
+        Assert.assertEquals(factory.activeCount(), 5);
+        c1.close();
+        c2.close();
+        Assert.assertEquals(factory.availableCount(), 2);
+        Assert.assertEquals(factory.activeCount(), 3);
+        Thread.sleep(50);
+        factory.prune();
+        Assert.assertEquals(factory.availableCount(), 0);
+        Assert.assertEquals(factory.activeCount(), 3);
+        c3.close();
+        c4.close();
+        c5.close();
       } finally {
         factory.close();
         Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);

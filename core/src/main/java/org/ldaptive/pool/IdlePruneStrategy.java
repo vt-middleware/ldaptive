@@ -3,32 +3,21 @@ package org.ldaptive.pool;
 
 import java.time.Duration;
 import java.time.Instant;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Removes connections from the pool based on how long they have been idle in the available queue. By default this
+ * Removes connections from the pool based on how long they have been idle in the available queue. By default, this
  * implementation executes every 5 minutes and prunes connections that have been idle for more than 10 minutes.
  *
  * @author  Middleware Services
  */
-public class IdlePruneStrategy implements PruneStrategy
+public class IdlePruneStrategy extends AbstractPruneStrategy
 {
 
   /** Default number of statistics to store. Value is {@value}. */
   private static final int DEFAULT_STATISTICS_SIZE = 1;
 
-  /** Default prune period in seconds. Value is 5 minutes. */
-  private static final Duration DEFAULT_PRUNE_PERIOD = Duration.ofMinutes(5);
-
   /** Default idle time. Value is 10 minutes. */
   private static final Duration DEFAULT_IDLE_TIME = Duration.ofMinutes(10);
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-  /** Prune period. */
-  private Duration prunePeriod;
 
   /** Idle time. */
   private Duration idleTime;
@@ -71,7 +60,7 @@ public class IdlePruneStrategy implements PruneStrategy
   {
     final Instant timeAvailable = conn.getPooledConnectionStatistics().getLastAvailableStat();
     logger.trace("evaluating timestamp {} for connection {}", timeAvailable, conn);
-    return timeAvailable.plus(idleTime).isBefore(Instant.now());
+    return timeAvailable != null ? timeAvailable.plus(idleTime).isBefore(Instant.now()) : true;
   }
 
 
@@ -79,27 +68,6 @@ public class IdlePruneStrategy implements PruneStrategy
   public int getStatisticsSize()
   {
     return DEFAULT_STATISTICS_SIZE;
-  }
-
-
-  @Override
-  public Duration getPrunePeriod()
-  {
-    return prunePeriod;
-  }
-
-
-  /**
-   * Sets the prune period.
-   *
-   * @param  period  to set
-   */
-  public void setPrunePeriod(final Duration period)
-  {
-    if (period == null || period.isNegative() || period.isZero()) {
-      throw new IllegalArgumentException("Prune period cannot be null, negative or zero");
-    }
-    prunePeriod = period;
   }
 
 
@@ -133,7 +101,55 @@ public class IdlePruneStrategy implements PruneStrategy
   {
     return new StringBuilder("[").append(
       getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("prunePeriod=").append(prunePeriod).append(", ")
+      .append("prunePeriod=").append(getPrunePeriod()).append(", ")
       .append("idleTime=").append(idleTime).append("]").toString();
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static IdlePruneStrategy.Builder builder()
+  {
+    return new IdlePruneStrategy.Builder();
+  }
+
+
+  /** Idle prune strategy builder. */
+  public static class Builder extends
+    AbstractPruneStrategy.AbstractBuilder<IdlePruneStrategy.Builder, IdlePruneStrategy>
+  {
+
+
+    /**
+     * Creates a new builder.
+     */
+    protected Builder()
+    {
+      super(new IdlePruneStrategy());
+    }
+
+
+    @Override
+    protected IdlePruneStrategy.Builder self()
+    {
+      return this;
+    }
+
+
+    /**
+     * Sets the prune idle time.
+     *
+     * @param  time  to set
+     *
+     * @return  this builder
+     */
+    public IdlePruneStrategy.Builder idle(final Duration time)
+    {
+      object.setIdleTime(time);
+      return self();
+    }
   }
 }

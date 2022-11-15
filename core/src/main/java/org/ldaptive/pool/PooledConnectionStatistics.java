@@ -99,6 +99,17 @@ public class PooledConnectionStatistics
 
 
   /**
+   * Inserts the supplied timestamp into the available statistics. This method is intended for testing.
+   *
+   * @param  instant  to add
+   */
+  synchronized void addAvailableStat(final Instant instant)
+  {
+    availableStats.add(instant);
+  }
+
+
+  /**
    * Returns all the active timestamp statistics.
    *
    * @return  active timestamp statistics
@@ -124,6 +135,17 @@ public class PooledConnectionStatistics
   public synchronized void addActiveStat()
   {
     activeStats.add(Instant.now());
+  }
+
+
+  /**
+   * Inserts the supplied timestamp into the active statistics. This method is intended for testing.
+   *
+   * @param  instant  to add
+   */
+  synchronized void addActiveStat(final Instant instant)
+  {
+    activeStats.add(instant);
   }
 
 
