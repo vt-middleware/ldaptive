@@ -40,7 +40,7 @@ public final class LdapURLActivatorService
     executor = new ScheduledThreadPoolExecutor(
       1,
       r -> {
-        final Thread t = new Thread(r, getClass().getSimpleName() + "@" + hashCode());
+        final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
         t.setDaemon(true);
         return t;
       });

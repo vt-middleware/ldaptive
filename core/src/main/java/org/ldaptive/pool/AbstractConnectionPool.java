@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,7 @@ import org.ldaptive.ConnectionValidator;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchConnectionValidator;
+import org.ldaptive.concurrent.CallableWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -508,6 +510,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     }
     if (available.isEmpty() && minPoolSize > 0) {
       if (failFastInitialize) {
+        closeAllConnections();
         throw new IllegalStateException(
           "Could not initialize pool size for pool " + getName(),
           growException != null ? growException.getCause() : null);
@@ -517,9 +520,10 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     }
     logger.debug("Initialized available queue {} for {}", available, this);
 
+    final String threadPoolName = name != null ? name + "-" + getClass().getSimpleName() : getClass().getSimpleName();
     poolExecutor = Executors.newSingleThreadScheduledExecutor(
       r -> {
-        final Thread t = new Thread(r, getClass().getSimpleName() + "@" + hashCode());
+        final Thread t = new Thread(r, "ldaptive-" + threadPoolName + "@" + hashCode());
         t.setDaemon(true);
         return t;
       });
@@ -566,7 +570,10 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    * this method is a no-op.
    *
    * @param  size  to grow the pool to
+   *
+   * @deprecated Use {@link #grow(int, boolean)}
    */
+  @Deprecated
   protected void grow(final int size)
   {
     grow(size, false);
@@ -587,30 +594,20 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   {
     if (checkOutLock.tryLock()) {
       try {
-        int count = 0;
         logger.trace("waiting for pool lock to initialize pool {}", poolLock.getQueueLength());
         poolLock.lock();
         try {
-          IllegalStateException lastThrown = null;
-          int currentPoolSize = active.size() + available.size();
+          final int currentPoolSize = active.size() + available.size();
           logger.debug("Checking connection pool size >= {} for {}", size, this);
-          while (currentPoolSize < size && count < size * 2) {
-            try {
-              final PooledConnectionProxy pc = createAvailableConnection(throwOnFailure);
-              if (pc != null && connectOnCreate) {
-                if (!passivateAndValidateConnection(pc)) {
-                  removeAvailableConnection(pc);
-                }
-              }
-            } catch (IllegalStateException e) {
-              lastThrown = e;
-            }
-            currentPoolSize = active.size() + available.size();
-            count++;
+
+          final int numConnsToAdd = size - currentPoolSize;
+          if (numConnsToAdd > 0) {
+            createAvailableConnections(numConnsToAdd, throwOnFailure);
+          } else {
+            logger.debug(
+              "Current pool size {} exceeds requested size {}, grow not performed for {}", currentPoolSize, size, this);
           }
-          if (lastThrown != null && currentPoolSize < size) {
-            throw lastThrown;
-          }
+          logger.debug("Pool size after grow is {} for {}", available.size() + active.size(), this);
         } finally {
           poolLock.unlock();
         }
@@ -635,16 +632,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     logger.debug("Closing {} of size {}", this, available.size() + active.size());
     poolLock.lock();
     try {
-      while (!available.isEmpty()) {
-        final PooledConnectionProxy pc = available.remove();
-        pc.getConnection().close();
-        logger.trace("removed {} from {}", pc, this);
-      }
-      while (!active.isEmpty()) {
-        final PooledConnectionProxy pc = active.remove();
-        pc.getConnection().close();
-        logger.trace("removed {} from {}", pc, this);
-      }
+      closeAllConnections();
     } finally {
       poolLock.unlock();
     }
@@ -652,6 +640,48 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     poolExecutor.shutdown();
     logger.info("Pool {} closed", this);
     initialized = false;
+  }
+
+
+  /**
+   * Closes all connections in the pool.
+   */
+  private synchronized void closeAllConnections()
+  {
+    poolLock.lock();
+    try {
+      final List<Callable<PooledConnectionProxy>> removeConns = new ArrayList<>(available.size() + active.size());
+      while (!available.isEmpty()) {
+        final PooledConnectionProxy pc = available.remove();
+        removeConns.add(() -> {
+          pc.getConnection().close();
+          return pc;
+        });
+      }
+      while (!active.isEmpty()) {
+        final PooledConnectionProxy pc = active.remove();
+        removeConns.add(() -> {
+          pc.getConnection().close();
+          return pc;
+        });
+      }
+
+      if (!removeConns.isEmpty()) {
+        final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>(getClass().getSimpleName());
+        try {
+          final List<ExecutionException> exceptions = callableWorker.execute(
+            removeConns,
+            pc -> logger.trace("removed {} from {}", pc, AbstractConnectionPool.this));
+          for (ExecutionException e : exceptions) {
+            logger.warn("Error closing connection for {}", this, e.getCause() != null ? e.getCause() : e);
+          }
+        } finally {
+          callableWorker.shutdown();
+        }
+      }
+    } finally {
+      poolLock.unlock();
+    }
   }
 
 
@@ -712,6 +742,77 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
 
   /**
+   * Asynchronously creates new connections and adds them to the available queue if the connection can be successfully
+   * passivated and validated. See {@link #passivateAndValidateConnection(PooledConnectionProxy)}. This method can make
+   * up to (count * 2) attempts in a best effort to create the number of connections requested.
+   *
+   * @param  count  number of connections to attempt to create
+   * @param  throwOnFailure  whether to throw illegal state exception on any connection creation failure
+   *
+   * @throws  IllegalStateException  if throwOnFailure is true and count connections are not successfully created
+   */
+  protected void createAvailableConnections(final int count, final boolean throwOnFailure)
+  {
+    poolLock.lock();
+    try {
+      final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>(getClass().getSimpleName());
+      try {
+        final AtomicInteger createdCount = new AtomicInteger();
+        final List<ExecutionException> exceptions = callableWorker.execute(
+          () -> {
+            PooledConnectionProxy pc = null;
+            int i = 0;
+            // make two attempts on each thread to open a connection
+            while (pc == null && i < 2) {
+              try {
+                pc = createConnection(true);
+                if (pc != null && connectOnCreate) {
+                  if (!passivateAndValidateConnection(pc)) {
+                    pc.getConnection().close();
+                    pc = null;
+                  }
+                }
+              } catch (IllegalStateException e) {
+                if (i == 1) {
+                  throw e;
+                }
+                pc = null;
+              }
+              i++;
+            }
+            return pc;
+          },
+          count,
+          pc -> {
+            if (pc != null) {
+              available.add(pc);
+              pc.getPooledConnectionStatistics().addAvailableStat();
+              logger.info("Added available connection {} for {}", pc.getConnection(), this);
+              createdCount.incrementAndGet();
+            }
+          });
+        if (createdCount.get() < count && throwOnFailure) {
+          if (!exceptions.isEmpty()) {
+            final ExecutionException e = exceptions.get(0);
+            if (e.getCause() instanceof IllegalStateException) {
+              throw (IllegalStateException) e.getCause();
+            } else {
+              throw new IllegalStateException(e.getCause() == null ? e : e.getCause());
+            }
+          } else {
+            throw new IllegalStateException("Could not create the requested number of connections");
+          }
+        }
+      } finally {
+        callableWorker.shutdown();
+      }
+    } finally {
+      poolLock.unlock();
+    }
+  }
+
+
+  /**
    * Create a new connection and place it in the available pool.
    *
    * @param  throwOnFailure  whether to throw illegal state exception
@@ -740,9 +841,11 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
 
   /**
-   * Create a new connection and place it in the active pool.
+   * Create a new connection and place it in the active queue. This method creates the connection and then attempts to
+   * acquire the pool lock in order to add the connection to the active queue. Therefore, this method can be invoked
+   * both with and without acquiring the pool lock.
    *
-   * @param  throwOnFailure  whether to throw illegal state exception
+   * @param  throwOnFailure  whether to throw illegal state exception on connection creation failure
    *
    * @return  connection that was placed in the active pool
    *
@@ -829,13 +932,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     try {
       if (available.remove(pc)) {
         destroy = true;
-      } else {
-        logger.trace("attempt to remove unknown available connection {} from {}", pc, this);
       }
       if (active.remove(pc)) {
         destroy = true;
-      } else {
-        logger.trace("attempt to remove unknown active connection {} from {}", pc, this);
       }
     } finally {
       poolLock.unlock();
@@ -935,20 +1034,48 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     poolLock.lock();
     try {
       if (!available.isEmpty()) {
-        int currentPoolSize = active.size() + available.size();
+        final int currentPoolSize = active.size() + available.size();
         if (currentPoolSize > minPoolSize) {
           logger.debug("Pruning available pool of size {} for {}", available.size(), this);
 
-          final int numConnToPrune = available.size();
-          final Iterator<PooledConnectionProxy> connIter = available.iterator();
-          for (int i = 0; i < numConnToPrune && currentPoolSize > minPoolSize; i++) {
-            final PooledConnectionProxy pc = connIter.next();
-            if (pruneStrategy.apply(pc)) {
-              connIter.remove();
-              pc.getConnection().close();
-              logger.trace("prune removed {} from {}", pc, this);
-              currentPoolSize--;
+          final int numConnAboveMin = currentPoolSize - minPoolSize;
+          final int numConnToPrune = available.size() < numConnAboveMin ? available.size() : numConnAboveMin;
+          final List<Callable<PooledConnectionProxy>> callables = new ArrayList<>(numConnToPrune);
+          for (PooledConnectionProxy pc : available) {
+            logger.trace("pruning {} for {}", pc, this);
+            callables.add(() -> {
+              if (pruneStrategy.apply(pc)) {
+                logger.trace("prune approved on {} with {} for {}", pc, pruneStrategy, AbstractConnectionPool.this);
+                return pc;
+              }
+              logger.trace("prune denied on {} with {} for {}", pc, pruneStrategy, AbstractConnectionPool.this);
+              return null;
+            });
+          }
+
+          final AtomicInteger numConnPruned = new AtomicInteger();
+          final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>(getClass().getSimpleName());
+          try {
+            final List<ExecutionException> exceptions = callableWorker.execute(
+              callables,
+              pc -> {
+                if (pc != null) {
+                  if (numConnPruned.get() < numConnToPrune) {
+                    logger.trace("prune removing {} from {}", pc, this);
+                    available.remove(pc);
+                    pc.getConnection().close();
+                    logger.trace("prune removed {} from {}", pc, this);
+                    numConnPruned.getAndIncrement();
+                  } else {
+                    logger.trace("prune ignored {} from {}", pc, this);
+                  }
+                }
+              });
+            for (ExecutionException e : exceptions) {
+              logger.warn("Error pruning connection for {}", this, e.getCause() != null ? e.getCause() : e);
             }
+          } finally {
+            callableWorker.shutdown();
           }
           if (numConnToPrune == available.size()) {
             logger.debug("Prune strategy did not remove any connections for {}", this);
@@ -1010,7 +1137,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       } else {
         logger.debug("No available connections, no validation performed for {}", this);
       }
-      grow(minPoolSize);
+      grow(minPoolSize, false);
       logger.debug("Pool size after validation is {} for {}", available.size() + active.size(), this);
     } finally {
       poolLock.unlock();
