@@ -6,12 +6,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CompletionService;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import org.ldaptive.LdapException;
+import org.ldaptive.concurrent.CallableWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +27,7 @@ public class AggregateDnResolver implements DnResolver
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** To submit operations to. */
-  private final ExecutorService service;
+  private final CallableWorker<String> callableWorker;
 
   /** Labeled DN resolvers. */
   private Map<String, DnResolver> dnResolvers = new HashMap<>();
@@ -40,7 +39,7 @@ public class AggregateDnResolver implements DnResolver
   /** Default constructor. */
   public AggregateDnResolver()
   {
-    service = Executors.newCachedThreadPool();
+    callableWorker = new CallableWorker<>(AggregateDnResolver.class.getSimpleName());
   }
 
 
@@ -51,7 +50,8 @@ public class AggregateDnResolver implements DnResolver
    */
   public AggregateDnResolver(final Map<String, DnResolver> resolvers)
   {
-    this(resolvers, Executors.newCachedThreadPool());
+    setDnResolvers(resolvers);
+    callableWorker = new CallableWorker<>(AggregateDnResolver.class.getSimpleName());
   }
 
 
@@ -64,7 +64,7 @@ public class AggregateDnResolver implements DnResolver
   public AggregateDnResolver(final Map<String, DnResolver> resolvers, final ExecutorService es)
   {
     setDnResolvers(resolvers);
-    service = es;
+    callableWorker = new CallableWorker<>(es);
   }
 
 
@@ -149,11 +149,11 @@ public class AggregateDnResolver implements DnResolver
   public String resolve(final User user)
     throws LdapException
   {
-    final CompletionService<String> cs = new ExecutorCompletionService<>(service);
-    final List<String> results = new ArrayList<>(dnResolvers.size());
+    final List<Callable<String>> callables = new ArrayList<>();
     for (final Map.Entry<String, DnResolver> entry : dnResolvers.entrySet()) {
-      cs.submit(
+      callables.add(
         () -> {
+          logger.debug("Submitted DN resolver {}", entry.getValue());
           final String dn = entry.getValue().resolve(user);
           logger.debug("DN resolver {} resolved dn {} for user {}", entry.getValue(), dn, user);
           if (dn != null && !dn.isEmpty()) {
@@ -161,25 +161,23 @@ public class AggregateDnResolver implements DnResolver
           }
           return null;
         });
-      logger.debug("Submitted DN resolver {}", entry.getValue());
     }
-    for (int i = 1; i <= dnResolvers.size(); i++) {
-      try {
-        logger.trace("waiting on DN resolver {} of {}", i, dnResolvers.size());
-        final String dn = cs.take().get();
-        if (dn != null) {
-          results.add(dn);
+
+    final List<String> results = new ArrayList<>(dnResolvers.size());
+    final List<ExecutionException> exceptions = callableWorker.execute(
+      callables,
+      s -> {
+        if (s != null) {
+          results.add(s);
         }
-      } catch (ExecutionException e) {
-        if (e.getCause() instanceof LdapException) {
-          throw (LdapException) e.getCause();
-        } else if (e.getCause() instanceof RuntimeException) {
-          throw (RuntimeException) e.getCause();
-        } else {
-          logger.warn("ExecutionException thrown, ignoring", e);
-        }
-      } catch (InterruptedException e) {
-        logger.warn("InterruptedException thrown, ignoring", e);
+      });
+    for (ExecutionException e : exceptions) {
+      if (e.getCause() instanceof LdapException) {
+        throw (LdapException) e.getCause();
+      } else if (e.getCause() instanceof RuntimeException) {
+        throw (RuntimeException) e.getCause();
+      } else {
+        logger.warn("ExecutionException thrown, ignoring", e);
       }
     }
     if (results.size() > 1 && !allowMultipleDns) {
@@ -193,7 +191,7 @@ public class AggregateDnResolver implements DnResolver
   /** Invokes {@link ExecutorService#shutdown()} on the underlying executor service. */
   public void shutdown()
   {
-    service.shutdown();
+    callableWorker.shutdown();
   }
 
 
