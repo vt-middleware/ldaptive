@@ -16,12 +16,19 @@
     <rule groupId="ch.qos.logback">
       <ignoreVersions>
         <ignoreVersion type="regex">^1\.3.*$</ignoreVersion>
+        <ignoreVersion type="regex">^1\.4.*$</ignoreVersion>
       </ignoreVersions>
     </rule>
     <!-- Pin this project to netty v4  -->
     <rule groupId="io.netty">
       <ignoreVersions>
         <ignoreVersion type="regex">^5.*$</ignoreVersion>
+      </ignoreVersions>
+    </rule>
+    <!-- Pin this project to springframework v5  -->
+    <rule groupId="org.springframework">
+      <ignoreVersions>
+        <ignoreVersion type="regex">^6.*$</ignoreVersion>
       </ignoreVersions>
     </rule>
   </rules>
