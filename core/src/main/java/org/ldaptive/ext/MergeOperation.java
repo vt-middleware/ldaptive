@@ -19,6 +19,7 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.OperationHandle;
 import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.handler.ResultPredicate;
@@ -26,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The merge operation performs the LDAP operations necessary to synchronize the data in an {@link LdapEntry} with it's
+ * The merge operation performs the LDAP operations necessary to synchronize the data in an {@link LdapEntry} with its
  * corresponding entry in the LDAP. The following logic is executed:
  *
  * <ul>
@@ -49,6 +50,18 @@ public class MergeOperation
 
   /** Connection factory. */
   private ConnectionFactory connectionFactory;
+
+  /** Search operation used to find the entry. */
+  private SearchOperation searchOperation;
+
+  /** Add operation used to add a new entry. */
+  private AddOperation addOperation;
+
+  /** Modify operation used to update an entry. */
+  private ModifyOperation modifyOperation;
+
+  /** Delete operation used to remove an entry. */
+  private DeleteOperation deleteOperation;
 
   /** Function to test results. */
   private ResultPredicate throwCondition;
@@ -83,6 +96,54 @@ public class MergeOperation
   }
 
 
+  public SearchOperation getSearchOperation()
+  {
+    return searchOperation;
+  }
+
+
+  public void setSearchOperation(final SearchOperation operation)
+  {
+    searchOperation = operation;
+  }
+
+
+  public AddOperation getAddOperation()
+  {
+    return addOperation;
+  }
+
+
+  public void setAddOperation(final AddOperation operation)
+  {
+    addOperation = operation;
+  }
+
+
+  public ModifyOperation getModifyOperation()
+  {
+    return modifyOperation;
+  }
+
+
+  public void setModifyOperation(final ModifyOperation operation)
+  {
+    modifyOperation = operation;
+  }
+
+
+  public DeleteOperation getDeleteOperation()
+  {
+    return deleteOperation;
+  }
+
+
+  public void setDeleteOperation(final DeleteOperation operation)
+  {
+    deleteOperation = operation;
+  }
+
+
   public ResultPredicate getThrowCondition()
   {
     return throwCondition;
@@ -107,51 +168,43 @@ public class MergeOperation
   public Result execute(final MergeRequest request)
     throws LdapException
   {
-    try (Connection conn = connectionFactory.getConnection()) {
-      conn.open();
+    final LdapEntry sourceEntry = request.getEntry();
 
-      final LdapEntry sourceEntry = request.getEntry();
+    // search for existing entry
+    final SearchOperation operation = searchOperation != null ?
+      SearchOperation.copy(searchOperation) : new SearchOperation();
+    operation.setConnectionFactory(connectionFactory);
+    operation.setThrowCondition(
+      r -> r.getResultCode() != ResultCode.SUCCESS && r.getResultCode() != ResultCode.NO_SUCH_OBJECT);
+    final SearchResponse searchResult = operation.execute(
+      SearchRequest.objectScopeSearchRequest(sourceEntry.getDn(), request.getSearchAttributes()));
 
-      // search for existing entry
-      final SearchResponse searchResult = conn.operation(
-        SearchRequest.objectScopeSearchRequest(sourceEntry.getDn(), request.getSearchAttributes())).execute();
-      if (searchResult.getResultCode() != ResultCode.SUCCESS &&
-          searchResult.getResultCode() != ResultCode.NO_SUCH_OBJECT) {
-        throw new LdapException(
-          searchResult.getResultCode(),
-          String.format(
-            "Error searching for entry: %s, response did not return success or no_such_object: %s",
-            sourceEntry,
-            searchResult));
-      }
-
-      final Result result;
-      if (searchResult.entrySize() == 0) {
-        if (request.getDeleteEntry()) {
-          logger.info("Target entry does not exist, no delete performed for request {}", request);
-          result = null;
-        } else {
-          // entry does not exist, add it
-          result = add(conn, request, sourceEntry);
-          if (throwCondition != null) {
-            throwCondition.testAndThrow(result);
-          }
-        }
-      } else if (request.getDeleteEntry()) {
-        // delete entry
-        result = delete(conn, request, sourceEntry);
-        if (throwCondition != null) {
-          throwCondition.testAndThrow(result);
-        }
+    final Result result;
+    if (searchResult.entrySize() == 0) {
+      if (request.getDeleteEntry()) {
+        logger.info("Target entry does not exist, no delete performed for request {}", request);
+        result = null;
       } else {
-        // entry exists, merge attributes
-        result = modify(conn, request, sourceEntry, searchResult.getEntry());
+        // entry does not exist, add it
+        result = add(request, sourceEntry);
         if (throwCondition != null) {
           throwCondition.testAndThrow(result);
         }
       }
-      return result;
+    } else if (request.getDeleteEntry()) {
+      // delete entry
+      result = delete(request, sourceEntry);
+      if (throwCondition != null) {
+        throwCondition.testAndThrow(result);
+      }
+    } else {
+      // entry exists, merge attributes
+      result = modify(request, sourceEntry, searchResult.getEntry());
+      if (throwCondition != null) {
+        throwCondition.testAndThrow(result);
+      }
     }
+    return result;
   }
 
 
@@ -168,9 +221,36 @@ public class MergeOperation
    * @return  response of the modify operation or an empty response if no operation is performed
    *
    * @throws  LdapException  if an error occurs executing the modify operation
+   *
+   * @deprecated  use {@link #modify(MergeRequest, LdapEntry, LdapEntry)}
    */
+  @Deprecated
   protected Result modify(
     final Connection conn,
+    final MergeRequest request,
+    final LdapEntry source,
+    final LdapEntry target)
+    throws LdapException
+  {
+    logger.warn("Use of deprecated method, connection parameter is ignored");
+    return modify(request, source, target);
+  }
+
+
+  /**
+   * Retrieves the attribute modifications from {@link LdapEntry#computeModifications(LdapEntry, LdapEntry)} and
+   * executes a {@link ModifyOperation} with those results. If no modifications are necessary, no operation is
+   * performed.
+   *
+   * @param  request  merge request
+   * @param  source  ldap entry to merge into the LDAP
+   * @param  target  ldap entry that exists in the LDAP
+   *
+   * @return  response of the modify operation or an empty response if no operation is performed
+   *
+   * @throws  LdapException  if an error occurs executing the modify operation
+   */
+  protected Result modify(
     final MergeRequest request,
     final LdapEntry source,
     final LdapEntry target)
@@ -200,21 +280,22 @@ public class MergeOperation
       }
       if (!resultModifications.isEmpty()) {
         logger.info(
-          "Modifying target entry {} with modifications {} from source entry " +
-          "{} for request {}",
+          "Modifying target entry {} with modifications {} from source entry {} for request {}",
           target,
           resultModifications,
           source,
           request);
 
-        final Result result = conn.operation(
+        final ModifyOperation operation = modifyOperation != null ?
+          ModifyOperation.copy(modifyOperation) : new ModifyOperation();
+        operation.setConnectionFactory(connectionFactory);
+        final Result result = operation.execute(
           ModifyRequest.builder()
             .dn(target.getDn())
             .modifications(resultModifications.toArray(AttributeModification[]::new))
-            .build()).execute();
+            .build());
         logger.info(
-          "Modified target entry {} with modifications {} from source entry " +
-          "{} for request {}",
+          "Modified target entry {} with modifications {} from source entry {} for request {}",
           target,
           resultModifications,
           source,
@@ -223,8 +304,7 @@ public class MergeOperation
       }
     }
     logger.info(
-      "Target entry {} equals source entry {}, no modification performed for " +
-      "request {}",
+      "Target entry {} equals source entry {}, no modification performed for request {}",
       target,
       source,
       request);
@@ -242,15 +322,39 @@ public class MergeOperation
    * @return  response of the add operation
    *
    * @throws  LdapException  if an error occurs executing the add operation
+   *
+   * @deprecated  use {@link #add(MergeRequest, LdapEntry)}
    */
+  @Deprecated
   protected Result add(final Connection conn, final MergeRequest request, final LdapEntry entry)
     throws LdapException
   {
-    final Result result = conn.operation(
+    logger.warn("Use of deprecated method, connection parameter is ignored");
+    return add(request, entry);
+  }
+
+
+  /**
+   * Executes an {@link AddOperation} for the supplied entry.
+   *
+   * @param  request  merge request
+   * @param  entry  to add to the LDAP
+   *
+   * @return  response of the add operation
+   *
+   * @throws  LdapException  if an error occurs executing the add operation
+   */
+  protected Result add(final MergeRequest request, final LdapEntry entry)
+    throws LdapException
+  {
+    final AddOperation operation = addOperation != null ?
+      AddOperation.copy(addOperation) : new AddOperation();
+    operation.setConnectionFactory(connectionFactory);
+    final Result result = operation.execute(
       AddRequest.builder()
         .dn(entry.getDn())
         .attributes(entry.getAttributes())
-        .build()).execute();
+        .build());
     logger.info("Added entry {} for request {}", entry, request);
     return result;
   }
@@ -266,11 +370,35 @@ public class MergeOperation
    * @return  response of the delete operation
    *
    * @throws  LdapException  if an error occurs executing the deleting operation
+   *
+   * @deprecated  use {@link #delete(MergeRequest, LdapEntry)}
    */
+  @Deprecated
   protected Result delete(final Connection conn, final MergeRequest request, final LdapEntry entry)
     throws LdapException
   {
-    final Result result = conn.operation(new DeleteRequest(entry.getDn())).execute();
+    logger.warn("Use of deprecated method, connection parameter is ignored");
+    return delete(request, entry);
+  }
+
+
+  /**
+   * Executes a {@link DeleteOperation} for the supplied entry.
+   *
+   * @param  request  merge request
+   * @param  entry  to delete from the LDAP
+   *
+   * @return  response of the delete operation
+   *
+   * @throws  LdapException  if an error occurs executing the deleting operation
+   */
+  protected Result delete(final MergeRequest request, final LdapEntry entry)
+    throws LdapException
+  {
+    final DeleteOperation operation = deleteOperation != null ?
+      DeleteOperation.copy(deleteOperation) : new DeleteOperation();
+    operation.setConnectionFactory(connectionFactory);
+    final Result result = operation.execute(new DeleteRequest(entry.getDn()));
     logger.info("Delete entry {} for request {}", entry, request);
     return result;
   }

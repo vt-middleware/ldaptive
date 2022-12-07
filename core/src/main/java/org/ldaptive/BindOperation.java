@@ -118,6 +118,29 @@ public class BindOperation extends AbstractOperation<BindRequest, BindResponse>
 
 
   /**
+   * Returns a new bind operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   *
+   * @return  copy of the supplied bind operation
+   */
+  public static BindOperation copy(final BindOperation operation)
+  {
+    final BindOperation op = new BindOperation();
+    op.setRequestHandlers(operation.getRequestHandlers());
+    op.setResultHandlers(operation.getResultHandlers());
+    op.setControlHandlers(operation.getControlHandlers());
+    op.setReferralHandlers(operation.getReferralHandlers());
+    op.setIntermediateResponseHandlers(operation.getIntermediateResponseHandlers());
+    op.setExceptionHandler(operation.getExceptionHandler());
+    op.setThrowCondition(operation.getThrowCondition());
+    op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
+    op.setConnectionFactory(operation.getConnectionFactory());
+    return op;
+  }
+
+
+  /**
    * Creates a builder for this class.
    *
    * @return  new builder

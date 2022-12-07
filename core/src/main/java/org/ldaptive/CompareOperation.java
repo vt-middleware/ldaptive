@@ -154,6 +154,30 @@ public class CompareOperation extends AbstractOperation<CompareRequest, CompareR
   }
 
 
+  /**
+   * Returns a new compare operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   *
+   * @return  copy of the supplied compare operation
+   */
+  public static CompareOperation copy(final CompareOperation operation)
+  {
+    final CompareOperation op = new CompareOperation();
+    op.setRequestHandlers(operation.getRequestHandlers());
+    op.setResultHandlers(operation.getResultHandlers());
+    op.setControlHandlers(operation.getControlHandlers());
+    op.setReferralHandlers(operation.getReferralHandlers());
+    op.setIntermediateResponseHandlers(operation.getIntermediateResponseHandlers());
+    op.setExceptionHandler(operation.getExceptionHandler());
+    op.setThrowCondition(operation.getThrowCondition());
+    op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
+    op.setConnectionFactory(operation.getConnectionFactory());
+    op.setCompareValueHandlers(operation.getCompareValueHandlers());
+    return op;
+  }
+
+
   @Override
   public String toString()
   {
