@@ -159,6 +159,30 @@ public class ExtendedOperation extends AbstractOperation<ExtendedRequest, Extend
   }
 
 
+  /**
+   * Returns a new extended operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   *
+   * @return  copy of the supplied extended operation
+   */
+  public static ExtendedOperation copy(final ExtendedOperation operation)
+  {
+    final ExtendedOperation op = new ExtendedOperation();
+    op.setRequestHandlers(operation.getRequestHandlers());
+    op.setResultHandlers(operation.getResultHandlers());
+    op.setControlHandlers(operation.getControlHandlers());
+    op.setReferralHandlers(operation.getReferralHandlers());
+    op.setIntermediateResponseHandlers(operation.getIntermediateResponseHandlers());
+    op.setExceptionHandler(operation.getExceptionHandler());
+    op.setThrowCondition(operation.getThrowCondition());
+    op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
+    op.setConnectionFactory(operation.getConnectionFactory());
+    op.setExtendedValueHandlers(operation.getExtendedValueHandlers());
+    return op;
+  }
+
+
   @Override
   public String toString()
   {

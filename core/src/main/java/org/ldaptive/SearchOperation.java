@@ -827,10 +827,10 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
     op.setExceptionHandler(operation.getExceptionHandler());
     op.setThrowCondition(operation.getThrowCondition());
     op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
+    op.setConnectionFactory(operation.getConnectionFactory());
     op.setEntryHandlers(operation.getEntryHandlers());
     op.setReferenceHandlers(operation.getReferenceHandlers());
     op.setSearchResultHandlers(operation.getSearchResultHandlers());
-    op.setConnectionFactory(operation.getConnectionFactory());
     op.setRequest(operation.getRequest());
     op.setTemplate(operation.getTemplate());
     return op;
