@@ -111,9 +111,113 @@ public class MergeOperationTest extends AbstractTest
     } else {
       request.setExcludeAttributes((String[]) null);
     }
+    // merge givenName and initials changes
     merge.execute(request);
-
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
     TestUtils.assertEquals(source, result.getEntry());
+
+    // delete mail attribute
+    final LdapAttribute mail = source.getAttribute("mail");
+    source.removeAttributes(mail);
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertNull(result.getEntry().getAttribute("mail"));
+
+    // add mail attribute
+    source.addAttributes(mail);
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertNotNull(result.getEntry().getAttribute("mail"));
+
+    // add new mail values using replace
+    mail.addStringValues(
+      "ccoolidge2@ldaptive.org", "ccoolidge3@ldaptive.org", "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 5);
+
+    // remove mail values using replace
+    mail.removeStringValues("ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 3);
+
+    // add new mail value using add
+    request.setUseReplace(false);
+    mail.clear();
+    mail.addStringValues("ccoolidge@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 1);
+
+    mail.addStringValues(
+      "ccoolidge2@ldaptive.org", "ccoolidge3@ldaptive.org", "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 5);
+
+    // remove mail values using delete
+    mail.removeStringValues("ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 3);
+
+    // use batching
+    request.setAttributeValuesBatchSize(2);
+    request.setModificationBatchSize(1);
+    mail.addStringValues(
+      "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
+      "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 11);
+
+    request.setAttributeValuesBatchSize(2);
+    request.setModificationBatchSize(0);
+    mail.removeStringValues(
+      "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
+      "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 3);
+
+    request.setAttributeValuesBatchSize(0);
+    request.setModificationBatchSize(2);
+    mail.addStringValues(
+      "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
+      "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 11);
+
+    request.setAttributeValuesBatchSize(2);
+    request.setModificationBatchSize(10);
+    mail.removeStringValues(
+      "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
+      "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 3);
+
+    request.setAttributeValuesBatchSize(1);
+    request.setModificationBatchSize(10);
+    mail.addStringValues(
+      "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
+      "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
+    merge.execute(request);
+    result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
+    TestUtils.assertEquals(source, result.getEntry());
+    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 11);
   }
 }

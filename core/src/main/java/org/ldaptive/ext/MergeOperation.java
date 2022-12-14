@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
@@ -12,6 +13,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
@@ -246,7 +248,8 @@ public class MergeOperation
    * @param  source  ldap entry to merge into the LDAP
    * @param  target  ldap entry that exists in the LDAP
    *
-   * @return  response of the modify operation or an empty response if no operation is performed
+   * @return  response of the modify operation or a null response if no operation is performed. If batching is
+   *          enabled in the request, returns the response of the last operation performed
    *
    * @throws  LdapException  if an error occurs executing the modify operation
    */
@@ -256,7 +259,8 @@ public class MergeOperation
     final LdapEntry target)
     throws LdapException
   {
-    final AttributeModification[] modifications = LdapEntry.computeModifications(source, target);
+    final AttributeModification[] modifications =
+      LdapEntry.computeModifications(source, target, request.isUseReplace());
     if (modifications != null && modifications.length > 0) {
       final List<AttributeModification> resultModifications = new ArrayList<>(modifications.length);
       final String[] includeAttrs = request.getIncludeAttributes();
@@ -279,6 +283,27 @@ public class MergeOperation
         Collections.addAll(resultModifications, modifications);
       }
       if (!resultModifications.isEmpty()) {
+        // if batching attribute values, create new attribute modifications as necessary
+        if (request.getAttributeValuesBatchSize() > 0) {
+          final List<AttributeModification> attrValuesModifications = new ArrayList<>(resultModifications.size());
+          for (AttributeModification am : resultModifications) {
+            if (request.getAttributeValuesBatchSize() < am.getAttribute().size()) {
+              divideList(
+                new ArrayList<>(am.getAttribute().getBinaryValues()),
+                request.getAttributeValuesBatchSize(),
+                values -> attrValuesModifications.add(
+                  new AttributeModification(
+                    am.getOperation(),
+                    LdapAttribute.builder().name(am.getAttribute().getName()).binaryValues(values).build())));
+            } else {
+              attrValuesModifications.add(am);
+            }
+          }
+          if (!attrValuesModifications.equals(resultModifications)) {
+            resultModifications.clear();
+            resultModifications.addAll(attrValuesModifications);
+          }
+        }
         logger.info(
           "Modifying target entry {} with modifications {} from source entry {} for request {}",
           target,
@@ -286,14 +311,32 @@ public class MergeOperation
           source,
           request);
 
-        final ModifyOperation operation = modifyOperation != null ?
-          ModifyOperation.copy(modifyOperation) : new ModifyOperation();
-        operation.setConnectionFactory(connectionFactory);
-        final Result result = operation.execute(
-          ModifyRequest.builder()
-            .dn(target.getDn())
-            .modifications(resultModifications.toArray(AttributeModification[]::new))
-            .build());
+        Result result = null;
+        // if batching modifications, execute a modify operation for each batch
+        if (request.getModificationBatchSize() > 0 && request.getModificationBatchSize() < resultModifications.size()) {
+          final List<List<AttributeModification>> batchedResultModifications =
+            new ArrayList<>(resultModifications.size());
+          divideList(resultModifications, request.getModificationBatchSize(), batchedResultModifications::add);
+          for (List<AttributeModification> batch : batchedResultModifications) {
+            final ModifyOperation operation = modifyOperation != null ?
+              ModifyOperation.copy(modifyOperation) : new ModifyOperation();
+            operation.setConnectionFactory(connectionFactory);
+            result = operation.execute(
+              ModifyRequest.builder()
+                .dn(target.getDn())
+                .modifications(batch.toArray(AttributeModification[]::new))
+                .build());
+          }
+        } else {
+          final ModifyOperation operation = modifyOperation != null ?
+            ModifyOperation.copy(modifyOperation) : new ModifyOperation();
+          operation.setConnectionFactory(connectionFactory);
+          result = operation.execute(
+            ModifyRequest.builder()
+              .dn(target.getDn())
+              .modifications(resultModifications.toArray(AttributeModification[]::new))
+              .build());
+        }
         logger.info(
           "Modified target entry {} with modifications {} from source entry {} for request {}",
           target,
@@ -401,5 +444,23 @@ public class MergeOperation
     final Result result = operation.execute(new DeleteRequest(entry.getDn()));
     logger.info("Delete entry {} for request {}", entry, request);
     return result;
+  }
+
+
+  /**
+   * Divides the supplied list into sub lists by the supplied divisor and passes each sub list to the consumer.
+   *
+   * @param  <T>  type of list element
+   * @param  list  to divide
+   * @param  divisor  to divide list by
+   * @param  consumer  to process each sub list
+   */
+  private <T> void divideList(final List<T> list, final int divisor, final Consumer<List<T>> consumer)
+  {
+    for (int i = 0; i < list.size() / divisor; i++) {
+      final int start = i * divisor;
+      final int end = (i + 1) * divisor;
+      consumer.accept(list.subList(start, end > list.size() ? list.size() : end));
+    }
   }
 }

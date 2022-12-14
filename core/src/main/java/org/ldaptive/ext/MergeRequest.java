@@ -27,6 +27,15 @@ public class MergeRequest
   /** Attribute names to exclude when performing a merge. */
   private String[] excludeAttrs;
 
+  /** Whether to use replace or add/delete for attribute modifications. */
+  private boolean useReplace = true;
+
+  /** Number of attribute modifications to batch together. */
+  private int modificationBatchSize;
+
+  /** Number of attribute values to batch together. */
+  private int attributeValuesBatchSize;
+
 
   /** Default constructor. */
   public MergeRequest() {}
@@ -166,6 +175,72 @@ public class MergeRequest
   }
 
 
+  /**
+   * Returns whether replace should be used for attribute modifications.
+   *
+   * @return  whether replace should be used for attribute modifications
+   */
+  public boolean isUseReplace()
+  {
+    return useReplace;
+  }
+
+
+  /**
+   * Sets whether replace should be used for attribute modifications.
+   *
+   * @param  replace  whether replace should be used for attribute modifications
+   */
+  public void setUseReplace(final boolean replace)
+  {
+    useReplace = replace;
+  }
+
+
+  /**
+   * Returns the number of modifications that a modify operation should contain.
+   *
+   * @return  number of modifications that a modify operation should contain
+   */
+  public int getModificationBatchSize()
+  {
+    return modificationBatchSize;
+  }
+
+
+  /**
+   * Sets the number of modifications that a modify operation should contain.
+   *
+   * @param  size  number of modifications that a modify operation should contain
+   */
+  public void setModificationBatchSize(final int size)
+  {
+    modificationBatchSize = size;
+  }
+
+
+  /**
+   * Returns the number of attribute values that any single attribute modification should contain.
+   *
+   * @return  number of attribute values that any single attribute modification should contain
+   */
+  public int getAttributeValuesBatchSize()
+  {
+    return attributeValuesBatchSize;
+  }
+
+
+  /**
+   * Sets the number of attribute values that any single attribute modification should contain.
+   *
+   * @param  size  number of attribute values that any single attribute modification should contain
+   */
+  public void setAttributeValuesBatchSize(final int size)
+  {
+    attributeValuesBatchSize = size;
+  }
+
+
   @Override
   public String toString()
   {
@@ -175,6 +250,9 @@ public class MergeRequest
       .append("deleteEntry=").append(deleteEntry).append(", ")
       .append("searchAttributes=").append(Arrays.toString(searchAttrs)).append(", ")
       .append("includeAttributes=").append(Arrays.toString(includeAttrs)).append(", ")
-      .append("excludeAttributes=").append(Arrays.toString(includeAttrs)).append("]").toString();
+      .append("excludeAttributes=").append(Arrays.toString(excludeAttrs)).append(", ")
+      .append("useReplace=").append(useReplace).append(", ")
+      .append("modificationBatchSize=").append(modificationBatchSize).append(", ")
+      .append("excludeAttributes=").append(attributeValuesBatchSize).append("]").toString();
   }
 }

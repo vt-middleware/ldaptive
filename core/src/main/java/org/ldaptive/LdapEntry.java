@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -10,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
@@ -293,7 +295,7 @@ public class LdapEntry extends AbstractMessage
 
   /**
    * Returns the list of attribute modifications needed to change the supplied target entry into the supplied source
-   * entry.
+   * entry. See {@link #computeModifications(LdapEntry, LdapEntry, boolean)}.
    *
    * @param  source  ldap entry containing new data
    * @param  target  ldap entry containing existing data
@@ -302,22 +304,64 @@ public class LdapEntry extends AbstractMessage
    */
   public static AttributeModification[] computeModifications(final LdapEntry source, final LdapEntry target)
   {
+    return computeModifications(source, target, true);
+  }
+
+
+  /**
+   * Returns the list of attribute modifications needed to change the supplied target entry into the supplied source
+   * entry. This implementation performs a byte comparison on the attribute values to determine changes.
+   *
+   * @param  source  ldap entry containing new data
+   * @param  target  ldap entry containing existing data
+   * @param  useReplace  whether to use a single REPLACE modification or individual ADD/DELETE for attribute values
+   *
+   * @return  attribute modifications needed to change target into source or an empty array
+   */
+  public static AttributeModification[] computeModifications(
+    final LdapEntry source, final LdapEntry target, final boolean useReplace)
+  {
     final List<AttributeModification> mods = new ArrayList<>();
     for (LdapAttribute sourceAttr : source.getAttributes()) {
       final LdapAttribute targetAttr = target.getAttribute(sourceAttr.getName());
       if (targetAttr == null) {
-        final AttributeModification mod = new AttributeModification(AttributeModification.Type.ADD, sourceAttr);
-        mods.add(mod);
+        mods.add(new AttributeModification(AttributeModification.Type.ADD, sourceAttr));
       } else if (!targetAttr.equals(sourceAttr)) {
-        final AttributeModification mod = new AttributeModification(AttributeModification.Type.REPLACE, sourceAttr);
-        mods.add(mod);
+        if (useReplace) {
+          mods.add(new AttributeModification(AttributeModification.Type.REPLACE, sourceAttr));
+        } else {
+          final Collection<byte[]> sourceValues = sourceAttr.getBinaryValues();
+          final Collection<byte[]> targetValues = targetAttr.getBinaryValues();
+
+          final Set<byte[]> valuesToAdd = sourceValues.stream()
+            .filter(sv -> targetValues.stream().noneMatch(tv -> Arrays.equals(sv, tv)))
+            .collect(Collectors.toSet());
+          if (!valuesToAdd.isEmpty()) {
+            mods.add(
+              new AttributeModification(
+                AttributeModification.Type.ADD,
+                LdapAttribute.builder().name(sourceAttr.getName()).binaryValues(valuesToAdd).build()));
+          }
+
+          final Set<byte[]> valuesToDelete = targetValues.stream()
+            .filter(tv -> sourceValues.stream().noneMatch(sv -> Arrays.equals(tv, sv)))
+            .collect(Collectors.toSet());
+          if (!valuesToDelete.isEmpty()) {
+            mods.add(
+              new AttributeModification(
+                AttributeModification.Type.DELETE,
+                LdapAttribute.builder().name(sourceAttr.getName()).binaryValues(valuesToDelete).build()));
+          }
+        }
       }
     }
     for (LdapAttribute targetAttr : target.getAttributes()) {
       final LdapAttribute sourceAttr = source.getAttribute(targetAttr.getName());
       if (sourceAttr == null) {
-        final AttributeModification mod = new AttributeModification(AttributeModification.Type.DELETE, targetAttr);
-        mods.add(mod);
+        mods.add(
+          new AttributeModification(
+            AttributeModification.Type.DELETE,
+            LdapAttribute.builder().name(targetAttr.getName()).build()));
       }
     }
     return mods.toArray(AttributeModification[]::new);
