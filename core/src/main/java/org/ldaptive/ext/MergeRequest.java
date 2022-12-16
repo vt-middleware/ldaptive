@@ -1,7 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import org.ldaptive.AttributeModification;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 
 /**
@@ -30,11 +36,8 @@ public class MergeRequest
   /** Whether to use replace or add/delete for attribute modifications. */
   private boolean useReplace = true;
 
-  /** Number of attribute modifications to batch together. */
-  private int modificationBatchSize;
-
-  /** Number of attribute values to batch together. */
-  private int attributeValuesBatchSize;
+  /** Handler for attribute modifications. */
+  private AttributeModificationsHandler[] attributeModificationsHandlers;
 
 
   /** Default constructor. */
@@ -198,46 +201,24 @@ public class MergeRequest
 
 
   /**
-   * Returns the number of modifications that a modify operation should contain.
+   * Returns the attribute modifications handlers.
    *
-   * @return  number of modifications that a modify operation should contain
+   * @return  attribute modifications handlers
    */
-  public int getModificationBatchSize()
+  public AttributeModificationsHandler[] getAttributeModificationsHandlers()
   {
-    return modificationBatchSize;
+    return attributeModificationsHandlers;
   }
 
 
   /**
-   * Sets the number of modifications that a modify operation should contain.
+   * Sets the attribute value processors.
    *
-   * @param  size  number of modifications that a modify operation should contain
+   * @param  handlers  attribute modifications handlers
    */
-  public void setModificationBatchSize(final int size)
+  public void setAttributeModificationsHandlers(final AttributeModificationsHandler... handlers)
   {
-    modificationBatchSize = size;
-  }
-
-
-  /**
-   * Returns the number of attribute values that any single attribute modification should contain.
-   *
-   * @return  number of attribute values that any single attribute modification should contain
-   */
-  public int getAttributeValuesBatchSize()
-  {
-    return attributeValuesBatchSize;
-  }
-
-
-  /**
-   * Sets the number of attribute values that any single attribute modification should contain.
-   *
-   * @param  size  number of attribute values that any single attribute modification should contain
-   */
-  public void setAttributeValuesBatchSize(final int size)
-  {
-    attributeValuesBatchSize = size;
+    attributeModificationsHandlers = handlers;
   }
 
 
@@ -252,7 +233,123 @@ public class MergeRequest
       .append("includeAttributes=").append(Arrays.toString(includeAttrs)).append(", ")
       .append("excludeAttributes=").append(Arrays.toString(excludeAttrs)).append(", ")
       .append("useReplace=").append(useReplace).append(", ")
-      .append("modificationBatchSize=").append(modificationBatchSize).append(", ")
-      .append("excludeAttributes=").append(attributeValuesBatchSize).append("]").toString();
+      .append("attributeModificationProcessor=").append(
+        Arrays.toString(attributeModificationsHandlers)).append("]").toString();
+  }
+
+
+  /**
+   * Marker interface for an attribute modifications handler. The complexity of this interface stems from the
+   * requirement to support batching. A modify operation is executed for each element in the outer list. Attribute
+   * modifications in the inner list may be mutated as needed to produce modification lists of the desired size and
+   * complexity.
+   *
+   * @author  Middleware Services
+   */
+  public interface AttributeModificationsHandler
+    extends Function<List<List<AttributeModification>>, List<List<AttributeModification>>> {}
+
+  /**
+   * Processes attribute modifications to enforce the maximum number of attribute values in any single attribute. For
+   * attribute values that exceed this limit, a new attribute is created to contain the excess values.
+   */
+  public static class MaxSizeAttributeValueHandler implements AttributeModificationsHandler
+  {
+
+    /** Maximum number of attribute values allowed in a single attribute. */
+    private final int maxSize;
+
+
+    /**
+     * Creates a new max attribute value size processor.
+     *
+     * @param  size  maximum number of attribute values to allow
+     */
+    public MaxSizeAttributeValueHandler(final int size)
+    {
+      maxSize = size;
+    }
+
+
+    @Override
+    public List<List<AttributeModification>> apply(final List<List<AttributeModification>> modifications)
+    {
+      final List<List<AttributeModification>> attrValuesModifications = new ArrayList<>(new ArrayList<>());
+      for (List<AttributeModification> mods : modifications) {
+        final List<AttributeModification> attrMods = new ArrayList<>(mods.size());
+        for (AttributeModification am : mods) {
+          if (am.getAttribute().size() > maxSize) {
+            divideList(
+              new ArrayList<>(am.getAttribute().getBinaryValues()),
+              maxSize,
+              values -> attrMods.add(
+                new AttributeModification(
+                  am.getOperation(),
+                  LdapAttribute.builder().name(am.getAttribute().getName()).binaryValues(values).build())));
+          } else {
+            attrMods.add(am);
+          }
+        }
+        attrValuesModifications.add(attrMods);
+      }
+      return attrValuesModifications;
+    }
+  }
+
+
+  /**
+   * Processes attribute modifications so that any list of attribute modifications does not exceed the configured batch
+   * size. For a provided matrix of 1x10 with batch size of 5, would result in a matrix of 2x5. This would result in the
+   * merge operation performing two modifies, each with five attribute modifications.
+   */
+  public static class BatchHandler implements AttributeModificationsHandler
+  {
+
+    /** Batch size to enforce. */
+    private final int batchSize;
+
+
+    /**
+     * Creates a new batch processor.
+     *
+     * @param  size  batch size
+     */
+    public BatchHandler(final int size)
+    {
+      batchSize = size;
+    }
+
+
+    @Override
+    public List<List<AttributeModification>> apply(final List<List<AttributeModification>> modifications)
+    {
+      final List<List<AttributeModification>> batchModifications = new ArrayList<>(modifications.size());
+      for (List<AttributeModification> mods : modifications) {
+        if (mods.size() > batchSize) {
+          divideList(mods, batchSize, batchModifications::add);
+        } else {
+          batchModifications.add(mods);
+        }
+      }
+      return batchModifications;
+    }
+  }
+
+
+  /**
+   * Divides the supplied list into sub lists by the supplied divisor and passes each sub list to the consumer.
+   *
+   * @param  <T>  type of list element
+   * @param  list  to divide
+   * @param  divisor  to divide list by
+   * @param  consumer  to process each sub list
+   */
+  private static <T> void divideList(final List<T> list, final int divisor, final Consumer<List<T>> consumer)
+  {
+    for (int i = 0; i < list.size() / divisor; i++) {
+      final int start = i * divisor;
+      final int end = (i + 1) * divisor;
+      consumer.accept(list.subList(start, end > list.size() ? list.size() : end));
+    }
   }
 }

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Consumer;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
@@ -13,7 +12,6 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
@@ -262,85 +260,60 @@ public class MergeOperation
     final AttributeModification[] modifications =
       LdapEntry.computeModifications(source, target, request.isUseReplace());
     if (modifications != null && modifications.length > 0) {
-      final List<AttributeModification> resultModifications = new ArrayList<>(modifications.length);
+      // create a list of lists to support attribute modification processors that perform batching
+      // by default the structure is 1xn, which may be modified by configured processors
+      final List<List<AttributeModification>> resultModifications = new ArrayList<>(1);
+      resultModifications.add(new ArrayList<>(modifications.length));
       final String[] includeAttrs = request.getIncludeAttributes();
       final String[] excludeAttrs = request.getExcludeAttributes();
       if (includeAttrs != null && includeAttrs.length > 0) {
         final List<String> l = Arrays.asList(includeAttrs);
         for (AttributeModification am : modifications) {
           if (l.contains(am.getAttribute().getName())) {
-            resultModifications.add(am);
+            resultModifications.get(0).add(am);
           }
         }
       } else if (excludeAttrs != null && excludeAttrs.length > 0) {
         final List<String> l = Arrays.asList(excludeAttrs);
         for (AttributeModification am : modifications) {
           if (!l.contains(am.getAttribute().getName())) {
-            resultModifications.add(am);
+            resultModifications.get(0).add(am);
           }
         }
       } else {
-        Collections.addAll(resultModifications, modifications);
+        Collections.addAll(resultModifications.get(0), modifications);
       }
-      if (!resultModifications.isEmpty()) {
-        // if batching attribute values, create new attribute modifications as necessary
-        if (request.getAttributeValuesBatchSize() > 0) {
-          final List<AttributeModification> attrValuesModifications = new ArrayList<>(resultModifications.size());
-          for (AttributeModification am : resultModifications) {
-            if (request.getAttributeValuesBatchSize() < am.getAttribute().size()) {
-              divideList(
-                new ArrayList<>(am.getAttribute().getBinaryValues()),
-                request.getAttributeValuesBatchSize(),
-                values -> attrValuesModifications.add(
-                  new AttributeModification(
-                    am.getOperation(),
-                    LdapAttribute.builder().name(am.getAttribute().getName()).binaryValues(values).build())));
-            } else {
-              attrValuesModifications.add(am);
-            }
-          }
-          if (!attrValuesModifications.equals(resultModifications)) {
-            resultModifications.clear();
-            resultModifications.addAll(attrValuesModifications);
+      if (!resultModifications.get(0).isEmpty()) {
+        // post process attribute modifications
+        List<List<AttributeModification>> processedModifications = resultModifications;
+        if (request.getAttributeModificationsHandlers() != null) {
+          for (MergeRequest.AttributeModificationsHandler processor : request.getAttributeModificationsHandlers())
+          {
+            processedModifications = processor.apply(processedModifications);
           }
         }
-        logger.info(
+        logger.debug(
           "Modifying target entry {} with modifications {} from source entry {} for request {}",
           target,
-          resultModifications,
+          processedModifications,
           source,
           request);
 
         Result result = null;
-        // if batching modifications, execute a modify operation for each batch
-        if (request.getModificationBatchSize() > 0 && request.getModificationBatchSize() < resultModifications.size()) {
-          final List<List<AttributeModification>> batchedResultModifications =
-            new ArrayList<>(resultModifications.size());
-          divideList(resultModifications, request.getModificationBatchSize(), batchedResultModifications::add);
-          for (List<AttributeModification> batch : batchedResultModifications) {
-            final ModifyOperation operation = modifyOperation != null ?
-              ModifyOperation.copy(modifyOperation) : new ModifyOperation();
-            operation.setConnectionFactory(connectionFactory);
-            result = operation.execute(
-              ModifyRequest.builder()
-                .dn(target.getDn())
-                .modifications(batch.toArray(AttributeModification[]::new))
-                .build());
-          }
-        } else {
+        for (List<AttributeModification> batch : processedModifications) {
           final ModifyOperation operation = modifyOperation != null ?
             ModifyOperation.copy(modifyOperation) : new ModifyOperation();
           operation.setConnectionFactory(connectionFactory);
           result = operation.execute(
             ModifyRequest.builder()
               .dn(target.getDn())
-              .modifications(resultModifications.toArray(AttributeModification[]::new))
+              .modifications(batch.toArray(AttributeModification[]::new))
               .build());
         }
         logger.info(
           "Modified target entry {} with modifications {} from source entry {} for request {}",
           target,
-          resultModifications,
+          processedModifications,
           source,
           request);
         return result;
@@ -444,23 +417,5 @@ public class MergeOperation
     final Result result = operation.execute(new DeleteRequest(entry.getDn()));
     logger.info("Delete entry {} for request {}", entry, request);
     return result;
-  }
-
-
-  /**
-   * Divides the supplied list into sub lists by the supplied divisor and passes each sub list to the consumer.
-   *
-   * @param  <T>  type of list element
-   * @param  list  to divide
-   * @param  divisor  to divide list by
-   * @param  consumer  to process each sub list
-   */
-  private <T> void divideList(final List<T> list, final int divisor, final Consumer<List<T>> consumer)
-  {
-    for (int i = 0; i < list.size() / divisor; i++) {
-      final int start = i * divisor;
-      final int end = (i + 1) * divisor;
-      consumer.accept(list.subList(start, end > list.size() ? list.size() : end));
-    }
   }
 }
