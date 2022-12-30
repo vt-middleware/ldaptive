@@ -246,7 +246,8 @@ public class MergeOperation
    * @param  source  ldap entry to merge into the LDAP
    * @param  target  ldap entry that exists in the LDAP
    *
-   * @return  response of the modify operation or an empty response if no operation is performed
+   * @return  response of the modify operation or a null response if no operation is performed. If batching is
+   *          enabled in the request, returns the response of the last operation performed
    *
    * @throws  LdapException  if an error occurs executing the modify operation
    */
@@ -256,48 +257,63 @@ public class MergeOperation
     final LdapEntry target)
     throws LdapException
   {
-    final AttributeModification[] modifications = LdapEntry.computeModifications(source, target);
+    final AttributeModification[] modifications =
+      LdapEntry.computeModifications(source, target, request.isUseReplace());
     if (modifications != null && modifications.length > 0) {
-      final List<AttributeModification> resultModifications = new ArrayList<>(modifications.length);
+      // create a list of lists to support attribute modification processors that perform batching
+      // by default the structure is 1xn, which may be modified by configured processors
+      final List<List<AttributeModification>> resultModifications = new ArrayList<>(1);
+      resultModifications.add(new ArrayList<>(modifications.length));
       final String[] includeAttrs = request.getIncludeAttributes();
       final String[] excludeAttrs = request.getExcludeAttributes();
       if (includeAttrs != null && includeAttrs.length > 0) {
         final List<String> l = Arrays.asList(includeAttrs);
         for (AttributeModification am : modifications) {
           if (l.contains(am.getAttribute().getName())) {
-            resultModifications.add(am);
+            resultModifications.get(0).add(am);
           }
         }
       } else if (excludeAttrs != null && excludeAttrs.length > 0) {
         final List<String> l = Arrays.asList(excludeAttrs);
         for (AttributeModification am : modifications) {
           if (!l.contains(am.getAttribute().getName())) {
-            resultModifications.add(am);
+            resultModifications.get(0).add(am);
           }
         }
       } else {
-        Collections.addAll(resultModifications, modifications);
+        Collections.addAll(resultModifications.get(0), modifications);
       }
-      if (!resultModifications.isEmpty()) {
-        logger.info(
+      if (!resultModifications.get(0).isEmpty()) {
+        // post process attribute modifications
+        List<List<AttributeModification>> processedModifications = resultModifications;
+        if (request.getAttributeModificationsHandlers() != null) {
+          for (MergeRequest.AttributeModificationsHandler processor : request.getAttributeModificationsHandlers())
+          {
+            processedModifications = processor.apply(processedModifications);
+          }
+        }
+        logger.debug(
           "Modifying target entry {} with modifications {} from source entry {} for request {}",
           target,
-          resultModifications,
+          processedModifications,
           source,
           request);
 
-        final ModifyOperation operation = modifyOperation != null ?
-          ModifyOperation.copy(modifyOperation) : new ModifyOperation();
-        operation.setConnectionFactory(connectionFactory);
-        final Result result = operation.execute(
-          ModifyRequest.builder()
-            .dn(target.getDn())
-            .modifications(resultModifications.toArray(AttributeModification[]::new))
-            .build());
+        Result result = null;
+        for (List<AttributeModification> batch : processedModifications) {
+          final ModifyOperation operation = modifyOperation != null ?
+            ModifyOperation.copy(modifyOperation) : new ModifyOperation();
+          operation.setConnectionFactory(connectionFactory);
+          result = operation.execute(
+            ModifyRequest.builder()
+              .dn(target.getDn())
+              .modifications(batch.toArray(AttributeModification[]::new))
+              .build());
+        }
         logger.info(
           "Modified target entry {} with modifications {} from source entry {} for request {}",
           target,
-          resultModifications,
+          processedModifications,
           source,
           request);
         return result;
