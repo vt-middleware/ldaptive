@@ -15,7 +15,7 @@ import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.auth.AccountState;
 
 /**
- * Request/response control for password policy. See http://tools.ietf.org/html/draft-behera-ldap-password-policy-10.
+ * Request/response control for password policy. See http://tools.ietf.org/html/draft-behera-ldap-password-policy-11.
  * Control is defined as:
  *
  * <pre>
@@ -32,7 +32,8 @@ import org.ldaptive.auth.AccountState;
       insufficientPasswordQuality (5),
       passwordTooShort            (6),
       passwordTooYoung            (7),
-      passwordInHistory           (8) } OPTIONAL }
+      passwordInHistory           (8),
+      passwordTooLong             (9) } OPTIONAL }
  * </pre>
  *
  * @author  Middleware Services
@@ -74,7 +75,10 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     PASSWORD_TOO_YOUNG(7),
 
     /** password in history. */
-    PASSWORD_IN_HISTORY(8);
+    PASSWORD_IN_HISTORY(8),
+
+    /** password too long. */
+    PASSWORD_TOO_LONG(9);
 
     /** underlying error code. */
     private final int code;
@@ -131,6 +135,8 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
       case PASSWORD_TOO_YOUNG:
 
       case PASSWORD_IN_HISTORY:
+
+      case PASSWORD_TOO_LONG:
         throw new CredentialException(name());
 
       default:
