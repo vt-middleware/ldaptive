@@ -454,7 +454,7 @@ public class LdapAttribute
    */
   public void removeBinaryValues(final Collection<byte[]> values)
   {
-    values.stream().filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::add);
+    values.stream().filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::remove);
   }
 
 

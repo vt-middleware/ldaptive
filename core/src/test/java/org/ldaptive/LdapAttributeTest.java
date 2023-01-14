@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -248,5 +249,85 @@ public class LdapAttributeTest
     Assert.assertNotEquals(
       LdapAttribute.builder().name("uid").values("1", "2", "3" , "4").build(),
       LdapAttribute.builder().name("uid").values("1", "2", "3").build());
+  }
+
+
+  /** Test for add and then remove methods. */
+  @Test
+  public void testAddRemoveStringValues()
+  {
+    final LdapAttribute la = new LdapAttribute("sn");
+    la.addStringValues("Smith", "Johnson");
+    Assert.assertEquals(la.size(), 2);
+    la.addStringValues(List.of("Williams", "Brown"));
+    Assert.assertEquals(la.size(), 4);
+    la.addStringValues("Jones");
+    Assert.assertEquals(la.size(), 5);
+    la.removeStringValues("Smith", "Johnson");
+    Assert.assertEquals(la.size(), 3);
+    la.removeStringValues(List.of("Williams", "Brown"));
+    Assert.assertEquals(la.size(), 1);
+    la.removeStringValues("Jones");
+    Assert.assertEquals(la.size(), 0);
+  }
+
+
+  /** Test for add and then remove methods. */
+  @Test
+  public void testAddRemoveBinaryValues()
+  {
+    final LdapAttribute la = new LdapAttribute("jpegPhoto");
+    la.addBinaryValues("image1".getBytes(), "image2".getBytes());
+    Assert.assertEquals(la.size(), 2);
+    la.addBinaryValues(List.of("image3".getBytes(), "image4".getBytes()));
+    Assert.assertEquals(la.size(), 4);
+    la.addBinaryValues("image5".getBytes());
+    Assert.assertEquals(la.size(), 5);
+    la.removeBinaryValues("image1".getBytes(), "image2".getBytes());
+    Assert.assertEquals(la.size(), 3);
+    la.removeBinaryValues(List.of("image3".getBytes(), "image4".getBytes()));
+    Assert.assertEquals(la.size(), 1);
+    la.removeBinaryValues("image5".getBytes());
+    Assert.assertEquals(la.size(), 0);
+  }
+
+
+  /** Test for add and then remove methods. */
+  @Test
+  public void testAddRemoveBufferValues()
+  {
+    final LdapAttribute la = new LdapAttribute("jpegPhoto");
+    la.addBufferValues(ByteBuffer.wrap("image1".getBytes()), ByteBuffer.wrap("image2".getBytes()));
+    Assert.assertEquals(la.size(), 2);
+    la.addBufferValues(List.of(ByteBuffer.wrap("image3".getBytes()), ByteBuffer.wrap("image4".getBytes())));
+    Assert.assertEquals(la.size(), 4);
+    la.addBufferValues(ByteBuffer.wrap("image5".getBytes()));
+    Assert.assertEquals(la.size(), 5);
+    la.removeBufferValues(ByteBuffer.wrap("image1".getBytes()), ByteBuffer.wrap("image2".getBytes()));
+    Assert.assertEquals(la.size(), 3);
+    la.removeBufferValues(List.of(ByteBuffer.wrap("image3".getBytes()), ByteBuffer.wrap("image4".getBytes())));
+    Assert.assertEquals(la.size(), 1);
+    la.removeBufferValues(ByteBuffer.wrap("image5".getBytes()));
+    Assert.assertEquals(la.size(), 0);
+  }
+
+
+  /** Test for add and then remove methods. */
+  @Test
+  public void testAddValues()
+  {
+    final LdapAttribute la = new LdapAttribute("sn");
+    la.addValues(s -> s.getBytes(StandardCharsets.UTF_8), "Smith", "Johnson");
+    Assert.assertEquals(la.size(), 2);
+    la.addValues(s -> s.getBytes(StandardCharsets.UTF_8), List.of("Williams", "Brown"));
+    Assert.assertEquals(la.size(), 4);
+    la.addValues(s -> s.getBytes(StandardCharsets.UTF_8), "Jones");
+    Assert.assertEquals(la.size(), 5);
+    la.removeStringValues("Smith", "Johnson");
+    Assert.assertEquals(la.size(), 3);
+    la.removeStringValues(List.of("Williams", "Brown"));
+    Assert.assertEquals(la.size(), 1);
+    la.removeStringValues("Jones");
+    Assert.assertEquals(la.size(), 0);
   }
 }
