@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
 
 /**
- * Bean for an matching rule schema element.
+ * Bean for a matching rule schema element.
  *
  * <pre>
    MatchingRuleDescription = LPAREN WSP
