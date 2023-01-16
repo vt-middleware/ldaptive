@@ -37,6 +37,18 @@
     <module>templates</module>
   </modules>
 
+  <dependencyManagement>
+    <dependencies>
+      <!-- newer versions require Java 11 -->
+      <dependency>
+        <groupId>org.testng</groupId>
+        <artifactId>testng</artifactId>
+        <version>7.5</version>
+        <scope>test</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <build>
     <plugins>
       <plugin>
