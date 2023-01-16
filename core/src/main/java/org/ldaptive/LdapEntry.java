@@ -3,7 +3,6 @@ package org.ldaptive;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
@@ -11,7 +10,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
@@ -330,27 +328,20 @@ public class LdapEntry extends AbstractMessage
         if (useReplace) {
           mods.add(new AttributeModification(AttributeModification.Type.REPLACE, sourceAttr));
         } else {
-          final Collection<byte[]> sourceValues = sourceAttr.getBinaryValues();
-          final Collection<byte[]> targetValues = targetAttr.getBinaryValues();
-
-          final Set<byte[]> valuesToAdd = sourceValues.stream()
-            .filter(sv -> targetValues.stream().noneMatch(tv -> Arrays.equals(sv, tv)))
-            .collect(Collectors.toSet());
-          if (!valuesToAdd.isEmpty()) {
-            mods.add(
-              new AttributeModification(
-                AttributeModification.Type.ADD,
-                LdapAttribute.builder().name(sourceAttr.getName()).binaryValues(valuesToAdd).build()));
+          final LdapAttribute toAdd = new LdapAttribute(sourceAttr.getName());
+          sourceAttr.getBinaryValues().stream()
+            .filter(sv -> !targetAttr.hasValue(sv))
+            .forEach(toAdd::addBinaryValues);
+          if (toAdd.size() > 0) {
+            mods.add(new AttributeModification(AttributeModification.Type.ADD, toAdd));
           }
 
-          final Set<byte[]> valuesToDelete = targetValues.stream()
-            .filter(tv -> sourceValues.stream().noneMatch(sv -> Arrays.equals(tv, sv)))
-            .collect(Collectors.toSet());
-          if (!valuesToDelete.isEmpty()) {
-            mods.add(
-              new AttributeModification(
-                AttributeModification.Type.DELETE,
-                LdapAttribute.builder().name(sourceAttr.getName()).binaryValues(valuesToDelete).build()));
+          final LdapAttribute toDelete = new LdapAttribute(sourceAttr.getName());
+          targetAttr.getBinaryValues().stream()
+            .filter(tv -> !sourceAttr.hasValue(tv))
+            .forEach(toDelete::addBinaryValues);
+          if (toDelete.size() > 0) {
+            mods.add(new AttributeModification(AttributeModification.Type.DELETE, toDelete));
           }
         }
       }

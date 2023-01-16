@@ -2,6 +2,7 @@
 package org.ldaptive;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -335,16 +336,7 @@ public class LdapAttribute
   {
     Stream.of(value)
       .filter(Objects::nonNull)
-      .map(v -> {
-        if (binary) {
-          try {
-            return LdapUtils.base64Decode(v);
-          } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
-          }
-        }
-        return LdapUtils.utf8Encode(v, false);
-      })
+      .map(s -> toByteArray(s, true))
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
       .forEach(attributeValues::add);
@@ -360,16 +352,7 @@ public class LdapAttribute
   {
     values.stream()
       .filter(Objects::nonNull)
-      .map(v -> {
-        if (binary) {
-          try {
-            return LdapUtils.base64Decode(v);
-          } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
-          }
-        }
-        return LdapUtils.utf8Encode(v, false);
-      })
+      .map(s -> toByteArray(s, true))
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
       .forEach(attributeValues::add);
@@ -467,16 +450,7 @@ public class LdapAttribute
   {
     Stream.of(value)
       .filter(Objects::nonNull)
-      .map(v -> {
-        if (binary) {
-          try {
-            return LdapUtils.base64Decode(v);
-          } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
-          }
-        }
-        return LdapUtils.utf8Encode(v, false);
-      })
+      .map(s -> toByteArray(s, true))
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
       .forEach(attributeValues::remove);
@@ -492,16 +466,7 @@ public class LdapAttribute
   {
     values.stream()
       .filter(Objects::nonNull)
-      .map(v -> {
-        if (binary) {
-          try {
-            return LdapUtils.base64Decode(v);
-          } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Error decoding " + v + " for " + attributeName, e);
-          }
-        }
-        return LdapUtils.utf8Encode(v, false);
-      })
+      .map(s -> toByteArray(s, true))
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
       .forEach(attributeValues::remove);
@@ -527,6 +492,47 @@ public class LdapAttribute
   public void removeBufferValues(final Collection<ByteBuffer> values)
   {
     values.stream().filter(Objects::nonNull).forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Returns whether the supplied value exists in this attribute.
+   *
+   * @param  value  to find
+   *
+   * @return  whether value exists
+   */
+  public boolean hasValue(final byte[] value)
+  {
+    return attributeValues.stream().anyMatch(bb -> Arrays.equals(bb.array(), value));
+  }
+
+
+  /**
+   * Returns whether the supplied value exists in this attribute.
+   *
+   * @param  value  to find
+   *
+   * @return  whether value exists
+   */
+  public boolean hasValue(final String value)
+  {
+    return attributeValues.stream().anyMatch(bb -> Arrays.equals(bb.array(), toByteArray(value, false)));
+  }
+
+
+  /**
+   * Returns whether the supplied value exists in this attribute.
+   *
+   * @param  <T>  type attribute to encode
+   * @param  func  to encode value with
+   * @param  value  to find
+   *
+   * @return  whether value exists
+   */
+  public <T> boolean hasValue(final Function<T, byte[]> func, final T value)
+  {
+    return attributeValues.stream().anyMatch(bb -> Arrays.equals(bb.array(), func.apply(value)));
   }
 
 
@@ -630,6 +636,33 @@ public class LdapAttribute
   {
     final DefaultAttributeValueEscaper escaper = new DefaultAttributeValueEscaper();
     return escaper.escape(value);
+  }
+
+
+  /**
+   * Converts the supplied string value to a byte array respecting the {@link #binary} flag. If this attribute is
+   * binary, value is expected to be in base64 format. Otherwise, value is UTF-8 encoded.
+   *
+   * @param  value  to convert
+   * @param  throwOnError  whether to throw if a base64 decode error occurs
+   *
+   * @return  binary value
+   *
+   * @throws  IllegalArgumentException  if attribute is binary, value cannot be base64 decoded and throwOnError is true
+   */
+  private byte[] toByteArray(final String value, final boolean throwOnError)
+  {
+    if (binary) {
+      try {
+        return LdapUtils.base64Decode(value);
+      } catch (IllegalArgumentException e) {
+        if (throwOnError) {
+          throw new IllegalArgumentException("Error decoding " + value + " for " + attributeName, e);
+        }
+        return null;
+      }
+    }
+    return LdapUtils.utf8Encode(value, false);
   }
 
 

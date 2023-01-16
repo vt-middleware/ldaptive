@@ -330,4 +330,23 @@ public class LdapAttributeTest
     la.removeStringValues("Jones");
     Assert.assertEquals(la.size(), 0);
   }
+
+
+  /** Test for hasValue methods. */
+  @Test
+  public void testHasValueString()
+  {
+    final LdapAttribute la1 = new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones");
+    Assert.assertTrue(la1.hasValue("Brown"));
+    Assert.assertFalse(la1.hasValue("brown"));
+    Assert.assertTrue(la1.hasValue("Brown".getBytes()));
+    Assert.assertFalse(la1.hasValue("brown".getBytes()));
+    Assert.assertTrue(la1.hasValue(s -> s.getBytes(StandardCharsets.UTF_8), "Brown"));
+    Assert.assertFalse(la1.hasValue(s -> s.getBytes(StandardCharsets.UTF_8), "brown"));
+
+    final LdapAttribute la2 = new LdapAttribute("jpegPhoto", "image".getBytes());
+    Assert.assertTrue(la2.hasValue("aW1hZ2U="));
+    Assert.assertFalse(la2.hasValue("aW1hZ2"));
+    Assert.assertFalse(la2.hasValue(" "));
+  }
 }
