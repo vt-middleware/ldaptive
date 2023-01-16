@@ -23,7 +23,7 @@ import org.ldaptive.schema.Schema;
 
 /**
  * Factory to create {@link Schema} from an active directory schema search result. Active Directory does not adhere to
- * RFC 4512 to represent it's schema. Each schema element is represented with a separate LDAP entry. The factory parses
+ * RFC 4512 to represent its schema. Each schema element is represented with a separate LDAP entry. The factory parses
  * and sets the object classes and attribute types for the schema. The other properties on the schema object are not
  * available.
  *

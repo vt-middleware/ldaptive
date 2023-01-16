@@ -153,7 +153,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
 
 
   /**
-   * Returns a new buffer containing an attribute description. The supplied buffer will have it's position set to the
+   * Returns a new buffer containing an attribute description. The supplied buffer will have its position set to the
    * next position after the attribute.
    *
    * @param  cb  to read from
@@ -338,7 +338,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
 
   /**
    * Returns a new char buffer whose position is 0 and whose limit is before the match character. The supplied buffer
-   * has it's position incremented one position past the match character.
+   * has its position incremented one position past the match character.
    *
    * @param  cb  to search
    * @param  match  to search for

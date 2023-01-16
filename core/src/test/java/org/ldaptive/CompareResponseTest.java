@@ -64,6 +64,7 @@ public class CompareResponseTest
       };
   }
 
+
   /**
    * @param  berValue  encoded response.
    * @param  response  expected decoded response.

@@ -419,7 +419,7 @@ public class LdapEntry extends AbstractMessage
 
 
   /**
-   * Parses a buffer containing an attribute name and it's values.
+   * Parses a buffer containing an attribute name and its values.
    */
   protected static class AttributeParser
   {

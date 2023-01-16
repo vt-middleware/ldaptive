@@ -478,7 +478,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    * Initialize this pool for use.
    *
    * @throws  IllegalStateException  if this pool has already been initialized, the pooling configuration is
-   *                                 inconsistent or the pool does not contain at least one connection and it's minimum
+   *                                 inconsistent or the pool does not contain at least one connection and its minimum
    *                                 size is greater than zero
    */
   @Override
@@ -1023,7 +1023,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
 
   /**
-   * Attempts to reduce the size of the pool back to it's configured minimum.
+   * Attempts to reduce the size of the pool back to its configured minimum.
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */

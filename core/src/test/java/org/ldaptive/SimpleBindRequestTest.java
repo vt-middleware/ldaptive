@@ -62,6 +62,7 @@ public class SimpleBindRequestTest
       };
   }
 
+
   /**
    * @param  request  simple bind request to encode.
    * @param  berValue  expected value.

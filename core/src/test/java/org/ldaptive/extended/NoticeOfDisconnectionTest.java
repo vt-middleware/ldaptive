@@ -52,6 +52,7 @@ public class NoticeOfDisconnectionTest
       };
   }
 
+
   /**
    * @param  berValue  encoded response.
    * @param  notification  expected decoded notification.

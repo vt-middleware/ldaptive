@@ -126,8 +126,8 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
 
   /**
    * Sets whether entry resolution should fail if multiple entries are found. If false an exception will be thrown if
-   * {@link #resolve(AuthenticationCriteria, AuthenticationHandlerResponse)} finds more than one entry matching it's
-   * filter. Otherwise the first entry found is returned.
+   * {@link #resolve(AuthenticationCriteria, AuthenticationHandlerResponse)} finds more than one entry matching its
+   * filter. Otherwise, the first entry found is returned.
    *
    * @param  b  whether multiple entries are allowed
    */

@@ -88,6 +88,7 @@ public class DERPathTest
     Assert.assertFalse(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() == new DERPath("/SEQ/OCTSTR[2]").hashCode());
   }
 
+
   /**
    * DER path test data.
    *

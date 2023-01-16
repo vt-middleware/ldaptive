@@ -14,7 +14,7 @@ import org.ldaptive.handler.AbstractEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
 
 /**
- * Constructs the primary group SID and then searches for that group and puts it's DN in the 'memberOf' attribute of the
+ * Constructs the primary group SID and then searches for that group and puts its DN in the 'memberOf' attribute of the
  * original search entry. This handler requires that entries contain both the 'objectSid' and 'primaryGroupID'
  * attributes. If those attributes are not found this handler is a no-op. This handler should be used in conjunction
  * with the {@link ObjectSidHandler} to ensure the 'objectSid' attribute is in the proper form. See

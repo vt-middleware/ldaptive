@@ -132,7 +132,7 @@ public class SyncReplRunner
 
 
   /**
-   * Returns a transport configured to use for sync repl. Uses it's own event loop groups with auto_read set to false.
+   * Returns a transport configured to use for sync repl. Uses its own event loop groups with auto_read set to false.
    * Detects whether Epoll or KQueue transports are available, otherwise uses NIO.
    *
    * @return  transport

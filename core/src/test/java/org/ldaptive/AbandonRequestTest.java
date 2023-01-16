@@ -35,6 +35,7 @@ public class AbandonRequestTest
       };
   }
 
+
   /**
    * @param  request  abandon request to encode.
    * @param  berValue  expected value.

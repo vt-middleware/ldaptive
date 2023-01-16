@@ -126,7 +126,7 @@ public class VirtualListViewParams
 
   /**
    * Creates a new virtual list view request control using the properties in this VLV params. The supplied response is
-   * inspected and if it contains a VLV response control, it's contextID and/or content count will be passed into the
+   * inspected and if it contains a VLV response control, its contextID and/or content count will be passed into the
    * created request control.
    *
    * @param  result  of a previous VLV operation

@@ -18,7 +18,7 @@ public interface LdapEntryManager<T>
 
 
   /**
-   * Searches for the supplied annotated object in an LDAP and returns the object mapped with it's ldap attribute
+   * Searches for the supplied annotated object in an LDAP and returns the object mapped with its ldap attribute
    * properties set.
    *
    * @param  object  to find

@@ -11,7 +11,7 @@ public interface DEREncoder
 
 
   /**
-   * Encode this object into it's DER type.
+   * Encode this object into its DER type.
    *
    * @return  DER encoded object
    */

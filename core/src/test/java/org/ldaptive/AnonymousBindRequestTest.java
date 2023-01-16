@@ -37,6 +37,7 @@ public class AnonymousBindRequestTest
       };
   }
 
+
   /**
    * @param  request  anonymous bind request to encode.
    * @param  berValue  expected value.

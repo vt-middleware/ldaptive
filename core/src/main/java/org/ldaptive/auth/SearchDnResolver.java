@@ -199,6 +199,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
     derefAliases = da;
   }
 
+
   /**
    * Gets an attribute to use to resolve the DN, if the attribute is not present the resolution fails back on the
    * entry's DN.
@@ -210,6 +211,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
     return resolveFromAttribute;
   }
 
+
   /**
    * Sets the attribute to use to resolve the DN. If null, the resolver will use the entry's DN.
    *
@@ -220,6 +222,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
     logger.trace("setting resolveFromAttribute: {}", attributeName);
     resolveFromAttribute = attributeName;
   }
+
 
   /**
    * Attempts to find the DN for the supplied user. {@link #createFilterTemplate(User)} is used to create the search
@@ -291,6 +294,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
     }
     return entry.getDn();
   }
+
 
   /**
    * Resolve DN from attribute in the resolveFromAttribute property.

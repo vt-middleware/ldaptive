@@ -8,7 +8,7 @@ import org.ldaptive.LdapUtils;
 
 /**
  * Merges the values of one or more attributes into a single attribute. The merged attribute may or may not already
- * exist on the entry. If it does exist it's existing values will remain intact.
+ * exist on the entry. If it does exist its existing values will remain intact.
  *
  * @author  Middleware Services
  */

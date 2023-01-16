@@ -124,7 +124,7 @@ public final class Hex
 
 
   /**
-   * Decodes the supplied character to it's corresponding nibble.
+   * Decodes the supplied character to its corresponding nibble.
    *
    * @param  hex  to read character from
    * @param  i  index of hex to read

@@ -97,6 +97,7 @@ public class BindResponseTest
       };
   }
 
+
   /**
    * @param  berValue  encoded response.
    * @param  response  expected decoded response.

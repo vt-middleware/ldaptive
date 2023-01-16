@@ -37,6 +37,7 @@ public class CancelRequestTest
       };
   }
 
+
   /**
    * @param  request  cancel request to encode.
    * @param  berValue  expected value.

@@ -24,7 +24,6 @@ public abstract class AbstractSampler extends AbstractJavaSamplerClient
   static final Logger LOGGER = LoggerFactory.getLogger(AbstractSampler.class);
 
 
-
   /**
    * Default constructor.
    *
@@ -35,6 +34,7 @@ public abstract class AbstractSampler extends AbstractJavaSamplerClient
   {
     LOGGER.debug(whoAmI() + "\tConstruct");
   }
+
 
   /**
    * Do an initial check to ensure the global test configuration was successful in the
@@ -57,6 +57,7 @@ public abstract class AbstractSampler extends AbstractJavaSamplerClient
     return null;
   }
 
+
   /**
    * Update current SampleResult with failed response when test setup has failed.
    *
@@ -66,6 +67,7 @@ public abstract class AbstractSampler extends AbstractJavaSamplerClient
   {
     failedResult(sampleResult, new LdapException("Setup failed. See log for more details"));
   }
+
 
   /**
    * Update current SampleResult with success response.

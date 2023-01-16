@@ -44,6 +44,7 @@ public class PasswordModifyRequestTest
       };
   }
 
+
   /**
    * @param  request  password modify request to encode.
    * @param  berValue  expected value.

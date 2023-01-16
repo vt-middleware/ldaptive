@@ -125,7 +125,7 @@ public class FilterTemplate
 
 
   /**
-   * Returns this filter with it's parameters encoded and replaced. See {@link #encode(Object)}.
+   * Returns this filter with its parameters encoded and replaced. See {@link #encode(Object)}.
    *
    * @return  formatted and encoded filter
    */

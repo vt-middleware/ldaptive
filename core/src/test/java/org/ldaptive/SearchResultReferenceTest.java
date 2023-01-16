@@ -49,6 +49,7 @@ public class SearchResultReferenceTest
       };
   }
 
+
   /**
    * @param  berValue  encoded response.
    * @param  response  expected decoded response.

@@ -46,6 +46,7 @@ public class LdapGroup implements Principal, Serializable
     return groupName;
   }
 
+
   /**
    * Adds a member to this group.
    *

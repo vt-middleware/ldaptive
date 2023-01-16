@@ -1410,7 +1410,7 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
-   * Encodes an LDAP request into it's DER bytes. See {@link EncodedRequest#getEncoded()}. This class prefers direct
+   * Encodes an LDAP request into its DER bytes. See {@link EncodedRequest#getEncoded()}. This class prefers direct
    * byte buffers.
    */
   @ChannelHandler.Sharable
@@ -1471,7 +1471,7 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
-   * Matches an inbound LDAP response message to it's operation handle and removes that handle from the response queue.
+   * Matches an inbound LDAP response message to its operation handle and removes that handle from the response queue.
    * Notifies all operation handles when an unsolicited notification arrives.
    */
   private class InboundMessageHandler extends SimpleChannelInboundHandler<Message>
@@ -1572,7 +1572,7 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
-   * Schedules a connection validator to run based on it's strategy. If the validator fails an exception caught is fired
+   * Schedules a connection validator to run based on its strategy. If the validator fails an exception caught is fired
    * in the pipeline.
    */
   private class ValidatorHandler extends ChannelInboundHandlerAdapter

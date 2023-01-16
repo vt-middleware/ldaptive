@@ -45,6 +45,7 @@ public class AddResponseTest
       };
   }
 
+
   /**
    * @param  berValue  encoded response.
    * @param  response  expected decoded response.

@@ -6,7 +6,7 @@ import org.testng.IInvokedMethodListener;
 import org.testng.ITestResult;
 
 /**
- * Marks a test as skipped if it's results indicate such.
+ * Marks a test as skipped if its results indicate such.
  *
  * @author  Middleware Services
  */
