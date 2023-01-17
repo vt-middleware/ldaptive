@@ -2,8 +2,10 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
@@ -264,30 +266,44 @@ public class Authenticator
    */
   public void close()
   {
+    final Set<ConnectionFactoryManager> managers = new HashSet<>();
     if (dnResolver instanceof ConnectionFactoryManager) {
-      closeConnectionFactoryManagers((ConnectionFactoryManager) dnResolver);
+      managers.add((ConnectionFactoryManager) dnResolver);
     } else if (dnResolver instanceof AggregateDnResolver) {
       final Map<String, DnResolver> resolvers = ((AggregateDnResolver) dnResolver).getDnResolvers();
       if (resolvers != null) {
-        closeConnectionFactoryManagers(resolvers.values().toArray(new ConnectionFactoryManager[0]));
+        resolvers.values().stream()
+          .filter(ConnectionFactoryManager.class::isInstance)
+          .map(ConnectionFactoryManager.class::cast)
+          .forEach(managers::add);
       }
     }
     if (authenticationHandler instanceof ConnectionFactoryManager) {
-      closeConnectionFactoryManagers((ConnectionFactoryManager) authenticationHandler);
+      managers.add((ConnectionFactoryManager) authenticationHandler);
     } else if (authenticationHandler instanceof AggregateAuthenticationHandler) {
       final Map<String, AuthenticationHandler> handlers =
         ((AggregateAuthenticationHandler) authenticationHandler).getAuthenticationHandlers();
       if (handlers != null) {
-        closeConnectionFactoryManagers(handlers.values().toArray(new ConnectionFactoryManager[0]));
+        handlers.values().stream()
+          .filter(ConnectionFactoryManager.class::isInstance)
+          .map(ConnectionFactoryManager.class::cast)
+          .forEach(managers::add);
       }
     }
     if (entryResolver instanceof ConnectionFactoryManager) {
-      closeConnectionFactoryManagers((ConnectionFactoryManager) entryResolver);
+      managers.add((ConnectionFactoryManager) entryResolver);
     } else if (entryResolver instanceof AggregateEntryResolver) {
       final Map<String, EntryResolver> resolvers = ((AggregateEntryResolver) entryResolver).getEntryResolvers();
       if (resolvers != null) {
-        closeConnectionFactoryManagers(resolvers.values().toArray(new ConnectionFactoryManager[0]));
+        resolvers.values().stream()
+          .filter(ConnectionFactoryManager.class::isInstance)
+          .map(ConnectionFactoryManager.class::cast)
+          .forEach(managers::add);
       }
+    }
+
+    if (!managers.isEmpty()) {
+      closeConnectionFactoryManagers(managers);
     }
   }
 
@@ -297,20 +313,19 @@ public class Authenticator
    *
    * @param  managers  to close connection factories for
    */
-  private void closeConnectionFactoryManagers(final ConnectionFactoryManager... managers)
+  private void closeConnectionFactoryManagers(final Set<ConnectionFactoryManager> managers)
   {
     if (managers != null) {
-      Arrays.stream(managers)
-        .filter(ConnectionFactoryManager.class::isInstance)
-        .map(ConnectionFactoryManager.class::cast)
+      managers.stream()
+        .filter(Objects::nonNull)
         .map(ConnectionFactoryManager::getConnectionFactory)
         .filter(Objects::nonNull)
+        .distinct()
         .forEach(cf -> {
           try {
             cf.close();
           } catch (Exception e) {
-            // use debug as exception may be expected if connection factories are shared among authenticator components
-            logger.debug("Error closing connection factory {}", cf, e);
+            logger.error("Error closing connection factory {}", cf, e);
           }
         });
     }
