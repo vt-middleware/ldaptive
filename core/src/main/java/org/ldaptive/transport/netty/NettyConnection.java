@@ -535,7 +535,7 @@ public final class NettyConnection extends TransportConnection
     final DefaultExtendedOperationHandle handle = new DefaultExtendedOperationHandle(
       request,
       this,
-      connectionConfig.getResponseTimeout());
+      connectionConfig.getStartTLSTimeout());
     final Result result;
     try {
       result = handle.execute();

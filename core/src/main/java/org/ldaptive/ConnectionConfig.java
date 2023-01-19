@@ -58,6 +58,9 @@ public class ConnectionConfig extends AbstractConfig
   /** Duration of time that connects will block. */
   private Duration connectTimeout = Duration.ofMinutes(1);
 
+  /** Duration of time to wait for startTLS responses. */
+  private Duration startTLSTimeout = Duration.ofMinutes(1);
+
   /** Duration of time to wait for responses. */
   private Duration responseTimeout = Duration.ofMinutes(1);
 
@@ -166,6 +169,33 @@ public class ConnectionConfig extends AbstractConfig
 
 
   /**
+   * Returns the startTLS timeout.
+   *
+   * @return  timeout
+   */
+  public Duration getStartTLSTimeout()
+  {
+    return startTLSTimeout;
+  }
+
+
+  /**
+   * Sets the maximum amount of time that startTLS operations will wait for a response.
+   *
+   * @param  time  timeout for responses
+   */
+  public void setStartTLSTimeout(final Duration time)
+  {
+    checkImmutable();
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("StartTLS timeout cannot be null or negative");
+    }
+    logger.trace("setting startTLSTimeout: {}", time);
+    startTLSTimeout = time;
+  }
+
+
+  /**
    * Returns the response timeout.
    *
    * @return  timeout
@@ -185,7 +215,7 @@ public class ConnectionConfig extends AbstractConfig
   {
     checkImmutable();
     if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Connect timeout cannot be null or negative");
+      throw new IllegalArgumentException("Response timeout cannot be null or negative");
     }
     logger.trace("setting responseTimeout: {}", time);
     responseTimeout = time;
@@ -475,6 +505,7 @@ public class ConnectionConfig extends AbstractConfig
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl(config.getLdapUrl());
     cc.setConnectTimeout(config.getConnectTimeout());
+    cc.setStartTLSTimeout(config.getStartTLSTimeout());
     cc.setResponseTimeout(config.getResponseTimeout());
     cc.setReconnectTimeout(config.getReconnectTimeout());
     cc.setAutoReconnect(config.getAutoReconnect());
@@ -498,6 +529,7 @@ public class ConnectionConfig extends AbstractConfig
       getClass().getName()).append("@").append(hashCode()).append("::")
       .append("ldapUrl=").append(ldapUrl).append(", ")
       .append("connectTimeout=").append(connectTimeout).append(", ")
+      .append("startTLSTimeout=").append(startTLSTimeout).append(", ")
       .append("responseTimeout=").append(responseTimeout).append(", ")
       .append("reconnectTimeout=").append(reconnectTimeout).append(", ")
       .append("autoReconnect=").append(autoReconnect).append(", ")
@@ -550,6 +582,13 @@ public class ConnectionConfig extends AbstractConfig
     public Builder responseTimeout(final Duration timeout)
     {
       object.setResponseTimeout(timeout);
+      return this;
+    }
+
+
+    public Builder startTLSTimeout(final Duration timeout)
+    {
+      object.setStartTLSTimeout(timeout);
       return this;
     }
 
