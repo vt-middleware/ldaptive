@@ -323,7 +323,12 @@ public class LdapEntry extends AbstractMessage
     for (LdapAttribute sourceAttr : source.getAttributes()) {
       final LdapAttribute targetAttr = target.getAttribute(sourceAttr.getName());
       if (targetAttr == null) {
-        mods.add(new AttributeModification(AttributeModification.Type.ADD, sourceAttr));
+        if (sourceAttr.size() > 0) {
+          mods.add(new AttributeModification(AttributeModification.Type.ADD, sourceAttr));
+        } else {
+          // perform a replace if attribute has no values to avoid potential schema issues
+          mods.add(new AttributeModification(AttributeModification.Type.REPLACE, sourceAttr));
+        }
       } else if (!targetAttr.equals(sourceAttr)) {
         if (useReplace) {
           mods.add(new AttributeModification(AttributeModification.Type.REPLACE, sourceAttr));

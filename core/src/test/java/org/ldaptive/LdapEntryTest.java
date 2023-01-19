@@ -256,7 +256,7 @@ public class LdapEntryTest
   }
 
 
-  /** Test {@link SearchResponse#equals(Object)}. */
+  /** Test {@link LdapEntry#equals(Object)}. */
   @Test
   public void testEquals()
   {
@@ -323,5 +323,157 @@ public class LdapEntryTest
           LdapAttribute.builder().name("givenName").values("Steve").build(),
           LdapAttribute.builder().name("sn").values("McQueen").build())
         .build());
+  }
+
+
+  /** Test {@link LdapEntry#computeModifications(LdapEntry, LdapEntry)}. */
+  @Test
+  public void testComputeModifications()
+  {
+    AttributeModification[] mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .build(),
+      true);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.ADD);
+    Assert.assertEquals(mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+
+    mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").build())
+        .build(),
+      true);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
+    Assert.assertEquals(mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+
+    mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").build())
+        .build(),
+      false);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.ADD);
+    Assert.assertEquals(mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+
+    mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred", "barney").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred").build())
+        .build(),
+      true);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
+    Assert.assertEquals(
+      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred", "barney").build());
+
+    mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred", "barney", "wilma").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred", "barney").build())
+        .build(),
+      false);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.ADD);
+    Assert.assertEquals(
+      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("wilma").build());
+
+    mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred", "barney").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred", "barney", "wilma").build())
+        .build(),
+      false);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.DELETE);
+    Assert.assertEquals(
+      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("wilma").build());
+
+    mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred", "barney").build())
+        .build(),
+      true);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
+    Assert.assertEquals(
+      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+
+    mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred").build())
+        .build(),
+      true);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
+    Assert.assertEquals(
+      mods[0].getAttribute(), LdapAttribute.builder().name("member").build());
+
+    mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").values("fred").build())
+        .build(),
+      false);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.DELETE);
+    Assert.assertEquals(
+      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+
+    // use replace if source doesn't have the attribute and target has an empty attribute
+    mods = LdapEntry.computeModifications(
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("member").build())
+        .build(),
+      LdapEntry.builder()
+        .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
+        .build(),
+      true);
+    Assert.assertEquals(mods.length, 1);
+    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
+    Assert.assertEquals(
+      mods[0].getAttribute(), LdapAttribute.builder().name("member").build());
   }
 }
