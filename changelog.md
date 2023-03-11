@@ -6,6 +6,16 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.1.2 - 11Mar2023
+
+Issue | Description
+:---- | :----------
+[ldaptive-228]({{ site.issueURL }}228) | Support batching for batching merge operations.
+[ldaptive-227]({{ site.issueURL }}227) | Improve MergeOperation to support configuration of underlying operations.
+[ldaptive-221]({{ site.issueURL }}221) | Fix the initialization of SyncInfoMessage.
+[ldaptive-218]({{ site.issueURL }}218) | Fix potential long waits on checkout.
+[ldaptive-212]({{ site.issueURL }}212) | Add basic Java module support.
+
 ## Version 2.1.1 - 16Apr2022
 
 Issue | Description
