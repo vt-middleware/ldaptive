@@ -57,7 +57,7 @@
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>1.7.36</org.slf4j.version>
     <io.netty.version>4.1.89.Final</io.netty.version>
-    <org.springframework.version>5.3.25</org.springframework.version>
+    <org.springframework.version>5.3.26</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.1.1</japicmp.oldVersion>
   </properties>
