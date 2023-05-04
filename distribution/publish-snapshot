@@ -21,8 +21,8 @@ echo "================================================================="
 user_continue
 
 # Build snapshot jars
-./mvn_cmd --with-jdk8 clean
-mvn package -Pjdk8 -Dmaven.javadoc.skip=true -B -V
+./mvn_cmd clean
+mvn package -Dmaven.javadoc.skip=true -B -V
 
 # Pull latest from the maven repo
 pushd ${REPO_PATH}
@@ -30,7 +30,7 @@ git pull
 popd
 
 # Deploy the artifact to the maven repo
-mvn deploy -Pjdk8 -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_PATH}
+mvn deploy -DskipTests -DaltDeploymentRepository=snapshot::default::file://${REPO_PATH}
 
 # Push changes to the maven repo
 pushd ${REPO_PATH}

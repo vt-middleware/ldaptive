@@ -8,43 +8,21 @@ function run_mvn() {
   SWITCH=$3
   if [ -z "$PROFILES" ]; then
     if [ -z "${SWITCH}" ]; then
-      if [ -z "${JDK8}" ]; then
-        ${MVN} -B -U ${PHASES}
-      else
-        ${MVN} -B -U -Pjdk8 ${PHASES}
-      fi
+      ${MVN} -B -U ${PHASES}
     else
-      if [ -z "${JDK8}" ]; then
-        ${MVN} -B -U ${PHASES} ${SWITCH}
-      else
-        ${MVN} -B -U -Pjdk8 ${PHASES} ${SWITCH}
-      fi
+      ${MVN} -B -U ${PHASES} ${SWITCH}
     fi
   else
     if [ -z "${SWITCH}" ]; then
-      if [ -z "${JDK8}" ]; then
-        ${MVN} -B -U -P${PROFILES} ${PHASES}
-      else
-        ${MVN} -B -U -P${PROFILES},jdk8 ${PHASES}
-      fi
+      ${MVN} -B -U -P${PROFILES} ${PHASES}
     else
-      if [ -z "${JDK8}" ]; then
-        ${MVN} -B -U -P${PROFILES} ${PHASES} ${SWITCH}
-      else
-        ${MVN} -B -U -P${PROFILES},jdk8 ${PHASES} ${SWITCH}
-      fi
+      ${MVN} -B -U -P${PROFILES} ${PHASES} ${SWITCH}
     fi
   fi
 }
 
-if [ "$1" = "--with-jdk8" ]; then
-  JDK8="true"
-  CMD=$2
-  ARG=$3
-else
-  CMD=$1
-  ARG=$2
-fi
+CMD=$1
+ARG=$2
 
 case "$CMD" in
   clean)
@@ -90,5 +68,5 @@ case "$CMD" in
     if [ -n "$1" ]; then
       echo "Invalid command"
     fi
-    echo "USAGE: `basename $0` [--with-jdk8] clean|javadoc|package|verify|install|versions-set|versions-display-dependency|versions-display-plugin|deploy|bundle-create"
+    echo "USAGE: `basename $0` clean|javadoc|package|verify|install|versions-set|versions-display-dependency|versions-display-plugin|deploy|bundle-create"
 esac
