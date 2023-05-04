@@ -55,8 +55,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
-    <org.slf4j.version>1.7.36</org.slf4j.version>
-    <io.netty.version>4.1.91.Final</io.netty.version>
+    <org.slf4j.version>2.0.7</org.slf4j.version>
+    <io.netty.version>4.1.92.Final</io.netty.version>
     <org.springframework.version>5.3.27</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.2.0</japicmp.oldVersion>
@@ -81,11 +81,10 @@
         <artifactId>slf4j-nop</artifactId>
         <version>${org.slf4j.version}</version>
       </dependency>
-      <!-- Remain on version 1.2.x until slf4j is updated to 2.x -->
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.2.12</version>
+        <version>1.4.7</version>
       </dependency>
       <dependency>
         <groupId>org.ldaptive</groupId>
@@ -220,7 +219,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-site-plugin</artifactId>
-          <version>3.11.0</version>
+          <version>3.12.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -245,12 +244,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
-          <version>3.2.1</version>
+          <version>3.2.2</version>
           <dependencies>
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>10.9.3</version>
+              <version>10.10.0</version>
             </dependency>
           </dependencies>
         </plugin>
