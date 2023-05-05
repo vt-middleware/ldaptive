@@ -14,7 +14,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import org.ldaptive.dn.DefaultAttributeValueEscaper;
 
 /**
  * LDAP attribute defined as:
@@ -619,23 +618,6 @@ public class LdapAttribute
       sorted.addStringValues(newValues);
     }
     return sorted;
-  }
-
-
-  /**
-   * Escapes the supplied string value per RFC 4514 section 2.4.
-   *
-   * @param  value  to escape
-   *
-   * @return  escaped value
-   *
-   * @deprecated use {@link DefaultAttributeValueEscaper}
-   */
-  @Deprecated
-  public static String escapeValue(final String value)
-  {
-    final DefaultAttributeValueEscaper escaper = new DefaultAttributeValueEscaper();
-    return escaper.escape(value);
   }
 
 

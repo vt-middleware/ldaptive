@@ -8,7 +8,6 @@ import java.util.List;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AttributeModification;
-import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
@@ -213,35 +212,6 @@ public class MergeOperation
    * executes a {@link ModifyOperation} with those results. If no modifications are necessary, no operation is
    * performed.
    *
-   * @param  conn  connection to perform operation on
-   * @param  request  merge request
-   * @param  source  ldap entry to merge into the LDAP
-   * @param  target  ldap entry that exists in the LDAP
-   *
-   * @return  response of the modify operation or an empty response if no operation is performed
-   *
-   * @throws  LdapException  if an error occurs executing the modify operation
-   *
-   * @deprecated  use {@link #modify(MergeRequest, LdapEntry, LdapEntry)}
-   */
-  @Deprecated
-  protected Result modify(
-    final Connection conn,
-    final MergeRequest request,
-    final LdapEntry source,
-    final LdapEntry target)
-    throws LdapException
-  {
-    logger.warn("Use of deprecated method, connection parameter is ignored");
-    return modify(request, source, target);
-  }
-
-
-  /**
-   * Retrieves the attribute modifications from {@link LdapEntry#computeModifications(LdapEntry, LdapEntry)} and
-   * executes a {@link ModifyOperation} with those results. If no modifications are necessary, no operation is
-   * performed.
-   *
    * @param  request  merge request
    * @param  source  ldap entry to merge into the LDAP
    * @param  target  ldap entry that exists in the LDAP
@@ -331,28 +301,6 @@ public class MergeOperation
   /**
    * Executes an {@link AddOperation} for the supplied entry.
    *
-   * @param  conn  connection to perform operation on
-   * @param  request  merge request
-   * @param  entry  to add to the LDAP
-   *
-   * @return  response of the add operation
-   *
-   * @throws  LdapException  if an error occurs executing the add operation
-   *
-   * @deprecated  use {@link #add(MergeRequest, LdapEntry)}
-   */
-  @Deprecated
-  protected Result add(final Connection conn, final MergeRequest request, final LdapEntry entry)
-    throws LdapException
-  {
-    logger.warn("Use of deprecated method, connection parameter is ignored");
-    return add(request, entry);
-  }
-
-
-  /**
-   * Executes an {@link AddOperation} for the supplied entry.
-   *
    * @param  request  merge request
    * @param  entry  to add to the LDAP
    *
@@ -373,28 +321,6 @@ public class MergeOperation
         .build());
     logger.info("Added entry {} for request {}", entry, request);
     return result;
-  }
-
-
-  /**
-   * Executes a {@link DeleteOperation} for the supplied entry.
-   *
-   * @param  conn  connection to perform operation on
-   * @param  request  merge request
-   * @param  entry  to delete from the LDAP
-   *
-   * @return  response of the delete operation
-   *
-   * @throws  LdapException  if an error occurs executing the deleting operation
-   *
-   * @deprecated  use {@link #delete(MergeRequest, LdapEntry)}
-   */
-  @Deprecated
-  protected Result delete(final Connection conn, final MergeRequest request, final LdapEntry entry)
-    throws LdapException
-  {
-    logger.warn("Use of deprecated method, connection parameter is ignored");
-    return delete(request, entry);
   }
 
 

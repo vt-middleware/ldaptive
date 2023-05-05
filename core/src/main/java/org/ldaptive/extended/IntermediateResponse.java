@@ -9,7 +9,6 @@ import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.OctetStringType;
-import org.ldaptive.asn1.ParseHandler;
 
 /**
  * LDAP extended response defined as:
@@ -57,22 +56,6 @@ public class IntermediateResponse extends AbstractMessage
     parser.registerHandler(ResponseValueHandler.PATH, new ResponseValueHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
-  }
-
-
-  /**
-   * Returns the parse handler for the response value.
-   *
-   * @return  parse handler
-   *
-   * @deprecated  this method was originally intended for use by subclasses to reduce the complexity of parsing.
-   *              Unfortunately performing parsing as part of class construction can have side effects. Most notably,
-   *              subclasses that do variable initialization will overwrite the results of the parsing.
-   */
-  @Deprecated
-  protected ParseHandler getResponseValueParseHandler()
-  {
-    return new ResponseValueHandler(this);
   }
 
 

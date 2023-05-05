@@ -570,21 +570,6 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    * this method is a no-op.
    *
    * @param  size  to grow the pool to
-   *
-   * @deprecated Use {@link #grow(int, boolean)}
-   */
-  @Deprecated
-  protected void grow(final int size)
-  {
-    grow(size, false);
-  }
-
-
-  /**
-   * Attempts to grow the pool to the supplied size. If the pool size is greater than or equal to the supplied size,
-   * this method is a no-op.
-   *
-   * @param  size  to grow the pool to
    * @param  throwOnFailure  whether to throw illegal state exception
    *
    * @throws  IllegalStateException  if the pool cannot grow to the supplied size and {@link
@@ -968,22 +953,6 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       removeAvailableAndActiveConnection(pc);
       throw new ValidationException("Validation of connection failed for pool " + getName());
     }
-  }
-
-
-  /**
-   * See {@link #passivateAndValidateConnection(PooledConnectionProxy)}.
-   *
-   * @param  pc  connection
-   *
-   * @return  whether both passivation and validation succeeded
-   *
-   * @deprecated  use {@link #passivateAndValidateConnection(PooledConnectionProxy)} instead
-   */
-  @Deprecated
-  protected boolean validateAndPassivateConnection(final PooledConnectionProxy pc)
-  {
-    return passivateAndValidateConnection(pc);
   }
 
 

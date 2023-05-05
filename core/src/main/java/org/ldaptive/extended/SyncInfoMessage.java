@@ -142,9 +142,6 @@ public class SyncInfoMessage extends IntermediateResponse
   }
 
 
-  // Once the deprecated parent method is removed, this method will no longer produce a warning
-  @SuppressWarnings("deprecation")
-  @Override
   protected ParseHandler getResponseValueParseHandler()
   {
     return (parser, encoded) -> {
@@ -274,20 +271,6 @@ public class SyncInfoMessage extends IntermediateResponse
     for (UUID id : uuids) {
       entryUuids.add(id);
     }
-  }
-
-
-  /**
-   * Sets the entry uuids.
-   *
-   * @param  uuids  entry uuids
-   *
-   * @deprecated  use {@link #addEntryUuids(UUID...)}
-   */
-  @Deprecated
-  public void setEntryUuids(final Set<UUID> uuids)
-  {
-    entryUuids = uuids;
   }
 
 
