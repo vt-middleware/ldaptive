@@ -3,6 +3,7 @@ package org.ldaptive.templates;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResponse;
@@ -164,11 +165,7 @@ public class SearchTemplatesOperation
 
     final SearchResponse subResult;
     if (fromResult != null) {
-      if (toResult != null) {
-        subResult = result.subResult(fromResult, toResult);
-      } else {
-        subResult = result.subResult(fromResult, result.entrySize());
-      }
+      subResult = result.subResult(fromResult, Objects.requireNonNullElseGet(toResult, result::entrySize));
     } else if (toResult != null) {
       subResult = result.subResult(0, toResult);
     } else {

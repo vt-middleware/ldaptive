@@ -99,7 +99,7 @@ public final class LdapURLActivatorService
   /**
    * Tests each registered URL. Removes URLs that successfully activated.
    */
-  protected void testInactiveUrls()
+  void testInactiveUrls()
   {
     for (LdapURL url : inactiveUrls) {
       if (!url.isActive() && url.getRetryMetadata().getConnectionStrategy().getRetryCondition().test(url)) {

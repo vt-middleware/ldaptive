@@ -16,10 +16,10 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
   private static final int POOL_SIZE = 10;
 
   /** Connection factory. */
-  protected ConnectionFactory connectionFactory2;
+  private ConnectionFactory connectionFactory2;
 
   /** Connection factory. */
-  protected ConnectionFactory connectionFactory3;
+  private ConnectionFactory connectionFactory3;
 
 
   @Override

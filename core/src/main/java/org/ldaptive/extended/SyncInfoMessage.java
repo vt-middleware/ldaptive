@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -268,9 +269,7 @@ public class SyncInfoMessage extends IntermediateResponse
    */
   public void addEntryUuids(final UUID... uuids)
   {
-    for (UUID id : uuids) {
-      entryUuids.add(id);
-    }
+    Collections.addAll(entryUuids, uuids);
   }
 
 

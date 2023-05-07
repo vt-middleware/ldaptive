@@ -87,9 +87,9 @@ public final class SecurityIdentifier
     st.nextToken();
 
     // second token is the revision
-    final int revision = Integer.valueOf(st.nextToken());
+    final int revision = Integer.parseInt(st.nextToken());
     // third token is the authority
-    final long authority = Long.valueOf(st.nextToken());
+    final long authority = Long.parseLong(st.nextToken());
     // remaining token are the sub authorities
     final List<String> subAuthorities = new ArrayList<>();
     while (st.hasMoreTokens()) {
@@ -108,7 +108,7 @@ public final class SecurityIdentifier
     putLong(sidBuffer, authority, true);
     for (String subAuthority : subAuthorities) {
       sidBuffer.limit(sidBuffer.position() + 4);
-      putLong(sidBuffer, Long.valueOf(subAuthority), false);
+      putLong(sidBuffer, Long.parseLong(subAuthority), false);
     }
 
     return sidBuffer.array();

@@ -100,7 +100,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
       .filter(e -> !e.getKey().startsWith(JAAS_OPTIONS_PROPERTY_PREFIX))
       .collect(
         Collectors.collectingAndThen(
-          Collectors.toMap(e -> e.getKey(), e -> e.getValue()), Collections::unmodifiableMap));
+          Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue), Collections::unmodifiableMap));
     jaasLoginModule = (String) props.getOrDefault(JAAS_LOGIN_MODULE_PROPERTY, DEFAULT_GSSAPI_LOGIN_MODULE);
     jaasOptions = props.entrySet().stream()
       .filter(e ->
@@ -111,7 +111,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
         Collectors.collectingAndThen(
           Collectors.toMap(
             e -> e.getKey().substring(JAAS_OPTIONS_PROPERTY_PREFIX.length()),
-            e -> e.getValue()),
+            Map.Entry::getValue),
           Collections::unmodifiableMap));
     if (props.get(JAAS_NAME_PROPERTY) == null) {
       if (props.get(JAAS_LOGIN_MODULE_PROPERTY) == null && jaasOptions.isEmpty()) {
@@ -122,7 +122,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
     } else {
       jaasName = (String) props.get(JAAS_NAME_PROPERTY);
     }
-    jaasRefreshConfig = Boolean.valueOf((String) props.getOrDefault(JAAS_REFRESH_CONFIG_PROPERTY, "false"));
+    jaasRefreshConfig = Boolean.parseBoolean((String) props.getOrDefault(JAAS_REFRESH_CONFIG_PROPERTY, "false"));
   }
 
 

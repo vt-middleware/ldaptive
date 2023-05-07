@@ -392,7 +392,7 @@ public class LdapAttribute
   {
     Stream.of(value)
       .filter(Objects::nonNull)
-      .map(func::apply)
+      .map(func)
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
       .forEach(attributeValues::add);
@@ -411,7 +411,7 @@ public class LdapAttribute
   {
     values.stream()
       .filter(Objects::nonNull)
-      .map(func::apply)
+      .map(func)
       .filter(Objects::nonNull)
       .map(ByteBuffer::wrap)
       .forEach(attributeValues::add);

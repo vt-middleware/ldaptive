@@ -110,7 +110,7 @@ public class Dn
    */
   public void add(final Dn dn)
   {
-    dn.getRDns().stream().forEach(rdn -> rdnComponents.add(rdn));
+    rdnComponents.addAll(dn.getRDns());
   }
 
 
@@ -163,7 +163,7 @@ public class Dn
     return new Dn(IntStream
       .range(0, rdnComponents.size())
       .filter(i -> i >= beginIndex && i < endIndex)
-      .mapToObj(i -> rdnComponents.get(i))
+      .mapToObj(rdnComponents::get)
       .collect(Collectors.toList()));
   }
 

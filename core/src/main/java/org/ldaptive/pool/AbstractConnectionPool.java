@@ -1085,7 +1085,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
         for (Map.Entry<PooledConnectionProxy, Supplier<Boolean>> entry : results.entrySet()) {
           // blocks until a result is received
           final Boolean validateResult = entry.getValue().get();
-          if (validateResult != null && validateResult.booleanValue()) {
+          if (validateResult != null && validateResult) {
             logger.trace("passed validation on {} with {} for {}", entry.getKey(), validator, this);
           } else {
             logger.warn(

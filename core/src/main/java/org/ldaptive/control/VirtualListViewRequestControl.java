@@ -421,24 +421,19 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
   public byte[] encode()
   {
     final List<DEREncoder> l = new ArrayList<>();
+    l.add(new IntegerType(getBeforeCount()));
+    l.add(new IntegerType(getAfterCount()));
     if (getAssertionValue() != null) {
-      l.add(new IntegerType(getBeforeCount()));
-      l.add(new IntegerType(getAfterCount()));
       l.add(new OctetStringType(new ContextDERTag(1, false), getAssertionValue()));
-      if (getContextID() != null) {
-        l.add(new OctetStringType(getContextID()));
-      }
     } else {
-      l.add(new IntegerType(getBeforeCount()));
-      l.add(new IntegerType(getAfterCount()));
       l.add(
         new ConstructedDEREncoder(
           new ContextDERTag(0, true),
           new IntegerType(getTargetOffset()),
           new IntegerType(getContentCount())));
-      if (getContextID() != null) {
-        l.add(new OctetStringType(getContextID()));
-      }
+    }
+    if (getContextID() != null) {
+      l.add(new OctetStringType(getContextID()));
     }
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(

@@ -103,7 +103,7 @@ public class LdifWriter implements SearchResultWriter
       final String attrName = attr.getName();
       final Collection<String> ldifLines = attr.getValues(
         bytes -> {
-          final StringBuffer sb = new StringBuffer(attrName);
+          final StringBuilder sb = new StringBuilder(attrName);
           if (attr.isBinary()) {
             sb.append(":: ").append(LdapUtils.base64Encode(bytes)).append(LINE_SEPARATOR);
           } else if (LdapUtils.shouldBase64Encode(bytes)) {

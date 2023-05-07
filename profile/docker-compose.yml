@@ -4,8 +4,8 @@ services:
   ldaptive:
     build: .
     ports:
-      - 9003:9003
-      - 10001:10001
+      - "9003:9003"
+      - "10001:10001"
     volumes:
       - $HOME/.m2:/root/.m2
       - $PWD:/apps/ldaptive

@@ -33,6 +33,6 @@ public class FileResourceLoader implements ResourceLoader
     if (!supports(path)) {
       throw new IllegalArgumentException("Path '" + path + "' must start with " + PREFIX);
     }
-    return new FileInputStream(new File(path.substring(PREFIX.length())));
+    return new FileInputStream(path.substring(PREFIX.length()));
   }
 }

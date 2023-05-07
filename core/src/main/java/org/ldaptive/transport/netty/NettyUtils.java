@@ -33,7 +33,7 @@ public final class NettyUtils
   private static final long DEFAULT_SHUTDOWN_MAX_TIMEOUT = 1000;
 
   /** Whether to use NIO even if other transports are available. */
-  private static final boolean USE_NIO = Boolean.valueOf(
+  private static final boolean USE_NIO = Boolean.parseBoolean(
     System.getProperty("org.ldaptive.transport.netty.useNio", "false"));
 
   /** Whether Epoll is available. */

@@ -214,7 +214,7 @@ public class SearchResponse extends AbstractResult
    */
   public void addReferences(final Collection<SearchResultReference> references)
   {
-    references.forEach(resultReferences::add);
+    resultReferences.addAll(references);
   }
 
 

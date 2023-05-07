@@ -191,7 +191,7 @@ public final class SchemaFactory
    *
    * @throws  LdapException  if the search fails
    */
-  protected static LdapEntry getLdapEntry(
+  private static LdapEntry getLdapEntry(
     final ConnectionFactory factory,
     final String dn,
     final String filter,

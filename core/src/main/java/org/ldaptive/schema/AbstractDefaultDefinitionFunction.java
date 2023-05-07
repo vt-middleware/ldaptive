@@ -61,8 +61,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
    */
   protected String readOID(final CharBuffer cb)
   {
-    final String oid = readUntilSpace(cb);
-    return oid;
+    return readUntilSpace(cb);
   }
 
 

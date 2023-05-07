@@ -133,7 +133,7 @@ public final class Hex
    *
    * @throws  IllegalArgumentException  if the character is not valid hex
    */
-  protected static int decode(final char[] hex, final int i)
+  private static int decode(final char[] hex, final int i)
   {
     final char c = hex[i];
     if (c > 'f') {

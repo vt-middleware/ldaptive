@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -71,9 +72,7 @@ public class SearchResultReference extends AbstractMessage
    */
   public void addUris(final String... uri)
   {
-    for (String s : uri) {
-      references.add(s);
-    }
+    Collections.addAll(references, uri);
   }
 
 

@@ -2,6 +2,7 @@
 package org.ldaptive;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
@@ -93,9 +94,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
    */
   public void addReferralURLs(final String... urls)
   {
-    for (String s : urls) {
-      referralURLs.add(s);
-    }
+    Collections.addAll(referralURLs, urls);
   }
 
 

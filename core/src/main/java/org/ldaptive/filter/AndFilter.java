@@ -2,8 +2,8 @@
 package org.ldaptive.filter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextDERTag;
@@ -42,7 +42,7 @@ public class AndFilter implements FilterSet
    */
   public AndFilter(final Filter... components)
   {
-    Stream.of(components).forEach(filterComponents::add);
+    filterComponents.addAll(Arrays.asList(components));
   }
 
 

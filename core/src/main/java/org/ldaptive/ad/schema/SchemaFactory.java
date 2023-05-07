@@ -113,7 +113,7 @@ public final class SchemaFactory
    *
    * @throws  LdapException  if the search fails
    */
-  protected static SearchResponse getSearchResult(
+  private static SearchResponse getSearchResult(
     final ConnectionFactory factory,
     final String dn,
     final String filter,
@@ -135,7 +135,7 @@ public final class SchemaFactory
    *
    * @return  attribute type
    */
-  protected static AttributeType createAttributeType(final LdapEntry entry)
+  private static AttributeType createAttributeType(final LdapEntry entry)
   {
     final LdapAttribute la = entry.getAttribute("objectClass");
     if (la == null || !la.getStringValues().contains("attributeSchema")) {
@@ -152,7 +152,7 @@ public final class SchemaFactory
         null,
         null,
         getAttributeValue(entry, "attributeSyntax"),
-        Boolean.valueOf(getAttributeValue(entry, "isSingleValued")),
+        Boolean.parseBoolean(getAttributeValue(entry, "isSingleValued")),
         false,
         false,
         null,
@@ -169,7 +169,7 @@ public final class SchemaFactory
    *
    * @return  object class
    */
-  protected static ObjectClass createObjectClass(final LdapEntry entry)
+  private static ObjectClass createObjectClass(final LdapEntry entry)
   {
     final LdapAttribute la = entry.getAttribute("objectClass");
     if (la == null || !la.getStringValues().contains("classSchema")) {

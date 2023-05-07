@@ -31,7 +31,7 @@ public class DefaultSearchOperationHandle
 {
 
   /** Whether to automatically sort search results. */
-  private static final boolean SORT_RESULTS = Boolean.valueOf(
+  private static final boolean SORT_RESULTS = Boolean.parseBoolean(
     System.getProperty("org.ldaptive.sortSearchResults", "false"));
 
   /** Functions to handle response entries. */

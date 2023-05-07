@@ -67,7 +67,7 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
           roleAttribute = value.split(",");
         }
       } else if ("noResultsIsError".equalsIgnoreCase(key)) {
-        noResultsIsError = Boolean.valueOf(value);
+        noResultsIsError = Boolean.parseBoolean(value);
       } else if ("roleResolverFactory".equalsIgnoreCase(key)) {
         try {
           roleResolverFactory = (RoleResolverFactory) Class.forName(value).getDeclaredConstructor().newInstance();

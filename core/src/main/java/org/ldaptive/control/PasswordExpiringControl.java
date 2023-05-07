@@ -128,6 +128,6 @@ public class PasswordExpiringControl extends AbstractControl implements Response
   public void decode(final DERBuffer encoded)
   {
     final String time = OctetStringType.decode(encoded);
-    setTimeBeforeExpiration(Integer.valueOf(time));
+    setTimeBeforeExpiration(Integer.parseInt(time));
   }
 }

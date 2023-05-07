@@ -41,7 +41,7 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
   protected BeanDefinitionBuilder parseAuthHandler(final Element element)
   {
     final BeanDefinitionBuilder authHandler;
-    if (Boolean.valueOf(element.getAttribute("disablePooling"))) {
+    if (Boolean.parseBoolean(element.getAttribute("disablePooling"))) {
       authHandler = BeanDefinitionBuilder.genericBeanDefinition(SimpleBindAuthenticationHandler.class);
       authHandler.addPropertyValue(
         "connectionFactory",
@@ -53,11 +53,11 @@ public abstract class AbstractAuthenticatorBeanDefinitionParser extends Abstract
         element.hasAttribute("id") ? element.getAttribute("id") + "-bind-pool" : "bind-pool",
         element,
         false);
-      if (Boolean.valueOf(element.getAttribute("passivateBindPool"))) {
+      if (Boolean.parseBoolean(element.getAttribute("passivateBindPool"))) {
         final BeanDefinitionBuilder passivator = BeanDefinitionBuilder.genericBeanDefinition(
           BindConnectionPassivator.class);
         connectionFactory.addPropertyValue("passivator", passivator.getBeanDefinition());
-      } else if (Boolean.valueOf(element.getAttribute("passivateBindPoolWithBindCredentials"))) {
+      } else if (Boolean.parseBoolean(element.getAttribute("passivateBindPoolWithBindCredentials"))) {
         final BeanDefinitionBuilder request = BeanDefinitionBuilder.genericBeanDefinition(SimpleBindRequest.class);
         request.addPropertyValue("ldapDN", element.getAttribute("bindDn"));
         request.addPropertyValue("password", element.getAttribute("bindCredential"));

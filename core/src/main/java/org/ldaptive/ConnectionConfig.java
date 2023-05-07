@@ -29,7 +29,7 @@ public class ConnectionConfig extends AbstractConfig
             // CheckStyle:MagicNumber OFF
             Thread.sleep(Duration.ofSeconds(5).toMillis());
             // CheckStyle:MagicNumber ON
-          } catch (InterruptedException e) {}
+          } catch (InterruptedException ignored) {}
         }
         return true;
       }
@@ -45,7 +45,7 @@ public class ConnectionConfig extends AbstractConfig
             // CheckStyle:MagicNumber OFF
             Thread.sleep(Duration.ofSeconds(5).multipliedBy(metadata.getAttempts()).toMillis());
             // CheckStyle:MagicNumber ON
-          } catch (InterruptedException e) {}
+          } catch (InterruptedException ignored) {}
         }
         return true;
       }

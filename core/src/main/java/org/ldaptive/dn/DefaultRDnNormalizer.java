@@ -58,7 +58,7 @@ public class DefaultRDnNormalizer implements RDnNormalizer
   {
     final Set<NameValue> nameValues = rdn.getNameValues().stream()
       .map(nv -> new NameValue(normalizeName(nv.getName()), normalizeValue(nv.getStringValue())))
-      .sorted(Comparator.comparing(nv -> nv.getName()))
+      .sorted(Comparator.comparing(NameValue::getName))
       .collect(Collectors.toCollection(LinkedHashSet::new));
     return new RDn(nameValues);
   }

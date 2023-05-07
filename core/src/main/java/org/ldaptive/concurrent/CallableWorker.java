@@ -103,7 +103,7 @@ public class CallableWorker<T>
   public List<ExecutionException> execute(final List<Callable<T>> callables, final Consumer<T> consumer)
   {
     final CompletionService<T> cs = new ExecutorCompletionService<>(executorService);
-    callables.stream().forEach(cs::submit);
+    callables.forEach(cs::submit);
     final List<ExecutionException> exceptions = new ArrayList<>(callables.size());
     for (int i = 0; i < callables.size(); i++) {
       try {

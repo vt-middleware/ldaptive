@@ -222,7 +222,7 @@ public final class NettyConnection extends TransportConnection
     } else {
       try {
         return Integer.parseInt(value);
-      } catch (NumberFormatException ex) {}
+      } catch (NumberFormatException ignored) {}
     }
     return value;
   }
@@ -1011,7 +1011,7 @@ public final class NettyConnection extends TransportConnection
    * Sends an exception notification to all pending responses that the connection has been closed. Since this invokes
    * any configured exception handlers, notifications will use the {@link #messageWorkerGroup} if it is configured.
    */
-  protected void notifyOperationHandlesOfClose()
+  private void notifyOperationHandlesOfClose()
   {
     if (pendingResponses.size() > 0) {
       if (LOGGER.isTraceEnabled()) {
@@ -1041,7 +1041,7 @@ public final class NettyConnection extends TransportConnection
    *
    * @throws  IllegalStateException  if the connection is open
    */
-  protected void reconnect()
+  private void reconnect()
   {
     if (isOpen()) {
       throw new IllegalStateException("Reconnect cannot be invoked when the connection is open");
@@ -1610,7 +1610,7 @@ public final class NettyConnection extends TransportConnection
             ctx.executor().schedule(
               () -> {
                 LOGGER.trace("connection validation returned {} for {}", result.get(), NettyConnection.this);
-                final boolean success = result.updateAndGet(b -> b == null ? false : b);
+                final boolean success = result.updateAndGet(b -> b != null && b);
                 if (!success) {
                   ctx.fireExceptionCaught(
                     new LdapException(

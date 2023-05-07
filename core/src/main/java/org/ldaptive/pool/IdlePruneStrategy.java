@@ -60,7 +60,7 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
   {
     final Instant timeAvailable = conn.getPooledConnectionStatistics().getLastAvailableStat();
     logger.trace("evaluating timestamp {} for connection {}", timeAvailable, conn);
-    return timeAvailable != null ? timeAvailable.plus(idleTime).isBefore(Instant.now()) : true;
+    return timeAvailable == null || timeAvailable.plus(idleTime).isBefore(Instant.now());
   }
 
 

@@ -122,9 +122,6 @@ public final class DefaultDnParser implements DnParser
       boolean appendHex = false;
       boolean appendValue = false;
       if (c == '\\') {
-        //if (pos + 1 == value.length()) {
-        //  throw new IllegalArgumentException("Invalid escape sequence, missing value");
-        //}
         if (pos + 1 < value.length()) {
           c = value.charAt(++pos);
           // if hexadecimal character add to buffer to decode later

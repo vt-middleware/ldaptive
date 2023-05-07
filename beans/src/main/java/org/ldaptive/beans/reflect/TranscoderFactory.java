@@ -57,7 +57,7 @@ public final class TranscoderFactory
    *
    * @throws  IllegalArgumentException  if the supplied type cannot be instantiated
    */
-  protected static ValueTranscoder<?> createValueTranscoder(final String type)
+  private static ValueTranscoder<?> createValueTranscoder(final String type)
   {
     try {
       return (ValueTranscoder<?>) Class.forName(type).getDeclaredConstructor().newInstance();

@@ -133,11 +133,9 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
   protected Set<SRVRecord> readSrvRecords(final String urls)
   {
     if (urls == null) {
-      if (dnsContextFactory == null) {
-        dnsResolvers = Collections.singletonMap(new SRVDNSResolver(new DefaultDNSContextFactory(), useSSL), null);
-      } else {
-        dnsResolvers = Collections.singletonMap(new SRVDNSResolver(dnsContextFactory, useSSL), null);
-      }
+      dnsResolvers = Collections.singletonMap(
+        new SRVDNSResolver(
+          Objects.requireNonNullElseGet(dnsContextFactory, DefaultDNSContextFactory::new), useSSL), null);
     } else if (urls.contains(" ")) {
       dnsResolvers = new HashMap<>();
       for (String url : urls.split(" ")) {
@@ -149,12 +147,10 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
       }
     } else {
       final String[] dnsUrl = parseUrl(urls);
-      if (dnsContextFactory == null) {
-        dnsResolvers = Collections.singletonMap(
-          new SRVDNSResolver(new DefaultDNSContextFactory(dnsUrl[0]), useSSL), dnsUrl[1]);
-      } else {
-        dnsResolvers = Collections.singletonMap(new SRVDNSResolver(dnsContextFactory, useSSL), dnsUrl[1]);
-      }
+      dnsResolvers = Collections.singletonMap(
+        new SRVDNSResolver(
+          Objects.requireNonNullElseGet(
+            dnsContextFactory, () -> new DefaultDNSContextFactory(dnsUrl[0])), useSSL), dnsUrl[1]);
     }
     final Set<SRVRecord> srvRecords = retrieveDNSRecords();
     if (srvRecords.isEmpty()) {

@@ -110,19 +110,19 @@ public abstract class AbstractLoginModule implements LoginModule
     for (String key : options.keySet()) {
       final String value = (String) options.get(key);
       if ("useFirstPass".equalsIgnoreCase(key)) {
-        useFirstPass = Boolean.valueOf(value);
+        useFirstPass = Boolean.parseBoolean(value);
       } else if ("tryFirstPass".equalsIgnoreCase(key)) {
-        tryFirstPass = Boolean.valueOf(value);
+        tryFirstPass = Boolean.parseBoolean(value);
       } else if ("storePass".equalsIgnoreCase(key)) {
-        storePass = Boolean.valueOf(value);
+        storePass = Boolean.parseBoolean(value);
       } else if ("clearPass".equalsIgnoreCase(key)) {
-        clearPass = Boolean.valueOf(value);
+        clearPass = Boolean.parseBoolean(value);
       } else if ("setLdapPrincipal".equalsIgnoreCase(key)) {
-        setLdapPrincipal = Boolean.valueOf(value);
+        setLdapPrincipal = Boolean.parseBoolean(value);
       } else if ("setLdapDnPrincipal".equalsIgnoreCase(key)) {
-        setLdapDnPrincipal = Boolean.valueOf(value);
+        setLdapDnPrincipal = Boolean.parseBoolean(value);
       } else if ("setLdapCredential".equalsIgnoreCase(key)) {
-        setLdapCredential = Boolean.valueOf(value);
+        setLdapCredential = Boolean.parseBoolean(value);
       } else if ("defaultRole".equalsIgnoreCase(key)) {
         for (String s : value.split(",")) {
           defaultRole.add(new LdapRole(s.trim()));

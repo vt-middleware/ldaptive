@@ -69,7 +69,7 @@ public abstract class AbstractConfig
   protected void checkStringInput(final String s, final boolean allowNull)
   {
     if (allowNull) {
-      if (s != null && "".equals(s)) {
+      if ("".equals(s)) {
         throw new IllegalArgumentException("Input cannot be empty");
       }
     } else {

@@ -19,7 +19,7 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
   protected void doParse(final Element element, final ParserContext context, final BeanDefinitionBuilder builder)
   {
     final BeanDefinitionBuilder dnResolver;
-    if (Boolean.valueOf(element.getAttribute("disablePooling"))) {
+    if (Boolean.parseBoolean(element.getAttribute("disablePooling"))) {
       final BeanDefinitionBuilder connectionFactory = parseDefaultConnectionFactory(null, element, true);
       dnResolver = parseDnResolver(null, element, connectionFactory);
     } else {
@@ -32,8 +32,8 @@ public abstract class AbstractSearchAuthenticatorBeanDefinitionParser extends Ab
     }
 
     BeanDefinitionBuilder entryResolver = null;
-    if (Boolean.valueOf(element.getAttribute("resolveEntryWithBindCredentials"))) {
-      if (Boolean.valueOf(element.getAttribute("disablePooling"))) {
+    if (Boolean.parseBoolean(element.getAttribute("resolveEntryWithBindCredentials"))) {
+      if (Boolean.parseBoolean(element.getAttribute("disablePooling"))) {
         final BeanDefinitionBuilder connectionFactory = parseDefaultConnectionFactory(null, element, true);
         entryResolver = parseEntryResolver(element, connectionFactory);
       } else {

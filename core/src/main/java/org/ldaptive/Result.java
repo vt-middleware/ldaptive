@@ -10,7 +10,8 @@ public interface Result extends Message
 {
 
   /** Whether to encode control characters. */
-  boolean ENCODE_CNTRL_CHARS = Boolean.valueOf(System.getProperty("org.ldaptive.response.ENCODE_CNTRL_CHARS", "false"));
+  boolean ENCODE_CNTRL_CHARS = Boolean.parseBoolean(
+    System.getProperty("org.ldaptive.response.ENCODE_CNTRL_CHARS", "false"));
 
 
   /**

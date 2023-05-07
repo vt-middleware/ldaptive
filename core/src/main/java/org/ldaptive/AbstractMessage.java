@@ -2,6 +2,7 @@
 package org.ldaptive;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.ldaptive.asn1.AbstractParseHandler;
@@ -69,9 +70,7 @@ public abstract class AbstractMessage implements Message
    */
   public void addControls(final ResponseControl... cntrls)
   {
-    for (ResponseControl c : cntrls) {
-      controls.add(c);
-    }
+    Collections.addAll(controls, cntrls);
   }
 
 
