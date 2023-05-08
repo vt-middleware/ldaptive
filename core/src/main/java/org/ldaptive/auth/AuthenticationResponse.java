@@ -162,18 +162,18 @@ public class AuthenticationResponse extends AbstractResult
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("authenticationHandlerResponse=").append(authenticationHandlerResponse).append(", ")
-      .append("resolvedDn=").append(resolvedDn).append(", ")
-      .append("ldapEntry=").append(ldapEntry).append(", ")
-      .append("accountState=").append(accountState).append(", ")
-      .append("resultCode=").append(getResultCode()).append(", ")
-      .append("matchedDN=").append(getMatchedDN()).append(", ")
-      .append("diagnosticMessage=").append(getEncodedDiagnosticMessage()).append(", ")
-      .append("referralURLs=").append(Arrays.toString(getReferralURLs())).append(", ")
-      .append("messageID=").append(getMessageID()).append(", ")
-      .append("controls=").append(Arrays.toString(getControls())).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "authenticationHandlerResponse=" + authenticationHandlerResponse + ", " +
+      "resolvedDn=" + resolvedDn + ", " +
+      "ldapEntry=" + ldapEntry + ", " +
+      "accountState=" + accountState + ", " +
+      "resultCode=" + getResultCode() + ", " +
+      "matchedDN=" + getMatchedDN() + ", " +
+      "diagnosticMessage=" + getEncodedDiagnosticMessage() + ", " +
+      "referralURLs=" + Arrays.toString(getReferralURLs()) + ", " +
+      "messageID=" + getMessageID() + ", " +
+      "controls=" + Arrays.toString(getControls()) + "]";
   }
 
 

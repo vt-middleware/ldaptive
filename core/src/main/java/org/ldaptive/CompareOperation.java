@@ -181,8 +181,7 @@ public class CompareOperation extends AbstractOperation<CompareRequest, CompareR
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("compareValueHandlers=").append(Arrays.toString(compareValueHandlers)).toString();
+    return super.toString() + ", " + "compareValueHandlers=" + Arrays.toString(compareValueHandlers);
   }
 
 

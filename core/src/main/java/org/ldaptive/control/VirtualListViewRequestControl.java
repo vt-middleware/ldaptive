@@ -406,14 +406,14 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("beforeCount=").append(beforeCount).append(", ")
-      .append("afterCount=").append(afterCount).append(", ")
-      .append("targetOffset=").append(targetOffset).append(", ")
-      .append("contentCount=").append(contentCount).append(", ")
-      .append("assertionValue=").append(LdapUtils.base64Encode(contextID)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "beforeCount=" + beforeCount + ", " +
+      "afterCount=" + afterCount + ", " +
+      "targetOffset=" + targetOffset + ", " +
+      "contentCount=" + contentCount + ", " +
+      "assertionValue=" + LdapUtils.base64Encode(contextID) + "]";
   }
 
 

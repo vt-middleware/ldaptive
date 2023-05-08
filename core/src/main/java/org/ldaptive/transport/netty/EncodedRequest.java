@@ -57,9 +57,8 @@ public class EncodedRequest
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("messageID=").append(messageID).append(", ")
-      .append("encoded=").append(LdapUtils.hexEncode(encoded)).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "messageID=" + messageID + ", " +
+      "encoded=" + String.valueOf(LdapUtils.hexEncode(encoded));
   }
 }

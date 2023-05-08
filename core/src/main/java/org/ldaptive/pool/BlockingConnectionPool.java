@@ -257,8 +257,6 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   @Override
   public String toString()
   {
-    return new StringBuilder().append(
-      super.toString()).append(", ")
-      .append("blockWaitTime=").append(blockWaitTime).toString();
+    return super.toString() + ", " + "blockWaitTime=" + blockWaitTime;
   }
 }

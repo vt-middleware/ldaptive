@@ -116,9 +116,7 @@ public class SearchResultReference extends AbstractMessage
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      super.toString()).append(", ")
-      .append("URIs=").append(references).toString();
+    return super.toString() + ", " + "URIs=" + references;
   }
 
 

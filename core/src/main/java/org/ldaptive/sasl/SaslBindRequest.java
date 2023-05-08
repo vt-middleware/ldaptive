@@ -104,8 +104,7 @@ public class SaslBindRequest extends AbstractRequestMessage implements BindReque
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("saslMechanism=").append(saslMechanism).toString();
+    return super.toString() + ", " + "saslMechanism=" + saslMechanism;
   }
 
 

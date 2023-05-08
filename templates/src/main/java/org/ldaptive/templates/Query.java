@@ -155,12 +155,12 @@ public class Query
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("terms=").append(Arrays.toString(terms)).append(", ")
-      .append("returnAttributes=").append(Arrays.toString(returnAttributes)).append(", ")
-      .append("searchRestrictions=").append(searchRestrictions).append(", ")
-      .append("fromResult=").append(fromResult).append(", ")
-      .append("toResult=").append(toResult).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "terms=" + Arrays.toString(terms) + ", " +
+      "returnAttributes=" + Arrays.toString(returnAttributes) + ", " +
+      "searchRestrictions=" + searchRestrictions + ", " +
+      "fromResult=" + fromResult + ", " +
+      "toResult=" + toResult + "]";
   }
 }

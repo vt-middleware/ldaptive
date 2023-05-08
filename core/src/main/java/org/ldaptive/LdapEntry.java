@@ -264,10 +264,9 @@ public class LdapEntry extends AbstractMessage
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      super.toString()).append(", ")
-      .append("dn=").append(ldapDn).append(", ")
-      .append("attributes=").append(attributes != null ? attributes.values() : null).toString();
+    return super.toString() + ", " +
+      "dn=" + ldapDn + ", " +
+      "attributes=" + (attributes != null ? attributes.values() : null);
   }
 
 

@@ -66,8 +66,7 @@ public class DeleteRequest extends AbstractRequestMessage
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("dn=").append(ldapDn).toString();
+    return super.toString() + ", " + "dn=" + ldapDn;
   }
 
 

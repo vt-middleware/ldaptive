@@ -133,10 +133,9 @@ public class DefaultDERBuffer implements DERBuffer
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("pos=").append(position()).append(", ")
-      .append("lim=").append(limit()).append(", ")
-      .append("cap=").append(capacity()).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "pos=" + position() + ", " +
+      "lim=" + limit() + ", " +
+      "cap=" + capacity();
   }
 }

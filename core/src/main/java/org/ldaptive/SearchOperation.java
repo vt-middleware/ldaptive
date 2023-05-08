@@ -840,12 +840,12 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("request=").append(request).append(", ")
-      .append("template=").append(filterTemplate).append(", ")
-      .append("entryHandlers=").append(Arrays.toString(entryHandlers)).append(", ")
-      .append("referenceHandlers=").append(Arrays.toString(referenceHandlers)).append(", ")
-      .append("searchResultHandlers=").append(Arrays.toString(searchResultHandlers)).toString();
+    return super.toString() + ", " +
+      "request=" + request + ", " +
+      "template=" + filterTemplate + ", " +
+      "entryHandlers=" + Arrays.toString(entryHandlers) + ", " +
+      "referenceHandlers=" + Arrays.toString(referenceHandlers) + ", " +
+      "searchResultHandlers=" + Arrays.toString(searchResultHandlers);
   }
 
 

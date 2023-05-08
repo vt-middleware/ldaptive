@@ -104,9 +104,9 @@ public class AuthenticationCriteria
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("dn=").append(authenticationDn).append(", ")
-      .append("authenticationRequest=").append(authenticationRequest).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "dn=" + authenticationDn + ", " +
+      "authenticationRequest=" + authenticationRequest + "]";
   }
 }

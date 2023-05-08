@@ -82,10 +82,10 @@ public class LdapDnPrincipal implements Principal, Serializable, Comparable<Prin
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("ldapDn=").append(ldapDn).append(", ")
-      .append("ldapEntry=").append(ldapEntry != null ? ldapEntry : "").append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "ldapDn=" + ldapDn + ", " +
+      "ldapEntry=" + (ldapEntry != null ? ldapEntry : "") + "]";
   }
 
 

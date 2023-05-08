@@ -66,7 +66,6 @@ public class DefaultDNSContextFactory implements DNSContextFactory
   @Override
   public String toString()
   {
-    return new StringBuilder(getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("nameservers=").append(nameservers).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "nameservers=" + nameservers;
   }
 }

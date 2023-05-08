@@ -165,7 +165,6 @@ public class DefaultCompareOperationHandle
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("onCompare=").append(Arrays.toString(onCompare)).toString();
+    return super.toString() + ", " + "onCompare=" + Arrays.toString(onCompare);
   }
 }

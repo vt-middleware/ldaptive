@@ -113,10 +113,8 @@ public final class MultiPooledSearchOperationProfile extends AbstractSearchOpera
   @Override
   public String toString()
   {
-    final StringBuilder sb = new StringBuilder();
-    sb.append(connectionFactory != null ? connectionFactory.toString() : "[null connection factory]").append(" -- ");
-    sb.append(connectionFactory2 != null ? connectionFactory2.toString() : "[null connection factory2]").append(" -- ");
-    sb.append(connectionFactory3 != null ? connectionFactory3.toString() : "[null connection factory3]");
-    return sb.toString();
+    return (connectionFactory != null ? connectionFactory.toString() : "[null connection factory]") + " -- " +
+      (connectionFactory2 != null ? connectionFactory2.toString() : "[null connection factory2]") + " -- " +
+      (connectionFactory3 != null ? connectionFactory3.toString() : "[null connection factory3]");
   }
 }

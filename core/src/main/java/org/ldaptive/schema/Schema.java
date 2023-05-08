@@ -489,15 +489,15 @@ public class Schema
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("attributeTypes=").append(attributeTypes).append(", ")
-      .append("ditContentRules=").append(ditContentRules).append(", ")
-      .append("ditStructureRules=").append(ditStructureRules).append(", ")
-      .append("syntaxes=").append(syntaxes).append(", ")
-      .append("matchingRules=").append(matchingRules).append(", ")
-      .append("matchingRuleUses=").append(matchingRuleUses).append(", ")
-      .append("nameForms=").append(nameForms).append(", ")
-      .append("objectClasses=").append(objectClasses).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "attributeTypes=" + attributeTypes + ", " +
+      "ditContentRules=" + ditContentRules + ", " +
+      "ditStructureRules=" + ditStructureRules + ", " +
+      "syntaxes=" + syntaxes + ", " +
+      "matchingRules=" + matchingRules + ", " +
+      "matchingRuleUses=" + matchingRuleUses + ", " +
+      "nameForms=" + nameForms + ", " +
+      "objectClasses=" + objectClasses + "]";
   }
 }

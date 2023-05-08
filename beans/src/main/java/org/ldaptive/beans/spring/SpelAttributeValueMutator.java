@@ -233,12 +233,12 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("attribute=").append(attribute).append(", ")
-      .append("expression=").append(expression).append(", ")
-      .append("evaluationContext=").append(evaluationContext).append(", ")
-      .append("transcoder=").append(transcoder).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "attribute=" + attribute + ", " +
+      "expression=" + expression + ", " +
+      "evaluationContext=" + evaluationContext + ", " +
+      "transcoder=" + transcoder + "]";
   }
 
 

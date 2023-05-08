@@ -153,7 +153,6 @@ public class SRVDNSResolver extends AbstractDNSResolver<SRVRecord>
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(super.toString()).append(", ")
-      .append("useSSL=").append(useSSL).append("]").toString();
+    return "[" + super.toString() + ", " + "useSSL=" + useSSL + "]";
   }
 }

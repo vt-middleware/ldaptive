@@ -303,16 +303,15 @@ public class SyncReplRunner
   @Override
   public String toString()
   {
-    return new StringBuilder().append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("syncReplClient=").append(syncReplClient).append(", ")
-      .append("searchRequest=").append(searchRequest).append(", ")
-      .append("cookieManager=").append(cookieManager).append(", ")
-      .append("onStart=").append(onStart).append(", ")
-      .append("onEntry=").append(onEntry).append(", ")
-      .append("onResult=").append(onResult).append(", ")
-      .append("onMessage=").append(onMessage).append(", ")
-      .append("started=").append(started).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "syncReplClient=" + syncReplClient + ", " +
+      "searchRequest=" + searchRequest + ", " +
+      "cookieManager=" + cookieManager + ", " +
+      "onStart=" + onStart + ", " +
+      "onEntry=" + onEntry + ", " +
+      "onResult=" + onResult + ", " +
+      "onMessage=" + onMessage + ", " +
+      "started=" + started;
   }
 
 

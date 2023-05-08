@@ -116,9 +116,9 @@ public class LdapGroup implements Principal, Serializable
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("groupName=").append(groupName).append(", ")
-      .append("members=").append(members).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "groupName=" + groupName + ", " +
+      "members=" + members + "]";
   }
 }

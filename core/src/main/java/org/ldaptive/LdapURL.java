@@ -326,7 +326,7 @@ public class LdapURL
    */
   public String getHostnameWithPort()
   {
-    return new StringBuilder(getHostname() != null ? getHostname() : "null").append(":").append(getPort()).toString();
+    return (getHostname() != null ? getHostname() : "null") + ":" + getPort();
   }
 
 
@@ -337,8 +337,7 @@ public class LdapURL
    */
   public String getHostnameWithSchemeAndPort()
   {
-    return new StringBuilder(getScheme()).append("://")
-      .append(getHostname() != null ? getHostname() : "null").append(":").append(getPort()).toString();
+    return getScheme() + "://" + (getHostname() != null ? getHostname() : "null") + ":" + getPort();
   }
 
 
@@ -479,16 +478,16 @@ public class LdapURL
   @Override
   public String toString()
   {
-    return new StringBuilder("[")
-      .append(getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("scheme=").append(scheme).append(", ")
-      .append("hostname=").append(hostname).append(", ")
-      .append("port=").append(port).append(", ")
-      .append("baseDn=").append(baseDn).append(", ")
-      .append("attributes=").append(Arrays.toString(attributes)).append(", ")
-      .append("scope=").append(scope).append(", ")
-      .append("filter=").append(filter).append(", ")
-      .append("inetAddress=").append(inetAddress).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "scheme=" + scheme + ", " +
+      "hostname=" + hostname + ", " +
+      "port=" + port + ", " +
+      "baseDn=" + baseDn + ", " +
+      "attributes=" + Arrays.toString(attributes) + ", " +
+      "scope=" + scope + ", " +
+      "filter=" + filter + ", " +
+      "inetAddress=" + inetAddress + "]";
   }
 
 

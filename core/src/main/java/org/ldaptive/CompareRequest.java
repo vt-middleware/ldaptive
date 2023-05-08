@@ -108,11 +108,10 @@ public class CompareRequest extends AbstractRequestMessage
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("dn=").append(ldapDn).append(", ")
-      .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("assertionValue=").append("userPassword".equals(attributeDesc) ? "<suppressed>" : assertionValue)
-      .toString();
+    return super.toString() + ", " +
+      "dn=" + ldapDn + ", " +
+      "attributeDesc=" + attributeDesc + ", " +
+      "assertionValue=" + ("userPassword".equals(attributeDesc) ? "<suppressed>" : assertionValue);
   }
 
 

@@ -96,10 +96,7 @@ public class NameValue
    */
   public String format()
   {
-    final StringBuilder sb = new StringBuilder();
-    sb.append(attributeName)
-      .append("=").append(LdapUtils.utf8Encode(attributeValue != null ? attributeValue.array() : null));
-    return sb.toString();
+    return attributeName + "=" + LdapUtils.utf8Encode(attributeValue != null ? attributeValue.array() : null);
   }
 
 
@@ -134,9 +131,9 @@ public class NameValue
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("name=").append(attributeName).append(", ")
-      .append("value=").append(getStringValue()).toString();
+    return getClass().getName() +
+      "@" + hashCode() + "::" +
+      "name=" + attributeName + ", " +
+      "value=" + getStringValue();
   }
 }

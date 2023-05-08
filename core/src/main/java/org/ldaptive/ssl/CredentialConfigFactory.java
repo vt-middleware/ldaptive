@@ -144,14 +144,14 @@ public final class CredentialConfigFactory
         @Override
         public String toString()
         {
-          return new StringBuilder("[").append(
-            getClass().getName()).append("@").append(hashCode()).append("::")
-            .append("trustStore=").append(trustStore).append(", ")
-            .append("trustStoreAliases=").append(Arrays.toString(trustStoreAliases)).append(", ")
-            .append("keyStore=").append(keyStore).append(", ")
-            .append("keyStorePassword=").append(keyStorePassword != null ? "suppressed" : null).append(", ")
-            .append("keyStoreAliases=").append(Arrays.toString(keyStoreAliases))
-            .append("]").toString();
+          return "[" +
+            getClass().getName() + "@" + hashCode() + "::" +
+            "trustStore=" + trustStore + ", " +
+            "trustStoreAliases=" + Arrays.toString(trustStoreAliases) + ", " +
+            "keyStore=" + keyStore + ", " +
+            "keyStorePassword=" + (keyStorePassword != null ? "suppressed" : null) + ", " +
+            "keyStoreAliases=" + Arrays.toString(keyStoreAliases) +
+            "]";
         }
       };
     // CheckStyle:AnonInnerLength ON
@@ -224,15 +224,15 @@ public final class CredentialConfigFactory
         @Override
         public String toString()
         {
-          return new StringBuilder("[").append(
-            getClass().getName()).append("@").append(hashCode()).append("::")
-            .append("trustCertificates=")
-            .append(trustCertificates != null ? "suppressed" : null).append(", ")
-            .append("authenticationCertificate=")
-            .append(authenticationCertificate != null ? "suppressed" : null).append(", ")
-            .append("authenticationKey=")
-            .append(authenticationKey != null ? "suppressed" : null)
-            .append("]").toString();
+          return "[" +
+            getClass().getName() + "@" + hashCode() + "::" +
+            "trustCertificates=" +
+            (trustCertificates != null ? "suppressed" : null) + ", " +
+            "authenticationCertificate=" +
+            (authenticationCertificate != null ? "suppressed" : null) + ", " +
+            "authenticationKey=" +
+            (authenticationKey != null ? "suppressed" : null) +
+            "]";
         }
       };
     // CheckStyle:AnonInnerLength ON
@@ -271,10 +271,10 @@ public final class CredentialConfigFactory
         @Override
         public String toString()
         {
-          return new StringBuilder("[").append(
-            getClass().getName()).append("@").append(hashCode()).append("::")
-            .append("trustCertificates=").append(trustCertificates != null ? "suppressed" : null)
-            .append("]").toString();
+          return "[" +
+            getClass().getName() + "@" + hashCode() + "::" +
+            "trustCertificates=" + (trustCertificates != null ? "suppressed" : null) +
+            "]";
         }
       };
   }

@@ -288,14 +288,13 @@ public class SyncReplClient
   @Override
   public String toString()
   {
-    return new StringBuilder().append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("factory=").append(factory).append(", ")
-      .append("refreshAndPersist=").append(refreshAndPersist).append(", ")
-      .append("onEntry=").append(onEntry).append(", ")
-      .append("onResult=").append(onResult).append(", ")
-      .append("onMessage=").append(onMessage).append(", ")
-      .append("onException=").append(onException).append(", ")
-      .append("handle=").append(handle).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "factory=" + factory + ", " +
+      "refreshAndPersist=" + refreshAndPersist + ", " +
+      "onEntry=" + onEntry + ", " +
+      "onResult=" + onResult + ", " +
+      "onMessage=" + onMessage + ", " +
+      "onException=" + onException + ", " +
+      "handle=" + handle;
   }
 }

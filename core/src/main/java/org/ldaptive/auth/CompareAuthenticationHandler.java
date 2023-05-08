@@ -143,12 +143,12 @@ public class CompareAuthenticationHandler extends AbstractAuthenticationHandler
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("factory=").append(getConnectionFactory()).append(", ")
-      .append("passwordAttribute=").append(passwordAttribute).append(", ")
-      .append("passwordScheme=").append(passwordScheme).append(", ")
-      .append("controls=").append(Arrays.toString(getAuthenticationControls())).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "factory=" + getConnectionFactory() + ", " +
+      "passwordAttribute=" + passwordAttribute + ", " +
+      "passwordScheme=" + passwordScheme + ", " +
+      "controls=" + Arrays.toString(getAuthenticationControls()) + "]";
   }
 
 

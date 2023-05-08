@@ -65,9 +65,9 @@ public class User
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("identifier=").append(identifier).append(", ")
-      .append("context=").append(context).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "identifier=" + identifier + ", " +
+      "context=" + context + "]";
   }
 }

@@ -256,9 +256,9 @@ public class DefaultSearchOperationHandle
   public String toString()
   {
     // do not log the result object, it is not thread safe
-    return new StringBuilder(super.toString()).append(", ")
-      .append("onEntry=").append(Arrays.toString(onEntry)).append(", ")
-      .append("onReference=").append(Arrays.toString(onReference)).append(", ")
-      .append("onSearchResult=").append(Arrays.toString(onSearchResult)).toString();
+    return super.toString() + ", " +
+      "onEntry=" + Arrays.toString(onEntry) + ", " +
+      "onReference=" + Arrays.toString(onReference) + ", " +
+      "onSearchResult=" + Arrays.toString(onSearchResult);
   }
 }

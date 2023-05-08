@@ -232,8 +232,6 @@ public class RDn
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("nameValues=").append(nameValues).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "nameValues=" + nameValues;
   }
 }

@@ -196,11 +196,11 @@ public class AuthenticationRequest
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("user=").append(user).append(", ")
-      .append("returnAttributes=").append(Arrays.toString(returnAttributes)).append(", ")
-      .append("controls=").append(Arrays.toString(controls)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "user=" + user + ", " +
+      "returnAttributes=" + Arrays.toString(returnAttributes) + ", " +
+      "controls=" + Arrays.toString(controls) + "]";
   }
 
 

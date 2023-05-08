@@ -211,10 +211,10 @@ public class MatchedValuesRequestControl extends AbstractControl implements Requ
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("matchedValuesFilters=").append(Arrays.toString(matchedValuesFilters)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "matchedValuesFilters=" + Arrays.toString(matchedValuesFilters) + "]";
   }
 
 

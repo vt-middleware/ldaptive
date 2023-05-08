@@ -125,10 +125,10 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("authenticationID=").append(authenticationID).append(", ")
-      .append("authorizationID=").append(authorizationID).append(", ")
-      .append("saslRealm=").append(saslRealm).append(", ")
-      .append("saslProperties=").append(saslProperties).toString();
+    return super.toString() + ", " +
+      "authenticationID=" + authenticationID + ", " +
+      "authorizationID=" + authorizationID + ", " +
+      "saslRealm=" + saslRealm + ", " +
+      "saslProperties=" + saslProperties;
   }
 }

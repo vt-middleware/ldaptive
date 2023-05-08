@@ -38,6 +38,6 @@ public class CustomDERTag extends AbstractDERTag
   @Override
   public String toString()
   {
-    return new StringBuilder(name()).append("(").append(getTagNo()).append(")").toString();
+    return name() + "(" + getTagNo() + ")";
   }
 }

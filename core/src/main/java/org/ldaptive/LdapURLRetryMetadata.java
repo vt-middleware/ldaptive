@@ -38,7 +38,6 @@ public class LdapURLRetryMetadata extends AbstractRetryMetadata
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("connectionStrategy=").append(connectionStrategy).toString();
+    return super.toString() + ", " + "connectionStrategy=" + connectionStrategy;
   }
 }

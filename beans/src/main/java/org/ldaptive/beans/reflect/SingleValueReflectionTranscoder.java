@@ -118,8 +118,6 @@ public class SingleValueReflectionTranscoder<T> implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("valueTranscoder=").append(valueTranscoder).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" + "valueTranscoder=" + valueTranscoder + "]";
   }
 }

@@ -520,14 +520,14 @@ public class Authenticator
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("dnResolver=").append(dnResolver).append(", ")
-      .append("authenticationHandler=").append(authenticationHandler).append(", ")
-      .append("entryResolver=").append(entryResolver).append(", ")
-      .append("returnAttributes=").append(Arrays.toString(returnAttributes)).append(", ")
-      .append("requestHandlers=").append(Arrays.toString(requestHandlers)).append(", ")
-      .append("responseHandlers=").append(Arrays.toString(responseHandlers)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "dnResolver=" + dnResolver + ", " +
+      "authenticationHandler=" + authenticationHandler + ", " +
+      "entryResolver=" + entryResolver + ", " +
+      "returnAttributes=" + Arrays.toString(returnAttributes) + ", " +
+      "requestHandlers=" + Arrays.toString(requestHandlers) + ", " +
+      "responseHandlers=" + Arrays.toString(responseHandlers) + "]";
   }
 
 

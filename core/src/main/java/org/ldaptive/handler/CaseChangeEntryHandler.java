@@ -238,11 +238,11 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("dnCaseChange=").append(dnCaseChange).append(", ")
-      .append("attributeNameCaseChange=").append(attributeNameCaseChange).append(", ")
-      .append("attributeValueCaseChange=").append(attributeValueCaseChange).append(", ")
-      .append("attributeNames=").append(Arrays.toString(attributeNames)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "dnCaseChange=" + dnCaseChange + ", " +
+      "attributeNameCaseChange=" + attributeNameCaseChange + ", " +
+      "attributeValueCaseChange=" + attributeValueCaseChange + ", " +
+      "attributeNames=" + Arrays.toString(attributeNames) + "]";
   }
 }

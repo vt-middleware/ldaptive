@@ -236,15 +236,14 @@ public class SaslConfig extends AbstractConfig
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("mechanism=").append(mechanism).append(", ")
-      .append("authorizationId=").append(authorizationId).append(", ")
-      .append("mutualAuthentication=").append(mutualAuthentication).append(", ")
-      .append("qualityOfProtection=").append(Arrays.toString(qualityOfProtection)).append(", ")
-      .append("securityStrength=").append(Arrays.toString(securityStrength)).append(", ")
-      .append("realm=").append(saslRealm).append(", ")
-      .append("properties=").append(properties).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" +
+      "mechanism=" + mechanism + ", " +
+      "authorizationId=" + authorizationId + ", " +
+      "mutualAuthentication=" + mutualAuthentication + ", " +
+      "qualityOfProtection=" + Arrays.toString(qualityOfProtection) + ", " +
+      "securityStrength=" + Arrays.toString(securityStrength) + ", " +
+      "realm=" + saslRealm + ", " +
+      "properties=" + properties + "]";
   }
 
 

@@ -121,10 +121,10 @@ public class SortRequestControl extends AbstractControl implements RequestContro
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("sortKeys=").append(Arrays.toString(sortKeys)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "sortKeys=" + Arrays.toString(sortKeys) + "]";
   }
 
 

@@ -318,15 +318,15 @@ public class SslConfig extends AbstractConfig
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("credentialConfig=").append(credentialConfig).append(", ")
-      .append("trustManagers=").append(Arrays.toString(trustManagers)).append(", ")
-      .append("hostnameVerifier=").append(hostnameVerifier).append(", ")
-      .append("enabledCipherSuites=").append(Arrays.toString(enabledCipherSuites)).append(", ")
-      .append("enabledProtocols=").append(Arrays.toString(enabledProtocols)).append(", ")
-      .append("handshakeCompletedListeners=").append(Arrays.toString(handshakeCompletedListeners)).append(", ")
-      .append("handshakeTimeout=").append(handshakeTimeout).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "credentialConfig=" + credentialConfig + ", " +
+      "trustManagers=" + Arrays.toString(trustManagers) + ", " +
+      "hostnameVerifier=" + hostnameVerifier + ", " +
+      "enabledCipherSuites=" + Arrays.toString(enabledCipherSuites) + ", " +
+      "enabledProtocols=" + Arrays.toString(enabledProtocols) + ", " +
+      "handshakeCompletedListeners=" + Arrays.toString(handshakeCompletedListeners) + ", " +
+      "handshakeTimeout=" + handshakeTimeout + "]";
   }
 
 

@@ -99,8 +99,6 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("warningPeriod=").append(warningPeriod).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" + "warningPeriod=" + warningPeriod + "]";
   }
 }

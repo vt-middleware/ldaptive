@@ -138,11 +138,11 @@ public class SearchTemplates
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("filterTemplates=").append(Arrays.toString(filterTemplates)).append(", ")
-      .append("searchRestrictions=").append(searchRestrictions).append(", ")
-      .append("termParsers=").append(Arrays.toString(termParsers)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "filterTemplates=" + Arrays.toString(filterTemplates) + ", " +
+      "searchRestrictions=" + searchRestrictions + ", " +
+      "termParsers=" + Arrays.toString(termParsers) + "]";
   }
 
 

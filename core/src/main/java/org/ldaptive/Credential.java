@@ -91,8 +91,6 @@ public class Credential
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("bytes=").append(LdapUtils.utf8Encode(bytes)).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" + "bytes=" + LdapUtils.utf8Encode(bytes) + "]";
   }
 }

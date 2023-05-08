@@ -312,13 +312,12 @@ public class SyncInfoMessage extends IntermediateResponse
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      super.toString()).append(", ")
-      .append("messageType=").append(messageType).append(", ")
-      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append(", ")
-      .append("refreshDone=").append(refreshDone).append(", ")
-      .append("refreshDeletes=").append(refreshDeletes).append(", ")
-      .append("entryUuids=").append(entryUuids).toString();
+    return super.toString() + ", " +
+      "messageType=" + messageType + ", " +
+      "cookie=" + LdapUtils.base64Encode(cookie) + ", " +
+      "refreshDone=" + refreshDone + ", " +
+      "refreshDeletes=" + refreshDeletes + ", " +
+      "entryUuids=" + entryUuids;
   }
 
 

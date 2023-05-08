@@ -266,9 +266,7 @@ public class Dn
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("rdnComponents=").append(rdnComponents).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "rdnComponents=" + rdnComponents;
   }
 
 

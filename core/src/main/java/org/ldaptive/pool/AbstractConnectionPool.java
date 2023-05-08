@@ -1184,24 +1184,23 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("name=").append(getName()).append(", ")
-      .append("minPoolSize=").append(minPoolSize).append(", ")
-      .append("maxPoolSize=").append(maxPoolSize).append(", ")
-      .append("validateOnCheckIn=").append(validateOnCheckIn).append(", ")
-      .append("validateOnCheckOut=").append(validateOnCheckOut).append(", ")
-      .append("validatePeriodically=").append(validatePeriodically).append(", ")
-      .append("activator=").append(activator).append(", ")
-      .append("passivator=").append(passivator).append(", ")
-      .append("validator=").append(validator).append(", ")
-      .append("pruneStrategy=").append(pruneStrategy).append(", ")
-      .append("connectOnCreate=").append(connectOnCreate).append(", ")
-      .append("connectionFactory=").append(connectionFactory).append(", ")
-      .append("failFastInitialize=").append(failFastInitialize).append(", ")
-      .append("initialized=").append(initialized).append(", ")
-      .append("availableCount=").append(availableCount()).append(", ")
-      .append("activeCount=").append(activeCount()).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "name=" + getName() + ", " +
+      "minPoolSize=" + minPoolSize + ", " +
+      "maxPoolSize=" + maxPoolSize + ", " +
+      "validateOnCheckIn=" + validateOnCheckIn + ", " +
+      "validateOnCheckOut=" + validateOnCheckOut + ", " +
+      "validatePeriodically=" + validatePeriodically + ", " +
+      "activator=" + activator + ", " +
+      "passivator=" + passivator + ", " +
+      "validator=" + validator + ", " +
+      "pruneStrategy=" + pruneStrategy + ", " +
+      "connectOnCreate=" + connectOnCreate + ", " +
+      "connectionFactory=" + connectionFactory + ", " +
+      "failFastInitialize=" + failFastInitialize + ", " +
+      "initialized=" + initialized + ", " +
+      "availableCount=" + availableCount() + ", " +
+      "activeCount=" + activeCount();
   }
 
 
@@ -1289,11 +1288,10 @@ public abstract class AbstractConnectionPool implements ConnectionPool
     @Override
     public String toString()
     {
-      return new StringBuilder(
-        getClass().getName()).append("@").append(hashCode()).append("::")
-        .append("conn=").append(conn).append(", ")
-        .append("createdTime=").append(createdTime).append(", ")
-        .append("statistics=").append(statistics).toString();
+      return getClass().getName() + "@" + hashCode() + "::" +
+        "conn=" + conn + ", " +
+        "createdTime=" + createdTime + ", " +
+        "statistics=" + statistics;
     }
 
 

@@ -127,9 +127,9 @@ public class LdapURLSet
   @Override
   public String toString()
   {
-    return new StringBuilder("[")
-      .append(getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("active=").append(getActiveUrls()).append(", ")
-      .append("inactive=").append(getInactiveUrls()).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "active=" + getActiveUrls() + ", " +
+      "inactive=" + getInactiveUrls() + "]";
   }
 }

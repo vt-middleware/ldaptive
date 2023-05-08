@@ -211,12 +211,12 @@ public class PersistentSearchRequestControl extends AbstractControl implements R
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("changeTypes=").append(changeTypes).append(", ")
-      .append("changesOnly=").append(changesOnly).append(", ")
-      .append("returnEcs=").append(returnEcs).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "changeTypes=" + changeTypes + ", " +
+      "changesOnly=" + changesOnly + ", " +
+      "returnEcs=" + returnEcs + "]";
   }
 
 

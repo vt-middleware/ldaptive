@@ -72,9 +72,7 @@ public class LdapRole implements Principal, Serializable, Comparable<Principal>
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("roleName=").append(roleName).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" + "roleName=" + roleName + "]";
   }
 
 

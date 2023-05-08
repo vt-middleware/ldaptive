@@ -61,9 +61,8 @@ public abstract class AbstractRetryMetadata implements RetryMetadata
   @Override
   public String toString()
   {
-    return new StringBuilder().append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("attempts=").append(attempts).append(", ")
-      .append("failureTime=").append(failureTime).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "attempts=" + attempts + ", " +
+      "failureTime=" + failureTime;
   }
 }

@@ -135,12 +135,12 @@ public class SRVRecord
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      "[").append(getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("priority=").append(priority).append(", ")
-      .append("weight=").append(weight).append(", ")
-      .append("port=").append(port).append(", ")
-      .append("target=").append(target).append(", ")
-      .append("useSSL=").append(useSSL).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "priority=" + priority + ", " +
+      "weight=" + weight + ", " +
+      "port=" + port + ", " +
+      "target=" + target + ", " +
+      "useSSL=" + useSSL + "]";
   }
 }

@@ -109,12 +109,12 @@ public class MethodAttributeValueMutator extends AbstractAttributeValueMutator
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("name=").append(getName()).append(", ")
-      .append("binary=").append(isBinary()).append(", ")
-      .append("reflectionTranscoder=").append(getReflectionTranscoder()).append(", ")
-      .append("getterMethod=").append(getterMethod).append(", ")
-      .append("setterMethod=").append(setterMethod).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "name=" + getName() + ", " +
+      "binary=" + isBinary() + ", " +
+      "reflectionTranscoder=" + getReflectionTranscoder() + ", " +
+      "getterMethod=" + getterMethod + ", " +
+      "setterMethod=" + setterMethod + "]";
   }
 }

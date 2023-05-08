@@ -52,16 +52,16 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver implements 
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("factory=").append(getConnectionFactory()).append(", ")
-      .append("baseDn=").append(getBaseDn()).append(", ")
-      .append("userFilter=").append(getUserFilter()).append(", ")
-      .append("userFilterParameters=").append(Arrays.toString(getUserFilterParameters())).append(", ")
-      .append("allowMultipleEntries=").append(getAllowMultipleEntries()).append(", ")
-      .append("subtreeSearch=").append(getSubtreeSearch()).append(", ")
-      .append("derefAliases=").append(getDerefAliases()).append(", ")
-      .append("binaryAttributes=").append(Arrays.toString(getBinaryAttributes())).append(", ")
-      .append("entryHandlers=").append(Arrays.toString(getEntryHandlers())).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "factory=" + getConnectionFactory() + ", " +
+      "baseDn=" + getBaseDn() + ", " +
+      "userFilter=" + getUserFilter() + ", " +
+      "userFilterParameters=" + Arrays.toString(getUserFilterParameters()) + ", " +
+      "allowMultipleEntries=" + getAllowMultipleEntries() + ", " +
+      "subtreeSearch=" + getSubtreeSearch() + ", " +
+      "derefAliases=" + getDerefAliases() + ", " +
+      "binaryAttributes=" + Arrays.toString(getBinaryAttributes()) + ", " +
+      "entryHandlers=" + Arrays.toString(getEntryHandlers()) + "]";
   }
 }

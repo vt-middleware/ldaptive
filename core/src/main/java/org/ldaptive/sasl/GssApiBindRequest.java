@@ -229,14 +229,14 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("authenticationID=").append(authenticationID).append(", ")
-      .append("authorizationID=").append(authorizationID).append(", ")
-      .append("realm=").append(saslRealm).append(", ")
-      .append("saslProperties=").append(saslProperties).append(", ")
-      .append("jaasName=").append(jaasName).append(", ")
-      .append("jaasRefreshConfig=").append(jaasRefreshConfig).append(", ")
-      .append("jaasLoginModule=").append(jaasLoginModule).append(", ")
-      .append("jaasOptions=").append(jaasOptions).toString();
+    return super.toString() + ", " +
+      "authenticationID=" + authenticationID + ", " +
+      "authorizationID=" + authorizationID + ", " +
+      "realm=" + saslRealm + ", " +
+      "saslProperties=" + saslProperties + ", " +
+      "jaasName=" + jaasName + ", " +
+      "jaasRefreshConfig=" + jaasRefreshConfig + ", " +
+      "jaasLoginModule=" + jaasLoginModule + ", " +
+      "jaasOptions=" + jaasOptions;
   }
 }

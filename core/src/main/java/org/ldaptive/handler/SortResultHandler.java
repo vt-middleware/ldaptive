@@ -47,6 +47,6 @@ public class SortResultHandler extends AbstractEntryHandler<SearchResponse> impl
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(getClass().getName()).append("@").append(hashCode()).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "]";
   }
 }

@@ -261,12 +261,12 @@ public class SyncRequestControl extends AbstractControl implements RequestContro
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("requestMode=").append(requestMode).append(", ")
-      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append(", ")
-      .append("reloadHint=").append(reloadHint).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "requestMode=" + requestMode + ", " +
+      "cookie=" + LdapUtils.base64Encode(cookie) + ", " +
+      "reloadHint=" + reloadHint + "]";
   }
 
 

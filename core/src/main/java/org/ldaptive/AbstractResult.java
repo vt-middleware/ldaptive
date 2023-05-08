@@ -136,11 +136,11 @@ public abstract class AbstractResult extends AbstractMessage implements Result
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("resultCode=").append(resultCode).append(", ")
-      .append("matchedDN=").append(matchedDN).append(", ")
-      .append("diagnosticMessage=").append(getEncodedDiagnosticMessage()).append(", ")
-      .append("referralURLs=").append(referralURLs).toString();
+    return super.toString() + ", " +
+      "resultCode=" + resultCode + ", " +
+      "matchedDN=" + matchedDN + ", " +
+      "diagnosticMessage=" + getEncodedDiagnosticMessage() + ", " +
+      "referralURLs=" + referralURLs;
   }
 
 

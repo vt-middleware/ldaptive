@@ -167,10 +167,10 @@ public class X509SSLContextInitializer extends AbstractSSLContextInitializer
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("trustManagers=").append(Arrays.toString(trustManagers)).append(", ")
-      .append("trustCerts=").append(Arrays.toString(trustCerts)).append(", ")
-      .append("authenticationCert=").append(authenticationCert).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "trustManagers=" + Arrays.toString(trustManagers) + ", " +
+      "trustCerts=" + Arrays.toString(trustCerts) + ", " +
+      "authenticationCert=" + authenticationCert + "]";
   }
 }

@@ -189,11 +189,10 @@ public class ExtensibleFilter implements Filter
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("matchingRuleID=").append(matchingRuleID).append(", ")
-      .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("assertionValue=").append(LdapUtils.utf8Encode(assertionValue)).append(", ")
-      .append("dnAttributes=").append(dnAttributes).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "matchingRuleID=" + matchingRuleID + ", " +
+      "attributeDesc=" + attributeDesc + ", " +
+      "assertionValue=" + LdapUtils.utf8Encode(assertionValue) + ", " +
+      "dnAttributes=" + dnAttributes;
   }
 }

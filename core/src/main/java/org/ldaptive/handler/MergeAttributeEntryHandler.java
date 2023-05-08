@@ -128,9 +128,9 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> 
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("mergeAttributeName=").append(mergeAttributeName).append(", ")
-      .append("attributeNames=").append(Arrays.toString(attributeNames)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "mergeAttributeName=" + mergeAttributeName + ", " +
+      "attributeNames=" + Arrays.toString(attributeNames) + "]";
   }
 }

@@ -254,13 +254,13 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("targetPosition=").append(targetPosition).append(", ")
-      .append("contentCount=").append(contentCount).append(", ")
-      .append("viewResult=").append(viewResult).append(", ")
-      .append("contextID=").append(LdapUtils.base64Encode(contextID)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "targetPosition=" + targetPosition + ", " +
+      "contentCount=" + contentCount + ", " +
+      "viewResult=" + viewResult + ", " +
+      "contextID=" + LdapUtils.base64Encode(contextID) + "]";
   }
 
 

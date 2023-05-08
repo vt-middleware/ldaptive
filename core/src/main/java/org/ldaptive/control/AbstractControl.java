@@ -65,9 +65,7 @@ public abstract class AbstractControl implements Control
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(criticality).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" + "criticality=" + criticality + "]";
   }
 
 

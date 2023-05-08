@@ -314,12 +314,12 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("flags=").append(flags).append(", ")
-      .append("maxAttributeCount=").append(maxAttributeCount).append(", ")
-      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "flags=" + flags + ", " +
+      "maxAttributeCount=" + maxAttributeCount + ", " +
+      "cookie=" + LdapUtils.base64Encode(cookie) + "]";
   }
 
 

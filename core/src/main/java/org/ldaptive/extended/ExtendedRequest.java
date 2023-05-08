@@ -100,9 +100,9 @@ public class ExtendedRequest extends AbstractRequestMessage
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString())
-      .append(", ").append("requestName=").append(requestName)
-      .append(", ").append("requestValue=").append(Arrays.toString(requestValue)).toString();
+    return super.toString() + ", " +
+      "requestName=" + requestName + ", " +
+      "requestValue=" + Arrays.toString(requestValue);
   }
 
 

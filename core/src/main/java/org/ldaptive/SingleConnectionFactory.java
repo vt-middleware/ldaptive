@@ -251,13 +251,13 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("transport=").append(getTransport()).append(", ")
-      .append("config=").append(getConnectionConfig()).append(", ")
-      .append("failFastInitialize=").append(failFastInitialize).append(", ")
-      .append("nonBlockingInitialize=").append(nonBlockingInitialize).append(", ")
-      .append("initialized=").append(initialized).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "transport=" + getTransport() + ", " +
+      "config=" + getConnectionConfig() + ", " +
+      "failFastInitialize=" + failFastInitialize + ", " +
+      "nonBlockingInitialize=" + nonBlockingInitialize + ", " +
+      "initialized=" + initialized + "]";
   }
 
 

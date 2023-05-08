@@ -152,8 +152,6 @@ public class PooledConnectionStatistics
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("size=").append(size).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" + "size=" + size + "]";
   }
 }

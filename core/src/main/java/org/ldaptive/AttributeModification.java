@@ -67,9 +67,6 @@ public class AttributeModification
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("operation=").append(operation).append(", ")
-      .append("attribute=").append(attribute).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "operation=" + operation + ", " + "attribute=" + attribute;
   }
 }

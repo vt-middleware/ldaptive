@@ -92,10 +92,10 @@ public class AccountState
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("accountWarnings=").append(Arrays.toString(accountWarnings)).append(", ")
-      .append("accountErrors=").append(Arrays.toString(accountErrors)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "accountWarnings=" + Arrays.toString(accountWarnings) + ", " +
+      "accountErrors=" + Arrays.toString(accountErrors) + "]";
   }
 
 
@@ -193,10 +193,10 @@ public class AccountState
     @Override
     public String toString()
     {
-      return new StringBuilder("[").append(
-        getClass().getName()).append("@").append(hashCode()).append("::")
-        .append("expiration=").append(expiration).append(", ")
-        .append("loginsRemaining=").append(loginsRemaining).append("]").toString();
+      return "[" +
+        getClass().getName() + "@" + hashCode() + "::" +
+        "expiration=" + expiration + ", " +
+        "loginsRemaining=" + loginsRemaining + "]";
     }
   }
 }

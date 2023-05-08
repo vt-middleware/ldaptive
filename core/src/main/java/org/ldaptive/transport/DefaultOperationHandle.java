@@ -619,17 +619,17 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("messageID=").append(messageID).append(", ")
-      .append("request=").append(request).append(", ")
-      .append("connection=").append(connection).append(", ")
-      .append("responseTimeout=").append(responseTimeout).append(", ")
-      .append("creationTime=").append(creationTime).append(", ")
-      .append("sentTime=").append(sentTime).append(", ")
-      .append("receivedTime=").append(receivedTime).append(", ")
-      .append("consumedMessage=").append(consumedMessage).append(", ")
-      .append("result=").append(result).append(", ")
-      .append("exception=").append(exception).toString();
+    return getClass().getName() +
+      "@" + hashCode() + "::" +
+      "messageID=" + messageID + ", " +
+      "request=" + request + ", " +
+      "connection=" + connection + ", " +
+      "responseTimeout=" + responseTimeout + ", " +
+      "creationTime=" + creationTime + ", " +
+      "sentTime=" + sentTime + ", " +
+      "receivedTime=" + receivedTime + ", " +
+      "consumedMessage=" + consumedMessage + ", " +
+      "result=" + result + ", " +
+      "exception=" + exception;
   }
 }

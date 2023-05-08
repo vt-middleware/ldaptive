@@ -215,12 +215,12 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("changeType=").append(changeType).append(", ")
-      .append("previousDn=").append(previousDn).append(", ")
-      .append("changeNumber=").append(changeNumber).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "changeType=" + changeType + ", " +
+      "previousDn=" + previousDn + ", " +
+      "changeNumber=" + changeNumber + "]";
   }
 
 

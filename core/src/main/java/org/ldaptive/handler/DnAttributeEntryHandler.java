@@ -113,9 +113,9 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> imp
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("dnAttributeName=").append(dnAttributeName).append(", ")
-      .append("addIfExists=").append(addIfExists).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "dnAttributeName=" + dnAttributeName + ", " +
+      "addIfExists=" + addIfExists + "]";
   }
 }

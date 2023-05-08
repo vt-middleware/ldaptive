@@ -81,8 +81,6 @@ public class BindConnectionPassivator implements ConnectionPassivator
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("bindRequest=").append(bindRequest).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" + "bindRequest=" + bindRequest + "]";
   }
 }

@@ -122,10 +122,10 @@ public class VerifyNameControl extends AbstractControl implements RequestControl
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("serverName=").append(serverName).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "serverName=" + serverName + "]";
   }
 
 

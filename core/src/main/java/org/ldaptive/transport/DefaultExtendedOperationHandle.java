@@ -163,7 +163,6 @@ public class DefaultExtendedOperationHandle
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("onExtended=").append(Arrays.toString(onExtended)).toString();
+    return super.toString() + ", " + "onExtended=" + Arrays.toString(onExtended);
   }
 }

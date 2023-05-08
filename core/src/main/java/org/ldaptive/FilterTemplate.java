@@ -234,10 +234,10 @@ public class FilterTemplate
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("filter=").append(searchFilter).append(", ")
-      .append("parameters=").append(parameters).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "filter=" + searchFilter + ", " +
+      "parameters=" + parameters + "]";
   }
 
 

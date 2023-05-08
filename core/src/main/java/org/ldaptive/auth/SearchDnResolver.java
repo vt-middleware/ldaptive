@@ -394,16 +394,16 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("factory=").append(getConnectionFactory()).append(", ")
-      .append("baseDn=").append(baseDn).append(", ")
-      .append("userFilter=").append(userFilter).append(", ")
-      .append("userFilterParameters=").append(Arrays.toString(userFilterParameters)).append(", ")
-      .append("allowMultipleDns=").append(allowMultipleDns).append(", ")
-      .append("subtreeSearch=").append(subtreeSearch).append(", ")
-      .append("derefAliases=").append(derefAliases).append(", ")
-      .append("resolveDnFromAttribute=").append(resolveFromAttribute).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "factory=" + getConnectionFactory() + ", " +
+      "baseDn=" + baseDn + ", " +
+      "userFilter=" + userFilter + ", " +
+      "userFilterParameters=" + Arrays.toString(userFilterParameters) + ", " +
+      "allowMultipleDns=" + allowMultipleDns + ", " +
+      "subtreeSearch=" + subtreeSearch + ", " +
+      "derefAliases=" + derefAliases + ", " +
+      "resolveDnFromAttribute=" + resolveFromAttribute + "]";
   }
 
 

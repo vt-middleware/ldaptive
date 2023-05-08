@@ -290,10 +290,9 @@ final class HandleMap
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("open=").append(open).append(", ")
-      .append("throttle=").append(throttle).append(", ")
-      .append("handles=").append(pending).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "open=" + open + ", " +
+      "throttle=" + throttle + ", " +
+      "handles=" + pending;
   }
 }

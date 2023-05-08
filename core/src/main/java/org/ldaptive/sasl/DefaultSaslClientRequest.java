@@ -142,8 +142,6 @@ public abstract class DefaultSaslClientRequest implements CallbackHandler
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("controls=").append(Arrays.toString(controls)).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "controls=" + Arrays.toString(controls);
   }
 }

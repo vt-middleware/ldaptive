@@ -77,10 +77,10 @@ public class DefaultSSLContextInitializer extends AbstractSSLContextInitializer
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("trustManagers=").append(Arrays.toString(trustManagers)).append(", ")
-      .append("keyManagers=").append(Arrays.toString(keyManagers)).append(", ")
-      .append("createDefaultTrustManagers=").append(createDefaultTrustManagers).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "trustManagers=" + Arrays.toString(trustManagers) + ", " +
+      "keyManagers=" + Arrays.toString(keyManagers) + ", " +
+      "createDefaultTrustManagers=" + createDefaultTrustManagers + "]";
   }
 }

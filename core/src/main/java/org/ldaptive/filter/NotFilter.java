@@ -92,8 +92,6 @@ public class NotFilter implements FilterSet
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("filterComponent=").append(filterComponent).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "filterComponent=" + filterComponent;
   }
 }

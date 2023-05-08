@@ -55,8 +55,6 @@ public class DefaultDnValueMutator implements DnValueMutator
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("dnMutator=").append(dnMutator).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" + "dnMutator=" + dnMutator + "]";
   }
 }

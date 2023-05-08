@@ -149,11 +149,11 @@ public class X509CredentialConfig implements CredentialConfig
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("trustCertificates=").append(trustCertificates).append(", ")
-      .append("authenticationCertificate=").append(authenticationCertificate).append(", ")
-      .append("authenticationKey=").append(authenticationKey).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "trustCertificates=" + trustCertificates + ", " +
+      "authenticationCertificate=" + authenticationCertificate + ", " +
+      "authenticationKey=" + authenticationKey + "]";
   }
 
 

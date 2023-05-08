@@ -54,9 +54,9 @@ public class SimpleBindAuthenticationHandler extends AbstractAuthenticationHandl
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("factory=").append(getConnectionFactory()).append(", ")
-      .append("controls=").append(Arrays.toString(getAuthenticationControls())).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "factory=" + getConnectionFactory() + ", " +
+      "controls=" + Arrays.toString(getAuthenticationControls()) + "]";
   }
 }

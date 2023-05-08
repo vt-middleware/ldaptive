@@ -113,8 +113,6 @@ public abstract class AbstractOperationWorker<T extends Operation<Q , S>, Q exte
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("operation=").append(operation).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "operation=" + operation;
   }
 }

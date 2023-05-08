@@ -150,11 +150,11 @@ public class ModifyDnRequest extends AbstractRequestMessage
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("oldModifyDn=").append(oldModifyDn).append(", ")
-      .append("newModifyRDn=").append(newModifyRDn).append(", ")
-      .append("delete=").append(deleteOldRDn).append(", ")
-      .append("superior=").append(newSuperiorDn).toString();
+    return super.toString() + ", " +
+      "oldModifyDn=" + oldModifyDn + ", " +
+      "newModifyRDn=" + newModifyRDn + ", " +
+      "delete=" + deleteOldRDn + ", " +
+      "superior=" + newSuperiorDn;
   }
 
 

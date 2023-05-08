@@ -116,9 +116,7 @@ public class AddRequest extends AbstractRequestMessage
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("dn=").append(ldapDn).append(", ")
-      .append("attributes=").append(Arrays.toString(attributes)).toString();
+    return super.toString() + ", " + "dn=" + ldapDn + ", " + "attributes=" + Arrays.toString(attributes);
   }
 
 

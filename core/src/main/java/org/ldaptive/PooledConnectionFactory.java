@@ -177,9 +177,7 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      super.toString()).append(", ")
-      .append("validationExceptionHandler=").append(validationExceptionHandler).append("]").toString();
+    return "[" + super.toString() + ", " + "validationExceptionHandler=" + validationExceptionHandler + "]";
   }
 
 

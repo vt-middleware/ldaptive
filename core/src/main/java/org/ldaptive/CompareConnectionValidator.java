@@ -93,11 +93,11 @@ public class CompareConnectionValidator extends AbstractConnectionValidator
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("validatePeriod=").append(getValidatePeriod()).append(", ")
-      .append("validateTimeout=").append(getValidateTimeout()).append(", ")
-      .append("compareRequest=").append(compareRequest).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "validatePeriod=" + getValidatePeriod() + ", " +
+      "validateTimeout=" + getValidateTimeout() + ", " +
+      "compareRequest=" + compareRequest + "]";
   }
 
 

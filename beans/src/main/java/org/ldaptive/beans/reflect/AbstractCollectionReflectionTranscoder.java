@@ -147,10 +147,10 @@ public abstract class AbstractCollectionReflectionTranscoder implements Reflecti
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("type=").append(type).append(", ")
-      .append("singleValueTranscoder=").append(singleValueTranscoder).append(", ")
-      .append("arrayTranscoder=").append(arrayTranscoder).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "type=" + type + ", " +
+      "singleValueTranscoder=" + singleValueTranscoder + ", " +
+      "arrayTranscoder=" + arrayTranscoder + "]";
   }
 }

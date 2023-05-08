@@ -254,13 +254,13 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("sessionSourceIp=").append(sessionSourceIp).append(", ")
-      .append("sessionSourceName=").append(sessionSourceName).append(", ")
-      .append("formatOID=").append(formatOID).append(", ")
-      .append("sessionTrackingIdentifier=").append(sessionTrackingIdentifier).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "sessionSourceIp=" + sessionSourceIp + ", " +
+      "sessionSourceName=" + sessionSourceName + ", " +
+      "formatOID=" + formatOID + ", " +
+      "sessionTrackingIdentifier=" + sessionTrackingIdentifier + "]";
   }
 
 

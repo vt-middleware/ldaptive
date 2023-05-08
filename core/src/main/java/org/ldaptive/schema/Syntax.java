@@ -127,11 +127,11 @@ public class Syntax extends AbstractSchemaElement
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("oid=").append(oid).append(", ")
-      .append("description=").append(getDescription()).append(", ")
-      .append("extensions=").append(getExtensions()).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "oid=" + oid + ", " +
+      "description=" + getDescription() + ", " +
+      "extensions=" + getExtensions() + "]";
   }
 
 

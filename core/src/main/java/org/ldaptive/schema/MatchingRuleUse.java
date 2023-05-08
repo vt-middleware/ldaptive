@@ -190,14 +190,14 @@ public class MatchingRuleUse extends AbstractNamedSchemaElement
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("oid=").append(oid).append(", ")
-      .append("names=").append(Arrays.toString(getNames())).append(", ")
-      .append("description=").append(getDescription()).append(", ")
-      .append("obsolete=").append(isObsolete()).append(", ")
-      .append("appliesAttributeTypes=").append(Arrays.toString(appliesAttributeTypes)).append(", ")
-      .append("extensions=").append(getExtensions()).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "oid=" + oid + ", " +
+      "names=" + Arrays.toString(getNames()) + ", " +
+      "description=" + getDescription() + ", " +
+      "obsolete=" + isObsolete() + ", " +
+      "appliesAttributeTypes=" + Arrays.toString(appliesAttributeTypes) + ", " +
+      "extensions=" + getExtensions() + "]";
   }
 
 

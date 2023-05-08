@@ -584,11 +584,10 @@ public class LdapAttribute
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("name=").append(attributeName).append(", ")
-      .append("values=").append(getStringValues()).append(", ")
-      .append("binary=").append(binary).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "name=" + attributeName + ", " +
+      "values=" + getStringValues() + ", " +
+      "binary=" + binary;
   }
 
 

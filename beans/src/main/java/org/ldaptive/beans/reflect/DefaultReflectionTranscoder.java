@@ -266,9 +266,9 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("customTranscoder=").append(customTranscoder).append(", ")
-      .append("valueTranscoder=").append(valueTranscoder).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "customTranscoder=" + customTranscoder + ", " +
+      "valueTranscoder=" + valueTranscoder + "]";
   }
 }

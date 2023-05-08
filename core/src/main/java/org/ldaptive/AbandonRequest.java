@@ -60,8 +60,8 @@ public class AbandonRequest extends AbstractRequestMessage
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("messageID=").append(messageID).toString();
+    return super.toString() + ", " +
+      "messageID=" + messageID;
   }
 
 

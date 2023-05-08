@@ -38,7 +38,7 @@ public class ApplicationDERTag extends AbstractDERTag
   @Override
   public String name()
   {
-    return new StringBuilder(TAG_NAME).append("(").append(getTagNo()).append(")").toString();
+    return TAG_NAME + "(" + getTagNo() + ")";
   }
 
 

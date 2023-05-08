@@ -163,11 +163,11 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("cookie=").append(LdapUtils.base64Encode(cookie)).append(", ")
-      .append("refreshDeletes=").append(refreshDeletes).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "cookie=" + LdapUtils.base64Encode(cookie) + ", " +
+      "refreshDeletes=" + refreshDeletes + "]";
   }
 
 

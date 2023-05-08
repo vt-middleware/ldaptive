@@ -121,12 +121,12 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("ldapURLSet=").append(ldapURLSet).append(", ")
-      .append("activateCondition=").append(activateCondition).append(", ")
-      .append("retryCondition=").append(retryCondition).append(", ")
-      .append("initialized=").append(initialized).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "ldapURLSet=" + ldapURLSet + ", " +
+      "activateCondition=" + activateCondition + ", " +
+      "retryCondition=" + retryCondition + ", " +
+      "initialized=" + initialized + "]";
   }
 
 

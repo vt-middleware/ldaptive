@@ -45,11 +45,7 @@ public class CertificateValueTranscoder implements ValueTranscoder<Certificate>
   @Override
   public String encodeStringValue(final Certificate value)
   {
-    final StringBuilder sb = new StringBuilder();
-    sb.append(BEGIN_CERT);
-    sb.append(LdapUtils.base64Encode(encodeBinaryValue(value)));
-    sb.append(END_CERT);
-    return sb.toString();
+    return BEGIN_CERT + LdapUtils.base64Encode(encodeBinaryValue(value)) + END_CERT;
   }
 
 

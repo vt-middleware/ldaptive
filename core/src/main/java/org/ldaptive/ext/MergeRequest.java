@@ -225,16 +225,16 @@ public class MergeRequest
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("ldapEntry=").append(ldapEntry).append(", ")
-      .append("deleteEntry=").append(deleteEntry).append(", ")
-      .append("searchAttributes=").append(Arrays.toString(searchAttrs)).append(", ")
-      .append("includeAttributes=").append(Arrays.toString(includeAttrs)).append(", ")
-      .append("excludeAttributes=").append(Arrays.toString(excludeAttrs)).append(", ")
-      .append("useReplace=").append(useReplace).append(", ")
-      .append("attributeModificationProcessor=").append(
-        Arrays.toString(attributeModificationsHandlers)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "ldapEntry=" + ldapEntry + ", " +
+      "deleteEntry=" + deleteEntry + ", " +
+      "searchAttributes=" + Arrays.toString(searchAttrs) + ", " +
+      "includeAttributes=" + Arrays.toString(includeAttrs) + ", " +
+      "excludeAttributes=" + Arrays.toString(excludeAttrs) + ", " +
+      "useReplace=" + useReplace + ", " +
+      "attributeModificationProcessor=" +
+      Arrays.toString(attributeModificationsHandlers) + "]";
   }
 
 

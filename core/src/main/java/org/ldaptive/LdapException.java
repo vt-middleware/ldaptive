@@ -121,7 +121,6 @@ public class LdapException extends Exception
    */
   protected static String formatResult(final Result result)
   {
-    return new StringBuilder("resultCode=").append(result.getResultCode()).append(", ")
-      .append("diagnosticMessage=").append(result.getEncodedDiagnosticMessage()).toString();
+    return "resultCode=" + result.getResultCode() + ", " + "diagnosticMessage=" + result.getEncodedDiagnosticMessage();
   }
 }

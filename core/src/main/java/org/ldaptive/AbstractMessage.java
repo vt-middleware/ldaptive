@@ -116,10 +116,7 @@ public abstract class AbstractMessage implements Message
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("messageID=").append(messageID).append(", ")
-      .append("controls=").append(controls).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "messageID=" + messageID + ", " + "controls=" + controls;
   }
 
 

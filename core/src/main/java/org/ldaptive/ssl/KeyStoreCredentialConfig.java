@@ -284,14 +284,14 @@ public class KeyStoreCredentialConfig implements CredentialConfig
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("trustStore=").append(trustStore).append(", ")
-      .append("trustStoreType=").append(trustStoreType).append(", ")
-      .append("trustStoreAliases=").append(Arrays.toString(trustStoreAliases)).append(", ")
-      .append("keyStore=").append(keyStore).append(", ")
-      .append("keyStoreType=").append(keyStoreType).append(", ")
-      .append("keyStoreAliases=").append(Arrays.toString(keyStoreAliases)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "trustStore=" + trustStore + ", " +
+      "trustStoreType=" + trustStoreType + ", " +
+      "trustStoreAliases=" + Arrays.toString(trustStoreAliases) + ", " +
+      "keyStore=" + keyStore + ", " +
+      "keyStoreType=" + keyStoreType + ", " +
+      "keyStoreAliases=" + Arrays.toString(keyStoreAliases) + "]";
   }
 
 

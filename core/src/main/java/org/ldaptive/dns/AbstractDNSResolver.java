@@ -123,7 +123,6 @@ public abstract class AbstractDNSResolver<T> implements DNSResolver<T>
   @Override
   public String toString()
   {
-    return new StringBuilder(getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("contextFactory=").append(contextFactory).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "contextFactory=" + contextFactory;
   }
 }

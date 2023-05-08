@@ -109,11 +109,11 @@ public class GenericControl extends AbstractControl implements RequestControl, R
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("oid=").append(getOID()).append(", ")
-      .append("value=").append(LdapUtils.base64Encode(value)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "oid=" + getOID() + ", " +
+      "value=" + LdapUtils.base64Encode(value) + "]";
   }
 
 

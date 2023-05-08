@@ -297,10 +297,9 @@ public class SearchResponse extends AbstractResult
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      super.toString()).append(", ")
-      .append("entries=").append(resultEntries != null ? resultEntries.values() : null).append(", ")
-      .append("references=").append(resultReferences).toString();
+    return super.toString() + ", " +
+      "entries=" + (resultEntries != null ? resultEntries.values() : null) + ", " +
+      "references=" + resultReferences;
   }
 
 

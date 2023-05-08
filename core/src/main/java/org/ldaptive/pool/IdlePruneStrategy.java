@@ -99,10 +99,10 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("prunePeriod=").append(getPrunePeriod()).append(", ")
-      .append("idleTime=").append(idleTime).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "prunePeriod=" + getPrunePeriod() + ", " +
+      "idleTime=" + idleTime + "]";
   }
 
 

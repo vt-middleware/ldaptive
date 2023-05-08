@@ -97,10 +97,9 @@ public abstract class AbstractAttributeValueAssertionFilter implements Filter
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("filterType=").append(filterType).append(", ")
-      .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("assertionValue=").append(LdapUtils.utf8Encode(assertionValue)).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "filterType=" + filterType + ", " +
+      "attributeDesc=" + attributeDesc + ", " +
+      "assertionValue=" + LdapUtils.utf8Encode(assertionValue);
   }
 }

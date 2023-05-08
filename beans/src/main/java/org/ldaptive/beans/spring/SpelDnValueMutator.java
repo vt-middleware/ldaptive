@@ -55,9 +55,9 @@ public class SpelDnValueMutator implements DnValueMutator
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("expression=").append(expression).append(", ")
-      .append("evaluationContext=").append(evaluationContext).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "expression=" + expression + ", " +
+      "evaluationContext=" + evaluationContext + "]";
   }
 }

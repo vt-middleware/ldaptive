@@ -146,10 +146,10 @@ public class DefaultConnectionFactory implements ConnectionFactory
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("transport=").append(transport).append(", ")
-      .append("config=").append(config).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "transport=" + transport + ", " +
+      "config=" + config + "]";
   }
 
 

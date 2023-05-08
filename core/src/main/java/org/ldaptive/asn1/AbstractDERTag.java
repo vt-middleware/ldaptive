@@ -53,6 +53,6 @@ public abstract class AbstractDERTag implements DERTag
   @Override
   public String toString()
   {
-    return new StringBuilder(name()).append("(").append(tagNo).append(")").toString();
+    return name() + "(" + tagNo + ")";
   }
 }

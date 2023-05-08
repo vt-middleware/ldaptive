@@ -101,11 +101,11 @@ public class NettyConnectionFactoryTransport implements Transport
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("channelType=").append(channelType).append(", ")
-      .append("ioWorkerGroup=").append(ioWorkerGroup).append(", ")
-      .append("messageWorkerGroup=").append(messageWorkerGroup).append(", ")
-      .append("shutdownOnClose=").append(shutdownOnClose).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "channelType=" + channelType + ", " +
+      "ioWorkerGroup=" + ioWorkerGroup + ", " +
+      "messageWorkerGroup=" + messageWorkerGroup + ", " +
+      "shutdownOnClose=" + shutdownOnClose + "]";
   }
 }

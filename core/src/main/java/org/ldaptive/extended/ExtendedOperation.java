@@ -186,8 +186,7 @@ public class ExtendedOperation extends AbstractOperation<ExtendedRequest, Extend
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("extendedValueHandlers=").append(Arrays.toString(extendedValueHandlers)).toString();
+    return super.toString() + ", " + "extendedValueHandlers=" + Arrays.toString(extendedValueHandlers);
   }
 
 

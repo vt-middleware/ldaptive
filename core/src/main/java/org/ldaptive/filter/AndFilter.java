@@ -97,8 +97,6 @@ public class AndFilter implements FilterSet
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("filterComponents=").append(filterComponents).toString();
+    return getClass().getName() + "@" + hashCode() + "::" + "filterComponents=" + filterComponents;
   }
 }

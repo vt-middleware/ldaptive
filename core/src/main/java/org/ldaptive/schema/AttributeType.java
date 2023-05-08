@@ -496,22 +496,22 @@ public class AttributeType extends AbstractNamedSchemaElement
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("oid=").append(oid).append(", ")
-      .append("names=").append(Arrays.toString(getNames())).append(", ")
-      .append("description=").append(getDescription()).append(", ")
-      .append("obsolete=").append(isObsolete()).append(", ")
-      .append("superiorType=").append(superiorType).append(", ")
-      .append("equalityMatchingRule=").append(equalityMatchingRule).append(", ")
-      .append("orderingMatchingRule=").append(orderingMatchingRule).append(", ")
-      .append("substringMatchingRule=").append(substringMatchingRule).append(", ")
-      .append("syntaxOID=").append(syntaxOID).append(", ")
-      .append("singleValued=").append(singleValued).append(", ")
-      .append("collective=").append(collective).append(", ")
-      .append("noUserModification=").append(noUserModification).append(", ")
-      .append("usage=").append(usage).append(", ")
-      .append("extensions=").append(getExtensions()).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "oid=" + oid + ", " +
+      "names=" + Arrays.toString(getNames()) + ", " +
+      "description=" + getDescription() + ", " +
+      "obsolete=" + isObsolete() + ", " +
+      "superiorType=" + superiorType + ", " +
+      "equalityMatchingRule=" + equalityMatchingRule + ", " +
+      "orderingMatchingRule=" + orderingMatchingRule + ", " +
+      "substringMatchingRule=" + substringMatchingRule + ", " +
+      "syntaxOID=" + syntaxOID + ", " +
+      "singleValued=" + singleValued + ", " +
+      "collective=" + collective + ", " +
+      "noUserModification=" + noUserModification + ", " +
+      "usage=" + usage + ", " +
+      "extensions=" + getExtensions() + "]";
   }
 
 

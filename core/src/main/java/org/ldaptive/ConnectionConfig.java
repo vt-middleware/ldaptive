@@ -525,22 +525,22 @@ public class ConnectionConfig extends AbstractConfig
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("ldapUrl=").append(ldapUrl).append(", ")
-      .append("connectTimeout=").append(connectTimeout).append(", ")
-      .append("startTLSTimeout=").append(startTLSTimeout).append(", ")
-      .append("responseTimeout=").append(responseTimeout).append(", ")
-      .append("reconnectTimeout=").append(reconnectTimeout).append(", ")
-      .append("autoReconnect=").append(autoReconnect).append(", ")
-      .append("autoReconnectCondition=").append(autoReconnectCondition).append(", ")
-      .append("autoReplay=").append(autoReplay).append(", ")
-      .append("sslConfig=").append(sslConfig).append(", ")
-      .append("useStartTLS=").append(useStartTLS).append(", ")
-      .append("connectionInitializers=").append(Arrays.toString(connectionInitializers)).append(", ")
-      .append("connectionStrategy=").append(connectionStrategy).append(", ")
-      .append("connectionValidator=").append(connectionValidator).append(", ")
-      .append("transportOptions=").append(transportOptions).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "ldapUrl=" + ldapUrl + ", " +
+      "connectTimeout=" + connectTimeout + ", " +
+      "startTLSTimeout=" + startTLSTimeout + ", " +
+      "responseTimeout=" + responseTimeout + ", " +
+      "reconnectTimeout=" + reconnectTimeout + ", " +
+      "autoReconnect=" + autoReconnect + ", " +
+      "autoReconnectCondition=" + autoReconnectCondition + ", " +
+      "autoReplay=" + autoReplay + ", " +
+      "sslConfig=" + sslConfig + ", " +
+      "useStartTLS=" + useStartTLS + ", " +
+      "connectionInitializers=" + Arrays.toString(connectionInitializers) + ", " +
+      "connectionStrategy=" + connectionStrategy + ", " +
+      "connectionValidator=" + connectionValidator + ", " +
+      "transportOptions=" + transportOptions + "]";
   }
 
 

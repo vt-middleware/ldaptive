@@ -187,9 +187,9 @@ public class SearchTemplatesOperation
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("searchOperationWorker=").append(searchOperationWorker).append(", ")
-      .append("searchTemplates=").append(Arrays.toString(searchTemplates)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "searchOperationWorker=" + searchOperationWorker + ", " +
+      "searchTemplates=" + Arrays.toString(searchTemplates) + "]";
   }
 }

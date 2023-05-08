@@ -104,8 +104,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("dn=").append(ldapDN).toString();
+    return super.toString() + ", " + "dn=" + ldapDN;
   }
 
 

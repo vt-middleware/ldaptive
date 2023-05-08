@@ -260,10 +260,10 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("searchAttribute=").append(searchAttribute).append(", ")
-      .append("mergeAttributes=").append(Arrays.toString(mergeAttributes)).append(", ")
-      .append("retAttrs=").append(Arrays.toString(retAttrs)).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "searchAttribute=" + searchAttribute + ", " +
+      "mergeAttributes=" + Arrays.toString(mergeAttributes) + ", " +
+      "retAttrs=" + Arrays.toString(retAttrs) + "]";
   }
 }

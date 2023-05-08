@@ -141,10 +141,9 @@ public class ExtendedResponse extends AbstractResult
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      super.toString()).append(", ")
-      .append("responseName=").append(responseName).append(", ")
-      .append("responseValue=").append(Arrays.toString(responseValue)).toString();
+    return super.toString() + ", " +
+      "responseName=" + responseName + ", " +
+      "responseValue=" + Arrays.toString(responseValue);
   }
 
 

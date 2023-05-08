@@ -91,10 +91,10 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("dnMutator=").append(dnMutator).append(", ")
-      .append("attributeMutators=").append(attributeMutators).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "dnMutator=" + dnMutator + ", " +
+      "attributeMutators=" + attributeMutators + "]";
   }
 
 
@@ -198,9 +198,7 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor
     @Override
     public String toString()
     {
-      return new StringBuilder("[").append(
-        getClass().getName()).append("@").append(hashCode()).append("::")
-        .append("ldapAttribute=").append(la).append("]").toString();
+      return "[" + getClass().getName() + "@" + hashCode() + "::" + "ldapAttribute=" + la + "]";
     }
   }
 }

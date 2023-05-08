@@ -63,7 +63,6 @@ public class CramMD5BindRequest extends DefaultSaslClientRequest
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("authenticationID=").append(authenticationID).toString();
+    return super.toString() + ", " + "authenticationID=" + authenticationID;
   }
 }

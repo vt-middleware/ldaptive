@@ -62,8 +62,6 @@ public class HostnameVerifierAdapter implements HostnameVerifier
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("hostnameVerifier=").append(hostnameVerifier).append("]").toString();
+    return "[" + getClass().getName() + "@" + hashCode() + "::" + "hostnameVerifier=" + hostnameVerifier + "]";
   }
 }

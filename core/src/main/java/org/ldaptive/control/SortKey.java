@@ -160,10 +160,10 @@ public class SortKey
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("attributeDescription=").append(attributeDescription).append(", ")
-      .append("matchingRuleId=").append(matchingRuleId).append(", ")
-      .append("reverseOrder=").append(reverseOrder).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "attributeDescription=" + attributeDescription + ", " +
+      "matchingRuleId=" + matchingRuleId + ", " +
+      "reverseOrder=" + reverseOrder + "]";
   }
 }

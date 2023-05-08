@@ -220,17 +220,16 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("connectionFactory=").append(connectionFactory).append(", ")
-      .append("requestHandlers=").append(Arrays.toString(requestHandlers)).append(", ")
-      .append("resultHandlers=").append(Arrays.toString(resultHandlers)).append(", ")
-      .append("controlHandlers=").append(Arrays.toString(controlHandlers)).append(", ")
-      .append("referralHandlers=").append(Arrays.toString(referralHandlers)).append(", ")
-      .append("intermediateResponseHandlers=").append(Arrays.toString(intermediateResponseHandlers)).append(", ")
-      .append("exceptionHandler=").append(exceptionHandler).append(", ")
-      .append("throwCondition=").append(throwCondition).append(", ")
-      .append("unsolicitedNotificationHandlers=").append(Arrays.toString(unsolicitedNotificationHandlers)).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "connectionFactory=" + connectionFactory + ", " +
+      "requestHandlers=" + Arrays.toString(requestHandlers) + ", " +
+      "resultHandlers=" + Arrays.toString(resultHandlers) + ", " +
+      "controlHandlers=" + Arrays.toString(controlHandlers) + ", " +
+      "referralHandlers=" + Arrays.toString(referralHandlers) + ", " +
+      "intermediateResponseHandlers=" + Arrays.toString(intermediateResponseHandlers) + ", " +
+      "exceptionHandler=" + exceptionHandler + ", " +
+      "throwCondition=" + throwCondition + ", " +
+      "unsolicitedNotificationHandlers=" + Arrays.toString(unsolicitedNotificationHandlers);
   }
 
 

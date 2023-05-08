@@ -297,12 +297,12 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("timeBeforeExpiration=").append(timeBeforeExpiration).append(", ")
-      .append("graceAuthNsRemaining=").append(graceAuthNsRemaining).append(", ")
-      .append("error=").append(error).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "timeBeforeExpiration=" + timeBeforeExpiration + ", " +
+      "graceAuthNsRemaining=" + graceAuthNsRemaining + ", " +
+      "error=" + error + "]";
   }
 
 

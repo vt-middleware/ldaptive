@@ -550,16 +550,16 @@ public class SearchRequest extends AbstractRequestMessage
   @Override
   public String toString()
   {
-    return new StringBuilder(super.toString()).append(", ")
-      .append("dn=").append(baseDn).append(", ")
-      .append("scope=").append(searchScope).append(", ")
-      .append("aliases=").append(derefAliases).append(", ")
-      .append("sizeLimit=").append(sizeLimit).append(", ")
-      .append("timeLimit=").append(timeLimit).append(", ")
-      .append("typesOnly=").append(typesOnly).append(", ")
-      .append("filter=").append(searchFilter).append(", ")
-      .append("returnAttributes=").append(Arrays.toString(returnAttributes)).append(", ")
-      .append("binaryAttributes=").append(Arrays.toString(binaryAttributes)).toString();
+    return super.toString() + ", " +
+      "dn=" + baseDn + ", " +
+      "scope=" + searchScope + ", " +
+      "aliases=" + derefAliases + ", " +
+      "sizeLimit=" + sizeLimit + ", " +
+      "timeLimit=" + timeLimit + ", " +
+      "typesOnly=" + typesOnly + ", " +
+      "filter=" + searchFilter + ", " +
+      "returnAttributes=" + Arrays.toString(returnAttributes) + ", " +
+      "binaryAttributes=" + Arrays.toString(binaryAttributes);
   }
 
 

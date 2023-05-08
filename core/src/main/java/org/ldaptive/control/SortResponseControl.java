@@ -172,11 +172,11 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("criticality=").append(getCriticality()).append(", ")
-      .append("sortResult=").append(sortResult).append(", ")
-      .append("attributeName=").append(attributeName).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "criticality=" + getCriticality() + ", " +
+      "sortResult=" + sortResult + ", " +
+      "attributeName=" + attributeName + "]";
   }
 
 

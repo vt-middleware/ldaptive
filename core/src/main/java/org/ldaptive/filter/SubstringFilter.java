@@ -219,13 +219,11 @@ public class SubstringFilter implements Filter
   @Override
   public String toString()
   {
-    return new StringBuilder(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("attributeDesc=").append(attributeDesc).append(", ")
-      .append("subInitial=").append(LdapUtils.utf8Encode(subInitial)).append(", ")
-      .append("subAny=").append(
-        subAny == null ? null :
-          Stream.of(subAny).map(LdapUtils::utf8Encode).collect(Collectors.toList())).append(", ")
-      .append("subFinal=").append(LdapUtils.utf8Encode(subFinal)).toString();
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "attributeDesc=" + attributeDesc + ", " +
+      "subInitial=" + LdapUtils.utf8Encode(subInitial) + ", " +
+      "subAny=" +
+      (subAny == null ? null : Stream.of(subAny).map(LdapUtils::utf8Encode).collect(Collectors.toList())) + ", " +
+      "subFinal=" + LdapUtils.utf8Encode(subFinal);
   }
 }

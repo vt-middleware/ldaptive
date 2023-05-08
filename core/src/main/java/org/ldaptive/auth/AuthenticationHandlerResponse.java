@@ -102,16 +102,16 @@ public class AuthenticationHandlerResponse extends AbstractResult
   @Override
   public String toString()
   {
-    return new StringBuilder("[").append(
-      getClass().getName()).append("@").append(hashCode()).append("::")
-      .append("connection=").append(connection).append(", ")
-      .append("authenticationResultCode=").append(authenticationResultCode).append(", ")
-      .append("resultCode=").append(getResultCode()).append(", ")
-      .append("matchedDN=").append(getMatchedDN()).append(", ")
-      .append("diagnosticMessage=").append(getEncodedDiagnosticMessage()).append(", ")
-      .append("referralURLs=").append(Arrays.toString(getReferralURLs())).append(", ")
-      .append("messageID=").append(getMessageID()).append(", ")
-      .append("controls=").append(Arrays.toString(getControls())).append("]").toString();
+    return "[" +
+      getClass().getName() + "@" + hashCode() + "::" +
+      "connection=" + connection + ", " +
+      "authenticationResultCode=" + authenticationResultCode + ", " +
+      "resultCode=" + getResultCode() + ", " +
+      "matchedDN=" + getMatchedDN() + ", " +
+      "diagnosticMessage=" + getEncodedDiagnosticMessage() + ", " +
+      "referralURLs=" + Arrays.toString(getReferralURLs()) + ", " +
+      "messageID=" + getMessageID() + ", " +
+      "controls=" + Arrays.toString(getControls()) + "]";
   }
 
 
