@@ -47,7 +47,7 @@ public class ScramBindRequest implements SaslClientRequest
    */
   public ScramBindRequest(final Mechanism mech, final String user, final String pass, final byte[] nonce)
   {
-    if (mech != Mechanism.SCRAM_SHA_1 || mech != Mechanism.SCRAM_SHA_256 || mech != Mechanism.SCRAM_SHA_512) {
+    if (mech != Mechanism.SCRAM_SHA_1 && mech != Mechanism.SCRAM_SHA_256 && mech != Mechanism.SCRAM_SHA_512) {
       throw new IllegalArgumentException("Invalid SCRAM mechanism: " + mech);
     }
     scramMechanism = mech;

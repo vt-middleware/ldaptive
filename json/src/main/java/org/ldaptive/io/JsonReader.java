@@ -87,9 +87,14 @@ public class JsonReader implements SearchResultReader
             result.addReferences(ref);
             result.addReferences(ref);
           } else if ("dn".equals(jsonAttr.getKey())) {
-            entry = new LdapEntry();
+            if (entry == null) {
+              entry = new LdapEntry();
+            }
             entry.setDn(jsonAttr.getValue().getAsString());
           } else {
+            if (entry == null) {
+              entry = new LdapEntry();
+            }
             final LdapAttribute attr = new LdapAttribute();
             attr.setName(jsonAttr.getKey());
             jsonAttr.getValue().getAsJsonArray().forEach(i -> attr.addStringValues(i.getAsString()));

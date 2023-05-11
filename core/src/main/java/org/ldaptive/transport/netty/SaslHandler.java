@@ -152,8 +152,9 @@ public class SaslHandler extends SimpleChannelInboundHandler<ByteBuf> implements
       final UnsupportedMessageTypeException exception = new UnsupportedMessageTypeException(msg, ByteBuf.class);
       ReferenceCountUtil.safeRelease(msg);
       promise.setFailure(exception);
+    } else {
+      queue.add((ByteBuf) msg, promise);
     }
-    queue.add((ByteBuf) msg, promise);
   }
 
 
