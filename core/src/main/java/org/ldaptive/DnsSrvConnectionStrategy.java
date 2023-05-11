@@ -227,7 +227,7 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
   /**
    * Invoke {@link org.ldaptive.dns.DNSResolver#resolve(String)} for each resolver until results are found.
    *
-   * @return  list of LDAP URLs
+   * @return  set of LDAP URLs
    */
   protected Set<SRVRecord> retrieveDNSRecords()
   {
