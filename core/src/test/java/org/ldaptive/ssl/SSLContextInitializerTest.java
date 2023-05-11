@@ -138,6 +138,7 @@ public class SSLContextInitializerTest
       for (int i = 0; i < aggregate.getTrustManagers().length; i++) {
         Assert.assertEquals(aggregate.getTrustManagers()[i].getClass().getName(), clazz[i]);
       }
+      Assert.assertNotNull(aggregate.getAcceptedIssuers());
     }
   }
 }
