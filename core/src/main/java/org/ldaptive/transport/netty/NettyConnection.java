@@ -1582,7 +1582,7 @@ public final class NettyConnection extends TransportConnection
     private final ConnectionValidator connectionValidator;
 
     /** Future to track execution status. */
-    private ScheduledFuture sf;
+    private ScheduledFuture<?> sf;
 
 
     /**
