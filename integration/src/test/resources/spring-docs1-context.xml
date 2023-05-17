@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+  <bean id="connectionFactory"
+        class="org.ldaptive.DefaultConnectionFactory">
+    <property name="connectionConfig">
+      <bean class="org.ldaptive.ConnectionConfig" p:ldapUrl="ldap://directory.ldaptive.org" p:useStartTLS="true">
+        <property name="sslConfig">
+          <bean class="org.ldaptive.ssl.SslConfig">
+            <property name="credentialConfig">
+              <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig"
+                    p:keyStore="classpath:/ldaptive.keystore"
+                    p:keyStoreType="BKS"
+                    p:keyStorePassword="changeit"
+                    p:trustStore="classpath:/ldaptive.truststore"
+                    p:trustStoreType="BKS"
+                    p:trustStorePassword="changeit" />
+            </property>
+          </bean>
+        </property>
+        <property name="connectionInitializers">
+          <bean class="org.ldaptive.BindConnectionInitializer">
+            <property name="bindSaslConfig">
+              <bean class="org.ldaptive.sasl.SaslConfig" p:mechanism="EXTERNAL" />
+            </property>
+          </bean>
+        </property>
+      </bean>
+    </property>
+  </bean>
+
+</beans>

@@ -57,5 +57,13 @@ public class SpringTest
     } finally {
       pool.close();
     }
+
+    final ClassPathXmlApplicationContext docs1 = new ClassPathXmlApplicationContext(
+      new String[] {"/spring-docs1-context.xml", });
+    Assert.assertTrue(docs1.getBeanDefinitionCount() > 0);
+
+    final ClassPathXmlApplicationContext docs2 = new ClassPathXmlApplicationContext(
+      new String[] {"/spring-docs2-context.xml", });
+    Assert.assertTrue(docs2.getBeanDefinitionCount() > 0);
   }
 }
