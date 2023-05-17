@@ -111,16 +111,6 @@ git add javadocs
 git commit -a -m "Updated javadocs for ${RELEASE_VERSION} release."
 echo "Committed new javadocs"
 
-# update the spring ext schema
-echo "Updating schema"
-user_continue
-
-cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext.xsd
-cp beans/target/classes/org/ldaptive/beans/spring/spring-ext.xsd schema/spring-ext-${RELEASE_VERSION}.xsd
-git add schema
-git commit -a -m "Updated schema for ${RELEASE_VERSION} release."
-echo "Committed new schema"
-
 # add new binaries
 echo "Adding release binaries"
 user_continue
