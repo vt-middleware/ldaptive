@@ -17,41 +17,37 @@ Ldaptive objects are candidates for configuration via Spring XML context files. 
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
 
   <bean id="connectionFactory"
-    class="org.ldaptive.DefaultConnectionFactory"
-    p:connectionConfig-ref="connectionConfig"
-  />
+        class="org.ldaptive.DefaultConnectionFactory">
+    <property name="connectionConfig">
+      <bean class="org.ldaptive.ConnectionConfig" p:ldapUrl="ldap://directory.ldaptive.org" p:useStartTLS="true">
+        <property name="sslConfig">
+          <bean class="org.ldaptive.ssl.SslConfig">
+            <property name="credentialConfig">
+              <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig"
+                    p:keyStore="classpath:/ldaptive.keystore"
+                    p:keyStoreType="BKS"
+                    p:keyStorePassword="changeit"
+                    p:trustStore="classpath:/ldaptive.truststore"
+                    p:trustStoreType="BKS"
+                    p:trustStorePassword="changeit" />
+            </property>
+          </bean>
+        </property>
+        <property name="connectionInitializers">
+          <bean class="org.ldaptive.BindConnectionInitializer">
+            <property name="bindSaslConfig">
+              <bean class="org.ldaptive.sasl.SaslConfig" p:mechanism="EXTERNAL" />
+            </property>
+          </bean>
+        </property>
+      </bean>
+    </property>
+  </bean>
 
-  <bean id="connectionConfig"
-    class="org.ldaptive.ConnectionConfig"
-    p:ldapUrl="ldap://directory.ldaptive.org"
-    p:bindSaslConfig-ref="saslConfig"
-    p:useStartTLS="true"
-    p:sslConfig-ref="sslConfig"
-  />
-
-  <bean id="saslConfig"
-    class="org.ldaptive.sasl.ExternalConfig"
-  />
-
-  <bean id="sslConfig"
-    class="org.ldaptive.ssl.SslConfig"
-    p:credentialConfig-ref="credentialConfig"
-  />
-
-  <bean id="credentialConfig"
-    class="org.ldaptive.ssl.KeyStoreCredentialConfig"
-    p:keyStore="classpath:/ldaptive.keystore"
-    p:keyStoreType="BKS"
-    p:keyStorePassword="changeit"
-    p:trustStore="classpath:/ldaptive.truststore"
-    p:trustStoreType="BKS"
-    p:trustStorePassword="changeit"
-  />
 </beans>
 {% endhighlight %}
 
@@ -70,53 +66,53 @@ Connection conn = cf.getConnection();
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
-       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-                           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
-                           http://www.springframework.org/schema/util
-                           http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-  <bean id="pool"
-    class="org.ldaptive.PooledConnectionFactory"
-    init-method="initialize"
-    p:blockWaitTime="5000">
-    <constructor-arg index="0" ref="connectionConfig"/>
-    <constructor-arg index="1">
-      <bean class="org.ldaptive.pool.PoolConfig"
-        p:minPoolSize="5"
-        p:maxPoolSize="20"
-        p:validatePeriodically="true"
-        p:validatePeriod="30"
-      />
-    </constructor-arg>
+  <bean id="conversionService"
+        class="org.springframework.context.support.ConversionServiceFactoryBean">
+    <property name="converters">
+      <set>
+        <bean class="org.ldaptive.beans.spring.convert.StringToDurationConverter"/>
+        <bean class="org.ldaptive.beans.spring.convert.DurationToStringConverter"/>
+      </set>
+    </property>
   </bean>
 
-  <bean id="connectionConfig"
-    class="org.ldaptive.ConnectionConfig"
-    p:ldapUrl="ldap://directory.ldaptive.org"
-    p:bindSaslConfig-ref="saslConfig"
-    p:useStartTLS="true"
-    p:sslConfig-ref="sslConfig"
-  />
+  <bean id="pool" class="org.ldaptive.PooledConnectionFactory" init-method="initialize"
+        p:blockWaitTime="PT5S"
+        p:minPoolSize="5"
+        p:maxPoolSize="20"
+        p:validatePeriodically="true">
+    <property name="validator">
+      <bean class="org.ldaptive.SearchConnectionValidator" p:validatePeriod="PT30S" />
+    </property>
+    <property name="connectionConfig">
+      <bean class="org.ldaptive.ConnectionConfig" p:ldapUrl="ldap://directory.ldaptive.org" p:useStartTLS="true">
+        <property name="sslConfig">
+          <bean class="org.ldaptive.ssl.SslConfig">
+            <property name="credentialConfig">
+              <bean class="org.ldaptive.ssl.KeyStoreCredentialConfig"
+                    p:keyStore="classpath:/ldaptive.keystore"
+                    p:keyStoreType="BKS"
+                    p:keyStorePassword="changeit"
+                    p:trustStore="classpath:/ldaptive.truststore"
+                    p:trustStoreType="BKS"
+                    p:trustStorePassword="changeit" />
+            </property>
+          </bean>
+        </property>
+        <property name="connectionInitializers">
+          <bean class="org.ldaptive.BindConnectionInitializer">
+            <property name="bindSaslConfig">
+              <bean class="org.ldaptive.sasl.SaslConfig" p:mechanism="EXTERNAL" />
+            </property>
+          </bean>
+        </property>
+      </bean>
+    </property>
+  </bean>
 
-  <bean id="saslConfig"
-    class="org.ldaptive.sasl.ExternalConfig"
-  />
-
-  <bean id="sslConfig"
-    class="org.ldaptive.ssl.SslConfig"
-    p:credentialConfig-ref="credentialConfig"
-  />
-
-  <bean id="credentialConfig"
-    class="org.ldaptive.ssl.KeyStoreCredentialConfig"
-    p:keyStore="classpath:/ldaptive.keystore"
-    p:keyStoreType="BKS"
-    p:keyStorePassword="changeit"
-    p:trustStore="classpath:/ldaptive.truststore"
-    p:trustStoreType="BKS"
-    p:trustStorePassword="changeit"
-  />
 </beans>
 {% endhighlight %}
 
@@ -125,143 +121,5 @@ To access your pool:
 {% highlight java %}
 ClassPathXmlApplicationContext poolContext = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-pool-context.xml", });
 PooledConnectionFactory pool = poolContext.getBean("pool", PooledConnectionFactory.class);
-{% endhighlight %}
-
-## Spring Extensible XML
-
-Ldaptive provides a [schema extension](http://www.ldaptive.org/schema/spring-ext.xsd) that can simplify configuration.
-
-### Connection Factory
-{% highlight xml %}
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
-
-  <context:property-placeholder location="classpath:/spring-ext.properties"/>
-
-  <ldaptive:connection-factory
-    ldapUrl="ldap://directory.ldaptive.org"
-    bindDn="cn=manager,ou=people,dc=ldaptive,dc=org"
-    bindCredential="not-a-real-password"
-    useStartTLS="true"
-    trustCertificates="file:/path/to/ldaptive.trust.crt"
-  />
-
-</beans>
-{% endhighlight %}
-
-{% highlight java %}
-ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-ext-context.xml", });
-DefaultConnectionFactory connectionFactory = context.getBean("connection-factory", DefaultConnectionFactory.class);
-{% endhighlight %}
-
-### Pooled Connection Factory
-
-{% highlight xml %}
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
-
-  <context:property-placeholder location="classpath:/spring-ext.properties"/>
-
-  <ldaptive:pooled-connection-factory
-    ldapUrl="ldap://directory.ldaptive.org"
-    bindDn="cn=manager,ou=people,dc=ldaptive,dc=org"
-    bindCredential="not-a-real-password"
-    useStartTLS="true"
-    trustCertificates="file:/path/to/ldaptive.trust.crt"
-    minPoolSize="5"
-    maxPoolSize="10"
-  />
-
-</beans>
-{% endhighlight %}
-
-{% highlight java %}
-ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-ext-context.xml", });
-PooledConnectionFactory pooledConnectionFactory = context.getBean("pooled-connection-factory", PooledConnectionFactory.class);
-{% endhighlight %}
-
-### Search Operation
-
-{% highlight xml %}
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
-
-  <context:property-placeholder location="classpath:/spring-ext.properties"/>
-
-  <ldaptive:search-operation
-    baseDn="ou=people,dc=ldaptive,dc=org"
-    searchFilter="(mail=*)"
-    returnAttributes="cn,givenName,sn"
-    timeLimit="PT5S"
-    sizeLimit="100"
-    binaryAttributes="jpegPhoto,userCertificate"
-  />
-
-</beans>
-{% endhighlight %}
-
-{% highlight java %}
-ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-ext-context.xml", });
-SearchOperation search = context.getBean("search-operation", SearchOperation.class);
-{% endhighlight %}
-
-### Authenticator
-
-{% highlight xml %}
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:ldaptive="http://www.ldaptive.org/schema/spring-ext"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-            http://www.ldaptive.org/schema/spring-ext http://www.ldaptive.org/schema/spring-ext-{{ site.version }}.xsd">
-
-  <context:property-placeholder location="classpath:/spring-ext.properties"/>
-
-  <ldaptive:bind-search-authenticator
-    id="bind-search-disable-pool"
-    ldapUrl="ldap://directory.ldaptive.org"
-    trustStore="classpath:/ldaptive.truststore"
-    trustStorePassword="changeit"
-    baseDn="ou=people,dc=ldaptive,dc=org"
-    userFilter="(mail={user})"
-    bindDn="cn=manager,ou=people,dc=ldaptive,dc=org"
-    bindCredential="file:/path/to/credential"
-    connectTimeout="PT2S"
-    useStartTLS="true">
-    <ldaptive:authentication-response-handler>
-      <ldaptive:password-policy-handler/>
-    </ldaptive:authentication-response-handler>
-  </ldaptive:bind-search-authenticator>
-
-</beans>
-{% endhighlight %}
-
-{% highlight java %}
-ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(new String[] {"/path_to_my/spring-ext-context.xml", });
-Authenticator bindSearchAuthenticator = context.getBean("bind-search-authenticator", Authenticator.class);
 {% endhighlight %}
 
