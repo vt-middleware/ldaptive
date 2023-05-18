@@ -65,7 +65,6 @@
   <modules>
     <module>core</module>
     <module>beans</module>
-    <module>json</module>
     <module>templates</module>
   </modules>
 
@@ -94,11 +93,6 @@
       <dependency>
         <groupId>org.ldaptive</groupId>
         <artifactId>ldaptive-beans</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.ldaptive</groupId>
-        <artifactId>ldaptive-json</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -160,11 +154,6 @@
         <groupId>com.sun.codemodel</groupId>
         <artifactId>codemodel</artifactId>
         <version>2.6</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>2.10.1</version>
       </dependency>
       <dependency>
         <groupId>io.netty</groupId>

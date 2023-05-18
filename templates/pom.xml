@@ -24,10 +24,6 @@
     </dependency>
     <dependency>
       <groupId>org.ldaptive</groupId>
-      <artifactId>ldaptive-json</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive-beans</artifactId>
     </dependency>
     <dependency>

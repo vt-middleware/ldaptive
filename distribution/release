@@ -135,9 +135,6 @@ curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
   -F "file=@core/target/ldaptive-"${RELEASE_VERSION}"-bundle.jar" \
   "https://oss.sonatype.org/service/local/staging/bundle_upload"
 curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
-  -F "file=@json/target/ldaptive-json-"${RELEASE_VERSION}"-bundle.jar" \
-  "https://oss.sonatype.org/service/local/staging/bundle_upload"
-curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
   -F "file=@beans/target/ldaptive-beans-"${RELEASE_VERSION}"-bundle.jar" \
   "https://oss.sonatype.org/service/local/staging/bundle_upload"
 curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \

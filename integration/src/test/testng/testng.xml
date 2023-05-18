@@ -400,28 +400,6 @@
   <parameter name="jaasRoleCombinedRecursive" value="0830|group6|group7|group8|group9"/>
   <parameter name="jaasCredential" value="password10"/>
 
-  <parameter name="webXml" value="target/test-classes/web.xml"/>
-
-  <parameter name="ldifSearchServletQuery" value="(mail=jkpolk@ldaptive.org)"/>
-  <parameter name="ldifSearchServletAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
-  <parameter name="ldifSearchServletLdif" value="/org/ldaptive/searchResults-11.ldif"/>
-
-  <parameter name="jsonSearchServletQuery" value="(uid=11)"/>
-  <parameter name="jsonSearchServletAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
-  <parameter name="jsonSearchServletLdif" value="/org/ldaptive/searchResults-11.ldif"/>
-
-  <parameter name="attributeServletQuery" value="(&amp;(givenName=zachary)(sn=taylor))"/>
-  <parameter name="attributeServletAttr" value="jpegPhoto"/>
-  <parameter name="attributeServletValue" value="/9j/4AAQSkZJRgABAQEASABIAAD//gATQ3JlYXRlZCB3aXRoIEdJTVD/2wBDAFA3PEY8MlBGQUZaVVBfeMiCeG5uePWvuZHI////////////////////////////////////////////////////2wBDAVVaWnhpeOuCguv/////////////////////////////////////////////////////////////////////////wAARCAANABcDASIAAhEBAxEB/8QAGAAAAwEBAAAAAAAAAAAAAAAAAAIEAQP/xAAiEAEAAgIABQUAAAAAAAAAAAABAAMCEQQSMUFxISIjMnP/xAAUAQEAAAAAAAAAAAAAAAAAAAAA/8QAFBEBAAAAAAAAAAAAAAAAAAAAAP/aAAwDAQACEQMRAD8A71fHZZW+ge48MWqvG0bLMRcnZvsdpnGH0R0ryvhlAAAdCBPRTXkZ7wHWaEI/D9LP0yhA/9k="/>
-
-  <parameter name="ldifTemplateSearchQuery" value="jkpolk"/>
-  <parameter name="ldifTemplateSearchAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
-  <parameter name="ldifTemplateSearchLdif" value="/org/ldaptive/searchResults-11.ldif"/>
-
-  <parameter name="jsonTemplateSearchQuery" value="polk"/>
-  <parameter name="jsonTemplateSearchAttrs" value="departmentNumber|givenName|sn|jpegPhoto"/>
-  <parameter name="jsonTemplateSearchLdif" value="/org/ldaptive/searchResults-11.ldif"/>
-
   <parameter name="ldifSearchDn" value="${ldapBaseDn}"/>
   <parameter name="ldifSearchFilter" value="(uid=14)"/>
 
