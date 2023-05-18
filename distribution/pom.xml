@@ -58,6 +58,11 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>findbugs</groupId>
       <artifactId>annotations</artifactId>
       <version>1.0.0</version>
