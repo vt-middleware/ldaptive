@@ -137,9 +137,6 @@ curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
 curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
   -F "file=@beans/target/ldaptive-beans-"${RELEASE_VERSION}"-bundle.jar" \
   "https://oss.sonatype.org/service/local/staging/bundle_upload"
-curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
-  -F "file=@templates/target/ldaptive-templates-"${RELEASE_VERSION}"-bundle.jar" \
-  "https://oss.sonatype.org/service/local/staging/bundle_upload"
 
 echo "Finished release ${RELEASE_VERSION} for ldaptive."
 

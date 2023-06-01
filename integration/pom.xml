@@ -26,11 +26,6 @@
     </dependency>
     <dependency>
       <groupId>org.ldaptive</groupId>
-      <artifactId>ldaptive-templates</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.ldaptive</groupId>
       <artifactId>ldaptive-beans</artifactId>
       <scope>test</scope>
     </dependency>
