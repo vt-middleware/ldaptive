@@ -154,7 +154,7 @@ public class GssApiBindRequest extends DefaultSaslClientRequest
           rc.setText(saslRealm);
         }
       } else {
-        throw new UnsupportedCallbackException(callback);
+        throw new UnsupportedCallbackException(callback, "Unsupported callback: " + callback);
       }
     }
   }

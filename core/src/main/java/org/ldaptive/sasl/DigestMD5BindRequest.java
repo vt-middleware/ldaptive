@@ -95,7 +95,7 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
           rcc.setSelectedIndex(selectedIndex);
         }
       } else {
-        throw new UnsupportedCallbackException(callback);
+        throw new UnsupportedCallbackException(callback, "Unsupported callback: " + callback);
       }
     }
   }

@@ -56,7 +56,7 @@ public class TestCallbackHandler implements CallbackHandler
           pc.setPassword(password.toCharArray());
         }
       } else {
-        throw new UnsupportedCallbackException(callback, "Unsupported");
+        throw new UnsupportedCallbackException(callback, "Unsupported callback: " + callback);
       }
     }
   }

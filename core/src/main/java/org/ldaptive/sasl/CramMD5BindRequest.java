@@ -47,7 +47,7 @@ public class CramMD5BindRequest extends DefaultSaslClientRequest
       } else if (callback instanceof PasswordCallback && password != null) {
         ((PasswordCallback) callback).setPassword(password.toCharArray());
       } else {
-        throw new UnsupportedCallbackException(callback);
+        throw new UnsupportedCallbackException(callback, "Unsupported callback: " + callback);
       }
     }
   }
