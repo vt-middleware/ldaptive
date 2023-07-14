@@ -55,8 +55,14 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
     final String realm,
     final Map<String, Object> props)
   {
+    if (authID == null) {
+      throw new IllegalArgumentException("Authentication ID cannot be null");
+    }
     authenticationID = authID;
     authorizationID = authzID;
+    if (pass == null) {
+      throw new IllegalArgumentException("Password cannot be null");
+    }
     password = pass;
     saslRealm = realm;
     saslProperties = Collections.unmodifiableMap(props);
@@ -70,7 +76,7 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
     for (Callback callback : callbacks) {
       if (callback instanceof NameCallback) {
         ((NameCallback) callback).setName(authenticationID);
-      } else if (callback instanceof PasswordCallback && password != null) {
+      } else if (callback instanceof PasswordCallback) {
         ((PasswordCallback) callback).setPassword(password.toCharArray());
       } else if (callback instanceof RealmCallback) {
         final RealmCallback rc = (RealmCallback) callback;
