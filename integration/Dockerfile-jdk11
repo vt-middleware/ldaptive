@@ -1,5 +1,5 @@
-FROM maven:3.8-openjdk-11
-RUN export DEBIAN_FRONTEND=noninteractive && \
-  apt-get update && \
-  apt-get install -y net-tools ldap-utils krb5-user && \
-  rm -rf /var/lib/apt/lists/*
+FROM maven:3.9-amazoncorretto-11
+RUN yum update -y && \
+  yum install -y net-tools openldap-clients krb5-workstation && \
+  yum clean all && \
+  rm -rf /var/cache/yum

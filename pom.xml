@@ -59,7 +59,7 @@
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>2.0.7</org.slf4j.version>
     <io.netty.version>4.1.94.Final</io.netty.version>
-    <org.springframework.version>5.3.28</org.springframework.version>
+    <org.springframework.version>5.3.29</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.2.0</japicmp.oldVersion>
   </properties>
@@ -111,7 +111,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>3.14.3</version>
+        <version>3.15</version>
         <scope>test</scope>
       </dependency>
       <dependency>
