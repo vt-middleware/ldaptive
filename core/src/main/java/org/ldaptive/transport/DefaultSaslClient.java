@@ -67,17 +67,20 @@ public class DefaultSaslClient implements SaslClient<DefaultSaslClientRequest>
       if (ResultCode.SASL_BIND_IN_PROGRESS != response.getResultCode()) {
         return response;
       }
-      while (!client.isComplete() &&
-        (ResultCode.SASL_BIND_IN_PROGRESS == response.getResultCode() ||
-          ResultCode.SUCCESS == response.getResultCode())) {
+      while (!client.isComplete() && ResultCode.SASL_BIND_IN_PROGRESS == response.getResultCode()) {
         bytes = client.evaluateChallenge(response.getServerSaslCreds());
-        if (ResultCode.SUCCESS == response.getResultCode()) {
-          if (bytes != null) {
-            throw new SaslException("SASL client error: received response after completion");
-          }
-          break;
-        }
         response = conn.operation(request.createBindRequest(bytes)).execute();
+      }
+      if (ResultCode.SASL_BIND_IN_PROGRESS == response.getResultCode()) {
+        throw new SaslException(
+          "SASL client error: client completed but bind still in progress for " + request + " with " + response);
+      }
+      if (!client.isComplete() && response.getServerSaslCreds() != null) {
+        // server may return additional data for the client in the last response
+        client.evaluateChallenge(response.getServerSaslCreds());
+      }
+      if (!client.isComplete() && ResultCode.SUCCESS == response.getResultCode()) {
+        throw new SaslException("SASL client error: client did not complete for " + request + " with " + response);
       }
       return response;
     } catch (Throwable e) {

@@ -9,6 +9,7 @@ import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import javax.security.sasl.SaslException;
 import org.ldaptive.BindResponse;
 import org.ldaptive.sasl.GssApiBindRequest;
 import org.ldaptive.sasl.SaslClient;
@@ -41,9 +42,10 @@ public class GssApiSaslClient implements SaslClient<GssApiBindRequest>
    * @return  final result of the bind process
    *
    * @throws  LoginException  if an error occurs
+   * @throws  SaslException  if an error occurs
    */
   public BindResponse bind(final TransportConnection conn, final GssApiBindRequest request)
-    throws LoginException
+    throws LoginException, SaslException
   {
     final Subject subject;
     if (request.getJaasName() != null) {
@@ -64,8 +66,8 @@ public class GssApiSaslClient implements SaslClient<GssApiBindRequest>
         loginModule = (LoginModule) Class.forName(request.getJaasLoginModule()).getDeclaredConstructor().newInstance();
       } catch (Exception e) {
         LOGGER.error("Error creating new instance of JAAS module for GSSAPI", e);
-        throw new LoginException(
-          "Could not instantiate JAAS module '" + request.getJaasLoginModule() + "' for GSSAPI");
+        throw new SaslException(
+          "Could not instantiate JAAS module '" + request.getJaasLoginModule() + "' for GSSAPI", e);
       }
 
       LOGGER.debug("Invoking module {} for request {}", loginModule, request);
@@ -79,17 +81,19 @@ public class GssApiSaslClient implements SaslClient<GssApiBindRequest>
       }
     }
 
+    final Exception[] doAsException = new Exception[1];
     final BindResponse result = Subject.doAs(
       subject, (PrivilegedAction<BindResponse>) () -> {
         try {
           return conn.operation(request);
         } catch (Exception e) {
           LOGGER.warn("SASL GSSAPI operation failed for {}", this, e);
+          doAsException[0] = e;
         }
         return null;
       });
     if (result == null) {
-      throw new LoginException("SASL GSSAPI operation failed");
+      throw new SaslException("SASL GSSAPI operation failed for " + request, doAsException[0]);
     }
     return result;
   }

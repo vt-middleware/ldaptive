@@ -169,10 +169,21 @@ public final class TestUtils
   /**
    * @return  connection factory
    */
-  public static ConnectionFactory createGssApi2ConnectionFactory()
+  public static ConnectionFactory createGssApiQopAuthConnectionFactory()
   {
     return DefaultConnectionFactory.builder()
-      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi-2.properties"))
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi-qop-auth.properties"))
+      .build();
+  }
+
+
+  /**
+   * @return  connection factory
+   */
+  public static ConnectionFactory createGssApiUseConfigConnectionFactory()
+  {
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi-use-config.properties"))
       .build();
   }
 

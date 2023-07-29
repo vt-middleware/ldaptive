@@ -2027,7 +2027,52 @@ public class SearchOperationTest extends AbstractTest
     "gssApiSearchResults"
   })
   @Test(groups = "search")
-  public void gssApiSearch2(
+  public void gssApiSearchQopAuth(
+    final String dn,
+    final String filter,
+    final String filterParameters,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    // ignore directory until it's configured
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
+      return;
+    }
+
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    try {
+      final SearchOperation search = new SearchOperation(TestUtils.createGssApiQopAuthConnectionFactory());
+      final SearchResponse result = search.execute(
+        new SearchRequest(
+          dn,
+          new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
+      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported
+      Assert.assertNotNull(e);
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   * @param  filterParameters  to replace parameters in filter with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "gssApiSearchDn",
+    "gssApiSearchFilter",
+    "gssApiSearchFilterParameters",
+    "gssApiSearchReturnAttrs",
+    "gssApiSearchResults"
+  })
+  @Test(groups = "search")
+  public void gssApiSearchUsingConfig(
     final String dn,
     final String filter,
     final String filterParameters,
@@ -2045,7 +2090,7 @@ public class SearchOperationTest extends AbstractTest
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createGssApi2ConnectionFactory());
+      final SearchOperation search = new SearchOperation(TestUtils.createGssApiUseConfigConnectionFactory());
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
