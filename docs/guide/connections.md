@@ -20,10 +20,10 @@ Connections are created and managed using a ConnectionFactory. Ldaptive provides
 
 ## PooledConnectionFactory
 
-`PooledConnectionFactory` maintains a pools of connection for use with an individual operation. See the [pooling guide]({{ relative }}docs/guide/connections/pooling.html) for details on how to use a `PooledConnectionFactory`.
+`PooledConnectionFactory` maintains a pools of connection for use with an individual operation. See the [pooling guide]({{ relative }}docs/guide/connections/pooling.html) for more details.
 
 ## SingleConnectionFactory
-`SingleConnectionFactory` has one connection that is used for operations. Unlike the `DefaultConnectionFactory`, the connection is not closed after each use. This factory opens the connections when `#initialize` is invoked and closed with `#close` is invoked.
+`SingleConnectionFactory` has one connection that is used for operations. Unlike the `DefaultConnectionFactory`, the connection is not closed after each use. This factory opens the connection when `SingleConnectionFactory#initialize` is invoked and closes the connection when `SingleConnectionFactory#close` is invoked.
 
 ## startTLS / LDAPS
 
