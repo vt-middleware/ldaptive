@@ -58,7 +58,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>2.0.7</org.slf4j.version>
-    <io.netty.version>4.1.94.Final</io.netty.version>
+    <io.netty.version>4.1.96.Final</io.netty.version>
     <org.springframework.version>5.3.29</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.2.0</japicmp.oldVersion>
@@ -84,7 +84,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.4.8</version>
+        <version>1.4.11</version>
       </dependency>
       <dependency>
         <groupId>org.ldaptive</groupId>
@@ -111,7 +111,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>3.15</version>
+        <version>3.15.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -225,7 +225,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>10.12.1</version>
+              <version>10.12.2</version>
             </dependency>
           </dependencies>
         </plugin>

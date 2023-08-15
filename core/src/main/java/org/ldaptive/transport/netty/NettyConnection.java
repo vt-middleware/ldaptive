@@ -1236,7 +1236,7 @@ public final class NettyConnection extends TransportConnection
   /**
    * Listener that logs the future success state when it occurs.
    */
-  private class LogFutureListener implements ChannelFutureListener
+  private final class LogFutureListener implements ChannelFutureListener
   {
 
 
@@ -1256,7 +1256,7 @@ public final class NettyConnection extends TransportConnection
    * Listener for channel close events. If {@link ConnectionConfig#getAutoReconnect()} is true, a connection reconnect
    * is attempted on a separate thread.
    */
-  private class CloseFutureListener implements ChannelFutureListener
+  private final class CloseFutureListener implements ChannelFutureListener
   {
 
     /** Whether this listener is in the process of reconnecting. */
@@ -1474,7 +1474,7 @@ public final class NettyConnection extends TransportConnection
    * Matches an inbound LDAP response message to its operation handle and removes that handle from the response queue.
    * Notifies all operation handles when an unsolicited notification arrives.
    */
-  private class InboundMessageHandler extends SimpleChannelInboundHandler<Message>
+  private final class InboundMessageHandler extends SimpleChannelInboundHandler<Message>
   {
 
 
@@ -1645,7 +1645,7 @@ public final class NettyConnection extends TransportConnection
   /**
    * Sets {@link #inboundException} and closes the channel when an exception occurs.
    */
-  private class InboundExceptionHandler extends ChannelInboundHandlerAdapter
+  private final class InboundExceptionHandler extends ChannelInboundHandlerAdapter
   {
 
 

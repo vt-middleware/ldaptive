@@ -205,7 +205,7 @@ public final class DefaultDnParser implements DnParser
 
 
   /** Parse handler for decoding octet strings. */
-  private static class OctetStringHandler implements ParseHandler
+  private static final class OctetStringHandler implements ParseHandler
   {
 
     /** Decoded octet string. */

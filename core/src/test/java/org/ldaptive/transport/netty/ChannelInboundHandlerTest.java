@@ -207,7 +207,7 @@ public class ChannelInboundHandlerTest
 
 
   /** Test message handler. */
-  private static class TestMessageHandler extends SimpleChannelInboundHandler<Message>
+  private static final class TestMessageHandler extends SimpleChannelInboundHandler<Message>
   {
     /** Message read by this handler. */
     private Message message;

@@ -55,7 +55,7 @@ public class LdapAttributeIgnoreCaseComparator implements Comparator<LdapAttribu
 
 
   /** Decodes and encodes a string by invoking {@link String#toLowerCase()}. */
-  private static class LowerCaseValueTranscoder implements ValueTranscoder<String>
+  private static final class LowerCaseValueTranscoder implements ValueTranscoder<String>
   {
 
 
