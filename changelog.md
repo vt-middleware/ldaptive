@@ -6,6 +6,19 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.2.0 - 17Aug2023
+
+slf4j updated to version 2 with this release.
+
+The following structual changes were made:
+* Drop support for the ldaptive-json module; there are many libraries available to create JSON from Objects.
+* Drop support for spring schema extensions; this feature was difficult to maintain and not widely used.
+* Move the templates module classes into core; three classes didn't merit a separate module.
+
+Issue | Description
+:---- | :----------
+[ldaptive-234]({{ site.issueURL }}235) | GSSAPI throws exception evaluating last challenge.
+
 ## Version 2.1.2 - 11Mar2023
 
 Issue | Description
