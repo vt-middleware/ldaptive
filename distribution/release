@@ -79,6 +79,7 @@ git push origin v${RELEASE_VERSION}
 # checkout the release tag
 git checkout v${RELEASE_VERSION}
 echo "Switched to the tag version ${RELEASE_VERSION}"
+user_continue
 
 # build the release distribution
 ./mvn_cmd install
