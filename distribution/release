@@ -94,7 +94,7 @@ user_continue
 git checkout gh-pages
 git pull origin gh-pages
 # remove root directory javadocs
-git rm -r javadocs/org javadocs/*.html javadocs/*.css javadocs/*.js javadocs/package-list
+git rm -r javadocs/org javadocs/jquery javadocs/resources javadocs/*.html javadocs/*.css javadocs/*.js javadocs/element-list
 # add new javadocs to root directory
 cp distribution/target/ldaptive-distribution-${RELEASE_VERSION}-javadoc.jar javadocs
 pushd javadocs
