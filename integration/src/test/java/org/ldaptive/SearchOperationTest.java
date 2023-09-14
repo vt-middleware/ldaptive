@@ -1158,10 +1158,9 @@ public class SearchOperationTest extends AbstractTest
     srh.setDnCaseChange(CaseChange.LOWER);
 
     final SearchResponse lcAllChangeResult = TestUtils.convertLdifToResult(expected);
-    for (LdapAttribute la : ucNamesChangeResult.getEntry().getAttributes()) {
-      lcAllChangeResult.getEntry().setDn(lcAllChangeResult.getEntry().getDn().toLowerCase());
+    lcAllChangeResult.getEntry().setDn(lcAllChangeResult.getEntry().getDn().toLowerCase());
+    for (LdapAttribute la : lcAllChangeResult.getEntry().getAttributes()) {
       la.setName(la.getName().toLowerCase());
-
       final Set<String> s = la.getStringValues().stream().map(String::toLowerCase).collect(Collectors.toSet());
       la.clear();
       la.addStringValues(s);
@@ -1171,7 +1170,7 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    TestUtils.assertEquals(ucNamesChangeResult, result);
+    TestUtils.assertEquals(lcAllChangeResult, result);
 
     // test lower case specific attributes
     srh.setAttributeNames("givenName");
