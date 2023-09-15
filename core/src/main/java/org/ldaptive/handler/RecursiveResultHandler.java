@@ -202,7 +202,7 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
         final SearchResponse result = getConnection().operation(
           SearchRequest.objectScopeSearchRequest(dn, retAttrs)).execute();
         if (result.isSuccess()) {
-          newEntry = result.getEntry(dn);
+          newEntry = result.getEntry();
         }
       } catch (LdapException e) {
         logger.warn("Error retrieving attribute(s): {}", Arrays.toString(retAttrs), e);
