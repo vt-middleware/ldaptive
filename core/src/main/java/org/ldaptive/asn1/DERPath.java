@@ -110,7 +110,7 @@ public class DERPath
         continue;
       }
       // Normalize node names to upper case
-      nodeStack.add(toNode(node.toUpperCase()));
+      nodeStack.add(toNode(LdapUtils.toUpperCaseAscii(node)));
     }
   }
 

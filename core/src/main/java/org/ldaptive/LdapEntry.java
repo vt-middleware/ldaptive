@@ -113,7 +113,7 @@ public class LdapEntry extends AbstractMessage
 
 
   /**
-   * Returns a single attribute of this attributes. If multiple attributes exist the first attribute returned by the
+   * Returns a single attribute of this entry. If multiple attributes exist the first attribute returned by the
    * underlying iterator is used. If no attributes exist null is returned.
    *
    * @return  single attribute
@@ -137,7 +137,7 @@ public class LdapEntry extends AbstractMessage
   public LdapAttribute getAttribute(final String name)
   {
     if (name != null) {
-      return attributes.get(name.toLowerCase());
+      return attributes.get(LdapUtils.toLowerCase(name));
     }
     return null;
   }
@@ -162,7 +162,7 @@ public class LdapEntry extends AbstractMessage
   public void addAttributes(final LdapAttribute... attrs)
   {
     for (LdapAttribute a : attrs) {
-      attributes.put(a.getName().toLowerCase(), a);
+      attributes.put(LdapUtils.toLowerCase(a.getName()), a);
     }
   }
 
@@ -174,7 +174,7 @@ public class LdapEntry extends AbstractMessage
    */
   public void addAttributes(final Collection<LdapAttribute> attrs)
   {
-    attrs.forEach(a -> attributes.put(a.getName().toLowerCase(), a));
+    attrs.forEach(a -> attributes.put(LdapUtils.toLowerCase(a.getName()), a));
   }
 
 
@@ -185,7 +185,7 @@ public class LdapEntry extends AbstractMessage
    */
   public void removeAttribute(final String name)
   {
-    attributes.remove(name.toLowerCase());
+    attributes.remove(LdapUtils.toLowerCase(name));
   }
 
 
@@ -197,7 +197,7 @@ public class LdapEntry extends AbstractMessage
   public void removeAttributes(final LdapAttribute... attrs)
   {
     for (LdapAttribute a : attrs) {
-      attributes.remove(a.getName().toLowerCase());
+      attributes.remove(LdapUtils.toLowerCase(a.getName()));
     }
   }
 
@@ -209,7 +209,7 @@ public class LdapEntry extends AbstractMessage
    */
   public void removeAttributes(final Collection<LdapAttribute> attrs)
   {
-    attrs.forEach(a -> attributes.remove(a.getName().toLowerCase()));
+    attrs.forEach(a -> attributes.remove(LdapUtils.toLowerCase(a.getName())));
   }
 
 
@@ -240,8 +240,8 @@ public class LdapEntry extends AbstractMessage
     if (o instanceof LdapEntry && super.equals(o)) {
       final LdapEntry v = (LdapEntry) o;
       return LdapUtils.areEqual(
-        ldapDn != null ? ldapDn.toLowerCase() : null,
-        v.ldapDn != null ? v.ldapDn.toLowerCase() : null) &&
+        ldapDn != null ? LdapUtils.toLowerCase(ldapDn) : null,
+        v.ldapDn != null ? LdapUtils.toLowerCase(v.ldapDn) : null) &&
         LdapUtils.areEqual(attributes, v.attributes);
     }
     return false;
@@ -256,7 +256,7 @@ public class LdapEntry extends AbstractMessage
         HASH_CODE_SEED,
         getMessageID(),
         getControls(),
-        ldapDn != null ? ldapDn.toLowerCase() : null,
+        ldapDn != null ? LdapUtils.toLowerCase(ldapDn) : null,
         attributes);
   }
 

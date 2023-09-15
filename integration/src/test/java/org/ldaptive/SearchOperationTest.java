@@ -1125,7 +1125,7 @@ public class SearchOperationTest extends AbstractTest
 
     final SearchResponse lcValuesChangeResult = TestUtils.convertLdifToResult(expected);
     for (LdapAttribute la : lcValuesChangeResult.getEntry().getAttributes()) {
-      final Set<String> s = la.getStringValues().stream().map(String::toLowerCase).collect(Collectors.toSet());
+      final Set<String> s = la.getStringValues().stream().map(LdapUtils::toLowerCase).collect(Collectors.toSet());
       la.clear();
       la.addStringValues(s);
     }
@@ -1143,7 +1143,7 @@ public class SearchOperationTest extends AbstractTest
 
     final SearchResponse ucNamesChangeResult = TestUtils.convertLdifToResult(expected);
     for (LdapAttribute la : ucNamesChangeResult.getEntry().getAttributes()) {
-      la.setName(la.getName().toUpperCase());
+      la.setName(LdapUtils.toUpperCase(la.getName()));
     }
     result = search.execute(
       dn,
@@ -1158,10 +1158,10 @@ public class SearchOperationTest extends AbstractTest
     srh.setDnCaseChange(CaseChange.LOWER);
 
     final SearchResponse lcAllChangeResult = TestUtils.convertLdifToResult(expected);
-    lcAllChangeResult.getEntry().setDn(lcAllChangeResult.getEntry().getDn().toLowerCase());
+    lcAllChangeResult.getEntry().setDn(LdapUtils.toLowerCase(lcAllChangeResult.getEntry().getDn()));
     for (LdapAttribute la : lcAllChangeResult.getEntry().getAttributes()) {
-      la.setName(la.getName().toLowerCase());
-      final Set<String> s = la.getStringValues().stream().map(String::toLowerCase).collect(Collectors.toSet());
+      la.setName(LdapUtils.toLowerCase(la.getName()));
+      final Set<String> s = la.getStringValues().stream().map(LdapUtils::toLowerCase).collect(Collectors.toSet());
       la.clear();
       la.addStringValues(s);
     }
@@ -1181,7 +1181,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchResponse lcgivenNameChangeResult = TestUtils.convertLdifToResult(expected);
     lcgivenNameChangeResult.getEntry().getAttributes().stream().filter(
       la -> la.getName().equals("givenName")).forEach(la -> {
-        final Set<String> s = la.getStringValues().stream().map(String::toLowerCase).collect(Collectors.toSet());
+        final Set<String> s = la.getStringValues().stream().map(LdapUtils::toLowerCase).collect(Collectors.toSet());
         la.clear();
         la.addStringValues(s);
       });

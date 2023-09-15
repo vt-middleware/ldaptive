@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.ldaptive.LdapUtils;
 
 /**
  * Normalizes a RDN by performing the following operations:
@@ -73,7 +74,7 @@ public class DefaultRDnNormalizer implements RDnNormalizer
    */
   private String normalizeName(final String name)
   {
-    return name.toLowerCase();
+    return LdapUtils.toLowerCase(name);
   }
 
 

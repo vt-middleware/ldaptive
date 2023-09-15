@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.StringTokenizer;
+import org.ldaptive.LdapUtils;
 
 /**
  * Contains data associated with a query request.
@@ -42,7 +43,7 @@ public class Query
   {
     if (query != null) {
       final List<String> l = new ArrayList<>();
-      final StringTokenizer queryTokens = new StringTokenizer(query.toLowerCase().trim());
+      final StringTokenizer queryTokens = new StringTokenizer(LdapUtils.toLowerCase(query).trim());
       while (queryTokens.hasMoreTokens()) {
         l.add(queryTokens.nextToken());
       }

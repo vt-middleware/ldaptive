@@ -532,7 +532,7 @@ public class BeanGenerator
       fqClassName = String.format(
         "%s.%s",
         classPackage,
-        className.substring(0, 1).toUpperCase() + className.substring(1));
+        Character.toUpperCase(className.charAt(0)) + className.substring(1));
     } else {
       fqClassName = String.format("%s.%s", classPackage, className);
     }
@@ -559,7 +559,7 @@ public class BeanGenerator
     final Class<?> syntaxType,
     final boolean multivalue)
   {
-    final String upperName = name.substring(0, 1).toUpperCase() + name.substring(1);
+    final String upperName = Character.toUpperCase(name.charAt(0)) + name.substring(1);
     if (multivalue) {
       final JClass detailClass = codeModel.ref(syntaxType);
       final JClass collectionClass = codeModel.ref(Collection.class);

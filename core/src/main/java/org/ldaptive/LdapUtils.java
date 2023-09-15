@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -400,6 +401,108 @@ public final class LdapUtils
     // CheckStyle:MagicNumber ON
 
     return encode;
+  }
+
+
+  /**
+   * Converts the supplied string to lower case. If the string contains non-ascii characters, {@link Locale#ROOT} is
+   * used.
+   *
+   * @param  s  to lower case
+   *
+   * @return  new lower case string
+   */
+  public static String toLowerCase(final String s)
+  {
+    if (s == null || s.isEmpty()) {
+      return s;
+    }
+    // CheckStyle:MagicNumber OFF
+    // if string contains non-ascii, use locale specific lowercase
+    if (s.chars().anyMatch(c -> c > 0x7F)) {
+      return s.toLowerCase(Locale.ROOT);
+    }
+    return toLowerCaseAscii(s);
+  }
+
+
+  /**
+   * Converts the characters A-Z to a-z.
+   *
+   * @param  s  to lower case
+   *
+   * @return  new string with lower case alphabetical characters
+   *
+   * @throws  IllegalArgumentException  if the supplied string contains non-ascii characters
+   */
+  public static String toLowerCaseAscii(final String s)
+  {
+    if (s == null || s.isEmpty()) {
+      return s;
+    }
+    // mutate A-Z to a-z
+    // CheckStyle:MagicNumber OFF
+    final char[] chars = s.toCharArray();
+    for (int i = 0; i < chars.length; i++) {
+      if (chars[i] > 0x7F) {
+        throw new IllegalArgumentException("String contains non-ascii characters: " + s);
+      } else if (chars[i] >= 'A' && chars[i] <= 'Z') {
+        chars[i] = (char) (chars[i] + 32);
+      }
+    }
+    // CheckStyle:MagicNumber ON
+    return new String(chars);
+  }
+
+
+  /**
+   * Converts the supplied string to upper case. If the string contains non-ascii characters, {@link Locale#ROOT} is
+   * used.
+   *
+   * @param  s  to upper case
+   *
+   * @return  new upper case string
+   */
+  public static String toUpperCase(final String s)
+  {
+    if (s == null || s.isEmpty()) {
+      return s;
+    }
+    // CheckStyle:MagicNumber OFF
+    // if string contains non-ascii, use locale specific uppercase
+    if (s.chars().anyMatch(c -> c > 0x7F)) {
+      return s.toUpperCase(Locale.ROOT);
+    }
+    return toUpperCaseAscii(s);
+  }
+
+
+  /**
+   * Converts the characters a-z to A-Z.
+   *
+   * @param  s  to upper case
+   *
+   * @return  new string with upper case alphabetical characters
+   *
+   * @throws  IllegalArgumentException  if the supplied string contains non-ascii characters
+   */
+  public static String toUpperCaseAscii(final String s)
+  {
+    if (s == null || s.isEmpty()) {
+      return s;
+    }
+    // mutate a-z to A-Z
+    // CheckStyle:MagicNumber OFF
+    final char[] chars = s.toCharArray();
+    for (int i = 0; i < chars.length; i++) {
+      if (chars[i] > 0x7F) {
+        throw new IllegalArgumentException("String contains non-ascii characters: " + s);
+      } else if (chars[i] >= 'a' && chars[i] <= 'z') {
+        chars[i] = (char) (chars[i] - 32);
+      }
+    }
+    // CheckStyle:MagicNumber ON
+    return new String(chars);
   }
 
 

@@ -54,7 +54,7 @@ public class LdapAttributeIgnoreCaseComparator implements Comparator<LdapAttribu
   }
 
 
-  /** Decodes and encodes a string by invoking {@link String#toLowerCase()}. */
+  /** Decodes and encodes a string by invoking {@link LdapUtils#toLowerCase(String)}. */
   private static final class LowerCaseValueTranscoder implements ValueTranscoder<String>
   {
 
@@ -62,28 +62,28 @@ public class LdapAttributeIgnoreCaseComparator implements Comparator<LdapAttribu
     @Override
     public String decodeStringValue(final String value)
     {
-      return value.toLowerCase();
+      return LdapUtils.toLowerCase(value);
     }
 
 
     @Override
     public String decodeBinaryValue(final byte[] value)
     {
-      return (new String(value, StandardCharsets.UTF_8)).toLowerCase();
+      return LdapUtils.toLowerCase(new String(value, StandardCharsets.UTF_8));
     }
 
 
     @Override
     public String encodeStringValue(final String value)
     {
-      return value.toLowerCase();
+      return LdapUtils.toLowerCase(value);
     }
 
 
     @Override
     public byte[] encodeBinaryValue(final String value)
     {
-      return value.toLowerCase().getBytes(StandardCharsets.UTF_8);
+      return LdapUtils.toLowerCase(value).getBytes(StandardCharsets.UTF_8);
     }
 
 

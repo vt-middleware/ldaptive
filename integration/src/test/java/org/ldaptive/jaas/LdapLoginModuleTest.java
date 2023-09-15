@@ -400,7 +400,7 @@ public class LdapLoginModuleTest extends AbstractTest
       Assert.assertEquals(dnPrincipals.size(), 1);
 
       final LdapDnPrincipal dnP = dnPrincipals.iterator().next();
-      Assert.assertEquals(dnP.getName().toLowerCase(), dn.toLowerCase());
+      Assert.assertEquals(new Dn(dnP.getName()).format(), new Dn(dn).format());
       if (!"".equals(role)) {
         Assert.assertTrue(
           dnP.getLdapEntry().getAttributes().size() > 0,

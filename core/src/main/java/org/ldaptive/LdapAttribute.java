@@ -561,9 +561,7 @@ public class LdapAttribute
     }
     if (o instanceof LdapAttribute) {
       final LdapAttribute v = (LdapAttribute) o;
-      return LdapUtils.areEqual(
-               attributeName != null ? attributeName.toLowerCase() : null,
-               v.attributeName != null ? v.attributeName.toLowerCase() : null) &&
+      return LdapUtils.areEqual(LdapUtils.toLowerCase(attributeName), LdapUtils.toLowerCase(v.attributeName)) &&
              LdapUtils.areEqual(attributeValues, v.attributeValues);
     }
     return false;
@@ -576,7 +574,7 @@ public class LdapAttribute
     return
       LdapUtils.computeHashCode(
         HASH_CODE_SEED,
-        attributeName != null ? attributeName.toLowerCase() : null,
+        LdapUtils.toLowerCase(attributeName),
         attributeValues);
   }
 

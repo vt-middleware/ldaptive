@@ -242,7 +242,7 @@ public class ClassGenerator
       fqClassName = String.format(
         "%s.%s",
         classPackage,
-        className.substring(0, 1).toUpperCase() + className.substring(1, className.length()));
+        Character.toUpperCase(className.charAt(0)) + className.substring(1));
     } else {
       fqClassName = String.format("%s.%s", classPackage, className);
     }

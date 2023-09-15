@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.sasl.Sasl;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.transport.DefaultSaslClient;
 
@@ -115,7 +116,7 @@ public abstract class DefaultSaslClientRequest implements CallbackHandler
           if (s == null) {
             throw new IllegalArgumentException("Security strength cannot be null");
           }
-        }).map(s -> s.name().toLowerCase()).collect(Collectors.joining(",")));
+        }).map(s -> LdapUtils.toLowerCaseAscii(s.name())).collect(Collectors.joining(",")));
     }
     if (config.getMutualAuthentication() != null) {
       props.put(Sasl.SERVER_AUTH, config.getMutualAuthentication().toString());

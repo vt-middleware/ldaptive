@@ -11,6 +11,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.auth.AccountState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -161,7 +162,7 @@ public class ActiveDirectoryAccountState extends AccountState
         final Matcher matcher = PATTERN.matcher(message);
         if (matcher.find()) {
           try {
-            return Error.valueOf(Integer.parseInt(matcher.group(1).toUpperCase(), HEX_RADIX));
+            return Error.valueOf(Integer.parseInt(LdapUtils.toUpperCaseAscii(matcher.group(1)), HEX_RADIX));
           } catch (NumberFormatException e) {
             final Logger l = LoggerFactory.getLogger(Error.class);
             l.warn("Error parsing active directory error", e);

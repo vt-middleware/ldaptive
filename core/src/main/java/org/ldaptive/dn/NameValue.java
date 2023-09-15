@@ -108,9 +108,7 @@ public class NameValue
     }
     if (o instanceof NameValue) {
       final NameValue v = (NameValue) o;
-      return LdapUtils.areEqual(
-        attributeName != null ? attributeName.toLowerCase() : null,
-        v.attributeName != null ? v.attributeName.toLowerCase() : null) &&
+      return LdapUtils.areEqual(LdapUtils.toLowerCase(attributeName), LdapUtils.toLowerCase(v.attributeName)) &&
         LdapUtils.areEqual(attributeValue, v.attributeValue);
     }
     return false;
@@ -123,7 +121,7 @@ public class NameValue
     return
       LdapUtils.computeHashCode(
         HASH_CODE_SEED,
-        attributeName != null ? attributeName.toLowerCase() : null,
+        LdapUtils.toLowerCase(attributeName),
         attributeValue);
   }
 

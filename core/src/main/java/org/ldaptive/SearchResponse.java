@@ -122,7 +122,7 @@ public class SearchResponse extends AbstractResult
    */
   public LdapEntry getEntry(final String dn)
   {
-    return resultEntries.get(dn.toLowerCase());
+    return resultEntries.get(LdapUtils.toLowerCase(dn));
   }
 
 
@@ -144,7 +144,7 @@ public class SearchResponse extends AbstractResult
    */
   public void addEntries(final LdapEntry... entry)
   {
-    Stream.of(entry).forEach(e -> resultEntries.put(e.getDn().toLowerCase(), e));
+    Stream.of(entry).forEach(e -> resultEntries.put(LdapUtils.toLowerCase(e.getDn()), e));
   }
 
 
@@ -155,7 +155,7 @@ public class SearchResponse extends AbstractResult
    */
   public void addEntries(final Collection<LdapEntry> entries)
   {
-    entries.forEach(e -> resultEntries.put(e.getDn().toLowerCase(), e));
+    entries.forEach(e -> resultEntries.put(LdapUtils.toLowerCase(e.getDn()), e));
   }
 
 

@@ -390,6 +390,6 @@ public final class TestUtils
       sb.append(Integer.toHexString(v)).append(":");
     }
     // CheckStyle:MagicNumber ON
-    return sb.toString().toUpperCase();
+    return LdapUtils.toUpperCase(sb.toString());
   }
 }

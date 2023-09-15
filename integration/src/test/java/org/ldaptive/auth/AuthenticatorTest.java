@@ -29,6 +29,7 @@ import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.SessionTrackingControl;
+import org.ldaptive.dn.Dn;
 import org.ldaptive.extended.ExtendedOperation;
 import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.handler.DnAttributeEntryHandler;
@@ -269,7 +270,7 @@ public class AuthenticatorTest extends AbstractTest
     final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
 
     // test one level searching
-    Assert.assertEquals(auth.resolveDn(new User(user)).toLowerCase(), testLdapEntry.getDn().toLowerCase());
+    Assert.assertEquals(new Dn(auth.resolveDn(new User(user))).format(), new Dn(testLdapEntry.getDn()).format());
 
     // test duplicate DNs
     final String filter = resolver.getUserFilter();
@@ -291,7 +292,7 @@ public class AuthenticatorTest extends AbstractTest
 
     final String baseDn = resolver.getBaseDn();
     resolver.setBaseDn(baseDn.substring(baseDn.indexOf(",") + 1));
-    Assert.assertEquals(auth.resolveDn(new User(user)).toLowerCase(), testLdapEntry.getDn().toLowerCase());
+    Assert.assertEquals(new Dn(auth.resolveDn(new User(user))).format(), new Dn(testLdapEntry.getDn()).format());
   }
 
 
@@ -345,7 +346,8 @@ public class AuthenticatorTest extends AbstractTest
       "(|(uid=$context.principal)(mail=$context.principal))");
     velocityResolver.setBaseDn(resolver.getBaseDn());
     auth.setDnResolver(velocityResolver);
-    Assert.assertEquals(auth.resolveDn(new User(null, context)).toLowerCase(), testLdapEntry.getDn().toLowerCase());
+    Assert.assertEquals(
+      new Dn(auth.resolveDn(new User(null, context))).format(), new Dn(testLdapEntry.getDn()).format());
   }
 
 
@@ -391,8 +393,7 @@ public class AuthenticatorTest extends AbstractTest
 
     resolver.setAllowMultipleDns(true);
     Assert.assertEquals(
-      auth.resolveDn(new User(user)).toLowerCase().split(":")[1],
-      testLdapEntry.getDn().toLowerCase());
+        new Dn(auth.resolveDn(new User(user))).format().split(":")[1], new Dn(testLdapEntry.getDn()).format());
   }
 
 
@@ -410,7 +411,7 @@ public class AuthenticatorTest extends AbstractTest
     final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
     resolver.setResolveFromAttribute("entryDN");
     resolver.setEntryHandlers(new DnAttributeEntryHandler());
-    Assert.assertEquals(auth.resolveDn(new User(user)).toLowerCase(), testLdapEntry.getDn().toLowerCase());
+    Assert.assertEquals(new Dn(auth.resolveDn(new User(user))).format(), new Dn(testLdapEntry.getDn()).format());
   }
 
 

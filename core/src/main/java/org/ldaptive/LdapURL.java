@@ -504,7 +504,7 @@ public class LdapURL
     }
 
     // CheckStyle:MagicNumber OFF
-    scheme = m.group(1).toLowerCase();
+    scheme = LdapUtils.toLowerCaseAscii(m.group(1));
     hostname = m.group(2);
     if (hostname != null) {
       // check for ipv6 address

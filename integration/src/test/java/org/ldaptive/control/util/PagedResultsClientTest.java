@@ -9,6 +9,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.TestUtils;
+import org.ldaptive.dn.Dn;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -86,14 +87,14 @@ public class PagedResultsClientTest extends AbstractTest
       SearchResponse response = client.execute(request);
       Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
       Assert.assertEquals(response.entrySize(), 1);
-      Assert.assertEquals(response.getEntry().getDn().toLowerCase(), testLdapEntries[0].getDn().toLowerCase());
+      Assert.assertEquals(new Dn(response.getEntry().getDn()).format(), new Dn(testLdapEntries[0].getDn()).format());
 
       int i = 1;
       while (client.hasMore(response)) {
         response = client.execute(request, response);
         Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
         Assert.assertEquals(response.entrySize(), 1);
-        Assert.assertEquals(response.getEntry().getDn().toLowerCase(), testLdapEntries[i].getDn().toLowerCase());
+        Assert.assertEquals(new Dn(response.getEntry().getDn()).format(), new Dn(testLdapEntries[i].getDn()).format());
         i++;
       }
 
@@ -134,9 +135,9 @@ public class PagedResultsClientTest extends AbstractTest
 
       final Iterator<LdapEntry> i = response.getEntries().iterator();
       Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-      Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[1].getDn().toLowerCase());
-      Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[0].getDn().toLowerCase());
-      Assert.assertEquals(i.next().getDn().toLowerCase(), testLdapEntries[2].getDn().toLowerCase());
+      Assert.assertEquals(new Dn(i.next().getDn()).format(), new Dn(testLdapEntries[1].getDn()).format());
+      Assert.assertEquals(new Dn(i.next().getDn()).format(), new Dn(testLdapEntries[0].getDn()).format());
+      Assert.assertEquals(new Dn(i.next().getDn()).format(), new Dn(testLdapEntries[2].getDn()).format());
     } finally {
       cf.close();
     }

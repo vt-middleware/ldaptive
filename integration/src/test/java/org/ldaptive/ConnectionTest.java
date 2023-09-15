@@ -117,7 +117,7 @@ public class ConnectionTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
     final SearchResponse lr = search.execute(
       new SearchRequest(new Dn(testLdapEntry.getDn()).subDn(1).format(), "(uid=15)"));
-    Assert.assertEquals(lr.getEntry().getDn().toLowerCase(), testLdapEntry.getDn().toLowerCase());
+    Assert.assertEquals(new Dn(lr.getEntry().getDn()).format(), new Dn(testLdapEntry.getDn()).format());
   }
 
 

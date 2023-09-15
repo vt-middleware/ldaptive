@@ -4,6 +4,7 @@ package org.ldaptive;
 import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.AuthorizationIdentityResponseControl;
 import org.ldaptive.control.SessionTrackingControl;
+import org.ldaptive.dn.Dn;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -103,7 +104,7 @@ public class BindOperationTest extends AbstractTest
     if (ctrl == null) {
       throw new UnsupportedOperationException("Authorization Identity Control not supported");
     }
-    Assert.assertEquals(ctrl.getAuthorizationId().toLowerCase(), "dn:" + dn.toLowerCase());
+    Assert.assertEquals(new Dn(ctrl.getAuthorizationId()).format(), "dn:" + new Dn(dn).format());
   }
 
 
