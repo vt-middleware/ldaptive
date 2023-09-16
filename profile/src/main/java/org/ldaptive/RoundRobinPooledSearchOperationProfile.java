@@ -66,6 +66,6 @@ public final class RoundRobinPooledSearchOperationProfile extends AbstractSearch
   @Override
   public String toString()
   {
-    return (connectionFactory != null ? connectionFactory.toString() : "[null connection factory]");
+    return connectionFactory != null ? connectionFactory.toString() : "[null connection factory]";
   }
 }
