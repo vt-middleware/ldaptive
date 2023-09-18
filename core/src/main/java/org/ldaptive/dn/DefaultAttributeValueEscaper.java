@@ -82,7 +82,7 @@ public class DefaultAttributeValueEscaper implements AttributeValueEscaper
   /**
    * Appends a backslash for every two hex characters.
    *
-   * @param  sb  to apppend to
+   * @param  sb  to append to
    * @param  hex  to read
    */
   private void escapeHex(final StringBuilder sb, final char... hex)
