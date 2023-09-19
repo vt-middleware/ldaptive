@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.templates;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.ldaptive.AbstractTest;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapEntry;
@@ -26,7 +28,7 @@ public class SearchTemplatesOperationTest extends AbstractTest
 {
 
   /** Entry created for ldap tests. */
-  private static LdapEntry testLdapEntry;
+  private static LdapEntry[] testLdapEntries;
 
   /** Executor to test. */
   private SearchTemplatesOperation searchOperation;
@@ -43,10 +45,16 @@ public class SearchTemplatesOperationTest extends AbstractTest
     throws Exception
   {
     final String ldif = TestUtils.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
-    super.createLdapEntry(testLdapEntry);
-    // remove objectClass as active directory adds some additional ones
-    testLdapEntry.removeAttribute("objectClass");
+    testLdapEntries = new LdapEntry[5];
+    for (int i = 0; i < 5; i++) {
+      testLdapEntries[i] = TestUtils.convertLdifToResult(ldif).getEntry();
+      final String cn = testLdapEntries[i].getAttribute("cn").getStringValue();
+      testLdapEntries[i].setDn(testLdapEntries[i].getDn().replaceFirst(cn, cn + i));
+      testLdapEntries[i].getAttribute("cn").addStringValues(cn + i);
+      super.createLdapEntry(testLdapEntries[i]);
+      // remove objectClass as active directory adds some additional ones
+      testLdapEntries[i].removeAttribute("objectClass");
+    }
   }
 
 
@@ -94,7 +102,9 @@ public class SearchTemplatesOperationTest extends AbstractTest
   public void deleteLdapEntry()
     throws Exception
   {
-    super.deleteLdapEntry(testLdapEntry.getDn());
+    for (int i = 0; i < testLdapEntries.length; i++) {
+      super.deleteLdapEntry(testLdapEntries[i].getDn());
+    }
     searchOperation.close();
   }
 
@@ -126,11 +136,71 @@ public class SearchTemplatesOperationTest extends AbstractTest
     throws Exception
   {
     final Query q = new Query(query);
-    q.setReturnAttributes(testLdapEntry.getAttributeNames());
+    q.setReturnAttributes(testLdapEntries[0].getAttributeNames());
 
-    final SearchResponse sr = searchOperation.execute(q);
+    SearchResponse sr = searchOperation.execute(q);
+    sr = SearchResponse.sort(sr);
     Assert.assertNotNull(sr);
-    Assert.assertNotNull(sr.getEntry());
-    TestUtils.assertEquals(testLdapEntry, sr.getEntry());
+    Assert.assertEquals(sr.entrySize(), 5);
+    final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
+    TestUtils.assertEquals(testLdapEntries[0], l.get(0));
+    TestUtils.assertEquals(testLdapEntries[1], l.get(1));
+    TestUtils.assertEquals(testLdapEntries[2], l.get(2));
+    TestUtils.assertEquals(testLdapEntries[3], l.get(3));
+    TestUtils.assertEquals(testLdapEntries[4], l.get(4));
+  }
+
+
+  @Test(groups = "templates")
+  public void searchFrom()
+  {
+    final Query q = new Query("0846");
+    q.setFromResult(2);
+    q.setReturnAttributes(testLdapEntries[0].getAttributeNames());
+
+    SearchResponse sr = searchOperation.execute(q);
+    sr = SearchResponse.sort(sr);
+    Assert.assertNotNull(sr);
+    Assert.assertEquals(sr.entrySize(), 3);
+    final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
+    TestUtils.assertEquals(testLdapEntries[2], l.get(0));
+    TestUtils.assertEquals(testLdapEntries[3], l.get(1));
+    TestUtils.assertEquals(testLdapEntries[4], l.get(2));
+  }
+
+
+  @Test(groups = "templates")
+  public void searchTo()
+  {
+    final Query q = new Query("0846");
+    q.setToResult(3);
+    q.setReturnAttributes(testLdapEntries[0].getAttributeNames());
+
+    SearchResponse sr = searchOperation.execute(q);
+    sr = SearchResponse.sort(sr);
+    Assert.assertNotNull(sr);
+    Assert.assertEquals(sr.entrySize(), 3);
+    final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
+    TestUtils.assertEquals(testLdapEntries[0], l.get(0));
+    TestUtils.assertEquals(testLdapEntries[1], l.get(1));
+    TestUtils.assertEquals(testLdapEntries[2], l.get(2));
+  }
+
+
+  @Test(groups = "templates")
+  public void searchFromTo()
+  {
+    final Query q = new Query("0846");
+    q.setFromResult(2);
+    q.setToResult(4);
+    q.setReturnAttributes(testLdapEntries[0].getAttributeNames());
+
+    SearchResponse sr = searchOperation.execute(q);
+    sr = SearchResponse.sort(sr);
+    Assert.assertNotNull(sr);
+    Assert.assertEquals(sr.entrySize(), 2);
+    final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
+    TestUtils.assertEquals(testLdapEntries[2], l.get(0));
+    TestUtils.assertEquals(testLdapEntries[3], l.get(1));
   }
 }

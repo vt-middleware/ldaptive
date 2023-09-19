@@ -157,9 +157,13 @@ public class SearchTemplatesOperation
     // iterate over all results and store each entry
     final SearchResponse result = new SearchResponse();
     for (SearchResponse res : responses) {
-      for (LdapEntry e : res.getEntries()) {
-        result.addEntries(e);
-        logger.debug("Search found: {}", e.getDn());
+      for (LdapEntry entry : res.getEntries()) {
+        if (result.getEntries().stream().noneMatch(e -> entry.getParsedDn().equals(e.getParsedDn()))) {
+          result.addEntries(entry);
+          logger.debug("Search found: {}", entry.getDn());
+        } else {
+          logger.debug("Search found duplicate: {}", entry.getDn());
+        }
       }
     }
 

@@ -16,6 +16,7 @@ import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.OctetStringType;
+import org.ldaptive.dn.Dn;
 
 /**
  * LDAP search result entry defined as:
@@ -52,6 +53,12 @@ public class LdapEntry extends AbstractMessage
 
   /** LDAP DN of the entry. */
   private String ldapDn;
+
+  /** Parsed LDAP DN. */
+  private Dn parsedDn;
+
+  /** Normalized LDAP DN. */
+  private String normalizedDn;
 
   /** LDAP attributes on the entry. */
   private Map<String, LdapAttribute> attributes = new LinkedHashMap<>();
@@ -91,6 +98,28 @@ public class LdapEntry extends AbstractMessage
 
 
   /**
+   * Returns the parsed ldap DN. Parsing is performed using {@link org.ldaptive.dn.DefaultDnParser}.
+   *
+   * @return  parsed ldap DN or null if {@link #ldapDn} is null or could not be parsed
+   */
+  public Dn getParsedDn()
+  {
+    return parsedDn;
+  }
+
+
+  /**
+   * Returns the normalized ldap DN. Normalization is performed using {@link org.ldaptive.dn.DefaultRDnNormalizer}.
+   *
+   * @return  normalized ldap DN or null if {@link #ldapDn} is null or could not be parsed
+   */
+  public String getNormalizedDn()
+  {
+    return normalizedDn;
+  }
+
+
+  /**
    * Sets the ldap DN.
    *
    * @param  dn  ldap DN
@@ -98,6 +127,16 @@ public class LdapEntry extends AbstractMessage
   public void setDn(final String dn)
   {
     ldapDn = dn;
+    if (ldapDn != null) {
+      try {
+        parsedDn = new Dn(ldapDn);
+      } catch (Exception e) {
+        parsedDn = null;
+      }
+      if (parsedDn != null) {
+        normalizedDn = parsedDn.format();
+      }
+    }
   }
 
 
@@ -239,9 +278,10 @@ public class LdapEntry extends AbstractMessage
     }
     if (o instanceof LdapEntry && super.equals(o)) {
       final LdapEntry v = (LdapEntry) o;
+      // compare normalizedDn if not null, else compare Dn
       return LdapUtils.areEqual(
-        ldapDn != null ? LdapUtils.toLowerCase(ldapDn) : null,
-        v.ldapDn != null ? LdapUtils.toLowerCase(v.ldapDn) : null) &&
+        normalizedDn != null ? normalizedDn : ldapDn,
+        normalizedDn != null ? v.normalizedDn : v.normalizedDn != null ? v.normalizedDn : v.ldapDn) &&
         LdapUtils.areEqual(attributes, v.attributes);
     }
     return false;
@@ -256,7 +296,7 @@ public class LdapEntry extends AbstractMessage
         HASH_CODE_SEED,
         getMessageID(),
         getControls(),
-        ldapDn != null ? LdapUtils.toLowerCase(ldapDn) : null,
+        normalizedDn != null ? normalizedDn : ldapDn,
         attributes);
   }
 

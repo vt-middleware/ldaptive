@@ -43,7 +43,7 @@ public abstract class AbstractTest
     final AddOperation create = new AddOperation(cf);
     create.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
     if (!entryExists(cf, entry)) {
-      throw new IllegalStateException("Could not add entry to LDAP");
+      throw new IllegalStateException("Could not add entry to LDAP: " + entry.getDn());
     }
     if (TestControl.isActiveDirectory() && entry.getAttribute("userPassword") != null) {
       final ModifyOperation modify = new ModifyOperation(cf);

@@ -1,18 +1,19 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
+import org.ldaptive.dn.Dn;
 
 /**
  * Response that encapsulates the result elements of a search request. This class formally decodes the SearchResultDone
@@ -46,10 +47,10 @@ public class SearchResponse extends AbstractResult
   private static final DERPath REFERRAL_PATH = new DERPath("/SEQ/APP(5)/CTX(3)/OCTSTR[0]");
 
   /** Entries contained in this result. */
-  private final Map<String, LdapEntry> resultEntries = new LinkedHashMap<>();
+  private final List<LdapEntry> resultEntries = new ArrayList<>();
 
   /** Search result references contained in this result. */
-  private final Set<SearchResultReference> resultReferences = new LinkedHashSet<>();
+  private final List<SearchResultReference> resultReferences = new ArrayList<>();
 
 
   /**
@@ -94,7 +95,7 @@ public class SearchResponse extends AbstractResult
    */
   public Collection<LdapEntry> getEntries()
   {
-    return resultEntries.values();
+    return resultEntries;
   }
 
 
@@ -109,20 +110,24 @@ public class SearchResponse extends AbstractResult
     if (resultEntries.isEmpty()) {
       return null;
     }
-    return resultEntries.values().iterator().next();
+    return resultEntries.iterator().next();
   }
 
 
   /**
-   * Returns the ldap in this result with the supplied DN.
+   * Returns the ldap entry in this result with the supplied DN. DN comparison is attempted with a normalized string
+   * comparison, see {@link org.ldaptive.dn.DefaultRDnNormalizer}.
    *
    * @param  dn  of the entry to return
    *
-   * @return  search result entry
+   * @return  search result entry or null if no entry matching the dn could be found
+   *
+   * @throws  IllegalArgumentException  if the supplied dn cannot be normalized
    */
   public LdapEntry getEntry(final String dn)
   {
-    return resultEntries.get(LdapUtils.toLowerCase(dn));
+    final String compareDn = new Dn(dn).format();
+    return resultEntries.stream().filter(e -> compareDn.equals(e.getNormalizedDn())).findAny().orElse(null);
   }
 
 
@@ -133,7 +138,7 @@ public class SearchResponse extends AbstractResult
    */
   public Set<String> getEntryDns()
   {
-    return resultEntries.keySet();
+    return resultEntries.stream().map(LdapEntry::getDn).collect(Collectors.toUnmodifiableSet());
   }
 
 
@@ -144,7 +149,7 @@ public class SearchResponse extends AbstractResult
    */
   public void addEntries(final LdapEntry... entry)
   {
-    Stream.of(entry).forEach(e -> resultEntries.put(LdapUtils.toLowerCase(e.getDn()), e));
+    Stream.of(entry).forEach(resultEntries::add);
   }
 
 
@@ -155,7 +160,7 @@ public class SearchResponse extends AbstractResult
    */
   public void addEntries(final Collection<LdapEntry> entries)
   {
-    entries.forEach(e -> resultEntries.put(LdapUtils.toLowerCase(e.getDn()), e));
+    entries.forEach(resultEntries::add);
   }
 
 
@@ -252,9 +257,9 @@ public class SearchResponse extends AbstractResult
     }
 
     int i = 0;
-    for (Map.Entry<String, LdapEntry> e : resultEntries.entrySet()) {
+    for (LdapEntry e : resultEntries) {
       if (i >= fromIndex && i < toIndex) {
-        result.addEntries(e.getValue());
+        result.addEntries(e);
       }
       i++;
     }
@@ -297,9 +302,7 @@ public class SearchResponse extends AbstractResult
   @Override
   public String toString()
   {
-    return super.toString() + ", " +
-      "entries=" + (resultEntries != null ? resultEntries.values() : null) + ", " +
-      "references=" + resultReferences;
+    return super.toString() + ", entries=" + resultEntries + ", references=" + resultReferences;
   }
 
 

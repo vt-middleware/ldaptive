@@ -34,7 +34,7 @@ public class Dn
 
 
   /**
-   * Creates a new DN with the supplied string.
+   * Creates a new DN with the supplied string. Uses a {@link DefaultDnParser} by default.
    *
    * @param  dn  to parse
    */
@@ -173,7 +173,7 @@ public class Dn
    *
    * @param  name  of the RDN
    *
-   * @return  RDN value
+   * @return  RDN values for the supplied name
    */
   public Collection<String> getValues(final String name)
   {
@@ -209,13 +209,13 @@ public class Dn
 
 
   /**
-   * Produces a string representation of this DN.
+   * Produces a string representation of this DN. Uses a {@link DefaultRDnNormalizer} by default.
    *
    * @return  DN string
    */
   public String format()
   {
-    return format(null);
+    return format(new DefaultRDnNormalizer());
   }
 
 
