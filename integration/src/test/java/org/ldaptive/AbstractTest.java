@@ -1,8 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.security.Security;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.ldaptive.ad.UnicodePwdAttribute;
 import org.ldaptive.dn.Dn;
 
@@ -22,11 +20,6 @@ public abstract class AbstractTest
 
   /** Timeout for threaded tests. */
   public static final int TEST_TIME_OUT = 60000;
-
-  static {
-    // Add the BC provider
-    Security.addProvider(new BouncyCastleProvider());
-  }
 
 
   /**
