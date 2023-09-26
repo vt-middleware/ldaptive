@@ -4,6 +4,7 @@ package org.ldaptive.dn;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.ldaptive.LdapUtils;
 
@@ -11,16 +12,88 @@ import org.ldaptive.LdapUtils;
  * Normalizes a RDN by performing the following operations:
  * <ul>
  *   <li>lowercase attribute names</li>
+ *   <li>lowercase attribute values</li>
+ *   <li>compress duplicate spaces in attribute values</li>
  *   <li>escape attribute value characters</li>
  *   <li>sort multi value RDNs by name</li>
  * </ul>
+ *
+ * This API provides properties to control attribute name normalization, attribute value normalization and attribute
+ * value escaping in order to customize the behavior. Note that attribute value normalization occurs before escaping.
+ *
  * @author  Middleware Services
  */
 public class DefaultRDnNormalizer implements RDnNormalizer
 {
 
-  /** Value escaper. */
-  private final AttributeValueEscaper valueEscaper;
+  /** Function that returns the value unchanged. */
+  public static final Function<String, String> NOOP = new Function<>() {
+    @Override
+    public String apply(final String s)
+    {
+      return s;
+    }
+
+    @Override
+    public String toString()
+    {
+      return "NOOP";
+    }
+  };
+
+  /** Function that lowercases the value. */
+  public static final Function<String, String> LOWERCASE = new Function<>() {
+    @Override
+    public String apply(final String s)
+    {
+      return LdapUtils.toLowerCase(s);
+    }
+
+    @Override
+    public String toString()
+    {
+      return "LOWERCASE";
+    }
+  };
+
+  /** Function that removes duplicate spaces from the value. */
+  public static final Function<String, String> COMPRESS = new Function<>() {
+    @Override
+    public String apply(final String s)
+    {
+      return LdapUtils.compressSpace(s, false);
+    }
+
+    @Override
+    public String toString()
+    {
+      return "COMPRESS";
+    }
+  };
+
+  /** Function that lowercases and removes duplicate spaces from the value. */
+  public static final Function<String, String> LOWERCASE_COMPRESS = new Function<>() {
+    @Override
+    public String apply(final String s)
+    {
+      return LdapUtils.toLowerCase(LdapUtils.compressSpace(s, false));
+    }
+
+    @Override
+    public String toString()
+    {
+      return "LOWERCASE_COMPRESS";
+    }
+  };
+
+  /** Attribute name function. */
+  private final Function<String, String> attributeNameFunction;
+
+  /** Attribute value function. */
+  private final Function<String, String> attributeValueFunction;
+
+  /** Attribute value escaper. */
+  private final AttributeValueEscaper attributeValueEscaper;
 
 
   /**
@@ -28,7 +101,7 @@ public class DefaultRDnNormalizer implements RDnNormalizer
    */
   public DefaultRDnNormalizer()
   {
-    this(new DefaultAttributeValueEscaper());
+    this(new DefaultAttributeValueEscaper(), LOWERCASE, LOWERCASE_COMPRESS);
   }
 
 
@@ -39,7 +112,25 @@ public class DefaultRDnNormalizer implements RDnNormalizer
    */
   public DefaultRDnNormalizer(final AttributeValueEscaper escaper)
   {
-    valueEscaper = escaper;
+    this(escaper, LOWERCASE, LOWERCASE_COMPRESS);
+  }
+
+
+  /**
+   * Creates a new default RDN normalizer.
+   *
+   * @param  escaper  to escape attribute values
+   * @param  nameNormalizer  to normalize attribute names
+   * @param  valueNormalizer  to normalize attribute values
+   */
+  public DefaultRDnNormalizer(
+    final AttributeValueEscaper escaper,
+    final Function<String, String> nameNormalizer,
+    final Function<String, String> valueNormalizer)
+  {
+    attributeValueEscaper = escaper;
+    attributeNameFunction = nameNormalizer;
+    attributeValueFunction = valueNormalizer;
   }
 
 
@@ -50,7 +141,29 @@ public class DefaultRDnNormalizer implements RDnNormalizer
    */
   public AttributeValueEscaper getValueEscaper()
   {
-    return valueEscaper;
+    return attributeValueEscaper;
+  }
+
+
+  /**
+   * Returns the attribute name function.
+   *
+   * @return  function for attribute names
+   */
+  public Function<String, String> getNameFunction()
+  {
+    return attributeNameFunction;
+  }
+
+
+  /**
+   * Returns the attribute value function.
+   *
+   * @return  function for attribute values
+   */
+  public Function<String, String> getValueFunction()
+  {
+    return attributeValueFunction;
   }
 
 
@@ -58,35 +171,22 @@ public class DefaultRDnNormalizer implements RDnNormalizer
   public RDn normalize(final RDn rdn)
   {
     final Set<NameValue> nameValues = rdn.getNameValues().stream()
-      .map(nv -> new NameValue(normalizeName(nv.getName()), normalizeValue(nv.getStringValue())))
+      .map(
+        nv -> new NameValue(
+          attributeNameFunction.apply(nv.getName()),
+          attributeValueEscaper.escape(attributeValueFunction.apply(nv.getStringValue()))))
       .sorted(Comparator.comparing(NameValue::getName))
       .collect(Collectors.toCollection(LinkedHashSet::new));
     return new RDn(nameValues);
   }
 
 
-  /**
-   * Lower cases the supplied name.
-   *
-   * @param  name  to normalize
-   *
-   * @return  normalized name
-   */
-  private String normalizeName(final String name)
+  @Override
+  public String toString()
   {
-    return LdapUtils.toLowerCase(name);
-  }
-
-
-  /**
-   * Escapes the supplied value.
-   *
-   * @param  value  to normalize
-   *
-   * @return  normalized value
-   */
-  private String normalizeValue(final String value)
-  {
-    return valueEscaper.escape(value);
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "attributeNameFunction=" + attributeNameFunction + ", " +
+      "attributeValueFunction=" + attributeValueFunction + ", " +
+      "attributeValueEscaper=" + attributeValueEscaper;
   }
 }

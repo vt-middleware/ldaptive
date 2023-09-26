@@ -262,6 +262,82 @@ public final class LdapUtils
 
 
   /**
+   * Removes the space character from both the beginning and end of the supplied value.
+   *
+   * @param  value  to trim space character from
+   *
+   * @return  trimmed value or same value if no trim was performed
+   */
+  public static String trimSpace(final String value)
+  {
+    if (value == null || value.isEmpty()) {
+      return value;
+    }
+
+    int startIndex = 0;
+    int endIndex = value.length();
+    while (startIndex < endIndex && value.charAt(startIndex) == ' ') {
+      startIndex++;
+    }
+    while (startIndex < endIndex && value.charAt(endIndex - 1) == ' ') {
+      endIndex--;
+    }
+    if (startIndex == 0 && endIndex == value.length()) {
+      return value;
+    }
+    return value.substring(startIndex, endIndex);
+  }
+
+
+  /**
+   * Changes the supplied value by replacing multiple spaces with a single space.
+   *
+   * @param  value  to compress spaces
+   * @param  trim  whether to remove any leading or trailing space characters
+   *
+   * @return  normalized value or value if no compress was performed
+   */
+  public static String compressSpace(final String value, final boolean trim)
+  {
+    if (value == null || value.isEmpty()) {
+      return value;
+    }
+
+    final StringBuilder sb = new StringBuilder();
+    boolean foundSpace = false;
+    for (int i = 0; i < value.length(); i++) {
+      final char ch = value.charAt(i);
+      if (ch == ' ') {
+        if (i == value.length() - 1) {
+          // last char is a space
+          sb.append(ch);
+        }
+        foundSpace = true;
+      } else {
+        if (foundSpace) {
+          sb.append(' ');
+        }
+        sb.append(ch);
+        foundSpace = false;
+      }
+    }
+
+    if (sb.length() == 0 && foundSpace) {
+      return trim ? "" : " ";
+    }
+    if (trim) {
+      if (sb.length() > 0 && sb.charAt(0) == ' ') {
+        sb.deleteCharAt(0);
+      }
+      if (sb.length() > 0 && sb.charAt(sb.length() - 1) == ' ') {
+        sb.deleteCharAt(sb.length() - 1);
+      }
+    }
+    return sb.toString();
+  }
+
+
+  /**
    * This will decode the supplied value as a base64 encoded string to a byte[]. Returns null if the supplied string is
    * null.
    *

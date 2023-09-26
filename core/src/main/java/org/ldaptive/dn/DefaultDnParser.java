@@ -37,7 +37,7 @@ public final class DefaultDnParser implements DnParser
    */
   public List<RDn> parse(final String dn)
   {
-    if (dn.trim().isEmpty()) {
+    if (LdapUtils.trimSpace(dn).isEmpty()) {
       return Collections.emptyList();
     }
 
@@ -46,7 +46,7 @@ public final class DefaultDnParser implements DnParser
     int pos = 0;
     while (pos < dn.length()) {
       final int[] endAttrNamePos = readToChar(dn, new char[] {'='}, pos);
-      final String attrName = dn.substring(pos, endAttrNamePos[0]).trim();
+      final String attrName = LdapUtils.trimSpace(dn.substring(pos, endAttrNamePos[0]));
       if (attrName.isEmpty()) {
         throw new IllegalArgumentException("Invalid RDN: no attribute name found for " + dn);
       } else if (attrName.contains("+") || attrName.contains(",")) {
@@ -59,7 +59,7 @@ public final class DefaultDnParser implements DnParser
       }
 
       final int[] endAttrValuePos = readToChar(dn, new char[] {'+', ','}, pos);
-      final String attrValue = dn.substring(pos, endAttrValuePos[0]).trim();
+      final String attrValue = LdapUtils.trimSpace(dn.substring(pos, endAttrValuePos[0]));
       if (attrValue.isEmpty()) {
         nameValues.add(new NameValue(attrName, ""));
       } else if (attrValue.startsWith("#")) {
