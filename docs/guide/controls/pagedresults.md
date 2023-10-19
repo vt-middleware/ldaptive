@@ -10,7 +10,7 @@ Request that the server return results in batches of a specific size. See [RFC 2
 
 ## Using the Paged Results Client
 
-The PagedResultClient encapsulates the cookie management associated with this control and exposes convenient methods for common operations.
+The PagedResultClient encapsulates the cookie management associated with this control and exposes convenient methods for common operations. Note that you must use a SingleConnectionFactory with this client as each search request must occur on the same connection. In addition, the connection factory should not be used for other purposes while in use by the PagedResultsClient.
 
 ### Perform paged search to completion
 
