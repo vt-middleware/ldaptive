@@ -38,7 +38,7 @@ public class CompareRequest extends AbstractRequestMessage
   /**
    * Default constructor.
    */
-  private CompareRequest() {}
+  public CompareRequest() {}
 
 
   /**
@@ -68,6 +68,17 @@ public class CompareRequest extends AbstractRequestMessage
 
 
   /**
+   * Sets the DN.
+   *
+   * @param  dn  ldapDn to set
+   */
+  public void setDn(final String dn)
+  {
+    ldapDn = dn;
+  }
+
+
+  /**
    * Returns the name.
    *
    * @return  name
@@ -79,6 +90,17 @@ public class CompareRequest extends AbstractRequestMessage
 
 
   /**
+   * Sets the name.
+   *
+   * @param  name  attributeDesc to set
+   */
+  public void setName(final String name)
+  {
+    attributeDesc = name;
+  }
+
+
+  /**
    * Returns the value.
    *
    * @return  value
@@ -86,6 +108,17 @@ public class CompareRequest extends AbstractRequestMessage
   public String getValue()
   {
     return assertionValue;
+  }
+
+
+  /**
+   * Sets the value.
+   *
+   * @param  value  assertionValue to set
+   */
+  public void setValue(final String value)
+  {
+    assertionValue = value;
   }
 
 
