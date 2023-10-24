@@ -59,6 +59,17 @@ public class NotFilter implements FilterSet
   }
 
 
+  /**
+   * Returns the component of this filter.
+   *
+   * @return  filter component
+   */
+  public Filter getComponent()
+  {
+    return filterComponent;
+  }
+
+
   @Override
   public DEREncoder getEncoder()
   {

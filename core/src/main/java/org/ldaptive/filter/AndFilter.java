@@ -3,6 +3,7 @@ package org.ldaptive.filter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ConstructedDEREncoder;
@@ -57,6 +58,17 @@ public class AndFilter implements FilterSet
   public void add(final Filter component)
   {
     filterComponents.add(component);
+  }
+
+
+  /**
+   * Returns the components of this filter.
+   *
+   * @return  filter components
+   */
+  public List<Filter> getComponents()
+  {
+    return Collections.unmodifiableList(filterComponents);
   }
 
 
