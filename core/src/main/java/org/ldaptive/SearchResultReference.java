@@ -18,7 +18,8 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * <pre>
    SearchResultReference ::= [APPLICATION 19] SEQUENCE
-     SIZE (1..MAX) OF uri URI * </pre>
+     SIZE (1..MAX) OF uri URI
+ * </pre>
  *
  * @author  Middleware Services
  */
