@@ -58,7 +58,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>2.0.9</org.slf4j.version>
-    <io.netty.version>4.1.97.Final</io.netty.version>
+    <io.netty.version>4.1.100.Final</io.netty.version>
     <org.springframework.version>5.3.30</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.2.0</japicmp.oldVersion>
