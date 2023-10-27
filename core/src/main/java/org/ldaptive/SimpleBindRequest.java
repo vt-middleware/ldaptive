@@ -65,7 +65,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
   protected void setLdapDN(final String name)
   {
     if (name == null || name.isEmpty()) {
-      throw new IllegalArgumentException("name cannot be null or empty");
+      throw new IllegalArgumentException("bind request name cannot be null or empty");
     }
     ldapDN = name;
   }
@@ -81,7 +81,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
   protected void setPassword(final String pass)
   {
     if (pass == null || pass.isEmpty()) {
-      throw new IllegalArgumentException("password cannot be null or empty");
+      throw new IllegalArgumentException("bind request password cannot be null or empty");
     }
     password = pass;
   }
