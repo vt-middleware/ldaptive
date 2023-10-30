@@ -30,6 +30,9 @@ public class VirtualListViewParams
   /** VLV assertion value; mutually exclusive with the target offset. */
   private final String assertionValue;
 
+  /** Cookie manager for VLV context ID. */
+  private final CookieManager cookieManager;
+
 
   /**
    * Creates a new virtual list view params.
@@ -44,6 +47,25 @@ public class VirtualListViewParams
     beforeCount = before;
     afterCount = after;
     assertionValue = null;
+    cookieManager = new DefaultCookieManager();
+  }
+
+
+  /**
+   * Creates a new virtual list view params.
+   *
+   * @param  offset  target offset
+   * @param  before  before count
+   * @param  after  after count
+   * @param  manager  cookie manager
+   */
+  public VirtualListViewParams(final int offset, final int before, final int after, final CookieManager manager)
+  {
+    targetOffset = offset;
+    beforeCount = before;
+    afterCount = after;
+    assertionValue = null;
+    cookieManager = manager;
   }
 
 
@@ -60,6 +82,25 @@ public class VirtualListViewParams
     beforeCount = before;
     afterCount = after;
     targetOffset = 0;
+    cookieManager = new DefaultCookieManager();
+  }
+
+
+  /**
+   * Creates a new virtual list view params.
+   *
+   * @param  assertion  assertion value
+   * @param  before  before count
+   * @param  after  after count
+   * @param  manager  cookie manager
+   */
+  public VirtualListViewParams(final String assertion, final int before, final int after, final CookieManager manager)
+  {
+    assertionValue = assertion;
+    beforeCount = before;
+    afterCount = after;
+    targetOffset = 0;
+    cookieManager = manager;
   }
 
 
@@ -108,6 +149,17 @@ public class VirtualListViewParams
 
 
   /**
+   * Returns the cookie manager.
+   *
+   * @return  cookie manager
+   */
+  public CookieManager getCookieManager()
+  {
+    return cookieManager;
+  }
+
+
+  /**
    * Creates a new virtual list view request control using the properties in this VLV params.
    *
    * @param  critical  whether the returned control is critical
@@ -117,9 +169,29 @@ public class VirtualListViewParams
   public VirtualListViewRequestControl createRequestControl(final boolean critical)
   {
     if (assertionValue != null) {
-      return new VirtualListViewRequestControl(assertionValue, beforeCount, afterCount, critical);
+      return new VirtualListViewRequestControl(
+        assertionValue, beforeCount, afterCount, cookieManager.readCookie(), critical);
     } else {
-      return new VirtualListViewRequestControl(targetOffset, beforeCount, afterCount, critical);
+      return new VirtualListViewRequestControl(
+        targetOffset, beforeCount, afterCount, cookieManager.readCookie(), critical);
+    }
+  }
+
+
+  /**
+   * Creates a new virtual list view request control using the properties in this VLV params.
+   *
+   * @param  critical  whether the returned control is critical
+   * @param  manager  cookie manager
+   *
+   * @return  virtual list view request control
+   */
+  public VirtualListViewRequestControl createRequestControl(final boolean critical, final CookieManager manager)
+  {
+    if (assertionValue != null) {
+      return new VirtualListViewRequestControl(assertionValue, beforeCount, afterCount, manager.readCookie(), critical);
+    } else {
+      return new VirtualListViewRequestControl(targetOffset, beforeCount, afterCount, manager.readCookie(), critical);
     }
   }
 
@@ -159,7 +231,9 @@ public class VirtualListViewParams
     } else {
       sb.append("targetOffset=").append(targetOffset).append(", ");
     }
-    sb.append("beforeCount=").append(beforeCount).append(", ").append("afterCount=").append(afterCount).append("]");
+    sb.append("beforeCount=").append(beforeCount).append(", ");
+    sb.append("afterCount=").append(afterCount).append(", ");
+    sb.append("cookieManager=").append(cookieManager).append("]");
     return sb.toString();
   }
 }

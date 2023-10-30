@@ -100,6 +100,26 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
    * @param  offset  target entry offset
    * @param  before  number of entries before the target
    * @param  after  number of entries after the target
+   * @param  context  server context id
+   * @param  critical  whether this control is critical
+   */
+  public VirtualListViewRequestControl(
+    final int offset,
+    final int before,
+    final int after,
+    final byte[] context,
+    final boolean critical)
+  {
+    this(offset, before, after, 0, context, critical);
+  }
+
+
+  /**
+   * Creates a new virtual list view request control.
+   *
+   * @param  offset  target entry offset
+   * @param  before  number of entries before the target
+   * @param  after  number of entries after the target
    * @param  count  server estimate of the number of entries
    * @param  context  server context id
    */
@@ -413,7 +433,8 @@ public class VirtualListViewRequestControl extends AbstractControl implements Re
       "afterCount=" + afterCount + ", " +
       "targetOffset=" + targetOffset + ", " +
       "contentCount=" + contentCount + ", " +
-      "assertionValue=" + LdapUtils.base64Encode(contextID) + "]";
+      "assertionValue=" + assertionValue + ", " +
+      "contextID=" + LdapUtils.base64Encode(contextID) + "]";
   }
 
 

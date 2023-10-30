@@ -1,6 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.ldaptive.AbstractSearchOperationFactory;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -8,6 +11,7 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.control.PagedResultsControl;
+import org.ldaptive.control.RequestControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,7 +118,14 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
     throws LdapException
   {
     final SearchOperation search = createSearchOperation();
-    request.setControls(new PagedResultsControl(resultSize, manager.readCookie(), true));
+    if (request.getControls() != null && request.getControls().length > 0) {
+      final List<RequestControl> requestControls = Arrays.stream(
+        request.getControls()).filter(c -> !(c instanceof PagedResultsControl)).collect(Collectors.toList());
+      requestControls.add(new PagedResultsControl(resultSize, manager.readCookie(), true));
+      request.setControls(requestControls.toArray(RequestControl[]::new));
+    } else {
+      request.setControls(new PagedResultsControl(resultSize, manager.readCookie(), true));
+    }
     final SearchResponse result = search.execute(request);
     final byte[] cookie = getPagedResultsCookie(result);
     if (cookie != null) {
@@ -142,8 +153,8 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
    * way:
    *
    * <ul>
-   *   <li>{@link SearchRequest#setControls( org.ldaptive.control.RequestControl...)} is invoked with {@link
-   *     PagedResultsControl}</li>
+   *   <li>{@link SearchRequest#setControls( RequestControl...)} is invoked with {@link PagedResultsControl} and any
+   *   other controls previously set on the search request.</li>
    * </ul>
    *
    * <p>This method will continue to execute search operations until all paged search results have been retrieved from
@@ -168,8 +179,8 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
    * way:
    *
    * <ul>
-   *   <li>{@link SearchRequest#setControls( org.ldaptive.control.RequestControl...)} is invoked with {@link
-   *     PagedResultsControl}</li>
+   *   <li>{@link SearchRequest#setControls( RequestControl...)} is invoked with {@link PagedResultsControl} and any
+   *   other controls previously set on the search request.</li>
    * </ul>
    *
    * <p>This method will continue to execute search operations until all paged search results have been retrieved from
@@ -180,7 +191,7 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
    * successful search, if the response contains a cookie.</p>
    *
    * <p>This method builds a synthetic response which contains the results of all search operations. Any ordering
-   * imposed by result handlers will be lost by this process.</p>
+   * imposed by result handlers may be lost by this process.</p>
    *
    * @param  request  search request to execute
    * @param  manager  for reading and writing cookies
@@ -201,7 +212,14 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
         combinedResults.addEntries(result.getEntries());
         combinedResults.addReferences(result.getReferences());
       }
-      request.setControls(new PagedResultsControl(resultSize, cookie, true));
+      if (request.getControls() != null && request.getControls().length > 0) {
+        final List<RequestControl> requestControls = Arrays.stream(
+          request.getControls()).filter(c -> !(c instanceof PagedResultsControl)).collect(Collectors.toList());
+        requestControls.add(new PagedResultsControl(resultSize, cookie, true));
+        request.setControls(requestControls.toArray(RequestControl[]::new));
+      } else {
+        request.setControls(new PagedResultsControl(resultSize, cookie, true));
+      }
       result = search.execute(request);
       cookie = getPagedResultsCookie(result);
       if (cookie != null) {
@@ -211,6 +229,19 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
     result.addEntries(combinedResults.getEntries());
     result.addReferences(combinedResults.getReferences());
     return result;
+  }
+
+
+  /**
+   * Returns the {@link PagedResultsControl} in the supplied response.
+   *
+   * @param  result  to inspect for a response control
+   *
+   * @return  paged results response control or null if it does not exist
+   */
+  public PagedResultsControl getResponseControl(final SearchResponse result)
+  {
+    return (PagedResultsControl) result.getControl(PagedResultsControl.OID);
   }
 
 
