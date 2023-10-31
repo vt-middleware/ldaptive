@@ -103,6 +103,6 @@ public class NotFilter implements FilterSet
   @Override
   public String toString()
   {
-    return getClass().getName() + "@" + hashCode() + "::" + "filterComponent=" + filterComponent;
+    return getClass().getName() + "@" + hashCode() + "::filterComponent=" + filterComponent;
   }
 }

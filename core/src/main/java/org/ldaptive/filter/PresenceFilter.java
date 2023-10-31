@@ -73,4 +73,10 @@ public class PresenceFilter implements Filter
   {
     return LdapUtils.computeHashCode(HASH_CODE_SEED, attributeDesc);
   }
+
+  @Override
+  public String toString()
+  {
+    return getClass().getName() + "@" + hashCode() + "::attributeDesc=" + attributeDesc;
+  }
 }
