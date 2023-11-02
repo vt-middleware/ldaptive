@@ -18,38 +18,72 @@ public class ConnectionConfig extends AbstractConfig
 
   /** Predicate that attempts a single reconnect. */
   public static final Predicate<RetryMetadata> ONE_RECONNECT_ATTEMPT =
-    metadata -> metadata instanceof ClosedRetryMetadata && metadata.getAttempts() == 0;
+    new Predicate<>() {
+      @Override
+      public boolean test(final RetryMetadata metadata)
+      {
+        return metadata instanceof ClosedRetryMetadata && metadata.getAttempts() == 0;
+      }
+
+      @Override
+      public String toString()
+      {
+        return "ONE_RECONNECT_ATTEMPT";
+      }
+    };
 
   /** Predicate that attempts to reconnect forever, waiting for 5 seconds after the first attempt. */
   public static final Predicate<RetryMetadata> INFINITE_RECONNECT_ATTEMPTS =
-    metadata -> {
-      if (metadata instanceof ClosedRetryMetadata) {
-        if (metadata.getAttempts() > 0) {
-          try {
-            // CheckStyle:MagicNumber OFF
-            Thread.sleep(Duration.ofSeconds(5).toMillis());
-            // CheckStyle:MagicNumber ON
-          } catch (InterruptedException ignored) {}
+    new Predicate<>() {
+      @Override
+      public boolean test(final RetryMetadata metadata)
+      {
+        if (metadata instanceof ClosedRetryMetadata) {
+          if (metadata.getAttempts() > 0) {
+            try {
+              // CheckStyle:MagicNumber OFF
+              Thread.sleep(Duration.ofSeconds(5).toMillis());
+              // CheckStyle:MagicNumber ON
+            } catch (InterruptedException ignored) {
+            }
+          }
+          return true;
         }
-        return true;
+        return false;
       }
-      return false;
+
+      @Override
+      public String toString()
+      {
+        return "INFINITE_RECONNECT_ATTEMPTS";
+      }
     };
 
   /** Predicate that attempts to reconnect forever, backing off in 5 second intervals after the first attempt. */
   public static final Predicate<RetryMetadata> INFINITE_RECONNECT_ATTEMPTS_WITH_BACKOFF =
-    metadata -> {
-      if (metadata instanceof ClosedRetryMetadata) {
-        if (metadata.getAttempts() > 0) {
-          try {
-            // CheckStyle:MagicNumber OFF
-            Thread.sleep(Duration.ofSeconds(5).multipliedBy(metadata.getAttempts()).toMillis());
-            // CheckStyle:MagicNumber ON
-          } catch (InterruptedException ignored) {}
+    new Predicate<>() {
+      @Override
+      public boolean test(final RetryMetadata metadata)
+      {
+        if (metadata instanceof ClosedRetryMetadata) {
+          if (metadata.getAttempts() > 0) {
+            try {
+              // CheckStyle:MagicNumber OFF
+              Thread.sleep(Duration.ofSeconds(5).multipliedBy(metadata.getAttempts()).toMillis());
+              // CheckStyle:MagicNumber ON
+            } catch (InterruptedException ignored) {
+            }
+          }
+          return true;
         }
-        return true;
+        return false;
       }
-      return false;
+
+      @Override
+      public String toString()
+      {
+        return "INFINITE_RECONNECT_ATTEMPTS_WITH_BACKOFF";
+      }
     };
 
   /** URL to the LDAP(s). */

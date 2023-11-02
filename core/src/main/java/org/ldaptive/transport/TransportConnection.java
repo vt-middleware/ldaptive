@@ -3,6 +3,7 @@ package org.ldaptive.transport;
 
 import java.time.Instant;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Predicate;
 import org.ldaptive.ActivePassiveConnectionStrategy;
 import org.ldaptive.ConnectException;
 import org.ldaptive.Connection;
@@ -60,7 +61,19 @@ public abstract class TransportConnection implements Connection
     connectionStrategy = connectionConfig.getConnectionStrategy();
     synchronized (connectionStrategy) {
       if (!connectionStrategy.isInitialized()) {
-        connectionStrategy.initialize(connectionConfig.getLdapUrl(), this::test);
+        connectionStrategy.initialize(connectionConfig.getLdapUrl(), new Predicate<>() {
+          @Override
+          public boolean test(final LdapURL url)
+          {
+            return TransportConnection.this.test(url);
+          }
+
+          @Override
+          public String toString()
+          {
+            return "DEFAULT_ACTIVATE_CONDITION";
+          }
+        });
       }
     }
   }

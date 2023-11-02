@@ -32,8 +32,19 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
   private Predicate<LdapURL> activateCondition;
 
   /** Condition used to determine whether to test an inactive URL. */
-  private Predicate<LdapURL> retryCondition = url -> Instant.now().isAfter(
-    url.getRetryMetadata().getFailureTime().plus(LdapURLActivatorService.getPeriod()));
+  private Predicate<LdapURL> retryCondition = new Predicate<>() {
+    @Override
+    public boolean test(final LdapURL url)
+    {
+      return Instant.now().isAfter(url.getRetryMetadata().getFailureTime().plus(LdapURLActivatorService.getPeriod()));
+    }
+
+    @Override
+    public String toString()
+    {
+      return "DEFAULT_RETRY_CONDITION";
+    }
+  };
 
 
   @Override
