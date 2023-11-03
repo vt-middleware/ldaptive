@@ -24,7 +24,7 @@ public class Authenticator
 {
 
   /** NoOp entry resolver. */
-  private static final EntryResolver NOOP_RESOLVER = new NoOpEntryResolver();
+  private static final EntryResolver NO_OP_RESOLVER = new NoOpEntryResolver();
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -500,7 +500,7 @@ public class Authenticator
           er = new SearchEntryResolver();
         }
       } else {
-        er = NOOP_RESOLVER;
+        er = NO_OP_RESOLVER;
       }
       try {
         entry = er.resolve(criteria, response);
@@ -510,8 +510,8 @@ public class Authenticator
       }
     }
     if (entry == null) {
-      entry = NOOP_RESOLVER.resolve(criteria, response);
-      logger.trace("resolved entry={} with resolver={}", entry, NOOP_RESOLVER);
+      entry = NO_OP_RESOLVER.resolve(criteria, response);
+      logger.trace("resolved entry={} with resolver={}", entry, NO_OP_RESOLVER);
     }
     return entry;
   }
