@@ -241,7 +241,7 @@ public class DefaultSearchOperationHandle
     if (onReference != null) {
       for (SearchReferenceHandler func : onReference) {
         try {
-          func.accept(r.getUris());
+          func.accept(r);
         } catch (Exception ex) {
           logger.warn("Reference consumer {} in handle {} threw an exception", func, this, ex);
         }

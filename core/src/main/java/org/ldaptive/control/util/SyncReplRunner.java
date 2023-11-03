@@ -12,6 +12,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Result;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResultReference;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
 import org.ldaptive.transport.Transport;
@@ -83,6 +84,9 @@ public class SyncReplRunner
 
   /** Invoked when an entry is received. */
   private Consumer<LdapEntry> onEntry;
+
+  /** Invoked when a reference is received. */
+  private Consumer<SearchResultReference> onReference;
 
   /** Invoked when a result is received. */
   private Consumer<Result> onResult;
@@ -174,6 +178,17 @@ public class SyncReplRunner
 
 
   /**
+   * Sets the onReference consumer.
+   *
+   * @param  consumer  to invoke when a reference is received
+   */
+  public void setOnReference(final Consumer<SearchResultReference> consumer)
+  {
+    onReference = consumer;
+  }
+
+
+  /**
    * Sets the onResult consumer.
    *
    * @param  consumer  to invoke when a result is received
@@ -212,6 +227,7 @@ public class SyncReplRunner
       reconnectWait);
     syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
     syncReplClient.setOnEntry(onEntry);
+    syncReplClient.setOnReference(onReference);
     syncReplClient.setOnResult(onResult);
     syncReplClient.setOnMessage(onMessage);
     syncReplClient.setOnException(onException);
@@ -309,6 +325,7 @@ public class SyncReplRunner
       "cookieManager=" + cookieManager + ", " +
       "onStart=" + onStart + ", " +
       "onEntry=" + onEntry + ", " +
+      "onReference=" + onReference + ", " +
       "onResult=" + onResult + ", " +
       "onMessage=" + onMessage + ", " +
       "started=" + started;

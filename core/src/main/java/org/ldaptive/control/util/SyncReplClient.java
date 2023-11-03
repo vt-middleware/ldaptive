@@ -9,6 +9,7 @@ import org.ldaptive.Result;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResultReference;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.control.SyncStateControl;
@@ -34,11 +35,17 @@ public class SyncReplClient
   /** Controls which mode the sync repl control should use. */
   private final boolean refreshAndPersist;
 
+  /** Controls the sync repl request reload hint. */
+  private final boolean reloadHint;
+
   /** Search operation handle. */
   private SearchOperationHandle handle;
 
   /** Invoked when an entry is received. */
   private Consumer<LdapEntry> onEntry;
+
+  /** Invoked when a reference is received. */
+  private Consumer<SearchResultReference> onReference;
 
   /** Invoked when a result is received. */
   private Consumer<Result> onResult;
@@ -61,8 +68,22 @@ public class SyncReplClient
    */
   public SyncReplClient(final ConnectionFactory cf, final boolean persist)
   {
+    this(cf, persist, false);
+  }
+
+
+  /**
+   * Creates a new sync repl client.
+   *
+   * @param  cf  to get a connection from
+   * @param  persist  whether to refresh and persist or just refresh
+   * @param  hint  sync repl request reload hint
+   */
+  public SyncReplClient(final ConnectionFactory cf, final boolean persist, final boolean hint)
+  {
     factory = cf;
     refreshAndPersist = persist;
+    reloadHint = hint;
   }
 
 
@@ -85,6 +106,17 @@ public class SyncReplClient
   public void setOnEntry(final Consumer<LdapEntry> consumer)
   {
     onEntry = consumer;
+  }
+
+
+  /**
+   * Sets the onReference consumer.
+   *
+   * @param  consumer  to invoke when a reference is received
+   */
+  public void setOnReference(final Consumer<SearchResultReference> consumer)
+  {
+    onReference = consumer;
   }
 
 
@@ -162,6 +194,7 @@ public class SyncReplClient
       new SyncRequestControl(
         refreshAndPersist ? SyncRequestControl.Mode.REFRESH_AND_PERSIST : SyncRequestControl.Mode.REFRESH_ONLY,
         manager.readCookie(),
+        reloadHint,
         true));
 
     final SearchOperation search = new SearchOperation(factory, request);
@@ -222,6 +255,30 @@ public class SyncReplClient
         }
       }
       return null;
+    });
+    search.setReferenceHandlers(reference -> {
+      logger.debug("Received {}", reference);
+      if (reference.getControl(SyncStateControl.OID) != null) {
+        final SyncStateControl syncStateControl = (SyncStateControl) reference.getControl(SyncStateControl.OID);
+        final byte[] cookie = syncStateControl.getCookie();
+        if (cookie != null) {
+          try {
+            manager.writeCookie(cookie);
+          } catch (Exception e) {
+            logger.warn("Unable to write cookie", e);
+          }
+        }
+      }
+      try {
+        onReference.accept(reference);
+      } catch (Exception e) {
+        logger.warn("Unable to process reference {}", reference);
+        try {
+          onException.accept(e);
+        } catch (Exception ex) {
+          logger.warn("Unable to process reference exception", ex);
+        }
+      }
     });
     search.setIntermediateResponseHandlers(response -> {
       if (SyncInfoMessage.OID.equals(response.getResponseName())) {

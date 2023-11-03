@@ -1609,7 +1609,7 @@ public class SearchOperationTest extends AbstractTest
       .config(cc)
       .build();
     final SearchOperation search = new SearchOperation(cf);
-    search.setReferenceHandlers(uris -> refs.addAll(Arrays.asList(uris)));
+    search.setReferenceHandlers(reference -> refs.addAll(Arrays.asList(reference.getUris())));
     SearchResponse response = search.execute(request);
     Assert.assertTrue(response.entrySize() > 0);
     Assert.assertTrue(refs.size() > 0);
@@ -1717,7 +1717,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     search.setSearchResultHandlers(new PrimaryGroupIdHandler());
     search.setEntryHandlers(new ObjectSidHandler(), new ObjectGuidHandler());
-    search.setReferenceHandlers(uris -> refs.addAll(Arrays.asList(uris)));
+    search.setReferenceHandlers(reference -> refs.addAll(Arrays.asList(reference.getUris())));
     SearchResponse response = search.execute(request);
     Assert.assertTrue(response.entrySize() > 0);
     Assert.assertTrue(refs.size() > 0);
