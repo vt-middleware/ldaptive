@@ -26,21 +26,6 @@ import org.ldaptive.LdapUtils;
 public class DefaultRDnNormalizer implements RDnNormalizer
 {
 
-  /** Function that returns the value unchanged. */
-  public static final Function<String, String> NOOP = new Function<>() {
-    @Override
-    public String apply(final String s)
-    {
-      return s;
-    }
-
-    @Override
-    public String toString()
-    {
-      return "NOOP";
-    }
-  };
-
   /** Function that lowercases the value. */
   public static final Function<String, String> LOWERCASE = new Function<>() {
     @Override

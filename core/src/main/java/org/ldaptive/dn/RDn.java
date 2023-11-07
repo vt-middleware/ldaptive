@@ -127,6 +127,17 @@ public class RDn
 
 
   /**
+   * Returns all the names in this RDN.
+   *
+   * @return  all names
+   */
+  public List<String> getNames()
+  {
+    return nameValues.stream().map(NameValue::getName).collect(Collectors.toUnmodifiableList());
+  }
+
+
+  /**
    * Returns the name values that match the supplied name.
    *
    * @param  name  to match
@@ -165,13 +176,52 @@ public class RDn
 
 
   /**
-   * Returns a string representation of this RDN, joining each name value pair with '+'.
+   * Returns whether this RDN contains any name values.
+   *
+   * @return  whether this RDN contains any name values
+   */
+  public boolean isEmpty()
+  {
+    return nameValues.isEmpty();
+  }
+
+
+  /**
+   * Returns whether the normalized format of the supplied RDN equals the normalized format of this RDN. See {@link
+   * DefaultRDnNormalizer}.
+   *
+   * @param  rdn  to compare
+   *
+   * @return  whether the supplied RDN is the same as this RDN
+   */
+  public boolean isSame(final RDn rdn)
+  {
+    return isSame(rdn, new DefaultRDnNormalizer());
+  }
+
+
+  /**
+   * Returns whether the normalized format of the supplied RDN equals the normalized format of this RDN.
+   *
+   * @param  normalizer  to use for comparison
+   * @param  rdn  to compare
+   *
+   * @return  whether the supplied RDN is the same as this RDN
+   */
+  public boolean isSame(final RDn rdn, final RDnNormalizer normalizer)
+  {
+    return format(normalizer).equals(rdn.format(normalizer));
+  }
+
+
+  /**
+   * Returns a string representation of this RDN. Uses a {@link DefaultRDnNormalizer} by default.
    *
    * @return  string form of the RDN
    */
   public String format()
   {
-    return format(null);
+    return format(new DefaultRDnNormalizer());
   }
 
 

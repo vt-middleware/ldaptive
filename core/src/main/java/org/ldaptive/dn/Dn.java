@@ -156,15 +156,42 @@ public class Dn
    * @param  beginIndex  first RDN to include (inclusive)
    * @param  endIndex  last RDN to include (exclusive)
    *
-   * @return  DN with sub-components of this DN
+   * @return  DN with sub-components of this DN or null if beginIndex &gt; endIndex
    */
   public Dn subDn(final int beginIndex, final int endIndex)
   {
+    if (beginIndex > endIndex) {
+      return null;
+    }
     return new Dn(IntStream
       .range(0, rdnComponents.size())
       .filter(i -> i >= beginIndex && i < endIndex)
       .mapToObj(rdnComponents::get)
       .collect(Collectors.toList()));
+  }
+
+
+  /**
+   * Convenience method to retrieve the parent DN. Invokes {@link #subDn(int)} with a parameter of 1.
+   *
+   * @return  DN containing all sub-components of this DN except the first or null if this DN has no components
+   */
+  public Dn getParent()
+  {
+    return subDn(1);
+  }
+
+
+  /**
+   * Returns all the RDN names.
+   *
+   * @return  all RDN names
+   */
+  public Collection<String> getNames()
+  {
+    return rdnComponents.stream()
+      .flatMap(rdn -> rdn.getNames().stream())
+      .collect(Collectors.toList());
   }
 
 
@@ -209,6 +236,118 @@ public class Dn
 
 
   /**
+   * Returns whether this DN contains any RDN components.
+   *
+   * @return  whether this DN contains any RDN components
+   */
+  public boolean isEmpty()
+  {
+    return rdnComponents.isEmpty();
+  }
+
+
+  /**
+   * Returns whether the normalized format of the supplied DN equals the normalized format of this DN. See {@link
+   * DefaultRDnNormalizer}.
+   *
+   * @param  dn  to compare
+   *
+   * @return  whether the supplied DN is the same as this DN
+   */
+  public boolean isSame(final Dn dn)
+  {
+    return isSame(dn, new DefaultRDnNormalizer());
+  }
+
+
+  /**
+   * Returns whether the normalized format of the supplied DN equals the normalized format of this DN.
+   *
+   * @param  normalizer  to use for comparison
+   * @param  dn  to compare
+   *
+   * @return  whether the supplied DN is the same as this DN
+   */
+  public boolean isSame(final Dn dn, final RDnNormalizer normalizer)
+  {
+    return format(normalizer).equals(dn.format(normalizer));
+  }
+
+
+  /**
+   * Returns whether the supplied DN is an ancestor. See {@link #isSame(Dn)}.
+   *
+   * @param  dn  to determine ancestry of
+   *
+   * @return  whether the supplied DN is an ancestor
+   */
+  public boolean isAncestor(final Dn dn)
+  {
+    return isAncestor(dn, new DefaultRDnNormalizer());
+  }
+
+
+  /**
+   * Returns whether the supplied DN is an ancestor. See {@link #isSame(Dn, RDnNormalizer)}.
+   *
+   * @param  dn  to determine ancestry of
+   * @param  normalizer  to format DN for comparison
+   *
+   * @return  whether the supplied DN is an ancestor
+   */
+  public boolean isAncestor(final Dn dn, final RDnNormalizer normalizer)
+  {
+    // all DNs are ancestors from the root DN
+    if (isEmpty() && !dn.isEmpty()) {
+      return true;
+    }
+
+    // greater than or equal number of RDNs, cannot be an ancestor
+    if (size() >= dn.size()) {
+      return false;
+    }
+
+    int index = size() - 1;
+    int dnIndex = dn.size() - 1;
+    boolean ancestor = true;
+    while (index >= 0) {
+      if (!getRDns().get(index--).isSame(dn.getRDns().get(dnIndex--), normalizer)) {
+        ancestor = false;
+        break;
+      }
+    }
+    return ancestor;
+  }
+
+
+  /**
+   * Returns whether the supplied DN is a descendant. See {@link #isSame(Dn)}.
+   *
+   * @param  dn  to determine descendancy of
+   *
+   * @return  whether the supplied DN is a descendant
+   */
+  public boolean isDescendant(final Dn dn)
+  {
+    return isDescendant(dn, new DefaultRDnNormalizer());
+  }
+
+
+  /**
+   * Returns whether the supplied DN is a descendant. See {@link #isSame(Dn, RDnNormalizer)}.
+   *
+   * @param  dn  to determine descendancy of
+   * @param  normalizer  to format DN for comparison
+   *
+   * @return  whether the supplied DN is a descendant
+   */
+  public boolean isDescendant(final Dn dn, final RDnNormalizer normalizer)
+  {
+    return dn.isAncestor(this, normalizer);
+  }
+
+
+  /**
    * Produces a string representation of this DN. Uses a {@link DefaultRDnNormalizer} by default.
    *
    * @return  DN string
@@ -228,17 +367,39 @@ public class Dn
    */
   public String format(final RDnNormalizer normalizer)
   {
-    if (rdnComponents == null || rdnComponents.size() == 0) {
+    return format(normalizer, ',', false);
+  }
+
+
+  /**
+   * Produces a string representation of this DN.
+   *
+   * @param  normalizer  to apply to the RDN components or null for no formatting
+   * @param  delimiter  to separate each RDN component
+   * @param  reverse  whether to reverse the order of RDN components for formatting.
+   *                  i.e. process components from right to left
+   *
+   * @return  DN string
+   */
+  public String format(final RDnNormalizer normalizer, final char delimiter, final boolean reverse)
+  {
+    if (rdnComponents.size() == 0) {
       return "";
     }
-    if (normalizer == null) {
-      return rdnComponents.stream()
-        .map(RDn::format)
-        .collect(Collectors.joining(","));
+    final StringBuilder sb = new StringBuilder();
+    if (reverse) {
+      for (int i = rdnComponents.size() - 1; i >= 0; i--) {
+        sb.append(rdnComponents.get(i).format(normalizer)).append(delimiter);
+      }
+    } else {
+      for (RDn rdnComponent : rdnComponents) {
+        sb.append(rdnComponent.format(normalizer)).append(delimiter);
+      }
     }
-    return rdnComponents.stream()
-      .map(rdn -> rdn.format(normalizer))
-      .collect(Collectors.joining(","));
+    if (sb.length() > 0 && sb.charAt(sb.length() - 1) == delimiter) {
+      sb.deleteCharAt(sb.length() - 1);
+    }
+    return sb.toString();
   }
 
 
