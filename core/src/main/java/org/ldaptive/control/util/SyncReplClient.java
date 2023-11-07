@@ -212,23 +212,29 @@ public class SyncReplClient
           }
         }
       }
-      try {
-        onResult.accept(result);
-      } catch (Exception e) {
-        logger.warn("Unable to process result {}", result);
+      if (onResult != null) {
         try {
-          onException.accept(e);
-        } catch (Exception ex) {
-          logger.warn("Unable to process result exception", ex);
+          onResult.accept(result);
+        } catch (Exception e) {
+          logger.warn("Unable to process result {}", result);
+          if (onException != null) {
+            try {
+              onException.accept(e);
+            } catch (Exception ex) {
+              logger.warn("Unable to process result exception", ex);
+            }
+          }
         }
       }
     });
     search.setExceptionHandler(e -> {
       logger.debug("Received exception", e);
-      try {
-        onException.accept(e);
-      } catch (Exception ex) {
-        logger.warn("Unable to process exception", ex);
+      if (onException != null) {
+        try {
+          onException.accept(e);
+        } catch (Exception ex) {
+          logger.warn("Unable to process exception", ex);
+        }
       }
     });
     search.setEntryHandlers(entry -> {
@@ -244,14 +250,18 @@ public class SyncReplClient
           }
         }
       }
-      try {
-        onEntry.accept(entry);
-      } catch (Exception e) {
-        logger.warn("Unable to process entry {}", entry);
+      if (onEntry != null) {
         try {
-          onException.accept(e);
-        } catch (Exception ex) {
-          logger.warn("Unable to process entry exception", ex);
+          onEntry.accept(entry);
+        } catch (Exception e) {
+          logger.warn("Unable to process entry {}", entry);
+          if (onException != null) {
+            try {
+              onException.accept(e);
+            } catch (Exception ex) {
+              logger.warn("Unable to process entry exception", ex);
+            }
+          }
         }
       }
       return null;
@@ -269,14 +279,18 @@ public class SyncReplClient
           }
         }
       }
-      try {
-        onReference.accept(reference);
-      } catch (Exception e) {
-        logger.warn("Unable to process reference {}", reference);
+      if (onReference != null) {
         try {
-          onException.accept(e);
-        } catch (Exception ex) {
-          logger.warn("Unable to process reference exception", ex);
+          onReference.accept(reference);
+        } catch (Exception e) {
+          logger.warn("Unable to process reference {}", reference);
+          if (onException != null) {
+            try {
+              onException.accept(e);
+            } catch (Exception ex) {
+              logger.warn("Unable to process reference exception", ex);
+            }
+          }
         }
       }
     });
@@ -291,14 +305,18 @@ public class SyncReplClient
             logger.warn("Unable to write cookie", e);
           }
         }
-        try {
-          onMessage.accept(message);
-        } catch (Exception e) {
-          logger.warn("Unable to process intermediate response {}", response);
+        if (onMessage != null) {
           try {
-            onException.accept(e);
-          } catch (Exception ex) {
-            logger.warn("Unable to process intermediate response exception", ex);
+            onMessage.accept(message);
+          } catch (Exception e) {
+            logger.warn("Unable to process intermediate response {}", response);
+            if (onException != null) {
+              try {
+                onException.accept(e);
+              } catch (Exception ex) {
+                logger.warn("Unable to process intermediate response exception", ex);
+              }
+            }
           }
         }
       }
