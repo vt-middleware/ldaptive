@@ -41,7 +41,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   public enum State {
 
     /** present. */
-    PRESET(0),
+    PRESENT(0),
 
     /** add. */
     ADD(1),
