@@ -980,7 +980,9 @@ public final class NettyConnection extends TransportConnection
           final UnbindRequest req = new UnbindRequest();
           req.setControls(controls);
           operation(req);
-          channel.close().addListener(new LogFutureListener());
+          if (channel != null) {
+            channel.close().addListener(new LogFutureListener());
+          }
         } else {
           LOGGER.trace("connection {} already closed", this);
           notifyOperationHandlesOfClose();

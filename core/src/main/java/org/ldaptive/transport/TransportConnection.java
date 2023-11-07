@@ -106,6 +106,8 @@ public abstract class TransportConnection implements Connection
         }
         if (isOpen()) {
           lastSuccessfulOpen = Instant.now();
+        } else {
+          throw new ConnectException(ResultCode.CONNECT_ERROR, "Channel closed immediately after open");
         }
         LOGGER.debug("Strategy {} finished open for connection {}", connectionStrategy, this);
       } finally {
