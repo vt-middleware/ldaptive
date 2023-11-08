@@ -1246,7 +1246,7 @@ public final class NettyConnection extends TransportConnection
       if (future.isSuccess()) {
         LOGGER.trace("operation channel success for {}", NettyConnection.this);
       } else {
-        LOGGER.warn("operation channel error for {}", NettyConnection.this, future.cause());
+        LOGGER.warn("operation channel error for {} / cause: {}", NettyConnection.this, future.cause());
       }
     }
   }
@@ -1282,7 +1282,7 @@ public final class NettyConnection extends TransportConnection
                 try {
                   reconnect();
                 } catch (Exception e) {
-                  LOGGER.warn("Reconnect attempt failed for {}", NettyConnection.this, e);
+                  LOGGER.warn("Reconnect attempt failed for {} / cause: {}", NettyConnection.this, e);
                 } finally {
                   reconnecting.set(false);
                 }
@@ -1652,7 +1652,7 @@ public final class NettyConnection extends TransportConnection
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause)
     {
-      LOGGER.warn("Inbound handler caught exception for {}", NettyConnection.this, cause);
+      LOGGER.warn("Inbound handler caught exception for {} / cause: {}", NettyConnection.this, cause);
       inboundException = cause;
       if (channel != null && !isClosing()) {
         channel.close().addListener(new LogFutureListener());

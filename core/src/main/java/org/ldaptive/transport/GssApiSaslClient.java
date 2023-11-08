@@ -87,7 +87,7 @@ public class GssApiSaslClient implements SaslClient<GssApiBindRequest>
         try {
           return conn.operation(request);
         } catch (Exception e) {
-          LOGGER.warn("SASL GSSAPI operation failed for {}", this, e);
+          LOGGER.warn("SASL GSSAPI operation failed for {} / exception: {}", this, e);
           doAsException[0] = e;
         }
         return null;

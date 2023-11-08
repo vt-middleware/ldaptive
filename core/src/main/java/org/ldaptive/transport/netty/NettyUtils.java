@@ -135,7 +135,7 @@ public final class NettyUtils
         shutdownLatch.countDown();
         if (!f.isSuccess()) {
           if (f.cause() != null) {
-            LOGGER.warn("Could not shutdown worker group {}", workerGroup, f.cause());
+            LOGGER.warn("Could not shutdown worker group {} / cause: {}", workerGroup, f.cause());
           } else {
             LOGGER.warn("Could not shutdown worker group {}", workerGroup);
           }
