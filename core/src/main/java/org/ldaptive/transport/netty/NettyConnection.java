@@ -1487,7 +1487,7 @@ public final class NettyConnection extends TransportConnection
       LOGGER.trace("channel read message {} on {}", msg, ctx);
       try {
         final DefaultOperationHandle handle = pendingResponses.get(msg.getMessageID());
-        LOGGER.debug("Received response message {} for handle {}", msg, handle);
+        LOGGER.debug("Received message {} for handle {}", msg, handle);
         if (handle != null) {
           if (msg instanceof LdapEntry) {
             ((SearchRequest) handle.getRequest()).configureBinaryAttributes((LdapEntry) msg);
@@ -1523,7 +1523,7 @@ public final class NettyConnection extends TransportConnection
           pendingResponses.notifyOperationHandles((UnsolicitedNotification) msg);
         } else {
           LOGGER.warn(
-            "Received response message {} without matching request in {} for {}",
+            "Received message {} without matching request in {} for {}",
             msg,
             pendingResponses,
             this);
