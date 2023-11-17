@@ -369,6 +369,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = singleTLSAuth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
+    Assert.assertTrue(response.isSuccess());
     expected.setDn(response.getLdapEntry().getDn());
     TestUtils.assertEquals(expected, response.getLdapEntry());
   }
@@ -391,7 +392,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     throws Exception
   {
     if (returnAttrs == null) {
-      final AuthenticationResponse response = singleTLSAuth.authenticate(
+      final AuthenticationResponse response = pooledTLSAuth.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
       Assert.assertFalse(response.isSuccess());
       return;
@@ -400,6 +401,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = pooledTLSAuth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
+    Assert.assertTrue(response.isSuccess());
     expected.setDn(response.getLdapEntry().getDn());
     TestUtils.assertEquals(expected, response.getLdapEntry());
   }
@@ -426,7 +428,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     }
 
     if (returnAttrs == null) {
-      final AuthenticationResponse response = singleTLSAuth.authenticate(
+      final AuthenticationResponse response = singleADFastBind.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
       Assert.assertFalse(response.isSuccess());
       return;
@@ -459,7 +461,7 @@ public class AuthenticatorLoadTest extends AbstractTest
     }
 
     if (returnAttrs == null) {
-      final AuthenticationResponse response = singleTLSAuth.authenticate(
+      final AuthenticationResponse response = pooledADFastBind.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
       Assert.assertFalse(response.isSuccess());
       return;
