@@ -79,4 +79,69 @@ public class SearchConnectionValidatorTest extends AbstractTest
     }
     Assert.assertFalse(validator.applyAsync(c).get());
   }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "validator")
+  public void validResultCodes()
+    throws Exception
+  {
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    SearchConnectionValidator validator = SearchConnectionValidator.builder()
+      .validResultCodes(ResultCode.AUTH_METHOD_NOT_SUPPORTED)
+      .timeout(Duration.ofSeconds(5))
+      .build();
+    try (Connection c = cf.getConnection()) {
+      c.open();
+      Assert.assertFalse(validator.apply(c));
+    }
+
+    validator = SearchConnectionValidator.builder()
+      .validResultCodes(ResultCode.SUCCESS)
+      .timeout(Duration.ofSeconds(5))
+      .build();
+    try (Connection c = cf.getConnection()) {
+      c.open();
+      Assert.assertTrue(validator.apply(c));
+    }
+
+    validator = SearchConnectionValidator.builder()
+      .validResultCodes(ResultCode.PARTIAL_RESULTS, ResultCode.SUCCESS)
+      .timeout(Duration.ofSeconds(5))
+      .build();
+    try (Connection c = cf.getConnection()) {
+      c.open();
+      Assert.assertTrue(validator.apply(c));
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "validator")
+  public void timeoutIsFailure()
+    throws Exception
+  {
+    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    SearchConnectionValidator validator = SearchConnectionValidator.builder()
+      .timeout(Duration.ofNanos(100))
+      .timeoutIsFailure(false)
+      .build();
+    try (Connection c = cf.getConnection()) {
+      c.open();
+      Assert.assertTrue(validator.apply(c));
+    }
+
+    validator = SearchConnectionValidator.builder()
+      .timeout(Duration.ofNanos(100))
+      .timeoutIsFailure(true)
+      .build();
+    try (Connection c = cf.getConnection()) {
+      c.open();
+      Assert.assertFalse(validator.apply(c));
+    }
+  }
 }

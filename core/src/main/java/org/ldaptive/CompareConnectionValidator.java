@@ -2,19 +2,16 @@
 package org.ldaptive;
 
 import java.time.Duration;
-import java.util.function.Consumer;
 
 /**
- * Validates a connection is healthy by performing a compare operation. Validation is considered successful if the
- * compare result contains a result code.
+ * Validates a connection is healthy by performing a compare operation. Unless {@link
+ * #setValidResultCodes(ResultCode...)} is set, validation is considered successful if the compare result contains any
+ * result code.
  *
  * @author  Middleware Services
  */
-public class CompareConnectionValidator extends AbstractConnectionValidator
+public class CompareConnectionValidator extends AbstractOperationConnectionValidator<CompareRequest, CompareResponse>
 {
-
-  /** Compare request to perform validation with. */
-  private CompareRequest compareRequest;
 
 
   /** Creates a new compare validator. */
@@ -46,7 +43,7 @@ public class CompareConnectionValidator extends AbstractConnectionValidator
   {
     setValidatePeriod(period);
     setValidateTimeout(timeout);
-    setCompareRequest(request);
+    setRequest(request);
   }
 
 
@@ -54,10 +51,13 @@ public class CompareConnectionValidator extends AbstractConnectionValidator
    * Returns the compare request.
    *
    * @return  compare request
+   *
+   * @deprecated  use {@link AbstractOperationConnectionValidator#getRequest()}
    */
+  @Deprecated
   public CompareRequest getCompareRequest()
   {
-    return compareRequest;
+    return getRequest();
   }
 
 
@@ -65,39 +65,26 @@ public class CompareConnectionValidator extends AbstractConnectionValidator
    * Sets the compare request.
    *
    * @param  cr  compare request
+   *
+   * @deprecated  use {@link AbstractOperationConnectionValidator#setRequest(Request)}
    */
+  @Deprecated
   public void setCompareRequest(final CompareRequest cr)
   {
-    compareRequest = cr;
+    setRequest(cr);
   }
 
 
   @Override
-  public void applyAsync(final Connection conn, final Consumer<Boolean> function)
+  protected OperationHandle<CompareRequest, CompareResponse> performOperation(final Connection conn)
   {
-    if (conn == null) {
-      function.accept(false);
-    } else {
-      final CompareOperationHandle h = conn.operation(compareRequest);
-      // note that validation doesn't require a TRUE result code
-      h.onResult(r -> function.accept(r.getResultCode() != null));
-      h.onException(e -> {
-        logger.debug("Connection validator failed for {}", conn, e);
-        function.accept(false);
-      });
-      h.send();
-    }
+    return conn.operation(getRequest());
   }
-
 
   @Override
   public String toString()
   {
-    return "[" +
-      getClass().getName() + "@" + hashCode() + "::" +
-      "validatePeriod=" + getValidatePeriod() + ", " +
-      "validateTimeout=" + getValidateTimeout() + ", " +
-      "compareRequest=" + compareRequest + "]";
+    return "[" + super.toString() + "]";
   }
 
 
@@ -114,7 +101,8 @@ public class CompareConnectionValidator extends AbstractConnectionValidator
 
   /** Compare validator builder. */
   public static class Builder extends
-    AbstractConnectionValidator.AbstractBuilder<CompareConnectionValidator.Builder, CompareConnectionValidator>
+    AbstractOperationConnectionValidator.AbstractBuilder<
+      CompareRequest, CompareResponse, CompareConnectionValidator.Builder, CompareConnectionValidator>
   {
 
 
@@ -131,20 +119,6 @@ public class CompareConnectionValidator extends AbstractConnectionValidator
     protected Builder self()
     {
       return this;
-    }
-
-
-    /**
-     * Sets the compare request to use for validation.
-     *
-     * @param  request  compare request
-     *
-     * @return  this builder
-     */
-    public Builder request(final CompareRequest request)
-    {
-      object.setCompareRequest(request);
-      return self();
     }
   }
 }

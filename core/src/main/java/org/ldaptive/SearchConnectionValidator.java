@@ -2,19 +2,16 @@
 package org.ldaptive;
 
 import java.time.Duration;
-import java.util.function.Consumer;
 
 /**
- * Validates a connection is healthy by performing a search operation. Validation is considered successful if the search
- * result contains a result code.
+ * Validates a connection is healthy by performing a search operation. Unless {@link
+ * #setValidResultCodes(ResultCode...)} is set, validation is considered successful if the search result contains any
+ * result code.
  *
  * @author  Middleware Services
  */
-public class SearchConnectionValidator extends AbstractConnectionValidator
+public class SearchConnectionValidator extends AbstractOperationConnectionValidator<SearchRequest, SearchResponse>
 {
-
-  /** Search request to perform validation with. */
-  private SearchRequest searchRequest;
 
 
   /** Creates a new search validator. */
@@ -46,7 +43,7 @@ public class SearchConnectionValidator extends AbstractConnectionValidator
   {
     setValidatePeriod(period);
     setValidateTimeout(timeout);
-    setSearchRequest(request);
+    setRequest(request);
   }
 
 
@@ -54,10 +51,13 @@ public class SearchConnectionValidator extends AbstractConnectionValidator
    * Returns the search request.
    *
    * @return  search request
+   *
+   * @deprecated  use {@link AbstractOperationConnectionValidator#getRequest()}
    */
+  @Deprecated
   public SearchRequest getSearchRequest()
   {
-    return searchRequest;
+    return getRequest();
   }
 
 
@@ -65,39 +65,27 @@ public class SearchConnectionValidator extends AbstractConnectionValidator
    * Sets the search request.
    *
    * @param  sr  search request
+   *
+   * @deprecated  use {@link AbstractOperationConnectionValidator#setRequest(Request)}
    */
+  @Deprecated
   public void setSearchRequest(final SearchRequest sr)
   {
-    searchRequest = sr;
+    setRequest(sr);
   }
 
 
   @Override
-  public void applyAsync(final Connection conn, final Consumer<Boolean> function)
+  protected OperationHandle<SearchRequest, SearchResponse> performOperation(final Connection conn)
   {
-    if (conn == null) {
-      function.accept(false);
-    } else {
-      final SearchOperationHandle h = conn.operation(searchRequest);
-      // note that validation doesn't require a SUCCESS result code
-      h.onResult(r -> function.accept(r.getResultCode() != null));
-      h.onException(e -> {
-        logger.debug("Connection validator failed for {}", conn, e);
-        function.accept(false);
-      });
-      h.send();
-    }
+    return conn.operation(getRequest());
   }
 
 
   @Override
   public String toString()
   {
-    return "[" +
-      getClass().getName() + "@" + hashCode() + "::" +
-      "validatePeriod=" + getValidatePeriod() + ", " +
-      "validateTimeout=" + getValidateTimeout() + ", " +
-      "searchRequest=" + searchRequest + "]";
+    return "[" + super.toString() + "]";
   }
 
 
@@ -114,7 +102,8 @@ public class SearchConnectionValidator extends AbstractConnectionValidator
 
   /** Search validator builder. */
   public static class Builder extends
-    AbstractConnectionValidator.AbstractBuilder<SearchConnectionValidator.Builder, SearchConnectionValidator>
+    AbstractOperationConnectionValidator.AbstractBuilder<
+      SearchRequest, SearchResponse, SearchConnectionValidator.Builder, SearchConnectionValidator>
   {
 
 
@@ -131,20 +120,6 @@ public class SearchConnectionValidator extends AbstractConnectionValidator
     protected Builder self()
     {
       return this;
-    }
-
-
-    /**
-     * Sets the search request to use for validation.
-     *
-     * @param  request  compare request
-     *
-     * @return  this builder
-     */
-    public Builder request(final SearchRequest request)
-    {
-      object.setSearchRequest(request);
-      return self();
     }
   }
 }
