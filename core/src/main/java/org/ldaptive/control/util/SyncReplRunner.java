@@ -2,15 +2,15 @@
 package org.ldaptive.control.util;
 
 import java.time.Duration;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
+import org.ldaptive.AbstractConnectionValidator;
 import org.ldaptive.ConnectionConfig;
-import org.ldaptive.InitialRetryMetadata;
+import org.ldaptive.ConnectionValidator;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Result;
+import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.SingleConnectionFactory;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Class that executes a {@link SyncReplClient} and expects to run continuously, reconnecting if the server is
  * unavailable. Consumers must be registered to handle entries, results, and messages as they are returned from the
- * server. If a consumer throws an exception, the runner will be stopped and started, then the sync repl search
+ * server. If the connection validator fails, the runner will be stopped and started, then the sync repl search
  * will execute again. Consumers cannot execute blocking LDAP operations on the same connection because the next
  * incoming message is not read until the consumer has completed.
  *
@@ -41,40 +41,11 @@ public class SyncReplRunner
   /** Number of message worker threads. */
   private static final int MESSAGE_WORKER_THREADS = 4;
 
-  /** Connection transport. */
-  private final Transport connectionTransport;
-
-  /** Connection configuration. */
-  private final ConnectionConfig connectionConfig;
-
   /** Sync repl search request. */
   private final SearchRequest searchRequest;
 
   /** Sync repl cookie manager. */
   private final CookieManager cookieManager;
-
-  /** Invoked when an exception is received. */
-  private final Consumer<Exception> onException = new Consumer<>() {
-    @Override
-    public void accept(final Exception e)
-    {
-      if (started) {
-        if (handlingException.compareAndSet(false, true)) {
-          try {
-            LOGGER.warn("Received exception '{}' for {}", e.getMessage(), this);
-            stop();
-            start();
-          } finally {
-            handlingException.set(false);
-          }
-        } else {
-          LOGGER.debug("Ignoring exception, restart already in progress for {}", this);
-        }
-      } else {
-        LOGGER.debug("Ignoring exception, runner not started for {}", this);
-      }
-    }
-  };
 
   /** Search operation handle. */
   private SyncReplClient syncReplClient;
@@ -94,44 +65,136 @@ public class SyncReplRunner
   /** Invoked when a sync info message is received. */
   private Consumer<SyncInfoMessage> onMessage;
 
+  /** Invoked when an exception occurs. */
+  private Consumer<Exception> onException;
+
   /** Whether the sync repl search is running. */
   private boolean started;
 
-  /** Prevent multiple invocations of onException. */
-  private AtomicBoolean handlingException = new AtomicBoolean();
-
 
   /**
-   * Creates a new sync repl runner. Uses a custom {@link ConnectionFactoryTransport} for processing I/O and messages.
+   * Creates a new sync repl runner. The supplied connection factory is modified to invoke {@link
+   * SyncReplClient#send(SearchRequest, CookieManager)} when the connection opens and {@link SyncReplClient#cancel()}
+   * when the connection closes.
    *
-   * @param  config  sync repl connection configuration
+   * @param  cf  to get a connection from
    * @param  request  sync repl search request
    * @param  manager  sync repl cookie manager
    */
-  public SyncReplRunner(final ConnectionConfig config, final SearchRequest request, final CookieManager manager)
+  public SyncReplRunner(final SingleConnectionFactory cf, final SearchRequest request, final CookieManager manager)
   {
-    this(createTransport(), config, request, manager);
+    syncReplClient = new SyncReplClient(cf, true);
+    searchRequest = request;
+    cookieManager = manager;
+    cf.setOnOpen(conn -> {
+      try {
+        syncReplClient.send(searchRequest, cookieManager);
+      } catch (LdapException e) {
+        LOGGER.error("Could not send sync repl request", e);
+        return false;
+      }
+      return true;
+    });
+    cf.setOnClose(conn -> {
+      try {
+        if (!syncReplClient.isComplete()) {
+          syncReplClient.cancel();
+        }
+      } catch (Exception e) {
+        LOGGER.warn("Could not cancel sync repl request", e);
+        return false;
+      }
+      return true;
+    });
   }
 
 
   /**
-   * Creates a new sync repl runner.
+   * Creates a new single connection factory. Uses a {@link SearchConnectionValidator} for connection validation. See
+   * {@link #createTransport()}
+   *
+   * @param  config  sync repl connection configuration
+   *
+   * @return  single connection factory for use with a sync repl runner
+   */
+  public static SingleConnectionFactory createConnectionFactory(final ConnectionConfig config)
+  {
+    // CheckStyle:MagicNumber OFF
+    return createConnectionFactory(
+      config,
+      SearchConnectionValidator.builder()
+        .period(Duration.ofMinutes(1))
+        .timeout(Duration.ofSeconds(5))
+        .timeoutIsFailure(false)
+        .build());
+    // CheckStyle:MagicNumber ON
+  }
+
+
+  /**
+   * Creates a new single connection factory. See {@link #createTransport()}.
+   *
+   * @param  config  sync repl connection configuration
+   * @param  validator  connection validator
+   *
+   * @return  single connection factory for use with a sync repl runner
+   */
+  public static SingleConnectionFactory createConnectionFactory(
+    final ConnectionConfig config, final ConnectionValidator validator)
+  {
+    return createConnectionFactory(createTransport(), config, validator);
+  }
+
+
+  /**
+   * Creates a new single connection factory.
    *
    * @param  transport  sync repl connection transport
    * @param  config  sync repl connection configuration
-   * @param  request  sync repl search request
-   * @param  manager  sync repl cookie manager
+   * @param  validator  connection validator
+   *
+   * @return  single connection factory for use with a sync repl runner
    */
-  public SyncReplRunner(
-    final Transport transport,
-    final ConnectionConfig config,
-    final SearchRequest request,
-    final CookieManager manager)
+  public static SingleConnectionFactory createConnectionFactory(
+    final Transport transport, final ConnectionConfig config, final ConnectionValidator validator)
   {
-    connectionTransport = transport;
-    connectionConfig = config;
-    searchRequest = request;
-    cookieManager = manager;
+    final SingleConnectionFactory factory = new SingleConnectionFactory(config, transport);
+    factory.setValidator(validator);
+    configureConnectionFactory(factory);
+    return factory;
+  }
+
+
+  /**
+   * Configures the supplied factory for use with a {@link SyncReplRunner}. The factory's configuration will have the
+   * following modifications:
+   * <ul>
+   *   <li>{@link ConnectionConfig#setTransportOption(String, Object)} of AUTO_READ to false</li>
+   *   <li>{@link ConnectionConfig#setAutoReconnect(boolean)} to false</li>
+   *   <li>{@link ConnectionConfig#setAutoReplay(boolean)} to false</li>
+   *   <li>{@link SingleConnectionFactory#setFailFastInitialize(boolean)} to false</li>
+   *   <li>{@link SingleConnectionFactory#setNonBlockingInitialize(boolean)} to false</li>
+   *   <li>{@link AbstractConnectionValidator#setOnFailure(Consumer)} to
+   *   {@link SingleConnectionFactory.ReinitializeConnectionConsumer}</li>
+   * </ul>
+   *
+   * @param  factory  to configure
+   */
+  public static void configureConnectionFactory(final SingleConnectionFactory factory)
+  {
+    final ConnectionConfig newConfig = ConnectionConfig.copy(factory.getConnectionConfig());
+    newConfig.setTransportOption("AUTO_READ", false);
+    newConfig.setAutoReconnect(false);
+    newConfig.setAutoReplay(false);
+    factory.setConnectionConfig(newConfig);
+    factory.setFailFastInitialize(false);
+    factory.setNonBlockingInitialize(false);
+    if (factory.getValidator() instanceof AbstractConnectionValidator) {
+      final AbstractConnectionValidator validator = (AbstractConnectionValidator) factory.getValidator();
+      if (validator.getOnFailure() == null) {
+        validator.setOnFailure(factory.new ReinitializeConnectionConsumer());
+      }
+    }
   }
 
 
@@ -211,21 +274,24 @@ public class SyncReplRunner
 
 
   /**
-   * Prepare this runner for use.
+   * Sets the onException consumer.
    *
-   * @param  refreshAndPersist  whether to refresh and persist or just refresh
-   * @param  reconnectWait  time to wait between open attempts
+   * @param  consumer  to invoke when an exception is received
    */
-  public void initialize(final boolean refreshAndPersist, final Duration reconnectWait)
+  public void setOnException(final Consumer<Exception> consumer)
+  {
+    onException = consumer;
+  }
+
+
+  /**
+   * Prepare this runner for use.
+   */
+  public synchronized void initialize()
   {
     if (started) {
       throw new IllegalStateException("Runner has already been started");
     }
-    final SingleConnectionFactory connectionFactory = reconnectFactory(
-      connectionTransport,
-      connectionConfig,
-      reconnectWait);
-    syncReplClient = new SyncReplClient(connectionFactory, refreshAndPersist);
     syncReplClient.setOnEntry(onEntry);
     syncReplClient.setOnReference(onReference);
     syncReplClient.setOnResult(onResult);
@@ -247,8 +313,10 @@ public class SyncReplRunner
         throw new RuntimeException("Start aborted from " + onStart);
       }
       LOGGER.debug("Starting runner {}", this);
-      ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
-      syncReplClient.send(searchRequest, cookieManager);
+      // the connection factory may be shared between multiple runners
+      if (!((SingleConnectionFactory) syncReplClient.getConnectionFactory()).isInitialized()) {
+        ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
+      }
       started = true;
       LOGGER.info("Runner {} started", this);
     } catch (Exception e) {
@@ -263,21 +331,13 @@ public class SyncReplRunner
   public synchronized void stop()
   {
     if (!started) {
-      return;
+      throw new IllegalStateException("Runner has not been started");
     }
     LOGGER.debug("Stopping runner {}", this);
-    started = false;
     if (syncReplClient != null) {
-      try {
-        if (!syncReplClient.isComplete()) {
-          syncReplClient.cancel();
-        }
-      } catch (Exception e) {
-        LOGGER.warn("Could not cancel sync repl request", e);
-      } finally {
-        syncReplClient.close();
-      }
+      syncReplClient.close();
     }
+    started = false;
     LOGGER.info("Runner {} stopped", this);
   }
 
@@ -299,7 +359,7 @@ public class SyncReplRunner
   public synchronized void restartSearch()
   {
     if (!started) {
-      throw new IllegalStateException("Runner is stopped");
+      throw new IllegalStateException("Cannot restart the search, runner is stopped");
     }
     try {
       if (!syncReplClient.isComplete()) {
@@ -328,48 +388,7 @@ public class SyncReplRunner
       "onReference=" + onReference + ", " +
       "onResult=" + onResult + ", " +
       "onMessage=" + onMessage + ", " +
+      "onException=" + onException + ", " +
       "started=" + started;
-  }
-
-
-  /**
-   * Creates a new single connection factory that will attempt to reconnect indefinitely. This method creates a copy of
-   * the supplied config makes the following modifications:
-   * <ul>
-   *   <li>{@link ConnectionConfig#setAutoReconnect(boolean)} to true</li>
-   *   <li>{@link ConnectionConfig#setAutoReconnectCondition(Predicate)} to sleep and return true for
-   *   InitialRetryMetadata</li>
-   *   <li>{@link ConnectionConfig#setAutoReplay(boolean)} to false</li>
-   * </ul>
-   *
-   * @param  transport  connection transport
-   * @param  cc  connection configuration
-   * @param  wait  length of time to wait between consecutive calls to open
-   *
-   * @return  single connection factory
-   */
-  protected static SingleConnectionFactory reconnectFactory(
-    final Transport transport,
-    final ConnectionConfig cc,
-    final Duration wait)
-  {
-    final ConnectionConfig newConfig = ConnectionConfig.copy(cc);
-    newConfig.setTransportOption("AUTO_READ", false);
-    newConfig.setAutoReconnect(false);
-    newConfig.setAutoReconnectCondition(metadata -> {
-      if (metadata instanceof InitialRetryMetadata) {
-        try {
-          LOGGER.debug("Waiting {}ms to reconnect", wait.toMillis());
-          Thread.sleep(wait.toMillis());
-        } catch (InterruptedException ignored) {}
-        return true;
-      }
-      return false;
-    });
-    newConfig.setAutoReplay(false);
-    final SingleConnectionFactory factory = new SingleConnectionFactory(newConfig, transport);
-    factory.setFailFastInitialize(true);
-    factory.setNonBlockingInitialize(false);
-    return factory;
   }
 }
