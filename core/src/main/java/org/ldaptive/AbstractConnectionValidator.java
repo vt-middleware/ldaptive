@@ -32,6 +32,9 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
   /** Maximum length of time a connection validation should block. */
   private Duration validateTimeout;
 
+  /** Whether the occurrence of a timeout should result in a validation failure. */
+  private boolean timeoutIsFailure = true;
+
 
   @Override
   public Duration getValidatePeriod()
@@ -69,6 +72,28 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
   }
 
 
+  /**
+   * Returns whether a timeout should be considered a validation failure.
+   *
+   * @return  whether a timeout should be considered a validation failure
+   */
+  public boolean getTimeoutIsFailure()
+  {
+    return timeoutIsFailure;
+  }
+
+
+  /**
+   * Sets whether a timeout should be considered a validation failure.
+   *
+   * @param  failure  whether a timeout should be considered a validation failure
+   */
+  public void setTimeoutIsFailure(final boolean failure)
+  {
+    timeoutIsFailure = failure;
+  }
+
+
   @Override
   public Boolean apply(final Connection conn)
   {
@@ -85,7 +110,7 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
     final CountDownLatch latch = new CountDownLatch(1);
     final AtomicBoolean result = new AtomicBoolean();
     applyAsync(conn, value -> {
-      result.set(value);
+      result.compareAndSet(false, value);
       latch.countDown();
     });
     return () -> {
@@ -94,13 +119,27 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
           // waits indefinitely for the validation response
           latch.await();
         } else {
-          latch.await(getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS);
+          if (!latch.await(getValidateTimeout().toMillis(), TimeUnit.MILLISECONDS) && !timeoutIsFailure) {
+            logger.debug("Connection validator timeout ignored for {}", conn);
+            result.compareAndSet(false, true);
+          }
         }
       } catch (Exception e) {
         logger.debug("Validating {} threw unexpected exception", conn, e);
       }
       return result.get();
     };
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return
+      getClass().getName() + "@" + hashCode() + "::" +
+      "validatePeriod=" + validatePeriod + ", " +
+      "validateTimeout=" + validateTimeout + ", " +
+      "timeoutIsFailure=" + timeoutIsFailure;
   }
 
 
@@ -160,6 +199,20 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
     public B timeout(final Duration timeout)
     {
       object.setValidateTimeout(timeout);
+      return self();
+    }
+
+
+    /**
+     * Sets whether timeout is a validation failure.
+     *
+     * @param  failure  whether timeout is a validation failure
+     *
+     * @return  this builder
+     */
+    public B timeoutIsFailure(final boolean failure)
+    {
+      object.setTimeoutIsFailure(failure);
       return self();
     }
 
