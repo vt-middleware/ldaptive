@@ -58,8 +58,8 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <org.slf4j.version>2.0.9</org.slf4j.version>
-    <io.netty.version>4.1.100.Final</io.netty.version>
-    <org.springframework.version>5.3.30</org.springframework.version>
+    <io.netty.version>4.1.101.Final</io.netty.version>
+    <org.springframework.version>5.3.31</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.2.0</japicmp.oldVersion>
   </properties>
@@ -84,7 +84,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.4.11</version>
+        <version>1.4.14</version>
       </dependency>
       <dependency>
         <groupId>org.ldaptive</groupId>
@@ -105,7 +105,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>3.15.3</version>
+        <version>3.15.4</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -219,7 +219,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>10.12.4</version>
+              <version>10.12.6</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -234,17 +234,17 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>build-helper-maven-plugin</artifactId>
-          <version>3.4.0</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
-          <version>3.1.0</version>
+          <version>3.1.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>3.6.2</version>
+          <version>3.6.3</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -274,7 +274,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
-          <version>2.16.1</version>
+          <version>2.16.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
