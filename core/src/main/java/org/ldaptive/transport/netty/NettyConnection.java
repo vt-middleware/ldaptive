@@ -319,7 +319,7 @@ public final class NettyConnection extends TransportConnection
         connectTime = Instant.now();
         LOGGER.debug("Netty opened connection {}", this);
       } catch (Exception e) {
-        LOGGER.error("Connection open failed for {}", this, e);
+        LOGGER.warn("Connection open failed for {}", this, e);
         try {
           notifyOperationHandlesOfClose();
           pendingResponses.close();

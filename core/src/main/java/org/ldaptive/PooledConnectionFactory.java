@@ -153,7 +153,7 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
       return super.getConnection();
     } catch (ValidationException e) {
       if (validationExceptionHandler != null) {
-        logger.warn("Connection could not be validated, invoking handler {}", validationExceptionHandler, e);
+        logger.debug("Connection could not be validated, invoking handler {}", validationExceptionHandler, e);
         final Connection conn = validationExceptionHandler.apply(e);
         if (conn != null) {
           return conn;

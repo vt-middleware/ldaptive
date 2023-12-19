@@ -306,7 +306,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
           try {
             validator.apply(proxy != null ? proxy.getConnection() : null);
           } catch (Exception e) {
-            logger.error("Validation task failed for {}", SingleConnectionFactory.this, e);
+            logger.warn("Validation task failed for {}", SingleConnectionFactory.this, e);
           }
           logger.debug("End validate task for {}", SingleConnectionFactory.this);
         },

@@ -83,7 +83,6 @@ public class BlockingConnectionPool extends AbstractConnectionPool
           logger.trace("retrieve available connection from pool of size {}", available.size());
           pc = retrieveAvailableConnection();
         } catch (NoSuchElementException e) {
-          logger.error("Could not retrieve available connection", e);
           throw new IllegalStateException("Pool is empty", e);
         }
       } else if (active.size() < getMaxPoolSize()) {
@@ -137,7 +136,6 @@ public class BlockingConnectionPool extends AbstractConnectionPool
       }
       if (pc == null) {
         if (available.isEmpty() && active.isEmpty()) {
-          logger.error("Could not service check out request");
           throw new PoolExhaustedException("Pool is empty and connection creation failed");
         }
         logger.debug("Create failed, block until connection is available");
@@ -150,7 +148,6 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     if (pc != null) {
       activateAndValidateConnection(pc);
     } else {
-      logger.error("Could not service check out request");
       throw new PoolExhaustedException("Pool is empty and connection creation failed");
     }
 
@@ -217,7 +214,6 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         }
       }
     } catch (InterruptedException e) {
-      logger.error("Waiting for available connection interrupted", e);
       throw new PoolException("Interrupted while waiting for an available connection", e);
     } finally {
       poolLock.unlock();
@@ -244,9 +240,9 @@ public class BlockingConnectionPool extends AbstractConnectionPool
         logger.trace("returned active connection: {}", pc);
         poolNotEmpty.signal();
       } else if (available.contains(pc)) {
-        logger.warn("returned available connection: {}", pc);
+        logger.warn("Returned available connection: {}", pc);
       } else {
-        logger.warn("attempt to return unknown connection: {}", pc);
+        logger.warn("Attempt to return unknown connection: {}", pc);
       }
     } finally {
       poolLock.unlock();

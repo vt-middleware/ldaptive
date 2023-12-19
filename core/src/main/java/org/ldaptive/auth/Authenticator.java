@@ -325,7 +325,7 @@ public class Authenticator
           try {
             cf.close();
           } catch (Exception e) {
-            logger.error("Error closing connection factory {}", cf, e);
+            logger.warn("Error closing connection factory {}", cf, e);
           }
         });
     }
@@ -506,7 +506,7 @@ public class Authenticator
         entry = er.resolve(criteria, response);
         logger.trace("resolved entry={} with resolver={}", entry, er);
       } catch (LdapException e) {
-        logger.warn("entry resolution failed for resolver={}", er, e);
+        logger.warn("Entry resolution failed for resolver={}", er, e);
       }
     }
     if (entry == null) {

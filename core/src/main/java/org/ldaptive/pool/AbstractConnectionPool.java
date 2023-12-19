@@ -534,7 +534,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
         try {
           prune();
         } catch (Exception e) {
-          logger.error("Prune task failed for {}", AbstractConnectionPool.this);
+          logger.warn("Prune task failed for {}", AbstractConnectionPool.this);
         }
         logger.debug("End prune task for {}", AbstractConnectionPool.this);
       },
@@ -550,7 +550,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
           try {
             validate();
           } catch (Exception e) {
-            logger.error("Validation task failed for {}", AbstractConnectionPool.this);
+            logger.warn("Validation task failed for {}", AbstractConnectionPool.this);
           }
           logger.debug("End validate task for {}", AbstractConnectionPool.this);
         },
@@ -710,7 +710,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       try {
         c.open();
       } catch (Exception e) {
-        logger.error("Unable to open connection for {}}", this, e);
+        logger.warn("Unable to open connection for {}}", this, e);
         c.close();
         c = null;
         if (throwOnFailure) {
