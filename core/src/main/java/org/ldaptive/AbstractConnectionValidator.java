@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,12 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
 
   /** Maximum length of time a connection validation should block. */
   private Duration validateTimeout;
+
+  /** Consumer to execute on a successful validation. */
+  private Consumer<Connection> onSuccess;
+
+  /** Consumer to execute on a failed validation. */
+  private Consumer<Connection> onFailure;
 
   /** Whether the occurrence of a timeout should result in a validation failure. */
   private boolean timeoutIsFailure = true;
@@ -73,6 +80,50 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
 
 
   /**
+   * Returns a consumer to handle a connection that has been successfully validated.
+   *
+   * @return  success consumer
+   */
+  public Consumer<Connection> getOnSuccess()
+  {
+    return onSuccess;
+  }
+
+
+  /**
+   * Sets a consumer to handle a connection that has been successfully validated.
+   *
+   * @param  consumer  to invoke on success
+   */
+  public void setOnSuccess(final Consumer<Connection> consumer)
+  {
+    onSuccess = consumer;
+  }
+
+
+  /**
+   * Returns a consumer to handle a connection that has failed validation.
+   *
+   * @return  failure consumer
+   */
+  public Consumer<Connection> getOnFailure()
+  {
+    return onFailure;
+  }
+
+
+  /**
+   * Sets a consumer to handle a connection that has failed validation.
+   *
+   * @param  consumer  to invoke on failure
+   */
+  public void setOnFailure(final Consumer<Connection> consumer)
+  {
+    onFailure = consumer;
+  }
+
+
+  /**
    * Returns whether a timeout should be considered a validation failure.
    *
    * @return  whether a timeout should be considered a validation failure
@@ -98,9 +149,18 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
   public Boolean apply(final Connection conn)
   {
     if (conn == null) {
+      if (onFailure != null) {
+        onFailure.accept(null);
+      }
       return false;
     }
-    return applyAsync(conn).get();
+    final Boolean result = applyAsync(conn).get();
+    if (result && onSuccess != null) {
+      onSuccess.accept(conn);
+    } else if (!result && onFailure != null) {
+      onFailure.accept(conn);
+    }
+    return result;
   }
 
 
@@ -139,6 +199,8 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
       getClass().getName() + "@" + hashCode() + "::" +
       "validatePeriod=" + validatePeriod + ", " +
       "validateTimeout=" + validateTimeout + ", " +
+      "onSuccess=" + onSuccess + ", " +
+      "onFailure=" + onFailure + ", " +
       "timeoutIsFailure=" + timeoutIsFailure;
   }
 
@@ -199,6 +261,20 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
     public B timeout(final Duration timeout)
     {
       object.setValidateTimeout(timeout);
+      return self();
+    }
+
+
+    public B onSuccess(final Consumer<Connection> consumer)
+    {
+      object.setOnSuccess(consumer);
+      return self();
+    }
+
+
+    public B onFailure(final Consumer<Connection> consumer)
+    {
+      object.setOnFailure(consumer);
       return self();
     }
 

@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapURL;
+import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.transport.netty.SimpleNettyServer;
 import org.testng.Assert;
@@ -25,7 +26,7 @@ public class SyncReplRunnerTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = "netty")
-  public void startAndStop()
+  public void validateConnection()
     throws Exception
   {
     final CountDownLatch openLatch = new CountDownLatch(2);
@@ -40,13 +41,15 @@ public class SyncReplRunnerTest
     try {
       final InetSocketAddress address = server.start();
       final SyncReplRunner runner = new SyncReplRunner(
-        ConnectionConfig.builder()
-          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
-          .build(),
+        SyncReplRunner.createConnectionFactory(
+          ConnectionConfig.builder()
+            .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+            .build(),
+          SearchConnectionValidator.builder().period(Duration.ofSeconds(5)).build()),
         SearchRequest.builder().filter("(objectClass=*)").build(),
         new DefaultCookieManager());
       try {
-        runner.initialize(true, Duration.ofSeconds(1));
+        runner.initialize();
         runner.start();
         if (!openLatch.await(Duration.ofMinutes(1).toMillis(), TimeUnit.MILLISECONDS)) {
           Assert.fail("Connection did not reconnect");

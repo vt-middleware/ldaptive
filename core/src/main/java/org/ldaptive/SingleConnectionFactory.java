@@ -7,6 +7,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import org.ldaptive.transport.Transport;
 import org.ldaptive.transport.TransportFactory;
 
@@ -18,11 +22,8 @@ import org.ldaptive.transport.TransportFactory;
 public class SingleConnectionFactory extends DefaultConnectionFactory
 {
 
-  /** The connection used by this factory. */
-  private Connection connection;
-
   /** The proxy used by this factory. */
-  private Connection proxy;
+  private ConnectionProxy proxy;
 
   /** Whether {@link #initialize()} has been successfully invoked. */
   private boolean initialized;
@@ -33,8 +34,17 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   /** Whether {@link #initialize()} should occur on a separate thread. */
   private boolean nonBlockingInitialize;
 
-  /** Executor for scheduling {@link #initialize()}. */
-  private ExecutorService initializeExecutor;
+  /** To run when a connection is opened. */
+  private Function<Connection, Boolean> onOpen;
+
+  /** To run when a connection is closed. */
+  private Function<Connection, Boolean> onClose;
+
+  /** For validating the connection. */
+  private ConnectionValidator validator;
+
+  /** Executor for scheduling factory tasks. */
+  private ExecutorService factoryExecutor;
 
 
   /** Default constructor. */
@@ -146,6 +156,72 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
 
 
   /**
+   * Returns the function to run when the connection is opened.
+   *
+   * @return  on open function
+   */
+  public Function<Connection, Boolean> getOnOpen()
+  {
+    return onOpen;
+  }
+
+
+  /**
+   * Sets the function to run when the connection is opened.
+   *
+   * @param  function  to run on connection open
+   */
+  public void setOnOpen(final Function<Connection, Boolean> function)
+  {
+    onOpen = function;
+  }
+
+
+  /**
+   * Returns the function to run when the connection is closed.
+   *
+   * @return  on close function
+   */
+  public Function<Connection, Boolean> getOnClose()
+  {
+    return onClose;
+  }
+
+
+  /**
+   * Sets the function to run when the connection is closed.
+   *
+   * @param  function  to run on connection close
+   */
+  public void setOnClose(final Function<Connection, Boolean> function)
+  {
+    onClose = function;
+  }
+
+
+  /**
+   * Returns the connection validator for this factory.
+   *
+   * @return  connection validator
+   */
+  public ConnectionValidator getValidator()
+  {
+    return validator;
+  }
+
+
+  /**
+   * Sets the connection validator for this factory.
+   *
+   * @param  cv  connection validator
+   */
+  public void setValidator(final ConnectionValidator cv)
+  {
+    validator = cv;
+  }
+
+
+  /**
    * Returns whether this factory has been initialized.
    *
    * @return  whether this factory has been initialized
@@ -168,15 +244,24 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       throw new IllegalStateException("Connection factory is already initialized");
     }
     if (nonBlockingInitialize) {
-      if (initializeExecutor == null) {
-        initializeExecutor = Executors.newCachedThreadPool(
-          r -> {
-            final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
-            t.setDaemon(true);
-            return t;
-          });
+      if (factoryExecutor == null) {
+        if (validator != null) {
+          factoryExecutor = Executors.newSingleThreadScheduledExecutor(
+            r -> {
+              final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
+              t.setDaemon(true);
+              return t;
+            });
+        } else {
+          factoryExecutor = Executors.newCachedThreadPool(
+            r -> {
+              final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
+              t.setDaemon(true);
+              return t;
+            });
+        }
       }
-      initializeExecutor.execute(
+      factoryExecutor.execute(
         () -> {
           try {
             initializeInternal();
@@ -185,6 +270,14 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
           }
         });
     } else {
+      if (validator != null) {
+        factoryExecutor = Executors.newSingleThreadScheduledExecutor(
+          r -> {
+            final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
+            t.setDaemon(true);
+            return t;
+          });
+      }
       initializeInternal();
     }
   }
@@ -198,25 +291,70 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   private synchronized void initializeInternal()
     throws LdapException
   {
-    if (!initialized) {
-      try {
-        connection = super.getConnection();
-        connection.open();
-        proxy = (Connection) Proxy.newProxyInstance(
-          Connection.class.getClassLoader(),
-          new Class[] {Connection.class},
-          new ConnectionProxy(connection));
-        initialized = true;
-        logger.info("Factory initialized {}", this);
-      } catch (LdapException e) {
-        if (failFastInitialize) {
-          throw e;
-        }
-        logger.warn("Could not initialize connection factory", e);
-      }
-    } else {
-      logger.debug("Factory already initialized");
+    LdapException initializeEx = null;
+    try {
+      initializeConnectionProxy();
+      logger.info("Factory initialized {}", this);
+    } catch (LdapException e) {
+      initializeEx = e;
+      logger.warn("Could not initialize connection factory", e);
     }
+    if (validator != null) {
+      ((ScheduledExecutorService) factoryExecutor).scheduleAtFixedRate(
+        () -> {
+          logger.debug("Begin validate task for {}", SingleConnectionFactory.this);
+          try {
+            validator.apply(proxy != null ? proxy.getConnection() : null);
+          } catch (Exception e) {
+            logger.error("Validation task failed for {}", SingleConnectionFactory.this, e);
+          }
+          logger.debug("End validate task for {}", SingleConnectionFactory.this);
+        },
+        validator.getValidatePeriod().toMillis(),
+        validator.getValidatePeriod().toMillis(),
+        TimeUnit.MILLISECONDS);
+    }
+    if (initializeEx != null && failFastInitialize) {
+      throw initializeEx;
+    }
+  }
+
+
+  /**
+   * Opens the connection and creates the connection proxy. Invokes {@link #onOpen} and will tear down the connection if
+   * that function returns false.
+   *
+   * @throws  LdapException  if connection open fails
+   */
+  private void initializeConnectionProxy()
+    throws LdapException
+  {
+    final Connection connection = super.getConnection();
+    connection.open();
+    proxy = new ConnectionProxy(connection);
+    initialized = true;
+    if (onOpen != null && !onOpen.apply(proxy.getConnection())) {
+      connection.close();
+      proxy = null;
+      initialized = false;
+      throw new LdapException("On open function failed for " + this);
+    }
+  }
+
+
+  /**
+   * Closes the connection and sets the proxy to null. Invokes {@link #onClose} prior to closing the connection.
+   */
+  private void destroyConnectionProxy()
+  {
+    if (proxy != null) {
+      if (onClose != null && !onClose.apply(proxy.getConnection())) {
+        logger.warn("On close function {} failed for {}", onClose, this);
+      }
+      proxy.getConnection().close();
+    }
+    proxy = null;
+    initialized = false;
   }
 
 
@@ -226,25 +364,25 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     if (!initialized) {
       throw new IllegalStateException("Connection factory is not initialized");
     }
-    return proxy;
+    return (Connection) Proxy.newProxyInstance(
+      Connection.class.getClassLoader(),
+      new Class[] {Connection.class},
+      proxy);
   }
 
 
   @Override
   public synchronized void close()
   {
-    if (connection != null) {
-      connection.close();
-    }
-    if (initializeExecutor != null) {
+    destroyConnectionProxy();
+    super.close();
+    if (factoryExecutor != null) {
       try {
-        initializeExecutor.shutdown();
+        factoryExecutor.shutdown();
       } finally {
-        initializeExecutor = null;
+        factoryExecutor = null;
       }
     }
-    super.close();
-    initialized = false;
   }
 
 
@@ -254,9 +392,12 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     return "[" +
       getClass().getName() + "@" + hashCode() + "::" +
       "transport=" + getTransport() + ", " +
-      "config=" + getConnectionConfig() + ", " +
+      "connection=" + (proxy != null ? proxy.getConnection() : null) + ", " +
       "failFastInitialize=" + failFastInitialize + ", " +
       "nonBlockingInitialize=" + nonBlockingInitialize + ", " +
+      "onOpen=" + onOpen + ", " +
+      "onClose=" + onClose + ", " +
+      "validator=" + validator + ", " +
       "initialized=" + initialized + "]";
   }
 
@@ -282,6 +423,17 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     public ConnectionProxy(final Connection c)
     {
       conn = c;
+    }
+
+
+    /**
+     * Returns the connection that is being proxied.
+     *
+     * @return  underlying connection
+     */
+    public Connection getConnection()
+    {
+      return conn;
     }
 
 
@@ -366,9 +518,30 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     }
 
 
-    public Builder config(final ConnectionConfig cc)
+    public Builder config(final ConnectionConfig config)
     {
-      object.setConnectionConfig(cc);
+      object.setConnectionConfig(config);
+      return this;
+    }
+
+
+    public Builder onOpen(final Function<Connection, Boolean> function)
+    {
+      object.setOnOpen(function);
+      return this;
+    }
+
+
+    public Builder onClose(final Function<Connection, Boolean> function)
+    {
+      object.setOnClose(function);
+      return this;
+    }
+
+
+    public Builder validator(final ConnectionValidator validator)
+    {
+      object.setValidator(validator);
       return this;
     }
 
@@ -393,4 +566,24 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     }
   }
   // CheckStyle:ON
+
+
+  /** Invokes {@link #destroyConnectionProxy()} followed by {@link #initializeConnectionProxy()}. */
+  public class ReinitializeConnectionConsumer implements Consumer<Connection>
+  {
+
+    @Override
+    public void accept(final Connection conn)
+    {
+      if (proxy != null && !proxy.getConnection().equals(conn)) {
+        throw new IllegalArgumentException("Connection not managed by this factory: " + conn);
+      }
+      try {
+        destroyConnectionProxy();
+        initializeConnectionProxy();
+      } catch (Exception e) {
+        logger.error("Could not reinitialize the connection proxy", e);
+      }
+    }
+  }
 }
