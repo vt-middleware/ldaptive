@@ -1526,7 +1526,7 @@ public final class NettyConnection extends TransportConnection
             "Received message {} without matching request in {} for {}",
             msg,
             pendingResponses,
-            this);
+            NettyConnection.this);
         }
       } finally {
         if (ctx != null) {

@@ -241,7 +241,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     throws LdapException
   {
     if (initialized) {
-      throw new IllegalStateException("Connection factory is already initialized");
+      throw new IllegalStateException("Connection factory is already initialized for " + this);
     }
     if (nonBlockingInitialize) {
       if (factoryExecutor == null) {
@@ -265,8 +265,9 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
         () -> {
           try {
             initializeInternal();
+            logger.info("Initialize successful for {}", SingleConnectionFactory.this);
           } catch (LdapException e) {
-            logger.debug("Execution of initialize failed", e);
+            logger.debug("Initialize failed for {}", SingleConnectionFactory.this, e);
           }
         });
     } else {
@@ -279,6 +280,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
           });
       }
       initializeInternal();
+      logger.info("Initialize successful for {}", SingleConnectionFactory.this);
     }
   }
 
@@ -297,7 +299,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
       logger.info("Factory initialized {}", this);
     } catch (LdapException e) {
       initializeEx = e;
-      logger.warn("Could not initialize connection factory", e);
+      logger.warn("Could not initialize connection factory for {}", SingleConnectionFactory.this, e);
     }
     if (validator != null) {
       ((ScheduledExecutorService) factoryExecutor).scheduleAtFixedRate(
