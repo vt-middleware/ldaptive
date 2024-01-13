@@ -216,7 +216,7 @@ public class SyncReplClient
         try {
           onResult.accept(result);
         } catch (Exception e) {
-          logger.warn("Unable to process result {}", result);
+          logger.warn("Unable to process result {}", result, e);
           if (onException != null) {
             try {
               onException.accept(e);
@@ -254,7 +254,7 @@ public class SyncReplClient
         try {
           onEntry.accept(entry);
         } catch (Exception e) {
-          logger.warn("Unable to process entry {}", entry);
+          logger.warn("Unable to process entry {}", entry, e);
           if (onException != null) {
             try {
               onException.accept(e);
@@ -283,7 +283,7 @@ public class SyncReplClient
         try {
           onReference.accept(reference);
         } catch (Exception e) {
-          logger.warn("Unable to process reference {}", reference);
+          logger.warn("Unable to process reference {}", reference, e);
           if (onException != null) {
             try {
               onException.accept(e);
@@ -309,7 +309,7 @@ public class SyncReplClient
           try {
             onMessage.accept(message);
           } catch (Exception e) {
-            logger.warn("Unable to process intermediate response {}", response);
+            logger.warn("Unable to process intermediate response {}", response, e);
             if (onException != null) {
               try {
                 onException.accept(e);
