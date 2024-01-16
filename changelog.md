@@ -6,6 +6,20 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.3.0 - 15Jan2024
+
+Issue | Description
+:---- | :----------
+[ldaptive-244]({{ site.issueURL }}244) | Add ConnectionValidator to SingleConnectionFactory.
+[ldaptive-243]({{ site.issueURL }}243) | Add timeoutIsFailure and validResultCodesto SearchConnectionValidator and CompareConnectionValidator.
+[c662b2f]({{ site.commitURL }}c662b2f) | Add support for determining ancestry, descendancy and equality of DNs.
+[0746c08]({{ site.commitURL }}0746c08) | Add support for search references and reloadHint in SyncReplClient.
+[ae1bda7]({{ site.commitURL }}ae1bda7) | Improvements to VLV and paged results.
+[cf0311b]({{ site.commitURL }}cf0311b) | Improve DefaultRDnNormalizer.
+[53f9076]({{ site.commitURL }}53f9076) | Add minimal attribute value escaper.
+[ldaptive-238]({{ site.issueURL }}238) | Prefer normalized DNs to lowercased DNs in LdapEntry.
+[ldaptive-237]({{ site.issueURL }}237) | Remove use of Locale specific lower/upper casing.
+
 ## Version 2.2.0 - 17Aug2023
 
 slf4j updated to version 2 with this release.
