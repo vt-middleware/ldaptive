@@ -21,15 +21,3 @@ Individual artifacts are available in the [Maven Central Repository](https://rep
 </dependencies>
 {% endhighlight %}
 
-## Additional Libraries
-
-### JSON Support
-{% highlight xml %}
-<dependencies>
-  <dependency>
-    <groupId>org.ldaptive</groupId>
-    <artifactId>ldaptive-json</artifactId>
-    <version>{{ site.version }}</version>
-  </dependency>
-</dependencies>
-{% endhighlight %}
