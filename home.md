@@ -8,8 +8,6 @@ redirect_from: "/home/"
 # LDAP library for Java.
 Ldaptive is a simple, extensible Java API for interacting with LDAP servers. It was designed to provide easy LDAP integration for application developers.
 
-### version 2 is now available in maven central.
-
 ## Features
 * Netty based asynchronous networking
 * Reactive API
