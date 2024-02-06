@@ -36,7 +36,7 @@ public interface Connection extends AutoCloseable
 
   /**
    * Creates a handle for a bind operation. Since clients must not send requests while a bind is in progress, some
-   * methods may not be supported on the the operation handle.
+   * methods may not be supported on the operation handle.
    *
    * @param  request  bind request
    *
@@ -56,7 +56,7 @@ public interface Connection extends AutoCloseable
 
 
   /**
-   * Creates a handle for an delete operation.
+   * Creates a handle for a delete operation.
    *
    * @param  request  delete request
    *
