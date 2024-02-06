@@ -296,48 +296,65 @@ public final class NettyConnection extends TransportConnection
         channel = connectInternal();
         channel.closeFuture().addListener(closeListener);
         pendingResponses.open();
-        // startTLS request must occur after the connection is ready
-        if (connectionConfig.getUseStartTLS()) {
-          final Result result = operation(new StartTLSRequest());
-          if (!result.isSuccess()) {
-            throw new ConnectException(
-              ResultCode.CONNECT_ERROR,
-              "StartTLS returned response: " + result + " for URL " + url);
-          }
-        }
-        // initialize the connection
-        if (connectionConfig.getConnectionInitializers() != null) {
-          for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
-            final Result result = initializer.initialize(this);
-            if (!result.isSuccess()) {
-              throw new ConnectException(
-                ResultCode.CONNECT_ERROR,
-                "Connection initializer " + initializer + " returned response: " + result + " for URL " + url);
-            }
-          }
-        }
+        openInitialize(url);
         connectTime = Instant.now();
         LOGGER.debug("Netty opened connection {}", this);
-      } catch (Exception e) {
-        LOGGER.warn("Connection open failed for {}", this, e);
-        try {
-          notifyOperationHandlesOfClose();
-          pendingResponses.close();
-          if (isOpen()) {
-            channel.closeFuture().removeListener(closeListener);
-            channel.close().addListener(new LogFutureListener());
-          }
-        } finally {
-          pendingResponses.clear();
-          channel = null;
-        }
-        throw e;
       } finally {
         openLock.unlock();
       }
     } else {
       LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
       throw new ConnectException(ResultCode.CONNECT_ERROR, "Open in progress");
+    }
+  }
+
+
+  /**
+   * Initializes this connection for use after it has been established. If startTLS is configured it will be performed.
+   * Any configured connection initializers are invoked.
+   *
+   * @param  url  LDAP URL to connect to
+   *
+   * @throws  LdapException  if initializing the connection fails
+   */
+  private void openInitialize(final LdapURL url)
+    throws LdapException
+  {
+    try {
+      // startTLS request must occur after the connection is ready
+      if (connectionConfig.getUseStartTLS()) {
+        final Result result = operation(new StartTLSRequest());
+        if (!result.isSuccess()) {
+          throw new ConnectException(
+            ResultCode.CONNECT_ERROR,
+            "StartTLS returned response: " + result + " for URL " + url);
+        }
+      }
+      // initialize the connection
+      if (connectionConfig.getConnectionInitializers() != null) {
+        for (ConnectionInitializer initializer : connectionConfig.getConnectionInitializers()) {
+          final Result result = initializer.initialize(this);
+          if (!result.isSuccess()) {
+            throw new ConnectException(
+              ResultCode.CONNECT_ERROR,
+              "Connection initializer " + initializer + " returned response: " + result + " for URL " + url);
+          }
+        }
+      }
+    } catch (Exception e) {
+      LOGGER.warn("Connection open failed for {}", this, e);
+      try {
+        notifyOperationHandlesOfClose();
+        pendingResponses.close();
+        if (isOpen()) {
+          channel.closeFuture().removeListener(closeListener);
+          channel.close().addListener(new LogFutureListener());
+        }
+      } finally {
+        pendingResponses.clear();
+        channel = null;
+      }
+      throw e;
     }
   }
 
@@ -360,6 +377,24 @@ public final class NettyConnection extends TransportConnection
   private Channel connectInternal()
     throws ConnectException
   {
+    final ClientInitializer initializer = createClientInitializer();
+    final ChannelFuture future = connectBootstrap(initializer);
+    waitForConnectionEstablish(initializer, future);
+    return future.channel();
+  }
+
+
+  /**
+   * Creates a new client initializer. If the {@link #ldapURL} is LDAPS an SSL handler is added to the client
+   * initializer.
+   *
+   * @return  client initializer
+   *
+   * @throws  ConnectException  if the SSL engine cannot be initialized
+   */
+  private ClientInitializer createClientInitializer()
+    throws ConnectException
+  {
     SslHandler handler = null;
     if (ldapURL.getScheme().equals("ldaps")) {
       try {
@@ -368,55 +403,7 @@ public final class NettyConnection extends TransportConnection
         throw new ConnectException(ResultCode.CONNECT_ERROR, e);
       }
     }
-    final ClientInitializer initializer = new ClientInitializer(handler);
-    final Bootstrap bootstrap = createBootstrap(initializer);
-
-    final CountDownLatch channelLatch = new CountDownLatch(1);
-    LOGGER.trace("connecting to bootstrap {} with URL {} for {}", bootstrap, ldapURL, this);
-    final ChannelFuture future;
-    if (ldapURL.getInetAddress() != null) {
-      future = bootstrap.connect(ldapURL.getInetAddress(), ldapURL.getPort());
-    } else {
-      future = bootstrap.connect(new InetSocketAddress(ldapURL.getHostname(), ldapURL.getPort()));
-    }
-    future.addListener((ChannelFutureListener) f -> channelLatch.countDown());
-    try {
-      // wait until the connection future is complete
-      // note that the wait time is controlled by the connectTimeout property in ConnectionConfig
-      // if a deadlock occurs here, there may not be enough threads available in the worker group
-      if (!channelLatch.await(connectionConfig.getConnectTimeout().multipliedBy(2).toMillis(), TimeUnit.MILLISECONDS)) {
-        LOGGER.warn(
-          "Error connecting to {} for {}. connectTimeout was not honored, check number of available threads",
-          ldapURL,
-          this);
-        future.cancel(true);
-      }
-    } catch (InterruptedException e) {
-      future.cancel(true);
-    }
-    LOGGER.trace("bootstrap connect returned {} for {}", future, this);
-    if (future.isCancelled()) {
-      throw new ConnectException(ResultCode.CONNECT_ERROR, "Connection cancelled");
-    }
-    if (!future.isSuccess()) {
-      if (future.cause() != null) {
-        throw new ConnectException(ResultCode.SERVER_DOWN, future.cause());
-      } else {
-        throw new ConnectException(ResultCode.SERVER_DOWN, "Connection could not be opened");
-      }
-    }
-
-    if (initializer.isSsl()) {
-      // socket is connected, wait for SSL handshake to complete
-      try {
-        waitForSSLHandshake(future.channel());
-      } catch (SSLException e) {
-        future.channel().close();
-        throw new ConnectException(ResultCode.CONNECT_ERROR, e);
-      }
-    }
-
-    return future.channel();
+    return new ClientInitializer(handler);
   }
 
 
@@ -457,6 +444,78 @@ public final class NettyConnection extends TransportConnection
     final SslHandler handler = new SslHandler(engine);
     handler.setHandshakeTimeout(sc.getHandshakeTimeout().toMillis(), TimeUnit.MILLISECONDS);
     return handler;
+  }
+
+
+  /**
+   * Creates a new bootstrap with the supplied initializer and uses that bootstrap to connect to the ldapURL.
+   *
+   * @param  initializer  to create bootstrap with
+   *
+   * @return  channel future produced from the connect invocation
+   */
+  private ChannelFuture connectBootstrap(final ClientInitializer initializer)
+  {
+    final Bootstrap bootstrap = createBootstrap(initializer);
+    LOGGER.trace("connecting to bootstrap {} with URL {} for {}", bootstrap, ldapURL, this);
+    final ChannelFuture future;
+    if (ldapURL.getInetAddress() != null) {
+      future = bootstrap.connect(ldapURL.getInetAddress(), ldapURL.getPort());
+    } else {
+      future = bootstrap.connect(new InetSocketAddress(ldapURL.getHostname(), ldapURL.getPort()));
+    }
+    return future;
+  }
+
+
+  /**
+   * Waits until the TCP connection has completed.
+   *
+   * @param  initializer  used to determine whether to wait for the SSL handshake to complete
+   * @param  future  to wait on
+   *
+   * @throws  ConnectException  if the connection fails
+   */
+  private void waitForConnectionEstablish(final ClientInitializer initializer, final ChannelFuture future)
+    throws ConnectException
+  {
+    final CountDownLatch channelLatch = new CountDownLatch(1);
+    future.addListener((ChannelFutureListener) f -> channelLatch.countDown());
+    try {
+      // wait until the connection future is complete
+      // note that the wait time is controlled by the connectTimeout property in ConnectionConfig
+      // if a deadlock occurs here, there may not be enough threads available in the worker group
+      if (!channelLatch.await(connectionConfig.getConnectTimeout().multipliedBy(2).toMillis(), TimeUnit.MILLISECONDS)) {
+        LOGGER.warn(
+          "Error connecting to {} for {}. connectTimeout was not honored, check number of available threads",
+          ldapURL,
+          this);
+        future.cancel(true);
+      }
+    } catch (InterruptedException e) {
+      future.cancel(true);
+    }
+    LOGGER.trace("bootstrap connect returned {} for {}", future, this);
+    if (future.isCancelled()) {
+      throw new ConnectException(ResultCode.CONNECT_ERROR, "Connection cancelled");
+    }
+    if (!future.isSuccess()) {
+      if (future.cause() != null) {
+        throw new ConnectException(ResultCode.SERVER_DOWN, future.cause());
+      } else {
+        throw new ConnectException(ResultCode.SERVER_DOWN, "Connection could not be opened");
+      }
+    }
+
+    if (initializer.isSsl()) {
+      // socket is connected, wait for SSL handshake to complete
+      try {
+        waitForSSLHandshake(future.channel());
+      } catch (SSLException e) {
+        future.channel().close();
+        throw new ConnectException(ResultCode.CONNECT_ERROR, e);
+      }
+    }
   }
 
 
