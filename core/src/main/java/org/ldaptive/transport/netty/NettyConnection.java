@@ -125,7 +125,7 @@ public final class NettyConnection extends TransportConnection
   private final EventLoopGroup messageWorkerGroup;
 
   /** Whether to shutdown the event loop groups on {@link #close()}. */
-  private boolean shutdownOnClose;
+  private final boolean shutdownOnClose;
 
   /** Netty channel configuration options. */
   private final Map<ChannelOption, Object> channelOptions;
@@ -1156,7 +1156,7 @@ public final class NettyConnection extends TransportConnection
         } finally {
           reconnectLock.writeLock().unlock();
         }
-        if (replayOperations != null && replayOperations.size() > 0) {
+        if (replayOperations != null && !replayOperations.isEmpty()) {
           replayOperations.forEach(this::write);
         }
         LOGGER.debug("Reconnect for connection {} finished", this);
