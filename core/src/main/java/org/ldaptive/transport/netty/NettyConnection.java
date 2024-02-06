@@ -286,7 +286,7 @@ public final class NettyConnection extends TransportConnection
         inboundException = null;
         ldapURL = url;
         if (connectionExecutor == null) {
-          connectionExecutor = Executors.newSingleThreadExecutor(
+          connectionExecutor = Executors.newCachedThreadPool(
             r -> {
               final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
               t.setDaemon(true);
