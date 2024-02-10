@@ -2,9 +2,16 @@
 package org.ldaptive;
 
 import org.ldaptive.handler.ExceptionHandler;
+import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.RequestHandler;
+import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
+import org.ldaptive.handler.ResultPredicate;
+import org.ldaptive.handler.SearchReferenceHandler;
 import org.ldaptive.handler.SearchResultHandler;
+import org.ldaptive.handler.UnsolicitedNotificationHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +29,35 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
   /** Connection factory. */
   private ConnectionFactory factory;
 
-  /** Functions to handle entries. */
-  private LdapEntryHandler[] entryHandlers;
-
-  /** Functions to handle exceptions. */
-  private ExceptionHandler exceptionHandler;
+  /** Functions to handle requests. */
+  private RequestHandler<SearchRequest>[] requestHandlers;
 
   /** Functions to handle response results. */
   private ResultHandler[] resultHandlers;
+
+  /** Functions to handle response controls. */
+  private ResponseControlHandler[] controlHandlers;
+
+  /** Functions to handle referrals. */
+  private ReferralHandler[] referralHandlers;
+
+  /** Functions to handle intermediate responses. */
+  private IntermediateResponseHandler[] intermediateResponseHandlers;
+
+  /** Function to handle exceptions. */
+  private ExceptionHandler exceptionHandler;
+
+  /** Function to test results. */
+  private ResultPredicate throwCondition;
+
+  /** Functions to handle unsolicited notifications. */
+  private UnsolicitedNotificationHandler[] unsolicitedNotificationHandlers;
+
+  /** Functions to handle entries. */
+  private LdapEntryHandler[] entryHandlers;
+
+  /** Functions to handle response references. */
+  private SearchReferenceHandler[] referenceHandlers;
 
   /** Functions to handle search response results. */
   private SearchResultHandler[] searchResultHandlers;
@@ -58,24 +86,113 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
 
 
   /**
-   * Returns the search entry handlers.
+   * Returns the search request handlers.
    *
-   * @return  search entry handlers
+   * @return  search request handlers
    */
-  public LdapEntryHandler[] getEntryHandlers()
+  public RequestHandler<SearchRequest>[] getRequestHandlers()
   {
-    return entryHandlers;
+    return requestHandlers;
   }
 
 
   /**
-   * Sets the search entry handlers.
+   * Sets the search request handlers.
    *
-   * @param  handlers  search entry handlers
+   * @param  handlers  search request handler
    */
-  public void setEntryHandlers(final LdapEntryHandler... handlers)
+  @SuppressWarnings("unchecked")
+  public void setRequestHandlers(final RequestHandler<SearchRequest>... handlers)
   {
-    entryHandlers = handlers;
+    requestHandlers = handlers;
+  }
+
+
+  /**
+   * Returns the search result handlers.
+   *
+   * @return  search result handlers
+   */
+  public ResultHandler[] getResultHandlers()
+  {
+    return resultHandlers;
+  }
+
+
+  /**
+   * Sets the search result handlers.
+   *
+   * @param  handlers  search result handlers
+   */
+  public void setResultHandlers(final ResultHandler... handlers)
+  {
+    resultHandlers = handlers;
+  }
+
+
+  /**
+   * Returns the control handlers.
+   *
+   * @return  control handlers
+   */
+  public ResponseControlHandler[] getControlHandlers()
+  {
+    return controlHandlers;
+  }
+
+
+  /**
+   * Sets the control handlers.
+   *
+   * @param  handlers  control handlers
+   */
+  public void setControlHandlers(final ResponseControlHandler... handlers)
+  {
+    controlHandlers = handlers;
+  }
+
+
+  /**
+   * Returns the referral handlers.
+   *
+   * @return  referral handlers
+   */
+  public ReferralHandler[] getReferralHandlers()
+  {
+    return referralHandlers;
+  }
+
+
+  /**
+   * Sets the referral handlers.
+   *
+   * @param  handlers  referral handlers
+   */
+  public void setReferralHandlers(final ReferralHandler... handlers)
+  {
+    referralHandlers = handlers;
+  }
+
+
+  /**
+   * Returns the intermediate response handlers.
+   *
+   * @return  intermediate response handlers
+   */
+  public IntermediateResponseHandler[] getIntermediateResponseHandlers()
+  {
+    return intermediateResponseHandlers;
+  }
+
+
+  /**
+   * Sets the intermediate response handlers.
+   *
+   * @param  handlers  intermediate response handlers
+   */
+  public void setIntermediateResponseHandlers(final IntermediateResponseHandler... handlers)
+  {
+    intermediateResponseHandlers = handlers;
   }
 
 
@@ -102,24 +219,90 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
 
 
   /**
-   * Returns the search result handlers.
+   * Returns the throw condition.
    *
-   * @return  search result handlers
+   * @return  throw condition
    */
-  public ResultHandler[] getResultHandlers()
+  public ResultPredicate getThrowCondition()
   {
-    return resultHandlers;
+    return throwCondition;
   }
 
 
   /**
-   * Sets the search result handlers.
+   * Sets the throw condition.
    *
-   * @param  handlers  search result handlers
+   * @param  function  throw condition
    */
-  public void setResultHandlers(final ResultHandler... handlers)
+  public void setThrowCondition(final ResultPredicate function)
   {
-    resultHandlers = handlers;
+    throwCondition = function;
+  }
+
+
+  /**
+   * Returns the unsolicited notification handlers.
+   *
+   * @return  unsolicited notification handlers
+   */
+  public UnsolicitedNotificationHandler[] getUnsolicitedNotificationHandlers()
+  {
+    return unsolicitedNotificationHandlers;
+  }
+
+
+  /**
+   * Sets the unsolicited notification handlers.
+   *
+   * @param  handlers  unsolicited notification handlers
+   */
+  public void setUnsolicitedNotificationHandlers(final UnsolicitedNotificationHandler... handlers)
+  {
+    unsolicitedNotificationHandlers = handlers;
+  }
+
+
+  /**
+   * Returns the search entry handlers.
+   *
+   * @return  search entry handlers
+   */
+  public LdapEntryHandler[] getEntryHandlers()
+  {
+    return entryHandlers;
+  }
+
+
+  /**
+   * Sets the search entry handlers.
+   *
+   * @param  handlers  search entry handlers
+   */
+  public void setEntryHandlers(final LdapEntryHandler... handlers)
+  {
+    entryHandlers = handlers;
+  }
+
+
+  /**
+   * Returns the search reference handlers.
+   *
+   * @return  search reference handlers
+   */
+  public SearchReferenceHandler[] getReferenceHandlers()
+  {
+    return referenceHandlers;
+  }
+
+
+  /**
+   * Sets the search reference handlers.
+   *
+   * @param  handlers  search reference handlers
+   */
+  public void setReferenceHandlers(final SearchReferenceHandler... handlers)
+  {
+    referenceHandlers = handlers;
   }
 
 
@@ -166,14 +349,35 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
   protected SearchOperation createSearchOperation(final ConnectionFactory cf)
   {
     final SearchOperation op = new SearchOperation(cf);
-    if (entryHandlers != null) {
-      op.setEntryHandlers(entryHandlers);
+    if (requestHandlers != null) {
+      op.setRequestHandlers(requestHandlers);
+    }
+    if (resultHandlers != null) {
+      op.setResultHandlers(resultHandlers);
+    }
+    if (controlHandlers != null) {
+      op.setControlHandlers(controlHandlers);
+    }
+    if (referralHandlers != null) {
+      op.setReferralHandlers(referralHandlers);
+    }
+    if (intermediateResponseHandlers != null) {
+      op.setIntermediateResponseHandlers(intermediateResponseHandlers);
     }
     if (exceptionHandler != null) {
       op.setExceptionHandler(exceptionHandler);
     }
-    if (resultHandlers != null) {
-      op.setResultHandlers(resultHandlers);
+    if (throwCondition != null) {
+      op.setThrowCondition(throwCondition);
+    }
+    if (unsolicitedNotificationHandlers != null) {
+      op.setUnsolicitedNotificationHandlers(unsolicitedNotificationHandlers);
+    }
+    if (entryHandlers != null) {
+      op.setEntryHandlers(entryHandlers);
+    }
+    if (referenceHandlers != null) {
+      op.setReferenceHandlers(referenceHandlers);
     }
     if (searchResultHandlers != null) {
       op.setSearchResultHandlers(searchResultHandlers);
