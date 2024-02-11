@@ -3,12 +3,15 @@ package org.ldaptive.transport;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.function.Predicate;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.Message;
 import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
+import org.ldaptive.extended.UnsolicitedNotification;
 import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
@@ -29,6 +32,22 @@ import org.ldaptive.handler.UnsolicitedNotificationHandler;
 public class DefaultSearchOperationHandle
   extends DefaultOperationHandle<SearchRequest, SearchResponse> implements SearchOperationHandle
 {
+
+  /** Predicate that requires any message except unsolicited. */
+  protected static final Predicate<Message> SEARCH_RESPONSE_TIMEOUT_CONDITION =
+    new Predicate<>() {
+      @Override
+      public boolean test(final Message message)
+      {
+        return message != null && !(message instanceof UnsolicitedNotification);
+      }
+
+      @Override
+      public String toString()
+      {
+        return "SEARCH_RESPONSE_TIMEOUT_CONDITION";
+      }
+    };
 
   /** Whether to automatically sort search results. */
   private static final boolean SORT_RESULTS = Boolean.parseBoolean(
@@ -56,7 +75,25 @@ public class DefaultSearchOperationHandle
    */
   public DefaultSearchOperationHandle(final SearchRequest req, final TransportConnection conn, final Duration timeout)
   {
-    super(req, conn, timeout);
+    this(req, conn, timeout, SEARCH_RESPONSE_TIMEOUT_CONDITION);
+  }
+
+
+  /**
+   * Creates a new search operation handle.
+   *
+   * @param  req  search request to expect a response for
+   * @param  conn  the request will be executed on
+   * @param  timeout  duration to wait for a response
+   * @param  timeoutCondition  whether a message should reset the timeout
+   */
+  DefaultSearchOperationHandle(
+    final SearchRequest req,
+    final TransportConnection conn,
+    final Duration timeout,
+    final Predicate<Message> timeoutCondition)
+  {
+    super(req, conn, timeout, timeoutCondition);
   }
 
 
@@ -214,6 +251,11 @@ public class DefaultSearchOperationHandle
    */
   public void entry(final LdapEntry r)
   {
+    if (getMessageID() != r.getMessageID()) {
+      final IllegalArgumentException e = new IllegalArgumentException("Invalid entry " + r + " for handle " + this);
+      exception(new LdapException(e));
+      throw e;
+    }
     LdapEntry e = r;
     if (onEntry != null) {
       for (LdapEntryHandler func : onEntry) {
@@ -223,11 +265,11 @@ public class DefaultSearchOperationHandle
           logger.warn("Entry function {} in handle {} threw an exception", func, this, ex);
         }
       }
-      consumedMessage();
     }
     if (e != null) {
       result.addEntries(e);
     }
+    consumedMessage(r);
   }
 
 
@@ -238,6 +280,11 @@ public class DefaultSearchOperationHandle
    */
   public void reference(final SearchResultReference r)
   {
+    if (getMessageID() != r.getMessageID()) {
+      final IllegalArgumentException e = new IllegalArgumentException("Invalid reference " + r + " for handle " + this);
+      exception(new LdapException(e));
+      throw e;
+    }
     if (onReference != null) {
       for (SearchReferenceHandler func : onReference) {
         try {
@@ -246,9 +293,9 @@ public class DefaultSearchOperationHandle
           logger.warn("Reference consumer {} in handle {} threw an exception", func, this, ex);
         }
       }
-      consumedMessage();
     }
     result.addReferences(r);
+    consumedMessage(r);
   }
 
 

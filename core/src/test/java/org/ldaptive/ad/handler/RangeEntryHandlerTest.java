@@ -39,6 +39,7 @@ public class RangeEntryHandlerTest
       new Object[][] {
         new Object[] {
           LdapEntry.builder()
+            .messageID(1)
             .dn("cn=test-group,ou=groups,dc=ldaptive,dc=org")
             .attributes(LdapAttribute.builder()
               .name("member;Range=0-4")
@@ -46,6 +47,7 @@ public class RangeEntryHandlerTest
               .build())
             .build(),
           LdapEntry.builder()
+            .messageID(1)
             .dn("cn=test-group,ou=groups,dc=ldaptive,dc=org")
             .attributes(LdapAttribute.builder()
               .name("member;Range=5-*")
@@ -68,16 +70,20 @@ public class RangeEntryHandlerTest
       h.messageID(1);
       h.sent();
       ((DefaultSearchOperationHandle) h).entry(entry2);
-      ((DefaultSearchOperationHandle) h).result(SearchResponse.builder().resultCode(ResultCode.SUCCESS).build());
+      ((DefaultSearchOperationHandle) h).result(
+        SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
     });
     handler.setConnection(conn);
-    final SearchResponse response = SearchResponse.builder().resultCode(ResultCode.SUCCESS).entry(entry1).build();
+    final SearchResponse response =
+      SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).entry(entry1).build();
     final SearchResponse rangeResponse = handler.apply(response);
     Assert.assertNotNull(rangeResponse);
     Assert.assertEquals(
       SearchResponse.builder()
+        .messageID(1)
         .resultCode(ResultCode.SUCCESS)
         .entry(LdapEntry.builder()
+          .messageID(1)
           .dn("cn=test-group,ou=groups,dc=ldaptive,dc=org")
           .attributes(LdapAttribute.builder()
             .name("member")
