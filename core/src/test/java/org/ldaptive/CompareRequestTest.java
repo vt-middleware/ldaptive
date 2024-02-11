@@ -68,31 +68,31 @@ public class CompareRequestTest
     // CheckStyle:Indentation OFF
     Assert.assertEquals(
       CompareRequest.builder().build().toString().split("::")[1],
-      "controls=null, dn=null, attributeDesc=null, assertionValue=null");
+      "controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=null");
     Assert.assertEquals(
       new CompareRequest(null, null, null).toString().split("::")[1],
-      "controls=null, dn=null, attributeDesc=null, assertionValue=null");
+      "controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=null");
     Assert.assertEquals(
       new CompareRequest("uid=1", null, null).toString().split("::")[1],
-      "controls=null, dn=uid=1, attributeDesc=null, assertionValue=null");
+      "controls=null, responseTimeout=null, dn=uid=1, attributeDesc=null, assertionValue=null");
     Assert.assertEquals(
       new CompareRequest(null, "name", null).toString().split("::")[1],
-      "controls=null, dn=null, attributeDesc=name, assertionValue=null");
+      "controls=null, responseTimeout=null, dn=null, attributeDesc=name, assertionValue=null");
     Assert.assertEquals(
       new CompareRequest(null, null, "value").toString().split("::")[1],
-      "controls=null, dn=null, attributeDesc=null, assertionValue=value");
+      "controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=value");
     Assert.assertEquals(
       new CompareRequest(null, "name", "value").toString().split("::")[1],
-      "controls=null, dn=null, attributeDesc=name, assertionValue=value");
+      "controls=null, responseTimeout=null, dn=null, attributeDesc=name, assertionValue=value");
     Assert.assertEquals(
       new CompareRequest(null, "userPassword", "password").toString().split("::")[1],
-      "controls=null, dn=null, attributeDesc=userPassword, assertionValue=<suppressed>");
+      "controls=null, responseTimeout=null, dn=null, attributeDesc=userPassword, assertionValue=<suppressed>");
     Assert.assertEquals(
       new CompareRequest("uid=1", "userPassword", "password").toString().split("::")[1],
-      "controls=null, dn=uid=1, attributeDesc=userPassword, assertionValue=<suppressed>");
+      "controls=null, responseTimeout=null, dn=uid=1, attributeDesc=userPassword, assertionValue=<suppressed>");
     Assert.assertEquals(
       new CompareRequest("uid=1", "name", "value").toString().split("::")[1],
-      "controls=null, dn=uid=1, attributeDesc=name, assertionValue=value");
+      "controls=null, responseTimeout=null, dn=uid=1, attributeDesc=name, assertionValue=value");
     // CheckStyle:Indentation ON
   }
 }

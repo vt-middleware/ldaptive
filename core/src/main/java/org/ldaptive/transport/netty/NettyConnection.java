@@ -48,6 +48,7 @@ import io.netty.handler.ssl.SslHandler;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.ScheduledFuture;
 import org.ldaptive.AbandonRequest;
+import org.ldaptive.AbstractRequestMessage;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AddResponse;
 import org.ldaptive.BindRequest;
@@ -594,7 +595,7 @@ public final class NettyConnection extends TransportConnection
     final DefaultExtendedOperationHandle handle = new DefaultExtendedOperationHandle(
       request,
       this,
-      connectionConfig.getStartTLSTimeout());
+      request.getResponseTimeout() != null ? request.getResponseTimeout() : connectionConfig.getStartTLSTimeout());
     final Result result;
     try {
       result = handle.execute();
@@ -817,13 +818,23 @@ public final class NettyConnection extends TransportConnection
   @Override
   public DefaultOperationHandle<AddRequest, AddResponse> operation(final AddRequest request)
   {
-    return new DefaultOperationHandle<>(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultOperationHandle<>(
+      request,
+      this,
+      request.getResponseTimeout() != null ? request.getResponseTimeout() : connectionConfig.getResponseTimeout());
   }
 
 
   @Override
   public BindOperationHandle operation(final BindRequest request)
   {
+    if (request instanceof AbstractRequestMessage) {
+      return new BindOperationHandle(
+        request,
+        this,
+        ((AbstractRequestMessage) request).getResponseTimeout() != null ?
+          ((AbstractRequestMessage) request).getResponseTimeout() : connectionConfig.getResponseTimeout());
+    }
     return new BindOperationHandle(request, this, connectionConfig.getResponseTimeout());
   }
 
@@ -831,14 +842,20 @@ public final class NettyConnection extends TransportConnection
   @Override
   public DefaultCompareOperationHandle operation(final CompareRequest request)
   {
-    return new DefaultCompareOperationHandle(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultCompareOperationHandle(
+      request,
+      this,
+      request.getResponseTimeout() != null ? request.getResponseTimeout() : connectionConfig.getResponseTimeout());
   }
 
 
   @Override
   public DefaultOperationHandle<DeleteRequest, DeleteResponse> operation(final DeleteRequest request)
   {
-    return new DefaultOperationHandle<>(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultOperationHandle<>(
+      request,
+      this,
+      request.getResponseTimeout() != null ? request.getResponseTimeout() : connectionConfig.getResponseTimeout());
   }
 
 
@@ -848,28 +865,40 @@ public final class NettyConnection extends TransportConnection
     if (request instanceof StartTLSRequest) {
       throw new IllegalArgumentException("StartTLS can only be invoked when the connection is opened");
     }
-    return new DefaultExtendedOperationHandle(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultExtendedOperationHandle(
+      request,
+      this,
+      request.getResponseTimeout() != null ? request.getResponseTimeout() : connectionConfig.getResponseTimeout());
   }
 
 
   @Override
   public DefaultOperationHandle<ModifyRequest, ModifyResponse> operation(final ModifyRequest request)
   {
-    return new DefaultOperationHandle<>(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultOperationHandle<>(
+      request,
+      this,
+      request.getResponseTimeout() != null ? request.getResponseTimeout() : connectionConfig.getResponseTimeout());
   }
 
 
   @Override
   public DefaultOperationHandle<ModifyDnRequest, ModifyDnResponse> operation(final ModifyDnRequest request)
   {
-    return new DefaultOperationHandle<>(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultOperationHandle<>(
+      request,
+      this,
+      request.getResponseTimeout() != null ? request.getResponseTimeout() : connectionConfig.getResponseTimeout());
   }
 
 
   @Override
   public DefaultSearchOperationHandle operation(final SearchRequest request)
   {
-    return new DefaultSearchOperationHandle(request, this, connectionConfig.getResponseTimeout());
+    return new DefaultSearchOperationHandle(
+      request,
+      this,
+      request.getResponseTimeout() != null ? request.getResponseTimeout() : connectionConfig.getResponseTimeout());
   }
 
 

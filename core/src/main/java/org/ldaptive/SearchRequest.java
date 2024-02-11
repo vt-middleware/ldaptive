@@ -522,7 +522,8 @@ public class SearchRequest extends AbstractRequestMessage
         LdapUtils.areEqual(searchFilter, v.searchFilter) &&
         LdapUtils.areEqual(returnAttributes, v.returnAttributes) &&
         LdapUtils.areEqual(binaryAttributes, v.binaryAttributes) &&
-        LdapUtils.areEqual(getControls(), v.getControls());
+        LdapUtils.areEqual(getControls(), v.getControls()) &&
+        LdapUtils.areEqual(getResponseTimeout(), v.getResponseTimeout());
     }
     return false;
   }
@@ -543,7 +544,8 @@ public class SearchRequest extends AbstractRequestMessage
         searchFilter,
         returnAttributes,
         binaryAttributes,
-        getControls());
+        getControls(),
+        getResponseTimeout());
   }
 
 

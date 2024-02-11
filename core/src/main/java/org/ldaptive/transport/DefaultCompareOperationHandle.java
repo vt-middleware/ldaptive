@@ -146,6 +146,12 @@ public class DefaultCompareOperationHandle
    */
   public void compare(final CompareResponse response)
   {
+    if (getMessageID() != response.getMessageID()) {
+      final IllegalArgumentException e = new IllegalArgumentException(
+        "Invalid compare response " + response + " for handle " + this);
+      exception(new LdapException(e));
+      throw e;
+    }
     if (onCompare != null) {
       for (CompareValueHandler func : onCompare) {
         try {
