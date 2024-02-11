@@ -1,6 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport.mock;
 
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import org.ldaptive.AbandonRequest;
 import org.ldaptive.AddRequest;
@@ -40,6 +43,9 @@ import org.ldaptive.transport.TransportConnection;
 public final class MockConnection extends TransportConnection
 {
 
+  /** Message ID. */
+  private AtomicInteger messageID = new AtomicInteger(1);
+
   /** Predicate to control the results of {@link #open(LdapURL)}. */
   private Predicate<LdapURL> openPredicate;
 
@@ -51,6 +57,39 @@ public final class MockConnection extends TransportConnection
 
   /** LDAP URL. */
   private LdapURL ldapURL;
+
+  /** Consumer for abandon operations. */
+  private Consumer<AbandonRequest> abandonConsumer;
+
+  /** Consumer for write operations. */
+  private Consumer<DefaultOperationHandle> writeConsumer = handle -> {
+    handle.messageID(messageID.getAndIncrement());
+    handle.sent();
+  };
+
+  /** Handle to return for add operations. */
+  private Function<AddRequest, OperationHandle<AddRequest, AddResponse>> addOperationFunction;
+
+  /** Handle to return for bind operations. */
+  private Function<BindRequest, OperationHandle<BindRequest, BindResponse>> bindOperationFunction;
+
+  /** Handle to return for compare operations. */
+  private Function<CompareRequest, CompareOperationHandle> compareOperationFunction;
+
+  /** Handle to return for delete operations. */
+  private Function<DeleteRequest, OperationHandle<DeleteRequest, DeleteResponse>> deleteOperationFunction;
+
+  /** Handle to return for extended operations. */
+  private Function<ExtendedRequest, ExtendedOperationHandle> extendedOperationFunction;
+
+  /** Handle to return for modify dn operations. */
+  private Function<ModifyDnRequest, OperationHandle<ModifyDnRequest, ModifyDnResponse>> modifyDnOperationFunction;
+
+  /** Handle to return for modify operations. */
+  private Function<ModifyRequest, OperationHandle<ModifyRequest, ModifyResponse>> modifyOperationFunction;
+
+  /** Handle to return for search operations. */
+  private Function<SearchRequest, SearchOperationHandle> searchOperationFunction;
 
 
   /**
@@ -73,6 +112,69 @@ public final class MockConnection extends TransportConnection
   public void setTestPredicate(final Predicate<LdapURL> p)
   {
     testPredicate = p;
+  }
+
+
+  public void setAbandonConsumer(final Consumer<AbandonRequest> consumer)
+  {
+    abandonConsumer = consumer;
+  }
+
+
+  public void setWriteConsumer(final Consumer<DefaultOperationHandle> consumer)
+  {
+    writeConsumer = consumer;
+  }
+
+
+  public void setAddOperationFunction(final Function<AddRequest, OperationHandle<AddRequest, AddResponse>> func)
+  {
+    addOperationFunction = func;
+  }
+
+
+  public void setBindOperationFunction(final Function<BindRequest, OperationHandle<BindRequest, BindResponse>> func)
+  {
+    bindOperationFunction = func;
+  }
+
+
+  public void setCompareOperationFunction(final Function<CompareRequest, CompareOperationHandle> func)
+  {
+    compareOperationFunction = func;
+  }
+
+
+  public void setDeleteOperationFunction(
+    final Function<DeleteRequest, OperationHandle<DeleteRequest, DeleteResponse>> func)
+  {
+    deleteOperationFunction = func;
+  }
+
+
+  public void setExtendedOperationFunction(final Function<ExtendedRequest, ExtendedOperationHandle> func)
+  {
+    extendedOperationFunction = func;
+  }
+
+
+  public void setModifyDnOperationFunction(
+    final Function<ModifyDnRequest, OperationHandle<ModifyDnRequest, ModifyDnResponse>> func)
+  {
+    modifyDnOperationFunction = func;
+  }
+
+
+  public void setModifyOperationFunction(
+    final Function<ModifyRequest, OperationHandle<ModifyRequest, ModifyResponse>> func)
+  {
+    modifyOperationFunction = func;
+  }
+
+
+  public void setSearchOperationFunction(final Function<SearchRequest, SearchOperationHandle> func)
+  {
+    searchOperationFunction = func;
   }
 
 
@@ -112,7 +214,11 @@ public final class MockConnection extends TransportConnection
   @Override
   protected void write(final DefaultOperationHandle handle)
   {
-    throw new UnsupportedOperationException();
+    if (writeConsumer != null) {
+      writeConsumer.accept(handle);
+    } else {
+      throw new UnsupportedOperationException();
+    }
   }
 
 
@@ -123,13 +229,20 @@ public final class MockConnection extends TransportConnection
   @Override
   public void operation(final AbandonRequest request)
   {
-    throw new UnsupportedOperationException();
+    if (abandonConsumer != null) {
+      abandonConsumer.accept(request);
+    } else {
+      throw new UnsupportedOperationException();
+    }
   }
 
 
   @Override
   public OperationHandle<AddRequest, AddResponse> operation(final AddRequest request)
   {
+    if (addOperationFunction != null) {
+      return addOperationFunction.apply(request);
+    }
     throw new UnsupportedOperationException();
   }
 
@@ -137,6 +250,9 @@ public final class MockConnection extends TransportConnection
   @Override
   public OperationHandle<BindRequest, BindResponse> operation(final BindRequest request)
   {
+    if (bindOperationFunction != null) {
+      return bindOperationFunction.apply(request);
+    }
     throw new UnsupportedOperationException();
   }
 
@@ -144,6 +260,9 @@ public final class MockConnection extends TransportConnection
   @Override
   public CompareOperationHandle operation(final CompareRequest request)
   {
+    if (compareOperationFunction != null) {
+      return compareOperationFunction.apply(request);
+    }
     throw new UnsupportedOperationException();
   }
 
@@ -151,6 +270,9 @@ public final class MockConnection extends TransportConnection
   @Override
   public OperationHandle<DeleteRequest, DeleteResponse> operation(final DeleteRequest request)
   {
+    if (deleteOperationFunction != null) {
+      return deleteOperationFunction.apply(request);
+    }
     throw new UnsupportedOperationException();
   }
 
@@ -158,13 +280,9 @@ public final class MockConnection extends TransportConnection
   @Override
   public ExtendedOperationHandle operation(final ExtendedRequest request)
   {
-    throw new UnsupportedOperationException();
-  }
-
-
-  @Override
-  public OperationHandle<ModifyRequest, ModifyResponse> operation(final ModifyRequest request)
-  {
+    if (extendedOperationFunction != null) {
+      return extendedOperationFunction.apply(request);
+    }
     throw new UnsupportedOperationException();
   }
 
@@ -172,6 +290,19 @@ public final class MockConnection extends TransportConnection
   @Override
   public OperationHandle<ModifyDnRequest, ModifyDnResponse> operation(final ModifyDnRequest request)
   {
+    if (modifyDnOperationFunction != null) {
+      return modifyDnOperationFunction.apply(request);
+    }
+    throw new UnsupportedOperationException();
+  }
+
+
+  @Override
+  public OperationHandle<ModifyRequest, ModifyResponse> operation(final ModifyRequest request)
+  {
+    if (modifyOperationFunction != null) {
+      return modifyOperationFunction.apply(request);
+    }
     throw new UnsupportedOperationException();
   }
 
@@ -179,6 +310,9 @@ public final class MockConnection extends TransportConnection
   @Override
   public SearchOperationHandle operation(final SearchRequest request)
   {
+    if (searchOperationFunction != null) {
+      return searchOperationFunction.apply(request);
+    }
     throw new UnsupportedOperationException();
   }
 
@@ -211,4 +345,104 @@ public final class MockConnection extends TransportConnection
   {
     open = false;
   }
+
+
+  public static MockConnection.Builder builder(final ConnectionConfig cc)
+  {
+    return new Builder(cc);
+  }
+
+
+  // CheckStyle:OFF
+  public static class Builder
+  {
+
+    private final MockConnection object;
+
+
+    protected Builder(final ConnectionConfig cc)
+    {
+      object = new MockConnection(cc);
+    }
+
+
+    public Builder abandonConsumer(final Consumer<AbandonRequest> c)
+    {
+      object.setAbandonConsumer(c);
+      return this;
+    }
+
+
+    public Builder writeConsumer(final Consumer<DefaultOperationHandle> c)
+    {
+      object.setWriteConsumer(c);
+      return this;
+    }
+
+
+    public Builder addOperationFunction(final Function<AddRequest, OperationHandle<AddRequest, AddResponse>> func)
+    {
+      object.setAddOperationFunction(func);
+      return this;
+    }
+
+
+    public Builder bindOperationFunction(final Function<BindRequest, OperationHandle<BindRequest, BindResponse>> func)
+    {
+      object.setBindOperationFunction(func);
+      return this;
+    }
+
+
+    public Builder compareOperationFunction(final Function<CompareRequest, CompareOperationHandle> func)
+    {
+      object.setCompareOperationFunction(func);
+      return this;
+    }
+
+
+    public Builder deleteOperationFunction(
+      final Function<DeleteRequest, OperationHandle<DeleteRequest, DeleteResponse>> func)
+    {
+      object.setDeleteOperationFunction(func);
+      return this;
+    }
+
+
+    public Builder extendedOperationFunction(final Function<ExtendedRequest, ExtendedOperationHandle> func)
+    {
+      object.setExtendedOperationFunction(func);
+      return this;
+    }
+
+
+    public Builder modifyDnOperationFunction(
+      final Function<ModifyDnRequest, OperationHandle<ModifyDnRequest, ModifyDnResponse>> func)
+    {
+      object.setModifyDnOperationFunction(func);
+      return this;
+    }
+
+
+    public Builder modifyOperationFunction(
+      final Function<ModifyRequest, OperationHandle<ModifyRequest, ModifyResponse>> func)
+    {
+      object.setModifyOperationFunction(func);
+      return this;
+    }
+
+
+    public Builder searchOperationFunction(final Function<SearchRequest, SearchOperationHandle> func)
+    {
+      object.setSearchOperationFunction(func);
+      return this;
+    }
+
+
+    public MockConnection build()
+    {
+      return object;
+    }
+  }
+  // CheckStyle:ON
 }

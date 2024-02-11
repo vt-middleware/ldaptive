@@ -1,0 +1,94 @@
+/* See LICENSE for licensing and NOTICE for copyright. */
+package org.ldaptive.ad.handler;
+
+import java.time.Duration;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.ldaptive.ConnectionConfig;
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
+import org.ldaptive.ResultCode;
+import org.ldaptive.SearchResponse;
+import org.ldaptive.transport.DefaultSearchOperationHandle;
+import org.ldaptive.transport.mock.MockConnection;
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
+
+/**
+ * Unit test for {@link RangeEntryHandler}.
+ *
+ * @author  Middleware Services
+ */
+public class RangeEntryHandlerTest
+{
+
+  /** Handler to test. */
+  private final RangeEntryHandler handler = new RangeEntryHandler();
+
+
+  /**
+   * Range entries.
+   *
+   * @return  test data
+   */
+  @DataProvider(name = "range-entries")
+  public Object[][] rangeEntries()
+  {
+    return
+      new Object[][] {
+        new Object[] {
+          LdapEntry.builder()
+            .dn("cn=test-group,ou=groups,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder()
+              .name("member;Range=0-4")
+              .values("alpha", "bravo", "charlie", "delta", "echo")
+              .build())
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=test-group,ou=groups,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder()
+              .name("member;Range=5-*")
+              .values("foxtrot", "golf", "hotel", "india")
+              .build())
+            .build(),
+        },
+      };
+  }
+
+
+  @Test(dataProvider = "range-entries")
+  public void apply(final LdapEntry entry1, final LdapEntry entry2)
+  {
+    final MockConnection conn = new MockConnection(
+      ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build());
+    conn.setSearchOperationFunction(
+      req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(1)));
+    conn.setWriteConsumer(h -> {
+      h.messageID(1);
+      h.sent();
+      ((DefaultSearchOperationHandle) h).entry(entry2);
+      ((DefaultSearchOperationHandle) h).result(SearchResponse.builder().resultCode(ResultCode.SUCCESS).build());
+    });
+    handler.setConnection(conn);
+    final SearchResponse response = SearchResponse.builder().resultCode(ResultCode.SUCCESS).entry(entry1).build();
+    final SearchResponse rangeResponse = handler.apply(response);
+    Assert.assertNotNull(rangeResponse);
+    Assert.assertEquals(
+      SearchResponse.builder()
+        .resultCode(ResultCode.SUCCESS)
+        .entry(LdapEntry.builder()
+          .dn("cn=test-group,ou=groups,dc=ldaptive,dc=org")
+          .attributes(LdapAttribute.builder()
+            .name("member")
+            .stringValues(
+              Stream.concat(
+                entry1.getAttribute().getStringValues().stream(),
+                entry2.getAttribute().getStringValues().stream())
+                .collect(Collectors.toList()))
+            .build())
+          .build())
+        .build(),
+      rangeResponse);
+  }
+}
