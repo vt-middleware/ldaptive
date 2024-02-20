@@ -665,21 +665,17 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       }
     }
     exception = e;
-    responseSemaphore.release();
+    consumedMessage();
     complete();
   }
 
 
   /**
    * Indicates that a protocol message was consumed by a supplied consumer.
-   *
-   * @deprecated  Use {@link #consumedMessage(Message)}
    */
-  @Deprecated
   protected void consumedMessage()
   {
-    consumedMessage = true;
-    responseSemaphore.release();
+    consumedMessage(true);
   }
 
 
@@ -690,8 +686,19 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   protected void consumedMessage(final Message message)
   {
+    consumedMessage(getResponseTimeoutCondition().test(message));
+  }
+
+
+  /**
+   * Indicates that a protocol message was consumed by a supplied consumer.
+   *
+   * @param  signalResponseSemaphore  whether to signal the response semaphore
+   */
+  private void consumedMessage(final boolean signalResponseSemaphore)
+  {
     consumedMessage = true;
-    if (getResponseTimeoutCondition().test(message)) {
+    if (signalResponseSemaphore) {
       responseSemaphore.release();
     }
   }
