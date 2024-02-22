@@ -113,8 +113,8 @@ public class ConnectionConfig extends AbstractConfig
    */
   private Predicate<RetryMetadata> autoReconnectCondition = ONE_RECONNECT_ATTEMPT;
 
-  /** Whether pending operations should be replayed after a reconnect. Default is true. */
-  private boolean autoReplay = true;
+  /** Whether pending operations should be replayed after a reconnect. Default is false. */
+  private boolean autoReplay;
 
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
