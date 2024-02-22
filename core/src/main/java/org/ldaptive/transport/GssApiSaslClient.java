@@ -75,8 +75,12 @@ public class GssApiSaslClient implements SaslClient<GssApiBindRequest>
       final Map<String, String> state = new HashMap<>();
       loginModule.initialize(subject, request, state, request.getJaasOptions());
       if (loginModule.login()) {
-        loginModule.commit();
+        if (!loginModule.commit()) {
+          loginModule.abort();
+          throw new LoginException("Commit failed for " + request + " using " + loginModule);
+        }
       } else {
+        loginModule.abort();
         throw new LoginException("Login failed for " + request + " using " + loginModule);
       }
     }
