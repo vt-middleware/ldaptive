@@ -144,7 +144,7 @@ public class CompareRequest extends AbstractRequestMessage
     return super.toString() + ", " +
       "dn=" + ldapDn + ", " +
       "attributeDesc=" + attributeDesc + ", " +
-      "assertionValue=" + ("userPassword".equals(attributeDesc) ? "<suppressed>" : assertionValue);
+      "assertionValue=" + ("userPassword".equalsIgnoreCase(attributeDesc) ? "<suppressed>" : assertionValue);
   }
 
 
