@@ -3,20 +3,37 @@ package org.ldaptive.transport;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 import org.ldaptive.AbandonRequest;
+import org.ldaptive.AddRequest;
+import org.ldaptive.AddResponse;
 import org.ldaptive.BindRequest;
+import org.ldaptive.BindResponse;
+import org.ldaptive.CompareRequest;
+import org.ldaptive.CompareResponse;
+import org.ldaptive.DeleteRequest;
+import org.ldaptive.DeleteResponse;
 import org.ldaptive.LdapException;
+import org.ldaptive.Message;
+import org.ldaptive.ModifyDnRequest;
+import org.ldaptive.ModifyDnResponse;
+import org.ldaptive.ModifyRequest;
+import org.ldaptive.ModifyResponse;
 import org.ldaptive.OperationHandle;
 import org.ldaptive.Request;
 import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.UnbindRequest;
 import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.CancelRequest;
 import org.ldaptive.extended.ExtendedOperationHandle;
+import org.ldaptive.extended.ExtendedRequest;
+import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.extended.StartTLSRequest;
 import org.ldaptive.extended.UnsolicitedNotification;
@@ -41,6 +58,22 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultOperationHandle<Q extends Request, S extends Result> implements OperationHandle<Q, S>
 {
+
+  /** Predicate that requires any result message except unsolicited. */
+  private static final Predicate<Message> DEFAULT_RESPONSE_TIMEOUT_CONDITION =
+    new Predicate<>() {
+      @Override
+      public boolean test(final Message message)
+      {
+        return message instanceof Result && !(message instanceof UnsolicitedNotification);
+      }
+
+      @Override
+      public String toString()
+      {
+        return "DEFAULT_RESPONSE_TIMEOUT_CONDITION";
+      }
+    };
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -81,8 +114,8 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   /** Function to run when a result is received to determine whether an exception should be raised. */
   private ResultPredicate throwCondition;
 
-  /** Latch to determine when a response has been received. */
-  private final CountDownLatch responseDone = new CountDownLatch(1);
+  /** Semaphore to determine when a response has been received. */
+  private final Semaphore responseSemaphore = new Semaphore(0);
 
   /** Timestamp when the handle was created. */
   private final Instant creationTime = Instant.now();
@@ -124,6 +157,17 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   }
 
 
+  /**
+   * Returns a predicate to determine whether the responseTimeout semaphore should be released.
+   *
+   * @return  response timeout condition
+   */
+  protected Predicate<Message> getResponseTimeoutCondition()
+  {
+    return DEFAULT_RESPONSE_TIMEOUT_CONDITION;
+  }
+
+
   @Override
   public DefaultOperationHandle<Q, S> send()
   {
@@ -144,32 +188,35 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   {
     try {
       if (Duration.ZERO.equals(responseTimeout)) {
-        responseDone.await();
-        if (result != null && exception == null) {
-          logger.trace("await received result {} for handle {}", result, this);
-          if (throwCondition != null) {
-            throwCondition.testAndThrow(result);
-          }
-          return result;
-        }
+        do {
+          logger.trace("await waiting to acquire {} for handle {}", responseSemaphore, this);
+          responseSemaphore.acquire();
+          logger.trace("await acquired {} for handle {}", responseSemaphore, this);
+        } while (result == null && exception == null);
       } else {
-        if (!responseDone.await(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
-          abandon(
-            new LdapException(
-              ResultCode.LDAP_TIMEOUT,
-              "No response received in " + responseTimeout.toMillis() + "ms for handle " + this));
-          logger.trace("await abandoned handle {}", this);
-        } else if (result != null && exception == null) {
-          logger.trace("await received result {} for handle {}", result, this);
-          if (throwCondition != null) {
-            throwCondition.testAndThrow(result);
+        do {
+          logger.trace("await waiting to acquire {} for handle {}", responseSemaphore, this);
+          if (!responseSemaphore.tryAcquire(responseTimeout.toMillis(), TimeUnit.MILLISECONDS)) {
+            abandon(
+              new LdapException(
+                ResultCode.LDAP_TIMEOUT,
+                "No response received in " + responseTimeout.toMillis() + "ms for handle " + this));
+            logger.trace("await failed to acquire {} and abandoned handle {}", responseSemaphore, this);
+            break;
           }
-          return result;
-        }
+          logger.trace("await acquired {} for handle {}", responseSemaphore, this);
+        } while (result == null && exception == null);
       }
     } catch (InterruptedException e) {
-      logger.trace("await interrupted for handle {} waiting for response", this, e);
+      logger.trace("await interrupted acquiring {} for handle {} waiting for response", responseSemaphore, this, e);
       exception(new LdapException(ResultCode.LOCAL_ERROR, e));
+    }
+    if (result != null && exception == null) {
+      logger.trace("await received result {} for handle {}", result, this);
+      if (throwCondition != null) {
+        throwCondition.testAndThrow(result);
+      }
+      return result;
     }
     if (exception == null) {
       throw new LdapException(
@@ -297,6 +344,8 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       if (receivedTime == null) {
         try {
           connection.operation(new AbandonRequest(messageID));
+        } catch (Exception e) {
+          logger.warn("Could not abandon operation for {}", this, e);
         } finally {
           exception(cause);
         }
@@ -328,6 +377,40 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       handle.onComplete(completeHandler);
     }
     return handle;
+  }
+
+
+  /**
+   * Whether the supplied result belongs to this handle.
+   *
+   * @param  r  to inspect
+   *
+   * @return  whether the supplied result belong to this handle
+   */
+  private boolean supports(final Result r)
+  {
+    if (messageID != r.getMessageID()) {
+      return false;
+    }
+    boolean supports = false;
+    if (request instanceof AddRequest && r instanceof AddResponse) {
+      supports = true;
+    } else if (request instanceof BindRequest && r instanceof BindResponse) {
+      supports = true;
+    } else if (request instanceof CompareRequest && r instanceof CompareResponse) {
+      supports = true;
+    } else if (request instanceof DeleteRequest && r instanceof DeleteResponse) {
+      supports = true;
+    } else if (request instanceof ExtendedRequest && r instanceof ExtendedResponse) {
+      supports = true;
+    } else if (request instanceof ModifyDnRequest && r instanceof ModifyDnResponse) {
+      supports = true;
+    } else if (request instanceof ModifyRequest && r instanceof ModifyResponse) {
+      supports = true;
+    } else if (request instanceof SearchRequest && r instanceof SearchResponse) {
+      supports = true;
+    }
+    return supports;
   }
 
 
@@ -454,7 +537,14 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public void result(final S r)
   {
     if (r == null) {
-      throw new IllegalArgumentException("Result cannot be null for handle " + this);
+      final IllegalArgumentException e = new IllegalArgumentException("Result cannot be null for handle " + this);
+      exception(new LdapException(e));
+      throw e;
+    }
+    if (!supports(r)) {
+      final IllegalArgumentException e = new IllegalArgumentException("Invalid result " + r + " for handle " + this);
+      exception(new LdapException(e));
+      throw e;
     }
     if (onResult != null) {
       for (ResultHandler func : onResult) {
@@ -464,9 +554,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
           logger.warn("Result function {} in handle {} threw an exception", func, this, ex);
         }
       }
-      consumedMessage();
     }
     result = r;
+    consumedMessage(r);
     complete();
   }
 
@@ -516,6 +606,12 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   public void intermediate(final IntermediateResponse r)
   {
+    if (getMessageID() != r.getMessageID()) {
+      final IllegalArgumentException e = new IllegalArgumentException(
+        "Invalid intermediate response " + r + " for handle " + this);
+      exception(new LdapException(e));
+      throw e;
+    }
     if (onIntermediate != null) {
       for (Consumer<IntermediateResponse> func : onIntermediate) {
         try {
@@ -524,8 +620,8 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
           logger.warn("Intermediate response consumer {} in handle {} threw an exception", func, this, ex);
         }
       }
-      consumedMessage();
     }
+    consumedMessage(r);
   }
 
 
@@ -544,8 +640,8 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
           logger.warn("Unsolicited notification consumer {} in handle {} threw an exception", func, this, ex);
         }
       }
-      consumedMessage();
     }
+    consumedMessage(u);
   }
 
 
@@ -557,7 +653,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public void exception(final LdapException e)
   {
     if (e == null) {
-      throw new IllegalArgumentException("Exception cannot be null for handle " + this);
+      final IllegalArgumentException ex = new IllegalArgumentException("Exception cannot be null for handle " + this);
+      exception(new LdapException(ex));
+      throw ex;
     }
     if (onException != null) {
       try {
@@ -567,6 +665,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       }
     }
     exception = e;
+    consumedMessage();
     complete();
   }
 
@@ -576,7 +675,32 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   protected void consumedMessage()
   {
+    consumedMessage(true);
+  }
+
+
+  /**
+   * Indicates that a protocol message was consumed by a supplied consumer.
+   *
+   * @param  message  that was consumed
+   */
+  protected void consumedMessage(final Message message)
+  {
+    consumedMessage(getResponseTimeoutCondition().test(message));
+  }
+
+
+  /**
+   * Indicates that a protocol message was consumed by a supplied consumer.
+   *
+   * @param  signalResponseSemaphore  whether to signal the response semaphore
+   */
+  private void consumedMessage(final boolean signalResponseSemaphore)
+  {
     consumedMessage = true;
+    if (signalResponseSemaphore) {
+      responseSemaphore.release();
+    }
   }
 
 
@@ -584,23 +708,19 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    * Releases the latch and sets the response as received. Invokes {@link #onComplete}. Handle is considered done when
    * this is invoked.
    */
-  private void complete()
+  private synchronized void complete()
   {
     try {
       if (receivedTime != null) {
-        logger.warn("Operation already complete for handle {}", this);
+        logger.debug("Operation already complete for handle {}", this);
         return;
       }
-      try {
-        responseDone.countDown();
-      } finally {
-        receivedTime = Instant.now();
-        if (onComplete != null) {
-          try {
-            onComplete.execute();
-          } catch (Exception e) {
-            logger.warn("Complete consumer {} in handle {} threw an exception", onComplete, this, e);
-          }
+      receivedTime = Instant.now();
+      if (onComplete != null) {
+        try {
+          onComplete.execute();
+        } catch (Exception e) {
+          logger.warn("Complete consumer {} in handle {} threw an exception", onComplete, this, e);
         }
       }
     } finally {

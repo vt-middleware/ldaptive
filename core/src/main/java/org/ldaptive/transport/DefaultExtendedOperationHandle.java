@@ -148,6 +148,12 @@ public class DefaultExtendedOperationHandle
    */
   public void extended(final ExtendedResponse response)
   {
+    if (getMessageID() != response.getMessageID()) {
+      final IllegalArgumentException e = new IllegalArgumentException(
+        "Invalid extended response " + response + " for handle " + this);
+      exception(new LdapException(e));
+      throw e;
+    }
     if (onExtended != null) {
       for (ExtendedValueHandler func : onExtended) {
         try {

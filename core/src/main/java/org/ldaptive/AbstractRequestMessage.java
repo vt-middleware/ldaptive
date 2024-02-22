@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.time.Duration;
 import java.util.Arrays;
 import org.ldaptive.asn1.BooleanType;
 import org.ldaptive.asn1.ConstructedDEREncoder;
@@ -39,6 +40,9 @@ public abstract class AbstractRequestMessage implements Request
   /** LDAP controls. */
   private RequestControl[] controls;
 
+  /** Duration of time to wait for a response. This property is not part of the request specification. */
+  private Duration responseTimeout;
+
 
   public RequestControl[] getControls()
   {
@@ -49,6 +53,31 @@ public abstract class AbstractRequestMessage implements Request
   public void setControls(final RequestControl... cntrls)
   {
     controls = cntrls;
+  }
+
+
+  /**
+   * Returns the response timeout.
+   *
+   * @return  timeout
+   */
+  public Duration getResponseTimeout()
+  {
+    return responseTimeout;
+  }
+
+
+  /**
+   * Sets the maximum amount of time to wait for a response from this request.
+   *
+   * @param  time  timeout for a response
+   */
+  public void setResponseTimeout(final Duration time)
+  {
+    if (time == null || time.isNegative()) {
+      throw new IllegalArgumentException("Response timeout cannot be null or negative");
+    }
+    responseTimeout = time;
   }
 
 
@@ -110,7 +139,9 @@ public abstract class AbstractRequestMessage implements Request
   @Override
   public String toString()
   {
-    return getClass().getName() + "@" + hashCode() + "::" + "controls=" + Arrays.toString(controls);
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "controls=" + Arrays.toString(controls) + ", " +
+      "responseTimeout=" + responseTimeout;
   }
 
 
@@ -156,6 +187,20 @@ public abstract class AbstractRequestMessage implements Request
     public B controls(final RequestControl... cntrls)
     {
       object.setControls(cntrls);
+      return self();
+    }
+
+
+    /**
+     * Sets the response timeout on the message.
+     *
+     * @param  time  response timeout
+     *
+     * @return  this builder
+     */
+    public B responseTimeout(final Duration time)
+    {
+      object.setResponseTimeout(time);
       return self();
     }
 
