@@ -32,7 +32,7 @@ or it can be specified with a JVM system property:
 
 ## Installation & Configuration
 
-Providers may have custom properties that aren't represented in the ldaptive configuration objects. Those properties are detailed in the following sections. If you don't like the behavior of a provider consider extending it to change it's functionality.
+Providers may have custom properties that aren't represented in the ldaptive configuration objects. Those properties are detailed in the following sections. If you don't like the behavior of a provider consider extending it to change its functionality.
 
 ### JNDI Provider
 

@@ -6,7 +6,7 @@ redirect_from: "/docs/guide/properties/"
 
 # Properties
 
-In order to support various configuration formats Ldaptive provides the ability to configure it's objects with Properties. Each property identifies a method which is reflectively invoked with the value.
+In order to support various configuration formats Ldaptive provides the ability to configure its objects with Properties. Each property identifies a method which is reflectively invoked with the value.
 
 {% highlight text %}
 org.ldaptive.ldapUrl=ldap://directory.ldaptive.org

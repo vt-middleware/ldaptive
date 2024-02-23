@@ -8,7 +8,7 @@ redirect_from: "/docs/guide/operations/search/async/"
 
 # Asynchronous Searching
 
-Ldaptive is asynchronous at it's core since it is built on Netty. The `#execute` method blocks until a result is received, however it's possible to configure handlers to process results as they arrive.
+Ldaptive is asynchronous at its core since it is built on Netty. The `#execute` method blocks until a result is received, however it's possible to configure handlers to process results as they arrive.
 
 {% highlight java %}
 {% include source/operations/search/async/1.java %}

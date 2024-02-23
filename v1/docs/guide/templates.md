@@ -224,7 +224,7 @@ Expects to find /templates-context.xml in the classpath and returns search resul
 </web-app>
 {% endhighlight %}
 
-This webapp can be used with the maven war overlay to customize it's configuration:
+This webapp can be used with the maven war overlay to customize its configuration:
 
 {% highlight xml %}
  <dependencies>

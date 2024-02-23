@@ -6,7 +6,7 @@ redirect_from: "/v1/docs/guide/ad/dirsync/"
 
 # Directory Synchronization (DirSync)
 
-Active Directory provides it's own control for tracking changes in the directory. Note the following constraints when configuring your search:
+Active Directory provides its own control for tracking changes in the directory. Note the following constraints when configuring your search:
 
 baseDN | must be the root of a directory partition, which can be a domain partition, the configuration partition, or the schema partition
 scope | must be the entire subtree of the partition

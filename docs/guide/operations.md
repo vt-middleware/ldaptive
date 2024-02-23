@@ -31,7 +31,7 @@ public interface Operation<Q extends Request, S extends Result>
 
 ### Synchronous calls
 
-Ldaptive is asynchronous at it's core but provides an *execute* to wait for operations to complete.
+Ldaptive is asynchronous at its core but provides an *execute* to wait for operations to complete.
 
 {% highlight java %}
 {% include source/operations/1.java %}

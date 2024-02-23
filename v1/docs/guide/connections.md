@@ -106,7 +106,7 @@ Supported private key formats include:
 - hostname must match the first CN
 - if certificate begins with a wildcard, domains are used for matching
 
-As of version 1.2.3, hostname validation can be controlled via the `CertificateHostnameVerifier` interface which is a property of `SslConfig`. One important caveat is that the JNDI provider *always* performs it's own hostname check when using startTLS. Any custom hostname checks will only be performed if their check fails.
+As of version 1.2.3, hostname validation can be controlled via the `CertificateHostnameVerifier` interface which is a property of `SslConfig`. One important caveat is that the JNDI provider *always* performs its own hostname check when using startTLS. Any custom hostname checks will only be performed if their check fails.
 
 ## Operation Retry
 
