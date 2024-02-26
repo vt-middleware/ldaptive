@@ -180,6 +180,28 @@ public final class TestUtils
   /**
    * @return  connection factory
    */
+  public static ConnectionFactory createGssApiQopAuthIntConnectionFactory()
+  {
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi-qop-auth-int.properties"))
+      .build();
+  }
+
+
+  /**
+   * @return  connection factory
+   */
+  public static ConnectionFactory createGssApiQopAuthIntLdapsConnectionFactory()
+  {
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi-qop-auth-int-ssl.properties"))
+      .build();
+  }
+
+
+  /**
+   * @return  connection factory
+   */
   public static ConnectionFactory createGssApiUseConfigConnectionFactory()
   {
     return DefaultConnectionFactory.builder()

@@ -2,6 +2,7 @@
 package org.ldaptive.transport.netty;
 
 import java.net.SocketAddress;
+import java.util.List;
 import javax.security.sasl.SaslClient;
 import javax.security.sasl.SaslException;
 import io.netty.buffer.ByteBuf;
@@ -11,7 +12,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOutboundHandler;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.CoalescingBufferQueue;
-import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.UnsupportedMessageTypeException;
 import io.netty.util.ReferenceCountUtil;
 import org.slf4j.Logger;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class SaslHandler extends SimpleChannelInboundHandler<ByteBuf> implements ChannelOutboundHandler
+public class SaslHandler extends ByteToMessageDecoder implements ChannelOutboundHandler
 {
 
   /** Logger for this class. */
@@ -55,20 +56,37 @@ public class SaslHandler extends SimpleChannelInboundHandler<ByteBuf> implements
 
 
   @Override
-  public void handlerRemoved(final ChannelHandlerContext ctx)
+  public void handlerRemoved0(final ChannelHandlerContext ctx)
     throws Exception
   {
     dispose();
   }
 
-
   @Override
-  protected void channelRead0(final ChannelHandlerContext ctx, final ByteBuf msg)
+  protected void decode(final ChannelHandlerContext ctx, final ByteBuf in, final List<Object> out)
     throws Exception
   {
-    final byte[] bytes = new byte[msg.readableBytes()];
-    msg.readBytes(bytes);
-    ctx.fireChannelRead(Unpooled.wrappedBuffer(saslClient.unwrap(bytes, 0, bytes.length)));
+    logger.trace("decoding {} bytes from {} on {}", in.readableBytes(), in, ctx);
+    // CheckStyle:MagicNumber OFF
+    if (in.readableBytes() <= 4) {
+      return;
+    }
+    // CheckStyle:MagicNumber ON
+
+    final int readerIdx = in.readerIndex();
+    final int writerIdx = in.writerIndex();
+    final int len = in.readInt();
+    if (in.readableBytes() < len) {
+      in.setIndex(readerIdx, writerIdx);
+      logger.trace("could not read enough bytes from {} to decode message on {}", in, ctx);
+      return;
+    }
+
+    final byte[] wrappedBytes = new byte[len];
+    in.readBytes(wrappedBytes);
+    final byte[] unwrapped = saslClient.unwrap(wrappedBytes, 0, wrappedBytes.length);
+    ctx.fireChannelRead(Unpooled.wrappedBuffer(unwrapped));
+    logger.trace("fired channel read for unwrapped message of length {}", unwrapped.length);
   }
 
 
@@ -115,6 +133,7 @@ public class SaslHandler extends SimpleChannelInboundHandler<ByteBuf> implements
    */
   private void dispose()
   {
+    logger.trace("disposing {} for client {} with queue {}", this, saslClient, queue);
     try {
       saslClient.dispose();
     } catch (SaslException e) {
@@ -148,12 +167,17 @@ public class SaslHandler extends SimpleChannelInboundHandler<ByteBuf> implements
   public void write(final ChannelHandlerContext ctx, final Object msg, final ChannelPromise promise)
     throws Exception
   {
+    logger.trace("write {} message of {} with queue {}", ctx, msg, queue);
     if (!(msg instanceof ByteBuf)) {
       final UnsupportedMessageTypeException exception = new UnsupportedMessageTypeException(msg, ByteBuf.class);
       ReferenceCountUtil.safeRelease(msg);
       promise.setFailure(exception);
+    } else if (queue == null) {
+      ReferenceCountUtil.safeRelease(msg);
+      promise.setFailure(new IllegalStateException("Queue is null, handler has been removed"));
     } else {
       queue.add((ByteBuf) msg, promise);
+      logger.trace("added message {} to queue {}", msg, queue);
     }
   }
 
@@ -162,7 +186,8 @@ public class SaslHandler extends SimpleChannelInboundHandler<ByteBuf> implements
   public void flush(final ChannelHandlerContext ctx)
     throws Exception
   {
-    if (queue.isEmpty()) {
+    logger.trace("flushing {} with queue {}", ctx, queue);
+    if (ctx.isRemoved() || queue.isEmpty()) {
       return;
     }
     ByteBuf buf = null;
@@ -173,7 +198,10 @@ public class SaslHandler extends SimpleChannelInboundHandler<ByteBuf> implements
       final byte[] bytes = new byte[readableBytes];
       buf.readBytes(bytes);
       final byte[] wrappedBytes = saslClient.wrap(bytes, 0, bytes.length);
-      ctx.writeAndFlush(Unpooled.wrappedBuffer(wrappedBytes), promise);
+      final ByteBuf wrappedBuf = Unpooled.buffer(wrappedBytes.length + 4);
+      wrappedBuf.writeInt(wrappedBytes.length).writeBytes(wrappedBytes);
+      ctx.writeAndFlush(wrappedBuf, promise);
+      logger.trace("write and flush of {} for wrapped message of length {}", ctx, wrappedBytes.length);
     } finally {
       if (buf != null) {
         ReferenceCountUtil.safeRelease(buf);

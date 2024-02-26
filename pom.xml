@@ -467,6 +467,9 @@
             <packagingSupporteds>
               <packagingSupported>jar</packagingSupported>
             </packagingSupporteds>
+            <excludes>
+              <exclude>org.ldaptive.transport.netty</exclude>
+            </excludes>
           </parameter>
           <dependencies>
             <!-- include optional dependencies -->
