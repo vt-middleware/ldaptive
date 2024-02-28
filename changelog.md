@@ -6,6 +6,15 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.3.1 - 26Feb2024
+
+Issue | Description
+:---- | :----------
+[ldaptive-251]({{ site.issueURL }}251) | SaslHandler does not send length correctly.
+[32528ad]({{ site.commitURL }}32528ad) | Change autoReplay default to false.
+[ldaptive-248]({{ site.issueURL }}248) | Response timeout is too strict for search operations.
+[b9e186a]({{ site.commitURL }}b9e186a) | Prefer cached thread pool for reconnects.
+
 ## Version 2.3.0 - 15Jan2024
 
 Issue | Description
