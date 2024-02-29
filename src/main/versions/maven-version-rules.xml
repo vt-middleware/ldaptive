@@ -17,5 +17,11 @@
         <ignoreVersion type="regex">^6.*$</ignoreVersion>
       </ignoreVersions>
     </rule>
+    <!-- Pin this project to slf4j v2.0  -->
+    <rule groupId="org.slf4j">
+      <ignoreVersions>
+        <ignoreVersion type="regex">^2\.1\..*$</ignoreVersion>
+      </ignoreVersions>
+    </rule>
   </rules>
 </ruleset>
