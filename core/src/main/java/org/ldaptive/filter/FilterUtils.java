@@ -2,6 +2,7 @@
 package org.ldaptive.filter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 
@@ -118,7 +119,17 @@ public final class FilterUtils
           throw new FilterParseException(ResultCode.FILTER_ERROR, "Could not hex decode escaped data in " + value, e);
         }
       } else {
-        bytes.write(c);
+        // CheckStyle:MagicNumber OFF
+        if ((c & 0x7F) == c) {
+          bytes.write(c);
+        } else {
+          try {
+            bytes.write(LdapUtils.utf8Encode(String.valueOf(c), false));
+          } catch (IOException e) {
+            throw new FilterParseException(ResultCode.FILTER_ERROR, "Could not write multi-byte character", e);
+          }
+        }
+        // CheckStyle:MagicNumber ON
       }
     }
     return bytes.toByteArray();

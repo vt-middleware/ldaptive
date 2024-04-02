@@ -83,6 +83,16 @@ public class FilterTemplateTest
             .parameter("firstname", "B\uD83D\uDF01ll")
             .build(),
         },
+        new Object[] {
+          "(member=uid=username," +
+            "ou=\\D0\\9B\\D0\\B0\\D0\\B1\\D0\\BE\\D1\\80\\D0\\B0\\D1\\82\\D0\\BE\\D1\\80\\D0\\B8\\D1\\8F," +
+            "ou=\\D0\\A3\\D0\\BD\\D0\\B8\\D0\\B2\\D0\\B5\\D1\\80\\D1\\81\\D0\\B8\\D1\\82\\D0\\B5\\D1\\82," +
+            "dc=company,dc=com)",
+          FilterTemplate.builder()
+            .filter("(member={dn})")
+            .parameter("dn", "uid=username,ou=Лаборатория,ou=Университет,dc=company,dc=com")
+            .build(),
+        },
       };
   }
 

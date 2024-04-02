@@ -979,6 +979,19 @@ public class FilterFunctionTest
               new SubstringFilter("sub5", "5", "5", "5"))),
           false,
         },
+        new Object[] {
+          "(member=uid=username,ou=Лаборатория,ou=Университет,dc=company,dc=com)",
+          new EqualityFilter("member", "uid=username,ou=Лаборатория,ou=Университет,dc=company,dc=com"),
+          false,
+        },
+        new Object[] {
+          "(member=uid=username," +
+            "ou=\\D0\\9B\\D0\\B0\\D0\\B1\\D0\\BE\\D1\\80\\D0\\B0\\D1\\82\\D0\\BE\\D1\\80\\D0\\B8\\D1\\8F," +
+            "ou=\\D0\\A3\\D0\\BD\\D0\\B8\\D0\\B2\\D0\\B5\\D1\\80\\D1\\81\\D0\\B8\\D1\\82\\D0\\B5\\D1\\82," +
+            "dc=company,dc=com)",
+          new EqualityFilter("member", "uid=username,ou=Лаборатория,ou=Университет,dc=company,dc=com"),
+          false,
+        },
       };
   }
   // CheckStyle:MethodLength ON
