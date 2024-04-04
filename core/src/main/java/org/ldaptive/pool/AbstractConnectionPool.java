@@ -88,10 +88,34 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   private boolean validatePeriodically;
 
   /** For activating connections. */
-  private ConnectionActivator activator = connection -> true;
+  private ConnectionActivator activator = new ConnectionActivator() {
+    @Override
+    public Boolean apply(final Connection conn)
+    {
+      return true;
+    }
+
+    @Override
+    public String toString()
+    {
+      return "DEFAULT_ACTIVATOR";
+    }
+  };
 
   /** For passivating connections. */
-  private ConnectionPassivator passivator = connection -> true;
+  private ConnectionPassivator passivator = new ConnectionPassivator() {
+    @Override
+    public Boolean apply(final Connection conn)
+    {
+      return true;
+    }
+
+    @Override
+    public String toString()
+    {
+      return "DEFAULT_PASSIVATOR";
+    }
+  };
 
   /** For validating connections. */
   private ConnectionValidator validator = new SearchConnectionValidator();
