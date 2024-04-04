@@ -34,7 +34,7 @@ public class RegexFilterFunction extends AbstractFilterFunction
 
   /** Regex pattern to match an extensible filter. */
   private static final Pattern EXTENSIBLE_FILTER_PATTERN = Pattern.compile(
-    "\\((" + ATTRIBUTE_DESC + ")?(:[Dd][Nn])?(?::(.+))?:=(" + ASSERTION_VALUE + ")\\)");
+    "\\((" + ATTRIBUTE_DESC + ")?(:dn)?(?::([^:]+))?:=(" + ASSERTION_VALUE + ")\\)");
 
   /** Regex pattern to match a greater or equal filter. */
   private static final Pattern GREATER_OR_EQUAL_FILTER_PATTERN = Pattern.compile(

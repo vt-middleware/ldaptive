@@ -97,6 +97,11 @@ public class DefaultFilterFunction extends AbstractFilterFunction
         }
         break;
       case ':':
+        if (!filterBuffer.hasRemaining()) {
+          throw new FilterParseException(
+            ResultCode.FILTER_ERROR,
+            "Invalid extensible expression for filter '" + filter + "'");
+        }
         if (filterBuffer.get() != '=') {
           searchFilter = parseExtensible(
             attribute.toString(),
@@ -113,7 +118,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
         }
         break;
       case '>':
-        if (filterBuffer.get() != '=') {
+        if (!filterBuffer.hasRemaining() || filterBuffer.get() != '=') {
           throw new FilterParseException(
             ResultCode.FILTER_ERROR,
             "Invalid greaterOrEqual expression for filter '" + filter + "'");
@@ -123,7 +128,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
           FilterUtils.parseAssertionValue(filterBuffer.slice().toString()));
         break;
       case '<':
-        if (filterBuffer.get() != '=') {
+        if (!filterBuffer.hasRemaining() || filterBuffer.get() != '=') {
           throw new FilterParseException(
             ResultCode.FILTER_ERROR,
             "Invalid lessOrEqual expression for filter '" + filter + "'");
@@ -133,7 +138,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
           FilterUtils.parseAssertionValue(filterBuffer.slice().toString()));
         break;
       case '~':
-        if (filterBuffer.get() != '=') {
+        if (!filterBuffer.hasRemaining() || filterBuffer.get() != '=') {
           throw new FilterParseException(
             ResultCode.FILTER_ERROR,
             "Invalid approximate expression for filter '" + filter + "'");
@@ -238,16 +243,23 @@ public class DefaultFilterFunction extends AbstractFilterFunction
    *
    * @param  cb  to read
    *
+   * @throws  FilterParseException  if an invalid character is encountered
+   *
    * @return  map of character buffers
    */
   private Map<String, List<CharBuffer>> readSubstrings(final CharBuffer cb)
+    throws FilterParseException
   {
     final Map<String, List<CharBuffer>> buffers = new HashMap<>();
     final int limit = cb.limit();
     cb.mark();
+    char lastChar = 0;
     while (cb.hasRemaining()) {
       final char c = cb.get();
       if (c == '*') {
+        if (lastChar == '*') {
+          throw new FilterParseException(ResultCode.FILTER_ERROR, "Unexpected asterisk");
+        }
         if (cb.position() == 1) {
           buffers.put("INITIAL", null);
           cb.mark();
@@ -268,6 +280,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
           cb.mark();
         }
       }
+      lastChar = c;
     }
     cb.reset();
     if (cb.hasRemaining()) {
@@ -306,7 +319,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
     boolean dnAttrs = false;
     CharBuffer remainingFilter = cb.slice();
     CharBuffer matchingRule = sliceAtMatch(remainingFilter, ':');
-    if (matchingRule == null) {
+    if (matchingRule == null || matchingRule.toString().isEmpty()) {
       throw new FilterParseException(ResultCode.FILTER_ERROR, "Invalid extensible expression, no data after ':'");
     }
     if ("dn".equalsIgnoreCase(matchingRule.toString())) {
@@ -316,6 +329,9 @@ public class DefaultFilterFunction extends AbstractFilterFunction
         if (remainingFilter.get() != '=') {
           remainingFilter = remainingFilter.position(remainingFilter.position() - 1).slice();
           matchingRule = sliceAtMatch(remainingFilter, ':');
+          if (matchingRule == null || matchingRule.toString().isEmpty()) {
+            throw new FilterParseException(ResultCode.FILTER_ERROR, "Invalid extensible expression, no data after ':'");
+          }
         } else {
           remainingFilter.position(remainingFilter.position() - 1);
         }

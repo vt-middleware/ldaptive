@@ -2,8 +2,6 @@
 package org.ldaptive.filter;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 
@@ -110,16 +108,14 @@ public final class FilterUtils
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream(value.length());
     for (int i = 0; i < value.length(); i++) {
       final char c = value.charAt(i);
-      if (c == '\0' || c == '(' || c == ')') {
+      if (c == '\0' || c == '(' || c == ')' || c == '*') {
         throw new FilterParseException(ResultCode.FILTER_ERROR, "Assertion value contains unescaped characters");
       } else if (c == '\\') {
-        final char[] hexValue = new char[]{value.charAt(++i), value.charAt(++i)};
         try {
+          final char[] hexValue = new char[]{value.charAt(++i), value.charAt(++i)};
           bytes.write(LdapUtils.hexDecode(hexValue));
-        } catch (IOException e) {
-          throw new FilterParseException(
-            ResultCode.FILTER_ERROR,
-            "Could not hex decode " + Arrays.toString(hexValue) + " in " + value);
+        } catch (Exception e) {
+          throw new FilterParseException(ResultCode.FILTER_ERROR, "Could not hex decode escaped data in " + value, e);
         }
       } else {
         bytes.write(c);

@@ -265,6 +265,128 @@ public class SearchOperationTest extends AbstractTest
 
 
   /**
+   * @param  dn  to search on.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "searchDn",
+    "searchReturnAttrs",
+    "searchResults"
+  })
+  @Test(groups = "search")
+  public void searchFilters(
+    final String dn,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+
+    // presence filter
+    SearchResponse result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(&(objectClass=*)(uid=2))")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(&(objectClass=*)(uid=*))")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    Assert.assertTrue(result.entrySize() > 10);
+
+    // extensible filter
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(uid:caseExactMatch:=2)")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+
+    // substring filter
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(cn=* Adams)")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(cn=* *)")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    Assert.assertTrue(result.entrySize() > 10);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(cn=John Adam*)")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(cn=Jo* *Adams)")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(cn=*ohn*Adam*)")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+
+    // greater than filter
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(&(uid=2)(createTimestamp>=20000101000000Z))")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(&(uid=*)(createTimestamp>=20000101000000Z))")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    Assert.assertTrue(result.entrySize() > 10);
+
+    // less than filter
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(&(uid=2)(createTimestamp<=21000101000000Z))")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(&(uid=*)(createTimestamp<=21000101000000Z))")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    Assert.assertTrue(result.entrySize() > 10);
+
+    // approximate filter
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter("(givenName~=Jon)")
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+  }
+
+
+  /**
    * @param  filter  to search with.
    * @param  filterParameters  to replace parameters in filter with.
    * @param  returnAttrs  to return from search.

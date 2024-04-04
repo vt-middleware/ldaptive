@@ -85,6 +85,10 @@ public class ExtensibleFilterTest
           new ExtensibleFilter(null, "uid", "jdoe"),
         },
         new Object[] {
+          "(:caseExactMatch:=foo)",
+          new ExtensibleFilter("caseExactMatch", null, "foo"),
+        },
+        new Object[] {
           "(:caseIgnoreMatch:=foo)",
           new ExtensibleFilter("caseIgnoreMatch", null, "foo"),
         },
@@ -113,7 +117,7 @@ public class ExtensibleFilterTest
           new ExtensibleFilter("1.2.3", null, "Wilma Flintstone"),
         },
         new Object[] {
-          "(:DN:2.4.6.8.10:=Dino)",
+          "(:dn:2.4.6.8.10:=Dino)",
           new ExtensibleFilter("2.4.6.8.10", null, "Dino", true),
         },
       };

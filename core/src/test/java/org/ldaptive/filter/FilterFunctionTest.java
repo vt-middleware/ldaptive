@@ -45,9 +45,93 @@ public class FilterFunctionTest
         new Object[] {"(  )", null, true, },
         new Object[] {" () ", null, true, },
         new Object[] {"  ()  ", null, true, },
+        new Object[] {"(foo)", null, true, },
+        new Object[] {"&foo=bar", null, true, },
+        new Object[] {"(=bar)", null, true, },
+        new Object[] {"(>=bar)", null, true, },
+        new Object[] {"(<=bar)", null, true, },
+        new Object[] {"(~=bar)", null, true, },
+        new Object[] {"(:=bar)", null, true, },
+        new Object[] {"(:dn:=bar)", null, true, },
+        new Object[] {"(foo=bar", null, true, },
+        new Object[] {"((foo=bar))", null, true, },
+        new Object[] {"((a=b)c", null, true, },
+        new Object[] {"(a=b)(c=d)", null, true, },
+        new Object[] {"(::=bar)", null, true, },
+        new Object[] {"(:dn::=bar)", null, true, },
+        new Object[] {"(:error:foo:=bar)", null, true, },
+        new Object[] {"(:dn:a:b:=bar)", null, true, },
+        new Object[] {"(:dn:foo:a=bar)", null, true, },
+        new Object[] {"(:foo:a=bar)", null, true, },
+        new Object[] {"(foo=ba(r)", null, true, },
+        new Object[] {"(foo=ba)r)", null, true, },
+        new Object[] {"(foo:=ba(r)", null, true, },
+        new Object[] {"(foo:=ba)r)", null, true, },
+        new Object[] {"(foo:dn:=ba(r)", null, true, },
+        new Object[] {"(foo:dn:=ba)r)", null, true, },
+        new Object[] {"(:dn:foo:=ba(r)", null, true, },
+        new Object[] {"(:dn:foo:=ba)r)", null, true, },
+        new Object[] {"(foo=**bar)", null, true, },
+        new Object[] {"(foo=bar**)", null, true, },
+        new Object[] {"(foo=bar**baz)", null, true, },
+        new Object[] {"(foo=*bar**baz**qux*)", null, true, },
+        new Object[] {"(foo>)", null, true, },
+        new Object[] {"(foo<)", null, true, },
+        new Object[] {"(foo~)", null, true, },
+        new Object[] {"(foo:)", null, true, },
+        new Object[] {"(foo>bar)", null, true, },
+        new Object[] {"(foo<bar)", null, true, },
+        new Object[] {"(foo~bar)", null, true, },
+        new Object[] {"(foo:bar)", null, true, },
+        new Object[] {"(foo:dn=bar)", null, true, },
+        new Object[] {"(:dn:bar=baz)", null, true, },
+        new Object[] {"(foo:dn:bar=baz)", null, true, },
+        new Object[] {"(foo::=bar)", null, true, },
+        new Object[] {"(:dn::=bar)", null, true, },
+        new Object[] {"(foo:dn::=bar)", null, true, },
+        new Object[] {"(foo=\\zz)", null, true, },
+        new Object[] {"(foo=\\az)", null, true, },
+        new Object[] {"(foo=\\a)", null, true, },
+        new Object[] {"(foo=a\\z)", null, true, },
+        new Object[] {"(foo=\\)", null, true, },
+        new Object[] {"(foo>=\\zz)", null, true, },
+        new Object[] {"(foo>=\\az)", null, true, },
+        new Object[] {"(foo>=\\a)", null, true, },
+        new Object[] {"(foo>=a\\z)", null, true, },
+        new Object[] {"(foo>=\\)", null, true, },
+        new Object[] {"(foo<=\\zz)", null, true, },
+        new Object[] {"(foo<=\\az)", null, true, },
+        new Object[] {"(foo<=\\a)", null, true, },
+        new Object[] {"(foo<=a\\z)", null, true, },
+        new Object[] {"(foo<=\\)", null, true, },
+        new Object[] {"(foo=))", null, true, },
+        new Object[] {"(foo=()", null, true, },
+        new Object[] {"(foo>=*)", null, true, },
+        new Object[] {"(foo<=*)", null, true, },
+        new Object[] {"(foo~=*)", null, true, },
+        new Object[] {"(foo:=*)", null, true, },
+        new Object[] {"(foo>=*)", null, true, },
+        new Object[] {"(foo>=()", null, true, },
+        new Object[] {"(foo<=()", null, true, },
+        new Object[] {"(foo~=()", null, true, },
+        new Object[] {"(foo:=()", null, true, },
+        new Object[] {"(foo>=()", null, true, },
+        new Object[] {"(foo>=))", null, true, },
+        new Object[] {"(foo<=))", null, true, },
+        new Object[] {"(foo~=))", null, true, },
+        new Object[] {"(foo:=))", null, true, },
+        new Object[] {"(foo>=))", null, true, },
+        new Object[] {"(foo>=bar*baz)", null, true, },
+        new Object[] {"(foo<=bar*baz)", null, true, },
+        new Object[] {"(foo~=bar*baz)", null, true, },
+        new Object[] {"(&(foo=bar)(baz=qux)", null, true, },
+        new Object[] {"(&(foo=bar)((baz=qux))", null, true, },
+        new Object[] {"(&(foo=bar))(baz=qux))", null, true, },
         new Object[] {"(cn=test(", null, true, },
         new Object[] {"(cn=aaaaa", null, true, },
         new Object[] {"(&(cn=abc)", null, true, },
+        new Object[] {"(&(cn=abc)(sn=xyz)", null, true, },
+        new Object[] {"(&(cn=abc)(givenName=def)(sn=xyz)", null, true, },
         new Object[] {"(=John)", null, true, },
         new Object[] {"(?authId=)", null, true, },
         new Object[] {"(givenName:=John", null, true, },
@@ -56,8 +140,31 @@ public class FilterFunctionTest
         new Object[] {"(:=dummyAssertion)", null, true, },
         new Object[] {"((objectClass=*)&(uid=*))", null, true, },
         new Object[] {"&(objectClass=*)(uid=*)", null, true, },
+        new Object[] {"(cn=**john)", null, true, },
+        new Object[] {"(givenName=John**)", null, true, },
+        new Object[] {"(uid=123**456)", null, true, },
+        new Object[] {"(uid=*123**456**789*)", null, true, },
         new Object[] {"((objectCategory=person)(objectClass=user)(!(cn=user1*)))", null, true, },
         new Object[] {"((&(objectClass=user)(cn=andy*)(cn=steve*)(cn=margaret*)))", null, true, },
+        new Object[] {"(cn>=*)", null, true, },
+        new Object[] {"(cn>=123*)", null, true, },
+        new Object[] {"(cn>=*123)", null, true, },
+        new Object[] {"(cn<=*)", null, true, },
+        new Object[] {"(cn<=123*)", null, true, },
+        new Object[] {"(cn<=*123)", null, true, },
+        new Object[] {"(cn~=*)", null, true, },
+        new Object[] {"(cn~=123*)", null, true, },
+        new Object[] {"(cn~=*123)", null, true, },
+        new Object[] {"(::=alice)", null, true, },
+        new Object[] {"(:dn::=alice)", null, true, },
+        new Object[] {"(uid:dn:caseExactMatch=123)", null, true, },
+        new Object[] {"(uid::=123)", null, true, },
+        new Object[] {"uid:caseExactMatch:=*", null, true, },
+        new Object[] {"uid:caseExactMatch:=123*", null, true, },
+        new Object[] {"uid:caseExactMatch:=*123", null, true, },
+        new Object[] {"uid:dn:caseExactMatch:=*", null, true, },
+        new Object[] {"uid:dn:caseExactMatch:=123*", null, true, },
+        new Object[] {"uid:dn:caseExactMatch:=*123", null, true, },
         new Object[] {
           "(memberOf=1.2.840.113556.1.4.1301=$#@&*()==,2.5.4.11=local,2.5.4.11=users,2.5.4.11=readimanager)",
           null,
@@ -99,8 +206,43 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          "givenName:=",
+          new ExtensibleFilter(null, "givenName", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "givenName:dn:=",
+          new ExtensibleFilter(null, "givenName", new byte[0], true),
+          false,
+        },
+        new Object[] {
+          ":caseExactMatch:=",
+          new ExtensibleFilter("caseExactMatch", null, new byte[0]),
+          false,
+        },
+        new Object[] {
+          "(:caseExactMatch:=John)",
+          new ExtensibleFilter("caseExactMatch", null, "John"),
+          false,
+        },
+        new Object[] {
+          ":dn:caseExactMatch:=",
+          new ExtensibleFilter("caseExactMatch", null, new byte[0], true),
+          false,
+        },
+        new Object[] {
+          ":dn:caseExactMatch:=John",
+          new ExtensibleFilter("caseExactMatch", null, "John", true),
+          false,
+        },
+        new Object[] {
           "givenName:=John",
           new ExtensibleFilter(null, "givenName", "John"),
+          false,
+        },
+        new Object[] {
+          "givenName:dn:=John",
+          new ExtensibleFilter(null, "givenName", "John", true),
           false,
         },
         new Object[] {
@@ -179,6 +321,246 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          "foo=",
+          new EqualityFilter("foo", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "(foo=)",
+          new EqualityFilter("foo", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "(foo>=)",
+          new GreaterOrEqualFilter("foo", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "(foo<=)",
+          new LessOrEqualFilter("foo", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "(foo~=)",
+          new ApproximateFilter("foo", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "(foo:=)",
+          new ExtensibleFilter(null, "foo", new byte[0], false),
+          false,
+        },
+        new Object[] {
+          "(foo:dn:=)",
+          new ExtensibleFilter(null, "foo", new byte[0], true),
+          false,
+        },
+        new Object[] {
+          "(:foo:=)",
+          new ExtensibleFilter("foo", null, new byte[0], false),
+          false,
+        },
+        new Object[] {
+          "(:dn:foo:=)",
+          new ExtensibleFilter("foo", null, new byte[0], true),
+          false,
+        },
+        new Object[] {
+          "foo=*",
+          new PresenceFilter("foo"),
+          false,
+        },
+        new Object[] {
+          "(foo=*)",
+          new PresenceFilter("foo"),
+          false,
+        },
+        new Object[] {
+          "foo=a",
+          new EqualityFilter("foo", "a"),
+          false,
+        },
+        new Object[] {
+          "(foo=a)",
+          new EqualityFilter("foo", "a"),
+          false,
+        },
+        new Object[] {
+          "(foo>=a)",
+          new GreaterOrEqualFilter("foo", "a"),
+          false,
+        },
+        new Object[] {
+          "(foo<=a)",
+          new LessOrEqualFilter("foo", "a"),
+          false,
+        },
+        new Object[] {
+          "(foo~=a)",
+          new ApproximateFilter("foo", "a"),
+          false,
+        },
+        new Object[] {
+          "(foo:=a)",
+          new ExtensibleFilter(null, "foo", "a", false),
+          false,
+        },
+        new Object[] {
+          "(foo:dn:=a)",
+          new ExtensibleFilter(null, "foo", "a", true),
+          false,
+        },
+        new Object[] {
+          "(:foo:=a)",
+          new ExtensibleFilter("foo", null, "a", false),
+          false,
+        },
+        new Object[] {
+          "(:dn:foo:=a)",
+          new ExtensibleFilter("foo", null, "a", true),
+          false,
+        },
+        new Object[] {
+          "foo=bar",
+          new EqualityFilter("foo", "bar"),
+          false,
+        },
+        new Object[] {
+          "(foo=bar)",
+          new EqualityFilter("foo", "bar"),
+          false,
+        },
+        new Object[] {
+          "foo>=bar",
+          new GreaterOrEqualFilter("foo", "bar"),
+          false,
+        },
+        new Object[] {
+          "(foo>=bar)",
+          new GreaterOrEqualFilter("foo", "bar"),
+          false,
+        },
+        new Object[] {
+          "foo<=bar",
+          new LessOrEqualFilter("foo", "bar"),
+          false,
+        },
+        new Object[] {
+          "(foo<=bar)",
+          new LessOrEqualFilter("foo", "bar"),
+          false,
+        },
+        new Object[] {
+          "foo~=bar",
+          new ApproximateFilter("foo", "bar"),
+          false,
+        },
+        new Object[] {
+          "(foo~=bar)",
+          new ApproximateFilter("foo", "bar"),
+          false,
+        },
+        new Object[] {
+          "(foo=bar*)",
+          new SubstringFilter("foo", "bar", null, (String[]) null),
+          false,
+        },
+        new Object[] {
+          "(foo=*bar*)",
+          new SubstringFilter("foo", null, null, "bar"),
+          false,
+        },
+        new Object[] {
+          "(foo=*bar)",
+          new SubstringFilter("foo", null, "bar", (String[]) null),
+          false,
+        },
+        new Object[] {
+          "(foo=bar*baz*qux)",
+          new SubstringFilter("foo", "bar", "qux", "baz"),
+          false,
+        },
+        new Object[] {
+          "foo:=bar",
+          new ExtensibleFilter(null, "foo", "bar", false),
+          false,
+        },
+        new Object[] {
+          "(foo:=bar)",
+          new ExtensibleFilter(null, "foo", "bar", false),
+          false,
+        },
+        new Object[] {
+          "foo:dn:=bar",
+          new ExtensibleFilter(null, "foo", "bar", true),
+          false,
+        },
+        new Object[] {
+          "(foo:dn:=bar)",
+          new ExtensibleFilter(null, "foo", "bar", true),
+          false,
+        },
+        new Object[] {
+          ":dn:foo:=bar",
+          new ExtensibleFilter("foo", null, "bar", true),
+          false,
+        },
+        new Object[] {
+          "(:dn:foo:=bar)",
+          new ExtensibleFilter("foo", null, "bar", true),
+          false,
+        },
+        new Object[] {
+          "foo:dn:bar:=baz",
+          new ExtensibleFilter("bar", "foo", "baz", true),
+          false,
+        },
+        new Object[] {
+          "(foo:dn:bar:=baz)",
+          new ExtensibleFilter("bar", "foo", "baz", true),
+          false,
+        },
+        new Object[] {
+          "(:foo:=bar)",
+          new ExtensibleFilter("foo", null, "bar", false),
+          false,
+        },
+        new Object[] {
+          "(&(a=b))",
+          new AndFilter(new EqualityFilter("a", "b")),
+          false,
+        },
+        new Object[] {
+          "(&(a=b)(c=d))",
+          new AndFilter(new EqualityFilter("a", "b"), new EqualityFilter("c", "d")),
+          false,
+        },
+        new Object[] {
+          "(|(a=b))",
+          new OrFilter(new EqualityFilter("a", "b")),
+          false,
+        },
+        new Object[] {
+          "(|(a=b)(c=d))",
+          new OrFilter(new EqualityFilter("a", "b"), new EqualityFilter("c", "d")),
+          false,
+        },
+        new Object[] {
+          "(!(foo=bar))",
+          new NotFilter(new EqualityFilter("foo", "bar")),
+          false,
+        },
+        new Object[] {
+          "cn=",
+          new EqualityFilter("cn", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "(cn=)",
+          new EqualityFilter("cn", new byte[0]),
+          false,
+        },
+        new Object[] {
           "uupid=jo\\00hn",
           new EqualityFilter("uupid", "jo\0hn"),
           false,
@@ -220,6 +602,11 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          "(givenName~=)",
+          new ApproximateFilter("givenName", new byte[0]),
+          false,
+        },
+        new Object[] {
           "(givenName~=John)",
           new ApproximateFilter("givenName", "John"),
           false,
@@ -230,8 +617,18 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          "(givenName>=)",
+          new GreaterOrEqualFilter("givenName", new byte[0]),
+          false,
+        },
+        new Object[] {
           "(givenName>=John)",
           new GreaterOrEqualFilter("givenName", "John"),
+          false,
+        },
+        new Object[] {
+          "(givenName<=)",
+          new LessOrEqualFilter("givenName", new byte[0]),
           false,
         },
         new Object[] {
@@ -270,8 +667,18 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          "(ou=*foo*)",
+          new SubstringFilter("ou", null, null, "foo"),
+          false,
+        },
+        new Object[] {
           "(ou=foo*bar)",
           new SubstringFilter("ou", "foo", "bar", (String[]) null),
+          false,
+        },
+        new Object[] {
+          "(ou=foo*bar*)",
+          new SubstringFilter("ou", "foo", null, "bar"),
           false,
         },
         new Object[] {
@@ -280,8 +687,8 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
-          "(ou=foo*guy*bar)",
-          new SubstringFilter("ou", "foo", "bar", "guy"),
+          "(ou=foo*baz*bar)",
+          new SubstringFilter("ou", "foo", "bar", "baz"),
           false,
         },
         new Object[] {
@@ -527,6 +934,51 @@ public class FilterFunctionTest
           new AndFilter(new EqualityFilter("givenName", "B\uD83D\uDF01ll")),
           false,
         },
+        new Object[] {
+          "(&(equal1=1)(objectClass1=oc1)(presence1=*)(objectClass2=*)(sub1=1*)(sub2=*2*)" +
+            "(sub3=*3)(greater1>=1)(less1<=1)(approx1~=1)(ext1:=1)(&(equal2=2)" +
+            "(objectClass3=oc3)(objectClass4=oc4)(presence2=*)(sub4=4*4*4))" +
+            "(!(equal3=3))(!(&(equal4=4)(equal5=5)))(!(|(objectClass5=oc5)(equal6=6)))" +
+            "(|(equal7=7)(objectClass6=oc6)(objectClass7=oc7)(presence3=*)" +
+            "(presence4=*)(objectClass8=*)(sub5=5*5*5)))",
+          new AndFilter(
+            new EqualityFilter("equal1", "1"),
+            new EqualityFilter("objectClass1", "oc1"),
+            new PresenceFilter("presence1"),
+            new PresenceFilter("objectClass2"),
+            new SubstringFilter("sub1", "1", null, (String[]) null),
+            new SubstringFilter("sub2", null, null, "2"),
+            new SubstringFilter("sub3", null, "3", (String[]) null),
+            new GreaterOrEqualFilter("greater1", "1"),
+            new LessOrEqualFilter("less1", "1"),
+            new ApproximateFilter("approx1", "1"),
+            new ExtensibleFilter(null, "ext1", "1", false),
+            new AndFilter(
+              new EqualityFilter("equal2", "2"),
+              new EqualityFilter("objectClass3", "oc3"),
+              new EqualityFilter("objectClass4", "oc4"),
+              new PresenceFilter("presence2"),
+              new SubstringFilter("sub4", "4", "4", "4")),
+            new NotFilter(
+              new EqualityFilter("equal3", "3")),
+            new NotFilter(
+              new AndFilter(
+                new EqualityFilter("equal4", "4"),
+                new EqualityFilter("equal5", "5"))),
+            new NotFilter(
+              new OrFilter(
+                new EqualityFilter("objectClass5", "oc5"),
+                new EqualityFilter("equal6", "6"))),
+            new OrFilter(
+              new EqualityFilter("equal7", "7"),
+              new EqualityFilter("objectClass6", "oc6"),
+              new EqualityFilter("objectClass7", "oc7"),
+              new PresenceFilter("presence3"),
+              new PresenceFilter("presence4"),
+              new PresenceFilter("objectClass8"),
+              new SubstringFilter("sub5", "5", "5", "5"))),
+          false,
+        },
       };
   }
   // CheckStyle:MethodLength ON
@@ -668,8 +1120,11 @@ public class FilterFunctionTest
     for (int i = 0; i < count; i++) {
       final String o = operators[rand.nextInt(operators.length)];
       final String a = attr[rand.nextInt(attr.length)];
-      final String v = values[rand.nextInt(values.length)];
       final String f = filterTypes[rand.nextInt(filterTypes.length)];
+      String v = values[rand.nextInt(values.length)];
+      if (v.contains("*") && !"=".equals(f)) {
+        v = v.replace('*', 't');
+      }
       String extraFilter = "";
       if ("|".equals(o) || "&".equals(o)) {
         for (int j = 0; j < rand.nextInt(100)+1; j++) {

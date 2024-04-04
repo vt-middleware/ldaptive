@@ -117,6 +117,11 @@ public abstract class AbstractFilterFunction implements FilterFunction
         closeIndex = findMatchingParenPosition(filter, pos);
       }
     }
+    if (pos > end) {
+      throw new FilterParseException(
+        ResultCode.FILTER_ERROR,
+        "Invalid filter syntax, missing parenthesis after " + set.getType());
+    }
     return set;
   }
 
