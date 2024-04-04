@@ -176,6 +176,14 @@ public class FilterFunctionTest
           true,
         },
         new Object[] {
+          "(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!" +
+            "(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!(&(|(!" +
+            "(foo=bar)" +
+            "))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))",
+          null,
+          true,
+        },
+        new Object[] {
           "givenName:=",
           new ExtensibleFilter(null, "givenName", new byte[0]),
           false,
@@ -1128,7 +1136,7 @@ public class FilterFunctionTest
     final String[] values = new String[] {"j", "k", "l", "m", "n", "o", "p", "q", "r", "*s", "*", "}", "!", "|"};
     final String[] operators = new String[] {"&", "|"};
     final String[] filterTypes = new String[] {"~=", "=", ">=", "<=", ":="};
-    final int count = rand.nextInt(seed) + 1;
+    final int count = (rand.nextInt(seed) % 50) + 1;
     String filter = "";
     for (int i = 0; i < count; i++) {
       final String o = operators[rand.nextInt(operators.length)];
@@ -1140,7 +1148,7 @@ public class FilterFunctionTest
       }
       String extraFilter = "";
       if ("|".equals(o) || "&".equals(o)) {
-        for (int j = 0; j < rand.nextInt(100)+1; j++) {
+        for (int j = 0; j < rand.nextInt(50)+1; j++) {
           if (j % 2 == 0) {
             extraFilter = "(!(" + a + "=" + v +"))";
           } else {
