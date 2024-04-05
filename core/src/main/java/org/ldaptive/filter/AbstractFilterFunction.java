@@ -11,6 +11,9 @@ import org.ldaptive.ResultCode;
 public abstract class AbstractFilterFunction implements FilterFunction
 {
 
+  /** Maximum filter depth. */
+  private static final int MAX_FILTER_DEPTH = 100;
+
 
   @Override
   public Filter parse(final String filter)
@@ -34,7 +37,13 @@ public abstract class AbstractFilterFunction implements FilterFunction
       balancedFilter = "(".concat(filter).concat(")");
     }
 
-    return readNextComponent(balancedFilter);
+    try {
+      return readNextComponent(balancedFilter, 0);
+    } catch (FilterParseException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new FilterParseException(ResultCode.FILTER_ERROR, e);
+    }
   }
 
 
@@ -42,14 +51,18 @@ public abstract class AbstractFilterFunction implements FilterFunction
    * Reads the next component contained in the supplied filter.
    *
    * @param  filter  to parse
+   * @param  depth  counter to track invocation depth
    *
    * @return  search filter
    *
    * @throws  FilterParseException  if filter does not start with '(' and end with ')'
    */
-  private Filter readNextComponent(final String filter)
+  private Filter readNextComponent(final String filter, final int depth)
     throws FilterParseException
   {
+    if (depth > MAX_FILTER_DEPTH) {
+      throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter parse depth exceeded");
+    }
     final int end = filter.length() - 1;
     if (filter.charAt(0) != '(' || filter.charAt(end) != ')') {
       throw new FilterParseException(
@@ -61,15 +74,15 @@ public abstract class AbstractFilterFunction implements FilterFunction
     switch (filter.charAt(pos)) {
 
     case '&':
-      searchFilter = readFilterSet(new AndFilter(), filter, ++pos, end);
+      searchFilter = readFilterSet(new AndFilter(), filter, ++pos, end, depth);
       break;
 
     case '|':
-      searchFilter = readFilterSet(new OrFilter(), filter, ++pos, end);
+      searchFilter = readFilterSet(new OrFilter(), filter, ++pos, end, depth);
       break;
 
     case '!':
-      searchFilter = readFilterSet(new NotFilter(), filter, ++pos, end);
+      searchFilter = readFilterSet(new NotFilter(), filter, ++pos, end, depth);
       break;
 
     default:
@@ -91,12 +104,18 @@ public abstract class AbstractFilterFunction implements FilterFunction
    * @param  filter  to parse
    * @param  start  position in filter
    * @param  end  position in filter
+   * @param  depth  counter to track invocation depth
    *
    * @return  the supplied filter set with components added from filter
    *
    * @throws  FilterParseException  if filter doesn't start with '(' and containing a matching ')'
    */
-  private FilterSet readFilterSet(final FilterSet set, final String filter, final int start, final int end)
+  private FilterSet readFilterSet(
+    final FilterSet set,
+    final String filter,
+    final int start,
+    final int end,
+    final int depth)
     throws FilterParseException
   {
     int pos = start;
@@ -107,11 +126,7 @@ public abstract class AbstractFilterFunction implements FilterFunction
         "Invalid filter syntax, missing parenthesis after " + set.getType());
     }
     while (pos < end) {
-      try {
-        set.add(readNextComponent(filter.substring(pos, closeIndex + 1)));
-      } catch (Exception e) {
-        throw new FilterParseException(ResultCode.FILTER_ERROR, e);
-      }
+      set.add(readNextComponent(filter.substring(pos, closeIndex + 1), depth + 1));
       pos = closeIndex + 1;
       if (pos < end) {
         closeIndex = findMatchingParenPosition(filter, pos);
