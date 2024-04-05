@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
+import org.ldaptive.LdapUtils;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -80,6 +81,14 @@ public class FilterUtilsTest
           "Pirate Flag \uD83C\uDFF4\u200D\u2620\uFE0F",
           "Pirate Flag \\F0\\9F\\8F\\B4\\E2\\80\\8D\\E2\\98\\A0\\EF\\B8\\8F",
         },
+        new Object[] {
+          "Лаборатория",
+          "\\D0\\9B\\D0\\B0\\D0\\B1\\D0\\BE\\D1\\80\\D0\\B0\\D1\\82\\D0\\BE\\D1\\80\\D0\\B8\\D1\\8F",
+        },
+        new Object[] {
+          "Университет",
+          "\\D0\\A3\\D0\\BD\\D0\\B8\\D0\\B2\\D0\\B5\\D1\\80\\D1\\81\\D0\\B8\\D1\\82\\D0\\B5\\D1\\82",
+        },
       };
   }
 
@@ -91,9 +100,10 @@ public class FilterUtilsTest
    * @throws  Exception  On test failure.
    */
   @Test(dataProvider = "values")
-  public void escape(final String value, final String match)
+  public void escapeAndParse(final String value, final String match)
     throws Exception
   {
     Assert.assertEquals(FilterUtils.escape(value), match);
+    Assert.assertEquals(FilterUtils.parseAssertionValue(match), LdapUtils.utf8Encode(value));
   }
 }
