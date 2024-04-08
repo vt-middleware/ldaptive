@@ -1,0 +1,7 @@
+dn: cn=Multibyte Chars,${ldapBaseDn}
+cn: Multibyte Chars
+# Raphaël
+givenName:: UmFwaGHDq2w=
+# Weiß
+sn:: V2Vpw58=
+uid: 17896

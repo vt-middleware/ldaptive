@@ -94,6 +94,8 @@
              value="/org/ldaptive/specialChars-2.ldif"/>
   <parameter name="createSpecialCharsEntry3"
              value="/org/ldaptive/specialChars-3.ldif"/>
+  <parameter name="createSpecialCharsEntry4"
+             value="/org/ldaptive/specialChars-4.ldif"/>
 
   <parameter name="multipleLdifResultsIn"
              value="/org/ldaptive/multipleEntriesIn.ldif"/>
@@ -198,6 +200,13 @@
   <parameter name="specialCharReturnAttrs" value="cn|givenName|sn|uid"/>
   <parameter name="specialCharSearchResults"
              value="/org/ldaptive/specialCharsResults.ldif"/>
+
+  <parameter name="specialCharSearchDn4" value="${ldapBaseDn}"/>
+  <parameter name="specialCharSearchFilter4" value="(&amp;(cn={0})(givenName=Raphaël)(sn=Weiß))"/>
+  <parameter name="specialCharSearchFilterParameters4" value="Multibyte Chars"/>
+  <parameter name="specialCharReturnAttrs4" value="cn|givenName|sn|uid"/>
+  <parameter name="specialCharSearchResults4"
+             value="/org/ldaptive/specialCharsResults4.ldif"/>
 
   <parameter name="quotedBaseDn" value='ou=test \"quote\",dc=vt,dc=edu'/>
   <parameter name="quotedBaseDnSearchResults"

@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.nio.charset.StandardCharsets;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -91,6 +92,15 @@ public class FilterTemplateTest
           FilterTemplate.builder()
             .filter("(member={dn})")
             .parameter("dn", "uid=username,ou=Лаборатория,ou=Университет,dc=company,dc=com")
+            .build(),
+        },
+        new Object[] {
+          "(member=uid=username," +
+            "ou=\\D0\\9B\\D0\\B0\\D0\\B1\\D0\\BE\\D1\\80\\D0\\B0\\D1\\82\\D0\\BE\\D1\\80\\D0\\B8\\D1\\8F," +
+            "ou=people,dc=company,dc=com)",
+          FilterTemplate.builder()
+            .filter("(member=uid=username,ou={ou},ou=people,dc=company,dc=com)")
+            .parameter("ou", "Лаборатория".getBytes(StandardCharsets.UTF_8))
             .build(),
         },
       };

@@ -64,6 +64,9 @@ public class SearchOperationTest extends AbstractTest
   /** Entry created for ldap tests. */
   private static LdapEntry specialCharsLdapEntry;
 
+  /** Entry created for ldap tests. */
+  private static LdapEntry specialCharsLdapEntry4;
+
   /** Entries for group tests. */
   private static final Map<String, LdapEntry[]> GROUP_ENTRIES = new HashMap<>();
 
@@ -164,6 +167,22 @@ public class SearchOperationTest extends AbstractTest
   }
 
 
+  /**
+   * @param  ldifFile  to create.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters("createSpecialCharsEntry4")
+  @BeforeClass(groups = "search")
+  public void createSpecialCharsEntry4(final String ldifFile)
+    throws Exception
+  {
+    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    specialCharsLdapEntry4 = TestUtils.convertLdifToResult(ldif).getEntry();
+    super.createLdapEntry(specialCharsLdapEntry4);
+  }
+
+
   /** @throws  Exception  On test failure. */
   @AfterClass(groups = "search")
   public void deleteLdapEntry()
@@ -171,6 +190,7 @@ public class SearchOperationTest extends AbstractTest
   {
     super.deleteLdapEntry(testLdapEntry.getDn());
     super.deleteLdapEntry(specialCharsLdapEntry.getDn());
+    super.deleteLdapEntry(specialCharsLdapEntry4.getDn());
     super.deleteLdapEntry(GROUP_ENTRIES.get("2")[0].getDn());
     super.deleteLdapEntry(GROUP_ENTRIES.get("3")[0].getDn());
     super.deleteLdapEntry(GROUP_ENTRIES.get("4")[0].getDn());
@@ -1493,6 +1513,44 @@ public class SearchOperationTest extends AbstractTest
       SearchRequest.builder()
         .dn(dn)
         .filter(new FilterTemplate(binaryFilter, new Object[] {LdapUtils.base64Decode(binaryFilterParameters)}))
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    TestUtils.assertEquals(specialCharsResult, result);
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   * @param  filterParameters  to replace parameters in filter with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "specialCharSearchDn4",
+    "specialCharSearchFilter4",
+    "specialCharSearchFilterParameters4",
+    "specialCharReturnAttrs4",
+    "specialCharSearchResults4"
+  })
+  @Test(groups = "search")
+  public void specialCharsSearch4(
+    final String dn,
+    final String filter,
+    final String filterParameters,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final SearchResponse specialCharsResult = TestUtils.convertLdifToResult(expected);
+
+    final SearchResponse result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(specialCharsResult, result);
   }

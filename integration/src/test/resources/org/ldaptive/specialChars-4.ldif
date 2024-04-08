@@ -1,0 +1,12 @@
+dn: cn=Multibyte Chars,${ldapBaseDn}
+cn: Multibyte Chars
+# Raphaël
+givenName:: UmFwaGHDq2w=
+objectClass: inetOrgPerson
+objectClass: organizationalPerson
+objectClass: person
+objectClass: top
+# Weiß
+sn:: V2Vpw58=
+uid: 17896
+userPassword: {SHA}rfKc0oug83hbYSYg8IiuVsQZ8Wk=
