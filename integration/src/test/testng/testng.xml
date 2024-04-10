@@ -380,7 +380,7 @@
   <parameter name="authenticateSpecialCharsUser2" value="17894"/>
   <parameter name="authenticateSpecialCharsCredential2" value="password17894"/>
   <parameter name="authenticateSpecialCharsUser3" value="17895"/>
-  <parameter name="authenticateSpecialCharsCredential3" value="password17895"/>
+  <parameter name="authenticateSpecialCharsCredential3" value="pÅssword17895"/>
 
   <parameter name="digestMd5User" value="test3@vt.edu"/>
   <parameter name="digestMd5Credential" value="password"/>
