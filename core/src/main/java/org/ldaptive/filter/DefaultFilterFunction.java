@@ -3,12 +3,14 @@ package org.ldaptive.filter;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 
 /**
@@ -52,7 +54,12 @@ public class DefaultFilterFunction extends AbstractFilterFunction
     if (filter == null || filter.isEmpty()) {
       throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter cannot be null or empty");
     }
-    CharBuffer filterBuffer = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(filter.getBytes()));
+    CharBuffer filterBuffer;
+    try {
+      filterBuffer = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(LdapUtils.utf8Encode(filter)));
+    } catch (CharacterCodingException e) {
+      throw new FilterParseException(ResultCode.FILTER_ERROR, "Error decoding filter component", e);
+    }
     if (filterBuffer.get() != '(') {
       throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter '" + filter + "' must start with '('");
     }

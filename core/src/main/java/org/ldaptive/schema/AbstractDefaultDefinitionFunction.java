@@ -3,9 +3,11 @@ package org.ldaptive.schema;
 
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import org.ldaptive.LdapUtils;
 
 /**
  * Base class for default definition functions.
@@ -34,7 +36,12 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
     if (definition == null || definition.isEmpty()) {
       throw new SchemaParseException("Definition cannot be null or empty");
     }
-    CharBuffer buffer = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(definition.getBytes()));
+    CharBuffer buffer;
+    try {
+      buffer = StandardCharsets.UTF_8.newDecoder().decode(ByteBuffer.wrap(LdapUtils.utf8Encode(definition)));
+    } catch (CharacterCodingException e) {
+      throw new SchemaParseException("Error decoding definition", e);
+    }
     if (buffer.get() != '(') {
       throw new SchemaParseException("Definition '" + definition + "' must start with '('");
     }
