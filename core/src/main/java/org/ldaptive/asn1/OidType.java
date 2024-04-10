@@ -231,7 +231,7 @@ public class OidType extends AbstractDERType implements DEREncoder
     int val = 0;
     for (int i = 0; i < 4; i++) {
       final byte b = buffer.get();
-      if (i == 0 && b == 0x80) {
+      if (i == 0 && (b & 0xFF) == 0x80) {
         throw new IllegalArgumentException("Component starts with 0x80");
       }
       val <<= 7;
