@@ -4,6 +4,7 @@ package org.ldaptive.props;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +69,7 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
     try {
       final Reader[] readers = new Reader[paths.length];
       for (int i = 0; i < paths.length; i++) {
-        readers[i] = new InputStreamReader(ResourceUtils.getResource(paths[i]));
+        readers[i] = new InputStreamReader(ResourceUtils.getResource(paths[i]), StandardCharsets.UTF_8);
       }
       return loadProperties(readers);
     } catch (IOException e) {

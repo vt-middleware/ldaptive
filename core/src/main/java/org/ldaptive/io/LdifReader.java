@@ -60,7 +60,7 @@ public class LdifReader implements SearchResultReader
     String line;
     br.mark(READ_AHEAD_LIMIT);
     while ((line = br.readLine()) != null) {
-      if (!"".equals(line)) {
+      if (!line.isEmpty()) {
         br.reset();
         final List<String> section = readSection(br);
         if (!section.isEmpty()) {
@@ -101,7 +101,7 @@ public class LdifReader implements SearchResultReader
     boolean readingComment = false;
     String line;
     while ((line = reader.readLine()) != null) {
-      if ("".equals(line)) {
+      if (line.isEmpty()) {
         // end of section
         break;
       } else if (line.startsWith("#")) {
@@ -222,7 +222,7 @@ public class LdifReader implements SearchResultReader
       }
       if (parts[1].startsWith(" ")) {
         ref.addUris(parts[1].substring(1));
-      } else if (parts[1].length() > 0) {
+      } else if (!parts[1].isEmpty()) {
         throw new IllegalArgumentException("Invalid LDAP reference data: " + line);
       }
     }
