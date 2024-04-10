@@ -115,6 +115,8 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
       clientUsername = username;
       if (nonce == null) {
         final SecureRandom random = new SecureRandom();
+        // force seeding
+        random.nextBytes(new byte[1]);
         final byte[] b = new byte[DEFAULT_NONCE_SIZE];
         random.nextBytes(b);
         clientNonce = LdapUtils.base64Encode(b);
