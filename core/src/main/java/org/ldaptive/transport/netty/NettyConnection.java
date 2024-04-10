@@ -912,13 +912,18 @@ public final class NettyConnection extends TransportConnection
       LOGGER.debug("Write handle {} with {} pending responses", handle, pendingResponses.size());
     }
     try {
-      final boolean gotReconnectLock;
-      if (Duration.ZERO.equals(connectionConfig.getReconnectTimeout())) {
-        reconnectLock.readLock().lock();
-        gotReconnectLock = true;
-      } else {
-        gotReconnectLock = reconnectLock.readLock().tryLock(
-          connectionConfig.getReconnectTimeout().toMillis(), TimeUnit.MILLISECONDS);
+      boolean gotReconnectLock;
+      try {
+        if (Duration.ZERO.equals(connectionConfig.getReconnectTimeout())) {
+          reconnectLock.readLock().lock();
+          gotReconnectLock = true;
+        } else {
+          gotReconnectLock = reconnectLock.readLock().tryLock(
+            connectionConfig.getReconnectTimeout().toMillis(), TimeUnit.MILLISECONDS);
+        }
+      } catch (InterruptedException e) {
+        LOGGER.warn("Interrupted waiting on reconnect lock", e);
+        gotReconnectLock = false;
       }
       if (gotReconnectLock) {
         try {
