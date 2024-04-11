@@ -54,8 +54,9 @@ public class LdapRoleAuthorizationModule extends AbstractLoginModule
   {
     super.initialize(subject, callbackHandler, sharedState, options);
 
-    for (String key : options.keySet()) {
-      final String value = (String) options.get(key);
+    for (Map.Entry<String, ?> entry : options.entrySet()) {
+      final String key = entry.getKey();
+      final String value = (String) entry.getValue();
       if ("roleFilter".equalsIgnoreCase(key)) {
         roleFilter = value;
       } else if ("roleAttribute".equalsIgnoreCase(key)) {

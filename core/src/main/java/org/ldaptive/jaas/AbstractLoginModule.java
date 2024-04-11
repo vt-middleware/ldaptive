@@ -107,8 +107,9 @@ public abstract class AbstractLoginModule implements LoginModule
     callbackHandler = handler;
     sharedState = state;
 
-    for (String key : options.keySet()) {
-      final String value = (String) options.get(key);
+    for (Map.Entry<String, ?> entry : options.entrySet()) {
+      final String key = entry.getKey();
+      final String value = (String) entry.getValue();
       if ("useFirstPass".equalsIgnoreCase(key)) {
         useFirstPass = Boolean.parseBoolean(value);
       } else if ("tryFirstPass".equalsIgnoreCase(key)) {

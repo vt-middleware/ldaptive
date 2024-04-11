@@ -128,12 +128,13 @@ public class SRVDNSResolver extends AbstractDNSResolver<SRVRecord>
 
       while (!weighted.isEmpty()) {
         SRVRecord record = null;
-        final Iterator<Long> i = weighted.keySet().iterator();
+        final Iterator<Map.Entry<Long, SRVRecord>> i = weighted.entrySet().iterator();
         final long random = ThreadLocalRandom.current().nextLong(totalWeight + 1);
         while (i.hasNext()) {
-          final Long weight = i.next();
+          final Map.Entry<Long, SRVRecord> e = i.next();
+          final Long weight = e.getKey();
           if (weight >= random) {
-            record = weighted.get(weight);
+            record = e.getValue();
             totalWeight -= record.getWeight();
             i.remove();
             break;
