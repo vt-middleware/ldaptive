@@ -9,7 +9,7 @@
   <version>2.3.2-SNAPSHOT</version>
   <name>LDAPTIVE PARENT</name>
   <description>Java LDAP API</description>
-  <url>http://www.ldaptive.org</url>
+  <url>https://www.ldaptive.org</url>
   <issueManagement>
     <system>GitHub</system>
     <url>https://github.com/vt-middleware/ldaptive/issues</url>
@@ -17,11 +17,11 @@
   <licenses>
     <license>
       <name>Apache 2</name>
-      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
     <license>
       <name>GNU Lesser General Public License</name>
-      <url>http://www.gnu.org/licenses/lgpl-3.0.txt</url>
+      <url>https://www.gnu.org/licenses/lgpl-3.0.txt</url>
     </license>
   </licenses>
   <scm>
@@ -34,7 +34,7 @@
       <name>Daniel Fisher</name>
       <email>dfisher@vt.edu</email>
       <organization>Virginia Tech</organization>
-      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <organizationUrl>https://www.vt.edu</organizationUrl>
       <roles>
         <role>developer</role>
       </roles>
@@ -44,7 +44,7 @@
       <name>Marvin Addison</name>
       <email>serac@vt.edu</email>
       <organization>Virginia Tech</organization>
-      <organizationUrl>http://www.vt.edu</organizationUrl>
+      <organizationUrl>https://www.vt.edu</organizationUrl>
       <roles>
         <role>developer</role>
       </roles>
@@ -347,7 +347,7 @@
         <configuration>
           <links>
             <link>https://docs.oracle.com/en/java/javase/11/docs/api</link>
-            <link>http://www.slf4j.org/apidocs/</link>
+            <link>https://www.slf4j.org/apidocs/</link>
           </links>
           <quiet>true</quiet>
           <author>false</author>
