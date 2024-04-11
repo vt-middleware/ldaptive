@@ -4,7 +4,6 @@ package org.ldaptive.auth;
 import java.util.Arrays;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
 import org.ldaptive.Result;
 import org.ldaptive.SimpleBindRequest;
@@ -14,7 +13,7 @@ import org.ldaptive.SimpleBindRequest;
  *
  * @author  Middleware Services
  */
-public class SimpleBindAuthenticationHandler extends AbstractAuthenticationHandler implements ConnectionFactoryManager
+public class SimpleBindAuthenticationHandler extends AbstractAuthenticationHandler
 {
 
 

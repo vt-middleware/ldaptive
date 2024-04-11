@@ -3,7 +3,6 @@ package org.ldaptive.auth;
 
 import java.util.Arrays;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchResponse;
@@ -15,7 +14,7 @@ import org.ldaptive.SearchResponse;
  *
  * @author  Middleware Services
  */
-public class SearchEntryResolver extends AbstractSearchEntryResolver implements ConnectionFactoryManager
+public class SearchEntryResolver extends AbstractSearchEntryResolver
 {
 
 
