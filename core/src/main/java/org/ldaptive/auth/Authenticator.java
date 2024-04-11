@@ -418,7 +418,7 @@ public class Authenticator
           AuthenticationHandlerResponse.builder()
             .diagnosticMessage("DN cannot be null")
             .resultCode(AuthenticationResultCode.DN_RESOLUTION_FAILURE).build())
-        .dn(dn)
+        .dn(null)
         .build();
     } else if (dn.isEmpty()) {
       response = AuthenticationResponse.builder()
