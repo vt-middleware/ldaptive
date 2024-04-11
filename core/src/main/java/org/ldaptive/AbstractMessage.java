@@ -171,9 +171,12 @@ public abstract class AbstractMessage implements Message
     {
       final ControlParser p = new ControlParser();
       p.parse(encoded);
+      if (p.getOid().isEmpty()) {
+        throw new IllegalArgumentException("Cannot parse response control without OID");
+      }
       getObject().addControls(
         ControlFactory.createResponseControl(
-          p.getOid().isPresent() ? p.getOid().get() : null,
+          p.getOid().get(),
           p.getCritical().isPresent() ? p.getCritical().get() : false,
           p.getValue().isPresent() ? p.getValue().get() : null));
     }
