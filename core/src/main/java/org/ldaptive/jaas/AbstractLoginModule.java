@@ -309,7 +309,7 @@ public abstract class AbstractLoginModule implements LoginModule
       useFirstPass,
       tryFirstPass,
       useCallback,
-      callbackHandler.getClass().getName(),
+      callbackHandler != null ? callbackHandler.getClass().getName() : null,
       nameCb.getClass().getName(),
       passCb.getClass().getName());
     try {
