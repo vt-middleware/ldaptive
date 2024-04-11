@@ -173,7 +173,7 @@ public class IntermediateResponse extends AbstractMessage
     {
       if (encoded.remaining() > 0) {
         final DERParser p = new DERParser();
-        p.readTag(encoded).getTagNo();
+        p.readTag(encoded);
         p.readLength(encoded);
         getObject().setResponseValue(encoded.getRemainingBytes());
       }
