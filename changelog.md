@@ -6,6 +6,14 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.3.2 - 11Apr2024
+
+Issue | Description
+:---- | :----------
+[ldaptive-254]({{ site.issueURL }}254) | Restrict max filter depth.
+[674c64d]({{ site.commitURL }}674c64d) | Filter parsing improvements.
+[ldaptive-252]({{ site.issueURL }}252) | Multi-byte characters incorrectly encoded in filter assertions.
+
 ## Version 2.3.1 - 26Feb2024
 
 Issue | Description
