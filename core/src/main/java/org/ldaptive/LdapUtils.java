@@ -215,12 +215,13 @@ public final class LdapUtils
           break;
 
         default:
-          sb.append("%");
           // CheckStyle:MagicNumber OFF
           if (ch <= 0x7F) {
-            sb.append(hexEncode((byte) (ch & 0x7F)));
+            sb.append("%").append(hexEncode((byte) (ch & 0x7F)));
           } else {
-            sb.append(hexEncode(utf8Encode(String.valueOf(ch))));
+            for (byte b : utf8Encode(String.valueOf(ch))) {
+              sb.append("%").append(hexEncode(b));
+            }
           }
           // CheckStyle:MagicNumber ON
         }
@@ -374,7 +375,7 @@ public final class LdapUtils
    *
    * @param  value  to decode
    *
-   * @return  percent decoded value
+   * @return  percent decoded value or same value if the string does not contain '%'
    */
   public static String percentDecode(final String value)
   {
@@ -384,17 +385,32 @@ public final class LdapUtils
 
     final StringBuilder sb = new StringBuilder();
     int pos = 0;
+    final StringBuilder hexValue = new StringBuilder();
     while (pos < value.length()) {
-      final char c = value.charAt(pos++);
+      final char c = value.charAt(pos);
+      boolean appendHex = false;
+      boolean appendValue = false;
       if (c == '%') {
-        final char[] hex = new char[] {
-          value.charAt(pos++),
-          value.charAt(pos++),
-        };
-        sb.append(utf8Encode(hexDecode(hex)));
+        if (pos + 2 < value.length()) {
+          hexValue.append(value.charAt(++pos)).append(value.charAt(++pos));
+          if (pos + 1 == value.length()) {
+            appendHex = true;
+          }
+        } else {
+          throw new IllegalArgumentException("Invalid percent encoded value: " + value);
+        }
       } else {
+        appendHex = hexValue.length() > 0;
+        appendValue = true;
+      }
+      if (appendHex) {
+        sb.append(utf8Encode(hexDecode(hexValue.toString().toCharArray())));
+        hexValue.setLength(0);
+      }
+      if (appendValue) {
         sb.append(c);
       }
+      pos++;
     }
     return sb.toString();
   }

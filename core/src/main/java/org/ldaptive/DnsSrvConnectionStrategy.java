@@ -17,6 +17,7 @@ import org.ldaptive.dns.DNSDomainFunction;
 import org.ldaptive.dns.DefaultDNSContextFactory;
 import org.ldaptive.dns.SRVDNSResolver;
 import org.ldaptive.dns.SRVRecord;
+import org.ldaptive.url.Url;
 
 /**
  * DNS SRV connection strategy. Queries a DNS server for SRV records and uses those records to construct a list of URLs.
@@ -173,18 +174,18 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
    */
   protected String[] parseUrl(final String url)
   {
-    final LdapURL ldapURL;
+    final Url ldapUrl;
     try {
-      ldapURL = new LdapURL(url);
+      ldapUrl = new Url(url);
     } catch (Exception e) {
       return parseDnsUrl(url);
     }
-    if (ldapURL.getBaseDn() == null || ldapURL.getBaseDn().isEmpty()) {
+    if (ldapUrl.getBaseDn() == null || ldapUrl.getBaseDn().isEmpty()) {
       throw new IllegalArgumentException("LDAP URL " + url + " must contain a base DN");
     }
-    final String domain = new DNSDomainFunction().apply(new Dn(ldapURL.getBaseDn()));
+    final String domain = new DNSDomainFunction().apply(new Dn(ldapUrl.getBaseDn()));
     if (domain.isEmpty()) {
-      throw new IllegalArgumentException("Base DN " + ldapURL.getBaseDn() + " could not be converted to a domain");
+      throw new IllegalArgumentException("Base DN " + ldapUrl.getBaseDn() + " could not be converted to a domain");
     }
     return new String[] {null, "_ldap._tcp.".concat(domain)};
   }

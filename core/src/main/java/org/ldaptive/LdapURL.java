@@ -2,70 +2,24 @@
 package org.ldaptive;
 
 import java.net.InetAddress;
-import java.util.Arrays;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.ldaptive.url.DefaultUrlParser;
+import org.ldaptive.url.Url;
+import org.ldaptive.url.UrlParser;
 
 /**
- * Class for parsing LDAP URLs. See RFC 4516. Expects URLs of the form scheme://hostname:port/baseDn?attrs?scope?filter.
- * This implementation does not support URL extensions.
+ * Class to represent an LDAP URL in order to make connections to an LDAP server. URL components are parsed according to
+ * RFC 4516. See {@link Url}
  *
  * @author  Middleware Services
  */
-// CheckStyle:HiddenField OFF
-public class LdapURL
+public final class LdapURL
 {
-
-  /** Pattern to match LDAP URL. */
-  protected static final Pattern URL_PATTERN = Pattern.compile(
-    "([lL][dD][aA][pP][sSiI]?)://(\\[[0-9A-Fa-f:]+\\]|[^:/]+)?" +
-      "(?::(\\d+))?" +
-      "(?:/(?:([^?]+))?" +
-      "(?:\\?([^?]*))?" +
-      "(?:\\?([^?]*))?" +
-      "(?:\\?(.*))?)?");
-
-  /** Default LDAP port, value is {@value}. */
-  protected static final int DEFAULT_LDAP_PORT = 389;
-
-  /** Default LDAPS port, value is {@value}. */
-  protected static final int DEFAULT_LDAPS_PORT = 636;
-
-  /** Default base DN, value is {@value}. */
-  protected static final String DEFAULT_BASE_DN = "";
-
-  /** Default search filter value is '(objectClass=*)'. */
-  protected static final String DEFAULT_FILTER = "(objectClass=*)";
-
-  /** Default scope, value is {@link SearchScope#OBJECT}. */
-  protected static final SearchScope DEFAULT_SCOPE = SearchScope.OBJECT;
-
-  /** Default return attributes, value is all user attributes. */
-  protected static final String[] DEFAULT_ATTRIBUTES = ReturnAttributes.ALL_USER.value();
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10333;
 
-  /** Scheme of the ldap url. */
-  private String scheme;
-
-  /** Hostname of the ldap url. */
-  private String hostname;
-
-  /** Port of the ldap url. */
-  private int port;
-
-  /** Base DN of the ldap url. */
-  private String baseDn;
-
-  /** Attributes of the ldap url. */
-  private String[] attributes;
-
-  /** Search scope of the ldap url. */
-  private SearchScope scope;
-
-  /** Search filter of the ldap url. */
-  private String filter;
+  /** Parsed URL properties. */
+  private Url url;
 
   /** Metadata that describes connection failures on this URL. */
   private LdapURLRetryMetadata retryMetadata;
@@ -85,6 +39,20 @@ public class LdapURL
 
 
   /**
+   * Creates a new LDAP URL with the supplied {@link Url}.
+   *
+   * @param  ldapURL  to set
+   */
+  private LdapURL(final Url ldapURL)
+  {
+    if (ldapURL.getHostname() == null) {
+      throw new IllegalArgumentException("Hostname cannot be null");
+    }
+    url = ldapURL;
+  }
+
+
+  /**
    * Creates a new ldap url.
    *
    * @param  hostname  LDAP server hostname
@@ -92,51 +60,30 @@ public class LdapURL
    */
   public LdapURL(final String hostname, final int port)
   {
-    this("ldap://" + hostname + ":" + port);
+    this("ldap://" + (hostname != null ? hostname : "") + ":" + port);
   }
 
 
   /**
    * Creates a new ldap url.
    *
-   * @param  url  LDAP url
+   * @param  ldapUrl  string representation of LDAP URL
    */
-  public LdapURL(final String url)
+  public LdapURL(final String ldapUrl)
   {
-    parseURL(url);
+    this(ldapUrl, new DefaultUrlParser());
   }
 
 
   /**
    * Creates a new ldap url.
    *
-   * @param  scheme  url scheme
-   * @param  hostname  url hostname
-   * @param  port  url port
-   * @param  baseDn  base DN
-   * @param  attributes  attributes
-   * @param  scope  search scope
-   * @param  filter  search filter
+   * @param  ldapUrl  string representation of LDAP URL
+   * @param  parser  to parse the url
    */
-  protected LdapURL(
-    final String scheme,
-    final String hostname,
-    final int port,
-    final String baseDn,
-    final String[] attributes,
-    final SearchScope scope,
-    final String filter)
+  public LdapURL(final String ldapUrl, final UrlParser parser)
   {
-    if (scheme == null) {
-      throw new IllegalArgumentException("Scheme cannot be null");
-    }
-    this.scheme = scheme;
-    this.hostname = hostname;
-    this.port = port;
-    this.baseDn = baseDn;
-    this.attributes = attributes;
-    this.scope = scope;
-    this.filter = filter;
+    this(parser.parse(ldapUrl));
   }
 
 
@@ -147,7 +94,7 @@ public class LdapURL
    */
   public String getScheme()
   {
-    return scheme;
+    return url.getScheme();
   }
 
 
@@ -158,7 +105,7 @@ public class LdapURL
    */
   public String getHostname()
   {
-    return hostname;
+    return url.getHostname();
   }
 
 
@@ -169,153 +116,13 @@ public class LdapURL
    */
   public int getPort()
   {
-    if (port == -1) {
-      return "ldaps".equals(scheme) ? DEFAULT_LDAPS_PORT : DEFAULT_LDAP_PORT;
-    }
-    return port;
+    return url.getPort();
   }
 
 
-  /**
-   * Returns false if a port was supplied in this url.
-   *
-   * @return  false if a port was supplied in this url
-   */
-  public boolean isDefaultPort()
+  public Url getUrl()
   {
-    return port == -1;
-  }
-
-
-  /**
-   * Returns the base DN.
-   *
-   * @return  baseDn
-   */
-  public String getBaseDn()
-  {
-    return baseDn == null ? DEFAULT_BASE_DN : baseDn;
-  }
-
-
-  /**
-   * Returns whether a base DN was supplied in this url.
-   *
-   * @return  whether a base DN was supplied in this url
-   */
-  public boolean isDefaultBaseDn()
-  {
-    return baseDn == null;
-  }
-
-
-  /**
-   * Returns the attributes.
-   *
-   * @return  attributes
-   */
-  public String[] getAttributes()
-  {
-    return attributes == null ? DEFAULT_ATTRIBUTES : attributes;
-  }
-
-
-  /**
-   * Returns whether attributes were supplied in this url.
-   *
-   * @return  whether an attributes were supplied in this url
-   */
-  public boolean isDefaultAttributes()
-  {
-    return attributes == null;
-  }
-
-
-  /**
-   * Returns the scope.
-   *
-   * @return  scope
-   */
-  public SearchScope getScope()
-  {
-    return scope == null ? DEFAULT_SCOPE : scope;
-  }
-
-
-  /**
-   * Returns whether a scope was supplied in this url.
-   *
-   * @return  whether a scope was supplied in this url
-   */
-  public boolean isDefaultScope()
-  {
-    return scope == null;
-  }
-
-
-  /**
-   * Returns the filter.
-   *
-   * @return  filter
-   */
-  public String getFilter()
-  {
-    return filter == null ? DEFAULT_FILTER : filter;
-  }
-
-
-  /**
-   * Returns whether a filter was supplied in this url.
-   *
-   * @return  whether a filter was supplied in this url
-   */
-  public boolean isDefaultFilter()
-  {
-    return filter == null;
-  }
-
-
-  /**
-   * Returns the formatted URL as scheme://hostname:port/baseDn?attrs?scope?filter.
-   *
-   * @return  url
-   */
-  public String getUrl()
-  {
-
-    final StringBuilder sb = new StringBuilder(scheme).append("://");
-    final String hostname = getHostname();
-    if (hostname != null) {
-      // ipv6 address
-      if (hostname.contains(":")) {
-        sb.append("[").append(hostname).append("]");
-      } else {
-        sb.append(hostname);
-      }
-    }
-    sb.append(":").append(getPort());
-    sb.append("/").append(LdapUtils.percentEncode(getBaseDn()));
-    sb.append("?");
-
-    final String[] attrs = getAttributes();
-    for (int i = 0; i < attrs.length; i++) {
-      sb.append(attrs[i]);
-      if (i + 1 < attrs.length) {
-        sb.append(",");
-      }
-    }
-    sb.append("?");
-
-    final SearchScope scope = getScope();
-    if (SearchScope.OBJECT == scope) {
-      sb.append("base");
-    } else if (SearchScope.ONELEVEL == scope) {
-      sb.append("one");
-    } else if (SearchScope.SUBTREE == scope) {
-      sb.append("sub");
-    }
-    sb.append("?").append(LdapUtils.percentEncode(getFilter()));
-    return sb.toString();
+    return url;
   }
 
 
@@ -326,7 +133,7 @@ public class LdapURL
    */
   public String getHostnameWithPort()
   {
-    return (getHostname() != null ? getHostname() : "null") + ":" + getPort();
+    return getHostname() + ":" + getPort();
   }
 
 
@@ -337,7 +144,7 @@ public class LdapURL
    */
   public String getHostnameWithSchemeAndPort()
   {
-    return getScheme() + "://" + (getHostname() != null ? getHostname() : "null") + ":" + getPort();
+    return getScheme() + "://" + getHostname() + ":" + getPort();
   }
 
 
@@ -424,13 +231,7 @@ public class LdapURL
   public static LdapURL copy(final LdapURL ldapURL)
   {
     final LdapURL url = new LdapURL();
-    url.scheme = ldapURL.scheme;
-    url.hostname = ldapURL.hostname;
-    url.port = ldapURL.port;
-    url.baseDn = ldapURL.baseDn;
-    url.attributes = ldapURL.attributes;
-    url.scope = ldapURL.scope;
-    url.filter = ldapURL.filter;
+    url.url = ldapURL.url;
     url.retryMetadata = ldapURL.retryMetadata;
     url.active = ldapURL.active;
     url.inetAddress = ldapURL.inetAddress;
@@ -446,13 +247,7 @@ public class LdapURL
     }
     if (o instanceof LdapURL) {
       final LdapURL v = (LdapURL) o;
-      return LdapUtils.areEqual(scheme, v.scheme) &&
-        LdapUtils.areEqual(hostname, v.hostname) &&
-        LdapUtils.areEqual(port, v.port) &&
-        LdapUtils.areEqual(baseDn, v.baseDn) &&
-        LdapUtils.areEqual(attributes, v.attributes) &&
-        LdapUtils.areEqual(scope, v.scope) &&
-        LdapUtils.areEqual(filter, v.filter) &&
+      return LdapUtils.areEqual(url, v.url) &&
         LdapUtils.areEqual(inetAddress, v.inetAddress);
     }
     return false;
@@ -464,13 +259,7 @@ public class LdapURL
   {
     return LdapUtils.computeHashCode(
       HASH_CODE_SEED,
-      scheme,
-      hostname,
-      port,
-      baseDn,
-      attributes,
-      scope,
-      filter,
+      url,
       inetAddress);
   }
 
@@ -480,58 +269,7 @@ public class LdapURL
   {
     return "[" +
       getClass().getName() + "@" + hashCode() + "::" +
-      "scheme=" + scheme + ", " +
-      "hostname=" + hostname + ", " +
-      "port=" + port + ", " +
-      "baseDn=" + baseDn + ", " +
-      "attributes=" + Arrays.toString(attributes) + ", " +
-      "scope=" + scope + ", " +
-      "filter=" + filter + ", " +
+      "url=" + getHostnameWithSchemeAndPort() + ", " +
       "inetAddress=" + inetAddress + "]";
   }
-
-
-  /**
-   * Matches the supplied url against a pattern and reads its components.
-   *
-   * @param  url  to parse
-   */
-  protected void parseURL(final String url)
-  {
-    final Matcher m = URL_PATTERN.matcher(url);
-    if (!m.matches()) {
-      throw new IllegalArgumentException("Invalid LDAP URL: " + url);
-    }
-
-    // CheckStyle:MagicNumber OFF
-    scheme = LdapUtils.toLowerCaseAscii(m.group(1));
-    hostname = m.group(2);
-    if (hostname != null) {
-      // check for ipv6 address
-      if (hostname.startsWith("[") && hostname.endsWith("]")) {
-        hostname = hostname.substring(1, hostname.length() - 1).trim();
-      }
-    }
-
-    port = m.group(3) != null ? Integer.parseInt(m.group(3)) : -1;
-    baseDn = m.group(4) != null ? LdapUtils.percentDecode(m.group(4)) : null;
-    attributes = m.group(5) != null ? m.group(5).length() > 0 ? m.group(5).split(",") : null : null;
-    final String scope = m.group(6);
-    if (scope != null && scope.length() > 0) {
-      if ("base".equalsIgnoreCase(scope)) {
-        this.scope = SearchScope.OBJECT;
-      } else if ("one".equalsIgnoreCase(scope)) {
-        this.scope = SearchScope.ONELEVEL;
-      } else if ("sub".equalsIgnoreCase(scope)) {
-        this.scope = SearchScope.SUBTREE;
-      } else {
-        throw new IllegalArgumentException("Invalid scope: " + scope);
-      }
-    }
-
-    filter = m.group(7) != null
-      ? m.group(7).length() > 0 ? LdapUtils.percentDecode(m.group(7)) : null : null;
-    // CheckStyle:MagicNumber ON
-  }
 }
-// CheckStyle:HiddenField ON
