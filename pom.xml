@@ -57,6 +57,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
+    <spotbugs.dir>src/main/spotbugs</spotbugs.dir>
     <org.slf4j.version>2.0.12</org.slf4j.version>
     <io.netty.version>4.1.108.Final</io.netty.version>
     <org.springframework.version>5.3.33</org.springframework.version>
@@ -224,6 +225,11 @@
           </dependencies>
         </plugin>
         <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>4.8.4.0</version>
+        </plugin>
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>3.2.5</version>
@@ -337,6 +343,24 @@
             <phase>compile</phase>
             <goals>
               <goal>checkstyle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>com.github.spotbugs</groupId>
+        <artifactId>spotbugs-maven-plugin</artifactId>
+        <configuration>
+          <effort>Max</effort>
+          <threshold>Medium</threshold>
+          <xmlOutput>true</xmlOutput>
+          <xmlOutputDirectory>${project.build.directory}/spotbugs</xmlOutputDirectory>
+          <excludeFilterFile>${spotbugs.dir}/exclude.xml</excludeFilterFile>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>check</goal>
             </goals>
           </execution>
         </executions>
