@@ -129,7 +129,7 @@ public class OidType extends AbstractDERType implements DEREncoder
 
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
     try {
-      try {
+      try (bytes) {
         // CheckStyle:MagicNumber OFF
         if (oid[0] < 2) {
           // should always fit into one byte, since oid[1] must be <= 38
@@ -141,8 +141,6 @@ public class OidType extends AbstractDERType implements DEREncoder
           bytes.write(toBytes(oid[i]));
         }
         // CheckStyle:MagicNumber ON
-      } finally {
-        bytes.close();
       }
     } catch (IOException e) {
       throw new IllegalStateException("Byte conversion failed", e);
