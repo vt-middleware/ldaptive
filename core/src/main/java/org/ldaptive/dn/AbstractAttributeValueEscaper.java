@@ -55,16 +55,12 @@ public abstract class AbstractAttributeValueEscaper implements AttributeValueEsc
 
       default:
         // CheckStyle:MagicNumber OFF
-        if (ch <= 127) {
+        if (ch <= 0x7F) {
           processAscii(sb, ch);
         } else if (i + 1 < len && Character.isHighSurrogate(ch)) {
-          final char nextChar = value.charAt(++i);
-          if (Character.isLowSurrogate(nextChar)) {
-            final int codePoint = Character.toCodePoint(ch, nextChar);
-            processNonAscii(sb, LdapUtils.utf8Encode(new String(new int[] {codePoint}, 0, 1)));
-          } else {
-            processNonAscii(sb, LdapUtils.utf8Encode(String.valueOf(ch)));
-          }
+          final char lowSurr = value.charAt(++i);
+          final int codePoint = Character.toCodePoint(ch, lowSurr);
+          processNonAscii(sb, LdapUtils.utf8Encode(new String(new int[] {codePoint}, 0, 1)));
         } else {
           processNonAscii(sb, LdapUtils.utf8Encode(String.valueOf(ch)));
         }
