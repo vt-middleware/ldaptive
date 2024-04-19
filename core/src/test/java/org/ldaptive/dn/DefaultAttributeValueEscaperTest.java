@@ -13,6 +13,9 @@ import org.testng.annotations.Test;
 public class DefaultAttributeValueEscaperTest
 {
 
+  /** Escaper to test. */
+  private final DefaultAttributeValueEscaper escaper = new DefaultAttributeValueEscaper();
+
 
   /**
    * Value test data.
@@ -98,6 +101,6 @@ public class DefaultAttributeValueEscaperTest
   public void escape(final String value, final String match)
     throws Exception
   {
-    Assert.assertEquals(new DefaultAttributeValueEscaper().escape(value), match);
+    Assert.assertEquals(escaper.escape(value), match);
   }
 }
