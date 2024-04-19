@@ -19,7 +19,7 @@ public class LdifWriter implements SearchResultWriter
 {
 
   /** Line separator. */
-  private static final String LINE_SEPARATOR = System.getProperty("line.separator");
+  private static final String LINE_SEPARATOR = System.lineSeparator();
 
   /** Writer to write to. */
   private final Writer ldifWriter;
