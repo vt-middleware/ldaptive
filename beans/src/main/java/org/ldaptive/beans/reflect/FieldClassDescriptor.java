@@ -30,7 +30,7 @@ public class FieldClassDescriptor extends AbstractClassDescriptor
     }
     for (Attribute attr : entryAnnotation.attributes()) {
       if (attr.values().length == 0) {
-        final String property = attr.property().length() > 0 ? attr.property() : attr.name();
+        final String property = !attr.property().isEmpty() ? attr.property() : attr.name();
         if (fields.containsKey(property)) {
           addAttributeValueMutator(createAttributeValueMutator(fields.get(property), attr));
         }

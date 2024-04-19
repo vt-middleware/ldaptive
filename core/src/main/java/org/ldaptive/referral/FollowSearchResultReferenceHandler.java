@@ -124,7 +124,7 @@ public class FollowSearchResultReferenceHandler extends AbstractFollowReferralHa
   @Override
   public SearchResponse apply(final SearchResponse result)
   {
-    if (result.getReferences() == null || result.getReferences().size() == 0) {
+    if (result.getReferences() == null || result.getReferences().isEmpty()) {
       return result;
     }
     if (referralDepth <= referralLimit) {

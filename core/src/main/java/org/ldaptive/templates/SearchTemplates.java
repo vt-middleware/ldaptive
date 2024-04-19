@@ -227,7 +227,7 @@ public class SearchTemplates
     {
       final String[] initials = new String[names.length];
       for (int i = 0; i < initials.length; i++) {
-        if (names[i] != null && names[i].length() > 0) {
+        if (names[i] != null && !names[i].isEmpty()) {
           initials[i] = names[i].substring(0, 1);
         } else {
           initials[i] = null;

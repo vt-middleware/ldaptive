@@ -54,7 +54,7 @@ public class SpelAttributeValueMutator implements AttributeValueMutator
     attribute = attr;
 
     final ExpressionParser parser = new SpelExpressionParser();
-    expression = parser.parseExpression(attribute.property().length() > 0 ? attribute.property() : attribute.name());
+    expression = parser.parseExpression(!attribute.property().isEmpty() ? attribute.property() : attribute.name());
     evaluationContext = context;
     if ("".equals(attribute.transcoder())) {
       transcoder = null;

@@ -155,7 +155,7 @@ public abstract class AbstractFilterFunction implements FilterFunction
   private int findMatchingParenPosition(final String filter, final int start)
     throws FilterParseException
   {
-    if (filter == null || filter.length() == 0) {
+    if (filter == null || filter.isEmpty()) {
       throw new FilterParseException(ResultCode.FILTER_ERROR, "Filter cannot be null or empty");
     }
     if (filter.charAt(start) != '(') {

@@ -85,7 +85,7 @@ public class Dn
    */
   public RDn getRDn()
   {
-    if (rdnComponents.size() == 0) {
+    if (rdnComponents.isEmpty()) {
       return null;
     }
     return rdnComponents.get(0);
@@ -383,7 +383,7 @@ public class Dn
    */
   public String format(final RDnNormalizer normalizer, final char delimiter, final boolean reverse)
   {
-    if (rdnComponents.size() == 0) {
+    if (rdnComponents.isEmpty()) {
       return "";
     }
     final StringBuilder sb = new StringBuilder();

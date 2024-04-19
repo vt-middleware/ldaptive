@@ -75,7 +75,7 @@ public class OrFilter implements FilterSet
   @Override
   public DEREncoder getEncoder()
   {
-    if (filterComponents.size() == 0) {
+    if (filterComponents.isEmpty()) {
       return new NullType(new ContextDERTag(Type.OR.ordinal(), true));
     } else {
       return new ConstructedDEREncoder(

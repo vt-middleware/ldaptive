@@ -75,7 +75,7 @@ public class AndFilter implements FilterSet
   @Override
   public DEREncoder getEncoder()
   {
-    if (filterComponents.size() == 0) {
+    if (filterComponents.isEmpty()) {
       return new NullType(new ContextDERTag(Type.AND.ordinal(), true));
     } else {
       return new ConstructedDEREncoder(

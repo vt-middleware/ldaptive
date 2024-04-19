@@ -127,7 +127,7 @@ public class ModifyRequest extends AbstractRequestMessage
    */
   private DEREncoder[] getAttributeValueEncoders(final Collection<byte[]> values)
   {
-    if (values == null || values.size() == 0) {
+    if (values == null || values.isEmpty()) {
       return new DEREncoder[] {() -> EMPTY_BYTE};
     }
     return values.stream().map(OctetStringType::new).toArray(DEREncoder[]::new);

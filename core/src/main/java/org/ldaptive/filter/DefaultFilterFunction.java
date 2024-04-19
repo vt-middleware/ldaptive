@@ -210,7 +210,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
   {
     final Filter filter;
     final Map<String, List<CharBuffer>> substrings = readSubstrings(cb);
-    if (substrings.size() == 0) {
+    if (substrings.isEmpty()) {
       throw new FilterParseException(ResultCode.FILTER_ERROR, "Could not parse equality or substring assertion");
     }
     if (substrings.containsKey("EQUALITY")) {
@@ -291,7 +291,7 @@ public class DefaultFilterFunction extends AbstractFilterFunction
     }
     cb.reset();
     if (cb.hasRemaining()) {
-      if (buffers.size() > 0) {
+      if (!buffers.isEmpty()) {
         buffers.put("FINAL", Collections.singletonList(cb.slice()));
       } else {
         buffers.put("EQUALITY", Collections.singletonList(cb.slice()));
