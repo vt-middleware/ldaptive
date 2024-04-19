@@ -114,6 +114,10 @@ public final class DefaultDnParser implements DnParser
    */
   private static String decodeStringValue(final String value)
   {
+    if (!value.contains("\\")) {
+      return value;
+    }
+
     final StringBuilder sb = new StringBuilder();
     int pos = 0;
     final StringBuilder hexValue = new StringBuilder();
