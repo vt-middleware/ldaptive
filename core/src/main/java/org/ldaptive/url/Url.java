@@ -47,6 +47,15 @@ public final class Url
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 11003;
 
+  /** LDAP scheme. */
+  private static final String LDAP_SCHEME = "ldap";
+
+  /** LDAPS scheme. */
+  private static final String LDAPS_SCHEME = "ldaps";
+
+  /** LDAPI scheme. */
+  private static final String LDAPI_SCHEME = "ldapi";
+
   /** Scheme of the ldap url. */
   private final String scheme;
 
@@ -171,6 +180,17 @@ public final class Url
 
 
   /**
+   * Returns whether the scheme is 'ldaps'.
+   *
+   * @return  whether the scheme is 'ldaps'
+   */
+  public boolean isSchemeLdaps()
+  {
+    return LDAPS_SCHEME.equals(scheme);
+  }
+
+
+  /**
    * Returns the hostname.
    *
    * @return  hostname
@@ -191,13 +211,13 @@ public final class Url
     if (port == -1) {
       final int defaultPort;
       switch (scheme) {
-      case "ldap":
+      case LDAP_SCHEME:
         defaultPort = DEFAULT_LDAP_PORT;
         break;
-      case "ldaps":
+      case LDAPS_SCHEME:
         defaultPort = DEFAULT_LDAPS_PORT;
         break;
-      case "ldapi":
+      case LDAPI_SCHEME:
         defaultPort = DEFAULT_LDAPI_PORT;
         break;
       default:
@@ -361,7 +381,7 @@ public final class Url
    */
   static void validateScheme(final String scheme)
   {
-    if (!"ldap".equals(scheme) && !"ldaps".equals(scheme) && !"ldapi".equals(scheme)) {
+    if (!LDAP_SCHEME.equals(scheme) && !LDAPS_SCHEME.equals(scheme) && !LDAPI_SCHEME.equals(scheme)) {
       throw new IllegalArgumentException("Invalid LDAP URL scheme: " + scheme);
     }
   }

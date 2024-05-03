@@ -181,6 +181,39 @@ public class NettyConnectionTest
   }
 
 
+  @Test(groups = "netty")
+  public void ldapsWithStartTLS()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final NettyConnection conn = new NettyConnection(
+        ConnectionConfig.builder()
+          .url("ldaps://" + address.getHostName() + ":" + address.getPort())
+          .useStartTLS(true)
+          .build(),
+        NioSocketChannel.class,
+        new NioEventLoopGroup(
+          0,
+          new ThreadPerTaskExecutor(new DefaultThreadFactory(NettyConnectionTest.class, true, Thread.NORM_PRIORITY))),
+        null,
+        true);
+      try {
+        conn.open();
+        Assert.fail("Should have thrown exception");
+      } catch (IllegalStateException e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      } finally {
+        conn.close();
+        Assert.assertFalse(conn.isOpen());
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
   /**
    * @throws  Exception  On test failure.
    */

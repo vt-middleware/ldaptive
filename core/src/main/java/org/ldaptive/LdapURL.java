@@ -99,6 +99,17 @@ public final class LdapURL
 
 
   /**
+   * Returns whether the scheme is 'ldaps'.
+   *
+   * @return  whether the scheme is 'ldaps'
+   */
+  public boolean isSchemeLdaps()
+  {
+    return url.isSchemeLdaps();
+  }
+
+
+  /**
    * Returns the hostname.
    *
    * @return  hostname
