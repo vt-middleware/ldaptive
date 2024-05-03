@@ -6,10 +6,8 @@ import java.util.List;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchScope;
 import org.ldaptive.dn.DefaultDnParser;
-import org.ldaptive.dn.Dn;
 import org.ldaptive.dn.DnParser;
 import org.ldaptive.filter.DefaultFilterFunction;
-import org.ldaptive.filter.Filter;
 import org.ldaptive.filter.FilterFunction;
 
 /**
@@ -51,20 +49,13 @@ public final class DefaultUrlParser implements UrlParser
     // CheckStyle:MagicNumber ON
 
     String baseDn = null;
-    Dn parsedBaseDn = null;
     if (nextPos > -1) {
       currentPos = nextPos;
       nextPos = url.indexOf('?', currentPos);
-      try {
-        baseDn = nextPos < 0 ? LdapUtils.percentDecode(url.substring(currentPos + 1)) :
-          LdapUtils.percentDecode(url.substring(currentPos + 1, nextPos));
-        if (baseDn.isEmpty()) {
-          baseDn = null;
-        } else {
-          parsedBaseDn = new Dn(baseDn, dnParser);
-        }
-      } catch (Exception e) {
-        throw new IllegalArgumentException("Invalid baseDN: " + url, e);
+      baseDn = nextPos < 0 ? LdapUtils.percentDecode(url.substring(currentPos + 1)) :
+        LdapUtils.percentDecode(url.substring(currentPos + 1, nextPos));
+      if (baseDn.isEmpty()) {
+        baseDn = null;
       }
     }
 
@@ -85,21 +76,14 @@ public final class DefaultUrlParser implements UrlParser
     }
 
     String filter = null;
-    Filter parsedFilter = null;
     if (nextPos > -1) {
-      try {
-        filter = LdapUtils.percentDecode(url.substring(nextPos + 1));
-        if (filter.isEmpty()) {
-          filter = null;
-        } else {
-          parsedFilter = filterFunction.parse(filter);
-        }
-      } catch (Exception e) {
-        throw new IllegalArgumentException("Invalid filter: " + url, e);
+      filter = LdapUtils.percentDecode(url.substring(nextPos + 1));
+      if (filter.isEmpty()) {
+        filter = null;
       }
     }
 
-    return new Url(scheme, hostname, port, baseDn, parsedBaseDn, attrs, scope, filter, parsedFilter);
+    return new Url(scheme, hostname, port, baseDn, attrs, scope, filter);
   }
 
 

@@ -4,8 +4,12 @@ package org.ldaptive.url;
 import java.util.Arrays;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchScope;
+import org.ldaptive.dn.DefaultDnParser;
 import org.ldaptive.dn.Dn;
+import org.ldaptive.dn.DnParser;
+import org.ldaptive.filter.DefaultFilterFunction;
 import org.ldaptive.filter.Filter;
+import org.ldaptive.filter.FilterFunction;
 import org.ldaptive.filter.PresenceFilter;
 
 /**
@@ -46,6 +50,12 @@ public final class Url
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 11003;
+
+  /** For parsing DNs. */
+  private static final DnParser DN_PARSER = new DefaultDnParser();
+
+  /** For parsing filters. */
+  private static final FilterFunction FILTER_FUNCTION = new DefaultFilterFunction();
 
   /** LDAP scheme. */
   private static final String LDAP_SCHEME = "ldap";
@@ -110,11 +120,9 @@ public final class Url
    * @param  hostname  url hostname
    * @param  port  url port
    * @param  baseDn  base DN
-   * @param  parsedBaseDn  parsed base DN
    * @param  attributes  attributes
    * @param  scope  search scope
    * @param  filter  search filter
-   * @param  parsedFilter  parsed search filter
    */
   // CheckStyle:HiddenField OFF
   // CheckStyle:ParameterNumber OFF
@@ -123,11 +131,9 @@ public final class Url
     final String hostname,
     final int port,
     final String baseDn,
-    final Dn parsedBaseDn,
     final String[] attributes,
     final SearchScope scope,
-    final String filter,
-    final Filter parsedFilter)
+    final String filter)
   {
     validateScheme(scheme);
     validatePort(port, true);
@@ -135,11 +141,19 @@ public final class Url
     this.hostname = hostname;
     this.port = port;
     this.baseDn = baseDn;
-    this.parsedBaseDn = parsedBaseDn;
+    try {
+      this.parsedBaseDn = this.baseDn != null ? new Dn(this.baseDn, DN_PARSER) : null;
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid baseDN: " + this.baseDn, e);
+    }
     this.attributes = attributes;
     this.scope = scope;
     this.filter = filter;
-    this.parsedFilter = parsedFilter;
+    try {
+      this.parsedFilter = this.filter != null ? FILTER_FUNCTION.parse(this.filter) : null;
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid filter: " + this.filter, e);
+    }
   }
   // CheckStyle:ParameterNumber ON
   // CheckStyle:HiddenField ON

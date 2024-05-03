@@ -7,9 +7,7 @@ import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchScope;
 import org.ldaptive.dn.DefaultDnParser;
-import org.ldaptive.dn.Dn;
 import org.ldaptive.dn.DnParser;
-import org.ldaptive.filter.Filter;
 import org.ldaptive.filter.FilterFunction;
 import org.ldaptive.filter.RegexFilterFunction;
 
@@ -69,14 +67,7 @@ public final class RegexUrlParser implements UrlParser
       port = Integer.parseInt(m.group(3));
       Url.validatePort(port, false);
     }
-    final String baseDn;
-    final Dn parsedBaseDn;
-    try {
-      baseDn = m.group(4) != null ? LdapUtils.percentDecode(m.group(4)) : null;
-      parsedBaseDn = baseDn != null ? new Dn(baseDn, dnParser) : null;
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Invalid baseDN: " + m.group(4));
-    }
+    final String baseDn = m.group(4) != null ? LdapUtils.percentDecode(m.group(4)) : null;
     final String[] attributes = m.group(5) != null ? !m.group(5).isEmpty() ? m.group(5).split(",") : null : null;
     if (attributes != null) {
       if (attributes.length == 0) {
@@ -103,16 +94,10 @@ public final class RegexUrlParser implements UrlParser
       }
     }
 
-    final String filter;
-    final Filter parsedFilter;
-    try {
-      filter = m.group(7) != null ? !m.group(7).isEmpty() ? LdapUtils.percentDecode(m.group(7)) : null : null;
-      parsedFilter = filter != null ? filterFunction.parse(filter) : null;
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Invalid filter: " + m.group(7));
-    }
+    final String filter = m.group(7) != null ?
+      !m.group(7).isEmpty() ? LdapUtils.percentDecode(m.group(7)) : null : null;
     // CheckStyle:MagicNumber ON
 
-    return new Url(scheme, hostname, port, baseDn, parsedBaseDn, attributes, searchScope, filter, parsedFilter);
+    return new Url(scheme, hostname, port, baseDn, attributes, searchScope, filter);
   }
 }
