@@ -199,13 +199,12 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
 
       LdapEntry newEntry = null;
       try {
-        final SearchResponse result = getConnection().operation(
-          SearchRequest.objectScopeSearchRequest(dn, retAttrs)).execute();
-        if (result.isSuccess()) {
+        final SearchResponse result = performSearch(dn, retAttrs);
+        if (result.isSuccess() && result.entrySize() == 1) {
           newEntry = result.getEntry();
         }
       } catch (LdapException e) {
-        logger.warn("Error retrieving attribute(s): {}", Arrays.toString(retAttrs), e);
+        logger.warn("Error retrieving attribute(s): {} for dn {}", Arrays.toString(retAttrs), dn, e);
       }
       searchedDns.add(dn);
 
@@ -231,6 +230,23 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
         }
       }
     }
+  }
+
+
+  /**
+   * Perform an object scope search on the supplied baseDN and retrieve the supplied return attributes.
+   *
+   * @param  baseDn  to search on
+   * @param  attrs  attributes to return
+   *
+   * @return  search response
+   *
+   * @throws  LdapException  if the search operation fails
+   */
+  protected SearchResponse performSearch(final String baseDn, final String[] attrs)
+    throws LdapException
+  {
+    return getConnection().operation(SearchRequest.objectScopeSearchRequest(baseDn, attrs)).execute();
   }
 
 
