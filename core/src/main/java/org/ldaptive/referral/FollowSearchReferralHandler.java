@@ -6,8 +6,6 @@ import org.ldaptive.LdapURL;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
-import org.ldaptive.filter.FilterParseException;
-import org.ldaptive.filter.FilterParser;
 import org.ldaptive.handler.SearchResultHandler;
 import org.ldaptive.transport.DefaultSearchOperationHandle;
 
@@ -78,22 +76,19 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
   @Override
   protected SearchRequest createReferralRequest(final LdapURL url)
   {
-    try {
-      return SearchRequest.builder()
-        .controls(getRequest().getControls())
-        .scope(!url.isDefaultScope() ? url.getScope() : getRequest().getSearchScope())
-        .dn(!url.isDefaultBaseDn() ? url.getBaseDn() : getRequest().getBaseDn())
-        .filter(!url.isDefaultFilter() ? FilterParser.parse(url.getFilter()) : getRequest().getFilter())
-        .sizeLimit(getRequest().getSizeLimit())
-        .timeLimit(getRequest().getTimeLimit())
-        .typesOnly(getRequest().isTypesOnly())
-        .returnAttributes(getRequest().getReturnAttributes())
-        .aliases(getRequest().getDerefAliases())
-        .binaryAttributes(getRequest().getBinaryAttributes())
-        .build();
-    } catch (FilterParseException e) {
-      throw new IllegalStateException("Could not parse filter in the LDAP URL '" + url.getFilter() + "'", e);
-    }
+    return SearchRequest.builder()
+      .controls(getRequest().getControls())
+      .scope(!url.getUrl().isDefaultScope() ? url.getUrl().getScope() : getRequest().getSearchScope())
+      .dn(!url.getUrl().isDefaultBaseDn() ? url.getUrl().getBaseDn() : getRequest().getBaseDn())
+      .filter(
+        !url.getUrl().isDefaultFilter() ? url.getUrl().getParsedFilter() : getRequest().getFilter())
+      .sizeLimit(getRequest().getSizeLimit())
+      .timeLimit(getRequest().getTimeLimit())
+      .typesOnly(getRequest().isTypesOnly())
+      .returnAttributes(getRequest().getReturnAttributes())
+      .aliases(getRequest().getDerefAliases())
+      .binaryAttributes(getRequest().getBinaryAttributes())
+      .build();
   }
 
 

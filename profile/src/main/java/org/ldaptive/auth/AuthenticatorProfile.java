@@ -49,7 +49,7 @@ public class AuthenticatorProfile extends AbstractProfile
   {
     resolverConnectionFactory = PooledConnectionFactory.builder()
       .config(ConnectionConfig.builder()
-        .url(new LdapURL(host, port).getUrl())
+        .url(new LdapURL(host, port).getUrl().format())
         .connectTimeout(Duration.ofSeconds(5))
         .connectionInitializers(
           BindConnectionInitializer.builder()
@@ -65,7 +65,7 @@ public class AuthenticatorProfile extends AbstractProfile
 
     bindConnectionFactory = PooledConnectionFactory.builder()
     .config(ConnectionConfig.builder()
-      .url(new LdapURL(host, port).getUrl())
+      .url(new LdapURL(host, port).getUrl().format())
       .connectTimeout(Duration.ofSeconds(5))
       .build())
     .blockWaitTime(Duration.ofSeconds(5))

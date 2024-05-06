@@ -133,7 +133,7 @@ public class ConnectionTest
     final Connection conn = connFactory.getConnection();
     try {
       conn.open();
-      Assert.assertTrue(conn.getLdapURL().getUrl().endsWith("/dc=ldaptive,dc=org?cn,sn?one?(uid=dfisher)"));
+      Assert.assertTrue(conn.getLdapURL().getUrl().format().endsWith("/dc=ldaptive,dc=org?cn,sn?one?(uid=dfisher)"));
     } finally {
       conn.close();
     }

@@ -246,6 +246,16 @@ public class DnTest
       });
     normalizedList.add("1.2.3.4=foo,5.6.7.8=bar");
 
+    parseList.add("uid=username,ou=Лаборатория");
+    matchList.add(Dn.builder().add(new RDn("uid", "username")).add(new RDn("ou", "Лаборатория")).build());
+    normalizerList.add(
+      new RDnNormalizer[] {
+        new DefaultRDnNormalizer(escaper, LOWERCASE, s -> s),
+        new DefaultRDnNormalizer(escaper, LOWERCASE, COMPRESS),
+      });
+    normalizedList.add(
+      "uid=username,ou=\\D0\\9B\\D0\\B0\\D0\\B1\\D0\\BE\\D1\\80\\D0\\B0\\D1\\82\\D0\\BE\\D1\\80\\D0\\B8\\D1\\8F");
+
     final Object[][] returnData = new Object[parseList.size()][4];
     for (int i = 0; i < returnData.length; i++) {
       returnData[i][0] = parseList.get(i);

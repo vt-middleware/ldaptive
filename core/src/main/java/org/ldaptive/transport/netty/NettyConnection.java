@@ -282,6 +282,9 @@ public final class NettyConnection extends TransportConnection
       throw new IllegalStateException("Connection is already open");
     }
     LOGGER.trace("opening connection {}", this);
+    if (url.isSchemeLdaps() && connectionConfig.getUseStartTLS()) {
+      throw new IllegalStateException("Invalid configuration, LDAPS cannot be used with startTLS");
+    }
     if (openLock.tryLock()) {
       try {
         inboundException = null;
@@ -397,7 +400,7 @@ public final class NettyConnection extends TransportConnection
     throws ConnectException
   {
     SslHandler handler = null;
-    if (ldapURL.getScheme().equals("ldaps")) {
+    if (ldapURL.isSchemeLdaps()) {
       try {
         handler = createSslHandler(connectionConfig);
       } catch (SSLException e) {

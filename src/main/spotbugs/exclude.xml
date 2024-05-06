@@ -53,12 +53,6 @@
     <Bug pattern="SING_SINGLETON_GETTER_NOT_SYNCHRONIZED" />
   </Match>
 
-  <!-- API breaking change to make this field package protected -->
-  <Match>
-    <Class name="org.ldaptive.LdapURL" />
-    <Bug pattern="MS_PKGPROTECT" />
-  </Match>
-
   <!-- Inconsistent synchronization -->
   <Match>
     <Or>
