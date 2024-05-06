@@ -212,7 +212,7 @@ public class OidType extends AbstractDERType implements DEREncoder
       bytes[i] = buffer[--size];
     }
     return bytes;
-      // CheckStyle:MagicNumber ON
+    // CheckStyle:MagicNumber ON
   }
 
 
