@@ -328,7 +328,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    *
    * @throws  LdapException  if connection open fails
    */
-  private void initializeConnectionProxy()
+  private synchronized void initializeConnectionProxy()
     throws LdapException
   {
     final Connection connection = super.getConnection();
@@ -347,7 +347,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   /**
    * Closes the connection and sets the proxy to null. Invokes {@link #onClose} prior to closing the connection.
    */
-  private void destroyConnectionProxy()
+  private synchronized void destroyConnectionProxy()
   {
     if (proxy != null) {
       if (onClose != null && !onClose.apply(proxy.getConnection())) {
