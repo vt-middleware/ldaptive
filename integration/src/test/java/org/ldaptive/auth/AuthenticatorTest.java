@@ -16,6 +16,7 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
+import org.ldaptive.ModifyResponse;
 import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.ResultCode;
 import org.ldaptive.ReturnAttributes;
@@ -1280,22 +1281,23 @@ public class AuthenticatorTest extends AbstractTest
     Assert.assertEquals(ppcResponse.getTimeBeforeExpiration(), -1);
 
     final ModifyOperation modify = new ModifyOperation(cf);
-    modify.execute(
+    final ModifyResponse modifyResponse = modify.execute(
       new ModifyRequest(
         entryDn,
         new AttributeModification(
           AttributeModification.Type.ADD,
           new LdapAttribute("pwdPolicySubentry", "cn=default,ou=policies,dc=vt,dc=edu"))));
+    Assert.assertEquals(modifyResponse.getResultCode(), ResultCode.SUCCESS);
     Thread.sleep(2000);
 
-    // test bind with zero expiration time
+    // test bind without pwdChangeDate
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
     Assert.assertTrue(response.isSuccess());
     ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-    Assert.assertEquals(ppcResponse.getTimeBeforeExpiration(), 0);
+    Assert.assertNull(ppcResponse.getError());
+    Assert.assertNull(response.getAccountState());
+    Assert.assertEquals(ppcResponse.getTimeBeforeExpiration(), -1);
     Assert.assertEquals(ppcResponse.getGraceAuthNsRemaining(), -1);
-    Assert.assertNotNull(response.getAccountState().getWarning().getExpiration());
-    Assert.assertNull(response.getAccountState().getError());
 
     // test bind with expiration time
     final String newCredential = credential + "-new";
@@ -1345,7 +1347,7 @@ public class AuthenticatorTest extends AbstractTest
     Thread.sleep(2000);
 
     // note that OpenLDAP never sends back 0 grace logins
-    int graceLogins = 2;
+    int graceLogins = 1;
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
     do {
       ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);

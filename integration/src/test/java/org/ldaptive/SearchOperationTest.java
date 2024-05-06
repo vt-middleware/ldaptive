@@ -334,7 +334,7 @@ public class SearchOperationTest extends AbstractTest
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter("(cn=* Adams)")
+        .filter("(cn=*hn Adams)")
         .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
 
@@ -355,14 +355,14 @@ public class SearchOperationTest extends AbstractTest
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter("(cn=Jo* *Adams)")
+        .filter("(mail=jad*@*org)")
         .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter("(cn=*ohn*Adam*)")
+        .filter("(cn=*ohn A*m*)")
         .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
 
@@ -400,7 +400,7 @@ public class SearchOperationTest extends AbstractTest
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter("(givenName~=Jon)")
+        .filter("(&(givenName~=Jon)(mail=adams@ldaptive.org))")
         .returnAttributes(returnAttrs.split("\\|")).build());
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
   }
@@ -1685,7 +1685,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     SearchResponse response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertTrue(response.getEntries().isEmpty());
     Assert.assertEquals(response.getReferralURLs().length, 1);
     Assert.assertEquals(response.getReferralURLs()[0], "ldap://localhost:389/ou=people,dc=vt,dc=edu??one");
 
@@ -1696,8 +1696,8 @@ public class SearchOperationTest extends AbstractTest
     }));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().size() > 0);
-    Assert.assertTrue(response.getReferralURLs().length == 0);
+    Assert.assertFalse(response.getEntries().isEmpty());
+    Assert.assertEquals(response.getReferralURLs().length, 0);
 
     // chase referrals
 
@@ -1710,13 +1710,13 @@ public class SearchOperationTest extends AbstractTest
     search.setSearchResultHandlers(new FollowSearchReferralHandler());
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().size() > 0);
+    Assert.assertFalse(response.getEntries().isEmpty());
 
     // limit 0
     search.setSearchResultHandlers(new FollowSearchReferralHandler(0));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertTrue(response.getEntries().isEmpty());
     Assert.assertEquals(
       response.getReferralURLs()[0],
       "ldap://ldap-test:10389/cn=1,ou=1,ou=referrals-chase,dc=vt,dc=edu??sub");
@@ -1725,7 +1725,7 @@ public class SearchOperationTest extends AbstractTest
     search.setSearchResultHandlers(new FollowSearchReferralHandler(1));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertTrue(response.getEntries().isEmpty());
     Assert.assertEquals(
       response.getReferralURLs()[0],
       "ldap://ldap-test:10389/cn=2,ou=2,ou=referrals-chase,dc=vt,dc=edu??sub");
@@ -1734,7 +1734,7 @@ public class SearchOperationTest extends AbstractTest
     search.setSearchResultHandlers(new FollowSearchReferralHandler(2));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertTrue(response.getEntries().isEmpty());
     Assert.assertEquals(
       response.getReferralURLs()[0],
       "ldap://ldap-test:10389/cn=3,ou=3,ou=referrals-chase,dc=vt,dc=edu??sub");
@@ -1743,14 +1743,14 @@ public class SearchOperationTest extends AbstractTest
     search.setSearchResultHandlers(new FollowSearchReferralHandler(3));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertTrue(response.getEntries().isEmpty());
     Assert.assertEquals(response.getReferralURLs()[0], "ldap://ldap-test:10389/ou=people,dc=vt,dc=edu??sub");
 
     // limit 4
     search.setSearchResultHandlers(new FollowSearchReferralHandler(4));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().size() > 0);
+    Assert.assertFalse(response.getEntries().isEmpty());
   }
 
 
@@ -1792,7 +1792,7 @@ public class SearchOperationTest extends AbstractTest
     search.setReferenceHandlers(reference -> refs.addAll(Arrays.asList(reference.getUris())));
     SearchResponse response = search.execute(request);
     Assert.assertTrue(response.entrySize() > 0);
-    Assert.assertTrue(refs.size() > 0);
+    Assert.assertFalse(refs.isEmpty());
     for (String r : refs) {
       Assert.assertNotNull(r);
     }
@@ -1810,7 +1810,7 @@ public class SearchOperationTest extends AbstractTest
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     Assert.assertTrue(response.entrySize() > 0);
-    Assert.assertTrue(response.referenceSize() == 0);
+    Assert.assertEquals(response.referenceSize(), 0);
 
     // chase search references
 
@@ -1822,13 +1822,13 @@ public class SearchOperationTest extends AbstractTest
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler());
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().size() > 0);
+    Assert.assertFalse(response.getEntries().isEmpty());
 
     // limit 0
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(0));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertTrue(response.getEntries().isEmpty());
     Assert.assertFalse(response.getReferences().isEmpty());
     for (SearchResultReference s : response.getReferences()) {
       Assert.assertEquals(s.getUris()[0], "ldap://ldap-test:10389/ou=1,ou=references-chase,dc=vt,dc=edu??sub");
@@ -1838,25 +1838,25 @@ public class SearchOperationTest extends AbstractTest
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(1));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertTrue(response.getEntries().isEmpty());
 
     // limit 2
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(2));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertTrue(response.getEntries().isEmpty());
 
     // limit 3
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(3));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().size() == 0);
+    Assert.assertTrue(response.getEntries().isEmpty());
 
     // limit 4
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(4));
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().size() > 0);
+    Assert.assertFalse(response.getEntries().isEmpty());
   }
 
 
@@ -1900,7 +1900,7 @@ public class SearchOperationTest extends AbstractTest
     search.setReferenceHandlers(reference -> refs.addAll(Arrays.asList(reference.getUris())));
     SearchResponse response = search.execute(request);
     Assert.assertTrue(response.entrySize() > 0);
-    Assert.assertTrue(refs.size() > 0);
+    Assert.assertFalse(refs.isEmpty());
     for (String r : refs) {
       Assert.assertNotNull(r);
     }
@@ -1974,7 +1974,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest("", new String[] {"supportedSASLMechanisms"}));
-    Assert.assertTrue(result.getEntry().getAttributes().size() > 0);
+    Assert.assertFalse(result.getEntry().getAttributes().isEmpty());
   }
 
 
@@ -1986,7 +1986,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest("", new String[] {"supportedcontrol"}));
-    Assert.assertTrue(result.getEntry().getAttributes().size() > 0);
+    Assert.assertFalse(result.getEntry().getAttributes().isEmpty());
   }
 
 
