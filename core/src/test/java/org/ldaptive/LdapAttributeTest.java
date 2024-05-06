@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -9,6 +8,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -21,17 +21,74 @@ public class LdapAttributeTest
 {
 
 
+  /** Tests create with no value. */
+  @Test
+  public void nullName()
+  {
+    try {
+      new LdapAttribute(null);
+      Assert.fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+
+    try {
+      new LdapAttribute(null, "Jones");
+      Assert.fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+
+    try {
+      new LdapAttribute(null, "Jones".getBytes(StandardCharsets.UTF_8));
+      Assert.fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+  }
+
+
+  /** Tests create with no value. */
+  @Test
+  public void noValue()
+  {
+    final LdapAttribute la = new LdapAttribute("givenName");
+    Assert.assertEquals(la.getName(), "givenName");
+    Assert.assertTrue(la.getOptions().isEmpty());
+    Assert.assertNull(la.getStringValue());
+    Assert.assertNull(la.getBinaryValue());
+    Assert.assertNull(la.getValue((Function<byte[], Object>) b -> b));
+    Assert.assertTrue(la.getStringValues().isEmpty());
+    Assert.assertTrue(la.getBinaryValues().isEmpty());
+    Assert.assertTrue(la.getValues((Function<byte[], Object>) b -> b).isEmpty());
+    Assert.assertEquals(la, new LdapAttribute("givenName"));
+    try {
+      la.addStringValues((String[]) null);
+      Assert.fail("Should have thrown NullPointerException");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), NullPointerException.class);
+    }
+    Assert.assertEquals(la.size(), 0);
+    la.clear();
+    Assert.assertEquals(la.size(), 0);
+  }
+
+
   /** Tests create with one value. */
   @Test
-  public void oneAttribute()
+  public void oneValue()
   {
-    final LdapAttribute la = new LdapAttribute("givenName", "William");
-    Assert.assertEquals(la.getStringValue(), "William");
+    final LdapAttribute la = new LdapAttribute("cn", "William Wallace");
+    Assert.assertEquals(la.getName(), "cn");
+    Assert.assertTrue(la.getOptions().isEmpty());
+    Assert.assertEquals(la.getStringValue(), "William Wallace");
     Assert.assertEquals(la.getStringValues().size(), 1);
-    Assert.assertEquals(la.getStringValues().iterator().next(), "William");
-    Assert.assertTrue(Arrays.equals("William".getBytes(), la.getBinaryValue()));
+    Assert.assertEquals(la.getStringValues().iterator().next(), "William Wallace");
+    Assert.assertEquals(la.getBinaryValue(), "William Wallace".getBytes(StandardCharsets.UTF_8));
+    Assert.assertEquals(la.getBinaryValues().size(), 1);
+    Assert.assertEquals(la.getBinaryValues().iterator().next(), "William Wallace".getBytes(StandardCharsets.UTF_8));
     Assert.assertEquals(la.size(), 1);
-    Assert.assertEquals(la, new LdapAttribute("givenName", "William"));
+    Assert.assertEquals(la, new LdapAttribute("cn", "William Wallace"));
     try {
       la.addStringValues((String[]) null);
       Assert.fail("Should have thrown NullPointerException");
@@ -47,12 +104,28 @@ public class LdapAttributeTest
 
   /** Tests create with two values. */
   @Test
-  public void twoAttributes()
+  public void twoValues()
   {
     final LdapAttribute la = new LdapAttribute("givenName", "Bill", "William");
+    Assert.assertTrue(la.getOptions().isEmpty());
     Assert.assertEquals(la.getStringValues().size(), 2);
-    Assert.assertEquals(la.size(), 2);
     Assert.assertEquals(la, new LdapAttribute("givenName", "Bill", "William"));
+    Assert.assertEquals(la.size(), 2);
+    la.clear();
+    Assert.assertEquals(la.size(), 0);
+  }
+
+
+  /** Tests create with same values. */
+  @Test
+  public void sameValues()
+  {
+    final LdapAttribute la = new LdapAttribute("givenName", "same", "same");
+    Assert.assertTrue(la.getOptions().isEmpty());
+    Assert.assertEquals(la.getStringValues().size(), 1);
+    Assert.assertEquals(la.getBinaryValues().size(), 1);
+    Assert.assertEquals(la, new LdapAttribute("givenName", "same", "same", "same"));
+    Assert.assertEquals(la.size(), 1);
     la.clear();
     Assert.assertEquals(la.size(), 0);
   }
@@ -294,26 +367,6 @@ public class LdapAttributeTest
 
   /** Test for add and then remove methods. */
   @Test
-  public void testAddRemoveBufferValues()
-  {
-    final LdapAttribute la = new LdapAttribute("jpegPhoto");
-    la.addBufferValues(ByteBuffer.wrap("image1".getBytes()), ByteBuffer.wrap("image2".getBytes()));
-    Assert.assertEquals(la.size(), 2);
-    la.addBufferValues(List.of(ByteBuffer.wrap("image3".getBytes()), ByteBuffer.wrap("image4".getBytes())));
-    Assert.assertEquals(la.size(), 4);
-    la.addBufferValues(ByteBuffer.wrap("image5".getBytes()));
-    Assert.assertEquals(la.size(), 5);
-    la.removeBufferValues(ByteBuffer.wrap("image1".getBytes()), ByteBuffer.wrap("image2".getBytes()));
-    Assert.assertEquals(la.size(), 3);
-    la.removeBufferValues(List.of(ByteBuffer.wrap("image3".getBytes()), ByteBuffer.wrap("image4".getBytes())));
-    Assert.assertEquals(la.size(), 1);
-    la.removeBufferValues(ByteBuffer.wrap("image5".getBytes()));
-    Assert.assertEquals(la.size(), 0);
-  }
-
-
-  /** Test for add and then remove methods. */
-  @Test
   public void testAddValues()
   {
     final LdapAttribute la = new LdapAttribute("sn");
@@ -334,7 +387,7 @@ public class LdapAttributeTest
 
   /** Test for hasValue methods. */
   @Test
-  public void testHasValueString()
+  public void testHasValue()
   {
     final LdapAttribute la1 = new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones");
     Assert.assertTrue(la1.hasValue("Brown"));
