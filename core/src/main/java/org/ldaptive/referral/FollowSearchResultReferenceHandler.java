@@ -1,7 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.referral;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapURL;
 import org.ldaptive.SearchOperation;
@@ -123,7 +125,8 @@ public class FollowSearchResultReferenceHandler extends AbstractFollowReferralHa
       return result;
     }
     if (referralDepth <= referralLimit) {
-      final Iterator<SearchResultReference> i = result.getReferences().iterator();
+      final List<SearchResultReference> refCopy = new ArrayList<>(result.getReferences());
+      final Iterator<SearchResultReference> i = refCopy.iterator();
       while (i.hasNext()) {
         final SearchResultReference ref = i.next();
         i.remove();
