@@ -516,6 +516,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   public void messageID(final int id)
   {
+    if (messageID != null) {
+      throw new IllegalStateException("Message ID already assigned.");
+    }
     messageID = id;
   }
 
@@ -525,6 +528,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   public void sent()
   {
+    if (sentTime != null) {
+      throw new IllegalStateException("Message already sent.");
+    }
     sentTime = Instant.now();
   }
 
@@ -536,6 +542,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   public void result(final S r)
   {
+    if (result != null) {
+      throw new IllegalStateException("Result already received.");
+    }
     if (r == null) {
       final IllegalArgumentException e = new IllegalArgumentException("Result cannot be null for handle " + this);
       exception(new LdapException(e));
@@ -652,6 +661,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   public void exception(final LdapException e)
   {
+    if (exception != null) {
+      throw new IllegalStateException("Exception already received.");
+    }
     if (e == null) {
       final IllegalArgumentException ex = new IllegalArgumentException("Exception cannot be null for handle " + this);
       exception(new LdapException(ex));
@@ -730,8 +742,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         }
       } catch (Exception e) {
         logger.warn("Connection {} complete threw an exception for handle {}", connection, this, e);
+      } finally {
+        connection = null;
       }
-      connection = null;
     }
   }
 
