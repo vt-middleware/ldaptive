@@ -57,7 +57,6 @@
   <Match>
     <Or>
       <Class name="org.ldaptive.SingleConnectionFactory" />
-      <Class name="org.ldaptive.control.util.SyncReplRunner" />
       <Class name="org.ldaptive.transport.DefaultOperationHandle" />
     </Or>
     <Bug pattern="IS2_INCONSISTENT_SYNC" />

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class SyncReplRunner
+public final class SyncReplRunner
 {
 
   /** Logger for this class. */
@@ -48,7 +48,7 @@ public class SyncReplRunner
   private final CookieManager cookieManager;
 
   /** Search operation handle. */
-  private SyncReplClient syncReplClient;
+  private final SyncReplClient syncReplClient;
 
   /** Invoked when {@link #start()} begins. */
   private Supplier<Boolean> onStart;
@@ -225,7 +225,12 @@ public class SyncReplRunner
    */
   public void setOnStart(final Supplier<Boolean> supplier)
   {
-    onStart = supplier;
+    synchronized (syncReplClient) {
+      if (started) {
+        throw new IllegalStateException("Cannot set onStart, runner already started");
+      }
+      onStart = supplier;
+    }
   }
 
 
@@ -236,7 +241,12 @@ public class SyncReplRunner
    */
   public void setOnEntry(final Consumer<LdapEntry> consumer)
   {
-    onEntry = consumer;
+    synchronized (syncReplClient) {
+      if (started) {
+        throw new IllegalStateException("Cannot set onEntry, runner already started");
+      }
+      onEntry = consumer;
+    }
   }
 
 
@@ -247,7 +257,12 @@ public class SyncReplRunner
    */
   public void setOnReference(final Consumer<SearchResultReference> consumer)
   {
-    onReference = consumer;
+    synchronized (syncReplClient) {
+      if (started) {
+        throw new IllegalStateException("Cannot set onReference, runner already started");
+      }
+      onReference = consumer;
+    }
   }
 
 
@@ -258,7 +273,12 @@ public class SyncReplRunner
    */
   public void setOnResult(final Consumer<Result> consumer)
   {
-    onResult = consumer;
+    synchronized (syncReplClient) {
+      if (started) {
+        throw new IllegalStateException("Cannot set onResult, runner already started");
+      }
+      onResult = consumer;
+    }
   }
 
 
@@ -269,7 +289,12 @@ public class SyncReplRunner
    */
   public void setOnMessage(final Consumer<SyncInfoMessage> consumer)
   {
-    onMessage = consumer;
+    synchronized (syncReplClient) {
+      if (started) {
+        throw new IllegalStateException("Cannot set onMessage, runner already started");
+      }
+      onMessage = consumer;
+    }
   }
 
 
@@ -280,47 +305,56 @@ public class SyncReplRunner
    */
   public void setOnException(final Consumer<Exception> consumer)
   {
-    onException = consumer;
+    synchronized (syncReplClient) {
+      if (started) {
+        throw new IllegalStateException("Cannot set onException, runner already started");
+      }
+      onException = consumer;
+    }
   }
 
 
   /**
    * Prepare this runner for use.
    */
-  public synchronized void initialize()
+  public void initialize()
   {
-    if (started) {
-      throw new IllegalStateException("Runner has already been started");
+    synchronized (syncReplClient) {
+      if (started) {
+        throw new IllegalStateException("Runner has already been started");
+      }
+      syncReplClient.setOnEntry(onEntry);
+      syncReplClient.setOnReference(onReference);
+      syncReplClient.setOnResult(onResult);
+      syncReplClient.setOnMessage(onMessage);
+      syncReplClient.setOnException(onException);
     }
-    syncReplClient.setOnEntry(onEntry);
-    syncReplClient.setOnReference(onReference);
-    syncReplClient.setOnResult(onResult);
-    syncReplClient.setOnMessage(onMessage);
-    syncReplClient.setOnException(onException);
   }
 
 
   /**
    * Starts this runner.
    */
-  public synchronized void start()
+  public void start()
   {
-    if (started) {
-      throw new IllegalStateException("Runner has already been started");
-    }
-    try {
-      if (onStart != null && !onStart.get()) {
-        throw new RuntimeException("Start aborted from " + onStart);
+    synchronized (syncReplClient) {
+      if (started) {
+        throw new IllegalStateException("Runner has already been started");
       }
-      LOGGER.debug("Starting runner {}", this);
-      // the connection factory may be shared between multiple runners
-      if (!((SingleConnectionFactory) syncReplClient.getConnectionFactory()).isInitialized()) {
-        ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
+      try {
+        if (onStart != null && !onStart.get()) {
+          throw new RuntimeException("Start aborted from " + onStart);
+        }
+        LOGGER.debug("Starting runner {}", this);
+        // the connection factory may be shared between multiple runners
+        if (!((SingleConnectionFactory) syncReplClient.getConnectionFactory()).isInitialized()) {
+          ((SingleConnectionFactory) syncReplClient.getConnectionFactory()).initialize();
+        }
+        started = true;
+        LOGGER.info("Runner {} started", this);
+      } catch (Exception e) {
+        LOGGER.error("Could not start the runner", e);
       }
-      started = true;
-      LOGGER.info("Runner {} started", this);
-    } catch (Exception e) {
-      LOGGER.error("Could not start the runner", e);
     }
   }
 
@@ -328,17 +362,17 @@ public class SyncReplRunner
   /**
    * Stops this runner.
    */
-  public synchronized void stop()
+  public void stop()
   {
-    if (!started) {
-      throw new IllegalStateException("Runner has not been started");
-    }
-    LOGGER.debug("Stopping runner {}", this);
-    if (syncReplClient != null) {
+    synchronized (syncReplClient) {
+      if (!started) {
+        throw new IllegalStateException("Runner has not been started");
+      }
+      LOGGER.debug("Stopping runner {}", this);
       syncReplClient.close();
+      started = false;
+      LOGGER.info("Runner {} stopped", this);
     }
-    started = false;
-    LOGGER.info("Runner {} stopped", this);
   }
 
 
@@ -356,22 +390,24 @@ public class SyncReplRunner
   /**
    * Cancels the sync repl search and sends a new search request.
    */
-  public synchronized void restartSearch()
+  public void restartSearch()
   {
-    if (!started) {
-      throw new IllegalStateException("Cannot restart the search, runner is stopped");
-    }
-    try {
-      if (!syncReplClient.isComplete()) {
-        syncReplClient.cancel();
+    synchronized (syncReplClient) {
+      if (!started) {
+        throw new IllegalStateException("Cannot restart the search, runner is stopped");
       }
-    } catch (Exception e) {
-      LOGGER.warn("Could not cancel sync repl request", e);
-    }
-    try {
-      syncReplClient.send(searchRequest, cookieManager);
-    } catch (LdapException e) {
-      throw new IllegalStateException("Could not send sync repl request", e);
+      try {
+        if (!syncReplClient.isComplete()) {
+          syncReplClient.cancel();
+        }
+      } catch (Exception e) {
+        LOGGER.warn("Could not cancel sync repl request", e);
+      }
+      try {
+        syncReplClient.send(searchRequest, cookieManager);
+      } catch (LdapException e) {
+        throw new IllegalStateException("Could not send sync repl request", e);
+      }
     }
   }
 
