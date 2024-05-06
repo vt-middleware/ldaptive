@@ -4,6 +4,7 @@ package org.ldaptive;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +31,13 @@ public abstract class AbstractProfile
   protected static final int UID_START = 549801;
 
   /** Number of threads to execute searches. */
-  protected static int threadCount;
+  static int threadCount;
 
   /** Time to sleep between search requests. */
-  protected static int threadSleep;
+  static int threadSleep;
 
   /** Number of searches to execute. */
-  protected static int iterations;
+  static int iterations;
 
   /** Number of searches requested. */
   private static final AtomicInteger REQUEST_COUNT = new AtomicInteger();
@@ -248,23 +249,25 @@ public abstract class AbstractProfile
     try {
       final String[] cmd = new String[] {"netstat", "-al"};
       final Process p = new ProcessBuilder(cmd).start();
-      final BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-      String line;
-      final List<String> openConns = new ArrayList<>();
-      while ((line = br.readLine()) != null) {
-        if (line.matches("(.*)ESTABLISHED(.*)")) {
-          final String s = line.split("\\s+")[4];
-          openConns.add(s);
+      final BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8));
+      try (br) {
+        String line;
+        final List<String> openConns = new ArrayList<>();
+        while ((line = br.readLine()) != null) {
+          if (line.matches("(.*)ESTABLISHED(.*)")) {
+            final String s = line.split("\\s+")[4];
+            openConns.add(s);
+          }
         }
-      }
 
-      int count = 0;
-      for (String o : openConns) {
-        if (o.contains("ldap")) {
-          count++;
+        int count = 0;
+        for (String o : openConns) {
+          if (o.contains("ldap")) {
+            count++;
+          }
         }
+        return count;
       }
-      return count;
     } catch (IOException e) {
       throw new IllegalStateException(e);
     }
