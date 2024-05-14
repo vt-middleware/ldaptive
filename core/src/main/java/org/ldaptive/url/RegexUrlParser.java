@@ -6,10 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchScope;
-import org.ldaptive.dn.DefaultDnParser;
-import org.ldaptive.dn.DnParser;
-import org.ldaptive.filter.FilterFunction;
-import org.ldaptive.filter.RegexFilterFunction;
 
 /**
  * Parses an LDAP URL string using a regular expression.
@@ -27,12 +23,6 @@ public final class RegexUrlParser implements UrlParser
       "(?:\\?([^?]*))?" +
       "(?:\\?([^?]*))?" +
       "(?:\\?(.*))?)?");
-
-  /** */
-  private final DnParser dnParser = new DefaultDnParser();
-
-  /** */
-  private final FilterFunction filterFunction = new RegexFilterFunction();
 
 
   @Override

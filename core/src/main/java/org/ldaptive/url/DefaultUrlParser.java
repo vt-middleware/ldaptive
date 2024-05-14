@@ -5,10 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchScope;
-import org.ldaptive.dn.DefaultDnParser;
-import org.ldaptive.dn.DnParser;
-import org.ldaptive.filter.DefaultFilterFunction;
-import org.ldaptive.filter.FilterFunction;
 
 /**
  * Parses an LDAP URL string.
@@ -17,12 +13,6 @@ import org.ldaptive.filter.FilterFunction;
  */
 public final class DefaultUrlParser implements UrlParser
 {
-
-  /** DN parser. */
-  private final DnParser dnParser = new DefaultDnParser();
-
-  /** Filter function. */
-  private final FilterFunction filterFunction = new DefaultFilterFunction();
 
 
   @Override
