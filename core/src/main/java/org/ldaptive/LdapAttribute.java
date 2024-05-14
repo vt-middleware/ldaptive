@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.ByteBuffer;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +56,7 @@ public class LdapAttribute
   private String attributeName;
 
   /** Attribute values. */
-  private Set<ByteBuffer> attributeValues = new LinkedHashSet<>();
+  private Collection<AttributeValue> attributeValues = new LinkedHashSet<>();
 
   /** Whether this attribute is binary and string representations should be base64 encoded. */
   private boolean binary;
@@ -117,6 +117,9 @@ public class LdapAttribute
    */
   public void setName(final String type)
   {
+    if (type == null) {
+      throw new IllegalArgumentException("Attribute type cannot be null");
+    }
     attributeName = type;
     if (getOptions().contains("binary") || Stream.of(BINARY_ATTRIBUTES).anyMatch(attributeName::equals)) {
       setBinary(true);
@@ -220,7 +223,7 @@ public class LdapAttribute
    */
   public byte[] getBinaryValue()
   {
-    return attributeValues.isEmpty() ? null : attributeValues.iterator().next().array();
+    return attributeValues.isEmpty() ? null : attributeValues.iterator().next().getValue(true);
   }
 
 
@@ -234,7 +237,7 @@ public class LdapAttribute
     if (attributeValues.isEmpty()) {
       return Collections.emptySet();
     }
-    return attributeValues.stream().map(ByteBuffer::array).collect(Collectors.toUnmodifiableList());
+    return attributeValues.stream().map(av -> av.getValue(true)).collect(Collectors.toUnmodifiableList());
   }
 
 
@@ -248,8 +251,7 @@ public class LdapAttribute
     if (attributeValues.isEmpty()) {
       return null;
     }
-    final ByteBuffer val = attributeValues.iterator().next();
-    return binary ? LdapUtils.base64Encode(val.array()) : LdapUtils.utf8Encode(val.array());
+    return attributeValues.iterator().next().getStringValue(binary);
   }
 
 
@@ -264,12 +266,7 @@ public class LdapAttribute
     if (attributeValues.isEmpty()) {
       return Collections.emptySet();
     }
-    return attributeValues.stream().map(v -> {
-      if (binary) {
-        return LdapUtils.base64Encode(v.array());
-      }
-      return LdapUtils.utf8Encode(v.array(), false);
-    }).collect(Collectors.toUnmodifiableList());
+    return attributeValues.stream().map(v -> v.getStringValue(binary)).collect(Collectors.toUnmodifiableList());
   }
 
 
@@ -283,7 +280,7 @@ public class LdapAttribute
    */
   public <T> T getValue(final Function<byte[], T> func)
   {
-    return attributeValues.isEmpty() ? null : func.apply(attributeValues.iterator().next().array());
+    return attributeValues.isEmpty() ? null : func.apply(attributeValues.iterator().next().getValue(true));
   }
 
 
@@ -297,10 +294,7 @@ public class LdapAttribute
    */
   public <T> Collection<T> getValues(final Function<byte[] , T> func)
   {
-    return attributeValues.stream()
-      .filter(Objects::nonNull)
-      .map(ByteBuffer::array)
-      .map(func).collect(Collectors.toUnmodifiableList());
+    return attributeValues.stream().map(av -> av.getValue(true)).map(func).collect(Collectors.toUnmodifiableList());
   }
 
 
@@ -311,7 +305,7 @@ public class LdapAttribute
    */
   public void addBinaryValues(final byte[]... value)
   {
-    Stream.of(value).filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::add);
+    Stream.of(value).filter(Objects::nonNull).map(b -> new AttributeValue(b, true)).forEach(attributeValues::add);
   }
 
 
@@ -322,7 +316,19 @@ public class LdapAttribute
    */
   public void addBinaryValues(final Collection<byte[]> values)
   {
-    values.stream().filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::add);
+    values.stream().filter(Objects::nonNull).map(b -> new AttributeValue(b, true)).forEach(attributeValues::add);
+  }
+
+
+  /**
+   * Adds all the byte arrays in the supplied collection as values for this attribute. This method does not create a
+   * copy of the supplied byte arrays.
+   *
+   * @param  values  to add
+   */
+  void addBinaryValuesInternal(final Collection<byte[]> values)
+  {
+    values.stream().map(b -> new AttributeValue(b, false)).forEach(attributeValues::add);
   }
 
 
@@ -335,9 +341,7 @@ public class LdapAttribute
   {
     Stream.of(value)
       .filter(Objects::nonNull)
-      .map(s -> toByteArray(s, true))
-      .filter(Objects::nonNull)
-      .map(ByteBuffer::wrap)
+      .map(s -> AttributeValue.fromString(s, binary))
       .forEach(attributeValues::add);
   }
 
@@ -351,32 +355,8 @@ public class LdapAttribute
   {
     values.stream()
       .filter(Objects::nonNull)
-      .map(s -> toByteArray(s, true))
-      .filter(Objects::nonNull)
-      .map(ByteBuffer::wrap)
+      .map(s -> AttributeValue.fromString(s, binary))
       .forEach(attributeValues::add);
-  }
-
-
-  /**
-   * Adds all the buffers in the supplied collection as values for this attribute.
-   *
-   * @param  values  to add, null values are discarded
-   */
-  public void addBufferValues(final ByteBuffer... values)
-  {
-    Stream.of(values).filter(Objects::nonNull).forEach(attributeValues::add);
-  }
-
-
-  /**
-   * Adds all the buffers in the supplied collection as values for this attribute.
-   *
-   * @param  values  to add, null values are discarded
-   */
-  public void addBufferValues(final Collection<ByteBuffer> values)
-  {
-    values.stream().filter(Objects::nonNull).forEach(attributeValues::add);
   }
 
 
@@ -394,7 +374,7 @@ public class LdapAttribute
       .filter(Objects::nonNull)
       .map(func)
       .filter(Objects::nonNull)
-      .map(ByteBuffer::wrap)
+      .map(b -> new AttributeValue(b, true))
       .forEach(attributeValues::add);
   }
 
@@ -413,7 +393,7 @@ public class LdapAttribute
       .filter(Objects::nonNull)
       .map(func)
       .filter(Objects::nonNull)
-      .map(ByteBuffer::wrap)
+      .map(b -> new AttributeValue(b, true))
       .forEach(attributeValues::add);
   }
 
@@ -425,7 +405,10 @@ public class LdapAttribute
    */
   public void removeBinaryValues(final byte[]... value)
   {
-    Stream.of(value).filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::remove);
+    Stream.of(value)
+      .filter(Objects::nonNull)
+      .map(b -> new AttributeValue(b, false))
+      .forEach(attributeValues::remove);
   }
 
 
@@ -436,7 +419,10 @@ public class LdapAttribute
    */
   public void removeBinaryValues(final Collection<byte[]> values)
   {
-    values.stream().filter(Objects::nonNull).map(ByteBuffer::wrap).forEach(attributeValues::remove);
+    values.stream()
+      .filter(Objects::nonNull)
+      .map(b -> new AttributeValue(b, false))
+      .forEach(attributeValues::remove);
   }
 
 
@@ -449,9 +435,7 @@ public class LdapAttribute
   {
     Stream.of(value)
       .filter(Objects::nonNull)
-      .map(s -> toByteArray(s, true))
-      .filter(Objects::nonNull)
-      .map(ByteBuffer::wrap)
+      .map(s -> AttributeValue.fromString(s, binary))
       .forEach(attributeValues::remove);
   }
 
@@ -465,32 +449,8 @@ public class LdapAttribute
   {
     values.stream()
       .filter(Objects::nonNull)
-      .map(s -> toByteArray(s, true))
-      .filter(Objects::nonNull)
-      .map(ByteBuffer::wrap)
+      .map(s -> AttributeValue.fromString(s, binary))
       .forEach(attributeValues::remove);
-  }
-
-
-  /**
-   * Removes all the buffers in the supplied collection as values from this attribute.
-   *
-   * @param  values  to remove, null values are discarded
-   */
-  public void removeBufferValues(final ByteBuffer... values)
-  {
-    Stream.of(values).filter(Objects::nonNull).forEach(attributeValues::remove);
-  }
-
-
-  /**
-   * Removes all the buffers in the supplied collection as values from this attribute.
-   *
-   * @param  values  to remove, null values are discarded
-   */
-  public void removeBufferValues(final Collection<ByteBuffer> values)
-  {
-    values.stream().filter(Objects::nonNull).forEach(attributeValues::remove);
   }
 
 
@@ -503,7 +463,7 @@ public class LdapAttribute
    */
   public boolean hasValue(final byte[] value)
   {
-    return attributeValues.stream().anyMatch(bb -> Arrays.equals(bb.array(), value));
+    return attributeValues.stream().anyMatch(av -> av.equalsValue(value));
   }
 
 
@@ -516,7 +476,7 @@ public class LdapAttribute
    */
   public boolean hasValue(final String value)
   {
-    return attributeValues.stream().anyMatch(bb -> Arrays.equals(bb.array(), toByteArray(value, false)));
+    return attributeValues.stream().anyMatch(av -> av.equalsValue(value, binary));
   }
 
 
@@ -531,7 +491,7 @@ public class LdapAttribute
    */
   public <T> boolean hasValue(final Function<T, byte[]> func, final T value)
   {
-    return attributeValues.stream().anyMatch(bb -> Arrays.equals(bb.array(), func.apply(value)));
+    return attributeValues.stream().anyMatch(av -> av.equalsValue(func.apply(value)));
   }
 
 
@@ -591,57 +551,26 @@ public class LdapAttribute
 
   /**
    * Returns a new attribute whose values are sorted. String values are sorted naturally. Binary values are sorted using
-   * {@link ByteBuffer#compareTo(ByteBuffer)}.
+   * {@link Arrays#compare(byte[], byte[])}.
    *
    * @param  la  attribute to sort
    *
-   * @return  sorted attribute
+   * @return  new ldap attribute with sorted values
    */
   public static LdapAttribute sort(final LdapAttribute la)
   {
     final LdapAttribute sorted = new LdapAttribute(la.getName());
     if (la.isBinary()) {
       sorted.setBinary(true);
-      final Set<byte[]> newValues = la.getBinaryValues().stream().sorted(
-        (o1, o2) -> {
-          final ByteBuffer bb1 = ByteBuffer.wrap(o1);
-          final ByteBuffer bb2 = ByteBuffer.wrap(o2);
-          return bb1.compareTo(bb2);
-        }).collect(Collectors.toCollection(LinkedHashSet::new));
+      final Set<byte[]> newValues = la.getBinaryValues().stream()
+        .sorted(new ByteArrayComparator()).collect(Collectors.toCollection(LinkedHashSet::new));
       sorted.addBinaryValues(newValues);
     } else {
       final Set<String> newValues = la.getStringValues().stream()
-        .sorted(Comparator.comparing(String::toString)).collect(Collectors.toCollection(LinkedHashSet::new));
+        .sorted(new StringComparator()).collect(Collectors.toCollection(LinkedHashSet::new));
       sorted.addStringValues(newValues);
     }
     return sorted;
-  }
-
-
-  /**
-   * Converts the supplied string value to a byte array respecting the {@link #binary} flag. If this attribute is
-   * binary, value is expected to be in base64 format. Otherwise, value is UTF-8 encoded.
-   *
-   * @param  value  to convert
-   * @param  throwOnError  whether to throw if a base64 decode error occurs
-   *
-   * @return  binary value
-   *
-   * @throws  IllegalArgumentException  if attribute is binary, value cannot be base64 decoded and throwOnError is true
-   */
-  private byte[] toByteArray(final String value, final boolean throwOnError)
-  {
-    if (binary) {
-      try {
-        return LdapUtils.base64Decode(value);
-      } catch (IllegalArgumentException e) {
-        if (throwOnError) {
-          throw new IllegalArgumentException("Error decoding " + value + " for " + attributeName, e);
-        }
-        return null;
-      }
-    }
-    return LdapUtils.utf8Encode(value, false);
   }
 
 
@@ -653,6 +582,189 @@ public class LdapAttribute
   public static Builder builder()
   {
     return new Builder();
+  }
+
+
+  /**
+   * Container for an attribute value. Supports helpers methods related to byte arrays and the notion of `binary`
+   * attribute values which are base64 encoded.
+   *
+   * @author  Middleware Services
+   */
+  private static class AttributeValue
+  {
+
+    /**
+     * hash code seed.
+     */
+    private static final int HASH_CODE_SEED = 10723;
+
+    /**
+     * attribute value.
+     */
+    private final byte[] value;
+
+
+    /**
+     * Creates a new attribute value.
+     *
+     * @param bytes byte array value
+     * @param copy  whether to copy the supplied bytes
+     */
+    AttributeValue(final byte[] bytes, final boolean copy)
+    {
+      if (bytes == null) {
+        throw new IllegalArgumentException("Attribute value cannot be null");
+      }
+      value = copy ? Arrays.copyOf(bytes, bytes.length) : bytes;
+    }
+
+
+    @Override
+    public boolean equals(final Object o)
+    {
+      if (o == this) {
+        return true;
+      }
+      if (o instanceof AttributeValue) {
+        final AttributeValue v = (AttributeValue) o;
+        return LdapUtils.areEqual(value, v.value);
+      }
+      return false;
+    }
+
+
+    @Override
+    public int hashCode()
+    {
+      return LdapUtils.computeHashCode(HASH_CODE_SEED, (Object) value);
+    }
+
+
+    /**
+     * Returns the value of this attribute value.
+     *
+     * @param copy whether to create a copy of the underlying value
+     * @return value
+     */
+    byte[] getValue(final boolean copy)
+    {
+      return copy ? Arrays.copyOf(value, value.length) : value;
+    }
+
+
+    /**
+     * Returns the value of this attribute value as a string.
+     *
+     * @param base64 whether value should be a base64 encoded string
+     * @return string value
+     */
+    String getStringValue(final boolean base64)
+    {
+      return base64 ? LdapUtils.base64Encode(value) : LdapUtils.utf8Encode(value);
+    }
+
+
+    /**
+     * Returns whether the supplied byte array equals this attribute value.
+     *
+     * @param bytes to compare
+     * @return whether the supplied byte array equals this attribute value
+     */
+    boolean equalsValue(final byte[] bytes)
+    {
+      return Arrays.equals(value, bytes);
+    }
+
+
+    /**
+     * Returns whether the supplied string equals this attribute value.
+     *
+     * @param string to compare
+     * @param base64 whether the string is base64 encoded
+     * @return whether the supplied string equals this attribute value
+     */
+    boolean equalsValue(final String string, final boolean base64)
+    {
+      final byte[] bytes = base64 ? base64Decode(string, false) : LdapUtils.utf8Encode(string, false);
+      return Arrays.equals(value, bytes);
+    }
+
+
+    /**
+     * Creates a new attribute value from the supplied string.
+     *
+     * @param string to create attribute value from
+     * @param base64 whether string should be base64 decoded
+     * @return new attribute value
+     */
+    static AttributeValue fromString(final String string, final boolean base64)
+    {
+      if (base64) {
+        return new AttributeValue(base64Decode(string, true), false);
+      }
+      return new AttributeValue(LdapUtils.utf8Encode(string, false), false);
+    }
+
+
+    /**
+     * Base64 decodes the supplied string.
+     *
+     * @param string       to decode
+     * @param throwOnError whether throw if string cannot be decoded
+     * @return base64 decoded bytes or null if throwOnError if false and string cannot be decoded
+     */
+    private static byte[] base64Decode(final String string, final boolean throwOnError)
+    {
+      try {
+        return LdapUtils.base64Decode(string);
+      } catch (IllegalArgumentException e) {
+        if (throwOnError) {
+          throw new IllegalArgumentException("Error decoding value: " + string, e);
+        }
+        return null;
+      }
+    }
+  }
+
+
+  /**
+   * Comparator for byte arrays. See {@link Arrays#compare(byte[], byte[])}.
+   */
+  private static final class ByteArrayComparator implements Comparator<byte[]>, Serializable
+  {
+
+    /**
+     * serialVersionUid.
+     */
+    private static final long serialVersionUID = -7798424594763024564L;
+
+
+    @Override
+    public int compare(final byte[] o1, final byte[] o2)
+    {
+      return Arrays.compare(o1, o2);
+    }
+  }
+
+
+  /**
+   * Comparator for strings. See {@link String#compareTo(String)}.
+   */
+  private static final class StringComparator implements Comparator<String>, Serializable
+  {
+
+    /**
+     * serialVersionUid.
+     */
+    private static final long serialVersionUID = 4891167994745573424L;
+
+
+    @Override
+    public int compare(final String o1, final String o2)
+    {
+      return o1.compareTo(o2);
+    }
   }
 
 
@@ -696,6 +808,13 @@ public class LdapAttribute
     }
 
 
+    Builder binaryValuesInternal(final Collection<byte[]> values)
+    {
+      object.addBinaryValuesInternal(values);
+      return this;
+    }
+
+
     public Builder values(final String... values)
     {
       object.addStringValues(values);
@@ -706,20 +825,6 @@ public class LdapAttribute
     public Builder stringValues(final Collection<String> values)
     {
       object.addStringValues(values);
-      return this;
-    }
-
-
-    public Builder values(final ByteBuffer... values)
-    {
-      object.addBufferValues(values);
-      return this;
-    }
-
-
-    public Builder bufferValues(final Collection<ByteBuffer> values)
-    {
-      object.addBufferValues(values);
       return this;
     }
 

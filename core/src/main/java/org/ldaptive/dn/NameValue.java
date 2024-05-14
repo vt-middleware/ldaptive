@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.dn;
 
-import java.nio.ByteBuffer;
 import java.util.function.Function;
 import org.ldaptive.LdapUtils;
 
@@ -19,7 +18,7 @@ public class NameValue
   private final String attributeName;
 
   /** Attribute value. */
-  private final ByteBuffer attributeValue;
+  private final byte[] attributeValue;
 
 
   /**
@@ -43,7 +42,7 @@ public class NameValue
   public NameValue(final String name, final byte[] value)
   {
     attributeName = name;
-    attributeValue = value != null ? ByteBuffer.wrap(value) : null;
+    attributeValue = value;
   }
 
 
@@ -60,19 +59,19 @@ public class NameValue
 
   public byte[] getBinaryValue()
   {
-    return attributeValue != null ? attributeValue.array() : null;
+    return attributeValue;
   }
 
 
   public String getStringValue()
   {
-    return attributeValue != null ? LdapUtils.utf8Encode(attributeValue.array()) : null;
+    return attributeValue != null ? LdapUtils.utf8Encode(attributeValue) : null;
   }
 
 
   public <T> T getValue(final Function<byte[], T> func)
   {
-    return attributeValue != null ? func.apply(attributeValue.array()) : null;
+    return func.apply(getBinaryValue());
   }
 
 
@@ -96,7 +95,7 @@ public class NameValue
    */
   public String format()
   {
-    return attributeName + "=" + LdapUtils.utf8Encode(attributeValue != null ? attributeValue.array() : null);
+    return attributeName + "=" + LdapUtils.utf8Encode(attributeValue);
   }
 
 

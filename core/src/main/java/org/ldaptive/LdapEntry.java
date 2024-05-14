@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -456,7 +455,7 @@ public class LdapEntry extends AbstractMessage
         getObject().addAttributes(LdapAttribute.builder().name(p.getName().get()).build());
       } else {
         getObject().addAttributes(
-          LdapAttribute.builder().name(p.getName().get()).bufferValues(p.getValues().get()).build());
+          LdapAttribute.builder().name(p.getName().get()).binaryValuesInternal(p.getValues().get()).build());
       }
     }
   }
@@ -481,7 +480,7 @@ public class LdapEntry extends AbstractMessage
     private String name;
 
     /** Attribute values. */
-    private List<ByteBuffer> values = new ArrayList<>();
+    private List<byte[]> values = new ArrayList<>();
 
 
     /**
@@ -490,7 +489,7 @@ public class LdapEntry extends AbstractMessage
     public AttributeParser()
     {
       parser.registerHandler(NAME_PATH, (p, e) -> name = OctetStringType.decode(e));
-      parser.registerHandler(VALUES_PATH, (p, e) -> values.add(ByteBuffer.wrap(e.getRemainingBytes())));
+      parser.registerHandler(VALUES_PATH, (p, e) -> values.add(e.getRemainingBytes()));
     }
 
 
@@ -521,7 +520,7 @@ public class LdapEntry extends AbstractMessage
      *
      * @return  attribute values or empty
      */
-    public Optional<List<ByteBuffer>> getValues()
+    public Optional<List<byte[]>> getValues()
     {
       return values.isEmpty() ? Optional.empty() : Optional.of(values);
     }
