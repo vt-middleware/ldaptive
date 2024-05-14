@@ -37,7 +37,7 @@ public final class SimpleBindAuthenticationHandler extends AbstractAuthenticatio
     final AuthenticationCriteria criteria)
     throws LdapException
   {
-    final SimpleBindRequest request = new SimpleBindRequest(criteria.getDn(), criteria.getCredential().getString());
+    final SimpleBindRequest request = new SimpleBindRequest(criteria.getDn(), criteria.getCredential());
     request.setControls(processRequestControls(criteria));
     final Result bindResult = c.operation(request).execute();
     return new AuthenticationHandlerResponse(

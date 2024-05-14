@@ -224,7 +224,7 @@ public class BindConnectionInitializer extends AbstractFreezable implements Conn
     } else {
       result = c.operation(SimpleBindRequest.builder()
         .dn(bindDn)
-        .password(bindCredential.getString())
+        .password(bindCredential)
         .controls(bindControls).build()).execute();
     }
     return result;

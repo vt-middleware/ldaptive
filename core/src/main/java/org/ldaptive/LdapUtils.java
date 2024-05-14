@@ -5,6 +5,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
@@ -138,6 +140,44 @@ public final class LdapUtils
       throw new NullPointerException("Cannot UTF-8 encode null value");
     }
     return value != null ? value.getBytes(StandardCharsets.UTF_8) : null;
+  }
+
+
+  /**
+   * This will convert the supplied value to a UTF-8 encoded byte array. Returns null if the supplied value is null.
+   *
+   * @param  value  to UTF-8 encode
+   *
+   * @return  UTF-8 encoded value
+   */
+  public static byte[] utf8Encode(final char[] value)
+  {
+    return utf8Encode(value, true);
+  }
+
+
+  /**
+   * This will convert the supplied value to a UTF-8 encoded byte array.
+   *
+   * @param  value  to UTF-8 encode
+   * @param  allowNull  whether to throw {@link NullPointerException} if value is null
+   *
+   * @return  UTF-8 encoded value
+   *
+   * @throws  NullPointerException  if allowNull is false and value is null
+   */
+  public static byte[] utf8Encode(final char[] value, final boolean allowNull)
+  {
+    if (!allowNull && value == null) {
+      throw new NullPointerException("Cannot UTF-8 encode null value");
+    }
+    if (value == null) {
+      return null;
+    }
+    final ByteBuffer buf = StandardCharsets.UTF_8.encode(CharBuffer.wrap(value));
+    final byte[] bytes = new byte[buf.limit()];
+    buf.get(bytes);
+    return bytes;
   }
 
 

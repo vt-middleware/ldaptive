@@ -21,7 +21,7 @@ public final class Credential
   public Credential(final String password)
   {
     if (password == null) {
-      throw new NullPointerException("Password cannot be null");
+      throw new IllegalArgumentException("Password cannot be null");
     }
     bytes = LdapUtils.utf8Encode(password, false);
   }
@@ -35,9 +35,9 @@ public final class Credential
   public Credential(final char[] password)
   {
     if (password == null) {
-      throw new NullPointerException("Password cannot be null");
+      throw new IllegalArgumentException("Password cannot be null");
     }
-    bytes = LdapUtils.utf8Encode(new String(password), false);
+    bytes = LdapUtils.utf8Encode(password, false);
   }
 
 
@@ -49,7 +49,7 @@ public final class Credential
   public Credential(final byte[] password)
   {
     if (password == null) {
-      throw new NullPointerException("Password cannot be null");
+      throw new IllegalArgumentException("Password cannot be null");
     }
     bytes = password;
   }
@@ -78,13 +78,24 @@ public final class Credential
 
 
   /**
-   * Returns this credential as a character array.
+   * Returns whether the underlying byte array is null.
    *
-   * @return  credential characters
+   * @return  whether the underlying byte array is null
    */
-  public char[] getChars()
+  public boolean isNull()
   {
-    return getString().toCharArray();
+    return bytes == null;
+  }
+
+
+  /**
+   * Returns whether the underlying byte array is empty.
+   *
+   * @return  whether the underlying byte array is empty
+   */
+  public boolean isEmpty()
+  {
+    return bytes.length == 0;
   }
 
 

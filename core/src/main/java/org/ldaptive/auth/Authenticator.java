@@ -416,7 +416,7 @@ public final class Authenticator extends AbstractFreezable
   {
     AuthenticationResponse response = null;
     final Credential credential = request.getCredential();
-    if (credential == null || credential.getBytes() == null) {
+    if (credential == null || credential.isNull()) {
       response = AuthenticationResponse.builder()
         .response(
           AuthenticationHandlerResponse.builder()
@@ -424,7 +424,7 @@ public final class Authenticator extends AbstractFreezable
             .resultCode(AuthenticationResultCode.INVALID_CREDENTIAL).build())
         .dn(dn)
         .build();
-    } else if (credential.getBytes().length == 0) {
+    } else if (credential.isEmpty()) {
       response = AuthenticationResponse.builder()
         .response(
           AuthenticationHandlerResponse.builder()

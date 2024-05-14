@@ -13,14 +13,14 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class SimpleBindRequest extends AbstractRequestMessage implements BindRequest
+public final class SimpleBindRequest extends AbstractRequestMessage implements BindRequest
 {
 
   /** LDAP DN to bind as. */
   private String ldapDN;
 
   /** Password for the LDAP DN. */
-  private String password;
+  private byte[] password;
 
 
   /**
@@ -51,7 +51,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
   public SimpleBindRequest(final String name, final Credential cred)
   {
     setLdapDN(name);
-    setPassword(cred.getString());
+    setPassword(cred.getBytes());
   }
 
 
@@ -62,7 +62,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
    *
    * @throws  IllegalArgumentException  if name is null or empty
    */
-  protected void setLdapDN(final String name)
+  private void setLdapDN(final String name)
   {
     if (name == null || name.isEmpty()) {
       throw new IllegalArgumentException("bind request name cannot be null or empty");
@@ -78,9 +78,25 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
    *
    * @throws  IllegalArgumentException  if pass is null or empty
    */
-  protected void setPassword(final String pass)
+  private void setPassword(final String pass)
   {
     if (pass == null || pass.isEmpty()) {
+      throw new IllegalArgumentException("bind request password cannot be null or empty");
+    }
+    setPassword(LdapUtils.utf8Encode(pass, false));
+  }
+
+
+  /**
+   * Sets the password.
+   *
+   * @param  pass  password to set
+   *
+   * @throws  IllegalArgumentException  if pass is null or empty
+   */
+  private void setPassword(final byte[] pass)
+  {
+    if (pass == null || pass.length == 0) {
       throw new IllegalArgumentException("bind request password cannot be null or empty");
     }
     password = pass;
@@ -90,13 +106,19 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
   @Override
   protected DEREncoder[] getRequestEncoders(final int id)
   {
+    if (ldapDN == null || ldapDN.isEmpty()) {
+      throw new IllegalStateException("bind request DN cannot be null or empty");
+    }
+    if (password == null || password.length == 0) {
+      throw new IllegalStateException("bind request password cannot be null or empty");
+    }
     return new DEREncoder[] {
       new IntegerType(id),
       new ConstructedDEREncoder(
         new ApplicationDERTag(PROTOCOL_OP, true),
         new IntegerType(VERSION),
         new OctetStringType(ldapDN),
-        new ContextType(0, LdapUtils.utf8Encode(password, false))),
+        new ContextType(0, password)),
     };
   }
 
@@ -120,7 +142,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
 
 
   /** Simple bind request builder. */
-  public static class Builder extends
+  public static final class Builder extends
     AbstractRequestMessage.AbstractBuilder<SimpleBindRequest.Builder, SimpleBindRequest>
   {
 
@@ -128,7 +150,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
     /**
      * Default constructor.
      */
-    protected Builder()
+    private Builder()
     {
       super(new SimpleBindRequest());
     }
@@ -178,7 +200,7 @@ public class SimpleBindRequest extends AbstractRequestMessage implements BindReq
      */
     public Builder password(final Credential credential)
     {
-      object.setPassword(credential.getString());
+      object.setPassword(credential.getBytes());
       return self();
     }
   }
