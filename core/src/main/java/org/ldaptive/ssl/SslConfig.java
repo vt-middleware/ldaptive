@@ -7,13 +7,14 @@ import java.util.Arrays;
 import javax.net.ssl.HandshakeCompletedListener;
 import javax.net.ssl.TrustManager;
 import org.ldaptive.AbstractConfig;
+import org.ldaptive.LdapUtils;
 
 /**
  * Contains all the configuration data for SSL and startTLS.
  *
  * @author  Middleware Services
  */
-public class SslConfig extends AbstractConfig
+public final class SslConfig extends AbstractConfig
 {
 
   /** Configuration for the trust and authentication material to use for SSL and startTLS. */
@@ -60,7 +61,7 @@ public class SslConfig extends AbstractConfig
    */
   public SslConfig(final TrustManager... managers)
   {
-    trustManagers = managers;
+    trustManagers = LdapUtils.copyArray(managers);
   }
 
 
@@ -73,7 +74,7 @@ public class SslConfig extends AbstractConfig
   public SslConfig(final CredentialConfig config, final TrustManager... managers)
   {
     credentialConfig = config;
-    trustManagers = managers;
+    trustManagers = LdapUtils.copyArray(managers);
   }
 
 
@@ -121,7 +122,7 @@ public class SslConfig extends AbstractConfig
    */
   public TrustManager[] getTrustManagers()
   {
-    return trustManagers;
+    return LdapUtils.copyArray(trustManagers);
   }
 
 
@@ -135,7 +136,7 @@ public class SslConfig extends AbstractConfig
     checkImmutable();
     checkArrayContainsNull(managers);
     logger.trace("setting trustManagers: {}", Arrays.toString(managers));
-    trustManagers = managers;
+    trustManagers = LdapUtils.copyArray(managers);
   }
 
 
@@ -170,7 +171,7 @@ public class SslConfig extends AbstractConfig
    */
   public String[] getEnabledCipherSuites()
   {
-    return enabledCipherSuites;
+    return LdapUtils.copyArray(enabledCipherSuites);
   }
 
 
@@ -184,7 +185,7 @@ public class SslConfig extends AbstractConfig
     checkImmutable();
     checkArrayContainsNull(suites);
     logger.trace("setting enabledCipherSuites: {}", Arrays.toString(suites));
-    enabledCipherSuites = suites;
+    enabledCipherSuites = LdapUtils.copyArray(suites);
   }
 
 
@@ -195,7 +196,7 @@ public class SslConfig extends AbstractConfig
    */
   public String[] getEnabledProtocols()
   {
-    return enabledProtocols;
+    return LdapUtils.copyArray(enabledProtocols);
   }
 
 
@@ -209,7 +210,7 @@ public class SslConfig extends AbstractConfig
     checkImmutable();
     checkArrayContainsNull(protocols);
     logger.trace("setting enabledProtocols: {}", Arrays.toString(protocols));
-    enabledProtocols = protocols;
+    enabledProtocols = LdapUtils.copyArray(protocols);
   }
 
 
@@ -220,7 +221,7 @@ public class SslConfig extends AbstractConfig
    */
   public HandshakeCompletedListener[] getHandshakeCompletedListeners()
   {
-    return handshakeCompletedListeners;
+    return LdapUtils.copyArray(handshakeCompletedListeners);
   }
 
 
@@ -234,7 +235,7 @@ public class SslConfig extends AbstractConfig
     checkImmutable();
     checkArrayContainsNull(listeners);
     logger.trace("setting handshakeCompletedListeners: {}", Arrays.toString(handshakeCompletedListeners));
-    handshakeCompletedListeners = listeners;
+    handshakeCompletedListeners = LdapUtils.copyArray(listeners);
   }
 
 
@@ -274,15 +275,15 @@ public class SslConfig extends AbstractConfig
    */
   public static SslConfig copy(final SslConfig config)
   {
-    final SslConfig sc = new SslConfig();
-    sc.setCredentialConfig(config.getCredentialConfig());
-    sc.setTrustManagers(config.getTrustManagers());
-    sc.setHostnameVerifier(config.getHostnameVerifier());
-    sc.setEnabledCipherSuites(config.getEnabledCipherSuites());
-    sc.setEnabledProtocols(config.getEnabledProtocols());
-    sc.setHandshakeCompletedListeners(config.getHandshakeCompletedListeners());
-    sc.setHandshakeTimeout(config.getHandshakeTimeout());
-    return sc;
+    final SslConfig copy = new SslConfig();
+    copy.setCredentialConfig(config.getCredentialConfig());
+    copy.setTrustManagers(config.getTrustManagers());
+    copy.setHostnameVerifier(config.getHostnameVerifier());
+    copy.setEnabledCipherSuites(config.getEnabledCipherSuites());
+    copy.setEnabledProtocols(config.getEnabledProtocols());
+    copy.setHandshakeCompletedListeners(config.getHandshakeCompletedListeners());
+    copy.setHandshakeTimeout(config.getHandshakeTimeout());
+    return copy;
   }
 
 
@@ -342,14 +343,21 @@ public class SslConfig extends AbstractConfig
 
 
   // CheckStyle:OFF
-  public static class Builder
+  public static final class Builder
   {
 
 
     private final SslConfig object = new SslConfig();
 
 
-    protected Builder() {}
+    private Builder() {}
+
+
+    public Builder makeImmutable()
+    {
+      object.makeImmutable();
+      return this;
+    }
 
 
     public Builder credentialConfig(final CredentialConfig config)

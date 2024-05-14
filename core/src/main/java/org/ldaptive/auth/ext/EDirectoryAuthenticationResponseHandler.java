@@ -3,6 +3,7 @@ package org.ldaptive.auth.ext;
 
 import java.time.Period;
 import java.time.ZonedDateTime;
+import org.ldaptive.AbstractImmutable;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -18,7 +19,8 @@ import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
  *
  * @author  Middleware Services
  */
-public class EDirectoryAuthenticationResponseHandler implements AuthenticationResponseHandler
+public final class EDirectoryAuthenticationResponseHandler extends AbstractImmutable
+  implements AuthenticationResponseHandler
 {
 
   /** Attributes needed to enforce password policy. */
@@ -92,6 +94,7 @@ public class EDirectoryAuthenticationResponseHandler implements AuthenticationRe
    */
   public void setWarningPeriod(final Period period)
   {
+    checkImmutable();
     warningPeriod = period;
   }
 

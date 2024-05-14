@@ -44,7 +44,7 @@ public enum ReturnAttributes {
    */
   public String[] value()
   {
-    return value;
+    return LdapUtils.copyArray(value);
   }
 
 

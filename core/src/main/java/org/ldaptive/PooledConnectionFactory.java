@@ -19,7 +19,7 @@ import org.ldaptive.transport.TransportFactory;
  *
  * @author  Middleware Services
  */
-public class PooledConnectionFactory extends BlockingConnectionPool implements ConnectionFactory
+public final class PooledConnectionFactory extends BlockingConnectionPool implements ConnectionFactory
 {
 
   /** Validation exception handler. Default implementation retries once. */
@@ -94,6 +94,14 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
 
 
   @Override
+  public void makeImmutable()
+  {
+    super.makeImmutable();
+    makeImmutable(validationExceptionHandler);
+  }
+
+
+  @Override
   public ConnectionConfig getConnectionConfig()
   {
     return getDefaultConnectionFactory().getConnectionConfig();
@@ -108,6 +116,7 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
    */
   public void setConnectionConfig(final ConnectionConfig cc)
   {
+    checkImmutable();
     getDefaultConnectionFactory().setConnectionConfig(cc);
   }
 
@@ -130,6 +139,7 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
    */
   public void setValidationExceptionHandler(final ValidationExceptionHandler handler)
   {
+    checkImmutable();
     validationExceptionHandler = handler;
   }
 
@@ -206,21 +216,28 @@ public class PooledConnectionFactory extends BlockingConnectionPool implements C
 
 
   // CheckStyle:OFF
-  public static class Builder
+  public static final class Builder
   {
 
     private final PooledConnectionFactory object;
 
 
-    protected Builder()
+    private Builder()
     {
       object = new PooledConnectionFactory();
     }
 
 
-    protected Builder(final Transport t)
+    private Builder(final Transport t)
     {
       object = new PooledConnectionFactory(t);
+    }
+
+
+    public Builder makeImmutable()
+    {
+      object.makeImmutable();
+      return this;
     }
 
 

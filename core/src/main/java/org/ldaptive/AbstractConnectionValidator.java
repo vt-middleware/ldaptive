@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConnectionValidator implements ConnectionValidator
+public abstract class AbstractConnectionValidator extends AbstractImmutable implements ConnectionValidator
 {
 
   /** Default validation period, value is 30 minutes. */
@@ -44,14 +44,15 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
 
 
   @Override
-  public Duration getValidatePeriod()
+  public final Duration getValidatePeriod()
   {
     return validatePeriod;
   }
 
 
-  public void setValidatePeriod(final Duration period)
+  public final void setValidatePeriod(final Duration period)
   {
+    checkImmutable();
     if (period == null || period.isNegative() || period.isZero()) {
       throw new IllegalArgumentException("Period cannot be null, negative or zero");
     }
@@ -59,7 +60,7 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
   }
 
   @Override
-  public Duration getValidateTimeout()
+  public final Duration getValidateTimeout()
   {
     return validateTimeout;
   }
@@ -70,8 +71,9 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
    *
    * @param  timeout  to set
    */
-  public void setValidateTimeout(final Duration timeout)
+  public final void setValidateTimeout(final Duration timeout)
   {
+    checkImmutable();
     if (timeout == null || timeout.isNegative()) {
       throw new IllegalArgumentException("Timeout cannot be null or negative");
     }
@@ -84,7 +86,7 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
    *
    * @return  success consumer
    */
-  public Consumer<Connection> getOnSuccess()
+  public final Consumer<Connection> getOnSuccess()
   {
     return onSuccess;
   }
@@ -95,8 +97,9 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
    *
    * @param  consumer  to invoke on success
    */
-  public void setOnSuccess(final Consumer<Connection> consumer)
+  public final void setOnSuccess(final Consumer<Connection> consumer)
   {
+    checkImmutable();
     onSuccess = consumer;
   }
 
@@ -106,7 +109,7 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
    *
    * @return  failure consumer
    */
-  public Consumer<Connection> getOnFailure()
+  public final Consumer<Connection> getOnFailure()
   {
     return onFailure;
   }
@@ -117,8 +120,9 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
    *
    * @param  consumer  to invoke on failure
    */
-  public void setOnFailure(final Consumer<Connection> consumer)
+  public final void setOnFailure(final Consumer<Connection> consumer)
   {
+    checkImmutable();
     onFailure = consumer;
   }
 
@@ -128,7 +132,7 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
    *
    * @return  whether a timeout should be considered a validation failure
    */
-  public boolean getTimeoutIsFailure()
+  public final boolean getTimeoutIsFailure()
   {
     return timeoutIsFailure;
   }
@@ -139,8 +143,9 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
    *
    * @param  failure  whether a timeout should be considered a validation failure
    */
-  public void setTimeoutIsFailure(final boolean failure)
+  public final void setTimeoutIsFailure(final boolean failure)
   {
+    checkImmutable();
     timeoutIsFailure = failure;
   }
 
@@ -235,6 +240,18 @@ public abstract class AbstractConnectionValidator implements ConnectionValidator
      * @return  builder
      */
     protected abstract B self();
+
+
+    /**
+     * Makes this instance immutable.
+     *
+     * @return  this builder
+     */
+    public B makeImmutable()
+    {
+      object.makeImmutable();
+      return self();
+    }
 
 
     /**

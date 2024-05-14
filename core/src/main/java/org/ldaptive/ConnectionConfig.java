@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -13,7 +14,7 @@ import org.ldaptive.ssl.SslConfig;
  *
  * @author  Middleware Services
  */
-public class ConnectionConfig extends AbstractConfig
+public final class ConnectionConfig extends AbstractConfig
 {
 
   /** Predicate that attempts a single reconnect. */
@@ -147,6 +148,16 @@ public class ConnectionConfig extends AbstractConfig
   public ConnectionConfig(final String url)
   {
     setLdapUrl(url);
+  }
+
+  @Override
+  public void makeImmutable()
+  {
+    super.makeImmutable();
+    makeImmutable(sslConfig);
+    makeImmutable(connectionInitializers);
+    makeImmutable(connectionStrategy);
+    makeImmutable(connectionValidator);
   }
 
 
@@ -410,7 +421,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public ConnectionInitializer[] getConnectionInitializers()
   {
-    return connectionInitializers;
+    return LdapUtils.copyArray(connectionInitializers);
   }
 
 
@@ -424,7 +435,7 @@ public class ConnectionConfig extends AbstractConfig
     checkImmutable();
     checkArrayContainsNull(initializers);
     logger.trace("setting connectionInitializers: {}", Arrays.toString(initializers));
-    connectionInitializers = initializers;
+    connectionInitializers = LdapUtils.copyArray(initializers);
   }
 
 
@@ -483,7 +494,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public Map<String, ?> getTransportOptions()
   {
-    return transportOptions;
+    return Collections.unmodifiableMap(transportOptions);
   }
 
 
@@ -536,23 +547,24 @@ public class ConnectionConfig extends AbstractConfig
    */
   public static ConnectionConfig copy(final ConnectionConfig config)
   {
-    final ConnectionConfig cc = new ConnectionConfig();
-    cc.setLdapUrl(config.getLdapUrl());
-    cc.setConnectTimeout(config.getConnectTimeout());
-    cc.setStartTLSTimeout(config.getStartTLSTimeout());
-    cc.setResponseTimeout(config.getResponseTimeout());
-    cc.setReconnectTimeout(config.getReconnectTimeout());
-    cc.setAutoReconnect(config.getAutoReconnect());
-    cc.setAutoReconnectCondition(config.getAutoReconnectCondition());
-    cc.setAutoReplay(config.getAutoReplay());
-    cc.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
-    cc.setUseStartTLS(config.getUseStartTLS());
-    cc.setConnectionInitializers(config.getConnectionInitializers());
-    cc.setConnectionStrategy(
+    final ConnectionConfig copy = new ConnectionConfig();
+    copy.setLdapUrl(config.getLdapUrl());
+    copy.setConnectTimeout(config.getConnectTimeout());
+    copy.setStartTLSTimeout(config.getStartTLSTimeout());
+    copy.setResponseTimeout(config.getResponseTimeout());
+    copy.setReconnectTimeout(config.getReconnectTimeout());
+    copy.setAutoReconnect(config.getAutoReconnect());
+    copy.setAutoReconnectCondition(config.getAutoReconnectCondition());
+    copy.setAutoReplay(config.getAutoReplay());
+    copy.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
+    copy.setUseStartTLS(config.getUseStartTLS());
+    copy.setConnectionInitializers(
+      config.getConnectionInitializers() != null ? config.getConnectionInitializers() : null);
+    copy.setConnectionStrategy(
       config.getConnectionStrategy() != null ? config.getConnectionStrategy().newInstance() : null);
-    cc.setConnectionValidator(config.getConnectionValidator());
-    cc.setTransportOptions(config.getTransportOptions());
-    return cc;
+    copy.setConnectionValidator(config.getConnectionValidator());
+    copy.setTransportOptions(config.getTransportOptions());
+    return copy;
   }
 
 

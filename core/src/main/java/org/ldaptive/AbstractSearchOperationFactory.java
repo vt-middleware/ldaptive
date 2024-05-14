@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.Arrays;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.LdapEntryHandler;
@@ -20,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractSearchOperationFactory implements ConnectionFactoryManager
+public abstract class AbstractSearchOperationFactory extends AbstractImmutable implements ConnectionFactoryManager
 {
 
   /** Logger for this class. */
@@ -63,12 +64,30 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
   private SearchResultHandler[] searchResultHandlers;
 
 
+  @Override
+  public void makeImmutable()
+  {
+    super.makeImmutable();
+    makeImmutable(factory);
+    makeImmutable(requestHandlers);
+    makeImmutable(resultHandlers);
+    makeImmutable(controlHandlers);
+    makeImmutable(referralHandlers);
+    makeImmutable(intermediateResponseHandlers);
+    makeImmutable(exceptionHandler);
+    makeImmutable(unsolicitedNotificationHandlers);
+    makeImmutable(entryHandlers);
+    makeImmutable(referralHandlers);
+    makeImmutable(searchResultHandlers);
+  }
+
+
   /**
    * Returns the connection factory.
    *
    * @return  connection factory
    */
-  public ConnectionFactory getConnectionFactory()
+  public final ConnectionFactory getConnectionFactory()
   {
     return factory;
   }
@@ -79,8 +98,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  cf  connection factory
    */
-  public void setConnectionFactory(final ConnectionFactory cf)
+  public final void setConnectionFactory(final ConnectionFactory cf)
   {
+    checkImmutable();
     factory = cf;
   }
 
@@ -90,9 +110,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  search request handlers
    */
-  public RequestHandler<SearchRequest>[] getRequestHandlers()
+  public final RequestHandler<SearchRequest>[] getRequestHandlers()
   {
-    return requestHandlers;
+    return LdapUtils.copyArray(requestHandlers);
   }
 
 
@@ -102,9 +122,10 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    * @param  handlers  search request handler
    */
   @SuppressWarnings("unchecked")
-  public void setRequestHandlers(final RequestHandler<SearchRequest>... handlers)
+  public final void setRequestHandlers(final RequestHandler<SearchRequest>... handlers)
   {
-    requestHandlers = handlers;
+    checkImmutable();
+    requestHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -113,9 +134,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  search result handlers
    */
-  public ResultHandler[] getResultHandlers()
+  public final ResultHandler[] getResultHandlers()
   {
-    return resultHandlers;
+    return LdapUtils.copyArray(resultHandlers);
   }
 
 
@@ -124,9 +145,10 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  handlers  search result handlers
    */
-  public void setResultHandlers(final ResultHandler... handlers)
+  public final void setResultHandlers(final ResultHandler... handlers)
   {
-    resultHandlers = handlers;
+    checkImmutable();
+    resultHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -135,9 +157,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  control handlers
    */
-  public ResponseControlHandler[] getControlHandlers()
+  public final ResponseControlHandler[] getControlHandlers()
   {
-    return controlHandlers;
+    return LdapUtils.copyArray(controlHandlers);
   }
 
 
@@ -146,9 +168,10 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  handlers  control handlers
    */
-  public void setControlHandlers(final ResponseControlHandler... handlers)
+  public final void setControlHandlers(final ResponseControlHandler... handlers)
   {
-    controlHandlers = handlers;
+    checkImmutable();
+    controlHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -157,9 +180,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  referral handlers
    */
-  public ReferralHandler[] getReferralHandlers()
+  public final ReferralHandler[] getReferralHandlers()
   {
-    return referralHandlers;
+    return LdapUtils.copyArray(referralHandlers);
   }
 
 
@@ -168,9 +191,10 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  handlers  referral handlers
    */
-  public void setReferralHandlers(final ReferralHandler... handlers)
+  public final void setReferralHandlers(final ReferralHandler... handlers)
   {
-    referralHandlers = handlers;
+    checkImmutable();
+    referralHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -179,9 +203,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  intermediate response handlers
    */
-  public IntermediateResponseHandler[] getIntermediateResponseHandlers()
+  public final IntermediateResponseHandler[] getIntermediateResponseHandlers()
   {
-    return intermediateResponseHandlers;
+    return LdapUtils.copyArray(intermediateResponseHandlers);
   }
 
 
@@ -190,9 +214,10 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  handlers  intermediate response handlers
    */
-  public void setIntermediateResponseHandlers(final IntermediateResponseHandler... handlers)
+  public final void setIntermediateResponseHandlers(final IntermediateResponseHandler... handlers)
   {
-    intermediateResponseHandlers = handlers;
+    checkImmutable();
+    intermediateResponseHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -201,7 +226,7 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  search exception handler
    */
-  public ExceptionHandler getExceptionHandler()
+  public final ExceptionHandler getExceptionHandler()
   {
     return exceptionHandler;
   }
@@ -212,8 +237,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  handler  search exception handler
    */
-  public void setExceptionHandler(final ExceptionHandler handler)
+  public final void setExceptionHandler(final ExceptionHandler handler)
   {
+    checkImmutable();
     exceptionHandler = handler;
   }
 
@@ -223,7 +249,7 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  throw condition
    */
-  public ResultPredicate getThrowCondition()
+  public final ResultPredicate getThrowCondition()
   {
     return throwCondition;
   }
@@ -234,8 +260,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  function  throw condition
    */
-  public void setThrowCondition(final ResultPredicate function)
+  public final void setThrowCondition(final ResultPredicate function)
   {
+    checkImmutable();
     throwCondition = function;
   }
 
@@ -245,9 +272,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  unsolicited notification handlers
    */
-  public UnsolicitedNotificationHandler[] getUnsolicitedNotificationHandlers()
+  public final UnsolicitedNotificationHandler[] getUnsolicitedNotificationHandlers()
   {
-    return unsolicitedNotificationHandlers;
+    return LdapUtils.copyArray(unsolicitedNotificationHandlers);
   }
 
 
@@ -256,9 +283,10 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  handlers  unsolicited notification handlers
    */
-  public void setUnsolicitedNotificationHandlers(final UnsolicitedNotificationHandler... handlers)
+  public final void setUnsolicitedNotificationHandlers(final UnsolicitedNotificationHandler... handlers)
   {
-    unsolicitedNotificationHandlers = handlers;
+    checkImmutable();
+    unsolicitedNotificationHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -267,9 +295,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  search entry handlers
    */
-  public LdapEntryHandler[] getEntryHandlers()
+  public final LdapEntryHandler[] getEntryHandlers()
   {
-    return entryHandlers;
+    return LdapUtils.copyArray(entryHandlers);
   }
 
 
@@ -278,9 +306,10 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  handlers  search entry handlers
    */
-  public void setEntryHandlers(final LdapEntryHandler... handlers)
+  public final void setEntryHandlers(final LdapEntryHandler... handlers)
   {
-    entryHandlers = handlers;
+    checkImmutable();
+    entryHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -289,9 +318,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  search reference handlers
    */
-  public SearchReferenceHandler[] getReferenceHandlers()
+  public final SearchReferenceHandler[] getReferenceHandlers()
   {
-    return referenceHandlers;
+    return LdapUtils.copyArray(referenceHandlers);
   }
 
 
@@ -300,9 +329,10 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  handlers  search reference handlers
    */
-  public void setReferenceHandlers(final SearchReferenceHandler... handlers)
+  public final void setReferenceHandlers(final SearchReferenceHandler... handlers)
   {
-    referenceHandlers = handlers;
+    checkImmutable();
+    referenceHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -311,9 +341,9 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @return  search result handlers
    */
-  public SearchResultHandler[] getSearchResultHandlers()
+  public final SearchResultHandler[] getSearchResultHandlers()
   {
-    return searchResultHandlers;
+    return LdapUtils.copyArray(searchResultHandlers);
   }
 
 
@@ -322,9 +352,10 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
    *
    * @param  handlers  search result handlers
    */
-  public void setSearchResultHandlers(final SearchResultHandler... handlers)
+  public final void setSearchResultHandlers(final SearchResultHandler... handlers)
   {
-    searchResultHandlers = handlers;
+    checkImmutable();
+    searchResultHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -383,5 +414,26 @@ public abstract class AbstractSearchOperationFactory implements ConnectionFactor
       op.setSearchResultHandlers(searchResultHandlers);
     }
     return op;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "factory=" + factory + ", " +
+      (requestHandlers != null ? "requestHandlers=" + Arrays.toString(requestHandlers) + ", " : "") +
+      (resultHandlers != null ? "resultHandlers=" + Arrays.toString(resultHandlers) + ", " : "") +
+      (controlHandlers != null ? "controlHandlers=" + Arrays.toString(controlHandlers) + ", " : "") +
+      (referralHandlers != null ? "referralHandlers=" + Arrays.toString(referralHandlers) + ", " : "") +
+      (intermediateResponseHandlers != null ?
+        "intermediateResponseHandlers=" + Arrays.toString(intermediateResponseHandlers) + ", " : "") +
+      (exceptionHandler != null ? "exceptionHandler=" + exceptionHandler + ", " : "") +
+      (throwCondition != null ? "throwCondition=" + throwCondition + ", " : "") +
+      (unsolicitedNotificationHandlers != null ?
+        "unsolicitedNotificationHandlers=" + Arrays.toString(unsolicitedNotificationHandlers) + ", " : "") +
+      (entryHandlers != null ? "entryHandlers=" + Arrays.toString(entryHandlers) + ", " : "") +
+      (referenceHandlers != null ? "referenceHandlers=" + Arrays.toString(referenceHandlers) + ", " : "") +
+      (searchResultHandlers != null ? "searchResultHandlers=" + Arrays.toString(searchResultHandlers) : "");
   }
 }

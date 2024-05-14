@@ -10,6 +10,7 @@ import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -65,7 +66,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @return  base DN
    */
-  public String getBaseDn()
+  public final String getBaseDn()
   {
     return baseDn;
   }
@@ -76,8 +77,9 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @param  dn  base DN
    */
-  public void setBaseDn(final String dn)
+  public final void setBaseDn(final String dn)
   {
+    checkImmutable();
     logger.trace("setting baseDn: {}", dn);
     baseDn = dn;
   }
@@ -88,7 +90,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @return  filter for searching
    */
-  public String getUserFilter()
+  public final String getUserFilter()
   {
     return userFilter;
   }
@@ -99,8 +101,9 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @param  filter  user filter
    */
-  public void setUserFilter(final String filter)
+  public final void setUserFilter(final String filter)
   {
+    checkImmutable();
     logger.trace("setting userFilter: {}", filter);
     userFilter = filter;
   }
@@ -111,9 +114,9 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @return  filter parameters
    */
-  public Object[] getUserFilterParameters()
+  public final Object[] getUserFilterParameters()
   {
-    return userFilterParameters;
+    return LdapUtils.copyArray(userFilterParameters);
   }
 
 
@@ -122,10 +125,11 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @param  filterParams  filter parameters
    */
-  public void setUserFilterParameters(final Object[] filterParams)
+  public final void setUserFilterParameters(final Object[] filterParams)
   {
+    checkImmutable();
     logger.trace("setting userFilterParameters: {}", Arrays.toString(filterParams));
-    userFilterParameters = filterParams;
+    userFilterParameters = LdapUtils.copyArray(filterParams);
   }
 
 
@@ -134,7 +138,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @return  whether an exception will be thrown if multiple DNs are found
    */
-  public boolean getAllowMultipleDns()
+  public final boolean getAllowMultipleDns()
   {
     return allowMultipleDns;
   }
@@ -146,8 +150,9 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @param  b  whether multiple DNs are allowed
    */
-  public void setAllowMultipleDns(final boolean b)
+  public final void setAllowMultipleDns(final boolean b)
   {
+    checkImmutable();
     logger.trace("setting allowMultipleDns: {}", b);
     allowMultipleDns = b;
   }
@@ -158,7 +163,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @return  whether the DN will be searched for over the entire base
    */
-  public boolean getSubtreeSearch()
+  public final boolean getSubtreeSearch()
   {
     return subtreeSearch;
   }
@@ -170,8 +175,9 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @param  b  whether the DN will be searched for over the entire base
    */
-  public void setSubtreeSearch(final boolean b)
+  public final void setSubtreeSearch(final boolean b)
   {
+    checkImmutable();
     logger.trace("setting subtreeSearch: {}", b);
     subtreeSearch = b;
   }
@@ -182,7 +188,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @return  how to dereference aliases
    */
-  public DerefAliases getDerefAliases()
+  public final DerefAliases getDerefAliases()
   {
     return derefAliases;
   }
@@ -193,8 +199,9 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @param  da  how to dereference aliases
    */
-  public void setDerefAliases(final DerefAliases da)
+  public final void setDerefAliases(final DerefAliases da)
   {
+    checkImmutable();
     logger.trace("setting derefAliases: {}", da);
     derefAliases = da;
   }
@@ -206,7 +213,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @return the attribute name
    */
-  public String getResolveFromAttribute()
+  public final String getResolveFromAttribute()
   {
     return resolveFromAttribute;
   }
@@ -217,8 +224,9 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    *
    * @param  attributeName  attribute name
    */
-  public void setResolveFromAttribute(final String attributeName)
+  public final void setResolveFromAttribute(final String attributeName)
   {
+    checkImmutable();
     logger.trace("setting resolveFromAttribute: {}", attributeName);
     resolveFromAttribute = attributeName;
   }
@@ -394,9 +402,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
   @Override
   public String toString()
   {
-    return "[" +
-      getClass().getName() + "@" + hashCode() + "::" +
-      "factory=" + getConnectionFactory() + ", " +
+    return "[" + super.toString() +
       "baseDn=" + baseDn + ", " +
       "userFilter=" + userFilter + ", " +
       "userFilterParameters=" + Arrays.toString(userFilterParameters) + ", " +
@@ -430,6 +436,18 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
      * Default constructor.
      */
     protected Builder() {}
+
+
+    /**
+     * Makes this instance immutable.
+     *
+     * @return  this builder
+     */
+    public Builder makeImmutable()
+    {
+      object.makeImmutable();
+      return this;
+    }
 
 
     /**

@@ -12,6 +12,7 @@ import org.ldaptive.auth.NoOpDnResolver;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.props.AuthenticatorPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
+import org.ldaptive.sasl.SaslConfig;
 import org.testng.Assert;
 
 /**
@@ -247,6 +248,23 @@ public final class TestUtils
     final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.tls.properties");
     auth.setDnResolver(new NoOpDnResolver());
     return auth;
+  }
+
+
+  /**
+   * @param  initializer  to read properties from
+   *
+   * @return  new bind connection initializer
+   */
+  public static BindConnectionInitializer copyBindConnectionInitializer(final BindConnectionInitializer initializer)
+  {
+    final BindConnectionInitializer copy = new BindConnectionInitializer();
+    copy.setBindDn(initializer.getBindDn());
+    copy.setBindCredential(initializer.getBindCredential());
+    copy.setBindSaslConfig(
+      initializer.getBindSaslConfig() != null ? SaslConfig.copy(initializer.getBindSaslConfig()) : null);
+    copy.setBindControls(initializer.getBindControls());
+    return copy;
   }
 
 

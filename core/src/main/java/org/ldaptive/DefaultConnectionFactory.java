@@ -11,14 +11,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class DefaultConnectionFactory implements ConnectionFactory
+public class DefaultConnectionFactory extends AbstractImmutable implements ConnectionFactory
 {
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Transport used by this factory. */
-  private Transport transport;
+  private final Transport transport;
 
   /** Connection configuration used by this factory. */
   private ConnectionConfig config;
@@ -93,7 +93,15 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
 
   @Override
-  public ConnectionConfig getConnectionConfig()
+  public void makeImmutable()
+  {
+    super.makeImmutable();
+    makeImmutable(config);
+  }
+
+
+  @Override
+  public final ConnectionConfig getConnectionConfig()
   {
     return config;
   }
@@ -105,8 +113,9 @@ public class DefaultConnectionFactory implements ConnectionFactory
    *
    * @param  cc  connection config
    */
-  public void setConnectionConfig(final ConnectionConfig cc)
+  public final void setConnectionConfig(final ConnectionConfig cc)
   {
+    checkImmutable();
     config = cc;
     config.makeImmutable();
   }
@@ -117,7 +126,7 @@ public class DefaultConnectionFactory implements ConnectionFactory
    *
    * @return  ldap transport
    */
-  public Transport getTransport()
+  public final Transport getTransport()
   {
     return transport;
   }
@@ -194,6 +203,13 @@ public class DefaultConnectionFactory implements ConnectionFactory
     protected Builder(final Transport t)
     {
       object = new DefaultConnectionFactory(t);
+    }
+
+
+    public Builder makeImmutable()
+    {
+      object.makeImmutable();
+      return this;
     }
 
 

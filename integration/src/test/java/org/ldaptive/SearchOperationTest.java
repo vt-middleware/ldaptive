@@ -2020,9 +2020,14 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final ConnectionFactory cf = TestUtils.createDigestMd5ConnectionFactory();
-    ((BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializers()[0]).setBindCredential(
-      new Credential("wrong-password"));
+    ConnectionFactory cf = TestUtils.createDigestMd5ConnectionFactory();
+    final ConnectionConfig cc = ConnectionConfig.copy(cf.getConnectionConfig());
+    Assert.assertEquals(cc.getConnectionInitializers().length, 1);
+    final BindConnectionInitializer initializer =
+      TestUtils.copyBindConnectionInitializer((BindConnectionInitializer) cc.getConnectionInitializers()[0]);
+    initializer.setBindCredential(new Credential("wrong-password"));
+    cc.setConnectionInitializers(initializer);
+    cf = new DefaultConnectionFactory(cc);
     try (Connection conn = cf.getConnection()) {
       conn.open();
       Assert.fail("DIGEST-MD5 should have thrown exception");
@@ -2070,9 +2075,14 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final ConnectionFactory cf = TestUtils.createCramMd5ConnectionFactory();
-    ((BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializers()[0]).setBindCredential(
-      new Credential("wrong-password"));
+    ConnectionFactory cf = TestUtils.createCramMd5ConnectionFactory();
+    final ConnectionConfig cc = ConnectionConfig.copy(cf.getConnectionConfig());
+    Assert.assertEquals(cc.getConnectionInitializers().length, 1);
+    final BindConnectionInitializer initializer =
+      TestUtils.copyBindConnectionInitializer((BindConnectionInitializer) cc.getConnectionInitializers()[0]);
+    initializer.setBindCredential(new Credential("wrong-password"));
+    cc.setConnectionInitializers(initializer);
+    cf = new DefaultConnectionFactory(cc);
     try (Connection conn = cf.getConnection()) {
       conn.open();
       Assert.fail("CRAM-MD5 should have thrown exception");

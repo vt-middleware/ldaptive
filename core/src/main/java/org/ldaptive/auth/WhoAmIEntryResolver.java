@@ -57,4 +57,11 @@ public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
     request.setBinaryAttributes(getBinaryAttributes());
     return request;
   }
+
+
+  @Override
+  public String toString()
+  {
+    return "[" + super.toString() + "]";
+  }
 }

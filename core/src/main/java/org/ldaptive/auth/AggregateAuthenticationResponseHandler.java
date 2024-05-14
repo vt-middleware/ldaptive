@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.ldaptive.AbstractImmutable;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
 import org.slf4j.Logger;
@@ -17,14 +18,15 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class AggregateAuthenticationResponseHandler implements AuthenticationResponseHandler
+public final class AggregateAuthenticationResponseHandler extends AbstractImmutable
+  implements AuthenticationResponseHandler
 {
 
   /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Labeled entry resolvers. */
-  private Map<String, AuthenticationResponseHandler[]> responseHandlers = new HashMap<>();
+  private final Map<String, AuthenticationResponseHandler[]> responseHandlers = new HashMap<>();
 
 
   /** Default constructor. */
@@ -38,7 +40,17 @@ public class AggregateAuthenticationResponseHandler implements AuthenticationRes
    */
   public AggregateAuthenticationResponseHandler(final Map<String, AuthenticationResponseHandler[]> handlers)
   {
-    setAuthenticationResponseHandlers(handlers);
+    responseHandlers.putAll(handlers);
+  }
+
+
+  @Override
+  public void makeImmutable()
+  {
+    super.makeImmutable();
+    for (AuthenticationResponseHandler[] handlers : responseHandlers.values()) {
+      makeImmutable(handlers);
+    }
   }
 
 
@@ -60,8 +72,9 @@ public class AggregateAuthenticationResponseHandler implements AuthenticationRes
    */
   public void setAuthenticationResponseHandlers(final Map<String, AuthenticationResponseHandler[]> handlers)
   {
+    checkImmutable();
     logger.trace("setting authenticationResponseHandlers: {}", handlers);
-    responseHandlers = handlers;
+    responseHandlers.putAll(handlers);
   }
 
 
@@ -73,6 +86,7 @@ public class AggregateAuthenticationResponseHandler implements AuthenticationRes
    */
   public void addAuthenticationResponseHandlers(final String label, final AuthenticationResponseHandler... handlers)
   {
+    checkImmutable();
     logger.trace("adding authenticationResponseHandlers: {}:{}", label, Arrays.toString(handlers));
     responseHandlers.put(label, handlers);
   }
@@ -106,14 +120,21 @@ public class AggregateAuthenticationResponseHandler implements AuthenticationRes
 
 
   // CheckStyle:OFF
-  public static class Builder
+  public static final class Builder
   {
 
 
     private final AggregateAuthenticationResponseHandler object = new AggregateAuthenticationResponseHandler();
 
 
-    protected Builder() {}
+    private Builder() {}
+
+
+    public Builder makeImmutable()
+    {
+      object.makeImmutable();
+      return this;
+    }
 
 
     public Builder handler(final String label, final AuthenticationResponseHandler... handlers)

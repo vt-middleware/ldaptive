@@ -44,7 +44,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    *
    * @return  time to wait for available connections
    */
-  public Duration getBlockWaitTime()
+  public final Duration getBlockWaitTime()
   {
     return blockWaitTime;
   }
@@ -55,8 +55,9 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    *
    * @param  time  to wait for available connections
    */
-  public void setBlockWaitTime(final Duration time)
+  public final void setBlockWaitTime(final Duration time)
   {
+    checkImmutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Block wait time cannot be null or negative");
     }
@@ -162,7 +163,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    *
    * @throws  NoSuchElementException  if the available queue is empty
    */
-  protected PooledConnectionProxy retrieveAvailableConnection()
+  protected final PooledConnectionProxy retrieveAvailableConnection()
   {
     final PooledConnectionProxy pc;
     logger.trace("waiting on pool lock for retrieve available {}", poolLock.getQueueLength());
@@ -187,7 +188,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    * @throws  PoolException  if this method fails
    * @throws  BlockingTimeoutException  if this pool is configured with a block time and it occurs
    */
-  protected PooledConnectionProxy blockAvailableConnection()
+  protected final PooledConnectionProxy blockAvailableConnection()
     throws PoolException
   {
     PooledConnectionProxy pc = null;

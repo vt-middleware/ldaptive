@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class BindConnectionInitializer implements ConnectionInitializer
+public class BindConnectionInitializer extends AbstractImmutable implements ConnectionInitializer
 {
 
   /** Logger for this class. */
@@ -68,12 +68,20 @@ public class BindConnectionInitializer implements ConnectionInitializer
   }
 
 
+  @Override
+  public void makeImmutable()
+  {
+    super.makeImmutable();
+    makeImmutable(bindSaslConfig);
+  }
+
+
   /**
    * Returns the bind DN.
    *
    * @return  DN to bind as
    */
-  public String getBindDn()
+  public final String getBindDn()
   {
     return bindDn;
   }
@@ -84,8 +92,9 @@ public class BindConnectionInitializer implements ConnectionInitializer
    *
    * @param  dn  to bind as
    */
-  public void setBindDn(final String dn)
+  public final void setBindDn(final String dn)
   {
+    checkImmutable();
     logger.trace("setting bindDn: {}", dn);
     bindDn = dn;
   }
@@ -96,9 +105,9 @@ public class BindConnectionInitializer implements ConnectionInitializer
    *
    * @return  bind DN credential
    */
-  public Credential getBindCredential()
+  public final Credential getBindCredential()
   {
-    return bindCredential;
+    return bindCredential != null ? Credential.copy(bindCredential) : null;
   }
 
 
@@ -107,8 +116,9 @@ public class BindConnectionInitializer implements ConnectionInitializer
    *
    * @param  credential  to use with bind DN
    */
-  public void setBindCredential(final Credential credential)
+  public final void setBindCredential(final Credential credential)
   {
+    checkImmutable();
     logger.trace("setting bindCredential: <suppressed>");
     bindCredential = credential;
   }
@@ -119,7 +129,7 @@ public class BindConnectionInitializer implements ConnectionInitializer
    *
    * @return  sasl config
    */
-  public SaslConfig getBindSaslConfig()
+  public final SaslConfig getBindSaslConfig()
   {
     return bindSaslConfig;
   }
@@ -130,8 +140,9 @@ public class BindConnectionInitializer implements ConnectionInitializer
    *
    * @param  config  sasl config
    */
-  public void setBindSaslConfig(final SaslConfig config)
+  public final void setBindSaslConfig(final SaslConfig config)
   {
+    checkImmutable();
     logger.trace("setting bindSaslConfig: {}", config);
     bindSaslConfig = config;
   }
@@ -142,9 +153,9 @@ public class BindConnectionInitializer implements ConnectionInitializer
    *
    * @return  controls
    */
-  public RequestControl[] getBindControls()
+  public final RequestControl[] getBindControls()
   {
-    return bindControls;
+    return LdapUtils.copyArray(bindControls);
   }
 
 
@@ -153,10 +164,11 @@ public class BindConnectionInitializer implements ConnectionInitializer
    *
    * @param  cntrls  controls to set
    */
-  public void setBindControls(final RequestControl... cntrls)
+  public final void setBindControls(final RequestControl... cntrls)
   {
+    checkImmutable();
     logger.trace("setting bindControls: {}", Arrays.toString(cntrls));
-    bindControls = cntrls;
+    bindControls = LdapUtils.copyArray(cntrls);
   }
 
 
@@ -260,6 +272,13 @@ public class BindConnectionInitializer implements ConnectionInitializer
 
 
     protected Builder() {}
+
+
+    public Builder makeImmutable()
+    {
+      object.makeImmutable();
+      return this;
+    }
 
 
     public Builder dn(final String dn)

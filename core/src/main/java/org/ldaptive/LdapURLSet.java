@@ -5,19 +5,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A set of LDAP URLs with helper functions for common connection strategies.
  *
  * @author  Middleware Services
  */
-public class LdapURLSet
+public final class LdapURLSet
 {
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** List of LDAP URLs to connect to in the order provided by the connection strategy. */
   private final List<LdapURL> urls = new ArrayList<>();
@@ -66,7 +61,7 @@ public class LdapURLSet
    */
   public List<LdapURL> getActiveUrls()
   {
-    return urls.stream().filter(LdapURL::isActive).collect(Collectors.toList());
+    return urls.stream().filter(LdapURL::isActive).collect(Collectors.toUnmodifiableList());
   }
 
 
@@ -88,7 +83,7 @@ public class LdapURLSet
    */
   public List<LdapURL> getInactiveUrls()
   {
-    return urls.stream().filter(u -> !u.isActive()).collect(Collectors.toList());
+    return urls.stream().filter(u -> !u.isActive()).collect(Collectors.toUnmodifiableList());
   }
 
 

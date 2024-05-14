@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.sasl;
 
+import org.ldaptive.LdapUtils;
 import org.ldaptive.transport.ScramSaslClient;
 
 /**
@@ -53,7 +54,7 @@ public class ScramBindRequest implements SaslClientRequest
     scramMechanism = mech;
     username = user;
     password = pass;
-    scramNonce = nonce;
+    scramNonce = LdapUtils.copyArray(nonce);
   }
 
 
@@ -77,7 +78,7 @@ public class ScramBindRequest implements SaslClientRequest
 
   public byte[] getNonce()
   {
-    return scramNonce;
+    return LdapUtils.copyArray(scramNonce);
   }
 
 

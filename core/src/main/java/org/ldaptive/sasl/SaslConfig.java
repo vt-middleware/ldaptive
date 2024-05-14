@@ -2,17 +2,22 @@
 package org.ldaptive.sasl;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.AbstractConfig;
+import org.ldaptive.LdapUtils;
 
 /**
  * Contains basic configuration data for SASL authentication.
  *
  * @author  Middleware Services
  */
-public class SaslConfig extends AbstractConfig
+public final class SaslConfig extends AbstractConfig
 {
+
+  /** sasl properties. */
+  private final Map<String, Object> properties = new HashMap<>();
 
   /** sasl mechanism. */
   private Mechanism mechanism;
@@ -31,9 +36,6 @@ public class SaslConfig extends AbstractConfig
 
   /** sasl realm. */
   private String saslRealm;
-
-  /** sasl properties. */
-  private Map<String, Object> properties = new HashMap<>();
 
 
   /**
@@ -115,7 +117,7 @@ public class SaslConfig extends AbstractConfig
    */
   public QualityOfProtection[] getQualityOfProtection()
   {
-    return qualityOfProtection;
+    return LdapUtils.copyArray(qualityOfProtection);
   }
 
 
@@ -129,7 +131,7 @@ public class SaslConfig extends AbstractConfig
     checkImmutable();
     checkArrayContainsNull(qop);
     logger.trace("setting qualityOfProtection: {}", Arrays.toString(qop));
-    qualityOfProtection = qop;
+    qualityOfProtection = LdapUtils.copyArray(qop);
   }
 
 
@@ -140,7 +142,7 @@ public class SaslConfig extends AbstractConfig
    */
   public SecurityStrength[] getSecurityStrength()
   {
-    return securityStrength;
+    return LdapUtils.copyArray(securityStrength);
   }
 
 
@@ -154,7 +156,7 @@ public class SaslConfig extends AbstractConfig
     checkImmutable();
     checkArrayContainsNull(ss);
     logger.trace("setting securityStrength: {}", Arrays.toString(ss));
-    securityStrength = ss;
+    securityStrength = LdapUtils.copyArray(ss);
   }
 
 
@@ -189,7 +191,7 @@ public class SaslConfig extends AbstractConfig
    */
   public Map<String, ?> getProperties()
   {
-    return properties;
+    return Collections.unmodifiableMap(properties);
   }
 
 
@@ -248,6 +250,27 @@ public class SaslConfig extends AbstractConfig
 
 
   /**
+   * Returns a sasl config initialized with the supplied config.
+   *
+   * @param  config  sasl config to read properties from
+   *
+   * @return  sasl config
+   */
+  public static SaslConfig copy(final SaslConfig config)
+  {
+    final SaslConfig copy = new SaslConfig();
+    copy.setMechanism(config.getMechanism());
+    copy.setAuthorizationId(config.getAuthorizationId());
+    copy.setMutualAuthentication(config.getMutualAuthentication());
+    copy.setQualityOfProtection(config.getQualityOfProtection());
+    copy.setSecurityStrength(config.getSecurityStrength());
+    copy.setRealm(config.getRealm());
+    copy.setProperties(new HashMap<>(config.getProperties()));
+    return copy;
+  }
+
+
+  /**
    * Creates a builder for this class.
    *
    * @return  new builder
@@ -259,14 +282,21 @@ public class SaslConfig extends AbstractConfig
 
 
   // CheckStyle:OFF
-  public static class Builder
+  public static final class Builder
   {
 
 
     private final SaslConfig object = new SaslConfig();
 
 
-    protected Builder() {}
+    private Builder() {}
+
+
+    public Builder makeImmutable()
+    {
+      object.makeImmutable();
+      return this;
+    }
 
 
     public Builder mechanism(final Mechanism mechanism)

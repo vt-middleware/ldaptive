@@ -76,7 +76,7 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
    *
    * @return  idle time
    */
-  public Duration getIdleTime()
+  public final Duration getIdleTime()
   {
     return idleTime;
   }
@@ -87,8 +87,9 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
    *
    * @param  time  that a connection has been idle and should be pruned
    */
-  public void setIdleTime(final Duration time)
+  public final void setIdleTime(final Duration time)
   {
+    checkImmutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Idle time cannot be null or negative");
     }

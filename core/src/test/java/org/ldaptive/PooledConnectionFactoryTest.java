@@ -13,6 +13,7 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.DefaultThreadFactory;
 import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.concurrent.SearchOperationWorker;
+import org.ldaptive.pool.BindConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.transport.netty.NettyConnectionFactoryTransport;
 import org.ldaptive.transport.netty.SimpleNettyServer;
@@ -521,5 +522,29 @@ public class PooledConnectionFactoryTest
     } finally {
       server.stop();
     }
+  }
+
+
+  @Test(groups = "netty")
+  public void immutable()
+  {
+    final PooledConnectionFactory factory = new PooledConnectionFactory();
+    factory.setPassivator(new BindConnectionPassivator());
+    factory.setValidator(new SearchConnectionValidator());
+    factory.setPruneStrategy(new IdlePruneStrategy());
+    factory.setDefaultConnectionFactory(new DefaultConnectionFactory());
+
+    factory.checkImmutable();
+    ((Immutable) factory.getPassivator()).checkImmutable();
+    ((Immutable) factory.getValidator()).checkImmutable();
+    ((Immutable) factory.getPruneStrategy()).checkImmutable();
+    factory.getDefaultConnectionFactory().checkImmutable();
+
+    factory.makeImmutable();
+    TestUtils.testImmutable(factory);
+    TestUtils.testImmutable((Immutable) factory.getPassivator());
+    TestUtils.testImmutable((Immutable) factory.getValidator());
+    TestUtils.testImmutable((Immutable) factory.getPruneStrategy());
+    TestUtils.testImmutable(factory.getDefaultConnectionFactory());
   }
 }

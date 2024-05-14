@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConnectionStrategy implements ConnectionStrategy
+public abstract class AbstractConnectionStrategy extends AbstractImmutable implements ConnectionStrategy
 {
 
   /** Logger for this class. */
@@ -48,14 +48,14 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
 
 
   @Override
-  public boolean isInitialized()
+  public final boolean isInitialized()
   {
     return initialized;
   }
 
 
   @Override
-  public synchronized void initialize(final String urls, final Predicate<LdapURL> condition)
+  public final synchronized void initialize(final String urls, final Predicate<LdapURL> condition)
   {
     if (isInitialized()) {
       throw new IllegalStateException("Strategy has already been initialized");
@@ -88,14 +88,14 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
 
 
   @Override
-  public Predicate<LdapURL> getActivateCondition()
+  public final Predicate<LdapURL> getActivateCondition()
   {
     return activateCondition;
   }
 
 
   @Override
-  public Predicate<LdapURL> getRetryCondition()
+  public final Predicate<LdapURL> getRetryCondition()
   {
     return retryCondition;
   }
@@ -106,14 +106,15 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
    *
    * @param  condition  that determines whether to test an inactive URL
    */
-  public void setRetryCondition(final Predicate<LdapURL> condition)
+  public final void setRetryCondition(final Predicate<LdapURL> condition)
   {
+    checkImmutable();
     retryCondition = condition;
   }
 
 
   @Override
-  public void success(final LdapURL url)
+  public final void success(final LdapURL url)
   {
     url.activate();
     url.getRetryMetadata().recordSuccess(Instant.now());
@@ -121,7 +122,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
 
 
   @Override
-  public void failure(final LdapURL url)
+  public final void failure(final LdapURL url)
   {
     url.deactivate();
     url.getRetryMetadata().recordFailure(Instant.now());
@@ -142,7 +143,7 @@ public abstract class AbstractConnectionStrategy implements ConnectionStrategy
 
 
   /** Default iterator implementation. */
-  protected static class DefaultLdapURLIterator implements Iterator<LdapURL>
+  protected static final class DefaultLdapURLIterator implements Iterator<LdapURL>
   {
 
     /** URLs to iterate over. */

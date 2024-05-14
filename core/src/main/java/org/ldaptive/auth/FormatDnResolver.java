@@ -2,7 +2,9 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
+import org.ldaptive.AbstractImmutable;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.dn.AttributeValueEscaper;
 import org.ldaptive.dn.DefaultAttributeValueEscaper;
 import org.slf4j.Logger;
@@ -13,7 +15,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class FormatDnResolver implements DnResolver
+public class FormatDnResolver extends AbstractImmutable implements DnResolver
 {
 
   /** log for this class. */
@@ -65,7 +67,7 @@ public class FormatDnResolver implements DnResolver
    *
    * @return  user field
    */
-  public String getFormat()
+  public final String getFormat()
   {
     return formatString;
   }
@@ -76,8 +78,9 @@ public class FormatDnResolver implements DnResolver
    *
    * @param  format  formatter string
    */
-  public void setFormat(final String format)
+  public final void setFormat(final String format)
   {
+    checkImmutable();
     formatString = format;
   }
 
@@ -87,9 +90,9 @@ public class FormatDnResolver implements DnResolver
    *
    * @return  format args
    */
-  public Object[] getFormatArgs()
+  public final Object[] getFormatArgs()
   {
-    return formatArgs;
+    return LdapUtils.copyArray(formatArgs);
   }
 
 
@@ -98,9 +101,10 @@ public class FormatDnResolver implements DnResolver
    *
    * @param  args  to set format arguments
    */
-  public void setFormatArgs(final Object[] args)
+  public final void setFormatArgs(final Object[] args)
   {
-    formatArgs = args;
+    checkImmutable();
+    formatArgs = LdapUtils.copyArray(args);
   }
 
 
@@ -109,7 +113,7 @@ public class FormatDnResolver implements DnResolver
    *
    * @return  whether the user input will be escaped.
    */
-  public boolean getEscapeUser()
+  public final boolean getEscapeUser()
   {
     return escapeUser;
   }
@@ -120,8 +124,9 @@ public class FormatDnResolver implements DnResolver
    *
    * @param  b  whether the user input will be escaped.
    */
-  public void setEscapeUser(final boolean b)
+  public final void setEscapeUser(final boolean b)
   {
+    checkImmutable();
     escapeUser = b;
   }
 

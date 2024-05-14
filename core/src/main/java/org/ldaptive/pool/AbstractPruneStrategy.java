@@ -2,6 +2,7 @@
 package org.ldaptive.pool;
 
 import java.time.Duration;
+import org.ldaptive.AbstractImmutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractPruneStrategy implements PruneStrategy
+public abstract class AbstractPruneStrategy extends AbstractImmutable implements PruneStrategy
 {
 
   /** Default prune period in seconds. Value is 5 minutes. */
@@ -24,7 +25,7 @@ public abstract class AbstractPruneStrategy implements PruneStrategy
 
 
   @Override
-  public Duration getPrunePeriod()
+  public final Duration getPrunePeriod()
   {
     return prunePeriod;
   }
@@ -35,8 +36,9 @@ public abstract class AbstractPruneStrategy implements PruneStrategy
    *
    * @param  period  to set
    */
-  public void setPrunePeriod(final Duration period)
+  public final void setPrunePeriod(final Duration period)
   {
+    checkImmutable();
     if (period == null || period.isNegative() || period.isZero()) {
       throw new IllegalArgumentException("Prune period cannot be null, negative or zero");
     }
@@ -74,6 +76,18 @@ public abstract class AbstractPruneStrategy implements PruneStrategy
      * @return  builder
      */
     protected abstract B self();
+
+
+    /**
+     * Makes this instance immutable.
+     *
+     * @return  this builder
+     */
+    public B makeImmutable()
+    {
+      object.makeImmutable();
+      return self();
+    }
 
 
     /**

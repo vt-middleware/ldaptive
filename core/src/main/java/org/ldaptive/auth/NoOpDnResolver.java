@@ -8,7 +8,7 @@ import org.ldaptive.LdapException;
  *
  * @author  Middleware Services
  */
-public class NoOpDnResolver implements DnResolver
+public final class NoOpDnResolver implements DnResolver
 {
 
 
