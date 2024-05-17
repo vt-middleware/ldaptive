@@ -71,7 +71,7 @@ public class CompareConnectionValidator extends AbstractOperationConnectionValid
   @Deprecated
   public final void setCompareRequest(final CompareRequest cr)
   {
-    checkImmutable();
+    assertMutable();
     setRequest(cr);
   }
 

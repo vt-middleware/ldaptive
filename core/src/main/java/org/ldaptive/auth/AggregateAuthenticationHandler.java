@@ -4,7 +4,7 @@ package org.ldaptive.auth;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public final class AggregateAuthenticationHandler extends AbstractImmutable implements AuthenticationHandler
+public final class AggregateAuthenticationHandler extends AbstractFreezable implements AuthenticationHandler
 {
 
   /** Logger for this class. */
@@ -43,9 +43,9 @@ public final class AggregateAuthenticationHandler extends AbstractImmutable impl
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(authenticationHandlers);
   }
 
@@ -68,7 +68,7 @@ public final class AggregateAuthenticationHandler extends AbstractImmutable impl
    */
   public void setAuthenticationHandlers(final Map<String, AuthenticationHandler> handlers)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting authenticationHandlers: {}", handlers);
     authenticationHandlers.putAll(handlers);
   }
@@ -82,7 +82,7 @@ public final class AggregateAuthenticationHandler extends AbstractImmutable impl
    */
   public void addAuthenticationHandler(final String label, final AuthenticationHandler handler)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("adding authenticationHandler: {}:{}", label, handler);
     authenticationHandlers.put(label, handler);
   }
@@ -127,7 +127,7 @@ public final class AggregateAuthenticationHandler extends AbstractImmutable impl
 
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

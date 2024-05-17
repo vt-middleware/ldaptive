@@ -4,7 +4,7 @@ package org.ldaptive.auth;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public final class AggregateEntryResolver extends AbstractImmutable implements EntryResolver
+public final class AggregateEntryResolver extends AbstractFreezable implements EntryResolver
 {
 
   /** Logger for this class. */
@@ -44,9 +44,9 @@ public final class AggregateEntryResolver extends AbstractImmutable implements E
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     for (EntryResolver resolver : entryResolvers.values()) {
       makeImmutable(resolver);
     }
@@ -71,7 +71,7 @@ public final class AggregateEntryResolver extends AbstractImmutable implements E
    */
   public void setEntryResolvers(final Map<String, EntryResolver> resolvers)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting entryResolvers: {}", resolvers);
     entryResolvers.putAll(resolvers);
   }
@@ -85,7 +85,7 @@ public final class AggregateEntryResolver extends AbstractImmutable implements E
    */
   public void addEntryResolver(final String label, final EntryResolver resolver)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("adding dnResolver: {}:{}", label, resolver);
     entryResolvers.put(label, resolver);
   }
@@ -128,7 +128,7 @@ public final class AggregateEntryResolver extends AbstractImmutable implements E
 
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

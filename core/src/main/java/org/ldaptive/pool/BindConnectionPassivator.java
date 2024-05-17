@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.AnonymousBindRequest;
 import org.ldaptive.BindRequest;
 import org.ldaptive.Connection;
@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class BindConnectionPassivator extends AbstractImmutable implements ConnectionPassivator
+public class BindConnectionPassivator extends AbstractFreezable implements ConnectionPassivator
 {
 
   /** Logger for this class. */
@@ -60,7 +60,7 @@ public class BindConnectionPassivator extends AbstractImmutable implements Conne
    */
   public final void setBindRequest(final BindRequest br)
   {
-    checkImmutable();
+    assertMutable();
     bindRequest = br;
   }
 

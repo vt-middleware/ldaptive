@@ -63,7 +63,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    */
   public final void setBaseDn(final String dn)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting baseDn: {}", dn);
     baseDn = dn;
   }
@@ -87,7 +87,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    */
   public final void setUserFilter(final String filter)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting userFilter: {}", filter);
     userFilter = filter;
   }
@@ -111,7 +111,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    */
   public final void setUserFilterParameters(final Object[] filterParams)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting userFilterParameters: {}", Arrays.toString(filterParams));
     userFilterParameters = LdapUtils.copyArray(filterParams);
   }
@@ -137,7 +137,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    */
   public final void setAllowMultipleEntries(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting allowMultipleEntries: {}", b);
     allowMultipleEntries = b;
   }
@@ -162,7 +162,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    */
   public final void setSubtreeSearch(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting subtreeSearch: {}", b);
     subtreeSearch = b;
   }
@@ -186,7 +186,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    */
   public final void setDerefAliases(final DerefAliases da)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting derefAliases: {}", da);
     derefAliases = da;
   }
@@ -210,7 +210,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    */
   public final void setBinaryAttributes(final String... attrs)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting binaryAttributes: {}", Arrays.toString(attrs));
     binaryAttributes = LdapUtils.copyArray(attrs);
   }

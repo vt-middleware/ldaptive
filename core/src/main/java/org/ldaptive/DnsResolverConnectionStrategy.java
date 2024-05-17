@@ -107,7 +107,7 @@ public class DnsResolverConnectionStrategy extends AbstractConnectionStrategy
    */
   public final void setResolverFunction(final Function<String, InetAddress[]> func)
   {
-    checkImmutable();
+    assertMutable();
     resolverFunction = func;
   }
 

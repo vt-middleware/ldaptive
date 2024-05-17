@@ -2,7 +2,7 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.dn.AttributeValueEscaper;
@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class FormatDnResolver extends AbstractImmutable implements DnResolver
+public class FormatDnResolver extends AbstractFreezable implements DnResolver
 {
 
   /** log for this class. */
@@ -80,7 +80,7 @@ public class FormatDnResolver extends AbstractImmutable implements DnResolver
    */
   public final void setFormat(final String format)
   {
-    checkImmutable();
+    assertMutable();
     formatString = format;
   }
 
@@ -103,7 +103,7 @@ public class FormatDnResolver extends AbstractImmutable implements DnResolver
    */
   public final void setFormatArgs(final Object[] args)
   {
-    checkImmutable();
+    assertMutable();
     formatArgs = LdapUtils.copyArray(args);
   }
 
@@ -126,7 +126,7 @@ public class FormatDnResolver extends AbstractImmutable implements DnResolver
    */
   public final void setEscapeUser(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     escapeUser = b;
   }
 

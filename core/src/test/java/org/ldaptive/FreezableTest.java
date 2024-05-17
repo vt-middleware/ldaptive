@@ -33,11 +33,11 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
- * Unit test for objects that implement {@link Immutable}.
+ * Unit test for objects that implement {@link Freezable}.
  *
  * @author  Middleware Services
  */
-public class ImmutableTest
+public class FreezableTest
 {
 
 
@@ -152,12 +152,12 @@ public class ImmutableTest
 
 
   @Test(dataProvider = "immutable-classes")
-  public void immutables(final Class<? extends Immutable> clazz) throws Exception
+  public void immutables(final Class<? extends Freezable> clazz) throws Exception
   {
-    final Constructor<? extends Immutable> constructor = clazz.getDeclaredConstructor();
+    final Constructor<? extends Freezable> constructor = clazz.getDeclaredConstructor();
     constructor.setAccessible(true);
-    final Immutable i = constructor.newInstance();
-    i.makeImmutable();
+    final Freezable i = constructor.newInstance();
+    i.freeze();
     invokeMethods(clazz, i);
   }
 
@@ -166,11 +166,11 @@ public class ImmutableTest
   public void noDefaultConstructor()
   {
     final PagedResultsClient pagedResultsClient = new PagedResultsClient(null, 0);
-    pagedResultsClient.makeImmutable();
+    pagedResultsClient.freeze();
     invokeMethods(PagedResultsClient.class, pagedResultsClient);
 
     final VirtualListViewClient virtualListViewClient = new VirtualListViewClient(null, (SortKey) null);
-    virtualListViewClient.makeImmutable();
+    virtualListViewClient.freeze();
     invokeMethods(VirtualListViewClient.class, virtualListViewClient);
   }
 
@@ -182,7 +182,7 @@ public class ImmutableTest
    * @param  clazz  to discover setter methods
    * @param i  to invoke methods on
    */
-  private void invokeMethods(final Class<? extends Immutable> clazz, final Immutable i)
+  private void invokeMethods(final Class<? extends Freezable> clazz, final Freezable i)
   {
     for (Method method : clazz.getMethods()) {
       if (!method.isBridge()) {

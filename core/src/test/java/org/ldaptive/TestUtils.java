@@ -20,10 +20,10 @@ public final class TestUtils
    *
    * @param  i  immutable to test
    */
-  public static void testImmutable(final Immutable i)
+  public static void testImmutable(final Freezable i)
   {
     try {
-      i.checkImmutable();
+      i.assertMutable();
       Assert.fail("Should have thrown exception for immutable: " + i);
     } catch (Exception e) {
       Assert.assertEquals(IllegalStateException.class, e.getClass());

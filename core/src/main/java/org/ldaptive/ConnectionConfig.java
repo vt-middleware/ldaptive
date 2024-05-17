@@ -151,9 +151,9 @@ public final class ConnectionConfig extends AbstractConfig
   }
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(sslConfig);
     makeImmutable(connectionInitializers);
     makeImmutable(connectionStrategy);
@@ -179,7 +179,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setLdapUrl(final String url)
   {
-    checkImmutable();
+    assertMutable();
     checkStringInput(url, true);
     logger.trace("setting ldapUrl: {}", url);
     ldapUrl = url;
@@ -204,7 +204,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setConnectTimeout(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Connect timeout cannot be null or negative");
     }
@@ -231,7 +231,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setStartTLSTimeout(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("StartTLS timeout cannot be null or negative");
     }
@@ -258,7 +258,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setResponseTimeout(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Response timeout cannot be null or negative");
     }
@@ -285,7 +285,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setReconnectTimeout(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Reconnect timeout cannot be null or negative");
     }
@@ -312,7 +312,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setAutoReconnect(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting autoReconnect: {}", b);
     autoReconnect = b;
   }
@@ -336,7 +336,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setAutoReconnectCondition(final Predicate<RetryMetadata> predicate)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting autoReconnectCondition: {}", predicate);
     autoReconnectCondition = predicate;
   }
@@ -360,7 +360,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setAutoReplay(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting autoReplay: {}", b);
     autoReplay = b;
   }
@@ -384,7 +384,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setSslConfig(final SslConfig config)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting sslConfig: {}", config);
     sslConfig = config;
   }
@@ -408,7 +408,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setUseStartTLS(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting useStartTLS: {}", b);
     useStartTLS = b;
   }
@@ -432,7 +432,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setConnectionInitializers(final ConnectionInitializer... initializers)
   {
-    checkImmutable();
+    assertMutable();
     checkArrayContainsNull(initializers);
     logger.trace("setting connectionInitializers: {}", Arrays.toString(initializers));
     connectionInitializers = LdapUtils.copyArray(initializers);
@@ -457,7 +457,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setConnectionStrategy(final ConnectionStrategy strategy)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting connectionStrategy: {}", strategy);
     connectionStrategy = strategy;
   }
@@ -481,7 +481,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setConnectionValidator(final ConnectionValidator validator)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting connectionValidator: {}", validator);
     connectionValidator = validator;
   }
@@ -505,7 +505,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setTransportOptions(final Map<String, ?> options)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting transport options: {}", options);
     transportOptions.putAll(options);
   }
@@ -532,7 +532,7 @@ public final class ConnectionConfig extends AbstractConfig
    */
   public void setTransportOption(final String id, final Object value)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting transport options: {}={}", id, value);
     transportOptions.put(id, value);
   }

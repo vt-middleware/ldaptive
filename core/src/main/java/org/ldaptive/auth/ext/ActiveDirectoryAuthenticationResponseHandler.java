@@ -3,7 +3,7 @@ package org.ldaptive.auth.ext;
 
 import java.time.Period;
 import java.time.ZonedDateTime;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ad.transcode.FileTimeValueTranscoder;
@@ -20,7 +20,7 @@ import org.ldaptive.auth.AuthenticationResponseHandler;
  *
  * @author  Middleware Services
  */
-public final class ActiveDirectoryAuthenticationResponseHandler extends AbstractImmutable
+public final class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreezable
   implements AuthenticationResponseHandler
 {
 
@@ -119,7 +119,7 @@ public final class ActiveDirectoryAuthenticationResponseHandler extends Abstract
    */
   public void setExpirationPeriod(final Period period)
   {
-    checkImmutable();
+    assertMutable();
     expirationPeriod = period;
   }
 
@@ -142,7 +142,7 @@ public final class ActiveDirectoryAuthenticationResponseHandler extends Abstract
    */
   public void setWarningPeriod(final Period period)
   {
-    checkImmutable();
+    assertMutable();
     warningPeriod = period;
   }
 

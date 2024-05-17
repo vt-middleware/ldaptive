@@ -6,7 +6,7 @@ package org.ldaptive;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractImmutable implements Immutable
+public abstract class AbstractFreezable implements Freezable
 {
 
   /** Whether this object has been marked immutable. */
@@ -14,21 +14,21 @@ public abstract class AbstractImmutable implements Immutable
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
     immutable = true;
   }
 
 
   @Override
-  public final boolean isImmutable()
+  public final boolean isFrozen()
   {
     return immutable;
   }
 
 
   @Override
-  public final void checkImmutable()
+  public final void assertMutable()
   {
     if (immutable) {
       throw new IllegalStateException("Cannot modify immutable object");
@@ -37,8 +37,8 @@ public abstract class AbstractImmutable implements Immutable
 
 
   /**
-   * Iterates over the supplied objects and invokes {@link Immutable#makeImmutable()} for any object that is an instance
-   * of {@link Immutable}.
+   * Iterates over the supplied objects and invokes {@link Freezable#freeze()} for any object that is an instance
+   * of {@link Freezable}.
    *
    * @param  objects  to make immutable
    */
@@ -53,14 +53,14 @@ public abstract class AbstractImmutable implements Immutable
 
 
   /**
-   * Makes the supplied object immutable if it is an instance of {@link Immutable}.
+   * Makes the supplied object immutable if it is an instance of {@link Freezable}.
    *
    * @param  object  to make immutable
    */
   protected static void makeImmutable(final Object object)
   {
-    if (object instanceof Immutable) {
-      ((Immutable) object).makeImmutable();
+    if (object instanceof Freezable) {
+      ((Freezable) object).freeze();
     }
   }
 }

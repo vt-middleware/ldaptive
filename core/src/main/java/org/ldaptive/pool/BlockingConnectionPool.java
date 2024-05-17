@@ -57,7 +57,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
    */
   public final void setBlockWaitTime(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Block wait time cannot be null or negative");
     }

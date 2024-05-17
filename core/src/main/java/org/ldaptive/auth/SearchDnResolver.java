@@ -79,7 +79,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   public final void setBaseDn(final String dn)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting baseDn: {}", dn);
     baseDn = dn;
   }
@@ -103,7 +103,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   public final void setUserFilter(final String filter)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting userFilter: {}", filter);
     userFilter = filter;
   }
@@ -127,7 +127,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   public final void setUserFilterParameters(final Object[] filterParams)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting userFilterParameters: {}", Arrays.toString(filterParams));
     userFilterParameters = LdapUtils.copyArray(filterParams);
   }
@@ -152,7 +152,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   public final void setAllowMultipleDns(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting allowMultipleDns: {}", b);
     allowMultipleDns = b;
   }
@@ -177,7 +177,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   public final void setSubtreeSearch(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting subtreeSearch: {}", b);
     subtreeSearch = b;
   }
@@ -201,7 +201,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   public final void setDerefAliases(final DerefAliases da)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting derefAliases: {}", da);
     derefAliases = da;
   }
@@ -226,7 +226,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   public final void setResolveFromAttribute(final String attributeName)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting resolveFromAttribute: {}", attributeName);
     resolveFromAttribute = attributeName;
   }
@@ -445,7 +445,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
      */
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

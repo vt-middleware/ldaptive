@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class DefaultConnectionFactory extends AbstractImmutable implements ConnectionFactory
+public class DefaultConnectionFactory extends AbstractFreezable implements ConnectionFactory
 {
 
   /** Logger for this class. */
@@ -93,9 +93,9 @@ public class DefaultConnectionFactory extends AbstractImmutable implements Conne
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(config);
   }
 
@@ -109,15 +109,15 @@ public class DefaultConnectionFactory extends AbstractImmutable implements Conne
 
   /**
    * Sets the connection config. Once invoked the supplied connection config is made immutable. See {@link
-   * ConnectionConfig#makeImmutable()}.
+   * ConnectionConfig#freeze()}.
    *
    * @param  cc  connection config
    */
   public final void setConnectionConfig(final ConnectionConfig cc)
   {
-    checkImmutable();
+    assertMutable();
     config = cc;
-    config.makeImmutable();
+    config.freeze();
   }
 
 
@@ -208,7 +208,7 @@ public class DefaultConnectionFactory extends AbstractImmutable implements Conne
 
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

@@ -59,7 +59,7 @@ public class ConfigTest
     // CheckStyle:IllegalType ON
     throws Exception
   {
-    config.makeImmutable();
+    config.freeze();
     for (Method method : config.getClass().getMethods()) {
       if (method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
         try {

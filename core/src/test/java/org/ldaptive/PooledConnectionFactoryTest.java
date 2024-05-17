@@ -534,17 +534,17 @@ public class PooledConnectionFactoryTest
     factory.setPruneStrategy(new IdlePruneStrategy());
     factory.setDefaultConnectionFactory(new DefaultConnectionFactory());
 
-    factory.checkImmutable();
-    ((Immutable) factory.getPassivator()).checkImmutable();
-    ((Immutable) factory.getValidator()).checkImmutable();
-    ((Immutable) factory.getPruneStrategy()).checkImmutable();
-    factory.getDefaultConnectionFactory().checkImmutable();
+    factory.assertMutable();
+    ((Freezable) factory.getPassivator()).assertMutable();
+    ((Freezable) factory.getValidator()).assertMutable();
+    ((Freezable) factory.getPruneStrategy()).assertMutable();
+    factory.getDefaultConnectionFactory().assertMutable();
 
-    factory.makeImmutable();
+    factory.freeze();
     TestUtils.testImmutable(factory);
-    TestUtils.testImmutable((Immutable) factory.getPassivator());
-    TestUtils.testImmutable((Immutable) factory.getValidator());
-    TestUtils.testImmutable((Immutable) factory.getPruneStrategy());
+    TestUtils.testImmutable((Freezable) factory.getPassivator());
+    TestUtils.testImmutable((Freezable) factory.getValidator());
+    TestUtils.testImmutable((Freezable) factory.getPruneStrategy());
     TestUtils.testImmutable(factory.getDefaultConnectionFactory());
   }
 }

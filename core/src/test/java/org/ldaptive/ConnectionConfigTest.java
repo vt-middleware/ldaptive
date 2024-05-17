@@ -22,17 +22,17 @@ public class ConnectionConfigTest
     cc.setConnectionStrategy(new ActivePassiveConnectionStrategy());
     cc.setConnectionValidator(new SearchConnectionValidator());
 
-    cc.checkImmutable();
-    cc.getSslConfig().checkImmutable();
-    ((Immutable) cc.getConnectionInitializers()[0]).checkImmutable();
-    ((Immutable) cc.getConnectionStrategy()).checkImmutable();
-    ((Immutable) cc.getConnectionValidator()).checkImmutable();
+    cc.assertMutable();
+    cc.getSslConfig().assertMutable();
+    ((Freezable) cc.getConnectionInitializers()[0]).assertMutable();
+    ((Freezable) cc.getConnectionStrategy()).assertMutable();
+    ((Freezable) cc.getConnectionValidator()).assertMutable();
 
-    cc.makeImmutable();
+    cc.freeze();
     TestUtils.testImmutable(cc);
     TestUtils.testImmutable(cc.getSslConfig());
-    TestUtils.testImmutable((Immutable) cc.getConnectionInitializers()[0]);
-    TestUtils.testImmutable((Immutable) cc.getConnectionStrategy());
-    TestUtils.testImmutable((Immutable) cc.getConnectionValidator());
+    TestUtils.testImmutable((Freezable) cc.getConnectionInitializers()[0]);
+    TestUtils.testImmutable((Freezable) cc.getConnectionStrategy());
+    TestUtils.testImmutable((Freezable) cc.getConnectionValidator());
   }
 }
