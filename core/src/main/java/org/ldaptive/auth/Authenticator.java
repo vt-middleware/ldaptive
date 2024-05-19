@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public final class Authenticator extends AbstractImmutable
+public final class Authenticator extends AbstractFreezable
 {
 
   /** NoOp entry resolver. */
@@ -70,9 +70,9 @@ public final class Authenticator extends AbstractImmutable
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(dnResolver);
     makeImmutable(authenticationHandler);
     makeImmutable(entryResolver);
@@ -99,7 +99,7 @@ public final class Authenticator extends AbstractImmutable
    */
   public void setDnResolver(final DnResolver resolver)
   {
-    checkImmutable();
+    assertMutable();
     dnResolver = resolver;
   }
 
@@ -122,7 +122,7 @@ public final class Authenticator extends AbstractImmutable
    */
   public void setAuthenticationHandler(final AuthenticationHandler handler)
   {
-    checkImmutable();
+    assertMutable();
     authenticationHandler = handler;
   }
 
@@ -145,7 +145,7 @@ public final class Authenticator extends AbstractImmutable
    */
   public void setEntryResolver(final EntryResolver resolver)
   {
-    checkImmutable();
+    assertMutable();
     entryResolver = resolver;
   }
 
@@ -168,7 +168,7 @@ public final class Authenticator extends AbstractImmutable
    */
   public void setResolveEntryOnFailure(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     resolveEntryOnFailure = b;
   }
 
@@ -191,7 +191,7 @@ public final class Authenticator extends AbstractImmutable
    */
   public void setReturnAttributes(final String... attrs)
   {
-    checkImmutable();
+    assertMutable();
     returnAttributes = LdapUtils.copyArray(attrs);
   }
 
@@ -214,7 +214,7 @@ public final class Authenticator extends AbstractImmutable
    */
   public void setRequestHandlers(final AuthenticationRequestHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     requestHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -237,7 +237,7 @@ public final class Authenticator extends AbstractImmutable
    */
   public void setResponseHandlers(final AuthenticationResponseHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     responseHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -583,7 +583,7 @@ public final class Authenticator extends AbstractImmutable
      */
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

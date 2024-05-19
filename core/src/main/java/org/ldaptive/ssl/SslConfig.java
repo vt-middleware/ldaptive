@@ -109,7 +109,7 @@ public final class SslConfig extends AbstractConfig
    */
   public void setCredentialConfig(final CredentialConfig config)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting credentialConfig: {}", config);
     credentialConfig = config;
   }
@@ -133,7 +133,7 @@ public final class SslConfig extends AbstractConfig
    */
   public void setTrustManagers(final TrustManager... managers)
   {
-    checkImmutable();
+    assertMutable();
     checkArrayContainsNull(managers);
     logger.trace("setting trustManagers: {}", Arrays.toString(managers));
     trustManagers = LdapUtils.copyArray(managers);
@@ -158,7 +158,7 @@ public final class SslConfig extends AbstractConfig
    */
   public void setHostnameVerifier(final CertificateHostnameVerifier verifier)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting hostnameVerifier: {}", verifier);
     hostnameVerifier = verifier;
   }
@@ -182,7 +182,7 @@ public final class SslConfig extends AbstractConfig
    */
   public void setEnabledCipherSuites(final String... suites)
   {
-    checkImmutable();
+    assertMutable();
     checkArrayContainsNull(suites);
     logger.trace("setting enabledCipherSuites: {}", Arrays.toString(suites));
     enabledCipherSuites = LdapUtils.copyArray(suites);
@@ -207,7 +207,7 @@ public final class SslConfig extends AbstractConfig
    */
   public void setEnabledProtocols(final String... protocols)
   {
-    checkImmutable();
+    assertMutable();
     checkArrayContainsNull(protocols);
     logger.trace("setting enabledProtocols: {}", Arrays.toString(protocols));
     enabledProtocols = LdapUtils.copyArray(protocols);
@@ -232,7 +232,7 @@ public final class SslConfig extends AbstractConfig
    */
   public void setHandshakeCompletedListeners(final HandshakeCompletedListener... listeners)
   {
-    checkImmutable();
+    assertMutable();
     checkArrayContainsNull(listeners);
     logger.trace("setting handshakeCompletedListeners: {}", Arrays.toString(handshakeCompletedListeners));
     handshakeCompletedListeners = LdapUtils.copyArray(listeners);
@@ -257,7 +257,7 @@ public final class SslConfig extends AbstractConfig
    */
   public void setHandshakeTimeout(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Handshake timeout cannot be null or negative");
     }
@@ -355,7 +355,7 @@ public final class SslConfig extends AbstractConfig
 
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

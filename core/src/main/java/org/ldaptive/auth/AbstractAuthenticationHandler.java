@@ -2,7 +2,7 @@
 package org.ldaptive.auth;
 
 import java.util.Arrays;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionFactoryManager;
@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractAuthenticationHandler extends AbstractImmutable
+public abstract class AbstractAuthenticationHandler extends AbstractFreezable
   implements AuthenticationHandler, ConnectionFactoryManager
 {
 
@@ -32,9 +32,9 @@ public abstract class AbstractAuthenticationHandler extends AbstractImmutable
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(factory);
   }
 
@@ -49,7 +49,7 @@ public abstract class AbstractAuthenticationHandler extends AbstractImmutable
   @Override
   public final void setConnectionFactory(final ConnectionFactory cf)
   {
-    checkImmutable();
+    assertMutable();
     factory = cf;
   }
 
@@ -72,7 +72,7 @@ public abstract class AbstractAuthenticationHandler extends AbstractImmutable
    */
   public final void setAuthenticationControls(final RequestControl... cntrls)
   {
-    checkImmutable();
+    assertMutable();
     authenticationControls = LdapUtils.copyArray(cntrls);
   }
 

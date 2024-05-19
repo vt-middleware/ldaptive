@@ -112,9 +112,9 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(validator);
   }
 
@@ -137,7 +137,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setFailFastInitialize(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     failFastInitialize = b;
   }
 
@@ -160,7 +160,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setNonBlockingInitialize(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     nonBlockingInitialize = b;
   }
 
@@ -183,7 +183,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setOnOpen(final Function<Connection, Boolean> function)
   {
-    checkImmutable();
+    assertMutable();
     onOpen = function;
   }
 
@@ -206,7 +206,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setOnClose(final Function<Connection, Boolean> function)
   {
-    checkImmutable();
+    assertMutable();
     onClose = function;
   }
 
@@ -229,7 +229,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setValidator(final ConnectionValidator cv)
   {
-    checkImmutable();
+    assertMutable();
     validator = cv;
   }
 
@@ -332,7 +332,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
     if (initializeEx != null && failFastInitialize) {
       throw initializeEx;
     }
-    makeImmutable();
+    this.freeze();
   }
 
 

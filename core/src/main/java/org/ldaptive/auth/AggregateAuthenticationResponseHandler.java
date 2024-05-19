@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
 import org.slf4j.Logger;
@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public final class AggregateAuthenticationResponseHandler extends AbstractImmutable
+public final class AggregateAuthenticationResponseHandler extends AbstractFreezable
   implements AuthenticationResponseHandler
 {
 
@@ -45,9 +45,9 @@ public final class AggregateAuthenticationResponseHandler extends AbstractImmuta
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     for (AuthenticationResponseHandler[] handlers : responseHandlers.values()) {
       makeImmutable(handlers);
     }
@@ -72,7 +72,7 @@ public final class AggregateAuthenticationResponseHandler extends AbstractImmuta
    */
   public void setAuthenticationResponseHandlers(final Map<String, AuthenticationResponseHandler[]> handlers)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting authenticationResponseHandlers: {}", handlers);
     responseHandlers.putAll(handlers);
   }
@@ -86,7 +86,7 @@ public final class AggregateAuthenticationResponseHandler extends AbstractImmuta
    */
   public void addAuthenticationResponseHandlers(final String label, final AuthenticationResponseHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("adding authenticationResponseHandlers: {}:{}", label, Arrays.toString(handlers));
     responseHandlers.put(label, handlers);
   }
@@ -132,7 +132,7 @@ public final class AggregateAuthenticationResponseHandler extends AbstractImmuta
 
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

@@ -2,7 +2,7 @@
 package org.ldaptive.pool;
 
 import java.time.Duration;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractPruneStrategy extends AbstractImmutable implements PruneStrategy
+public abstract class AbstractPruneStrategy extends AbstractFreezable implements PruneStrategy
 {
 
   /** Default prune period in seconds. Value is 5 minutes. */
@@ -38,7 +38,7 @@ public abstract class AbstractPruneStrategy extends AbstractImmutable implements
    */
   public final void setPrunePeriod(final Duration period)
   {
-    checkImmutable();
+    assertMutable();
     if (period == null || period.isNegative() || period.isZero()) {
       throw new IllegalArgumentException("Prune period cannot be null, negative or zero");
     }
@@ -85,7 +85,7 @@ public abstract class AbstractPruneStrategy extends AbstractImmutable implements
      */
     public B makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return self();
     }
 

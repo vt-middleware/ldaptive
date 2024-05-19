@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConnectionStrategy extends AbstractImmutable implements ConnectionStrategy
+public abstract class AbstractConnectionStrategy extends AbstractFreezable implements ConnectionStrategy
 {
 
   /** Logger for this class. */
@@ -108,7 +108,7 @@ public abstract class AbstractConnectionStrategy extends AbstractImmutable imple
    */
   public final void setRetryCondition(final Predicate<LdapURL> condition)
   {
-    checkImmutable();
+    assertMutable();
     retryCondition = condition;
   }
 

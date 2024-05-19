@@ -94,9 +94,9 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(validationExceptionHandler);
   }
 
@@ -110,13 +110,13 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
 
   /**
    * Sets the connection config. Once invoked the supplied connection config is made immutable. See {@link
-   * ConnectionConfig#makeImmutable()}.
+   * ConnectionConfig#freeze()}.
    *
    * @param  cc  connection config
    */
   public void setConnectionConfig(final ConnectionConfig cc)
   {
-    checkImmutable();
+    assertMutable();
     getDefaultConnectionFactory().setConnectionConfig(cc);
   }
 
@@ -139,7 +139,7 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
    */
   public void setValidationExceptionHandler(final ValidationExceptionHandler handler)
   {
-    checkImmutable();
+    assertMutable();
     validationExceptionHandler = handler;
   }
 
@@ -236,7 +236,7 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
 
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

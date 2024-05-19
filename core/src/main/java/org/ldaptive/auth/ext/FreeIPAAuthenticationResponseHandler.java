@@ -3,7 +3,7 @@ package org.ldaptive.auth.ext;
 
 import java.time.Period;
 import java.time.ZonedDateTime;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
@@ -19,7 +19,7 @@ import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
  *
  * @author  tduehr
  */
-public final class FreeIPAAuthenticationResponseHandler extends AbstractImmutable
+public final class FreeIPAAuthenticationResponseHandler extends AbstractFreezable
   implements AuthenticationResponseHandler
 {
 
@@ -135,7 +135,7 @@ public final class FreeIPAAuthenticationResponseHandler extends AbstractImmutabl
    */
   public void setMaxLoginFailures(final int loginFailures)
   {
-    checkImmutable();
+    assertMutable();
     if (loginFailures < 0) {
       throw new IllegalArgumentException("Login failures must be >= 0");
     }
@@ -163,7 +163,7 @@ public final class FreeIPAAuthenticationResponseHandler extends AbstractImmutabl
    */
   public void setExpirationPeriod(final Period period)
   {
-    checkImmutable();
+    assertMutable();
     expirationPeriod = period;
   }
 
@@ -186,7 +186,7 @@ public final class FreeIPAAuthenticationResponseHandler extends AbstractImmutabl
    */
   public void setWarningPeriod(final Period period)
   {
-    checkImmutable();
+    assertMutable();
     warningPeriod = period;
   }
 

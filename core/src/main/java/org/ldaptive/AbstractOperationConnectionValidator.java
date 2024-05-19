@@ -43,7 +43,7 @@ public abstract class AbstractOperationConnectionValidator<Q extends Request, S 
    */
   public final void setRequest(final Q req)
   {
-    checkImmutable();
+    assertMutable();
     request = req;
   }
 
@@ -66,7 +66,7 @@ public abstract class AbstractOperationConnectionValidator<Q extends Request, S 
    */
   public final void setValidResultCodes(final ResultCode... codes)
   {
-    checkImmutable();
+    assertMutable();
     validResultCodes = LdapUtils.copyArray(codes);
   }
 

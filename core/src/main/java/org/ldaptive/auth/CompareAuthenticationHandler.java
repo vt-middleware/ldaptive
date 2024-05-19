@@ -67,7 +67,7 @@ public final class CompareAuthenticationHandler extends AbstractAuthenticationHa
    */
   public void setPasswordScheme(final String s)
   {
-    checkImmutable();
+    assertMutable();
     passwordScheme = new Scheme(s);
   }
 
@@ -90,7 +90,7 @@ public final class CompareAuthenticationHandler extends AbstractAuthenticationHa
    */
   public void setPasswordAttribute(final String s)
   {
-    checkImmutable();
+    assertMutable();
     passwordAttribute = s;
   }
 

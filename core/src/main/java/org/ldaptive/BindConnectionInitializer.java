@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class BindConnectionInitializer extends AbstractImmutable implements ConnectionInitializer
+public class BindConnectionInitializer extends AbstractFreezable implements ConnectionInitializer
 {
 
   /** Logger for this class. */
@@ -69,9 +69,9 @@ public class BindConnectionInitializer extends AbstractImmutable implements Conn
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(bindSaslConfig);
   }
 
@@ -94,7 +94,7 @@ public class BindConnectionInitializer extends AbstractImmutable implements Conn
    */
   public final void setBindDn(final String dn)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting bindDn: {}", dn);
     bindDn = dn;
   }
@@ -118,7 +118,7 @@ public class BindConnectionInitializer extends AbstractImmutable implements Conn
    */
   public final void setBindCredential(final Credential credential)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting bindCredential: <suppressed>");
     bindCredential = credential;
   }
@@ -142,7 +142,7 @@ public class BindConnectionInitializer extends AbstractImmutable implements Conn
    */
   public final void setBindSaslConfig(final SaslConfig config)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting bindSaslConfig: {}", config);
     bindSaslConfig = config;
   }
@@ -166,7 +166,7 @@ public class BindConnectionInitializer extends AbstractImmutable implements Conn
    */
   public final void setBindControls(final RequestControl... cntrls)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting bindControls: {}", Arrays.toString(cntrls));
     bindControls = LdapUtils.copyArray(cntrls);
   }
@@ -276,7 +276,7 @@ public class BindConnectionInitializer extends AbstractImmutable implements Conn
 
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

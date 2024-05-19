@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConfig extends AbstractImmutable
+public abstract class AbstractConfig extends AbstractFreezable
 {
 
   /** Logger for this class. */

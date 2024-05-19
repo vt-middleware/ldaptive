@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapException;
 import org.ldaptive.concurrent.CallableWorker;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public final class AggregateDnResolver extends AbstractImmutable implements DnResolver
+public final class AggregateDnResolver extends AbstractFreezable implements DnResolver
 {
 
   /** Logger for this class. */
@@ -70,9 +70,9 @@ public final class AggregateDnResolver extends AbstractImmutable implements DnRe
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     for (DnResolver resolver : dnResolvers.values()) {
       makeImmutable(resolver);
     }
@@ -97,7 +97,7 @@ public final class AggregateDnResolver extends AbstractImmutable implements DnRe
    */
   public void setDnResolvers(final Map<String, DnResolver> resolvers)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting dnResolvers: {}", resolvers);
     dnResolvers.putAll(resolvers);
   }
@@ -111,7 +111,7 @@ public final class AggregateDnResolver extends AbstractImmutable implements DnRe
    */
   public void addDnResolver(final String label, final DnResolver resolver)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("adding dnResolver: {}:{}", label, resolver);
     dnResolvers.put(label, resolver);
   }
@@ -136,7 +136,7 @@ public final class AggregateDnResolver extends AbstractImmutable implements DnRe
    */
   public void setAllowMultipleDns(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting allowMultipleDns: {}", b);
     allowMultipleDns = b;
   }
@@ -233,7 +233,7 @@ public final class AggregateDnResolver extends AbstractImmutable implements DnRe
 
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConnectionValidator extends AbstractImmutable implements ConnectionValidator
+public abstract class AbstractConnectionValidator extends AbstractFreezable implements ConnectionValidator
 {
 
   /** Default validation period, value is 30 minutes. */
@@ -52,7 +52,7 @@ public abstract class AbstractConnectionValidator extends AbstractImmutable impl
 
   public final void setValidatePeriod(final Duration period)
   {
-    checkImmutable();
+    assertMutable();
     if (period == null || period.isNegative() || period.isZero()) {
       throw new IllegalArgumentException("Period cannot be null, negative or zero");
     }
@@ -73,7 +73,7 @@ public abstract class AbstractConnectionValidator extends AbstractImmutable impl
    */
   public final void setValidateTimeout(final Duration timeout)
   {
-    checkImmutable();
+    assertMutable();
     if (timeout == null || timeout.isNegative()) {
       throw new IllegalArgumentException("Timeout cannot be null or negative");
     }
@@ -99,7 +99,7 @@ public abstract class AbstractConnectionValidator extends AbstractImmutable impl
    */
   public final void setOnSuccess(final Consumer<Connection> consumer)
   {
-    checkImmutable();
+    assertMutable();
     onSuccess = consumer;
   }
 
@@ -122,7 +122,7 @@ public abstract class AbstractConnectionValidator extends AbstractImmutable impl
    */
   public final void setOnFailure(final Consumer<Connection> consumer)
   {
-    checkImmutable();
+    assertMutable();
     onFailure = consumer;
   }
 
@@ -145,7 +145,7 @@ public abstract class AbstractConnectionValidator extends AbstractImmutable impl
    */
   public final void setTimeoutIsFailure(final boolean failure)
   {
-    checkImmutable();
+    assertMutable();
     timeoutIsFailure = failure;
   }
 
@@ -249,7 +249,7 @@ public abstract class AbstractConnectionValidator extends AbstractImmutable impl
      */
     public B makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return self();
     }
 

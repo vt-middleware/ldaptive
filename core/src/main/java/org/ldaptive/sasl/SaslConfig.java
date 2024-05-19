@@ -56,7 +56,7 @@ public final class SaslConfig extends AbstractConfig
    */
   public void setMechanism(final Mechanism m)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting mechanism: {}", m);
     mechanism = m;
   }
@@ -80,7 +80,7 @@ public final class SaslConfig extends AbstractConfig
    */
   public void setAuthorizationId(final String id)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting authorizationId: {}", id);
     authorizationId = id;
   }
@@ -104,7 +104,7 @@ public final class SaslConfig extends AbstractConfig
    */
   public void setMutualAuthentication(final Boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting mutualAuthentication: {}", b);
     mutualAuthentication = b;
   }
@@ -128,7 +128,7 @@ public final class SaslConfig extends AbstractConfig
    */
   public void setQualityOfProtection(final QualityOfProtection... qop)
   {
-    checkImmutable();
+    assertMutable();
     checkArrayContainsNull(qop);
     logger.trace("setting qualityOfProtection: {}", Arrays.toString(qop));
     qualityOfProtection = LdapUtils.copyArray(qop);
@@ -153,7 +153,7 @@ public final class SaslConfig extends AbstractConfig
    */
   public void setSecurityStrength(final SecurityStrength... ss)
   {
-    checkImmutable();
+    assertMutable();
     checkArrayContainsNull(ss);
     logger.trace("setting securityStrength: {}", Arrays.toString(ss));
     securityStrength = LdapUtils.copyArray(ss);
@@ -178,7 +178,7 @@ public final class SaslConfig extends AbstractConfig
    */
   public void setRealm(final String realm)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting realm: {}", realm);
     saslRealm = realm;
   }
@@ -202,7 +202,7 @@ public final class SaslConfig extends AbstractConfig
    */
   public void setProperties(final Map<String, ?> props)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting properties: {}", props);
     properties.putAll(props);
   }
@@ -229,7 +229,7 @@ public final class SaslConfig extends AbstractConfig
    */
   public void setProperty(final String name, final Object value)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting property: {}={}", name, value);
     properties.put(name, value);
   }
@@ -294,7 +294,7 @@ public final class SaslConfig extends AbstractConfig
 
     public Builder makeImmutable()
     {
-      object.makeImmutable();
+      object.freeze();
       return this;
     }
 

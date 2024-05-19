@@ -89,7 +89,7 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
    */
   public final void setIdleTime(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Idle time cannot be null or negative");
     }

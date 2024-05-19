@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractSearchOperationFactory extends AbstractImmutable implements ConnectionFactoryManager
+public abstract class AbstractSearchOperationFactory extends AbstractFreezable implements ConnectionFactoryManager
 {
 
   /** Logger for this class. */
@@ -65,9 +65,9 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(factory);
     makeImmutable(requestHandlers);
     makeImmutable(resultHandlers);
@@ -100,7 +100,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setConnectionFactory(final ConnectionFactory cf)
   {
-    checkImmutable();
+    assertMutable();
     factory = cf;
   }
 
@@ -124,7 +124,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
   @SuppressWarnings("unchecked")
   public final void setRequestHandlers(final RequestHandler<SearchRequest>... handlers)
   {
-    checkImmutable();
+    assertMutable();
     requestHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -147,7 +147,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setResultHandlers(final ResultHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     resultHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -170,7 +170,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setControlHandlers(final ResponseControlHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     controlHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -193,7 +193,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setReferralHandlers(final ReferralHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     referralHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -216,7 +216,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setIntermediateResponseHandlers(final IntermediateResponseHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     intermediateResponseHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -239,7 +239,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setExceptionHandler(final ExceptionHandler handler)
   {
-    checkImmutable();
+    assertMutable();
     exceptionHandler = handler;
   }
 
@@ -262,7 +262,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setThrowCondition(final ResultPredicate function)
   {
-    checkImmutable();
+    assertMutable();
     throwCondition = function;
   }
 
@@ -285,7 +285,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setUnsolicitedNotificationHandlers(final UnsolicitedNotificationHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     unsolicitedNotificationHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -308,7 +308,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setEntryHandlers(final LdapEntryHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     entryHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -331,7 +331,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setReferenceHandlers(final SearchReferenceHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     referenceHandlers = LdapUtils.copyArray(handlers);
   }
 
@@ -354,7 +354,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractImmutable i
    */
   public final void setSearchResultHandlers(final SearchResultHandler... handlers)
   {
-    checkImmutable();
+    assertMutable();
     searchResultHandlers = LdapUtils.copyArray(handlers);
   }
 

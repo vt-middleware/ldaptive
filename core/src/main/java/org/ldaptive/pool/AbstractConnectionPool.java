@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
-import org.ldaptive.AbstractImmutable;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionValidator;
 import org.ldaptive.DefaultConnectionFactory;
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConnectionPool extends AbstractImmutable implements ConnectionPool
+public abstract class AbstractConnectionPool extends AbstractFreezable implements ConnectionPool
 {
 
   /** Default min pool size, value is {@value}. */
@@ -144,9 +144,9 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
 
 
   @Override
-  public void makeImmutable()
+  public void freeze()
   {
-    super.makeImmutable();
+    super.freeze();
     makeImmutable(activator);
     makeImmutable(passivator);
     makeImmutable(validator);
@@ -173,7 +173,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setName(final String s)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting name: {}", s);
     name = s;
   }
@@ -198,7 +198,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setMinPoolSize(final int size)
   {
-    checkImmutable();
+    assertMutable();
     if (size < 0) {
       throw new IllegalArgumentException("Minimum pool size must be greater than or equal to 0 for pool " + getName());
     }
@@ -226,7 +226,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setMaxPoolSize(final int size)
   {
-    checkImmutable();
+    assertMutable();
     // allow a max size of zero for configurations that need to create a pool but don't want it to function
     if (size < 0) {
       throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 0 for pool " + getName());
@@ -254,7 +254,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setValidateOnCheckIn(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting validateOnCheckIn: {}", b);
     validateOnCheckIn = b;
   }
@@ -278,7 +278,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setValidateOnCheckOut(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting validateOnCheckOut: {}", b);
     validateOnCheckOut = b;
   }
@@ -302,7 +302,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setValidatePeriodically(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting validatePeriodically: {}", b);
     validatePeriodically = b;
   }
@@ -326,7 +326,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setActivator(final ConnectionActivator a)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting activator: {}", a);
     activator = a;
   }
@@ -350,7 +350,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setPassivator(final ConnectionPassivator p)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting passivator: {}", p);
     passivator = p;
   }
@@ -374,7 +374,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setValidator(final ConnectionValidator cv)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting validator: {}", cv);
     validator = cv;
   }
@@ -398,7 +398,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setPruneStrategy(final PruneStrategy ps)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting pruneStrategy: {}", ps);
     pruneStrategy = ps;
   }
@@ -422,7 +422,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setDefaultConnectionFactory(final DefaultConnectionFactory cf)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting defaultConnectionFactory: {}", cf);
     connectionFactory = cf;
   }
@@ -446,7 +446,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setConnectOnCreate(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting connectOnCreate: {}", b);
     connectOnCreate = b;
   }
@@ -471,7 +471,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setQueueType(final QueueType type)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting queueType: {}", type);
     queueType = type;
   }
@@ -495,7 +495,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
    */
   public final void setFailFastInitialize(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting failFastInitialize: {}", b);
     failFastInitialize = b;
   }
@@ -611,7 +611,7 @@ public abstract class AbstractConnectionPool extends AbstractImmutable implement
       logger.debug("Validate pool task scheduled for {}", this);
     }
 
-    makeImmutable();
+    this.freeze();
     initialized = true;
     logger.info("Pool initialized for {}", this);
   }

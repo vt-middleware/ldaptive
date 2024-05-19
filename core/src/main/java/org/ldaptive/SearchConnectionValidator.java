@@ -71,7 +71,7 @@ public class SearchConnectionValidator extends AbstractOperationConnectionValida
   @Deprecated
   public final void setSearchRequest(final SearchRequest sr)
   {
-    checkImmutable();
+    assertMutable();
     setRequest(sr);
   }
 
