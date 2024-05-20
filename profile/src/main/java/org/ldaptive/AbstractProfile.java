@@ -30,6 +30,7 @@ public abstract class AbstractProfile
   /** Number to start with for UID creation. */
   protected static final int UID_START = 549801;
 
+  // CheckStyle:VisibilityModifier OFF
   /** Number of threads to execute searches. */
   static int threadCount;
 
@@ -38,6 +39,7 @@ public abstract class AbstractProfile
 
   /** Number of searches to execute. */
   static int iterations;
+  // CheckStyle:VisibilityModifier ON
 
   /** Number of searches requested. */
   private static final AtomicInteger REQUEST_COUNT = new AtomicInteger();
