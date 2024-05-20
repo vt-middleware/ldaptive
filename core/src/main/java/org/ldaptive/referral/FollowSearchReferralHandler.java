@@ -109,4 +109,11 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
       new FollowSearchReferralHandler(getReferralLimit(), getReferralDepth() + 1, getReferralConnectionFactory()));
     return op;
   }
+
+
+  @Override
+  public FollowSearchReferralHandler newInstance()
+  {
+    return new FollowSearchReferralHandler(getReferralLimit(), getReferralDepth(), getReferralConnectionFactory());
+  }
 }

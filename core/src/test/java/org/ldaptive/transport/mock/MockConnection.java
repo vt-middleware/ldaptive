@@ -366,6 +366,13 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    public Builder openPredicate(final Predicate<LdapURL> p)
+    {
+      object.setOpenPredicate(p);
+      return this;
+    }
+
+
     public Builder abandonConsumer(final Consumer<AbandonRequest> c)
     {
       object.setAbandonConsumer(c);

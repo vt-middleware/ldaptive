@@ -9,7 +9,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class NoOpEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler
+public class NoOpEntryHandler implements LdapEntryHandler
 {
 
   /** hash code seed. */
@@ -19,7 +19,6 @@ public class NoOpEntryHandler extends AbstractEntryHandler<LdapEntry> implements
   @Override
   public LdapEntry apply(final LdapEntry entry)
   {
-    handleEntry(entry);
     return entry;
   }
 

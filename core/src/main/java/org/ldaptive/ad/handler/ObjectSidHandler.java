@@ -56,6 +56,13 @@ public class ObjectSidHandler extends AbstractBinaryAttributeHandler<LdapEntry> 
 
 
   @Override
+  public ObjectSidHandler newInstance()
+  {
+    return new ObjectSidHandler();
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {

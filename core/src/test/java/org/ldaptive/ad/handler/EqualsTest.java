@@ -47,7 +47,7 @@ public class EqualsTest
     EqualsVerifier.forClass(clazz)
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
-      .withIgnoredFields("logger", "connection", "request", "handle")
+      .withIgnoredFields("logger", "connection", "request", "handle", "immutable")
       .verify();
   }
 }

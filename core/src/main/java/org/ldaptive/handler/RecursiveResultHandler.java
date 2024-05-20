@@ -12,6 +12,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
+import org.ldaptive.transport.AbstractMessageFunctionalEntryHandler;
 
 /**
  * This recursively searches based on a supplied attribute and merges those results into the original entry. For the
@@ -46,7 +47,8 @@ import org.ldaptive.SearchResponse;
  *
  * @author  Middleware Services
  */
-public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse> implements SearchResultHandler
+public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandler<SearchResponse>
+  implements SearchResultHandler
 {
 
   /** hash code seed. */
@@ -85,7 +87,7 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
    *
    * @return  attribute name
    */
-  public String getSearchAttribute()
+  public final String getSearchAttribute()
   {
     return searchAttribute;
   }
@@ -96,8 +98,9 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
    *
    * @param  name  of the search attribute
    */
-  public void setSearchAttribute(final String name)
+  public final void setSearchAttribute(final String name)
   {
+    assertMutable();
     searchAttribute = name;
     initializeReturnAttributes();
   }
@@ -108,9 +111,9 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
    *
    * @return  attribute names
    */
-  public String[] getMergeAttributes()
+  public final String[] getMergeAttributes()
   {
-    return mergeAttributes;
+    return LdapUtils.copyArray(mergeAttributes);
   }
 
 
@@ -119,9 +122,10 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
    *
    * @param  mergeAttrs  attribute names to merge
    */
-  public void setMergeAttributes(final String... mergeAttrs)
+  public final void setMergeAttributes(final String... mergeAttrs)
   {
-    mergeAttributes = mergeAttrs;
+    assertMutable();
+    mergeAttributes = LdapUtils.copyArray(mergeAttrs);
     initializeReturnAttributes();
   }
 
@@ -247,6 +251,13 @@ public class RecursiveResultHandler extends AbstractEntryHandler<SearchResponse>
     throws LdapException
   {
     return getConnection().operation(SearchRequest.objectScopeSearchRequest(baseDn, attrs)).execute();
+  }
+
+
+  @Override
+  public RecursiveResultHandler newInstance()
+  {
+    return new RecursiveResultHandler(searchAttribute, mergeAttributes);
   }
 
 

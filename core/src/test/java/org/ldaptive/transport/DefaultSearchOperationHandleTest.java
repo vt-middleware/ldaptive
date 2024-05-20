@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
@@ -16,7 +17,9 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
+import org.ldaptive.ad.handler.AbstractBinaryAttributeHandler;
 import org.ldaptive.extended.IntermediateResponse;
+import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.transport.mock.MockConnection;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -44,6 +47,8 @@ public class DefaultSearchOperationHandleTest
   @DataProvider(name = "search-handles")
   public Object[][] createHandles()
   {
+    final TestBinaryAttributeHandler entryHandler = new TestBinaryAttributeHandler();
+    entryHandler.freeze();
     return
       new Object[][] {
         new Object[] {
@@ -51,7 +56,7 @@ public class DefaultSearchOperationHandleTest
             SearchRequest.builder().build(),
             MockConnection.builder(
               ConnectionConfig.builder().url("ldap://ds1.ldaptive.org").build()).abandonConsumer(req -> {}).build(),
-            Duration.ZERO),
+            Duration.ZERO).onEntry(entryHandler),
           SearchResponse.builder().messageID(1).build(),
           Duration.ofSeconds(2),
           false,
@@ -61,7 +66,7 @@ public class DefaultSearchOperationHandleTest
             SearchRequest.builder().build(),
             MockConnection.builder(
               ConnectionConfig.builder().url("ldap://ds1.ldaptive.org").build()).abandonConsumer(req -> {}).build(),
-            Duration.ofSeconds(1)),
+            Duration.ofSeconds(1)).onEntry(entryHandler),
           SearchResponse.builder().messageID(1).build(),
           Duration.ofSeconds(2),
           true,
@@ -71,7 +76,7 @@ public class DefaultSearchOperationHandleTest
             SearchRequest.builder().build(),
             MockConnection.builder(
               ConnectionConfig.builder().url("ldap://ds1.ldaptive.org").build()).abandonConsumer(req -> {}).build(),
-            Duration.ofSeconds(3)),
+            Duration.ofSeconds(3)).onEntry(entryHandler),
           SearchResponse.builder().messageID(1).build(),
           Duration.ofSeconds(2),
           false,
@@ -368,5 +373,33 @@ public class DefaultSearchOperationHandleTest
       Assert.fail("Exception was not set on the handle");
     }
     Assert.assertEquals(ResultCode.LOCAL_ERROR, ldapException.get().getResultCode());
+  }
+
+
+  /** Test class. */
+  protected static class TestBinaryAttributeHandler extends AbstractBinaryAttributeHandler<LdapEntry>
+    implements LdapEntryHandler
+  {
+
+
+    @Override
+    protected String convertValue(final byte[] value)
+    {
+      return new String(value, StandardCharsets.UTF_8);
+    }
+
+
+    @Override
+    public LdapEntry apply(final LdapEntry ldapEntry)
+    {
+      return ldapEntry;
+    }
+
+
+    @Override
+    public TestBinaryAttributeHandler newInstance()
+    {
+      return new TestBinaryAttributeHandler();
+    }
   }
 }

@@ -141,4 +141,12 @@ public class FollowSearchResultReferenceHandler extends AbstractFollowReferralHa
     }
     return result;
   }
+
+
+  @Override
+  public FollowSearchResultReferenceHandler newInstance()
+  {
+    return new FollowSearchResultReferenceHandler(
+      getReferralLimit(), getReferralDepth(), getReferralConnectionFactory());
+  }
 }

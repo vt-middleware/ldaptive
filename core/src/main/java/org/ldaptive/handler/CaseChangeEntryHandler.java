@@ -11,7 +11,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler
+public class CaseChangeEntryHandler extends AbstractEntryHandler implements LdapEntryHandler
 {
 
   /** hash code seed. */
@@ -65,12 +65,37 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
   private String[] attributeNames;
 
 
+  /** Default constructor. */
+  public CaseChangeEntryHandler() {}
+
+
+  /**
+   * Creates a new case change entry handler.
+   *
+   * @param  dnChange  to apply to entry DN
+   * @param  attrNameChange  to apply to attribute names
+   * @param  attrValueChange  to apply to attribute values
+   * @param  attrNames  to apply these changes to
+   */
+  public CaseChangeEntryHandler(
+    final CaseChange dnChange,
+    final CaseChange attrNameChange,
+    final CaseChange attrValueChange,
+    final String... attrNames)
+  {
+    dnCaseChange = dnChange;
+    attributeNameCaseChange = attrNameChange;
+    attributeValueCaseChange = attrValueChange;
+    attributeNames = attrNames;
+  }
+
+
   /**
    * Returns the DN case change.
    *
    * @return  case change
    */
-  public CaseChange getDnCaseChange()
+  public final CaseChange getDnCaseChange()
   {
     return dnCaseChange;
   }
@@ -81,8 +106,9 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
    *
    * @param  cc  case change
    */
-  public void setDnCaseChange(final CaseChange cc)
+  public final void setDnCaseChange(final CaseChange cc)
   {
+    assertMutable();
     dnCaseChange = cc;
   }
 
@@ -92,7 +118,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
    *
    * @return  case change
    */
-  public CaseChange getAttributeNameCaseChange()
+  public final CaseChange getAttributeNameCaseChange()
   {
     return attributeNameCaseChange;
   }
@@ -103,8 +129,9 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
    *
    * @param  cc  case change
    */
-  public void setAttributeNameCaseChange(final CaseChange cc)
+  public final void setAttributeNameCaseChange(final CaseChange cc)
   {
+    assertMutable();
     attributeNameCaseChange = cc;
   }
 
@@ -114,7 +141,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
    *
    * @return  case change
    */
-  public CaseChange getAttributeValueCaseChange()
+  public final CaseChange getAttributeValueCaseChange()
   {
     return attributeValueCaseChange;
   }
@@ -125,8 +152,9 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
    *
    * @param  cc  case change
    */
-  public void setAttributeValueCaseChange(final CaseChange cc)
+  public final void setAttributeValueCaseChange(final CaseChange cc)
   {
+    assertMutable();
     attributeValueCaseChange = cc;
   }
 
@@ -136,9 +164,9 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
    *
    * @return  attribute names
    */
-  public String[] getAttributeNames()
+  public final String[] getAttributeNames()
   {
-    return attributeNames;
+    return LdapUtils.copyArray(attributeNames);
   }
 
 
@@ -147,9 +175,10 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
    *
    * @param  names  of the attributes
    */
-  public void setAttributeNames(final String... names)
+  public final void setAttributeNames(final String... names)
   {
-    attributeNames = names;
+    assertMutable();
+    attributeNames = LdapUtils.copyArray(names);
   }
 
 
@@ -199,13 +228,6 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
 
 
   @Override
-  protected byte[] handleAttributeValue(final byte[] value)
-  {
-    return value;
-  }
-
-
-  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {
@@ -244,5 +266,110 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler<LdapEntry> impl
       "attributeNameCaseChange=" + attributeNameCaseChange + ", " +
       "attributeValueCaseChange=" + attributeValueCaseChange + ", " +
       "attributeNames=" + Arrays.toString(attributeNames) + "]";
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  /** Case change entry handler builder. */
+  public static final class Builder
+  {
+
+    /** Case change entry handler to build. */
+    private final CaseChangeEntryHandler object = new CaseChangeEntryHandler();
+
+
+    /**
+     * Default constructor.
+     */
+    private Builder() {}
+
+
+    /**
+     * Makes this instance immutable.
+     *
+     * @return  this builder
+     */
+    public Builder freeze()
+    {
+      object.freeze();
+      return this;
+    }
+
+
+    /**
+     * Sets the DN case change.
+     *
+     * @param  cc  DN case change
+     *
+     * @return  this builder
+     */
+    public Builder dnCaseChange(final CaseChange cc)
+    {
+      object.setDnCaseChange(cc);
+      return this;
+    }
+
+
+    /**
+     * Sets the attribute name case change.
+     *
+     * @param  cc  attribute name case change
+     *
+     * @return  this builder
+     */
+    public Builder attributeNameCaseChange(final CaseChange cc)
+    {
+      object.setAttributeNameCaseChange(cc);
+      return this;
+    }
+
+
+    /**
+     * Sets the attribute value case change.
+     *
+     * @param  cc  attribute value case change
+     *
+     * @return  this builder
+     */
+    public Builder attributeValueCaseChange(final CaseChange cc)
+    {
+      object.setAttributeValueCaseChange(cc);
+      return this;
+    }
+
+
+    /**
+     * Sets the attribute names.
+     *
+     * @param  names  attribute names
+     *
+     * @return  this builder
+     */
+    public Builder attributeNames(final String... names)
+    {
+      object.setAttributeNames(names);
+      return this;
+    }
+
+
+    /**
+     * Returns the case change entry handler.
+     *
+     * @return  case change entry handler
+     */
+    public CaseChangeEntryHandler build()
+    {
+      return object;
+    }
   }
 }

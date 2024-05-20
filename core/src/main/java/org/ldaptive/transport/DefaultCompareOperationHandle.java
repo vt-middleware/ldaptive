@@ -133,8 +133,7 @@ public class DefaultCompareOperationHandle
    */
   public DefaultCompareOperationHandle onCompare(final CompareValueHandler... function)
   {
-    onCompare = function;
-    initializeMessageFunctional((Object[]) onCompare);
+    onCompare = initializeMessageFunctional(function);
     return this;
   }
 

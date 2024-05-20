@@ -10,7 +10,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class DnAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler
+public class DnAttributeEntryHandler extends AbstractEntryHandler implements LdapEntryHandler
 {
 
   /** hash code seed. */
@@ -25,12 +25,29 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> imp
   private boolean addIfExists;
 
 
+  /** Default constructor. */
+  public DnAttributeEntryHandler() {}
+
+
+  /**
+   * Creates a new DN attribute entry handler.
+   *
+   * @param  attrName  to add the DN to
+   * @param  add  whether to add the DN if the attribute exists
+   */
+  public DnAttributeEntryHandler(final String attrName, final boolean add)
+  {
+    dnAttributeName = attrName;
+    addIfExists = add;
+  }
+
+
   /**
    * Returns the DN attribute name.
    *
    * @return  DN attribute name
    */
-  public String getDnAttributeName()
+  public final String getDnAttributeName()
   {
     return dnAttributeName;
   }
@@ -41,8 +58,9 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> imp
    *
    * @param  name  of the DN attribute
    */
-  public void setDnAttributeName(final String name)
+  public final void setDnAttributeName(final String name)
   {
+    assertMutable();
     dnAttributeName = name;
   }
 
@@ -52,7 +70,7 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> imp
    *
    * @return  whether to add the entryDN if an attribute of the same name exists
    */
-  public boolean isAddIfExists()
+  public final boolean isAddIfExists()
   {
     return addIfExists;
   }
@@ -63,8 +81,9 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> imp
    *
    * @param  b  whether to add the entryDN if an attribute of the same name exists
    */
-  public void setAddIfExists(final boolean b)
+  public final void setAddIfExists(final boolean b)
   {
+    assertMutable();
     addIfExists = b;
   }
 
@@ -117,5 +136,82 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> imp
       getClass().getName() + "@" + hashCode() + "::" +
       "dnAttributeName=" + dnAttributeName + ", " +
       "addIfExists=" + addIfExists + "]";
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  /** DN attribute entry handler builder. */
+  public static final class Builder
+  {
+
+    /** DN attribute entry handler to build. */
+    private final DnAttributeEntryHandler object = new DnAttributeEntryHandler();
+
+
+    /**
+     * Default constructor.
+     */
+    private Builder() {}
+
+
+    /**
+     * Makes this instance immutable.
+     *
+     * @return  this builder
+     */
+    public Builder freeze()
+    {
+      object.freeze();
+      return this;
+    }
+
+
+    /**
+     * Sets the DN attribute name.
+     *
+     * @param  name  DN attribute name
+     *
+     * @return  this builder
+     */
+    public Builder dnAttributeName(final String name)
+    {
+      object.setDnAttributeName(name);
+      return this;
+    }
+
+
+    /**
+     * Sets the add if exists.
+     *
+     * @param  b  add if exists
+     *
+     * @return  this builder
+     */
+    public Builder addIfExists(final boolean b)
+    {
+      object.setAddIfExists(b);
+      return this;
+    }
+
+
+    /**
+     * Returns the DN attribute entry handler.
+     *
+     * @return  DN attribute entry handler
+     */
+    public DnAttributeEntryHandler build()
+    {
+      return object;
+    }
   }
 }

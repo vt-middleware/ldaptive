@@ -194,8 +194,7 @@ public class DefaultSearchOperationHandle
   @Override
   public DefaultSearchOperationHandle onEntry(final LdapEntryHandler... function)
   {
-    onEntry = function;
-    initializeMessageFunctional((Object[]) onEntry);
+    onEntry = initializeMessageFunctional(function);
     return this;
   }
 
@@ -203,8 +202,7 @@ public class DefaultSearchOperationHandle
   @Override
   public DefaultSearchOperationHandle onReference(final SearchReferenceHandler... function)
   {
-    onReference = function;
-    initializeMessageFunctional((Object[]) onReference);
+    onReference = initializeMessageFunctional(function);
     return this;
   }
 
@@ -212,8 +210,7 @@ public class DefaultSearchOperationHandle
   @Override
   public DefaultSearchOperationHandle onSearchResult(final SearchResultHandler... function)
   {
-    onSearchResult = function;
-    initializeMessageFunctional((Object[]) onSearchResult);
+    onSearchResult = initializeMessageFunctional(function);
     return this;
   }
 
