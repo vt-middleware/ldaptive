@@ -46,7 +46,7 @@ public final class AggregateAuthenticationHandler extends AbstractFreezable impl
   public void freeze()
   {
     super.freeze();
-    makeImmutable(authenticationHandlers);
+    freeze(authenticationHandlers);
   }
 
 
@@ -125,7 +125,7 @@ public final class AggregateAuthenticationHandler extends AbstractFreezable impl
     private Builder() {}
 
 
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

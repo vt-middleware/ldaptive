@@ -154,10 +154,10 @@ public final class ConnectionConfig extends AbstractConfig
   public void freeze()
   {
     super.freeze();
-    makeImmutable(sslConfig);
-    makeImmutable(connectionInitializers);
-    makeImmutable(connectionStrategy);
-    makeImmutable(connectionValidator);
+    freeze(sslConfig);
+    freeze(connectionInitializers);
+    freeze(connectionStrategy);
+    freeze(connectionValidator);
   }
 
 

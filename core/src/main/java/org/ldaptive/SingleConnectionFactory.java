@@ -115,7 +115,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
   public void freeze()
   {
     super.freeze();
-    makeImmutable(validator);
+    freeze(validator);
   }
 
 

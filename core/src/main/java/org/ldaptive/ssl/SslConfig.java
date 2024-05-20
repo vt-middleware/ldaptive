@@ -353,7 +353,7 @@ public final class SslConfig extends AbstractConfig
     private Builder() {}
 
 
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

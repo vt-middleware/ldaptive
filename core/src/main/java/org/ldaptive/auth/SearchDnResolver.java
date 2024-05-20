@@ -443,7 +443,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
      *
      * @return  this builder
      */
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

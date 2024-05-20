@@ -68,17 +68,17 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
   public void freeze()
   {
     super.freeze();
-    makeImmutable(factory);
-    makeImmutable(requestHandlers);
-    makeImmutable(resultHandlers);
-    makeImmutable(controlHandlers);
-    makeImmutable(referralHandlers);
-    makeImmutable(intermediateResponseHandlers);
-    makeImmutable(exceptionHandler);
-    makeImmutable(unsolicitedNotificationHandlers);
-    makeImmutable(entryHandlers);
-    makeImmutable(referralHandlers);
-    makeImmutable(searchResultHandlers);
+    freeze(factory);
+    freeze(requestHandlers);
+    freeze(resultHandlers);
+    freeze(controlHandlers);
+    freeze(referralHandlers);
+    freeze(intermediateResponseHandlers);
+    freeze(exceptionHandler);
+    freeze(unsolicitedNotificationHandlers);
+    freeze(entryHandlers);
+    freeze(referralHandlers);
+    freeze(searchResultHandlers);
   }
 
 

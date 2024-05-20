@@ -48,7 +48,7 @@ public final class AggregateEntryResolver extends AbstractFreezable implements E
   {
     super.freeze();
     for (EntryResolver resolver : entryResolvers.values()) {
-      makeImmutable(resolver);
+      freeze(resolver);
     }
   }
 
@@ -126,7 +126,7 @@ public final class AggregateEntryResolver extends AbstractFreezable implements E
     private Builder() {}
 
 
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

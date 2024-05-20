@@ -73,11 +73,11 @@ public final class Authenticator extends AbstractFreezable
   public void freeze()
   {
     super.freeze();
-    makeImmutable(dnResolver);
-    makeImmutable(authenticationHandler);
-    makeImmutable(entryResolver);
-    makeImmutable(requestHandlers);
-    makeImmutable(responseHandlers);
+    freeze(dnResolver);
+    freeze(authenticationHandler);
+    freeze(entryResolver);
+    freeze(requestHandlers);
+    freeze(responseHandlers);
   }
 
 
@@ -581,7 +581,7 @@ public final class Authenticator extends AbstractFreezable
      *
      * @return  this builder
      */
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

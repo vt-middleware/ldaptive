@@ -97,7 +97,7 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
   public void freeze()
   {
     super.freeze();
-    makeImmutable(validationExceptionHandler);
+    freeze(validationExceptionHandler);
   }
 
 
@@ -234,7 +234,7 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
     }
 
 
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

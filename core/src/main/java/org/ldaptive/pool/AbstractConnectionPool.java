@@ -147,11 +147,11 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   public void freeze()
   {
     super.freeze();
-    makeImmutable(activator);
-    makeImmutable(passivator);
-    makeImmutable(validator);
-    makeImmutable(pruneStrategy);
-    makeImmutable(connectionFactory);
+    freeze(activator);
+    freeze(passivator);
+    freeze(validator);
+    freeze(pruneStrategy);
+    freeze(connectionFactory);
   }
 
 

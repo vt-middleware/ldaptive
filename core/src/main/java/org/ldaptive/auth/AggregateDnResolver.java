@@ -74,7 +74,7 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
   {
     super.freeze();
     for (DnResolver resolver : dnResolvers.values()) {
-      makeImmutable(resolver);
+      freeze(resolver);
     }
   }
 
@@ -231,7 +231,7 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
     private Builder() {}
 
 
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

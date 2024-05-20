@@ -42,11 +42,11 @@ public abstract class AbstractFreezable implements Freezable
    *
    * @param  objects  to make immutable
    */
-  protected static void makeImmutable(final Object[] objects)
+  protected static void freeze(final Object[] objects)
   {
     if (objects != null) {
       for (Object o : objects) {
-        makeImmutable(o);
+        freeze(o);
       }
     }
   }
@@ -57,7 +57,7 @@ public abstract class AbstractFreezable implements Freezable
    *
    * @param  object  to make immutable
    */
-  protected static void makeImmutable(final Object object)
+  protected static void freeze(final Object object)
   {
     if (object instanceof Freezable) {
       ((Freezable) object).freeze();

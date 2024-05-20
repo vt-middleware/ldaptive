@@ -72,7 +72,7 @@ public class BindConnectionInitializer extends AbstractFreezable implements Conn
   public void freeze()
   {
     super.freeze();
-    makeImmutable(bindSaslConfig);
+    freeze(bindSaslConfig);
   }
 
 
@@ -274,7 +274,7 @@ public class BindConnectionInitializer extends AbstractFreezable implements Conn
     protected Builder() {}
 
 
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

@@ -96,7 +96,7 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
   public void freeze()
   {
     super.freeze();
-    makeImmutable(config);
+    freeze(config);
   }
 
 
@@ -206,7 +206,7 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
     }
 
 
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

@@ -247,7 +247,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
      *
      * @return  this builder
      */
-    public B makeImmutable()
+    public B freeze()
     {
       object.freeze();
       return self();

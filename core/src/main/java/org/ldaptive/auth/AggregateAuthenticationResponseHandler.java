@@ -49,7 +49,7 @@ public final class AggregateAuthenticationResponseHandler extends AbstractFreeza
   {
     super.freeze();
     for (AuthenticationResponseHandler[] handlers : responseHandlers.values()) {
-      makeImmutable(handlers);
+      freeze(handlers);
     }
   }
 
@@ -130,7 +130,7 @@ public final class AggregateAuthenticationResponseHandler extends AbstractFreeza
     private Builder() {}
 
 
-    public Builder makeImmutable()
+    public Builder freeze()
     {
       object.freeze();
       return this;

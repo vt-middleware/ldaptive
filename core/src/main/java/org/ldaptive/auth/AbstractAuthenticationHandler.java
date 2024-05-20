@@ -35,7 +35,7 @@ public abstract class AbstractAuthenticationHandler extends AbstractFreezable
   public void freeze()
   {
     super.freeze();
-    makeImmutable(factory);
+    freeze(factory);
   }
 
 

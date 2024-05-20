@@ -83,7 +83,7 @@ public abstract class AbstractPruneStrategy extends AbstractFreezable implements
      *
      * @return  this builder
      */
-    public B makeImmutable()
+    public B freeze()
     {
       object.freeze();
       return self();
