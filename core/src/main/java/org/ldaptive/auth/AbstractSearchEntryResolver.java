@@ -8,6 +8,7 @@ import org.ldaptive.DerefAliases;
 import org.ldaptive.FilterTemplate;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchScope;
@@ -49,7 +50,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @return  base DN
    */
-  public String getBaseDn()
+  public final String getBaseDn()
   {
     return baseDn;
   }
@@ -60,8 +61,9 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @param  dn  base DN
    */
-  public void setBaseDn(final String dn)
+  public final void setBaseDn(final String dn)
   {
+    assertMutable();
     logger.trace("setting baseDn: {}", dn);
     baseDn = dn;
   }
@@ -72,7 +74,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @return  filter for searching
    */
-  public String getUserFilter()
+  public final String getUserFilter()
   {
     return userFilter;
   }
@@ -83,8 +85,9 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @param  filter  for searching
    */
-  public void setUserFilter(final String filter)
+  public final void setUserFilter(final String filter)
   {
+    assertMutable();
     logger.trace("setting userFilter: {}", filter);
     userFilter = filter;
   }
@@ -95,9 +98,9 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @return  filter parameters
    */
-  public Object[] getUserFilterParameters()
+  public final Object[] getUserFilterParameters()
   {
-    return userFilterParameters;
+    return LdapUtils.copyArray(userFilterParameters);
   }
 
 
@@ -106,10 +109,11 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @param  filterParams  filter parameters
    */
-  public void setUserFilterParameters(final Object[] filterParams)
+  public final void setUserFilterParameters(final Object[] filterParams)
   {
+    assertMutable();
     logger.trace("setting userFilterParameters: {}", Arrays.toString(filterParams));
-    userFilterParameters = filterParams;
+    userFilterParameters = LdapUtils.copyArray(filterParams);
   }
 
 
@@ -118,7 +122,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @return  whether an exception will be thrown if multiple entries are found
    */
-  public boolean getAllowMultipleEntries()
+  public final boolean getAllowMultipleEntries()
   {
     return allowMultipleEntries;
   }
@@ -131,8 +135,9 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @param  b  whether multiple entries are allowed
    */
-  public void setAllowMultipleEntries(final boolean b)
+  public final void setAllowMultipleEntries(final boolean b)
   {
+    assertMutable();
     logger.trace("setting allowMultipleEntries: {}", b);
     allowMultipleEntries = b;
   }
@@ -143,7 +148,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @return  whether the entry will be searched for over the entire base
    */
-  public boolean getSubtreeSearch()
+  public final boolean getSubtreeSearch()
   {
     return subtreeSearch;
   }
@@ -155,8 +160,9 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @param  b  whether the entry will be searched for over the entire base
    */
-  public void setSubtreeSearch(final boolean b)
+  public final void setSubtreeSearch(final boolean b)
   {
+    assertMutable();
     logger.trace("setting subtreeSearch: {}", b);
     subtreeSearch = b;
   }
@@ -167,7 +173,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @return  how to dereference aliases
    */
-  public DerefAliases getDerefAliases()
+  public final DerefAliases getDerefAliases()
   {
     return derefAliases;
   }
@@ -178,8 +184,9 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @param  da  how to dereference aliases
    */
-  public void setDerefAliases(final DerefAliases da)
+  public final void setDerefAliases(final DerefAliases da)
   {
+    assertMutable();
     logger.trace("setting derefAliases: {}", da);
     derefAliases = da;
   }
@@ -190,9 +197,9 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @return  binary attribute names
    */
-  public String[] getBinaryAttributes()
+  public final String[] getBinaryAttributes()
   {
-    return binaryAttributes;
+    return LdapUtils.copyArray(binaryAttributes);
   }
 
 
@@ -201,10 +208,11 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
    *
    * @param  attrs  binary attribute names
    */
-  public void setBinaryAttributes(final String... attrs)
+  public final void setBinaryAttributes(final String... attrs)
   {
+    assertMutable();
     logger.trace("setting binaryAttributes: {}", Arrays.toString(attrs));
-    binaryAttributes = attrs;
+    binaryAttributes = LdapUtils.copyArray(attrs);
   }
 
 
@@ -309,5 +317,19 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
       }
     }
     return entry;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return super.toString() +
+      "baseDn=" + baseDn + ", " +
+      "userFilter=" + userFilter + ", " +
+      "userFilterParameters=" + Arrays.toString(userFilterParameters) + ", " +
+      "allowMultipleEntries=" + allowMultipleEntries + ", " +
+      "subtreeSearch=" + subtreeSearch + ", " +
+      "derefAliases=" + derefAliases + ", " +
+      "binaryAttributes=" + Arrays.toString(binaryAttributes);
   }
 }

@@ -672,18 +672,21 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public static SearchRequest copy(final SearchRequest request)
   {
-    final SearchRequest sr = new SearchRequest();
-    sr.setBaseDn(request.getBaseDn());
-    sr.setSearchScope(request.getSearchScope());
-    sr.setDerefAliases(request.getDerefAliases());
-    sr.setSizeLimit(request.getSizeLimit());
-    sr.setTimeLimit(request.getTimeLimit());
-    sr.setTypesOnly(request.isTypesOnly());
-    sr.setFilter(request.getFilter());
-    sr.setReturnAttributes(request.getReturnAttributes());
-    sr.setBinaryAttributes(request.getBinaryAttributes());
-    sr.setControls(request.getControls());
-    return sr;
+    final SearchRequest copy = new SearchRequest();
+    copy.setBaseDn(request.getBaseDn());
+    copy.setSearchScope(request.getSearchScope());
+    copy.setDerefAliases(request.getDerefAliases());
+    copy.setSizeLimit(request.getSizeLimit());
+    copy.setTimeLimit(request.getTimeLimit());
+    copy.setTypesOnly(request.isTypesOnly());
+    copy.setFilter(request.getFilter());
+    copy.setReturnAttributes(LdapUtils.copyArray(request.getReturnAttributes()));
+    copy.setBinaryAttributes(LdapUtils.copyArray(request.getBinaryAttributes()));
+    copy.setControls(LdapUtils.copyArray(request.getControls()));
+    if (request.getResponseTimeout() != null) {
+      copy.setResponseTimeout(request.getResponseTimeout());
+    }
+    return copy;
   }
 
 

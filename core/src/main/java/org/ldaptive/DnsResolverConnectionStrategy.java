@@ -94,7 +94,7 @@ public class DnsResolverConnectionStrategy extends AbstractConnectionStrategy
    *
    * @return  name resolution function
    */
-  public Function<String, InetAddress[]> getResolverFunction()
+  public final Function<String, InetAddress[]> getResolverFunction()
   {
     return resolverFunction;
   }
@@ -105,8 +105,9 @@ public class DnsResolverConnectionStrategy extends AbstractConnectionStrategy
    *
    * @param  func  to set
    */
-  public void setResolverFunction(final Function<String, InetAddress[]> func)
+  public final void setResolverFunction(final Function<String, InetAddress[]> func)
   {
+    assertMutable();
     resolverFunction = func;
   }
 

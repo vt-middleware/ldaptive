@@ -4,6 +4,7 @@ package org.ldaptive.auth;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
 import org.slf4j.Logger;
@@ -16,14 +17,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class AggregateAuthenticationHandler implements AuthenticationHandler
+public final class AggregateAuthenticationHandler extends AbstractFreezable implements AuthenticationHandler
 {
 
   /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Labeled authentication handlers. */
-  private Map<String, AuthenticationHandler> authenticationHandlers = new HashMap<>();
+  private final Map<String, AuthenticationHandler> authenticationHandlers = new HashMap<>();
 
 
   /** Default constructor. */
@@ -38,6 +39,14 @@ public class AggregateAuthenticationHandler implements AuthenticationHandler
   public AggregateAuthenticationHandler(final Map<String, AuthenticationHandler> handlers)
   {
     setAuthenticationHandlers(handlers);
+  }
+
+
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    makeImmutable(authenticationHandlers);
   }
 
 
@@ -59,8 +68,9 @@ public class AggregateAuthenticationHandler implements AuthenticationHandler
    */
   public void setAuthenticationHandlers(final Map<String, AuthenticationHandler> handlers)
   {
+    assertMutable();
     logger.trace("setting authenticationHandlers: {}", handlers);
-    authenticationHandlers = handlers;
+    authenticationHandlers.putAll(handlers);
   }
 
 
@@ -72,6 +82,7 @@ public class AggregateAuthenticationHandler implements AuthenticationHandler
    */
   public void addAuthenticationHandler(final String label, final AuthenticationHandler handler)
   {
+    assertMutable();
     logger.trace("adding authenticationHandler: {}:{}", label, handler);
     authenticationHandlers.put(label, handler);
   }
@@ -104,14 +115,21 @@ public class AggregateAuthenticationHandler implements AuthenticationHandler
 
 
   // CheckStyle:OFF
-  public static class Builder
+  public static final class Builder
   {
 
 
     private final AggregateAuthenticationHandler object = new AggregateAuthenticationHandler();
 
 
-    protected Builder() {}
+    private Builder() {}
+
+
+    public Builder makeImmutable()
+    {
+      object.freeze();
+      return this;
+    }
 
 
     public Builder handler(final String label, final AuthenticationHandler handler)

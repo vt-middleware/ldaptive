@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
-import java.util.Arrays;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.SearchOperation;
@@ -51,16 +50,6 @@ public class SearchEntryResolver extends AbstractSearchEntryResolver
   @Override
   public String toString()
   {
-    return "[" +
-      getClass().getName() + "@" + hashCode() + "::" +
-      "factory=" + getConnectionFactory() + ", " +
-      "baseDn=" + getBaseDn() + ", " +
-      "userFilter=" + getUserFilter() + ", " +
-      "userFilterParameters=" + Arrays.toString(getUserFilterParameters()) + ", " +
-      "allowMultipleEntries=" + getAllowMultipleEntries() + ", " +
-      "subtreeSearch=" + getSubtreeSearch() + ", " +
-      "derefAliases=" + getDerefAliases() + ", " +
-      "binaryAttributes=" + Arrays.toString(getBinaryAttributes()) + ", " +
-      "entryHandlers=" + Arrays.toString(getEntryHandlers()) + "]";
+    return "[" + super.toString() + "]";
   }
 }

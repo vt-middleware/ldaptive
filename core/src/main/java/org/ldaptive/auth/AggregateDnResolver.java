@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapException;
 import org.ldaptive.concurrent.CallableWorker;
 import org.slf4j.Logger;
@@ -20,17 +21,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class AggregateDnResolver implements DnResolver
+public final class AggregateDnResolver extends AbstractFreezable implements DnResolver
 {
 
   /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** To submit operations to. */
   private final CallableWorker<String> callableWorker;
 
   /** Labeled DN resolvers. */
-  private Map<String, DnResolver> dnResolvers = new HashMap<>();
+  private final Map<String, DnResolver> dnResolvers = new HashMap<>();
 
   /** Whether to throw an exception if multiple DNs are found. */
   private boolean allowMultipleDns;
@@ -68,6 +69,16 @@ public class AggregateDnResolver implements DnResolver
   }
 
 
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    for (DnResolver resolver : dnResolvers.values()) {
+      makeImmutable(resolver);
+    }
+  }
+
+
   /**
    * Returns the DN resolvers to aggregate over.
    *
@@ -86,8 +97,9 @@ public class AggregateDnResolver implements DnResolver
    */
   public void setDnResolvers(final Map<String, DnResolver> resolvers)
   {
+    assertMutable();
     logger.trace("setting dnResolvers: {}", resolvers);
-    dnResolvers = resolvers;
+    dnResolvers.putAll(resolvers);
   }
 
 
@@ -99,6 +111,7 @@ public class AggregateDnResolver implements DnResolver
    */
   public void addDnResolver(final String label, final DnResolver resolver)
   {
+    assertMutable();
     logger.trace("adding dnResolver: {}:{}", label, resolver);
     dnResolvers.put(label, resolver);
   }
@@ -123,6 +136,7 @@ public class AggregateDnResolver implements DnResolver
    */
   public void setAllowMultipleDns(final boolean b)
   {
+    assertMutable();
     logger.trace("setting allowMultipleDns: {}", b);
     allowMultipleDns = b;
   }
@@ -207,14 +221,21 @@ public class AggregateDnResolver implements DnResolver
 
 
   // CheckStyle:OFF
-  public static class Builder
+  public static final class Builder
   {
 
 
     private final AggregateDnResolver object = new AggregateDnResolver();
 
 
-    protected Builder() {}
+    private Builder() {}
+
+
+    public Builder makeImmutable()
+    {
+      object.freeze();
+      return this;
+    }
 
 
     public Builder resolver(final String label, final DnResolver resolver)

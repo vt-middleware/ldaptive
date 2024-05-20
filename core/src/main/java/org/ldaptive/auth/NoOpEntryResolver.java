@@ -8,7 +8,7 @@ import org.ldaptive.LdapEntry;
  *
  * @author  Middleware Services
  */
-public class NoOpEntryResolver implements EntryResolver
+public final class NoOpEntryResolver implements EntryResolver
 {
 
 

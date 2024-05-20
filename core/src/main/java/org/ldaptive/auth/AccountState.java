@@ -4,6 +4,7 @@ package org.ldaptive.auth;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import javax.security.auth.login.LoginException;
+import org.ldaptive.LdapUtils;
 
 /**
  * Represents the state of an LDAP account based on account policies for that LDAP. Note that only warning(s) or
@@ -28,7 +29,7 @@ public class AccountState
    */
   public AccountState(final AccountState.Warning... warnings)
   {
-    accountWarnings = warnings;
+    accountWarnings = LdapUtils.copyArray(warnings);
     accountErrors = null;
   }
 
@@ -41,7 +42,7 @@ public class AccountState
   public AccountState(final AccountState.Error... errors)
   {
     accountWarnings = null;
-    accountErrors = errors;
+    accountErrors = LdapUtils.copyArray(errors);
   }
 
 
@@ -52,7 +53,7 @@ public class AccountState
    */
   public AccountState.Warning[] getWarnings()
   {
-    return accountWarnings;
+    return LdapUtils.copyArray(accountWarnings);
   }
 
 
@@ -74,7 +75,7 @@ public class AccountState
    */
   public AccountState.Error[] getErrors()
   {
-    return accountErrors;
+    return LdapUtils.copyArray(accountErrors);
   }
 
 

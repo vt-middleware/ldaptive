@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
@@ -20,14 +21,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class Authenticator
+public final class Authenticator extends AbstractFreezable
 {
 
   /** NoOp entry resolver. */
   private static final EntryResolver NO_OP_RESOLVER = new NoOpEntryResolver();
 
   /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** For finding user DNs. */
   private DnResolver dnResolver;
@@ -68,6 +69,18 @@ public class Authenticator
   }
 
 
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    makeImmutable(dnResolver);
+    makeImmutable(authenticationHandler);
+    makeImmutable(entryResolver);
+    makeImmutable(requestHandlers);
+    makeImmutable(responseHandlers);
+  }
+
+
   /**
    * Returns the DN resolver.
    *
@@ -86,6 +99,7 @@ public class Authenticator
    */
   public void setDnResolver(final DnResolver resolver)
   {
+    assertMutable();
     dnResolver = resolver;
   }
 
@@ -108,6 +122,7 @@ public class Authenticator
    */
   public void setAuthenticationHandler(final AuthenticationHandler handler)
   {
+    assertMutable();
     authenticationHandler = handler;
   }
 
@@ -130,6 +145,7 @@ public class Authenticator
    */
   public void setEntryResolver(final EntryResolver resolver)
   {
+    assertMutable();
     entryResolver = resolver;
   }
 
@@ -152,6 +168,7 @@ public class Authenticator
    */
   public void setResolveEntryOnFailure(final boolean b)
   {
+    assertMutable();
     resolveEntryOnFailure = b;
   }
 
@@ -163,7 +180,7 @@ public class Authenticator
    */
   public String[] getReturnAttributes()
   {
-    return returnAttributes;
+    return LdapUtils.copyArray(returnAttributes);
   }
 
 
@@ -174,7 +191,8 @@ public class Authenticator
    */
   public void setReturnAttributes(final String... attrs)
   {
-    returnAttributes = attrs;
+    assertMutable();
+    returnAttributes = LdapUtils.copyArray(attrs);
   }
 
 
@@ -185,7 +203,7 @@ public class Authenticator
    */
   public AuthenticationRequestHandler[] getRequestHandlers()
   {
-    return requestHandlers;
+    return LdapUtils.copyArray(requestHandlers);
   }
 
 
@@ -196,7 +214,8 @@ public class Authenticator
    */
   public void setRequestHandlers(final AuthenticationRequestHandler... handlers)
   {
-    requestHandlers = handlers;
+    assertMutable();
+    requestHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -207,7 +226,7 @@ public class Authenticator
    */
   public AuthenticationResponseHandler[] getResponseHandlers()
   {
-    return responseHandlers;
+    return LdapUtils.copyArray(responseHandlers);
   }
 
 
@@ -218,7 +237,8 @@ public class Authenticator
    */
   public void setResponseHandlers(final AuthenticationResponseHandler... handlers)
   {
-    responseHandlers = handlers;
+    assertMutable();
+    responseHandlers = LdapUtils.copyArray(handlers);
   }
 
 
@@ -343,7 +363,7 @@ public class Authenticator
    *
    * @throws  LdapException  if an LDAP error occurs
    */
-  protected AuthenticationResponse authenticate(final String dn, final AuthenticationRequest request)
+  private AuthenticationResponse authenticate(final String dn, final AuthenticationRequest request)
     throws LdapException
   {
     logger.trace("authenticate dn={} with request={}", dn, request);
@@ -373,8 +393,8 @@ public class Authenticator
 
     final AuthenticationResponse authResponse = new AuthenticationResponse(response, dn, entry);
     // execute authentication response handlers
-    if (getResponseHandlers() != null && getResponseHandlers().length > 0) {
-      for (AuthenticationResponseHandler ah : getResponseHandlers()) {
+    if (responseHandlers != null && responseHandlers.length > 0) {
+      for (AuthenticationResponseHandler ah : responseHandlers) {
         ah.handle(authResponse);
       }
     }
@@ -392,7 +412,7 @@ public class Authenticator
    *
    * @return  authentication response if validation failed, otherwise null
    */
-  protected AuthenticationResponse validateInput(final String dn, final AuthenticationRequest request)
+  private AuthenticationResponse validateInput(final String dn, final AuthenticationRequest request)
   {
     AuthenticationResponse response = null;
     final Credential credential = request.getCredential();
@@ -444,10 +464,10 @@ public class Authenticator
    *
    * @throws  LdapException  if an error occurs with a request handler
    */
-  protected AuthenticationRequest processRequest(final String dn, final AuthenticationRequest request)
+  private AuthenticationRequest processRequest(final String dn, final AuthenticationRequest request)
     throws LdapException
   {
-    if (returnAttributes == null && (getRequestHandlers() == null || getRequestHandlers().length == 0)) {
+    if (returnAttributes == null && (requestHandlers == null || requestHandlers.length == 0)) {
       return request;
     }
 
@@ -462,8 +482,8 @@ public class Authenticator
     }
 
     // execute authentication request handlers
-    if (getRequestHandlers() != null && getRequestHandlers().length > 0) {
-      for (AuthenticationRequestHandler ah : getRequestHandlers()) {
+    if (requestHandlers != null && requestHandlers.length > 0) {
+      for (AuthenticationRequestHandler ah : requestHandlers) {
         ah.handle(dn, newRequest);
       }
     }
@@ -483,7 +503,7 @@ public class Authenticator
    *
    * @throws  LdapException  if an error occurs resolving the entry
    */
-  protected LdapEntry resolveEntry(
+  private LdapEntry resolveEntry(
     final AuthenticationCriteria criteria,
     final AuthenticationHandlerResponse response)
     throws LdapException
@@ -543,7 +563,7 @@ public class Authenticator
 
 
   /** Authenticator builder. */
-  public static class Builder
+  public static final class Builder
   {
 
     /** Authenticator to build. */
@@ -553,7 +573,19 @@ public class Authenticator
     /**
      * Default constructor.
      */
-    protected Builder() {}
+    private Builder() {}
+
+
+    /**
+     * Makes this instance immutable.
+     *
+     * @return  this builder
+     */
+    public Builder makeImmutable()
+    {
+      object.freeze();
+      return this;
+    }
 
 
     /**

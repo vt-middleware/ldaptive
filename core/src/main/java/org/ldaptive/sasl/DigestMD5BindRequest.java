@@ -4,6 +4,7 @@ package org.ldaptive.sasl;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
@@ -65,7 +66,10 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
     }
     password = pass;
     saslRealm = realm;
-    saslProperties = Collections.unmodifiableMap(props);
+    saslProperties = props.entrySet().stream()
+      .collect(
+        Collectors.collectingAndThen(
+          Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue), Collections::unmodifiableMap));
   }
 
 
@@ -124,7 +128,7 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
   @Override
   public Map<String, ?> getSaslProperties()
   {
-    return saslProperties;
+    return Collections.unmodifiableMap(saslProperties);
   }
 
 

@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
+import java.util.Arrays;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.ConnectionFactoryManager;
@@ -15,7 +17,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractAuthenticationHandler implements AuthenticationHandler, ConnectionFactoryManager
+public abstract class AbstractAuthenticationHandler extends AbstractFreezable
+  implements AuthenticationHandler, ConnectionFactoryManager
 {
 
   /** Logger for this class. */
@@ -29,15 +32,24 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
 
 
   @Override
-  public ConnectionFactory getConnectionFactory()
+  public void freeze()
+  {
+    super.freeze();
+    makeImmutable(factory);
+  }
+
+
+  @Override
+  public final ConnectionFactory getConnectionFactory()
   {
     return factory;
   }
 
 
   @Override
-  public void setConnectionFactory(final ConnectionFactory cf)
+  public final void setConnectionFactory(final ConnectionFactory cf)
   {
+    assertMutable();
     factory = cf;
   }
 
@@ -47,9 +59,9 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
    *
    * @return  controls
    */
-  public RequestControl[] getAuthenticationControls()
+  public final RequestControl[] getAuthenticationControls()
   {
-    return authenticationControls;
+    return LdapUtils.copyArray(authenticationControls);
   }
 
 
@@ -58,9 +70,10 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
    *
    * @param  cntrls  controls to set
    */
-  public void setAuthenticationControls(final RequestControl... cntrls)
+  public final void setAuthenticationControls(final RequestControl... cntrls)
   {
-    authenticationControls = cntrls;
+    assertMutable();
+    authenticationControls = LdapUtils.copyArray(cntrls);
   }
 
 
@@ -114,14 +127,23 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
   {
     final RequestControl[] ctls;
     if (criteria.getAuthenticationRequest().getControls() != null) {
-      if (getAuthenticationControls() != null) {
-        ctls = LdapUtils.concatArrays(criteria.getAuthenticationRequest().getControls(), getAuthenticationControls());
+      if (authenticationControls != null) {
+        ctls = LdapUtils.concatArrays(criteria.getAuthenticationRequest().getControls(), authenticationControls);
       } else {
         ctls = criteria.getAuthenticationRequest().getControls();
       }
     } else {
-      ctls = getAuthenticationControls();
+      ctls = authenticationControls;
     }
     return ctls;
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "factory=" + factory + ", " +
+      "controls=" + Arrays.toString(authenticationControls);
   }
 }

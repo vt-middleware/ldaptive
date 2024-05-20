@@ -4,6 +4,7 @@ package org.ldaptive.auth;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
@@ -17,14 +18,14 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class AggregateEntryResolver implements EntryResolver
+public final class AggregateEntryResolver extends AbstractFreezable implements EntryResolver
 {
 
   /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Labeled entry resolvers. */
-  private Map<String, EntryResolver> entryResolvers = new HashMap<>();
+  private final Map<String, EntryResolver> entryResolvers = new HashMap<>();
 
 
   /** Default constructor. */
@@ -39,6 +40,16 @@ public class AggregateEntryResolver implements EntryResolver
   public AggregateEntryResolver(final Map<String, EntryResolver> resolvers)
   {
     setEntryResolvers(resolvers);
+  }
+
+
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    for (EntryResolver resolver : entryResolvers.values()) {
+      makeImmutable(resolver);
+    }
   }
 
 
@@ -60,8 +71,9 @@ public class AggregateEntryResolver implements EntryResolver
    */
   public void setEntryResolvers(final Map<String, EntryResolver> resolvers)
   {
+    assertMutable();
     logger.trace("setting entryResolvers: {}", resolvers);
-    entryResolvers = resolvers;
+    entryResolvers.putAll(resolvers);
   }
 
 
@@ -73,6 +85,7 @@ public class AggregateEntryResolver implements EntryResolver
    */
   public void addEntryResolver(final String label, final EntryResolver resolver)
   {
+    assertMutable();
     logger.trace("adding dnResolver: {}:{}", label, resolver);
     entryResolvers.put(label, resolver);
   }
@@ -103,14 +116,21 @@ public class AggregateEntryResolver implements EntryResolver
 
 
   // CheckStyle:OFF
-  public static class Builder
+  public static final class Builder
   {
 
 
     private final AggregateEntryResolver object = new AggregateEntryResolver();
 
 
-    protected Builder() {}
+    private Builder() {}
+
+
+    public Builder makeImmutable()
+    {
+      object.freeze();
+      return this;
+    }
 
 
     public Builder resolver(final String label, final EntryResolver resolver)

@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
-import java.util.Arrays;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
@@ -13,7 +12,7 @@ import org.ldaptive.SimpleBindRequest;
  *
  * @author  Middleware Services
  */
-public class SimpleBindAuthenticationHandler extends AbstractAuthenticationHandler
+public final class SimpleBindAuthenticationHandler extends AbstractAuthenticationHandler
 {
 
 
@@ -53,9 +52,6 @@ public class SimpleBindAuthenticationHandler extends AbstractAuthenticationHandl
   @Override
   public String toString()
   {
-    return "[" +
-      getClass().getName() + "@" + hashCode() + "::" +
-      "factory=" + getConnectionFactory() + ", " +
-      "controls=" + Arrays.toString(getAuthenticationControls()) + "]";
+    return "[" + super.toString() + "]";
   }
 }

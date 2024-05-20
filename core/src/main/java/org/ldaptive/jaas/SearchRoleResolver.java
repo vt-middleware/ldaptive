@@ -49,6 +49,6 @@ public class SearchRoleResolver extends AbstractSearchOperationFactory implement
   @Override
   public String toString()
   {
-    return "[" + getClass().getName() + "@" + hashCode() + "::" + "factory=" + getConnectionFactory() + "]";
+    return "[" + super.toString() + "]";
   }
 }

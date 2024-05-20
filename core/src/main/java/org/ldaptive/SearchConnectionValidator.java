@@ -55,7 +55,7 @@ public class SearchConnectionValidator extends AbstractOperationConnectionValida
    * @deprecated  use {@link AbstractOperationConnectionValidator#getRequest()}
    */
   @Deprecated
-  public SearchRequest getSearchRequest()
+  public final SearchRequest getSearchRequest()
   {
     return getRequest();
   }
@@ -69,8 +69,9 @@ public class SearchConnectionValidator extends AbstractOperationConnectionValida
    * @deprecated  use {@link AbstractOperationConnectionValidator#setRequest(Request)}
    */
   @Deprecated
-  public void setSearchRequest(final SearchRequest sr)
+  public final void setSearchRequest(final SearchRequest sr)
   {
+    assertMutable();
     setRequest(sr);
   }
 

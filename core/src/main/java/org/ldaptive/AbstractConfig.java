@@ -9,35 +9,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConfig
+public abstract class AbstractConfig extends AbstractFreezable
 {
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-  /** Whether this config has been marked immutable. */
-  private boolean immutable;
-
-
-  /** Make this config immutable. */
-  public void makeImmutable()
-  {
-    immutable = true;
-  }
-
-
-  /**
-   * Verifies if this config is immutable.
-   *
-   * @throws  IllegalStateException  if this config is immutable
-   */
-  public void checkImmutable()
-  {
-    if (immutable) {
-      throw new IllegalStateException("Cannot modify immutable object");
-    }
-  }
-
 
   /**
    * Verifies that an array does not contain a null element.

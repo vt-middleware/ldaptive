@@ -3,7 +3,6 @@ package org.ldaptive.auth;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 import org.ldaptive.CompareRequest;
 import org.ldaptive.CompareResponse;
 import org.ldaptive.Connection;
@@ -19,14 +18,14 @@ import org.ldaptive.ResultCode;
  *
  * @author  Middleware Services
  */
-public class CompareAuthenticationHandler extends AbstractAuthenticationHandler
+public final class CompareAuthenticationHandler extends AbstractAuthenticationHandler
 {
 
   /** Default password scheme. Value is {@value}. */
-  protected static final String DEFAULT_SCHEME = "SHA:SHA";
+  private static final String DEFAULT_SCHEME = "SHA:SHA";
 
   /** Default password attribute. Value is {@value}. */
-  protected static final String DEFAULT_ATTRIBUTE = "userPassword";
+  private static final String DEFAULT_ATTRIBUTE = "userPassword";
 
   /** Password scheme. */
   private Scheme passwordScheme = new Scheme(DEFAULT_SCHEME);
@@ -68,6 +67,7 @@ public class CompareAuthenticationHandler extends AbstractAuthenticationHandler
    */
   public void setPasswordScheme(final String s)
   {
+    assertMutable();
     passwordScheme = new Scheme(s);
   }
 
@@ -90,6 +90,7 @@ public class CompareAuthenticationHandler extends AbstractAuthenticationHandler
    */
   public void setPasswordAttribute(final String s)
   {
+    assertMutable();
     passwordAttribute = s;
   }
 
@@ -127,7 +128,7 @@ public class CompareAuthenticationHandler extends AbstractAuthenticationHandler
    *
    * @throws  LdapException  if the supplied algorithm cannot be found
    */
-  protected byte[] digestCredential(final Credential credential, final String algorithm)
+  private byte[] digestCredential(final Credential credential, final String algorithm)
     throws LdapException
   {
     try {
@@ -143,19 +144,16 @@ public class CompareAuthenticationHandler extends AbstractAuthenticationHandler
   @Override
   public String toString()
   {
-    return "[" +
-      getClass().getName() + "@" + hashCode() + "::" +
-      "factory=" + getConnectionFactory() + ", " +
+    return "[" + super.toString() +
       "passwordAttribute=" + passwordAttribute + ", " +
-      "passwordScheme=" + passwordScheme + ", " +
-      "controls=" + Arrays.toString(getAuthenticationControls()) + "]";
+      "passwordScheme=" + passwordScheme + "]";
   }
 
 
   /**
    * Represents a password scheme used for attribute comparison.
    */
-  public static class Scheme
+  public static final class Scheme
   {
 
     /** Label of the scheme. */

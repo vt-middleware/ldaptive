@@ -3,14 +3,13 @@ package org.ldaptive.auth.ext;
 
 import java.time.Period;
 import java.time.ZonedDateTime;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -20,7 +19,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author  tduehr
  */
-public class FreeIPAAuthenticationResponseHandler implements AuthenticationResponseHandler
+public final class FreeIPAAuthenticationResponseHandler extends AbstractFreezable
+  implements AuthenticationResponseHandler
 {
 
   /** Attributes needed to enforce password policy. */
@@ -29,9 +29,6 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
     "krbLoginFailedCount",
     "krbLastPwdChange",
   };
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Amount of time since a password was set until it will expire. Used if krbPasswordExpiration cannot be read. */
   private Period expirationPeriod;
@@ -138,6 +135,7 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
    */
   public void setMaxLoginFailures(final int loginFailures)
   {
+    assertMutable();
     if (loginFailures < 0) {
       throw new IllegalArgumentException("Login failures must be >= 0");
     }
@@ -165,6 +163,7 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
    */
   public void setExpirationPeriod(final Period period)
   {
+    assertMutable();
     expirationPeriod = period;
   }
 
@@ -187,6 +186,7 @@ public class FreeIPAAuthenticationResponseHandler implements AuthenticationRespo
    */
   public void setWarningPeriod(final Period period)
   {
+    assertMutable();
     warningPeriod = period;
   }
 

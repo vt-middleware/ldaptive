@@ -30,7 +30,7 @@ public abstract class AbstractOperationConnectionValidator<Q extends Request, S 
    *
    * @return  operation request
    */
-  public Q getRequest()
+  public final Q getRequest()
   {
     return request;
   }
@@ -41,8 +41,9 @@ public abstract class AbstractOperationConnectionValidator<Q extends Request, S 
    *
    * @param  req  operation request
    */
-  public void setRequest(final Q req)
+  public final void setRequest(final Q req)
   {
+    assertMutable();
     request = req;
   }
 
@@ -52,9 +53,9 @@ public abstract class AbstractOperationConnectionValidator<Q extends Request, S 
    *
    * @return  valid result codes
    */
-  public ResultCode[] getValidResultCodes()
+  public final ResultCode[] getValidResultCodes()
   {
-    return validResultCodes;
+    return LdapUtils.copyArray(validResultCodes);
   }
 
 
@@ -63,9 +64,10 @@ public abstract class AbstractOperationConnectionValidator<Q extends Request, S 
    *
    * @param  codes  that represent a valid connection
    */
-  public void setValidResultCodes(final ResultCode... codes)
+  public final void setValidResultCodes(final ResultCode... codes)
   {
-    validResultCodes = codes;
+    assertMutable();
+    validResultCodes = LdapUtils.copyArray(codes);
   }
 
 

@@ -42,6 +42,6 @@ public class DefaultReferralConnectionFactory implements ReferralConnectionFacto
   {
     final ConnectionConfig cc = ConnectionConfig.copy(connectionConfig);
     cc.setLdapUrl(url);
-    return new DefaultConnectionFactory(cc);
+    return DefaultConnectionFactory.builder().config(cc).makeImmutable().build();
   }
 }

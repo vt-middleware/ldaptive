@@ -54,4 +54,11 @@ public class AuthorizationIdentityEntryResolver extends AbstractSearchEntryResol
     request.setBinaryAttributes(getBinaryAttributes());
     return request;
   }
+
+
+  @Override
+  public String toString()
+  {
+    return "[" + super.toString() + "]";
+  }
 }

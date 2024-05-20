@@ -6,7 +6,7 @@ package org.ldaptive;
  *
  * @author  Middleware Services
  */
-public class Credential
+public final class Credential
 {
 
   /** Credential stored as a byte array. */
@@ -92,5 +92,18 @@ public class Credential
   public String toString()
   {
     return "[" + getClass().getName() + "@" + hashCode() + "::" + "bytes=" + LdapUtils.utf8Encode(bytes) + "]";
+  }
+
+
+  /**
+   * Returns a credential initialized with the supplied credential.
+   *
+   * @param  credential  to read properties from
+   *
+   * @return  credential
+   */
+  public static Credential copy(final Credential credential)
+  {
+    return new Credential(LdapUtils.copyArray(credential.bytes));
   }
 }

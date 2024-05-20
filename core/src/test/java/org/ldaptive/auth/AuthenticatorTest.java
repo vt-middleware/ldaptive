@@ -1,9 +1,14 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
+import java.util.Arrays;
 import java.util.Collections;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.Freezable;
 import org.ldaptive.MockConnectionFactory;
+import org.ldaptive.TestUtils;
+import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
+import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -27,6 +32,7 @@ public class AuthenticatorTest
     auth.setAuthenticationHandler(
       new SimpleBindAuthenticationHandler(new MockConnectionFactory(new ConnectionConfig())));
     auth.setEntryResolver(new SearchEntryResolver(new MockConnectionFactory(new ConnectionConfig())));
+    auth.freeze();
     auth.close();
 
     Assert.assertFalse(
@@ -58,6 +64,7 @@ public class AuthenticatorTest
     auth.setEntryResolver(
       new AggregateEntryResolver(
         Collections.singletonMap("1", new SearchEntryResolver(new MockConnectionFactory(new ConnectionConfig())))));
+    auth.freeze();
     auth.close();
 
     Assert.assertFalse(
@@ -77,5 +84,33 @@ public class AuthenticatorTest
         ((SearchEntryResolver)
           ((AggregateEntryResolver) auth.getEntryResolver()).getEntryResolvers()
               .values().iterator().next()).getConnectionFactory()).isOpen());
+  }
+
+
+  /**
+   * Unit test for {@link Authenticator#freeze()}.
+   */
+  @Test(groups = "auth")
+  public void immutable()
+  {
+    final Authenticator auth = new Authenticator();
+    auth.setDnResolver(new SearchDnResolver());
+    auth.setAuthenticationHandler(new SimpleBindAuthenticationHandler());
+    auth.setEntryResolver(new SearchEntryResolver());
+    auth.setResponseHandlers(
+      new ActiveDirectoryAuthenticationResponseHandler(), new EDirectoryAuthenticationResponseHandler());
+
+    auth.assertMutable();
+    ((Freezable) auth.getDnResolver()).assertMutable();
+    ((Freezable) auth.getAuthenticationHandler()).assertMutable();
+    ((Freezable) auth.getEntryResolver()).assertMutable();
+    Arrays.stream(auth.getResponseHandlers()).forEach(ah -> ((Freezable) ah).assertMutable());
+
+    auth.freeze();
+    TestUtils.testImmutable(auth);
+    TestUtils.testImmutable((Freezable) auth.getDnResolver());
+    TestUtils.testImmutable((Freezable) auth.getAuthenticationHandler());
+    TestUtils.testImmutable((Freezable) auth.getEntryResolver());
+    Arrays.stream(auth.getResponseHandlers()).forEach(ah -> TestUtils.testImmutable((Freezable) ah));
   }
 }

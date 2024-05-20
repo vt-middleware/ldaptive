@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -13,7 +14,7 @@ import org.ldaptive.ssl.SslConfig;
  *
  * @author  Middleware Services
  */
-public class ConnectionConfig extends AbstractConfig
+public final class ConnectionConfig extends AbstractConfig
 {
 
   /** Predicate that attempts a single reconnect. */
@@ -149,6 +150,16 @@ public class ConnectionConfig extends AbstractConfig
     setLdapUrl(url);
   }
 
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    makeImmutable(sslConfig);
+    makeImmutable(connectionInitializers);
+    makeImmutable(connectionStrategy);
+    makeImmutable(connectionValidator);
+  }
+
 
   /**
    * Returns the ldap url.
@@ -168,7 +179,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setLdapUrl(final String url)
   {
-    checkImmutable();
+    assertMutable();
     checkStringInput(url, true);
     logger.trace("setting ldapUrl: {}", url);
     ldapUrl = url;
@@ -193,7 +204,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setConnectTimeout(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Connect timeout cannot be null or negative");
     }
@@ -220,7 +231,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setStartTLSTimeout(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("StartTLS timeout cannot be null or negative");
     }
@@ -247,7 +258,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setResponseTimeout(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Response timeout cannot be null or negative");
     }
@@ -274,7 +285,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setReconnectTimeout(final Duration time)
   {
-    checkImmutable();
+    assertMutable();
     if (time == null || time.isNegative()) {
       throw new IllegalArgumentException("Reconnect timeout cannot be null or negative");
     }
@@ -301,7 +312,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setAutoReconnect(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting autoReconnect: {}", b);
     autoReconnect = b;
   }
@@ -325,7 +336,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setAutoReconnectCondition(final Predicate<RetryMetadata> predicate)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting autoReconnectCondition: {}", predicate);
     autoReconnectCondition = predicate;
   }
@@ -349,7 +360,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setAutoReplay(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting autoReplay: {}", b);
     autoReplay = b;
   }
@@ -373,7 +384,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setSslConfig(final SslConfig config)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting sslConfig: {}", config);
     sslConfig = config;
   }
@@ -397,7 +408,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setUseStartTLS(final boolean b)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting useStartTLS: {}", b);
     useStartTLS = b;
   }
@@ -410,7 +421,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public ConnectionInitializer[] getConnectionInitializers()
   {
-    return connectionInitializers;
+    return LdapUtils.copyArray(connectionInitializers);
   }
 
 
@@ -421,10 +432,10 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setConnectionInitializers(final ConnectionInitializer... initializers)
   {
-    checkImmutable();
+    assertMutable();
     checkArrayContainsNull(initializers);
     logger.trace("setting connectionInitializers: {}", Arrays.toString(initializers));
-    connectionInitializers = initializers;
+    connectionInitializers = LdapUtils.copyArray(initializers);
   }
 
 
@@ -446,7 +457,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setConnectionStrategy(final ConnectionStrategy strategy)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting connectionStrategy: {}", strategy);
     connectionStrategy = strategy;
   }
@@ -470,7 +481,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setConnectionValidator(final ConnectionValidator validator)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting connectionValidator: {}", validator);
     connectionValidator = validator;
   }
@@ -483,7 +494,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public Map<String, ?> getTransportOptions()
   {
-    return transportOptions;
+    return Collections.unmodifiableMap(transportOptions);
   }
 
 
@@ -494,7 +505,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setTransportOptions(final Map<String, ?> options)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting transport options: {}", options);
     transportOptions.putAll(options);
   }
@@ -521,7 +532,7 @@ public class ConnectionConfig extends AbstractConfig
    */
   public void setTransportOption(final String id, final Object value)
   {
-    checkImmutable();
+    assertMutable();
     logger.trace("setting transport options: {}={}", id, value);
     transportOptions.put(id, value);
   }
@@ -536,23 +547,24 @@ public class ConnectionConfig extends AbstractConfig
    */
   public static ConnectionConfig copy(final ConnectionConfig config)
   {
-    final ConnectionConfig cc = new ConnectionConfig();
-    cc.setLdapUrl(config.getLdapUrl());
-    cc.setConnectTimeout(config.getConnectTimeout());
-    cc.setStartTLSTimeout(config.getStartTLSTimeout());
-    cc.setResponseTimeout(config.getResponseTimeout());
-    cc.setReconnectTimeout(config.getReconnectTimeout());
-    cc.setAutoReconnect(config.getAutoReconnect());
-    cc.setAutoReconnectCondition(config.getAutoReconnectCondition());
-    cc.setAutoReplay(config.getAutoReplay());
-    cc.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
-    cc.setUseStartTLS(config.getUseStartTLS());
-    cc.setConnectionInitializers(config.getConnectionInitializers());
-    cc.setConnectionStrategy(
+    final ConnectionConfig copy = new ConnectionConfig();
+    copy.setLdapUrl(config.getLdapUrl());
+    copy.setConnectTimeout(config.getConnectTimeout());
+    copy.setStartTLSTimeout(config.getStartTLSTimeout());
+    copy.setResponseTimeout(config.getResponseTimeout());
+    copy.setReconnectTimeout(config.getReconnectTimeout());
+    copy.setAutoReconnect(config.getAutoReconnect());
+    copy.setAutoReconnectCondition(config.getAutoReconnectCondition());
+    copy.setAutoReplay(config.getAutoReplay());
+    copy.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
+    copy.setUseStartTLS(config.getUseStartTLS());
+    copy.setConnectionInitializers(
+      config.getConnectionInitializers() != null ? config.getConnectionInitializers() : null);
+    copy.setConnectionStrategy(
       config.getConnectionStrategy() != null ? config.getConnectionStrategy().newInstance() : null);
-    cc.setConnectionValidator(config.getConnectionValidator());
-    cc.setTransportOptions(config.getTransportOptions());
-    return cc;
+    copy.setConnectionValidator(config.getConnectionValidator());
+    copy.setTransportOptions(config.getTransportOptions());
+    return copy;
   }
 
 

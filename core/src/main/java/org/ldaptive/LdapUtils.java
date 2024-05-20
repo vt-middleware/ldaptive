@@ -747,6 +747,33 @@ public final class LdapUtils
 
 
   /**
+   * Creates a copy of the supplied array.
+   *
+   * @param  <T>  type of array
+   * @param  array  array to copy. May be null.
+   *
+   * @return  array copy or null if input was null
+   */
+  public static <T> T[] copyArray(final T[] array)
+  {
+    return array != null ? Arrays.copyOf(array, array.length) : null;
+  }
+
+
+  /**
+   * Creates a copy of the supplied array.
+   *
+   * @param  array  array to copy. May be null.
+   *
+   * @return  array copy or null if input was null
+   */
+  public static byte[] copyArray(final byte[] array)
+  {
+    return array != null ? Arrays.copyOf(array, array.length) : null;
+  }
+
+
+  /**
    * Determines equality of the supplied objects. Array types are automatically detected.
    *
    * @param  o1  to test equality of

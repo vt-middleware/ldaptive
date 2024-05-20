@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.pool;
 
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.AnonymousBindRequest;
 import org.ldaptive.BindRequest;
 import org.ldaptive.Connection;
@@ -13,7 +14,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class BindConnectionPassivator implements ConnectionPassivator
+public class BindConnectionPassivator extends AbstractFreezable implements ConnectionPassivator
 {
 
   /** Logger for this class. */
@@ -46,7 +47,7 @@ public class BindConnectionPassivator implements ConnectionPassivator
    *
    * @return  bind request
    */
-  public BindRequest getBindRequest()
+  public final BindRequest getBindRequest()
   {
     return bindRequest;
   }
@@ -57,8 +58,9 @@ public class BindConnectionPassivator implements ConnectionPassivator
    *
    * @param  br  bind request
    */
-  public void setBindRequest(final BindRequest br)
+  public final void setBindRequest(final BindRequest br)
   {
+    assertMutable();
     bindRequest = br;
   }
 

@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionValidator;
 import org.ldaptive.DefaultConnectionFactory;
@@ -39,7 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractConnectionPool implements ConnectionPool
+public abstract class AbstractConnectionPool extends AbstractFreezable implements ConnectionPool
 {
 
   /** Default min pool size, value is {@value}. */
@@ -142,12 +143,24 @@ public abstract class AbstractConnectionPool implements ConnectionPool
   private boolean failFastInitialize = true;
 
 
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    makeImmutable(activator);
+    makeImmutable(passivator);
+    makeImmutable(validator);
+    makeImmutable(pruneStrategy);
+    makeImmutable(connectionFactory);
+  }
+
+
   /**
    * Returns the name for this pool.
    *
    * @return  pool name
    */
-  public String getName()
+  public final String getName()
   {
     return name;
   }
@@ -158,8 +171,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  s  pool name
    */
-  public void setName(final String s)
+  public final void setName(final String s)
   {
+    assertMutable();
     logger.trace("setting name: {}", s);
     name = s;
   }
@@ -171,7 +185,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  min pool size
    */
-  public int getMinPoolSize()
+  public final int getMinPoolSize()
   {
     return minPoolSize;
   }
@@ -182,8 +196,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  size  min pool size, greater than or equal to zero
    */
-  public void setMinPoolSize(final int size)
+  public final void setMinPoolSize(final int size)
   {
+    assertMutable();
     if (size < 0) {
       throw new IllegalArgumentException("Minimum pool size must be greater than or equal to 0 for pool " + getName());
     }
@@ -198,7 +213,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  max pool size
    */
-  public int getMaxPoolSize()
+  public final int getMaxPoolSize()
   {
     return maxPoolSize;
   }
@@ -209,8 +224,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  size  max pool size, greater than or equal to zero
    */
-  public void setMaxPoolSize(final int size)
+  public final void setMaxPoolSize(final int size)
   {
+    assertMutable();
     // allow a max size of zero for configurations that need to create a pool but don't want it to function
     if (size < 0) {
       throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 0 for pool " + getName());
@@ -225,7 +241,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  validate on check in
    */
-  public boolean isValidateOnCheckIn()
+  public final boolean isValidateOnCheckIn()
   {
     return validateOnCheckIn;
   }
@@ -236,8 +252,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  b  validate on check in
    */
-  public void setValidateOnCheckIn(final boolean b)
+  public final void setValidateOnCheckIn(final boolean b)
   {
+    assertMutable();
     logger.trace("setting validateOnCheckIn: {}", b);
     validateOnCheckIn = b;
   }
@@ -248,7 +265,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  validate on check in
    */
-  public boolean isValidateOnCheckOut()
+  public final boolean isValidateOnCheckOut()
   {
     return validateOnCheckOut;
   }
@@ -259,8 +276,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  b  validate on check out
    */
-  public void setValidateOnCheckOut(final boolean b)
+  public final void setValidateOnCheckOut(final boolean b)
   {
+    assertMutable();
     logger.trace("setting validateOnCheckOut: {}", b);
     validateOnCheckOut = b;
   }
@@ -271,7 +289,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  validate periodically
    */
-  public boolean isValidatePeriodically()
+  public final boolean isValidatePeriodically()
   {
     return validatePeriodically;
   }
@@ -282,8 +300,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  b  validate periodically
    */
-  public void setValidatePeriodically(final boolean b)
+  public final void setValidatePeriodically(final boolean b)
   {
+    assertMutable();
     logger.trace("setting validatePeriodically: {}", b);
     validatePeriodically = b;
   }
@@ -294,7 +313,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  activator
    */
-  public ConnectionActivator getActivator()
+  public final ConnectionActivator getActivator()
   {
     return activator;
   }
@@ -305,8 +324,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  a  activator
    */
-  public void setActivator(final ConnectionActivator a)
+  public final void setActivator(final ConnectionActivator a)
   {
+    assertMutable();
     logger.trace("setting activator: {}", a);
     activator = a;
   }
@@ -317,7 +337,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  passivator
    */
-  public ConnectionPassivator getPassivator()
+  public final ConnectionPassivator getPassivator()
   {
     return passivator;
   }
@@ -328,8 +348,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  p  passivator
    */
-  public void setPassivator(final ConnectionPassivator p)
+  public final void setPassivator(final ConnectionPassivator p)
   {
+    assertMutable();
     logger.trace("setting passivator: {}", p);
     passivator = p;
   }
@@ -340,7 +361,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  connection validator
    */
-  public ConnectionValidator getValidator()
+  public final ConnectionValidator getValidator()
   {
     return validator;
   }
@@ -351,8 +372,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  cv  connection validator
    */
-  public void setValidator(final ConnectionValidator cv)
+  public final void setValidator(final ConnectionValidator cv)
   {
+    assertMutable();
     logger.trace("setting validator: {}", cv);
     validator = cv;
   }
@@ -363,7 +385,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  prune strategy
    */
-  public PruneStrategy getPruneStrategy()
+  public final PruneStrategy getPruneStrategy()
   {
     return pruneStrategy;
   }
@@ -374,8 +396,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  ps  prune strategy
    */
-  public void setPruneStrategy(final PruneStrategy ps)
+  public final void setPruneStrategy(final PruneStrategy ps)
   {
+    assertMutable();
     logger.trace("setting pruneStrategy: {}", ps);
     pruneStrategy = ps;
   }
@@ -386,7 +409,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  connection factory
    */
-  public DefaultConnectionFactory getDefaultConnectionFactory()
+  public final DefaultConnectionFactory getDefaultConnectionFactory()
   {
     return connectionFactory;
   }
@@ -397,8 +420,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  cf  connection factory
    */
-  public void setDefaultConnectionFactory(final DefaultConnectionFactory cf)
+  public final void setDefaultConnectionFactory(final DefaultConnectionFactory cf)
   {
+    assertMutable();
     logger.trace("setting defaultConnectionFactory: {}", cf);
     connectionFactory = cf;
   }
@@ -409,7 +433,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  whether connections will attempt to connect after creation
    */
-  public boolean getConnectOnCreate()
+  public final boolean getConnectOnCreate()
   {
     return connectOnCreate;
   }
@@ -420,8 +444,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  b  connect on create
    */
-  public void setConnectOnCreate(final boolean b)
+  public final void setConnectOnCreate(final boolean b)
   {
+    assertMutable();
     logger.trace("setting connectOnCreate: {}", b);
     connectOnCreate = b;
   }
@@ -432,7 +457,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  queue type
    */
-  public QueueType getQueueType()
+  public final QueueType getQueueType()
   {
     return queueType;
   }
@@ -444,8 +469,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  type  of queue
    */
-  public void setQueueType(final QueueType type)
+  public final void setQueueType(final QueueType type)
   {
+    assertMutable();
     logger.trace("setting queueType: {}", type);
     queueType = type;
   }
@@ -456,7 +482,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  whether {@link #initialize()} should throw
    */
-  public boolean getFailFastInitialize()
+  public final boolean getFailFastInitialize()
   {
     return failFastInitialize;
   }
@@ -467,8 +493,9 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  b  whether {@link #initialize()} should throw
    */
-  public void setFailFastInitialize(final boolean b)
+  public final void setFailFastInitialize(final boolean b)
   {
+    assertMutable();
     logger.trace("setting failFastInitialize: {}", b);
     failFastInitialize = b;
   }
@@ -479,7 +506,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  whether this pool has been initialized
    */
-  public boolean isInitialized()
+  public final boolean isInitialized()
   {
     return initialized;
   }
@@ -490,7 +517,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
-  protected void throwIfNotInitialized()
+  protected final void throwIfNotInitialized()
   {
     if (!initialized) {
       throw new IllegalStateException("Pool " + getName() + " is not initialized");
@@ -584,6 +611,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
       logger.debug("Validate pool task scheduled for {}", this);
     }
 
+    this.freeze();
     initialized = true;
     logger.info("Pool initialized for {}", this);
   }
@@ -599,7 +627,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    * @throws  IllegalStateException  if the pool cannot grow to the supplied size and {@link
    *                                 #createAvailableConnection(boolean)} throws
    */
-  protected void grow(final int size, final boolean throwOnFailure)
+  protected final void grow(final int size, final boolean throwOnFailure)
   {
     if (checkOutLock.tryLock()) {
       try {
@@ -727,7 +755,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @throws  IllegalStateException  if {@link #connectOnCreate} is true and the connection cannot be opened
    */
-  protected PooledConnectionProxy createConnection(final boolean throwOnFailure)
+  protected final PooledConnectionProxy createConnection(final boolean throwOnFailure)
   {
     Connection c = connectionFactory.getConnection();
     if (connectOnCreate) {
@@ -760,7 +788,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @throws  IllegalStateException  if throwOnFailure is true and count connections are not successfully created
    */
-  protected void createAvailableConnections(final int count, final boolean throwOnFailure)
+  protected final void createAvailableConnections(final int count, final boolean throwOnFailure)
   {
     poolLock.lock();
     try {
@@ -830,7 +858,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @throws  IllegalStateException  if {@link #createConnection(boolean)} throws
    */
-  protected PooledConnectionProxy createAvailableConnection(final boolean throwOnFailure)
+  protected final PooledConnectionProxy createAvailableConnection(final boolean throwOnFailure)
   {
     final PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
@@ -860,7 +888,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @throws  IllegalStateException  if {@link #createConnection(boolean)} throws
    */
-  protected PooledConnectionProxy createActiveConnection(final boolean throwOnFailure)
+  protected final PooledConnectionProxy createActiveConnection(final boolean throwOnFailure)
   {
     final PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
@@ -884,7 +912,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  pc  connection that is in the available pool
    */
-  protected void removeAvailableConnection(final PooledConnectionProxy pc)
+  protected final void removeAvailableConnection(final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
@@ -909,7 +937,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  pc  connection that is in the active pool
    */
-  protected void removeActiveConnection(final PooledConnectionProxy pc)
+  protected final void removeActiveConnection(final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
@@ -934,7 +962,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @param  pc  connection that is in both the available and active pools
    */
-  protected void removeAvailableAndActiveConnection(final PooledConnectionProxy pc)
+  protected final void removeAvailableAndActiveConnection(final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
@@ -964,7 +992,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @throws  PoolException  if either activation or validation fails
    */
-  protected void activateAndValidateConnection(final PooledConnectionProxy pc)
+  protected final void activateAndValidateConnection(final PooledConnectionProxy pc)
     throws PoolException
   {
     if (!activator.apply(pc.getConnection())) {
@@ -989,7 +1017,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  whether both passivation and validation succeeded
    */
-  protected boolean passivateAndValidateConnection(final PooledConnectionProxy pc)
+  protected final boolean passivateAndValidateConnection(final PooledConnectionProxy pc)
   {
     if (!pc.getConnection().isOpen()) {
       logger.warn("Failed validation on {} for {}, not open", pc.getConnection(), this);
@@ -1020,7 +1048,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
-  public void prune()
+  public final void prune()
   {
     throwIfNotInitialized();
     logger.trace("waiting for pool lock to prune {} for {}", poolLock.getQueueLength(), this);
@@ -1092,7 +1120,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
-  public void validate()
+  public final void validate()
   {
     throwIfNotInitialized();
     poolLock.lock();
@@ -1139,7 +1167,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
 
   @Override
-  public int availableCount()
+  public final int availableCount()
   {
     if (available == null) {
       return 0;
@@ -1149,7 +1177,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
 
   @Override
-  public int activeCount()
+  public final int activeCount()
   {
     if (active == null) {
       return 0;
@@ -1159,7 +1187,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
 
 
   @Override
-  public Set<PooledConnectionStatistics> getPooledConnectionStatistics()
+  public final Set<PooledConnectionStatistics> getPooledConnectionStatistics()
   {
     throwIfNotInitialized();
 
@@ -1186,7 +1214,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  connection proxy
    */
-  protected Connection createConnectionProxy(final PooledConnectionProxy pc)
+  protected final Connection createConnectionProxy(final PooledConnectionProxy pc)
   {
     return (Connection) Proxy.newProxyInstance(Connection.class.getClassLoader(), new Class[] {Connection.class}, pc);
   }
@@ -1199,7 +1227,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    *
    * @return  pooled connection proxy
    */
-  protected PooledConnectionProxy retrieveConnectionProxy(final Connection proxy)
+  protected final PooledConnectionProxy retrieveConnectionProxy(final Connection proxy)
   {
     return (PooledConnectionProxy) Proxy.getInvocationHandler(proxy);
   }
@@ -1232,7 +1260,7 @@ public abstract class AbstractConnectionPool implements ConnectionPool
    * Contains a connection that is participating in this pool. Used to track how long a connection has been in use and
    * override certain method invocations.
    */
-  protected class DefaultPooledConnectionProxy implements PooledConnectionProxy
+  protected final class DefaultPooledConnectionProxy implements PooledConnectionProxy
   {
 
     /** hash code seed. */

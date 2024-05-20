@@ -19,7 +19,7 @@ import org.ldaptive.transport.TransportFactory;
  *
  * @author  Middleware Services
  */
-public class SingleConnectionFactory extends DefaultConnectionFactory
+public final class SingleConnectionFactory extends DefaultConnectionFactory
 {
 
   /** The proxy used by this factory. */
@@ -111,6 +111,14 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
   }
 
 
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    makeImmutable(validator);
+  }
+
+
   /**
    * Returns whether {@link #initialize()} should throw if the connection cannot be opened.
    *
@@ -129,6 +137,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setFailFastInitialize(final boolean b)
   {
+    assertMutable();
     failFastInitialize = b;
   }
 
@@ -151,6 +160,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setNonBlockingInitialize(final boolean b)
   {
+    assertMutable();
     nonBlockingInitialize = b;
   }
 
@@ -173,6 +183,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setOnOpen(final Function<Connection, Boolean> function)
   {
+    assertMutable();
     onOpen = function;
   }
 
@@ -195,6 +206,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setOnClose(final Function<Connection, Boolean> function)
   {
+    assertMutable();
     onClose = function;
   }
 
@@ -217,6 +229,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public void setValidator(final ConnectionValidator cv)
   {
+    assertMutable();
     validator = cv;
   }
 
@@ -319,6 +332,7 @@ public class SingleConnectionFactory extends DefaultConnectionFactory
     if (initializeEx != null && failFastInitialize) {
       throw initializeEx;
     }
+    this.freeze();
   }
 
 
