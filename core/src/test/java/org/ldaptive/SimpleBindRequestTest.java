@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.nio.charset.StandardCharsets;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -74,5 +75,143 @@ public class SimpleBindRequestTest
     throws Exception
   {
     Assert.assertEquals(request.encode(1), berValue);
+  }
+
+
+  @Test
+  public void nullOrEmptyDn()
+  {
+    try {
+      new SimpleBindRequest(null, "pass");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().dn(null).build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      new SimpleBindRequest("", "pass");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().dn("").build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+  }
+
+
+  @Test
+  public void nullOrEmptyPassword()
+  {
+    try {
+      new SimpleBindRequest("dn", (String) null);
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().password((String) null).build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      new SimpleBindRequest("dn", "");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().password("").build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+  }
+
+
+  @Test
+  public void nullOrEmptyCredential()
+  {
+    try {
+      new SimpleBindRequest("dn", new Credential((String) null));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      new SimpleBindRequest("dn", new Credential((char[]) null));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      new SimpleBindRequest("dn", new Credential((byte[]) null));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().password(new Credential((String) null)).build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().password(new Credential((char[]) null)).build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().password(new Credential((byte[]) null)).build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      new SimpleBindRequest("dn", new Credential(""));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      new SimpleBindRequest("dn", new Credential("".toCharArray()));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      new SimpleBindRequest("dn", new Credential("".getBytes(StandardCharsets.UTF_8)));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().password(new Credential("")).build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().password(new Credential("".toCharArray())).build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
+    try {
+      SimpleBindRequest.builder().password(new Credential("".getBytes(StandardCharsets.UTF_8))).build();
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+    }
   }
 }
