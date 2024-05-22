@@ -6,7 +6,6 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import org.ldaptive.AbandonRequest;
 import org.ldaptive.AddRequest;
@@ -81,13 +80,13 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Protocol request to send. */
-  private Request request;
+  private final Request request;
+
+  /** Time to wait for a response. */
+  private final Duration responseTimeout;
 
   /** Connection to send the request on. */
   private TransportConnection connection;
-
-  /** Time to wait for a response. */
-  private Duration responseTimeout;
 
   /** Protocol message ID. */
   private Integer messageID;
@@ -177,7 +176,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       throw new IllegalStateException("Request for handle " + this + " has already been sent");
     }
     if (connection == null) {
-      throw new IllegalStateException("Cannot execute request for handle " + this + " , connection is null");
+      throw new IllegalStateException("Cannot execute request for handle " + this + ", connection is null");
     }
     connection.write(this);
     return this;
@@ -648,7 +647,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       throw e;
     }
     if (onIntermediate != null) {
-      for (Consumer<IntermediateResponse> func : onIntermediate) {
+      for (IntermediateResponseHandler func : onIntermediate) {
         try {
           func.accept(r);
         } catch (Exception ex) {
