@@ -1,8 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.handler;
 
+import org.ldaptive.LdapAttribute;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchResponse;
+import org.ldaptive.SearchResultReference;
 
 /**
  * Merges the values of the attributes in all entries into a single entry.
@@ -23,7 +26,58 @@ public class MergeResultHandler implements SearchResultHandler
   @Override
   public SearchResponse apply(final SearchResponse searchResponse)
   {
-    return SearchResponse.merge(searchResponse);
+    return merge(searchResponse);
+  }
+
+
+  /**
+   * Merges the entries in the supplied result into a single entry. This method always returns a search result of size
+   * zero or one.
+   *
+   * @param  searchResponse  search result containing entries to merge
+   *
+   * @return  search result containing a single merged entry
+   */
+  private SearchResponse merge(final SearchResponse searchResponse)
+  {
+    final SearchResponse merged = new SearchResponse();
+    merged.initialize(searchResponse);
+
+    LdapEntry mergedEntry = null;
+    for (LdapEntry entry : searchResponse.getEntries()) {
+      if (mergedEntry == null) {
+        mergedEntry = LdapEntry.copy(entry);
+      } else {
+        for (LdapAttribute la : entry.getAttributes()) {
+          final LdapAttribute oldAttr = mergedEntry.getAttribute(la.getName());
+          if (oldAttr == null) {
+            mergedEntry.addAttributes(LdapAttribute.copy(la));
+          } else {
+            if (oldAttr.isBinary()) {
+              oldAttr.addBinaryValues(la.getBinaryValues());
+            } else {
+              oldAttr.addStringValues(la.getStringValues());
+            }
+          }
+        }
+      }
+    }
+    if (mergedEntry != null) {
+      merged.addEntries(mergedEntry);
+    }
+
+    SearchResultReference mergedReference = null;
+    for (SearchResultReference reference : searchResponse.getReferences()) {
+      if (mergedReference == null) {
+        mergedReference = SearchResultReference.copy(reference);
+      } else {
+        mergedReference.addUris(reference.getUris());
+      }
+    }
+    if (mergedReference != null) {
+      merged.addReferences(mergedReference);
+    }
+    return merged;
   }
 
 

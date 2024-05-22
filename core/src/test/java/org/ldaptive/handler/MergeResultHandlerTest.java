@@ -76,8 +76,7 @@ public class MergeResultHandlerTest
   public void apply(final LdapEntry[] actual, final LdapEntry[] expected)
   {
     final MergeResultHandler handler = new MergeResultHandler();
-    final SearchResponse response = new SearchResponse();
-    response.addEntries(actual);
+    final SearchResponse response = SearchResponse.builder().entry(actual).build();
     Assert.assertEquals(
       handler.apply(response).getEntries(),
       Stream.of(expected).collect(Collectors.toCollection(LinkedHashSet::new)));

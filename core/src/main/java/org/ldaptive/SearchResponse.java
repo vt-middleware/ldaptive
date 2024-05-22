@@ -331,46 +331,6 @@ public class SearchResponse extends AbstractResult
 
 
   /**
-   * Merges the entries in the supplied result into a single entry. This method always returns a search result of size
-   * zero or one.
-   *
-   * @param  result  search result containing entries to merge
-   *
-   * @return  search result containing a single merged entry
-   */
-  public static SearchResponse merge(final SearchResponse result)
-  {
-    LdapEntry mergedEntry = null;
-    if (result != null) {
-      for (LdapEntry entry : result.getEntries()) {
-        if (mergedEntry == null) {
-          mergedEntry = entry;
-        } else {
-          for (LdapAttribute la : entry.getAttributes()) {
-            final LdapAttribute oldAttr = mergedEntry.getAttribute(la.getName());
-            if (oldAttr == null) {
-              mergedEntry.addAttributes(la);
-            } else {
-              if (oldAttr.isBinary()) {
-                oldAttr.addBinaryValues(la.getBinaryValues());
-              } else {
-                oldAttr.addStringValues(la.getStringValues());
-              }
-            }
-          }
-        }
-      }
-    }
-    return mergedEntry != null ?
-      builder()
-        .entry(
-          LdapEntry.builder().dn(mergedEntry.getDn()).attributes(mergedEntry.getAttributes()).build())
-        .build() :
-      new SearchResponse();
-  }
-
-
-  /**
    * Creates a builder for this class.
    *
    * @return  new builder

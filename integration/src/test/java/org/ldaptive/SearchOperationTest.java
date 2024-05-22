@@ -38,6 +38,7 @@ import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
 import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
+import org.ldaptive.handler.MergeResultHandler;
 import org.ldaptive.handler.NoOpEntryHandler;
 import org.ldaptive.handler.RecursiveResultHandler;
 import org.ldaptive.referral.DefaultReferralConnectionFactory;
@@ -1064,6 +1065,7 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    search.setSearchResultHandlers(new MergeResultHandler());
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
@@ -1079,7 +1081,7 @@ public class SearchOperationTest extends AbstractTest
     Assert.assertEquals(
       (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
         TestUtils.convertLdifToResult(expected).getEntry(),
-        SearchResponse.merge(result).getEntry()),
+        result.getEntry()),
       0);
   }
 
@@ -1107,6 +1109,7 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    search.setSearchResultHandlers(new MergeResultHandler());
 
     final String expected = TestUtils.readFileIntoString(ldifFile);
 
@@ -1122,7 +1125,7 @@ public class SearchOperationTest extends AbstractTest
     Assert.assertEquals(
       (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
         TestUtils.convertLdifToResult(expected).getEntry(),
-        SearchResponse.merge(result).getEntry()),
+        result.getEntry()),
       0);
   }
 
