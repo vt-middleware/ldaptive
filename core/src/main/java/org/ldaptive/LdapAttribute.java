@@ -26,7 +26,7 @@ import java.util.stream.Stream;
  *
  * @author  Middleware Services
  */
-public class LdapAttribute
+public class LdapAttribute extends AbstractFreezable
 {
 
   /** hash code seed. */
@@ -115,8 +115,9 @@ public class LdapAttribute
    *
    * @param  type  attribute name
    */
-  public void setName(final String type)
+  public final void setName(final String type)
   {
+    assertMutable();
     if (type == null) {
       throw new IllegalArgumentException("Attribute type cannot be null");
     }
@@ -132,7 +133,7 @@ public class LdapAttribute
    *
    * @return  whether this ldap attribute is binary
    */
-  public boolean isBinary()
+  public final boolean isBinary()
   {
     return binary;
   }
@@ -143,8 +144,9 @@ public class LdapAttribute
    *
    * @param  b  whether this ldap attribute is binary
    */
-  public void setBinary(final boolean b)
+  public final void setBinary(final boolean b)
   {
+    assertMutable();
     binary = b;
   }
 
@@ -154,8 +156,9 @@ public class LdapAttribute
    *
    * @param  attrNames  custom binary attribute names
    */
-  public void configureBinary(final String... attrNames)
+  public final void configureBinary(final String... attrNames)
   {
+    assertMutable();
     if (binary) {
       return;
     }
@@ -175,7 +178,7 @@ public class LdapAttribute
    *
    * @return  attribute description
    */
-  public String getName()
+  public final String getName()
   {
     return attributeName;
   }
@@ -188,7 +191,7 @@ public class LdapAttribute
    *
    * @return  attribute description
    */
-  public String getName(final boolean withOptions)
+  public final String getName(final boolean withOptions)
   {
     if (withOptions) {
       return attributeName;
@@ -204,7 +207,7 @@ public class LdapAttribute
    *
    * @return  attribute description options
    */
-  public List<String> getOptions()
+  public final List<String> getOptions()
   {
     if (attributeName.indexOf(";") > 0) {
       final String[] split = attributeName.split(";");
@@ -305,6 +308,7 @@ public class LdapAttribute
    */
   public void addBinaryValues(final byte[]... value)
   {
+    assertMutable();
     Stream.of(value).filter(Objects::nonNull).map(b -> new AttributeValue(b, true)).forEach(attributeValues::add);
   }
 
@@ -316,6 +320,7 @@ public class LdapAttribute
    */
   public void addBinaryValues(final Collection<byte[]> values)
   {
+    assertMutable();
     values.stream().filter(Objects::nonNull).map(b -> new AttributeValue(b, true)).forEach(attributeValues::add);
   }
 
@@ -328,6 +333,7 @@ public class LdapAttribute
    */
   void addBinaryValuesInternal(final Collection<byte[]> values)
   {
+    assertMutable();
     values.stream().map(b -> new AttributeValue(b, false)).forEach(attributeValues::add);
   }
 
@@ -339,6 +345,7 @@ public class LdapAttribute
    */
   public void addStringValues(final String... value)
   {
+    assertMutable();
     Stream.of(value)
       .filter(Objects::nonNull)
       .map(s -> AttributeValue.fromString(s, binary))
@@ -353,6 +360,7 @@ public class LdapAttribute
    */
   public void addStringValues(final Collection<String> values)
   {
+    assertMutable();
     values.stream()
       .filter(Objects::nonNull)
       .map(s -> AttributeValue.fromString(s, binary))
@@ -370,6 +378,7 @@ public class LdapAttribute
   @SuppressWarnings("unchecked")
   public <T> void addValues(final Function<T, byte[]> func, final T... value)
   {
+    assertMutable();
     Stream.of(value)
       .filter(Objects::nonNull)
       .map(func)
@@ -389,6 +398,7 @@ public class LdapAttribute
    */
   public <T> void addValues(final Function<T, byte[]> func, final Collection<T> values)
   {
+    assertMutable();
     values.stream()
       .filter(Objects::nonNull)
       .map(func)
@@ -405,6 +415,7 @@ public class LdapAttribute
    */
   public void removeBinaryValues(final byte[]... value)
   {
+    assertMutable();
     Stream.of(value)
       .filter(Objects::nonNull)
       .map(b -> new AttributeValue(b, false))
@@ -419,6 +430,7 @@ public class LdapAttribute
    */
   public void removeBinaryValues(final Collection<byte[]> values)
   {
+    assertMutable();
     values.stream()
       .filter(Objects::nonNull)
       .map(b -> new AttributeValue(b, false))
@@ -433,6 +445,7 @@ public class LdapAttribute
    */
   public void removeStringValues(final String... value)
   {
+    assertMutable();
     Stream.of(value)
       .filter(Objects::nonNull)
       .map(s -> AttributeValue.fromString(s, binary))
@@ -447,6 +460,7 @@ public class LdapAttribute
    */
   public void removeStringValues(final Collection<String> values)
   {
+    assertMutable();
     values.stream()
       .filter(Objects::nonNull)
       .map(s -> AttributeValue.fromString(s, binary))
@@ -500,15 +514,16 @@ public class LdapAttribute
    *
    * @return  number of values in this ldap attribute
    */
-  public int size()
+  public final int size()
   {
     return attributeValues.size();
   }
 
 
   /** Removes all the values in this ldap attribute. */
-  public void clear()
+  public final void clear()
   {
+    assertMutable();
     attributeValues.clear();
   }
 
@@ -550,6 +565,25 @@ public class LdapAttribute
 
 
   /**
+   * Creates a mutable copy of the supplied attribute.
+   *
+   * @param  attr  to copy
+   *
+   * @return  new ldap attribute instance
+   */
+  public static LdapAttribute copy(final LdapAttribute attr)
+  {
+    final LdapAttribute ldapAttribute = new LdapAttribute();
+    ldapAttribute.attributeName = attr.attributeName;
+    for (AttributeValue av : attr.attributeValues) {
+      ldapAttribute.attributeValues.add(AttributeValue.copy(av));
+    }
+    ldapAttribute.binary = attr.binary;
+    return ldapAttribute;
+  }
+
+
+  /**
    * Returns a new attribute whose values are sorted. String values are sorted naturally. Binary values are sorted using
    * {@link Arrays#compare(byte[], byte[])}.
    *
@@ -569,6 +603,9 @@ public class LdapAttribute
       final Set<String> newValues = la.getStringValues().stream()
         .sorted(new StringComparator()).collect(Collectors.toCollection(LinkedHashSet::new));
       sorted.addStringValues(newValues);
+    }
+    if (la.isFrozen()) {
+      sorted.freeze();
     }
     return sorted;
   }
@@ -591,7 +628,7 @@ public class LdapAttribute
    *
    * @author  Middleware Services
    */
-  private static class AttributeValue
+  private static final class AttributeValue
   {
 
     /**
@@ -616,7 +653,7 @@ public class LdapAttribute
       if (bytes == null) {
         throw new IllegalArgumentException("Attribute value cannot be null");
       }
-      value = copy ? Arrays.copyOf(bytes, bytes.length) : bytes;
+      value = copy ? LdapUtils.copyArray(bytes) : bytes;
     }
 
 
@@ -649,7 +686,7 @@ public class LdapAttribute
      */
     byte[] getValue(final boolean copy)
     {
-      return copy ? Arrays.copyOf(value, value.length) : value;
+      return copy ? LdapUtils.copyArray(value) : value;
     }
 
 
@@ -704,6 +741,19 @@ public class LdapAttribute
         return new AttributeValue(base64Decode(string, true), false);
       }
       return new AttributeValue(LdapUtils.utf8Encode(string, false), false);
+    }
+
+
+    /**
+     * Creates a copy of the supplied attribute value.
+     *
+     * @param  value  to create copy of
+     *
+     * @return  new attribute value
+     */
+    static AttributeValue copy(final AttributeValue value)
+    {
+      return new AttributeValue(value.getValue(true), false);
     }
 
 
@@ -777,6 +827,13 @@ public class LdapAttribute
 
 
     protected Builder() {}
+
+
+    public Builder freeze()
+    {
+      object.freeze();
+      return this;
+    }
 
 
     public Builder name(final String name)

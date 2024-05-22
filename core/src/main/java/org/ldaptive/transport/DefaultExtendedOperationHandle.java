@@ -22,7 +22,7 @@ import org.ldaptive.handler.UnsolicitedNotificationHandler;
  *
  * @author  Middleware Services
  */
-public class DefaultExtendedOperationHandle
+public final class DefaultExtendedOperationHandle
   extends DefaultOperationHandle<ExtendedRequest, ExtendedResponse> implements ExtendedOperationHandle
 {
 

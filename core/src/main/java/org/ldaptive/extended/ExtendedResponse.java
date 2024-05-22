@@ -79,29 +79,32 @@ public class ExtendedResponse extends AbstractResult
     parser.registerHandler(VALUE_PATH, new ResponseValueHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
+    freezeOnConstruct();
   }
 
 
-  public String getResponseName()
+  public final String getResponseName()
   {
     return responseName;
   }
 
 
-  public void setResponseName(final String name)
+  public final void setResponseName(final String name)
   {
+    assertMutableOnConstruct();
     responseName = name;
   }
 
 
-  public byte[] getResponseValue()
+  public final byte[] getResponseValue()
   {
     return responseValue;
   }
 
 
-  public void setResponseValue(final byte[] value)
+  public final void setResponseValue(final byte[] value)
   {
+    assertMutableOnConstruct();
     responseValue = value;
   }
 

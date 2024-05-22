@@ -23,7 +23,7 @@ import org.ldaptive.handler.UnsolicitedNotificationHandler;
  *
  * @author  Middleware Services
  */
-public class DefaultCompareOperationHandle
+public final class DefaultCompareOperationHandle
   extends DefaultOperationHandle<CompareRequest, CompareResponse> implements CompareOperationHandle
 {
 

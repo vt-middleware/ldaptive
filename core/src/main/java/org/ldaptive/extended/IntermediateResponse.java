@@ -56,29 +56,32 @@ public class IntermediateResponse extends AbstractMessage
     parser.registerHandler(ResponseValueHandler.PATH, new ResponseValueHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
+    freezeOnConstruct();
   }
 
 
-  public String getResponseName()
+  public final String getResponseName()
   {
     return responseName;
   }
 
 
-  protected void setResponseName(final String name)
+  protected final void setResponseName(final String name)
   {
+    assertMutableOnConstruct();
     responseName = name;
   }
 
 
-  public byte[] getResponseValue()
+  public final byte[] getResponseValue()
   {
     return responseValue;
   }
 
 
-  protected void setResponseValue(final byte[] value)
+  protected final void setResponseValue(final byte[] value)
   {
+    assertMutableOnConstruct();
     responseValue = value;
   }
 

@@ -33,18 +33,49 @@ import org.ldaptive.control.ResponseControl;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractMessage implements Message
+public abstract class AbstractMessage extends AbstractFreezable implements Message
 {
+
+  /** LDAP controls. */
+  private final List<ResponseControl> controls = new ArrayList<>();
 
   /** Protocol message ID. */
   private int messageID;
 
-  /** LDAP controls. */
-  private List<ResponseControl> controls = new ArrayList<>();
+  /** Whether this object has been marked immutable. */
+  private volatile boolean immutableOnConstruct;
+
+
+  /** Invoked from a constructor to control the immutability of specific properties. */
+  protected final void freezeOnConstruct()
+  {
+    immutableOnConstruct = true;
+  }
+
+
+  /**
+   * Verifies if the {@link #immutableOnConstruct} flag is set.
+   *
+   * @throws  IllegalStateException  if the {@link #immutableOnConstruct flag is set}
+   */
+  protected final void assertMutableOnConstruct()
+  {
+    if (immutableOnConstruct) {
+      throw new IllegalStateException("Cannot modify immutable object");
+    }
+  }
 
 
   @Override
-  public int getMessageID()
+  public void freeze()
+  {
+    freezeOnConstruct();
+    super.freeze();
+  }
+
+
+  @Override
+  public final int getMessageID()
   {
     return messageID;
   }
@@ -52,12 +83,13 @@ public abstract class AbstractMessage implements Message
 
   public void setMessageID(final int id)
   {
+    assertMutableOnConstruct();
     messageID = id;
   }
 
 
   @Override
-  public ResponseControl[] getControls()
+  public final ResponseControl[] getControls()
   {
     return controls != null ? controls.toArray(new ResponseControl[0]) : null;
   }
@@ -68,8 +100,9 @@ public abstract class AbstractMessage implements Message
    *
    * @param  cntrls  to add
    */
-  public void addControls(final ResponseControl... cntrls)
+  public final void addControls(final ResponseControl... cntrls)
   {
+    assertMutableOnConstruct();
     Collections.addAll(controls, cntrls);
   }
 
@@ -84,6 +117,23 @@ public abstract class AbstractMessage implements Message
   {
     setMessageID(message.getMessageID());
     addControls(message.getControls());
+  }
+
+
+  /**
+   * Returns whether the base properties of this message are equal. Those include message ID and controls.
+   *
+   * @param  message  to compare
+   *
+   * @return  whether message properties are equal
+   */
+  public final boolean equalsMessage(final Message message)
+  {
+    if (message == this) {
+      return true;
+    }
+    return LdapUtils.areEqual(getMessageID(), message.getMessageID()) &&
+      LdapUtils.areEqual(getControls(), message.getControls());
   }
 
 
@@ -291,6 +341,13 @@ public abstract class AbstractMessage implements Message
     protected abstract B self();
 
 
+    public B freeze()
+    {
+      object.freeze();
+      return self();
+    }
+
+
     public B messageID(final int id)
     {
       object.setMessageID(id);
@@ -307,6 +364,7 @@ public abstract class AbstractMessage implements Message
 
     public T build()
     {
+      object.freezeOnConstruct();
       return object;
     }
   }

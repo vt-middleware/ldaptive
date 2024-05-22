@@ -12,7 +12,7 @@ import org.ldaptive.Result;
  *
  * @author  Middleware Services
  */
-public class AuthenticationHandlerResponse extends AbstractResult
+public final class AuthenticationHandlerResponse extends AbstractResult
 {
 
   /** hash code seed. */
@@ -45,6 +45,7 @@ public class AuthenticationHandlerResponse extends AbstractResult
     copyValues(result);
     authenticationResultCode = code;
     connection = conn;
+    freezeOnConstruct();
   }
 
 
@@ -120,18 +121,18 @@ public class AuthenticationHandlerResponse extends AbstractResult
    *
    * @return  new builder
    */
-  protected static Builder builder()
+  static Builder builder()
   {
     return new Builder();
   }
 
 
   // CheckStyle:OFF
-  protected static class Builder extends AbstractResult.AbstractBuilder<Builder, AuthenticationHandlerResponse>
+  protected static final class Builder extends AbstractResult.AbstractBuilder<Builder, AuthenticationHandlerResponse>
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new AuthenticationHandlerResponse());
     }

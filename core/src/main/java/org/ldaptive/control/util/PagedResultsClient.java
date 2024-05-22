@@ -12,8 +12,6 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.RequestControl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Client that simplifies using the paged results control.
@@ -22,9 +20,6 @@ import org.slf4j.LoggerFactory;
  */
 public class PagedResultsClient extends AbstractSearchOperationFactory
 {
-
-  /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Results page size. */
   private final int resultSize;
@@ -226,9 +221,11 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
         manager.writeCookie(cookie);
       }
     } while (cookie != null);
-    result.addEntries(combinedResults.getEntries());
-    result.addReferences(combinedResults.getReferences());
-    return result;
+    final SearchResponse finalResult = SearchResponse.copy(result);
+    finalResult.addEntries(combinedResults.getEntries());
+    finalResult.addReferences(combinedResults.getReferences());
+    finalResult.freeze();
+    return finalResult;
   }
 
 

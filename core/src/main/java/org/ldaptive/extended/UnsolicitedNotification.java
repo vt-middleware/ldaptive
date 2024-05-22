@@ -48,6 +48,7 @@ public class UnsolicitedNotification extends ExtendedResponse
   @Override
   public void setMessageID(final int id)
   {
+    assertMutableOnConstruct();
     if (id != 0) {
       throw new IllegalArgumentException("Message ID must be zero");
     }

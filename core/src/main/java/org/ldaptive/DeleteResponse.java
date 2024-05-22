@@ -14,7 +14,7 @@ import org.ldaptive.asn1.DERPath;
  *
  * @author  Middleware Services
  */
-public class DeleteResponse extends AbstractResult
+public final class DeleteResponse extends AbstractResult
 {
 
   /** BER protocol number. */
@@ -57,6 +57,7 @@ public class DeleteResponse extends AbstractResult
     parser.registerHandler(REFERRAL_PATH, new ReferralHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
+    freezeOnConstruct();
   }
 
 
@@ -97,11 +98,11 @@ public class DeleteResponse extends AbstractResult
 
 
   // CheckStyle:OFF
-  public static class Builder extends AbstractResult.AbstractBuilder<Builder, DeleteResponse>
+  public static final class Builder extends AbstractResult.AbstractBuilder<Builder, DeleteResponse>
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new DeleteResponse());
     }

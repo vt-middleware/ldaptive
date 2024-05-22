@@ -4,9 +4,12 @@ package org.ldaptive.dn;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -19,7 +22,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class Dn
+public final class Dn extends AbstractFreezable
 {
 
   /** hash code seed. */
@@ -99,7 +102,7 @@ public class Dn
    */
   public List<RDn> getRDns()
   {
-    return rdnComponents;
+    return Collections.unmodifiableList(rdnComponents);
   }
 
 
@@ -110,6 +113,7 @@ public class Dn
    */
   public void add(final Dn dn)
   {
+    assertMutable();
     rdnComponents.addAll(dn.getRDns());
   }
 
@@ -121,6 +125,7 @@ public class Dn
    */
   public void add(final RDn rdn)
   {
+    assertMutable();
     rdnComponents.add(rdn);
   }
 
@@ -133,6 +138,7 @@ public class Dn
    */
   public void add(final int index, final RDn rdn)
   {
+    assertMutable();
     rdnComponents.add(index, rdn);
   }
 
@@ -191,7 +197,7 @@ public class Dn
   {
     return rdnComponents.stream()
       .flatMap(rdn -> rdn.getNames().stream())
-      .collect(Collectors.toList());
+      .collect(Collectors.toUnmodifiableList());
   }
 
 
@@ -205,9 +211,12 @@ public class Dn
   public Collection<String> getValues(final String name)
   {
     return rdnComponents.stream()
-      .filter(rdn -> rdn.getNameValue().hasName(name))
-      .map(rdn -> rdn.getNameValue().getStringValue())
-      .collect(Collectors.toList());
+      .map(RDn::getNameValue)
+      .filter(Objects::nonNull)
+      .filter(nv -> nv.hasName(name))
+      .map(NameValue::getStringValue)
+      .filter(Objects::nonNull)
+      .collect(Collectors.toUnmodifiableList());
   }
 
 
@@ -432,6 +441,23 @@ public class Dn
 
 
   /**
+   * Creates a mutable copy of the supplied DN.
+   *
+   * @param  dn  to copy
+   *
+   * @return  new DN instance
+   */
+  public static Dn copy(final Dn dn)
+  {
+    final Dn copy = new Dn();
+    for (RDn rdn : dn.rdnComponents) {
+      copy.add(new RDn(rdn.getNameValues()));
+    }
+    return copy;
+  }
+
+
+  /**
    * Creates a builder for this class.
    *
    * @return  new builder
@@ -443,14 +469,21 @@ public class Dn
 
 
   // CheckStyle:OFF
-  public static class Builder
+  public static final class Builder
   {
 
 
     private final Dn object = new Dn();
 
 
-    protected Builder() {}
+    private Builder() {}
+
+
+    public Dn.Builder freeze()
+    {
+      object.freeze();
+      return this;
+    }
 
 
     public Dn.Builder add(final String dn)
