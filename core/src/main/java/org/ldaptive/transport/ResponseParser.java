@@ -113,7 +113,8 @@ public class ResponseParser
       e.clear();
       final ExtendedResponse extRes = new ExtendedResponse(e);
       if (NoticeOfDisconnection.OID.equals(extRes.getResponseName())) {
-        message = new NoticeOfDisconnection();
+        e.clear();
+        message = new NoticeOfDisconnection(e);
       } else {
         message = extRes;
       }

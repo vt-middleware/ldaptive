@@ -21,7 +21,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class RDn
+public final class RDn
 {
 
   /** hash code seed. */

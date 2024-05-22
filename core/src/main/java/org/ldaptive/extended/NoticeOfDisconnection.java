@@ -18,7 +18,7 @@ import org.ldaptive.asn1.DERBuffer;
  *
  * @author  Middleware Services
  */
-public class NoticeOfDisconnection extends UnsolicitedNotification
+public final class NoticeOfDisconnection extends UnsolicitedNotification
 {
 
   /** OID of this response. */
@@ -87,11 +87,11 @@ public class NoticeOfDisconnection extends UnsolicitedNotification
 
 
   // CheckStyle:OFF
-  public static class Builder extends UnsolicitedNotification.Builder
+  public static final class Builder extends UnsolicitedNotification.Builder
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new NoticeOfDisconnection());
     }

@@ -23,7 +23,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class SearchResultReference extends AbstractMessage
+public final class SearchResultReference extends AbstractMessage implements Freezable
 {
 
   /** BER protocol number. */
@@ -36,7 +36,10 @@ public class SearchResultReference extends AbstractMessage
   private static final DERPath REFERRAL_URI_PATH = new DERPath("/SEQ/APP(19)/OCTSTR");
 
   /** List of references. */
-  private List<String> references = new ArrayList<>();
+  private final List<String> references = new ArrayList<>();
+
+  /** Whether this object has been marked immutable. */
+  private volatile boolean immutable;
 
 
   /**
@@ -60,6 +63,34 @@ public class SearchResultReference extends AbstractMessage
   }
 
 
+  @Override
+  public void freeze()
+  {
+    immutable = true;
+  }
+
+
+  @Override
+  public boolean isFrozen()
+  {
+    return immutable;
+  }
+
+
+  @Override
+  public void assertMutable()
+  {
+    if (immutable) {
+      throw new IllegalStateException("Cannot modify immutable object");
+    }
+  }
+
+
+  /**
+   * Returns the URIs in this reference.
+   *
+   * @return  reference URIs
+   */
   public String[] getUris()
   {
     return references.toArray(new String[0]);
@@ -73,6 +104,7 @@ public class SearchResultReference extends AbstractMessage
    */
   public void addUris(final String... uri)
   {
+    assertMutable();
     Collections.addAll(references, uri);
   }
 
@@ -84,7 +116,34 @@ public class SearchResultReference extends AbstractMessage
    */
   public void addUris(final Collection<String> uris)
   {
+    assertMutable();
     references.addAll(uris);
+  }
+
+
+  /**
+   * Removes a URI from this reference.
+   *
+   * @param  uri  to remove
+   */
+  public void removeUris(final String... uri)
+  {
+    assertMutable();
+    for (String s : uri) {
+      references.remove(s);
+    }
+  }
+
+
+  /**
+   * Removes a URI from this reference.
+   *
+   * @param  uris  to remove
+   */
+  public void removeUris(final Collection<String> uris)
+  {
+    assertMutable();
+    uris.forEach(references::remove);
   }
 
 
@@ -118,6 +177,22 @@ public class SearchResultReference extends AbstractMessage
   public String toString()
   {
     return super.toString() + ", " + "URIs=" + references;
+  }
+
+
+  /**
+   * Creates a mutable copy of the supplied search result reference.
+   *
+   * @param  ref  to copy
+   *
+   * @return  new search result reference instance
+   */
+  public static SearchResultReference copy(final SearchResultReference ref)
+  {
+    final SearchResultReference copy = new SearchResultReference();
+    copy.copyValues(ref);
+    copy.references.addAll(ref.references);
+    return copy;
   }
 
 
@@ -173,11 +248,11 @@ public class SearchResultReference extends AbstractMessage
 
 
   // CheckStyle:OFF
-  public static class Builder extends AbstractMessage.AbstractBuilder<Builder, SearchResultReference>
+  public static final class Builder extends AbstractMessage.AbstractBuilder<Builder, SearchResultReference>
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new SearchResultReference());
     }
@@ -190,9 +265,23 @@ public class SearchResultReference extends AbstractMessage
     }
 
 
+    public Builder freeze()
+    {
+      object.freeze();
+      return this;
+    }
+
+
     public Builder uris(final String... uri)
     {
       object.addUris(uri);
+      return this;
+    }
+
+
+    public Builder uris(final Collection<String> uris)
+    {
+      object.addUris(uris);
       return this;
     }
   }

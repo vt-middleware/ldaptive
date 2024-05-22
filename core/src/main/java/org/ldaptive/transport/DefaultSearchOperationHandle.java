@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Message;
+import org.ldaptive.ResultCode;
 import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
@@ -29,7 +30,7 @@ import org.ldaptive.handler.UnsolicitedNotificationHandler;
  *
  * @author  Middleware Services
  */
-public class DefaultSearchOperationHandle
+public final class DefaultSearchOperationHandle
   extends DefaultOperationHandle<SearchRequest, SearchResponse> implements SearchOperationHandle
 {
 
@@ -101,29 +102,37 @@ public class DefaultSearchOperationHandle
   public SearchResponse await()
     throws LdapException
   {
-    final SearchResponse done = super.await();
-    result.initialize(done);
+    SearchResponse done = super.await();
+    done.addEntries(result.getEntries());
+    done.addReferences(result.getReferences());
     if (SORT_RESULTS) {
-      result = SearchResponse.sort(result);
+      done = SearchResponse.sort(done);
     }
-    if (onSearchResult != null) {
-      for (SearchResultHandler func : onSearchResult) {
-        try {
-          result = func.apply(result);
-        } catch (Exception ex) {
-          logger.warn("Result function {} threw an exception", func, ex);
+    try {
+      if (onSearchResult != null) {
+        for (SearchResultHandler func : onSearchResult) {
+          SearchResponse handlerResponse = null;
+          try {
+            handlerResponse = func.apply(done);
+          } catch (Exception ex) {
+            logger.warn("Result function {} threw an exception", func, ex);
+          }
+          if (handlerResponse == null) {
+            throw new IllegalStateException("Search result handler " + func + " returned null result");
+          } else if (!handlerResponse.equalsResult(done)) {
+            if (!ResultCode.REFERRAL.equals(done.getResultCode()) &&
+                !ResultCode.REFERRAL_LIMIT_EXCEEDED.equals(handlerResponse.getResultCode()))
+            {
+              throw new IllegalStateException("Cannot modify non-referral search result instance with handler " + func);
+            }
+          }
+          done = handlerResponse;
         }
       }
+    } finally {
+      done.freeze();
     }
-    return result;
-  }
-
-
-  @Override
-  public SearchResponse execute()
-    throws LdapException
-  {
-    return send().await();
+    return done;
   }
 
 
@@ -249,7 +258,14 @@ public class DefaultSearchOperationHandle
     if (onEntry != null) {
       for (LdapEntryHandler func : onEntry) {
         try {
-          e = func.apply(e);
+          final LdapEntry handlerEntry = func.apply(e);
+          if (handlerEntry == null) {
+            e = null;
+            break;
+          } else if (!handlerEntry.equalsMessage(e)) {
+            throw new IllegalStateException("Cannot modify entry instance with handler " + func);
+          }
+          e = handlerEntry;
         } catch (Exception ex) {
           logger.warn("Entry function {} in handle {} threw an exception", func, this, ex);
         }

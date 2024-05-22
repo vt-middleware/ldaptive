@@ -43,6 +43,7 @@ public class SyncInfoMessageTest
             0x23, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30},
           SyncInfoMessage.builder()
             .messageID(4)
+            .responseName(SyncInfoMessage.OID)
             .type(SyncInfoMessage.Type.REFRESH_DELETE)
             .cookie(
               new byte[] {
@@ -68,6 +69,7 @@ public class SyncInfoMessageTest
             0x30, 0x30, 0x30, 0x30, 0x30},
           SyncInfoMessage.builder()
             .messageID(4)
+            .responseName(SyncInfoMessage.OID)
             .type(SyncInfoMessage.Type.NEW_COOKIE)
             .cookie(
               new byte[] {
@@ -93,6 +95,7 @@ public class SyncInfoMessageTest
             0x23, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x01, 0x01, 0x00},
           SyncInfoMessage.builder()
             .messageID(4)
+            .responseName(SyncInfoMessage.OID)
             .type(SyncInfoMessage.Type.REFRESH_PRESENT)
             .refreshDone(false)
             .cookie(
@@ -123,6 +126,7 @@ public class SyncInfoMessageTest
             0x7F, 0x11, 0x6F, (byte) 0xF5, 0x6E, 0x4E, 0x59},
           SyncInfoMessage.builder()
             .messageID(4)
+            .responseName(SyncInfoMessage.OID)
             .type(SyncInfoMessage.Type.SYNC_ID_SET)
             .cookie(
               new byte[] {
@@ -151,6 +155,7 @@ public class SyncInfoMessageTest
             (byte) 0x93, 0x05, 0x09},
           SyncInfoMessage.builder()
             .messageID(4)
+            .responseName(SyncInfoMessage.OID)
             .type(SyncInfoMessage.Type.SYNC_ID_SET)
             .uuids(UUID.fromString("a1407114-b51f-103c-8093-83ef8d930509")).build(),
         },

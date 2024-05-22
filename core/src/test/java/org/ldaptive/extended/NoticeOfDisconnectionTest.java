@@ -45,6 +45,7 @@ public class NoticeOfDisconnectionTest
             (byte) 0x8a, 0x16, 0x31, 0x2e, 0x33, 0x2e, 0x36, 0x2e, 0x31, 0x2e, 0x34, 0x2e, 0x31, 0x2e, 0x31, 0x34, 0x36,
             0x36, 0x2e, 0x32, 0x30, 0x30, 0x33, 0x36},
           NoticeOfDisconnection.builder()
+            .responseName(NoticeOfDisconnection.OID)
             .resultCode(ResultCode.UNAVAILABLE)
             .matchedDN("")
             .diagnosticMessage("The Directory Server is shutting down").build(),

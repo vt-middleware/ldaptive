@@ -11,7 +11,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class AuthenticationResponse extends AbstractResult
+public final class AuthenticationResponse extends AbstractResult
 {
 
   /** hash code seed. */
@@ -50,6 +50,7 @@ public class AuthenticationResponse extends AbstractResult
     authenticationHandlerResponse = response;
     resolvedDn = dn;
     ldapEntry = entry;
+    ldapEntry.freeze();
   }
 
 
@@ -119,6 +120,7 @@ public class AuthenticationResponse extends AbstractResult
    */
   public void setAccountState(final AccountState state)
   {
+    // account state must remain mutable for response handlers
     accountState = state;
   }
 
@@ -182,18 +184,18 @@ public class AuthenticationResponse extends AbstractResult
    *
    * @return  new builder
    */
-  protected static Builder builder()
+  static Builder builder()
   {
     return new Builder();
   }
 
 
   // CheckStyle:OFF
-  protected static class Builder extends AbstractResult.AbstractBuilder<Builder, AuthenticationResponse>
+  protected static final class Builder extends AbstractResult.AbstractBuilder<Builder, AuthenticationResponse>
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new AuthenticationResponse());
     }
@@ -208,7 +210,7 @@ public class AuthenticationResponse extends AbstractResult
 
     public Builder response(final AuthenticationHandlerResponse response)
     {
-      object.copyValues(response);
+      super.copy(response);
       object.authenticationHandlerResponse = response;
       return this;
     }

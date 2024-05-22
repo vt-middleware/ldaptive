@@ -51,9 +51,6 @@ public class EqualsTest
           ModifyResponse.class,
         },
         new Object[] {
-          SearchResponse.class,
-        },
-        new Object[] {
           AuthenticationHandlerResponse.class,
         },
         new Object[] {
@@ -130,6 +127,18 @@ public class EqualsTest
     EqualsVerifier.forClass(SearchResultReference.class)
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
+      .withIgnoredFields("immutable")
+      .verify();
+  }
+
+
+  @Test
+  public void searchResponse()
+  {
+    EqualsVerifier.forClass(SearchResponse.class)
+      .suppress(Warning.STRICT_INHERITANCE)
+      .suppress(Warning.NONFINAL_FIELDS)
+      .withIgnoredFields("immutable")
       .verify();
   }
 
