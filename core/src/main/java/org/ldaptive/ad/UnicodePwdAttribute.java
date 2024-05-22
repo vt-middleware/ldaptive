@@ -42,6 +42,13 @@ public class UnicodePwdAttribute extends LdapAttribute
 
 
   @Override
+  public String getStringValue()
+  {
+    return getValue(TRANSCODER.decoder());
+  }
+
+
+  @Override
   public Collection<String> getStringValues()
   {
     return getValues(TRANSCODER.decoder());
@@ -52,5 +59,12 @@ public class UnicodePwdAttribute extends LdapAttribute
   public void addStringValues(final String... value)
   {
     addValues(TRANSCODER.encoder(), value);
+  }
+
+
+  @Override
+  public void addStringValues(final Collection<String> values)
+  {
+    addValues(TRANSCODER.encoder(), values);
   }
 }
