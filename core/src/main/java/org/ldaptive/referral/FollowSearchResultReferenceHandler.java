@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
+import org.ldaptive.ResultCode;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
@@ -121,42 +123,31 @@ public class FollowSearchResultReferenceHandler extends AbstractFollowReferralHa
   @Override
   public SearchResponse apply(final SearchResponse result)
   {
-    if (result.getReferences() == null || result.getReferences().isEmpty()) {
+    if (!result.isSuccess() || result.getReferences().isEmpty()) {
       return result;
+    }
+    if (referralDepth > referralLimit) {
+      throw new RuntimeException(
+        new LdapException(ResultCode.REFERRAL_LIMIT_EXCEEDED, "Referral limit of " + referralLimit + " exceeded"));
     }
     final SearchResponse referralResult = SearchResponse.copy(result);
     final List<SearchResultReference> refsToAdd = new ArrayList<>();
     final List<SearchResultReference> refsToRemove = new ArrayList<>();
-    if (referralDepth <= referralLimit) {
-      for (SearchResultReference ref : referralResult.getReferences()) {
-        refsToRemove.add(ref);
-        final SearchResponse sr = followReferral(ref.getUris());
-        if (sr != null) {
-          sr.getEntries().forEach(e -> {
-            final LdapEntry entry = LdapEntry.builder()
-              .copy(e)
-              .messageID(referralResult.getMessageID())
-              .build();
-            if (!referralResult.getEntries().contains(entry)) {
-              referralResult.addEntries(entry);
-            }
-          });
-          sr.getReferences().forEach(r -> {
-            final SearchResultReference reference = SearchResultReference.builder()
-              .copy(r)
-              .messageID(referralResult.getMessageID())
-              .build();
-            refsToAdd.add(reference);
-          });
-        }
+    for (SearchResultReference ref : referralResult.getReferences()) {
+      refsToRemove.add(ref);
+      final SearchResponse sr;
+      try {
+        sr = followReferral(ref.getUris());
+      } catch (LdapException e) {
+        throw new RuntimeException(e);
       }
-      refsToRemove.forEach(referralResult::removeReferences);
-      for (SearchResultReference reference : refsToAdd) {
-        if (!referralResult.getReferences().contains(reference)) {
-          referralResult.addReferences(reference);
-        }
+      if (sr != null) {
+        sr.getEntries().forEach(e -> referralResult.addEntries(LdapEntry.copy(e)));
+        sr.getReferences().forEach(r -> refsToAdd.add(SearchResultReference.copy(r)));
       }
     }
+    refsToRemove.forEach(referralResult::removeReferences);
+    refsToAdd.forEach(referralResult::addReferences);
     return referralResult;
   }
 

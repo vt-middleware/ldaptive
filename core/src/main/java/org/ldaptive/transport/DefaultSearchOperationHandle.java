@@ -115,14 +115,15 @@ public final class DefaultSearchOperationHandle
           try {
             handlerResponse = func.apply(done);
           } catch (Exception ex) {
-            logger.warn("Result function {} threw an exception", func, ex);
+            if (ex.getCause() instanceof LdapException) {
+              throw (LdapException) ex.getCause();
+            }
+            throw new IllegalStateException("Search result handler " + func + " threw exception", ex);
           }
           if (handlerResponse == null) {
             throw new IllegalStateException("Search result handler " + func + " returned null result");
           } else if (!handlerResponse.equalsResult(done)) {
-            if (!ResultCode.REFERRAL.equals(done.getResultCode()) &&
-                !ResultCode.REFERRAL_LIMIT_EXCEEDED.equals(handlerResponse.getResultCode()))
-            {
+            if (!ResultCode.REFERRAL.equals(done.getResultCode())) {
               throw new IllegalStateException("Cannot modify non-referral search result instance with handler " + func);
             }
           }
@@ -267,7 +268,11 @@ public final class DefaultSearchOperationHandle
           }
           e = handlerEntry;
         } catch (Exception ex) {
-          logger.warn("Entry function {} in handle {} threw an exception", func, this, ex);
+          if (ex.getCause() instanceof LdapException) {
+            exception((LdapException) ex.getCause());
+          } else {
+            logger.warn("Entry function {} in handle {} threw an exception", func, this, ex);
+          }
         }
       }
     }

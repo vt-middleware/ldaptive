@@ -112,14 +112,17 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
 
 
   /**
-   * Follows the supplied referral URLs in order until a SUCCESS or REFERRAL_LIMIT_EXCEEDED occurs. If neither of those
-   * conditions occurs this method returns null.
+   * Follows the supplied referral URLs in random order until a SUCCESS or REFERRAL_LIMIT_EXCEEDED occurs. If neither of
+   * those conditions occurs this method returns null.
    *
    * @param  referralUrls  produced by the request
    *
    * @return  referral response
+   *
+   * @throws  LdapException  if the referral limit is exceeded
    */
   protected S followReferral(final String[] referralUrls)
+    throws LdapException
   {
     S referralResult = null;
     final List<String> urls = Arrays.asList(referralUrls);
@@ -137,6 +140,9 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
         final Operation<Q, S> op = createReferralOperation(cf);
         referralResult = op.execute(referralRequest);
       } catch (LdapException e) {
+        if (e.getResultCode() == ResultCode.REFERRAL_LIMIT_EXCEEDED) {
+          throw e;
+        }
         logger.warn("Could not follow referral to " + url, e);
       }
       if (referralResult != null &&
@@ -152,15 +158,24 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
   @Override
   public S apply(final S result)
   {
-    if (result.getReferralURLs() == null || result.getReferralURLs().length == 0) {
+    if (!ResultCode.REFERRAL.equals(result.getResultCode()) ||
+        result.getReferralURLs() == null ||
+        result.getReferralURLs().length == 0)
+    {
       return result;
     }
+    if (referralDepth > referralLimit) {
+      throw new RuntimeException(
+        new LdapException(ResultCode.REFERRAL_LIMIT_EXCEEDED, "Referral limit of " + referralLimit + " exceeded"));
+    }
     S referralResult = result;
-    if (referralDepth <= referralLimit) {
+    try {
       final S r = followReferral(result.getReferralURLs());
       if (r != null) {
         referralResult = r;
       }
+    } catch (LdapException e) {
+      throw new RuntimeException(e);
     }
     return referralResult;
   }

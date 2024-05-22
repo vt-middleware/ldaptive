@@ -1715,39 +1715,17 @@ public class SearchOperationTest extends AbstractTest
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     Assert.assertFalse(response.getEntries().isEmpty());
 
-    // limit 0
-    search.setSearchResultHandlers(new FollowSearchReferralHandler(0));
-    response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().isEmpty());
-    Assert.assertEquals(
-      response.getReferralURLs()[0],
-      "ldap://ldap-test:10389/cn=1,ou=1,ou=referrals-chase,dc=vt,dc=edu??sub");
-
-    // limit 1
-    search.setSearchResultHandlers(new FollowSearchReferralHandler(1));
-    response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().isEmpty());
-    Assert.assertEquals(
-      response.getReferralURLs()[0],
-      "ldap://ldap-test:10389/cn=2,ou=2,ou=referrals-chase,dc=vt,dc=edu??sub");
-
-    // limit 2
-    search.setSearchResultHandlers(new FollowSearchReferralHandler(2));
-    response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().isEmpty());
-    Assert.assertEquals(
-      response.getReferralURLs()[0],
-      "ldap://ldap-test:10389/cn=3,ou=3,ou=referrals-chase,dc=vt,dc=edu??sub");
-
-    // limit 3
-    search.setSearchResultHandlers(new FollowSearchReferralHandler(3));
-    response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().isEmpty());
-    Assert.assertEquals(response.getReferralURLs()[0], "ldap://ldap-test:10389/ou=people,dc=vt,dc=edu??sub");
+    // limit 0-3
+    for (int i = 0; i < 4; i++) {
+      search.setSearchResultHandlers(new FollowSearchReferralHandler(i));
+      try {
+        search.execute(request);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), LdapException.class);
+        Assert.assertEquals(((LdapException) e).getResultCode(), ResultCode.REFERRAL_LIMIT_EXCEEDED);
+      }
+    }
 
     // limit 4
     search.setSearchResultHandlers(new FollowSearchReferralHandler(4));
@@ -1827,33 +1805,17 @@ public class SearchOperationTest extends AbstractTest
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     Assert.assertFalse(response.getEntries().isEmpty());
 
-    // limit 0
-    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(0));
-    response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().isEmpty());
-    Assert.assertFalse(response.getReferences().isEmpty());
-    for (SearchResultReference s : response.getReferences()) {
-      Assert.assertEquals(s.getUris()[0], "ldap://ldap-test:10389/ou=1,ou=references-chase,dc=vt,dc=edu??sub");
+    // limit 0-3
+    for (int i = 0; i < 4; i++) {
+      search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(i));
+      try {
+        search.execute(request);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), LdapException.class);
+        Assert.assertEquals(((LdapException) e).getResultCode(), ResultCode.REFERRAL_LIMIT_EXCEEDED);
+      }
     }
-
-    // limit 1
-    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(1));
-    response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().isEmpty());
-
-    // limit 2
-    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(2));
-    response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().isEmpty());
-
-    // limit 3
-    search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(3));
-    response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.getEntries().isEmpty());
 
     // limit 4
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(4));
