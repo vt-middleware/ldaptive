@@ -10,8 +10,8 @@ import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.ad.SecurityIdentifier;
-import org.ldaptive.handler.AbstractEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
+import org.ldaptive.transport.AbstractMessageFunctionalEntryHandler;
 
 /**
  * Constructs the primary group SID and then searches for that group and puts its DN in the 'memberOf' attribute of the
@@ -25,7 +25,8 @@ import org.ldaptive.handler.SearchResultHandler;
  *
  * @author  Middleware Services
  */
-public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> implements SearchResultHandler
+public class PrimaryGroupIdHandler extends AbstractMessageFunctionalEntryHandler<SearchResponse>
+  implements SearchResultHandler
 {
 
   /** hash code seed. */
@@ -38,12 +39,29 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
   private String baseDn;
 
 
+  /** Default constructor. */
+  public PrimaryGroupIdHandler() {}
+
+
+  /**
+   * Creates a new primary group id handler.
+   *
+   * @param  filter  to locate the primary group
+   * @param  dn  base DN to search for the primary group
+   */
+  public PrimaryGroupIdHandler(final String filter, final String dn)
+  {
+    groupFilter = filter;
+    baseDn = dn;
+  }
+
+
   /**
    * Returns the search filter used to find the primary group.
    *
    * @return  group search filter
    */
-  public String getGroupFilter()
+  public final String getGroupFilter()
   {
     return groupFilter;
   }
@@ -54,8 +72,9 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
    *
    * @param  filter  search filter
    */
-  public void setGroupFilter(final String filter)
+  public final void setGroupFilter(final String filter)
   {
+    assertMutable();
     groupFilter = filter;
   }
 
@@ -66,7 +85,7 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
    *
    * @return  base DN to search for the primary group
    */
-  public String getBaseDn()
+  public final String getBaseDn()
   {
     return baseDn;
   }
@@ -77,8 +96,9 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
    *
    * @param  dn  base DN
    */
-  public void setBaseDn(final String dn)
+  public final void setBaseDn(final String dn)
   {
+    assertMutable();
     baseDn = dn;
   }
 
@@ -135,6 +155,13 @@ public class PrimaryGroupIdHandler extends AbstractEntryHandler<SearchResponse> 
         logger.warn("Error retrieving group ID: {}", groupSid, e);
       }
     }
+  }
+
+
+  @Override
+  public PrimaryGroupIdHandler newInstance()
+  {
+    return new PrimaryGroupIdHandler(groupFilter, baseDn);
   }
 
 

@@ -55,6 +55,13 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler<LdapEntry>
 
 
   @Override
+  public ObjectGuidHandler newInstance()
+  {
+    return new ObjectGuidHandler();
+  }
+
+
+  @Override
   public boolean equals(final Object o)
   {
     if (o == this) {

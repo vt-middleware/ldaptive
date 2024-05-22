@@ -6,7 +6,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
-import org.ldaptive.handler.AbstractEntryHandler;
+import org.ldaptive.transport.AbstractMessageFunctionalEntryHandler;
 
 /**
  * Base class for entry handlers that convert a binary attribute to its string form.
@@ -15,7 +15,7 @@ import org.ldaptive.handler.AbstractEntryHandler;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractBinaryAttributeHandler<T> extends AbstractEntryHandler<T>
+public abstract class AbstractBinaryAttributeHandler<T> extends AbstractMessageFunctionalEntryHandler<T>
 {
 
   /** hash code seed. */
@@ -30,7 +30,7 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractEntryHan
    *
    * @return  attribute name
    */
-  public String getAttributeName()
+  public final String getAttributeName()
   {
     return attributeName;
   }
@@ -41,8 +41,9 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractEntryHan
    *
    * @param  name  of the attribute
    */
-  public void setAttributeName(final String name)
+  public final void setAttributeName(final String name)
   {
+    assertMutable();
     attributeName = name;
   }
 
@@ -85,6 +86,7 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractEntryHan
   @Override
   public void setRequest(final SearchRequest request)
   {
+    assertMutable();
     final String[] binaryAttrs = request.getBinaryAttributes();
     if (binaryAttrs != null) {
       final boolean isAttrSet = Stream.of(binaryAttrs).anyMatch(a -> attributeName.equalsIgnoreCase(a));
@@ -94,6 +96,7 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractEntryHan
     } else {
       request.setBinaryAttributes(attributeName);
     }
+    super.setRequest(request);
   }
 
 

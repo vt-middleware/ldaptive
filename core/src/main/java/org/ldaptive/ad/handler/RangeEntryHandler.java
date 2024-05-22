@@ -11,8 +11,8 @@ import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
-import org.ldaptive.handler.AbstractEntryHandler;
 import org.ldaptive.handler.SearchResultHandler;
+import org.ldaptive.transport.AbstractMessageFunctionalEntryHandler;
 
 /**
  * Rewrites attributes returned from Active Directory to include all values by performing additional searches. This
@@ -30,7 +30,8 @@ import org.ldaptive.handler.SearchResultHandler;
  * @author  Middleware Services
  * @author  Tom Zeller
  */
-public class RangeEntryHandler extends AbstractEntryHandler<SearchResponse> implements SearchResultHandler
+public class RangeEntryHandler extends AbstractMessageFunctionalEntryHandler<SearchResponse>
+  implements SearchResultHandler
 {
 
   /** hash code seed. */
@@ -135,6 +136,13 @@ public class RangeEntryHandler extends AbstractEntryHandler<SearchResponse> impl
         handleAttributes(entry);
       }
     }
+  }
+
+
+  @Override
+  public RangeEntryHandler newInstance()
+  {
+    return new RangeEntryHandler();
   }
 
 

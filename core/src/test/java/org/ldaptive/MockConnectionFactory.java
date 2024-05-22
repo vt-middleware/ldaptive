@@ -14,6 +14,9 @@ public class MockConnectionFactory implements ConnectionFactory
   /** Connection config. */
   private ConnectionConfig connectionConfig;
 
+  /** Mock connection. */
+  private MockConnection connection;
+
   /** Whether this connection factory is open. */
   private boolean isOpen = true;
 
@@ -29,11 +32,22 @@ public class MockConnectionFactory implements ConnectionFactory
   }
 
 
+  /**
+   * Creates a new mock connection factory.
+   *
+   * @param  conn  mock connection
+   */
+  public MockConnectionFactory(final MockConnection conn)
+  {
+    connection = conn;
+  }
+
+
   @Override
   public Connection getConnection() throws LdapException
   {
     if (isOpen) {
-      return new MockConnection(connectionConfig);
+      return connection != null ? connection : new MockConnection(connectionConfig);
     }
     throw new IllegalStateException("Connection factory is closed.");
   }

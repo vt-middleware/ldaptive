@@ -1,22 +1,25 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.handler;
+package org.ldaptive.transport;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Base class for entry handlers which simply returns values unaltered.
  *
+ * @param  <T>  type of object to handle
+ *
  * @author  Middleware Services
  */
-public abstract class AbstractEntryHandler extends AbstractFreezable
+public abstract class AbstractMessageFunctionalEntryHandler<T>
+  extends MessageFunctional.Function<SearchRequest, SearchResponse, T, T>
 {
-
   /** Log for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 

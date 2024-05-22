@@ -12,7 +12,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class MergeAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> implements LdapEntryHandler
+public class MergeAttributeEntryHandler extends AbstractEntryHandler implements LdapEntryHandler
 {
 
   /** hash code seed. */
@@ -25,12 +25,29 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> 
   private String[] attributeNames;
 
 
+  /** Default constructor. */
+  public MergeAttributeEntryHandler() {}
+
+
+  /**
+   * Creates a ew merge attribute entry handler.
+   *
+   * @param  mergeName  attribute name to merge values into
+   * @param  attrNames  attribute names to read values from
+   */
+  public MergeAttributeEntryHandler(final String mergeName, final String[] attrNames)
+  {
+    mergeAttributeName = mergeName;
+    attributeNames = attrNames;
+  }
+
+
   /**
    * Returns the merge attribute name.
    *
    * @return  merge attribute name
    */
-  public String getMergeAttributeName()
+  public final String getMergeAttributeName()
   {
     return mergeAttributeName;
   }
@@ -41,8 +58,9 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> 
    *
    * @param  name  of the merge attribute
    */
-  public void setMergeAttributeName(final String name)
+  public final void setMergeAttributeName(final String name)
   {
+    assertMutable();
     mergeAttributeName = name;
   }
 
@@ -52,9 +70,9 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> 
    *
    * @return  attribute names
    */
-  public String[] getAttributeNames()
+  public final String[] getAttributeNames()
   {
-    return attributeNames;
+    return LdapUtils.copyArray(attributeNames);
   }
 
 
@@ -63,9 +81,10 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> 
    *
    * @param  names  of the attributes
    */
-  public void setAttributeNames(final String... names)
+  public final void setAttributeNames(final String... names)
   {
-    attributeNames = names;
+    assertMutable();
+    attributeNames = LdapUtils.copyArray(names);
   }
 
 
@@ -132,5 +151,82 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler<LdapEntry> 
       getClass().getName() + "@" + hashCode() + "::" +
       "mergeAttributeName=" + mergeAttributeName + ", " +
       "attributeNames=" + Arrays.toString(attributeNames) + "]";
+  }
+
+
+  /**
+   * Creates a builder for this class.
+   *
+   * @return  new builder
+   */
+  public static Builder builder()
+  {
+    return new Builder();
+  }
+
+
+  /** Merge attribute entry handler builder. */
+  public static final class Builder
+  {
+
+    /** Merge attribute entry handler to build. */
+    private final MergeAttributeEntryHandler object = new MergeAttributeEntryHandler();
+
+
+    /**
+     * Default constructor.
+     */
+    private Builder() {}
+
+
+    /**
+     * Makes this instance immutable.
+     *
+     * @return  this builder
+     */
+    public Builder freeze()
+    {
+      object.freeze();
+      return this;
+    }
+
+
+    /**
+     * Sets the attribute names.
+     *
+     * @param  names  attribute names
+     *
+     * @return  this builder
+     */
+    public Builder attributeNames(final String... names)
+    {
+      object.setAttributeNames(names);
+      return this;
+    }
+
+
+    /**
+     * Sets the merge attribute name.
+     *
+     * @param  name  merge attribute name
+     *
+     * @return  this builder
+     */
+    public Builder mergeAttributeName(final String name)
+    {
+      object.setMergeAttributeName(name);
+      return this;
+    }
+
+
+    /**
+     * Returns the merge attribute entry handler.
+     *
+     * @return  merge attribute entry handler
+     */
+    public MergeAttributeEntryHandler build()
+    {
+      return object;
+    }
   }
 }

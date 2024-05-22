@@ -9,7 +9,7 @@ import org.ldaptive.SearchResponse;
  *
  * @author  Middleware Services
  */
-public class SortResultHandler extends AbstractEntryHandler<SearchResponse> implements SearchResultHandler
+public class SortResultHandler implements SearchResultHandler
 {
 
   /** hash code seed. */

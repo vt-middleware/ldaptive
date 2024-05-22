@@ -3,6 +3,7 @@ package org.ldaptive.transport;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
@@ -17,6 +18,7 @@ import org.ldaptive.CompareResponse;
 import org.ldaptive.DeleteRequest;
 import org.ldaptive.DeleteResponse;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Message;
 import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyDnResponse;
@@ -230,8 +232,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   @Override
   public DefaultOperationHandle<Q, S> onResult(final ResultHandler... function)
   {
-    onResult = function;
-    initializeMessageFunctional((Object[]) onResult);
+    onResult = initializeMessageFunctional(function);
     return this;
   }
 
@@ -239,8 +240,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   @Override
   public DefaultOperationHandle<Q, S> onControl(final ResponseControlHandler... function)
   {
-    onControl = function;
-    initializeMessageFunctional((Object[]) onControl);
+    onControl = initializeMessageFunctional(function);
     return this;
   }
 
@@ -248,8 +248,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   @Override
   public DefaultOperationHandle<Q, S> onReferral(final ReferralHandler... function)
   {
-    onReferral = function;
-    initializeMessageFunctional((Object[]) onReferral);
+    onReferral = initializeMessageFunctional(function);
     return this;
   }
 
@@ -257,8 +256,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   @Override
   public DefaultOperationHandle<Q, S> onIntermediate(final IntermediateResponseHandler... function)
   {
-    onIntermediate = function;
-    initializeMessageFunctional((Object[]) onIntermediate);
+    onIntermediate = initializeMessageFunctional(function);
     return this;
   }
 
@@ -266,8 +264,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   @Override
   public DefaultOperationHandle<Q, S> onUnsolicitedNotification(final UnsolicitedNotificationHandler... function)
   {
-    onUnsolicitedNotification = function;
-    initializeMessageFunctional((Object[]) onUnsolicitedNotification);
+    onUnsolicitedNotification = initializeMessageFunctional(function);
     return this;
   }
 
@@ -275,8 +272,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   @Override
   public DefaultOperationHandle<Q, S> onException(final ExceptionHandler function)
   {
-    onException = function;
-    initializeMessageFunctional(onException);
+    onException = initializeMessageFunctional(function);
     return this;
   }
 
@@ -298,22 +294,52 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
 
 
   /**
-   * Iterates over the supplied functions, set the connection and request if the type is {@link MessageFunctional}.
+   * Iterates over the supplied functions and creates a new, initialized {@link MessageFunctional} if any exists.
    *
+   * @param  <T>  type of functions
    * @param  functions  to initialize
+   *
+   * @return  array of functions with any {@link MessageFunctional} initialized
    */
   @SuppressWarnings("unchecked")
-  protected void initializeMessageFunctional(final Object... functions)
+  protected final <T> T[] initializeMessageFunctional(final T... functions)
   {
     if (functions != null) {
-      for (Object o : functions) {
-        if (o instanceof MessageFunctional) {
-          ((MessageFunctional) o).setConnection(connection);
-          ((MessageFunctional) o).setRequest(request);
-          ((MessageFunctional) o).setHandle(this);
+      final boolean hasMessageFunctional = Arrays.stream(functions).anyMatch(f -> f instanceof MessageFunctional);
+      if (hasMessageFunctional) {
+        final T[] copy = LdapUtils.copyArray(functions);
+        for (int i = 0; i < copy.length; i++) {
+          copy[i] = initializeMessageFunctional(copy[i]);
         }
+        return copy;
       }
     }
+    return functions;
+  }
+
+
+  /**
+   * Creates a new {@link MessageFunctional} if function is of that type and initializes it.
+   *
+   * @param  <T>  type of function
+   * @param  function  to initialize
+   *
+   * @return  initialized message functional or the same function
+   */
+  @SuppressWarnings("unchecked")
+  protected final <T> T initializeMessageFunctional(final T function)
+  {
+    if (function instanceof MessageFunctional) {
+      final MessageFunctional mf = ((MessageFunctional) function).newInstance();
+      mf.setConnection(connection);
+      mf.setRequest(request);
+      mf.setHandle(this);
+      if (((MessageFunctional) function).isFrozen()) {
+        mf.freeze();
+      }
+      return (T) mf;
+    }
+    return function;
   }
 
 

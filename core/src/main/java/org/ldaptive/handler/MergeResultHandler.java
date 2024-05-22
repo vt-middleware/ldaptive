@@ -9,7 +9,7 @@ import org.ldaptive.SearchResponse;
  *
  * @author  Miguel Martinez de Espronceda
  */
-public class MergeResultHandler extends AbstractEntryHandler<SearchResponse> implements SearchResultHandler
+public class MergeResultHandler implements SearchResultHandler
 {
 
   /** hash code seed. */

@@ -5,6 +5,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import org.ldaptive.ad.handler.ObjectGuidHandler;
+import org.ldaptive.ad.handler.ObjectSidHandler;
+import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
+import org.ldaptive.ad.handler.RangeEntryHandler;
 import org.ldaptive.auth.AggregateAuthenticationHandler;
 import org.ldaptive.auth.AggregateAuthenticationResponseHandler;
 import org.ldaptive.auth.AggregateDnResolver;
@@ -23,9 +27,15 @@ import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.control.SortKey;
 import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.control.util.VirtualListViewClient;
+import org.ldaptive.handler.CaseChangeEntryHandler;
+import org.ldaptive.handler.DnAttributeEntryHandler;
+import org.ldaptive.handler.MergeAttributeEntryHandler;
+import org.ldaptive.handler.RecursiveResultHandler;
 import org.ldaptive.jaas.SearchRoleResolver;
 import org.ldaptive.pool.BindConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
+import org.ldaptive.referral.FollowSearchReferralHandler;
+import org.ldaptive.referral.FollowSearchResultReferenceHandler;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.testng.Assert;
@@ -147,6 +157,36 @@ public class FreezableTest
         new Object[] {
           FreeIPAAuthenticationResponseHandler.class,
         },
+        new Object[] {
+          ObjectGuidHandler.class,
+        },
+        new Object[] {
+          ObjectSidHandler.class,
+        },
+        new Object[] {
+          CaseChangeEntryHandler.class,
+        },
+        new Object[] {
+          DnAttributeEntryHandler.class,
+        },
+        new Object[] {
+          MergeAttributeEntryHandler.class,
+        },
+        new Object[] {
+          PrimaryGroupIdHandler.class,
+        },
+        new Object[] {
+          RangeEntryHandler.class,
+        },
+        new Object[] {
+          RecursiveResultHandler.class,
+        },
+        new Object[] {
+          FollowSearchReferralHandler.class,
+        },
+        new Object[] {
+          FollowSearchResultReferenceHandler.class,
+        },
       };
   }
 
@@ -192,11 +232,13 @@ public class FreezableTest
         if (invokeMethod) {
           try {
             method.invoke(i, createParamType(method.getParameterTypes()[0]));
-            Assert.fail("Should have thrown exception for " + clazz);
+            Assert.fail("Method " + method + " should have thrown exception for " + clazz);
           } catch (Exception e) {
             Assert.assertEquals(e.getClass(), InvocationTargetException.class);
             Assert.assertEquals(
-              ((InvocationTargetException) e).getTargetException().getClass(), IllegalStateException.class);
+              ((InvocationTargetException) e).getTargetException().getClass(),
+              IllegalStateException.class,
+              "Method " + method + " should have thrown illegal state exception for " + clazz);
           }
         }
       }

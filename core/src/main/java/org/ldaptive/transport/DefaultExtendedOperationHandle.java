@@ -135,8 +135,7 @@ public class DefaultExtendedOperationHandle
    */
   public DefaultExtendedOperationHandle onExtended(final ExtendedValueHandler... function)
   {
-    onExtended = function;
-    initializeMessageFunctional((Object[]) onExtended);
+    onExtended = initializeMessageFunctional(function);
     return this;
   }
 

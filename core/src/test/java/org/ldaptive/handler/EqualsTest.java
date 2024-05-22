@@ -3,6 +3,8 @@ package org.ldaptive.handler;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.ldaptive.Freezable;
+import org.ldaptive.transport.MessageFunctional;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -50,10 +52,23 @@ public class EqualsTest
   @Test(dataProvider = "handler-classes")
   public void handlers(final Class<?> clazz)
   {
-    EqualsVerifier.forClass(clazz)
-      .suppress(Warning.STRICT_INHERITANCE)
-      .suppress(Warning.NONFINAL_FIELDS)
-      .withIgnoredFields("logger", "connection", "request", "handle")
-      .verify();
+    if (MessageFunctional.class.isAssignableFrom(clazz)) {
+      EqualsVerifier.forClass(clazz)
+        .suppress(Warning.STRICT_INHERITANCE)
+        .suppress(Warning.NONFINAL_FIELDS)
+        .withIgnoredFields("logger", "connection", "request", "handle", "immutable")
+        .verify();
+    } else if (Freezable.class.isAssignableFrom(clazz)) {
+      EqualsVerifier.forClass(clazz)
+        .suppress(Warning.STRICT_INHERITANCE)
+        .suppress(Warning.NONFINAL_FIELDS)
+        .withIgnoredFields("logger", "immutable")
+        .verify();
+    } else {
+      EqualsVerifier.forClass(clazz)
+        .suppress(Warning.STRICT_INHERITANCE)
+        .suppress(Warning.NONFINAL_FIELDS)
+        .verify();
+    }
   }
 }

@@ -1,13 +1,14 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport;
 
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.Connection;
 import org.ldaptive.OperationHandle;
 import org.ldaptive.Request;
 import org.ldaptive.Result;
 
 /**
- * Base class for processing a message that is initialized with the request and connection.
+ * Base class for processing a message that is initialized with properties from the handle.
  *
  * @param  <Q> type of request
  * @param  <S> type of result
@@ -15,7 +16,7 @@ import org.ldaptive.Result;
  * @author  Middleware Services
  */
 // CheckStyle:AbstractClassName OFF
-public abstract class MessageFunctional<Q extends Request, S extends Result>
+public abstract class MessageFunctional<Q extends Request, S extends Result> extends AbstractFreezable
 {
 
   /** Connection the request occurred on. */
@@ -36,6 +37,7 @@ public abstract class MessageFunctional<Q extends Request, S extends Result>
 
   public void setConnection(final TransportConnection conn)
   {
+    assertMutable();
     connection = conn;
   }
 
@@ -48,6 +50,7 @@ public abstract class MessageFunctional<Q extends Request, S extends Result>
 
   public void setRequest(final Q req)
   {
+    assertMutable();
     request = req;
   }
 
@@ -60,8 +63,17 @@ public abstract class MessageFunctional<Q extends Request, S extends Result>
 
   public void setHandle(final OperationHandle<Q, S> h)
   {
+    assertMutable();
     handle = h;
   }
+
+
+  /**
+   * Create a new instance of this message functional.
+   *
+   * @return  new instance of this message functional
+   */
+  public abstract MessageFunctional<Q, S> newInstance();
 
 
   /**
