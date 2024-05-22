@@ -2,9 +2,9 @@
 package org.ldaptive.referral;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapURL;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
@@ -124,22 +124,36 @@ public class FollowSearchResultReferenceHandler extends AbstractFollowReferralHa
     if (result.getReferences() == null || result.getReferences().isEmpty()) {
       return result;
     }
+    final SearchResponse referralResult = SearchResponse.copy(result);
+    final List<SearchResultReference> refsToAdd = new ArrayList<>();
+    final List<SearchResultReference> refsToRemove = new ArrayList<>();
     if (referralDepth <= referralLimit) {
-      final List<SearchResultReference> refCopy = new ArrayList<>(result.getReferences());
-      final Iterator<SearchResultReference> i = refCopy.iterator();
-      while (i.hasNext()) {
-        final SearchResultReference ref = i.next();
-        i.remove();
+      for (SearchResultReference ref : referralResult.getReferences()) {
+        refsToRemove.add(ref);
         final SearchResponse sr = followReferral(ref.getUris());
         if (sr != null) {
-          result.addEntries(sr.getEntries());
-          if (sr.getReferralURLs() != null && sr.getReferralURLs().length > 0) {
-            result.addReferralURLs(sr.getReferralURLs());
-          }
+          sr.getEntries().forEach(e -> {
+            final LdapEntry entry = LdapEntry.copy(e);
+            entry.setMessageID(referralResult.getMessageID());
+            if (!referralResult.getEntries().contains(entry)) {
+              referralResult.addEntries(entry);
+            }
+          });
+          sr.getReferences().forEach(r -> {
+            final SearchResultReference reference = SearchResultReference.copy(r);
+            reference.setMessageID(referralResult.getMessageID());
+            refsToAdd.add(reference);
+          });
+        }
+      }
+      refsToRemove.forEach(referralResult::removeReferences);
+      for (SearchResultReference reference : refsToAdd) {
+        if (!referralResult.getReferences().contains(reference)) {
+          referralResult.addReferences(reference);
         }
       }
     }
-    return result;
+    return referralResult;
   }
 
 

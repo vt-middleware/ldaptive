@@ -1813,7 +1813,7 @@ public class SearchOperationTest extends AbstractTest
     response = search.execute(request);
     Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
     Assert.assertTrue(response.entrySize() > 0);
-    Assert.assertTrue(response.referenceSize() > 0);
+    Assert.assertEquals(response.referenceSize(), 0);
 
     // chase search references
 

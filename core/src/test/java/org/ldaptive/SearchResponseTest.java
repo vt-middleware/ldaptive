@@ -679,4 +679,224 @@ public class SearchResponseTest
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
   }
+
+
+  @Test
+  public void immutable()
+  {
+    final SearchResponse response = SearchResponse.builder()
+      .messageID(1)
+      .controls(new SortResponseControl())
+      .entry(
+        LdapEntry.builder()
+          .messageID(1)
+          .dn("uid=1,ou=people,dc=ldaptive,dc=org")
+          .attributes(LdapAttribute.builder().name("givenName").values("bob", "robert").build())
+          .attributes(LdapAttribute.builder().name("sn").values("baker").build())
+          .build())
+      .reference(
+        SearchResultReference.builder()
+          .messageID(1)
+          .uris("ldap://ds1.ldaptive.org", "ldap://ds2.ldaptive.org")
+          .build())
+      .build();
+
+    response.assertMutable();
+    try {
+      response.setMessageID(0);
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      response.addControls(new SortResponseControl());
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      response.setDiagnosticMessage("foo");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      response.setMatchedDN("bar");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      response.setResultCode(ResultCode.LOCAL_ERROR);
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    response.addEntries(
+      LdapEntry.builder()
+        .messageID(1)
+        .dn("uid=2,ou=people,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("givenName").values("bill", "billy").build())
+        .attributes(LdapAttribute.builder().name("sn").values("thompson").build())
+        .build());
+    response.addReferences(SearchResultReference.builder().uris("ldap://ds3.ldaptive.org").build());
+    response.getEntry().setDn("uid=1,ou=robots,dc=ldaptive,dc=org");
+    response.getEntry().getAttribute("givenName").addStringValues("rob");
+
+    response.freeze();
+    try {
+      response.addEntries(LdapEntry.builder()
+        .messageID(1)
+        .dn("uid=3,ou=people,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("givenName").values("ben").build())
+        .build());
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      response.getEntry().setDn("uid=1,ou=aliens,dc=ldaptive,dc=org");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      response.getEntry().getAttribute("givenName").addStringValues("william");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      response.getReference().addUris("ldap://ds4.ldaptive.org");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+  }
+
+
+  @Test
+  public void copy()
+  {
+    final SearchResponse response1 = SearchResponse.builder()
+      .messageID(1)
+      .controls(new SortResponseControl())
+      .entry(
+        LdapEntry.builder()
+          .messageID(1)
+          .dn("uid=1,ou=people,dc=ldaptive,dc=org")
+          .attributes(LdapAttribute.builder().name("givenName").values("bob", "robert").build())
+          .attributes(LdapAttribute.builder().name("sn").values("baker").build())
+          .build())
+      .reference(
+        SearchResultReference.builder()
+          .uris("ldap://ds1.ldaptive.org")
+          .build())
+      .build();
+    final SearchResponse copy1 = SearchResponse.copy(response1);
+    Assert.assertEquals(copy1, response1);
+    Assert.assertFalse(response1.isFrozen());
+    Assert.assertFalse(copy1.isFrozen());
+
+    final SearchResponse response2 = SearchResponse.builder()
+      .messageID(1)
+      .controls(new SortResponseControl())
+      .entry(
+        LdapEntry.builder()
+          .messageID(1)
+          .dn("uid=1,ou=people,dc=ldaptive,dc=org")
+          .attributes(LdapAttribute.builder().name("givenName").values("bob", "robert").build())
+          .attributes(LdapAttribute.builder().name("sn").values("baker").build())
+          .build())
+      .reference(
+        SearchResultReference.builder()
+          .uris("ldap://ds1.ldaptive.org")
+          .build())
+      .freeze()
+      .build();
+    final SearchResponse copy2 = SearchResponse.copy(response2);
+    Assert.assertEquals(copy2, response2);
+    Assert.assertTrue(response2.isFrozen());
+    Assert.assertFalse(copy2.isFrozen());
+  }
+
+
+  @Test
+  public void sort()
+  {
+    final SearchResponse response = SearchResponse.builder()
+      .messageID(1)
+      .controls(new SortResponseControl())
+      .entry(
+        LdapEntry.builder()
+          .messageID(1)
+          .dn("uid=bob,ou=people,dc=ldaptive,dc=org")
+          .attributes(LdapAttribute.builder().name("givenName").values("bob", "robert").build())
+          .attributes(LdapAttribute.builder().name("sn").values("baker").build())
+          .build(),
+        LdapEntry.builder()
+          .messageID(1)
+          .dn("uid=alice,ou=people,dc=ldaptive,dc=org")
+          .attributes(LdapAttribute.builder().name("givenName").values("allison", "alice").build())
+          .attributes(LdapAttribute.builder().name("sn").values("abare").build())
+          .build())
+      .reference(
+        SearchResultReference.builder()
+          .uris("ldap://ds1.ldaptive.org")
+          .build(),
+        SearchResultReference.builder()
+          .uris("ldap://directory-1.ldaptive.org")
+          .build())
+      .build();
+    final SearchResponse sort = SearchResponse.sort(response);
+    Assert.assertNotEquals(sort, response);
+    Assert.assertEquals(sort.getEntry().getDn(), "uid=alice,ou=people,dc=ldaptive,dc=org");
+    Assert.assertEquals(sort.getEntry().getAttribute("givenName").getStringValue(), "alice");
+    Assert.assertEquals(sort.getReference().getUris()[0], "ldap://directory-1.ldaptive.org");
+  }
+
+
+  /*
+  @Test
+  public void merge()
+  {
+    final SearchResponse response = SearchResponse.builder()
+      .messageID(1)
+      .controls(new SortResponseControl())
+      .entry(
+        LdapEntry.builder()
+          .messageID(1)
+          .dn("uid=bob,ou=people,dc=ldaptive,dc=org")
+          .attributes(LdapAttribute.builder().name("givenName").values("bob", "robert").build())
+          .attributes(LdapAttribute.builder().name("sn").values("baker").build())
+          .build(),
+        LdapEntry.builder()
+          .messageID(1)
+          .dn("uid=alice,ou=people,dc=ldaptive,dc=org")
+          .attributes(LdapAttribute.builder().name("givenName").values("allison", "alice").build())
+          .attributes(LdapAttribute.builder().name("sn").values("abare").build())
+          .build())
+      .reference(
+        SearchResultReference.builder()
+          .uris("ldap://ds1.ldaptive.org")
+          .build(),
+        SearchResultReference.builder()
+          .uris("ldap://directory-1.ldaptive.org")
+          .build())
+      .build();
+    final SearchResponse merge = SearchResponse.merge(response);
+    Assert.assertNotEquals(merge, response);
+    Assert.assertEquals(merge.getEntry().getDn(), "uid=bob,ou=people,dc=ldaptive,dc=org");
+    Assert.assertEquals(
+      merge.getEntry().getAttribute("givenName").getStringValues(),
+      List.of("bob", "robert", "allison", "alice"));
+    Assert.assertEquals(
+      merge.getEntry().getAttribute("sn").getStringValues(),
+      List.of("baker", "abare"));
+    Assert.assertEquals(
+      Arrays.asList(merge.getReference().getUris()),
+      List.of("ldap://ds1.ldaptive.org", "ldap://directory-1.ldaptive.org"));
+  }
+
+   */
 }

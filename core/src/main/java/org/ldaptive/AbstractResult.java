@@ -32,6 +32,9 @@ import org.ldaptive.asn1.OctetStringType;
 public abstract class AbstractResult extends AbstractMessage implements Result
 {
 
+  /** Referral URLS. */
+  private final List<String> referralURLs = new ArrayList<>();
+
   /** Result code. */
   private ResultCode resultCode;
 
@@ -41,47 +44,82 @@ public abstract class AbstractResult extends AbstractMessage implements Result
   /** Diagnostic message. */
   private String diagnosticMessage;
 
-  /** Referral URLS. */
-  private List<String> referralURLs = new ArrayList<>();
 
-
-  public ResultCode getResultCode()
+  /**
+   * Returns the result code.
+   *
+   * @return  result code
+   */
+  public final ResultCode getResultCode()
   {
     return resultCode;
   }
 
 
-  public void setResultCode(final ResultCode code)
+  /**
+   * Sets the result code.
+   *
+   * @param  code  result code
+   */
+  public final void setResultCode(final ResultCode code)
   {
+    assertMutableOnConstruct();
     resultCode = code;
   }
 
 
-  public String getMatchedDN()
+  /**
+   * Returns the matched DN.
+   *
+   * @return  matched DN
+   */
+  public final String getMatchedDN()
   {
     return matchedDN;
   }
 
 
-  public void setMatchedDN(final String dn)
+  /**
+   * Sets the matched DN.
+   *
+   * @param  dn  matched DN
+   */
+  public final void setMatchedDN(final String dn)
   {
+    assertMutableOnConstruct();
     matchedDN = dn;
   }
 
 
-  public String getDiagnosticMessage()
+  /**
+   * Returns the diagnostic message.
+   *
+   * @return  diagnostic message
+   */
+  public final String getDiagnosticMessage()
   {
     return diagnosticMessage;
   }
 
 
-  public void setDiagnosticMessage(final String message)
+  /**
+   * Sets the diagnostic message.
+   *
+   * @param  message  diagnostic message
+   */
+  public final void setDiagnosticMessage(final String message)
   {
+    assertMutableOnConstruct();
     diagnosticMessage = message;
   }
 
 
-  public String[] getReferralURLs()
+  /**
+   * Returns the referral URLs.
+   *
+   * @return  referral URLs
+   */
+  public final String[] getReferralURLs()
   {
     return referralURLs != null ? referralURLs.toArray(new String[0]) : null;
   }
@@ -92,8 +130,9 @@ public abstract class AbstractResult extends AbstractMessage implements Result
    *
    * @param  urls  to add
    */
-  public void addReferralURLs(final String... urls)
+  public final void addReferralURLs(final String... urls)
   {
+    assertMutableOnConstruct();
     Collections.addAll(referralURLs, urls);
   }
 
@@ -111,6 +150,29 @@ public abstract class AbstractResult extends AbstractMessage implements Result
     setMatchedDN(result.getMatchedDN());
     setDiagnosticMessage(result.getDiagnosticMessage());
     addReferralURLs(result.getReferralURLs());
+  }
+
+
+  /**
+   * Returns whether the base properties of this result are equal. Those include message ID, controls, result code,
+   * matched DN, diagnostic message and referral URLs.
+   *
+   * @param  result  to compare
+   *
+   * @return  whether result properties are equal
+   */
+  public final boolean equalsResult(final Result result)
+  {
+    if (result == this) {
+      return true;
+    }
+    if (super.equalsMessage(result)) {
+      return LdapUtils.areEqual(getResultCode(), result.getResultCode()) &&
+        LdapUtils.areEqual(getMatchedDN(), result.getMatchedDN()) &&
+        LdapUtils.areEqual(getDiagnosticMessage(), result.getDiagnosticMessage()) &&
+        LdapUtils.areEqual(getReferralURLs(), result.getReferralURLs());
+    }
+    return false;
   }
 
 

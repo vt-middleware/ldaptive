@@ -9,7 +9,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class NameValue
+public final class NameValue
 {
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 5011;

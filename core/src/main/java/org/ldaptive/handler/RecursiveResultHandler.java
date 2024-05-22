@@ -159,11 +159,15 @@ public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandle
     // Recursively searches a list of attributes and merges those results with
     // the existing entry.
     final List<String> searchedDns = new ArrayList<>();
-    if (entry.getAttribute(searchAttribute) != null) {
-      searchedDns.add(entry.getDn());
-      readSearchAttribute(entry, searchedDns);
-    } else {
-      recursiveSearch(entry.getDn(), entry, searchedDns);
+    try {
+      if (entry.getAttribute(searchAttribute) != null) {
+        searchedDns.add(entry.getDn());
+        readSearchAttribute(entry, searchedDns);
+      } else {
+        recursiveSearch(entry.getDn(), entry, searchedDns);
+      }
+    } catch (LdapException e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -174,8 +178,11 @@ public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandle
    *
    * @param  entry  to read
    * @param  searchedDns  list of DNs whose attributes have been read
+   *
+   * @throws  LdapException  if an error occurs performing a search
    */
   private void readSearchAttribute(final LdapEntry entry, final List<String> searchedDns)
+    throws LdapException
   {
     if (entry != null) {
       final LdapAttribute attr = entry.getAttribute(searchAttribute);
@@ -196,19 +203,18 @@ public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandle
    * @param  dn  to get attribute(s) for
    * @param  entry  to merge with
    * @param  searchedDns  list of DNs that have been searched for
+   *
+   * @throws  LdapException  if an error occurs performing a search
    */
   private void recursiveSearch(final String dn, final LdapEntry entry, final List<String> searchedDns)
+    throws LdapException
   {
     if (!searchedDns.contains(dn)) {
 
       LdapEntry newEntry = null;
-      try {
-        final SearchResponse result = performSearch(dn, retAttrs);
-        if (result.isSuccess() && result.entrySize() == 1) {
-          newEntry = result.getEntry();
-        }
-      } catch (LdapException e) {
-        logger.warn("Error retrieving attribute(s): {} for dn {}", Arrays.toString(retAttrs), dn, e);
+      final SearchResponse result = performSearch(dn, retAttrs);
+      if (result.isSuccess() && result.entrySize() == 1) {
+        newEntry = LdapEntry.copy(result.getEntry());
       }
       searchedDns.add(dn);
 
@@ -222,7 +228,7 @@ public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandle
           if (newAttr != null) {
             final LdapAttribute oldAttr = entry.getAttribute(s);
             if (oldAttr == null) {
-              entry.addAttributes(newAttr);
+              entry.addAttributes(LdapAttribute.copy(newAttr));
             } else {
               if (newAttr.isBinary()) {
                 newAttr.getBinaryValues().forEach(oldAttr::addBinaryValues);

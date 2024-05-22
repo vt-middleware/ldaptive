@@ -2,8 +2,10 @@
 package org.ldaptive;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import org.ldaptive.asn1.DefaultDERBuffer;
+import org.ldaptive.control.SortResponseControl;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -475,5 +477,88 @@ public class LdapEntryTest
     Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
     Assert.assertEquals(
       mods[0].getAttribute(), LdapAttribute.builder().name("member").build());
+  }
+
+
+  @Test
+  public void immutable()
+  {
+    final LdapEntry entry = LdapEntry.builder()
+      .messageID(1)
+      .controls(new SortResponseControl())
+      .attributes(LdapAttribute.builder().name("givenName").values("bob").build())
+      .build();
+
+    entry.assertMutable();
+    try {
+      entry.setMessageID(0);
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      entry.addControls(new SortResponseControl());
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    entry.addAttributes(LdapAttribute.builder().name("sn").values("baker").build());
+    entry.getAttribute("givenName").addStringValues("robert");
+
+    entry.freeze();
+    try {
+      entry.addAttributes(LdapAttribute.builder().name("cn").values("robert baker").build());
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      entry.getAttribute("givenName").addStringValues("rob");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+  }
+
+
+  @Test
+  public void copy()
+  {
+    final LdapEntry entry1 = LdapEntry.builder()
+      .messageID(1)
+      .controls(new SortResponseControl())
+      .attributes(LdapAttribute.builder().name("givenName").values("bob").build())
+      .build();
+    final LdapEntry copy1 = LdapEntry.copy(entry1);
+    Assert.assertEquals(copy1, entry1);
+    Assert.assertFalse(entry1.isFrozen());
+    Assert.assertFalse(copy1.isFrozen());
+
+    final LdapEntry entry2 = LdapEntry.builder()
+      .messageID(2)
+      .controls(new SortResponseControl())
+      .dn("uid=bob,ou=people,dc=ldaptive,dc=org")
+      .attributes(LdapAttribute.builder().name("givenName").values("bob").build())
+      .freeze()
+      .build();
+    final LdapEntry copy2 = LdapEntry.copy(entry2);
+    Assert.assertEquals(copy2, entry2);
+    Assert.assertTrue(entry2.isFrozen());
+    Assert.assertFalse(copy2.isFrozen());
+  }
+
+
+  /** Test for sort method. */
+  @Test
+  public void sort()
+  {
+    final LdapEntry entry = new LdapEntry();
+    entry.setDn("uid=1,ou=people,dc=vt,dc=edu");
+    entry.addAttributes(new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones"));
+    entry.addAttributes(new LdapAttribute("giveName", "Bobby", "Bob", "Robert", "John", "James"));
+    final LdapEntry sort = LdapEntry.sort(entry);
+    Assert.assertEquals(sort, entry);
+    Assert.assertEquals(sort.getAttribute().getName(), "giveName");
+    Assert.assertEquals(sort.getAttribute().getStringValues(), List.of("Bob", "Bobby", "James", "John", "Robert"));
   }
 }

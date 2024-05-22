@@ -8,6 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AddResponse;
@@ -21,6 +22,8 @@ import org.ldaptive.LdapException;
 import org.ldaptive.Request;
 import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SimpleBindRequest;
+import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.transport.mock.MockConnection;
 import org.testng.Assert;
@@ -310,5 +313,71 @@ public class DefaultOperationHandleTest
       Assert.fail("Exception was not set on the handle");
     }
     Assert.assertEquals(ResultCode.LOCAL_ERROR, ldapException.get().getResultCode());
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "transport")
+  public void immutableResult()
+    throws Exception
+  {
+    final DefaultOperationHandle<BindRequest, BindResponse> handle = new DefaultOperationHandle<>(
+      SimpleBindRequest.builder().build(),
+      MockConnection.builder(
+        ConnectionConfig.builder().url("ldap://ds1.ldaptive.org").build()).abandonConsumer(req -> {}).build(),
+      Duration.ofSeconds(1));
+    handle.messageID(1);
+
+    final AtomicBoolean handlerExecuted = new AtomicBoolean();
+    handle.onResult(result -> {
+      final BindResponse response = (BindResponse) result;
+      try {
+        response.setMessageID(0);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        response.addControls((ResponseControl) null);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        response.setResultCode(ResultCode.LOCAL_ERROR);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        response.setMatchedDN(null);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        response.setDiagnosticMessage(null);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        response.addReferralURLs("");
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        response.setServerSaslCreds(null);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      Assert.assertTrue(handlerExecuted.compareAndSet(false, true));
+    });
+    handle.result(BindResponse.builder().messageID(1).build());
+    Assert.assertTrue(handlerExecuted.get());
   }
 }

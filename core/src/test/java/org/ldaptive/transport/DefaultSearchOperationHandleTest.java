@@ -3,14 +3,17 @@ package org.ldaptive.transport;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import org.ldaptive.ConnectionConfig;
+import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
@@ -18,8 +21,11 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.ad.handler.AbstractBinaryAttributeHandler;
+import org.ldaptive.control.ResponseControl;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.handler.LdapEntryHandler;
+import org.ldaptive.handler.MergeResultHandler;
+import org.ldaptive.handler.SortResultHandler;
 import org.ldaptive.transport.mock.MockConnection;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -373,6 +379,143 @@ public class DefaultSearchOperationHandleTest
       Assert.fail("Exception was not set on the handle");
     }
     Assert.assertEquals(ResultCode.LOCAL_ERROR, ldapException.get().getResultCode());
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "transport")
+  public void immutableResult()
+    throws Exception
+  {
+    final DefaultSearchOperationHandle handle = new DefaultSearchOperationHandle(
+      SearchRequest.builder().build(),
+      MockConnection.builder(
+        ConnectionConfig.builder().url("ldap://ds1.ldaptive.org").build()).abandonConsumer(req -> {}).build(),
+      Duration.ofSeconds(1));
+    handle.messageID(1);
+
+    final AtomicBoolean handlerExecuted = new AtomicBoolean();
+    handle.onSearchResult(result -> {
+      try {
+        result.setMessageID(0);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        result.addControls((ResponseControl) null);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        result.setResultCode(ResultCode.LOCAL_ERROR);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        result.setMatchedDN(null);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        result.setDiagnosticMessage(null);
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      try {
+        result.addReferralURLs("");
+        Assert.fail("Should have thrown exception");
+      } catch (Exception e) {
+        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      }
+      result.addReferences(SearchResultReference.builder().messageID(result.getMessageID()).build());
+      result.addEntries(LdapEntry.builder().messageID(result.getMessageID()).build());
+      Assert.assertTrue(handlerExecuted.compareAndSet(false, true));
+      return result;
+    });
+    handle.entry(LdapEntry.builder().messageID(1).build());
+    handle.result(SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
+    final SearchResponse result = handle.await();
+    Assert.assertTrue(handlerExecuted.get());
+    try {
+      result.addReferences(SearchResultReference.builder().messageID(result.getMessageID()).build());
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      result.addEntries(LdapEntry.builder().messageID(result.getMessageID()).build());
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "transport")
+  public void sortResultHandler()
+    throws Exception
+  {
+    final DefaultSearchOperationHandle handle = new DefaultSearchOperationHandle(
+      SearchRequest.builder().build(),
+      MockConnection.builder(
+        ConnectionConfig.builder().url("ldap://ds1.ldaptive.org").build()).abandonConsumer(req -> {}).build(),
+      Duration.ofSeconds(1));
+    handle.messageID(1);
+
+    handle.onSearchResult(new SortResultHandler());
+    handle.entry(LdapEntry.builder().messageID(1).dn("uid=xyz,ou=sort,dc=ldaptive,dc=org").build());
+    handle.entry(LdapEntry.builder().messageID(1).dn("uid=abc,ou=sort,dc=ldaptive,dc=org").build());
+    handle.result(SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
+    final SearchResponse result = handle.await();
+    Assert.assertNotNull(result.getEntry());
+    Assert.assertEquals(result.getEntry().getDn(), "uid=abc,ou=sort,dc=ldaptive,dc=org");
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "transport")
+  public void mergeResultHandler()
+    throws Exception
+  {
+    final DefaultSearchOperationHandle handle = new DefaultSearchOperationHandle(
+      SearchRequest.builder().build(),
+      MockConnection.builder(
+        ConnectionConfig.builder().url("ldap://ds1.ldaptive.org").build()).abandonConsumer(req -> {}).build(),
+      Duration.ofSeconds(1));
+    handle.messageID(1);
+
+    handle.onSearchResult(new MergeResultHandler());
+    handle.entry(LdapEntry.builder()
+      .messageID(1)
+      .dn("uid=alice,ou=merge,dc=ldaptive,dc=org")
+      .attributes(
+        LdapAttribute.builder().name("givenName").values("alice").build())
+      .build());
+    handle.entry(LdapEntry.builder()
+      .messageID(1)
+      .dn("uid=bob,ou=merge,dc=ldaptive,dc=org")
+      .attributes(
+        LdapAttribute.builder().name("givenName").values("bob", "robert").build())
+      .build());
+    handle.result(SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
+    final SearchResponse result = handle.await();
+    Assert.assertEquals(result.entrySize(), 1);
+    Assert.assertNotNull(result.getEntry());
+    Assert.assertEquals("uid=alice,ou=merge,dc=ldaptive,dc=org", result.getEntry().getDn());
+    Assert.assertEquals(
+      List.of("alice", "bob", "robert"), result.getEntry().getAttribute("givenName").getStringValues());
   }
 
 

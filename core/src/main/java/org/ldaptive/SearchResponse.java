@@ -9,7 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
@@ -25,7 +24,7 @@ import org.ldaptive.dn.Dn;
  *
  * @author  Middleware Services
  */
-public class SearchResponse extends AbstractResult
+public final class SearchResponse extends AbstractResult
 {
 
   /** BER protocol number. */
@@ -74,6 +73,16 @@ public class SearchResponse extends AbstractResult
     parser.registerHandler(REFERRAL_PATH, new ReferralHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
+    freezeOnConstruct();
+  }
+
+
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    resultEntries.forEach(e -> e.freeze());
+    resultReferences.forEach(r -> r.freeze());
   }
 
 
@@ -84,7 +93,9 @@ public class SearchResponse extends AbstractResult
    */
   public void initialize(final SearchResponse result)
   {
+    assertMutable();
     copyValues(result);
+    freezeOnConstruct();
   }
 
 
@@ -95,7 +106,7 @@ public class SearchResponse extends AbstractResult
    */
   public Collection<LdapEntry> getEntries()
   {
-    return resultEntries;
+    return Collections.unmodifiableCollection(resultEntries);
   }
 
 
@@ -149,7 +160,8 @@ public class SearchResponse extends AbstractResult
    */
   public void addEntries(final LdapEntry... entry)
   {
-    Stream.of(entry).forEach(resultEntries::add);
+    assertMutable();
+    Collections.addAll(resultEntries, entry);
   }
 
 
@@ -160,7 +172,34 @@ public class SearchResponse extends AbstractResult
    */
   public void addEntries(final Collection<LdapEntry> entries)
   {
-    entries.forEach(resultEntries::add);
+    assertMutable();
+    resultEntries.addAll(entries);
+  }
+
+
+  /**
+   * Removes an entry from this search result.
+   *
+   * @param  entry  entry to remove
+   */
+  public void removeEntries(final LdapEntry... entry)
+  {
+    assertMutable();
+    for (LdapEntry e : entry) {
+      resultEntries.remove(e);
+    }
+  }
+
+
+  /**
+   * Removes entry(s) from this search result.
+   *
+   * @param  entries  collection of entries to remove
+   */
+  public void removeEntries(final Collection<LdapEntry> entries)
+  {
+    assertMutable();
+    entries.forEach(resultEntries::remove);
   }
 
 
@@ -182,7 +221,7 @@ public class SearchResponse extends AbstractResult
    */
   public Collection<SearchResultReference> getReferences()
   {
-    return resultReferences;
+    return Collections.unmodifiableCollection(resultReferences);
   }
 
 
@@ -208,6 +247,7 @@ public class SearchResponse extends AbstractResult
    */
   public void addReferences(final SearchResultReference... reference)
   {
+    assertMutable();
     Collections.addAll(resultReferences, reference);
   }
 
@@ -219,7 +259,34 @@ public class SearchResponse extends AbstractResult
    */
   public void addReferences(final Collection<SearchResultReference> references)
   {
+    assertMutable();
     resultReferences.addAll(references);
+  }
+
+
+  /**
+   * Removes a reference from this search result.
+   *
+   * @param  reference  reference to remove
+   */
+  public void removeReferences(final SearchResultReference... reference)
+  {
+    assertMutable();
+    for (SearchResultReference r : reference) {
+      resultReferences.remove(r);
+    }
+  }
+
+
+  /**
+   * Removes references(s) from this search result.
+   *
+   * @param  references  collection of references to remove
+   */
+  public void removeReferences(final Collection<SearchResultReference> references)
+  {
+    assertMutable();
+    references.forEach(resultReferences::remove);
   }
 
 
@@ -307,25 +374,47 @@ public class SearchResponse extends AbstractResult
 
 
   /**
+   * Creates a mutable copy of the supplied search response.
+   *
+   * @param  response  to copy
+   *
+   * @return  new search response instance
+   */
+  public static SearchResponse copy(final SearchResponse response)
+  {
+    final SearchResponse copy = new SearchResponse();
+    copy.copyValues(response);
+    response.resultEntries.forEach(e -> copy.resultEntries.add(LdapEntry.copy(e)));
+    response.resultReferences.forEach(r -> copy.resultReferences.add(SearchResultReference.copy(r)));
+    return copy;
+  }
+
+
+  /**
    * Returns a new response whose entries are sorted naturally by DN. Each attribute and each attribute value are also
    * sorted. See {@link LdapEntry#sort(LdapEntry)} and {@link LdapAttribute#sort(LdapAttribute)}.
    *
-   * @param  sr  response to sort
+   * @param  result  response to sort
    *
    * @return  sorted response
    */
-  public static SearchResponse sort(final SearchResponse sr)
+  public static SearchResponse sort(final SearchResponse result)
   {
     final SearchResponse sorted = new SearchResponse();
-    sorted.copyValues(sr);
-    sorted.addEntries(sr.getEntries().stream()
+    sorted.copyValues(result);
+    final Set<LdapEntry> entries = result.getEntries().stream()
       .map(LdapEntry::sort)
       .sorted(Comparator.comparing(LdapEntry::getDn, String.CASE_INSENSITIVE_ORDER))
-      .collect(Collectors.toCollection(LinkedHashSet::new)));
-    sorted.addReferences(sr.getReferences().stream()
+      .collect(Collectors.toCollection(LinkedHashSet::new));
+    sorted.addEntries(entries);
+    final Set<SearchResultReference> references = result.getReferences().stream()
       .map(SearchResultReference::sort)
       .sorted(Comparator.comparing(SearchResultReference::hashCode))
-      .collect(Collectors.toCollection(LinkedHashSet::new)));
+      .collect(Collectors.toCollection(LinkedHashSet::new));
+    sorted.addReferences(references);
+    if (result.isFrozen()) {
+      sorted.freeze();
+    }
     return sorted;
   }
 
@@ -342,11 +431,11 @@ public class SearchResponse extends AbstractResult
 
 
   // CheckStyle:OFF
-  public static class Builder extends AbstractResult.AbstractBuilder<Builder, SearchResponse>
+  public static final class Builder extends AbstractResult.AbstractBuilder<Builder, SearchResponse>
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new SearchResponse());
     }
@@ -359,6 +448,13 @@ public class SearchResponse extends AbstractResult
     }
 
 
+    public Builder initialize(final SearchResponse r)
+    {
+      object.initialize(r);
+      return this;
+    }
+
+
     public Builder entry(final LdapEntry... e)
     {
       object.addEntries(e);
@@ -366,9 +462,23 @@ public class SearchResponse extends AbstractResult
     }
 
 
+    public Builder entry(final Collection<LdapEntry> entries)
+    {
+      object.addEntries(entries);
+      return this;
+    }
+
+
     public Builder reference(final SearchResultReference... r)
     {
       object.addReferences(r);
+      return this;
+    }
+
+
+    public Builder reference(final Collection<SearchResultReference> references)
+    {
+      object.addReferences(references);
       return this;
     }
   }

@@ -44,7 +44,7 @@ import org.ldaptive.control.ResponseControl;
  *
  * @author  Middleware Services
  */
-public class SyncInfoMessage extends IntermediateResponse
+public final class SyncInfoMessage extends IntermediateResponse
 {
 
   /** OID of this response. */
@@ -102,6 +102,9 @@ public class SyncInfoMessage extends IntermediateResponse
     SYNC_ID_SET
   }
 
+  /** entry uuids. */
+  private final Set<UUID> entryUuids = new LinkedHashSet<>();
+
   /** message type. */
   private Type messageType;
 
@@ -114,14 +117,11 @@ public class SyncInfoMessage extends IntermediateResponse
   /** refresh deletes. */
   private boolean refreshDeletes;
 
-  /** entry uuids. */
-  private Set<UUID> entryUuids = new LinkedHashSet<>();
-
 
   /**
    * Default constructor.
    */
-  protected SyncInfoMessage()
+  private SyncInfoMessage()
   {
     setResponseName(OID);
   }
@@ -140,10 +140,11 @@ public class SyncInfoMessage extends IntermediateResponse
     parser.registerHandler(ResponseValueHandler.PATH, getResponseValueParseHandler());
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
     parser.parse(buffer);
+    freezeOnConstruct();
   }
 
 
-  protected ParseHandler getResponseValueParseHandler()
+  private ParseHandler getResponseValueParseHandler()
   {
     return (parser, encoded) -> {
       final DERParser p = new DERParser();
@@ -181,6 +182,7 @@ public class SyncInfoMessage extends IntermediateResponse
    */
   public void setMessageType(final Type type)
   {
+    assertMutableOnConstruct();
     messageType = type;
   }
 
@@ -203,6 +205,7 @@ public class SyncInfoMessage extends IntermediateResponse
    */
   public void setCookie(final byte[] value)
   {
+    assertMutableOnConstruct();
     cookie = value;
   }
 
@@ -225,6 +228,7 @@ public class SyncInfoMessage extends IntermediateResponse
    */
   public void setRefreshDone(final boolean b)
   {
+    assertMutableOnConstruct();
     refreshDone = b;
   }
 
@@ -247,6 +251,7 @@ public class SyncInfoMessage extends IntermediateResponse
    */
   public void setRefreshDeletes(final boolean b)
   {
+    assertMutableOnConstruct();
     refreshDeletes = b;
   }
 
@@ -269,6 +274,7 @@ public class SyncInfoMessage extends IntermediateResponse
    */
   public void addEntryUuids(final UUID... uuids)
   {
+    assertMutableOnConstruct();
     Collections.addAll(entryUuids, uuids);
   }
 
@@ -611,17 +617,17 @@ public class SyncInfoMessage extends IntermediateResponse
 
 
   // CheckStyle:OFF
-  public static class Builder extends IntermediateResponse.Builder
+  public static final class Builder extends IntermediateResponse.Builder
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new SyncInfoMessage());
     }
 
 
-    protected Builder(final SyncInfoMessage m)
+    private Builder(final SyncInfoMessage m)
     {
       super(m);
     }

@@ -130,6 +130,7 @@ public class EqualsTest
     EqualsVerifier.forClass(SearchResultReference.class)
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
+      .withIgnoredFields("immutableOnConstruct", "immutable")
       .verify();
   }
 
@@ -170,6 +171,7 @@ public class EqualsTest
     EqualsVerifier.forClass(clazz)
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
+      .withIgnoredFields("immutableOnConstruct", "immutable")
       .verify();
   }
 }
