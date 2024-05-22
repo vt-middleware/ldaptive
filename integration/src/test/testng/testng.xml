@@ -453,6 +453,9 @@
       <define name="authload">
         <include name="authload" />
       </define>
+      <define name="searchload">
+        <include name="searchload" />
+      </define>
       <run>
         <include name="${ldapTestGroup}"/>
       </run>
