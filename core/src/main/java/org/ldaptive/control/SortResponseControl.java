@@ -217,7 +217,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
       if (rc == null) {
         throw new IllegalArgumentException("Unknown result code " + resultValue);
       }
-      getObject().setSortResult(rc);
+      getMessage().setSortResult(rc);
     }
   }
 
@@ -244,7 +244,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setAttributeName(OctetStringType.decode(encoded));
+      getMessage().setAttributeName(OctetStringType.decode(encoded));
     }
   }
 }

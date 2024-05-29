@@ -231,7 +231,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setSize(IntegerType.decode(encoded).intValue());
+      getMessage().setSize(IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -260,7 +260,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getMessage().setCookie(cookie);
       }
     }
   }

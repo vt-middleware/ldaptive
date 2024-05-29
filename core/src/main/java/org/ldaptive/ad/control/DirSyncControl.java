@@ -368,7 +368,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setFlags(IntegerType.decode(encoded).longValue());
+      getMessage().setFlags(IntegerType.decode(encoded).longValue());
     }
   }
 
@@ -395,7 +395,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setMaxAttributeCount(IntegerType.decode(encoded).intValue());
+      getMessage().setMaxAttributeCount(IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -424,7 +424,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getMessage().setCookie(cookie);
       }
     }
   }

@@ -262,7 +262,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
       if (ct == null) {
         throw new IllegalArgumentException("Unknown change type code " + typeValue);
       }
-      getObject().setChangeType(ct);
+      getMessage().setChangeType(ct);
     }
   }
 
@@ -289,7 +289,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setPreviousDn(OctetStringType.decode(encoded));
+      getMessage().setPreviousDn(OctetStringType.decode(encoded));
     }
   }
 
@@ -316,7 +316,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setChangeNumber(IntegerType.decode(encoded).intValue());
+      getMessage().setChangeNumber(IntegerType.decode(encoded).intValue());
     }
   }
 }

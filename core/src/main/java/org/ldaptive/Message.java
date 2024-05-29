@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.List;
 import org.ldaptive.control.ResponseControl;
 
 /**
@@ -10,7 +11,6 @@ import org.ldaptive.control.ResponseControl;
  */
 public interface Message
 {
-
 
   /**
    * Returns the ID for this message.
@@ -45,5 +45,17 @@ public interface Message
       }
     }
     return null;
+  }
+
+  /** Message builder interface. */
+  interface Builder<T extends Message>
+  {
+    void messageID(int messageID);
+
+    void controls(ResponseControl... controls);
+
+    void controls(List<ResponseControl> controls);
+
+    T build();
   }
 }

@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
+import org.ldaptive.Message;
+
 /**
  * Parse handler for managing and initializing an object.
  *
@@ -8,31 +10,38 @@ package org.ldaptive.asn1;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractParseHandler<T> implements ParseHandler
+public abstract class AbstractParseHandler<T extends Message, B extends Message.Builder<T>> implements ParseHandler
 {
 
-  /** Object to initialize. */
-  private final T object;
+  /** Builder that will produce a message object of type T. */
+  private final B builder;
 
 
   /**
    * Creates a new abstract parse handler.
    *
-   * @param  t  object to initialize
+   * @param  builder  Produces the message.
    */
-  public AbstractParseHandler(final T t)
+  public AbstractParseHandler(final B builder)
   {
-    object = t;
+    this.builder = builder;
   }
 
 
   /**
-   * Returns the object.
-   *
-   * @return  object
+   * @return  Message builder that is building the message from DER-encoded data.
    */
-  public T getObject()
+  public B getBuilder()
   {
-    return object;
+    return builder;
+  }
+
+
+  /**
+   * @return  Built message object.
+   */
+  public T getMessage()
+  {
+    return builder.build();
   }
 }

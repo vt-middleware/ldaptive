@@ -465,7 +465,7 @@ public class LdapEntry extends AbstractMessage
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setDn(OctetStringType.decode(encoded));
+      getMessage().setDn(OctetStringType.decode(encoded));
     }
   }
 
@@ -496,9 +496,9 @@ public class LdapEntry extends AbstractMessage
         throw new IllegalArgumentException("Could not parse attribute");
       }
       if (p.getValues().isEmpty()) {
-        getObject().addAttributes(LdapAttribute.builder().name(p.getName().get()).build());
+        getMessage().addAttributes(LdapAttribute.builder().name(p.getName().get()).build());
       } else {
-        getObject().addAttributes(
+        getMessage().addAttributes(
           LdapAttribute.builder().name(p.getName().get()).binaryValuesInternal(p.getValues().get()).build());
       }
     }

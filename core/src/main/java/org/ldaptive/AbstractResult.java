@@ -2,13 +2,16 @@
 package org.ldaptive;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import lombok.experimental.SuperBuilder;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
+import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
+import org.ldaptive.asn1.ParseHandler;
+import org.ldaptive.control.ResponseControl;
 
 /**
  * LDAP result message defined as:
@@ -29,6 +32,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
+@SuperBuilder
 public abstract class AbstractResult extends AbstractMessage implements Result
 {
 
@@ -45,6 +49,21 @@ public abstract class AbstractResult extends AbstractMessage implements Result
   private String diagnosticMessage;
 
 
+  public AbstractResult(
+          final int messageID,
+          final List<ResponseControl> controls,
+          final ResultCode resultCode,
+          final String matchedDN,
+          final String diagnosticMessage,
+          final List<String> referralUrls) {
+    super(messageID, controls);
+    this.resultCode = resultCode;
+    this.matchedDN = matchedDN;
+    this.diagnosticMessage = diagnosticMessage;
+    this.referralURLs.addAll(referralUrls);
+  }
+
+
   /**
    * Returns the result code.
    *
@@ -53,18 +72,6 @@ public abstract class AbstractResult extends AbstractMessage implements Result
   public final ResultCode getResultCode()
   {
     return resultCode;
-  }
-
-
-  /**
-   * Sets the result code.
-   *
-   * @param  code  result code
-   */
-  public final void setResultCode(final ResultCode code)
-  {
-    assertMutableOnConstruct();
-    resultCode = code;
   }
 
 
@@ -80,18 +87,6 @@ public abstract class AbstractResult extends AbstractMessage implements Result
 
 
   /**
-   * Sets the matched DN.
-   *
-   * @param  dn  matched DN
-   */
-  public final void setMatchedDN(final String dn)
-  {
-    assertMutableOnConstruct();
-    matchedDN = dn;
-  }
-
-
-  /**
    * Returns the diagnostic message.
    *
    * @return  diagnostic message
@@ -103,53 +98,13 @@ public abstract class AbstractResult extends AbstractMessage implements Result
 
 
   /**
-   * Sets the diagnostic message.
-   *
-   * @param  message  diagnostic message
-   */
-  public final void setDiagnosticMessage(final String message)
-  {
-    assertMutableOnConstruct();
-    diagnosticMessage = message;
-  }
-
-
-  /**
    * Returns the referral URLs.
    *
    * @return  referral URLs
    */
   public final String[] getReferralURLs()
   {
-    return referralURLs != null ? referralURLs.toArray(new String[0]) : null;
-  }
-
-
-  /**
-   * Adds referral URLs to the result.
-   *
-   * @param  urls  to add
-   */
-  public final void addReferralURLs(final String... urls)
-  {
-    assertMutableOnConstruct();
-    Collections.addAll(referralURLs, urls);
-  }
-
-
-  /**
-   * Copies the property values from the supplied result to this result.
-   *
-   * @param  <T>  type of result
-   * @param  result  to copy from
-   */
-  protected <T extends Result> void copyValues(final T result)
-  {
-    super.copyValues(result);
-    setResultCode(result.getResultCode());
-    setMatchedDN(result.getMatchedDN());
-    setDiagnosticMessage(result.getDiagnosticMessage());
-    addReferralURLs(result.getReferralURLs());
+    return referralURLs.toArray(String[]::new);
   }
 
 
@@ -173,6 +128,21 @@ public abstract class AbstractResult extends AbstractMessage implements Result
         LdapUtils.areEqual(getReferralURLs(), result.getReferralURLs());
     }
     return false;
+  }
+
+
+  @Override
+  public int hashCode()
+  {
+    return
+      LdapUtils.computeHashCode(
+        getHashCodeSeed(),
+        getMessageID(),
+        getControls(),
+        getResultCode(),
+        getMatchedDN(),
+        getDiagnosticMessage(),
+        getReferralURLs());
   }
 
 
@@ -206,140 +176,154 @@ public abstract class AbstractResult extends AbstractMessage implements Result
   }
 
 
-  /** Parse handler implementation for the LDAP result code. */
-  protected static class ResultCodeHandler extends AbstractParseHandler<AbstractResult>
+  /** @return Unique per-class seed used in {@link #hashCode()} implementation. */
+  protected abstract int getHashCodeSeed();
+
+
+  /**
+   * Base class for all result builders.
+   *
+   * @param <T> Type of result produced by this builder.
+   */
+  protected static abstract class AbstractBuilder<T extends Result> implements Result.Builder<T>
   {
+    /** DER path to result code. */
+    private static final DERPath RESULT_CODE_PATH = new DERPath("/SEQ/APP(9)/ENUM[0]");
+
+    /** DER path to matched DN. */
+    private static final DERPath MATCHED_DN_PATH = new DERPath("/SEQ/APP(9)/OCTSTR[1]");
+
+    /** DER path to diagnostic message. */
+    private static final DERPath DIAGNOSTIC_MESSAGE_PATH = new DERPath("/SEQ/APP(9)/OCTSTR[2]");
+
+    /** DER path to referral. */
+    private static final DERPath REFERRAL_PATH = new DERPath("/SEQ/APP(9)/CTX(3)/OCTSTR[0]");
 
 
     /**
+     * Builds a new result from a buffer containing a DER encoding of the result.
+     *
+     * @param  buffer  to decode
+     *
+     * @return  New result object.
+     */
+    public T build(final DERBuffer buffer) {
+      final DERParser parser = new DERParser();
+      parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler<>(this));
+      parser.registerHandler(RESULT_CODE_PATH, new ResultCodeHandler<>(this));
+      parser.registerHandler(MATCHED_DN_PATH, new MatchedDNHandler<>(this));
+      parser.registerHandler(DIAGNOSTIC_MESSAGE_PATH, new DiagnosticMessageHandler<>(this));
+      parser.registerHandler(REFERRAL_PATH, new ReferralHandler<>(this));
+      parser.registerHandler(ControlsHandler.PATH, new ControlsHandler<>(this));
+      registerHandlers(parser);
+      parser.parse(buffer);
+      return build();
+    }
+
+
+    /**
+     * @return  New result object.
+     */
+    public abstract T build();
+
+
+    /**
+     * Template method that may be overridden to register additional parse handlers with this builder.
+     *
+     * @param parser DER parser
+     */
+    public void registerHandlers(final DERParser parser) {}
+  }
+
+
+  /** Parse handler implementation for the LDAP result code. */
+  protected static class ResultCodeHandler<T extends Result, B extends Result.Builder<T>>
+          extends AbstractParseHandler<T, B>
+  {
+    /**
      * Creates a new LDAP result code handler.
      *
-     * @param  response  to configure
+     * @param  builder  Result builder.
      */
-    public ResultCodeHandler(final AbstractResult response)
+    public ResultCodeHandler(final B builder)
     {
-      super(response);
+      super(builder);
     }
 
 
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setResultCode(ResultCode.valueOf(IntegerType.decodeUnsignedPrimitive(encoded)));
+      getBuilder().resultCode(ResultCode.valueOf(IntegerType.decodeUnsignedPrimitive(encoded)));
     }
   }
 
 
   /** Parse handler implementation for the LDAP matched DN. */
-  protected static class MatchedDNHandler extends AbstractParseHandler<AbstractResult>
+  protected static class MatchedDNHandler<T extends Result, B extends Result.Builder<T>>
+          extends AbstractParseHandler<T, B>
   {
-
-
     /**
      * Creates a new LDAP matched DN handler.
      *
-     * @param  response  to configure
+     * @param  builder  Result builder
      */
-    public MatchedDNHandler(final AbstractResult response)
+    public MatchedDNHandler(final B builder)
     {
-      super(response);
+      super(builder);
     }
 
 
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setMatchedDN(OctetStringType.decode(encoded));
+      getBuilder().matchedDN(OctetStringType.decode(encoded));
     }
   }
 
 
   /** Parse handler implementation for the LDAP diagnostic message. */
-  protected static class DiagnosticMessageHandler extends AbstractParseHandler<AbstractResult>
+  protected static class DiagnosticMessageHandler<T extends Result, B extends Result.Builder<T>>
+          extends AbstractParseHandler<T, B>
   {
-
-
     /**
      * Creates a new LDAP diagnostic message handler.
      *
-     * @param  response  to configure
+     * @param  builder  Response builder.
      */
-    public DiagnosticMessageHandler(final AbstractResult response)
+    public DiagnosticMessageHandler(final B builder)
     {
-      super(response);
+      super(builder);
     }
 
 
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setDiagnosticMessage(OctetStringType.decode(encoded));
+      getBuilder().diagnosticMessage(OctetStringType.decode(encoded));
     }
   }
 
 
   /** Parse handler implementation for the LDAP referral. */
-  protected static class ReferralHandler extends AbstractParseHandler<AbstractResult>
+  protected static class ReferralHandler<T extends Result, B extends Result.Builder<T>>
+          extends AbstractParseHandler<T, B>
   {
-
-
     /**
      * Creates a new LDAP referral handler.
      *
-     * @param  response  to configure
+     * @param  builder  Response builder
      */
-    public ReferralHandler(final AbstractResult response)
+    public ReferralHandler(final B builder)
     {
-      super(response);
+      super(builder);
     }
 
 
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().addReferralURLs(OctetStringType.decode(encoded));
+      getBuilder().referralURLs(OctetStringType.decode(encoded));
     }
   }
-
-
-  // CheckStyle:OFF
-  protected abstract static class AbstractBuilder<B, T extends AbstractResult>
-    extends AbstractMessage.AbstractBuilder<B, T>
-  {
-
-
-    protected AbstractBuilder(final T t)
-    {
-      super(t);
-    }
-
-
-    public B resultCode(final ResultCode code)
-    {
-      object.setResultCode(code);
-      return self();
-    }
-
-
-    public B matchedDN(final String dn)
-    {
-      object.setMatchedDN(dn);
-      return self();
-    }
-
-
-    public B diagnosticMessage(final String message)
-    {
-      object.setDiagnosticMessage(message);
-      return self();
-    }
-
-
-    public B referralURLs(final String... url)
-    {
-      object.addReferralURLs(url);
-      return self();
-    }
-  }
-  // CheckStyle:ON
 }

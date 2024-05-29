@@ -75,7 +75,7 @@ public class ResponseParser
   {
     parser.registerHandler(BIND_PATH, (p, e) -> {
       e.clear();
-      message = new BindResponse(e);
+      message = BindResponse.builder().build(e);
     });
     parser.registerHandler(ENTRY_PATH, (p, e) -> {
       e.clear();
@@ -87,11 +87,11 @@ public class ResponseParser
     });
     parser.registerHandler(MODIFY_PATH, (p, e) -> {
       e.clear();
-      message = new ModifyResponse(e);
+      message = ModifyResponse.builder().build(e);
     });
     parser.registerHandler(ADD_PATH, (p, e) -> {
       e.clear();
-      message = new AddResponse(e);
+      message = AddResponse.builder().build(e);
     });
     parser.registerHandler(DELETE_PATH, (p, e) -> {
       e.clear();
@@ -99,7 +99,7 @@ public class ResponseParser
     });
     parser.registerHandler(MODIFY_DN_PATH, (p, e) -> {
       e.clear();
-      message = new ModifyDnResponse(e);
+      message = ModifyDnResponse.builder().build(e);
     });
     parser.registerHandler(COMPARE_PATH, (p, e) -> {
       e.clear();

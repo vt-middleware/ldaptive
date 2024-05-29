@@ -346,7 +346,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setTimeBeforeExpiration(IntegerType.decode(encoded).intValue());
+      getMessage().setTimeBeforeExpiration(IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -373,7 +373,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setGraceAuthNsRemaining(IntegerType.decode(encoded).intValue());
+      getMessage().setGraceAuthNsRemaining(IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -405,7 +405,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
       if (e == null) {
         throw new IllegalArgumentException("Unknown error code " + errValue);
       }
-      getObject().setError(e);
+      getMessage().setError(e);
     }
   }
 }

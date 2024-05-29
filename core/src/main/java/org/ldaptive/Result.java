@@ -1,6 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.List;
+import org.ldaptive.control.ResponseControl;
+
 /**
  * LDAP protocol result.
  *
@@ -72,5 +75,19 @@ public interface Result extends Message
     } else {
       return getDiagnosticMessage();
     }
+  }
+
+  /** Result builder interface. */
+  interface Builder<T extends Result> extends Message.Builder<T>
+  {
+    void resultCode(ResultCode resultCode);
+
+    void diagnosticMessage(String diagnosticMessage);
+
+    void matchedDN(String matchedDN);
+
+    void referralURLs(List<String> urls);
+
+    void referralURLs(String... urls);
   }
 }

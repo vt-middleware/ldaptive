@@ -62,7 +62,7 @@ public final class PasswordModifyResponseParser
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().append(OctetStringType.decode(encoded));
+      getMessage().append(OctetStringType.decode(encoded));
     }
   }
 }

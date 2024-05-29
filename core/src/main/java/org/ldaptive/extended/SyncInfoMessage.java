@@ -346,11 +346,11 @@ public final class SyncInfoMessage extends IntermediateResponse
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setMessageType(Type.NEW_COOKIE);
+      getMessage().setMessageType(Type.NEW_COOKIE);
 
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getMessage().setCookie(cookie);
       }
     }
   }
@@ -375,7 +375,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setMessageType(Type.REFRESH_DELETE);
+      getMessage().setMessageType(Type.REFRESH_DELETE);
     }
   }
 
@@ -401,7 +401,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getMessage().setCookie(cookie);
       }
     }
   }
@@ -426,7 +426,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setRefreshDone(BooleanType.decode(encoded));
+      getMessage().setRefreshDone(BooleanType.decode(encoded));
     }
   }
 
@@ -450,7 +450,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setMessageType(Type.REFRESH_PRESENT);
+      getMessage().setMessageType(Type.REFRESH_PRESENT);
     }
   }
 
@@ -476,7 +476,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getMessage().setCookie(cookie);
       }
     }
   }
@@ -501,7 +501,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setRefreshDone(BooleanType.decode(encoded));
+      getMessage().setRefreshDone(BooleanType.decode(encoded));
     }
   }
 
@@ -525,7 +525,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setMessageType(Type.SYNC_ID_SET);
+      getMessage().setMessageType(Type.SYNC_ID_SET);
     }
   }
 
@@ -551,7 +551,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getMessage().setCookie(cookie);
       }
     }
   }
@@ -576,7 +576,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setRefreshDeletes(BooleanType.decode(encoded));
+      getMessage().setRefreshDeletes(BooleanType.decode(encoded));
     }
   }
 
@@ -600,7 +600,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().getEntryUuids().add(UuidType.decode(encoded));
+      getMessage().getEntryUuids().add(UuidType.decode(encoded));
     }
   }
 

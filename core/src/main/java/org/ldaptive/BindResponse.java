@@ -1,10 +1,14 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.List;
+import lombok.Getter;
+import lombok.experimental.SuperBuilder;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
+import org.ldaptive.control.ResponseControl;
 
 /**
  * LDAP bind response defined as:
@@ -17,6 +21,8 @@ import org.ldaptive.asn1.DERPath;
  *
  * @author  Middleware Services
  */
+@Getter
+@SuperBuilder
 public final class BindResponse extends AbstractResult
 {
 
@@ -26,61 +32,32 @@ public final class BindResponse extends AbstractResult
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10243;
 
-  /** DER path to result code. */
-  private static final DERPath RESULT_CODE_PATH = new DERPath("/SEQ/APP(1)/ENUM[0]");
-
-  /** DER path to matched DN. */
-  private static final DERPath MATCHED_DN_PATH = new DERPath("/SEQ/APP(1)/OCTSTR[1]");
-
-  /** DER path to diagnostic message. */
-  private static final DERPath DIAGNOSTIC_MESSAGE_PATH = new DERPath("/SEQ/APP(1)/OCTSTR[2]");
-
-  /** DER path to referral. */
-  private static final DERPath REFERRAL_PATH = new DERPath("/SEQ/APP(1)/CTX(3)/OCTSTR[0]");
-
-  /** DER path to SASL credentials. */
-  private static final DERPath SASL_CREDENTIALS_PATH = new DERPath("/SEQ/APP(1)/CTX(7)");
-
   /** Server SASL credentials. */
   private byte[] serverSaslCreds;
 
 
   /**
-   * Default constructor.
-   */
-  private BindResponse() {}
-
-
-  /**
-   * Creates a new bind response.
+   * Creates a new instance with the given required parameters.
    *
-   * @param  buffer  to decode
+   * @param  messageID  LDAP protocol message ID.
+   * @param  controls  Response controls.
+   * @param  resultCode  LDAP protocol result code.
+   * @param  matchedDN  DN matched by operation.
+   * @param  diagnosticMessage  Informative message returned by server.
+   * @param  referralUrls  Zero or more referral URLs.
+   * @param  credentials  SASL credentials.
    */
-  public BindResponse(final DERBuffer buffer)
+  public BindResponse(
+          final int messageID,
+          final List<ResponseControl> controls,
+          final ResultCode resultCode,
+          final String matchedDN,
+          final String diagnosticMessage,
+          final List<String> referralUrls,
+          final byte[] credentials)
   {
-    final DERParser parser = new DERParser();
-    parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
-    parser.registerHandler(RESULT_CODE_PATH, new ResultCodeHandler(this));
-    parser.registerHandler(MATCHED_DN_PATH, new MatchedDNHandler(this));
-    parser.registerHandler(DIAGNOSTIC_MESSAGE_PATH, new DiagnosticMessageHandler(this));
-    parser.registerHandler(REFERRAL_PATH, new ReferralHandler(this));
-    parser.registerHandler(SASL_CREDENTIALS_PATH, new SASLCredsHandler(this));
-    parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
-    parser.parse(buffer);
-    freezeOnConstruct();
-  }
-
-
-  public byte[] getServerSaslCreds()
-  {
-    return serverSaslCreds;
-  }
-
-
-  public void setServerSaslCreds(final byte[] creds)
-  {
-    assertMutableOnConstruct();
-    serverSaslCreds = creds;
+    super(messageID, controls, resultCode, matchedDN, diagnosticMessage, referralUrls);
+    serverSaslCreds = credentials;
   }
 
 
@@ -99,34 +76,38 @@ public final class BindResponse extends AbstractResult
 
 
   @Override
-  public int hashCode()
+  protected int getHashCodeSeed()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getMessageID(),
-        getControls(),
-        getResultCode(),
-        getMatchedDN(),
-        getDiagnosticMessage(),
-        getReferralURLs(),
-        serverSaslCreds);
+    return HASH_CODE_SEED;
+  }
+
+
+  /**
+   */
+  public static abstract class BindResponseBuilder extends AbstractResult.AbstractBuilder<BindResponse>
+  {
+    /** DER path to SASL credentials. */
+    private static final DERPath SASL_CREDENTIALS_PATH = new DERPath("/SEQ/APP(1)/CTX(7)");
+
+
+    @Override
+    public void registerHandlers(DERParser parser) {
+      parser.registerHandler(SASL_CREDENTIALS_PATH, new SASLCredsHandler(this));
+    }
   }
 
 
   /** Parse handler implementation for the server SASL creds. */
-  protected static class SASLCredsHandler extends AbstractParseHandler<BindResponse>
+  protected static class SASLCredsHandler extends AbstractParseHandler<BindResponse, BindResponseBuilder>
   {
-
-
     /**
      * Creates a new server SASL creds handler.
      *
-     * @param  response  to configure
+     * @param  builder  Response builder.
      */
-    SASLCredsHandler(final BindResponse response)
+    SASLCredsHandler(final BindResponseBuilder builder)
     {
-      super(response);
+      super(builder);
     }
 
 
@@ -134,46 +115,8 @@ public final class BindResponse extends AbstractResult
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
       if (encoded.remaining() > 0) {
-        getObject().setServerSaslCreds(encoded.getRemainingBytes());
+        getBuilder().serverSaslCreds(encoded.getRemainingBytes());
       }
     }
   }
-
-
-  /**
-   * Creates a builder for this class.
-   *
-   * @return  new builder
-   */
-  public static Builder builder()
-  {
-    return new Builder();
-  }
-
-
-  // CheckStyle:OFF
-  public static final class Builder extends AbstractResult.AbstractBuilder<Builder, BindResponse>
-  {
-
-
-    private Builder()
-    {
-      super(new BindResponse());
-    }
-
-
-    @Override
-    protected Builder self()
-    {
-      return this;
-    }
-
-
-    public Builder serverSaslCreds(final byte[] creds)
-    {
-      object.setServerSaslCreds(creds);
-      return this;
-    }
-  }
-  // CheckStyle:ON
 }

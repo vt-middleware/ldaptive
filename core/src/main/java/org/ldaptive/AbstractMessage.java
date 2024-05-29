@@ -2,9 +2,12 @@
 package org.ldaptive;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import lombok.Builder;
+import lombok.experimental.SuperBuilder;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.BooleanType;
 import org.ldaptive.asn1.DERBuffer;
@@ -33,7 +36,8 @@ import org.ldaptive.control.ResponseControl;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractMessage extends AbstractFreezable implements Message
+@SuperBuilder
+public abstract class AbstractMessage implements Message
 {
 
   /** LDAP controls. */
@@ -42,37 +46,11 @@ public abstract class AbstractMessage extends AbstractFreezable implements Messa
   /** Protocol message ID. */
   private int messageID;
 
-  /** Whether this object has been marked immutable. */
-  private volatile boolean immutableOnConstruct;
 
-
-  /** Invoked from a constructor to control the immutability of specific properties. */
-  protected final void freezeOnConstruct()
-  {
-    immutableOnConstruct = true;
+  public AbstractMessage(final int messageID, final List<ResponseControl> controls) {
+    this.messageID = messageID;
+    this.controls.addAll(controls);
   }
-
-
-  /**
-   * Verifies if the {@link #immutableOnConstruct} flag is set.
-   *
-   * @throws  IllegalStateException  if the {@link #immutableOnConstruct flag is set}
-   */
-  protected final void assertMutableOnConstruct()
-  {
-    if (immutableOnConstruct) {
-      throw new IllegalStateException("Cannot modify immutable object");
-    }
-  }
-
-
-  @Override
-  public void freeze()
-  {
-    freezeOnConstruct();
-    super.freeze();
-  }
-
 
   @Override
   public final int getMessageID()
@@ -81,42 +59,10 @@ public abstract class AbstractMessage extends AbstractFreezable implements Messa
   }
 
 
-  public void setMessageID(final int id)
-  {
-    assertMutableOnConstruct();
-    messageID = id;
-  }
-
-
   @Override
   public final ResponseControl[] getControls()
   {
-    return controls != null ? controls.toArray(new ResponseControl[0]) : null;
-  }
-
-
-  /**
-   * Adds the supplied controls to this message.
-   *
-   * @param  cntrls  to add
-   */
-  public final void addControls(final ResponseControl... cntrls)
-  {
-    assertMutableOnConstruct();
-    Collections.addAll(controls, cntrls);
-  }
-
-
-  /**
-   * Copies the property values from the supplied message to this message.
-   *
-   * @param  <T>  type of message
-   * @param  message  to copy from
-   */
-  protected <T extends Message> void copyValues(final T message)
-  {
-    setMessageID(message.getMessageID());
-    addControls(message.getControls());
+    return controls.toArray(ResponseControl[]::new);
   }
 
 
@@ -171,9 +117,8 @@ public abstract class AbstractMessage extends AbstractFreezable implements Messa
 
 
   /** Parse handler implementation for the message ID. */
-  protected static class MessageIDHandler extends AbstractParseHandler<AbstractMessage>
+  protected static class MessageIDHandler<T extends Message> extends AbstractParseHandler<T, Message.Builder<T>>
   {
-
     /** DER path to message id. */
     public static final DERPath PATH = new DERPath("/SEQ/INT[0]");
 
@@ -181,26 +126,25 @@ public abstract class AbstractMessage extends AbstractFreezable implements Messa
     /**
      * Creates a new message ID handler.
      *
-     * @param  response  to configure
+     * @param  builder  That will produces the message.
      */
-    public MessageIDHandler(final AbstractMessage response)
+    public MessageIDHandler(final Message.Builder<T> builder)
     {
-      super(response);
+      super(builder);
     }
 
 
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setMessageID(IntegerType.decodeUnsignedPrimitive(encoded));
+      getBuilder().messageID(IntegerType.decodeUnsignedPrimitive(encoded));
     }
   }
 
 
   /** Parse handler implementation for the message controls. */
-  protected static class ControlsHandler extends AbstractParseHandler<AbstractMessage>
+  protected static class ControlsHandler<T extends Message> extends AbstractParseHandler<T, Message.Builder<T>>
   {
-
     /** DER path to controls. */
     public static final DERPath PATH = new DERPath("/SEQ/CTX(0)/SEQ");
 
@@ -208,11 +152,11 @@ public abstract class AbstractMessage extends AbstractFreezable implements Messa
     /**
      * Creates a new controls handler.
      *
-     * @param  response  to configure
+     * @param  builder  Message builder.
      */
-    public ControlsHandler(final AbstractMessage response)
+    public ControlsHandler(final Message.Builder<T> builder)
     {
-      super(response);
+      super(builder);
     }
 
 
@@ -224,7 +168,7 @@ public abstract class AbstractMessage extends AbstractFreezable implements Messa
       if (p.getOid().isEmpty()) {
         throw new IllegalArgumentException("Cannot parse response control without OID");
       }
-      getObject().addControls(
+      getBuilder().controls(
         ControlFactory.createResponseControl(
           p.getOid().get(),
           p.getCritical().isPresent() ? p.getCritical().get() : false,
@@ -238,7 +182,6 @@ public abstract class AbstractMessage extends AbstractFreezable implements Messa
    */
   protected static class ControlParser
   {
-
     /** DER path to criticality. */
     private static final DERPath CRITICAL_PATH = new DERPath("/BOOL[1]");
 
@@ -323,50 +266,4 @@ public abstract class AbstractMessage extends AbstractFreezable implements Messa
       return Optional.ofNullable(value);
     }
   }
-
-
-  // CheckStyle:OFF
-  protected abstract static class AbstractBuilder<B, T extends AbstractMessage>
-  {
-
-    protected final T object;
-
-
-    protected AbstractBuilder(final T t)
-    {
-      object = t;
-    }
-
-
-    protected abstract B self();
-
-
-    public B freeze()
-    {
-      object.freeze();
-      return self();
-    }
-
-
-    public B messageID(final int id)
-    {
-      object.setMessageID(id);
-      return self();
-    }
-
-
-    public B controls(final ResponseControl... controls)
-    {
-      object.addControls(controls);
-      return self();
-    }
-
-
-    public T build()
-    {
-      object.freezeOnConstruct();
-      return object;
-    }
-  }
-  // CheckStyle:ON
 }

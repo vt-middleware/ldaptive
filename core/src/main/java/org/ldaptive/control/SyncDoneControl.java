@@ -205,7 +205,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getMessage().setCookie(cookie);
       }
     }
   }
@@ -233,7 +233,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setRefreshDeletes(BooleanType.decode(encoded));
+      getMessage().setRefreshDeletes(BooleanType.decode(encoded));
     }
   }
 }

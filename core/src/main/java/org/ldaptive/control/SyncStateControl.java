@@ -320,7 +320,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
       if (s == null) {
         throw new IllegalArgumentException("Unknown state value " + stateValue);
       }
-      getObject().setSyncState(s);
+      getMessage().setSyncState(s);
     }
   }
 
@@ -348,7 +348,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
       if (encoded.hasRemaining()) {
-        getObject().setEntryUuid(UuidType.decode(encoded));
+        getMessage().setEntryUuid(UuidType.decode(encoded));
       }
     }
   }
@@ -378,7 +378,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getMessage().setCookie(cookie);
       }
     }
   }

@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.ldaptive.asn1.DERBuffer;
-import org.ldaptive.asn1.DERParser;
-import org.ldaptive.asn1.DERPath;
+import java.util.List;
+import lombok.experimental.SuperBuilder;
+import org.ldaptive.control.ResponseControl;
 
 /**
  * LDAP modify response defined as:
@@ -14,52 +14,36 @@ import org.ldaptive.asn1.DERPath;
  *
  * @author  Middleware Services
  */
+@SuperBuilder
 public final class ModifyResponse extends AbstractResult
 {
-
   /** BER protocol number. */
   public static final int PROTOCOL_OP = 7;
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 10273;
 
-  /** DER path to result code. */
-  private static final DERPath RESULT_CODE_PATH = new DERPath("/SEQ/APP(7)/ENUM[0]");
-
-  /** DER path to matched DN. */
-  private static final DERPath MATCHED_DN_PATH = new DERPath("/SEQ/APP(7)/OCTSTR[1]");
-
-  /** DER path to diagnostic message. */
-  private static final DERPath DIAGNOSTIC_MESSAGE_PATH = new DERPath("/SEQ/APP(7)/OCTSTR[2]");
-
-  /** DER path to referral. */
-  private static final DERPath REFERRAL_PATH = new DERPath("/SEQ/APP(7)/CTX(3)/OCTSTR[0]");
-
 
   /**
-   * Default constructor.
-   */
-  private ModifyResponse() {}
-
-
-  /**
-   * Creates a new modify response.
+   * Creates a new instance with the given required parameters.
    *
-   * @param  buffer  to decode
+   * @param  messageID  LDAP protocol message ID.
+   * @param  controls  Response controls.
+   * @param  resultCode  LDAP protocol result code.
+   * @param  matchedDN  DN matched by operation.
+   * @param  diagnosticMessage  Informative message returned by server.
+   * @param  referralUrls  Zero or more referral URLs.
    */
-  public ModifyResponse(final DERBuffer buffer)
+  public ModifyResponse(
+          final int messageID,
+          final List<ResponseControl> controls,
+          final ResultCode resultCode,
+          final String matchedDN,
+          final String diagnosticMessage,
+          final List<String> referralUrls)
   {
-    final DERParser parser = new DERParser();
-    parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
-    parser.registerHandler(RESULT_CODE_PATH, new ResultCodeHandler(this));
-    parser.registerHandler(MATCHED_DN_PATH, new MatchedDNHandler(this));
-    parser.registerHandler(DIAGNOSTIC_MESSAGE_PATH, new DiagnosticMessageHandler(this));
-    parser.registerHandler(REFERRAL_PATH, new ReferralHandler(this));
-    parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
-    parser.parse(buffer);
-    freezeOnConstruct();
+    super(messageID, controls, resultCode, matchedDN, diagnosticMessage, referralUrls);
   }
-
 
   @Override
   public boolean equals(final Object o)
@@ -72,47 +56,14 @@ public final class ModifyResponse extends AbstractResult
 
 
   @Override
-  public int hashCode()
+  protected int getHashCodeSeed()
   {
-    return
-      LdapUtils.computeHashCode(
-        HASH_CODE_SEED,
-        getMessageID(),
-        getControls(),
-        getResultCode(),
-        getMatchedDN(),
-        getDiagnosticMessage(),
-        getReferralURLs());
+    return HASH_CODE_SEED;
   }
 
 
   /**
-   * Creates a builder for this class.
-   *
-   * @return  new builder
+   * Modify response builder.
    */
-  public static Builder builder()
-  {
-    return new Builder();
-  }
-
-
-  // CheckStyle:OFF
-  public static final class Builder extends AbstractResult.AbstractBuilder<Builder, ModifyResponse>
-  {
-
-
-    private Builder()
-    {
-      super(new ModifyResponse());
-    }
-
-
-    @Override
-    protected Builder self()
-    {
-      return this;
-    }
-  }
-  // CheckStyle:ON
+  public static abstract class ModifyResponseBuilder extends AbstractResult.AbstractBuilder<ModifyResponse> {}
 }

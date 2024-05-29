@@ -312,7 +312,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setSessionSourceIp(OctetStringType.decode(encoded));
+      getMessage().setSessionSourceIp(OctetStringType.decode(encoded));
     }
   }
 
@@ -339,7 +339,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setSessionSourceName(OctetStringType.decode(encoded));
+      getMessage().setSessionSourceName(OctetStringType.decode(encoded));
     }
   }
 
@@ -366,7 +366,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setFormatOID(OctetStringType.decode(encoded));
+      getMessage().setFormatOID(OctetStringType.decode(encoded));
     }
   }
 
@@ -393,7 +393,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setSessionTrackingIdentifier(OctetStringType.decode(encoded));
+      getMessage().setSessionTrackingIdentifier(OctetStringType.decode(encoded));
     }
   }
 }

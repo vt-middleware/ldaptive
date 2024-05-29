@@ -206,7 +206,7 @@ public final class SearchResultReference extends AbstractMessage
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().addUris(OctetStringType.decode(encoded));
+      getMessage().addUris(OctetStringType.decode(encoded));
     }
   }
 

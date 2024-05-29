@@ -169,7 +169,7 @@ public class ExtendedResponse extends AbstractResult
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setResponseName(OctetStringType.decode(encoded));
+      getMessage().setResponseName(OctetStringType.decode(encoded));
     }
   }
 
@@ -193,7 +193,7 @@ public class ExtendedResponse extends AbstractResult
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setResponseValue(encoded.getRemainingBytes());
+      getMessage().setResponseValue(encoded.getRemainingBytes());
     }
   }
 

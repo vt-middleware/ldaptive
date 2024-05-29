@@ -225,7 +225,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().getStatistics().put(statName, IntegerType.decode(encoded).intValue());
+      getMessage().getStatistics().put(statName, IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -255,7 +255,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
       // strings are terminated with 0x00(null), use trim to remove
-      getObject().getStatistics().put(statName, OctetStringType.decode(encoded).trim());
+      getMessage().getStatistics().put(statName, OctetStringType.decode(encoded).trim());
     }
   }
 }

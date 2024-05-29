@@ -298,7 +298,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setTargetPosition(IntegerType.decode(encoded).intValue());
+      getMessage().setTargetPosition(IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -325,7 +325,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setContentCount(IntegerType.decode(encoded).intValue());
+      getMessage().setContentCount(IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -357,7 +357,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
       if (rc == null) {
         throw new IllegalArgumentException("Unknown result code " + resultValue);
       }
-      getObject().setViewResult(rc);
+      getMessage().setViewResult(rc);
     }
   }
 
@@ -386,7 +386,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setContextID(cookie);
+        getMessage().setContextID(cookie);
       }
     }
   }

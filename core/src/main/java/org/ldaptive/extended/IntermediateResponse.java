@@ -146,7 +146,7 @@ public class IntermediateResponse extends AbstractMessage
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
       if (encoded.remaining() > 0) {
-        getObject().setResponseName(OctetStringType.decode(encoded));
+        getMessage().setResponseName(OctetStringType.decode(encoded));
       }
     }
   }
@@ -178,7 +178,7 @@ public class IntermediateResponse extends AbstractMessage
         final DERParser p = new DERParser();
         p.readTag(encoded);
         p.readLength(encoded);
-        getObject().setResponseValue(encoded.getRemainingBytes());
+        getMessage().setResponseValue(encoded.getRemainingBytes());
       }
     }
   }
