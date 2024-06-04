@@ -59,25 +59,25 @@ public class IntermediateResponse extends AbstractMessage
   }
 
 
-  public String getResponseName()
+  public final String getResponseName()
   {
     return responseName;
   }
 
 
-  protected void setResponseName(final String name)
+  protected final void setResponseName(final String name)
   {
     responseName = name;
   }
 
 
-  public byte[] getResponseValue()
+  public final byte[] getResponseValue()
   {
     return responseValue;
   }
 
 
-  protected void setResponseValue(final byte[] value)
+  protected final void setResponseValue(final byte[] value)
   {
     responseValue = value;
   }

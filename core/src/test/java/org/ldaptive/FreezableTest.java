@@ -5,14 +5,18 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
+import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AggregateAuthenticationHandler;
 import org.ldaptive.auth.AggregateAuthenticationResponseHandler;
 import org.ldaptive.auth.AggregateDnResolver;
 import org.ldaptive.auth.AggregateEntryResolver;
+import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.AuthorizationIdentityEntryResolver;
 import org.ldaptive.auth.CompareAuthenticationHandler;
@@ -27,6 +31,7 @@ import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.control.SortKey;
 import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.control.util.VirtualListViewClient;
+import org.ldaptive.dn.Dn;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.handler.MergeAttributeEntryHandler;
@@ -50,6 +55,17 @@ import org.testng.annotations.Test;
 public class FreezableTest
 {
 
+  /** Methods to ignore immutability test. */
+  private static final List<Method> IGNORE_METHODS = new ArrayList<>();
+
+  /* Initialize ignore methods. */
+  static {
+    try {
+      IGNORE_METHODS.add(AuthenticationResponse.class.getMethod("setAccountState", AccountState.class));
+    } catch (NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
+  }
 
   /**
    * Immutable classes.
@@ -101,6 +117,18 @@ public class FreezableTest
           SearchConnectionValidator.class,
         },
         new Object[] {
+          SearchResponse.class,
+        },
+        new Object[] {
+          LdapEntry.class,
+        },
+        new Object[] {
+          LdapAttribute.class,
+        },
+        new Object[] {
+          SearchResultReference.class,
+        },
+        new Object[] {
           IdlePruneStrategy.class,
         },
         new Object[] {
@@ -147,6 +175,9 @@ public class FreezableTest
         },
         new Object[] {
           SingleConnectionFactory.class,
+        },
+        new Object[] {
+          Dn.class,
         },
         new Object[] {
           EDirectoryAuthenticationResponseHandler.class,
@@ -225,7 +256,7 @@ public class FreezableTest
   private void invokeMethods(final Class<? extends Freezable> clazz, final Freezable i)
   {
     for (Method method : clazz.getMethods()) {
-      if (!method.isBridge()) {
+      if (!IGNORE_METHODS.contains(method) && !method.isBridge()) {
         final boolean invokeMethod =
           (method.getName().startsWith("set") || method.getName().startsWith("add")) &&
             method.getParameterTypes().length == 1;

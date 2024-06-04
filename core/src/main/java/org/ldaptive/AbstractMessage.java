@@ -36,28 +36,28 @@ import org.ldaptive.control.ResponseControl;
 public abstract class AbstractMessage implements Message
 {
 
+  /** LDAP controls. */
+  private final List<ResponseControl> controls = new ArrayList<>();
+
   /** Protocol message ID. */
   private int messageID;
 
-  /** LDAP controls. */
-  private List<ResponseControl> controls = new ArrayList<>();
-
 
   @Override
-  public int getMessageID()
+  public final int getMessageID()
   {
     return messageID;
   }
 
 
-  public void setMessageID(final int id)
+  protected void setMessageID(final int id)
   {
     messageID = id;
   }
 
 
   @Override
-  public ResponseControl[] getControls()
+  public final ResponseControl[] getControls()
   {
     return controls != null ? controls.toArray(new ResponseControl[0]) : null;
   }
@@ -68,7 +68,7 @@ public abstract class AbstractMessage implements Message
    *
    * @param  cntrls  to add
    */
-  public void addControls(final ResponseControl... cntrls)
+  protected final void addControls(final ResponseControl... cntrls)
   {
     Collections.addAll(controls, cntrls);
   }
@@ -84,6 +84,23 @@ public abstract class AbstractMessage implements Message
   {
     setMessageID(message.getMessageID());
     addControls(message.getControls());
+  }
+
+
+  /**
+   * Returns whether the base properties of this message are equal. Those include message ID and controls.
+   *
+   * @param  message  to compare
+   *
+   * @return  whether message properties are equal
+   */
+  public final boolean equalsMessage(final Message message)
+  {
+    if (message == this) {
+      return true;
+    }
+    return LdapUtils.areEqual(getMessageID(), message.getMessageID()) &&
+      LdapUtils.areEqual(getControls(), message.getControls());
   }
 
 
@@ -301,6 +318,13 @@ public abstract class AbstractMessage implements Message
     public B controls(final ResponseControl... controls)
     {
       object.addControls(controls);
+      return self();
+    }
+
+
+    public B copy(final Message m)
+    {
+      object.copyValues(m);
       return self();
     }
 

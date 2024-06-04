@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -35,7 +36,7 @@ import org.ldaptive.dn.Dn;
  *
  * @author  Middleware Services
  */
-public class LdapEntry extends AbstractMessage
+public class LdapEntry extends AbstractMessage implements Freezable
 {
 
   /** BER protocol number. */
@@ -50,6 +51,9 @@ public class LdapEntry extends AbstractMessage
   /** DER path to attributes. */
   private static final DERPath ATTRIBUTES_PATH = new DERPath("/SEQ/APP(4)/SEQ/SEQ");
 
+  /** LDAP attributes on the entry. */
+  private final Map<String, LdapAttribute> attributes = new LinkedHashMap<>();
+
   /** LDAP DN of the entry. */
   private String ldapDn;
 
@@ -59,8 +63,8 @@ public class LdapEntry extends AbstractMessage
   /** Normalized LDAP DN. */
   private String normalizedDn;
 
-  /** LDAP attributes on the entry. */
-  private Map<String, LdapAttribute> attributes = new LinkedHashMap<>();
+  /** Whether this object has been marked immutable. */
+  private volatile boolean immutable;
 
 
   /**
@@ -85,12 +89,39 @@ public class LdapEntry extends AbstractMessage
   }
 
 
+  @Override
+  public void freeze()
+  {
+    immutable = true;
+    if (parsedDn != null) {
+      parsedDn.freeze();
+    }
+    attributes.values().forEach(a -> a.freeze());
+  }
+
+
+  @Override
+  public final boolean isFrozen()
+  {
+    return immutable;
+  }
+
+
+  @Override
+  public final void assertMutable()
+  {
+    if (immutable) {
+      throw new IllegalStateException("Cannot modify immutable object");
+    }
+  }
+
+
   /**
    * Returns the ldap DN.
    *
    * @return  ldap DN
    */
-  public String getDn()
+  public final String getDn()
   {
     return ldapDn;
   }
@@ -101,7 +132,7 @@ public class LdapEntry extends AbstractMessage
    *
    * @return  parsed ldap DN or null if {@link #ldapDn} is null or could not be parsed
    */
-  public Dn getParsedDn()
+  public final Dn getParsedDn()
   {
     return parsedDn;
   }
@@ -112,7 +143,7 @@ public class LdapEntry extends AbstractMessage
    *
    * @return  normalized ldap DN or null if {@link #ldapDn} is null or could not be parsed
    */
-  public String getNormalizedDn()
+  public final String getNormalizedDn()
   {
     return normalizedDn;
   }
@@ -123,8 +154,9 @@ public class LdapEntry extends AbstractMessage
    *
    * @param  dn  ldap DN
    */
-  public void setDn(final String dn)
+  public final void setDn(final String dn)
   {
+    assertMutable();
     ldapDn = dn;
     if (ldapDn != null) {
       try {
@@ -146,7 +178,7 @@ public class LdapEntry extends AbstractMessage
    */
   public Collection<LdapAttribute> getAttributes()
   {
-    return attributes.values();
+    return Collections.unmodifiableCollection(attributes.values());
   }
 
 
@@ -199,6 +231,7 @@ public class LdapEntry extends AbstractMessage
    */
   public void addAttributes(final LdapAttribute... attrs)
   {
+    assertMutable();
     for (LdapAttribute a : attrs) {
       attributes.put(LdapUtils.toLowerCase(a.getName()), a);
     }
@@ -212,6 +245,7 @@ public class LdapEntry extends AbstractMessage
    */
   public void addAttributes(final Collection<LdapAttribute> attrs)
   {
+    assertMutable();
     attrs.forEach(a -> attributes.put(LdapUtils.toLowerCase(a.getName()), a));
   }
 
@@ -223,6 +257,7 @@ public class LdapEntry extends AbstractMessage
    */
   public void removeAttribute(final String name)
   {
+    assertMutable();
     attributes.remove(LdapUtils.toLowerCase(name));
   }
 
@@ -234,6 +269,7 @@ public class LdapEntry extends AbstractMessage
    */
   public void removeAttributes(final LdapAttribute... attrs)
   {
+    assertMutable();
     for (LdapAttribute a : attrs) {
       attributes.remove(LdapUtils.toLowerCase(a.getName()));
     }
@@ -247,6 +283,7 @@ public class LdapEntry extends AbstractMessage
    */
   public void removeAttributes(final Collection<LdapAttribute> attrs)
   {
+    assertMutable();
     attrs.forEach(a -> attributes.remove(LdapUtils.toLowerCase(a.getName())));
   }
 
@@ -256,15 +293,16 @@ public class LdapEntry extends AbstractMessage
    *
    * @return  number of attributes
    */
-  public int size()
+  public final int size()
   {
     return attributes.size();
   }
 
 
   /** Removes all the attributes. */
-  public void clear()
+  public final void clear()
   {
+    assertMutable();
     attributes.clear();
   }
 
@@ -310,6 +348,27 @@ public class LdapEntry extends AbstractMessage
 
 
   /**
+   * Creates a mutable copy of the supplied entry.
+   *
+   * @param  entry  to copy
+   *
+   * @return  new ldap entry instance
+   */
+  public static LdapEntry copy(final LdapEntry entry)
+  {
+    final LdapEntry copy = new LdapEntry();
+    copy.copyValues(entry);
+    copy.ldapDn = entry.ldapDn;
+    copy.parsedDn = entry.parsedDn != null ? Dn.copy(entry.parsedDn) : null;
+    copy.normalizedDn = entry.normalizedDn;
+    for (Map.Entry<String, LdapAttribute> e : entry.attributes.entrySet()) {
+      copy.attributes.put(e.getKey(), LdapAttribute.copy(e.getValue()));
+    }
+    return copy;
+  }
+
+
+  /**
    * Returns a new entry whose attributes are sorted naturally by name without options.
    *
    * @param  le  entry to sort
@@ -325,6 +384,9 @@ public class LdapEntry extends AbstractMessage
       le.getAttributes().stream()
         .map(LdapAttribute::sort)
         .sorted(Comparator.comparing(o -> o.getName(false))).collect(Collectors.toCollection(LinkedHashSet::new)));
+    if (le.isFrozen()) {
+      sorted.freeze();
+    }
     return sorted;
   }
 
@@ -552,6 +614,13 @@ public class LdapEntry extends AbstractMessage
     @Override
     protected Builder self()
     {
+      return this;
+    }
+
+
+    public Builder freeze()
+    {
+      object.freeze();
       return this;
     }
 

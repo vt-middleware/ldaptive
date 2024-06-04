@@ -82,25 +82,25 @@ public class ExtendedResponse extends AbstractResult
   }
 
 
-  public String getResponseName()
+  public final String getResponseName()
   {
     return responseName;
   }
 
 
-  public void setResponseName(final String name)
+  protected final void setResponseName(final String name)
   {
     responseName = name;
   }
 
 
-  public byte[] getResponseValue()
+  public final byte[] getResponseValue()
   {
     return responseValue;
   }
 
 
-  public void setResponseValue(final byte[] value)
+  protected final void setResponseValue(final byte[] value)
   {
     responseValue = value;
   }

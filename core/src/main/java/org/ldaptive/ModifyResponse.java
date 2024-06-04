@@ -14,7 +14,7 @@ import org.ldaptive.asn1.DERPath;
  *
  * @author  Middleware Services
  */
-public class ModifyResponse extends AbstractResult
+public final class ModifyResponse extends AbstractResult
 {
 
   /** BER protocol number. */
@@ -97,11 +97,11 @@ public class ModifyResponse extends AbstractResult
 
 
   // CheckStyle:OFF
-  public static class Builder extends AbstractResult.AbstractBuilder<Builder, ModifyResponse>
+  public static final class Builder extends AbstractResult.AbstractBuilder<Builder, ModifyResponse>
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new ModifyResponse());
     }

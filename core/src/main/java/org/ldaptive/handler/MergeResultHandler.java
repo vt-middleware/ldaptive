@@ -40,8 +40,7 @@ public class MergeResultHandler implements SearchResultHandler
    */
   private SearchResponse merge(final SearchResponse searchResponse)
   {
-    final SearchResponse merged = new SearchResponse();
-    merged.initialize(searchResponse);
+    final SearchResponse merged = SearchResponse.builder().copy(searchResponse).build();
 
     LdapEntry mergedEntry = null;
     for (LdapEntry entry : searchResponse.getEntries()) {

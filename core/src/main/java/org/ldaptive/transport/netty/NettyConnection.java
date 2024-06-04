@@ -1282,7 +1282,7 @@ public final class NettyConnection extends TransportConnection
 
 
   /** Bind specific operation handle that locks other operations until the bind completes. */
-  public class BindOperationHandle extends DefaultOperationHandle<BindRequest, BindResponse>
+  public final class BindOperationHandle extends DefaultOperationHandle<BindRequest, BindResponse>
   {
 
 

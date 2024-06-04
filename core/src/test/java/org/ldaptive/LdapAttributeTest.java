@@ -402,4 +402,98 @@ public class LdapAttributeTest
     Assert.assertFalse(la2.hasValue("aW1hZ2"));
     Assert.assertFalse(la2.hasValue(" "));
   }
+
+
+  @Test
+  public void immutable()
+  {
+    final LdapAttribute attr = LdapAttribute.builder().name("givenName").values("bob").build();
+    attr.assertMutable();
+    attr.setName("gn");
+    attr.setBinary(true);
+    attr.addStringValues("robert");
+
+    attr.freeze();
+    try {
+      attr.setName("sn");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      attr.setBinary(true);
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      attr.addStringValues("foo");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      attr.addStringValues(List.of("foo"));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      attr.addBinaryValues("foo".getBytes(StandardCharsets.UTF_8));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      attr.addBinaryValues(List.of("foo".getBytes(StandardCharsets.UTF_8)));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      attr.addValues((Function<Object, byte[]>) o -> o.toString().getBytes(StandardCharsets.UTF_8), "foo");
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+    try {
+      attr.addValues((Function<Object, byte[]>) o -> o.toString().getBytes(StandardCharsets.UTF_8), List.of("foo"));
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
+  }
+
+
+  /** Test for copy method. */
+  @Test
+  public void copy()
+  {
+    final LdapAttribute la1 = new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones");
+    final LdapAttribute cp1 = LdapAttribute.copy(la1);
+    Assert.assertEquals(cp1, la1);
+    Assert.assertFalse(la1.isFrozen());
+    Assert.assertFalse(cp1.isFrozen());
+
+    final LdapAttribute la2 = LdapAttribute.builder()
+      .name("jpegPhoto")
+      .values("image".getBytes())
+      .freeze()
+      .build();
+    final LdapAttribute cp2 = LdapAttribute.copy(la2);
+    Assert.assertEquals(cp2, la2);
+    Assert.assertTrue(la2.isFrozen());
+    Assert.assertFalse(cp2.isFrozen());
+  }
+
+
+  /** Test for sort method. */
+  @Test
+  public void sort()
+  {
+    final LdapAttribute la = new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones");
+    final LdapAttribute sort = LdapAttribute.sort(la);
+    Assert.assertEquals(sort, la);
+    Assert.assertEquals(sort.getStringValues(), List.of("Brown", "Johnson", "Jones", "Smith", "Williams"));
+  }
 }

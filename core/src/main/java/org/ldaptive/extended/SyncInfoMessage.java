@@ -44,7 +44,7 @@ import org.ldaptive.control.ResponseControl;
  *
  * @author  Middleware Services
  */
-public class SyncInfoMessage extends IntermediateResponse
+public final class SyncInfoMessage extends IntermediateResponse
 {
 
   /** OID of this response. */
@@ -102,6 +102,9 @@ public class SyncInfoMessage extends IntermediateResponse
     SYNC_ID_SET
   }
 
+  /** entry uuids. */
+  private final Set<UUID> entryUuids = new LinkedHashSet<>();
+
   /** message type. */
   private Type messageType;
 
@@ -114,14 +117,11 @@ public class SyncInfoMessage extends IntermediateResponse
   /** refresh deletes. */
   private boolean refreshDeletes;
 
-  /** entry uuids. */
-  private Set<UUID> entryUuids = new LinkedHashSet<>();
-
 
   /**
    * Default constructor.
    */
-  protected SyncInfoMessage()
+  private SyncInfoMessage()
   {
     setResponseName(OID);
   }
@@ -143,7 +143,7 @@ public class SyncInfoMessage extends IntermediateResponse
   }
 
 
-  protected ParseHandler getResponseValueParseHandler()
+  private ParseHandler getResponseValueParseHandler()
   {
     return (parser, encoded) -> {
       final DERParser p = new DERParser();
@@ -179,7 +179,7 @@ public class SyncInfoMessage extends IntermediateResponse
    *
    * @param  type  message type
    */
-  public void setMessageType(final Type type)
+  private void setMessageType(final Type type)
   {
     messageType = type;
   }
@@ -201,7 +201,7 @@ public class SyncInfoMessage extends IntermediateResponse
    *
    * @param  value  sync request cookie
    */
-  public void setCookie(final byte[] value)
+  private void setCookie(final byte[] value)
   {
     cookie = value;
   }
@@ -223,7 +223,7 @@ public class SyncInfoMessage extends IntermediateResponse
    *
    * @param  b  refresh done
    */
-  public void setRefreshDone(final boolean b)
+  private void setRefreshDone(final boolean b)
   {
     refreshDone = b;
   }
@@ -245,7 +245,7 @@ public class SyncInfoMessage extends IntermediateResponse
    *
    * @param  b  whether to refresh deletes
    */
-  public void setRefreshDeletes(final boolean b)
+  private void setRefreshDeletes(final boolean b)
   {
     refreshDeletes = b;
   }
@@ -267,7 +267,7 @@ public class SyncInfoMessage extends IntermediateResponse
    *
    * @param  uuids  to add
    */
-  public void addEntryUuids(final UUID... uuids)
+  private void addEntryUuids(final UUID... uuids)
   {
     Collections.addAll(entryUuids, uuids);
   }
@@ -611,17 +611,17 @@ public class SyncInfoMessage extends IntermediateResponse
 
 
   // CheckStyle:OFF
-  public static class Builder extends IntermediateResponse.Builder
+  public static final class Builder extends IntermediateResponse.Builder
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new SyncInfoMessage());
     }
 
 
-    protected Builder(final SyncInfoMessage m)
+    private Builder(final SyncInfoMessage m)
     {
       super(m);
     }
@@ -637,16 +637,32 @@ public class SyncInfoMessage extends IntermediateResponse
     @Override
     public Builder messageID(final int id)
     {
-      object.setMessageID(id);
-      return self();
+      ((SyncInfoMessage) object).setMessageID(id);
+      return this;
     }
 
 
     @Override
     public Builder controls(final ResponseControl... controls)
     {
-      object.addControls(controls);
-      return self();
+      ((SyncInfoMessage) object).addControls(controls);
+      return this;
+    }
+
+
+    @Override
+    public Builder responseName(final String name)
+    {
+      object.setResponseName(name);
+      return this;
+    }
+
+
+    @Override
+    public Builder responseValue(final byte[] value)
+    {
+      object.setResponseValue(value);
+      return this;
     }
 
 

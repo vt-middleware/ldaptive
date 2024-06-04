@@ -19,6 +19,7 @@ public class EqualsTest
   {
     EqualsVerifier.forClass(Dn.class)
       .suppress(Warning.STRICT_INHERITANCE)
+      .withIgnoredFields("immutable")
       .verify();
   }
 

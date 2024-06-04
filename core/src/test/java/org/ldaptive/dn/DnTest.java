@@ -903,4 +903,25 @@ public class DnTest
     Assert.assertTrue(nullDn.isAncestor(dn5Norm, normalizer));
     Assert.assertFalse(nullDn.isAncestor(nullDn, normalizer));
   }
+
+
+  /** Test for copy method. */
+  @Test
+  public void copy()
+  {
+    final Dn dn1 = new Dn("uid=1,ou=people,dc=ldaptive,dc=org");
+    final Dn cp1 = Dn.copy(dn1);
+    Assert.assertEquals(cp1, dn1);
+    Assert.assertFalse(dn1.isFrozen());
+    Assert.assertFalse(cp1.isFrozen());
+
+    final Dn dn2 = Dn.builder()
+      .add("uid=1,ou=people,dc=ldaptive,dc=org")
+      .freeze()
+      .build();
+    final Dn cp2 = Dn.copy(dn2);
+    Assert.assertEquals(cp2, dn2);
+    Assert.assertTrue(dn2.isFrozen());
+    Assert.assertFalse(cp2.isFrozen());
+  }
 }

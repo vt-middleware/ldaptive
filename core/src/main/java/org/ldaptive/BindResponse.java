@@ -17,7 +17,7 @@ import org.ldaptive.asn1.DERPath;
  *
  * @author  Middleware Services
  */
-public class BindResponse extends AbstractResult
+public final class BindResponse extends AbstractResult
 {
 
   /** BER protocol number. */
@@ -76,7 +76,7 @@ public class BindResponse extends AbstractResult
   }
 
 
-  public void setServerSaslCreds(final byte[] creds)
+  private void setServerSaslCreds(final byte[] creds)
   {
     serverSaslCreds = creds;
   }
@@ -150,11 +150,11 @@ public class BindResponse extends AbstractResult
 
 
   // CheckStyle:OFF
-  public static class Builder extends AbstractResult.AbstractBuilder<Builder, BindResponse>
+  public static final class Builder extends AbstractResult.AbstractBuilder<Builder, BindResponse>
   {
 
 
-    protected Builder()
+    private Builder()
     {
       super(new BindResponse());
     }
