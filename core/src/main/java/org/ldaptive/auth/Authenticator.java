@@ -370,6 +370,7 @@ public final class Authenticator extends AbstractFreezable
 
     final AuthenticationResponse invalidInput = validateInput(dn, request);
     if (invalidInput != null) {
+      invalidInput.freeze();
       return invalidInput;
     }
 
@@ -398,6 +399,7 @@ public final class Authenticator extends AbstractFreezable
         ah.handle(authResponse);
       }
     }
+    authResponse.freeze();
 
     logger.debug("Authenticate response={} for dn={} with request={}", response, dn, processedRequest);
     return authResponse;

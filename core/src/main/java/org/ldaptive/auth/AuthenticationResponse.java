@@ -3,6 +3,7 @@ package org.ldaptive.auth;
 
 import java.util.Arrays;
 import org.ldaptive.AbstractResult;
+import org.ldaptive.Freezable;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 
@@ -11,7 +12,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public final class AuthenticationResponse extends AbstractResult
+public final class AuthenticationResponse extends AbstractResult implements Freezable
 {
 
   /** hash code seed. */
@@ -28,6 +29,9 @@ public final class AuthenticationResponse extends AbstractResult
 
   /** Account state. */
   private AccountState accountState;
+
+  /** Whether this object has been marked immutable. */
+  private volatile boolean immutable;
 
 
   /** Default constructor. */
@@ -50,7 +54,32 @@ public final class AuthenticationResponse extends AbstractResult
     authenticationHandlerResponse = response;
     resolvedDn = dn;
     ldapEntry = entry;
-    ldapEntry.freeze();
+    if (ldapEntry != null) {
+      ldapEntry.freeze();
+    }
+  }
+
+
+  @Override
+  public void freeze()
+  {
+    immutable = true;
+  }
+
+
+  @Override
+  public boolean isFrozen()
+  {
+    return immutable;
+  }
+
+
+  @Override
+  public void assertMutable()
+  {
+    if (immutable) {
+      throw new IllegalStateException("Cannot modify immutable object");
+    }
   }
 
 
@@ -120,7 +149,7 @@ public final class AuthenticationResponse extends AbstractResult
    */
   public void setAccountState(final AccountState state)
   {
-    // account state must remain mutable for response handlers
+    assertMutable();
     accountState = state;
   }
 
@@ -212,6 +241,13 @@ public final class AuthenticationResponse extends AbstractResult
     {
       super.copy(response);
       object.authenticationHandlerResponse = response;
+      return this;
+    }
+
+
+    public Builder freeze()
+    {
+      object.freeze();
       return this;
     }
 

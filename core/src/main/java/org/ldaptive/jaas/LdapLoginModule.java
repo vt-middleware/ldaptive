@@ -132,6 +132,7 @@ public class LdapLoginModule extends AbstractLoginModule
           loginSuccess = false;
         }
       }
+      response.freeze();
 
       if (!loginSuccess) {
         logger.debug("Authentication failed: " + response);

@@ -5,13 +5,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
-import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AggregateAuthenticationHandler;
 import org.ldaptive.auth.AggregateAuthenticationResponseHandler;
 import org.ldaptive.auth.AggregateDnResolver;
@@ -55,17 +52,6 @@ import org.testng.annotations.Test;
 public class FreezableTest
 {
 
-  /** Methods to ignore immutability test. */
-  private static final List<Method> IGNORE_METHODS = new ArrayList<>();
-
-  /* Initialize ignore methods. */
-  static {
-    try {
-      IGNORE_METHODS.add(AuthenticationResponse.class.getMethod("setAccountState", AccountState.class));
-    } catch (NoSuchMethodException e) {
-      throw new RuntimeException(e);
-    }
-  }
 
   /**
    * Immutable classes.
@@ -165,6 +151,9 @@ public class FreezableTest
           Authenticator.class,
         },
         new Object[] {
+          AuthenticationResponse.class,
+        },
+        new Object[] {
           BindConnectionInitializer.class,
         },
         new Object[] {
@@ -256,7 +245,7 @@ public class FreezableTest
   private void invokeMethods(final Class<? extends Freezable> clazz, final Freezable i)
   {
     for (Method method : clazz.getMethods()) {
-      if (!IGNORE_METHODS.contains(method) && !method.isBridge()) {
+      if (!method.isBridge()) {
         final boolean invokeMethod =
           (method.getName().startsWith("set") || method.getName().startsWith("add")) &&
             method.getParameterTypes().length == 1;

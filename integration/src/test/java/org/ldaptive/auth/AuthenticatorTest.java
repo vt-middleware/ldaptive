@@ -583,6 +583,12 @@ public class AuthenticatorTest extends AbstractTest
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
+    try {
+      response.setAccountState(null);
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
     Assert.assertTrue(response.isSuccess());
     Assert.assertEquals(
       response.getAuthenticationResultCode(),
@@ -629,6 +635,12 @@ public class AuthenticatorTest extends AbstractTest
     // test auth with return attributes
     final String expected = TestUtils.readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
+    try {
+      response.setAccountState(null);
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
     TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
   }
 
@@ -1307,6 +1319,12 @@ public class AuthenticatorTest extends AbstractTest
     Thread.sleep(2000);
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
+    try {
+      response.setAccountState(null);
+      Assert.fail("Should have thrown exception");
+    } catch (Exception e) {
+      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+    }
     Assert.assertTrue(response.isSuccess());
     ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
     Assert.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
