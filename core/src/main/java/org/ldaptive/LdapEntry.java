@@ -96,7 +96,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
     if (parsedDn != null) {
       parsedDn.freeze();
     }
-    attributes.values().forEach(a -> a.freeze());
+    attributes.values().forEach(Freezable::freeze);
   }
 
 
@@ -538,11 +538,11 @@ public class LdapEntry extends AbstractMessage implements Freezable
     /** Parser for decoding LDAP attributes. */
     private final DERParser parser = new DERParser();
 
+    /** Attribute values. */
+    private final List<byte[]> values = new ArrayList<>();
+
     /** Attribute name. */
     private String name;
-
-    /** Attribute values. */
-    private List<byte[]> values = new ArrayList<>();
 
 
     /**

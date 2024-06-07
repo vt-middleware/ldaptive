@@ -25,7 +25,7 @@ public class SRVDNSResolver extends AbstractDNSResolver<SRVRecord>
   private static final String DEFAULT_RECORD_NAME = "_ldap._tcp";
 
   /** Connect to LDAP using LDAPS. */
-  private boolean useSSL;
+  private final boolean useSSL;
 
 
   /** Default constructor. */

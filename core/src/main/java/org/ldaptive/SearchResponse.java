@@ -83,8 +83,8 @@ public final class SearchResponse extends AbstractResult implements Freezable
   public void freeze()
   {
     immutable = true;
-    resultEntries.forEach(e -> e.freeze());
-    resultReferences.forEach(r -> r.freeze());
+    resultEntries.forEach(LdapEntry::freeze);
+    resultReferences.forEach(SearchResultReference::freeze);
   }
 
 

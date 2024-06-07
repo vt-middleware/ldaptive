@@ -52,11 +52,11 @@ public class LdapAttribute extends AbstractFreezable
   /** List of custom binary attribute names. */
   private static final String[] BINARY_ATTRIBUTES;
 
+  /** Attribute values. */
+  private final Collection<AttributeValue> attributeValues = new LinkedHashSet<>();
+
   /** Attribute name. */
   private String attributeName;
-
-  /** Attribute values. */
-  private Collection<AttributeValue> attributeValues = new LinkedHashSet<>();
 
   /** Whether this attribute is binary and string representations should be base64 encoded. */
   private boolean binary;

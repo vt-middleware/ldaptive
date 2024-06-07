@@ -23,7 +23,7 @@ public class ConnectionTransport implements Transport
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Number of I/O threads. */
-  private int numIoThreads;
+  private final int numIoThreads;
 
   /** Number of message threads. */
   private int numMessageThreads = -1;

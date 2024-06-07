@@ -105,7 +105,7 @@ public final class LdapURLSet
    *
    * @param  ldapUrls  LDAP URLs to add to this set.
    */
-  protected synchronized void populate(final List<LdapURL> ldapUrls)
+  synchronized void populate(final List<LdapURL> ldapUrls)
   {
     // Copy activity state from any URLs currently in the set that match new entries
     for (LdapURL url : urls) {

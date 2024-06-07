@@ -57,6 +57,9 @@ public final class DefaultSearchOperationHandle
   private static final boolean SORT_RESULTS = Boolean.parseBoolean(
     System.getProperty("org.ldaptive.sortSearchResults", "false"));
 
+  /** Synthetic result that is built as entries and references are received. */
+  private final SearchResponse result = new SearchResponse();
+
   /** Functions to handle response entries. */
   private LdapEntryHandler[] onEntry;
 
@@ -65,9 +68,6 @@ public final class DefaultSearchOperationHandle
 
   /** Functions to handle complete response. */
   private SearchResultHandler[] onSearchResult;
-
-  /** Synthetic result that is built as entries and references are received. */
-  private SearchResponse result = new SearchResponse();
 
 
   /**
