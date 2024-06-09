@@ -95,10 +95,7 @@ public class MergeOperationTest extends AbstractTest
         .build());
     merge.setModifyOperation(
       ModifyOperation.builder()
-        .onRequest((RequestHandler<ModifyRequest>) r -> {
-          modificationsCount.getAndAdd(r.getModifications().length);
-          return r;
-        })
+        .onRequest((RequestHandler<ModifyRequest>) r -> modificationsCount.getAndAdd(r.getModifications().length))
         .onResult(r -> modifyOperationCount.getAndIncrement())
         .build());
     final MergeRequest request = new MergeRequest(source);

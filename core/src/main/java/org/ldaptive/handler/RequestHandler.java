@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.handler;
 
-import java.util.function.Function;
+import java.util.function.Consumer;
 import org.ldaptive.Request;
 
 /**
@@ -11,4 +11,4 @@ import org.ldaptive.Request;
  *
  * @author  Middleware Services
  */
-public interface RequestHandler<Q extends Request> extends Function<Q, Q> {}
+public interface RequestHandler<Q extends Request> extends Consumer<Q> {}

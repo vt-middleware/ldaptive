@@ -189,11 +189,10 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
     if (requestHandlers == null || requestHandlers.length == 0) {
       return request;
     }
-    Q req = request;
     for (RequestHandler<Q> func : requestHandlers) {
-      req = func.apply(req);
+      func.accept(request);
     }
-    return req;
+    return request;
   }
 
 
