@@ -224,7 +224,6 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
     final SearchResponse finalResult = SearchResponse.copy(result);
     finalResult.addEntries(combinedResults.getEntries());
     finalResult.addReferences(combinedResults.getReferences());
-    finalResult.freeze();
     return finalResult;
   }
 

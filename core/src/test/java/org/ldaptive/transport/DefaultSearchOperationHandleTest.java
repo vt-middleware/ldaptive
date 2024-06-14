@@ -22,6 +22,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.ad.handler.AbstractBinaryAttributeHandler;
 import org.ldaptive.extended.IntermediateResponse;
+import org.ldaptive.handler.FreezeResultHandler;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeResultHandler;
 import org.ldaptive.handler.SortResultHandler;
@@ -396,12 +397,14 @@ public class DefaultSearchOperationHandleTest
     handle.messageID(1);
 
     final AtomicBoolean handlerExecuted = new AtomicBoolean();
-    handle.onSearchResult(result -> {
-      result.addReferences(SearchResultReference.builder().messageID(result.getMessageID()).build());
-      result.addEntries(LdapEntry.builder().messageID(result.getMessageID()).build());
-      Assert.assertTrue(handlerExecuted.compareAndSet(false, true));
-      return result;
-    });
+    handle.onSearchResult(
+      result -> {
+        result.addReferences(SearchResultReference.builder().messageID(result.getMessageID()).build());
+        result.addEntries(LdapEntry.builder().messageID(result.getMessageID()).build());
+        Assert.assertTrue(handlerExecuted.compareAndSet(false, true));
+        return result;
+      },
+      new FreezeResultHandler());
     handle.entry(LdapEntry.builder().messageID(1).build());
     handle.result(SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
     final SearchResponse result = handle.await();

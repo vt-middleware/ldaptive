@@ -298,6 +298,7 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
     logger.trace("resolve criteria={}", criteria);
 
     final SearchResponse result = performLdapSearch(criteria, response);
+    result.freeze();
     logger.debug("Resolved result={} for criteria={}", result, criteria);
 
     if (!result.isSuccess()) {

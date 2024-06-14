@@ -45,6 +45,9 @@ public class EqualsTest
         new Object[] {
           SortResultHandler.class,
         },
+        new Object[] {
+          FreezeResultHandler.class,
+        },
       };
   }
 

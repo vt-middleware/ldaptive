@@ -256,6 +256,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
 
       if (filter != null && filter.getFilter() != null) {
         final SearchResponse result = performLdapSearch(filter);
+        result.freeze();
         if (!result.isSuccess()) {
           throw new LdapException(
             "Error resolving DN for user " + user + " with filter " + filter +

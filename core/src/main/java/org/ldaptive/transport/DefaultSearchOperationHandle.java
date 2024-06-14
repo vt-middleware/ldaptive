@@ -108,30 +108,26 @@ public final class DefaultSearchOperationHandle
     if (SORT_RESULTS) {
       done = SearchResponse.sort(done);
     }
-    try {
-      if (onSearchResult != null) {
-        for (SearchResultHandler func : onSearchResult) {
-          SearchResponse handlerResponse = null;
-          try {
-            handlerResponse = func.apply(done);
-          } catch (Exception ex) {
-            if (ex.getCause() instanceof LdapException) {
-              throw (LdapException) ex.getCause();
-            }
-            throw new IllegalStateException("Search result handler " + func + " threw exception", ex);
+    if (onSearchResult != null) {
+      for (SearchResultHandler func : onSearchResult) {
+        final SearchResponse handlerResponse;
+        try {
+          handlerResponse = func.apply(done);
+        } catch (Exception ex) {
+          if (ex.getCause() instanceof LdapException) {
+            throw (LdapException) ex.getCause();
           }
-          if (handlerResponse == null) {
-            throw new IllegalStateException("Search result handler " + func + " returned null result");
-          } else if (!handlerResponse.equalsResult(done)) {
-            if (!ResultCode.REFERRAL.equals(done.getResultCode())) {
-              throw new IllegalStateException("Cannot modify non-referral search result instance with handler " + func);
-            }
-          }
-          done = handlerResponse;
+          throw new IllegalStateException("Search result handler " + func + " threw exception", ex);
         }
+        if (handlerResponse == null) {
+          throw new IllegalStateException("Search result handler " + func + " returned null result");
+        } else if (!handlerResponse.equalsResult(done)) {
+          if (!ResultCode.REFERRAL.equals(done.getResultCode())) {
+            throw new IllegalStateException("Cannot modify non-referral search result instance with handler " + func);
+          }
+        }
+        done = handlerResponse;
       }
-    } finally {
-      done.freeze();
     }
     return done;
   }
