@@ -80,7 +80,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Protocol request to send. */
-  private final Request request;
+  private final Q request;
 
   /** Time to wait for a response. */
   private final Duration responseTimeout;
@@ -528,7 +528,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    *
    * @return  request
    */
-  public Request getRequest()
+  public Q getRequest()
   {
     return request;
   }
