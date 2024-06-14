@@ -164,7 +164,7 @@ public class LdapAttribute extends AbstractFreezable
     }
     if (attrNames != null && attrNames.length > 0) {
       for (String s : attrNames) {
-        if (attributeName.equals(s)) {
+        if (attributeName.equalsIgnoreCase(s)) {
           binary = true;
           break;
         }
