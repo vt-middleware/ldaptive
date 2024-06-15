@@ -55,10 +55,13 @@
 
   <!-- Inconsistent synchronization -->
   <Match>
-    <Or>
-      <Class name="org.ldaptive.SingleConnectionFactory" />
-      <Class name="org.ldaptive.transport.DefaultOperationHandle" />
-    </Or>
+    <!-- access to the complete method is synchronized, not access to the connection -->
+    <Class name="org.ldaptive.transport.DefaultOperationHandle" />
+    <Bug pattern="IS2_INCONSISTENT_SYNC" />
+  </Match>
+
+  <Match>
+    <Class name="org.ldaptive.SingleConnectionFactory" />
     <Bug pattern="IS2_INCONSISTENT_SYNC" />
   </Match>
 
