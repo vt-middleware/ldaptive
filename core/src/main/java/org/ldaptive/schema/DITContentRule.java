@@ -26,7 +26,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class DITContentRule extends AbstractNamedSchemaElement
+public final class DITContentRule extends AbstractNamedSchemaElement
 {
 
   /** hash code seed. */

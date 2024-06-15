@@ -23,7 +23,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class MatchingRuleUse extends AbstractNamedSchemaElement
+public final class MatchingRuleUse extends AbstractNamedSchemaElement
 {
 
   /** hash code seed. */

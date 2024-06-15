@@ -217,10 +217,8 @@ public class VirtualListViewClient extends AbstractSearchOperationFactory
     byte[] cookie = null;
     final VirtualListViewResponseControl ctl = (VirtualListViewResponseControl) result.getControl(
       VirtualListViewResponseControl.OID);
-    if (ctl != null) {
-      if (ctl.getContextID() != null && ctl.getContextID().length > 0) {
-        cookie = ctl.getContextID();
-      }
+    if (ctl != null && ctl.getContextID() != null && ctl.getContextID().length > 0) {
+      cookie = ctl.getContextID();
     }
     return cookie;
   }

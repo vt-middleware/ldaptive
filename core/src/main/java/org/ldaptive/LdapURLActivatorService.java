@@ -30,14 +30,11 @@ public final class LdapURLActivatorService
   /** List of inactive URLs to test. */
   private final List<LdapURL> inactiveUrls = new ArrayList<>();
 
-  /** Executor for testing inactive URLs. */
-  private final ScheduledThreadPoolExecutor executor;
-
 
   /** Default constructor. */
   private LdapURLActivatorService()
   {
-    executor = new ScheduledThreadPoolExecutor(
+    final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
       1,
       r -> {
         final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());

@@ -146,6 +146,7 @@ public abstract class AbstractOperationConnectionValidator<Q extends Request, S 
      *
      * @return  builder
      */
+    @Override
     protected abstract B self();
 
 

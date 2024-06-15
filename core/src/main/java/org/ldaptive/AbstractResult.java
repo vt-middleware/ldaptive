@@ -50,6 +50,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
    *
    * @return  result code
    */
+  @Override
   public final ResultCode getResultCode()
   {
     return resultCode;
@@ -72,6 +73,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
    *
    * @return  matched DN
    */
+  @Override
   public final String getMatchedDN()
   {
     return matchedDN;
@@ -94,6 +96,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
    *
    * @return  diagnostic message
    */
+  @Override
   public final String getDiagnosticMessage()
   {
     return diagnosticMessage;
@@ -116,6 +119,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
    *
    * @return  referral URLs
    */
+  @Override
   public final String[] getReferralURLs()
   {
     return referralURLs != null ? referralURLs.toArray(new String[0]) : null;

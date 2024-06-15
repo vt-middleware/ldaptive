@@ -113,7 +113,7 @@ public final class FilterUtils
         throw new FilterParseException(ResultCode.FILTER_ERROR, "Assertion value contains unescaped characters");
       } else if (c == '\\') {
         try {
-          final char[] hexValue = new char[]{value.charAt(++i), value.charAt(++i)};
+          final char[] hexValue = {value.charAt(++i), value.charAt(++i)};
           bytes.write(LdapUtils.hexDecode(hexValue));
         } catch (Exception e) {
           throw new FilterParseException(ResultCode.FILTER_ERROR, "Could not hex decode escaped data in " + value, e);

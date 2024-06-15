@@ -43,21 +43,21 @@ public final class SecurityIdentifier
     final StringBuilder sb = new StringBuilder("S");
 
     // byte[0] is the revision
-    sb.append("-").append(sidBuffer.get() & 0xFF);
+    sb.append('-').append(sidBuffer.get() & 0xFF);
 
     // byte[1] is the count of sub-authorities
     final int countSubAuth = sidBuffer.get() & 0xFF;
 
     // byte[2] - byte[7] is the authority (48 bits)
     sidBuffer.limit(8);
-    sb.append("-").append(getLong(sidBuffer, true));
+    sb.append('-').append(getLong(sidBuffer, true));
 
     // byte[8] - ? is the sub-authorities,
     // (32 bits per authority, little endian)
     for (int i = 0; i < countSubAuth; i++) {
       // values are unsigned, so get 4 bytes as a long
       sidBuffer.limit(sidBuffer.position() + 4);
-      sb.append("-").append(getLong(sidBuffer, false));
+      sb.append('-').append(getLong(sidBuffer, false));
     }
 
     return sb.toString();

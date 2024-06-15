@@ -23,7 +23,7 @@ public class SearchTemplates
   private String searchRestrictions;
 
   /** Term parsers for creating filter parameters. */
-  private TermParser[] termParsers = new TermParser[] {
+  private TermParser[] termParsers = {
     new DefaultTermParser(),
     new InitialTermParser(),
   };

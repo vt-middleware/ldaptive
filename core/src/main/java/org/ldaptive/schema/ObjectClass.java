@@ -26,7 +26,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class ObjectClass extends AbstractNamedSchemaElement
+public final class ObjectClass extends AbstractNamedSchemaElement
 {
 
   /** hash code seed. */

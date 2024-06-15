@@ -1,14 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.io;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 /**
  * Creates an {@link InputStream} from a string that is prefixed with 'file:'. See {@link
- * FileInputStream#FileInputStream(File)}.
+ * FileInputStream#FileInputStream(java.io.File)}.
  *
  * @author  Middleware Services
  */

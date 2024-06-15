@@ -42,6 +42,7 @@ public class ScramSaslClient implements SaslClient<ScramBindRequest>
    *
    * @throws  LdapException  if an error occurs
    */
+  @Override
   public BindResponse bind(final TransportConnection conn, final ScramBindRequest request)
     throws LdapException
   {

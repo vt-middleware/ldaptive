@@ -14,7 +14,7 @@ public final class ResourceUtils
 {
 
   /** Default resource loaders. */
-  private static final ResourceLoader[] DEFAULT_RESOURCE_LOADERS = new ResourceLoader[] {
+  private static final ResourceLoader[] DEFAULT_RESOURCE_LOADERS = {
     new ClasspathResourceLoader(),
     new FileResourceLoader(),
   };

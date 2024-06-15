@@ -13,6 +13,7 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Queue;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -104,8 +105,8 @@ public final class LdapUtils
    */
   public static String utf8Encode(final byte[] value, final boolean allowNull)
   {
-    if (!allowNull && value == null) {
-      throw new NullPointerException("Cannot UTF-8 encode null value");
+    if (!allowNull) {
+      Objects.requireNonNull(value, "Cannot UTF-8 encode null value");
     }
     return value != null ? new String(value, StandardCharsets.UTF_8) : null;
   }
@@ -136,8 +137,8 @@ public final class LdapUtils
    */
   public static byte[] utf8Encode(final String value, final boolean allowNull)
   {
-    if (!allowNull && value == null) {
-      throw new NullPointerException("Cannot UTF-8 encode null value");
+    if (!allowNull) {
+      Objects.requireNonNull(value, "Cannot UTF-8 encode null value");
     }
     return value != null ? value.getBytes(StandardCharsets.UTF_8) : null;
   }
@@ -168,8 +169,8 @@ public final class LdapUtils
    */
   public static byte[] utf8Encode(final char[] value, final boolean allowNull)
   {
-    if (!allowNull && value == null) {
-      throw new NullPointerException("Cannot UTF-8 encode null value");
+    if (!allowNull) {
+      Objects.requireNonNull(value, "Cannot UTF-8 encode null value");
     }
     if (value == null) {
       return null;
@@ -257,10 +258,10 @@ public final class LdapUtils
         default:
           // CheckStyle:MagicNumber OFF
           if (ch <= 0x7F) {
-            sb.append("%").append(hexEncode((byte) (ch & 0x7F)));
+            sb.append('%').append(hexEncode((byte) (ch & 0x7F)));
           } else {
             for (byte b : utf8Encode(String.valueOf(ch))) {
-              sb.append("%").append(hexEncode(b));
+              sb.append('%').append(hexEncode(b));
             }
           }
           // CheckStyle:MagicNumber ON
@@ -288,7 +289,7 @@ public final class LdapUtils
           final char ch = value.charAt(i);
           // CheckStyle:MagicNumber OFF
           if (ch <= 0x1F || ch == 0x7F) {
-            sb.append("%");
+            sb.append('%');
             sb.append(hexEncode((byte) (ch & 0x7F)));
           } else {
             sb.append(ch);

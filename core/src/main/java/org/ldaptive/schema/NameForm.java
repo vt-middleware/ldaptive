@@ -25,7 +25,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class NameForm extends AbstractNamedSchemaElement
+public final class NameForm extends AbstractNamedSchemaElement
 {
 
   /** hash code seed. */

@@ -403,10 +403,8 @@ public class DirSyncClient
   {
     byte[] cookie = null;
     final DirSyncControl ctl = (DirSyncControl) result.getControl(DirSyncControl.OID);
-    if (ctl != null) {
-      if (ctl.getCookie() != null && ctl.getCookie().length > 0) {
-        cookie = ctl.getCookie();
-      }
+    if (ctl != null && ctl.getCookie() != null && ctl.getCookie().length > 0) {
+      cookie = ctl.getCookie();
     }
     return cookie;
   }

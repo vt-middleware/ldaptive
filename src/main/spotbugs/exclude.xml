@@ -91,4 +91,12 @@
     <Method name="authenticate" />
     <Bug pattern="NP_NULL_ON_SOME_PATH" />
   </Match>
+
+  <!-- Cannot cleanup null object -->
+  <Match>
+    <Class name="org.ldaptive.io.ClasspathResourceLoader" />
+    <Method name="load" />
+    <Bug pattern="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE" />
+  </Match>
+
 </FindBugsFilter>

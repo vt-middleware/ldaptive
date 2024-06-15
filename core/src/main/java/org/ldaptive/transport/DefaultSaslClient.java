@@ -48,6 +48,7 @@ public class DefaultSaslClient implements SaslClient<DefaultSaslClientRequest>
    *
    * @throws  SaslException  if an error occurs
    */
+  @Override
   public BindResponse bind(final TransportConnection conn, final DefaultSaslClientRequest request)
     throws SaslException
   {
@@ -83,11 +84,11 @@ public class DefaultSaslClient implements SaslClient<DefaultSaslClientRequest>
         throw new SaslException("SASL client error: client did not complete for " + request + " with " + response);
       }
       return response;
+    } catch (SaslException e) {
+      dispose();
+      throw e;
     } catch (Throwable e) {
       dispose();
-      if (e instanceof SaslException) {
-        throw (SaslException) e;
-      }
       throw new SaslException("SASL bind failed for " + request, e);
     }
   }

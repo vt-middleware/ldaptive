@@ -2,6 +2,7 @@
 package org.ldaptive.io;
 
 import java.io.InputStream;
+import java.util.Objects;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -32,9 +33,7 @@ public class ClasspathResourceLoader implements ResourceLoader
     }
     // load the resource using a class in the base package
     final InputStream is = LdapUtils.class.getResourceAsStream(path.substring(PREFIX.length()));
-    if (is == null) {
-      throw new NullPointerException("Could not get stream from '" + path + "' classpath");
-    }
+    Objects.requireNonNull(is, "Could not get stream from '" + path + "' classpath");
     return is;
   }
 }

@@ -121,10 +121,8 @@ public final class DefaultSearchOperationHandle
         }
         if (handlerResponse == null) {
           throw new IllegalStateException("Search result handler " + func + " returned null result");
-        } else if (!handlerResponse.equalsResult(done)) {
-          if (!ResultCode.REFERRAL.equals(done.getResultCode())) {
-            throw new IllegalStateException("Cannot modify non-referral search result instance with handler " + func);
-          }
+        } else if (!handlerResponse.equalsResult(done) && !ResultCode.REFERRAL.equals(done.getResultCode())) {
+          throw new IllegalStateException("Cannot modify non-referral search result instance with handler " + func);
         }
         done = handlerResponse;
       }

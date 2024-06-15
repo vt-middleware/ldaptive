@@ -31,7 +31,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class AttributeType extends AbstractNamedSchemaElement
+public final class AttributeType extends AbstractNamedSchemaElement
 {
 
   /** hash code seed. */
@@ -251,10 +251,8 @@ public class AttributeType extends AbstractNamedSchemaElement
    */
   public String getSyntaxOID(final boolean withBoundCount)
   {
-    if (!withBoundCount && syntaxOID != null) {
-      if (syntaxOID.contains("{") && syntaxOID.endsWith("}")) {
-        return syntaxOID.substring(0, syntaxOID.indexOf('{'));
-      }
+    if (!withBoundCount && syntaxOID != null && syntaxOID.contains("{") && syntaxOID.endsWith("}")) {
+      return syntaxOID.substring(0, syntaxOID.indexOf('{'));
     }
     return syntaxOID;
   }
@@ -267,11 +265,9 @@ public class AttributeType extends AbstractNamedSchemaElement
    */
   public int getSyntaxOIDBoundCount()
   {
-    if (syntaxOID != null) {
-      if (syntaxOID.contains("{") && syntaxOID.endsWith("}")) {
-        final String count = syntaxOID.substring(syntaxOID.indexOf('{') + 1, syntaxOID.length() - 1);
-        return Integer.parseInt(count);
-      }
+    if (syntaxOID != null && syntaxOID.contains("{") && syntaxOID.endsWith("}")) {
+      final String count = syntaxOID.substring(syntaxOID.indexOf('{') + 1, syntaxOID.length() - 1);
+      return Integer.parseInt(count);
     }
     return -1;
   }

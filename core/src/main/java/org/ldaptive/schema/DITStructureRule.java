@@ -24,7 +24,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class DITStructureRule extends AbstractNamedSchemaElement
+public final class DITStructureRule extends AbstractNamedSchemaElement
 {
 
   /** hash code seed. */

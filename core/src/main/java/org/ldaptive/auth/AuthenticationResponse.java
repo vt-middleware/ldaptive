@@ -89,6 +89,7 @@ public final class AuthenticationResponse extends AbstractResult implements Free
    *
    * @return  whether authentication was successful
    */
+  @Override
   public boolean isSuccess()
   {
     return

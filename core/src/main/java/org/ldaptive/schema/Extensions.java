@@ -14,7 +14,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class Extensions
+public final class Extensions
 {
 
   /** hash code seed. */

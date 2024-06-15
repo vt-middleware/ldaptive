@@ -26,7 +26,7 @@ public class ConnectionTransport implements Transport
   private final int numIoThreads;
 
   /** Number of message threads. */
-  private int numMessageThreads = -1;
+  private final int numMessageThreads;
 
 
   /**
@@ -45,7 +45,7 @@ public class ConnectionTransport implements Transport
    */
   public ConnectionTransport(final int ioThreads)
   {
-    numIoThreads = ioThreads;
+    this(ioThreads, -1);
   }
 
 

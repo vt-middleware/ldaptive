@@ -33,7 +33,7 @@ public class LdapAttribute extends AbstractFreezable
   private static final int HASH_CODE_SEED = 10223;
 
   /** List of attribute names known to use binary syntax. */
-  private static final String[] DEFAULT_BINARY_ATTRIBUTES = new String[] {
+  private static final String[] DEFAULT_BINARY_ATTRIBUTES = {
     "photo",
     "personalSignature",
     "audio",
@@ -196,7 +196,7 @@ public class LdapAttribute extends AbstractFreezable
     if (withOptions) {
       return attributeName;
     } else {
-      final int optionIndex = attributeName.indexOf(";");
+      final int optionIndex = attributeName.indexOf(';');
       return optionIndex > 0 ? attributeName.substring(0, optionIndex) : attributeName;
     }
   }
@@ -209,7 +209,7 @@ public class LdapAttribute extends AbstractFreezable
    */
   public final List<String> getOptions()
   {
-    if (attributeName.indexOf(";") > 0) {
+    if (attributeName.indexOf(';') > 0) {
       final String[] split = attributeName.split(";");
       if (split.length > 1) {
         return IntStream.range(1, split.length).mapToObj(i -> split[i]).collect(Collectors.toUnmodifiableList());

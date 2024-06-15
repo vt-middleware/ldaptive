@@ -44,6 +44,7 @@ public class GssApiSaslClient implements SaslClient<GssApiBindRequest>
    * @throws  LoginException  if an error occurs
    * @throws  SaslException  if an error occurs
    */
+  @Override
   public BindResponse bind(final TransportConnection conn, final GssApiBindRequest request)
     throws LoginException, SaslException
   {

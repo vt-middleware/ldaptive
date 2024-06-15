@@ -99,15 +99,15 @@ public class OidType extends AbstractDERType implements DEREncoder
     final int firstId = encoded.get();
     // CheckStyle:MagicNumber OFF
     if (firstId < 40) {
-      sb.append("0").append(".").append(firstId).append(".");
+      sb.append("0.").append(firstId).append(".");
     } else if (firstId < 80) {
-      sb.append("1").append(".").append(firstId - 40).append(".");
+      sb.append("1.").append(firstId - 40).append(".");
     } else {
-      sb.append("2").append(".").append(firstId - 80).append(".");
+      sb.append("2.").append(firstId - 80).append(".");
     }
     // CheckStyle:MagicNumber ON
     while (encoded.hasRemaining()) {
-      sb.append(readInt(encoded)).append(".");
+      sb.append(readInt(encoded)).append('.');
     }
     sb.setLength(sb.length() - 1);
     return sb.toString();

@@ -2,6 +2,7 @@
 package org.ldaptive.transport;
 
 import java.time.Instant;
+import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import org.ldaptive.ActivePassiveConnectionStrategy;
@@ -54,9 +55,7 @@ public abstract class TransportConnection implements Connection
    */
   public TransportConnection(final ConnectionConfig config)
   {
-    if (config == null) {
-      throw new NullPointerException("Connection config cannot be null");
-    }
+    Objects.requireNonNull(config, "Connection config cannot be null");
     connectionConfig = config;
     connectionStrategy = connectionConfig.getConnectionStrategy();
     synchronized (connectionStrategy) {

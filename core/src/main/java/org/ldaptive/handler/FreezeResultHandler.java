@@ -16,10 +16,6 @@ public class FreezeResultHandler implements SearchResultHandler
   private static final int HASH_CODE_SEED = 859;
 
 
-  /** Default constructor. */
-  public FreezeResultHandler() {}
-
-
   @Override
   public SearchResponse apply(final SearchResponse response)
   {

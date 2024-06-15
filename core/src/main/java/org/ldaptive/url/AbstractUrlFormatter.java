@@ -31,8 +31,7 @@ public abstract class AbstractUrlFormatter implements UrlFormatter
     if (!"ldapi".equals(url.getScheme())) {
       sb.append(':').append(url.getPort());
     }
-    sb.append('/').append(LdapUtils.percentEncode(formatBaseDn(url.getBaseDn(), url.getParsedBaseDn())));
-    sb.append('?');
+    sb.append('/').append(LdapUtils.percentEncode(formatBaseDn(url.getBaseDn(), url.getParsedBaseDn()))).append('?');
 
     final String[] attrs = url.getAttributes();
     for (int i = 0; i < attrs.length; i++) {

@@ -252,10 +252,8 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
   {
     byte[] cookie = null;
     final PagedResultsControl ctl = (PagedResultsControl) result.getControl(PagedResultsControl.OID);
-    if (ctl != null) {
-      if (ctl.getCookie() != null && ctl.getCookie().length > 0) {
-        cookie = ctl.getCookie();
-      }
+    if (ctl != null && ctl.getCookie() != null && ctl.getCookie().length > 0) {
+      cookie = ctl.getCookie();
     }
     return cookie;
   }

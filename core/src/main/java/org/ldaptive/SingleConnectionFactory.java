@@ -534,6 +534,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
     }
 
 
+    @Override
     public Builder config(final ConnectionConfig config)
     {
       object.setConnectionConfig(config);
@@ -576,6 +577,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
     }
 
 
+    @Override
     public SingleConnectionFactory build()
     {
       return object;

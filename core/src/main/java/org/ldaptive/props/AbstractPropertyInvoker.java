@@ -76,15 +76,13 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       }
       // look for setters
       for (Method method : c.getMethods()) {
-        if (!method.isBridge()) {
-          if (method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
-            final String mName = method.getName().substring(3);
-            final String pName = Character.toLowerCase(mName.charAt(0)) + mName.substring(1);
-            if (properties.containsKey(pName)) {
-              final Method[] m = properties.get(pName);
-              if (m[0] != null && method.getParameterTypes()[0].equals(m[0].getReturnType())) {
-                m[1] = method;
-              }
+        if (!method.isBridge() && method.getName().startsWith("set") && method.getParameterTypes().length == 1) {
+          final String mName = method.getName().substring(3);
+          final String pName = Character.toLowerCase(mName.charAt(0)) + mName.substring(1);
+          if (properties.containsKey(pName)) {
+            final Method[] m = properties.get(pName);
+            if (m[0] != null && method.getParameterTypes()[0].equals(m[0].getReturnType())) {
+              m[1] = method;
             }
           }
         }
@@ -396,7 +394,7 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
   {
     try {
       try {
-        Object[] params = new Object[] {arg};
+        Object[] params = {arg};
         if (arg == null && method.getParameterTypes().length == 0) {
           params = null;
         }

@@ -53,14 +53,6 @@ public final class DefaultCompareOperationHandle
 
 
   @Override
-  public CompareResponse await()
-    throws LdapException
-  {
-    return super.await();
-  }
-
-
-  @Override
   public DefaultCompareOperationHandle onResult(final ResultHandler... function)
   {
     super.onResult(function);
@@ -131,6 +123,7 @@ public final class DefaultCompareOperationHandle
    *
    * @return  this handle
    */
+  @Override
   public DefaultCompareOperationHandle onCompare(final CompareValueHandler... function)
   {
     onCompare = initializeMessageFunctional(function);

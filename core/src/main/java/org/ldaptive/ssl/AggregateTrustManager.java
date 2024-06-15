@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.X509ExtendedTrustManager;
@@ -62,12 +63,10 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
    */
   public AggregateTrustManager(final Strategy strategy, final X509TrustManager... managers)
   {
-    if (strategy == null) {
-      throw new NullPointerException("Strategy cannot be null");
-    }
+    Objects.requireNonNull(strategy, "Strategy cannot be null");
     trustStrategy = strategy;
     if (managers == null || managers.length == 0) {
-      throw new NullPointerException("Trust managers cannot be empty or null");
+      throw new IllegalArgumentException("Trust managers cannot be empty or null");
     }
     trustManagers = Stream.of(managers)
       .map(tm -> {

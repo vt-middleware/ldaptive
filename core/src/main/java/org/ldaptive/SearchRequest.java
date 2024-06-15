@@ -4,6 +4,7 @@ package org.ldaptive;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Stream;
 import org.ldaptive.asn1.ApplicationDERTag;
 import org.ldaptive.asn1.BooleanType;
@@ -481,12 +482,8 @@ public class SearchRequest extends AbstractRequestMessage
   @Override
   protected DEREncoder[] getRequestEncoders(final int id)
   {
-    if (baseDn == null) {
-      throw new NullPointerException("No baseDn defined in " + this);
-    }
-    if (searchFilter == null) {
-      throw new NullPointerException("No search filter defined in " + this);
-    }
+    Objects.requireNonNull(baseDn, "No baseDn defined in " + this);
+    Objects.requireNonNull(searchFilter, "No search filter defined in " + this);
     return new DEREncoder[] {
       new IntegerType(id),
       new ConstructedDEREncoder(

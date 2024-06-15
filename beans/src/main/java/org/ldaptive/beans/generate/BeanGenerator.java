@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -282,9 +283,7 @@ public class BeanGenerator
    */
   public void setNameMappings(final Map<String, String> m)
   {
-    if (m == null) {
-      throw new NullPointerException("Name mappings cannot be null");
-    }
+    Objects.requireNonNull(m, "Name mappings cannot be null");
     nameMappings = m;
   }
 
@@ -310,9 +309,7 @@ public class BeanGenerator
    */
   public void setExcludedNames(final String... names)
   {
-    if (names == null) {
-      throw new NullPointerException("Excluded names cannot be null");
-    }
+    Objects.requireNonNull(names, "Excluded names cannot be null");
     excludedNames = names;
   }
 
@@ -595,7 +592,7 @@ public class BeanGenerator
     final JClass ldapUtilsClass = codeModel.ref(org.ldaptive.LdapUtils.class);
     final JInvocation computeHashCode = ldapUtilsClass.staticInvoke("computeHashCode");
     final JMethod hashCode = clazz.method(JMod.PUBLIC, int.class, "hashCode");
-    hashCode.annotate(java.lang.Override.class);
+    hashCode.annotate(Override.class);
     // CheckStyle:MagicNumber OFF
     computeHashCode.arg(JExpr.lit(7919));
     // CheckStyle:MagicNumber ON
@@ -614,7 +611,7 @@ public class BeanGenerator
   private void createEquals(final JDefinedClass clazz)
   {
     final JMethod equals = clazz.method(JMod.PUBLIC, boolean.class, "equals");
-    equals.annotate(java.lang.Override.class);
+    equals.annotate(Override.class);
     final JVar o = equals.param(Object.class, "o");
 
     final JConditional ifSame = equals.body()._if(o.eq(JExpr._this()));
@@ -648,10 +645,10 @@ public class BeanGenerator
    */
   private void createToString(final JDefinedClass clazz)
   {
-    final JClass stringClass = codeModel.ref(java.lang.String.class);
+    final JClass stringClass = codeModel.ref(String.class);
     final JInvocation format = stringClass.staticInvoke("format");
     final JMethod toString = clazz.method(JMod.PUBLIC, String.class, "toString");
-    toString.annotate(java.lang.Override.class);
+    toString.annotate(Override.class);
 
     final StringBuilder sb = new StringBuilder("[%s@%d::");
     for (Map.Entry<String, JFieldVar> entry : clazz.fields().entrySet()) {

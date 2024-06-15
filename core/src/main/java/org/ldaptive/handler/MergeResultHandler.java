@@ -19,10 +19,6 @@ public class MergeResultHandler implements SearchResultHandler
   private static final int HASH_CODE_SEED = 857;
 
 
-  /** Default constructor. */
-  public MergeResultHandler() {}
-
-
   @Override
   public SearchResponse apply(final SearchResponse searchResponse)
   {

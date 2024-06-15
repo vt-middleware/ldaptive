@@ -24,7 +24,7 @@ public class EDirectoryAuthenticationResponseHandler extends AbstractFreezable
 {
 
   /** Attributes needed to enforce password policy. */
-  public static final String[] ATTRIBUTES = new String[] {"passwordExpirationTime", "loginGraceRemaining", };
+  public static final String[] ATTRIBUTES = {"passwordExpirationTime", "loginGraceRemaining", };
 
   /** Amount of time before expiration to produce a warning. */
   private Period warningPeriod;

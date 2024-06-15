@@ -25,7 +25,7 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
 {
 
   /** Attributes needed to enforce password policy. */
-  public static final String[] ATTRIBUTES = new String[] {"msDS-UserPasswordExpiryTimeComputed", "pwdLastSet", };
+  public static final String[] ATTRIBUTES = {"msDS-UserPasswordExpiryTimeComputed", "pwdLastSet", };
 
   /** Amount of time since a password was set until it will expire. Used if msDS-UserPasswordExpiryTimeComputed cannot
    * be read. */

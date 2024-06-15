@@ -55,14 +55,6 @@ public final class DefaultExtendedOperationHandle
 
 
   @Override
-  public ExtendedResponse await()
-    throws LdapException
-  {
-    return super.await();
-  }
-
-
-  @Override
   public DefaultExtendedOperationHandle onResult(final ResultHandler... function)
   {
     super.onResult(function);
@@ -133,6 +125,7 @@ public final class DefaultExtendedOperationHandle
    *
    * @return  this handle
    */
+  @Override
   public DefaultExtendedOperationHandle onExtended(final ExtendedValueHandler... function)
   {
     onExtended = initializeMessageFunctional(function);

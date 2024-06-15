@@ -8,6 +8,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -184,9 +185,7 @@ public final class NettyConnection extends TransportConnection
     final boolean shutdownGroups)
   {
     super(config);
-    if (ioGroup == null) {
-      throw new NullPointerException("I/O worker group cannot be null");
-    }
+    Objects.requireNonNull(ioGroup, "I/O worker group cannot be null");
     channelType = type;
     ioWorkerGroup = ioGroup;
     messageWorkerGroup = messageGroup;
@@ -676,12 +675,10 @@ public final class NettyConnection extends TransportConnection
       final BindResponse result;
       try {
         result = client.bind(this, request);
+      } catch (LdapException e) {
+        throw e;
       } catch (Exception e) {
-        if (e instanceof LdapException) {
-          throw (LdapException) e;
-        } else {
-          throw new LdapException(ResultCode.LOCAL_ERROR, e);
-        }
+        throw new LdapException(ResultCode.LOCAL_ERROR, e);
       }
       if (result == null) {
         throw new LdapException(ResultCode.LOCAL_ERROR, "SASL operation failed");
@@ -745,12 +742,10 @@ public final class NettyConnection extends TransportConnection
         final BindResponse result;
         try {
           result = client.bind(this, request);
+        } catch (LdapException e) {
+          throw e;
         } catch (Exception e) {
-          if (e instanceof LdapException) {
-            throw (LdapException) e;
-          } else {
-            throw new LdapException(ResultCode.LOCAL_ERROR, e);
-          }
+          throw new LdapException(ResultCode.LOCAL_ERROR, e);
         }
         if (result == null) {
           throw new LdapException(ResultCode.LOCAL_ERROR, "SASL GSSAPI operation failed");
@@ -978,12 +973,10 @@ public final class NettyConnection extends TransportConnection
       } else {
         handle.exception(new LdapException(ResultCode.SERVER_DOWN, "Reconnect in progress"));
       }
+    } catch (LdapException e) {
+      handle.exception(e);
     } catch (Exception e) {
-      if (e instanceof LdapException) {
-        handle.exception((LdapException) e);
-      } else {
-        handle.exception(new LdapException(ResultCode.LOCAL_ERROR, e));
-      }
+      handle.exception(new LdapException(ResultCode.LOCAL_ERROR, e));
     }
   }
 
@@ -1211,6 +1204,7 @@ public final class NettyConnection extends TransportConnection
    *
    * @return  whether the Netty channel is open
    */
+  @Override
   public boolean isOpen()
   {
     return channel != null && channel.isOpen();

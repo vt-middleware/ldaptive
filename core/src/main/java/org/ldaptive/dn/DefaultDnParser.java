@@ -35,6 +35,7 @@ public final class DefaultDnParser implements DnParser
    *
    * @return  unmodifiable list of RDNs
    */
+  @Override
   public List<RDn> parse(final String dn)
   {
     if (LdapUtils.trimSpace(dn).isEmpty()) {

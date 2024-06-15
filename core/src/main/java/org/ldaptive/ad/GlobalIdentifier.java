@@ -40,20 +40,19 @@ public final class GlobalIdentifier
 
     // encode the next 2 bytes, big endian
     guidBuffer.limit(6);
-    sb.append("-").append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
+    sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
 
     // encode the next 2 bytes, big endian
     guidBuffer.limit(8);
-    sb.append("-").append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
+    sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
 
     // encode the next 2 bytes, little endian
     guidBuffer.limit(10);
-    sb.append("-").append(LdapUtils.hexEncode(getBytes(guidBuffer, false)));
+    sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, false)));
 
     // encode the last 6 bytes, little endian
     guidBuffer.limit(guidBuffer.capacity());
-    sb.append("-").append(LdapUtils.hexEncode(getBytes(guidBuffer, false)));
-    sb.append("}");
+    sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, false))).append('}');
 
     return sb.toString();
     // CheckStyle:MagicNumber ON

@@ -131,10 +131,8 @@ public abstract class AbstractPropertySource<T> implements PropertySource<T>
             }
             // check if this is a super class property
             // if it is, set it now, it may be overridden with the props map
-          } else if (propertiesDomain.value().startsWith(propDomain)) {
-            if (invoker.hasProperty(propName)) {
-              invoker.setProperty(object, propName, value);
-            }
+          } else if (propertiesDomain.value().startsWith(propDomain) && invoker.hasProperty(propName)) {
+            invoker.setProperty(object, propName, value);
           }
         }
       }

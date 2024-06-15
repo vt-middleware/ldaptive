@@ -24,7 +24,7 @@ public class FreeIPAAuthenticationResponseHandler extends AbstractFreezable
 {
 
   /** Attributes needed to enforce password policy. */
-  public static final String[] ATTRIBUTES = new String[] {
+  public static final String[] ATTRIBUTES = {
     "krbPasswordExpiration",
     "krbLoginFailedCount",
     "krbLastPwdChange",

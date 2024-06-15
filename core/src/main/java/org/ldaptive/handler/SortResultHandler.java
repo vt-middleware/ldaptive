@@ -16,10 +16,6 @@ public class SortResultHandler implements SearchResultHandler
   private static final int HASH_CODE_SEED = 853;
 
 
-  /** Default constructor. */
-  public SortResultHandler() {}
-
-
   @Override
   public SearchResponse apply(final SearchResponse response)
   {

@@ -12,7 +12,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class Schema
+public final class Schema
 {
 
   /** hash code seed. */
