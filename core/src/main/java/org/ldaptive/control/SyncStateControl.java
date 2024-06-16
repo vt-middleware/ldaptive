@@ -87,7 +87,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
      */
     public static State valueOf(final int i)
     {
-      for (State s : State.values()) {
+      for (State s : values()) {
         if (s.value() == i) {
           return s;
         }

@@ -218,31 +218,25 @@ public final class DITContentRule extends AbstractNamedSchemaElement
     final StringBuilder sb = new StringBuilder("( ");
     sb.append(oid).append(" ");
     if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ");
-      sb.append(SchemaUtils.formatDescriptors(getNames()));
+      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
     }
     if (getDescription() != null) {
-      sb.append("DESC ");
-      sb.append(SchemaUtils.formatDescriptors(getDescription()));
+      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
     }
     if (isObsolete()) {
       sb.append("OBSOLETE ");
     }
     if (auxiliaryClasses != null && auxiliaryClasses.length > 0) {
-      sb.append("AUX ");
-      sb.append(SchemaUtils.formatOids(auxiliaryClasses));
+      sb.append("AUX ").append(SchemaUtils.formatOids(auxiliaryClasses));
     }
     if (requiredAttributes != null && requiredAttributes.length > 0) {
-      sb.append("MUST ");
-      sb.append(SchemaUtils.formatOids(requiredAttributes));
+      sb.append("MUST ").append(SchemaUtils.formatOids(requiredAttributes));
     }
     if (optionalAttributes != null && optionalAttributes.length > 0) {
-      sb.append("MAY ");
-      sb.append(SchemaUtils.formatOids(optionalAttributes));
+      sb.append("MAY ").append(SchemaUtils.formatOids(optionalAttributes));
     }
     if (restrictedAttributes != null && restrictedAttributes.length > 0) {
-      sb.append("NOT ");
-      sb.append(SchemaUtils.formatOids(restrictedAttributes));
+      sb.append("NOT ").append(SchemaUtils.formatOids(restrictedAttributes));
     }
     if (getExtensions() != null) {
       sb.append(getExtensions().format());

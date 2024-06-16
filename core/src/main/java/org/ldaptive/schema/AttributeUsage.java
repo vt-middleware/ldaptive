@@ -79,7 +79,7 @@ public enum AttributeUsage {
    */
   public static AttributeUsage parse(final String s)
   {
-    for (AttributeUsage usage : AttributeUsage.values()) {
+    for (AttributeUsage usage : values()) {
       if (usage.getName().equalsIgnoreCase(s)) {
         return usage;
       }

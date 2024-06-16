@@ -65,9 +65,7 @@ public interface Result extends Message
    */
   default String getEncodedDiagnosticMessage()
   {
-    if (getDiagnosticMessage() != null &&
-        !"".equals(getDiagnosticMessage()) &&
-        Result.ENCODE_CNTRL_CHARS) {
+    if (ENCODE_CNTRL_CHARS && getDiagnosticMessage() != null && !"".equals(getDiagnosticMessage())) {
       return LdapUtils.percentEncodeControlChars(getDiagnosticMessage());
     } else {
       return getDiagnosticMessage();

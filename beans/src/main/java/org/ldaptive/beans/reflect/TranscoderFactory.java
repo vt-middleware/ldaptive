@@ -31,7 +31,7 @@ public final class TranscoderFactory
    */
   public static ValueTranscoder<?> getInstance(final String type)
   {
-    if (type == null || "".equals(type)) {
+    if (type == null || type.isEmpty()) {
       return null;
     }
 

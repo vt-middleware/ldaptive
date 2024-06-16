@@ -131,12 +131,10 @@ public final class MatchingRule extends AbstractNamedSchemaElement
     final StringBuilder sb = new StringBuilder("( ");
     sb.append(oid).append(" ");
     if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ");
-      sb.append(SchemaUtils.formatDescriptors(getNames()));
+      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
     }
     if (getDescription() != null) {
-      sb.append("DESC ");
-      sb.append(SchemaUtils.formatDescriptors(getDescription()));
+      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
     }
     if (isObsolete()) {
       sb.append("OBSOLETE ");

@@ -89,7 +89,7 @@ public enum ReturnAttributes {
   public static String[] parse(final String... attrs)
   {
     if (attrs == null || attrs.length == 0) {
-      return ReturnAttributes.ALL_USER.value();
+      return ALL_USER.value();
     }
     return attrs;
   }

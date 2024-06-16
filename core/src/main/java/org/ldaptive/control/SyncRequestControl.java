@@ -79,7 +79,7 @@ public class SyncRequestControl extends AbstractControl implements RequestContro
      */
     public static Mode valueOf(final int i)
     {
-      for (Mode m : Mode.values()) {
+      for (Mode m : values()) {
         if (m.value() == i) {
           return m;
         }

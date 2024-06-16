@@ -90,8 +90,7 @@ public class Syntax extends AbstractSchemaElement
     final StringBuilder sb = new StringBuilder("( ");
     sb.append(oid).append(" ");
     if (getDescription() != null) {
-      sb.append("DESC ");
-      sb.append(SchemaUtils.formatDescriptors(getDescription()));
+      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
     }
     if (getExtensions() != null) {
       sb.append(getExtensions().format());

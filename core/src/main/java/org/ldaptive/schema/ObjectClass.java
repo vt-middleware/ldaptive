@@ -218,30 +218,25 @@ public final class ObjectClass extends AbstractNamedSchemaElement
     final StringBuilder sb = new StringBuilder("( ");
     sb.append(oid).append(" ");
     if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ");
-      sb.append(SchemaUtils.formatDescriptors(getNames()));
+      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
     }
     if (getDescription() != null) {
-      sb.append("DESC ");
-      sb.append(SchemaUtils.formatDescriptors(getDescription()));
+      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
     }
     if (isObsolete()) {
       sb.append("OBSOLETE ");
     }
     if (superiorClasses != null && superiorClasses.length > 0) {
-      sb.append("SUP ");
-      sb.append(SchemaUtils.formatOids(superiorClasses));
+      sb.append("SUP ").append(SchemaUtils.formatOids(superiorClasses));
     }
     if (objectClassType != null) {
       sb.append(objectClassType.name()).append(" ");
     }
     if (requiredAttributes != null && requiredAttributes.length > 0) {
-      sb.append("MUST ");
-      sb.append(SchemaUtils.formatOids(requiredAttributes));
+      sb.append("MUST ").append(SchemaUtils.formatOids(requiredAttributes));
     }
     if (optionalAttributes != null && optionalAttributes.length > 0) {
-      sb.append("MAY ");
-      sb.append(SchemaUtils.formatOids(optionalAttributes));
+      sb.append("MAY ").append(SchemaUtils.formatOids(optionalAttributes));
     }
     if (getExtensions() != null) {
       sb.append(getExtensions().format());

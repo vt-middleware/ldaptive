@@ -256,7 +256,7 @@ public enum ResultCode {
    */
   public static ResultCode valueOf(final int code)
   {
-    for (ResultCode rc : ResultCode.values()) {
+    for (ResultCode rc : values()) {
       if (rc.value() == code) {
         return rc;
       }

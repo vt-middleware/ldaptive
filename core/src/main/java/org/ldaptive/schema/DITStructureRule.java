@@ -160,12 +160,10 @@ public final class DITStructureRule extends AbstractNamedSchemaElement
     final StringBuilder sb = new StringBuilder("( ");
     sb.append(id).append(" ");
     if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ");
-      sb.append(SchemaUtils.formatDescriptors(getNames()));
+      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
     }
     if (getDescription() != null) {
-      sb.append("DESC ");
-      sb.append(SchemaUtils.formatDescriptors(getDescription()));
+      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
     }
     if (isObsolete()) {
       sb.append("OBSOLETE ");
@@ -174,8 +172,7 @@ public final class DITStructureRule extends AbstractNamedSchemaElement
       sb.append("FORM ").append(nameForm).append(" ");
     }
     if (superiorRules != null && superiorRules.length > 0) {
-      sb.append("SUP ");
-      sb.append(SchemaUtils.formatNumbers(superiorRules));
+      sb.append("SUP ").append(SchemaUtils.formatNumbers(superiorRules));
     }
     if (getExtensions() != null) {
       sb.append(getExtensions().format());

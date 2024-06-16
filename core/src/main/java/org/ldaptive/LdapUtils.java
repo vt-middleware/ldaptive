@@ -289,8 +289,7 @@ public final class LdapUtils
           final char ch = value.charAt(i);
           // CheckStyle:MagicNumber OFF
           if (ch <= 0x1F || ch == 0x7F) {
-            sb.append('%');
-            sb.append(hexEncode((byte) (ch & 0x7F)));
+            sb.append('%').append(hexEncode((byte) (ch & 0x7F)));
           } else {
             sb.append(ch);
           }
@@ -588,11 +587,9 @@ public final class LdapUtils
           final int codePoint = Character.toCodePoint(ch, lowSurr);
           if (Character.isUpperCase(codePoint)) {
             final int lowerCodePoint = Character.toLowerCase(codePoint);
-            sb.append(Character.highSurrogate(lowerCodePoint));
-            sb.append(Character.lowSurrogate(lowerCodePoint));
+            sb.append(Character.highSurrogate(lowerCodePoint)).append(Character.lowSurrogate(lowerCodePoint));
           } else {
-            sb.append(Character.highSurrogate(codePoint));
-            sb.append(Character.lowSurrogate(codePoint));
+            sb.append(Character.highSurrogate(codePoint)).append(Character.lowSurrogate(codePoint));
           }
         } else if (Character.isUpperCase(ch)) {
           sb.append(Character.toLowerCase(ch));
@@ -685,11 +682,9 @@ public final class LdapUtils
           final int codePoint = Character.toCodePoint(ch, lowSurr);
           if (Character.isLowerCase(codePoint)) {
             final int upperCodePoint = Character.toUpperCase(codePoint);
-            sb.append(Character.highSurrogate(upperCodePoint));
-            sb.append(Character.lowSurrogate(upperCodePoint));
+            sb.append(Character.highSurrogate(upperCodePoint)).append(Character.lowSurrogate(upperCodePoint));
           } else {
-            sb.append(Character.highSurrogate(codePoint));
-            sb.append(Character.lowSurrogate(codePoint));
+            sb.append(Character.highSurrogate(codePoint)).append(Character.lowSurrogate(codePoint));
           }
         } else if (Character.isLowerCase(ch)) {
           sb.append(Character.toUpperCase(ch));

@@ -41,11 +41,11 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
     public static String perform(final CaseChange cc, final String string)
     {
       String s = null;
-      if (CaseChange.LOWER == cc) {
+      if (LOWER == cc) {
         s = string.toLowerCase();
-      } else if (CaseChange.UPPER == cc) {
+      } else if (UPPER == cc) {
         s = string.toUpperCase();
-      } else if (CaseChange.NONE == cc) {
+      } else if (NONE == cc) {
         s = string;
       }
       return s;

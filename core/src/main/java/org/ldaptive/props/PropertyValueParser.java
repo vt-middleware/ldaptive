@@ -99,7 +99,7 @@ public class PropertyValueParser
   {
     while (matcher.find()) {
       final String input = matcher.group().trim();
-      if (!"".equals(input)) {
+      if (!input.isEmpty()) {
         final String[] s = input.split("=", 2);
         if (s.length < 2) {
           throw new IllegalArgumentException("Invalid property syntax: " + input);

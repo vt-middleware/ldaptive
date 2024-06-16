@@ -92,7 +92,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
      */
     public static Flag valueOf(final long l)
     {
-      for (Flag f : Flag.values()) {
+      for (Flag f : values()) {
         if (f.value() == l) {
           return f;
         }

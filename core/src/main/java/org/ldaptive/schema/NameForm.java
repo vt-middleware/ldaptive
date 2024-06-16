@@ -189,12 +189,10 @@ public final class NameForm extends AbstractNamedSchemaElement
     final StringBuilder sb = new StringBuilder("( ");
     sb.append(oid).append(" ");
     if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ");
-      sb.append(SchemaUtils.formatDescriptors(getNames()));
+      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
     }
     if (getDescription() != null) {
-      sb.append("DESC ");
-      sb.append(SchemaUtils.formatDescriptors(getDescription()));
+      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
     }
     if (isObsolete()) {
       sb.append("OBSOLETE ");
@@ -203,12 +201,10 @@ public final class NameForm extends AbstractNamedSchemaElement
       sb.append("OC ").append(structuralClass).append(" ");
     }
     if (requiredAttributes != null && requiredAttributes.length > 0) {
-      sb.append("MUST ");
-      sb.append(SchemaUtils.formatOids(requiredAttributes));
+      sb.append("MUST ").append(SchemaUtils.formatOids(requiredAttributes));
     }
     if (optionalAttributes != null && optionalAttributes.length > 0) {
-      sb.append("MAY ");
-      sb.append(SchemaUtils.formatOids(optionalAttributes));
+      sb.append("MAY ").append(SchemaUtils.formatOids(optionalAttributes));
     }
     if (getExtensions() != null) {
       sb.append(getExtensions().format());

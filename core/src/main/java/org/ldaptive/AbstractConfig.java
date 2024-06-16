@@ -49,7 +49,7 @@ public abstract class AbstractConfig extends AbstractFreezable
         throw new IllegalArgumentException("Input cannot be empty");
       }
     } else {
-      if (s == null || "".equals(s)) {
+      if (s == null || s.isEmpty()) {
         throw new IllegalArgumentException("Input cannot be null or empty");
       }
     }

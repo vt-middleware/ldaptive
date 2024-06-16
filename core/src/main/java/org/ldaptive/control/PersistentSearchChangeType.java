@@ -56,7 +56,7 @@ public enum PersistentSearchChangeType {
    */
   public static PersistentSearchChangeType valueOf(final int i)
   {
-    for (PersistentSearchChangeType ct : PersistentSearchChangeType.values()) {
+    for (PersistentSearchChangeType ct : values()) {
       if (ct.value() == i) {
         return ct;
       }

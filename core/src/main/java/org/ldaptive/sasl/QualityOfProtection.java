@@ -52,7 +52,7 @@ public enum QualityOfProtection {
    */
   public static QualityOfProtection fromString(final String s)
   {
-    for (QualityOfProtection p : QualityOfProtection.values()) {
+    for (QualityOfProtection p : values()) {
       if (p.string().equalsIgnoreCase(s)) {
         return p;
       }

@@ -106,7 +106,7 @@ public enum UniversalDERTag implements DERTag {
 
   static {
     // Initializes tag mapping
-    for (UniversalDERTag tag : UniversalDERTag.values()) {
+    for (UniversalDERTag tag : values()) {
       TAGNO_MAP.put(tag.getTagNo(), tag);
       TAGNAME_MAP.put(tag.name(), tag);
     }

@@ -154,7 +154,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
      */
     public static Error valueOf(final int code)
     {
-      for (Error e : Error.values()) {
+      for (Error e : values()) {
         if (e.getCode() == code) {
           return e;
         }
