@@ -55,7 +55,7 @@ public class CompareConnectionValidator extends AbstractOperationConnectionValid
    * @deprecated  use {@link AbstractOperationConnectionValidator#getRequest()}
    */
   @Deprecated
-  public final CompareRequest getCompareRequest()
+  public CompareRequest getCompareRequest()
   {
     return getRequest();
   }
@@ -69,7 +69,7 @@ public class CompareConnectionValidator extends AbstractOperationConnectionValid
    * @deprecated  use {@link AbstractOperationConnectionValidator#setRequest(Request)}
    */
   @Deprecated
-  public final void setCompareRequest(final CompareRequest cr)
+  public void setCompareRequest(final CompareRequest cr)
   {
     assertMutable();
     setRequest(cr);

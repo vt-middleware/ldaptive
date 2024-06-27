@@ -95,7 +95,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
    *
    * @return  case change
    */
-  public final CaseChange getDnCaseChange()
+  public CaseChange getDnCaseChange()
   {
     return dnCaseChange;
   }
@@ -106,7 +106,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
    *
    * @param  cc  case change
    */
-  public final void setDnCaseChange(final CaseChange cc)
+  public void setDnCaseChange(final CaseChange cc)
   {
     assertMutable();
     dnCaseChange = cc;
@@ -118,7 +118,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
    *
    * @return  case change
    */
-  public final CaseChange getAttributeNameCaseChange()
+  public CaseChange getAttributeNameCaseChange()
   {
     return attributeNameCaseChange;
   }
@@ -129,7 +129,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
    *
    * @param  cc  case change
    */
-  public final void setAttributeNameCaseChange(final CaseChange cc)
+  public void setAttributeNameCaseChange(final CaseChange cc)
   {
     assertMutable();
     attributeNameCaseChange = cc;
@@ -141,7 +141,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
    *
    * @return  case change
    */
-  public final CaseChange getAttributeValueCaseChange()
+  public CaseChange getAttributeValueCaseChange()
   {
     return attributeValueCaseChange;
   }
@@ -152,7 +152,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
    *
    * @param  cc  case change
    */
-  public final void setAttributeValueCaseChange(final CaseChange cc)
+  public void setAttributeValueCaseChange(final CaseChange cc)
   {
     assertMutable();
     attributeValueCaseChange = cc;
@@ -164,7 +164,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
    *
    * @return  attribute names
    */
-  public final String[] getAttributeNames()
+  public String[] getAttributeNames()
   {
     return LdapUtils.copyArray(attributeNames);
   }
@@ -175,7 +175,7 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
    *
    * @param  names  of the attributes
    */
-  public final void setAttributeNames(final String... names)
+  public void setAttributeNames(final String... names)
   {
     assertMutable();
     attributeNames = LdapUtils.copyArray(names);

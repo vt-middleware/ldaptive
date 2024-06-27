@@ -87,7 +87,7 @@ public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandle
    *
    * @return  attribute name
    */
-  public final String getSearchAttribute()
+  public String getSearchAttribute()
   {
     return searchAttribute;
   }
@@ -98,7 +98,7 @@ public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandle
    *
    * @param  name  of the search attribute
    */
-  public final void setSearchAttribute(final String name)
+  public void setSearchAttribute(final String name)
   {
     assertMutable();
     searchAttribute = name;
@@ -111,7 +111,7 @@ public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandle
    *
    * @return  attribute names
    */
-  public final String[] getMergeAttributes()
+  public String[] getMergeAttributes()
   {
     return LdapUtils.copyArray(mergeAttributes);
   }
@@ -122,7 +122,7 @@ public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandle
    *
    * @param  mergeAttrs  attribute names to merge
    */
-  public final void setMergeAttributes(final String... mergeAttrs)
+  public void setMergeAttributes(final String... mergeAttrs)
   {
     assertMutable();
     mergeAttributes = LdapUtils.copyArray(mergeAttrs);

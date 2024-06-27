@@ -160,7 +160,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  pool name
    */
-  public final String getName()
+  public String getName()
   {
     return name;
   }
@@ -171,7 +171,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  s  pool name
    */
-  public final void setName(final String s)
+  public void setName(final String s)
   {
     assertMutable();
     logger.trace("setting name: {}", s);
@@ -185,7 +185,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  min pool size
    */
-  public final int getMinPoolSize()
+  public int getMinPoolSize()
   {
     return minPoolSize;
   }
@@ -196,7 +196,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  size  min pool size, greater than or equal to zero
    */
-  public final void setMinPoolSize(final int size)
+  public void setMinPoolSize(final int size)
   {
     assertMutable();
     if (size < 0) {
@@ -213,7 +213,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  max pool size
    */
-  public final int getMaxPoolSize()
+  public int getMaxPoolSize()
   {
     return maxPoolSize;
   }
@@ -224,7 +224,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  size  max pool size, greater than or equal to zero
    */
-  public final void setMaxPoolSize(final int size)
+  public void setMaxPoolSize(final int size)
   {
     assertMutable();
     // allow a max size of zero for configurations that need to create a pool but don't want it to function
@@ -241,7 +241,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  validate on check in
    */
-  public final boolean isValidateOnCheckIn()
+  public boolean isValidateOnCheckIn()
   {
     return validateOnCheckIn;
   }
@@ -252,7 +252,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  b  validate on check in
    */
-  public final void setValidateOnCheckIn(final boolean b)
+  public void setValidateOnCheckIn(final boolean b)
   {
     assertMutable();
     logger.trace("setting validateOnCheckIn: {}", b);
@@ -265,7 +265,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  validate on check in
    */
-  public final boolean isValidateOnCheckOut()
+  public boolean isValidateOnCheckOut()
   {
     return validateOnCheckOut;
   }
@@ -276,7 +276,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  b  validate on check out
    */
-  public final void setValidateOnCheckOut(final boolean b)
+  public void setValidateOnCheckOut(final boolean b)
   {
     assertMutable();
     logger.trace("setting validateOnCheckOut: {}", b);
@@ -289,7 +289,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  validate periodically
    */
-  public final boolean isValidatePeriodically()
+  public boolean isValidatePeriodically()
   {
     return validatePeriodically;
   }
@@ -300,7 +300,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  b  validate periodically
    */
-  public final void setValidatePeriodically(final boolean b)
+  public void setValidatePeriodically(final boolean b)
   {
     assertMutable();
     logger.trace("setting validatePeriodically: {}", b);
@@ -313,7 +313,8 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  activator
    */
-  public final ConnectionActivator getActivator()
+  @Override
+  public ConnectionActivator getActivator()
   {
     return activator;
   }
@@ -324,7 +325,8 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  a  activator
    */
-  public final void setActivator(final ConnectionActivator a)
+  @Override
+  public void setActivator(final ConnectionActivator a)
   {
     assertMutable();
     logger.trace("setting activator: {}", a);
@@ -337,7 +339,8 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  passivator
    */
-  public final ConnectionPassivator getPassivator()
+  @Override
+  public ConnectionPassivator getPassivator()
   {
     return passivator;
   }
@@ -348,7 +351,8 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  p  passivator
    */
-  public final void setPassivator(final ConnectionPassivator p)
+  @Override
+  public void setPassivator(final ConnectionPassivator p)
   {
     assertMutable();
     logger.trace("setting passivator: {}", p);
@@ -361,7 +365,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  connection validator
    */
-  public final ConnectionValidator getValidator()
+  public ConnectionValidator getValidator()
   {
     return validator;
   }
@@ -372,7 +376,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  cv  connection validator
    */
-  public final void setValidator(final ConnectionValidator cv)
+  public void setValidator(final ConnectionValidator cv)
   {
     assertMutable();
     logger.trace("setting validator: {}", cv);
@@ -385,7 +389,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  prune strategy
    */
-  public final PruneStrategy getPruneStrategy()
+  public PruneStrategy getPruneStrategy()
   {
     return pruneStrategy;
   }
@@ -396,7 +400,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  ps  prune strategy
    */
-  public final void setPruneStrategy(final PruneStrategy ps)
+  public void setPruneStrategy(final PruneStrategy ps)
   {
     assertMutable();
     logger.trace("setting pruneStrategy: {}", ps);
@@ -409,7 +413,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  connection factory
    */
-  public final DefaultConnectionFactory getDefaultConnectionFactory()
+  public DefaultConnectionFactory getDefaultConnectionFactory()
   {
     return connectionFactory;
   }
@@ -420,7 +424,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  cf  connection factory
    */
-  public final void setDefaultConnectionFactory(final DefaultConnectionFactory cf)
+  public void setDefaultConnectionFactory(final DefaultConnectionFactory cf)
   {
     assertMutable();
     logger.trace("setting defaultConnectionFactory: {}", cf);
@@ -433,7 +437,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  whether connections will attempt to connect after creation
    */
-  public final boolean getConnectOnCreate()
+  public boolean getConnectOnCreate()
   {
     return connectOnCreate;
   }
@@ -444,7 +448,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  b  connect on create
    */
-  public final void setConnectOnCreate(final boolean b)
+  public void setConnectOnCreate(final boolean b)
   {
     assertMutable();
     logger.trace("setting connectOnCreate: {}", b);
@@ -457,7 +461,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  queue type
    */
-  public final QueueType getQueueType()
+  public QueueType getQueueType()
   {
     return queueType;
   }
@@ -469,7 +473,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  type  of queue
    */
-  public final void setQueueType(final QueueType type)
+  public void setQueueType(final QueueType type)
   {
     assertMutable();
     logger.trace("setting queueType: {}", type);
@@ -482,7 +486,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  whether {@link #initialize()} should throw
    */
-  public final boolean getFailFastInitialize()
+  public boolean getFailFastInitialize()
   {
     return failFastInitialize;
   }
@@ -493,7 +497,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  b  whether {@link #initialize()} should throw
    */
-  public final void setFailFastInitialize(final boolean b)
+  public void setFailFastInitialize(final boolean b)
   {
     assertMutable();
     logger.trace("setting failFastInitialize: {}", b);
@@ -506,7 +510,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  whether this pool has been initialized
    */
-  public final boolean isInitialized()
+  public boolean isInitialized()
   {
     return initialized;
   }
@@ -517,7 +521,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
-  protected final void throwIfNotInitialized()
+  protected void throwIfNotInitialized()
   {
     if (!initialized) {
       throw new IllegalStateException("Pool " + getName() + " is not initialized");
@@ -627,7 +631,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    * @throws  IllegalStateException  if the pool cannot grow to the supplied size and {@link
    *                                 #createAvailableConnection(boolean)} throws
    */
-  protected final void grow(final int size, final boolean throwOnFailure)
+  protected void grow(final int size, final boolean throwOnFailure)
   {
     if (checkOutLock.tryLock()) {
       try {
@@ -755,7 +759,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @throws  IllegalStateException  if {@link #connectOnCreate} is true and the connection cannot be opened
    */
-  protected final PooledConnectionProxy createConnection(final boolean throwOnFailure)
+  protected PooledConnectionProxy createConnection(final boolean throwOnFailure)
   {
     Connection c = connectionFactory.getConnection();
     if (connectOnCreate) {
@@ -788,7 +792,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @throws  IllegalStateException  if throwOnFailure is true and count connections are not successfully created
    */
-  protected final void createAvailableConnections(final int count, final boolean throwOnFailure)
+  protected void createAvailableConnections(final int count, final boolean throwOnFailure)
   {
     poolLock.lock();
     try {
@@ -858,7 +862,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @throws  IllegalStateException  if {@link #createConnection(boolean)} throws
    */
-  protected final PooledConnectionProxy createAvailableConnection(final boolean throwOnFailure)
+  protected PooledConnectionProxy createAvailableConnection(final boolean throwOnFailure)
   {
     final PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
@@ -888,7 +892,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @throws  IllegalStateException  if {@link #createConnection(boolean)} throws
    */
-  protected final PooledConnectionProxy createActiveConnection(final boolean throwOnFailure)
+  protected PooledConnectionProxy createActiveConnection(final boolean throwOnFailure)
   {
     final PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
@@ -912,7 +916,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  pc  connection that is in the available pool
    */
-  protected final void removeAvailableConnection(final PooledConnectionProxy pc)
+  protected void removeAvailableConnection(final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
@@ -937,7 +941,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  pc  connection that is in the active pool
    */
-  protected final void removeActiveConnection(final PooledConnectionProxy pc)
+  protected void removeActiveConnection(final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
@@ -962,7 +966,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @param  pc  connection that is in both the available and active pools
    */
-  protected final void removeAvailableAndActiveConnection(final PooledConnectionProxy pc)
+  protected void removeAvailableAndActiveConnection(final PooledConnectionProxy pc)
   {
     boolean destroy = false;
     poolLock.lock();
@@ -992,7 +996,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @throws  PoolException  if either activation or validation fails
    */
-  protected final void activateAndValidateConnection(final PooledConnectionProxy pc)
+  protected void activateAndValidateConnection(final PooledConnectionProxy pc)
     throws PoolException
   {
     if (!activator.apply(pc.getConnection())) {
@@ -1017,7 +1021,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  whether both passivation and validation succeeded
    */
-  protected final boolean passivateAndValidateConnection(final PooledConnectionProxy pc)
+  protected boolean passivateAndValidateConnection(final PooledConnectionProxy pc)
   {
     if (!pc.getConnection().isOpen()) {
       logger.warn("Failed validation on {} for {}, not open", pc.getConnection(), this);
@@ -1048,7 +1052,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
-  public final void prune()
+  public void prune()
   {
     throwIfNotInitialized();
     logger.trace("waiting for pool lock to prune {} for {}", poolLock.getQueueLength(), this);
@@ -1120,7 +1124,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @throws  IllegalStateException  if this pool has not been initialized
    */
-  public final void validate()
+  public void validate()
   {
     throwIfNotInitialized();
     poolLock.lock();
@@ -1167,7 +1171,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
 
 
   @Override
-  public final int availableCount()
+  public int availableCount()
   {
     if (available == null) {
       return 0;
@@ -1177,7 +1181,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
 
 
   @Override
-  public final int activeCount()
+  public int activeCount()
   {
     if (active == null) {
       return 0;
@@ -1187,7 +1191,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
 
 
   @Override
-  public final Set<PooledConnectionStatistics> getPooledConnectionStatistics()
+  public Set<PooledConnectionStatistics> getPooledConnectionStatistics()
   {
     throwIfNotInitialized();
 
@@ -1214,7 +1218,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  connection proxy
    */
-  protected final Connection createConnectionProxy(final PooledConnectionProxy pc)
+  protected Connection createConnectionProxy(final PooledConnectionProxy pc)
   {
     return (Connection) Proxy.newProxyInstance(Connection.class.getClassLoader(), new Class[] {Connection.class}, pc);
   }
@@ -1227,7 +1231,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    *
    * @return  pooled connection proxy
    */
-  protected final PooledConnectionProxy retrieveConnectionProxy(final Connection proxy)
+  protected PooledConnectionProxy retrieveConnectionProxy(final Connection proxy)
   {
     return (PooledConnectionProxy) Proxy.getInvocationHandler(proxy);
   }
@@ -1260,7 +1264,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    * Contains a connection that is participating in this pool. Used to track how long a connection has been in use and
    * override certain method invocations.
    */
-  protected final class DefaultPooledConnectionProxy implements PooledConnectionProxy
+  protected class DefaultPooledConnectionProxy implements PooledConnectionProxy
   {
 
     /** hash code seed. */

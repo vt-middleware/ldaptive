@@ -87,7 +87,8 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  connection factory
    */
-  public final ConnectionFactory getConnectionFactory()
+  @Override
+  public ConnectionFactory getConnectionFactory()
   {
     return factory;
   }
@@ -98,7 +99,8 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  cf  connection factory
    */
-  public final void setConnectionFactory(final ConnectionFactory cf)
+  @Override
+  public void setConnectionFactory(final ConnectionFactory cf)
   {
     assertMutable();
     factory = cf;
@@ -110,7 +112,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  search request handlers
    */
-  public final RequestHandler<SearchRequest>[] getRequestHandlers()
+  public RequestHandler<SearchRequest>[] getRequestHandlers()
   {
     return LdapUtils.copyArray(requestHandlers);
   }
@@ -122,7 +124,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    * @param  handlers  search request handler
    */
   @SuppressWarnings("unchecked")
-  public final void setRequestHandlers(final RequestHandler<SearchRequest>... handlers)
+  public void setRequestHandlers(final RequestHandler<SearchRequest>... handlers)
   {
     assertMutable();
     requestHandlers = LdapUtils.copyArray(handlers);
@@ -134,7 +136,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  search result handlers
    */
-  public final ResultHandler[] getResultHandlers()
+  public ResultHandler[] getResultHandlers()
   {
     return LdapUtils.copyArray(resultHandlers);
   }
@@ -145,7 +147,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  handlers  search result handlers
    */
-  public final void setResultHandlers(final ResultHandler... handlers)
+  public void setResultHandlers(final ResultHandler... handlers)
   {
     assertMutable();
     resultHandlers = LdapUtils.copyArray(handlers);
@@ -157,7 +159,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  control handlers
    */
-  public final ResponseControlHandler[] getControlHandlers()
+  public ResponseControlHandler[] getControlHandlers()
   {
     return LdapUtils.copyArray(controlHandlers);
   }
@@ -168,7 +170,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  handlers  control handlers
    */
-  public final void setControlHandlers(final ResponseControlHandler... handlers)
+  public void setControlHandlers(final ResponseControlHandler... handlers)
   {
     assertMutable();
     controlHandlers = LdapUtils.copyArray(handlers);
@@ -180,7 +182,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  referral handlers
    */
-  public final ReferralHandler[] getReferralHandlers()
+  public ReferralHandler[] getReferralHandlers()
   {
     return LdapUtils.copyArray(referralHandlers);
   }
@@ -191,7 +193,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  handlers  referral handlers
    */
-  public final void setReferralHandlers(final ReferralHandler... handlers)
+  public void setReferralHandlers(final ReferralHandler... handlers)
   {
     assertMutable();
     referralHandlers = LdapUtils.copyArray(handlers);
@@ -203,7 +205,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  intermediate response handlers
    */
-  public final IntermediateResponseHandler[] getIntermediateResponseHandlers()
+  public IntermediateResponseHandler[] getIntermediateResponseHandlers()
   {
     return LdapUtils.copyArray(intermediateResponseHandlers);
   }
@@ -214,7 +216,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  handlers  intermediate response handlers
    */
-  public final void setIntermediateResponseHandlers(final IntermediateResponseHandler... handlers)
+  public void setIntermediateResponseHandlers(final IntermediateResponseHandler... handlers)
   {
     assertMutable();
     intermediateResponseHandlers = LdapUtils.copyArray(handlers);
@@ -226,7 +228,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  search exception handler
    */
-  public final ExceptionHandler getExceptionHandler()
+  public ExceptionHandler getExceptionHandler()
   {
     return exceptionHandler;
   }
@@ -237,7 +239,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  handler  search exception handler
    */
-  public final void setExceptionHandler(final ExceptionHandler handler)
+  public void setExceptionHandler(final ExceptionHandler handler)
   {
     assertMutable();
     exceptionHandler = handler;
@@ -249,7 +251,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  throw condition
    */
-  public final ResultPredicate getThrowCondition()
+  public ResultPredicate getThrowCondition()
   {
     return throwCondition;
   }
@@ -260,7 +262,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  function  throw condition
    */
-  public final void setThrowCondition(final ResultPredicate function)
+  public void setThrowCondition(final ResultPredicate function)
   {
     assertMutable();
     throwCondition = function;
@@ -272,7 +274,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  unsolicited notification handlers
    */
-  public final UnsolicitedNotificationHandler[] getUnsolicitedNotificationHandlers()
+  public UnsolicitedNotificationHandler[] getUnsolicitedNotificationHandlers()
   {
     return LdapUtils.copyArray(unsolicitedNotificationHandlers);
   }
@@ -283,7 +285,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  handlers  unsolicited notification handlers
    */
-  public final void setUnsolicitedNotificationHandlers(final UnsolicitedNotificationHandler... handlers)
+  public void setUnsolicitedNotificationHandlers(final UnsolicitedNotificationHandler... handlers)
   {
     assertMutable();
     unsolicitedNotificationHandlers = LdapUtils.copyArray(handlers);
@@ -295,7 +297,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  search entry handlers
    */
-  public final LdapEntryHandler[] getEntryHandlers()
+  public LdapEntryHandler[] getEntryHandlers()
   {
     return LdapUtils.copyArray(entryHandlers);
   }
@@ -306,7 +308,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  handlers  search entry handlers
    */
-  public final void setEntryHandlers(final LdapEntryHandler... handlers)
+  public void setEntryHandlers(final LdapEntryHandler... handlers)
   {
     assertMutable();
     entryHandlers = LdapUtils.copyArray(handlers);
@@ -318,7 +320,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  search reference handlers
    */
-  public final SearchReferenceHandler[] getReferenceHandlers()
+  public SearchReferenceHandler[] getReferenceHandlers()
   {
     return LdapUtils.copyArray(referenceHandlers);
   }
@@ -329,7 +331,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  handlers  search reference handlers
    */
-  public final void setReferenceHandlers(final SearchReferenceHandler... handlers)
+  public void setReferenceHandlers(final SearchReferenceHandler... handlers)
   {
     assertMutable();
     referenceHandlers = LdapUtils.copyArray(handlers);
@@ -341,7 +343,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @return  search result handlers
    */
-  public final SearchResultHandler[] getSearchResultHandlers()
+  public SearchResultHandler[] getSearchResultHandlers()
   {
     return LdapUtils.copyArray(searchResultHandlers);
   }
@@ -352,7 +354,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractFreezable i
    *
    * @param  handlers  search result handlers
    */
-  public final void setSearchResultHandlers(final SearchResultHandler... handlers)
+  public void setSearchResultHandlers(final SearchResultHandler... handlers)
   {
     assertMutable();
     searchResultHandlers = LdapUtils.copyArray(handlers);

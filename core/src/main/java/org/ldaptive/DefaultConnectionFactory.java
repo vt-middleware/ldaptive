@@ -101,7 +101,7 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
 
 
   @Override
-  public final ConnectionConfig getConnectionConfig()
+  public ConnectionConfig getConnectionConfig()
   {
     return config;
   }
@@ -113,7 +113,7 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
    *
    * @param  cc  connection config
    */
-  public final void setConnectionConfig(final ConnectionConfig cc)
+  public void setConnectionConfig(final ConnectionConfig cc)
   {
     assertMutable();
     config = cc;
@@ -126,7 +126,7 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
    *
    * @return  ldap transport
    */
-  public final Transport getTransport()
+  public Transport getTransport()
   {
     return transport;
   }

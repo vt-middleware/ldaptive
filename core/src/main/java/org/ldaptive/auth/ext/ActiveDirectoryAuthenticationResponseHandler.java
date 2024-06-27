@@ -20,7 +20,7 @@ import org.ldaptive.auth.AuthenticationResponseHandler;
  *
  * @author  Middleware Services
  */
-public final class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreezable
+public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreezable
   implements AuthenticationResponseHandler
 {
 

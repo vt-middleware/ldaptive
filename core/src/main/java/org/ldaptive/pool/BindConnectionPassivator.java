@@ -47,7 +47,7 @@ public class BindConnectionPassivator extends AbstractFreezable implements Conne
    *
    * @return  bind request
    */
-  public final BindRequest getBindRequest()
+  public BindRequest getBindRequest()
   {
     return bindRequest;
   }
@@ -58,7 +58,7 @@ public class BindConnectionPassivator extends AbstractFreezable implements Conne
    *
    * @param  br  bind request
    */
-  public final void setBindRequest(final BindRequest br)
+  public void setBindRequest(final BindRequest br)
   {
     assertMutable();
     bindRequest = br;

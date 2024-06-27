@@ -48,14 +48,14 @@ public abstract class AbstractConnectionStrategy extends AbstractFreezable imple
 
 
   @Override
-  public final boolean isInitialized()
+  public boolean isInitialized()
   {
     return initialized;
   }
 
 
   @Override
-  public final synchronized void initialize(final String urls, final Predicate<LdapURL> condition)
+  public synchronized void initialize(final String urls, final Predicate<LdapURL> condition)
   {
     if (isInitialized()) {
       throw new IllegalStateException("Strategy has already been initialized");
@@ -88,14 +88,14 @@ public abstract class AbstractConnectionStrategy extends AbstractFreezable imple
 
 
   @Override
-  public final Predicate<LdapURL> getActivateCondition()
+  public Predicate<LdapURL> getActivateCondition()
   {
     return activateCondition;
   }
 
 
   @Override
-  public final Predicate<LdapURL> getRetryCondition()
+  public Predicate<LdapURL> getRetryCondition()
   {
     return retryCondition;
   }
@@ -106,7 +106,7 @@ public abstract class AbstractConnectionStrategy extends AbstractFreezable imple
    *
    * @param  condition  that determines whether to test an inactive URL
    */
-  public final void setRetryCondition(final Predicate<LdapURL> condition)
+  public void setRetryCondition(final Predicate<LdapURL> condition)
   {
     assertMutable();
     retryCondition = condition;
@@ -114,7 +114,7 @@ public abstract class AbstractConnectionStrategy extends AbstractFreezable imple
 
 
   @Override
-  public final void success(final LdapURL url)
+  public void success(final LdapURL url)
   {
     url.activate();
     url.getRetryMetadata().recordSuccess(Instant.now());
@@ -122,7 +122,7 @@ public abstract class AbstractConnectionStrategy extends AbstractFreezable imple
 
 
   @Override
-  public final void failure(final LdapURL url)
+  public void failure(final LdapURL url)
   {
     url.deactivate();
     url.getRetryMetadata().recordFailure(Instant.now());
@@ -143,7 +143,7 @@ public abstract class AbstractConnectionStrategy extends AbstractFreezable imple
 
 
   /** Default iterator implementation. */
-  protected static final class DefaultLdapURLIterator implements Iterator<LdapURL>
+  protected static class DefaultLdapURLIterator implements Iterator<LdapURL>
   {
 
     /** URLs to iterate over. */

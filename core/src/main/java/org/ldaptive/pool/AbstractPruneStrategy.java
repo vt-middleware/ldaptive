@@ -25,7 +25,7 @@ public abstract class AbstractPruneStrategy extends AbstractFreezable implements
 
 
   @Override
-  public final Duration getPrunePeriod()
+  public Duration getPrunePeriod()
   {
     return prunePeriod;
   }
@@ -36,7 +36,7 @@ public abstract class AbstractPruneStrategy extends AbstractFreezable implements
    *
    * @param  period  to set
    */
-  public final void setPrunePeriod(final Duration period)
+  public void setPrunePeriod(final Duration period)
   {
     assertMutable();
     if (period == null || period.isNegative() || period.isZero()) {

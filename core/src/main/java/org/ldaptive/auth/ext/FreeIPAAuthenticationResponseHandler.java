@@ -19,7 +19,7 @@ import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
  *
  * @author  tduehr
  */
-public final class FreeIPAAuthenticationResponseHandler extends AbstractFreezable
+public class FreeIPAAuthenticationResponseHandler extends AbstractFreezable
   implements AuthenticationResponseHandler
 {
 

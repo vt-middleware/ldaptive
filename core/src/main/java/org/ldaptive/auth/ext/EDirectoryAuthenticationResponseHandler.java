@@ -19,7 +19,7 @@ import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
  *
  * @author  Middleware Services
  */
-public final class EDirectoryAuthenticationResponseHandler extends AbstractFreezable
+public class EDirectoryAuthenticationResponseHandler extends AbstractFreezable
   implements AuthenticationResponseHandler
 {
 

@@ -47,7 +47,7 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler implements 
    *
    * @return  merge attribute name
    */
-  public final String getMergeAttributeName()
+  public String getMergeAttributeName()
   {
     return mergeAttributeName;
   }
@@ -58,7 +58,7 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler implements 
    *
    * @param  name  of the merge attribute
    */
-  public final void setMergeAttributeName(final String name)
+  public void setMergeAttributeName(final String name)
   {
     assertMutable();
     mergeAttributeName = name;
@@ -70,7 +70,7 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler implements 
    *
    * @return  attribute names
    */
-  public final String[] getAttributeNames()
+  public String[] getAttributeNames()
   {
     return LdapUtils.copyArray(attributeNames);
   }
@@ -81,7 +81,7 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler implements 
    *
    * @param  names  of the attributes
    */
-  public final void setAttributeNames(final String... names)
+  public void setAttributeNames(final String... names)
   {
     assertMutable();
     attributeNames = LdapUtils.copyArray(names);

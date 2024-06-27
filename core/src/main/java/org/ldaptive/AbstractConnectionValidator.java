@@ -44,13 +44,13 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
 
 
   @Override
-  public final Duration getValidatePeriod()
+  public Duration getValidatePeriod()
   {
     return validatePeriod;
   }
 
 
-  public final void setValidatePeriod(final Duration period)
+  public void setValidatePeriod(final Duration period)
   {
     assertMutable();
     if (period == null || period.isNegative() || period.isZero()) {
@@ -60,7 +60,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
   }
 
   @Override
-  public final Duration getValidateTimeout()
+  public Duration getValidateTimeout()
   {
     return validateTimeout;
   }
@@ -71,7 +71,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
    *
    * @param  timeout  to set
    */
-  public final void setValidateTimeout(final Duration timeout)
+  public void setValidateTimeout(final Duration timeout)
   {
     assertMutable();
     if (timeout == null || timeout.isNegative()) {
@@ -86,7 +86,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
    *
    * @return  success consumer
    */
-  public final Consumer<Connection> getOnSuccess()
+  public Consumer<Connection> getOnSuccess()
   {
     return onSuccess;
   }
@@ -97,7 +97,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
    *
    * @param  consumer  to invoke on success
    */
-  public final void setOnSuccess(final Consumer<Connection> consumer)
+  public void setOnSuccess(final Consumer<Connection> consumer)
   {
     assertMutable();
     onSuccess = consumer;
@@ -109,7 +109,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
    *
    * @return  failure consumer
    */
-  public final Consumer<Connection> getOnFailure()
+  public Consumer<Connection> getOnFailure()
   {
     return onFailure;
   }
@@ -120,7 +120,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
    *
    * @param  consumer  to invoke on failure
    */
-  public final void setOnFailure(final Consumer<Connection> consumer)
+  public void setOnFailure(final Consumer<Connection> consumer)
   {
     assertMutable();
     onFailure = consumer;
@@ -132,7 +132,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
    *
    * @return  whether a timeout should be considered a validation failure
    */
-  public final boolean getTimeoutIsFailure()
+  public boolean getTimeoutIsFailure()
   {
     return timeoutIsFailure;
   }
@@ -143,7 +143,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
    *
    * @param  failure  whether a timeout should be considered a validation failure
    */
-  public final void setTimeoutIsFailure(final boolean failure)
+  public void setTimeoutIsFailure(final boolean failure)
   {
     assertMutable();
     timeoutIsFailure = failure;

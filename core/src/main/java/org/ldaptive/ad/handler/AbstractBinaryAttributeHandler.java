@@ -30,7 +30,7 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractMessageF
    *
    * @return  attribute name
    */
-  public final String getAttributeName()
+  public String getAttributeName()
   {
     return attributeName;
   }
@@ -41,7 +41,7 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractMessageF
    *
    * @param  name  of the attribute
    */
-  public final void setAttributeName(final String name)
+  public void setAttributeName(final String name)
   {
     assertMutable();
     attributeName = name;

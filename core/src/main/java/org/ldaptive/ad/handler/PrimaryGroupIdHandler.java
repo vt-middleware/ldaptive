@@ -61,7 +61,7 @@ public class PrimaryGroupIdHandler extends AbstractMessageFunctionalEntryHandler
    *
    * @return  group search filter
    */
-  public final String getGroupFilter()
+  public String getGroupFilter()
   {
     return groupFilter;
   }
@@ -72,7 +72,7 @@ public class PrimaryGroupIdHandler extends AbstractMessageFunctionalEntryHandler
    *
    * @param  filter  search filter
    */
-  public final void setGroupFilter(final String filter)
+  public void setGroupFilter(final String filter)
   {
     assertMutable();
     groupFilter = filter;
@@ -85,7 +85,7 @@ public class PrimaryGroupIdHandler extends AbstractMessageFunctionalEntryHandler
    *
    * @return  base DN to search for the primary group
    */
-  public final String getBaseDn()
+  public String getBaseDn()
   {
     return baseDn;
   }
@@ -96,7 +96,7 @@ public class PrimaryGroupIdHandler extends AbstractMessageFunctionalEntryHandler
    *
    * @param  dn  base DN
    */
-  public final void setBaseDn(final String dn)
+  public void setBaseDn(final String dn)
   {
     assertMutable();
     baseDn = dn;

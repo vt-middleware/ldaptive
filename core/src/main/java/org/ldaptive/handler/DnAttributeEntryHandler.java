@@ -47,7 +47,7 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler implements Lda
    *
    * @return  DN attribute name
    */
-  public final String getDnAttributeName()
+  public String getDnAttributeName()
   {
     return dnAttributeName;
   }
@@ -58,7 +58,7 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler implements Lda
    *
    * @param  name  of the DN attribute
    */
-  public final void setDnAttributeName(final String name)
+  public void setDnAttributeName(final String name)
   {
     assertMutable();
     dnAttributeName = name;
@@ -70,7 +70,7 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler implements Lda
    *
    * @return  whether to add the entryDN if an attribute of the same name exists
    */
-  public final boolean isAddIfExists()
+  public boolean isAddIfExists()
   {
     return addIfExists;
   }
@@ -81,7 +81,7 @@ public class DnAttributeEntryHandler extends AbstractEntryHandler implements Lda
    *
    * @param  b  whether to add the entryDN if an attribute of the same name exists
    */
-  public final void setAddIfExists(final boolean b)
+  public void setAddIfExists(final boolean b)
   {
     assertMutable();
     addIfExists = b;
