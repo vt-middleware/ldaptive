@@ -549,22 +549,21 @@ public final class ConnectionConfig extends AbstractConfig
   public static ConnectionConfig copy(final ConnectionConfig config)
   {
     final ConnectionConfig copy = new ConnectionConfig();
-    copy.setLdapUrl(config.getLdapUrl());
-    copy.setConnectTimeout(config.getConnectTimeout());
-    copy.setStartTLSTimeout(config.getStartTLSTimeout());
-    copy.setResponseTimeout(config.getResponseTimeout());
-    copy.setReconnectTimeout(config.getReconnectTimeout());
-    copy.setAutoReconnect(config.getAutoReconnect());
-    copy.setAutoReconnectCondition(config.getAutoReconnectCondition());
-    copy.setAutoReplay(config.getAutoReplay());
-    copy.setSslConfig(config.getSslConfig() != null ? SslConfig.copy(config.getSslConfig()) : null);
-    copy.setUseStartTLS(config.getUseStartTLS());
+    copy.setLdapUrl(config.ldapUrl);
+    copy.setConnectTimeout(config.connectTimeout);
+    copy.setStartTLSTimeout(config.startTLSTimeout);
+    copy.setResponseTimeout(config.responseTimeout);
+    copy.setReconnectTimeout(config.reconnectTimeout);
+    copy.setAutoReconnect(config.autoReconnect);
+    copy.setAutoReconnectCondition(config.autoReconnectCondition);
+    copy.setAutoReplay(config.autoReplay);
+    copy.setSslConfig(config.sslConfig != null ? SslConfig.copy(config.sslConfig) : null);
+    copy.setUseStartTLS(config.useStartTLS);
     copy.setConnectionInitializers(
-      config.getConnectionInitializers() != null ? config.getConnectionInitializers() : null);
-    copy.setConnectionStrategy(
-      config.getConnectionStrategy() != null ? config.getConnectionStrategy().newInstance() : null);
-    copy.setConnectionValidator(config.getConnectionValidator());
-    copy.setTransportOptions(config.getTransportOptions());
+      config.connectionInitializers != null ? config.connectionInitializers : null);
+    copy.setConnectionStrategy(config.connectionStrategy != null ? config.connectionStrategy.newInstance() : null);
+    copy.setConnectionValidator(config.connectionValidator);
+    copy.setTransportOptions(config.transportOptions);
     return copy;
   }
 

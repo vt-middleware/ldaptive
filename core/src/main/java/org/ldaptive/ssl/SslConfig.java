@@ -287,13 +287,13 @@ public final class SslConfig extends AbstractConfig
   public static SslConfig copy(final SslConfig config)
   {
     final SslConfig copy = new SslConfig();
-    copy.setCredentialConfig(config.getCredentialConfig());
-    copy.setTrustManagers(config.getTrustManagers());
-    copy.setHostnameVerifier(config.getHostnameVerifier());
-    copy.setEnabledCipherSuites(config.getEnabledCipherSuites());
-    copy.setEnabledProtocols(config.getEnabledProtocols());
-    copy.setHandshakeCompletedListeners(config.getHandshakeCompletedListeners());
-    copy.setHandshakeTimeout(config.getHandshakeTimeout());
+    copy.setCredentialConfig(config.credentialConfig);
+    copy.setTrustManagers(config.trustManagers);
+    copy.setHostnameVerifier(config.hostnameVerifier);
+    copy.setEnabledCipherSuites(config.enabledCipherSuites);
+    copy.setEnabledProtocols(config.enabledProtocols);
+    copy.setHandshakeCompletedListeners(config.handshakeCompletedListeners);
+    copy.setHandshakeTimeout(config.handshakeTimeout);
     return copy;
   }
 

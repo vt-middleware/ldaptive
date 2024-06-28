@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.time.Duration;
 import org.ldaptive.control.ProxyAuthorizationControl;
+import org.ldaptive.control.SortRequestControl;
 import org.ldaptive.filter.AndFilter;
 import org.ldaptive.filter.EqualityFilter;
 import org.testng.Assert;
@@ -135,5 +136,25 @@ public class SearchRequestTest
     throws Exception
   {
     Assert.assertEquals(request.encode(2), berValue);
+  }
+
+
+  @Test
+  public void copy()
+  {
+    final SearchRequest request = SearchRequest.builder()
+      .dn("dc=ldaptive,dc=org")
+      .scope(SearchScope.OBJECT)
+      .aliases(DerefAliases.ALWAYS)
+      .sizeLimit(5)
+      .timeLimit(Duration.ofMinutes(1))
+      .typesOnly(false)
+      .filter("(uid=1234)")
+      .returnAttributes("cn", "sn", "jpegPhoto")
+      .binaryAttributes("jpegPhoto")
+      .controls(new SortRequestControl())
+      .responseTimeout(Duration.ofSeconds(3))
+      .build();
+    Assert.assertEquals(SearchRequest.copy(request), request);
   }
 }

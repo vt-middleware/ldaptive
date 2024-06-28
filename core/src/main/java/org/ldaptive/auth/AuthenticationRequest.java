@@ -176,13 +176,14 @@ public class AuthenticationRequest
 
 
   /**
-   * Returns an authentication request initialized with the supplied request.
+   * Returns an authentication request initialized with the supplied request. This method does not perform a deep copy
+   * of request properties.
    *
    * @param  request  authentication request to read properties from
    *
    * @return  authentication request
    */
-  public static AuthenticationRequest copy(final AuthenticationRequest request)
+  static AuthenticationRequest copy(final AuthenticationRequest request)
   {
     final AuthenticationRequest r = new AuthenticationRequest();
     r.setUser(request.getUser());

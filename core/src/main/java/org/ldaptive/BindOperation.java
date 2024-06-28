@@ -126,17 +126,23 @@ public class BindOperation extends AbstractOperation<BindRequest, BindResponse>
    */
   public static BindOperation copy(final BindOperation operation)
   {
-    final BindOperation op = new BindOperation();
-    op.setRequestHandlers(operation.getRequestHandlers());
-    op.setResultHandlers(operation.getResultHandlers());
-    op.setControlHandlers(operation.getControlHandlers());
-    op.setReferralHandlers(operation.getReferralHandlers());
-    op.setIntermediateResponseHandlers(operation.getIntermediateResponseHandlers());
-    op.setExceptionHandler(operation.getExceptionHandler());
-    op.setThrowCondition(operation.getThrowCondition());
-    op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
-    op.setConnectionFactory(operation.getConnectionFactory());
-    return op;
+    return copy(operation, false);
+  }
+
+
+  /**
+   * Returns a new bind operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   * @param  deep  whether to make a deep copy
+   *
+   * @return  copy of the supplied bind operation
+   */
+  public static BindOperation copy(final BindOperation operation, final boolean deep)
+  {
+    final BindOperation copy = new BindOperation();
+    copy(operation, copy, deep);
+    return copy;
   }
 
 

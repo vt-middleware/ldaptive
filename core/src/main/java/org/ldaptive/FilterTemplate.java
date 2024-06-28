@@ -242,6 +242,22 @@ public class FilterTemplate
 
 
   /**
+   * Returns a new filter template with the same properties as the supplied template.
+   *
+   * @param  template  to copy
+   *
+   * @return  copy of the supplied filter template
+   */
+  public static FilterTemplate copy(final FilterTemplate template)
+  {
+    final FilterTemplate copy = new FilterTemplate();
+    copy.searchFilter = template.searchFilter;
+    copy.parameters.putAll(template.parameters);
+    return copy;
+  }
+
+
+  /**
    * Creates a builder for this class.
    *
    * @return  new builder

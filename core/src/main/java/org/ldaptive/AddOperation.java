@@ -126,17 +126,23 @@ public class AddOperation extends AbstractOperation<AddRequest, AddResponse>
    */
   public static AddOperation copy(final AddOperation operation)
   {
-    final AddOperation op = new AddOperation();
-    op.setRequestHandlers(operation.getRequestHandlers());
-    op.setResultHandlers(operation.getResultHandlers());
-    op.setControlHandlers(operation.getControlHandlers());
-    op.setReferralHandlers(operation.getReferralHandlers());
-    op.setIntermediateResponseHandlers(operation.getIntermediateResponseHandlers());
-    op.setExceptionHandler(operation.getExceptionHandler());
-    op.setThrowCondition(operation.getThrowCondition());
-    op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
-    op.setConnectionFactory(operation.getConnectionFactory());
-    return op;
+    return copy(operation, false);
+  }
+
+
+  /**
+   * Returns a new add operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   * @param  deep  whether to make a deep copy
+   *
+   * @return  copy of the supplied add operation
+   */
+  public static AddOperation copy(final AddOperation operation, final boolean deep)
+  {
+    final AddOperation copy = new AddOperation();
+    copy(operation, copy, deep);
+    return copy;
   }
 
 

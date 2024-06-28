@@ -126,17 +126,23 @@ public class ModifyOperation extends AbstractOperation<ModifyRequest, ModifyResp
    */
   public static ModifyOperation copy(final ModifyOperation operation)
   {
-    final ModifyOperation op = new ModifyOperation();
-    op.setRequestHandlers(operation.getRequestHandlers());
-    op.setResultHandlers(operation.getResultHandlers());
-    op.setControlHandlers(operation.getControlHandlers());
-    op.setReferralHandlers(operation.getReferralHandlers());
-    op.setIntermediateResponseHandlers(operation.getIntermediateResponseHandlers());
-    op.setExceptionHandler(operation.getExceptionHandler());
-    op.setThrowCondition(operation.getThrowCondition());
-    op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
-    op.setConnectionFactory(operation.getConnectionFactory());
-    return op;
+    return copy(operation, false);
+  }
+
+
+  /**
+   * Returns a new modify operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   * @param  deep  whether to make a deep copy
+   *
+   * @return  copy of the supplied modify operation
+   */
+  public static ModifyOperation copy(final ModifyOperation operation, final boolean deep)
+  {
+    final ModifyOperation copy = new ModifyOperation();
+    copy(operation, copy, deep);
+    return copy;
   }
 
 

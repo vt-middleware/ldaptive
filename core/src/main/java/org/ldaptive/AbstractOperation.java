@@ -233,6 +233,32 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
 
 
   /**
+   * Copies properties from one operation to another.
+   *
+   * @param  <Q>  type of request
+   * @param  <S>  type of result
+   * @param  from  to copy properties from
+   * @param  to  to copy properties to
+   * @param  deep  whether to make a deep copy
+   */
+  protected static <Q extends Request, S extends Result> void copy(
+    final AbstractOperation<Q, S> from, final AbstractOperation<Q, S> to, final boolean deep)
+  {
+    to.requestHandlers = deep ? LdapUtils.copyArray(from.requestHandlers) : from.requestHandlers;
+    to.resultHandlers = deep ? LdapUtils.copyArray(from.resultHandlers) : from.resultHandlers;
+    to.controlHandlers = deep ? LdapUtils.copyArray(from.controlHandlers) : from.controlHandlers;
+    to.referralHandlers = deep ? LdapUtils.copyArray(from.referralHandlers) : from.referralHandlers;
+    to.intermediateResponseHandlers =
+      deep ? LdapUtils.copyArray(from.intermediateResponseHandlers) : from.intermediateResponseHandlers;
+    to.exceptionHandler = from.exceptionHandler;
+    to.throwCondition = from.throwCondition;
+    to.unsolicitedNotificationHandlers =
+      deep ? LdapUtils.copyArray(from.unsolicitedNotificationHandlers) : from.unsolicitedNotificationHandlers;
+    to.connectionFactory = from.connectionFactory;
+  }
+
+
+  /**
    * Base class for operation builders.
    *
    * @param  <B>  type of builder

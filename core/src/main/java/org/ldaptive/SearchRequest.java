@@ -669,17 +669,31 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public static SearchRequest copy(final SearchRequest request)
   {
+    return copy(request, false);
+  }
+
+
+  /**
+   * Returns a new search request with the same properties as the supplied request.
+   *
+   * @param  request  to copy
+   * @param  deep  whether to make a deep copy of this search request
+   *
+   * @return  copy of the supplied search request
+   */
+  public static SearchRequest copy(final SearchRequest request, final boolean deep)
+  {
     final SearchRequest copy = new SearchRequest();
-    copy.setBaseDn(request.getBaseDn());
-    copy.setSearchScope(request.getSearchScope());
-    copy.setDerefAliases(request.getDerefAliases());
-    copy.setSizeLimit(request.getSizeLimit());
-    copy.setTimeLimit(request.getTimeLimit());
-    copy.setTypesOnly(request.isTypesOnly());
-    copy.setFilter(request.getFilter());
-    copy.setReturnAttributes(LdapUtils.copyArray(request.getReturnAttributes()));
-    copy.setBinaryAttributes(LdapUtils.copyArray(request.getBinaryAttributes()));
-    copy.setControls(LdapUtils.copyArray(request.getControls()));
+    copy.setBaseDn(request.baseDn);
+    copy.setSearchScope(request.searchScope);
+    copy.setDerefAliases(request.derefAliases);
+    copy.setSizeLimit(request.sizeLimit);
+    copy.setTimeLimit(request.timeLimit);
+    copy.setTypesOnly(request.typesOnly);
+    copy.setFilter(request.searchFilter);
+    copy.setReturnAttributes(deep ? LdapUtils.copyArray(request.returnAttributes) : request.returnAttributes);
+    copy.setBinaryAttributes(deep ? LdapUtils.copyArray(request.binaryAttributes) : request.binaryAttributes);
+    copy.setControls(deep ? LdapUtils.copyArray(request.getControls()) : request.getControls());
     if (request.getResponseTimeout() != null) {
       copy.setResponseTimeout(request.getResponseTimeout());
     }

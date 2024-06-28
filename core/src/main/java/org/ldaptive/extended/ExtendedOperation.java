@@ -6,6 +6,7 @@ import org.ldaptive.AbstractOperation;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.OperationHandle;
 import org.ldaptive.handler.ExtendedValueHandler;
 
@@ -168,18 +169,25 @@ public class ExtendedOperation extends AbstractOperation<ExtendedRequest, Extend
    */
   public static ExtendedOperation copy(final ExtendedOperation operation)
   {
-    final ExtendedOperation op = new ExtendedOperation();
-    op.setRequestHandlers(operation.getRequestHandlers());
-    op.setResultHandlers(operation.getResultHandlers());
-    op.setControlHandlers(operation.getControlHandlers());
-    op.setReferralHandlers(operation.getReferralHandlers());
-    op.setIntermediateResponseHandlers(operation.getIntermediateResponseHandlers());
-    op.setExceptionHandler(operation.getExceptionHandler());
-    op.setThrowCondition(operation.getThrowCondition());
-    op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
-    op.setConnectionFactory(operation.getConnectionFactory());
-    op.setExtendedValueHandlers(operation.getExtendedValueHandlers());
-    return op;
+    return copy(operation, false);
+  }
+
+
+  /**
+   * Returns a new extended operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   * @param  deep  whether to make a deep copy
+   *
+   * @return  copy of the supplied extended operation
+   */
+  public static ExtendedOperation copy(final ExtendedOperation operation, final boolean deep)
+  {
+    final ExtendedOperation copy = new ExtendedOperation();
+    copy(operation, copy, deep);
+    copy.extendedValueHandlers =
+      deep ? LdapUtils.copyArray(operation.extendedValueHandlers) : operation.extendedValueHandlers;
+    return copy;
   }
 
 

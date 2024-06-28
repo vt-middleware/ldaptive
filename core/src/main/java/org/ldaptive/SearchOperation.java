@@ -818,22 +818,33 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
    */
   public static SearchOperation copy(final SearchOperation operation)
   {
-    final SearchOperation op = new SearchOperation();
-    op.setRequestHandlers(operation.getRequestHandlers());
-    op.setResultHandlers(operation.getResultHandlers());
-    op.setControlHandlers(operation.getControlHandlers());
-    op.setReferralHandlers(operation.getReferralHandlers());
-    op.setIntermediateResponseHandlers(operation.getIntermediateResponseHandlers());
-    op.setExceptionHandler(operation.getExceptionHandler());
-    op.setThrowCondition(operation.getThrowCondition());
-    op.setUnsolicitedNotificationHandlers(operation.getUnsolicitedNotificationHandlers());
-    op.setConnectionFactory(operation.getConnectionFactory());
-    op.setEntryHandlers(operation.getEntryHandlers());
-    op.setReferenceHandlers(operation.getReferenceHandlers());
-    op.setSearchResultHandlers(operation.getSearchResultHandlers());
-    op.setRequest(operation.getRequest());
-    op.setTemplate(operation.getTemplate());
-    return op;
+    return copy(operation, false);
+  }
+
+
+  /**
+   * Returns a new search operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   * @param  deep  whether to make a deep copy
+   *
+   * @return  copy of the supplied search operation
+   */
+  public static SearchOperation copy(final SearchOperation operation, final boolean deep)
+  {
+    final SearchOperation copy = new SearchOperation();
+    copy(operation, copy, deep);
+    copy.entryHandlers = deep ? LdapUtils.copyArray(operation.entryHandlers) : operation.entryHandlers;
+    copy.referenceHandlers = deep ? LdapUtils.copyArray(operation.referenceHandlers) : operation.referenceHandlers;
+    copy.searchResultHandlers =
+      deep ? LdapUtils.copyArray(operation.searchResultHandlers) : operation.searchResultHandlers;
+    copy.request =
+      operation.request != null ?
+        deep ? SearchRequest.copy(operation.request, true) : operation.request : null;
+    copy.filterTemplate =
+      operation.filterTemplate != null ?
+        deep ? FilterTemplate.copy(operation.filterTemplate) : operation.filterTemplate : null;
+    return copy;
   }
 
 
