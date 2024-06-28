@@ -4,6 +4,7 @@ package org.ldaptive.ssl;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -11,7 +12,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class KeyStoreCredentialConfig implements CredentialConfig
+public class KeyStoreCredentialConfig extends AbstractFreezable implements CredentialConfig
 {
 
   /** hash code seed. */
@@ -63,6 +64,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public void setTrustStore(final String name)
   {
+    assertMutable();
     trustStore = name;
   }
 
@@ -85,6 +87,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public void setTrustStorePassword(final String password)
   {
+    assertMutable();
     trustStorePassword = password;
   }
 
@@ -107,6 +110,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public void setTrustStoreType(final String type)
   {
+    assertMutable();
     trustStoreType = type;
   }
 
@@ -118,7 +122,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public String[] getTrustStoreAliases()
   {
-    return trustStoreAliases;
+    return LdapUtils.copyArray(trustStoreAliases);
   }
 
 
@@ -129,6 +133,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public void setTrustStoreAliases(final String... aliases)
   {
+    assertMutable();
     trustStoreAliases = aliases;
   }
 
@@ -151,6 +156,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public void setKeyStore(final String name)
   {
+    assertMutable();
     keyStore = name;
   }
 
@@ -173,6 +179,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public void setKeyStorePassword(final String password)
   {
+    assertMutable();
     keyStorePassword = password;
   }
 
@@ -195,6 +202,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public void setKeyStoreType(final String type)
   {
+    assertMutable();
     keyStoreType = type;
   }
 
@@ -206,7 +214,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public String[] getKeyStoreAliases()
   {
-    return keyStoreAliases;
+    return LdapUtils.copyArray(keyStoreAliases);
   }
 
 
@@ -217,6 +225,7 @@ public class KeyStoreCredentialConfig implements CredentialConfig
    */
   public void setKeyStoreAliases(final String... aliases)
   {
+    assertMutable();
     keyStoreAliases = aliases;
   }
 

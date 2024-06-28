@@ -3,6 +3,7 @@ package org.ldaptive.ssl;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -10,7 +11,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class X509CredentialConfig implements CredentialConfig
+public class X509CredentialConfig extends AbstractFreezable implements CredentialConfig
 {
 
   /** hash code seed. */
@@ -53,6 +54,7 @@ public class X509CredentialConfig implements CredentialConfig
    */
   public void setTrustCertificates(final String name)
   {
+    assertMutable();
     trustCertificates = name;
   }
 
@@ -75,6 +77,7 @@ public class X509CredentialConfig implements CredentialConfig
    */
   public void setAuthenticationCertificate(final String name)
   {
+    assertMutable();
     authenticationCertificate = name;
   }
 
@@ -97,6 +100,7 @@ public class X509CredentialConfig implements CredentialConfig
    */
   public void setAuthenticationKey(final String name)
   {
+    assertMutable();
     authenticationKey = name;
   }
 

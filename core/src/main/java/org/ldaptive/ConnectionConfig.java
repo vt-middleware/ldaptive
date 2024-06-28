@@ -150,6 +150,7 @@ public final class ConnectionConfig extends AbstractConfig
     setLdapUrl(url);
   }
 
+
   @Override
   public void freeze()
   {

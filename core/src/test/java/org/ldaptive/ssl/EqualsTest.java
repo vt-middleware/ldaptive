@@ -20,7 +20,7 @@ public class EqualsTest
     EqualsVerifier.forClass(KeyStoreCredentialConfig.class)
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
-      .withIgnoredFields("keyStoreReader")
+      .withIgnoredFields("keyStoreReader", "immutable")
       .verify();
   }
 
@@ -31,7 +31,7 @@ public class EqualsTest
     EqualsVerifier.forClass(X509CredentialConfig.class)
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
-      .withIgnoredFields("certsReader", "certReader", "keyReader")
+      .withIgnoredFields("certsReader", "certReader", "keyReader", "immutable")
       .verify();
   }
 }

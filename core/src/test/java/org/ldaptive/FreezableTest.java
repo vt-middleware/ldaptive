@@ -39,7 +39,9 @@ import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
 import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
+import org.ldaptive.ssl.X509CredentialConfig;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -77,6 +79,12 @@ public class FreezableTest
         },
         new Object[] {
           SslConfig.class,
+        },
+        new Object[] {
+          X509CredentialConfig.class,
+        },
+        new Object[] {
+          KeyStoreCredentialConfig.class,
         },
         new Object[] {
           PooledConnectionFactory.class,

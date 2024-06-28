@@ -78,6 +78,17 @@ public final class SslConfig extends AbstractConfig
   }
 
 
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    freeze(credentialConfig);
+    freeze(trustManagers);
+    freeze(hostnameVerifier);
+    freeze(handshakeCompletedListeners);
+  }
+
+
   /**
    * Returns whether this ssl config contains any configuration data.
    *
