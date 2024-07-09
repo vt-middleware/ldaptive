@@ -9,6 +9,7 @@ redirect_from: "/docs/guide/connections/pooling/"
 Pooling ldap connections provides a way to mitigate the overhead of creating LDAP connections. A connection pool is controlled by the following properties:
 
 Name | Default Value | Description
+blockWaitTime | PT1M | length of time to wait for a connection to be returned from the pool
 minPoolSize | 3 | size the pool should be initialized to and pruned to
 maxPoolSize | 10 | maximum size the pool can grow to
 validateOnCheckIn | false | whether connections should be validated when returned to the pool
@@ -18,6 +19,7 @@ activator | null | class to activate connections as they are checked out of the 
 passivator | null | class to passivate connections as they are returned to the pool
 validator | `SearchConnectionValidator` | class to validate that a connection is viable for use
 pruneStrategy | `IdlePruneStrategy` | class to remove unneeded connections from the pool
+validationExceptionHandler | `RetryValidationExceptionHandler` | class to handle validation exceptions when validateOnCheckOut is true
 
 Ldaptive provides a `PooledConnectionFactory` implementation which uses a blocking connection pool.
 
@@ -71,6 +73,18 @@ You can also configure validation to occur when the pool is idle instead of duri
 {% highlight java %}
 {% include source/connections/pooling/4.java %}
 {% endhighlight %}
+
+## Check out Validation
+
+Connections can be validated before they are returned from `getConnection()`. This option may be useful if periodic validation is not a reliable mechanism to keep the connection pool healthy. When validation fails it is handled by a `ValidationExceptionHandler`.
+
+### RetryValidationExceptionHandler
+
+This is the default handler used for check out validation. This handler will ask the pool for another connection which will also be validated. This process will attempt `maxPoolSize + 1` attempts in order to find a valid connection or create a new one. If `blockWaitTime` occurs before a valid connection is returned a `ValidationException` is thrown.
+
+## Check in Validation
+
+Connections can be validated when they are returned to the pool. If a connection fails validation, it is not put back into the pool, instead it is closed.
 
 ## Pruning
 
