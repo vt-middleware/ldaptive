@@ -10,6 +10,8 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
 import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -29,6 +31,9 @@ public class FreeIPAAuthenticationResponseHandler extends AbstractFreezable
     "krbLoginFailedCount",
     "krbLastPwdChange",
   };
+
+  /** Logger for this class. */
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Amount of time since a password was set until it will expire. Used if krbPasswordExpiration cannot be read. */
   private Period expirationPeriod;
@@ -76,10 +81,13 @@ public class FreeIPAAuthenticationResponseHandler extends AbstractFreezable
   public void handle(final AuthenticationResponse response)
   {
     if (response.getResultCode() != ResultCode.SUCCESS) {
+      logger.debug(
+        "Parsing response code: {}, diagnostic message: {}", response.getResultCode(), response.getDiagnosticMessage());
       final FreeIPAAccountState.Error fError = FreeIPAAccountState.Error.parse(
         response.getResultCode(),
         response.getDiagnosticMessage());
       if (fError != null) {
+        logger.debug("Translated response code and diagnostic message to: {}", fError);
         response.setAccountState(new FreeIPAAccountState(fError));
       }
     } else if (response.isSuccess()) {
@@ -87,12 +95,18 @@ public class FreeIPAAuthenticationResponseHandler extends AbstractFreezable
       final LdapAttribute expTime = entry.getAttribute("krbPasswordExpiration");
       final LdapAttribute failedLogins = entry.getAttribute("krbLoginFailedCount");
       final LdapAttribute lastPwdChange = entry.getAttribute("krbLastPwdChange");
-      ZonedDateTime exp = null;
+      logger.debug(
+        "Read attributes krbPasswordExpiration: {}, krbLoginFailedCount: {}, krbLastPwdChange: {}",
+        expTime,
+        failedLogins,
+        lastPwdChange);
 
+      ZonedDateTime exp = null;
       Integer loginRemaining = null;
       if (failedLogins != null && maxLoginFailures > 0) {
         loginRemaining = maxLoginFailures - Integer.parseInt(failedLogins.getStringValue());
       }
+      logger.debug("Set loginRemaining to {}", loginRemaining);
 
       if (expTime != null) {
         exp = expTime.getValue(new GeneralizedTimeValueTranscoder().decoder());
@@ -100,20 +114,26 @@ public class FreeIPAAuthenticationResponseHandler extends AbstractFreezable
         exp = lastPwdChange.getValue(new GeneralizedTimeValueTranscoder().decoder()).plus(expirationPeriod);
       }
       if (exp != null) {
+        logger.debug("Transcoded passwordExpirationTime to {}", exp);
         if (warningPeriod != null) {
           final ZonedDateTime warn = exp.minus(warningPeriod);
-          if (ZonedDateTime.now().isAfter(warn)) {
+          final ZonedDateTime now = ZonedDateTime.now();
+          logger.debug("Warning period is: {}, current datetime is {}", warn, now);
+          if (now.isAfter(warn)) {
             response.setAccountState(
               new FreeIPAAccountState(exp, loginRemaining != null ? loginRemaining : 0));
           }
         } else {
+          logger.debug("No warning period is defined");
           response.setAccountState(
             new FreeIPAAccountState(exp, loginRemaining != null ? loginRemaining : 0));
         }
       } else if (loginRemaining != null && loginRemaining < maxLoginFailures) {
+        logger.debug("Using loginRemaining: {}", loginRemaining);
         response.setAccountState(new FreeIPAAccountState(null, loginRemaining));
       }
     }
+    logger.debug("Configured authentication response: {}", response);
   }
 
 

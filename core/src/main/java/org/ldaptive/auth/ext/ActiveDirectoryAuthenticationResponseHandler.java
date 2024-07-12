@@ -9,6 +9,8 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.ad.transcode.FileTimeValueTranscoder;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Attempts to parse the authentication response message and set the account state using data associated with active
@@ -26,6 +28,9 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
 
   /** Attributes needed to enforce password policy. */
   public static final String[] ATTRIBUTES = {"msDS-UserPasswordExpiryTimeComputed", "pwdLastSet", };
+
+  /** Logger for this class. */
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Amount of time since a password was set until it will expire. Used if msDS-UserPasswordExpiryTimeComputed cannot
    * be read. */
@@ -71,6 +76,7 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
       final LdapAttribute expTime = entry.getAttribute("msDS-UserPasswordExpiryTimeComputed");
       final LdapAttribute pwdLastSet = entry.getAttribute("pwdLastSet");
 
+      logger.debug("Read attributes msDS-UserPasswordExpiryTimeComputed: {}, pwdLastSet: {}", expTime, pwdLastSet);
       ZonedDateTime exp = null;
       // ignore expTime if account is set to never expire
       if (expTime != null && !"9223372036854775807".equals(expTime.getStringValue())) {
@@ -80,24 +86,31 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
       }
 
       if (exp != null) {
+        logger.debug("Transcoded passwordExpirationTime to {}", exp);
         if (warningPeriod != null) {
           final ZonedDateTime warn = exp.minus(warningPeriod);
-          if (ZonedDateTime.now().isAfter(warn)) {
+          final ZonedDateTime now = ZonedDateTime.now();
+          logger.debug("Warning period is: {}, current datetime is {}", warn, now);
+          if (now.isAfter(warn)) {
             response.setAccountState(new ActiveDirectoryAccountState(exp));
           }
         } else {
+          logger.debug("No warning period is defined");
           response.setAccountState(new ActiveDirectoryAccountState(exp));
         }
       }
     } else {
       if (response.getDiagnosticMessage() != null) {
+        logger.debug("Parsing response diagnostic message: {}", response.getDiagnosticMessage());
         final ActiveDirectoryAccountState.Error adError = ActiveDirectoryAccountState.Error.parse(
           response.getDiagnosticMessage());
         if (adError != null) {
+          logger.debug("Translated response diagnostic message to: {}", adError);
           response.setAccountState(new ActiveDirectoryAccountState(adError));
         }
       }
     }
+    logger.debug("Configured authentication response: {}", response);
   }
 
 
