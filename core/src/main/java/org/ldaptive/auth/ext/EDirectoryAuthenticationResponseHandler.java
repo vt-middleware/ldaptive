@@ -66,13 +66,13 @@ public final class EDirectoryAuthenticationResponseHandler extends AbstractFreez
       final LdapAttribute loginRemaining = entry.getAttribute("loginGraceRemaining");
       final int loginRemainingValue = loginRemaining != null ? Integer.parseInt(loginRemaining.getStringValue()) : 0;
 
-      logger.debug("passwordExpirationTime: {}, loginGraceRemaining: {}", expTime, loginRemaining)
+      logger.debug("passwordExpirationTime: {}, loginGraceRemaining: {}", expTime, loginRemaining);
       if (expTime != null) {
         final ZonedDateTime exp = expTime.getValue(new GeneralizedTimeValueTranscoder().decoder());
-        logger.debug("Transcoded passwordExpirationTime to {}", exp)
+        logger.debug("Transcoded passwordExpirationTime to {}", exp);
         if (warningPeriod != null) {
           final ZonedDateTime warn = exp.minus(warningPeriod);
-          logger.debug("Warning period is: {}", warn)
+          logger.debug("Warning period is: {}", warn);
 
           final ZonedDateTime now = ZonedDateTime.now();
           logger.debug("Current date/time is {}", now);
@@ -85,7 +85,7 @@ public final class EDirectoryAuthenticationResponseHandler extends AbstractFreez
           response.setAccountState(new EDirectoryAccountState(exp, loginRemainingValue));
         }
       } else if (loginRemaining != null) {
-        logger.debug("passwordExpirationTime attribute has no value");
+        logger.debug("passwordExpirationTime attribute has no value; using loginGraceRemaining {}", loginRemainingValue);
         response.setAccountState(new EDirectoryAccountState(null, loginRemainingValue));
       }
     }
