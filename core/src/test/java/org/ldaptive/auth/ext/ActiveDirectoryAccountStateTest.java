@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link ActiveDirectoryAccountState}.
@@ -90,6 +90,6 @@ public class ActiveDirectoryAccountStateTest
   public void parseMessage(final String message, final ActiveDirectoryAccountState.Error err)
     throws Exception
   {
-    Assert.assertEquals(ActiveDirectoryAccountState.Error.parse(message), err);
+    assertThat(ActiveDirectoryAccountState.Error.parse(message)).isEqualTo(err);
   }
 }

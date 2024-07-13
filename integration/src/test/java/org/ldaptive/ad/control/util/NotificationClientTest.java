@@ -13,10 +13,10 @@ import org.ldaptive.ModifyRequest;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchScope;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
-import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link NotificationClient}.
@@ -41,7 +41,7 @@ public class NotificationClientTest extends AbstractTest
       return;
     }
 
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ConnectionFactory cf = createConnectionFactory();
     try {
       final NotificationClient client = new NotificationClient(cf);
 
@@ -51,11 +51,11 @@ public class NotificationClientTest extends AbstractTest
       final BlockingQueue<NotificationClient.NotificationItem> results = client.execute(request);
 
       NotificationClient.NotificationItem item = results.poll(5, TimeUnit.SECONDS);
-      Assert.assertNotNull(item);
+      assertThat(item).isNotNull();
       if (item.isException()) {
         throw item.getException();
       }
-      Assert.assertTrue(item.getResult().getMessageID() > 0);
+      assertThat(item.getResult().getMessageID()).isGreaterThan(0);
 
       final ModifyOperation modify = new ModifyOperation(cf);
       modify.execute(
@@ -66,9 +66,9 @@ public class NotificationClientTest extends AbstractTest
             new LdapAttribute("sn", Integer.toString(new Random().nextInt(1000000))))));
 
       item = results.poll(5, TimeUnit.SECONDS);
-      Assert.assertNotNull(item);
-      Assert.assertTrue(item.isEntry());
-      Assert.assertNotNull(item.getEntry());
+      assertThat(item).isNotNull();
+      assertThat(item.isEntry()).isTrue();
+      assertThat(item.getEntry()).isNotNull();
 
       client.abandon();
     } finally {

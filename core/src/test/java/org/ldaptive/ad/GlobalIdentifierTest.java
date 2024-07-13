@@ -2,9 +2,9 @@
 package org.ldaptive.ad;
 
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link GlobalIdentifier}.
@@ -54,7 +54,7 @@ public class GlobalIdentifierTest
   public void testToString(final String guidString, final byte[] guid)
     throws Exception
   {
-    Assert.assertEquals(GlobalIdentifier.toString(guid), guidString);
+    assertThat(GlobalIdentifier.toString(guid)).isEqualTo(guidString);
   }
 
 
@@ -68,6 +68,6 @@ public class GlobalIdentifierTest
   public void testToBytes(final String guidString, final byte[] guid)
     throws Exception
   {
-    Assert.assertEquals(guid, GlobalIdentifier.toBytes(guidString));
+    assertThat(GlobalIdentifier.toBytes(guidString)).isEqualTo(guid);
   }
 }

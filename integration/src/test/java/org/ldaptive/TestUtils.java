@@ -5,15 +5,18 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import org.assertj.core.api.AbstractAssert;
 import org.ldaptive.auth.Authenticator;
 import org.ldaptive.auth.NoOpDnResolver;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.props.AuthenticatorPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 import org.ldaptive.sasl.SaslConfig;
-import org.testng.Assert;
+import org.ldaptive.transcode.ValueTranscoder;
 
 /**
  * Utility methods for ldap tests.
@@ -297,7 +300,7 @@ public final class TestUtils
     try (BufferedReader br = readFile(filename)) {
       String line;
       while ((line = br.readLine()) != null) {
-        result.append(line).append(System.getProperty("line.separator"));
+        result.append(line).append(System.lineSeparator());
       }
     }
     return result.toString();
@@ -322,6 +325,22 @@ public final class TestUtils
 
 
   /**
+   * Converts an ldif to a ldap result.
+   *
+   * @param  ldif  to convert.
+   *
+   * @return  ldap result.
+   *
+   * @throws  Exception  if ldif cannot be read
+   */
+  public static LdapEntry convertLdifToEntry(final String ldif)
+    throws Exception
+  {
+    return convertLdifToResult(ldif).getEntry();
+  }
+
+
+  /**
    * Converts a string of the form: givenName=John|sn=Doe into a ldap attributes and stores them in an ldap entry.
    *
    * @param  dn  of the entry
@@ -341,39 +360,6 @@ public final class TestUtils
       }
     }
     return le;
-  }
-
-
-  /**
-   * Invokes {@link Assert#assertEquals(Object, Object)} after removing the controls and messageId from the actual
-   * response entries.
-   *
-   * @param  expected  value
-   * @param  actual  value
-   */
-  public static void assertEquals(final SearchResponse expected, final SearchResponse actual)
-  {
-    final SearchResponse newResult = new SearchResponse();
-    for (LdapEntry e : actual.getEntries()) {
-      Assert.assertNotNull(e);
-      newResult.addEntries(LdapEntry.builder().dn(e.getDn()).attributes(e.getAttributes()).build());
-    }
-    Assert.assertEquals(newResult, expected);
-  }
-
-
-  /**
-   * Invokes {@link Assert#assertEquals(Object, Object)} after removing the controls and messageId from the actual
-   * entry.
-   *
-   * @param  expected  value
-   * @param  actual  value
-   */
-  public static void assertEquals(final LdapEntry expected, final LdapEntry actual)
-  {
-    Assert.assertNotNull(actual);
-    final LdapEntry newEntry = LdapEntry.builder().dn(actual.getDn()).attributes(actual.getAttributes()).build();
-    Assert.assertEquals(newEntry, expected);
   }
 
 
@@ -431,5 +417,157 @@ public final class TestUtils
     }
     // CheckStyle:MagicNumber ON
     return LdapUtils.toUpperCase(sb.toString());
+  }
+
+
+  /** Assert for testing ldap entries. */
+  public static final class LdapEntryAssert extends AbstractAssert<LdapEntryAssert, LdapEntry>
+  {
+
+
+    public LdapEntryAssert(final LdapEntry actual)
+    {
+      super(actual, LdapEntryAssert.class);
+    }
+
+
+    public static LdapEntryAssert assertThat(final LdapEntry actual)
+    {
+      return new LdapEntryAssert(actual);
+    }
+
+
+    public LdapEntryAssert isSame(final LdapEntry expected, final String... caseIgnoreAttrs)
+    {
+      isNotNull();
+      final LdapEntry newActual = lowerCaseEntry(actual, caseIgnoreAttrs);
+      final LdapEntry newExpected = lowerCaseEntry(expected, caseIgnoreAttrs);
+      if (!Objects.equals(newActual, newExpected)) {
+        failWithMessage("Expected entry to be [%s] but was [%s]", newExpected, newActual);
+      }
+      return this;
+    }
+
+
+    public static LdapEntry lowerCaseEntry(final LdapEntry entry, final String... caseIgnoreAttrs)
+    {
+      final LdapEntry newEntry = LdapEntry.builder().dn(entry.getDn()).build();
+      if (caseIgnoreAttrs != null && caseIgnoreAttrs.length > 0) {
+        for (LdapAttribute la : entry.getAttributes()) {
+          boolean setAttr = false;
+          for (String name : caseIgnoreAttrs) {
+            if (name.equalsIgnoreCase(la.getName())) {
+              newEntry.addAttributes(LowerCaseValueTranscoder.lowerCase(la));
+              setAttr = true;
+              break;
+            }
+          }
+          if (!setAttr) {
+            newEntry.addAttributes(la);
+          }
+        }
+      } else {
+        newEntry.addAttributes(entry.getAttributes());
+      }
+      return newEntry;
+    }
+  }
+
+
+  /** Assert for testing search responses. */
+  public static final class SearchResponseAssert extends AbstractAssert<SearchResponseAssert, SearchResponse>
+  {
+
+
+    public SearchResponseAssert(final SearchResponse actual)
+    {
+      super(actual, SearchResponseAssert.class);
+    }
+
+
+    public static SearchResponseAssert assertThat(final SearchResponse actual)
+    {
+      return new SearchResponseAssert(actual);
+    }
+
+
+    public SearchResponseAssert isSame(final SearchResponse expected, final String... caseIgnoreAttrs)
+    {
+      isNotNull();
+      final SearchResponse newActual = new SearchResponse();
+      actual.getEntries().forEach(e -> newActual.addEntries(LdapEntryAssert.lowerCaseEntry(e, caseIgnoreAttrs)));
+      final SearchResponse newExpected = new SearchResponse();
+      expected.getEntries().forEach(e -> newExpected.addEntries(LdapEntryAssert.lowerCaseEntry(e, caseIgnoreAttrs)));
+      if (!Objects.equals(newActual, newExpected)) {
+        failWithMessage("Expected response to be [%s] but was [%s]", newExpected, newActual);
+      }
+      return this;
+    }
+  }
+
+
+  /** Decodes and encodes a string by invoking {@link LdapUtils#toLowerCase(String)}. */
+  private static final class LowerCaseValueTranscoder implements ValueTranscoder<String>
+  {
+
+    /** for lower casing values. */
+    private static final LowerCaseValueTranscoder TRANSCODER = new LowerCaseValueTranscoder();
+
+
+    @Override
+    public String decodeStringValue(final String value)
+    {
+      return LdapUtils.toLowerCase(value);
+    }
+
+
+    @Override
+    public String decodeBinaryValue(final byte[] value)
+    {
+      return LdapUtils.toLowerCase(new String(value, StandardCharsets.UTF_8));
+    }
+
+
+    @Override
+    public String encodeStringValue(final String value)
+    {
+      return LdapUtils.toLowerCase(value);
+    }
+
+
+    @Override
+    public byte[] encodeBinaryValue(final String value)
+    {
+      return LdapUtils.toLowerCase(value).getBytes(StandardCharsets.UTF_8);
+    }
+
+
+    @Override
+    public Class<String> getType()
+    {
+      return String.class;
+    }
+
+
+    /**
+     * Returns a new ldap attribute whose values have been lower cased.
+     *
+     * @param  la  attribute to copy values from
+     *
+     * @return  ldap attribute with lower cased values
+     *
+     * @throws  IllegalArgumentException  if a binary attribute is supplied
+     */
+    public static LdapAttribute lowerCase(final LdapAttribute la)
+    {
+      try {
+        final LdapAttribute lowerCase = new LdapAttribute();
+        lowerCase.setName(la.getName());
+        lowerCase.addStringValues(la.getValues(TRANSCODER.decoder()));
+        return lowerCase;
+      } catch (UnsupportedOperationException e) {
+        throw new IllegalArgumentException("Error lower casing attribute " + la, e);
+      }
+    }
   }
 }

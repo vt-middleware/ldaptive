@@ -12,9 +12,9 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ssl.AggregateTrustManager.Strategy;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link AggregateTrustManager}.
@@ -407,11 +407,11 @@ public class AggregateTrustManagerTest
     try {
       trustManager.checkServerTrusted(chain, "RSA");
       if (!success) {
-        Assert.fail("Should have thrown exception for " + Arrays.toString(trustManagers));
+        fail("Should have thrown exception for %s", Arrays.toString(trustManagers));
       }
     } catch (Exception e) {
       if (success) {
-        Assert.fail("Should not have thrown exception for " + Arrays.toString(trustManagers), e);
+        fail("Should not have thrown exception for %s", Arrays.toString(trustManagers), e);
       }
     }
   }
@@ -428,11 +428,11 @@ public class AggregateTrustManagerTest
     try {
       trustManager.checkServerTrusted(chain, "RSA", new MockSSLEngine(new DefaultSSLContextInitializer()));
       if (!success) {
-        Assert.fail("Should have thrown exception for " + Arrays.toString(trustManagers));
+        fail("Should have thrown exception for %s", Arrays.toString(trustManagers));
       }
     } catch (Exception e) {
       if (success) {
-        Assert.fail("Should not have thrown exception for " + Arrays.toString(trustManagers), e);
+        fail("Should not have thrown exception for %s", Arrays.toString(trustManagers), e);
       }
     }
   }
@@ -449,11 +449,11 @@ public class AggregateTrustManagerTest
     try {
       trustManager.checkServerTrusted(chain, "RSA", new MockSSLSocket(new DefaultSSLContextInitializer()));
       if (!success) {
-        Assert.fail("Should have thrown exception for " + Arrays.toString(trustManagers));
+        fail("Should have thrown exception for %s", Arrays.toString(trustManagers));
       }
     } catch (Exception e) {
       if (success) {
-        Assert.fail("Should not have thrown exception for " + Arrays.toString(trustManagers), e);
+        fail("Should not have thrown exception for %s", Arrays.toString(trustManagers), e);
       }
     }
   }
@@ -470,11 +470,11 @@ public class AggregateTrustManagerTest
     try {
       trustManager.checkClientTrusted(chain, "RSA");
       if (!success) {
-        Assert.fail("Should have thrown exception for " + Arrays.toString(trustManagers));
+        fail("Should have thrown exception for %s", Arrays.toString(trustManagers));
       }
     } catch (Exception e) {
       if (success) {
-        Assert.fail("Should not have thrown exception for " + Arrays.toString(trustManagers), e);
+        fail("Should not have thrown exception for %s", Arrays.toString(trustManagers), e);
       }
     }
   }
@@ -491,11 +491,11 @@ public class AggregateTrustManagerTest
     try {
       trustManager.checkClientTrusted(chain, "RSA", new MockSSLEngine(new DefaultSSLContextInitializer()));
       if (!success) {
-        Assert.fail("Should have thrown exception for " + Arrays.toString(trustManagers));
+        fail("Should have thrown exception for %s", Arrays.toString(trustManagers));
       }
     } catch (Exception e) {
       if (success) {
-        Assert.fail("Should not have thrown exception for " + Arrays.toString(trustManagers), e);
+        fail("Should not have thrown exception for %s", Arrays.toString(trustManagers), e);
       }
     }
   }
@@ -512,11 +512,11 @@ public class AggregateTrustManagerTest
     try {
       trustManager.checkClientTrusted(chain, "RSA", new MockSSLSocket(new DefaultSSLContextInitializer()));
       if (!success) {
-        Assert.fail("Should have thrown exception for " + Arrays.toString(trustManagers));
+        fail("Should have thrown exception for %s", Arrays.toString(trustManagers));
       }
     } catch (Exception e) {
       if (success) {
-        Assert.fail("Should not have thrown exception for " + Arrays.toString(trustManagers), e);
+        fail("Should not have thrown exception for %s", Arrays.toString(trustManagers), e);
       }
     }
   }
@@ -531,7 +531,7 @@ public class AggregateTrustManagerTest
   {
     final AggregateTrustManager trustManager = new AggregateTrustManager(strategy, trustManagers);
     final X509Certificate[] issuers = trustManager.getAcceptedIssuers();
-    Assert.assertNotNull(issuers);
+    assertThat(issuers).isNotNull();
   }
 
 
@@ -544,7 +544,7 @@ public class AggregateTrustManagerTest
   {
     final AggregateTrustManager trustManager = new AggregateTrustManager(strategy, trustManagers);
     final X509Certificate[] issuers = trustManager.getAcceptedIssuers();
-    Assert.assertNotNull(issuers);
+    assertThat(issuers).isNotNull();
   }
 
 

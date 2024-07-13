@@ -1,11 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link CompareOperation}.
@@ -59,7 +59,11 @@ public class CompareOperationTest extends AbstractTest
     throws Exception
   {
     final CompareOperation compare = new CompareOperation(TestUtils.createConnectionFactory());
-    Assert.assertFalse(compare.execute(new CompareRequest(dn, "cn", "not-a-name")).isTrue());
-    Assert.assertTrue(compare.execute(new CompareRequest(dn, attrName, attrValue)).isTrue());
+    final CompareResponse falseRes = compare.execute(new CompareRequest(dn, "cn", "not-a-name"));
+    assertThat(falseRes.isTrue()).isFalse();
+    assertThat(falseRes.isFalse()).isTrue();
+    final CompareResponse trueRes = compare.execute(new CompareRequest(dn, attrName, attrValue));
+    assertThat(trueRes.isTrue()).isTrue();
+    assertThat(trueRes.isFalse()).isFalse();
   }
 }

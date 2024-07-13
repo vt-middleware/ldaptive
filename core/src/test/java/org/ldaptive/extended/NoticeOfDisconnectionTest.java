@@ -3,9 +3,9 @@ package org.ldaptive.extended;
 
 import org.ldaptive.ResultCode;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link NoticeOfDisconnection}.
@@ -64,6 +64,6 @@ public class NoticeOfDisconnectionTest
   public void encode(final byte[] berValue, final NoticeOfDisconnection notification)
     throws Exception
   {
-    Assert.assertEquals(new NoticeOfDisconnection(new DefaultDERBuffer(berValue)), notification);
+    assertThat(new NoticeOfDisconnection(new DefaultDERBuffer(berValue))).isEqualTo(notification);
   }
 }

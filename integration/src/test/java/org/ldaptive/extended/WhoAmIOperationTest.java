@@ -5,9 +5,9 @@ import org.ldaptive.AbstractTest;
 import org.ldaptive.BindConnectionInitializer;
 import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for the WhoAmI extended operation.
@@ -28,11 +28,11 @@ public class WhoAmIOperationTest extends AbstractTest
       return;
     }
 
-    final DefaultConnectionFactory cf = (DefaultConnectionFactory) TestUtils.createConnectionFactory();
+    final DefaultConnectionFactory cf = (DefaultConnectionFactory) createConnectionFactory();
     final ExtendedOperation whoami = new ExtendedOperation(cf);
     final ExtendedResponse res = whoami.execute(new WhoAmIRequest());
     final BindConnectionInitializer ci =
       (BindConnectionInitializer) cf.getConnectionConfig().getConnectionInitializers()[0];
-    Assert.assertEquals(WhoAmIResponseParser.parse(res), "dn:" + ci.getBindDn());
+    assertThat(WhoAmIResponseParser.parse(res)).isEqualTo("dn:" + ci.getBindDn());
   }
 }

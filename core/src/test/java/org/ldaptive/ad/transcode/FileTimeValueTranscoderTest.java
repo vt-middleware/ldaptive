@@ -5,9 +5,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link FileTimeValueTranscoder}.
@@ -55,7 +55,7 @@ public class FileTimeValueTranscoderTest
   public void decodeStringValue(final ZonedDateTime date, final String fileTime)
     throws Exception
   {
-    Assert.assertEquals(transcoder.decodeStringValue(fileTime), date);
+    assertThat(transcoder.decodeStringValue(fileTime)).isEqualTo(date);
   }
 
 
@@ -69,7 +69,7 @@ public class FileTimeValueTranscoderTest
   public void encodeStringValue(final ZonedDateTime date, final String fileTime)
     throws Exception
   {
-    Assert.assertEquals(transcoder.encodeStringValue(date), fileTime);
+    assertThat(transcoder.encodeStringValue(date)).isEqualTo(fileTime);
   }
 
 

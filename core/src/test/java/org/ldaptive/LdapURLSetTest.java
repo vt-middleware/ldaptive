@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link LdapURLSet}.
@@ -110,12 +110,12 @@ public class LdapURLSetTest
   public void populate(final LdapURLSet urlSet, final LdapURL[] expected)
     throws Exception
   {
-    Assert.assertTrue(urlSet.hasActiveUrls());
-    Assert.assertEquals(urlSet.getActiveUrls().size(), expected.length);
-    Assert.assertFalse(urlSet.hasInactiveUrls());
-    Assert.assertEquals(urlSet.getInactiveUrls().size(), 0);
+    assertThat(urlSet.hasActiveUrls()).isTrue();
+    assertThat(urlSet.getActiveUrls()).hasSize(expected.length);
+    assertThat(urlSet.hasInactiveUrls()).isFalse();
+    assertThat(urlSet.getInactiveUrls()).isEmpty();
     for (int i = 0; i < expected.length; i++) {
-      Assert.assertEquals(urlSet.getActiveUrls().get(i), expected[i]);
+      assertThat(urlSet.getActiveUrls().get(i)).isEqualTo(expected[i]);
     }
   }
 
@@ -124,27 +124,27 @@ public class LdapURLSetTest
   public void deactivate(final LdapURLSet urlSet, final LdapURL[] expected)
     throws Exception
   {
-    Assert.assertTrue(urlSet.hasActiveUrls());
-    Assert.assertEquals(urlSet.getActiveUrls().size(), expected.length);
-    Assert.assertFalse(urlSet.hasInactiveUrls());
-    Assert.assertEquals(urlSet.getInactiveUrls().size(), 0);
+    assertThat(urlSet.hasActiveUrls()).isTrue();
+    assertThat(urlSet.getActiveUrls().size()).isEqualTo(expected.length);
+    assertThat(urlSet.hasInactiveUrls()).isFalse();
+    assertThat(urlSet.getInactiveUrls()).isEmpty();
 
     // deactivate URLs
     while (urlSet.hasActiveUrls()) {
       urlSet.getActiveUrls().get(0).deactivate();
     }
-    Assert.assertFalse(urlSet.hasActiveUrls());
-    Assert.assertEquals(urlSet.getActiveUrls().size(), 0);
-    Assert.assertTrue(urlSet.hasInactiveUrls());
-    Assert.assertEquals(urlSet.getInactiveUrls().size(), expected.length);
+    assertThat(urlSet.hasActiveUrls()).isFalse();
+    assertThat(urlSet.getActiveUrls()).isEmpty();
+    assertThat(urlSet.hasInactiveUrls()).isTrue();
+    assertThat(urlSet.getInactiveUrls().size()).isEqualTo(expected.length);
 
     // activate URLs
     while (urlSet.hasInactiveUrls()) {
       urlSet.getInactiveUrls().get(0).activate();
     }
-    Assert.assertTrue(urlSet.hasActiveUrls());
-    Assert.assertEquals(urlSet.getActiveUrls().size(), expected.length);
-    Assert.assertFalse(urlSet.hasInactiveUrls());
-    Assert.assertEquals(urlSet.getInactiveUrls().size(), 0);
+    assertThat(urlSet.hasActiveUrls()).isTrue();
+    assertThat(urlSet.getActiveUrls().size()).isEqualTo(expected.length);
+    assertThat(urlSet.hasInactiveUrls()).isFalse();
+    assertThat(urlSet.getInactiveUrls()).isEmpty();
   }
 }

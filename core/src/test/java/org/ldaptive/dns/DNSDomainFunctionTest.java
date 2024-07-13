@@ -4,9 +4,9 @@ package org.ldaptive.dns;
 import org.ldaptive.dn.Dn;
 import org.ldaptive.dn.NameValue;
 import org.ldaptive.dn.RDn;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DNSDomainFunction}.
@@ -69,6 +69,6 @@ public class DNSDomainFunctionTest
   public void testApply(final Dn dn, final String domain)
   {
     final String dnDomain = new DNSDomainFunction().apply(dn);
-    Assert.assertEquals(dnDomain, domain);
+    assertThat(dnDomain).isEqualTo(domain);
   }
 }

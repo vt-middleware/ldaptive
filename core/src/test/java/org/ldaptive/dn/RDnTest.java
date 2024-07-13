@@ -4,9 +4,9 @@ package org.ldaptive.dn;
 // CheckStyle:AvoidStaticImport OFF
 import java.util.List;
 import java.util.Set;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 import static org.ldaptive.dn.DefaultRDnNormalizer.COMPRESS;
 import static org.ldaptive.dn.DefaultRDnNormalizer.LOWERCASE_COMPRESS;
 import static org.ldaptive.dn.DefaultRDnNormalizer.LOWERCASE;
@@ -1524,9 +1524,9 @@ public class RDnTest
     final String normalized)
   {
     final RDn rdn = new RDn(parse);
-    Assert.assertEquals(rdn, match);
+    assertThat(rdn).isEqualTo(match);
     for (RDnNormalizer normalizer : normalizers) {
-      Assert.assertEquals(rdn.format(normalizer), normalized, "Normalizer: " + normalizer);
+      assertThat(rdn.format(normalizer)).isEqualTo(normalized).withFailMessage("Normalizer: %s", normalizer);
     }
   }
 
@@ -1539,9 +1539,9 @@ public class RDnTest
   {
     try {
       new RDn(parse);
-      Assert.fail("Should have thrown IllegalArgumentException for " + parse);
+      fail("Should have thrown IllegalArgumentException for %s", parse);
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
   }
 
@@ -1549,35 +1549,27 @@ public class RDnTest
   @Test
   public void testGetNameValue()
   {
-    Assert.assertEquals(
-      new RDn("gn=foo").getNameValue(),
-      new NameValue("gn", "foo"));
-    Assert.assertEquals(
-      new RDn(new NameValue("gn", "foo")).getNameValue(),
-      new NameValue("gn", "foo"));
-    Assert.assertEquals(
-      new RDn(new NameValue("gn", "foo"),
-        new NameValue("sn", "bar")).getNameValue(), new NameValue("gn", "foo"));
-    Assert.assertEquals(
-      new RDn("gn=foo+sn=bar").getNameValue(),
-      new NameValue("gn", "foo"));
+    assertThat(new RDn("gn=foo").getNameValue())
+      .isEqualTo(new NameValue("gn", "foo"));
+    assertThat(new RDn(new NameValue("gn", "foo")).getNameValue())
+      .isEqualTo(new NameValue("gn", "foo"));
+    assertThat(new RDn(new NameValue("gn", "foo"), new NameValue("sn", "bar")).getNameValue())
+      .isEqualTo(new NameValue("gn", "foo"));
+    assertThat(new RDn("gn=foo+sn=bar").getNameValue())
+      .isEqualTo(new NameValue("gn", "foo"));
   }
 
 
   @Test
   public void testGetNameValues()
   {
-    Assert.assertEquals(
-      new RDn("gn=foo").getNameValues(),
+    assertThat(new RDn("gn=foo").getNameValues()).isEqualTo(
       Set.of(new NameValue("gn", "foo")));
-    Assert.assertEquals(
-      new RDn(new NameValue("gn", "foo")).getNameValues(),
+    assertThat(new RDn(new NameValue("gn", "foo")).getNameValues()).isEqualTo(
       Set.of(new NameValue("gn", "foo")));
-    Assert.assertEquals(
-      new RDn(new NameValue("gn", "foo"), new NameValue("sn", "bar")).getNameValues(),
+    assertThat(new RDn(new NameValue("gn", "foo"), new NameValue("sn", "bar")).getNameValues()).isEqualTo(
       Set.of(new NameValue("gn", "foo"), new NameValue("sn", "bar")));
-    Assert.assertEquals(
-      new RDn("gn=foo+sn=bar").getNameValues(),
+    assertThat(new RDn("gn=foo+sn=bar").getNameValues()).isEqualTo(
       Set.of(new NameValue("gn", "foo"), new NameValue("sn", "bar")));
   }
 
@@ -1585,11 +1577,7 @@ public class RDnTest
   @Test
   public void testGetNames()
   {
-    Assert.assertEquals(
-      new RDn("gn=foo").getNames(),
-      List.of("gn"));
-    Assert.assertEquals(
-      new RDn("UID=bar+CN=foo").getNames(),
-      List.of("UID", "CN"));
+    assertThat(new RDn("gn=foo").getNames()).isEqualTo(List.of("gn"));
+    assertThat(new RDn("UID=bar+CN=foo").getNames()).isEqualTo(List.of("UID", "CN"));
   }
 }

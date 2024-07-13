@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.templates;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link Query}.
@@ -59,6 +59,6 @@ public class QueryTest
   @Test(groups = "querytest", dataProvider = "query-data")
   public void format(final Query query, final String[] terms)
   {
-    Assert.assertEquals(query.getTerms(), terms);
+    assertThat(query.getTerms()).isEqualTo(terms);
   }
 }

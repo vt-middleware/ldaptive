@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link ApproximateFilter}.
@@ -12,70 +12,6 @@ import org.testng.annotations.Test;
  */
 public class ApproximateFilterTest
 {
-
-
-  /**
-   * Approximate test data.
-   *
-   * @return  request test data
-   */
-  @DataProvider(name = "filter")
-  public Object[][] createFilter()
-  {
-    return
-      new Object[][] {
-        new Object[] {
-          "",
-          null,
-        },
-        new Object[] {
-          "givenName~=",
-          null,
-        },
-        new Object[] {
-          "~=",
-          null,
-        },
-        new Object[] {
-          "givenName~=John",
-          null,
-        },
-        new Object[] {
-          "(~=John)",
-          null,
-        },
-        new Object[] {
-          "(givenName~=John",
-          null,
-        },
-        new Object[] {
-          "givenName~=John)",
-          null,
-        },
-        new Object[] {
-          "(givenName~=)",
-          new ApproximateFilter("givenName", ""),
-        },
-        new Object[] {
-          "(givenName~=John)",
-          new ApproximateFilter("givenName", "John"),
-        },
-      };
-  }
-
-
-  /**
-   * @param  value  to parse.
-   * @param  filter  expected value.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(dataProvider = "filter")
-  public void parseRegex(final String value, final ApproximateFilter filter)
-    throws Exception
-  {
-    Assert.assertEquals(RegexFilterFunction.parseApproximateFilter(value), filter);
-  }
 
 
   /**
@@ -109,6 +45,6 @@ public class ApproximateFilterTest
   public void encode(final ApproximateFilter filter, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(filter.getEncoder().encode(), berValue);
+    assertThat(filter.getEncoder().encode()).isEqualTo(berValue);
   }
 }

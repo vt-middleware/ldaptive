@@ -45,11 +45,12 @@ import org.ldaptive.referral.DefaultReferralConnectionFactory;
 import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
 import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link SearchOperation}.
@@ -89,8 +90,8 @@ public class SearchOperationTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    testLdapEntry = convertLdifToEntry(ldif);
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -118,10 +119,10 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    GROUP_ENTRIES.get("2")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
-    GROUP_ENTRIES.get("3")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
-    GROUP_ENTRIES.get("4")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile4)).getEntry();
-    GROUP_ENTRIES.get("5")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile5)).getEntry();
+    GROUP_ENTRIES.get("2")[0] = convertLdifToEntry(readFileIntoString(ldifFile2));
+    GROUP_ENTRIES.get("3")[0] = convertLdifToEntry(readFileIntoString(ldifFile3));
+    GROUP_ENTRIES.get("4")[0] = convertLdifToEntry(readFileIntoString(ldifFile4));
+    GROUP_ENTRIES.get("5")[0] = convertLdifToEntry(readFileIntoString(ldifFile5));
     // CheckStyle:Indentation ON
 
     for (Map.Entry<String, LdapEntry[]> e : GROUP_ENTRIES.entrySet()) {
@@ -130,7 +131,7 @@ public class SearchOperationTest extends AbstractTest
 
     final String baseDn = new Dn(GROUP_ENTRIES.get("2")[0].getDn()).subDn(1).format();
     // setup group relationships
-    final ModifyOperation modify = new ModifyOperation(TestUtils.createSetupConnectionFactory());
+    final ModifyOperation modify = new ModifyOperation(createSetupConnectionFactory());
     modify.execute(
       new ModifyRequest(
         GROUP_ENTRIES.get("2")[0].getDn(),
@@ -162,8 +163,8 @@ public class SearchOperationTest extends AbstractTest
   public void createSpecialCharsEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    specialCharsLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    specialCharsLdapEntry = convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(specialCharsLdapEntry);
   }
 
@@ -178,8 +179,8 @@ public class SearchOperationTest extends AbstractTest
   public void createSpecialCharsEntry4(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    specialCharsLdapEntry4 = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    specialCharsLdapEntry4 = convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(specialCharsLdapEntry4);
   }
 
@@ -226,11 +227,11 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
-    final SearchResponse entryDnResult = TestUtils.convertLdifToResult(expected);
+    final SearchResponse entryDnResult = convertLdifToResult(expected);
     entryDnResult.getEntry().addAttributes(new LdapAttribute("entryDN", entryDnResult.getEntry().getDn()));
 
     // test searching
@@ -239,7 +240,8 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
          .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     // test searching no attributes
     result = search.execute(
@@ -247,7 +249,7 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(ReturnAttributes.NONE.value()).build());
-    Assert.assertTrue(result.getEntry().getAttributes().isEmpty());
+    assertThat(result.getEntry().getAttributes().isEmpty()).isTrue();
 
     // test searching without handler
     result = search.execute(
@@ -255,7 +257,8 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       new LdapEntryHandler[0]);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     // test searching with multiple handlers
     final DnAttributeEntryHandler srh = new DnAttributeEntryHandler();
@@ -265,9 +268,7 @@ public class SearchOperationTest extends AbstractTest
       returnAttrs.split("\\|"),
       new NoOpEntryHandler(), srh);
     // ignore the case of entryDN; some directories return those in mixed case
-    Assert.assertEquals(
-      (new LdapEntryIgnoreCaseComparator("entryDN")).compare(entryDnResult.getEntry(), result.getEntry()),
-      0);
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(entryDnResult.getEntry(), "entryDN");
 
     // test that entry dn handler is no-op if attribute name conflicts
     srh.setDnAttributeName("givenName");
@@ -277,11 +278,7 @@ public class SearchOperationTest extends AbstractTest
       returnAttrs.split("\\|"),
       new NoOpEntryHandler(), srh);
     // ignore the case of entryDN; some directories return those in mixed case
-    Assert.assertEquals(
-      (new LdapEntryIgnoreCaseComparator("entryDN")).compare(
-        TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()),
-      0);
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(convertLdifToEntry(expected), "entryDN");
   }
 
 
@@ -304,9 +301,9 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
     // presence filter
     SearchResponse result = search.execute(
@@ -314,14 +311,15 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(&(objectClass=*)(uid=2))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter("(&(objectClass=*)(uid=*))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    Assert.assertTrue(result.entrySize() > 10);
+    assertThat(result.entrySize()).isGreaterThan(10);
 
     // extensible filter
     result = search.execute(
@@ -329,7 +327,8 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(uid:caseExactMatch:=2)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     // substring filter
     result = search.execute(
@@ -337,35 +336,39 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(cn=*hn Adams)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter("(cn=* *)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    Assert.assertTrue(result.entrySize() > 10);
+    assertThat(result.entrySize()).isGreaterThan(10);
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter("(cn=John Adam*)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter("(mail=jad*@*org)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter("(cn=*ohn A*m*)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     // greater than filter
     result = search.execute(
@@ -373,14 +376,15 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(&(uid=2)(createTimestamp>=20000101000000Z))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter("(&(uid=*)(createTimestamp>=20000101000000Z))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    Assert.assertTrue(result.entrySize() > 10);
+    assertThat(result.entrySize()).isGreaterThan(10);
 
     // less than filter
     result = search.execute(
@@ -388,14 +392,15 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(&(uid=2)(createTimestamp<=21000101000000Z))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter("(&(uid=*)(createTimestamp<=21000101000000Z))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    Assert.assertTrue(result.entrySize() > 10);
+    assertThat(result.entrySize()).isGreaterThan(10);
 
     // approximate filter
     result = search.execute(
@@ -403,7 +408,8 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(&(givenName~=Jon)(mail=adams@ldaptive.org))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
   }
 
 
@@ -429,8 +435,8 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchResponse expectedResult = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile));
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchResponse expectedResult = convertLdifToResult(readFileIntoString(ldifFile));
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
     final SearchRequest subtreeRequest = SearchRequest.builder()
       .dn(new Dn(expectedResult.getEntry().getDn()).subDn(2).format())
@@ -438,7 +444,8 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBTREE).build();
     SearchResponse result = search.execute(subtreeRequest);
-    TestUtils.assertEquals(expectedResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(expectedResult);
 
     final SearchRequest onelevelRequest = SearchRequest.builder()
       .dn(new Dn(expectedResult.getEntry().getDn()).subDn(1).format())
@@ -446,7 +453,8 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.ONELEVEL).build();
     result = search.execute(onelevelRequest);
-    TestUtils.assertEquals(expectedResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(expectedResult);
 
     final SearchRequest objectRequest = SearchRequest.builder()
       .dn(expectedResult.getEntry().getDn())
@@ -454,7 +462,8 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.OBJECT).build();
     result = search.execute(objectRequest);
-    TestUtils.assertEquals(expectedResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(expectedResult);
 
     final SearchRequest subordinateRequest = SearchRequest.builder()
       .dn(new Dn(expectedResult.getEntry().getDn()).subDn(2).format())
@@ -462,7 +471,8 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBORDINATE).build();
     result = search.execute(subordinateRequest);
-    TestUtils.assertEquals(expectedResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(expectedResult);
   }
 
 
@@ -488,9 +498,9 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
     // test searching, no attributes
     SearchResponse result = search.execute(
@@ -498,8 +508,8 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(ReturnAttributes.NONE.value()).build());
-    Assert.assertNotNull(result.getEntry());
-    Assert.assertTrue(result.getEntry().getAttributes().isEmpty());
+    assertThat(result.getEntry()).isNotNull();
+    assertThat(result.getEntry().getAttributes().isEmpty()).isTrue();
 
     // test searching, user attributes
     result = search.execute(
@@ -507,9 +517,9 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(ReturnAttributes.ALL_USER.value()).build());
-    Assert.assertNotNull(result.getEntry());
-    Assert.assertNotNull(result.getEntry().getAttribute("cn"));
-    Assert.assertNull(result.getEntry().getAttribute("createTimestamp"));
+    assertThat(result.getEntry()).isNotNull();
+    assertThat(result.getEntry().getAttribute("cn")).isNotNull();
+    assertThat(result.getEntry().getAttribute("createTimestamp")).isNull();
 
     // test searching, operations attributes
     if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
@@ -526,9 +536,9 @@ public class SearchOperationTest extends AbstractTest
           .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
           .returnAttributes(ReturnAttributes.ALL_OPERATIONAL.value()).build());
     }
-    Assert.assertNotNull(result.getEntry());
-    Assert.assertNull(result.getEntry().getAttribute("cn"));
-    Assert.assertNotNull(result.getEntry().getAttribute("createTimestamp"));
+    assertThat(result.getEntry()).isNotNull();
+    assertThat(result.getEntry().getAttribute("cn")).isNull();
+    assertThat(result.getEntry().getAttribute("createTimestamp")).isNotNull();
 
     // test searching, all attributes
     if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
@@ -545,9 +555,9 @@ public class SearchOperationTest extends AbstractTest
           .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
           .returnAttributes(ReturnAttributes.ALL.value()).build());
     }
-    Assert.assertNotNull(result.getEntry());
-    Assert.assertNotNull(result.getEntry().getAttribute("cn"));
-    Assert.assertNotNull(result.getEntry().getAttribute("createTimestamp"));
+    assertThat(result.getEntry()).isNotNull();
+    assertThat(result.getEntry().getAttribute("cn")).isNotNull();
+    assertThat(result.getEntry().getAttribute("createTimestamp")).isNotNull();
   }
 
 
@@ -569,11 +579,11 @@ public class SearchOperationTest extends AbstractTest
   public void pagedSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    final SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory();
+    final SingleConnectionFactory cf = createSingleConnectionFactory();
     try {
       final PagedResultsControl prc = new PagedResultsControl(1, true);
       final SearchOperation search = new SearchOperation(cf);
-      final String expected = TestUtils.readFileIntoString(ldifFile);
+      final String expected = readFileIntoString(ldifFile);
 
       // test searching
       final SearchRequest request = SearchRequest.builder()
@@ -604,14 +614,10 @@ public class SearchOperationTest extends AbstractTest
       } while (cookie != null);
       // ignore the case of member and contactPerson;
       // some directories return those in mixed case
-      Assert.assertEquals(
-        (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
-          TestUtils.convertLdifToResult(expected),
-          pagedResults),
-        0);
+      SearchResponseAssert.assertThat(pagedResults).isSame(convertLdifToResult(expected), "member", "contactPerson");
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     } finally {
       cf.close();
     }
@@ -650,8 +656,8 @@ public class SearchOperationTest extends AbstractTest
     VirtualListViewRequestControl vlvrc = new VirtualListViewRequestControl(3, 1, 1, true);
     final byte[] contextID;
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
-      final String expected = TestUtils.readFileIntoString(ldifFile);
+      final SearchOperation search = new SearchOperation(createConnectionFactory());
+      final String expected = readFileIntoString(ldifFile);
 
       // test searching
       final SearchRequest request = SearchRequest.builder()
@@ -667,23 +673,19 @@ public class SearchOperationTest extends AbstractTest
       }
       // ignore the case of member and contactPerson;
       // some directories return those in mixed case
-      Assert.assertEquals(
-        (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
-          TestUtils.convertLdifToResult(expected),
-          result),
-        0);
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected), "member", "contactPerson");
       final SortResponseControl srResCtl =
         (SortResponseControl) result.getControl(SortResponseControl.OID);
-      Assert.assertNotNull(srResCtl);
-      Assert.assertEquals(srResCtl.getSortResult(), ResultCode.SUCCESS);
+      assertThat(srResCtl).isNotNull();
+      assertThat(srResCtl.getSortResult()).isEqualTo(ResultCode.SUCCESS);
 
       final VirtualListViewResponseControl vlvResCtl =
         (VirtualListViewResponseControl) result.getControl(VirtualListViewResponseControl.OID);
-      Assert.assertNotNull(vlvResCtl);
-      Assert.assertEquals(vlvResCtl.getViewResult(), ResultCode.SUCCESS);
-      Assert.assertEquals(vlvResCtl.getTargetPosition(), 3);
-      Assert.assertEquals(vlvResCtl.getContentCount(), 4);
-      Assert.assertNotNull(vlvResCtl.getContextID());
+      assertThat(vlvResCtl).isNotNull();
+      assertThat(vlvResCtl.getViewResult()).isEqualTo(ResultCode.SUCCESS);
+      assertThat(vlvResCtl.getTargetPosition()).isEqualTo(3);
+      assertThat(vlvResCtl.getContentCount()).isEqualTo(4);
+      assertThat(vlvResCtl.getContextID()).isNotNull();
       contextID = vlvResCtl.getContextID();
 
       vlvrc = new VirtualListViewRequestControl("group4", 1, 1, contextID, true);
@@ -691,14 +693,10 @@ public class SearchOperationTest extends AbstractTest
       result = search.execute(request);
       // ignore the case of member and contactPerson;
       // some directories return those in mixed case
-      Assert.assertEquals(
-        (new SearchResultIgnoreCaseComparator("member", "contactPerson")).compare(
-          TestUtils.convertLdifToResult(expected),
-          result),
-        0);
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected), "member", "contactPerson");
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -723,7 +721,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+      final SearchOperation search = new SearchOperation(createConnectionFactory());
 
       SortRequestControl src = new SortRequestControl(new SortKey[] {new SortKey("uugid", "caseExactMatch")}, true);
 
@@ -741,7 +739,7 @@ public class SearchOperationTest extends AbstractTest
       // confirm sorted
       int i = 2;
       for (LdapEntry e : result.getEntries()) {
-        Assert.assertEquals(e.getAttribute("uid").getStringValue(), String.valueOf(2000 + i));
+        assertThat(e.getAttribute("uid").getStringValue()).isEqualTo(String.valueOf(2000 + i));
         i++;
       }
 
@@ -753,12 +751,12 @@ public class SearchOperationTest extends AbstractTest
       // confirm sorted
       i = 5;
       for (LdapEntry e : result.getEntries()) {
-        Assert.assertEquals(e.getAttribute("uid").getStringValue(), String.valueOf(2000 + i));
+        assertThat(e.getAttribute("uid").getStringValue()).isEqualTo(String.valueOf(2000 + i));
         i--;
       }
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -778,7 +776,7 @@ public class SearchOperationTest extends AbstractTest
     throws Exception
   {
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+      final SearchOperation search = new SearchOperation(createConnectionFactory());
 
       // test mail presence
       SearchRequest request = SearchRequest.builder()
@@ -792,13 +790,12 @@ public class SearchOperationTest extends AbstractTest
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support this control");
       }
-      Assert.assertEquals(result.entrySize(), 1);
-      Assert.assertEquals(result.getEntry().size(), 1);
+      assertThat(result.entrySize()).isEqualTo(1);
+      assertThat(result.getEntry().size()).isEqualTo(1);
       LdapAttribute attr = result.getEntry().getAttribute();
-      Assert.assertEquals(attr.getName(), "mail");
-      Assert.assertEqualsNoOrder(
-        attr.getStringValues().toArray(new String[0]),
-        new String[] {"jadams@ldaptive.org", "john.adams@ldaptive.org", "adams@ldaptive.org"});
+      assertThat(attr.getName()).isEqualTo("mail");
+      assertThat(attr.getStringValues().toArray(new String[0]))
+        .containsExactlyInAnyOrder("jadams@ldaptive.org", "john.adams@ldaptive.org", "adams@ldaptive.org");
 
       // test mail equality
       request = SearchRequest.builder()
@@ -812,12 +809,12 @@ public class SearchOperationTest extends AbstractTest
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support this control");
       }
-      Assert.assertEquals(result.entrySize(), 1);
-      Assert.assertEquals(result.getEntry().size(), 1);
+      assertThat(result.entrySize()).isEqualTo(1);
+      assertThat(result.getEntry().size()).isEqualTo(1);
       attr = result.getEntry().getAttribute();
-      Assert.assertEquals(attr.getName(), "mail");
-      Assert.assertEquals(attr.size(), 1);
-      Assert.assertEquals(attr.getStringValue(), "john.adams@ldaptive.org");
+      assertThat(attr.getName()).isEqualTo("mail");
+      assertThat(attr.size()).isEqualTo(1);
+      assertThat(attr.getStringValue()).isEqualTo("john.adams@ldaptive.org");
 
       // test mail substring
       request = SearchRequest.builder()
@@ -831,13 +828,12 @@ public class SearchOperationTest extends AbstractTest
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support this control");
       }
-      Assert.assertEquals(result.entrySize(), 1);
-      Assert.assertEquals(result.getEntry().size(), 1);
+      assertThat(result.entrySize()).isEqualTo(1);
+      assertThat(result.getEntry().size()).isEqualTo(1);
       attr = result.getEntry().getAttribute();
-      Assert.assertEquals(attr.getName(), "mail");
-      Assert.assertEqualsNoOrder(
-        attr.getStringValues().toArray(new String[0]),
-        new String[] {"jadams@ldaptive.org", "john.adams@ldaptive.org"});
+      assertThat(attr.getName()).isEqualTo("mail");
+      assertThat(attr.getStringValues().toArray(new String[0]))
+        .containsExactlyInAnyOrder("jadams@ldaptive.org", "john.adams@ldaptive.org");
 
       // test mail extensible
       request = SearchRequest.builder()
@@ -852,12 +848,12 @@ public class SearchOperationTest extends AbstractTest
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support this control");
       }
-      Assert.assertEquals(result.entrySize(), 1);
-      Assert.assertEquals(result.getEntry().size(), 1);
+      assertThat(result.entrySize()).isEqualTo(1);
+      assertThat(result.getEntry().size()).isEqualTo(1);
       attr = result.getEntry().getAttribute();
-      Assert.assertEquals(attr.getName(), "mail");
-      Assert.assertEquals(attr.size(), 1);
-      Assert.assertEquals(attr.getStringValue(), "john.adams@ldaptive.org");
+      assertThat(attr.getName()).isEqualTo("mail");
+      assertThat(attr.size()).isEqualTo(1);
+      assertThat(attr.getStringValue()).isEqualTo("john.adams@ldaptive.org");
 
       // test multiple filters
       request = SearchRequest.builder()
@@ -870,14 +866,14 @@ public class SearchOperationTest extends AbstractTest
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support this control");
       }
-      Assert.assertEquals(result.entrySize(), 1);
-      Assert.assertEquals(result.getEntry().size(), 2);
-      Assert.assertEquals(result.getEntry().getAttribute("mail").getStringValue(), "john.adams@ldaptive.org");
-      Assert.assertEquals(result.getEntry().getAttribute("sn").getStringValue(), "Adams");
+      assertThat(result.entrySize()).isEqualTo(1);
+      assertThat(result.getEntry().size()).isEqualTo(2);
+      assertThat(result.getEntry().getAttribute("mail").getStringValue()).isEqualTo("john.adams@ldaptive.org");
+      assertThat(result.getEntry().getAttribute("sn").getStringValue()).isEqualTo("Adams");
 
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -902,14 +898,14 @@ public class SearchOperationTest extends AbstractTest
   {
     boolean addedAttribute = false;
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+      final SearchOperation search = new SearchOperation(createConnectionFactory());
 
       final SearchRequest request = SearchRequest.builder().dn(dn).filter(filter).build();
 
       // no authz
       SearchResponse response = search.execute(request);
-      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-      Assert.assertEquals(response.entrySize(), 1);
+      assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+      assertThat(response.entrySize()).isEqualTo(1);
 
       // anonymous authz
       request.setControls(new ProxyAuthorizationControl("dn:"));
@@ -918,16 +914,16 @@ public class SearchOperationTest extends AbstractTest
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support this control");
       }
-      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-      Assert.assertEquals(response.entrySize(), 0);
+      assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+      assertThat(response.entrySize()).isEqualTo(0);
 
       // authz denied
       request.setControls(new ProxyAuthorizationControl("dn:" + authzTo));
       response = search.execute(request);
-      Assert.assertEquals(response.getResultCode(), ResultCode.AUTHORIZATION_DENIED);
+      assertThat(response.getResultCode()).isEqualTo(ResultCode.AUTHORIZATION_DENIED);
 
       // add authzTo
-      final ModifyOperation modify = new ModifyOperation(TestUtils.createConnectionFactory());
+      final ModifyOperation modify = new ModifyOperation(createConnectionFactory());
       modify.execute(
         new ModifyRequest(
           authzFrom,
@@ -935,23 +931,23 @@ public class SearchOperationTest extends AbstractTest
       addedAttribute = true;
 
       response = search.execute(request);
-      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-      Assert.assertEquals(response.entrySize(), 1);
+      assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+      assertThat(response.entrySize()).isEqualTo(1);
 
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     } finally {
       if (addedAttribute) {
         try {
           // remove authzTo
-          final ModifyOperation modify = new ModifyOperation(TestUtils.createConnectionFactory());
+          final ModifyOperation modify = new ModifyOperation(createConnectionFactory());
           modify.execute(
             new ModifyRequest(
               authzFrom,
               new AttributeModification(AttributeModification.Type.DELETE, new LdapAttribute("authzTo"))));
         } catch (LdapException e) {
-          Assert.fail(e.getMessage());
+          fail(e.getMessage());
         }
       }
     }
@@ -983,9 +979,9 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
     // test recursive searching
     final RecursiveResultHandler rsrh = new RecursiveResultHandler("member", "uugid", "uid");
@@ -994,13 +990,8 @@ public class SearchOperationTest extends AbstractTest
     final SearchResponse result = search.execute(
       dn, new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|"));
 
-    // ignore the case of member and contactPerson; some directories return
-    // those in mixed case
-    Assert.assertEquals(
-      (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
-        TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()),
-      0);
+    // ignore the case of member and contactPerson; some directories return those in mixed case
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(convertLdifToEntry(expected), "member", "contactPerson");
   }
 
 
@@ -1026,9 +1017,9 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
     // test recursive searching
     final RecursiveResultHandler rsrh = new RecursiveResultHandler("member", "member");
@@ -1036,13 +1027,8 @@ public class SearchOperationTest extends AbstractTest
 
     final SearchResponse result = search.execute(dn, new FilterTemplate(filter), returnAttrs.split("\\|"));
 
-    // ignore the case of member and contactPerson; some directories return
-    // those in mixed case
-    Assert.assertEquals(
-      (new LdapEntryIgnoreCaseComparator("member")).compare(
-        TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()),
-      0);
+    // ignore the case of member and contactPerson; some directories return those in mixed case
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(convertLdifToEntry(expected), "member");
   }
 
 
@@ -1064,10 +1050,10 @@ public class SearchOperationTest extends AbstractTest
   public void mergeSearch(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     search.setSearchResultHandlers(new MergeResultHandler());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
     // test result merge
     final SearchRequest sr = SearchRequest.builder()
@@ -1078,11 +1064,7 @@ public class SearchOperationTest extends AbstractTest
     final SearchResponse result = search.execute(sr);
     // ignore the case of member and contactPerson; some directories return
     // those in mixed case
-    Assert.assertEquals(
-      (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
-        TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()),
-      0);
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(convertLdifToEntry(expected), "member", "contactPerson");
   }
 
 
@@ -1108,10 +1090,10 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     search.setSearchResultHandlers(new MergeResultHandler());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
     // test result merge
     final SearchRequest sr = SearchRequest.builder()
@@ -1120,13 +1102,8 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes(returnAttrs.split("\\|")).build();
 
     final SearchResponse result = search.execute(sr);
-    // ignore the case of member and contactPerson; some directories return
-    // those in mixed case
-    Assert.assertEquals(
-      (new LdapEntryIgnoreCaseComparator("member", "contactPerson")).compare(
-        TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()),
-      0);
+    // ignore the case of member and contactPerson; some directories return those in mixed case
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(convertLdifToEntry(expected), "member", "contactPerson");
   }
 
 
@@ -1152,9 +1129,9 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
     // test merge searching
     final MergeAttributeEntryHandler handler = new MergeAttributeEntryHandler();
@@ -1166,7 +1143,8 @@ public class SearchOperationTest extends AbstractTest
       filter,
       returnAttrs.split("\\|"),
       handler);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
   }
 
 
@@ -1188,7 +1166,7 @@ public class SearchOperationTest extends AbstractTest
   public void binarySearch(final String dn, final String filter, final String returnAttr, final String base64Value)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
     // test binary searching
     SearchRequest request = SearchRequest.builder()
@@ -1198,13 +1176,13 @@ public class SearchOperationTest extends AbstractTest
       .binaryAttributes(returnAttr).build();
 
     SearchResponse result = search.execute(request);
-    Assert.assertTrue(result.getEntry().getAttribute().isBinary());
-    Assert.assertEquals(result.getEntry().getAttribute().getStringValue(), base64Value);
+    assertThat(result.getEntry().getAttribute().isBinary()).isTrue();
+    assertThat(result.getEntry().getAttribute().getStringValue()).isEqualTo(base64Value);
 
     request = SearchRequest.builder().dn(dn).filter(filter).returnAttributes("sn").build();
     result = search.execute(request);
-    Assert.assertFalse(result.getEntry().getAttribute().isBinary());
-    Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
+    assertThat(result.getEntry().getAttribute().isBinary()).isFalse();
+    assertThat(result.getEntry().getAttribute().getBinaryValue()).isNotNull();
 
     request = SearchRequest.builder()
       .dn(dn)
@@ -1212,16 +1190,16 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes("sn")
       .binaryAttributes("sn").build();
     result = search.execute(request);
-    Assert.assertTrue(result.getEntry().getAttribute().isBinary());
-    Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
+    assertThat(result.getEntry().getAttribute().isBinary()).isTrue();
+    assertThat(result.getEntry().getAttribute().getBinaryValue()).isNotNull();
 
     request = SearchRequest.builder()
       .dn(dn)
       .filter(filter)
       .returnAttributes("userCertificate;binary").build();
     result = search.execute(request);
-    Assert.assertTrue(result.getEntry().getAttribute().isBinary());
-    Assert.assertNotNull(result.getEntry().getAttribute().getBinaryValue());
+    assertThat(result.getEntry().getAttribute().isBinary()).isTrue();
+    assertThat(result.getEntry().getAttribute().getBinaryValue()).isNotNull();
   }
 
 
@@ -1250,25 +1228,26 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     final CaseChangeEntryHandler srh = new CaseChangeEntryHandler();
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
     // test no case change
-    final SearchResponse noChangeResult = TestUtils.convertLdifToResult(expected);
+    final SearchResponse noChangeResult = convertLdifToResult(expected);
     SearchResponse result = search.execute(
       dn,
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    TestUtils.assertEquals(noChangeResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(noChangeResult);
 
     // test lower case attribute values
     srh.setAttributeNameCaseChange(CaseChange.NONE);
     srh.setAttributeValueCaseChange(CaseChange.LOWER);
     srh.setDnCaseChange(CaseChange.NONE);
 
-    final SearchResponse lcValuesChangeResult = TestUtils.convertLdifToResult(expected);
+    final SearchResponse lcValuesChangeResult = convertLdifToResult(expected);
     for (LdapAttribute la : lcValuesChangeResult.getEntry().getAttributes()) {
       final Set<String> s = la.getStringValues().stream().map(LdapUtils::toLowerCase).collect(Collectors.toSet());
       la.clear();
@@ -1279,14 +1258,15 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    TestUtils.assertEquals(lcValuesChangeResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(lcValuesChangeResult);
 
     // test upper case attribute names
     srh.setAttributeNameCaseChange(CaseChange.UPPER);
     srh.setAttributeValueCaseChange(CaseChange.NONE);
     srh.setDnCaseChange(CaseChange.NONE);
 
-    final SearchResponse ucNamesChangeResult = TestUtils.convertLdifToResult(expected);
+    final SearchResponse ucNamesChangeResult = convertLdifToResult(expected);
     for (LdapAttribute la : ucNamesChangeResult.getEntry().getAttributes()) {
       la.setName(LdapUtils.toUpperCase(la.getName()));
     }
@@ -1295,14 +1275,15 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    TestUtils.assertEquals(ucNamesChangeResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(ucNamesChangeResult);
 
     // test lower case everything
     srh.setAttributeNameCaseChange(CaseChange.LOWER);
     srh.setAttributeValueCaseChange(CaseChange.LOWER);
     srh.setDnCaseChange(CaseChange.LOWER);
 
-    final SearchResponse lcAllChangeResult = TestUtils.convertLdifToResult(expected);
+    final SearchResponse lcAllChangeResult = convertLdifToResult(expected);
     lcAllChangeResult.getEntry().setDn(LdapUtils.toLowerCase(lcAllChangeResult.getEntry().getDn()));
     for (LdapAttribute la : lcAllChangeResult.getEntry().getAttributes()) {
       la.setName(LdapUtils.toLowerCase(la.getName()));
@@ -1315,7 +1296,8 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    TestUtils.assertEquals(lcAllChangeResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(lcAllChangeResult);
 
     // test lower case specific attributes
     srh.setAttributeNames("givenName");
@@ -1323,7 +1305,7 @@ public class SearchOperationTest extends AbstractTest
     srh.setAttributeValueCaseChange(CaseChange.LOWER);
     srh.setDnCaseChange(CaseChange.NONE);
 
-    final SearchResponse lcgivenNameChangeResult = TestUtils.convertLdifToResult(expected);
+    final SearchResponse lcgivenNameChangeResult = convertLdifToResult(expected);
     lcgivenNameChangeResult.getEntry().getAttributes().stream().filter(
       la -> la.getName().equals("givenName")).forEach(la -> {
         final Set<String> s = la.getStringValues().stream().map(LdapUtils::toLowerCase).collect(Collectors.toSet());
@@ -1335,7 +1317,8 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    TestUtils.assertEquals(lcgivenNameChangeResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(lcgivenNameChangeResult);
   }
 
 
@@ -1362,9 +1345,9 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     search.setSearchResultHandlers(new RangeEntryHandler());
     final SearchResponse result = search.execute(
       dn,
@@ -1377,11 +1360,7 @@ public class SearchOperationTest extends AbstractTest
       throw new UnsupportedOperationException("LDAP server does not support this DN syntax");
     }
     // ignore the case of member; some directories return it in mixed case
-    Assert.assertEquals(
-      (new LdapEntryIgnoreCaseComparator("member")).compare(
-        TestUtils.convertLdifToResult(expected).getEntry(),
-        result.getEntry()),
-      0);
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(convertLdifToEntry(expected), "member");
   }
 
 
@@ -1403,7 +1382,7 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     search.setEntryHandlers(new ObjectSidHandler(), new ObjectGuidHandler());
     final SearchRequest sr = SearchRequest.builder()
       .dn(dn)
@@ -1413,13 +1392,13 @@ public class SearchOperationTest extends AbstractTest
 
     final SearchResponse response = search.execute(sr);
     final GetStatsControl ctrl = (GetStatsControl) response.getControl(GetStatsControl.OID);
-    Assert.assertTrue(ctrl.getStatistics().size() > 1);
+    assertThat(ctrl.getStatistics().size()).isGreaterThan(1);
 
     final LdapAttribute whenCreated = response.getEntry().getAttribute("whenCreated");
-    Assert.assertNotNull(whenCreated.getValue(new GeneralizedTimeValueTranscoder().decoder()));
+    assertThat(whenCreated.getValue(new GeneralizedTimeValueTranscoder().decoder())).isNotNull();
 
     final LdapAttribute whenChanged = response.getEntry().getAttribute("whenChanged");
-    Assert.assertNotNull(whenChanged.getValue(new GeneralizedTimeValueTranscoder().decoder()));
+    assertThat(whenChanged.getValue(new GeneralizedTimeValueTranscoder().decoder())).isNotNull();
   }
 
 
@@ -1444,7 +1423,7 @@ public class SearchOperationTest extends AbstractTest
     }
 
     try  {
-      final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+      final SearchOperation search = new SearchOperation(createConnectionFactory());
       search.setEntryHandlers(new ObjectSidHandler(), new ObjectGuidHandler());
       final SearchRequest sr = SearchRequest.builder()
         .dn(dn)
@@ -1465,7 +1444,7 @@ public class SearchOperationTest extends AbstractTest
       search.execute(sr);
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -1501,23 +1480,25 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
-    final String expected = TestUtils.readFileIntoString(ldifFile);
-    final SearchResponse specialCharsResult = TestUtils.convertLdifToResult(expected);
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
+    final String expected = readFileIntoString(ldifFile);
+    final SearchResponse specialCharsResult = convertLdifToResult(expected);
 
     SearchResponse result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(specialCharsResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
 
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter(new FilterTemplate(binaryFilter, new Object[] {LdapUtils.base64Decode(binaryFilterParameters)}))
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(specialCharsResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
   }
 
 
@@ -1546,16 +1527,17 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
-    final String expected = TestUtils.readFileIntoString(ldifFile);
-    final SearchResponse specialCharsResult = TestUtils.convertLdifToResult(expected);
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
+    final String expected = readFileIntoString(ldifFile);
+    final SearchResponse specialCharsResult = convertLdifToResult(expected);
 
     final SearchResponse result = search.execute(
       SearchRequest.builder()
         .dn(dn)
         .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(returnAttrs.split("\\|")).build());
-    TestUtils.assertEquals(specialCharsResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
   }
 
 
@@ -1573,12 +1555,13 @@ public class SearchOperationTest extends AbstractTest
   public void quoteInBaseDn(final String dn, final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
-    final String expected = TestUtils.readFileIntoString(ldifFile);
-    final SearchResponse quotedResult = TestUtils.convertLdifToResult(expected);
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
+    final String expected = readFileIntoString(ldifFile);
+    final SearchResponse quotedResult = convertLdifToResult(expected);
 
     final SearchResponse result = search.execute(SearchRequest.objectScopeSearchRequest(dn));
-    TestUtils.assertEquals(quotedResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(quotedResult);
   }
 
 
@@ -1602,11 +1585,11 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
-    final SearchResponse specialCharsResult = TestUtils.convertLdifToResult(expected);
+    final String expected = readFileIntoString(ldifFile);
+    final SearchResponse specialCharsResult = convertLdifToResult(expected);
     specialCharsResult.getEntry().setDn(specialCharsResult.getEntry().getDn().replaceAll("\\\\", ""));
 
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
     // test special character searching
     final SearchRequest request = new SearchRequest(dn, filter);
@@ -1615,7 +1598,8 @@ public class SearchOperationTest extends AbstractTest
       // ignore this test if not supported by the server
       return;
     }
-    TestUtils.assertEquals(specialCharsResult, result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
   }
 
 
@@ -1635,7 +1619,7 @@ public class SearchOperationTest extends AbstractTest
   public void searchExceeded(final String dn, final String filter, final int resultsSize)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     final SearchRequest request = new SearchRequest();
     request.setBaseDn(dn);
     request.setSizeLimit(resultsSize);
@@ -1643,13 +1627,13 @@ public class SearchOperationTest extends AbstractTest
     request.setFilter("(uugid=*)");
 
     SearchResponse response = search.execute(request);
-    Assert.assertEquals(response.entrySize(), resultsSize);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SIZE_LIMIT_EXCEEDED);
+    assertThat(response.entrySize()).isEqualTo(resultsSize);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SIZE_LIMIT_EXCEEDED);
 
     request.setFilter(filter);
     response = search.execute(request);
-    Assert.assertEquals(response.entrySize(), resultsSize);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isEqualTo(resultsSize);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 
 
@@ -1679,7 +1663,7 @@ public class SearchOperationTest extends AbstractTest
     request.setReturnAttributes(ReturnAttributes.NONE.value());
     request.setFilter(filter);
 
-    final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
+    final ConnectionConfig cc = readConnectionConfig(null);
     cc.setConnectTimeout(Duration.ofMillis(500));
     cc.setResponseTimeout(Duration.ofMillis(500));
     final ConnectionFactory cf = DefaultConnectionFactory.builder()
@@ -1687,10 +1671,10 @@ public class SearchOperationTest extends AbstractTest
       .build();
     final SearchOperation search = new SearchOperation(cf);
     SearchResponse response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.REFERRAL);
-    Assert.assertTrue(response.getEntries().isEmpty());
-    Assert.assertEquals(response.getReferralURLs().length, 1);
-    Assert.assertEquals(response.getReferralURLs()[0], "ldap://localhost:389/ou=people,dc=vt,dc=edu??one");
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.REFERRAL);
+    assertThat(response.getEntries().isEmpty()).isTrue();
+    assertThat(response.getReferralURLs().length).isEqualTo(1);
+    assertThat(response.getReferralURLs()[0]).isEqualTo("ldap://localhost:389/ou=people,dc=vt,dc=edu??one");
 
     search.setSearchResultHandlers(new FollowSearchReferralHandler(url -> {
       final ConnectionConfig refConfig = ConnectionConfig.copy(cc);
@@ -1698,9 +1682,9 @@ public class SearchOperationTest extends AbstractTest
       return new DefaultConnectionFactory(refConfig);
     }));
     response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertFalse(response.getEntries().isEmpty());
-    Assert.assertEquals(response.getReferralURLs().length, 0);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.getEntries().isEmpty()).isFalse();
+    assertThat(response.getReferralURLs().length).isEqualTo(0);
 
     // chase referrals
 
@@ -1712,26 +1696,26 @@ public class SearchOperationTest extends AbstractTest
     request.setFilter("uupid=dhawes");
     search.setSearchResultHandlers(new FollowSearchReferralHandler());
     response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertFalse(response.getEntries().isEmpty());
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.getEntries().isEmpty()).isFalse();
 
     // limit 0-3
     for (int i = 0; i < 4; i++) {
       search.setSearchResultHandlers(new FollowSearchReferralHandler(i));
       try {
         search.execute(request);
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       } catch (Exception e) {
-        Assert.assertEquals(e.getClass(), LdapException.class);
-        Assert.assertEquals(((LdapException) e).getResultCode(), ResultCode.REFERRAL_LIMIT_EXCEEDED);
+        assertThat(e).isExactlyInstanceOf(LdapException.class);
+        assertThat(((LdapException) e).getResultCode()).isEqualTo(ResultCode.REFERRAL_LIMIT_EXCEEDED);
       }
     }
 
     // limit 4
     search.setSearchResultHandlers(new FollowSearchReferralHandler(4));
     response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertFalse(response.getEntries().isEmpty());
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.getEntries().isEmpty()).isFalse();
   }
 
 
@@ -1763,7 +1747,7 @@ public class SearchOperationTest extends AbstractTest
     request.setReturnAttributes(ReturnAttributes.NONE.value());
     request.setFilter(filter);
 
-    final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
+    final ConnectionConfig cc = readConnectionConfig(null);
     cc.setConnectTimeout(Duration.ofMillis(500));
     cc.setResponseTimeout(Duration.ofMillis(500));
     final ConnectionFactory cf = DefaultConnectionFactory.builder()
@@ -1772,12 +1756,12 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     search.setReferenceHandlers(reference -> refs.addAll(Arrays.asList(reference.getUris())));
     SearchResponse response = search.execute(request);
-    Assert.assertTrue(response.entrySize() > 0);
-    Assert.assertFalse(refs.isEmpty());
+    assertThat(response.entrySize()).isGreaterThan(0);
+    assertThat(refs.isEmpty()).isFalse();
     for (String r : refs) {
-      Assert.assertNotNull(r);
+      assertThat(r).isNotNull();
     }
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
 
     refs.clear();
     final FollowSearchResultReferenceHandler srh = new FollowSearchResultReferenceHandler(
@@ -1789,9 +1773,9 @@ public class SearchOperationTest extends AbstractTest
       });
     search.setSearchResultHandlers(srh);
     response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.entrySize() > 0);
-    Assert.assertEquals(response.referenceSize(), 0);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isGreaterThan(0);
+    assertThat(response.referenceSize()).isEqualTo(0);
 
     // chase search references
 
@@ -1802,26 +1786,26 @@ public class SearchOperationTest extends AbstractTest
     request.setFilter("uupid=dhawes");
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler());
     response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertFalse(response.getEntries().isEmpty());
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.getEntries().isEmpty()).isFalse();
 
     // limit 0-3
     for (int i = 0; i < 4; i++) {
       search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(i));
       try {
         search.execute(request);
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       } catch (Exception e) {
-        Assert.assertEquals(e.getClass(), LdapException.class);
-        Assert.assertEquals(((LdapException) e).getResultCode(), ResultCode.REFERRAL_LIMIT_EXCEEDED);
+        assertThat(e).isExactlyInstanceOf(LdapException.class);
+        assertThat(((LdapException) e).getResultCode()).isEqualTo(ResultCode.REFERRAL_LIMIT_EXCEEDED);
       }
     }
 
     // limit 4
     search.setSearchResultHandlers(new FollowSearchResultReferenceHandler(4));
     response = search.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertFalse(response.getEntries().isEmpty());
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.getEntries().isEmpty()).isFalse();
   }
 
 
@@ -1853,7 +1837,7 @@ public class SearchOperationTest extends AbstractTest
     request.setReturnAttributes(ReturnAttributes.NONE.value());
     request.setFilter(filter);
 
-    final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
+    final ConnectionConfig cc = readConnectionConfig(null);
     cc.setConnectTimeout(Duration.ofMillis(500));
     cc.setResponseTimeout(Duration.ofMillis(500));
     final ConnectionFactory cf = DefaultConnectionFactory.builder()
@@ -1864,18 +1848,18 @@ public class SearchOperationTest extends AbstractTest
     search.setEntryHandlers(new ObjectSidHandler(), new ObjectGuidHandler());
     search.setReferenceHandlers(reference -> refs.addAll(Arrays.asList(reference.getUris())));
     SearchResponse response = search.execute(request);
-    Assert.assertTrue(response.entrySize() > 0);
-    Assert.assertFalse(refs.isEmpty());
+    assertThat(response.entrySize()).isGreaterThan(0);
+    assertThat(refs.isEmpty()).isFalse();
     for (String r : refs) {
-      Assert.assertNotNull(r);
+      assertThat(r).isNotNull();
     }
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
 
     refs.clear();
     search.setSearchResultHandlers(new FollowSearchReferralHandler(new DefaultReferralConnectionFactory(cc)));
     response = search.execute(request);
-    Assert.assertTrue(response.entrySize() > 0);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isGreaterThan(0);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 
 
@@ -1897,10 +1881,11 @@ public class SearchOperationTest extends AbstractTest
   public void getAttributes(final String dn, final String returnAttrs, final String results)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertStringToEntry(dn, results), result.getEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(convertStringToEntry(dn, results));
   }
 
 
@@ -1920,14 +1905,13 @@ public class SearchOperationTest extends AbstractTest
   public void getAttributesBase64(final String dn, final String returnAttrs, final String results)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|"));
     request.setBinaryAttributes("jpegPhoto");
 
     final SearchResponse result = search.execute(request);
-    Assert.assertEquals(
-      result.getEntry().getAttribute("jpegPhoto").getStringValue(),
-      TestUtils.convertStringToEntry(dn, results).getAttribute("jpegPhoto").getStringValue());
+    assertThat(result.getEntry().getAttribute("jpegPhoto").getStringValue())
+      .isEqualTo(convertStringToEntry(dn, results).getAttribute("jpegPhoto").getStringValue());
   }
 
 
@@ -1936,10 +1920,10 @@ public class SearchOperationTest extends AbstractTest
   public void getSaslMechanisms()
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest("", new String[] {"supportedSASLMechanisms"}));
-    Assert.assertFalse(result.getEntry().getAttributes().isEmpty());
+    assertThat(result.getEntry().getAttributes().isEmpty()).isFalse();
   }
 
 
@@ -1948,10 +1932,10 @@ public class SearchOperationTest extends AbstractTest
   public void getSupportedControls()
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest("", new String[] {"supportedcontrol"}));
-    Assert.assertFalse(result.getEntry().getAttributes().isEmpty());
+    assertThat(result.getEntry().getAttributes().isEmpty()).isFalse();
   }
 
 
@@ -1985,28 +1969,29 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    ConnectionFactory cf = TestUtils.createDigestMd5ConnectionFactory();
+    ConnectionFactory cf = createDigestMd5ConnectionFactory();
     final ConnectionConfig cc = ConnectionConfig.copy(cf.getConnectionConfig());
-    Assert.assertEquals(cc.getConnectionInitializers().length, 1);
+    assertThat(cc.getConnectionInitializers().length).isEqualTo(1);
     final BindConnectionInitializer initializer =
-      TestUtils.copyBindConnectionInitializer((BindConnectionInitializer) cc.getConnectionInitializers()[0]);
+      copyBindConnectionInitializer((BindConnectionInitializer) cc.getConnectionInitializers()[0]);
     initializer.setBindCredential(new Credential("wrong-password"));
     cc.setConnectionInitializers(initializer);
     cf = new DefaultConnectionFactory(cc);
     try (Connection conn = cf.getConnection()) {
       conn.open();
-      Assert.fail("DIGEST-MD5 should have thrown exception");
+      fail("DIGEST-MD5 should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), ConnectException.class);
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
     }
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
-    final SearchOperation search = new SearchOperation(TestUtils.createDigestMd5ConnectionFactory());
+    final String expected = readFileIntoString(ldifFile);
+    final SearchOperation search = new SearchOperation(createDigestMd5ConnectionFactory());
     final SearchResponse result = search.execute(
       new SearchRequest(
         dn,
         new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
   }
 
 
@@ -2040,24 +2025,24 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    ConnectionFactory cf = TestUtils.createCramMd5ConnectionFactory();
+    ConnectionFactory cf = createCramMd5ConnectionFactory();
     final ConnectionConfig cc = ConnectionConfig.copy(cf.getConnectionConfig());
-    Assert.assertEquals(cc.getConnectionInitializers().length, 1);
+    assertThat(cc.getConnectionInitializers().length).isEqualTo(1);
     final BindConnectionInitializer initializer =
-      TestUtils.copyBindConnectionInitializer((BindConnectionInitializer) cc.getConnectionInitializers()[0]);
+      copyBindConnectionInitializer((BindConnectionInitializer) cc.getConnectionInitializers()[0]);
     initializer.setBindCredential(new Credential("wrong-password"));
     cc.setConnectionInitializers(initializer);
     cf = new DefaultConnectionFactory(cc);
     try (Connection conn = cf.getConnection()) {
       conn.open();
-      Assert.fail("CRAM-MD5 should have thrown exception");
+      fail("CRAM-MD5 should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), ConnectException.class);
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
     }
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createCramMd5ConnectionFactory());
+      final SearchOperation search = new SearchOperation(createCramMd5ConnectionFactory());
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
@@ -2066,10 +2051,11 @@ public class SearchOperationTest extends AbstractTest
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support CRAM-MD5");
       }
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+      // TODO this will need some work
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -2104,17 +2090,18 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createSaslExternalConnectionFactory());
+      final SearchOperation search = new SearchOperation(createSaslExternalConnectionFactory());
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+      // TODO this will need some work
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -2149,17 +2136,18 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createGssApiConnectionFactory());
+      final SearchOperation search = new SearchOperation(createGssApiConnectionFactory());
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+      // TODO this will need some work
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -2194,17 +2182,18 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createGssApiQopAuthConnectionFactory());
+      final SearchOperation search = new SearchOperation(createGssApiQopAuthConnectionFactory());
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+      // TODO this will need some work
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -2239,17 +2228,18 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createGssApiQopAuthIntConnectionFactory());
+      final SearchOperation search = new SearchOperation(createGssApiQopAuthIntConnectionFactory());
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+      // TODO this will need some work
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -2284,17 +2274,18 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createGssApiQopAuthIntLdapsConnectionFactory());
+      final SearchOperation search = new SearchOperation(createGssApiQopAuthIntLdapsConnectionFactory());
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+      // TODO this will need some work
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -2332,17 +2323,18 @@ public class SearchOperationTest extends AbstractTest
     System.setProperty("java.security.auth.login.config", "target/test-classes/ldap_jaas.config");
     System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     try {
-      final SearchOperation search = new SearchOperation(TestUtils.createGssApiUseConfigConnectionFactory());
+      final SearchOperation search = new SearchOperation(createGssApiUseConfigConnectionFactory());
       final SearchResponse result = search.execute(
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+      // TODO this will need some work
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     } finally {
       System.clearProperty("java.security.auth.login.config");
       System.clearProperty("javax.security.auth.useSubjectCredsOnly");
@@ -2380,25 +2372,28 @@ public class SearchOperationTest extends AbstractTest
     request.setFilter(new FilterTemplate(filter, filterParameters.split("\\|")));
     request.setReturnAttributes(returnAttrs.split("\\|"));
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
-    final ConnectionFactory cf = new DefaultConnectionFactory(TestUtils.readConnectionConfig(null));
+    final ConnectionFactory cf = new DefaultConnectionFactory(readConnectionConfig(null));
     SearchResponse result = SearchOperation.execute(cf, request);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
-    PooledConnectionFactory pcf = new PooledConnectionFactory(TestUtils.readConnectionConfig(null));
+    PooledConnectionFactory pcf = new PooledConnectionFactory(readConnectionConfig(null));
     pcf.setConnectOnCreate(false);
     pcf.initialize();
     result = SearchOperation.execute(pcf, request);
     pcf.close();
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
-    pcf = new PooledConnectionFactory(TestUtils.readConnectionConfig(null));
+    pcf = new PooledConnectionFactory(readConnectionConfig(null));
     pcf.setConnectOnCreate(true);
     pcf.initialize();
     result = SearchOperation.execute(pcf, request);
     pcf.close();
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
   }
 
 
@@ -2427,16 +2422,17 @@ public class SearchOperationTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
 
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ConnectionFactory cf = createConnectionFactory();
     final SearchOperationWorker op = new SearchOperationWorker();
     op.getOperation().setConnectionFactory(cf);
     op.getOperation().setRequest(SearchRequest.builder().dn(dn).build());
     final Collection<SearchResponse> results = op.execute(
       new FilterTemplate[]{new FilterTemplate(filter, filterParameters.split("\\|"))},
       returnAttrs.split("\\|"));
-    Assert.assertEquals(results.size(), 1);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), results.iterator().next());
+    assertThat(results.size()).isEqualTo(1);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(results.iterator().next()).isSame(convertLdifToResult(expected));
   }
 }

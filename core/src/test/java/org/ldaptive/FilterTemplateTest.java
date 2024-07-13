@@ -2,9 +2,9 @@
 package org.ldaptive;
 
 import java.nio.charset.StandardCharsets;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link FilterTemplate}.
@@ -117,6 +117,6 @@ public class FilterTemplateTest
   public void testFormat(final String encodedFilter, final FilterTemplate filter)
     throws Exception
   {
-    Assert.assertEquals(filter.format(), encodedFilter);
+    assertThat(filter.format()).isEqualTo(encodedFilter);
   }
 }

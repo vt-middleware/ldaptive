@@ -5,9 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link CertificateValueTranscoder}.
@@ -80,9 +80,9 @@ public class CertificateValueTranscoderTest
   public void testTranscode(final Certificate cert, final String s, final byte[] b)
     throws Exception
   {
-    Assert.assertEquals(cert, transcoder.decodeStringValue(s));
-    Assert.assertEquals(cert, transcoder.decodeBinaryValue(b));
-    Assert.assertEquals(s, transcoder.encodeStringValue(cert));
-    Assert.assertEquals(b, transcoder.encodeBinaryValue(cert));
+    assertThat(transcoder.decodeStringValue(s)).isEqualTo(cert);
+    assertThat(transcoder.decodeBinaryValue(b)).isEqualTo(cert);
+    assertThat(transcoder.encodeStringValue(cert)).isEqualTo(s);
+    assertThat(transcoder.encodeBinaryValue(cert)).isEqualTo(b);
   }
 }

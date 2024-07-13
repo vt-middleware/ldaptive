@@ -5,10 +5,10 @@ import java.util.Iterator;
 import java.util.Set;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Ignore;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 
 /**
@@ -63,15 +63,14 @@ public class SRVDNSResolverTest
   {
     final SRVDNSResolver resolver = new SRVDNSResolver(contextFactory);
     final Set<SRVRecord> records = resolver.resolve("_ldap._tcp.ldaptive.org");
-    Assert.assertEquals(records.size(), 3);
+    assertThat(records.size()).isEqualTo(3);
     for (SRVRecord record : records) {
-      Assert.assertEquals(
-        record.getLdapURL().getHostnameWithSchemeAndPort(),
-        "ldap://" + record.getTarget() + ":" + record.getPort());
-      Assert.assertEquals(record.getPort(), 389);
-      Assert.assertEquals(record.getPriority(), 0);
-      Assert.assertTrue(record.getTarget().endsWith(".ldaptive.org"));
-      Assert.assertEquals(record.getWeight(), 100);
+      assertThat(record.getLdapURL().getHostnameWithSchemeAndPort())
+        .isEqualTo("ldap://" + record.getTarget() + ":" + record.getPort());
+      assertThat(record.getPort()).isEqualTo(389);
+      assertThat(record.getPriority()).isEqualTo(0);
+      assertThat(record.getTarget().endsWith(".ldaptive.org")).isTrue();
+      assertThat(record.getWeight()).isEqualTo(100);
     }
   }
 
@@ -84,23 +83,23 @@ public class SRVDNSResolverTest
   {
     final SRVDNSResolver resolver = new SRVDNSResolver(contextFactory);
     final Set<SRVRecord> records = resolver.resolve("_ldap._tcp.sorted.ldaptive.org");
-    Assert.assertEquals(records.size(), 3);
+    assertThat(records.size()).isEqualTo(3);
     final Iterator<SRVRecord> i = records.iterator();
     int count = 0;
     while (i.hasNext()) {
       final SRVRecord record = i.next();
       if (count == 0) {
-        Assert.assertEquals(record.getTarget(), "curly.ldaptive.org");
-        Assert.assertEquals(record.getPriority(), 1);
-        Assert.assertEquals(record.getWeight(), 0);
+        assertThat(record.getTarget()).isEqualTo("curly.ldaptive.org");
+        assertThat(record.getPriority()).isEqualTo(1);
+        assertThat(record.getWeight()).isEqualTo(0);
       } else if (count == 1) {
-        Assert.assertEquals(record.getTarget(), "moe.ldaptive.org");
-        Assert.assertEquals(record.getPriority(), 3);
-        Assert.assertEquals(record.getWeight(), 200);
+        assertThat(record.getTarget()).isEqualTo("moe.ldaptive.org");
+        assertThat(record.getPriority()).isEqualTo(3);
+        assertThat(record.getWeight()).isEqualTo(200);
       } else if (count == 2) {
-        Assert.assertEquals(record.getTarget(), "larry.ldaptive.org");
-        Assert.assertEquals(record.getPriority(), 5);
-        Assert.assertEquals(record.getWeight(), 100);
+        assertThat(record.getTarget()).isEqualTo("larry.ldaptive.org");
+        assertThat(record.getPriority()).isEqualTo(5);
+        assertThat(record.getWeight()).isEqualTo(100);
       } else {
         throw new IllegalStateException("Unknown index:" + count);
       }
@@ -117,15 +116,14 @@ public class SRVDNSResolverTest
   {
     final SRVDNSResolver resolver = new SRVDNSResolver(contextFactory);
     final Set<SRVRecord> records = resolver.resolve(null);
-    Assert.assertEquals(records.size(), 3);
+    assertThat(records.size()).isEqualTo(3);
     for (SRVRecord record : records) {
-      Assert.assertEquals(
-        record.getLdapURL().getHostnameWithSchemeAndPort(),
-        "ldap://" + record.getTarget() + ":" + record.getPort());
-      Assert.assertEquals(record.getPort(), 389);
-      Assert.assertEquals(record.getPriority(), 0);
-      Assert.assertTrue(record.getTarget().endsWith(".ldaptive.org"));
-      Assert.assertEquals(record.getWeight(), 100);
+      assertThat("ldap://" + record.getTarget() + ":" + record.getPort())
+        .isEqualTo(record.getLdapURL().getHostnameWithSchemeAndPort());
+      assertThat(record.getPort()).isEqualTo(389);
+      assertThat(record.getPriority()).isEqualTo(0);
+      assertThat(record.getTarget().endsWith(".ldaptive.org")).isTrue();
+      assertThat(record.getWeight()).isEqualTo(100);
     }
   }
 
@@ -147,7 +145,7 @@ public class SRVDNSResolverTest
     }
     final String recordName = System.getProperty("SRVDNSResolverTest.name");
     final Set<SRVRecord> records = resolver.resolve(recordName);
-    Assert.assertTrue(records.size() > 0);
+    assertThat(records.size()).isGreaterThan(0);
   }
 
 

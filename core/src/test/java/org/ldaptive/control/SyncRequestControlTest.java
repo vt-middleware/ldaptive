@@ -2,9 +2,9 @@
 package org.ldaptive.control;
 
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SyncRequestControl}.
@@ -63,14 +63,14 @@ public class SyncRequestControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  sync request control to test.
+   * @param  control  sync request control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "request")
-  public void decode(final byte[] berValue, final SyncRequestControl expected)
+  public void decode(final byte[] berValue, final SyncRequestControl control)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue);
+    assertThat(control.encode()).isEqualTo(berValue);
   }
 }

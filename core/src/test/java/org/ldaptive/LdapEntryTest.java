@@ -2,13 +2,12 @@
 package org.ldaptive;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.SortResponseControl;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link LdapEntry}.
@@ -175,7 +174,7 @@ public class LdapEntryTest
   public void encode(final byte[] berValue, final LdapEntry response)
     throws Exception
   {
-    Assert.assertEquals(new LdapEntry(new DefaultDERBuffer(berValue)), response);
+    assertThat(new LdapEntry(new DefaultDERBuffer(berValue))).isEqualTo(response);
   }
 
 
@@ -191,10 +190,10 @@ public class LdapEntryTest
     le.addAttributes(attr2, attr1);
 
     final LdapAttribute[] attrs = le.getAttributes().toArray(LdapAttribute[]::new);
-    Assert.assertEquals(attr2, attrs[0]);
-    Assert.assertEquals(attr1, attrs[1]);
+    assertThat(attr2).isEqualTo(attrs[0]);
+    assertThat(attr1).isEqualTo(attrs[1]);
     le.clear();
-    Assert.assertEquals(le.size(), 0);
+    assertThat(le.size()).isEqualTo(0);
   }
 
 
@@ -206,14 +205,15 @@ public class LdapEntryTest
   {
     final LdapAttribute attr1 = new LdapAttribute("givenName", "John");
     final LdapEntry le = LdapEntry.builder().dn("uid=1").attributes(attr1).build();
-    Assert.assertEquals(attr1, le.getAttribute());
-    Assert.assertEquals(attr1, le.getAttribute("givenName"));
-    Assert.assertEquals(attr1, le.getAttribute("givenname"));
-    Assert.assertEquals("givenName", le.getAttributeNames()[0]);
-    Assert.assertEquals(le.size(), 1);
-    Assert.assertEquals(le, LdapEntry.builder().dn("uid=1").attributes(attr1).build());
+    assertThat(attr1)
+      .isEqualTo(le.getAttribute())
+      .isEqualTo(le.getAttribute("givenName"))
+      .isEqualTo(le.getAttribute("givenname"));
+    assertThat("givenName").isEqualTo(le.getAttributeNames()[0]);
+    assertThat(le.size()).isEqualTo(1);
+    assertThat(le).isEqualTo(LdapEntry.builder().dn("uid=1").attributes(attr1).build());
     le.clear();
-    Assert.assertEquals(le.size(), 0);
+    assertThat(le.size()).isEqualTo(0);
   }
 
 
@@ -226,17 +226,19 @@ public class LdapEntryTest
     final LdapAttribute attr1 = new LdapAttribute("givenName", "John");
     final LdapAttribute attr2 = new LdapAttribute("sn", "Doe");
     final LdapEntry le = LdapEntry.builder().dn("uid=1").attributes(attr2, attr1).build();
-    Assert.assertEquals(attr1, le.getAttribute("givenName"));
-    Assert.assertEquals(attr1, le.getAttribute("GIVENNAME"));
-    Assert.assertEquals(attr2, le.getAttribute("sn"));
-    Assert.assertEquals(attr2, le.getAttribute("SN"));
-    Assert.assertEquals(le.getAttributeNames().length, 2);
-    Assert.assertEquals(le.size(), 2);
-    Assert.assertEquals(le, LdapEntry.builder().dn("uid=1").attributes(attr1, attr2).build());
+    assertThat(attr1)
+      .isEqualTo(le.getAttribute("givenName"))
+      .isEqualTo(le.getAttribute("GIVENNAME"));
+    assertThat(attr2)
+      .isEqualTo(le.getAttribute("sn"))
+      .isEqualTo(le.getAttribute("SN"));
+    assertThat(le.getAttributeNames().length).isEqualTo(2);
+    assertThat(le.size()).isEqualTo(2);
+    assertThat(le).isEqualTo(LdapEntry.builder().dn("uid=1").attributes(attr1, attr2).build());
     le.removeAttributes(attr2);
-    Assert.assertEquals(le.size(), 1);
+    assertThat(le.size()).isEqualTo(1);
     le.clear();
-    Assert.assertEquals(le.size(), 0);
+    assertThat(le.size()).isEqualTo(0);
   }
 
 
@@ -252,9 +254,9 @@ public class LdapEntryTest
     final LdapEntry le = LdapEntry.builder().dn("uid=1").attributes(s).build();
     le.addAttributes(attr2);
     le.removeAttribute("GIVENNAME");
-    Assert.assertEquals(le.size(), 1);
+    assertThat(le.size()).isEqualTo(1);
     le.clear();
-    Assert.assertEquals(le.size(), 0);
+    assertThat(le.size()).isEqualTo(0);
   }
 
 
@@ -263,16 +265,16 @@ public class LdapEntryTest
   public void testEquals()
   {
     final LdapEntry le1 = LdapEntry.builder().build();
-    Assert.assertEquals(le1, le1);
-    Assert.assertEquals(LdapEntry.builder().build(), LdapEntry.builder().build());
-    Assert.assertEquals(
+    assertThat(le1).isEqualTo(le1);
+    assertThat(LdapEntry.builder().build()).isEqualTo(LdapEntry.builder().build());
+    assertThat(
       LdapEntry.builder()
         .dn("uid=1,dc=ldaptive,dc=org")
         .attributes(
           LdapAttribute.builder().name("uid").values("1").build(),
           LdapAttribute.builder().name("givenName").values("Steve").build(),
           LdapAttribute.builder().name("sn").values("McQueen").build())
-        .build(),
+        .build()).isEqualTo(
       LdapEntry.builder()
         .dn("uid=1,dc=ldaptive,dc=org")
         .attributes(
@@ -280,14 +282,14 @@ public class LdapEntryTest
           LdapAttribute.builder().name("givenName").values("Steve").build(),
           LdapAttribute.builder().name("sn").values("McQueen").build())
         .build());
-    Assert.assertEquals(
+    assertThat(
       LdapEntry.builder()
         .dn("uid=1,dc=ldaptive,dc=org")
         .attributes(
           LdapAttribute.builder().name("uid").values("1").build(),
           LdapAttribute.builder().name("givenName").values("Steve").build(),
           LdapAttribute.builder().name("sn").values("McQueen").build())
-        .build(),
+        .build()).isEqualTo(
       LdapEntry.builder()
         .dn("UID=1,dc=ldaptive,dc=org")
         .attributes(
@@ -295,14 +297,14 @@ public class LdapEntryTest
           LdapAttribute.builder().name("givenName").values("Steve").build(),
           LdapAttribute.builder().name("SN").values("McQueen").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       LdapEntry.builder()
         .dn("uid=2,dc=ldaptive,dc=org")
         .attributes(
           LdapAttribute.builder().name("uid").values("1").build(),
           LdapAttribute.builder().name("givenName").values("Steve").build(),
           LdapAttribute.builder().name("sn").values("McQueen").build())
-        .build(),
+        .build()).isNotEqualTo(
       LdapEntry.builder()
         .dn("uid=1,dc=ldaptive,dc=org")
         .attributes(
@@ -310,14 +312,14 @@ public class LdapEntryTest
           LdapAttribute.builder().name("givenName").values("Steve").build(),
           LdapAttribute.builder().name("sn").values("McQueen").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       LdapEntry.builder()
         .dn("uid=1,dc=ldaptive,dc=org")
         .attributes(
           LdapAttribute.builder().name("uid").values("2").build(),
           LdapAttribute.builder().name("givenName").values("Steve").build(),
           LdapAttribute.builder().name("sn").values("McQueen").build())
-        .build(),
+        .build()).isNotEqualTo(
       LdapEntry.builder()
         .dn("uid=1,dc=ldaptive,dc=org")
         .attributes(
@@ -341,9 +343,9 @@ public class LdapEntryTest
         .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
         .build(),
       true);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.ADD);
-    Assert.assertEquals(mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.ADD);
+    assertThat(mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").values("fred").build());
 
     mods = LdapEntry.computeModifications(
       LdapEntry.builder()
@@ -355,9 +357,9 @@ public class LdapEntryTest
         .attributes(LdapAttribute.builder().name("member").build())
         .build(),
       true);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
-    Assert.assertEquals(mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.REPLACE);
+    assertThat(mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").values("fred").build());
 
     mods = LdapEntry.computeModifications(
       LdapEntry.builder()
@@ -369,9 +371,9 @@ public class LdapEntryTest
         .attributes(LdapAttribute.builder().name("member").build())
         .build(),
       false);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.ADD);
-    Assert.assertEquals(mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.ADD);
+    assertThat(mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").values("fred").build());
 
     mods = LdapEntry.computeModifications(
       LdapEntry.builder()
@@ -383,10 +385,10 @@ public class LdapEntryTest
         .attributes(LdapAttribute.builder().name("member").values("fred").build())
         .build(),
       true);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
-    Assert.assertEquals(
-      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred", "barney").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.REPLACE);
+    assertThat(
+      mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").values("fred", "barney").build());
 
     mods = LdapEntry.computeModifications(
       LdapEntry.builder()
@@ -398,10 +400,10 @@ public class LdapEntryTest
         .attributes(LdapAttribute.builder().name("member").values("fred", "barney").build())
         .build(),
       false);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.ADD);
-    Assert.assertEquals(
-      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("wilma").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.ADD);
+    assertThat(
+      mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").values("wilma").build());
 
     mods = LdapEntry.computeModifications(
       LdapEntry.builder()
@@ -413,10 +415,10 @@ public class LdapEntryTest
         .attributes(LdapAttribute.builder().name("member").values("fred", "barney", "wilma").build())
         .build(),
       false);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.DELETE);
-    Assert.assertEquals(
-      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("wilma").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.DELETE);
+    assertThat(
+      mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").values("wilma").build());
 
     mods = LdapEntry.computeModifications(
       LdapEntry.builder()
@@ -428,10 +430,10 @@ public class LdapEntryTest
         .attributes(LdapAttribute.builder().name("member").values("fred", "barney").build())
         .build(),
       true);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
-    Assert.assertEquals(
-      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.REPLACE);
+    assertThat(
+      mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").values("fred").build());
 
     mods = LdapEntry.computeModifications(
       LdapEntry.builder()
@@ -443,10 +445,10 @@ public class LdapEntryTest
         .attributes(LdapAttribute.builder().name("member").values("fred").build())
         .build(),
       true);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
-    Assert.assertEquals(
-      mods[0].getAttribute(), LdapAttribute.builder().name("member").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.REPLACE);
+    assertThat(
+      mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").build());
 
     mods = LdapEntry.computeModifications(
       LdapEntry.builder()
@@ -458,10 +460,10 @@ public class LdapEntryTest
         .attributes(LdapAttribute.builder().name("member").values("fred").build())
         .build(),
       false);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.DELETE);
-    Assert.assertEquals(
-      mods[0].getAttribute(), LdapAttribute.builder().name("member").values("fred").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.DELETE);
+    assertThat(
+      mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").values("fred").build());
 
     // use replace if source doesn't have the attribute and target has an empty attribute
     mods = LdapEntry.computeModifications(
@@ -473,10 +475,10 @@ public class LdapEntryTest
         .dn("uid=1,ou=groups,dc=ldaptive,dc=org")
         .build(),
       true);
-    Assert.assertEquals(mods.length, 1);
-    Assert.assertEquals(mods[0].getOperation(), AttributeModification.Type.REPLACE);
-    Assert.assertEquals(
-      mods[0].getAttribute(), LdapAttribute.builder().name("member").build());
+    assertThat(mods.length).isEqualTo(1);
+    assertThat(mods[0].getOperation()).isEqualTo(AttributeModification.Type.REPLACE);
+    assertThat(
+      mods[0].getAttribute()).isEqualTo(LdapAttribute.builder().name("member").build());
   }
 
 
@@ -496,15 +498,15 @@ public class LdapEntryTest
     entry.freeze();
     try {
       entry.addAttributes(LdapAttribute.builder().name("cn").values("robert baker").build());
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
     try {
       entry.getAttribute("givenName").addStringValues("rob");
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
   }
 
@@ -518,9 +520,9 @@ public class LdapEntryTest
       .attributes(LdapAttribute.builder().name("givenName").values("bob").build())
       .build();
     final LdapEntry copy1 = LdapEntry.copy(entry1);
-    Assert.assertEquals(copy1, entry1);
-    Assert.assertFalse(entry1.isFrozen());
-    Assert.assertFalse(copy1.isFrozen());
+    assertThat(copy1).isEqualTo(entry1);
+    assertThat(entry1.isFrozen()).isFalse();
+    assertThat(copy1.isFrozen()).isFalse();
 
     final LdapEntry entry2 = LdapEntry.builder()
       .messageID(2)
@@ -530,9 +532,9 @@ public class LdapEntryTest
       .freeze()
       .build();
     final LdapEntry copy2 = LdapEntry.copy(entry2);
-    Assert.assertEquals(copy2, entry2);
-    Assert.assertTrue(entry2.isFrozen());
-    Assert.assertFalse(copy2.isFrozen());
+    assertThat(copy2).isEqualTo(entry2);
+    assertThat(entry2.isFrozen()).isTrue();
+    assertThat(copy2.isFrozen()).isFalse();
   }
 
 
@@ -545,8 +547,8 @@ public class LdapEntryTest
     entry.addAttributes(new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones"));
     entry.addAttributes(new LdapAttribute("giveName", "Bobby", "Bob", "Robert", "John", "James"));
     final LdapEntry sort = LdapEntry.sort(entry);
-    Assert.assertEquals(sort, entry);
-    Assert.assertEquals(sort.getAttribute().getName(), "giveName");
-    Assert.assertEquals(sort.getAttribute().getStringValues(), List.of("Bob", "Bobby", "James", "John", "Robert"));
+    assertThat(sort).isEqualTo(entry);
+    assertThat(sort.getAttribute().getName()).isEqualTo("giveName");
+    assertThat(sort.getAttribute().getStringValues()).containsExactly("Bob", "Bobby", "James", "John", "Robert");
   }
 }

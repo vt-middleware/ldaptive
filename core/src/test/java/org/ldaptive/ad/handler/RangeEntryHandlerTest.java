@@ -11,9 +11,9 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.transport.DefaultSearchOperationHandle;
 import org.ldaptive.transport.mock.MockConnection;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link RangeEntryHandler}.
@@ -77,8 +77,7 @@ public class RangeEntryHandlerTest
     final SearchResponse response =
       SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).entry(entry1).build();
     final SearchResponse rangeResponse = handler.apply(response);
-    Assert.assertNotNull(rangeResponse);
-    Assert.assertEquals(
+    assertThat(rangeResponse).isEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .resultCode(ResultCode.SUCCESS)
@@ -94,7 +93,6 @@ public class RangeEntryHandlerTest
                 .collect(Collectors.toList()))
             .build())
           .build())
-        .build(),
-      rangeResponse);
+        .build());
   }
 }

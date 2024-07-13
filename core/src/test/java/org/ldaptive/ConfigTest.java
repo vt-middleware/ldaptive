@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.SslConfig;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for objects that extends {@link AbstractConfig}.
@@ -69,9 +69,9 @@ public class ConfigTest
           } else {
             method.invoke(config, new Object[] {null});
           }
-          Assert.fail("Should have thrown IllegalStateException for " + method);
+          fail("Should have thrown IllegalStateException for %s", method);
         } catch (Exception e) {
-          Assert.assertEquals(e.getCause().getClass(), IllegalStateException.class);
+          assertThat(e.getCause()).isExactlyInstanceOf(IllegalStateException.class);
         }
       }
     }
@@ -96,10 +96,10 @@ public class ConfigTest
           final Class<?> type = method.getParameterTypes()[0];
           if (type.isArray()) {
             method.invoke(config, new Object[] {Array.newInstance(type.getComponentType(), 1)});
-            Assert.fail("Should have thrown IllegalArgumentException for " + method);
+            fail("Should have thrown IllegalArgumentException for %s", method);
           }
         } catch (Exception e) {
-          Assert.assertEquals(e.getCause().getClass(), IllegalArgumentException.class);
+          assertThat(e.getCause()).isExactlyInstanceOf(IllegalArgumentException.class);
         }
       }
     }

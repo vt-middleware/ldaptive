@@ -9,10 +9,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.ldaptive.transport.mock.MockConnection;
-import org.testng.Assert;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DnsResolverConnectionStrategy}.
@@ -154,8 +154,8 @@ public class DnsResolverConnectionStrategyTest
     final DnsResolverConnectionStrategy strategy = new DnsResolverConnectionStrategy();
     strategy.setResolverFunction(customResolver);
     strategy.initialize(actual, ldapURL -> true);
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()), Arrays.asList(expected));
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(expected);
   }
 
 
@@ -172,42 +172,38 @@ public class DnsResolverConnectionStrategyTest
     conn.setOpenPredicate(ldapURL -> !Arrays.equals(ldapURL.getInetAddress().getAddress(), new byte[] {10, 10, 5, 2}));
     conn.setTestPredicate(ldapURL -> true);
 
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 5);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(5)
+      .containsExactly(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
 
     // first v4 entry should fail, list should reorder with that entry last
     conn.open();
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 4);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(directory1v6, directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 1);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().iterator().next(), directory1v4);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(4)
+      .containsExactly(directory1v6, directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(1)
+      .containsExactly(directory1v4);
 
     // confirm the inactive entry stays at the end
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(directory1v6, directory2v4, directory2v6, directory3v4, directory1v4));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 4);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(directory1v6, directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 1);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().iterator().next(), directory1v4);
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(directory1v6, directory2v4, directory2v6, directory3v4, directory1v4);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(4)
+      .containsExactly(directory1v6, directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(1)
+      .containsExactly(directory1v4);
 
     // mark first entry as active, list should reorder with that entry first
     strategy.success(strategy.ldapURLSet.getInactiveUrls().iterator().next());
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 5);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(5)
+      .containsExactly(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
   }
 
 
@@ -230,49 +226,48 @@ public class DnsResolverConnectionStrategyTest
           ldapURL.getInetAddress().getAddress(),
           new byte[] {38, 7, -76, 0, 0, -112, 104, 0, 32, 0, 0, 0, 0, 0, 0, 100}));
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 5);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(5)
+      .containsExactly(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
 
     // first ipv4 and ipv6 entries should fail, list should reorder with those entries last
     conn.open();
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls(), Arrays.asList(directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 2);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls(), Arrays.asList(directory1v4, directory1v6));
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(3)
+      .containsExactly(directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(2)
+      .containsExactly(directory1v4, directory1v6);
 
     // confirm the inactive entries stay at the end
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(directory2v4, directory2v6, directory3v4, directory1v4, directory1v6));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls(), Arrays.asList(directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 2);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls(), Arrays.asList(directory1v4, directory1v6));
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(directory2v4, directory2v6, directory3v4, directory1v4, directory1v6);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(3)
+      .containsExactly(directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(2)
+      .containsExactly(directory1v4, directory1v6);
 
     // mark first entry as active, list should reorder with that entry first
     strategy.success(strategy.ldapURLSet.getInactiveUrls().iterator().next());
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(directory1v4, directory2v4, directory2v6, directory3v4, directory1v6));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 4);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(directory1v4, directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 1);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().iterator().next(), directory1v6);
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(directory1v4, directory2v4, directory2v6, directory3v4, directory1v6);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(4)
+      .containsExactly(directory1v4, directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(1)
+      .containsExactly(directory1v6);
 
     // mark second entry as active, list should reorder with that entry second
     strategy.success(strategy.ldapURLSet.getInactiveUrls().iterator().next());
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 5);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(5)
+      .containsExactly(directory1v4, directory1v6, directory2v4, directory2v6, directory3v4);
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
   }
 }

@@ -4,9 +4,9 @@ package org.ldaptive.control;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link PagedResultsControl}.
@@ -204,30 +204,30 @@ public class PagedResultsControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  paged results control to test.
+   * @param  control  paged results control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "request-response")
-  public void encode(final DERBuffer berValue, final PagedResultsControl expected)
+  public void encode(final DERBuffer berValue, final PagedResultsControl control)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue.getRemainingBytes());
+    assertThat(control.encode()).isEqualTo(berValue.getRemainingBytes());
   }
 
 
   /**
    * @param  berValue  to decode.
-   * @param  expected  paged results control to test.
+   * @param  control  paged results control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "request-response")
-  public void decode(final DERBuffer berValue, final PagedResultsControl expected)
+  public void decode(final DERBuffer berValue, final PagedResultsControl control)
     throws Exception
   {
-    final PagedResultsControl actual = new PagedResultsControl(expected.getCriticality());
+    final PagedResultsControl actual = new PagedResultsControl(control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

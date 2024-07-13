@@ -3,10 +3,10 @@ package org.ldaptive.beans.generate;
 
 import org.ldaptive.AbstractTest;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
 import org.ldaptive.schema.Schema;
 import org.ldaptive.schema.SchemaFactory;
 import org.testng.annotations.Test;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link BeanGenerator}.
@@ -26,7 +26,7 @@ public class BeanGeneratorTest extends AbstractTest
       return;
     }
 
-    final Schema schema = SchemaFactory.createSchema(TestUtils.createSetupConnectionFactory());
+    final Schema schema = SchemaFactory.createSchema(createSetupConnectionFactory());
     final BeanGenerator generator = new BeanGenerator();
     generator.setSchema(schema);
     generator.setExcludedNames("objectClass");
@@ -50,7 +50,7 @@ public class BeanGeneratorTest extends AbstractTest
     }
 
     final Schema schema = org.ldaptive.ad.schema.SchemaFactory.createSchema(
-      TestUtils.createSetupConnectionFactory(),
+      createSetupConnectionFactory(),
       "CN=Schema,CN=Configuration,DC=middleware,DC=vt,DC=edu");
     final BeanGenerator generator = new BeanGenerator();
     generator.setSchema(schema);

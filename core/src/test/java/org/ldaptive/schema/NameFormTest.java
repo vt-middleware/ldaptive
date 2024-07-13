@@ -2,9 +2,9 @@
 package org.ldaptive.schema;
 
 import java.util.Collections;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link NameForm}.
@@ -100,9 +100,9 @@ public class NameFormTest
   {
     for (DefinitionFunction<NameForm> func : functions) {
       final NameForm parsed = func.parse(definition);
-      Assert.assertEquals(nameForm, parsed);
-      Assert.assertEquals(definition, parsed.format());
-      Assert.assertEquals(nameForm.format(), parsed.format());
+      assertThat(parsed).isEqualTo(nameForm);
+      assertThat(parsed.format()).isEqualTo(definition);
+      assertThat(parsed.format()).isEqualTo(nameForm.format());
     }
   }
 }

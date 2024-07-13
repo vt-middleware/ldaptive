@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link GreaterOrEqualFilter}.
@@ -12,70 +12,6 @@ import org.testng.annotations.Test;
  */
 public class GreaterOrEqualFilterTest
 {
-
-
-  /**
-   * Greater or equal test data.
-   *
-   * @return  request test data
-   */
-  @DataProvider(name = "filter")
-  public Object[][] createFilter()
-  {
-    return
-      new Object[][] {
-        new Object[] {
-          "",
-          null,
-        },
-        new Object[] {
-          "createTimestamp>=",
-          null,
-        },
-        new Object[] {
-          ">=",
-          null,
-        },
-        new Object[] {
-          "createTimestamp>=20170102030405.678Z",
-          null,
-        },
-        new Object[] {
-          "(>=20170102030405.678Z)",
-          null,
-        },
-        new Object[] {
-          "(createTimestamp>=20170102030405.678Z",
-          null,
-        },
-        new Object[] {
-          "createTimestamp>=20170102030405.678Z)",
-          null,
-        },
-        new Object[] {
-          "(createTimestamp>=)",
-          new GreaterOrEqualFilter("createTimestamp", ""),
-        },
-        new Object[] {
-          "(createTimestamp>=20170102030405.678Z)",
-          new GreaterOrEqualFilter("createTimestamp", "20170102030405.678Z"),
-        },
-      };
-  }
-
-
-  /**
-   * @param  value  to parse.
-   * @param  filter  expected value.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(dataProvider = "filter")
-  public void parseRegex(final String value, final GreaterOrEqualFilter filter)
-    throws Exception
-  {
-    Assert.assertEquals(RegexFilterFunction.parseGreaterOrEqualFilter(value), filter);
-  }
 
 
   /**
@@ -110,6 +46,6 @@ public class GreaterOrEqualFilterTest
   public void encode(final GreaterOrEqualFilter filter, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(filter.getEncoder().encode(), berValue);
+    assertThat(filter.getEncoder().encode()).isEqualTo(berValue);
   }
 }

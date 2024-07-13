@@ -3,9 +3,9 @@ package org.ldaptive.asn1;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DERPath} class.
@@ -22,14 +22,14 @@ public class DERPathTest
   {
     final DERPath path = new DERPath("/SEQ");
     path.pushNode("OCTSTR");
-    Assert.assertEquals(path.toString(), "/SEQ/OCTSTR");
-    Assert.assertEquals(path.popNode(), "OCTSTR");
+    assertThat(path.toString()).isEqualTo("/SEQ/OCTSTR");
+    assertThat(path.popNode()).isEqualTo("OCTSTR");
     path.pushNode("INT", 1);
-    Assert.assertEquals(path.toString(), "/SEQ/INT[1]");
-    Assert.assertEquals(path.popNode(), "INT[1]");
-    Assert.assertEquals(path.popNode(), "SEQ");
-    Assert.assertNull(path.popNode());
-    Assert.assertNull(path.popNode());
+    assertThat(path.toString()).isEqualTo("/SEQ/INT[1]");
+    assertThat(path.popNode()).isEqualTo("INT[1]");
+    assertThat(path.popNode()).isEqualTo("SEQ");
+    assertThat(path.popNode()).isNull();
+    assertThat(path.popNode()).isNull();
   }
 
 
@@ -38,18 +38,18 @@ public class DERPathTest
   public void testToNode()
     throws Exception
   {
-    Assert.assertEquals(DERPath.toNode("SEQ").getName(), "SEQ");
-    Assert.assertEquals(DERPath.toNode("SEQ").getChildIndex(), -1);
-    Assert.assertEquals(DERPath.toNode("APP(4)").getName(), "APP(4)");
-    Assert.assertEquals(DERPath.toNode("APP(4)").getChildIndex(), -1);
-    Assert.assertEquals(DERPath.toNode("ENUM[0]").getName(), "ENUM");
-    Assert.assertEquals(DERPath.toNode("ENUM[0]").getChildIndex(), 0);
-    Assert.assertEquals(DERPath.toNode("OCTSTR[1]").getName(), "OCTSTR");
-    Assert.assertEquals(DERPath.toNode("OCTSTR[1]").getChildIndex(), 1);
-    Assert.assertEquals(DERPath.toNode("INT[3]").getName(), "INT");
-    Assert.assertEquals(DERPath.toNode("INT[3]").getChildIndex(), 3);
-    Assert.assertEquals(DERPath.toNode("CTX(0)").getName(), "CTX(0)");
-    Assert.assertEquals(DERPath.toNode("CTX(0)").getChildIndex(), -1);
+    assertThat(DERPath.toNode("SEQ").getName()).isEqualTo("SEQ");
+    assertThat(DERPath.toNode("SEQ").getChildIndex()).isEqualTo(-1);
+    assertThat(DERPath.toNode("APP(4)").getName()).isEqualTo("APP(4)");
+    assertThat(DERPath.toNode("APP(4)").getChildIndex()).isEqualTo(-1);
+    assertThat(DERPath.toNode("ENUM[0]").getName()).isEqualTo("ENUM");
+    assertThat(DERPath.toNode("ENUM[0]").getChildIndex()).isEqualTo(0);
+    assertThat(DERPath.toNode("OCTSTR[1]").getName()).isEqualTo("OCTSTR");
+    assertThat(DERPath.toNode("OCTSTR[1]").getChildIndex()).isEqualTo(1);
+    assertThat(DERPath.toNode("INT[3]").getName()).isEqualTo("INT");
+    assertThat(DERPath.toNode("INT[3]").getChildIndex()).isEqualTo(3);
+    assertThat(DERPath.toNode("CTX(0)").getName()).isEqualTo("CTX(0)");
+    assertThat(DERPath.toNode("CTX(0)").getChildIndex()).isEqualTo(-1);
   }
 
 
@@ -58,12 +58,12 @@ public class DERPathTest
   public void testHashCode()
     throws Exception
   {
-    Assert.assertEquals(new DERPath("SEQ").hashCode(), new DERPath("SEQ").hashCode());
-    Assert.assertNotEquals(new DERPath("ENUM").hashCode(), new DERPath("INT").hashCode());
-    Assert.assertEquals(
-      new DERPath("APP(0)").pushNode("CTX(0)").hashCode(), new DERPath("APP(0)").pushNode("CTX(0)").hashCode());
-    Assert.assertNotEquals(
-      new DERPath("APP(0)").pushNode("CTX(0)").hashCode(), new DERPath("CTX(0)").pushNode("APP(0)").hashCode());
+    assertThat(new DERPath("SEQ").hashCode()).isEqualTo(new DERPath("SEQ").hashCode());
+    assertThat(new DERPath("ENUM").hashCode()).isNotEqualTo(new DERPath("INT").hashCode());
+    assertThat(new DERPath("APP(0)").pushNode("CTX(0)").hashCode())
+      .isEqualTo(new DERPath("APP(0)").pushNode("CTX(0)").hashCode());
+    assertThat(new DERPath("APP(0)").pushNode("CTX(0)").hashCode())
+      .isNotEqualTo(new DERPath("CTX(0)").pushNode("APP(0)").hashCode());
   }
 
 
@@ -72,9 +72,9 @@ public class DERPathTest
   public void testEquals()
     throws Exception
   {
-    Assert.assertTrue(new DERPath("/SEQ[0]/OCTSTR[1]").equals(new DERPath("/SEQ[0]/OCTSTR[1]")));
-    Assert.assertFalse(new DERPath("/SEQ[0]/OCTSTR[1]").equals(new DERPath("/SEQ[0]/OCTSTR[2]")));
-    Assert.assertFalse(new DERPath("/SEQ[0]/OCTSTR[1]").equals(new DERPath("/SEQ/OCTSTR[2]")));
+    assertThat(new DERPath("/SEQ[0]/OCTSTR[1]")).isEqualTo(new DERPath("/SEQ[0]/OCTSTR[1]"));
+    assertThat(new DERPath("/SEQ[0]/OCTSTR[1]")).isNotEqualTo(new DERPath("/SEQ[0]/OCTSTR[2]"));
+    assertThat(new DERPath("/SEQ[0]/OCTSTR[1]")).isNotEqualTo(new DERPath("/SEQ/OCTSTR[2]"));
   }
 
 
@@ -83,9 +83,9 @@ public class DERPathTest
   public void testHashcode()
     throws Exception
   {
-    Assert.assertEquals(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode(), new DERPath("/SEQ[0]/OCTSTR[1]").hashCode());
-    Assert.assertFalse(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() == new DERPath("/SEQ[0]/OCTSTR[2]").hashCode());
-    Assert.assertFalse(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() == new DERPath("/SEQ/OCTSTR[2]").hashCode());
+    assertThat(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode()).isEqualTo(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode());
+    assertThat(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() == new DERPath("/SEQ[0]/OCTSTR[2]").hashCode()).isFalse();
+    assertThat(new DERPath("/SEQ[0]/OCTSTR[1]").hashCode() == new DERPath("/SEQ/OCTSTR[2]").hashCode()).isFalse();
   }
 
 
@@ -125,7 +125,7 @@ public class DERPathTest
   public void testToString(final String testPath, final String expected)
     throws Exception
   {
-    Assert.assertEquals(new DERPath(testPath).toString(), expected);
+    assertThat(new DERPath(testPath).toString()).isEqualTo(expected);
   }
 
 
@@ -139,7 +139,7 @@ public class DERPathTest
   public void testEquals(final String testPath, final String expected)
     throws Exception
   {
-    Assert.assertTrue(new DERPath(testPath).equals(new DERPath(expected)));
+    assertThat(new DERPath(testPath)).isEqualTo(new DERPath(expected));
   }
 
 

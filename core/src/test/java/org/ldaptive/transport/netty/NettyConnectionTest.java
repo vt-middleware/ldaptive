@@ -21,9 +21,9 @@ import org.ldaptive.ConnectionValidator;
 import org.ldaptive.LdapURL;
 import org.ldaptive.SearchScope;
 import org.ldaptive.UnbindRequest;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link NettyConnection}.
@@ -85,23 +85,23 @@ public class NettyConnectionTest
         true);
       try {
         conn.open();
-        Assert.assertTrue(conn.isOpen());
+        assertThat(conn.isOpen()).isTrue();
         int id = conn.getMessageID();
-        Assert.assertEquals(id, 1);
+        assertThat(id).isEqualTo(1);
         conn.operation(new UnbindRequest());
-        Assert.assertEquals(conn.getMessageID(), id + 1);
+        assertThat(conn.getMessageID()).isEqualTo(id + 1);
         conn.setMessageID(Integer.MAX_VALUE - 1);
         conn.operation(new UnbindRequest());
         id = conn.getMessageID();
-        Assert.assertEquals(id, Integer.MAX_VALUE);
+        assertThat(id).isEqualTo(Integer.MAX_VALUE);
         conn.operation(new UnbindRequest());
         id = conn.getMessageID();
-        Assert.assertEquals(id, 1);
+        assertThat(id).isEqualTo(1);
         conn.operation(new UnbindRequest());
-        Assert.assertEquals(conn.getMessageID(), id + 1);
+        assertThat(conn.getMessageID()).isEqualTo(id + 1);
       } finally {
         conn.close();
-        Assert.assertFalse(conn.isOpen());
+        assertThat(conn.isOpen()).isFalse();
       }
     } finally {
       server.stop();
@@ -131,11 +131,11 @@ public class NettyConnectionTest
       null,
       true);
     final Map<ChannelOption, Object> options = conn.getChannelOptions();
-    Assert.assertNotNull(options);
-    Assert.assertEquals(options.get(ChannelOption.AUTO_READ), false);
-    Assert.assertEquals(options.get(ChannelOption.TCP_NODELAY), true);
-    Assert.assertEquals(options.get(ChannelOption.SO_SNDBUF), 1024);
-    Assert.assertEquals(options.get(ChannelOption.SO_RCVBUF), 1024);
+    assertThat(options).isNotNull();
+    assertThat(options.get(ChannelOption.AUTO_READ)).isEqualTo(false);
+    assertThat(options.get(ChannelOption.TCP_NODELAY)).isEqualTo(true);
+    assertThat(options.get(ChannelOption.SO_SNDBUF)).isEqualTo(1024);
+    assertThat(options.get(ChannelOption.SO_RCVBUF)).isEqualTo(1024);
   }
 
 
@@ -159,21 +159,21 @@ public class NettyConnectionTest
         true);
       try {
         conn.open();
-        Assert.assertNotNull(conn.getLdapURL());
-        Assert.assertEquals(conn.getLdapURL().getScheme(), "ldap");
-        Assert.assertEquals(conn.getLdapURL().getHostname(), address.getHostName());
-        Assert.assertEquals(conn.getLdapURL().getPort(), address.getPort());
-        Assert.assertFalse(conn.getLdapURL().getUrl().isDefaultBaseDn());
-        Assert.assertEquals(conn.getLdapURL().getUrl().getBaseDn(), "dc=ldaptive,dc=org");
-        Assert.assertFalse(conn.getLdapURL().getUrl().isDefaultAttributes());
-        Assert.assertEquals(conn.getLdapURL().getUrl().getAttributes(), new String[] {"cn", "sn"});
-        Assert.assertFalse(conn.getLdapURL().getUrl().isDefaultScope());
-        Assert.assertEquals(conn.getLdapURL().getUrl().getScope(), SearchScope.ONELEVEL);
-        Assert.assertFalse(conn.getLdapURL().getUrl().isDefaultFilter());
-        Assert.assertEquals(conn.getLdapURL().getUrl().getFilter(), "(uid=dfisher)");
+        assertThat(conn.getLdapURL()).isNotNull();
+        assertThat(conn.getLdapURL().getScheme()).isEqualTo("ldap");
+        assertThat(conn.getLdapURL().getHostname()).isEqualTo(address.getHostName());
+        assertThat(conn.getLdapURL().getPort()).isEqualTo(address.getPort());
+        assertThat(conn.getLdapURL().getUrl().isDefaultBaseDn()).isFalse();
+        assertThat(conn.getLdapURL().getUrl().getBaseDn()).isEqualTo("dc=ldaptive,dc=org");
+        assertThat(conn.getLdapURL().getUrl().isDefaultAttributes()).isFalse();
+        assertThat(conn.getLdapURL().getUrl().getAttributes()).isEqualTo(new String[] {"cn", "sn"});
+        assertThat(conn.getLdapURL().getUrl().isDefaultScope()).isFalse();
+        assertThat(conn.getLdapURL().getUrl().getScope()).isEqualTo(SearchScope.ONELEVEL);
+        assertThat(conn.getLdapURL().getUrl().isDefaultFilter()).isFalse();
+        assertThat(conn.getLdapURL().getUrl().getFilter()).isEqualTo("(uid=dfisher)");
       } finally {
         conn.close();
-        Assert.assertFalse(conn.isOpen());
+        assertThat(conn.isOpen()).isFalse();
       }
     } finally {
       server.stop();
@@ -201,12 +201,12 @@ public class NettyConnectionTest
         true);
       try {
         conn.open();
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       } catch (IllegalStateException e) {
-        Assert.assertEquals(e.getClass(), IllegalStateException.class);
+        assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
       } finally {
         conn.close();
-        Assert.assertFalse(conn.isOpen());
+        assertThat(conn.isOpen()).isFalse();
       }
     } finally {
       server.stop();
@@ -236,10 +236,10 @@ public class NettyConnectionTest
         true);
       try {
         conn.open();
-        Assert.assertTrue(conn.isOpen());
+        assertThat(conn.isOpen()).isTrue();
       } finally {
         conn.close();
-        Assert.assertFalse(conn.isOpen());
+        assertThat(conn.isOpen()).isFalse();
       }
     } finally {
       server.stop();
@@ -271,7 +271,7 @@ public class NettyConnectionTest
         .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
         .autoReconnect(true)
         .autoReconnectCondition(metadata -> {
-          Assert.assertEquals(metadata.getAttempts(), 0);
+          assertThat(metadata.getAttempts()).isEqualTo(0);
           reconnectAttempted.set(true);
           return metadata instanceof ClosedRetryMetadata && metadata.getAttempts() == 0;
         })
@@ -284,23 +284,23 @@ public class NettyConnectionTest
         false);
       try {
         conn.open();
-        Assert.assertTrue(conn.isOpen());
+        assertThat(conn.isOpen()).isTrue();
         // unbind will cause the server to disconnect
         conn.operation(new UnbindRequest());
         if (!openLatch.await(Duration.ofMinutes(1).toMillis(), TimeUnit.MILLISECONDS)) {
-          Assert.fail("Connection did not reconnect");
+          fail("Connection did not reconnect");
         }
-        Assert.assertTrue(reconnectAttempted.get());
+        assertThat(reconnectAttempted.get()).isTrue();
         // it may take a few seconds for the connection to reestablish
         int isOpenCount = 0;
         while (!conn.isOpen() && isOpenCount < 10) {
           Thread.sleep(1000);
           isOpenCount++;
         }
-        Assert.assertTrue(conn.isOpen());
+        assertThat(conn.isOpen()).isTrue();
       } finally {
         conn.close();
-        Assert.assertFalse(conn.isOpen());
+        assertThat(conn.isOpen()).isFalse();
       }
     } finally {
       server.stop();
@@ -364,13 +364,13 @@ public class NettyConnectionTest
         false);
       try {
         conn.open();
-        Assert.assertTrue(conn.isOpen());
+        assertThat(conn.isOpen()).isTrue();
         if (!validateLatch.await(Duration.ofMinutes(1).toMillis(), TimeUnit.MILLISECONDS)) {
-          Assert.fail("Connection validator did not execute");
+          fail("Connection validator did not execute");
         }
       } finally {
         conn.close();
-        Assert.assertFalse(conn.isOpen());
+        assertThat(conn.isOpen()).isFalse();
       }
     } finally {
       server.stop();
@@ -438,14 +438,14 @@ public class NettyConnectionTest
         false);
       try {
         conn.open();
-        Assert.assertTrue(conn.isOpen());
+        assertThat(conn.isOpen()).isTrue();
         if (!validateLatch.await(Duration.ofMinutes(1).toMillis(), TimeUnit.MILLISECONDS)) {
-          Assert.fail("Connection validator did not execute");
+          fail("Connection validator did not execute");
         }
-        Assert.assertTrue(conn.isOpen());
+        assertThat(conn.isOpen()).isTrue();
       } finally {
         conn.close();
-        Assert.assertFalse(conn.isOpen());
+        assertThat(conn.isOpen()).isFalse();
       }
     } finally {
       server.stop();

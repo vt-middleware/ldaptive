@@ -8,8 +8,8 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchResponse;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link RecursiveResultHandler}.
@@ -54,7 +54,7 @@ public class RecursiveResultHandlerTest
       LdapAttribute.builder().name("member").values("uid=child1,ou=groups,dc=ldaptive,dc=org").build()).build();
 
     final SearchResponse response = SearchResponse.builder().entry(parent).build();
-    Assert.assertEquals(handler.apply(response).getEntry(), expected);
+    assertThat(handler.apply(response).getEntry()).isEqualTo(expected);
   }
 
 

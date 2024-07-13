@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.url;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link UrlFormatter} implementations.
@@ -299,6 +299,6 @@ public class UrlFormatterTest
     throws Exception
   {
     final Url url = new Url(actual);
-    Assert.assertEquals(url.format(), expected);
+    assertThat(url.format()).isEqualTo(expected);
   }
 }

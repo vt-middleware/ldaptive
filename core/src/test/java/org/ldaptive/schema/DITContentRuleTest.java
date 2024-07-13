@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link DITContentRule}.
@@ -103,9 +103,9 @@ public class DITContentRuleTest
   {
     for (DefinitionFunction<DITContentRule> func : functions) {
       final DITContentRule parsed = func.parse(definition);
-      Assert.assertEquals(contentRule, parsed);
-      Assert.assertEquals(definition, parsed.format());
-      Assert.assertEquals(contentRule.format(), parsed.format());
+      assertThat(parsed).isEqualTo(contentRule);
+      assertThat(parsed.format()).isEqualTo(definition);
+      assertThat(parsed.format()).isEqualTo(contentRule.format());
     }
   }
 }

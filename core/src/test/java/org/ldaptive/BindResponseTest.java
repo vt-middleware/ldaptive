@@ -3,9 +3,9 @@ package org.ldaptive;
 
 import java.nio.charset.StandardCharsets;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link BindResponse}.
@@ -108,6 +108,6 @@ public class BindResponseTest
   public void encode(final byte[] berValue, final BindResponse response)
     throws Exception
   {
-    Assert.assertEquals(new BindResponse(new DefaultDERBuffer(berValue)), response);
+    assertThat(new BindResponse(new DefaultDERBuffer(berValue))).isEqualTo(response);
   }
 }

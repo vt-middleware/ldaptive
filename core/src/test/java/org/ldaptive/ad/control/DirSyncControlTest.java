@@ -4,9 +4,9 @@ package org.ldaptive.ad.control;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DirSyncControl}.
@@ -118,30 +118,30 @@ public class DirSyncControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  dir sync control to test.
+   * @param  control  dir sync control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "request-response")
-  public void encode(final DERBuffer berValue, final DirSyncControl expected)
+  public void encode(final DERBuffer berValue, final DirSyncControl control)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue.getRemainingBytes());
+    assertThat(control.encode()).isEqualTo(berValue.getRemainingBytes());
   }
 
 
   /**
    * @param  berValue  to decode.
-   * @param  expected  dir sync control to test.
+   * @param  control  dir sync control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "request-response")
-  public void decode(final DERBuffer berValue, final DirSyncControl expected)
+  public void decode(final DERBuffer berValue, final DirSyncControl control)
     throws Exception
   {
-    final DirSyncControl actual = new DirSyncControl(expected.getCriticality());
+    final DirSyncControl actual = new DirSyncControl(control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

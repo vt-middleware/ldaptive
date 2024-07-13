@@ -3,9 +3,9 @@ package org.ldaptive.extended;
 
 import java.util.UUID;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SyncInfoMessage}.
@@ -173,6 +173,6 @@ public class SyncInfoMessageTest
   public void encode(final byte[] berValue, final SyncInfoMessage response)
     throws Exception
   {
-    Assert.assertEquals(new SyncInfoMessage(new DefaultDERBuffer(berValue)), response);
+    assertThat(new SyncInfoMessage(new DefaultDERBuffer(berValue))).isEqualTo(response);
   }
 }

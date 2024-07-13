@@ -4,9 +4,9 @@ package org.ldaptive.control;
 import org.ldaptive.ResultCode;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link VirtualListViewResponseControl}.
@@ -117,16 +117,16 @@ public class VirtualListViewResponseControlTest
 
   /**
    * @param  berValue  to decode.
-   * @param  expected  virtual list view response control to test.
+   * @param  control  virtual list view response control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "response")
-  public void decode(final DERBuffer berValue, final VirtualListViewResponseControl expected)
+  public void decode(final DERBuffer berValue, final VirtualListViewResponseControl control)
     throws Exception
   {
-    final VirtualListViewResponseControl actual = new VirtualListViewResponseControl(expected.getCriticality());
+    final VirtualListViewResponseControl actual = new VirtualListViewResponseControl(control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

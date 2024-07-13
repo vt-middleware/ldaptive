@@ -2,9 +2,9 @@
 package org.ldaptive.transcode;
 
 import java.util.UUID;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link UUIDValueTranscoder}.
@@ -52,7 +52,7 @@ public class UUIDValueTranscoderTest
     throws Exception
   {
     final UUID uuid = UUID.fromString(s);
-    Assert.assertEquals(uuid, transcoder.decodeStringValue(s));
-    Assert.assertEquals(s, transcoder.encodeStringValue(uuid));
+    assertThat(transcoder.decodeStringValue(s)).isEqualTo(uuid);
+    assertThat(transcoder.encodeStringValue(uuid)).isEqualTo(s);
   }
 }

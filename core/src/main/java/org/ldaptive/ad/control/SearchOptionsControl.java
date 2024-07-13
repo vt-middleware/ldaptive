@@ -33,10 +33,10 @@ public class SearchOptionsControl extends AbstractControl implements RequestCont
   /** Types of flags. */
   public enum Flag {
 
-    /** SERVER_SEARCH_FLAG_DOMAIN_SCOPE . */
+    /** SERVER_SEARCH_FLAG_DOMAIN_SCOPE. */
     DOMAIN_SCOPE,
 
-    /** SERVER_SEARCH_FLAG_PHANTOM_ROOT . */
+    /** SERVER_SEARCH_FLAG_PHANTOM_ROOT. */
     PHANTOM_ROOT
   }
 

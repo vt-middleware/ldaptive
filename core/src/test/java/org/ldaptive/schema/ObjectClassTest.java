@@ -2,9 +2,9 @@
 package org.ldaptive.schema;
 
 import java.util.Collections;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link ObjectClass}.
@@ -261,9 +261,9 @@ public class ObjectClassTest
   {
     for (DefinitionFunction<ObjectClass> func : functions) {
       final ObjectClass parsed = func.parse(definition);
-      Assert.assertEquals(objectClass, parsed);
-      Assert.assertEquals(definition, parsed.format());
-      Assert.assertEquals(objectClass.format(), parsed.format());
+      assertThat(parsed).isEqualTo(objectClass);
+      assertThat(parsed.format()).isEqualTo(definition);
+      assertThat(parsed.format()).isEqualTo(objectClass.format());
     }
   }
 }

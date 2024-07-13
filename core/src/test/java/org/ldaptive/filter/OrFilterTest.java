@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link OrFilter}.
@@ -54,6 +54,6 @@ public class OrFilterTest
   public void encode(final OrFilter filter, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(filter.getEncoder().encode(), berValue);
+    assertThat(filter.getEncoder().encode()).isEqualTo(berValue);
   }
 }

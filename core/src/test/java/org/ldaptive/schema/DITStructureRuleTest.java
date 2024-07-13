@@ -2,9 +2,9 @@
 package org.ldaptive.schema;
 
 import java.util.Collections;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link DITStructureRule}.
@@ -159,9 +159,9 @@ public class DITStructureRuleTest
   {
     for (DefinitionFunction<DITStructureRule> func : functions) {
       final DITStructureRule parsed = func.parse(definition);
-      Assert.assertEquals(structureRule, parsed);
-      Assert.assertEquals(definition, parsed.format());
-      Assert.assertEquals(structureRule.format(), parsed.format());
+      assertThat(parsed).isEqualTo(structureRule);
+      assertThat(parsed.format()).isEqualTo(definition);
+      assertThat(parsed.format()).isEqualTo(structureRule.format());
     }
   }
 }

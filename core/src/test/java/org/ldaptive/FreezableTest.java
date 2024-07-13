@@ -42,9 +42,9 @@ import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for objects that implement {@link Freezable}.
@@ -260,13 +260,12 @@ public class FreezableTest
         if (invokeMethod) {
           try {
             method.invoke(i, createParamType(method.getParameterTypes()[0]));
-            Assert.fail("Method " + method + " should have thrown exception for " + clazz);
+            fail("Method %s should have thrown exception for %s", method, clazz);
           } catch (Exception e) {
-            Assert.assertEquals(e.getClass(), InvocationTargetException.class);
-            Assert.assertEquals(
-              ((InvocationTargetException) e).getTargetException().getClass(),
-              IllegalStateException.class,
-              "Method " + method + " should have thrown illegal state exception for " + clazz);
+            assertThat(e).isExactlyInstanceOf(InvocationTargetException.class);
+            assertThat(((InvocationTargetException) e).getTargetException())
+              .isExactlyInstanceOf(IllegalStateException.class)
+              .withFailMessage("Method %s should have thrown illegal state exception for %s", method, clazz);
           }
         }
       }

@@ -23,11 +23,11 @@ import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.transport.mock.MockConnection;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DefaultOperationHandle}.
@@ -119,16 +119,16 @@ public class DefaultOperationHandleTest
     if (throwsTimeout) {
       try {
         handle.execute();
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       } catch (Exception ex) {
         if (ex instanceof LdapException) {
-          Assert.assertEquals(ResultCode.LDAP_TIMEOUT, ((LdapException) ex).getResultCode());
+          assertThat(((LdapException) ex).getResultCode()).isEqualTo(ResultCode.LDAP_TIMEOUT);
         } else {
           throw ex;
         }
       }
     } else {
-      Assert.assertEquals(handle.execute(), response);
+      assertThat(handle.execute()).isEqualTo(response);
     }
   }
 
@@ -169,16 +169,16 @@ public class DefaultOperationHandleTest
     if (throwsTimeout) {
       try {
         handle.execute();
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       } catch (Exception ex) {
         if (ex instanceof LdapException) {
-          Assert.assertEquals(ResultCode.LDAP_TIMEOUT, ((LdapException) ex).getResultCode());
+          assertThat(((LdapException) ex).getResultCode()).isEqualTo(ResultCode.LDAP_TIMEOUT);
         } else {
           throw ex;
         }
       }
     } else {
-      Assert.assertEquals(handle.execute(), response);
+      assertThat(handle.execute()).isEqualTo(response);
     }
   }
 
@@ -219,17 +219,17 @@ public class DefaultOperationHandleTest
         () -> handle.result(response), responseTime.multipliedBy(2).toMillis(), TimeUnit.MILLISECONDS);
       try {
         handle.execute();
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       } catch (Exception ex) {
         if (ex instanceof LdapException) {
-          Assert.assertEquals(ResultCode.LDAP_TIMEOUT, ((LdapException) ex).getResultCode());
+          assertThat(((LdapException) ex).getResultCode()).isEqualTo(ResultCode.LDAP_TIMEOUT);
         } else {
           throw ex;
         }
       }
     } else {
       executorService.schedule(() -> handle.result(response), responseTime.toMillis(), TimeUnit.MILLISECONDS);
-      Assert.assertEquals(handle.execute(), response);
+      assertThat(handle.execute()).isEqualTo(response);
     }
   }
 
@@ -254,16 +254,16 @@ public class DefaultOperationHandleTest
     executorService.schedule(() -> handle.exception(e), responseTime.toMillis(), TimeUnit.MILLISECONDS);
     try {
       handle.execute();
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception ex) {
       if (throwsTimeout) {
         if (ex instanceof LdapException) {
-          Assert.assertEquals(ResultCode.LDAP_TIMEOUT, ((LdapException) ex).getResultCode());
+          assertThat(((LdapException) ex).getResultCode()).isEqualTo(ResultCode.LDAP_TIMEOUT);
         } else {
           throw ex;
         }
       } else {
-        Assert.assertEquals(ex, e);
+        assertThat(e).isEqualTo(ex);
       }
     }
   }
@@ -304,11 +304,11 @@ public class DefaultOperationHandleTest
       future.cancel(true);
       future.get();
     } catch (Exception e) {
-      Assert.assertEquals(CancellationException.class, e.getClass());
+      assertThat(e).isExactlyInstanceOf(CancellationException.class);
     }
     if (!latch.await(Duration.ofSeconds(2).toMillis(), TimeUnit.MILLISECONDS)) {
-      Assert.fail("Exception was not set on the handle");
+      fail("Exception was not set on the handle");
     }
-    Assert.assertEquals(ResultCode.LOCAL_ERROR, ldapException.get().getResultCode());
+    assertThat(ldapException.get().getResultCode()).isEqualTo(ResultCode.LOCAL_ERROR);
   }
 }

@@ -10,14 +10,14 @@ import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
-import org.ldaptive.TestUtils;
 import org.ldaptive.concurrent.SearchOperationWorker;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link SearchTemplatesOperation}.
@@ -44,10 +44,10 @@ public class SearchTemplatesOperationTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
+    final String ldif = readFileIntoString(ldifFile);
     testLdapEntries = new LdapEntry[5];
     for (int i = 0; i < 5; i++) {
-      testLdapEntries[i] = TestUtils.convertLdifToResult(ldif).getEntry();
+      testLdapEntries[i] = convertLdifToResult(ldif).getEntry();
       final String cn = testLdapEntries[i].getAttribute("cn").getStringValue();
       testLdapEntries[i].setDn(testLdapEntries[i].getDn().replaceFirst(cn, cn + i));
       testLdapEntries[i].getAttribute("cn").addStringValues(cn + i);
@@ -68,7 +68,7 @@ public class SearchTemplatesOperationTest extends AbstractTest
   public void createExecutor(final String baseDn)
     throws Exception
   {
-    final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
+    final ConnectionConfig cc = readConnectionConfig(null);
     final PooledConnectionFactory cf = new PooledConnectionFactory(cc);
     cf.setMinPoolSize(5);
     cf.setMaxPoolSize(10);
@@ -140,14 +140,14 @@ public class SearchTemplatesOperationTest extends AbstractTest
 
     SearchResponse sr = searchOperation.execute(q);
     sr = SearchResponse.sort(sr);
-    Assert.assertNotNull(sr);
-    Assert.assertEquals(sr.entrySize(), 5);
+    assertThat(sr).isNotNull().extracting(SearchResponse::entrySize).isEqualTo(5);
     final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
-    TestUtils.assertEquals(testLdapEntries[0], l.get(0));
-    TestUtils.assertEquals(testLdapEntries[1], l.get(1));
-    TestUtils.assertEquals(testLdapEntries[2], l.get(2));
-    TestUtils.assertEquals(testLdapEntries[3], l.get(3));
-    TestUtils.assertEquals(testLdapEntries[4], l.get(4));
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(l.get(0)).isSame(testLdapEntries[0]);
+    LdapEntryAssert.assertThat(l.get(1)).isSame(testLdapEntries[1]);
+    LdapEntryAssert.assertThat(l.get(2)).isSame(testLdapEntries[2]);
+    LdapEntryAssert.assertThat(l.get(3)).isSame(testLdapEntries[3]);
+    LdapEntryAssert.assertThat(l.get(4)).isSame(testLdapEntries[4]);
   }
 
 
@@ -160,12 +160,12 @@ public class SearchTemplatesOperationTest extends AbstractTest
 
     SearchResponse sr = searchOperation.execute(q);
     sr = SearchResponse.sort(sr);
-    Assert.assertNotNull(sr);
-    Assert.assertEquals(sr.entrySize(), 3);
+    assertThat(sr).isNotNull().extracting(SearchResponse::entrySize).isEqualTo(3);
     final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
-    TestUtils.assertEquals(testLdapEntries[2], l.get(0));
-    TestUtils.assertEquals(testLdapEntries[3], l.get(1));
-    TestUtils.assertEquals(testLdapEntries[4], l.get(2));
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(l.get(0)).isSame(testLdapEntries[2]);
+    LdapEntryAssert.assertThat(l.get(1)).isSame(testLdapEntries[3]);
+    LdapEntryAssert.assertThat(l.get(2)).isSame(testLdapEntries[4]);
   }
 
 
@@ -178,12 +178,12 @@ public class SearchTemplatesOperationTest extends AbstractTest
 
     SearchResponse sr = searchOperation.execute(q);
     sr = SearchResponse.sort(sr);
-    Assert.assertNotNull(sr);
-    Assert.assertEquals(sr.entrySize(), 3);
+    assertThat(sr).isNotNull().extracting(SearchResponse::entrySize).isEqualTo(3);
     final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
-    TestUtils.assertEquals(testLdapEntries[0], l.get(0));
-    TestUtils.assertEquals(testLdapEntries[1], l.get(1));
-    TestUtils.assertEquals(testLdapEntries[2], l.get(2));
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(l.get(0)).isSame(testLdapEntries[0]);
+    LdapEntryAssert.assertThat(l.get(1)).isSame(testLdapEntries[1]);
+    LdapEntryAssert.assertThat(l.get(2)).isSame(testLdapEntries[2]);
   }
 
 
@@ -197,10 +197,10 @@ public class SearchTemplatesOperationTest extends AbstractTest
 
     SearchResponse sr = searchOperation.execute(q);
     sr = SearchResponse.sort(sr);
-    Assert.assertNotNull(sr);
-    Assert.assertEquals(sr.entrySize(), 2);
+    assertThat(sr).isNotNull().extracting(SearchResponse::entrySize).isEqualTo(2);
     final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
-    TestUtils.assertEquals(testLdapEntries[2], l.get(0));
-    TestUtils.assertEquals(testLdapEntries[3], l.get(1));
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(l.get(0)).isSame(testLdapEntries[2]);
+    LdapEntryAssert.assertThat(l.get(1)).isSame(testLdapEntries[3]);
   }
 }

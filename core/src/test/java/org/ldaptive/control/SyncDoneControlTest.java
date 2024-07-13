@@ -3,9 +3,9 @@ package org.ldaptive.control;
 
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SyncDoneControl}.
@@ -57,16 +57,16 @@ public class SyncDoneControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  sync done control to test.
+   * @param  control  sync done control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "response")
-  public void decode(final DERBuffer berValue, final SyncDoneControl expected)
+  public void decode(final DERBuffer berValue, final SyncDoneControl control)
     throws Exception
   {
-    final SyncDoneControl actual = new SyncDoneControl(expected.getCriticality());
+    final SyncDoneControl actual = new SyncDoneControl(control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

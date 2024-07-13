@@ -3,7 +3,6 @@ package org.ldaptive.transport;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -27,11 +26,11 @@ import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeResultHandler;
 import org.ldaptive.handler.SortResultHandler;
 import org.ldaptive.transport.mock.MockConnection;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DefaultSearchOperationHandle}.
@@ -125,16 +124,16 @@ public class DefaultSearchOperationHandleTest
     if (throwsTimeout) {
       try {
         handle.execute();
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       } catch (Exception ex) {
         if (ex instanceof LdapException) {
-          Assert.assertEquals(ResultCode.LDAP_TIMEOUT, ((LdapException) ex).getResultCode());
+          assertThat(((LdapException) ex).getResultCode()).isEqualTo(ResultCode.LDAP_TIMEOUT);
         } else {
           throw ex;
         }
       }
     } else {
-      Assert.assertEquals(handle.execute(), response);
+      assertThat(handle.execute()).isEqualTo(response);
     }
   }
 
@@ -165,8 +164,8 @@ public class DefaultSearchOperationHandleTest
     executorService.schedule(
       () -> handle.entry(entry2), responseTime.multipliedBy(3).dividedBy(4).toMillis(), TimeUnit.MILLISECONDS);
     executorService.schedule(() -> handle.result(response), responseTime.toMillis(), TimeUnit.MILLISECONDS);
-    Assert.assertEquals(
-      handle.execute(), SearchResponse.builder().messageID(1).entry(entry1, entry2).reference(ref1).build());
+    assertThat(handle.execute()).isEqualTo(
+      SearchResponse.builder().messageID(1).entry(entry1, entry2).reference(ref1).build());
   }
 
 
@@ -199,18 +198,18 @@ public class DefaultSearchOperationHandleTest
         () -> handle.result(response), responseTime.multipliedBy(2).toMillis(), TimeUnit.MILLISECONDS);
       try {
         handle.execute();
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       } catch (Exception ex) {
         if (ex instanceof LdapException) {
-          Assert.assertEquals(ResultCode.LDAP_TIMEOUT, ((LdapException) ex).getResultCode());
+          assertThat(((LdapException) ex).getResultCode()).isEqualTo(ResultCode.LDAP_TIMEOUT);
         } else {
           throw ex;
         }
       }
     } else {
       executorService.schedule(() -> handle.result(response), responseTime.toMillis(), TimeUnit.MILLISECONDS);
-      Assert.assertEquals(
-        handle.execute(), SearchResponse.builder().messageID(1).entry(entry1, entry2).reference(ref1).build());
+      assertThat(handle.execute()).isEqualTo(
+        SearchResponse.builder().messageID(1).entry(entry1, entry2).reference(ref1).build());
     }
   }
 
@@ -248,7 +247,7 @@ public class DefaultSearchOperationHandleTest
       responseTime.multipliedBy(3).dividedBy(4).toMillis(),
       TimeUnit.MILLISECONDS);
     executorService.schedule(() -> handle.result(response), responseTime.toMillis(), TimeUnit.MILLISECONDS);
-    Assert.assertEquals(handle.execute(), response);
+    assertThat(handle.execute()).isEqualTo(response);
   }
 
 
@@ -288,17 +287,17 @@ public class DefaultSearchOperationHandleTest
         () -> handle.result(response), responseTime.multipliedBy(2).toMillis(), TimeUnit.MILLISECONDS);
       try {
         handle.execute();
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       } catch (Exception ex) {
         if (ex instanceof LdapException) {
-          Assert.assertEquals(ResultCode.LDAP_TIMEOUT, ((LdapException) ex).getResultCode());
+          assertThat(((LdapException) ex).getResultCode()).isEqualTo(ResultCode.LDAP_TIMEOUT);
         } else {
           throw ex;
         }
       }
     } else {
       executorService.schedule(() -> handle.result(response), responseTime.toMillis(), TimeUnit.MILLISECONDS);
-      Assert.assertEquals(handle.execute(), response);
+      assertThat(handle.execute()).isEqualTo(response);
     }
   }
 
@@ -323,16 +322,16 @@ public class DefaultSearchOperationHandleTest
     executorService.schedule(() -> handle.exception(e), responseTime.toMillis(), TimeUnit.MILLISECONDS);
     try {
       handle.execute();
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception ex) {
       if (throwsTimeout) {
         if (ex instanceof LdapException) {
-          Assert.assertEquals(ResultCode.LDAP_TIMEOUT, ((LdapException) ex).getResultCode());
+          assertThat(((LdapException) ex).getResultCode()).isEqualTo(ResultCode.LDAP_TIMEOUT);
         } else {
           throw ex;
         }
       } else {
-        Assert.assertEquals(ex, e);
+        assertThat(ex).isEqualTo(e);
       }
     }
   }
@@ -373,12 +372,12 @@ public class DefaultSearchOperationHandleTest
       future.cancel(true);
       future.get();
     } catch (Exception e) {
-      Assert.assertEquals(CancellationException.class, e.getClass());
+      assertThat(e).isExactlyInstanceOf(CancellationException.class);
     }
     if (!latch.await(Duration.ofSeconds(2).toMillis(), TimeUnit.MILLISECONDS)) {
-      Assert.fail("Exception was not set on the handle");
+      fail("Exception was not set on the handle");
     }
-    Assert.assertEquals(ResultCode.LOCAL_ERROR, ldapException.get().getResultCode());
+    assertThat(ldapException.get().getResultCode()).isEqualTo(ResultCode.LOCAL_ERROR);
   }
 
 
@@ -401,25 +400,25 @@ public class DefaultSearchOperationHandleTest
       result -> {
         result.addReferences(SearchResultReference.builder().messageID(result.getMessageID()).build());
         result.addEntries(LdapEntry.builder().messageID(result.getMessageID()).build());
-        Assert.assertTrue(handlerExecuted.compareAndSet(false, true));
+        assertThat(handlerExecuted.compareAndSet(false, true)).isTrue();
         return result;
       },
       new FreezeResultHandler());
     handle.entry(LdapEntry.builder().messageID(1).build());
     handle.result(SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
     final SearchResponse result = handle.await();
-    Assert.assertTrue(handlerExecuted.get());
+    assertThat(handlerExecuted.get()).isTrue();
     try {
       result.addReferences(SearchResultReference.builder().messageID(result.getMessageID()).build());
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
     try {
       result.addEntries(LdapEntry.builder().messageID(result.getMessageID()).build());
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
   }
 
@@ -443,8 +442,8 @@ public class DefaultSearchOperationHandleTest
     handle.entry(LdapEntry.builder().messageID(1).dn("uid=abc,ou=sort,dc=ldaptive,dc=org").build());
     handle.result(SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
     final SearchResponse result = handle.await();
-    Assert.assertNotNull(result.getEntry());
-    Assert.assertEquals(result.getEntry().getDn(), "uid=abc,ou=sort,dc=ldaptive,dc=org");
+    assertThat(result.getEntry()).isNotNull();
+    assertThat(result.getEntry().getDn()).isEqualTo("uid=abc,ou=sort,dc=ldaptive,dc=org");
   }
 
 
@@ -477,11 +476,11 @@ public class DefaultSearchOperationHandleTest
       .build());
     handle.result(SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
     final SearchResponse result = handle.await();
-    Assert.assertEquals(result.entrySize(), 1);
-    Assert.assertNotNull(result.getEntry());
-    Assert.assertEquals("uid=alice,ou=merge,dc=ldaptive,dc=org", result.getEntry().getDn());
-    Assert.assertEquals(
-      List.of("alice", "bob", "robert"), result.getEntry().getAttribute("givenName").getStringValues());
+    assertThat(result.entrySize()).isEqualTo(1);
+    assertThat(result.getEntry()).isNotNull();
+    assertThat(result.getEntry().getDn()).isEqualTo("uid=alice,ou=merge,dc=ldaptive,dc=org");
+    assertThat(result.getEntry().getAttribute("givenName").getStringValues())
+      .containsExactly("alice", "bob", "robert");
   }
 
 

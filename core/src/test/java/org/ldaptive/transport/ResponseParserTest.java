@@ -8,9 +8,9 @@ import org.ldaptive.Message;
 import org.ldaptive.ResultCode;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.extended.ExtendedResponse;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link ResponseParser}.
@@ -104,6 +104,6 @@ public class ResponseParserTest
     throws Exception
   {
     final ResponseParser parser = new ResponseParser();
-    Assert.assertEquals(parser.parse(new DefaultDERBuffer(berValue)).get(), response);
+    assertThat(parser.parse(new DefaultDERBuffer(berValue)).get()).isEqualTo(response);
   }
 }

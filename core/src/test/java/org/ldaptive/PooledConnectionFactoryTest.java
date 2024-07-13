@@ -17,8 +17,8 @@ import org.ldaptive.pool.BindConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.transport.netty.NettyConnectionFactoryTransport;
 import org.ldaptive.transport.netty.SimpleNettyServer;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link PooledConnectionFactory}.
@@ -48,7 +48,7 @@ public class PooledConnectionFactoryTest
         factory.initialize();
       } finally {
         factory.close();
-        Assert.assertEquals(factory.availableCount(), 0);
+        assertThat(factory.availableCount()).isEqualTo(0);
       }
     } finally {
       server.stop();
@@ -109,16 +109,16 @@ public class PooledConnectionFactoryTest
         for (OperationHandle<SearchRequest, SearchResponse> handle : responses) {
           try {
             handle.await();
-            Assert.fail("Should have thrown exception");
+            fail("Should have thrown exception");
           } catch (Exception e) {
-            Assert.assertEquals(e.getClass(), LdapException.class);
+            assertThat(e).isExactlyInstanceOf(LdapException.class);
           }
         }
       } finally {
         if (factory.isInitialized()) {
           factory.close();
         }
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
       }
     } finally {
       server.stop();
@@ -146,12 +146,12 @@ public class PooledConnectionFactoryTest
       factory.setName("pooled-connection-factory-test-validate-periodically");
       try {
         factory.initialize();
-        Assert.assertEquals(factory.availableCount(), 3);
+        assertThat(factory.availableCount()).isEqualTo(3);
         factory.validate();
-        Assert.assertEquals(factory.availableCount(), 3);
+        assertThat(factory.availableCount()).isEqualTo(3);
       } finally {
         factory.close();
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
       }
     } finally {
       server.stop();
@@ -179,16 +179,16 @@ public class PooledConnectionFactoryTest
         .build();
       try {
         factory.initialize();
-        Assert.assertEquals(factory.availableCount(), 3);
+        assertThat(factory.availableCount()).isEqualTo(3);
         server.stop();
         factory.validate();
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
         server.start();
         factory.validate();
-        Assert.assertEquals(factory.availableCount(), 3);
+        assertThat(factory.availableCount()).isEqualTo(3);
       } finally {
         factory.close();
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
       }
     } finally {
       server.stop();
@@ -234,15 +234,15 @@ public class PooledConnectionFactoryTest
         .build();
       try {
         factory.initialize();
-        Assert.assertEquals(factory.availableCount(), 0);
+        assertThat(factory.availableCount()).isEqualTo(0);
         // get 2 connections to grow the pool size and then validate
         Connection c1 = factory.getConnection();
         Connection c2 = factory.getConnection();
         c1.close();
         c2.close();
-        Assert.assertEquals(factory.availableCount(), 2);
+        assertThat(factory.availableCount()).isEqualTo(2);
         factory.validate();
-        Assert.assertEquals(factory.availableCount(), 0);
+        assertThat(factory.availableCount()).isEqualTo(0);
 
         // change the wait time and repeat
         serverWait.set(Duration.ofMillis(500));
@@ -250,12 +250,12 @@ public class PooledConnectionFactoryTest
         c2 = factory.getConnection();
         c1.close();
         c2.close();
-        Assert.assertEquals(factory.availableCount(), 2);
+        assertThat(factory.availableCount()).isEqualTo(2);
         factory.validate();
-        Assert.assertEquals(factory.availableCount(), 2);
+        assertThat(factory.availableCount()).isEqualTo(2);
       } finally {
         factory.close();
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
       }
     } finally {
       server.stop();
@@ -313,28 +313,28 @@ public class PooledConnectionFactoryTest
       factory.setValidationExceptionHandler(factory.new RetryValidationExceptionHandler());
       try {
         factory.initialize();
-        Assert.assertEquals(factory.availableCount(), 0);
-        Assert.assertEquals(factory.activeCount(), 0);
-        Assert.assertEquals(validateCount.intValue(), 0);
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        assertThat(validateCount.intValue()).isEqualTo(0);
         Connection c1 = factory.getConnection();
-        Assert.assertEquals(factory.availableCount(), 0);
-        Assert.assertEquals(factory.activeCount(), 1);
-        Assert.assertEquals(validateCount.intValue(), 1);
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(1);
+        assertThat(validateCount.intValue()).isEqualTo(1);
         c1.close();
-        Assert.assertEquals(factory.availableCount(), 1);
-        Assert.assertEquals(factory.activeCount(), 0);
+        assertThat(factory.availableCount()).isEqualTo(1);
+        assertThat(factory.activeCount()).isEqualTo(0);
 
         // getConnection should result in a ValidationException, which results in another call to getConnection
         c1 = factory.getConnection();
-        Assert.assertEquals(factory.availableCount(), 0);
-        Assert.assertEquals(factory.activeCount(), 1);
-        Assert.assertEquals(validateCount.intValue(), 3);
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(1);
+        assertThat(validateCount.intValue()).isEqualTo(3);
         c1.close();
-        Assert.assertEquals(factory.availableCount(), 1);
-        Assert.assertEquals(factory.activeCount(), 0);
+        assertThat(factory.availableCount()).isEqualTo(1);
+        assertThat(factory.activeCount()).isEqualTo(0);
       } finally {
         factory.close();
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
       }
     } finally {
       server.stop();
@@ -365,15 +365,15 @@ public class PooledConnectionFactoryTest
         .build();
       try {
         factory.initialize();
-        Assert.assertEquals(factory.availableCount(), 2);
+        assertThat(factory.availableCount()).isEqualTo(2);
         final Connection c1 = factory.getConnection();
         c1.close();
         Thread.sleep(50);
         factory.prune();
-        Assert.assertEquals(factory.availableCount(), 2);
+        assertThat(factory.availableCount()).isEqualTo(2);
       } finally {
         factory.close();
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
       }
     } finally {
       server.stop();
@@ -404,20 +404,20 @@ public class PooledConnectionFactoryTest
         .build();
       try {
         factory.initialize();
-        Assert.assertEquals(factory.availableCount(), 2);
+        assertThat(factory.availableCount()).isEqualTo(2);
         final Connection c1 = factory.getConnection();
         final Connection c2 = factory.getConnection();
         final Connection c3 = factory.getConnection();
         c1.close();
         c2.close();
         c3.close();
-        Assert.assertEquals(factory.availableCount(), 3);
+        assertThat(factory.availableCount()).isEqualTo(3);
         Thread.sleep(50);
         factory.prune();
-        Assert.assertEquals(factory.availableCount(), 2);
+        assertThat(factory.availableCount()).isEqualTo(2);
       } finally {
         factory.close();
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
       }
     } finally {
       server.stop();
@@ -448,24 +448,24 @@ public class PooledConnectionFactoryTest
         .build();
       try {
         factory.initialize();
-        Assert.assertEquals(factory.availableCount(), 2);
+        assertThat(factory.availableCount()).isEqualTo(2);
         final Connection c1 = factory.getConnection();
         final Connection c2 = factory.getConnection();
         final Connection c3 = factory.getConnection();
-        Assert.assertEquals(factory.availableCount(), 0);
-        Assert.assertEquals(factory.activeCount(), 3);
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(3);
         Thread.sleep(50);
         factory.prune();
-        Assert.assertEquals(factory.availableCount(), 0);
-        Assert.assertEquals(factory.activeCount(), 3);
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(3);
         c1.close();
         c2.close();
         c3.close();
-        Assert.assertEquals(factory.availableCount(), 3);
-        Assert.assertEquals(factory.activeCount(), 0);
+        assertThat(factory.availableCount()).isEqualTo(3);
+        assertThat(factory.activeCount()).isEqualTo(0);
       } finally {
         factory.close();
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
       }
     } finally {
       server.stop();
@@ -496,28 +496,28 @@ public class PooledConnectionFactoryTest
         .build();
       try {
         factory.initialize();
-        Assert.assertEquals(factory.availableCount(), 2);
+        assertThat(factory.availableCount()).isEqualTo(2);
         final Connection c1 = factory.getConnection();
         final Connection c2 = factory.getConnection();
         final Connection c3 = factory.getConnection();
         final Connection c4 = factory.getConnection();
         final Connection c5 = factory.getConnection();
-        Assert.assertEquals(factory.availableCount(), 0);
-        Assert.assertEquals(factory.activeCount(), 5);
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(5);
         c1.close();
         c2.close();
-        Assert.assertEquals(factory.availableCount(), 2);
-        Assert.assertEquals(factory.activeCount(), 3);
+        assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(3);
         Thread.sleep(50);
         factory.prune();
-        Assert.assertEquals(factory.availableCount(), 0);
-        Assert.assertEquals(factory.activeCount(), 3);
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(3);
         c3.close();
         c4.close();
         c5.close();
       } finally {
         factory.close();
-        Assert.assertEquals(factory.availableCount() + factory.activeCount(), 0);
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
       }
     } finally {
       server.stop();

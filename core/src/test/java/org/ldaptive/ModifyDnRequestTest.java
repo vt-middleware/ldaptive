@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link ModifyDnRequest}.
@@ -103,6 +103,6 @@ public class ModifyDnRequestTest
   public void encode(final ModifyDnRequest request, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(request.encode(2), berValue);
+    assertThat(request.encode(2)).isEqualTo(berValue);
   }
 }

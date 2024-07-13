@@ -6,9 +6,9 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link GeneralizedTimeValueTranscoder}.
@@ -290,7 +290,7 @@ public class GeneralizedTimeValueTranscoderTest
   public void decodeGeneralized(final ZonedDateTime date, final String generalizedTime, final String formatTime)
     throws Exception
   {
-    Assert.assertEquals(transcoder.decodeStringValue(generalizedTime), date);
+    assertThat(transcoder.decodeStringValue(generalizedTime)).isEqualTo(date);
   }
 
 
@@ -305,7 +305,7 @@ public class GeneralizedTimeValueTranscoderTest
   public void encodeFormat(final ZonedDateTime date, final String generalizedTime, final String formatTime)
     throws Exception
   {
-    Assert.assertEquals(transcoder.encodeStringValue(date), formatTime);
+    assertThat(transcoder.encodeStringValue(date)).isEqualTo(formatTime);
   }
 
 
@@ -320,7 +320,7 @@ public class GeneralizedTimeValueTranscoderTest
   public void decodeFormat(final ZonedDateTime date, final String generalizedTime, final String formatTime)
     throws Exception
   {
-    Assert.assertEquals(transcoder.decodeStringValue(formatTime), date.withZoneSameInstant(ZoneOffset.UTC));
+    assertThat(transcoder.decodeStringValue(formatTime)).isEqualTo(date.withZoneSameInstant(ZoneOffset.UTC));
   }
 
 
@@ -335,9 +335,9 @@ public class GeneralizedTimeValueTranscoderTest
   {
     try {
       transcoder.decodeStringValue(generalizedTime);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
   }
 

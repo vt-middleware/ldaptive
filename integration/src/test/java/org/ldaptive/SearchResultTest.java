@@ -5,6 +5,7 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link SearchResponse}.
@@ -28,8 +29,8 @@ public class SearchResultTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    testLdapEntry = convertLdifToEntry(ldif);
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -61,10 +62,11 @@ public class SearchResultTest extends AbstractTest
   public void toSearchResults(final String dn, final String filter, final String returnAttrs, final String ldifFile)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
     final SearchResponse result = search.execute(new SearchRequest(dn, filter, returnAttrs.split("\\|")));
-    final String expected = TestUtils.readFileIntoString(ldifFile);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected), result);
+    final String expected = readFileIntoString(ldifFile);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
   }
 }

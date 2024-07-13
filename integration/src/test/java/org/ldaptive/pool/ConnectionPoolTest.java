@@ -14,15 +14,15 @@ import org.ldaptive.RoundRobinConnectionStrategy;
 import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
-import org.ldaptive.TestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Load test for connection pools.
@@ -81,7 +81,7 @@ public class ConnectionPoolTest extends AbstractTest
   {
     searchBaseDn = dn;
 
-    final ConnectionConfig cc = TestUtils.readConnectionConfig(null);
+    final ConnectionConfig cc = readConnectionConfig(null);
 
     blockingPool = new BlockingConnectionPool(new DefaultConnectionFactory(cc));
     blockingPool.setMaxPoolSize(30);
@@ -102,7 +102,7 @@ public class ConnectionPoolTest extends AbstractTest
     blockingTimeoutPool.setValidator(
       SearchConnectionValidator.builder().period(Duration.ofSeconds(5)).timeout(Duration.ofSeconds(5)).build());
 
-    final ConnectionConfig connStrategyCc = TestUtils.readConnectionConfig(null);
+    final ConnectionConfig connStrategyCc = readConnectionConfig(null);
     connStrategyCc.setLdapUrl(String.format("%s ldap://dne.directory.ldaptive.org", host));
     connStrategyCc.setConnectionStrategy(new RoundRobinConnectionStrategy());
     final DefaultConnectionFactory connStrategyCf = new DefaultConnectionFactory(connStrategyCc);
@@ -156,15 +156,15 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    ENTRIES.get("2")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
-    ENTRIES.get("3")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
-    ENTRIES.get("4")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile4)).getEntry();
-    ENTRIES.get("5")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile5)).getEntry();
-    ENTRIES.get("6")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile6)).getEntry();
-    ENTRIES.get("7")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile7)).getEntry();
-    ENTRIES.get("8")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile8)).getEntry();
-    ENTRIES.get("9")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile9)).getEntry();
-    ENTRIES.get("10")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile10)).getEntry();
+    ENTRIES.get("2")[0] = convertLdifToEntry(readFileIntoString(ldifFile2));
+    ENTRIES.get("3")[0] = convertLdifToEntry(readFileIntoString(ldifFile3));
+    ENTRIES.get("4")[0] = convertLdifToEntry(readFileIntoString(ldifFile4));
+    ENTRIES.get("5")[0] = convertLdifToEntry(readFileIntoString(ldifFile5));
+    ENTRIES.get("6")[0] = convertLdifToEntry(readFileIntoString(ldifFile6));
+    ENTRIES.get("7")[0] = convertLdifToEntry(readFileIntoString(ldifFile7));
+    ENTRIES.get("8")[0] = convertLdifToEntry(readFileIntoString(ldifFile8));
+    ENTRIES.get("9")[0] = convertLdifToEntry(readFileIntoString(ldifFile9));
+    ENTRIES.get("10")[0] = convertLdifToEntry(readFileIntoString(ldifFile10));
     // CheckStyle:Indentation ON
 
     for (Map.Entry<String, LdapEntry[]> e : ENTRIES.entrySet()) {
@@ -221,15 +221,15 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    ENTRIES.get("2")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
-    ENTRIES.get("3")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
-    ENTRIES.get("4")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile4)).getEntry();
-    ENTRIES.get("5")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile5)).getEntry();
-    ENTRIES.get("6")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile6)).getEntry();
-    ENTRIES.get("7")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile7)).getEntry();
-    ENTRIES.get("8")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile8)).getEntry();
-    ENTRIES.get("9")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile9)).getEntry();
-    ENTRIES.get("10")[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile10)).getEntry();
+    ENTRIES.get("2")[1] = convertLdifToEntry(readFileIntoString(ldifFile2));
+    ENTRIES.get("3")[1] = convertLdifToEntry(readFileIntoString(ldifFile3));
+    ENTRIES.get("4")[1] = convertLdifToEntry(readFileIntoString(ldifFile4));
+    ENTRIES.get("5")[1] = convertLdifToEntry(readFileIntoString(ldifFile5));
+    ENTRIES.get("6")[1] = convertLdifToEntry(readFileIntoString(ldifFile6));
+    ENTRIES.get("7")[1] = convertLdifToEntry(readFileIntoString(ldifFile7));
+    ENTRIES.get("8")[1] = convertLdifToEntry(readFileIntoString(ldifFile8));
+    ENTRIES.get("9")[1] = convertLdifToEntry(readFileIntoString(ldifFile9));
+    ENTRIES.get("10")[1] = convertLdifToEntry(readFileIntoString(ldifFile10));
     // CheckStyle:Indentation ON
   }
   // CheckStyle:ParameterNumber ON
@@ -255,14 +255,14 @@ public class ConnectionPoolTest extends AbstractTest
     super.deleteLdapEntry(ENTRIES.get("10")[0].getDn());
 
     blockingPool.close();
-    Assert.assertEquals(blockingPool.availableCount(), 0);
-    Assert.assertEquals(blockingPool.activeCount(), 0);
+    assertThat(blockingPool.availableCount()).isEqualTo(0);
+    assertThat(blockingPool.activeCount()).isEqualTo(0);
     blockingTimeoutPool.close();
-    Assert.assertEquals(blockingTimeoutPool.availableCount(), 0);
-    Assert.assertEquals(blockingTimeoutPool.activeCount(), 0);
+    assertThat(blockingTimeoutPool.availableCount()).isEqualTo(0);
+    assertThat(blockingTimeoutPool.activeCount()).isEqualTo(0);
     connStrategyPool.close();
-    Assert.assertEquals(connStrategyPool.availableCount(), 0);
-    Assert.assertEquals(connStrategyPool.activeCount(), 0);
+    assertThat(connStrategyPool.availableCount()).isEqualTo(0);
+    assertThat(connStrategyPool.activeCount()).isEqualTo(0);
   }
 
 
@@ -369,9 +369,9 @@ public class ConnectionPoolTest extends AbstractTest
   {
     try {
       blockingPool.getDefaultConnectionFactory().getConnectionConfig().setConnectTimeout(Duration.ofSeconds(10));
-      Assert.fail("Expected illegalstateexception to be thrown");
+      fail("Expected IllegalStateException to be thrown");
     } catch (IllegalStateException e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
   }
 
@@ -429,8 +429,8 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     Thread.sleep(10000);
-    Assert.assertEquals(blockingPool.activeCount(), 0);
-    Assert.assertEquals(blockingPool.availableCount(), blockingPool.DEFAULT_MIN_POOL_SIZE);
+    assertThat(blockingPool.activeCount()).isEqualTo(0);
+    assertThat(blockingPool.availableCount()).isEqualTo(blockingPool.DEFAULT_MIN_POOL_SIZE);
   }
 
 
@@ -500,8 +500,8 @@ public class ConnectionPoolTest extends AbstractTest
     throws Exception
   {
     Thread.sleep(10000);
-    Assert.assertEquals(blockingTimeoutPool.activeCount(), 0);
-    Assert.assertEquals(blockingTimeoutPool.availableCount(), blockingTimeoutPool.DEFAULT_MIN_POOL_SIZE);
+    assertThat(blockingTimeoutPool.activeCount()).isEqualTo(0);
+    assertThat(blockingTimeoutPool.availableCount()).isEqualTo(blockingTimeoutPool.DEFAULT_MIN_POOL_SIZE);
   }
 
 
@@ -551,8 +551,9 @@ public class ConnectionPoolTest extends AbstractTest
     }
 
     logger.info("CONNECTION POOL:: RESULT: {}", result);
-    Assert.assertEquals(result.getResultCode(), ResultCode.SUCCESS);
-    TestUtils.assertEquals(results, result.getEntry());
+    assertThat(result.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    // TODO this will need some work
+    assertThat(results).isEqualTo(result.getEntry());
     return System.currentTimeMillis() - startTime;
   }
 }

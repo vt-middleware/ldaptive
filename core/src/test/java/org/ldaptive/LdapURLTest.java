@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link LdapURL}.
@@ -350,12 +350,12 @@ public class LdapURLTest
     throws Exception
   {
     final LdapURL url = new LdapURL(actual);
-    Assert.assertEquals(url.getScheme(), scheme);
-    Assert.assertEquals(url.getHostname(), hostname);
-    Assert.assertEquals(url.getPort(), port);
+    assertThat(url.getScheme()).isEqualTo(scheme);
+    assertThat(url.getHostname()).isEqualTo(hostname);
+    assertThat(url.getPort()).isEqualTo(port);
     if (hostname != null) {
-      Assert.assertEquals(url.getHostnameWithPort(), hostname + ":" + port);
-      Assert.assertEquals(url.getHostnameWithSchemeAndPort(), scheme + "://" + hostname + ":" + port);
+      assertThat(url.getHostnameWithPort()).isEqualTo(hostname + ":" + port);
+      assertThat(url.getHostnameWithSchemeAndPort()).isEqualTo(scheme + "://" + hostname + ":" + port);
     }
   }
 
@@ -371,9 +371,9 @@ public class LdapURLTest
   {
     try {
       new LdapURL(url);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (IllegalArgumentException e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 }

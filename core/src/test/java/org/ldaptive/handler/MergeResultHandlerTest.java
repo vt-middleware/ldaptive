@@ -1,15 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.handler;
 
-import java.util.LinkedHashSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResponse;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link MergeResultHandler}.
@@ -76,9 +73,7 @@ public class MergeResultHandlerTest
   public void apply(final LdapEntry[] actual, final LdapEntry[] expected)
   {
     final MergeResultHandler handler = new MergeResultHandler();
-    final SearchResponse response = SearchResponse.builder().entry(actual).build();
-    Assert.assertEquals(
-      handler.apply(response).getEntries(),
-      Stream.of(expected).collect(Collectors.toCollection(LinkedHashSet::new)));
+    assertThat(handler.apply(SearchResponse.builder().entry(actual).build()))
+      .isEqualTo(SearchResponse.builder().entry(expected).build());
   }
 }

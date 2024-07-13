@@ -2,9 +2,9 @@
 package org.ldaptive.filter;
 
 import java.util.Random;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for filter functions.
@@ -17,7 +17,13 @@ public class FilterFunctionTest
   /**
    * Random number generator.
    */
-  private static Random rand = new Random();
+  private static final Random RAND = new Random();
+
+  /** Default filter function. */
+  private final FilterFunction defaultFilterFunction = new DefaultFilterFunction();
+
+  /** Regex filter function. */
+  private final FilterFunction regexFilterFunction = new RegexFilterFunction();
 
 
   /**
@@ -45,6 +51,9 @@ public class FilterFunctionTest
         new Object[] {"(  )", null, true, },
         new Object[] {" () ", null, true, },
         new Object[] {"  ()  ", null, true, },
+        new Object[] {"=", null, true, },
+        new Object[] {"<=", null, true, },
+        new Object[] {">=", null, true, },
         new Object[] {"(foo)", null, true, },
         new Object[] {"&foo=bar", null, true, },
         new Object[] {"(=bar)", null, true, },
@@ -146,6 +155,9 @@ public class FilterFunctionTest
         new Object[] {"(uid=*123**456**789*)", null, true, },
         new Object[] {"((objectCategory=person)(objectClass=user)(!(cn=user1*)))", null, true, },
         new Object[] {"((&(objectClass=user)(cn=andy*)(cn=steve*)(cn=margaret*)))", null, true, },
+        new Object[] {"(>=20170102030405.678Z)", null, true, },
+        new Object[] {"(createTimestamp>=20170102030405.678Z", null, true, },
+        new Object[] {"createTimestamp>=20170102030405.678Z)", null, true, },
         new Object[] {"(cn>=*)", null, true, },
         new Object[] {"(cn>=123*)", null, true, },
         new Object[] {"(cn>=*123)", null, true, },
@@ -344,8 +356,18 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          "foo<=",
+          new LessOrEqualFilter("foo", new byte[0]),
+          false,
+        },
+        new Object[] {
           "(foo<=)",
           new LessOrEqualFilter("foo", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "foo~=",
+          new ApproximateFilter("foo", new byte[0]),
           false,
         },
         new Object[] {
@@ -354,8 +376,18 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          "foo:=",
+          new ExtensibleFilter(null, "foo", new byte[0], false),
+          false,
+        },
+        new Object[] {
           "(foo:=)",
           new ExtensibleFilter(null, "foo", new byte[0], false),
+          false,
+        },
+        new Object[] {
+          "foo:dn:=",
+          new ExtensibleFilter(null, "foo", new byte[0], true),
           false,
         },
         new Object[] {
@@ -364,8 +396,18 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          ":foo:=",
+          new ExtensibleFilter("foo", null, new byte[0], false),
+          false,
+        },
+        new Object[] {
           "(:foo:=)",
           new ExtensibleFilter("foo", null, new byte[0], false),
+          false,
+        },
+        new Object[] {
+          ":dn:foo:=",
+          new ExtensibleFilter("foo", null, new byte[0], true),
           false,
         },
         new Object[] {
@@ -635,8 +677,38 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          "(createTimestamp>=)",
+          new GreaterOrEqualFilter("createTimestamp", ""),
+          false,
+        },
+        new Object[] {
+          "(createTimestamp>=20170102030405.678Z)",
+          new GreaterOrEqualFilter("createTimestamp", "20170102030405.678Z"),
+          false,
+        },
+        new Object[] {
+          "accountBalance<=",
+          new LessOrEqualFilter("accountBalance", new byte[0]),
+          false,
+        },
+        new Object[] {
           "(givenName<=)",
           new LessOrEqualFilter("givenName", new byte[0]),
+          false,
+        },
+        new Object[] {
+          "accountBalance<=1234",
+          new LessOrEqualFilter("accountBalance", "1234"),
+          false,
+        },
+        new Object[] {
+          "(accountBalance<=1234)",
+          new LessOrEqualFilter("accountBalance", "1234"),
+          false,
+        },
+        new Object[] {
+          "givenName<=John",
+          new LessOrEqualFilter("givenName", "John"),
           false,
         },
         new Object[] {
@@ -898,8 +970,18 @@ public class FilterFunctionTest
           false,
         },
         new Object[] {
+          "(filename=C:\\5cMyFile)",
+          new EqualityFilter("filename", "C:\\MyFile"),
+          false,
+        },
+        new Object[] {
           "(cn=*\\2A*)",
           new SubstringFilter("cn", null, null, "*"),
+          false,
+        },
+        new Object[] {
+          "(bin=\\00\\00\\00\\04)",
+          new EqualityFilter("bin", new String(new byte[] {0x00, 0x00, 0x00, 0x04})),
           false,
         },
         new Object[] {
@@ -925,6 +1007,11 @@ public class FilterFunctionTest
         new Object[] {
           "(&(givenName=Bill\\2A)(sn=Wa\\28ll\\29ace))",
           new AndFilter(new EqualityFilter("givenName", "Bill*"), new EqualityFilter("sn", "Wa(ll)ace")),
+          false,
+        },
+        new Object[] {
+          "(1.3.6.1.4.1.1466.0=\\04\\02\\48\\69)",
+          new EqualityFilter("1.3.6.1.4.1.1466.0", new String(new byte[] {0x04, 0x02, 0x48, 0x69})),
           false,
         },
         new Object[] {
@@ -1015,11 +1102,11 @@ public class FilterFunctionTest
     return
       new Object[][] {
         new Object[] {
-          generateFilter(rand.nextInt(1000)+1, false),
+          generateFilter(RAND.nextInt(1000)+1, false),
           false,
         },
         new Object[] {
-          generateFilter(rand.nextInt(1000)+1, true),
+          generateFilter(RAND.nextInt(1000)+1, true),
           true,
         },
       };
@@ -1037,15 +1124,14 @@ public class FilterFunctionTest
   public void parseAndCompareDefault(final String value, final Filter filter, final boolean throwsException)
     throws Exception
   {
-    final FilterFunction func = new DefaultFilterFunction();
     try {
-      Assert.assertEquals(func.parse(value), filter);
+      assertThat(defaultFilterFunction.parse(value)).isEqualTo(filter);
       if (throwsException) {
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       }
     } catch (FilterParseException e) {
       if (!throwsException) {
-        Assert.fail("Should not have thrown exception");
+        fail("Should not have thrown exception");
       }
     }
   }
@@ -1062,15 +1148,14 @@ public class FilterFunctionTest
   public void parseAndCompareRegex(final String value, final Filter filter, final boolean throwsException)
     throws Exception
   {
-    final FilterFunction func = new RegexFilterFunction();
     try {
-      Assert.assertEquals(func.parse(value), filter);
+      assertThat(regexFilterFunction.parse(value)).isEqualTo(filter);
       if (throwsException) {
-        Assert.fail("Should have thrown exception");
+        fail("Should have thrown exception");
       }
     } catch (FilterParseException e) {
       if (!throwsException) {
-        Assert.fail("Should not have thrown exception");
+        fail("Should not have thrown exception");
       }
     }
   }
@@ -1086,15 +1171,14 @@ public class FilterFunctionTest
   public void parseDefault(final String value, final boolean throwsException)
     throws Exception
   {
-    final FilterFunction func = new DefaultFilterFunction();
     try {
-      func.parse(value);
+      defaultFilterFunction.parse(value);
       if (throwsException) {
-        Assert.fail("Should have thrown exception for filter " + value);
+        fail("Should have thrown exception for filter " + value);
       }
     } catch (FilterParseException e) {
       if (!throwsException) {
-        Assert.fail("Should not have thrown exception for filter " + value, e);
+        fail("Should not have thrown exception for filter " + value, e);
       }
     }
   }
@@ -1110,15 +1194,14 @@ public class FilterFunctionTest
   public void parseRegex(final String value, final boolean throwsException)
     throws Exception
   {
-    final FilterFunction func = new RegexFilterFunction();
     try {
-      func.parse(value);
+      regexFilterFunction.parse(value);
       if (throwsException) {
-        Assert.fail("Should have thrown exception for filter " + value);
+        fail("Should have thrown exception for filter " + value);
       }
     } catch (FilterParseException e) {
       if (!throwsException) {
-        Assert.fail("Should not have thrown exception for filter " + value, e);
+        fail("Should not have thrown exception for filter " + value, e);
       }
     }
   }
@@ -1136,19 +1219,19 @@ public class FilterFunctionTest
     final String[] values = new String[] {"j", "k", "l", "m", "n", "o", "p", "q", "r", "*s", "*", "}", "!", "|"};
     final String[] operators = new String[] {"&", "|"};
     final String[] filterTypes = new String[] {"~=", "=", ">=", "<=", ":="};
-    final int count = (rand.nextInt(seed) % 50) + 1;
+    final int count = (RAND.nextInt(seed) % 50) + 1;
     String filter = "";
     for (int i = 0; i < count; i++) {
-      final String o = operators[rand.nextInt(operators.length)];
-      final String a = attr[rand.nextInt(attr.length)];
-      final String f = filterTypes[rand.nextInt(filterTypes.length)];
-      String v = values[rand.nextInt(values.length)];
+      final String o = operators[RAND.nextInt(operators.length)];
+      final String a = attr[RAND.nextInt(attr.length)];
+      final String f = filterTypes[RAND.nextInt(filterTypes.length)];
+      String v = values[RAND.nextInt(values.length)];
       if (v.contains("*") && !"=".equals(f)) {
         v = v.replace('*', 't');
       }
       String extraFilter = "";
       if ("|".equals(o) || "&".equals(o)) {
-        for (int j = 0; j < rand.nextInt(50)+1; j++) {
+        for (int j = 0; j < RAND.nextInt(50)+1; j++) {
           if (j % 2 == 0) {
             extraFilter = "(!(" + a + "=" + v +"))";
           } else {
@@ -1159,8 +1242,8 @@ public class FilterFunctionTest
       if (generateBadData) {
         extraFilter = extraFilter + f;
       }
-      filter = "(" + o + ("".equals(extraFilter) ? "" : extraFilter)+ "(" + a + f + v + ")" +
-        ("".equals(filter) ? "" : filter) + ")";
+      filter = "(" + o + (extraFilter.isEmpty() ? "" : extraFilter)+ "(" + a + f + v + ")" +
+        (filter.isEmpty() ? "" : filter) + ")";
     }
     return filter;
   }

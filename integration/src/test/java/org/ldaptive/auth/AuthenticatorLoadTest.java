@@ -16,14 +16,14 @@ import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
 import org.ldaptive.ad.extended.FastBindConnectionInitializer;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Load test for {@link Authenticator}.
@@ -64,10 +64,10 @@ public class AuthenticatorLoadTest extends AbstractTest
   public AuthenticatorLoadTest()
     throws Exception
   {
-    singleTLSAuth = TestUtils.readAuthenticator("classpath:/org/ldaptive/ldap.tls.load.properties");
-    pooledTLSAuth = TestUtils.readAuthenticator("classpath:/org/ldaptive/ldap.tls.load.properties");
-    singleADFastBind = TestUtils.readAuthenticator("classpath:/org/ldaptive/ldap.tls.load.properties");
-    pooledADFastBind = TestUtils.readAuthenticator("classpath:/org/ldaptive/ldap.tls.load.properties");
+    singleTLSAuth = readAuthenticator("classpath:/org/ldaptive/ldap.tls.load.properties");
+    pooledTLSAuth = readAuthenticator("classpath:/org/ldaptive/ldap.tls.load.properties");
+    singleADFastBind = readAuthenticator("classpath:/org/ldaptive/ldap.tls.load.properties");
+    pooledADFastBind = readAuthenticator("classpath:/org/ldaptive/ldap.tls.load.properties");
   }
 
 
@@ -184,15 +184,15 @@ public class AuthenticatorLoadTest extends AbstractTest
     }
 
     // CheckStyle:Indentation OFF
-    ENTRIES.get("2")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
-    ENTRIES.get("3")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
-    ENTRIES.get("4")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile4)).getEntry();
-    ENTRIES.get("5")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile5)).getEntry();
-    ENTRIES.get("6")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile6)).getEntry();
-    ENTRIES.get("7")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile7)).getEntry();
-    ENTRIES.get("8")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile8)).getEntry();
-    ENTRIES.get("9")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile9)).getEntry();
-    ENTRIES.get("10")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile10)).getEntry();
+    ENTRIES.get("2")[0] = convertLdifToEntry(readFileIntoString(ldifFile2));
+    ENTRIES.get("3")[0] = convertLdifToEntry(readFileIntoString(ldifFile3));
+    ENTRIES.get("4")[0] = convertLdifToEntry(readFileIntoString(ldifFile4));
+    ENTRIES.get("5")[0] = convertLdifToEntry(readFileIntoString(ldifFile5));
+    ENTRIES.get("6")[0] = convertLdifToEntry(readFileIntoString(ldifFile6));
+    ENTRIES.get("7")[0] = convertLdifToEntry(readFileIntoString(ldifFile7));
+    ENTRIES.get("8")[0] = convertLdifToEntry(readFileIntoString(ldifFile8));
+    ENTRIES.get("9")[0] = convertLdifToEntry(readFileIntoString(ldifFile9));
+    ENTRIES.get("10")[0] = convertLdifToEntry(readFileIntoString(ldifFile10));
     // CheckStyle:Indentation ON
 
     for (Map.Entry<String, LdapEntry[]> e : ENTRIES.entrySet()) {
@@ -362,16 +362,17 @@ public class AuthenticatorLoadTest extends AbstractTest
     if (returnAttrs == null) {
       final AuthenticationResponse response = singleTLSAuth.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
-      Assert.assertFalse(response.isSuccess());
+      assertThat(response.isSuccess()).isFalse();
       return;
     }
     // test auth with return attributes
-    final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
+    final LdapEntry expected = convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = singleTLSAuth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
     expected.setDn(response.getLdapEntry().getDn());
-    TestUtils.assertEquals(expected, response.getLdapEntry());
+    // TODO this will need some work
+    assertThat(response.getLdapEntry()).isEqualTo(expected);
   }
 
 
@@ -394,16 +395,17 @@ public class AuthenticatorLoadTest extends AbstractTest
     if (returnAttrs == null) {
       final AuthenticationResponse response = pooledTLSAuth.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
-      Assert.assertFalse(response.isSuccess());
+      assertThat(response.isSuccess()).isFalse();
       return;
     }
     // test auth with return attributes
-    final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
+    final LdapEntry expected = convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = pooledTLSAuth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
     expected.setDn(response.getLdapEntry().getDn());
-    TestUtils.assertEquals(expected, response.getLdapEntry());
+    // TODO this will need some work
+    assertThat(response.getLdapEntry()).isEqualTo(expected);
   }
 
 
@@ -430,13 +432,13 @@ public class AuthenticatorLoadTest extends AbstractTest
     if (returnAttrs == null) {
       final AuthenticationResponse response = singleADFastBind.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
-      Assert.assertFalse(response.isSuccess());
+      assertThat(response.isSuccess()).isFalse();
       return;
     }
     // test auth with fast bind
     final AuthenticationResponse response = singleADFastBind.authenticate(
       new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
   }
 
 
@@ -463,13 +465,13 @@ public class AuthenticatorLoadTest extends AbstractTest
     if (returnAttrs == null) {
       final AuthenticationResponse response = pooledADFastBind.authenticate(
         new AuthenticationRequest(user, new Credential(credential)));
-      Assert.assertFalse(response.isSuccess());
+      assertThat(response.isSuccess()).isFalse();
       return;
     }
     // test auth with return attributes
-    final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
+    final LdapEntry expected = convertStringToEntry(null, expectedAttrs);
     final AuthenticationResponse response = pooledADFastBind.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
   }
 }

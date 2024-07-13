@@ -4,9 +4,9 @@ package org.ldaptive.io;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Scanner;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link Base64}.
@@ -104,8 +104,8 @@ public class Base64Test
     throws Exception
   {
     final String s = new String(Base64.getEncoder().encode(raw), StandardCharsets.UTF_8);
-    Assert.assertEquals(encoded, s);
-    Assert.assertEquals(raw, Base64.getDecoder().decode(s));
+    assertThat(s).isEqualTo(encoded);
+    assertThat(Base64.getDecoder().decode(s)).isEqualTo(raw);
   }
 
 
@@ -119,7 +119,7 @@ public class Base64Test
   public void decodeMime(final byte[] raw, final String encoded)
     throws Exception
   {
-    Assert.assertEquals(raw, Base64.getMimeDecoder().decode(encoded));
+    assertThat(Base64.getMimeDecoder().decode(encoded)).isEqualTo(raw);
   }
 
 
@@ -134,9 +134,9 @@ public class Base64Test
   {
     try {
       Base64.getDecoder().decode(data);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(IllegalArgumentException.class, e.getClass());
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
   }
 }

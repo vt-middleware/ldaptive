@@ -2,9 +2,9 @@
 package org.ldaptive.asn1;
 
 import java.math.BigInteger;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link IntegerType}.
@@ -149,7 +149,7 @@ public class IntegerTypeTest
   public void decode(final byte[] bytes, final BigInteger expected, final BigInteger unsigned, final int unsignedPrim)
     throws Exception
   {
-    Assert.assertEquals(IntegerType.decode(new DefaultDERBuffer(bytes)), expected);
+    assertThat(IntegerType.decode(new DefaultDERBuffer(bytes))).isEqualTo(expected);
   }
 
 
@@ -166,7 +166,7 @@ public class IntegerTypeTest
     final byte[] bytes, final BigInteger expected, final BigInteger unsigned, final int unsignedPrim)
     throws Exception
   {
-    Assert.assertEquals(IntegerType.decodeUnsigned(new DefaultDERBuffer(bytes)), unsigned);
+    assertThat(IntegerType.decodeUnsigned(new DefaultDERBuffer(bytes))).isEqualTo(unsigned);
   }
 
 
@@ -183,7 +183,7 @@ public class IntegerTypeTest
     final byte[] bytes, final BigInteger expected, final BigInteger unsigned, final int unsignedPrim)
     throws Exception
   {
-    Assert.assertEquals(IntegerType.decodeUnsignedPrimitive(new DefaultDERBuffer(bytes)), unsignedPrim);
+    assertThat(IntegerType.decodeUnsignedPrimitive(new DefaultDERBuffer(bytes))).isEqualTo(unsignedPrim);
   }
 
 
@@ -202,9 +202,9 @@ public class IntegerTypeTest
   {
     if (integer.intValue() == -1 && expected.length > 1) {
       // ignore multi byte negative 1
-      Assert.assertTrue(expected.length > 1);
+      assertThat(expected.length).isGreaterThan(1);
     } else {
-      Assert.assertEquals(IntegerType.toBytes(integer), expected);
+      assertThat(IntegerType.toBytes(integer)).isEqualTo(expected);
     }
   }
 }

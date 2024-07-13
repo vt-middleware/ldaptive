@@ -4,9 +4,9 @@ package org.ldaptive.control;
 import java.util.UUID;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SyncStateControl}.
@@ -98,16 +98,16 @@ public class SyncStateControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  sync state control to test.
+   * @param  control  sync state control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "response")
-  public void decode(final DERBuffer berValue, final SyncStateControl expected)
+  public void decode(final DERBuffer berValue, final SyncStateControl control)
     throws Exception
   {
-    final SyncStateControl actual = new SyncStateControl(expected.getCriticality());
+    final SyncStateControl actual = new SyncStateControl(control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

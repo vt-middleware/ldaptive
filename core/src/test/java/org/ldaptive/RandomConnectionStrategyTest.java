@@ -9,9 +9,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import org.ldaptive.transport.mock.MockConnection;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link RandomConnectionStrategy}.
@@ -66,21 +66,26 @@ public class RandomConnectionStrategyTest
   {
     final RandomConnectionStrategy strategy = new RandomConnectionStrategy();
     strategy.initialize(actual, ldapURL -> true);
-    Assert.assertEquals(
-      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
-    Assert.assertEquals(
-      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
-    Assert.assertEquals(
-      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
-    Assert.assertEquals(
-      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
-    Assert.assertEquals(
-      (HashSet) StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toCollection(HashSet::new)),
-      (HashSet) Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+    assertThat(
+      (HashSet<LdapURL>) StreamSupport.stream(strategy.spliterator(), false)
+        .collect(Collectors.toCollection(HashSet::new)))
+      .isEqualTo(Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+    assertThat(
+      (HashSet<LdapURL>) StreamSupport.stream(strategy.spliterator(), false)
+        .collect(Collectors.toCollection(HashSet::new)))
+      .isEqualTo(Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+    assertThat(
+      (HashSet<LdapURL>) StreamSupport.stream(strategy.spliterator(), false)
+        .collect(Collectors.toCollection(HashSet::new)))
+      .isEqualTo(Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+    assertThat(
+      (HashSet<LdapURL>) StreamSupport.stream(strategy.spliterator(), false)
+        .collect(Collectors.toCollection(HashSet::new)))
+      .isEqualTo(Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
+    assertThat(
+      (HashSet<LdapURL>) StreamSupport.stream(strategy.spliterator(), false)
+        .collect(Collectors.toCollection(HashSet::new)))
+      .isEqualTo(Stream.of(expected).collect(Collectors.toCollection(HashSet::new)));
   }
 
 
@@ -101,7 +106,7 @@ public class RandomConnectionStrategyTest
       iter.next();
       i++;
     }
-    Assert.assertEquals(i, expected.length);
+    assertThat(i).isEqualTo(expected.length);
   }
 
 
@@ -146,31 +151,28 @@ public class RandomConnectionStrategyTest
       }
     });
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+    assertThat(strategy.ldapURLSet.getActiveUrls()).hasSize(3);
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
 
     // first entry should fail
     conn.open();
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 2);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 1);
+    assertThat(strategy.ldapURLSet.getActiveUrls()).hasSize(2);
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).hasSize(1);
 
     // confirm the inactive entry stays at the end
     List<LdapURL> applyList = StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList());
-    Assert.assertEquals(applyList.size(), 3);
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(0)));
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(1)));
-    Assert.assertTrue(
-      strategy.ldapURLSet.getInactiveUrls().contains(applyList.get(2)));
+    assertThat(applyList).hasSize(3);
+    assertThat(strategy.ldapURLSet.getActiveUrls()).containsExactlyInAnyOrder(applyList.get(0), applyList.get(1));
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).containsExactly(applyList.get(2));
 
     // mark inactive entry as active
     strategy.success(strategy.ldapURLSet.getInactiveUrls().iterator().next());
     applyList = StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList());
-    Assert.assertEquals(applyList.size(), 3);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(0)));
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(1)));
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(2)));
+    assertThat(applyList).hasSize(3);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(3)
+      .containsExactlyInAnyOrder(applyList.get(0), applyList.get(1), applyList.get(2));
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
   }
 
 
@@ -197,42 +199,39 @@ public class RandomConnectionStrategyTest
       }
     });
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+    assertThat(strategy.ldapURLSet.getActiveUrls()).hasSize(3);
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
 
     // first and second entry should fail
     conn.open();
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 1);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 2);
+    assertThat(strategy.ldapURLSet.getActiveUrls()).hasSize(1);
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).hasSize(2);
 
     // confirm the inactive entries stay at the end
     List<LdapURL> applyList = StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList());
-    Assert.assertEquals(applyList.size(), 3);
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(0)));
-    Assert.assertTrue(
-      strategy.ldapURLSet.getInactiveUrls().contains(applyList.get(1)));
-    Assert.assertTrue(
-      strategy.ldapURLSet.getInactiveUrls().contains(applyList.get(2)));
+    assertThat(applyList).hasSize(3);
+    assertThat(strategy.ldapURLSet.getActiveUrls()).containsExactly(applyList.get(0));
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .containsExactlyInAnyOrder(applyList.get(1), applyList.get(2));
 
     // mark first entry as active
     strategy.success(strategy.ldapURLSet.getInactiveUrls().iterator().next());
     applyList = StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList());
-    Assert.assertEquals(applyList.size(), 3);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 2);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 1);
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(0)));
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(1)));
-    Assert.assertTrue(
-      strategy.ldapURLSet.getInactiveUrls().contains(applyList.get(2)));
+    assertThat(applyList).hasSize(3);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(2)
+      .containsExactlyInAnyOrder(applyList.get(0), applyList.get(1));
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(1)
+      .containsExactly(applyList.get(2));
 
     // mark second entry as active
     strategy.success(strategy.ldapURLSet.getInactiveUrls().iterator().next());
     applyList = StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList());
-    Assert.assertEquals(applyList.size(), 3);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(0)));
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(1)));
-    Assert.assertTrue(strategy.ldapURLSet.getActiveUrls().contains(applyList.get(2)));
+    assertThat(applyList).hasSize(3);
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(3)
+      .containsExactlyInAnyOrder(applyList.get(0), applyList.get(1), applyList.get(2));
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
   }
 }

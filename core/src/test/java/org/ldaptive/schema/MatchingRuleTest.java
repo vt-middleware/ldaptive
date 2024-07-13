@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link MatchingRule}.
@@ -94,9 +94,9 @@ public class MatchingRuleTest
   {
     for (DefinitionFunction<MatchingRule> func : functions) {
       final MatchingRule parsed = func.parse(definition);
-      Assert.assertEquals(matchingRule, parsed);
-      Assert.assertEquals(definition, parsed.format());
-      Assert.assertEquals(matchingRule.format(), parsed.format());
+      assertThat(parsed).isEqualTo(matchingRule);
+      assertThat(parsed.format()).isEqualTo(definition);
+      assertThat(parsed.format()).isEqualTo(matchingRule.format());
     }
   }
 }

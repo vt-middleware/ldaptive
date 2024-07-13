@@ -5,9 +5,9 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link ObjectSidHandler}.
@@ -64,7 +64,7 @@ public class ObjectSidHandlerTest
   @Test(groups = "handler", dataProvider = "entries")
   public void apply(final ObjectSidHandler handler, final LdapEntry actual, final LdapEntry expected)
   {
-    Assert.assertEquals(handler.apply(actual), expected);
+    assertThat(handler.apply(actual)).isEqualTo(expected);
   }
 
 
@@ -73,9 +73,9 @@ public class ObjectSidHandlerTest
   {
     final ObjectSidHandler handler = new ObjectSidHandler();
     handler.setRequest(SearchRequest.builder().build());
-    Assert.assertEquals(handler.getRequest().getBinaryAttributes(), new String[] {"objectSid"});
+    assertThat(handler.getRequest().getBinaryAttributes()).isEqualTo(new String[] {"objectSid"});
 
     handler.setRequest(SearchRequest.builder().binaryAttributes("jpegPhoto").build());
-    Assert.assertEquals(handler.getRequest().getBinaryAttributes(), new String[] {"jpegPhoto", "objectSid"});
+    assertThat(handler.getRequest().getBinaryAttributes()).isEqualTo(new String[] {"jpegPhoto", "objectSid"});
   }
 }

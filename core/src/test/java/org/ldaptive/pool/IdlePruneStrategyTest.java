@@ -5,9 +5,9 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 import java.time.Instant;
 import org.ldaptive.Connection;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link IdlePruneStrategy}.
@@ -63,7 +63,7 @@ public class IdlePruneStrategyTest
   public void apply(final PooledConnectionProxy conn, final Duration idle, final boolean result)
   {
     final IdlePruneStrategy strategy = new IdlePruneStrategy(idle);
-    Assert.assertEquals(strategy.apply(conn), result);
+    assertThat(strategy.apply(conn)).isEqualTo(result);
   }
 
 

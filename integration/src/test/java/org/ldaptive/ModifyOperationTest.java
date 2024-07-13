@@ -1,11 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link ModifyOperation}.
@@ -29,8 +30,8 @@ public class ModifyOperationTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    testLdapEntry = convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -55,8 +56,8 @@ public class ModifyOperationTest extends AbstractTest
   public void addAttribute(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final LdapEntry expected = convertStringToEntry(dn, attrs);
+    final ConnectionFactory cf = createConnectionFactory();
     final ModifyOperation modify = new ModifyOperation(cf);
     modify.execute(
       new ModifyRequest(dn, new AttributeModification(AttributeModification.Type.ADD, expected.getAttribute())));
@@ -64,7 +65,7 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()}));
-    Assert.assertEquals(expected.getAttribute(), result.getEntry().getAttribute());
+    assertThat(result.getEntry().getAttribute()).isEqualTo(expected.getAttribute());
   }
 
 
@@ -79,8 +80,8 @@ public class ModifyOperationTest extends AbstractTest
   public void addAttributes(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final LdapEntry expected = convertStringToEntry(dn, attrs);
+    final ConnectionFactory cf = createConnectionFactory();
     final ModifyOperation modify = new ModifyOperation(cf);
     final AttributeModification[] mods = new AttributeModification[expected.size()];
     int i = 0;
@@ -93,7 +94,8 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, expected.getAttributeNames()));
-    TestUtils.assertEquals(expected, result.getEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(expected);
   }
 
 
@@ -108,8 +110,8 @@ public class ModifyOperationTest extends AbstractTest
   public void replaceAttribute(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final LdapEntry expected = convertStringToEntry(dn, attrs);
+    final ConnectionFactory cf = createConnectionFactory();
     final ModifyOperation modify = new ModifyOperation(cf);
     modify.execute(
       new ModifyRequest(dn, new AttributeModification(AttributeModification.Type.REPLACE, expected.getAttribute())));
@@ -117,7 +119,8 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()}));
-    TestUtils.assertEquals(expected, result.getEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(expected);
   }
 
 
@@ -132,8 +135,8 @@ public class ModifyOperationTest extends AbstractTest
   public void replaceAttributes(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final LdapEntry expected = convertStringToEntry(dn, attrs);
+    final ConnectionFactory cf = createConnectionFactory();
     final ModifyOperation modify = new ModifyOperation(cf);
     final AttributeModification[] mods = new AttributeModification[expected.size()];
     int i = 0;
@@ -146,7 +149,8 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, expected.getAttributeNames()));
-    TestUtils.assertEquals(expected, result.getEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(expected);
   }
 
 
@@ -161,9 +165,9 @@ public class ModifyOperationTest extends AbstractTest
   public void removeAttribute(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
+    final LdapEntry expected = convertStringToEntry(dn, attrs);
 
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ConnectionFactory cf = createConnectionFactory();
     final ModifyOperation modify = new ModifyOperation(cf);
     modify.execute(
       new ModifyRequest(dn, new AttributeModification(AttributeModification.Type.DELETE, expected.getAttribute())));
@@ -171,7 +175,7 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()}));
-    Assert.assertEquals(result.getEntry().getAttributes().size(), 0);
+    assertThat(result.getEntry().getAttributes().size()).isEqualTo(0);
   }
 
 
@@ -186,14 +190,14 @@ public class ModifyOperationTest extends AbstractTest
   public void removeAttributes(final String dn, final String attrs)
     throws Exception
   {
-    final LdapEntry expected = TestUtils.convertStringToEntry(dn, attrs);
-    final LdapEntry remove = TestUtils.convertStringToEntry(dn, attrs);
+    final LdapEntry expected = convertStringToEntry(dn, attrs);
+    final LdapEntry remove = convertStringToEntry(dn, attrs);
 
     final String[] attrsName = remove.getAttributeNames();
-    remove.getAttributes().remove(remove.getAttribute(attrsName[0]));
-    expected.getAttributes().remove(expected.getAttribute(attrsName[1]));
+    remove.removeAttribute(attrsName[0]);
+    expected.removeAttribute(attrsName[1]);
 
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ConnectionFactory cf = createConnectionFactory();
     final ModifyOperation modify = new ModifyOperation(cf);
     final AttributeModification[] mods = new AttributeModification[expected.size()];
     int i = 0;
@@ -205,6 +209,7 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, expected.getAttributeNames()));
-    TestUtils.assertEquals(expected, result.getEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(expected);
   }
 }

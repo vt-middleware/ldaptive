@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link CompareRequest}.
@@ -57,7 +57,7 @@ public class CompareRequestTest
   public void encode(final CompareRequest request, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(request.encode(2), berValue);
+    assertThat(request.encode(2)).isEqualTo(berValue);
   }
 
 
@@ -65,34 +65,34 @@ public class CompareRequestTest
   @Test
   public void testToString()
   {
-    // CheckStyle:Indentation OFF
-    Assert.assertEquals(
-      CompareRequest.builder().build().toString().split("::")[1],
-      "controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=null");
-    Assert.assertEquals(
-      new CompareRequest(null, null, null).toString().split("::")[1],
-      "controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=null");
-    Assert.assertEquals(
-      new CompareRequest("uid=1", null, null).toString().split("::")[1],
-      "controls=null, responseTimeout=null, dn=uid=1, attributeDesc=null, assertionValue=null");
-    Assert.assertEquals(
-      new CompareRequest(null, "name", null).toString().split("::")[1],
-      "controls=null, responseTimeout=null, dn=null, attributeDesc=name, assertionValue=null");
-    Assert.assertEquals(
-      new CompareRequest(null, null, "value").toString().split("::")[1],
-      "controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=value");
-    Assert.assertEquals(
-      new CompareRequest(null, "name", "value").toString().split("::")[1],
-      "controls=null, responseTimeout=null, dn=null, attributeDesc=name, assertionValue=value");
-    Assert.assertEquals(
-      new CompareRequest(null, "userPassword", "password").toString().split("::")[1],
-      "controls=null, responseTimeout=null, dn=null, attributeDesc=userPassword, assertionValue=<suppressed>");
-    Assert.assertEquals(
-      new CompareRequest("uid=1", "userPassword", "password").toString().split("::")[1],
-      "controls=null, responseTimeout=null, dn=uid=1, attributeDesc=userPassword, assertionValue=<suppressed>");
-    Assert.assertEquals(
-      new CompareRequest("uid=1", "name", "value").toString().split("::")[1],
-      "controls=null, responseTimeout=null, dn=uid=1, attributeDesc=name, assertionValue=value");
-    // CheckStyle:Indentation ON
+    assertThat(CompareRequest.builder().build())
+      .asString()
+      .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=null");
+    assertThat(new CompareRequest(null, null, null))
+      .asString()
+      .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=null");
+    assertThat(new CompareRequest("uid=1", null, null))
+      .asString()
+      .endsWith("::controls=null, responseTimeout=null, dn=uid=1, attributeDesc=null, assertionValue=null");
+    assertThat(new CompareRequest(null, "name", null))
+      .asString()
+      .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=name, assertionValue=null");
+    assertThat(new CompareRequest(null, null, "value"))
+      .asString()
+      .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=value");
+    assertThat(new CompareRequest(null, "name", "value"))
+      .asString()
+      .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=name, assertionValue=value");
+    assertThat(new CompareRequest(null, "userPassword", "password"))
+      .asString()
+      .endsWith(
+        "::controls=null, responseTimeout=null, dn=null, attributeDesc=userPassword, assertionValue=<suppressed>");
+    assertThat(new CompareRequest("uid=1", "userPassword", "password"))
+      .asString()
+      .endsWith(
+        "::controls=null, responseTimeout=null, dn=uid=1, attributeDesc=userPassword, assertionValue=<suppressed>");
+    assertThat(new CompareRequest("uid=1", "name", "value"))
+      .asString()
+      .endsWith("::controls=null, responseTimeout=null, dn=uid=1, attributeDesc=name, assertionValue=value");
   }
 }

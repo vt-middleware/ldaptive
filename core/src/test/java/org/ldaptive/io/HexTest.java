@@ -3,9 +3,9 @@ package org.ldaptive.io;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link Hex}.
@@ -99,8 +99,8 @@ public class HexTest
     throws Exception
   {
     final char[] c = Hex.encode(raw);
-    Assert.assertEquals(encoded.toCharArray(), c);
-    Assert.assertEquals(raw, Hex.decode(c));
+    assertThat(c).isEqualTo(encoded.toCharArray());
+    assertThat(Hex.decode(c)).isEqualTo(raw);
   }
 
 
@@ -115,9 +115,9 @@ public class HexTest
   {
     try {
       Hex.decode(data);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(IllegalArgumentException.class, e.getClass());
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
   }
 }

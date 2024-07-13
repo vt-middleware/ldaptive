@@ -6,9 +6,9 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import javax.net.ssl.TrustManager;
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SSLContextInitializer}.
@@ -128,17 +128,17 @@ public class SSLContextInitializerTest
   {
     final TrustManager[] tm = initializer.getTrustManagers();
     if (tm == null) {
-      Assert.assertEquals(1, clazz.length);
-      Assert.assertEquals("", clazz[0]);
+      assertThat(clazz.length).isEqualTo(1);
+      assertThat(clazz[0]).isEqualTo("");
     } else {
-      Assert.assertEquals(tm.length, 1);
-      Assert.assertTrue(tm[0] instanceof AggregateTrustManager);
+      assertThat(tm.length).isEqualTo(1);
+      assertThat(tm[0]).isExactlyInstanceOf(AggregateTrustManager.class);
       final AggregateTrustManager aggregate = (AggregateTrustManager) tm[0];
-      Assert.assertEquals(aggregate.getTrustManagers().length, clazz.length);
+      assertThat(aggregate.getTrustManagers().length).isEqualTo(clazz.length);
       for (int i = 0; i < aggregate.getTrustManagers().length; i++) {
-        Assert.assertEquals(aggregate.getTrustManagers()[i].getClass().getName(), clazz[i]);
+        assertThat(aggregate.getTrustManagers()[i].getClass().getName()).isEqualTo(clazz[i]);
       }
-      Assert.assertNotNull(aggregate.getAcceptedIssuers());
+      assertThat(aggregate.getAcceptedIssuers()).isNotNull();
     }
   }
 }

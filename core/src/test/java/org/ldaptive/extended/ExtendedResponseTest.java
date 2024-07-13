@@ -4,9 +4,9 @@ package org.ldaptive.extended;
 import java.nio.charset.StandardCharsets;
 import org.ldaptive.ResultCode;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link ExtendedResponse}.
@@ -123,6 +123,6 @@ public class ExtendedResponseTest
   public void encode(final byte[] berValue, final ExtendedResponse response)
     throws Exception
   {
-    Assert.assertEquals(new ExtendedResponse(new DefaultDERBuffer(berValue)), response);
+    assertThat(new ExtendedResponse(new DefaultDERBuffer(berValue))).isEqualTo(response);
   }
 }

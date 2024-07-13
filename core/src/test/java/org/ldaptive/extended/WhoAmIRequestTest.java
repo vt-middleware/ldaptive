@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.extended;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link WhoAmIRequest}.
@@ -47,6 +47,6 @@ public class WhoAmIRequestTest
   public void encode(final WhoAmIRequest request, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(request.encode(2), berValue);
+    assertThat(request.encode(2)).isEqualTo(berValue);
   }
 }

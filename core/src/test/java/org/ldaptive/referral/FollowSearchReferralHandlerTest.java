@@ -13,8 +13,8 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.transport.DefaultSearchOperationHandle;
 import org.ldaptive.transport.mock.MockConnection;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link FollowSearchReferralHandler}.
@@ -38,9 +38,7 @@ public class FollowSearchReferralHandlerTest
         .attributes(LdapAttribute.builder().name("uid").values("1").build())
         .build())
       .build();
-    Assert.assertEquals(
-      handler.apply(response),
-      response);
+    assertThat(handler.apply(response)).isEqualTo(response);
   }
 
 
@@ -92,8 +90,7 @@ public class FollowSearchReferralHandlerTest
         "ldap://ds1.ldaptive.org:389/dc=ldaptive,dc=org??sub?")
       .build();
     for (int i = 0; i < 20; i++) {
-      Assert.assertEquals(
-        handler.apply(response),
+      assertThat(handler.apply(response)).isEqualTo(
         SearchResponse.builder()
           .messageID(1)
           .resultCode(ResultCode.SUCCESS)
@@ -143,8 +140,7 @@ public class FollowSearchReferralHandlerTest
         "ldap://ds1.ldaptive.org:389/dc=ldaptive,dc=org??sub?",
         "ldap://ds2.ldaptive.org:389/dc=ldaptive,dc=org??sub?")
       .build();
-    Assert.assertEquals(
-      handler.apply(response),
+    assertThat(handler.apply(response)).isEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .resultCode(ResultCode.SUCCESS)
@@ -201,11 +197,11 @@ public class FollowSearchReferralHandlerTest
       .build();
     try {
       handler.apply(response);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), RuntimeException.class);
-      Assert.assertEquals(e.getCause().getClass(), LdapException.class);
-      Assert.assertEquals(((LdapException) e.getCause()).getResultCode(), ResultCode.REFERRAL_LIMIT_EXCEEDED);
+      assertThat(e).isExactlyInstanceOf(RuntimeException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(LdapException.class);
+      assertThat(((LdapException) e.getCause()).getResultCode()).isEqualTo(ResultCode.REFERRAL_LIMIT_EXCEEDED);
     }
   }
 
@@ -258,11 +254,10 @@ public class FollowSearchReferralHandlerTest
 
     try {
       handler.apply(response);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
-      Assert.assertTrue(
-        e.getMessage().startsWith("Search result handler org.ldaptive.referral.FollowSearchReferralHandler"));
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+      assertThat(e.getMessage()).startsWith("Search result handler org.ldaptive.referral.FollowSearchReferralHandler");
     }
   }
 
@@ -313,8 +308,7 @@ public class FollowSearchReferralHandlerTest
       .referralURLs("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
       .build();
 
-    Assert.assertEquals(
-      handler.apply(response),
+    assertThat(handler.apply(response)).isEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .resultCode(ResultCode.REFERRAL)

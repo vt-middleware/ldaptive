@@ -2,9 +2,9 @@
 package org.ldaptive.ad.control;
 
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SearchOptionsControl}.
@@ -43,14 +43,14 @@ public class SearchOptionsControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  search options control to test.
+   * @param  control  search options control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "request")
-  public void encode(final byte[] berValue, final SearchOptionsControl expected)
+  public void encode(final byte[] berValue, final SearchOptionsControl control)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue);
+    assertThat(control.encode()).isEqualTo(berValue);
   }
 }

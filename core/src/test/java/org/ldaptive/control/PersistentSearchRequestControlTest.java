@@ -3,9 +3,9 @@ package org.ldaptive.control;
 
 import java.util.EnumSet;
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link PersistentSearchRequestControl}.
@@ -53,14 +53,14 @@ public class PersistentSearchRequestControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  persistent search request control to test.
+   * @param  control  persistent search request control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "request")
-  public void encode(final byte[] berValue, final PersistentSearchRequestControl expected)
+  public void encode(final byte[] berValue, final PersistentSearchRequestControl control)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue);
+    assertThat(control.encode()).isEqualTo(berValue);
   }
 }

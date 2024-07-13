@@ -3,9 +3,9 @@ package org.ldaptive.handler;
 
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link MergeAttributeEntryHandler}.
@@ -77,6 +77,6 @@ public class MergeAttributeEntryHandlerTest
   @Test(groups = "handler", dataProvider = "entries")
   public void apply(final MergeAttributeEntryHandler handler, final LdapEntry actual, final LdapEntry expected)
   {
-    Assert.assertEquals(handler.apply(actual), expected);
+    assertThat(handler.apply(actual)).isEqualTo(expected);
   }
 }

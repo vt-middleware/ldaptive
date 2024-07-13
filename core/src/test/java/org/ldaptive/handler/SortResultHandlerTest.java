@@ -1,15 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.handler;
 
-import java.util.LinkedHashSet;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResponse;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SortResultHandler}.
@@ -94,10 +91,7 @@ public class SortResultHandlerTest
   public void apply(final LdapEntry[] actual, final LdapEntry[] expected)
   {
     final SortResultHandler handler = new SortResultHandler();
-    final SearchResponse response = new SearchResponse();
-    response.addEntries(actual);
-    Assert.assertEquals(
-      handler.apply(response).getEntries(),
-      Stream.of(expected).collect(Collectors.toCollection(LinkedHashSet::new)));
+    assertThat(handler.apply(SearchResponse.builder().entry(actual).build()))
+      .isEqualTo(SearchResponse.builder().entry(expected).build());
   }
 }

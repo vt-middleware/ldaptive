@@ -2,9 +2,9 @@
 package org.ldaptive.asn1;
 
 import java.util.UUID;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link UuidType}.
@@ -60,7 +60,7 @@ public class UuidTypeTest
   public void decode(final byte[] bytes, final UUID expected)
     throws Exception
   {
-    Assert.assertEquals(UuidType.decode(new DefaultDERBuffer(bytes)), expected);
+    assertThat(UuidType.decode(new DefaultDERBuffer(bytes))).isEqualTo(expected);
   }
 
 
@@ -74,6 +74,6 @@ public class UuidTypeTest
   public void encode(final byte[] expected, final UUID uuid)
     throws Exception
   {
-    Assert.assertEquals(UuidType.toBytes(uuid), expected);
+    assertThat(UuidType.toBytes(uuid)).isEqualTo(expected);
   }
 }

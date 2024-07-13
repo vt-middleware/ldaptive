@@ -5,9 +5,9 @@ import java.io.ByteArrayInputStream;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DefaultHostnameVerifier}. Generate key with: openssl genrsa -aes256 -out test.key 2048 Generate
@@ -385,6 +385,6 @@ public class DefaultHostnameVerifierTest
   public void verifyDefault(final String hostname, final X509Certificate cert, final boolean pass)
     throws Exception
   {
-    Assert.assertEquals(DEFAULT_VERIFIER.verify(hostname, cert), pass);
+    assertThat(DEFAULT_VERIFIER.verify(hostname, cert)).isEqualTo(pass);
   }
 }

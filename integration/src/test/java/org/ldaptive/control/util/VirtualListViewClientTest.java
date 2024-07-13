@@ -8,13 +8,13 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
 import org.ldaptive.control.SortKey;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link VirtualListViewClient}.
@@ -45,11 +45,11 @@ public class VirtualListViewClientTest extends AbstractTest
     throws Exception
   {
     testLdapEntries = new LdapEntry[3];
-    testLdapEntries[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile1)).getEntry();
+    testLdapEntries[0] = convertLdifToEntry(readFileIntoString(ldifFile1));
     super.createLdapEntry(testLdapEntries[0]);
-    testLdapEntries[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    testLdapEntries[1] = convertLdifToEntry(readFileIntoString(ldifFile2));
     super.createLdapEntry(testLdapEntries[1]);
-    testLdapEntries[2] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    testLdapEntries[2] = convertLdifToEntry(readFileIntoString(ldifFile3));
     super.createLdapEntry(testLdapEntries[2]);
   }
 
@@ -85,7 +85,7 @@ public class VirtualListViewClientTest extends AbstractTest
     }
 
     VirtualListViewClient client = new VirtualListViewClient(
-      TestUtils.createConnectionFactory(),
+      createConnectionFactory(),
       new SortKey("uid", "caseExactMatch"),
       new SortKey("givenName", "caseIgnoreMatch"));
 
@@ -93,34 +93,34 @@ public class VirtualListViewClientTest extends AbstractTest
     //request.setSortBehavior(SortBehavior.ORDERED);
     SearchResponse response = client.execute(request, new VirtualListViewParams(1, 0, 1));
     Iterator<LdapEntry> i = response.getEntries().iterator();
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[0].getDn());
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[1].getDn());
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[0].getDn());
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[1].getDn());
 
     response = client.execute(request, new VirtualListViewParams(2, 1, 1), response);
     i = response.getEntries().iterator();
-    Assert.assertEquals(ResultCode.SUCCESS, response.getResultCode());
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[0].getDn());
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[1].getDn());
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[2].getDn());
+    assertThat(ResultCode.SUCCESS).isEqualTo(response.getResultCode());
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[0].getDn());
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[1].getDn());
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[2].getDn());
 
     // VLV does not give a clean way to destroy the server side sorted entries
     // list. Open a new connection.
-    client = new VirtualListViewClient(TestUtils.createConnectionFactory(), new SortKey("uid", "caseExactMatch"));
+    client = new VirtualListViewClient(createConnectionFactory(), new SortKey("uid", "caseExactMatch"));
 
     request = new SearchRequest(dn, filter);
     //request.setSortBehavior(SortBehavior.ORDERED);
     response = client.execute(request, new VirtualListViewParams("21", 1, 0));
     i = response.getEntries().iterator();
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[1].getDn());
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[2].getDn());
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[1].getDn());
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[2].getDn());
 
     response = client.execute(request, new VirtualListViewParams("19", 0, 2), response);
     i = response.getEntries().iterator();
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[0].getDn());
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[1].getDn());
-    Assert.assertEquals(i.next().getDn(), testLdapEntries[2].getDn());
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[0].getDn());
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[1].getDn());
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[2].getDn());
   }
 }

@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.transcode;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DeltaTimeValueTranscoder}.
@@ -47,7 +47,7 @@ public class DeltaTimeValueTranscoderTest
   public void testTranscode(final Long millis, final String deltaTime)
     throws Exception
   {
-    Assert.assertEquals(transcoder.decodeStringValue(deltaTime), millis);
-    Assert.assertEquals(transcoder.encodeStringValue(millis), deltaTime);
+    assertThat(transcoder.decodeStringValue(deltaTime)).isEqualTo(millis);
+    assertThat(transcoder.encodeStringValue(millis)).isEqualTo(deltaTime);
   }
 }

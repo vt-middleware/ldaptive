@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.Assert;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Utility methods for ldap tests.
@@ -24,9 +24,9 @@ public final class TestUtils
   {
     try {
       i.assertMutable();
-      Assert.fail("Should have thrown exception for immutable: " + i);
+      fail("Should have thrown exception for immutable: %s", i);
     } catch (Exception e) {
-      Assert.assertEquals(IllegalStateException.class, e.getClass());
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
   }
 }

@@ -70,8 +70,12 @@
     <module name="TypeName"/>
 
     <!-- imports -->
-    <module name="AvoidStarImport"/>
-    <module name="AvoidStaticImport"/>
+    <module name="AvoidStarImport">
+      <property name="excludes" value="org.assertj.core.api.Assertions,org.ldaptive.TestUtils"/>
+    </module>
+    <module name="AvoidStaticImport">
+      <property name="excludes" value="org.assertj.core.api.Assertions.*,org.ldaptive.TestUtils.*"/>
+    </module>
     <module name="IllegalImport"/>
     <module name="RedundantImport"/>
     <module name="UnusedImports"/>

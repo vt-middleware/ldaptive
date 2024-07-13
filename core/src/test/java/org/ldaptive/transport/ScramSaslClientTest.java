@@ -6,8 +6,8 @@ import org.ldaptive.BindResponse;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.sasl.Mechanism;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link ScramSaslClient}.
@@ -27,7 +27,7 @@ public class ScramSaslClientTest
   {
     final ScramSaslClient.ClientFirstMessage clientFirstMsg = new ScramSaslClient.ClientFirstMessage(
       "test@ldaptive.org", null);
-    Assert.assertEquals(clientFirstMsg.encode(), "n,,n=test@ldaptive.org,r=" + clientFirstMsg.getNonce());
+    assertThat(clientFirstMsg.encode()).isEqualTo("n,,n=test@ldaptive.org,r=" + clientFirstMsg.getNonce());
   }
 
 
@@ -51,18 +51,16 @@ public class ScramSaslClientTest
         .serverSaslCreds(saslCreds.getBytes(StandardCharsets.UTF_8))
         .build());
 
-    Assert.assertEquals(serverFirstMsg.getMessage(), saslCreds);
-    Assert.assertEquals(
-      serverFirstMsg.getCombinedNonce(), "tBn5tno7IaCEAX28UCdeYA==rZymji+nFf6/+3nvnH7oRVzqhYBrXfNo");
-    Assert.assertEquals(serverFirstMsg.getSalt(), LdapUtils.base64Decode("GrrkPG1cm6PsF/3Lq9xAtL5xUz0="));
-    Assert.assertEquals(serverFirstMsg.getIterations(), 4096);
+    assertThat(serverFirstMsg.getMessage()).isEqualTo(saslCreds);
+    assertThat(serverFirstMsg.getCombinedNonce()).isEqualTo("tBn5tno7IaCEAX28UCdeYA==rZymji+nFf6/+3nvnH7oRVzqhYBrXfNo");
+    assertThat(serverFirstMsg.getSalt()).isEqualTo(LdapUtils.base64Decode("GrrkPG1cm6PsF/3Lq9xAtL5xUz0="));
+    assertThat(serverFirstMsg.getIterations()).isEqualTo(4096);
 
     final ScramSaslClient.ClientFinalMessage clientFinalMsg = new ScramSaslClient.ClientFinalMessage(
       Mechanism.SCRAM_SHA_1, "password", clientFirstMsg, serverFirstMsg);
 
-    Assert.assertEquals(
-      clientFinalMsg.encode(),
-      "c=biws,r=tBn5tno7IaCEAX28UCdeYA==rZymji+nFf6/+3nvnH7oRVzqhYBrXfNo,p=jtvyGs0+ZYhxqtejptDPilF89Y4=");
+    assertThat(clientFinalMsg.encode())
+      .isEqualTo("c=biws,r=tBn5tno7IaCEAX28UCdeYA==rZymji+nFf6/+3nvnH7oRVzqhYBrXfNo,p=jtvyGs0+ZYhxqtejptDPilF89Y4=");
 
     final ScramSaslClient.ServerFinalMessage serverFinalMessage = new ScramSaslClient.ServerFinalMessage(
       Mechanism.SCRAM_SHA_1,
@@ -72,6 +70,6 @@ public class ScramSaslClientTest
         .serverSaslCreds("v=p42sN66CmsScQGfZJppVyhuTX+g=".getBytes(StandardCharsets.UTF_8))
         .build());
 
-    Assert.assertTrue(serverFinalMessage.isVerified());
+    assertThat(serverFinalMessage.isVerified()).isTrue();
   }
 }

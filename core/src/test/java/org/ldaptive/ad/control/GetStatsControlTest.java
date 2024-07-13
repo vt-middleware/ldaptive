@@ -3,9 +3,9 @@ package org.ldaptive.ad.control;
 
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link GetStatsControl}.
@@ -57,17 +57,17 @@ public class GetStatsControlTest
 
 
   /**
+   * @param  control  get stats control to test.
    * @param  berValue  to encode.
-   * @param  expected  get stats control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "response")
-  public void decode(final DERBuffer berValue, final GetStatsControl expected)
+  public void decode(final DERBuffer berValue, final GetStatsControl control)
     throws Exception
   {
-    final GetStatsControl actual = new GetStatsControl(expected.getCriticality());
+    final GetStatsControl actual = new GetStatsControl(control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

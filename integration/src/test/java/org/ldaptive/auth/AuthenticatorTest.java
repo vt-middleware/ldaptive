@@ -36,11 +36,12 @@ import org.ldaptive.extended.PasswordModifyRequest;
 import org.ldaptive.handler.DnAttributeEntryHandler;
 import org.ldaptive.velocity.TemplateSearchDnResolver;
 import org.ldaptive.velocity.UserContext;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link Authenticator}.
@@ -106,8 +107,8 @@ public class AuthenticatorTest extends AbstractTest
   public void createAuthEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    testLdapEntry = convertLdifToEntry(ldif);
     super.createLdapEntry(testLdapEntry);
 
     final AuthenticationHandler ah = pooledTLSAuth.getAuthenticationHandler();
@@ -130,8 +131,8 @@ public class AuthenticatorTest extends AbstractTest
   public void createSpecialCharsEntry2(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    specialCharsLdapEntry2 = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    specialCharsLdapEntry2 = convertLdifToEntry(ldif);
     super.createLdapEntry(specialCharsLdapEntry2);
   }
 
@@ -146,8 +147,8 @@ public class AuthenticatorTest extends AbstractTest
   public void createSpecialCharsEntry3(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    specialCharsLdapEntry3 = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    specialCharsLdapEntry3 = convertLdifToEntry(ldif);
     super.createLdapEntry(specialCharsLdapEntry3);
   }
 
@@ -242,11 +243,11 @@ public class AuthenticatorTest extends AbstractTest
   @Test(groups = "auth")
   public void loadProperties(final String ldapUrl, final String baseDn)
   {
-    final Authenticator auth = TestUtils.readAuthenticator("classpath:/org/ldaptive/ldap.tls.properties");
+    final Authenticator auth = readAuthenticator("classpath:/org/ldaptive/ldap.tls.properties");
     final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
     final DefaultConnectionFactory resolverCf = (DefaultConnectionFactory) dnResolver.getConnectionFactory();
-    Assert.assertEquals(resolverCf.getConnectionConfig().getLdapUrl(), ldapUrl);
-    Assert.assertEquals(((SearchDnResolver) auth.getDnResolver()).getBaseDn(), baseDn);
+    assertThat(resolverCf.getConnectionConfig().getLdapUrl()).isEqualTo(ldapUrl);
+    assertThat(((SearchDnResolver) auth.getDnResolver()).getBaseDn()).isEqualTo(baseDn);
   }
 
 
@@ -265,22 +266,22 @@ public class AuthenticatorTest extends AbstractTest
     final Authenticator auth = createTLSAuthenticator(true);
 
     // test input
-    Assert.assertNull(auth.resolveDn(null));
-    Assert.assertNull(auth.resolveDn(new User("")));
+    assertThat(auth.resolveDn(null)).isNull();
+    assertThat(auth.resolveDn(new User(""))).isNull();
 
     final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
 
     // test one level searching
-    Assert.assertEquals(new Dn(auth.resolveDn(new User(user))).format(), new Dn(testLdapEntry.getDn()).format());
+    assertThat(new Dn(auth.resolveDn(new User(user))).format()).isEqualTo(new Dn(testLdapEntry.getDn()).format());
 
     // test duplicate DNs
     final String filter = resolver.getUserFilter();
     resolver.setUserFilter(duplicateFilter);
     try {
       auth.resolveDn(new User(user));
-      Assert.fail("Should have thrown LdapException");
+      fail("Should have thrown LdapException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), LdapException.class);
+      assertThat(e).isExactlyInstanceOf(LdapException.class);
     }
 
     resolver.setAllowMultipleDns(true);
@@ -293,7 +294,7 @@ public class AuthenticatorTest extends AbstractTest
 
     final String baseDn = resolver.getBaseDn();
     resolver.setBaseDn(baseDn.substring(baseDn.indexOf(",") + 1));
-    Assert.assertEquals(new Dn(auth.resolveDn(new User(user))).format(), new Dn(testLdapEntry.getDn()).format());
+    assertThat(new Dn(auth.resolveDn(new User(user))).format()).isEqualTo(new Dn(testLdapEntry.getDn()).format());
   }
 
 
@@ -313,7 +314,7 @@ public class AuthenticatorTest extends AbstractTest
     final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
 
     auth.setDnResolver(new FormatDnResolver("cn=%s,%s", new Object[] {resolver.getBaseDn()}));
-    Assert.assertEquals(auth.resolveDn(new User(cn)), testLdapEntry.getDn());
+    assertThat(auth.resolveDn(new User(cn))).isEqualTo(testLdapEntry.getDn());
   }
 
 
@@ -347,8 +348,8 @@ public class AuthenticatorTest extends AbstractTest
       "(|(uid=$context.principal)(mail=$context.principal))");
     velocityResolver.setBaseDn(resolver.getBaseDn());
     auth.setDnResolver(velocityResolver);
-    Assert.assertEquals(
-      new Dn(auth.resolveDn(new User(null, context))).format(), new Dn(testLdapEntry.getDn()).format());
+    assertThat(new Dn(auth.resolveDn(new User(null, context))).format())
+      .isEqualTo(new Dn(testLdapEntry.getDn()).format());
   }
 
 
@@ -380,21 +381,21 @@ public class AuthenticatorTest extends AbstractTest
     auth.setDnResolver(resolver);
 
     // test input
-    Assert.assertNull(auth.resolveDn(null));
-    Assert.assertNull(auth.resolveDn(new User("")));
+    assertThat(auth.resolveDn(null)).isNull();
+    assertThat(auth.resolveDn(new User(""))).isNull();
 
     // test duplicate DNs
     resolver.setAllowMultipleDns(false);
     try {
       auth.resolveDn(new User(user));
-      Assert.fail("Should have thrown LdapException");
+      fail("Should have thrown LdapException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), LdapException.class);
+      assertThat(e).isExactlyInstanceOf(LdapException.class);
     }
 
     resolver.setAllowMultipleDns(true);
-    Assert.assertEquals(
-        new Dn(auth.resolveDn(new User(user))).format().split(":")[1], new Dn(testLdapEntry.getDn()).format());
+    assertThat(new Dn(auth.resolveDn(new User(user))).format().split(":")[1])
+      .isEqualTo(new Dn(testLdapEntry.getDn()).format());
   }
 
 
@@ -412,7 +413,7 @@ public class AuthenticatorTest extends AbstractTest
     final SearchDnResolver resolver = (SearchDnResolver) auth.getDnResolver();
     resolver.setResolveFromAttribute("entryDN");
     resolver.setEntryHandlers(new DnAttributeEntryHandler());
-    Assert.assertEquals(new Dn(auth.resolveDn(new User(user))).format(), new Dn(testLdapEntry.getDn()).format());
+    assertThat(new Dn(auth.resolveDn(new User(user))).format()).isEqualTo(new Dn(testLdapEntry.getDn()).format());
   }
 
 
@@ -439,15 +440,16 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     final Authenticator auth = createTLSDnAuthenticator(false);
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
 
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
 
     // test auth with return attributes
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -478,15 +480,16 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     final Authenticator auth = createSSLDnAuthenticator(false);
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
 
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
 
     // test auth with return attributes
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -518,19 +521,19 @@ public class AuthenticatorTest extends AbstractTest
     auth.setResponseHandlers(authHandler);
 
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertTrue(!authHandler.getResults().isEmpty());
-    Assert.assertFalse(authHandler.getResults().get(dn));
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(!authHandler.getResults().isEmpty()).isTrue();
+    assertThat(authHandler.getResults().get(dn)).isFalse();
 
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertTrue(authHandler.getResults().get(dn));
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(authHandler.getResults().get(dn)).isTrue();
 
     authHandler.getResults().clear();
 
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertTrue(authHandler.getResults().get(dn));
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(authHandler.getResults().get(dn)).isTrue();
   }
 
 
@@ -559,42 +562,40 @@ public class AuthenticatorTest extends AbstractTest
     // test invalid user
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest("i-do-not-exist", new Credential(credential)));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(response.getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
-    Assert.assertNull(response.getResultCode());
-    Assert.assertNotNull(response.getDiagnosticMessage());
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAuthenticationResultCode()).isEqualTo(AuthenticationResultCode.DN_RESOLUTION_FAILURE);
+    assertThat(response.getResultCode()).isNull();
+    assertThat(response.getDiagnosticMessage()).isNotNull();
 
     // test failed auth with return attributes
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD), returnAttrs.split("\\|")));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
-    Assert.assertEquals(response.getResultCode(), ResultCode.INVALID_CREDENTIALS);
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.INVALID_CREDENTIALS);
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
 
     // test auth with return attributes
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
     try {
       response.setAccountState(null);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -627,21 +628,22 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
 
     // test auth with return attributes
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
     try {
       response.setAccountState(null);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -675,16 +677,17 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     AuthenticationResponse response = pooledTLSAuth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
 
     response = pooledTLSAuth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
 
     // test auth with return attributes
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     response = pooledTLSAuth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -735,16 +738,17 @@ public class AuthenticatorTest extends AbstractTest
     // test plain auth
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(new User(null, context), new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
 
     response = auth.authenticate(new AuthenticationRequest(new User(null, context), new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
 
     // test auth with return attributes
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(
       new AuthenticationRequest(new User(null, context), new Credential(credential), returnAttrs.split("\\|")));
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -798,45 +802,43 @@ public class AuthenticatorTest extends AbstractTest
     // test invalid user
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest("i-do-not-exist", new Credential(credential)));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(response.getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
-    Assert.assertNull(response.getResultCode());
-    Assert.assertNotNull(response.getDiagnosticMessage());
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAuthenticationResultCode()).isEqualTo(AuthenticationResultCode.DN_RESOLUTION_FAILURE);
+    assertThat(response.getResultCode()).isNull();
+    assertThat(response.getDiagnosticMessage()).isNotNull();
 
     // test multiple DNs
     try {
       auth.authenticate(new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-      Assert.fail("Should have thrown LdapException");
+      fail("Should have thrown LdapException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), LdapException.class);
+      assertThat(e).isExactlyInstanceOf(LdapException.class);
     }
     dnResolver.setAllowMultipleDns(true);
 
     // test failed auth with return attributes
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD), returnAttrs.split("\\|")));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
-    Assert.assertEquals(response.getResultCode(), ResultCode.INVALID_CREDENTIALS);
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.INVALID_CREDENTIALS);
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
 
     // test auth with return attributes
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -860,31 +862,31 @@ public class AuthenticatorTest extends AbstractTest
 
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, null, returnAttrs.split("\\|")));
-    Assert.assertEquals(response.getAuthenticationResultCode(), AuthenticationResultCode.INVALID_CREDENTIAL);
-    Assert.assertNull(response.getResultCode());
-    Assert.assertNotNull(response.getDiagnosticMessage());
+    assertThat(response.getAuthenticationResultCode()).isEqualTo(AuthenticationResultCode.INVALID_CREDENTIAL);
+    assertThat(response.getResultCode()).isNull();
+    assertThat(response.getDiagnosticMessage()).isNotNull();
 
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(new byte[0]), returnAttrs.split("\\|")));
-    Assert.assertEquals(response.getAuthenticationResultCode(), AuthenticationResultCode.INVALID_CREDENTIAL);
-    Assert.assertNull(response.getResultCode());
-    Assert.assertNotNull(response.getDiagnosticMessage());
+    assertThat(response.getAuthenticationResultCode()).isEqualTo(AuthenticationResultCode.INVALID_CREDENTIAL);
+    assertThat(response.getResultCode()).isNull();
+    assertThat(response.getDiagnosticMessage()).isNotNull();
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(""), returnAttrs.split("\\|")));
-    Assert.assertEquals(response.getAuthenticationResultCode(), AuthenticationResultCode.INVALID_CREDENTIAL);
-    Assert.assertNull(response.getResultCode());
-    Assert.assertNotNull(response.getDiagnosticMessage());
+    assertThat(response.getAuthenticationResultCode()).isEqualTo(AuthenticationResultCode.INVALID_CREDENTIAL);
+    assertThat(response.getResultCode()).isNull();
+    assertThat(response.getDiagnosticMessage()).isNotNull();
 
     response = auth.authenticate(
       new AuthenticationRequest((String) null, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertEquals(response.getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
-    Assert.assertNull(response.getResultCode());
-    Assert.assertNotNull(response.getDiagnosticMessage());
+    assertThat(response.getAuthenticationResultCode()).isEqualTo(AuthenticationResultCode.DN_RESOLUTION_FAILURE);
+    assertThat(response.getResultCode()).isNull();
+    assertThat(response.getDiagnosticMessage()).isNotNull();
 
     response = auth.authenticate(new AuthenticationRequest("", new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertEquals(response.getAuthenticationResultCode(), AuthenticationResultCode.DN_RESOLUTION_FAILURE);
-    Assert.assertNull(response.getResultCode());
-    Assert.assertNotNull(response.getDiagnosticMessage());
+    assertThat(response.getAuthenticationResultCode()).isEqualTo(AuthenticationResultCode.DN_RESOLUTION_FAILURE);
+    assertThat(response.getResultCode()).isNull();
+    assertThat(response.getDiagnosticMessage()).isNotNull();
   }
 
 
@@ -910,54 +912,53 @@ public class AuthenticatorTest extends AbstractTest
     final String ldifFile)
     throws Exception
   {
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
+    final LdapEntry expectedEntry = convertLdifToEntry(expected);
     final Authenticator auth = createTLSAuthenticator(true);
 
     // no attributes
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertEquals(response.getLdapEntry().getAttributes().size(), 0);
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.getLdapEntry().getAttributes().size()).isEqualTo(0);
 
     // attributes on the request
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
 
     // attributes on the authenticator
     auth.setReturnAttributes(returnAttrs.split("\\|"));
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
     auth.setReturnAttributes((String) null);
 
     // NONE attributes on the authenticator
     auth.setReturnAttributes(ReturnAttributes.NONE.value());
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
     auth.setReturnAttributes((String) null);
 
     // NONE attributes on the authenticator and request
     auth.setReturnAttributes(ReturnAttributes.NONE.value());
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertEquals(response.getLdapEntry().getAttributes().size(), 0);
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.getLdapEntry().getAttributes().size()).isEqualTo(0);
     auth.setReturnAttributes((String) null);
   }
 
@@ -981,10 +982,10 @@ public class AuthenticatorTest extends AbstractTest
     // test without rewrite
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
 
     // test with rewrite
 
@@ -996,10 +997,10 @@ public class AuthenticatorTest extends AbstractTest
     ((SearchDnResolver) auth.getDnResolver()).setBaseDn("dc=blah");
     ((SearchDnResolver) auth.getDnResolver()).setSubtreeSearch(true);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
   }
 
 
@@ -1021,10 +1022,10 @@ public class AuthenticatorTest extends AbstractTest
 
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
   }
 
 
@@ -1060,15 +1061,15 @@ public class AuthenticatorTest extends AbstractTest
     entryResolver.setSubtreeSearch(dnResolver.getSubtreeSearch());
     auth.setEntryResolver(entryResolver);
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     final AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -1106,20 +1107,19 @@ public class AuthenticatorTest extends AbstractTest
 
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
-    Assert.assertEquals(response.getResultCode(), ResultCode.COMPARE_FALSE);
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_FAILURE);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.COMPARE_FALSE);
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.COMPARE_TRUE);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.COMPARE_TRUE);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -1152,15 +1152,15 @@ public class AuthenticatorTest extends AbstractTest
     final Authenticator auth = createTLSAuthenticator(true);
     auth.setEntryResolver(new WhoAmIEntryResolver());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     final AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertEquals(
-      response.getAuthenticationResultCode(),
-      AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(response.getAuthenticationResultCode())
+      .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
 
@@ -1191,16 +1191,16 @@ public class AuthenticatorTest extends AbstractTest
     ah.setAuthenticationControls(new AuthorizationIdentityRequestControl());
     auth.setEntryResolver(new AuthorizationIdentityEntryResolver());
 
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     try {
       final AuthenticationResponse response = auth.authenticate(
         new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-      Assert.assertTrue(response.isSuccess());
-      Assert.assertEquals(
-        response.getAuthenticationResultCode(),
-        AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+      assertThat(response.isSuccess()).isTrue();
+      assertThat(response.getAuthenticationResultCode())
+        .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+      assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+      // TODO this will need some work
+      LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
     } catch (IllegalStateException e) {
       throw new UnsupportedOperationException("LDAP server does not support this control");
     }
@@ -1234,19 +1234,19 @@ public class AuthenticatorTest extends AbstractTest
       new AddControlAuthenticationRequestHandler(
         (dn, arUser) -> new RequestControl[] {
           new SessionTrackingControl("151.101.32.133", "", SessionTrackingControl.USERNAME_ACCT_OID, ""), }));
-    final String expected = TestUtils.readFileIntoString(ldifFile);
+    final String expected = readFileIntoString(ldifFile);
     try {
       final AuthenticationRequest request = new AuthenticationRequest(
         user,
         new Credential(credential),
         returnAttrs.split("\\|"));
       final AuthenticationResponse response = auth.authenticate(request);
-      Assert.assertTrue(response.isSuccess());
-      Assert.assertEquals(
-        response.getAuthenticationResultCode(),
-        AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
-      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-      TestUtils.assertEquals(TestUtils.convertLdifToResult(expected).getEntry(), response.getLdapEntry());
+      assertThat(response.isSuccess()).isTrue();
+      assertThat(response.getAuthenticationResultCode())
+        .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
+      assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+      // TODO this will need some work
+      LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
     } catch (IllegalStateException e) {
       throw new UnsupportedOperationException("LDAP server does not support this control");
     }
@@ -1271,7 +1271,7 @@ public class AuthenticatorTest extends AbstractTest
       return;
     }
 
-    final ConnectionFactory cf = TestUtils.createSetupConnectionFactory();
+    final ConnectionFactory cf = createSetupConnectionFactory();
     AuthenticationResponse response;
     PasswordPolicyControl ppcResponse;
     final Authenticator auth = createTLSAuthenticator(true);
@@ -1283,14 +1283,14 @@ public class AuthenticatorTest extends AbstractTest
 
     // test bind sending ppolicy control
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
     ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-    Assert.assertNotNull(ppcResponse);
+    assertThat(ppcResponse).isNotNull();
 
-    Assert.assertNull(ppcResponse.getError());
-    Assert.assertNull(response.getAccountState());
-    Assert.assertEquals(ppcResponse.getGraceAuthNsRemaining(), -1);
-    Assert.assertEquals(ppcResponse.getTimeBeforeExpiration(), -1);
+    assertThat(ppcResponse.getError()).isNull();
+    assertThat(response.getAccountState()).isNull();
+    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
+    assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
 
     final ModifyOperation modify = new ModifyOperation(cf);
     final ModifyResponse modifyResponse = modify.execute(
@@ -1299,17 +1299,17 @@ public class AuthenticatorTest extends AbstractTest
         new AttributeModification(
           AttributeModification.Type.ADD,
           new LdapAttribute("pwdPolicySubentry", "cn=default,ou=policies,dc=vt,dc=edu"))));
-    Assert.assertEquals(modifyResponse.getResultCode(), ResultCode.SUCCESS);
+    assertThat(modifyResponse.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     Thread.sleep(2000);
 
     // test bind without pwdChangeDate
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
     ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-    Assert.assertNull(ppcResponse.getError());
-    Assert.assertNull(response.getAccountState());
-    Assert.assertEquals(ppcResponse.getTimeBeforeExpiration(), -1);
-    Assert.assertEquals(ppcResponse.getGraceAuthNsRemaining(), -1);
+    assertThat(ppcResponse.getError()).isNull();
+    assertThat(response.getAccountState()).isNull();
+    assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
+    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
 
     // test bind with expiration time
     final String newCredential = credential + "-new";
@@ -1321,16 +1321,16 @@ public class AuthenticatorTest extends AbstractTest
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
     try {
       response.setAccountState(null);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
     ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-    Assert.assertTrue(ppcResponse.getTimeBeforeExpiration() > 0);
-    Assert.assertEquals(ppcResponse.getGraceAuthNsRemaining(), -1);
-    Assert.assertNotNull(response.getAccountState().getWarning().getExpiration());
-    Assert.assertNull(response.getAccountState().getError());
+    assertThat(ppcResponse.getTimeBeforeExpiration() > 0).isTrue();
+    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
+    assertThat(response.getAccountState().getWarning().getExpiration()).isNotNull();
+    assertThat(response.getAccountState().getError()).isNull();
 
     // test bind on locked account
     modify.execute(
@@ -1341,14 +1341,13 @@ public class AuthenticatorTest extends AbstractTest
           new LdapAttribute("pwdAccountLockedTime", "000001010000Z"))));
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
     ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-    Assert.assertEquals(ppcResponse.getError(), PasswordPolicyControl.Error.ACCOUNT_LOCKED);
-    Assert.assertEquals(
-      response.getAccountState().getError().getCode(),
-      PasswordPolicyControl.Error.ACCOUNT_LOCKED.getCode());
-    Assert.assertEquals(ppcResponse.getGraceAuthNsRemaining(), -1);
-    Assert.assertEquals(ppcResponse.getTimeBeforeExpiration(), -1);
+    assertThat(ppcResponse.getError()).isEqualTo(PasswordPolicyControl.Error.ACCOUNT_LOCKED);
+    assertThat(response.getAccountState().getError().getCode())
+      .isEqualTo(PasswordPolicyControl.Error.ACCOUNT_LOCKED.getCode());
+    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
+    assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
 
     modify.execute(
       new ModifyRequest(
@@ -1369,12 +1368,12 @@ public class AuthenticatorTest extends AbstractTest
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
     do {
       ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-      Assert.assertTrue(response.isSuccess());
-      Assert.assertEquals(ppcResponse.getTimeBeforeExpiration(), -1);
-      Assert.assertEquals(ppcResponse.getGraceAuthNsRemaining(), graceLogins);
-      Assert.assertEquals(response.getAccountState().getWarning().getLoginsRemaining(), graceLogins);
-      Assert.assertNull(response.getAccountState().getWarning().getExpiration());
-      Assert.assertNull(response.getAccountState().getError());
+      assertThat(response.isSuccess()).isTrue();
+      assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
+      assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(graceLogins);
+      assertThat(response.getAccountState().getWarning().getLoginsRemaining()).isEqualTo(graceLogins);
+      assertThat(response.getAccountState().getWarning().getExpiration()).isNull();
+      assertThat(response.getAccountState().getError()).isNull();
       graceLogins--;
       Thread.sleep(2000);
       response = auth.authenticate(new AuthenticationRequest(user, new Credential(newCredential)));
@@ -1382,13 +1381,12 @@ public class AuthenticatorTest extends AbstractTest
 
     // password expired
     ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(ppcResponse.getError(), PasswordPolicyControl.Error.PASSWORD_EXPIRED);
-    Assert.assertEquals(
-      response.getAccountState().getError().getCode(),
-      PasswordPolicyControl.Error.PASSWORD_EXPIRED.getCode());
-    Assert.assertEquals(ppcResponse.getGraceAuthNsRemaining(), -1);
-    Assert.assertEquals(ppcResponse.getTimeBeforeExpiration(), -1);
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(ppcResponse.getError()).isEqualTo(PasswordPolicyControl.Error.PASSWORD_EXPIRED);
+    assertThat(response.getAccountState().getError().getCode())
+      .isEqualTo(PasswordPolicyControl.Error.PASSWORD_EXPIRED.getCode());
+    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
+    assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
 
     modify.execute(
       new ModifyRequest(
@@ -1429,30 +1427,30 @@ public class AuthenticatorTest extends AbstractTest
     // setting return attributes uses the search entry resolver
     AuthenticationResponse response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), ReturnAttributes.ALL_USER.value()));
-    Assert.assertTrue(response.isSuccess());
-    Assert.assertNull(response.getAccountState());
+    assertThat(response.isSuccess()).isTrue();
+    assertThat(response.getAccountState()).isNull();
 
     LdapEntry entry = response.getLdapEntry();
-    Assert.assertNotNull(entry.getAttribute("pwdLastSet"));
-    Assert.assertNotNull(entry.getAttribute("userAccountControl"));
+    assertThat(entry.getAttribute("pwdLastSet")).isNotNull();
+    assertThat(entry.getAttribute("userAccountControl")).isNotNull();
 
     // bad password
     // setting return attributes uses the search entry resolver
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD), ReturnAttributes.ALL_USER.value()));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(response.getAccountState().getError(), ActiveDirectoryAccountState.Error.LOGON_FAILURE);
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAccountState().getError()).isEqualTo(ActiveDirectoryAccountState.Error.LOGON_FAILURE);
     entry = response.getLdapEntry();
-    Assert.assertNull(entry.getAttribute("pwdLastSet"));
-    Assert.assertNull(entry.getAttribute("userAccountControl"));
+    assertThat(entry.getAttribute("pwdLastSet")).isNull();
+    assertThat(entry.getAttribute("userAccountControl")).isNull();
 
     // bad password, no return attributes
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(INVALID_PASSWD)));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(response.getAccountState().getError(), ActiveDirectoryAccountState.Error.LOGON_FAILURE);
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAccountState().getError()).isEqualTo(ActiveDirectoryAccountState.Error.LOGON_FAILURE);
     entry = response.getLdapEntry();
-    Assert.assertNull(entry.getAttribute("pwdLastSet"));
-    Assert.assertNull(entry.getAttribute("userAccountControl"));
+    assertThat(entry.getAttribute("pwdLastSet")).isNull();
+    assertThat(entry.getAttribute("userAccountControl")).isNull();
 
     // bad password, leverage an existing connection factory for entry
     // resolution on a failed bind
@@ -1461,14 +1459,14 @@ public class AuthenticatorTest extends AbstractTest
     auth.setEntryResolver(new SearchEntryResolver(ah.getConnectionFactory()));
     response = auth.authenticate(
       new AuthenticationRequest(user, new Credential(INVALID_PASSWD), ReturnAttributes.ALL_USER.value()));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(response.getAccountState().getError(), ActiveDirectoryAccountState.Error.LOGON_FAILURE);
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAccountState().getError()).isEqualTo(ActiveDirectoryAccountState.Error.LOGON_FAILURE);
     entry = response.getLdapEntry();
-    Assert.assertNotNull(entry.getAttribute("pwdLastSet"));
-    Assert.assertNotNull(entry.getAttribute("userAccountControl"));
+    assertThat(entry.getAttribute("pwdLastSet")).isNotNull();
+    assertThat(entry.getAttribute("userAccountControl")).isNotNull();
     auth.setEntryResolver(null);
 
-    final ModifyOperation modify = new ModifyOperation(TestUtils.createSetupConnectionFactory());
+    final ModifyOperation modify = new ModifyOperation(createSetupConnectionFactory());
 
     // account disabled
     final String userAccountControl = entry.getAttribute("userAccountControl").getStringValue();
@@ -1480,8 +1478,8 @@ public class AuthenticatorTest extends AbstractTest
           new LdapAttribute("userAccountControl", "514"))));
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(response.getAccountState().getError(), ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED);
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAccountState().getError()).isEqualTo(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED);
 
     modify.execute(
       new ModifyRequest(
@@ -1497,7 +1495,7 @@ public class AuthenticatorTest extends AbstractTest
         new AttributeModification(AttributeModification.Type.REPLACE, new LdapAttribute("pwdLastSet", "0"))));
 
     response = auth.authenticate(new AuthenticationRequest(user, new Credential(credential)));
-    Assert.assertFalse(response.isSuccess());
-    Assert.assertEquals(response.getAccountState().getError(), ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE);
+    assertThat(response.isSuccess()).isFalse();
+    assertThat(response.getAccountState().getError()).isEqualTo(ActiveDirectoryAccountState.Error.PASSWORD_MUST_CHANGE);
   }
 }

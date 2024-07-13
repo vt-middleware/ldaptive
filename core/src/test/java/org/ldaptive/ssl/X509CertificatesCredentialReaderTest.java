@@ -8,8 +8,8 @@ import java.security.cert.X509Certificate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link X509CertificatesCredentialReader}.
@@ -60,6 +60,6 @@ public class X509CertificatesCredentialReaderTest
       .map(file -> "file:" + file.getAbsolutePath())
       .collect(Collectors.joining(","));
     final X509Certificate[] certificates = reader.read(paths);
-    Assert.assertEquals(2, certificates.length);
+    assertThat(certificates.length).isEqualTo(2);
   }
 }

@@ -10,8 +10,8 @@ import org.ldaptive.LdapURL;
 import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.transport.netty.SimpleNettyServer;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SyncReplRunner}.
@@ -52,7 +52,7 @@ public class SyncReplRunnerTest
         runner.initialize();
         runner.start();
         if (!openLatch.await(Duration.ofMinutes(1).toMillis(), TimeUnit.MILLISECONDS)) {
-          Assert.fail("Connection did not reconnect");
+          fail("Connection did not reconnect");
         }
       } finally {
         runner.stop();

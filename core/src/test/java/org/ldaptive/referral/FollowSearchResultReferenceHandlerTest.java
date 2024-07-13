@@ -14,8 +14,8 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.transport.DefaultSearchOperationHandle;
 import org.ldaptive.transport.mock.MockConnection;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link FollowSearchResultReferenceHandler}.
@@ -39,9 +39,7 @@ public class FollowSearchResultReferenceHandlerTest
         .attributes(LdapAttribute.builder().name("uid").values("1").build())
         .build())
       .build();
-    Assert.assertEquals(
-      handler.apply(response),
-      response);
+    assertThat(handler.apply(response)).isEqualTo(response);
   }
 
 
@@ -95,8 +93,7 @@ public class FollowSearchResultReferenceHandlerTest
       .build();
     for (int i = 0; i < 20; i++) {
       final SearchResponse sr = handler.apply(response);
-      Assert.assertEquals(
-        sr,
+      assertThat(sr).isEqualTo(
         SearchResponse.builder()
           .messageID(1)
           .resultCode(ResultCode.SUCCESS)
@@ -161,8 +158,7 @@ public class FollowSearchResultReferenceHandlerTest
         .build())
       .build();
     final SearchResponse sr = handler.apply(response);
-    Assert.assertEquals(
-      sr,
+    assertThat(sr).isEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .resultCode(ResultCode.SUCCESS)
@@ -230,8 +226,7 @@ public class FollowSearchResultReferenceHandlerTest
           .build())
       .build();
     final SearchResponse sr = handler.apply(response);
-    Assert.assertEquals(
-      sr,
+    assertThat(sr).isEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .resultCode(ResultCode.SUCCESS)
@@ -316,11 +311,11 @@ public class FollowSearchResultReferenceHandlerTest
       .build();
     try {
       handler.apply(response);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), RuntimeException.class);
-      Assert.assertEquals(e.getCause().getClass(), LdapException.class);
-      Assert.assertEquals(((LdapException) e.getCause()).getResultCode(), ResultCode.REFERRAL_LIMIT_EXCEEDED);
+      assertThat(e).isExactlyInstanceOf(RuntimeException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(LdapException.class);
+      assertThat(((LdapException) e.getCause()).getResultCode()).isEqualTo(ResultCode.REFERRAL_LIMIT_EXCEEDED);
     }
   }
 
@@ -391,11 +386,11 @@ public class FollowSearchResultReferenceHandlerTest
 
     try {
       handler.apply(response);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
-      Assert.assertTrue(
-        e.getMessage().startsWith("Search result handler org.ldaptive.referral.FollowSearchResultReferenceHandler"));
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+      assertThat(e.getMessage())
+        .startsWith("Search result handler org.ldaptive.referral.FollowSearchResultReferenceHandler");
     }
   }
 
@@ -464,8 +459,7 @@ public class FollowSearchResultReferenceHandlerTest
         .build())
       .build();
 
-    Assert.assertEquals(
-      handler.apply(response),
+    assertThat(handler.apply(response)).isEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .resultCode(ResultCode.SUCCESS)

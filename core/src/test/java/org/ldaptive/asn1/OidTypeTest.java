@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.asn1;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link OidType}.
@@ -138,7 +138,7 @@ public class OidTypeTest
   public void decode(final byte[] bytes, final String expected)
     throws Exception
   {
-    Assert.assertEquals(OidType.decode(new DefaultDERBuffer(bytes)), expected);
+    assertThat(OidType.decode(new DefaultDERBuffer(bytes))).isEqualTo(expected);
   }
 
 
@@ -152,7 +152,7 @@ public class OidTypeTest
   public void encode(final byte[] expected, final String oid)
     throws Exception
   {
-    Assert.assertEquals(OidType.toBytes(OidType.parse(oid)), expected);
+    assertThat(OidType.toBytes(OidType.parse(oid))).isEqualTo(expected);
   }
 
 
@@ -163,7 +163,7 @@ public class OidTypeTest
     try {
       new OidType(oid);
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
   }
 }

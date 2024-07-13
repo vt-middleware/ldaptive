@@ -20,10 +20,10 @@ import org.ldaptive.props.AuthenticatorPropertySource;
 import org.ldaptive.props.ConnectionConfigPropertySource;
 import org.ldaptive.props.DefaultConnectionFactoryPropertySource;
 import org.ldaptive.props.SearchRequestPropertySource;
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for property source implementations in the props package.
@@ -54,8 +54,8 @@ public class PropertiesTest
       "classpath:/org/ldaptive/ldap.null.properties");
     ccSource.initialize();
 
-    Assert.assertNotNull(cc.getConnectionInitializers());
-    Assert.assertNull(((BindConnectionInitializer) cc.getConnectionInitializers()[0]).getBindSaslConfig());
+    assertThat(cc.getConnectionInitializers()).isNotNull();
+    assertThat(((BindConnectionInitializer) cc.getConnectionInitializers()[0]).getBindSaslConfig()).isNull();
 
     final SearchRequest sr = new SearchRequest();
     final SearchRequestPropertySource srSource = new SearchRequestPropertySource(
@@ -85,14 +85,13 @@ public class PropertiesTest
     final ConnectionConfig cc = cf.getConnectionConfig();
     final BindConnectionInitializer ci = (BindConnectionInitializer) cc.getConnectionInitializers()[0];
 
-    Assert.assertEquals(cc.getLdapUrl(), host);
-    Assert.assertEquals(ci.getBindDn(), bindDn);
-    Assert.assertEquals(cc.getConnectTimeout(), Duration.ofSeconds(8));
-    Assert.assertFalse(cc.getUseStartTLS());
-    Assert.assertEquals(cc.getConnectionStrategy().getClass(), RoundRobinConnectionStrategy.class);
-    Assert.assertEquals(
-      cc.getTransportOptions(),
-      Map.of("SO_LINGER", "false", "TCP_NODELAY", "false", "SO_RCVBUF", "1024", "AUTO_READ", "false"));
+    assertThat(cc.getLdapUrl()).isEqualTo(host);
+    assertThat(ci.getBindDn()).isEqualTo(bindDn);
+    assertThat(cc.getConnectTimeout()).isEqualTo(Duration.ofSeconds(8));
+    assertThat(cc.getUseStartTLS()).isFalse();
+    assertThat(cc.getConnectionStrategy().getClass()).isEqualTo(RoundRobinConnectionStrategy.class);
+    assertThat(cc.getTransportOptions())
+      .isEqualTo(Map.of("SO_LINGER", "false", "TCP_NODELAY", "false", "SO_RCVBUF", "1024", "AUTO_READ", "false"));
 
     final SearchRequest sr = new SearchRequest();
     final SearchRequestPropertySource srSource = new SearchRequestPropertySource(
@@ -100,11 +99,11 @@ public class PropertiesTest
       "classpath:/org/ldaptive/ldap.parser.properties");
     srSource.initialize();
 
-    Assert.assertEquals(new Dn(sr.getBaseDn()).format(), new Dn(bindDn).subDn(1).format());
-    Assert.assertEquals(sr.getSearchScope(), SearchScope.OBJECT);
-    Assert.assertEquals(sr.getTimeLimit(), Duration.ofSeconds(5));
-    Assert.assertEquals(sr.getBinaryAttributes()[0], "jpegPhoto");
-    Assert.assertEquals(((PagedResultsControl) sr.getControls()[0]).getSize(), 5);
+    assertThat(new Dn(sr.getBaseDn()).format()).isEqualTo(new Dn(bindDn).subDn(1).format());
+    assertThat(sr.getSearchScope()).isEqualTo(SearchScope.OBJECT);
+    assertThat(sr.getTimeLimit()).isEqualTo(Duration.ofSeconds(5));
+    assertThat(sr.getBinaryAttributes()[0]).isEqualTo("jpegPhoto");
+    assertThat(((PagedResultsControl) sr.getControls()[0]).getSize()).isEqualTo(5);
 
     final Authenticator auth = new Authenticator();
     final AuthenticatorPropertySource aSource = new AuthenticatorPropertySource(
@@ -116,35 +115,35 @@ public class PropertiesTest
     for (Function<LdapEntry, LdapEntry> handler : dnResolver.getEntryHandlers()) {
       if (handler instanceof MergeAttributeEntryHandler) {
         final MergeAttributeEntryHandler h = (MergeAttributeEntryHandler) handler;
-        Assert.assertNotNull(h);
+        assertThat(h).isNotNull();
       } else if (handler instanceof DnAttributeEntryHandler) {
         final DnAttributeEntryHandler h = (DnAttributeEntryHandler) handler;
-        Assert.assertEquals(h.getDnAttributeName(), "myDN");
+        assertThat(h.getDnAttributeName()).isEqualTo("myDN");
       } else {
         throw new Exception("Unknown search result handler type " + handler);
       }
     }
 
     final PooledConnectionFactory resolverCf = (PooledConnectionFactory) dnResolver.getConnectionFactory();
-    Assert.assertEquals(resolverCf.getMinPoolSize(), 1);
-    Assert.assertEquals(resolverCf.getMaxPoolSize(), 3);
-    Assert.assertEquals(resolverCf.isValidatePeriodically(), true);
-    Assert.assertNotNull(resolverCf.getValidator());
+    assertThat(resolverCf.getMinPoolSize()).isEqualTo(1);
+    assertThat(resolverCf.getMaxPoolSize()).isEqualTo(3);
+    assertThat(resolverCf.isValidatePeriodically()).isTrue();
+    assertThat(resolverCf.getValidator()).isNotNull();
 
     final IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) resolverCf.getPruneStrategy();
-    Assert.assertEquals(pruneStrategy.getPrunePeriod(), Duration.ofMinutes(1));
-    Assert.assertEquals(pruneStrategy.getIdleTime(), Duration.ofMinutes(2));
-    Assert.assertNotNull(resolverCf.getActivator());
-    Assert.assertEquals(resolverCf.getPassivator().getClass(), BindConnectionPassivator.class);
+    assertThat(pruneStrategy.getPrunePeriod()).isEqualTo(Duration.ofMinutes(1));
+    assertThat(pruneStrategy.getIdleTime()).isEqualTo(Duration.ofMinutes(2));
+    assertThat(resolverCf.getActivator()).isNotNull();
+    assertThat(resolverCf.getPassivator().getClass()).isEqualTo(BindConnectionPassivator.class);
 
     final DefaultConnectionFactory resolverBaseCf = resolverCf.getDefaultConnectionFactory();
     final ConnectionConfig authCc = resolverBaseCf.getConnectionConfig();
     final BindConnectionInitializer authCi = (BindConnectionInitializer) authCc.getConnectionInitializers()[0];
-    Assert.assertEquals(authCc.getLdapUrl(), "ldap://auth.ldaptive.org:14389");
-    Assert.assertEquals(authCi.getBindDn(), bindDn);
-    Assert.assertEquals(authCc.getConnectTimeout(), Duration.ofSeconds(8));
-    Assert.assertTrue(authCc.getUseStartTLS());
-    Assert.assertEquals(authCc.getConnectionStrategy().getClass(), RoundRobinConnectionStrategy.class);
+    assertThat(authCc.getLdapUrl()).isEqualTo("ldap://auth.ldaptive.org:14389");
+    assertThat(authCi.getBindDn()).isEqualTo(bindDn);
+    assertThat(authCc.getConnectTimeout()).isEqualTo(Duration.ofSeconds(8));
+    assertThat(authCc.getUseStartTLS()).isTrue();
+    assertThat(authCc.getConnectionStrategy().getClass()).isEqualTo(RoundRobinConnectionStrategy.class);
 
     if (auth.getDnResolver() instanceof ConnectionFactoryManager) {
       final ConnectionFactoryManager dnResolverCfm = (ConnectionFactoryManager) auth.getDnResolver();
@@ -199,53 +198,52 @@ public class PropertiesTest
     final ConnectionConfig cc = cf.getConnectionConfig();
     final BindConnectionInitializer ci = (BindConnectionInitializer) cc.getConnectionInitializers()[0];
 
-    Assert.assertNotNull(cf.getTransport().getClass());
-    Assert.assertEquals(cc.getLdapUrl(), host);
-    Assert.assertEquals(ci.getBindDn(), bindDn);
-    Assert.assertEquals(cc.getConnectTimeout(), Duration.ofSeconds(8));
-    Assert.assertTrue(cc.getUseStartTLS());
-    Assert.assertEquals(cc.getConnectionStrategy().getClass(), RoundRobinConnectionStrategy.class);
+    assertThat(cf.getTransport().getClass()).isNotNull();
+    assertThat(cc.getLdapUrl()).isEqualTo(host);
+    assertThat(ci.getBindDn()).isEqualTo(bindDn);
+    assertThat(cc.getConnectTimeout()).isEqualTo(Duration.ofSeconds(8));
+    assertThat(cc.getUseStartTLS()).isTrue();
+    assertThat(cc.getConnectionStrategy().getClass()).isEqualTo(RoundRobinConnectionStrategy.class);
 
-    Assert.assertEquals(new Dn(searchRequest.getBaseDn()).format(), new Dn(bindDn).subDn(1).format());
-    Assert.assertEquals(searchRequest.getSearchScope(), SearchScope.OBJECT);
-    Assert.assertEquals(searchRequest.getTimeLimit(), Duration.ofSeconds(5));
-    Assert.assertEquals(searchRequest.getBinaryAttributes()[0], "jpegPhoto");
+    assertThat(new Dn(searchRequest.getBaseDn()).format()).isEqualTo(new Dn(bindDn).subDn(1).format());
+    assertThat(searchRequest.getSearchScope()).isEqualTo(SearchScope.OBJECT);
+    assertThat(searchRequest.getTimeLimit()).isEqualTo(Duration.ofSeconds(5));
+    assertThat(searchRequest.getBinaryAttributes()[0]).isEqualTo("jpegPhoto");
 
     final SearchDnResolver dnResolver = (SearchDnResolver) auth.getDnResolver();
     for (Function<LdapEntry, LdapEntry> handler : dnResolver.getEntryHandlers()) {
       if (handler instanceof MergeAttributeEntryHandler) {
         final MergeAttributeEntryHandler h = (MergeAttributeEntryHandler) handler;
-        Assert.assertNotNull(h);
+        assertThat(h).isNotNull();
       } else if (handler instanceof DnAttributeEntryHandler) {
         final DnAttributeEntryHandler h = (DnAttributeEntryHandler) handler;
-        Assert.assertEquals(h.getDnAttributeName(), "myDN");
+        assertThat(h.getDnAttributeName()).isEqualTo("myDN");
       } else {
         throw new Exception("Unknown search result handler type " + handler);
       }
     }
 
     final PooledConnectionFactory resolverCf = (PooledConnectionFactory) dnResolver.getConnectionFactory();
-    Assert.assertEquals(resolverCf.getMinPoolSize(), 1);
-    Assert.assertEquals(resolverCf.getMaxPoolSize(), 3);
-    Assert.assertEquals(resolverCf.isValidatePeriodically(), true);
-    Assert.assertNotNull(resolverCf.getValidator());
+    assertThat(resolverCf.getMinPoolSize()).isEqualTo(1);
+    assertThat(resolverCf.getMaxPoolSize()).isEqualTo(3);
+    assertThat(resolverCf.isValidatePeriodically()).isTrue();
+    assertThat(resolverCf.getValidator()).isNotNull();
 
     final IdlePruneStrategy pruneStrategy = (IdlePruneStrategy) resolverCf.getPruneStrategy();
-    Assert.assertEquals(pruneStrategy.getPrunePeriod(), Duration.ofMinutes(1));
-    Assert.assertEquals(pruneStrategy.getIdleTime(), Duration.ofMinutes(2));
+    assertThat(pruneStrategy.getPrunePeriod()).isEqualTo(Duration.ofMinutes(1));
+    assertThat(pruneStrategy.getIdleTime()).isEqualTo(Duration.ofMinutes(2));
 
     final ConnectionConfig authCc = resolverCf.getDefaultConnectionFactory().getConnectionConfig();
     final BindConnectionInitializer authCi = (BindConnectionInitializer) authCc.getConnectionInitializers()[0];
-    Assert.assertEquals(authCc.getLdapUrl(), host);
-    Assert.assertEquals(authCi.getBindDn(), bindDn);
-    Assert.assertEquals(authCc.getConnectTimeout(), Duration.ofSeconds(8));
-    Assert.assertTrue(authCc.getUseStartTLS());
-    Assert.assertEquals(authCc.getConnectionStrategy().getClass(), RoundRobinConnectionStrategy.class);
+    assertThat(authCc.getLdapUrl()).isEqualTo(host);
+    assertThat(authCi.getBindDn()).isEqualTo(bindDn);
+    assertThat(authCc.getConnectTimeout()).isEqualTo(Duration.ofSeconds(8));
+    assertThat(authCc.getUseStartTLS()).isTrue();
+    assertThat(authCc.getConnectionStrategy().getClass()).isEqualTo(RoundRobinConnectionStrategy.class);
 
-    Assert.assertEquals(
-      auth.getAuthenticationHandler().getClass(),
-      org.ldaptive.auth.CompareAuthenticationHandler.class);
-    Assert.assertEquals(auth.getDnResolver().getClass(), org.ldaptive.auth.SearchDnResolver.class);
+    assertThat(auth.getAuthenticationHandler().getClass())
+      .isEqualTo(org.ldaptive.auth.CompareAuthenticationHandler.class);
+    assertThat(auth.getDnResolver().getClass()).isEqualTo(org.ldaptive.auth.SearchDnResolver.class);
 
     if (auth.getDnResolver() instanceof ConnectionFactoryManager) {
       final ConnectionFactoryManager dnResolverCfm = (ConnectionFactoryManager) auth.getDnResolver();
@@ -271,7 +269,7 @@ public class PropertiesTest
       "classpath:/org/ldaptive/ldap.null.properties");
     srSource.initialize();
 
-    Assert.assertEquals(sr.getSearchScope(), SearchScope.SUBTREE);
-    Assert.assertNotNull(sr.getControls());
+    assertThat(sr.getSearchScope()).isEqualTo(SearchScope.SUBTREE);
+    assertThat(sr.getControls()).isNotNull();
   }
 }

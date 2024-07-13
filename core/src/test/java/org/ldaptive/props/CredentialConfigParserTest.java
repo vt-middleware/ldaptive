@@ -3,9 +3,9 @@ package org.ldaptive.props;
 
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link CredentialConfigParser}.
@@ -126,9 +126,9 @@ public class CredentialConfigParserTest
   public void initializeType(final String property, final Object initialized)
     throws Exception
   {
-    Assert.assertTrue(CredentialConfigParser.isCredentialConfig(property));
+    assertThat(CredentialConfigParser.isCredentialConfig(property)).isTrue();
 
     final CredentialConfigParser parser = new CredentialConfigParser(property);
-    Assert.assertEquals(initialized, parser.initializeType());
+    assertThat(parser.initializeType()).isEqualTo(initialized);
   }
 }

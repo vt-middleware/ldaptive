@@ -2,9 +2,9 @@
 package org.ldaptive;
 
 import org.ldaptive.control.TreeDeleteControl;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DeleteRequest}.
@@ -63,6 +63,6 @@ public class DeleteRequestTest
   public void encode(final DeleteRequest request, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(request.encode(2), berValue);
+    assertThat(request.encode(2)).isEqualTo(berValue);
   }
 }

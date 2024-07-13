@@ -7,14 +7,14 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
 import org.ldaptive.ad.control.DirSyncControl;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link DirSyncClient}.
@@ -45,11 +45,11 @@ public class DirSyncClientTest extends AbstractTest
     throws Exception
   {
     testLdapEntries = new LdapEntry[3];
-    testLdapEntries[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile1)).getEntry();
+    testLdapEntries[0] = convertLdifToEntry(readFileIntoString(ldifFile1));
     super.createLdapEntry(testLdapEntries[0]);
-    testLdapEntries[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    testLdapEntries[1] = convertLdifToEntry(readFileIntoString(ldifFile2));
     super.createLdapEntry(testLdapEntries[1]);
-    testLdapEntries[2] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    testLdapEntries[2] = convertLdifToEntry(readFileIntoString(ldifFile3));
     super.createLdapEntry(testLdapEntries[2]);
   }
 
@@ -84,15 +84,15 @@ public class DirSyncClientTest extends AbstractTest
     }
 
     final DirSyncClient client = new DirSyncClient(
-      TestUtils.createConnectionFactory(),
+      createConnectionFactory(),
       new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
     client.setEntryHandlers(new ObjectGuidHandler());
 
     final SearchRequest request = new SearchRequest(dn.substring(dn.indexOf(",") + 1), filter, "uid");
     final SearchResponse response = client.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.entrySize() > 0);
-    Assert.assertFalse(client.hasMore(response));
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isGreaterThan(0);
+    assertThat(client.hasMore(response)).isFalse();
   }
 
 
@@ -115,13 +115,13 @@ public class DirSyncClientTest extends AbstractTest
     }
 
     final DirSyncClient client = new DirSyncClient(
-      TestUtils.createConnectionFactory(),
+      createConnectionFactory(),
       new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
     client.setEntryHandlers(new ObjectGuidHandler());
 
     final SearchRequest request = new SearchRequest(dn.substring(dn.indexOf(",") + 1), filter, "uid");
     final SearchResponse response = client.executeToCompletion(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-    Assert.assertTrue(response.entrySize() > 0);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isGreaterThan(0);
   }
 }

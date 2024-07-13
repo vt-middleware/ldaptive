@@ -3,9 +3,9 @@ package org.ldaptive.control;
 
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link PasswordPolicyControl}.
@@ -85,16 +85,16 @@ public class PasswordPolicyControlTest
 
   /**
    * @param  berValue  to decode.
-   * @param  expected  ppolicy control to test.
+   * @param  control  ppolicy control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "response")
-  public void decode(final DERBuffer berValue, final PasswordPolicyControl expected)
+  public void decode(final DERBuffer berValue, final PasswordPolicyControl control)
     throws Exception
   {
-    final PasswordPolicyControl actual = new PasswordPolicyControl(expected.getCriticality());
+    final PasswordPolicyControl actual = new PasswordPolicyControl(control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

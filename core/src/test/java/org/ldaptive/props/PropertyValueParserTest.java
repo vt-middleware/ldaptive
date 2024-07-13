@@ -9,9 +9,9 @@ import org.ldaptive.sasl.Mechanism;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslConfig;
 import org.ldaptive.sasl.SecurityStrength;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link PropertyValueParser}.
@@ -87,13 +87,13 @@ public class PropertyValueParserTest
     final PropertyValueParser parser;
     if (type != null) {
       parser = new PropertyValueParser(property, type.getName());
-      Assert.assertTrue(PropertyValueParser.isParamsOnlyConfig(property));
+      assertThat(PropertyValueParser.isParamsOnlyConfig(property)).isTrue();
     } else {
       parser = new PropertyValueParser(property);
-      Assert.assertTrue(PropertyValueParser.isConfig(property));
+      assertThat(PropertyValueParser.isConfig(property)).isTrue();
     }
 
     final Object o = parser.initializeType();
-    Assert.assertEquals(initialized.toString().split("::")[1], o.toString().split("::")[1]);
+    assertThat(initialized.toString().split("::")[1]).isEqualTo(o.toString().split("::")[1]);
   }
 }

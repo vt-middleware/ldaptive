@@ -2,9 +2,9 @@
 package org.ldaptive.ad;
 
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SecurityIdentifier}.
@@ -54,7 +54,7 @@ public class SecurityIdentifierTest
   public void testToString(final String sidString, final byte[] sid)
     throws Exception
   {
-    Assert.assertEquals(sidString, SecurityIdentifier.toString(sid));
+    assertThat(SecurityIdentifier.toString(sid)).isEqualTo(sidString);
   }
 
 
@@ -68,6 +68,6 @@ public class SecurityIdentifierTest
   public void testToBytes(final String sidString, final byte[] sid)
     throws Exception
   {
-    Assert.assertEquals(sid, SecurityIdentifier.toBytes(sidString));
+    assertThat(SecurityIdentifier.toBytes(sidString)).isEqualTo(sid);
   }
 }

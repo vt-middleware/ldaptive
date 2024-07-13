@@ -2,9 +2,9 @@
 package org.ldaptive;
 
 import java.time.Duration;
-import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Test for {@link SearchConnectionValidator}.
@@ -27,9 +27,9 @@ public class SearchConnectionValidatorTest extends AbstractTest
     final Connection c = cf.getConnection();
     try (c) {
       c.open();
-      Assert.assertTrue(validator.apply(c));
+      assertThat(validator.apply(c)).isTrue();
     }
-    Assert.assertFalse(validator.apply(c));
+    assertThat(validator.apply(c)).isFalse();
   }
 
 
@@ -53,11 +53,11 @@ public class SearchConnectionValidatorTest extends AbstractTest
     final Connection c = cf.getConnection();
     try (c) {
       c.open();
-      Assert.assertTrue(validator1.apply(c));
-      Assert.assertTrue(validator2.apply(c));
+      assertThat(validator1.apply(c)).isTrue();
+      assertThat(validator2.apply(c)).isTrue();
     }
-    Assert.assertFalse(validator1.apply(c));
-    Assert.assertFalse(validator2.apply(c));
+    assertThat(validator1.apply(c)).isFalse();
+    assertThat(validator2.apply(c)).isFalse();
   }
 
 
@@ -75,9 +75,9 @@ public class SearchConnectionValidatorTest extends AbstractTest
     final Connection c = cf.getConnection();
     try (c) {
       c.open();
-      Assert.assertTrue(validator.applyAsync(c).get());
+      assertThat(validator.applyAsync(c).get()).isTrue();
     }
-    Assert.assertFalse(validator.applyAsync(c).get());
+    assertThat(validator.applyAsync(c).get()).isFalse();
   }
 
 
@@ -95,7 +95,7 @@ public class SearchConnectionValidatorTest extends AbstractTest
       .build();
     try (Connection c = cf.getConnection()) {
       c.open();
-      Assert.assertFalse(validator.apply(c));
+      assertThat(validator.apply(c)).isFalse();
     }
 
     validator = SearchConnectionValidator.builder()
@@ -104,7 +104,7 @@ public class SearchConnectionValidatorTest extends AbstractTest
       .build();
     try (Connection c = cf.getConnection()) {
       c.open();
-      Assert.assertTrue(validator.apply(c));
+      assertThat(validator.apply(c)).isTrue();
     }
 
     validator = SearchConnectionValidator.builder()
@@ -113,7 +113,7 @@ public class SearchConnectionValidatorTest extends AbstractTest
       .build();
     try (Connection c = cf.getConnection()) {
       c.open();
-      Assert.assertTrue(validator.apply(c));
+      assertThat(validator.apply(c)).isTrue();
     }
   }
 
@@ -132,7 +132,7 @@ public class SearchConnectionValidatorTest extends AbstractTest
       .build();
     try (Connection c = cf.getConnection()) {
       c.open();
-      Assert.assertTrue(validator.apply(c));
+      assertThat(validator.apply(c)).isTrue();
     }
 
     validator = SearchConnectionValidator.builder()
@@ -141,7 +141,7 @@ public class SearchConnectionValidatorTest extends AbstractTest
       .build();
     try (Connection c = cf.getConnection()) {
       c.open();
-      Assert.assertFalse(validator.apply(c));
+      assertThat(validator.apply(c)).isFalse();
     }
   }
 }

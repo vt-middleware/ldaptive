@@ -1,8 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link LdapUtils}.
@@ -16,127 +16,127 @@ public class LdapUtilsTest
   @Test
   public void testTrimSpace()
   {
-    Assert.assertEquals(LdapUtils.trimSpace(""), "");
-    Assert.assertEquals(LdapUtils.trimSpace(" "), "");
-    Assert.assertEquals(LdapUtils.trimSpace("  "), "");
-    Assert.assertEquals(LdapUtils.trimSpace("   "), "");
-    Assert.assertEquals(LdapUtils.trimSpace("text"), "text");
-    Assert.assertEquals(LdapUtils.trimSpace(" text"), "text");
-    Assert.assertEquals(LdapUtils.trimSpace("  text"), "text");
-    Assert.assertEquals(LdapUtils.trimSpace("   text"), "text");
-    Assert.assertEquals(LdapUtils.trimSpace("text "), "text");
-    Assert.assertEquals(LdapUtils.trimSpace("text  "), "text");
-    Assert.assertEquals(LdapUtils.trimSpace("text   "), "text");
-    Assert.assertEquals(LdapUtils.trimSpace(" text "), "text");
-    Assert.assertEquals(LdapUtils.trimSpace("  text  "), "text");
-    Assert.assertEquals(LdapUtils.trimSpace("   text   "), "text");
-    Assert.assertEquals(LdapUtils.trimSpace("text with spaces"), "text with spaces");
-    Assert.assertEquals(LdapUtils.trimSpace(" text with spaces"), "text with spaces");
-    Assert.assertEquals(LdapUtils.trimSpace("  text with spaces"), "text with spaces");
-    Assert.assertEquals(LdapUtils.trimSpace("   text with spaces"), "text with spaces");
-    Assert.assertEquals(LdapUtils.trimSpace("text with spaces "), "text with spaces");
-    Assert.assertEquals(LdapUtils.trimSpace("text with spaces  "), "text with spaces");
-    Assert.assertEquals(LdapUtils.trimSpace("text with spaces   "), "text with spaces");
-    Assert.assertEquals(LdapUtils.trimSpace(" text with spaces "), "text with spaces");
-    Assert.assertEquals(LdapUtils.trimSpace("  text with spaces  "), "text with spaces");
-    Assert.assertEquals(LdapUtils.trimSpace("   text with spaces   "), "text with spaces");
+    assertThat(LdapUtils.trimSpace("")).isEqualTo("");
+    assertThat(LdapUtils.trimSpace(" ")).isEqualTo("");
+    assertThat(LdapUtils.trimSpace("  ")).isEqualTo("");
+    assertThat(LdapUtils.trimSpace("   ")).isEqualTo("");
+    assertThat(LdapUtils.trimSpace("text")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace(" text")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace("  text")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace("   text")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace("text ")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace("text  ")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace("text   ")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace(" text ")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace("  text  ")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace("   text   ")).isEqualTo("text");
+    assertThat(LdapUtils.trimSpace("text with spaces")).isEqualTo("text with spaces");
+    assertThat(LdapUtils.trimSpace(" text with spaces")).isEqualTo("text with spaces");
+    assertThat(LdapUtils.trimSpace("  text with spaces")).isEqualTo("text with spaces");
+    assertThat(LdapUtils.trimSpace("   text with spaces")).isEqualTo("text with spaces");
+    assertThat(LdapUtils.trimSpace("text with spaces ")).isEqualTo("text with spaces");
+    assertThat(LdapUtils.trimSpace("text with spaces  ")).isEqualTo("text with spaces");
+    assertThat(LdapUtils.trimSpace("text with spaces   ")).isEqualTo("text with spaces");
+    assertThat(LdapUtils.trimSpace(" text with spaces ")).isEqualTo("text with spaces");
+    assertThat(LdapUtils.trimSpace("  text with spaces  ")).isEqualTo("text with spaces");
+    assertThat(LdapUtils.trimSpace("   text with spaces   ")).isEqualTo("text with spaces");
   }
 
 
   @Test
   public void testCompressSpaceTrim()
   {
-    Assert.assertEquals(LdapUtils.compressSpace("", true), "");
-    Assert.assertEquals(LdapUtils.compressSpace(" ", true), "");
-    Assert.assertEquals(LdapUtils.compressSpace("  ", true), "");
-    Assert.assertEquals(LdapUtils.compressSpace("   ", true), "");
+    assertThat(LdapUtils.compressSpace("", true)).isEqualTo("");
+    assertThat(LdapUtils.compressSpace(" ", true)).isEqualTo("");
+    assertThat(LdapUtils.compressSpace("  ", true)).isEqualTo("");
+    assertThat(LdapUtils.compressSpace("   ", true)).isEqualTo("");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text", true), "text");
-    Assert.assertEquals(LdapUtils.compressSpace(" TEXT", true), "TEXT");
-    Assert.assertEquals(LdapUtils.compressSpace("  TEXT", true), "TEXT");
-    Assert.assertEquals(LdapUtils.compressSpace("   text", true), "text");
+    assertThat(LdapUtils.compressSpace("text", true)).isEqualTo("text");
+    assertThat(LdapUtils.compressSpace(" TEXT", true)).isEqualTo("TEXT");
+    assertThat(LdapUtils.compressSpace("  TEXT", true)).isEqualTo("TEXT");
+    assertThat(LdapUtils.compressSpace("   text", true)).isEqualTo("text");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text ", true), "text");
-    Assert.assertEquals(LdapUtils.compressSpace("TEXT  ", true), "TEXT");
-    Assert.assertEquals(LdapUtils.compressSpace("text   ", true), "text");
+    assertThat(LdapUtils.compressSpace("text ", true)).isEqualTo("text");
+    assertThat(LdapUtils.compressSpace("TEXT  ", true)).isEqualTo("TEXT");
+    assertThat(LdapUtils.compressSpace("text   ", true)).isEqualTo("text");
 
-    Assert.assertEquals(LdapUtils.compressSpace(" text ", true), "text");
-    Assert.assertEquals(LdapUtils.compressSpace("  tEXt  ", true), "tEXt");
-    Assert.assertEquals(LdapUtils.compressSpace("   text   ", true), "text");
+    assertThat(LdapUtils.compressSpace(" text ", true)).isEqualTo("text");
+    assertThat(LdapUtils.compressSpace("  tEXt  ", true)).isEqualTo("tEXt");
+    assertThat(LdapUtils.compressSpace("   text   ", true)).isEqualTo("text");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text with spaces", true), "text with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace(" text WITH spaces", true), "text WITH spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("  text WITH spaces", true), "text WITH spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("   text with spaces", true), "text with spaces");
+    assertThat(LdapUtils.compressSpace("text with spaces", true)).isEqualTo("text with spaces");
+    assertThat(LdapUtils.compressSpace(" text WITH spaces", true)).isEqualTo("text WITH spaces");
+    assertThat(LdapUtils.compressSpace("  text WITH spaces", true)).isEqualTo("text WITH spaces");
+    assertThat(LdapUtils.compressSpace("   text with spaces", true)).isEqualTo("text with spaces");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text with spaces ", true), "text with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("text with SPACES  ", true), "text with SPACES");
-    Assert.assertEquals(LdapUtils.compressSpace("text with spaces   ", true), "text with spaces");
+    assertThat(LdapUtils.compressSpace("text with spaces ", true)).isEqualTo("text with spaces");
+    assertThat(LdapUtils.compressSpace("text with SPACES  ", true)).isEqualTo("text with SPACES");
+    assertThat(LdapUtils.compressSpace("text with spaces   ", true)).isEqualTo("text with spaces");
 
-    Assert.assertEquals(LdapUtils.compressSpace(" text with spaces ", true), "text with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("  TEXT with spaces  ", true), "TEXT with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("   text with spaces   ", true), "text with spaces");
+    assertThat(LdapUtils.compressSpace(" text with spaces ", true)).isEqualTo("text with spaces");
+    assertThat(LdapUtils.compressSpace("  TEXT with spaces  ", true)).isEqualTo("TEXT with spaces");
+    assertThat(LdapUtils.compressSpace("   text with spaces   ", true)).isEqualTo("text with spaces");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text  with  spaces", true), "text with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace(" TEXT   with   spaces", true), "TEXT with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("  text  with  SPACES", true), "text with SPACES");
-    Assert.assertEquals(LdapUtils.compressSpace("   text   with   spaces", true), "text with spaces");
+    assertThat(LdapUtils.compressSpace("text  with  spaces", true)).isEqualTo("text with spaces");
+    assertThat(LdapUtils.compressSpace(" TEXT   with   spaces", true)).isEqualTo("TEXT with spaces");
+    assertThat(LdapUtils.compressSpace("  text  with  SPACES", true)).isEqualTo("text with SPACES");
+    assertThat(LdapUtils.compressSpace("   text   with   spaces", true)).isEqualTo("text with spaces");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text  with  spaces ", true), "text with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("text   WITH   spaces  ", true), "text WITH spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("text    with    spaces   ", true), "text with spaces");
+    assertThat(LdapUtils.compressSpace("text  with  spaces ", true)).isEqualTo("text with spaces");
+    assertThat(LdapUtils.compressSpace("text   WITH   spaces  ", true)).isEqualTo("text WITH spaces");
+    assertThat(LdapUtils.compressSpace("text    with    spaces   ", true)).isEqualTo("text with spaces");
 
-    Assert.assertEquals(LdapUtils.compressSpace(" text  with  spaces ", true), "text with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("  TEXT   with   SPACES  ", true), "TEXT with SPACES");
-    Assert.assertEquals(LdapUtils.compressSpace("   text    with    spaces   ", true), "text with spaces");
+    assertThat(LdapUtils.compressSpace(" text  with  spaces ", true)).isEqualTo("text with spaces");
+    assertThat(LdapUtils.compressSpace("  TEXT   with   SPACES  ", true)).isEqualTo("TEXT with SPACES");
+    assertThat(LdapUtils.compressSpace("   text    with    spaces   ", true)).isEqualTo("text with spaces");
   }
 
 
   @Test
   public void testCompressSpaceNoTrim()
   {
-    Assert.assertEquals(LdapUtils.compressSpace("", false), "");
-    Assert.assertEquals(LdapUtils.compressSpace(" ", false), " ");
-    Assert.assertEquals(LdapUtils.compressSpace("  ", false), " ");
-    Assert.assertEquals(LdapUtils.compressSpace("   ", false), " ");
+    assertThat(LdapUtils.compressSpace("", false)).isEqualTo("");
+    assertThat(LdapUtils.compressSpace(" ", false)).isEqualTo(" ");
+    assertThat(LdapUtils.compressSpace("  ", false)).isEqualTo(" ");
+    assertThat(LdapUtils.compressSpace("   ", false)).isEqualTo(" ");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text", false), "text");
-    Assert.assertEquals(LdapUtils.compressSpace(" TEXT", false), " TEXT");
-    Assert.assertEquals(LdapUtils.compressSpace("  TEXT", false), " TEXT");
-    Assert.assertEquals(LdapUtils.compressSpace("   text", false), " text");
+    assertThat(LdapUtils.compressSpace("text", false)).isEqualTo("text");
+    assertThat(LdapUtils.compressSpace(" TEXT", false)).isEqualTo(" TEXT");
+    assertThat(LdapUtils.compressSpace("  TEXT", false)).isEqualTo(" TEXT");
+    assertThat(LdapUtils.compressSpace("   text", false)).isEqualTo(" text");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text ", false), "text ");
-    Assert.assertEquals(LdapUtils.compressSpace("TEXT  ", false), "TEXT ");
-    Assert.assertEquals(LdapUtils.compressSpace("text   ", false), "text ");
+    assertThat(LdapUtils.compressSpace("text ", false)).isEqualTo("text ");
+    assertThat(LdapUtils.compressSpace("TEXT  ", false)).isEqualTo("TEXT ");
+    assertThat(LdapUtils.compressSpace("text   ", false)).isEqualTo("text ");
 
-    Assert.assertEquals(LdapUtils.compressSpace(" text ", false), " text ");
-    Assert.assertEquals(LdapUtils.compressSpace("  tEXt  ", false), " tEXt ");
-    Assert.assertEquals(LdapUtils.compressSpace("   text   ", false), " text ");
+    assertThat(LdapUtils.compressSpace(" text ", false)).isEqualTo(" text ");
+    assertThat(LdapUtils.compressSpace("  tEXt  ", false)).isEqualTo(" tEXt ");
+    assertThat(LdapUtils.compressSpace("   text   ", false)).isEqualTo(" text ");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text with spaces", false), "text with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace(" text WITH spaces", false), " text WITH spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("  text WITH spaces", false), " text WITH spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("   text with spaces", false), " text with spaces");
+    assertThat(LdapUtils.compressSpace("text with spaces", false)).isEqualTo("text with spaces");
+    assertThat(LdapUtils.compressSpace(" text WITH spaces", false)).isEqualTo(" text WITH spaces");
+    assertThat(LdapUtils.compressSpace("  text WITH spaces", false)).isEqualTo(" text WITH spaces");
+    assertThat(LdapUtils.compressSpace("   text with spaces", false)).isEqualTo(" text with spaces");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text with spaces ", false), "text with spaces ");
-    Assert.assertEquals(LdapUtils.compressSpace("text with SPACES  ", false), "text with SPACES ");
-    Assert.assertEquals(LdapUtils.compressSpace("text with spaces   ", false), "text with spaces ");
+    assertThat(LdapUtils.compressSpace("text with spaces ", false)).isEqualTo("text with spaces ");
+    assertThat(LdapUtils.compressSpace("text with SPACES  ", false)).isEqualTo("text with SPACES ");
+    assertThat(LdapUtils.compressSpace("text with spaces   ", false)).isEqualTo("text with spaces ");
 
-    Assert.assertEquals(LdapUtils.compressSpace(" text with spaces ", false), " text with spaces ");
-    Assert.assertEquals(LdapUtils.compressSpace("  TEXT with spaces  ", false), " TEXT with spaces ");
-    Assert.assertEquals(LdapUtils.compressSpace("   text with spaces   ", false), " text with spaces ");
+    assertThat(LdapUtils.compressSpace(" text with spaces ", false)).isEqualTo(" text with spaces ");
+    assertThat(LdapUtils.compressSpace("  TEXT with spaces  ", false)).isEqualTo(" TEXT with spaces ");
+    assertThat(LdapUtils.compressSpace("   text with spaces   ", false)).isEqualTo(" text with spaces ");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text  with  spaces", false), "text with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace(" TEXT   with   spaces", false), " TEXT with spaces");
-    Assert.assertEquals(LdapUtils.compressSpace("  text  with  SPACES", false), " text with SPACES");
-    Assert.assertEquals(LdapUtils.compressSpace("   text   with   spaces", false), " text with spaces");
+    assertThat(LdapUtils.compressSpace("text  with  spaces", false)).isEqualTo("text with spaces");
+    assertThat(LdapUtils.compressSpace(" TEXT   with   spaces", false)).isEqualTo(" TEXT with spaces");
+    assertThat(LdapUtils.compressSpace("  text  with  SPACES", false)).isEqualTo(" text with SPACES");
+    assertThat(LdapUtils.compressSpace("   text   with   spaces", false)).isEqualTo(" text with spaces");
 
-    Assert.assertEquals(LdapUtils.compressSpace("text  with  spaces ", false), "text with spaces ");
-    Assert.assertEquals(LdapUtils.compressSpace("text   WITH   spaces  ", false), "text WITH spaces ");
-    Assert.assertEquals(LdapUtils.compressSpace("text    with    spaces   ", false), "text with spaces ");
+    assertThat(LdapUtils.compressSpace("text  with  spaces ", false)).isEqualTo("text with spaces ");
+    assertThat(LdapUtils.compressSpace("text   WITH   spaces  ", false)).isEqualTo("text WITH spaces ");
+    assertThat(LdapUtils.compressSpace("text    with    spaces   ", false)).isEqualTo("text with spaces ");
 
-    Assert.assertEquals(LdapUtils.compressSpace(" text  with  spaces ", false), " text with spaces ");
-    Assert.assertEquals(LdapUtils.compressSpace("  TEXT   with   SPACES  ", false), " TEXT with SPACES ");
-    Assert.assertEquals(LdapUtils.compressSpace("   text    with    spaces   ", false), " text with spaces ");
+    assertThat(LdapUtils.compressSpace(" text  with  spaces ", false)).isEqualTo(" text with spaces ");
+    assertThat(LdapUtils.compressSpace("  TEXT   with   SPACES  ", false)).isEqualTo(" TEXT with SPACES ");
+    assertThat(LdapUtils.compressSpace("   text    with    spaces   ", false)).isEqualTo(" text with spaces ");
   }
 }

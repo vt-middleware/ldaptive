@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link PresenceFilter}.
@@ -12,70 +12,6 @@ import org.testng.annotations.Test;
  */
 public class PresenceFilterTest
 {
-
-
-  /**
-   * Presence test data.
-   *
-   * @return  request test data
-   */
-  @DataProvider(name = "filter")
-  public Object[][] createFilter()
-  {
-    return
-      new Object[][] {
-        new Object[] {
-          "",
-          null,
-        },
-        new Object[] {
-          "attr=",
-          null,
-        },
-        new Object[] {
-          "=*",
-          null,
-        },
-        new Object[] {
-          "attr=*",
-          null,
-        },
-        new Object[] {
-          "(attr=*",
-          null,
-        },
-        new Object[] {
-          "attr=*)",
-          null,
-        },
-        new Object[] {
-          "(attr=)",
-          null,
-        },
-        new Object[] {
-          "(=*)",
-          null,
-        },
-        new Object[] {
-          "(attr=*)",
-          new PresenceFilter("attr"),
-        },
-      };
-  }
-
-
-  /**
-   * @param  value  to parse.
-   * @param  filter  expected value.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(dataProvider = "filter")
-  public void parseRegex(final String value, final PresenceFilter filter)
-    throws Exception
-  {
-    Assert.assertEquals(RegexFilterFunction.parsePresenceFilter(value), filter);
-  }
 
 
   /**
@@ -107,6 +43,6 @@ public class PresenceFilterTest
   public void encode(final PresenceFilter filter, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(filter.getEncoder().encode(), berValue);
+    assertThat(filter.getEncoder().encode()).isEqualTo(berValue);
   }
 }

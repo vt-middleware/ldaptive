@@ -14,13 +14,13 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
-import org.ldaptive.TestUtils;
 import org.ldaptive.dn.Dn;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link LdapLoginModule}.
@@ -57,8 +57,8 @@ public class LdapLoginModuleTest extends AbstractTest
   public void createAuthEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    testLdapEntry = convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
 
     System.setProperty("java.security.auth.login.config", "target/test-classes/ldap_jaas.config");
@@ -88,10 +88,10 @@ public class LdapLoginModuleTest extends AbstractTest
     throws Exception
   {
     // CheckStyle:Indentation OFF
-    GROUP_ENTRIES.get("6")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile6)).getEntry();
-    GROUP_ENTRIES.get("7")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile7)).getEntry();
-    GROUP_ENTRIES.get("8")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile8)).getEntry();
-    GROUP_ENTRIES.get("9")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile9)).getEntry();
+    GROUP_ENTRIES.get("6")[0] = convertLdifToEntry(readFileIntoString(ldifFile6));
+    GROUP_ENTRIES.get("7")[0] = convertLdifToEntry(readFileIntoString(ldifFile7));
+    GROUP_ENTRIES.get("8")[0] = convertLdifToEntry(readFileIntoString(ldifFile8));
+    GROUP_ENTRIES.get("9")[0] = convertLdifToEntry(readFileIntoString(ldifFile9));
     // CheckStyle:Indentation ON
 
     for (Map.Entry<String, LdapEntry[]> e : GROUP_ENTRIES.entrySet()) {
@@ -99,7 +99,7 @@ public class LdapLoginModuleTest extends AbstractTest
     }
 
     // setup group relationships
-    final ModifyOperation modify = new ModifyOperation(TestUtils.createConnectionFactory());
+    final ModifyOperation modify = new ModifyOperation(createConnectionFactory());
     modify.execute(
       new ModifyRequest(
         GROUP_ENTRIES.get("6")[0].getDn(),
@@ -146,19 +146,19 @@ public class LdapLoginModuleTest extends AbstractTest
       PropertiesAuthenticatorFactory.close();
     } catch (UnsupportedOperationException e) {
       // ignore if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
     try {
       PropertiesRoleResolverFactory.close();
     } catch (UnsupportedOperationException e) {
       // ignore if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
     try {
       SpringAuthenticatorFactory.close();
     } catch (UnsupportedOperationException e) {
       // ignore if not supported
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -369,11 +369,11 @@ public class LdapLoginModuleTest extends AbstractTest
     LoginContext lc = new LoginContext(name, callback);
     try {
       lc.login();
-      Assert.fail("Invalid password, login should have failed");
+      fail("Invalid password, login should have failed");
     } catch (UnsupportedOperationException e) {
       throw e;
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), LoginException.class);
+      assertThat(e).isExactlyInstanceOf(LoginException.class);
     }
 
     callback.setPassword(credential);
@@ -383,31 +383,33 @@ public class LdapLoginModuleTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       throw e;
     } catch (Exception e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
 
     final Set<LdapPrincipal> principals = lc.getSubject().getPrincipals(LdapPrincipal.class);
-    Assert.assertEquals(principals.size(), 1);
+    assertThat(principals.size()).isEqualTo(1);
 
     final LdapPrincipal p = principals.iterator().next();
-    Assert.assertEquals(p.getName(), user);
+    assertThat(p.getName()).isEqualTo(user);
     if (!"".equals(role)) {
-      Assert.assertTrue(p.getLdapEntry().getAttributes().size() > 0, "Entry has no attributes: " + p.getLdapEntry());
+      assertThat(p.getLdapEntry().getAttributes().size())
+        .isGreaterThan(0)
+        .withFailMessage("Entry has no attributes: " + p.getLdapEntry());
     }
 
     final Set<LdapDnPrincipal> dnPrincipals = lc.getSubject().getPrincipals(LdapDnPrincipal.class);
     if (checkLdapDn) {
-      Assert.assertEquals(dnPrincipals.size(), 1);
+      assertThat(dnPrincipals.size()).isEqualTo(1);
 
       final LdapDnPrincipal dnP = dnPrincipals.iterator().next();
-      Assert.assertEquals(new Dn(dnP.getName()).format(), new Dn(dn).format());
+      assertThat(new Dn(dnP.getName()).format()).isEqualTo(new Dn(dn).format());
       if (!"".equals(role)) {
-        Assert.assertTrue(
-          dnP.getLdapEntry().getAttributes().size() > 0,
-          "Entry has no attributes: " + p.getLdapEntry());
+        assertThat(dnP.getLdapEntry().getAttributes().size())
+          .isGreaterThan(0)
+          .withFailMessage("Entry has no attributes: " + p.getLdapEntry());
       }
     } else {
-      Assert.assertEquals(dnPrincipals.size(), 0);
+      assertThat(dnPrincipals.size()).isEqualTo(0);
     }
 
     final Set<LdapRole> roles = lc.getSubject().getPrincipals(LdapRole.class);
@@ -417,7 +419,7 @@ public class LdapLoginModuleTest extends AbstractTest
     if (checkRoles.length == 1 && "".equals(checkRoles[0])) {
       checkRoles = new String[0];
     }
-    Assert.assertEquals(checkRoles.length, roles.size());
+    assertThat(checkRoles.length).isEqualTo(roles.size());
     while (roleIter.hasNext()) {
       final LdapRole r = roleIter.next();
       boolean match = false;
@@ -427,23 +429,23 @@ public class LdapLoginModuleTest extends AbstractTest
           break;
         }
       }
-      Assert.assertTrue(match);
+      assertThat(match).isTrue();
     }
 
     final Set<LdapCredential> credentials = lc.getSubject().getPrivateCredentials(LdapCredential.class);
-    Assert.assertEquals(credentials.size(), 1);
+    assertThat(credentials.size()).isEqualTo(1);
 
     final LdapCredential c = credentials.iterator().next();
-    Assert.assertEquals(new String((char[]) c.getCredential()), credential);
+    assertThat(new String((char[]) c.getCredential())).isEqualTo(credential);
 
     try {
       lc.logout();
     } catch (Exception e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
 
-    Assert.assertEquals(lc.getSubject().getPrincipals().size(), 0);
-    Assert.assertEquals(lc.getSubject().getPrivateCredentials().size(), 0);
+    assertThat(lc.getSubject().getPrincipals().size()).isEqualTo(0);
+    assertThat(lc.getSubject().getPrivateCredentials().size()).isEqualTo(0);
   }
 
 
@@ -521,14 +523,14 @@ public class LdapLoginModuleTest extends AbstractTest
     } catch (UnsupportedOperationException e) {
       throw e;
     } catch (Exception e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
 
     final Set<LdapRole> roles = lc.getSubject().getPrincipals(LdapRole.class);
 
     final Iterator<LdapRole> roleIter = roles.iterator();
     final String[] checkRoles = role.split("\\|");
-    Assert.assertEquals(checkRoles.length, roles.size());
+    assertThat(checkRoles.length).isEqualTo(roles.size());
     while (roleIter.hasNext()) {
       final LdapRole r = roleIter.next();
       boolean match = false;
@@ -538,11 +540,11 @@ public class LdapLoginModuleTest extends AbstractTest
           break;
         }
       }
-      Assert.assertTrue(match);
+      assertThat(match).isTrue();
     }
 
     final Set<LdapGroup> roleGroups = lc.getSubject().getPrincipals(LdapGroup.class);
-    Assert.assertEquals(roleGroups.size(), 2);
+    assertThat(roleGroups.size()).isEqualTo(2);
     for (LdapGroup g : roleGroups) {
       if ("Roles".equals(g.getName())) {
         final Set<Principal> members = g.getMembers();
@@ -554,10 +556,10 @@ public class LdapLoginModuleTest extends AbstractTest
               match = true;
             }
           }
-          Assert.assertTrue(match);
+          assertThat(match).isTrue();
           count++;
         }
-        Assert.assertEquals(lc.getSubject().getPrincipals(LdapRole.class).size(), count);
+        assertThat(lc.getSubject().getPrincipals(LdapRole.class).size()).isEqualTo(count);
       } else if ("Principals".equals(g.getName())) {
         final Set<Principal> members = g.getMembers();
         int count = 0;
@@ -568,25 +570,25 @@ public class LdapLoginModuleTest extends AbstractTest
               match = true;
             }
           }
-          Assert.assertTrue(match);
+          assertThat(match).isTrue();
           count++;
         }
-        Assert.assertEquals(lc.getSubject().getPrincipals(LdapPrincipal.class).size(), count);
+        assertThat(lc.getSubject().getPrincipals(LdapPrincipal.class).size()).isEqualTo(count);
       } else {
-        Assert.fail("Found invalid group");
+        fail("Found invalid group");
       }
     }
 
     final Set<?> credentials = lc.getSubject().getPrivateCredentials();
-    Assert.assertEquals(credentials.size(), 0);
+    assertThat(credentials.size()).isEqualTo(0);
 
     try {
       lc.logout();
     } catch (Exception e) {
-      Assert.fail(e.getMessage());
+      fail(e.getMessage());
     }
 
-    Assert.assertEquals(lc.getSubject().getPrincipals().size(), 0);
-    Assert.assertEquals(lc.getSubject().getPrivateCredentials().size(), 0);
+    assertThat(lc.getSubject().getPrincipals().size()).isEqualTo(0);
+    assertThat(lc.getSubject().getPrivateCredentials().size()).isEqualTo(0);
   }
 }

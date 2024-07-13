@@ -2,9 +2,9 @@
 package org.ldaptive.filter;
 
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link FilterUtils}.
@@ -103,7 +103,7 @@ public class FilterUtilsTest
   public void escapeAndParse(final String value, final String match)
     throws Exception
   {
-    Assert.assertEquals(FilterUtils.escape(value), match);
-    Assert.assertEquals(FilterUtils.parseAssertionValue(match), LdapUtils.utf8Encode(value));
+    assertThat(FilterUtils.escape(value)).isEqualTo(match);
+    assertThat(FilterUtils.parseAssertionValue(match)).isEqualTo(LdapUtils.utf8Encode(value));
   }
 }

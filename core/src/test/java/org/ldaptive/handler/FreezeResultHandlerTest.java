@@ -5,8 +5,8 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link FreezeResultHandler}.
@@ -33,27 +33,27 @@ public class FreezeResultHandlerTest
     handler.apply(response);
     try {
       response.removeEntries(le1);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
     try {
       response.removeReferences(ref1);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
     try {
       response.addEntries(LdapEntry.builder().build());
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
     try {
       response.addReferences(SearchResultReference.builder().build());
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
   }
 }

@@ -5,9 +5,9 @@ import org.ldaptive.SearchScope;
 import org.ldaptive.dn.Dn;
 import org.ldaptive.filter.EqualityFilter;
 import org.ldaptive.filter.Filter;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link Url}.
@@ -891,8 +891,8 @@ public class UrlTest
     final DefaultUrlParser parser = new DefaultUrlParser();
     final Url url = parser.parse(actual);
     compareEntries(url, expected);
-    Assert.assertEquals(url.getParsedBaseDn(), baseDn);
-    Assert.assertEquals(url.getParsedFilter(), filter);
+    assertThat(url.getParsedBaseDn()).isEqualTo(baseDn);
+    assertThat(url.getParsedFilter()).isEqualTo(filter);
   }
 
 
@@ -908,9 +908,9 @@ public class UrlTest
     final DefaultUrlParser parser = new DefaultUrlParser();
     try {
       parser.parse(url);
-      Assert.fail("Should have thrown exception");
-    } catch (IllegalArgumentException e) {
-      Assert.assertNotNull(e);
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(IllegalArgumentException.class);
     }
   }
 
@@ -930,8 +930,8 @@ public class UrlTest
     final RegexUrlParser parser = new RegexUrlParser();
     final Url url = parser.parse(actual);
     compareEntries(url, expected);
-    Assert.assertEquals(url.getParsedBaseDn(), baseDn);
-    Assert.assertEquals(url.getParsedFilter(), filter);
+    assertThat(url.getParsedBaseDn()).isEqualTo(baseDn);
+    assertThat(url.getParsedFilter()).isEqualTo(filter);
   }
 
 
@@ -947,9 +947,9 @@ public class UrlTest
     final RegexUrlParser parser = new RegexUrlParser();
     try {
       parser.parse(url);
-      Assert.fail("Should have thrown exception");
-    } catch (IllegalArgumentException e) {
-      Assert.assertNotNull(e);
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(IllegalArgumentException.class);
     }
   }
 
@@ -962,12 +962,12 @@ public class UrlTest
    */
   private void compareEntries(final Url entry1, final Url entry2)
   {
-    Assert.assertEquals(entry1.getScheme(), entry2.getScheme());
-    Assert.assertEquals(entry1.getHostname(), entry2.getHostname());
-    Assert.assertEquals(entry1.getPort(), entry2.getPort());
-    Assert.assertEquals(entry1.getBaseDn(), entry2.getBaseDn());
-    Assert.assertEquals(entry1.getAttributes(), entry2.getAttributes());
-    Assert.assertEquals(entry1.getScope(), entry2.getScope());
-    Assert.assertEquals(entry1.getFilter(), entry2.getFilter());
+    assertThat(entry1.getScheme()).isEqualTo(entry2.getScheme());
+    assertThat(entry1.getHostname()).isEqualTo(entry2.getHostname());
+    assertThat(entry1.getPort()).isEqualTo(entry2.getPort());
+    assertThat(entry1.getBaseDn()).isEqualTo(entry2.getBaseDn());
+    assertThat(entry1.getAttributes()).isEqualTo(entry2.getAttributes());
+    assertThat(entry1.getScope()).isEqualTo(entry2.getScope());
+    assertThat(entry1.getFilter()).isEqualTo(entry2.getFilter());
   }
 }

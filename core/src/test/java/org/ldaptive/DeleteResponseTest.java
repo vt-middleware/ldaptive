@@ -2,9 +2,9 @@
 package org.ldaptive;
 
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DeleteResponse}.
@@ -56,6 +56,6 @@ public class DeleteResponseTest
   public void encode(final byte[] berValue, final DeleteResponse response)
     throws Exception
   {
-    Assert.assertEquals(new DeleteResponse(new DefaultDERBuffer(berValue)), response);
+    assertThat(new DeleteResponse(new DefaultDERBuffer(berValue))).isEqualTo(response);
   }
 }

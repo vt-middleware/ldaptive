@@ -12,12 +12,12 @@ import org.ldaptive.ssl.DefaultTrustManager;
 import org.ldaptive.ssl.NoHostnameVerifier;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link Connection}.
@@ -46,7 +46,7 @@ public class ConnectionTest
 
     final AddOperation add = new AddOperation(TestUtils.createConnectionFactory());
     final AddResponse response = add.execute(new AddRequest(testLdapEntry.getDn(), testLdapEntry.getAttributes()));
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 
 
@@ -56,10 +56,10 @@ public class ConnectionTest
     throws Exception
   {
     final CompareOperation compare = new CompareOperation(TestUtils.createConnectionFactory());
-    Assert.assertTrue(
+    assertThat(
       compare.execute(
         new CompareRequest(
-          testLdapEntry.getDn(), "mail", testLdapEntry.getAttribute("mail").getStringValue())).isTrue());
+          testLdapEntry.getDn(), "mail", testLdapEntry.getAttribute("mail").getStringValue())).isTrue()).isTrue();
   }
 
 
@@ -70,7 +70,7 @@ public class ConnectionTest
   {
     final DeleteOperation delete = new DeleteOperation(TestUtils.createConnectionFactory());
     final DeleteResponse response = delete.execute(new DeleteRequest(testLdapEntry.getDn()));
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 
 
@@ -84,7 +84,7 @@ public class ConnectionTest
       new ModifyRequest(
         testLdapEntry.getDn(),
         new AttributeModification(AttributeModification.Type.ADD, new LdapAttribute("title", "President"))));
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 
 
@@ -99,13 +99,13 @@ public class ConnectionTest
         testLdapEntry.getDn(),
         "cn=James Buchanan Jr.",
         true));
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     response = modifyDn.execute(
       new ModifyDnRequest(
         Dn.builder().add("cn=James Buchanan Jr.").add(new Dn(testLdapEntry.getDn()).subDn(1)).build().format(),
         "cn=James Buchanan",
         true));
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 
 
@@ -117,7 +117,7 @@ public class ConnectionTest
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
     final SearchResponse lr = search.execute(
       new SearchRequest(new Dn(testLdapEntry.getDn()).subDn(1).format(), "(uid=15)"));
-    Assert.assertEquals(new Dn(lr.getEntry().getDn()).format(), new Dn(testLdapEntry.getDn()).format());
+    assertThat(new Dn(lr.getEntry().getDn()).format()).isEqualTo(new Dn(testLdapEntry.getDn()).format());
   }
 
 
@@ -133,7 +133,7 @@ public class ConnectionTest
     final Connection conn = connFactory.getConnection();
     try {
       conn.open();
-      Assert.assertTrue(conn.getLdapURL().getUrl().format().endsWith("/dc=ldaptive,dc=org?cn,sn?one?(uid=dfisher)"));
+      assertThat(conn.getLdapURL().getUrl().format()).endsWith("/dc=ldaptive,dc=org?cn,sn?one?(uid=dfisher)");
     } finally {
       conn.close();
     }
@@ -422,9 +422,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -444,9 +444,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -467,9 +467,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -511,9 +511,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -618,9 +618,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -641,9 +641,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -665,9 +665,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -690,9 +690,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -738,9 +738,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -786,9 +786,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -829,9 +829,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -852,9 +852,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -876,9 +876,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -922,9 +922,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -1034,9 +1034,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -1058,9 +1058,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -1082,9 +1082,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -1107,9 +1107,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -1155,9 +1155,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -1203,9 +1203,9 @@ public class ConnectionTest
     try (Connection conn = DefaultConnectionFactory.builder().config(cc).build().getConnection()) {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Assert.fail("Should have thrown Exception, no exception thrown");
+      fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      Assert.assertNotNull(e);
+      assertThat(e).isNotNull();
     }
   }
 
@@ -1231,6 +1231,6 @@ public class ConnectionTest
       ldapUrl.getHostname().substring(0, ldapUrl.getHostname().indexOf(".")) :
       ldapUrl.getHostname();
     final int openConns = TestUtils.countOpenConnections(hostPrefix);
-    Assert.assertEquals(openConns, 0);
+    assertThat(openConns).isEqualTo(0);
   }
 }

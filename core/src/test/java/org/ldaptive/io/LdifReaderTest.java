@@ -7,9 +7,9 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link LdifReader}.
@@ -409,6 +409,6 @@ public class LdifReaderTest
     throws Exception
   {
     final LdifReader reader = new LdifReader(actual);
-    Assert.assertEquals(reader.read(), expected);
+    assertThat(reader.read()).isEqualTo(expected);
   }
 }

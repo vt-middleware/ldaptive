@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.sasl;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SaslBindRequest}.
@@ -70,6 +70,6 @@ public class SaslBindRequestTest
   public void encode(final SaslBindRequest request, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(request.encode(1), berValue);
+    assertThat(request.encode(1)).isEqualTo(berValue);
   }
 }

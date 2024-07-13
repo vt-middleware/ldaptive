@@ -2,8 +2,8 @@
 package org.ldaptive;
 
 import java.time.Instant;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link LdapURLActivatorService}.
@@ -27,18 +27,18 @@ public class LdapURLActivatorServiceTest
 
     final LdapURLActivatorService activator = LdapURLActivatorService.getInstance();
     activator.clear();
-    Assert.assertEquals(activator.getInactiveUrls().size(), 0);
+    assertThat(activator.getInactiveUrls()).isEmpty();
     activator.testInactiveUrls();
-    Assert.assertEquals(activator.getInactiveUrls().size(), 0);
+    assertThat(activator.getInactiveUrls()).isEmpty();
 
     final LdapURL url = strategy.iterator().next();
     strategy.failure(url);
-    Assert.assertEquals(activator.getInactiveUrls().size(), 1);
+    assertThat(activator.getInactiveUrls()).hasSize(1);
     // sleep here to guarantee the retry condition succeeds
     Thread.sleep(1);
     activator.testInactiveUrls();
-    Assert.assertEquals(activator.getInactiveUrls().size(), 0);
+    assertThat(activator.getInactiveUrls()).isEmpty();
     activator.testInactiveUrls();
-    Assert.assertEquals(activator.getInactiveUrls().size(), 0);
+    assertThat(activator.getInactiveUrls()).isEmpty();
   }
 }

@@ -1,14 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 import org.ldaptive.transport.mock.MockConnection;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link RoundRobinConnectionStrategy}.
@@ -106,8 +105,8 @@ public class RoundRobinConnectionStrategyTest
     for (int i = 0; i < count; i++) {
       strategy.iterator();
     }
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()), Arrays.asList(expected));
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(expected);
   }
 
 
@@ -132,7 +131,7 @@ public class RoundRobinConnectionStrategyTest
       iter.next();
       i++;
     }
-    Assert.assertEquals(i, expected.length);
+    assertThat(i).isEqualTo(expected.length);
   }
 
 
@@ -165,62 +164,54 @@ public class RoundRobinConnectionStrategyTest
     final MockConnection conn = new MockConnection(cc);
     conn.setOpenPredicate(ldapURL -> !ldapURL.getHostname().contains("-1"));
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(3)
+      .containsExactly(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org"),
-        new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+        new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
 
     // first entry should fail, list should reorder with that entry last
     conn.open();
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 2);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(2)
+      .containsExactly(
         new LdapURL("ldap://directory-2.ldaptive.org"),
-        new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 1);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getInactiveUrls().iterator().next(),
-      new LdapURL("ldap://directory-1.ldaptive.org"));
+        new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(1)
+      .containsExactly(new LdapURL("ldap://directory-1.ldaptive.org"));
 
     // confirm the inactive entry stays at the end
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org"),
-        new LdapURL("ldap://directory-1.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 2);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(
+        new LdapURL("ldap://directory-1.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(2)
+      .containsExactly(
         new LdapURL("ldap://directory-2.ldaptive.org"),
-        new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 1);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getInactiveUrls().iterator().next(),
-      new LdapURL("ldap://directory-1.ldaptive.org"));
+        new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(1)
+      .containsExactly(new LdapURL("ldap://directory-1.ldaptive.org"));
 
     // mark first entry as active, list should reorder with that entry last
     strategy.success(strategy.ldapURLSet.getInactiveUrls().iterator().next());
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org"),
-        new LdapURL("ldap://directory-2.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(
+        new LdapURL("ldap://directory-2.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(3)
+      .containsExactly(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org"),
-        new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+        new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
   }
 
 
@@ -235,98 +226,84 @@ public class RoundRobinConnectionStrategyTest
     final MockConnection conn = new MockConnection(cc);
     conn.setOpenPredicate(ldapURL -> !ldapURL.getHostname().contains("-1") && !ldapURL.getHostname().contains("-2"));
     conn.setTestPredicate(ldapURL -> true);
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(3)
+      .containsExactly(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org"),
-        new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+        new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
 
     // first and second entry should fail, list should reorder with those entries last
     conn.open();
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 1);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls().iterator().next(),
-      new LdapURL("ldap://directory-3.ldaptive.org"));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 2);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getInactiveUrls(),
-      Arrays.asList(
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(1)
+      .containsExactly(new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(2)
+      .containsExactly(
         new LdapURL("ldap://directory-1.ldaptive.org"),
-        new LdapURL("ldap://directory-2.ldaptive.org")));
+        new LdapURL("ldap://directory-2.ldaptive.org"));
 
     // confirm the inactive entries stay at the end
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org"),
-        new LdapURL("ldap://directory-2.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 1);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls().iterator().next(),
-      new LdapURL("ldap://directory-3.ldaptive.org"));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 2);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getInactiveUrls(),
-      Arrays.asList(
+        new LdapURL("ldap://directory-2.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(1)
+      .containsExactly(new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(2)
+      .containsExactly(
         new LdapURL("ldap://directory-1.ldaptive.org"),
-        new LdapURL("ldap://directory-2.ldaptive.org")));
+        new LdapURL("ldap://directory-2.ldaptive.org"));
 
     // mark first entry as active, list should reorder with that entry as the last active
     strategy.success(strategy.ldapURLSet.getInactiveUrls().iterator().next());
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org"),
-        new LdapURL("ldap://directory-2.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 2);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(
+        new LdapURL("ldap://directory-2.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(2)
+      .containsExactly(
         new LdapURL("ldap://directory-1.ldaptive.org"),
-        new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 1);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getInactiveUrls().iterator().next(),
-      new LdapURL("ldap://directory-2.ldaptive.org"));
+        new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(1)
+      .containsExactly(new LdapURL("ldap://directory-2.ldaptive.org"));
 
     // confirm the inactive entries stay at the end
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(
         new LdapURL("ldap://directory-3.ldaptive.org"),
         new LdapURL("ldap://directory-1.ldaptive.org"),
-        new LdapURL("ldap://directory-2.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 2);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(
+        new LdapURL("ldap://directory-2.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(2)
+      .containsExactly(
         new LdapURL("ldap://directory-1.ldaptive.org"),
-        new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 1);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getInactiveUrls().iterator().next(),
-      new LdapURL("ldap://directory-2.ldaptive.org"));
+        new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls())
+      .hasSize(1)
+      .containsExactly(new LdapURL("ldap://directory-2.ldaptive.org"));
 
     // mark second entry as active, list should reorder with that entry as the last active
     strategy.success(strategy.ldapURLSet.getInactiveUrls().iterator().next());
-    Assert.assertEquals(
-      StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()),
-      Arrays.asList(
+    assertThat(StreamSupport.stream(strategy.spliterator(), false).collect(Collectors.toList()))
+      .containsExactly(
         new LdapURL("ldap://directory-2.ldaptive.org"),
         new LdapURL("ldap://directory-3.ldaptive.org"),
-        new LdapURL("ldap://directory-1.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getActiveUrls().size(), 3);
-    Assert.assertEquals(
-      strategy.ldapURLSet.getActiveUrls(),
-      Arrays.asList(
+        new LdapURL("ldap://directory-1.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getActiveUrls())
+      .hasSize(3)
+      .containsExactly(
         new LdapURL("ldap://directory-1.ldaptive.org"),
         new LdapURL("ldap://directory-2.ldaptive.org"),
-        new LdapURL("ldap://directory-3.ldaptive.org")));
-    Assert.assertEquals(strategy.ldapURLSet.getInactiveUrls().size(), 0);
+        new LdapURL("ldap://directory-3.ldaptive.org"));
+    assertThat(strategy.ldapURLSet.getInactiveUrls()).isEmpty();
   }
 }

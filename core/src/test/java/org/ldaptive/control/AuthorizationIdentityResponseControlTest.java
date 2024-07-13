@@ -3,9 +3,9 @@ package org.ldaptive.control;
 
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link AuthorizationIdentityResponseControl}.
@@ -41,17 +41,17 @@ public class AuthorizationIdentityResponseControlTest
 
   /**
    * @param  berValue  to decode.
-   * @param  expected  authorization identity response control to test.
+   * @param  control  authorization identity response control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "response")
-  public void decode(final DERBuffer berValue, final AuthorizationIdentityResponseControl expected)
+  public void decode(final DERBuffer berValue, final AuthorizationIdentityResponseControl control)
     throws Exception
   {
     final AuthorizationIdentityResponseControl actual = new AuthorizationIdentityResponseControl(
-      expected.getCriticality());
+      control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

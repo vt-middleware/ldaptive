@@ -3,9 +3,9 @@ package org.ldaptive.extended;
 
 import java.nio.charset.StandardCharsets;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link IntermediateResponse}.
@@ -56,6 +56,6 @@ public class IntermediateResponseTest
   public void encode(final byte[] berValue, final IntermediateResponse response)
     throws Exception
   {
-    Assert.assertEquals(new IntermediateResponse(new DefaultDERBuffer(berValue)), response);
+    assertThat(new IntermediateResponse(new DefaultDERBuffer(berValue))).isEqualTo(response);
   }
 }

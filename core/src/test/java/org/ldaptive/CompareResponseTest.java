@@ -2,9 +2,9 @@
 package org.ldaptive;
 
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link CompareResponse}.
@@ -75,6 +75,6 @@ public class CompareResponseTest
   public void encode(final byte[] berValue, final CompareResponse response)
     throws Exception
   {
-    Assert.assertEquals(new CompareResponse(new DefaultDERBuffer(berValue)), response);
+    assertThat(new CompareResponse(new DefaultDERBuffer(berValue))).isEqualTo(response);
   }
 }

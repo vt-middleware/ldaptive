@@ -2,9 +2,9 @@
 package org.ldaptive.ad.transcode;
 
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link UnicodePwdValueTranscoder}.
@@ -89,11 +89,11 @@ public class UnicodePwdValueTranscoderTest
   public void testTranscode(final String pwd, final byte[] unicodePwd)
     throws Exception
   {
-    Assert.assertEquals(transcoder.encodeBinaryValue(pwd), unicodePwd);
-    Assert.assertEquals(transcoder.decodeBinaryValue(unicodePwd), pwd);
-    Assert.assertEquals(transcoder.decodeStringValue(transcoder.encodeStringValue(pwd)), pwd);
-    Assert.assertEquals(transcoder.encodeStringValue(pwd), LdapUtils.utf8Encode(unicodePwd));
-    Assert.assertEquals(transcoder.decodeStringValue(LdapUtils.utf8Encode(unicodePwd)), pwd);
+    assertThat(transcoder.encodeBinaryValue(pwd)).isEqualTo(unicodePwd);
+    assertThat(transcoder.decodeBinaryValue(unicodePwd)).isEqualTo(pwd);
+    assertThat(transcoder.decodeStringValue(transcoder.encodeStringValue(pwd))).isEqualTo(pwd);
+    assertThat(transcoder.encodeStringValue(pwd)).isEqualTo(LdapUtils.utf8Encode(unicodePwd));
+    assertThat(transcoder.decodeStringValue(LdapUtils.utf8Encode(unicodePwd))).isEqualTo(pwd);
   }
 
 
@@ -109,27 +109,27 @@ public class UnicodePwdValueTranscoderTest
   {
     try {
       transcoder.encodeStringValue(pwd);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
     try {
       transcoder.encodeBinaryValue(pwd);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
     try {
       transcoder.decodeStringValue(LdapUtils.utf8Encode(unicodePwd));
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
     try {
       transcoder.decodeBinaryValue(unicodePwd);
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
   }
 }

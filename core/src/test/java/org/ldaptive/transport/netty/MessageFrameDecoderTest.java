@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link MessageFrameDecoder}.
@@ -111,9 +111,9 @@ public class MessageFrameDecoderTest
   {
     final List<Object> out = new ArrayList<>();
     decoder.decode(null, Unpooled.wrappedBuffer(berValue), out);
-    Assert.assertEquals(!out.isEmpty(), frame);
+    assertThat(!out.isEmpty()).isEqualTo(frame);
     if (frame) {
-      Assert.assertEquals(((ByteBuf) out.get(0)).array(), berValue);
+      assertThat(((ByteBuf) out.get(0)).array()).isEqualTo(berValue);
     }
   }
 }

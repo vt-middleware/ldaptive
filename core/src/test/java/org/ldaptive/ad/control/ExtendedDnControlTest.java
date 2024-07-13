@@ -2,9 +2,9 @@
 package org.ldaptive.ad.control;
 
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link ExtendedDnControl}.
@@ -43,14 +43,14 @@ public class ExtendedDnControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  extended dn control to test.
+   * @param  control  extended dn control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "request")
-  public void encode(final byte[] berValue, final ExtendedDnControl expected)
+  public void encode(final byte[] berValue, final ExtendedDnControl control)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue);
+    assertThat(control.encode()).isEqualTo(berValue);
   }
 }

@@ -9,12 +9,12 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link LdifReader} and {@link LdifWriter}.
@@ -38,8 +38,8 @@ public class LdifTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    testLdapEntry = convertLdifToEntry(ldif);
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -64,7 +64,7 @@ public class LdifTest extends AbstractTest
   public void searchAndCompareLdif(final String dn, final String filter)
     throws Exception
   {
-    final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
 
     final SearchRequest request = new SearchRequest(dn, filter);
     if (TestControl.isActiveDirectory()) {
@@ -82,8 +82,8 @@ public class LdifTest extends AbstractTest
     final StringReader reader = new StringReader(writer.toString());
     final LdifReader ldifReader = new LdifReader(reader);
     final SearchResponse result2 = ldifReader.read();
-
-    TestUtils.assertEquals(result2, result1);
+    // TODO this will need some work
+    SearchResponseAssert.assertThat(result1).isSame(result2);
   }
 
 
@@ -98,15 +98,15 @@ public class LdifTest extends AbstractTest
   public void readAndCompareMultipleLdif(final String ldifFileIn, final String ldifFileOut)
     throws Exception
   {
-    final String ldifStringIn = TestUtils.readFileIntoString(ldifFileIn);
+    final String ldifStringIn = readFileIntoString(ldifFileIn);
     LdifReader ldifReader = new LdifReader(new StringReader(ldifStringIn));
     final SearchResponse result1 = ldifReader.read();
 
-    final String ldifStringOut = TestUtils.readFileIntoString(ldifFileOut);
+    final String ldifStringOut = readFileIntoString(ldifFileOut);
     ldifReader = new LdifReader(new StringReader(ldifStringOut));
 
     final SearchResponse result2 = ldifReader.read();
 
-    Assert.assertEquals(result1, result2);
+    assertThat(result1).isEqualTo(result2);
   }
 }

@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SyncReplCookie}.
@@ -57,10 +57,10 @@ public class SyncReplCookieTest
     throws Exception
   {
     final SyncReplCookie syncCookie = new SyncReplCookie(cookie);
-    Assert.assertEquals(rid, syncCookie.getRid());
-    Assert.assertEquals(csnTime, syncCookie.getCsn().getTime());
-    Assert.assertEquals(csnCount, syncCookie.getCsn().getCount());
-    Assert.assertEquals(csnSid, syncCookie.getCsn().getSid());
-    Assert.assertEquals(csnMod, syncCookie.getCsn().getMod());
+    assertThat(syncCookie.getRid()).isEqualTo(rid);
+    assertThat(syncCookie.getCsn().getTime()).isEqualTo(csnTime);
+    assertThat(syncCookie.getCsn().getCount()).isEqualTo(csnCount);
+    assertThat(syncCookie.getCsn().getSid()).isEqualTo(csnSid);
+    assertThat(syncCookie.getCsn().getMod()).isEqualTo(csnMod);
   }
 }

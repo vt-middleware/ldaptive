@@ -3,9 +3,9 @@ package org.ldaptive.control;
 
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link EntryChangeNotificationControl}.
@@ -46,16 +46,16 @@ public class EntryChangeNotificationControlTest
 
   /**
    * @param  berValue  to decode.
-   * @param  expected  entry change notification control to test.
+   * @param  control  entry change notification control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "response")
-  public void decode(final DERBuffer berValue, final EntryChangeNotificationControl expected)
+  public void decode(final DERBuffer berValue, final EntryChangeNotificationControl control)
     throws Exception
   {
-    final EntryChangeNotificationControl actual = new EntryChangeNotificationControl(expected.getCriticality());
+    final EntryChangeNotificationControl actual = new EntryChangeNotificationControl(control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

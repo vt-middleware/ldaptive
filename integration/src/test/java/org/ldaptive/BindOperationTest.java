@@ -6,11 +6,11 @@ import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.AuthorizationIdentityResponseControl;
 import org.ldaptive.control.SessionTrackingControl;
 import org.ldaptive.dn.Dn;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link BindOperation}.
@@ -61,7 +61,7 @@ public class BindOperationTest extends AbstractTest
   {
     final BindOperation bind = new BindOperation(TestUtils.createConnectionFactory());
     final BindResponse response = bind.execute(new SimpleBindRequest(dn, "INVALID-PASSWD"));
-    Assert.assertEquals(response.getResultCode(), ResultCode.INVALID_CREDENTIALS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.INVALID_CREDENTIALS);
   }
 
 
@@ -78,13 +78,13 @@ public class BindOperationTest extends AbstractTest
     final BindOperation bind = new BindOperation(TestUtils.createConnectionFactory());
     BindResponse response = bind.execute(
       new SimpleBindRequest(dn, new Credential("INVALID-PASSWD")));
-    Assert.assertEquals(response.getResultCode(), ResultCode.INVALID_CREDENTIALS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.INVALID_CREDENTIALS);
     response = bind.execute(
       new SimpleBindRequest(dn, new Credential("INVALID-PASSWD".toCharArray())));
-    Assert.assertEquals(response.getResultCode(), ResultCode.INVALID_CREDENTIALS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.INVALID_CREDENTIALS);
     response = bind.execute(
       new SimpleBindRequest(dn, new Credential("INVALID-PASSWD".getBytes(StandardCharsets.UTF_8))));
-    Assert.assertEquals(response.getResultCode(), ResultCode.INVALID_CREDENTIALS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.INVALID_CREDENTIALS);
   }
 
 
@@ -101,7 +101,7 @@ public class BindOperationTest extends AbstractTest
   {
     final BindOperation bind = new BindOperation(TestUtils.createConnectionFactory());
     final BindResponse response = bind.execute(new SimpleBindRequest(dn, passwd));
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 
 
@@ -118,11 +118,11 @@ public class BindOperationTest extends AbstractTest
   {
     final BindOperation bind = new BindOperation(TestUtils.createConnectionFactory());
     BindResponse response = bind.execute(new SimpleBindRequest(dn, new Credential(passwd)));
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     response = bind.execute(new SimpleBindRequest(dn, new Credential(passwd.toCharArray())));
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     response = bind.execute(new SimpleBindRequest(dn, new Credential(passwd.getBytes(StandardCharsets.UTF_8))));
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 
 
@@ -142,14 +142,14 @@ public class BindOperationTest extends AbstractTest
     request.setControls(new AuthorizationIdentityRequestControl());
 
     final BindResponse response = bind.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
 
     final AuthorizationIdentityResponseControl ctrl = (AuthorizationIdentityResponseControl) response.getControl(
       AuthorizationIdentityResponseControl.OID);
     if (ctrl == null) {
       throw new UnsupportedOperationException("Authorization Identity Control not supported");
     }
-    Assert.assertEquals(new Dn(ctrl.getAuthorizationId()).format(), "dn:" + new Dn(dn).format());
+    assertThat(new Dn(ctrl.getAuthorizationId()).format()).isEqualTo("dn:" + new Dn(dn).format());
   }
 
 
@@ -174,7 +174,7 @@ public class BindOperationTest extends AbstractTest
         ""));
 
     final BindResponse response = bind.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 
 
@@ -188,6 +188,6 @@ public class BindOperationTest extends AbstractTest
     final BindOperation bind = new BindOperation(TestUtils.createConnectionFactory());
     final AnonymousBindRequest request = new AnonymousBindRequest();
     final BindResponse response = bind.execute(request);
-    Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }
 }

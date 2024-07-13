@@ -6,15 +6,15 @@ import org.ldaptive.Credential;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.Authenticator;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for the password modify extended operation.
@@ -41,8 +41,8 @@ public class PasswordModifyOperationTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    testLdapEntry = convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
   }
 
@@ -72,32 +72,32 @@ public class PasswordModifyOperationTest extends AbstractTest
       return;
     }
 
-    final Authenticator auth = TestUtils.createSSLDnAuthenticator();
+    final Authenticator auth = createSSLDnAuthenticator();
     AuthenticationResponse response = auth.authenticate(new AuthenticationRequest(dn, new Credential(oldPass)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
 
-    final ExtendedOperation modify = new ExtendedOperation(TestUtils.createConnectionFactory());
+    final ExtendedOperation modify = new ExtendedOperation(createConnectionFactory());
     // invalid password
     final ExtendedResponse res = modify.execute(new PasswordModifyRequest(dn, INVALID_PASSWD, newPass));
-    Assert.assertEquals(res.getResultCode(), ResultCode.UNWILLING_TO_PERFORM);
+    assertThat(res.getResultCode()).isEqualTo(ResultCode.UNWILLING_TO_PERFORM);
 
     // change password
     ExtendedResponse modifyResponse = modify.execute(new PasswordModifyRequest(dn, oldPass, newPass));
-    Assert.assertNotNull(modifyResponse);
-    Assert.assertNull(modifyResponse.getResponseValue());
+    assertThat(modifyResponse).isNotNull();
+    assertThat(modifyResponse.getResponseValue()).isNull();
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(oldPass)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(newPass)));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
 
     // generate password
     modifyResponse = modify.execute(new PasswordModifyRequest(dn));
-    Assert.assertNotNull(modifyResponse);
-    Assert.assertNotNull(modifyResponse.getResponseValue());
+    assertThat(modifyResponse).isNotNull();
+    assertThat(modifyResponse.getResponseValue()).isNotNull();
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(newPass)));
-    Assert.assertFalse(response.isSuccess());
+    assertThat(response.isSuccess()).isFalse();
     response = auth.authenticate(
       new AuthenticationRequest(dn, new Credential(PasswordModifyResponseParser.parse(modifyResponse))));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
   }
 }

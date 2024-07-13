@@ -6,9 +6,9 @@ import org.ldaptive.control.ProxyAuthorizationControl;
 import org.ldaptive.control.SortRequestControl;
 import org.ldaptive.filter.AndFilter;
 import org.ldaptive.filter.EqualityFilter;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SearchRequest}.
@@ -135,7 +135,7 @@ public class SearchRequestTest
   public void encode(final SearchRequest request, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(request.encode(2), berValue);
+    assertThat(request.encode(2)).isEqualTo(berValue);
   }
 
 
@@ -155,6 +155,6 @@ public class SearchRequestTest
       .controls(new SortRequestControl())
       .responseTimeout(Duration.ofSeconds(3))
       .build();
-    Assert.assertEquals(SearchRequest.copy(request), request);
+    assertThat(SearchRequest.copy(request)).isEqualTo(request);
   }
 }

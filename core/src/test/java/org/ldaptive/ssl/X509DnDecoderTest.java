@@ -6,9 +6,9 @@ import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.dn.Dn;
 import org.ldaptive.dn.NameValue;
 import org.ldaptive.dn.RDn;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link X509DnDecoder}.
@@ -238,6 +238,6 @@ public class X509DnDecoderTest
     throws Exception
   {
     final X509DnDecoder decoder = new X509DnDecoder();
-    Assert.assertEquals(decoder.apply(new DefaultDERBuffer(bytes)), expected);
+    assertThat(decoder.apply(new DefaultDERBuffer(bytes))).isEqualTo(expected);
   }
 }

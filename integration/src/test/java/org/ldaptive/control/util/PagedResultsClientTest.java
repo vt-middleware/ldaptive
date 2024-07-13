@@ -8,13 +8,13 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SingleConnectionFactory;
-import org.ldaptive.TestUtils;
 import org.ldaptive.dn.Dn;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link PagedResultsClient}.
@@ -45,11 +45,11 @@ public class PagedResultsClientTest extends AbstractTest
     throws Exception
   {
     testLdapEntries = new LdapEntry[3];
-    testLdapEntries[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile1)).getEntry();
+    testLdapEntries[0] = convertLdifToEntry(readFileIntoString(ldifFile1));
     super.createLdapEntry(testLdapEntries[0]);
-    testLdapEntries[1] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
+    testLdapEntries[1] = convertLdifToEntry(readFileIntoString(ldifFile2));
     super.createLdapEntry(testLdapEntries[1]);
-    testLdapEntries[2] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
+    testLdapEntries[2] = convertLdifToEntry(readFileIntoString(ldifFile3));
     super.createLdapEntry(testLdapEntries[2]);
   }
 
@@ -79,29 +79,29 @@ public class PagedResultsClientTest extends AbstractTest
   public void execute(final String dn, final String filter)
     throws Exception
   {
-    final SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory();
+    final SingleConnectionFactory cf = createSingleConnectionFactory();
     try {
       final PagedResultsClient client = new PagedResultsClient(cf, 1);
 
       final SearchRequest request = new SearchRequest(dn, filter);
       SearchResponse response = client.execute(request);
-      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-      Assert.assertEquals(response.entrySize(), 1);
-      Assert.assertEquals(new Dn(response.getEntry().getDn()).format(), new Dn(testLdapEntries[0].getDn()).format());
+      assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+      assertThat(response.entrySize()).isEqualTo(1);
+      assertThat(new Dn(response.getEntry().getDn()).format()).isEqualTo(new Dn(testLdapEntries[0].getDn()).format());
 
       int i = 1;
       while (client.hasMore(response)) {
         response = client.execute(request, response);
-        Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-        Assert.assertEquals(response.entrySize(), 1);
-        Assert.assertEquals(new Dn(response.getEntry().getDn()).format(), new Dn(testLdapEntries[i].getDn()).format());
+        assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+        assertThat(response.entrySize()).isEqualTo(1);
+        assertThat(new Dn(response.getEntry().getDn()).format()).isEqualTo(new Dn(testLdapEntries[i].getDn()).format());
         i++;
       }
 
       try {
         client.execute(request, response);
       } catch (IllegalArgumentException e) {
-        Assert.assertNotNull(e);
+        assertThat(e).isNotNull();
       }
     } finally {
       cf.close();
@@ -123,21 +123,21 @@ public class PagedResultsClientTest extends AbstractTest
   public void executeToCompletion(final String dn, final String filter)
     throws Exception
   {
-    final SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory();
+    final SingleConnectionFactory cf = createSingleConnectionFactory();
     try {
       final PagedResultsClient client = new PagedResultsClient(cf, 1);
 
       final SearchRequest request = new SearchRequest(dn, filter);
 
       final SearchResponse response = SearchResponse.sort(client.executeToCompletion(request));
-      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-      Assert.assertEquals(response.entrySize(), 3);
+      assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+      assertThat(response.entrySize()).isEqualTo(3);
 
       final Iterator<LdapEntry> i = response.getEntries().iterator();
-      Assert.assertEquals(response.getResultCode(), ResultCode.SUCCESS);
-      Assert.assertEquals(new Dn(i.next().getDn()).format(), new Dn(testLdapEntries[1].getDn()).format());
-      Assert.assertEquals(new Dn(i.next().getDn()).format(), new Dn(testLdapEntries[0].getDn()).format());
-      Assert.assertEquals(new Dn(i.next().getDn()).format(), new Dn(testLdapEntries[2].getDn()).format());
+      assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+      assertThat(new Dn(i.next().getDn()).format()).isEqualTo(new Dn(testLdapEntries[1].getDn()).format());
+      assertThat(new Dn(i.next().getDn()).format()).isEqualTo(new Dn(testLdapEntries[0].getDn()).format());
+      assertThat(new Dn(i.next().getDn()).format()).isEqualTo(new Dn(testLdapEntries[2].getDn()).format());
     } finally {
       cf.close();
     }

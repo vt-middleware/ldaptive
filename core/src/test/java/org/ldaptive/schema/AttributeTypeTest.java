@@ -2,9 +2,9 @@
 package org.ldaptive.schema;
 
 import java.util.Collections;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link AttributeType}.
@@ -320,9 +320,9 @@ public class AttributeTypeTest
   {
     for (DefinitionFunction<AttributeType> func : functions) {
       final AttributeType parsed = func.parse(definition);
-      Assert.assertEquals(type, parsed);
-      Assert.assertEquals(definition, parsed.format());
-      Assert.assertEquals(type.format(), parsed.format());
+      assertThat(parsed).isEqualTo(type);
+      assertThat(parsed.format()).isEqualTo(definition);
+      assertThat(parsed.format()).isEqualTo(type.format());
     }
   }
 }

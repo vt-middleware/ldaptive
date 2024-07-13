@@ -3,9 +3,9 @@ package org.ldaptive.control;
 
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link PasswordExpiringControl}.
@@ -40,16 +40,16 @@ public class PasswordExpiringControlTest
 
   /**
    * @param  berValue  to decode.
-   * @param  expected  password expiring control to test.
+   * @param  control  password expiring control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "response")
-  public void decode(final DERBuffer berValue, final PasswordExpiringControl expected)
+  public void decode(final DERBuffer berValue, final PasswordExpiringControl control)
     throws Exception
   {
-    final PasswordExpiringControl actual = new PasswordExpiringControl(expected.getCriticality());
+    final PasswordExpiringControl actual = new PasswordExpiringControl(control.getCriticality());
     actual.decode(berValue);
-    Assert.assertEquals(actual, expected);
+    assertThat(actual).isEqualTo(control);
   }
 }

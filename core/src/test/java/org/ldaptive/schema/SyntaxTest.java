@@ -2,9 +2,9 @@
 package org.ldaptive.schema;
 
 import java.util.Collections;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link Syntax}.
@@ -61,9 +61,9 @@ public class SyntaxTest
   {
     for (DefinitionFunction<Syntax> func : functions) {
       final Syntax parsed = func.parse(definition);
-      Assert.assertEquals(attributeSyntax, parsed);
-      Assert.assertEquals(definition, parsed.format());
-      Assert.assertEquals(attributeSyntax.format(), parsed.format());
+      assertThat(parsed).isEqualTo(attributeSyntax);
+      assertThat(parsed.format()).isEqualTo(definition);
+      assertThat(parsed.format()).isEqualTo(attributeSyntax.format());
     }
   }
 }

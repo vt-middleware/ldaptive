@@ -11,11 +11,11 @@ import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
 import org.ldaptive.control.SyncRequestControl;
-import org.testng.Assert;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for cancelling a search operation.
@@ -41,7 +41,7 @@ public class CancelOperationTest extends AbstractTest
       return;
     }
 
-    final SingleConnectionFactory cf = TestUtils.createSingleConnectionFactory();
+    final SingleConnectionFactory cf = createSingleConnectionFactory();
     try {
       final SearchOperation search = new SearchOperation(cf);
       final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn);
@@ -59,8 +59,8 @@ public class CancelOperationTest extends AbstractTest
       latch.await(10, TimeUnit.SECONDS);
 
       final ExtendedResponse cancelResult = searchHandle.cancel().execute();
-      Assert.assertEquals(result[0].getResultCode(), ResultCode.CANCELED);
-      Assert.assertEquals(cancelResult.getResultCode(), ResultCode.SUCCESS);
+      assertThat(result[0].getResultCode()).isEqualTo(ResultCode.CANCELED);
+      assertThat(cancelResult.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     } finally {
       cf.close();
     }

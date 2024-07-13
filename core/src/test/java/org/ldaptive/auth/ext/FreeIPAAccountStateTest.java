@@ -2,9 +2,9 @@
 package org.ldaptive.auth.ext;
 
 import org.ldaptive.ResultCode;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link FreeIPAAccountState}.
@@ -87,6 +87,6 @@ public class FreeIPAAccountStateTest
   public void parse(final ResultCode rc, final String message, final FreeIPAAccountState.Error err)
     throws Exception
   {
-    Assert.assertEquals(FreeIPAAccountState.Error.parse(rc, message), err);
+    assertThat(FreeIPAAccountState.Error.parse(rc, message)).isEqualTo(err);
   }
 }

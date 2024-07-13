@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.filter;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SubstringFilter}.
@@ -12,102 +12,6 @@ import org.testng.annotations.Test;
  */
 public class SubstringFilterTest
 {
-
-
-  /**
-   * Substring test data.
-   *
-   * @return  request test data
-   */
-  @DataProvider(name = "filter")
-  public Object[][] createFilter()
-  {
-    return
-      new Object[][] {
-        new Object[] {
-          "",
-          null,
-        },
-        new Object[] {
-          "cn=",
-          null,
-        },
-        new Object[] {
-          "=",
-          null,
-        },
-        new Object[] {
-          "cn=John*",
-          null,
-        },
-        new Object[] {
-          "(cn=)",
-          null,
-        },
-        new Object[] {
-          "(cn=*)",
-          null,
-        },
-        new Object[] {
-          "(=John*)",
-          null,
-        },
-        new Object[] {
-          "(cn=John*",
-          null,
-        },
-        new Object[] {
-          "cn=John*)",
-          null,
-        },
-        new Object[] {
-          "(cn=John*)",
-          new SubstringFilter("cn", "John", null, (String[]) null),
-        },
-        new Object[] {
-          "(cn=John**)",
-          null,
-        },
-        new Object[] {
-          "(cn=*John*)",
-          new SubstringFilter("cn", null, null, "John"),
-        },
-        new Object[] {
-          "(cn=*John*Doe*)",
-          new SubstringFilter("cn", null, null, "John", "Doe"),
-        },
-        new Object[] {
-          "(cn=*Doe)",
-          new SubstringFilter("cn", null, "Doe", (String[]) null),
-        },
-        new Object[] {
-          "(cn=J*i*h*n*D*o*e)",
-          new SubstringFilter("cn", "J", "e", "i", "h", "n", "D", "o"),
-        },
-        new Object[] {
-          "(cn=John*Doe)",
-          new SubstringFilter("cn", "John", "Doe", (String[]) null),
-        },
-        new Object[] {
-          "(cn=*\\2a*)",
-          new SubstringFilter("cn", null, null, "*"),
-        },
-      };
-  }
-
-
-  /**
-   * @param  value  to parse.
-   * @param  filter  expected value.
-   *
-   * @throws  Exception  On test failure.
-   */
-  @Test(dataProvider = "filter")
-  public void parseRegex(final String value, final SubstringFilter filter)
-    throws Exception
-  {
-    Assert.assertEquals(RegexFilterFunction.parseSubstringFilter(value), filter);
-  }
 
 
   /**
@@ -170,6 +74,6 @@ public class SubstringFilterTest
   public void encode(final SubstringFilter filter, final byte[] berValue)
     throws Exception
   {
-    Assert.assertEquals(filter.getEncoder().encode(), berValue);
+    assertThat(filter.getEncoder().encode()).isEqualTo(berValue);
   }
 }

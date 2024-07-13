@@ -1,9 +1,9 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.dn;
 
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link DefaultAttributeValueEscaper}.
@@ -101,6 +101,6 @@ public class DefaultAttributeValueEscaperTest
   public void escape(final String value, final String match)
     throws Exception
   {
-    Assert.assertEquals(escaper.escape(value), match);
+    assertThat(escaper.escape(value)).isEqualTo(match);
   }
 }

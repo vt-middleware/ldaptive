@@ -3,8 +3,8 @@ package org.ldaptive;
 
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for Spring integration.
@@ -26,7 +26,7 @@ public class SpringTest
   {
     final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
       new String[] {"/spring-context.xml", });
-    Assert.assertTrue(context.getBeanDefinitionCount() > 0);
+    assertThat(context.getBeanDefinitionCount()).isGreaterThan(0);
 
     ConnectionFactory cf = context.getBean("connectionFactory", ConnectionFactory.class);
     Connection conn = cf.getConnection();
@@ -38,7 +38,7 @@ public class SpringTest
 
     final ClassPathXmlApplicationContext factoryContext = new ClassPathXmlApplicationContext(
       new String[] {"/spring-factory-context.xml", });
-    Assert.assertTrue(factoryContext.getBeanDefinitionCount() > 0);
+    assertThat(factoryContext.getBeanDefinitionCount()).isGreaterThan(0);
     cf = factoryContext.getBean("connectionFactory", ConnectionFactory.class);
     conn = cf.getConnection();
     try {
@@ -49,7 +49,7 @@ public class SpringTest
 
     final ClassPathXmlApplicationContext poolContext = new ClassPathXmlApplicationContext(
       new String[] {"/spring-pool-context.xml", });
-    Assert.assertTrue(poolContext.getBeanDefinitionCount() > 0);
+    assertThat(poolContext.getBeanDefinitionCount()).isGreaterThan(0);
 
     BlockingConnectionPool pool = null;
     try {
@@ -60,10 +60,10 @@ public class SpringTest
 
     final ClassPathXmlApplicationContext docs1 = new ClassPathXmlApplicationContext(
       new String[] {"/spring-docs1-context.xml", });
-    Assert.assertTrue(docs1.getBeanDefinitionCount() > 0);
+    assertThat(docs1.getBeanDefinitionCount()).isGreaterThan(0);
 
     final ClassPathXmlApplicationContext docs2 = new ClassPathXmlApplicationContext(
       new String[] {"/spring-docs2-context.xml", });
-    Assert.assertTrue(docs2.getBeanDefinitionCount() > 0);
+    assertThat(docs2.getBeanDefinitionCount()).isGreaterThan(0);
   }
 }

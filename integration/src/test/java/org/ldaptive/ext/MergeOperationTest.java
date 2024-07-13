@@ -14,13 +14,13 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.TestControl;
-import org.ldaptive.TestUtils;
 import org.ldaptive.handler.RequestHandler;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Unit test for {@link MergeOperation}.
@@ -44,15 +44,15 @@ public class MergeOperationTest extends AbstractTest
   public void createLdapEntry(final String ldifFile)
     throws Exception
   {
-    final String ldif = TestUtils.readFileIntoString(ldifFile);
-    testLdapEntry = TestUtils.convertLdifToResult(ldif).getEntry();
+    final String ldif = readFileIntoString(ldifFile);
+    testLdapEntry = convertLdifToResult(ldif).getEntry();
 
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
-    Assert.assertFalse(super.entryExists(cf, testLdapEntry));
+    final ConnectionFactory cf = createConnectionFactory();
+    assertThat(super.entryExists(cf, testLdapEntry)).isFalse();
 
     final MergeOperation merge = new MergeOperation(cf);
     merge.execute(new MergeRequest(testLdapEntry));
-    Assert.assertTrue(super.entryExists(cf, testLdapEntry));
+    assertThat(super.entryExists(cf, testLdapEntry)).isTrue();
   }
 
 
@@ -61,12 +61,12 @@ public class MergeOperationTest extends AbstractTest
   public void deleteLdapEntry()
     throws Exception
   {
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
-    Assert.assertTrue(super.entryExists(cf, testLdapEntry));
+    final ConnectionFactory cf = createConnectionFactory();
+    assertThat(super.entryExists(cf, testLdapEntry)).isTrue();
 
     final MergeOperation merge = new MergeOperation(cf);
     merge.execute(new MergeRequest(testLdapEntry, true));
-    Assert.assertFalse(super.entryExists(cf, testLdapEntry));
+    assertThat(super.entryExists(cf, testLdapEntry)).isFalse();
     merge.execute(new MergeRequest(testLdapEntry, true));
   }
 
@@ -79,7 +79,7 @@ public class MergeOperationTest extends AbstractTest
     final LdapEntry source = new LdapEntry();
     source.setDn(testLdapEntry.getDn());
 
-    final ConnectionFactory cf = TestUtils.createConnectionFactory();
+    final ConnectionFactory cf = createConnectionFactory();
     final AtomicInteger modificationsCount = new AtomicInteger();
     final AtomicInteger addOperationCount = new AtomicInteger();
     final AtomicInteger deleteOperationCount = new AtomicInteger();
@@ -123,14 +123,15 @@ public class MergeOperationTest extends AbstractTest
     }
     // no-op, include/exclude should prevent a modify from occurring
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.get(), 0);
-    Assert.assertEquals(deleteOperationCount.get(), 0);
-    Assert.assertEquals(modifyOperationCount.get(), 0);
+    assertThat(addOperationCount.get()).isEqualTo(0);
+    assertThat(deleteOperationCount.get()).isEqualTo(0);
+    assertThat(modifyOperationCount.get()).isEqualTo(0);
 
     final SearchOperation search = new SearchOperation(cf);
     SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(testLdapEntry.getDn(), testLdapEntry.getAttributeNames()));
-    TestUtils.assertEquals(testLdapEntry, result.getEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(testLdapEntry);
 
     if (TestControl.isActiveDirectory()) {
       request.setIncludeAttributes("givenName", "initials");
@@ -139,93 +140,101 @@ public class MergeOperationTest extends AbstractTest
     }
     // merge givenName and initials changes
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 2);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(2);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
 
     // delete mail attribute
     final LdapAttribute mail = source.getAttribute("mail");
     source.removeAttributes(mail);
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 1);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertNull(result.getEntry().getAttribute("mail"));
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail")).isNull();
 
     // add mail attribute
     source.addAttributes(mail);
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 1);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertNotNull(result.getEntry().getAttribute("mail"));
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail")).isNotNull();
 
     // add new mail values using replace
     mail.addStringValues(
       "ccoolidge2@ldaptive.org", "ccoolidge3@ldaptive.org", "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 1);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 5);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(5);
 
     // remove mail values using replace
     mail.removeStringValues("ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 1);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 3);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
 
     // add new mail value using add
     request.setUseReplace(false);
     mail.clear();
     mail.addStringValues("ccoolidge@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 1);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 1);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(1);
 
     mail.addStringValues(
       "ccoolidge2@ldaptive.org", "ccoolidge3@ldaptive.org", "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 1);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 5);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(5);
 
     // remove mail values using delete
     mail.removeStringValues("ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 1);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 3);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
 
     // use batching
     request.setAttributeModificationsHandlers(
@@ -235,39 +244,42 @@ public class MergeOperationTest extends AbstractTest
       "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
       "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 4);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 4);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(4);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(4);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 11);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(11);
 
     request.setAttributeModificationsHandlers(new MergeRequest.MaxSizeAttributeValueHandler(2));
     mail.removeStringValues(
       "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
       "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 4);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(4);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 3);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
 
     request.setAttributeModificationsHandlers(new MergeRequest.BatchHandler(2));
     mail.addStringValues(
       "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
       "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 1);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 11);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(11);
 
     request.setAttributeModificationsHandlers(
       new MergeRequest.MaxSizeAttributeValueHandler(2),
@@ -276,13 +288,14 @@ public class MergeOperationTest extends AbstractTest
       "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
       "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 4);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(4);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 3);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
 
     request.setAttributeModificationsHandlers(
       new MergeRequest.MaxSizeAttributeValueHandler(1),
@@ -291,13 +304,14 @@ public class MergeOperationTest extends AbstractTest
       "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
       "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 1);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 8);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(8);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 11);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(11);
 
     request.setAttributeModificationsHandlers(
       new MergeRequest.MaxSizeAttributeValueHandler(2),
@@ -306,12 +320,13 @@ public class MergeOperationTest extends AbstractTest
       "ccoolidge4@ldaptive.org", "ccoolidge5@ldaptive.org", "ccoolidge6@ldaptive.org", "ccoolidge7@ldaptive.org",
       "ccoolidge8@ldaptive.org", "ccoolidge9@ldaptive.org", "ccoolidge10@ldaptive.org", "ccoolidge11@ldaptive.org");
     merge.execute(request);
-    Assert.assertEquals(addOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(deleteOperationCount.getAndSet(0), 0);
-    Assert.assertEquals(modifyOperationCount.getAndSet(0), 2);
-    Assert.assertEquals(modificationsCount.getAndSet(0), 4);
+    assertThat(addOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(deleteOperationCount.getAndSet(0)).isEqualTo(0);
+    assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(2);
+    assertThat(modificationsCount.getAndSet(0)).isEqualTo(4);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    TestUtils.assertEquals(source, result.getEntry());
-    Assert.assertEquals(result.getEntry().getAttribute("mail").size(), 3);
+    // TODO this will need some work
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
+    assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
   }
 }

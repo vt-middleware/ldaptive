@@ -6,12 +6,13 @@ import java.util.Map;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
-import org.testng.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Parameters;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
+import static org.ldaptive.TestUtils.*;
 
 /**
  * Load test for {@link SearchOperation}.
@@ -82,13 +83,13 @@ public class SearchOperationLoadTest extends AbstractTest
     final String ldifFile10)
     throws Exception
   {
-    singleTLSSearch = new SearchOperation(TestUtils.createConnectionFactory());
+    singleTLSSearch = new SearchOperation(createConnectionFactory());
     singleTLSSearch.setEntryHandlers(
       CaseChangeEntryHandler.builder().dnCaseChange(CaseChangeEntryHandler.CaseChange.LOWER).build());
     singleTLSSearch.setSearchResultHandlers(
       new FollowSearchReferralHandler(),
       new FollowSearchResultReferenceHandler());
-    pooledTLSSearch = new SearchOperation(TestUtils.createPooledConnectionFactory());
+    pooledTLSSearch = new SearchOperation(createPooledConnectionFactory());
     pooledTLSSearch.setEntryHandlers(
       CaseChangeEntryHandler.builder().dnCaseChange(CaseChangeEntryHandler.CaseChange.LOWER).build());
     pooledTLSSearch.setSearchResultHandlers(
@@ -97,15 +98,15 @@ public class SearchOperationLoadTest extends AbstractTest
 
     searchBaseDn = baseDn;
     // CheckStyle:Indentation OFF
-    ENTRIES.get("2")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile2)).getEntry();
-    ENTRIES.get("3")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile3)).getEntry();
-    ENTRIES.get("4")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile4)).getEntry();
-    ENTRIES.get("5")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile5)).getEntry();
-    ENTRIES.get("6")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile6)).getEntry();
-    ENTRIES.get("7")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile7)).getEntry();
-    ENTRIES.get("8")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile8)).getEntry();
-    ENTRIES.get("9")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile9)).getEntry();
-    ENTRIES.get("10")[0] = TestUtils.convertLdifToResult(TestUtils.readFileIntoString(ldifFile10)).getEntry();
+    ENTRIES.get("2")[0] = convertLdifToEntry(readFileIntoString(ldifFile2));
+    ENTRIES.get("3")[0] = convertLdifToEntry(readFileIntoString(ldifFile3));
+    ENTRIES.get("4")[0] = convertLdifToEntry(readFileIntoString(ldifFile4));
+    ENTRIES.get("5")[0] = convertLdifToEntry(readFileIntoString(ldifFile5));
+    ENTRIES.get("6")[0] = convertLdifToEntry(readFileIntoString(ldifFile6));
+    ENTRIES.get("7")[0] = convertLdifToEntry(readFileIntoString(ldifFile7));
+    ENTRIES.get("8")[0] = convertLdifToEntry(readFileIntoString(ldifFile8));
+    ENTRIES.get("9")[0] = convertLdifToEntry(readFileIntoString(ldifFile9));
+    ENTRIES.get("10")[0] = convertLdifToEntry(readFileIntoString(ldifFile10));
     // CheckStyle:Indentation ON
 
     for (Map.Entry<String, LdapEntry[]> e : ENTRIES.entrySet()) {
@@ -255,17 +256,18 @@ public class SearchOperationLoadTest extends AbstractTest
   {
     if (returnAttrs == null) {
       final SearchResponse response = singleTLSSearch.execute(new SearchRequest(searchBaseDn, filter));
-      Assert.assertTrue(response.isSuccess());
-      Assert.assertNull(response.getEntry());
+      assertThat(response.isSuccess()).isTrue();
+      assertThat(response.getEntry()).isNull();
       return;
     }
     // test search with return attributes
-    final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
+    final LdapEntry expected = convertStringToEntry(null, expectedAttrs);
     final SearchResponse response = singleTLSSearch.execute(
       new SearchRequest(searchBaseDn, filter, returnAttrs.split("\\|")));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
     expected.setDn(response.getEntry().getDn());
-    TestUtils.assertEquals(expected, response.getEntry());
+    // TODO this will need some work
+    assertThat(response.getEntry()).isEqualTo(expected);
   }
 
 
@@ -286,16 +288,17 @@ public class SearchOperationLoadTest extends AbstractTest
   {
     if (returnAttrs == null) {
       final SearchResponse response = pooledTLSSearch.execute(new SearchRequest(searchBaseDn, filter));
-      Assert.assertTrue(response.isSuccess());
-      Assert.assertNull(response.getEntry());
+      assertThat(response.isSuccess()).isTrue();
+      assertThat(response.getEntry()).isNull();
       return;
     }
     // test search with return attributes
-    final LdapEntry expected = TestUtils.convertStringToEntry(null, expectedAttrs);
+    final LdapEntry expected = convertStringToEntry(null, expectedAttrs);
     final SearchResponse response = pooledTLSSearch.execute(
       new SearchRequest(searchBaseDn, filter, returnAttrs.split("\\|")));
-    Assert.assertTrue(response.isSuccess());
+    assertThat(response.isSuccess()).isTrue();
     expected.setDn(response.getEntry().getDn());
-    TestUtils.assertEquals(expected, response.getEntry());
+    // TODO this will need some work
+    assertThat(response.getEntry()).isEqualTo(expected);
   }
 }

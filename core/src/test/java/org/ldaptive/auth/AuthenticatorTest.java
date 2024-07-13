@@ -9,8 +9,8 @@ import org.ldaptive.MockConnectionFactory;
 import org.ldaptive.TestUtils;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
-import org.testng.Assert;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link Authenticator}.
@@ -35,15 +35,15 @@ public class AuthenticatorTest
     auth.freeze();
     auth.close();
 
-    Assert.assertFalse(
+    assertThat(
       ((MockConnectionFactory)
-        ((SearchDnResolver) auth.getDnResolver()).getConnectionFactory()).isOpen());
-    Assert.assertFalse(
+        ((SearchDnResolver) auth.getDnResolver()).getConnectionFactory()).isOpen()).isFalse();
+    assertThat(
       ((MockConnectionFactory)
-        ((SimpleBindAuthenticationHandler) auth.getAuthenticationHandler()).getConnectionFactory()).isOpen());
-    Assert.assertFalse(
+        ((SimpleBindAuthenticationHandler) auth.getAuthenticationHandler()).getConnectionFactory()).isOpen()).isFalse();
+    assertThat(
       ((MockConnectionFactory)
-        ((SearchEntryResolver) auth.getEntryResolver()).getConnectionFactory()).isOpen());
+        ((SearchEntryResolver) auth.getEntryResolver()).getConnectionFactory()).isOpen()).isFalse();
   }
 
 
@@ -67,23 +67,23 @@ public class AuthenticatorTest
     auth.freeze();
     auth.close();
 
-    Assert.assertFalse(
+    assertThat(
       ((MockConnectionFactory)
         ((SearchDnResolver)
           ((AggregateDnResolver)
             auth.getDnResolver()).getDnResolvers()
-              .values().iterator().next()).getConnectionFactory()).isOpen());
-    Assert.assertFalse(
+              .values().iterator().next()).getConnectionFactory()).isOpen()).isFalse();
+    assertThat(
       ((MockConnectionFactory)
         ((SimpleBindAuthenticationHandler)
           ((AggregateAuthenticationHandler)
             auth.getAuthenticationHandler()).getAuthenticationHandlers()
-              .values().iterator().next()).getConnectionFactory()).isOpen());
-    Assert.assertFalse(
+              .values().iterator().next()).getConnectionFactory()).isOpen()).isFalse();
+    assertThat(
       ((MockConnectionFactory)
         ((SearchEntryResolver)
           ((AggregateEntryResolver) auth.getEntryResolver()).getEntryResolvers()
-              .values().iterator().next()).getConnectionFactory()).isOpen());
+              .values().iterator().next()).getConnectionFactory()).isOpen()).isFalse();
   }
 
 

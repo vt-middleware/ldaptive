@@ -7,9 +7,9 @@ import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.SortResponseControl;
 import org.ldaptive.control.VirtualListViewResponseControl;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SearchResponse}.
@@ -300,7 +300,7 @@ public class SearchResponseTest
   public void encode(final byte[] berValue, final SearchResponse response)
     throws Exception
   {
-    Assert.assertEquals(new SearchResponse(new DefaultDERBuffer(berValue)), response);
+    assertThat(new SearchResponse(new DefaultDERBuffer(berValue))).isEqualTo(response);
   }
 
 
@@ -314,13 +314,15 @@ public class SearchResponseTest
       .dn("uid=1").build();
     final SearchResponse sr = new SearchResponse();
     sr.addEntries(entry1);
-    Assert.assertEquals(entry1, sr.getEntry());
-    Assert.assertEquals(entry1, sr.getEntry("uid=1"));
-    Assert.assertEquals(entry1, sr.getEntry("UID=1"));
-    Assert.assertEquals(sr.entrySize(), 1);
-    Assert.assertEquals(sr.getEntryDns().size(), 1);
-    Assert.assertEquals(sr.getEntryDns().iterator().next(), "uid=1");
-    Assert.assertEquals(sr, SearchResponse.builder().entry(entry1).build());
+    assertThat(entry1)
+      .isEqualTo(sr.getEntry())
+      .isEqualTo(sr.getEntry("uid=1"))
+      .isEqualTo(sr.getEntry("UID=1"));
+    assertThat(sr.entrySize()).isEqualTo(1);
+    assertThat(sr.getEntryDns())
+      .hasSize(1)
+      .containsExactly("uid=1");
+    assertThat(sr).isEqualTo(SearchResponse.builder().entry(entry1).build());
   }
 
 
@@ -336,13 +338,15 @@ public class SearchResponseTest
       .dn("uid=2").build();
     final SearchResponse sr = new SearchResponse();
     sr.addEntries(entry1, entry2);
-    Assert.assertEquals(entry1, sr.getEntry("uid=1"));
-    Assert.assertEquals(entry1, sr.getEntry("UID=1"));
-    Assert.assertEquals(entry2, sr.getEntry("UID=2"));
-    Assert.assertEquals(entry2, sr.getEntry("uid=2"));
-    Assert.assertEquals(sr.entrySize(), 2);
-    Assert.assertEquals(sr.getEntryDns().size(), 2);
-    Assert.assertEquals(sr, SearchResponse.builder().entry(entry1, entry2).build());
+    assertThat(entry1)
+      .isEqualTo(sr.getEntry("uid=1"))
+      .isEqualTo(sr.getEntry("UID=1"));
+    assertThat(entry2)
+      .isEqualTo(sr.getEntry("UID=2"))
+      .isEqualTo(sr.getEntry("uid=2"));
+    assertThat(sr.entrySize()).isEqualTo(2);
+    assertThat(sr.getEntryDns()).hasSize(2);
+    assertThat(sr).isEqualTo(SearchResponse.builder().entry(entry1, entry2).build());
   }
 
 
@@ -360,8 +364,8 @@ public class SearchResponseTest
     sr.addEntries(entry2, entry1);
 
     final LdapEntry[] entries = sr.getEntries().toArray(LdapEntry[]::new);
-    Assert.assertEquals(entry2, entries[0]);
-    Assert.assertEquals(entry1, entries[1]);
+    assertThat(entry2).isEqualTo(entries[0]);
+    assertThat(entry1).isEqualTo(entries[1]);
   }
 
 
@@ -377,26 +381,26 @@ public class SearchResponseTest
       .dn("uid=2").build();
     final SearchResponse sr = new SearchResponse();
     sr.addEntries(entry2, entry1);
-    Assert.assertEquals(sr.subResult(2, 2).entrySize(), 0);
-    Assert.assertEquals(sr.subResult(1, 2).entrySize(), 1);
-    Assert.assertEquals(sr.subResult(0, 2).entrySize(), 2);
+    assertThat(sr.subResult(2, 2).entrySize()).isEqualTo(0);
+    assertThat(sr.subResult(1, 2).entrySize()).isEqualTo(1);
+    assertThat(sr.subResult(0, 2).entrySize()).isEqualTo(2);
     try {
       sr.subResult(-1, 1);
-      Assert.fail("Should have thrown IndexOutOfBoundsException");
+      fail("Should have thrown IndexOutOfBoundsException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
+      assertThat(e).isExactlyInstanceOf(IndexOutOfBoundsException.class);
     }
     try {
       sr.subResult(0, 3);
-      Assert.fail("Should have thrown IndexOutOfBoundsException");
+      fail("Should have thrown IndexOutOfBoundsException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
+      assertThat(e).isExactlyInstanceOf(IndexOutOfBoundsException.class);
     }
     try {
       sr.subResult(1, 0);
-      Assert.fail("Should have thrown IndexOutOfBoundsException");
+      fail("Should have thrown IndexOutOfBoundsException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IndexOutOfBoundsException.class);
+      assertThat(e).isExactlyInstanceOf(IndexOutOfBoundsException.class);
     }
   }
 
@@ -406,9 +410,9 @@ public class SearchResponseTest
   public void testEquals()
   {
     final SearchResponse sr1 = SearchResponse.builder().build();
-    Assert.assertEquals(sr1, sr1);
-    Assert.assertEquals(SearchResponse.builder().build(), SearchResponse.builder().build());
-    Assert.assertEquals(
+    assertThat(sr1).isEqualTo(sr1);
+    assertThat(SearchResponse.builder().build()).isEqualTo(SearchResponse.builder().build());
+    assertThat(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -421,7 +425,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uid").values("1").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
-        .build(),
+        .build()).isEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -435,7 +439,7 @@ public class SearchResponseTest
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       SearchResponse.builder()
         .messageID(2)
         .controls(new PasswordPolicyControl())
@@ -448,7 +452,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uid").values("1").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
-        .build(),
+        .build()).isNotEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -462,7 +466,7 @@ public class SearchResponseTest
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -475,7 +479,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uid").values("1").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
-        .build(),
+        .build()).isNotEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -489,7 +493,7 @@ public class SearchResponseTest
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -502,7 +506,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uid").values("1").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
-        .build(),
+        .build()).isNotEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -516,7 +520,7 @@ public class SearchResponseTest
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -529,7 +533,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uid").values("1").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
-        .build(),
+        .build()).isNotEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -543,7 +547,7 @@ public class SearchResponseTest
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -556,7 +560,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uid").values("1").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
-        .build(),
+        .build()).isNotEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -570,7 +574,7 @@ public class SearchResponseTest
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -583,7 +587,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uid").values("1").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
-        .build(),
+        .build()).isNotEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -597,7 +601,7 @@ public class SearchResponseTest
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -610,7 +614,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uuid").values("1").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
-        .build(),
+        .build()).isNotEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -624,7 +628,7 @@ public class SearchResponseTest
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -637,7 +641,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uid").values("2").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
-        .build(),
+        .build()).isNotEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -651,7 +655,7 @@ public class SearchResponseTest
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-3.ldaptive.org").build())
         .build());
-    Assert.assertNotEquals(
+    assertThat(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -664,7 +668,7 @@ public class SearchResponseTest
           .attributes(LdapAttribute.builder().name("uid").values("1").build())
           .build())
         .reference(SearchResultReference.builder().uris("ldap://directory-4.ldaptive.org").build())
-        .build(),
+        .build()).isNotEqualTo(
       SearchResponse.builder()
         .messageID(1)
         .controls(new PasswordPolicyControl())
@@ -720,27 +724,27 @@ public class SearchResponseTest
         .dn("uid=3,ou=people,dc=ldaptive,dc=org")
         .attributes(LdapAttribute.builder().name("givenName").values("ben").build())
         .build());
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
     try {
       response.getEntry().setDn("uid=1,ou=aliens,dc=ldaptive,dc=org");
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
     try {
       response.getEntry().getAttribute("givenName").addStringValues("william");
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
     try {
       response.getReference().addUris("ldap://ds4.ldaptive.org");
-      Assert.fail("Should have thrown exception");
+      fail("Should have thrown exception");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
   }
 
@@ -764,9 +768,9 @@ public class SearchResponseTest
           .build())
       .build();
     final SearchResponse copy1 = SearchResponse.copy(response1);
-    Assert.assertEquals(copy1, response1);
-    Assert.assertFalse(response1.isFrozen());
-    Assert.assertFalse(copy1.isFrozen());
+    assertThat(copy1).isEqualTo(response1);
+    assertThat(response1.isFrozen()).isFalse();
+    assertThat(copy1.isFrozen()).isFalse();
 
     final SearchResponse response2 = SearchResponse.builder()
       .messageID(1)
@@ -785,9 +789,9 @@ public class SearchResponseTest
       .freeze()
       .build();
     final SearchResponse copy2 = SearchResponse.copy(response2);
-    Assert.assertEquals(copy2, response2);
-    Assert.assertTrue(response2.isFrozen());
-    Assert.assertFalse(copy2.isFrozen());
+    assertThat(copy2).isEqualTo(response2);
+    assertThat(response2.isFrozen()).isTrue();
+    assertThat(copy2.isFrozen()).isFalse();
   }
 
 
@@ -819,9 +823,17 @@ public class SearchResponseTest
           .build())
       .build();
     final SearchResponse sort = SearchResponse.sort(response);
-    Assert.assertNotEquals(sort, response);
-    Assert.assertEquals(sort.getEntry().getDn(), "uid=alice,ou=people,dc=ldaptive,dc=org");
-    Assert.assertEquals(sort.getEntry().getAttribute("givenName").getStringValue(), "alice");
-    Assert.assertEquals(sort.getReference().getUris()[0], "ldap://directory-1.ldaptive.org");
+    assertThat(sort).isNotEqualTo(response);
+    assertThat(sort.getEntry())
+      .extracting(LdapEntry::getDn)
+      .isEqualTo("uid=alice,ou=people,dc=ldaptive,dc=org");
+    assertThat(sort.getEntry())
+      .extracting(e -> e.getAttribute("givenName"))
+      .extracting(LdapAttribute::getStringValue)
+      .isEqualTo("alice");
+    assertThat(sort.getReference())
+      .extracting(SearchResultReference::getUris)
+      .extracting(u -> u[0])
+      .isEqualTo("ldap://directory-1.ldaptive.org");
   }
 }

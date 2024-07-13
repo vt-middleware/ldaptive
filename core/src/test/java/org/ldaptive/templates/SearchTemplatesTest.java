@@ -2,9 +2,9 @@
 package org.ldaptive.templates;
 
 import org.ldaptive.FilterTemplate;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link SearchTemplates}.
@@ -232,6 +232,6 @@ public class SearchTemplatesTest
   @Test(groups = "templatestest", dataProvider = "template-data")
   public void format(final SearchTemplates templates, final Query query, final FilterTemplate[] filters)
   {
-    Assert.assertEquals(templates.format(query), filters);
+    assertThat(templates.format(query)).isEqualTo(filters);
   }
 }

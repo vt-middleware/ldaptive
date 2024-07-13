@@ -2,9 +2,9 @@
 package org.ldaptive.control;
 
 import org.ldaptive.LdapUtils;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit test for {@link MatchedValuesRequestControl}.
@@ -56,15 +56,15 @@ public class MatchedValuesRequestControlTest
 
   /**
    * @param  berValue  to encode.
-   * @param  expected  matched values request control to test.
+   * @param  control  matched values request control to test.
    *
    * @throws  Exception  On test failure.
    */
   @Test(groups = "control", dataProvider = "request")
-  public void encode(final byte[] berValue, final MatchedValuesRequestControl expected)
+  public void encode(final byte[] berValue, final MatchedValuesRequestControl control)
     throws Exception
   {
-    Assert.assertEquals(expected.encode(), berValue);
+    assertThat(control.encode()).isEqualTo(berValue);
   }
 
 
@@ -77,30 +77,30 @@ public class MatchedValuesRequestControlTest
   {
     try {
       new MatchedValuesRequestControl("(&(uid=1)(gn=bob))");
-      Assert.fail("Should have thrown IllegalArgumentException");
+      fail("Should have thrown IllegalArgumentException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     try {
       new MatchedValuesRequestControl("(|(uid=1)(gn=bob))");
-      Assert.fail("Should have thrown IllegalArgumentException");
+      fail("Should have thrown IllegalArgumentException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     try {
       new MatchedValuesRequestControl("(!(gn=bob))");
-      Assert.fail("Should have thrown IllegalArgumentException");
+      fail("Should have thrown IllegalArgumentException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     try {
       new MatchedValuesRequestControl("(:dn:2.5.13.5:=John)");
-      Assert.fail("Should have thrown IllegalArgumentException");
+      fail("Should have thrown IllegalArgumentException");
     } catch (Exception e) {
-      Assert.assertEquals(e.getClass(), IllegalArgumentException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
   }
 }

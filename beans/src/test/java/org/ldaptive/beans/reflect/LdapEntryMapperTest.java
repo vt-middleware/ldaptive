@@ -4,9 +4,9 @@ package org.ldaptive.beans.reflect;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.beans.LdapEntryMapper;
 import org.ldaptive.beans.spring.SpringLdapEntryMapper;
-import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit tests for {@link LdapEntryMapper} implementations.
@@ -129,7 +129,7 @@ public class LdapEntryMapperTest
     final LdapEntry mapped = new LdapEntry();
     object.initialize();
     mapper.map(object, mapped);
-    Assert.assertEquals(entry, mapped);
+    assertThat(mapped).isEqualTo(entry);
   }
 
 
@@ -147,6 +147,6 @@ public class LdapEntryMapperTest
     final CustomObject mapped = object.getClass().getDeclaredConstructor().newInstance();
     mapper.map(entry, mapped);
     mapped.initialize();
-    Assert.assertEquals(object, mapped);
+    assertThat(mapped).isEqualTo(object);
   }
 }
