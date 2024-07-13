@@ -708,7 +708,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
       }
 
       if (!removeConns.isEmpty()) {
-        final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>(getClass().getSimpleName());
+        final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>("close-" + name);
         try {
           final List<ExecutionException> exceptions = callableWorker.execute(
             removeConns,
@@ -796,7 +796,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   {
     poolLock.lock();
     try {
-      final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>(getClass().getSimpleName());
+      final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>("create-" + name);
       try {
         final AtomicInteger createdCount = new AtomicInteger();
         final List<ExecutionException> exceptions = callableWorker.execute(
@@ -1079,7 +1079,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
           }
 
           final AtomicInteger numConnPruned = new AtomicInteger();
-          final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>(getClass().getSimpleName());
+          final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>("prune-" + name);
           try {
             final List<ExecutionException> exceptions = callableWorker.execute(
               callables,
