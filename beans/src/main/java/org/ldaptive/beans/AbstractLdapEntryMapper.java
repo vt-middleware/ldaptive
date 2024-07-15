@@ -60,26 +60,14 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
   {
     final ClassDescriptor descriptor = getClassDescriptor(source);
     final DnValueMutator dnMutator = descriptor.getDnValueMutator();
+    logger.trace("using dn mutator {} on {}", dnMutator, source);
     if (dnMutator != null) {
-      dest.setDn(dnMutator.getValue(source));
+      dest.setDn(mapDn(source, dnMutator));
     }
     for (AttributeValueMutator mutator : descriptor.getAttributeValueMutators()) {
-      logger.trace("using mutator {}", mutator);
+      logger.trace("using attribute value mutator {} on {}", mutator, source);
       if (mutator != null) {
-        final LdapAttribute attr = new LdapAttribute();
-        attr.setBinary(mutator.isBinary());
-        attr.setName(mutator.getName());
-        if (attr.isBinary()) {
-          final Collection<byte[]> c = mutator.getBinaryValues(source);
-          if (c != null) {
-            attr.addBinaryValues(c);
-          }
-        } else {
-          final Collection<String> c = mutator.getStringValues(source);
-          if (c != null) {
-            attr.addStringValues(c);
-          }
-        }
+        final LdapAttribute attr = mapValue(source, mutator);
         if (attr.size() > 0) {
           dest.addAttributes(attr);
         }
@@ -89,25 +77,96 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
   }
 
 
+  /**
+   * Creates a new DN using the supplied mutator and source.
+   *
+   * @param  source  to get DN from
+   * @param  mutator  to invoke
+   *
+   * @return  mapped DN
+   */
+  protected String mapDn(final T source, final DnValueMutator mutator)
+  {
+    return mutator.getValue(source);
+  }
+
+
+  /**
+   * Creates a new ldap attribute using the supplied mutator and source.
+   *
+   * @param  source  to get attribute values from
+   * @param  mutator  to invoke
+   *
+   * @return  new ldap attribute containing zero or more values
+   */
+  protected LdapAttribute mapValue(final T source, final AttributeValueMutator mutator)
+  {
+    final LdapAttribute attr = new LdapAttribute();
+    attr.setBinary(mutator.isBinary());
+    attr.setName(mutator.getName());
+    if (attr.isBinary()) {
+      final Collection<byte[]> c = mutator.getBinaryValues(source);
+      if (c != null) {
+        attr.addBinaryValues(c);
+      }
+    } else {
+      final Collection<String> c = mutator.getStringValues(source);
+      if (c != null) {
+        attr.addStringValues(c);
+      }
+    }
+    return attr;
+  }
+
+
   @Override
   public void map(final LdapEntry source, final T dest)
   {
     final ClassDescriptor descriptor = getClassDescriptor(dest);
     final DnValueMutator dnMutator = descriptor.getDnValueMutator();
+    logger.trace("using dn mutator {} for entry {}", dnMutator, source);
     if (dnMutator != null) {
-      dnMutator.setValue(dest, source.getDn());
+      mapDn(source.getDn(), dest, dnMutator);
     }
-    source.getAttributes().stream().filter(attr -> attr.size() > 0).forEach(attr -> {
-      final AttributeValueMutator mutator = descriptor.getAttributeValueMutator(attr.getName());
-      logger.trace("using mutator {} for attribute {}", mutator, attr);
-      if (mutator != null) {
-        if (attr.isBinary()) {
-          mutator.setBinaryValues(dest, attr.getBinaryValues());
-        } else {
-          mutator.setStringValues(dest, attr.getStringValues());
+    for (LdapAttribute attr : source.getAttributes()) {
+      if (attr.size() > 0) {
+        final AttributeValueMutator mutator = descriptor.getAttributeValueMutator(attr.getName());
+        logger.trace("using mutator {} for attribute {}", mutator, attr);
+        if (mutator != null) {
+          mapValue(attr, dest, mutator);
         }
       }
-    });
+    }
     logger.debug("Mapped {} to {}", source, dest);
+  }
+
+
+  /**
+   * Sets the supplied DN on the destination using the mutator.
+   *
+   * @param  dn  value to set
+   * @param  dest  to set value on
+   * @param  mutator  to invoke
+   */
+  protected void mapDn(final String dn, final T dest, final DnValueMutator mutator)
+  {
+    mutator.setValue(dest, dn);
+  }
+
+
+  /**
+   * Sets the supplied attribute values on the destination using the mutator.
+   *
+   * @param  attr  values to set
+   * @param  dest  to set values on
+   * @param  mutator  to invoke
+   */
+  protected void mapValue(final LdapAttribute attr, final T dest, final AttributeValueMutator mutator)
+  {
+    if (attr.isBinary()) {
+      mutator.setBinaryValues(dest, attr.getBinaryValues());
+    } else {
+      mutator.setStringValues(dest, attr.getStringValues());
+    }
   }
 }
