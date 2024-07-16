@@ -201,14 +201,12 @@ public abstract class AbstractLoginModule implements LoginModule
     subject.getPrincipals().addAll(roles);
     logger.debug("Committed the following roles: {}", roles);
     if (principalGroupName != null) {
-      final LdapGroup group = new LdapGroup(principalGroupName);
-      principals.forEach(group::addMember);
+      final LdapGroup group = new LdapGroup(principalGroupName, principals);
       subject.getPrincipals().add(group);
       logger.debug("Committed the following principal group: {}", group);
     }
     if (roleGroupName != null) {
-      final LdapGroup group = new LdapGroup(roleGroupName);
-      roles.forEach(group::addMember);
+      final LdapGroup group = new LdapGroup(roleGroupName, roles);
       subject.getPrincipals().add(group);
       logger.debug("Committed the following role group: {}", group);
     }

@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.jaas;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,14 +12,11 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class LdapGroup implements Principal, Serializable
+public class LdapGroup implements Principal
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 431;
-
-  /** serial version uid. */
-  private static final long serialVersionUID = 7947097145323474960L;
 
   /** LDAP group name. */
   private final String groupName;
@@ -33,10 +29,12 @@ public class LdapGroup implements Principal, Serializable
    * Creates a new ldap group with the supplied name.
    *
    * @param  name  of the group
+   * @param  principals  that are members of the group
    */
-  public LdapGroup(final String name)
+  public LdapGroup(final String name, final Set<Principal> principals)
   {
     groupName = name;
+    members.addAll(principals);
   }
 
 
@@ -48,35 +46,14 @@ public class LdapGroup implements Principal, Serializable
 
 
   /**
-   * Adds a member to this group.
+   * Returns whether the supplied member is in this group.
    *
-   * @param  user  to add
+   * @param  member  to check
+   * @return  whether the supplied member is in this group
    */
-  public void addMember(final Principal user)
-  {
-    members.add(user);
-  }
-
-
-  /**
-   * Removes a member from this group.
-   *
-   * @param  user  to remove
-   */
-  public void removeMember(final Principal user)
-  {
-    members.remove(user);
-  }
-
-
   public boolean isMember(final Principal member)
   {
-    for (Principal p : members) {
-      if (p.getName() != null && p.getName().equals(member.getName())) {
-        return true;
-      }
-    }
-    return false;
+    return members.stream().anyMatch(member::equals);
   }
 
 

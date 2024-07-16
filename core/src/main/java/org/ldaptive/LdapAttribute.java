@@ -631,14 +631,10 @@ public class LdapAttribute extends AbstractFreezable
   private static final class AttributeValue
   {
 
-    /**
-     * hash code seed.
-     */
+    /** hash code seed. */
     private static final int HASH_CODE_SEED = 10723;
 
-    /**
-     * attribute value.
-     */
+    /** attribute value. */
     private final byte[] value;
 
 
