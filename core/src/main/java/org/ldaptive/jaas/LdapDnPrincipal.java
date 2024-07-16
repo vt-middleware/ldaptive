@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.jaas;
 
-import java.io.Serializable;
 import java.security.Principal;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
@@ -11,14 +10,11 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class LdapDnPrincipal implements Principal, Serializable, Comparable<Principal>
+public class LdapDnPrincipal implements Principal, Comparable<Principal>
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 409;
-
-  /** serial version uid. */
-  private static final long serialVersionUID = 8345846704852267195L;
 
   /** LDAP user name. */
   private final String ldapDn;
