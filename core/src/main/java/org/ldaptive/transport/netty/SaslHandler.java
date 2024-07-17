@@ -27,7 +27,7 @@ public class SaslHandler extends ByteToMessageDecoder implements ChannelOutbound
 {
 
   /** Logger for this class. */
-  private final Logger logger = LoggerFactory.getLogger(SaslHandler.class);
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Underlying SASL client. */
   private final SaslClient saslClient;
