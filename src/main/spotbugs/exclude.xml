@@ -21,16 +21,6 @@
     </Or>
   </Match>
 
-  <!-- Ignore unserializable LdapEntry -->
-  <Match>
-    <Or>
-      <Class name="org.ldaptive.jaas.LdapDnPrincipal" />
-      <Class name="org.ldaptive.jaas.LdapPrincipal" />
-      <Class name="org.ldaptive.jaas.LdapGroup" />
-    </Or>
-    <Bug pattern="SE_BAD_FIELD" />
-  </Match>
-
   <!-- Code uses unrecognized pattern for lock release -->
   <Match>
     <Class name="org.ldaptive.transport.netty.NettyConnection" />

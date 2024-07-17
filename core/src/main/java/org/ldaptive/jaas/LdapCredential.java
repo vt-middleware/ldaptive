@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.jaas;
 
-import java.io.Serializable;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -9,14 +8,11 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class LdapCredential implements Serializable
+public class LdapCredential
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 401;
-
-  /** serial version uid. */
-  private static final long serialVersionUID = 1965949592374728021L;
 
   /** LDAP credential. */
   private final Object credential;

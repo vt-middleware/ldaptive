@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.jaas;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,14 +16,11 @@ import org.ldaptive.SearchResponse;
  *
  * @author  Middleware Services
  */
-public class LdapRole implements Principal, Serializable, Comparable<Principal>
+public class LdapRole implements Principal, Comparable<Principal>
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 421;
-
-  /** serial version uid. */
-  private static final long serialVersionUID = 1578734888816839199L;
 
   /** LDAP role name. */
   private final String roleName;
