@@ -186,9 +186,10 @@ public class VirtualListViewClient extends AbstractSearchOperationFactory
       }
     } while (
       cookie != null && ResultCode.SUCCESS.equals(ctrlResult) && contentCount > 0 && entryCount.get() < contentCount);
-    result.addEntries(combinedResults.getEntries());
-    result.addReferences(combinedResults.getReferences());
-    return result;
+    final SearchResponse finalResult = SearchResponse.copy(result);
+    finalResult.addEntries(combinedResults.getEntries());
+    finalResult.addReferences(combinedResults.getReferences());
+    return finalResult;
   }
 
 

@@ -94,12 +94,14 @@ public class VirtualListViewClientTest extends AbstractTest
     SearchResponse response = client.execute(request, new VirtualListViewParams(1, 0, 1));
     Iterator<LdapEntry> i = response.getEntries().iterator();
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isEqualTo(2);
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[0].getDn());
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[1].getDn());
 
     response = client.execute(request, new VirtualListViewParams(2, 1, 1), response);
     i = response.getEntries().iterator();
     assertThat(ResultCode.SUCCESS).isEqualTo(response.getResultCode());
+    assertThat(response.entrySize()).isEqualTo(3);
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[0].getDn());
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[1].getDn());
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[2].getDn());
@@ -113,14 +115,51 @@ public class VirtualListViewClientTest extends AbstractTest
     response = client.execute(request, new VirtualListViewParams("21", 1, 0));
     i = response.getEntries().iterator();
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isEqualTo(2);
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[1].getDn());
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[2].getDn());
 
     response = client.execute(request, new VirtualListViewParams("19", 0, 2), response);
     i = response.getEntries().iterator();
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isEqualTo(3);
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[0].getDn());
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[1].getDn());
     assertThat(i.next().getDn()).isEqualTo(testLdapEntries[2].getDn());
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "vlvSearchDn",
+    "vlvSearchFilter"
+  })
+  @Test(groups = "control-util")
+  public void executeToCompletion(final String dn, final String filter)
+    throws Exception
+  {
+    // AD server says vlv is a supported control, but returns UNAVAIL_EXTENSION
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
+      return;
+    }
+
+    final VirtualListViewClient client = new VirtualListViewClient(
+      createConnectionFactory(),
+      new SortKey("uid", "caseExactMatch"),
+      new SortKey("givenName", "caseIgnoreMatch"));
+
+    final SearchRequest request = new SearchRequest(dn, filter);
+    final SearchResponse response = client.executeToCompletion(request, new VirtualListViewParams(1, 0, 1));
+    final Iterator<LdapEntry> i = response.getEntries().iterator();
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isEqualTo(3);
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[2].getDn());
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[0].getDn());
+    assertThat(i.next().getDn()).isEqualTo(testLdapEntries[1].getDn());
   }
 }
