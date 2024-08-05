@@ -174,6 +174,9 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   public void setName(final String s)
   {
     assertMutable();
+    if (s == null) {
+      throw new IllegalArgumentException("Pool name cannot be null");
+    }
     logger.trace("setting name: {}", s);
     name = s;
   }
@@ -200,7 +203,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   {
     assertMutable();
     if (size < 0) {
-      throw new IllegalArgumentException("Minimum pool size must be greater than or equal to 0 for pool " + getName());
+      throw new IllegalArgumentException("Minimum pool size must be greater than or equal to 0 for pool " + name);
     }
     logger.trace("setting minPoolSize: {}", size);
     minPoolSize = size;
@@ -229,7 +232,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     assertMutable();
     // allow a max size of zero for configurations that need to create a pool but don't want it to function
     if (size < 0) {
-      throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 0 for pool " + getName());
+      throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 0 for pool " + name);
     }
     logger.trace("setting maxPoolSize: {}", size);
     maxPoolSize = size;
@@ -524,7 +527,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   protected void throwIfNotInitialized()
   {
     if (!initialized) {
-      throw new IllegalStateException("Pool " + getName() + " is not initialized");
+      throw new IllegalStateException("Pool " + name + " is not initialized");
     }
   }
 
@@ -540,18 +543,18 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   public synchronized void initialize()
   {
     if (initialized) {
-      throw new IllegalStateException("Pool " + getName() + " has already been initialized");
+      throw new IllegalStateException("Pool " + name + " has already been initialized");
     }
     logger.debug("Beginning pool initialization for {}", this);
 
     if (pruneStrategy == null) {
-      throw new IllegalStateException("No prune strategy configured for pool " + getName());
+      throw new IllegalStateException("No prune strategy configured for pool " + name);
     }
     if (activator == null) {
-      throw new IllegalStateException("No activator configured for pool " + getName());
+      throw new IllegalStateException("No activator configured for pool " + name);
     }
     if (passivator == null) {
-      throw new IllegalStateException("No passivator configured for pool " + getName());
+      throw new IllegalStateException("No passivator configured for pool " + name);
     }
 
     available = new Queue<>(queueType);
@@ -567,7 +570,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
       if (failFastInitialize) {
         closeAllConnections();
         throw new IllegalStateException(
-          "Could not initialize pool size for pool " + getName(),
+          "Could not initialize pool size for pool " + name,
           growException != null ? growException.getCause() : null);
       } else {
         logger.warn("Could not initialize pool size (pool is empty) for {}", this);
@@ -575,10 +578,9 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     }
     logger.debug("Initialized available queue {} for {}", available, this);
 
-    final String threadPoolName = name != null ? name + "-" + getClass().getSimpleName() : getClass().getSimpleName();
     poolExecutor = Executors.newSingleThreadScheduledExecutor(
       r -> {
-        final Thread t = new Thread(r, "ldaptive-" + threadPoolName + "@" + hashCode());
+        final Thread t = new Thread(r, name + "@" + hashCode());
         t.setDaemon(true);
         return t;
       });
@@ -770,7 +772,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
         c.close();
         c = null;
         if (throwOnFailure) {
-          throw new IllegalStateException("Unable to open connection for pool " + getName(), e);
+          throw new IllegalStateException("Unable to open connection for pool " + name, e);
         }
       }
     }
@@ -1002,12 +1004,12 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     if (!activator.apply(pc.getConnection())) {
       logger.warn("Failed activation on {} with {} for {}", pc.getConnection(), activator, this);
       removeAvailableAndActiveConnection(pc);
-      throw new ActivationException("Activation of connection failed for pool " + getName());
+      throw new ActivationException("Activation of connection failed for pool " + name);
     }
     if (validateOnCheckOut && !validator.apply(pc.getConnection())) {
       logger.warn("Failed check out validation on {} with {} for {}", pc.getConnection(), validator, this);
       removeAvailableAndActiveConnection(pc);
-      throw new ValidationException("Validation of connection failed for pool " + getName());
+      throw new ValidationException("Validation of connection failed for pool " + name);
     }
   }
 
@@ -1241,7 +1243,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   public String toString()
   {
     return getClass().getName() + "@" + hashCode() + "::" +
-      "name=" + getName() + ", " +
+      "name=" + name + ", " +
       "minPoolSize=" + minPoolSize + ", " +
       "maxPoolSize=" + maxPoolSize + ", " +
       "validateOnCheckIn=" + validateOnCheckIn + ", " +
