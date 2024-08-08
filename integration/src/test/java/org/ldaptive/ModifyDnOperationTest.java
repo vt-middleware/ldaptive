@@ -59,7 +59,7 @@ public class ModifyDnOperationTest extends AbstractTest
    */
   @Parameters({ "modifyOldDn", "modifyNewDn" })
   @Test(groups = "modifyDn")
-  public void modifyDnLdapEntry(final String oldDn, final String newDn)
+  public void modifyDn(final String oldDn, final String newDn)
     throws Exception
   {
     final SearchOperation search = new SearchOperation(TestUtils.createConnectionFactory());

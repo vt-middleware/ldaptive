@@ -122,7 +122,7 @@ public abstract class AbstractResult extends AbstractMessage implements Result
   @Override
   public final String[] getReferralURLs()
   {
-    return referralURLs != null ? referralURLs.toArray(new String[0]) : null;
+    return referralURLs != null ? referralURLs.toArray(String[]::new) : new String[0];
   }
 
 

@@ -42,6 +42,7 @@ import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
 import org.ldaptive.handler.ResultPredicate;
@@ -108,6 +109,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
 
   /** Function to handle unsolicited notifications. */
   private UnsolicitedNotificationHandler[] onUnsolicitedNotification;
+
+  /** Function to chase referrals. */
+  private ReferralResultHandler<S> onReferralResult;
 
   /** Function to run when the operation completes. */
   private CompleteHandler onComplete;
@@ -214,6 +218,13 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
     }
     if (result != null && exception == null) {
       logger.trace("await received result {} for handle {}", result, this);
+      if (ResultCode.REFERRAL == result.getResultCode() && onReferralResult != null) {
+        final S referralResult = processReferralResult(result, onReferralResult);
+        if (throwCondition != null) {
+          throwCondition.testAndThrow(referralResult);
+        }
+        return referralResult;
+      }
       if (throwCondition != null) {
         throwCondition.testAndThrow(result);
       }
@@ -264,6 +275,14 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public DefaultOperationHandle<Q, S> onUnsolicitedNotification(final UnsolicitedNotificationHandler... function)
   {
     onUnsolicitedNotification = initializeMessageFunctional(function);
+    return this;
+  }
+
+
+  @Override
+  public DefaultOperationHandle<Q, S> onReferralResult(final ReferralResultHandler<S> function)
+  {
+    onReferralResult = initializeMessageFunctional(function);
     return this;
   }
 
@@ -509,6 +528,12 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public UnsolicitedNotificationHandler[] getOnUnsolicitedNotification()
   {
     return onUnsolicitedNotification;
+  }
+
+
+  public ReferralResultHandler<S> getOnReferralResult()
+  {
+    return onReferralResult;
   }
 
 
@@ -771,6 +796,40 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         connection = null;
       }
     }
+  }
+
+
+  /**
+   * Invokes the supplied referral result handler and returns the result of that handler.
+   *
+   * @param  original  operation result
+   * @param  handler  to invoke
+   *
+   * @return  result returned by the handler
+   *
+   * @throws  LdapException  if the handler throws an LdapException
+   * @throws  IllegalArgumentException  if original is not a referral
+   * @throws  IllegalStateException  if the handler does not return a valid result
+   */
+  protected S processReferralResult(final S original, final ReferralResultHandler<S> handler)
+    throws LdapException
+  {
+    if (ResultCode.REFERRAL != original.getResultCode()) {
+      throw new IllegalArgumentException("Cannot process referral result for " + original);
+    }
+    final S handlerResponse;
+    try {
+      handlerResponse = handler.apply(original);
+    } catch (Exception ex) {
+      if (ex.getCause() instanceof LdapException) {
+        throw (LdapException) ex.getCause();
+      }
+      throw new IllegalStateException("Referral result handler " + handler + " threw exception", ex);
+    }
+    if (handlerResponse == null) {
+      throw new IllegalStateException("Referral result handler " + handler + " returned null result");
+    }
+    return handlerResponse;
   }
 
 

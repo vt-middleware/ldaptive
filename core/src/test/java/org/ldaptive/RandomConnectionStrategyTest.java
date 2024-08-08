@@ -136,7 +136,7 @@ public class RandomConnectionStrategyTest
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org");
     cc.setConnectionStrategy(strategy);
-    final MockConnection conn = new MockConnection(cc);
+    final MockConnection<?, ?> conn = new MockConnection<>(cc);
     conn.setOpenPredicate(new Predicate<>() {
       private int count;
 
@@ -184,7 +184,7 @@ public class RandomConnectionStrategyTest
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org");
     cc.setConnectionStrategy(strategy);
-    final MockConnection conn = new MockConnection(cc);
+    final MockConnection<?, ?> conn = new MockConnection<>(cc);
     conn.setOpenPredicate(new Predicate<>() {
       private int count;
 

@@ -6,6 +6,7 @@ import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
 import org.ldaptive.handler.ResultPredicate;
@@ -54,6 +55,10 @@ public interface CompareOperationHandle extends OperationHandle<CompareRequest, 
 
   @Override
   CompareOperationHandle onUnsolicitedNotification(UnsolicitedNotificationHandler... function);
+
+
+  @Override
+  CompareOperationHandle onReferralResult(ReferralResultHandler<CompareResponse> function);
 
 
   @Override

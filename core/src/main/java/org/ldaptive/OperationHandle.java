@@ -7,6 +7,7 @@ import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
 import org.ldaptive.handler.ResultPredicate;
@@ -107,6 +108,16 @@ public interface OperationHandle<Q extends Request, S extends Result>
    * @return  this handle
    */
   OperationHandle<Q, S> onUnsolicitedNotification(UnsolicitedNotificationHandler... function);
+
+
+  /**
+   * Sets the functions to execute when a response is complete and contains a referral result code.
+   *
+   * @param  function  to execute on a referral response
+   *
+   * @return  this handle
+   */
+  OperationHandle<Q, S> onReferralResult(ReferralResultHandler<S> function);
 
 
   /**

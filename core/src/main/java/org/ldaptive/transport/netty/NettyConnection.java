@@ -82,6 +82,7 @@ import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.extended.StartTLSRequest;
 import org.ldaptive.extended.UnsolicitedNotification;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.sasl.DefaultSaslClientRequest;
 import org.ldaptive.sasl.QualityOfProtection;
 import org.ldaptive.sasl.SaslClient;
@@ -1304,6 +1305,15 @@ public final class NettyConnection extends TransportConnection
     public BindResponse await()
     {
       throw new UnsupportedOperationException("Bind requests are synchronous, invoke execute");
+    }
+
+
+    @Override
+    protected BindResponse processReferralResult(
+      final BindResponse done, final ReferralResultHandler<BindResponse> handler)
+      throws LdapException
+    {
+      throw new UnsupportedOperationException("Referrals are not supported for bind operations.");
     }
 
 

@@ -8,6 +8,7 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.transport.DefaultSearchOperationHandle;
 import org.ldaptive.transport.mock.MockConnection;
@@ -62,7 +63,7 @@ public class RangeEntryHandlerTest
   @Test(dataProvider = "range-entries")
   public void apply(final LdapEntry entry1, final LdapEntry entry2)
   {
-    final MockConnection conn = new MockConnection(
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(
       ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build());
     conn.setSearchOperationFunction(
       req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(1)));
@@ -70,7 +71,7 @@ public class RangeEntryHandlerTest
       h.messageID(1);
       h.sent();
       ((DefaultSearchOperationHandle) h).entry(entry2);
-      ((DefaultSearchOperationHandle) h).result(
+      h.result(
         SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
     });
     handler.setConnection(conn);

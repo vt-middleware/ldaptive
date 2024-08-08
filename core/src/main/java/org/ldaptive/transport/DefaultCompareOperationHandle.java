@@ -13,6 +13,7 @@ import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
 import org.ldaptive.handler.ResultPredicate;
@@ -93,6 +94,14 @@ public final class DefaultCompareOperationHandle
 
 
   @Override
+  public DefaultCompareOperationHandle onReferralResult(final ReferralResultHandler<CompareResponse> function)
+  {
+    super.onReferralResult(function);
+    return this;
+  }
+
+
+  @Override
   public DefaultCompareOperationHandle onException(final ExceptionHandler function)
   {
     super.onException(function);
@@ -116,18 +125,17 @@ public final class DefaultCompareOperationHandle
   }
 
 
-  /**
-   * Sets the function to execute when a compare result is received.
-   *
-   * @param  function  to execute on a compare result
-   *
-   * @return  this handle
-   */
   @Override
   public DefaultCompareOperationHandle onCompare(final CompareValueHandler... function)
   {
     onCompare = initializeMessageFunctional(function);
     return this;
+  }
+
+
+  public CompareValueHandler[] getOnCompare()
+  {
+    return onCompare;
   }
 
 

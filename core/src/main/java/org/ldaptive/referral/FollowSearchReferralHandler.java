@@ -1,28 +1,24 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.referral;
 
-import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapURL;
-import org.ldaptive.SearchOperation;
-import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.SearchResultHandler;
-import org.ldaptive.transport.DefaultSearchOperationHandle;
 
 /**
  * Provides handling of an ldap referral for search operations.
  *
  * @author  Middleware Services
  */
-public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<SearchRequest, SearchResponse>
-  implements SearchResultHandler
+public class FollowSearchReferralHandler extends AbstractFollowSearchReferralHandler
+  implements SearchResultHandler, ReferralResultHandler<SearchResponse>
 {
 
 
   /** Creates a new search referral handler. */
   public FollowSearchReferralHandler()
   {
-    this(DEFAULT_REFERRAL_LIMIT, 1, new DefaultReferralConnectionFactory());
+    this(DEFAULT_REFERRAL_LIMIT, 1, new DefaultReferralConnectionFactory(), false);
   }
 
 
@@ -33,7 +29,19 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
    */
   public FollowSearchReferralHandler(final ReferralConnectionFactory factory)
   {
-    this(DEFAULT_REFERRAL_LIMIT, 1, factory);
+    this(DEFAULT_REFERRAL_LIMIT, 1, factory, false);
+  }
+
+
+  /**
+   * Creates a new search referral handler.
+   *
+   * @param  factory  referral connection factory
+   * @param  tf  whether to throw on failure to chase referrals
+   */
+  public FollowSearchReferralHandler(final ReferralConnectionFactory factory, final boolean tf)
+  {
+    this(DEFAULT_REFERRAL_LIMIT, 1, factory, tf);
   }
 
 
@@ -44,7 +52,7 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
    */
   public FollowSearchReferralHandler(final int limit)
   {
-    this(limit, 1, new DefaultReferralConnectionFactory());
+    this(limit, 1, new DefaultReferralConnectionFactory(), false);
   }
 
 
@@ -56,7 +64,20 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
    */
   public FollowSearchReferralHandler(final int limit, final ReferralConnectionFactory factory)
   {
-    this(limit, 1, factory);
+    this(limit, 1, factory, false);
+  }
+
+
+  /**
+   * Creates a new search referral handler.
+   *
+   * @param  limit  number of referrals to follow
+   * @param  factory  referral connection factory
+   * @param  tf  whether to throw on failure to chase referrals
+   */
+  public FollowSearchReferralHandler(final int limit, final ReferralConnectionFactory factory, final boolean tf)
+  {
+    this(limit, 1, factory, tf);
   }
 
 
@@ -66,54 +87,27 @@ public class FollowSearchReferralHandler extends AbstractFollowReferralHandler<S
    * @param  limit  number of referrals to follow
    * @param  depth  number of referrals followed
    * @param  factory  referral connection factory
+   * @param  tf  whether to throw on failure to chase referrals
    */
-  private FollowSearchReferralHandler(final int limit, final int depth, final ReferralConnectionFactory factory)
+  private FollowSearchReferralHandler(
+    final int limit, final int depth, final ReferralConnectionFactory factory, final boolean tf)
   {
-    super(limit, depth, factory);
+    super(limit, depth, factory, tf);
   }
 
 
   @Override
-  protected SearchRequest createReferralRequest(final LdapURL url)
+  protected FollowSearchReferralHandler createNextSearchResultHandler()
   {
-    return SearchRequest.builder()
-      .controls(getRequest().getControls())
-      .scope(!url.getUrl().isDefaultScope() ? url.getUrl().getScope() : getRequest().getSearchScope())
-      .dn(!url.getUrl().isDefaultBaseDn() ? url.getUrl().getBaseDn() : getRequest().getBaseDn())
-      .filter(
-        !url.getUrl().isDefaultFilter() ? url.getUrl().getParsedFilter() : getRequest().getFilter())
-      .sizeLimit(getRequest().getSizeLimit())
-      .timeLimit(getRequest().getTimeLimit())
-      .typesOnly(getRequest().isTypesOnly())
-      .returnAttributes(getRequest().getReturnAttributes())
-      .aliases(getRequest().getDerefAliases())
-      .binaryAttributes(getRequest().getBinaryAttributes())
-      .build();
-  }
-
-
-  @Override
-  protected SearchOperation createReferralOperation(final ConnectionFactory factory)
-  {
-    final DefaultSearchOperationHandle handle = (DefaultSearchOperationHandle) getHandle();
-    final SearchOperation op = new SearchOperation(factory);
-    op.setResultHandlers(handle.getOnResult());
-    op.setEntryHandlers(handle.getOnEntry());
-    op.setReferenceHandlers(handle.getOnReference());
-    op.setControlHandlers(handle.getOnControl());
-    op.setExceptionHandler(handle.getOnException());
-    op.setIntermediateResponseHandlers(handle.getOnIntermediate());
-    op.setReferralHandlers(handle.getOnReferral());
-    op.setUnsolicitedNotificationHandlers(handle.getOnUnsolicitedNotification());
-    op.setSearchResultHandlers(
-      new FollowSearchReferralHandler(getReferralLimit(), getReferralDepth() + 1, getReferralConnectionFactory()));
-    return op;
+    return new FollowSearchReferralHandler(
+      getReferralLimit(), getReferralDepth() + 1, getReferralConnectionFactory(), getThrowOnFailure());
   }
 
 
   @Override
   public FollowSearchReferralHandler newInstance()
   {
-    return new FollowSearchReferralHandler(getReferralLimit(), getReferralDepth(), getReferralConnectionFactory());
+    return new FollowSearchReferralHandler(
+      getReferralLimit(), getReferralDepth(), getReferralConnectionFactory(), getThrowOnFailure());
   }
 }

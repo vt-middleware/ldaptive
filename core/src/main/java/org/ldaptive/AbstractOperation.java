@@ -5,6 +5,7 @@ import java.util.Arrays;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.RequestHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
@@ -48,6 +49,9 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
 
   /** Functions to handle unsolicited notifications. */
   private UnsolicitedNotificationHandler[] unsolicitedNotificationHandlers;
+
+  /** Functions to handle referral responses. */
+  private ReferralResultHandler<S> referralResultHandler;
 
 
   /**
@@ -176,6 +180,18 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
   }
 
 
+  public ReferralResultHandler<S> getReferralResultHandler()
+  {
+    return referralResultHandler;
+  }
+
+
+  public void setReferralResultHandler(final ReferralResultHandler<S> handler)
+  {
+    referralResultHandler = handler;
+  }
+
+
   /**
    * Applies any configured request handlers to the supplied request. Returns the supplied request unaltered if no
    * request handlers are configured.
@@ -212,6 +228,7 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
       .onException(getExceptionHandler())
       .throwIf(getThrowCondition())
       .onUnsolicitedNotification(getUnsolicitedNotificationHandlers())
+      .onReferralResult(getReferralResultHandler())
       .onResult(getResultHandlers());
   }
 
@@ -228,7 +245,8 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
       "intermediateResponseHandlers=" + Arrays.toString(intermediateResponseHandlers) + ", " +
       "exceptionHandler=" + exceptionHandler + ", " +
       "throwCondition=" + throwCondition + ", " +
-      "unsolicitedNotificationHandlers=" + Arrays.toString(unsolicitedNotificationHandlers);
+      "unsolicitedNotificationHandlers=" + Arrays.toString(unsolicitedNotificationHandlers) + ", " +
+      "referralResultHandler=" + referralResultHandler;
   }
 
 
@@ -254,6 +272,7 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
     to.throwCondition = from.throwCondition;
     to.unsolicitedNotificationHandlers =
       deep ? LdapUtils.copyArray(from.unsolicitedNotificationHandlers) : from.unsolicitedNotificationHandlers;
+    to.referralResultHandler = from.referralResultHandler;
     to.connectionFactory = from.connectionFactory;
   }
 
@@ -385,6 +404,21 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
     public B onUnsolicitedNotification(final UnsolicitedNotificationHandler... handlers)
     {
       object.setUnsolicitedNotificationHandlers(handlers);
+      return self();
+    }
+
+
+    /**
+     * Sets the functions to execute when a referral result is received.
+     *
+     * @param  handler  to execute on a referral result
+     *
+     * @return  this builder
+     */
+    @SuppressWarnings("unchecked")
+    public B onReferralResult(final ReferralResultHandler handler)
+    {
+      object.setReferralResultHandler(handler);
       return self();
     }
 

@@ -144,7 +144,7 @@ public class DnsSrvConnectionStrategyTest
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl("dns://");
     cc.setConnectionStrategy(strategy);
-    final MockConnection conn = new MockConnection(cc);
+    final MockConnection<?, ?> conn = new MockConnection<>(cc);
     conn.setOpenPredicate(ldapURL -> !ldapURL.getHostname().contains("-1"));
     conn.setTestPredicate(ldapURL -> true);
     assertThat(strategy.ldapURLSet.getActiveUrls())
@@ -206,7 +206,7 @@ public class DnsSrvConnectionStrategyTest
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl("dns://");
     cc.setConnectionStrategy(strategy);
-    final MockConnection conn = new MockConnection(cc);
+    final MockConnection<?, ?> conn = new MockConnection<>(cc);
     conn.setOpenPredicate(ldapURL -> !ldapURL.getHostname().contains("-1") && !ldapURL.getHostname().contains("-2"));
     conn.setTestPredicate(ldapURL -> true);
     assertThat(strategy.ldapURLSet.getActiveUrls())

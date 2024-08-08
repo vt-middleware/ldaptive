@@ -6,6 +6,7 @@ import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
 import org.ldaptive.handler.ResultPredicate;
@@ -56,6 +57,10 @@ public interface SearchOperationHandle extends OperationHandle<SearchRequest, Se
 
   @Override
   SearchOperationHandle onUnsolicitedNotification(UnsolicitedNotificationHandler... function);
+
+
+  @Override
+  SearchOperationHandle onReferralResult(ReferralResultHandler<SearchResponse> function);
 
 
   @Override

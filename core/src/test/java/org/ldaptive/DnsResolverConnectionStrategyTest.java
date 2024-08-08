@@ -168,7 +168,7 @@ public class DnsResolverConnectionStrategyTest
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org");
     cc.setConnectionStrategy(strategy);
-    final MockConnection conn = new MockConnection(cc);
+    final MockConnection<?, ?> conn = new MockConnection<>(cc);
     conn.setOpenPredicate(ldapURL -> !Arrays.equals(ldapURL.getInetAddress().getAddress(), new byte[] {10, 10, 5, 2}));
     conn.setTestPredicate(ldapURL -> true);
 
@@ -216,7 +216,7 @@ public class DnsResolverConnectionStrategyTest
     final ConnectionConfig cc = new ConnectionConfig();
     cc.setLdapUrl("ldap://directory-1.ldaptive.org ldap://directory-2.ldaptive.org ldap://directory-3.ldaptive.org");
     cc.setConnectionStrategy(strategy);
-    final MockConnection conn = new MockConnection(cc);
+    final MockConnection<?, ?> conn = new MockConnection<>(cc);
     conn.setOpenPredicate(
       ldapURL ->
         !Arrays.equals(
