@@ -35,7 +35,7 @@ public abstract class MessageFunctional<Q extends Request, S extends Result> ext
   }
 
 
-  public void setConnection(final TransportConnection conn)
+  public void setConnection(final Connection conn)
   {
     assertMutable();
     connection = conn;
@@ -77,7 +77,7 @@ public abstract class MessageFunctional<Q extends Request, S extends Result> ext
 
 
   /**
-   * Marker class to inject connection and request properties.
+   * Marker class to inject handle properties.
    *
    * @param  <Q>  type of request
    * @param  <S>  type of result
@@ -89,7 +89,7 @@ public abstract class MessageFunctional<Q extends Request, S extends Result> ext
 
 
   /**
-   * Marker class to inject connection and request properties.
+   * Marker class to inject handle properties.
    *
    * @param  <Q>  type of request
    * @param  <S>  type of result
@@ -100,7 +100,7 @@ public abstract class MessageFunctional<Q extends Request, S extends Result> ext
 
 
   /**
-   * Marker class to inject connection and request properties.
+   * Marker class to inject handle properties.
    *
    * @param  <Q>  type of request
    * @param  <S>  type of result
