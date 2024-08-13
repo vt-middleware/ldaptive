@@ -1,7 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -72,13 +72,13 @@ public abstract class AbstractMessageFunctionalEntryHandler<T>
     if (attr != null) {
       attr.setName(handleAttributeName(attr.getName()));
       if (attr.isBinary()) {
-        final Set<byte[]> newValues = attr.getBinaryValues().stream().map(
-          this::handleAttributeValue).collect(Collectors.toSet());
+        final List<byte[]> newValues = attr.getBinaryValues().stream().map(
+          this::handleAttributeValue).collect(Collectors.toList());
         attr.clear();
         attr.addBinaryValues(newValues);
       } else {
-        final Set<String> newValues = attr.getStringValues().stream().map(
-          this::handleAttributeValue).collect(Collectors.toSet());
+        final List<String> newValues = attr.getStringValues().stream().map(
+          this::handleAttributeValue).collect(Collectors.toList());
         attr.clear();
         attr.addStringValues(newValues);
       }
