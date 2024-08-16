@@ -23,6 +23,8 @@ import org.ldaptive.ModifyDnResponse;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.ModifyResponse;
 import org.ldaptive.OperationHandle;
+import org.ldaptive.Request;
+import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
@@ -38,9 +40,12 @@ import org.ldaptive.transport.TransportConnection;
 /**
  * Mock connection for testing.
  *
+ * @param  <Q>  type of request
+ * @param  <S>  type of response
+ *
  * @author  Middleware Services
  */
-public final class MockConnection extends TransportConnection
+public final class MockConnection<Q extends Request, S extends Result> extends TransportConnection
 {
 
   /** Message ID. */
@@ -62,7 +67,7 @@ public final class MockConnection extends TransportConnection
   private Consumer<AbandonRequest> abandonConsumer;
 
   /** Consumer for write operations. */
-  private Consumer<DefaultOperationHandle> writeConsumer = handle -> {
+  private Consumer<DefaultOperationHandle<Q, S>> writeConsumer = handle -> {
     handle.messageID(messageID.getAndIncrement());
     handle.sent();
   };
@@ -121,7 +126,7 @@ public final class MockConnection extends TransportConnection
   }
 
 
-  public void setWriteConsumer(final Consumer<DefaultOperationHandle> consumer)
+  public void setWriteConsumer(final Consumer<DefaultOperationHandle<Q, S>> consumer)
   {
     writeConsumer = consumer;
   }
@@ -212,6 +217,7 @@ public final class MockConnection extends TransportConnection
 
 
   @Override
+  @SuppressWarnings("unchecked")
   protected void write(final DefaultOperationHandle handle)
   {
     if (writeConsumer != null) {
@@ -362,10 +368,11 @@ public final class MockConnection extends TransportConnection
 
     protected Builder(final ConnectionConfig cc)
     {
-      object = new MockConnection(cc);
+      object = new MockConnection<>(cc);
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder openPredicate(final Predicate<LdapURL> p)
     {
       object.setOpenPredicate(p);
@@ -373,6 +380,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder abandonConsumer(final Consumer<AbandonRequest> c)
     {
       object.setAbandonConsumer(c);
@@ -380,6 +388,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder writeConsumer(final Consumer<DefaultOperationHandle> c)
     {
       object.setWriteConsumer(c);
@@ -387,6 +396,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder addOperationFunction(final Function<AddRequest, OperationHandle<AddRequest, AddResponse>> func)
     {
       object.setAddOperationFunction(func);
@@ -394,6 +404,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder bindOperationFunction(final Function<BindRequest, OperationHandle<BindRequest, BindResponse>> func)
     {
       object.setBindOperationFunction(func);
@@ -401,6 +412,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder compareOperationFunction(final Function<CompareRequest, CompareOperationHandle> func)
     {
       object.setCompareOperationFunction(func);
@@ -408,6 +420,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder deleteOperationFunction(
       final Function<DeleteRequest, OperationHandle<DeleteRequest, DeleteResponse>> func)
     {
@@ -416,6 +429,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder extendedOperationFunction(final Function<ExtendedRequest, ExtendedOperationHandle> func)
     {
       object.setExtendedOperationFunction(func);
@@ -423,6 +437,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder modifyDnOperationFunction(
       final Function<ModifyDnRequest, OperationHandle<ModifyDnRequest, ModifyDnResponse>> func)
     {
@@ -431,6 +446,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder modifyOperationFunction(
       final Function<ModifyRequest, OperationHandle<ModifyRequest, ModifyResponse>> func)
     {
@@ -439,6 +455,7 @@ public final class MockConnection extends TransportConnection
     }
 
 
+    @SuppressWarnings("unchecked")
     public Builder searchOperationFunction(final Function<SearchRequest, SearchOperationHandle> func)
     {
       object.setSearchOperationFunction(func);

@@ -8,6 +8,7 @@ import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.ExtendedValueHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
 import org.ldaptive.handler.ResultPredicate;
@@ -56,6 +57,10 @@ public interface ExtendedOperationHandle extends OperationHandle<ExtendedRequest
 
   @Override
   ExtendedOperationHandle onUnsolicitedNotification(UnsolicitedNotificationHandler... function);
+
+
+  @Override
+  ExtendedOperationHandle onReferralResult(ReferralResultHandler<ExtendedResponse> function);
 
 
   @Override

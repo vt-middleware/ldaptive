@@ -13,8 +13,8 @@ import org.ldaptive.DefaultConnectionFactory;
 public class DefaultReferralConnectionFactory implements ReferralConnectionFactory
 {
 
-  /** Connection config for referrals. */
-  private final ConnectionConfig connectionConfig;
+  /** Factory to copy properties from. */
+  private final DefaultConnectionFactory factory;
 
 
   /**
@@ -29,19 +29,59 @@ public class DefaultReferralConnectionFactory implements ReferralConnectionFacto
   /**
    * Creates a new default referral connection factory.
    *
-   * @param  config  connection configuration
+   * @param  cc  connection configuration to copy properties from
    */
-  public DefaultReferralConnectionFactory(final ConnectionConfig config)
+  public DefaultReferralConnectionFactory(final ConnectionConfig cc)
   {
-    connectionConfig = config;
+    final ConnectionConfig config = ConnectionConfig.copy(cc);
+    config.setLdapUrl(null);
+    factory = DefaultConnectionFactory.builder().config(config).freeze().build();
+  }
+
+
+  /**
+   * Creates a new default referral connection factory.
+   *
+   * @param  cf  default connection factory to copy properties from
+   */
+  public DefaultReferralConnectionFactory(final DefaultConnectionFactory cf)
+  {
+    factory = copy(cf, null);
+  }
+
+
+  /**
+   * Creates a copy of the supplied connection factory and sets the supplied URL on the new connection factory.
+   *
+   * @param  cf  to copy
+   * @param  url  to set on the new connection factory
+   *
+   * @return  default connection factory
+   */
+  private DefaultConnectionFactory copy(final DefaultConnectionFactory cf, final String url)
+  {
+    final DefaultConnectionFactory.Builder builder;
+    if (cf.getTransport() != null) {
+      builder = DefaultConnectionFactory.builder(cf.getTransport());
+    } else {
+      builder = DefaultConnectionFactory.builder();
+    }
+    final ConnectionConfig cc = ConnectionConfig.copy(cf.getConnectionConfig());
+    cc.setLdapUrl(url);
+    return builder.config(cc).freeze().build();
   }
 
 
   @Override
   public ConnectionFactory getConnectionFactory(final String url)
   {
-    final ConnectionConfig cc = ConnectionConfig.copy(connectionConfig);
-    cc.setLdapUrl(url);
-    return DefaultConnectionFactory.builder().config(cc).freeze().build();
+    return copy(factory, url);
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return getClass().getName() + "@" + hashCode() + "::factory=" + factory;
   }
 }

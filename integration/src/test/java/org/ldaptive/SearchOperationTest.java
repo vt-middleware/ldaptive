@@ -44,6 +44,7 @@ import org.ldaptive.handler.RecursiveResultHandler;
 import org.ldaptive.referral.DefaultReferralConnectionFactory;
 import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
+import org.ldaptive.referral.PooledReferralConnectionFactory;
 import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -1650,6 +1651,17 @@ public class SearchOperationTest extends AbstractTest
     assertThat(response.getReferralURLs().length).isEqualTo(1);
     assertThat(response.getReferralURLs()[0]).isEqualTo("ldap://localhost:389/ou=test,dc=vt,dc=edu??one");
 
+    search.setReferralResultHandler(new FollowSearchReferralHandler(url -> {
+      final ConnectionConfig refConfig = ConnectionConfig.copy(cc);
+      refConfig.setLdapUrl(url.replace("localhost", new LdapURL(cc.getLdapUrl()).getHostname()));
+      return new DefaultConnectionFactory(refConfig);
+    }));
+    response = search.execute(request);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.getEntries().isEmpty()).isFalse();
+    assertThat(response.getReferralURLs().length).isEqualTo(0);
+    search.setReferralResultHandler(null);
+
     search.setSearchResultHandlers(new FollowSearchReferralHandler(url -> {
       final ConnectionConfig refConfig = ConnectionConfig.copy(cc);
       refConfig.setLdapUrl(url.replace("localhost", new LdapURL(cc.getLdapUrl()).getHostname()));
@@ -1749,7 +1761,7 @@ public class SearchOperationTest extends AbstractTest
     response = search.execute(request);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     assertThat(response.entrySize()).isGreaterThan(0);
-    assertThat(response.referenceSize()).isEqualTo(0);
+    assertThat(response.referenceSize()).isEqualTo(2);
 
     // chase search references
 
@@ -1762,6 +1774,7 @@ public class SearchOperationTest extends AbstractTest
     response = search.execute(request);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     assertThat(response.getEntries().isEmpty()).isFalse();
+    assertThat(response.getReferences().isEmpty()).isTrue();
 
     // limit 0-3
     for (int i = 0; i < 4; i++) {
@@ -1780,6 +1793,7 @@ public class SearchOperationTest extends AbstractTest
     response = search.execute(request);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     assertThat(response.getEntries().isEmpty()).isFalse();
+    assertThat(response.getReferences().isEmpty()).isTrue();
   }
 
 
@@ -1814,7 +1828,7 @@ public class SearchOperationTest extends AbstractTest
     final ConnectionConfig cc = readConnectionConfig(null);
     cc.setConnectTimeout(Duration.ofMillis(500));
     cc.setResponseTimeout(Duration.ofMillis(500));
-    final ConnectionFactory cf = DefaultConnectionFactory.builder()
+    final DefaultConnectionFactory cf = DefaultConnectionFactory.builder()
       .config(cc)
       .build();
     final SearchOperation search = new SearchOperation(cf);
@@ -1830,8 +1844,21 @@ public class SearchOperationTest extends AbstractTest
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
 
     refs.clear();
-    search.setSearchResultHandlers(new FollowSearchReferralHandler(new DefaultReferralConnectionFactory(cc)));
+    search.setSearchResultHandlers(
+      new FollowSearchReferralHandler(new DefaultReferralConnectionFactory(cf)));
     response = search.execute(request);
+    assertThat(response.entrySize()).isGreaterThan(0);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+
+    final PooledReferralConnectionFactory prcf = new PooledReferralConnectionFactory(
+      PooledConnectionFactory.builder().config(cf.getConnectionConfig()).build());
+    refs.clear();
+    search.setSearchResultHandlers(new FollowSearchReferralHandler(prcf));
+    try {
+      response = search.execute(request);
+    } finally {
+      prcf.close();
+    }
     assertThat(response.entrySize()).isGreaterThan(0);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
   }

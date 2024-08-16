@@ -18,12 +18,14 @@ import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
 import org.ldaptive.handler.ResultPredicate;
 import org.ldaptive.handler.SearchReferenceHandler;
 import org.ldaptive.handler.SearchResultHandler;
 import org.ldaptive.handler.UnsolicitedNotificationHandler;
+import org.ldaptive.referral.FollowSearchReferralHandler;
 
 /**
  * Handle that notifies on the components of a search request.
@@ -121,8 +123,12 @@ public final class DefaultSearchOperationHandle
         }
         if (handlerResponse == null) {
           throw new IllegalStateException("Search result handler " + func + " returned null result");
-        } else if (!handlerResponse.equalsResult(done) && !ResultCode.REFERRAL.equals(done.getResultCode())) {
-          throw new IllegalStateException("Cannot modify non-referral search result instance with handler " + func);
+        } else if (!handlerResponse.equalsResult(done) &&
+          // FollowSearchReferralHandler can be used as a referral handler and a search result handler for convenience
+          // allow it to modify the search response
+          !(ResultCode.REFERRAL == done.getResultCode() && FollowSearchReferralHandler.class.equals(func.getClass())))
+        {
+          throw new IllegalStateException("Cannot modify search result instance with handler " + func);
         }
         done = handlerResponse;
       }
@@ -167,6 +173,14 @@ public final class DefaultSearchOperationHandle
   public DefaultSearchOperationHandle onUnsolicitedNotification(final UnsolicitedNotificationHandler... function)
   {
     super.onUnsolicitedNotification(function);
+    return this;
+  }
+
+
+  @Override
+  public DefaultSearchOperationHandle onReferralResult(final ReferralResultHandler<SearchResponse> function)
+  {
+    super.onReferralResult(function);
     return this;
   }
 

@@ -12,6 +12,7 @@ import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.ExtendedValueHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
 import org.ldaptive.handler.ReferralHandler;
+import org.ldaptive.handler.ReferralResultHandler;
 import org.ldaptive.handler.ResponseControlHandler;
 import org.ldaptive.handler.ResultHandler;
 import org.ldaptive.handler.ResultPredicate;
@@ -95,6 +96,14 @@ public final class DefaultExtendedOperationHandle
 
 
   @Override
+  public DefaultExtendedOperationHandle onReferralResult(final ReferralResultHandler<ExtendedResponse> function)
+  {
+    super.onReferralResult(function);
+    return this;
+  }
+
+
+  @Override
   public DefaultExtendedOperationHandle onException(final ExceptionHandler function)
   {
     super.onException(function);
@@ -118,18 +127,17 @@ public final class DefaultExtendedOperationHandle
   }
 
 
-  /**
-   * Sets the function to execute when an extended response is received.
-   *
-   * @param  function  to execute on an extended response
-   *
-   * @return  this handle
-   */
   @Override
   public DefaultExtendedOperationHandle onExtended(final ExtendedValueHandler... function)
   {
     onExtended = initializeMessageFunctional(function);
     return this;
+  }
+
+
+  public ExtendedValueHandler[] getOnExtended()
+  {
+    return onExtended;
   }
 
 

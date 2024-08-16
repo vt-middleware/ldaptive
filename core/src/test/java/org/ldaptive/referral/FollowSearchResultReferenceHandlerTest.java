@@ -26,7 +26,7 @@ public class FollowSearchResultReferenceHandlerTest
 {
 
 
-  @Test(groups = "handlers")
+  @Test(groups = "referral")
   public void applyNoReference()
   {
     final FollowSearchResultReferenceHandler handler = new FollowSearchResultReferenceHandler();
@@ -43,12 +43,12 @@ public class FollowSearchResultReferenceHandlerTest
   }
 
 
-  @Test(groups = "handlers")
+  @Test(groups = "referral")
   public void applyStateless()
   {
     final AtomicInteger referralDepth = new AtomicInteger();
     final ConnectionConfig config = ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build();
-    final MockConnection conn = new MockConnection(config);
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
     conn.setOpenPredicate(ldapURL -> true);
     conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
     conn.setWriteConsumer(h -> {
@@ -59,7 +59,7 @@ public class FollowSearchResultReferenceHandlerTest
         .dn("uid=2,ou=test,dc=ldaptive,dc=org")
         .attributes(LdapAttribute.builder().name("uid").values("2").build())
         .build());
-      ((DefaultSearchOperationHandle) h).result(
+      h.result(
         SearchResponse.builder().messageID(referralDepth.get()).resultCode(ResultCode.SUCCESS).build());
       referralDepth.getAndSet(0);
       // close connection since it will be reused by the next handler invocation
@@ -113,11 +113,11 @@ public class FollowSearchResultReferenceHandlerTest
   }
 
 
-  @Test(groups = "handlers")
+  @Test(groups = "referral")
   public void applyReference()
   {
     final ConnectionConfig config = ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build();
-    final MockConnection conn = new MockConnection(config);
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
     conn.setOpenPredicate(ldapURL -> true);
     conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
     conn.setWriteConsumer(h -> {
@@ -128,7 +128,7 @@ public class FollowSearchResultReferenceHandlerTest
         .dn("uid=2,ou=test,dc=ldaptive,dc=org")
         .attributes(LdapAttribute.builder().name("uid").values("2").build())
         .build());
-      ((DefaultSearchOperationHandle) h).result(
+      h.result(
         SearchResponse.builder().messageID(5).resultCode(ResultCode.SUCCESS).build());
     });
     final SearchRequest request = SearchRequest.builder()
@@ -177,12 +177,12 @@ public class FollowSearchResultReferenceHandlerTest
   }
 
 
-  @Test(groups = "handlers")
+  @Test(groups = "referral")
   public void applyMultiReference()
   {
     final AtomicInteger count = new AtomicInteger(1);
     final ConnectionConfig config = ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build();
-    final MockConnection conn = new MockConnection(config);
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
     conn.setOpenPredicate(ldapURL -> true);
     conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
     conn.setWriteConsumer(h -> {
@@ -193,7 +193,7 @@ public class FollowSearchResultReferenceHandlerTest
         .dn("uid=" + count.incrementAndGet() + ",ou=test,dc=ldaptive,dc=org")
         .attributes(LdapAttribute.builder().name("uid").values(String.valueOf(count.get())).build())
         .build());
-      ((DefaultSearchOperationHandle) h).result(
+      h.result(
         SearchResponse.builder().messageID(5).resultCode(ResultCode.SUCCESS).build());
     });
     final SearchRequest request = SearchRequest.builder()
@@ -250,12 +250,12 @@ public class FollowSearchResultReferenceHandlerTest
   }
 
 
-  @Test(groups = "handlers")
+  @Test(groups = "referral")
   public void applyReferenceLimit()
   {
     final AtomicInteger count = new AtomicInteger(1);
     final ConnectionConfig config = ConnectionConfig.builder().url("ldap://placeholder.ldaptive.org").build();
-    final MockConnection conn = new MockConnection(config);
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
     conn.setOpenPredicate(ldapURL -> true);
     conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
     conn.setWriteConsumer(h -> {
@@ -272,7 +272,7 @@ public class FollowSearchResultReferenceHandlerTest
           .messageID(1)
           .uris("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
           .build());
-      ((DefaultSearchOperationHandle) h).result(
+      h.result(
         SearchResponse.builder()
           .messageID(1)
           .resultCode(ResultCode.SUCCESS)
@@ -320,12 +320,138 @@ public class FollowSearchResultReferenceHandlerTest
   }
 
 
-  @Test(groups = "handlers")
+  @Test(groups = "referral")
+  public void applyNotSuccess()
+  {
+    final AtomicInteger count = new AtomicInteger(1);
+    final ConnectionConfig config = ConnectionConfig.builder().url("ldap://placeholder.ldaptive.org").build();
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
+    conn.setOpenPredicate(ldapURL -> true);
+    conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
+    conn.setWriteConsumer(h -> {
+      h.messageID(1);
+      h.sent();
+      h.result(SearchResponse.builder()
+        .messageID(1)
+        .resultCode(ResultCode.NO_SUCH_OBJECT)
+        .build());
+      // close connection since it will be reused by the next handler invocation
+      conn.close();
+    });
+    final SearchRequest request = SearchRequest.builder()
+      .dn("ou=test,dc=ldaptive,dc=org")
+      .filter("(uid=1)")
+      .build();
+    final DefaultSearchOperationHandle handle = new DefaultSearchOperationHandle(
+      request,
+      MockConnection.builder(
+          ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build())
+        .openPredicate(ldapURL -> true)
+        .build(),
+      Duration.ofSeconds(5));
+
+    final FollowSearchResultReferenceHandler handler = new FollowSearchResultReferenceHandler(
+      url -> new MockConnectionFactory(conn));
+    handler.setRequest(request);
+    handler.setHandle(handle);
+    final SearchResponse response = SearchResponse.builder()
+      .messageID(1)
+      .resultCode(ResultCode.SUCCESS)
+      .entry(LdapEntry.builder()
+        .messageID(1)
+        .dn("uid=" + count.get() + ",ou=test,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("uid").values(String.valueOf(count.get())).build())
+        .build())
+      .reference(SearchResultReference.builder()
+        .messageID(1)
+        .uris("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+        .build())
+      .build();
+
+    final SearchResponse sr = handler.apply(response);
+    assertThat(sr).isEqualTo(
+      SearchResponse.builder()
+        .messageID(1)
+        .resultCode(ResultCode.SUCCESS)
+        .entry(
+          LdapEntry.builder()
+            .messageID(1)
+            .dn("uid=1,ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values("1").build())
+            .build())
+        .reference(SearchResultReference.builder()
+          .messageID(1)
+          .uris("ldap://ds1.ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+          .build())
+        .build());
+  }
+
+
+  @Test(groups = "referral")
+  public void applyNotSuccessWithFailure()
+  {
+    final AtomicInteger count = new AtomicInteger(1);
+    final ConnectionConfig config = ConnectionConfig.builder().url("ldap://placeholder.ldaptive.org").build();
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
+    conn.setOpenPredicate(ldapURL -> true);
+    conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
+    conn.setWriteConsumer(h -> {
+      h.messageID(1);
+      h.sent();
+      h.result(SearchResponse.builder()
+        .messageID(1)
+        .resultCode(ResultCode.NO_SUCH_OBJECT)
+        .build());
+      // close connection since it will be reused by the next handler invocation
+      conn.close();
+    });
+    final SearchRequest request = SearchRequest.builder()
+      .dn("ou=test,dc=ldaptive,dc=org")
+      .filter("(uid=1)")
+      .build();
+    final DefaultSearchOperationHandle handle = new DefaultSearchOperationHandle(
+      request,
+      MockConnection.builder(
+          ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build())
+        .openPredicate(ldapURL -> true)
+        .build(),
+      Duration.ofSeconds(5));
+
+    final FollowSearchResultReferenceHandler handler = new FollowSearchResultReferenceHandler(
+      url -> new MockConnectionFactory(conn), true);
+    handler.setRequest(request);
+    handler.setHandle(handle);
+    final SearchResponse response = SearchResponse.builder()
+      .messageID(1)
+      .resultCode(ResultCode.SUCCESS)
+      .entry(LdapEntry.builder()
+        .messageID(1)
+        .dn("uid=" + count.get() + ",ou=test,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("uid").values(String.valueOf(count.get())).build())
+        .build())
+      .reference(SearchResultReference.builder()
+        .messageID(1)
+        .uris("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+        .build())
+      .build();
+
+    try {
+      handler.apply(response);
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(RuntimeException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(LdapException.class);
+      assertThat(e.getCause().getMessage()).startsWith("Could not follow referral");
+    }
+  }
+
+
+  @Test(groups = "referral")
   public void applyThrowsRuntimeException()
   {
     final AtomicInteger count = new AtomicInteger(1);
     final ConnectionConfig config = ConnectionConfig.builder().url("ldap://placeholder.ldaptive.org").build();
-    final MockConnection conn = new MockConnection(config);
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
     conn.setOpenPredicate(ldapURL -> true);
     conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
     conn.setWriteConsumer(h -> {
@@ -343,7 +469,7 @@ public class FollowSearchResultReferenceHandlerTest
             .messageID(1)
             .uris("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
             .build());
-        ((DefaultSearchOperationHandle) h).result(
+        h.result(
           SearchResponse.builder()
             .messageID(1)
             .resultCode(ResultCode.SUCCESS)
@@ -384,23 +510,35 @@ public class FollowSearchResultReferenceHandlerTest
         .build())
       .build();
 
-    try {
-      handler.apply(response);
-      fail("Should have thrown exception");
-    } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
-      assertThat(e.getMessage())
-        .startsWith("Search result handler org.ldaptive.referral.FollowSearchResultReferenceHandler");
-    }
+    assertThat(handler.apply(response)).isEqualTo(
+      SearchResponse.builder()
+        .messageID(1)
+        .resultCode(ResultCode.SUCCESS)
+        .entry(
+          LdapEntry.builder()
+            .messageID(1)
+            .dn("uid=1,ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values("1").build())
+            .build(),
+          LdapEntry.builder()
+            .messageID(1)
+            .dn("uid=3,ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values("3").build())
+            .build())
+        .reference(SearchResultReference.builder()
+          .messageID(1)
+          .uris("ldap://ds3.ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+          .build())
+        .build());
   }
 
 
-  @Test(groups = "handlers")
-  public void applyThrowsLdapException()
+  @Test(groups = "referral")
+  public void applyThrowsRuntimeExceptionWithFailure()
   {
     final AtomicInteger count = new AtomicInteger(1);
     final ConnectionConfig config = ConnectionConfig.builder().url("ldap://placeholder.ldaptive.org").build();
-    final MockConnection conn = new MockConnection(config);
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
     conn.setOpenPredicate(ldapURL -> true);
     conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
     conn.setWriteConsumer(h -> {
@@ -418,7 +556,82 @@ public class FollowSearchResultReferenceHandlerTest
             .messageID(1)
             .uris("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
             .build());
-        ((DefaultSearchOperationHandle) h).result(
+        h.result(
+          SearchResponse.builder()
+            .messageID(1)
+            .resultCode(ResultCode.SUCCESS)
+            .build());
+        // close connection since it will be reused by the next handler invocation
+        conn.close();
+      } else {
+        throw new RuntimeException("Test Exception");
+      }
+    });
+    final SearchRequest request = SearchRequest.builder()
+      .dn("ou=test,dc=ldaptive,dc=org")
+      .filter("(uid=1)")
+      .build();
+    final DefaultSearchOperationHandle handle = new DefaultSearchOperationHandle(
+      request,
+      MockConnection.builder(
+          ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build())
+        .openPredicate(ldapURL -> true)
+        .build(),
+      Duration.ofSeconds(5));
+
+    final FollowSearchResultReferenceHandler handler = new FollowSearchResultReferenceHandler(
+      10, url -> new MockConnectionFactory(conn), true);
+    handler.setRequest(request);
+    handler.setHandle(handle);
+    final SearchResponse response = SearchResponse.builder()
+      .messageID(1)
+      .resultCode(ResultCode.SUCCESS)
+      .entry(LdapEntry.builder()
+        .messageID(1)
+        .dn("uid=" + count.get() + ",ou=test,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("uid").values(String.valueOf(count.get())).build())
+        .build())
+      .reference(SearchResultReference.builder()
+        .messageID(1)
+        .uris("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+        .build())
+      .build();
+
+    try {
+      handler.apply(response);
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+      assertThat(e.getMessage())
+        .startsWith("Search result handler org.ldaptive.referral.FollowSearchResultReferenceHandler");
+    }
+  }
+
+
+  @Test(groups = "referral")
+  public void applyThrowsLdapException()
+  {
+    final AtomicInteger count = new AtomicInteger(1);
+    final ConnectionConfig config = ConnectionConfig.builder().url("ldap://placeholder.ldaptive.org").build();
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
+    conn.setOpenPredicate(ldapURL -> true);
+    conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
+    conn.setWriteConsumer(h -> {
+      if (count.getAndIncrement() == 2) {
+        h.messageID(1);
+        h.sent();
+        ((DefaultSearchOperationHandle) h).entry(
+          LdapEntry.builder()
+            .messageID(1)
+            .dn("uid=" + count.get() + ",ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values(String.valueOf(count.get())).build())
+            .build());
+        ((DefaultSearchOperationHandle) h).reference(
+          SearchResultReference.builder()
+            .messageID(1)
+            .uris("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+            .build());
+        h.result(
           SearchResponse.builder()
             .messageID(1)
             .resultCode(ResultCode.SUCCESS)
@@ -463,11 +676,96 @@ public class FollowSearchResultReferenceHandlerTest
       SearchResponse.builder()
         .messageID(1)
         .resultCode(ResultCode.SUCCESS)
-        .entry(LdapEntry.builder()
+        .entry(
+          LdapEntry.builder()
+            .messageID(1)
+            .dn("uid=1,ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values("1").build())
+            .build(),
+          LdapEntry.builder()
+            .messageID(1)
+            .dn("uid=3,ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values("3").build())
+            .build())
+        .reference(SearchResultReference.builder()
           .messageID(1)
-          .dn("uid=1,ou=test,dc=ldaptive,dc=org")
-          .attributes(LdapAttribute.builder().name("uid").values("1").build())
+          .uris("ldap://ds3.ldaptive.org:389/dc=ldaptive,dc=org??sub?")
           .build())
         .build());
+  }
+
+
+  @Test(groups = "referral")
+  public void applyThrowsLdapExceptionWithFailure()
+  {
+    final AtomicInteger count = new AtomicInteger(1);
+    final ConnectionConfig config = ConnectionConfig.builder().url("ldap://placeholder.ldaptive.org").build();
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
+    conn.setOpenPredicate(ldapURL -> true);
+    conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
+    conn.setWriteConsumer(h -> {
+      if (count.getAndIncrement() == 2) {
+        h.messageID(1);
+        h.sent();
+        ((DefaultSearchOperationHandle) h).entry(
+          LdapEntry.builder()
+            .messageID(1)
+            .dn("uid=" + count.get() + ",ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values(String.valueOf(count.get())).build())
+            .build());
+        ((DefaultSearchOperationHandle) h).reference(
+          SearchResultReference.builder()
+            .messageID(1)
+            .uris("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+            .build());
+        h.result(
+          SearchResponse.builder()
+            .messageID(1)
+            .resultCode(ResultCode.SUCCESS)
+            .build());
+        // close connection since it will be reused by the next handler invocation
+        conn.close();
+      } else {
+        throw new RuntimeException(new LdapException("Test Exception"));
+      }
+    });
+    final SearchRequest request = SearchRequest.builder()
+      .dn("ou=test,dc=ldaptive,dc=org")
+      .filter("(uid=1)")
+      .build();
+    final DefaultSearchOperationHandle handle = new DefaultSearchOperationHandle(
+      request,
+      MockConnection.builder(
+          ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build())
+        .openPredicate(ldapURL -> true)
+        .build(),
+      Duration.ofSeconds(5));
+
+    final FollowSearchResultReferenceHandler handler = new FollowSearchResultReferenceHandler(
+      10, url -> new MockConnectionFactory(conn), true);
+    handler.setRequest(request);
+    handler.setHandle(handle);
+    final SearchResponse response = SearchResponse.builder()
+      .messageID(1)
+      .resultCode(ResultCode.SUCCESS)
+      .entry(LdapEntry.builder()
+        .messageID(1)
+        .dn("uid=" + count.get() + ",ou=test,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("uid").values(String.valueOf(count.get())).build())
+        .build())
+      .reference(SearchResultReference.builder()
+        .messageID(1)
+        .uris("ldap://ds" + count.getAndIncrement() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+        .build())
+      .build();
+
+    try {
+      handler.apply(response);
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(RuntimeException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(LdapException.class);
+      assertThat(e.getCause().getMessage()).isEqualTo("Test Exception");
+    }
   }
 }

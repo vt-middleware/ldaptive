@@ -4,6 +4,7 @@ package org.ldaptive.referral;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
@@ -42,6 +43,9 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
   /** Referral connection factory. */
   private final ReferralConnectionFactory connectionFactory;
 
+  /** Whether to throw an exception if a referral cannot be chased. */
+  private final boolean throwOnFailure;
+
 
   /**
    * Creates a new abstract referral handler.
@@ -49,12 +53,15 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
    * @param  limit  number of referrals to follow
    * @param  depth  number of referrals followed
    * @param  factory  referral connection factory
+   * @param  tf  whether to throw on failure to chase referral
    */
-  public AbstractFollowReferralHandler(final int limit, final int depth, final ReferralConnectionFactory factory)
+  public AbstractFollowReferralHandler(
+    final int limit, final int depth, final ReferralConnectionFactory factory, final boolean tf)
   {
     referralLimit = limit;
     referralDepth = depth;
     connectionFactory = factory;
+    throwOnFailure = tf;
   }
 
 
@@ -92,6 +99,17 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
 
 
   /**
+   * Returns whether to throw on failure to chase referrals.
+   *
+   * @return  whether to throw on failure to chase referrals
+   */
+  public boolean getThrowOnFailure()
+  {
+    return throwOnFailure;
+  }
+
+
+  /**
    * Creates a new request for this type of referral.
    *
    * @param  url  of the referral
@@ -109,6 +127,17 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
    * @return  new operation
    */
   protected abstract Operation<Q, S> createReferralOperation(ConnectionFactory factory);
+
+
+  /**
+   * Returns the result codes that indicate a successful referral was followed.
+   *
+   * @return  success result codes
+   */
+  protected Set<ResultCode> getSuccessResultCodes()
+  {
+    return Set.of(ResultCode.SUCCESS);
+  }
 
 
   /**
@@ -138,12 +167,18 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
       try {
         final Q referralRequest = createReferralRequest(ldapUrl);
         final Operation<Q, S> op = createReferralOperation(cf);
+        logger.debug("Created referral request {} for {}", referralRequest, op);
         referralResult = op.execute(referralRequest);
       } catch (LdapException e) {
-        if (e.getResultCode() == ResultCode.REFERRAL_LIMIT_EXCEEDED) {
+        if (throwOnFailure || e.getResultCode() == ResultCode.REFERRAL_LIMIT_EXCEEDED) {
           throw e;
         }
-        logger.warn("Could not follow referral to " + url, e);
+        logger.warn("Could not follow referral to {}", url, e);
+      } catch (Exception e) {
+        if (throwOnFailure) {
+          throw e;
+        }
+        logger.warn("Could not follow referral to {}", url, e);
       }
       if (referralResult != null &&
           (referralResult.getResultCode() == ResultCode.SUCCESS ||
@@ -151,6 +186,7 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
         break;
       }
     }
+    logger.debug("Received referral result {}", referralResult);
     return referralResult;
   }
 
@@ -171,11 +207,22 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
     S referralResult = result;
     try {
       final S r = followReferral(result.getReferralURLs());
-      if (r != null) {
+      // if referral fails, return the original result
+      if (r != null || referralDepth > 1) {
         referralResult = r;
       }
     } catch (LdapException e) {
       throw new RuntimeException(e);
+    }
+    if (referralDepth == 1 &&
+         (referralResult == null || !getSuccessResultCodes().contains(referralResult.getResultCode())))
+    {
+      // referral chasing failed, throw or use the original result
+      if (getThrowOnFailure()) {
+        throw new RuntimeException(
+          new LdapException(ResultCode.LOCAL_ERROR, "Could not follow referral " + referralResult));
+      }
+      referralResult = result;
     }
     return referralResult;
   }

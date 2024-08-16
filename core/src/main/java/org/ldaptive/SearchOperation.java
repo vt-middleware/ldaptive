@@ -805,6 +805,7 @@ public class SearchOperation extends AbstractOperation<SearchRequest, SearchResp
       .onException(getExceptionHandler())
       .throwIf(getThrowCondition())
       .onUnsolicitedNotification(getUnsolicitedNotificationHandlers())
+      .onReferralResult(getReferralResultHandler())
       .onSearchResult(getSearchResultHandlers());
   }
 
