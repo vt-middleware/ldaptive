@@ -1648,7 +1648,7 @@ public class SearchOperationTest extends AbstractTest
     assertThat(response.getResultCode()).isEqualTo(ResultCode.REFERRAL);
     assertThat(response.getEntries().isEmpty()).isTrue();
     assertThat(response.getReferralURLs().length).isEqualTo(1);
-    assertThat(response.getReferralURLs()[0]).isEqualTo("ldap://localhost:389/ou=people,dc=vt,dc=edu??one");
+    assertThat(response.getReferralURLs()[0]).isEqualTo("ldap://localhost:389/ou=test,dc=vt,dc=edu??one");
 
     search.setSearchResultHandlers(new FollowSearchReferralHandler(url -> {
       final ConnectionConfig refConfig = ConnectionConfig.copy(cc);
