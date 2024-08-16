@@ -220,9 +220,9 @@ public final class SearchResponse extends AbstractResult implements Freezable
 
 
   /**
-   * Returns a collection of ldap entry.
+   * Returns a collection of search result reference.
    *
-   * @return  collection of ldap entry
+   * @return  collection of search result reference
    */
   public Collection<SearchResultReference> getReferences()
   {
