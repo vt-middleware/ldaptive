@@ -266,8 +266,7 @@ public class SearchOperationLoadTest extends AbstractTest
       new SearchRequest(searchBaseDn, filter, returnAttrs.split("\\|")));
     assertThat(response.isSuccess()).isTrue();
     expected.setDn(response.getEntry().getDn());
-    // TODO this will need some work
-    assertThat(response.getEntry()).isEqualTo(expected);
+    LdapEntryAssert.assertThat(response.getEntry()).isSame(expected);
   }
 
 
@@ -298,7 +297,6 @@ public class SearchOperationLoadTest extends AbstractTest
       new SearchRequest(searchBaseDn, filter, returnAttrs.split("\\|")));
     assertThat(response.isSuccess()).isTrue();
     expected.setDn(response.getEntry().getDn());
-    // TODO this will need some work
-    assertThat(response.getEntry()).isEqualTo(expected);
+    LdapEntryAssert.assertThat(response.getEntry()).isSame(expected);
   }
 }

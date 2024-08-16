@@ -115,7 +115,6 @@ public class PersistentSearchClientTest extends AbstractTest
       EntryChangeNotificationControl.OID);
     assertThat(ecnc.getChangeType()).isEqualTo(PersistentSearchChangeType.MODIFY);
     expectedResult.getEntry().addAttributes(modAttr);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(createCompareEntry(expectedResult.getEntry(), entry)).isSame(expectedResult.getEntry());
 
     // modify dn
@@ -129,7 +128,6 @@ public class PersistentSearchClientTest extends AbstractTest
     assertThat(ecnc.getChangeType()).isEqualTo(PersistentSearchChangeType.MODDN);
     expectedResult.getEntry().setDn(modDn);
     expectedResult.getEntry().addAttributes(new LdapAttribute("CN", "PSC"));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(createCompareEntry(expectedResult.getEntry(), entry)).isSame(expectedResult.getEntry());
 
     // modify dn back
@@ -140,7 +138,6 @@ public class PersistentSearchClientTest extends AbstractTest
     assertThat(ecnc.getChangeType()).isEqualTo(PersistentSearchChangeType.MODDN);
     expectedResult.getEntry().setDn(dn);
     expectedResult.getEntry().addAttributes(cn);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(createCompareEntry(expectedResult.getEntry(), entry)).isSame(expectedResult.getEntry());
 
     client.abandon();

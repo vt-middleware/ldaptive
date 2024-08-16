@@ -240,7 +240,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
          .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     // test searching no attributes
@@ -257,7 +256,6 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       new LdapEntryHandler[0]);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     // test searching with multiple handlers
@@ -311,7 +309,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(&(objectClass=*)(uid=2))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
@@ -327,7 +324,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(uid:caseExactMatch:=2)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     // substring filter
@@ -336,7 +332,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(cn=*hn Adams)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
@@ -351,7 +346,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(cn=John Adam*)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
@@ -359,7 +353,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(mail=jad*@*org)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
@@ -367,7 +360,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(cn=*ohn A*m*)")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     // greater than filter
@@ -376,7 +368,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(&(uid=2)(createTimestamp>=20000101000000Z))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
@@ -392,7 +383,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(&(uid=2)(createTimestamp<=21000101000000Z))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     result = search.execute(
@@ -408,7 +398,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter("(&(givenName~=Jon)(mail=adams@ldaptive.org))")
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
   }
 
@@ -444,7 +433,6 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBTREE).build();
     SearchResponse result = search.execute(subtreeRequest);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(expectedResult);
 
     final SearchRequest onelevelRequest = SearchRequest.builder()
@@ -453,7 +441,6 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.ONELEVEL).build();
     result = search.execute(onelevelRequest);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(expectedResult);
 
     final SearchRequest objectRequest = SearchRequest.builder()
@@ -462,7 +449,6 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.OBJECT).build();
     result = search.execute(objectRequest);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(expectedResult);
 
     final SearchRequest subordinateRequest = SearchRequest.builder()
@@ -471,7 +457,6 @@ public class SearchOperationTest extends AbstractTest
       .returnAttributes(returnAttrs.split("\\|"))
       .scope(SearchScope.SUBORDINATE).build();
     result = search.execute(subordinateRequest);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(expectedResult);
   }
 
@@ -1143,7 +1128,6 @@ public class SearchOperationTest extends AbstractTest
       filter,
       returnAttrs.split("\\|"),
       handler);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
   }
 
@@ -1239,7 +1223,6 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(noChangeResult);
 
     // test lower case attribute values
@@ -1258,7 +1241,6 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(lcValuesChangeResult);
 
     // test upper case attribute names
@@ -1275,7 +1257,6 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(ucNamesChangeResult);
 
     // test lower case everything
@@ -1296,7 +1277,6 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(lcAllChangeResult);
 
     // test lower case specific attributes
@@ -1317,7 +1297,6 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate(filter, filterParameters.split("\\|")),
       returnAttrs.split("\\|"),
       srh);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(lcgivenNameChangeResult);
   }
 
@@ -1489,7 +1468,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
 
     result = search.execute(
@@ -1497,7 +1475,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new FilterTemplate(binaryFilter, new Object[] {LdapUtils.base64Decode(binaryFilterParameters)}))
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
   }
 
@@ -1536,7 +1513,6 @@ public class SearchOperationTest extends AbstractTest
         .dn(dn)
         .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
         .returnAttributes(returnAttrs.split("\\|")).build());
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
   }
 
@@ -1560,7 +1536,6 @@ public class SearchOperationTest extends AbstractTest
     final SearchResponse quotedResult = convertLdifToResult(expected);
 
     final SearchResponse result = search.execute(SearchRequest.objectScopeSearchRequest(dn));
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(quotedResult);
   }
 
@@ -1598,7 +1573,6 @@ public class SearchOperationTest extends AbstractTest
       // ignore this test if not supported by the server
       return;
     }
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
   }
 
@@ -1884,7 +1858,6 @@ public class SearchOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(createConnectionFactory());
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, returnAttrs.split("\\|")));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(convertStringToEntry(dn, results));
   }
 
@@ -1990,7 +1963,6 @@ public class SearchOperationTest extends AbstractTest
       new SearchRequest(
         dn,
         new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
   }
 
@@ -2051,7 +2023,6 @@ public class SearchOperationTest extends AbstractTest
         // ignore this test if not supported by the server
         throw new UnsupportedOperationException("LDAP server does not support CRAM-MD5");
       }
-      // TODO this will need some work
       SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported by the directory
@@ -2097,7 +2068,6 @@ public class SearchOperationTest extends AbstractTest
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      // TODO this will need some work
       SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
@@ -2143,7 +2113,6 @@ public class SearchOperationTest extends AbstractTest
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      // TODO this will need some work
       SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
@@ -2189,7 +2158,6 @@ public class SearchOperationTest extends AbstractTest
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      // TODO this will need some work
       SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
@@ -2235,7 +2203,6 @@ public class SearchOperationTest extends AbstractTest
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      // TODO this will need some work
       SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
@@ -2281,7 +2248,6 @@ public class SearchOperationTest extends AbstractTest
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      // TODO this will need some work
       SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
@@ -2330,7 +2296,6 @@ public class SearchOperationTest extends AbstractTest
         new SearchRequest(
           dn,
           new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
-      // TODO this will need some work
       SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
     } catch (UnsupportedOperationException e) {
       // ignore this test if not supported
@@ -2376,7 +2341,6 @@ public class SearchOperationTest extends AbstractTest
 
     final ConnectionFactory cf = new DefaultConnectionFactory(readConnectionConfig(null));
     SearchResponse result = SearchOperation.execute(cf, request);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     PooledConnectionFactory pcf = new PooledConnectionFactory(readConnectionConfig(null));
@@ -2384,7 +2348,6 @@ public class SearchOperationTest extends AbstractTest
     pcf.initialize();
     result = SearchOperation.execute(pcf, request);
     pcf.close();
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
 
     pcf = new PooledConnectionFactory(readConnectionConfig(null));
@@ -2392,7 +2355,6 @@ public class SearchOperationTest extends AbstractTest
     pcf.initialize();
     result = SearchOperation.execute(pcf, request);
     pcf.close();
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
   }
 
@@ -2432,7 +2394,6 @@ public class SearchOperationTest extends AbstractTest
       new FilterTemplate[]{new FilterTemplate(filter, filterParameters.split("\\|"))},
       returnAttrs.split("\\|"));
     assertThat(results.size()).isEqualTo(1);
-    // TODO this will need some work
     SearchResponseAssert.assertThat(results.iterator().next()).isSame(convertLdifToResult(expected));
   }
 }

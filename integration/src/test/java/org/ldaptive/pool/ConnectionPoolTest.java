@@ -552,8 +552,7 @@ public class ConnectionPoolTest extends AbstractTest
 
     logger.info("CONNECTION POOL:: RESULT: {}", result);
     assertThat(result.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-    // TODO this will need some work
-    assertThat(results).isEqualTo(result.getEntry());
+    LdapEntryAssert.assertThat(result.getEntry()).isSame(results);
     return System.currentTimeMillis() - startTime;
   }
 }

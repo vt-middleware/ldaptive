@@ -371,8 +371,7 @@ public class AuthenticatorLoadTest extends AbstractTest
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
     assertThat(response.isSuccess()).isTrue();
     expected.setDn(response.getLdapEntry().getDn());
-    // TODO this will need some work
-    assertThat(response.getLdapEntry()).isEqualTo(expected);
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(expected);
   }
 
 
@@ -404,8 +403,7 @@ public class AuthenticatorLoadTest extends AbstractTest
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
     assertThat(response.isSuccess()).isTrue();
     expected.setDn(response.getLdapEntry().getDn());
-    // TODO this will need some work
-    assertThat(response.getLdapEntry()).isEqualTo(expected);
+    LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(expected);
   }
 
 

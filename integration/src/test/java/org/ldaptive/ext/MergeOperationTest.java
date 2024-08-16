@@ -130,7 +130,6 @@ public class MergeOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(testLdapEntry.getDn(), testLdapEntry.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(testLdapEntry);
 
     if (TestControl.isActiveDirectory()) {
@@ -145,7 +144,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(2);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
 
     // delete mail attribute
@@ -157,7 +155,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail")).isNull();
 
@@ -169,7 +166,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail")).isNotNull();
 
@@ -182,7 +178,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(5);
 
@@ -194,7 +189,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
 
@@ -208,7 +202,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(1);
 
@@ -220,7 +213,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(5);
 
@@ -232,7 +224,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
 
@@ -249,7 +240,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(4);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(4);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(11);
 
@@ -263,7 +253,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(4);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
 
@@ -277,7 +266,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(1);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(11);
 
@@ -293,7 +281,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(4);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
 
@@ -309,7 +296,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(1);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(8);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(11);
 
@@ -325,7 +311,6 @@ public class MergeOperationTest extends AbstractTest
     assertThat(modifyOperationCount.getAndSet(0)).isEqualTo(2);
     assertThat(modificationsCount.getAndSet(0)).isEqualTo(4);
     result = search.execute(SearchRequest.objectScopeSearchRequest(source.getDn(), source.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(source);
     assertThat(result.getEntry().getAttribute("mail").size()).isEqualTo(3);
   }

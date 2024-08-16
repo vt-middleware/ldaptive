@@ -448,7 +448,6 @@ public class AuthenticatorTest extends AbstractTest
     // test auth with return attributes
     final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential), returnAttrs.split("\\|")));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -488,7 +487,6 @@ public class AuthenticatorTest extends AbstractTest
     // test auth with return attributes
     final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(new AuthenticationRequest(dn, new Credential(credential), returnAttrs.split("\\|")));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -594,7 +592,6 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(response.getAuthenticationResultCode())
       .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -642,7 +639,6 @@ public class AuthenticatorTest extends AbstractTest
     } catch (Exception e) {
       assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -686,7 +682,6 @@ public class AuthenticatorTest extends AbstractTest
     final String expected = readFileIntoString(ldifFile);
     response = pooledTLSAuth.authenticate(
       new AuthenticationRequest(user, new Credential(credential), returnAttrs.split("\\|")));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -747,7 +742,6 @@ public class AuthenticatorTest extends AbstractTest
     final String expected = readFileIntoString(ldifFile);
     response = auth.authenticate(
       new AuthenticationRequest(new User(null, context), new Credential(credential), returnAttrs.split("\\|")));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -837,7 +831,6 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(response.getAuthenticationResultCode())
       .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -929,7 +922,6 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(response.getAuthenticationResultCode())
       .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
 
     // attributes on the authenticator
@@ -938,7 +930,6 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(response.getAuthenticationResultCode())
       .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
     auth.setReturnAttributes((String) null);
 
@@ -948,7 +939,6 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(response.getAuthenticationResultCode())
       .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
     auth.setReturnAttributes((String) null);
 
@@ -1068,7 +1058,6 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(response.getAuthenticationResultCode())
       .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -1118,7 +1107,6 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(response.getAuthenticationResultCode())
       .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.COMPARE_TRUE);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -1159,7 +1147,6 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(response.getAuthenticationResultCode())
       .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-    // TODO this will need some work
     LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
   }
 
@@ -1199,7 +1186,6 @@ public class AuthenticatorTest extends AbstractTest
       assertThat(response.getAuthenticationResultCode())
         .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
       assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-      // TODO this will need some work
       LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
     } catch (IllegalStateException e) {
       throw new UnsupportedOperationException("LDAP server does not support this control");
@@ -1245,7 +1231,6 @@ public class AuthenticatorTest extends AbstractTest
       assertThat(response.getAuthenticationResultCode())
         .isEqualTo(AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS);
       assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-      // TODO this will need some work
       LdapEntryAssert.assertThat(response.getLdapEntry()).isSame(convertLdifToEntry(expected));
     } catch (IllegalStateException e) {
       throw new UnsupportedOperationException("LDAP server does not support this control");

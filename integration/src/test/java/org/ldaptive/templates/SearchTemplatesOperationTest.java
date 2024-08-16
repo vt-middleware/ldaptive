@@ -142,7 +142,6 @@ public class SearchTemplatesOperationTest extends AbstractTest
     sr = SearchResponse.sort(sr);
     assertThat(sr).isNotNull().extracting(SearchResponse::entrySize).isEqualTo(5);
     final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
-    // TODO this will need some work
     LdapEntryAssert.assertThat(l.get(0)).isSame(testLdapEntries[0]);
     LdapEntryAssert.assertThat(l.get(1)).isSame(testLdapEntries[1]);
     LdapEntryAssert.assertThat(l.get(2)).isSame(testLdapEntries[2]);
@@ -162,7 +161,6 @@ public class SearchTemplatesOperationTest extends AbstractTest
     sr = SearchResponse.sort(sr);
     assertThat(sr).isNotNull().extracting(SearchResponse::entrySize).isEqualTo(3);
     final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
-    // TODO this will need some work
     LdapEntryAssert.assertThat(l.get(0)).isSame(testLdapEntries[2]);
     LdapEntryAssert.assertThat(l.get(1)).isSame(testLdapEntries[3]);
     LdapEntryAssert.assertThat(l.get(2)).isSame(testLdapEntries[4]);
@@ -180,7 +178,6 @@ public class SearchTemplatesOperationTest extends AbstractTest
     sr = SearchResponse.sort(sr);
     assertThat(sr).isNotNull().extracting(SearchResponse::entrySize).isEqualTo(3);
     final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
-    // TODO this will need some work
     LdapEntryAssert.assertThat(l.get(0)).isSame(testLdapEntries[0]);
     LdapEntryAssert.assertThat(l.get(1)).isSame(testLdapEntries[1]);
     LdapEntryAssert.assertThat(l.get(2)).isSame(testLdapEntries[2]);
@@ -199,7 +196,6 @@ public class SearchTemplatesOperationTest extends AbstractTest
     sr = SearchResponse.sort(sr);
     assertThat(sr).isNotNull().extracting(SearchResponse::entrySize).isEqualTo(2);
     final List<LdapEntry> l = new ArrayList<>(sr.getEntries());
-    // TODO this will need some work
     LdapEntryAssert.assertThat(l.get(0)).isSame(testLdapEntries[2]);
     LdapEntryAssert.assertThat(l.get(1)).isSame(testLdapEntries[3]);
   }

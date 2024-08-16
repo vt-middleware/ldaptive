@@ -94,7 +94,6 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, expected.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(expected);
   }
 
@@ -119,7 +118,6 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, new String[] {expected.getAttribute().getName()}));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(expected);
   }
 
@@ -149,7 +147,6 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, expected.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(expected);
   }
 
@@ -209,7 +206,6 @@ public class ModifyOperationTest extends AbstractTest
     final SearchOperation search = new SearchOperation(cf);
     final SearchResponse result = search.execute(
       SearchRequest.objectScopeSearchRequest(dn, expected.getAttributeNames()));
-    // TODO this will need some work
     LdapEntryAssert.assertThat(result.getEntry()).isSame(expected);
   }
 }

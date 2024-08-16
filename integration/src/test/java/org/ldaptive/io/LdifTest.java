@@ -82,7 +82,6 @@ public class LdifTest extends AbstractTest
     final StringReader reader = new StringReader(writer.toString());
     final LdifReader ldifReader = new LdifReader(reader);
     final SearchResponse result2 = ldifReader.read();
-    // TODO this will need some work
     SearchResponseAssert.assertThat(result1).isSame(result2);
   }
 

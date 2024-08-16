@@ -152,7 +152,6 @@ public class SyncReplClientTest extends AbstractTest
       assertThat(ssc.getSyncState()).isEqualTo(SyncStateControl.State.ADD);
       assertThat(ssc.getEntryUuid()).isNotNull();
       assertThat(ssc.getCookie()).isNull();
-      // TODO this will need some work
       LdapEntryAssert.assertThat(entry).isSame(convertLdifToEntry(expected));
 
       final Message message = (Message) queue.take();
@@ -189,7 +188,6 @@ public class SyncReplClientTest extends AbstractTest
       assertThat(ssc.getSyncState()).isEqualTo(SyncStateControl.State.MODIFY);
       assertThat(ssc.getEntryUuid()).isNotNull();
       assertThat(ssc.getCookie()).isNotNull();
-      // TODO this will need some work
       LdapEntryAssert.assertThat(entry).isSame(convertLdifToEntry(expected));
 
       client.cancel();
