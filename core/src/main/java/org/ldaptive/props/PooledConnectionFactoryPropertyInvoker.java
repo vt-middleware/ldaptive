@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.props;
 
+import org.ldaptive.pool.ValidationExceptionHandler;
 import org.ldaptive.transport.Transport;
 
 /**
@@ -30,6 +31,8 @@ public class PooledConnectionFactoryPropertyInvoker extends BlockingConnectionPo
     if (type != String.class) {
       if (Transport.class.isAssignableFrom(type)) {
         newValue = createTypeFromPropertyValue(Transport.class, value);
+      } else if (ValidationExceptionHandler.class.isAssignableFrom(type)) {
+        newValue = createTypeFromPropertyValue(ValidationExceptionHandler.class, value);
       } else {
         newValue = super.convertValue(type, value);
       }
