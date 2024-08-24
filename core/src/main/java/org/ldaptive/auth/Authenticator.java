@@ -345,7 +345,7 @@ public final class Authenticator extends AbstractFreezable
           try {
             cf.close();
           } catch (Exception e) {
-            logger.warn("Error closing connection factory {}", cf, e);
+            logger.debug("Error closing connection factory {}", cf, e);
           }
         });
     }

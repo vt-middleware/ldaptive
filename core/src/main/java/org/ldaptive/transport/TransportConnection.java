@@ -113,7 +113,7 @@ public abstract class TransportConnection implements Connection
         openLock.unlock();
       }
     } else {
-      LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
+      LOGGER.debug("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
       throw new LdapException(ResultCode.CONNECT_ERROR, "Open in progress");
     }
   }
@@ -158,7 +158,7 @@ public abstract class TransportConnection implements Connection
         openLock.unlock();
       }
     } else {
-      LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
+      LOGGER.debug("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
       throw new LdapException(ResultCode.CONNECT_ERROR, "Open in progress");
     }
   }

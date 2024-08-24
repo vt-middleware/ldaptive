@@ -389,7 +389,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           connection.operation(new AbandonRequest(messageID));
         } catch (Exception e) {
-          logger.warn("Could not abandon operation for {}", this, e);
+          logger.debug("Could not abandon operation for {}", this, e);
         } finally {
           exception(cause);
         }

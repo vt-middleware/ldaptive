@@ -573,7 +573,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
           "Could not initialize pool size for pool " + name,
           growException != null ? growException.getCause() : null);
       } else {
-        logger.warn("Could not initialize pool size (pool is empty) for {}", this);
+        logger.info("Could not initialize pool size (pool is empty) for {}", this);
       }
     }
     logger.debug("Initialized available queue {} for {}", available, this);
@@ -716,7 +716,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
             removeConns,
             pc -> logger.trace("removed {} from {}", pc, AbstractConnectionPool.this));
           for (ExecutionException e : exceptions) {
-            logger.warn("Error closing connection for {}", this, e.getCause() != null ? e.getCause() : e);
+            logger.debug("Error closing connection for {}", this, e.getCause() != null ? e.getCause() : e);
           }
         } finally {
           callableWorker.shutdown();
@@ -768,7 +768,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
       try {
         c.open();
       } catch (Exception e) {
-        logger.warn("Unable to open connection for {}}", this, e);
+        logger.debug("Unable to open connection for {}}", this, e);
         c.close();
         c = null;
         if (throwOnFailure) {
@@ -830,7 +830,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
             if (pc != null) {
               available.add(pc);
               pc.getPooledConnectionStatistics().addAvailableStat();
-              logger.info("Added available connection {} for {}", pc.getConnection(), this);
+              logger.debug("Added available connection {} for {}", pc.getConnection(), this);
               createdCount.incrementAndGet();
             }
           });
@@ -872,12 +872,12 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
       try {
         available.add(pc);
         pc.getPooledConnectionStatistics().addAvailableStat();
-        logger.info("Added available connection {} for {}", pc.getConnection(), this);
+        logger.debug("Added available connection {} for {}", pc.getConnection(), this);
       } finally {
         poolLock.unlock();
       }
     } else {
-      logger.warn("Unable to create available connection for {}", this);
+      logger.debug("Unable to create available connection for {}", this);
     }
     return pc;
   }
@@ -902,12 +902,12 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
       try {
         active.add(pc);
         pc.getPooledConnectionStatistics().addActiveStat();
-        logger.info("Added active connection {} for {}", pc.getConnection(), this);
+        logger.debug("Added active connection {} for {}", pc.getConnection(), this);
       } finally {
         poolLock.unlock();
       }
     } else {
-      logger.warn("Unable to create active connection for {}", this);
+      logger.debug("Unable to create active connection for {}", this);
     }
     return pc;
   }
@@ -933,7 +933,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     }
     if (destroy) {
       pc.getConnection().close();
-      logger.info("Removed {} from {}", pc.getConnection(), this);
+      logger.debug("Removed {} from {}", pc.getConnection(), this);
     }
   }
 
@@ -958,7 +958,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     }
     if (destroy) {
       pc.getConnection().close();
-      logger.info("Removed {} from {}", pc.getConnection(), this);
+      logger.debug("Removed {} from {}", pc.getConnection(), this);
     }
   }
 
@@ -984,7 +984,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     }
     if (destroy) {
       pc.getConnection().close();
-      logger.info("Removed {} from {}", pc.getConnection(), this);
+      logger.debug("Removed {} from {}", pc.getConnection(), this);
     }
   }
 
@@ -1002,12 +1002,12 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     throws PoolException
   {
     if (!activator.apply(pc.getConnection())) {
-      logger.warn("Failed activation on {} with {} for {}", pc.getConnection(), activator, this);
+      logger.debug("Failed activation on {} with {} for {}", pc.getConnection(), activator, this);
       removeAvailableAndActiveConnection(pc);
       throw new ActivationException("Activation of connection failed for pool " + name);
     }
     if (validateOnCheckOut && !validator.apply(pc.getConnection())) {
-      logger.warn("Failed check out validation on {} with {} for {}", pc.getConnection(), validator, this);
+      logger.debug("Failed check out validation on {} with {} for {}", pc.getConnection(), validator, this);
       removeAvailableAndActiveConnection(pc);
       throw new ValidationException("Validation of connection failed for pool " + name);
     }
@@ -1026,7 +1026,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   protected boolean passivateAndValidateConnection(final PooledConnectionProxy pc)
   {
     if (!pc.getConnection().isOpen()) {
-      logger.warn("Failed validation on {} for {}, not open", pc.getConnection(), this);
+      logger.debug("Failed validation on {} for {}, not open", pc.getConnection(), this);
       return false;
     }
 
@@ -1037,13 +1037,13 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
           logger.trace("connection {} passed initialize validation", pc);
           valid = true;
         } else {
-          logger.warn("Failed check in validation on {} with {} for {}", pc.getConnection(), validator, this);
+          logger.debug("Failed check in validation on {} with {} for {}", pc.getConnection(), validator, this);
         }
       } else {
         valid = true;
       }
     } else {
-      logger.warn("Failed passivation on {} with {} for {}", pc.getConnection(), passivator, this);
+      logger.debug("Failed passivation on {} with {} for {}", pc.getConnection(), passivator, this);
     }
     return valid;
   }
@@ -1099,7 +1099,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
                 }
               });
             for (ExecutionException e : exceptions) {
-              logger.warn("Error pruning connection for {}", this, e.getCause() != null ? e.getCause() : e);
+              logger.debug("Error pruning connection for {}", this, e.getCause() != null ? e.getCause() : e);
             }
           } finally {
             callableWorker.shutdown();
@@ -1146,7 +1146,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
           if (validateResult != null && validateResult) {
             logger.trace("passed validation on {} with {} for {}", entry.getKey(), validator, this);
           } else {
-            logger.warn(
+            logger.debug(
               "Failed validation on {} with {} for {}, {}",
               entry.getKey().getConnection(),
               validator,

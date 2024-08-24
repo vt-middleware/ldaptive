@@ -307,7 +307,7 @@ public final class NettyConnection extends TransportConnection
         openLock.unlock();
       }
     } else {
-      LOGGER.warn("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
+      LOGGER.debug("Open lock {} could not be acquired by {}", openLock, Thread.currentThread());
       throw new ConnectException(ResultCode.CONNECT_ERROR, "Open in progress");
     }
   }
@@ -346,7 +346,7 @@ public final class NettyConnection extends TransportConnection
         }
       }
     } catch (Exception e) {
-      LOGGER.warn("Connection open failed for {}", this, e);
+      LOGGER.debug("Connection open failed for {}", this, e);
       try {
         notifyOperationHandlesOfClose();
         pendingResponses.close();
@@ -630,7 +630,7 @@ public final class NettyConnection extends TransportConnection
     if (reconnectLock.readLock().tryLock()) {
       try {
         if (!isOpen()) {
-          LOGGER.warn("Attempt to unbind ignored, connection {} is not open", this);
+          LOGGER.debug("Attempt to unbind ignored, connection {} is not open", this);
         } else {
           if (bindLock.readLock().tryLock()) {
             try {
@@ -648,7 +648,7 @@ public final class NettyConnection extends TransportConnection
         reconnectLock.readLock().unlock();
       }
     } else {
-      LOGGER.warn("Attempt to unbind ignored, connection {} is reconnecting", this);
+      LOGGER.debug("Attempt to unbind ignored, connection {} is reconnecting", this);
     }
   }
 
@@ -764,7 +764,7 @@ public final class NettyConnection extends TransportConnection
   {
     final DefaultOperationHandle handle = pendingResponses.remove(request.getMessageID());
     if (handle == null && pendingResponses.isOpen()) {
-      LOGGER.warn(
+      LOGGER.debug(
         "Attempt to abandon message {} that no longer exists for {}",
         request.getMessageID(),
         NettyConnection.this);
@@ -1062,7 +1062,7 @@ public final class NettyConnection extends TransportConnection
             if (LOGGER.isTraceEnabled()) {
               LOGGER.trace("abandoning requests {} for {} to close connection", pendingResponses, this);
             } else if (LOGGER.isInfoEnabled()) {
-              LOGGER.info("Abandoning {} requests for {} to close connection", pendingResponses.size(), this);
+              LOGGER.debug("Abandoning {} requests for {} to close connection", pendingResponses.size(), this);
             }
             pendingResponses.abandonRequests();
           }
@@ -1077,7 +1077,7 @@ public final class NettyConnection extends TransportConnection
           LOGGER.trace("connection {} already closed", this);
           notifyOperationHandlesOfClose();
         }
-        LOGGER.info("Closed connection {}", this);
+        LOGGER.debug("Closed connection {}", this);
       } finally {
         pendingResponses.clear();
         connectionExecutor = null;
@@ -1168,7 +1168,7 @@ public final class NettyConnection extends TransportConnection
         try {
           try {
             reopen(new ClosedRetryMetadata(lastSuccessfulOpen, inboundException));
-            LOGGER.info("Auto reconnect finished for connection {}", this);
+            LOGGER.debug("Auto reconnect finished for connection {}", this);
           } catch (Exception e) {
             LOGGER.debug("Auto reconnect failed for connection {}", this, e);
           }
@@ -1192,7 +1192,7 @@ public final class NettyConnection extends TransportConnection
         }
         LOGGER.debug("Reconnect for connection {} finished", this);
       } else {
-        LOGGER.warn("Reconnect failed, could not acquire reconnect lock");
+        LOGGER.debug("Reconnect failed, could not acquire reconnect lock");
       }
     } else {
       throw new IllegalStateException("Reconnect is already in progress");
@@ -1348,7 +1348,7 @@ public final class NettyConnection extends TransportConnection
       if (future.isSuccess()) {
         LOGGER.trace("operation channel success for {}", NettyConnection.this);
       } else {
-        LOGGER.warn("operation channel error for {}", NettyConnection.this, future.cause());
+        LOGGER.debug("operation channel error for {}", NettyConnection.this, future.cause());
       }
     }
   }
@@ -1384,7 +1384,7 @@ public final class NettyConnection extends TransportConnection
                 try {
                   reconnect();
                 } catch (Exception e) {
-                  LOGGER.warn("Reconnect attempt failed for {}", NettyConnection.this, e);
+                  LOGGER.debug("Reconnect attempt failed for {}", NettyConnection.this, e);
                 } finally {
                   reconnecting.set(false);
                 }
@@ -1393,7 +1393,7 @@ public final class NettyConnection extends TransportConnection
               }
             });
         } else {
-          LOGGER.warn(
+          LOGGER.debug(
             "Reconnect could not be scheduled on executor {} for {}",
             connectionExecutor,
             NettyConnection.this);
@@ -1596,7 +1596,7 @@ public final class NettyConnection extends TransportConnection
             ((DefaultSearchOperationHandle) handle).reference((SearchResultReference) msg);
           } else if (msg instanceof Result) {
             if (pendingResponses.remove(msg.getMessageID()) == null) {
-              LOGGER.warn(
+              LOGGER.debug(
                 "Processed message {} that no longer exists for {}",
                 msg.getMessageID(),
                 NettyConnection.this);
@@ -1619,7 +1619,7 @@ public final class NettyConnection extends TransportConnection
             throw new IllegalStateException("Unknown message type: " + msg);
           }
         } else if (msg instanceof UnsolicitedNotification) {
-          LOGGER.info("Received UnsolicitedNotification {} for {}", msg, NettyConnection.this);
+          LOGGER.debug("Received UnsolicitedNotification {} for {}", msg, NettyConnection.this);
           pendingResponses.notifyOperationHandles((UnsolicitedNotification) msg);
         } else {
           LOGGER.warn(
@@ -1754,7 +1754,7 @@ public final class NettyConnection extends TransportConnection
     @Override
     public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause)
     {
-      LOGGER.warn("Inbound handler caught exception for {}", NettyConnection.this, cause);
+      LOGGER.debug("Inbound handler caught exception for {}", NettyConnection.this, cause);
       inboundException = cause;
       if (channel != null && !isClosing()) {
         channel.close().addListener(new LogFutureListener());

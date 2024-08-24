@@ -395,9 +395,9 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
         try {
           return PooledConnectionFactory.super.getConnection();
         } catch (ValidationException ex) {
-          logger.warn("Validation exception handler failed on retry {}", count, ex);
+          logger.debug("Validation exception handler failed on retry {}", count, ex);
         } catch (Exception ex) {
-          logger.warn("Validation exception handler failed", ex);
+          logger.debug("Validation exception handler failed", ex);
           break;
         }
       }

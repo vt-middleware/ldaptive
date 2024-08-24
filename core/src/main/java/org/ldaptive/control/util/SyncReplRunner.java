@@ -101,7 +101,7 @@ public final class SyncReplRunner
           syncReplClient.cancel();
         }
       } catch (Exception e) {
-        LOGGER.warn("Could not cancel sync repl request", e);
+        LOGGER.debug("Could not cancel sync repl request", e);
         return false;
       }
       return true;
@@ -401,7 +401,7 @@ public final class SyncReplRunner
           syncReplClient.cancel();
         }
       } catch (Exception e) {
-        LOGGER.warn("Could not cancel sync repl request", e);
+        LOGGER.debug("Could not cancel sync repl request", e);
       }
       try {
         syncReplClient.send(searchRequest, cookieManager);

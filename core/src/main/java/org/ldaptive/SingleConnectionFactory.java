@@ -309,7 +309,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
     LdapException initializeEx = null;
     try {
       initializeConnectionProxy();
-      logger.info("Factory initialized {}", this);
+      logger.debug("Factory initialized {}", this);
     } catch (LdapException e) {
       initializeEx = e;
       logger.warn("Could not initialize connection factory for {}", SingleConnectionFactory.this, e);
@@ -321,7 +321,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
           try {
             validator.apply(proxy != null ? proxy.getConnection() : null);
           } catch (Exception e) {
-            logger.warn("Validation task failed for {}", SingleConnectionFactory.this, e);
+            logger.debug("Validation task failed for {}", SingleConnectionFactory.this, e);
           }
           logger.debug("End validate task for {}", SingleConnectionFactory.this);
         },

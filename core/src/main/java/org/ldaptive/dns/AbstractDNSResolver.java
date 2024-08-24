@@ -51,7 +51,7 @@ public abstract class AbstractDNSResolver<T> implements DNSResolver<T>
         resolveOne(ctx, name, key, records);
       }
       final Set<T> results = processRecords(records);
-      logger.info("Resolved {} for domain {} using {}", results, name, ctx);
+      logger.debug("Resolved {} for domain {} using {}", results, name, ctx);
       return results;
     } catch (NamingException e) {
       throw new RuntimeException("DNS lookup failed for " + name, e);

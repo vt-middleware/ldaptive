@@ -135,9 +135,9 @@ public final class NettyUtils
         shutdownLatch.countDown();
         if (!f.isSuccess()) {
           if (f.cause() != null) {
-            LOGGER.warn("Could not shutdown worker group {}", workerGroup, f.cause());
+            LOGGER.debug("Could not shutdown worker group {}", workerGroup, f.cause());
           } else {
-            LOGGER.warn("Could not shutdown worker group {}", workerGroup);
+            LOGGER.debug("Could not shutdown worker group {}", workerGroup);
           }
         } else {
           LOGGER.trace("worker group {} gracefully shutdown", workerGroup);
@@ -145,10 +145,10 @@ public final class NettyUtils
       });
     try {
       if (!shutdownLatch.await(DEFAULT_SHUTDOWN_MAX_TIMEOUT * 2, TimeUnit.MILLISECONDS)) {
-        LOGGER.warn("Shutdown max timeout was not honored for worker group {}", workerGroup);
+        LOGGER.debug("Shutdown max timeout was not honored for worker group {}", workerGroup);
       }
     } catch (InterruptedException e) {
-      LOGGER.warn("Interrupted during shutdown for worker group {}", workerGroup);
+      LOGGER.debug("Interrupted during shutdown for worker group {}", workerGroup);
     }
   }
 }

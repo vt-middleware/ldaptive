@@ -276,7 +276,7 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
             }
           }
         } else {
-          logger.info("Search for user={} failed using filter={}", user, filter);
+          logger.debug("Search for user={} failed using filter={}", user, filter);
         }
       } else {
         logger.error("DN filter template not found, no search performed");
