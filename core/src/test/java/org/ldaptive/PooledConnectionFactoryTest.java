@@ -15,6 +15,7 @@ import io.netty.util.concurrent.ThreadPerTaskExecutor;
 import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.pool.BindConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
+import org.ldaptive.transport.netty.ConnectionFactoryTransport;
 import org.ldaptive.transport.netty.NettyConnectionFactoryTransport;
 import org.ldaptive.transport.netty.SimpleNettyServer;
 import org.testng.annotations.Test;
@@ -42,7 +43,8 @@ public class PooledConnectionFactoryTest
       final PooledConnectionFactory factory = new PooledConnectionFactory(
         ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
-          .build());
+          .build(),
+        new ConnectionFactoryTransport());
       factory.setName("pooled-connection-factory-test-open-and-close");
       try {
         factory.initialize();
@@ -136,7 +138,7 @@ public class PooledConnectionFactoryTest
     final SimpleNettyServer server = new SimpleNettyServer();
     try {
       final InetSocketAddress address = server.start();
-      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(new ConnectionFactoryTransport())
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -169,7 +171,7 @@ public class PooledConnectionFactoryTest
     final SimpleNettyServer server = new SimpleNettyServer();
     try {
       final InetSocketAddress address = server.start();
-      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(new ConnectionFactoryTransport())
         .name("pooled-connection-factory-test-validate-periodically-restart")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
@@ -222,7 +224,7 @@ public class PooledConnectionFactoryTest
       null);
     try {
       final InetSocketAddress address = server.start();
-      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(new ConnectionFactoryTransport())
         .name("pooled-connection-factory-test-validate-periodically-with-timeout")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
@@ -274,7 +276,7 @@ public class PooledConnectionFactoryTest
     try {
       final InetSocketAddress address = server.start();
       final AtomicInteger validateCount = new AtomicInteger();
-      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(new ConnectionFactoryTransport())
         .name("pooled-connection-factory-test-validate-one-checkout")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
@@ -352,7 +354,7 @@ public class PooledConnectionFactoryTest
     final SimpleNettyServer server = new SimpleNettyServer();
     try {
       final InetSocketAddress address = server.start();
-      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(new ConnectionFactoryTransport())
         .name("pooled-connection-factory-test-prune-below-min")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
@@ -391,7 +393,7 @@ public class PooledConnectionFactoryTest
     final SimpleNettyServer server = new SimpleNettyServer();
     try {
       final InetSocketAddress address = server.start();
-      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(new ConnectionFactoryTransport())
         .name("pooled-connection-factory-test-prune-above-min")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
@@ -435,7 +437,7 @@ public class PooledConnectionFactoryTest
     final SimpleNettyServer server = new SimpleNettyServer();
     try {
       final InetSocketAddress address = server.start();
-      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(new ConnectionFactoryTransport())
         .name("pooled-connection-factory-test-prune-all-active")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
@@ -483,7 +485,7 @@ public class PooledConnectionFactoryTest
     final SimpleNettyServer server = new SimpleNettyServer();
     try {
       final InetSocketAddress address = server.start();
-      final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(new ConnectionFactoryTransport())
         .name("pooled-connection-factory-test-prune-active-above-min")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
