@@ -617,7 +617,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
       logger.debug("Validate pool task scheduled for {}", this);
     }
 
-    this.freeze();
+    freeze();
     initialized = true;
     logger.info("Pool initialized for {}", this);
   }

@@ -89,7 +89,7 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractMessageF
     assertMutable();
     final String[] binaryAttrs = request.getBinaryAttributes();
     if (binaryAttrs != null) {
-      final boolean isAttrSet = Stream.of(binaryAttrs).anyMatch(a -> attributeName.equalsIgnoreCase(a));
+      final boolean isAttrSet = Stream.of(binaryAttrs).anyMatch(attributeName::equalsIgnoreCase);
       if (!isAttrSet) {
         request.setBinaryAttributes(LdapUtils.concatArrays(binaryAttrs, new String[] {attributeName}));
       }
