@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.transport.netty;
+package org.ldaptive.transport;
 
 import org.ldaptive.LdapUtils;
 import org.ldaptive.Request;
@@ -9,7 +9,7 @@ import org.ldaptive.Request;
  *
  * @author  Middleware Services
  */
-public class EncodedRequest
+public final class EncodedRequest
 {
 
   /** Protocol message ID. */

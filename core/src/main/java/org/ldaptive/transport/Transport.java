@@ -5,7 +5,7 @@ import org.ldaptive.Connection;
 import org.ldaptive.ConnectionConfig;
 
 /**
- * Provides an abstraction layer for different {@link TransportConnection} implementations.
+ * Provides an abstraction layer for different {@link Connection} implementations.
  *
  * @author  Middleware Services
  */

@@ -96,6 +96,8 @@ import org.ldaptive.transport.DefaultExtendedOperationHandle;
 import org.ldaptive.transport.DefaultOperationHandle;
 import org.ldaptive.transport.DefaultSaslClient;
 import org.ldaptive.transport.DefaultSearchOperationHandle;
+import org.ldaptive.transport.EncodedRequest;
+import org.ldaptive.transport.HandleMap;
 import org.ldaptive.transport.ResponseParser;
 import org.ldaptive.transport.TransportConnection;
 import org.slf4j.Logger;

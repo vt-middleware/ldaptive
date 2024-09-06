@@ -941,18 +941,20 @@ public final class LdapUtils
    * Looks for the supplied system property value and loads a class with that name. The default constructor for that
    * class is then returned.
    *
+   * @param  <T>  class type
    * @param  property  whose value is a class
    *
    * @return  class constructor or null if no system property was found
    *
    * @throws  IllegalArgumentException  if an error occurs instantiating the constructor
    */
-  public static Constructor<?> createConstructorFromProperty(final String property)
+  @SuppressWarnings("unchecked")
+  public static <T> Constructor<T> createConstructorFromProperty(final String property)
   {
     final String clazz = System.getProperty(property);
     if (clazz != null) {
       try {
-        return Class.forName(clazz).getDeclaredConstructor();
+        return (Constructor<T>) Class.forName(clazz).getDeclaredConstructor();
       } catch (Exception e) {
         throw new IllegalArgumentException("Error getting declared constructor for " + clazz, e);
       }

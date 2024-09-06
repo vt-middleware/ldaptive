@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.transport.netty;
+package org.ldaptive.transport;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -12,7 +12,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldaptive.LdapException;
 import org.ldaptive.ResultCode;
 import org.ldaptive.extended.UnsolicitedNotification;
-import org.ldaptive.transport.DefaultOperationHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,17 +20,17 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-final class HandleMap
+public final class HandleMap
 {
 
   /** Logger for this class. */
   private static final Logger LOGGER = LoggerFactory.getLogger(HandleMap.class);
 
-  /** Ldap netty transport system property. */
-  private static final String THROTTLE_REQUESTS_PROPERTY = "org.ldaptive.transport.netty.throttleRequests";
+  /** Throttle requests system property. */
+  private static final String THROTTLE_REQUESTS_PROPERTY = "org.ldaptive.transport.throttleRequests";
 
-  /** Ldap netty transport system property. */
-  private static final String THROTTLE_TIMEOUT_PROPERTY = "org.ldaptive.transport.netty.throttleTimeout";
+  /** Throttle timeout system property. */
+  private static final String THROTTLE_TIMEOUT_PROPERTY = "org.ldaptive.transport.throttleTimeout";
 
   /** If property is greater than zero, use the throttle semaphore. */
   private static final int THROTTLE_REQUESTS = Integer.parseInt(System.getProperty(THROTTLE_REQUESTS_PROPERTY, "0"));
@@ -41,7 +40,7 @@ final class HandleMap
     Long.parseLong(System.getProperty(THROTTLE_TIMEOUT_PROPERTY, "60")));
 
   /** Map of message IDs to their operation handle. */
-  private final Map<Integer, DefaultOperationHandle> pending = new ConcurrentHashMap<>();
+  private final Map<Integer, DefaultOperationHandle<?, ?>> pending = new ConcurrentHashMap<>();
 
   /** Only one notification can occur at a time. */
   private final AtomicBoolean notificationLock = new AtomicBoolean();
@@ -56,7 +55,7 @@ final class HandleMap
   /**
    * Creates a new handle map.
    */
-  HandleMap()
+  public HandleMap()
   {
     if (THROTTLE_REQUESTS > 0) {
       throttle = new Semaphore(THROTTLE_REQUESTS);
@@ -102,7 +101,7 @@ final class HandleMap
    *
    * @return  operation handle or null
    */
-  public DefaultOperationHandle get(final int id)
+  public DefaultOperationHandle<?, ?> get(final int id)
   {
     return open ? pending.get(id) : null;
   }
@@ -115,10 +114,10 @@ final class HandleMap
    *
    * @return  operation handle or null
    */
-  public DefaultOperationHandle remove(final int id)
+  public DefaultOperationHandle<?, ?> remove(final int id)
   {
     if (open) {
-      final DefaultOperationHandle handle = pending.remove(id);
+      final DefaultOperationHandle<?, ?> handle = pending.remove(id);
       releaseThrottle(1);
       return handle;
     }
@@ -136,7 +135,7 @@ final class HandleMap
    *
    * @throws  LdapException  if this queue is not open
    */
-  public DefaultOperationHandle put(final int id, final DefaultOperationHandle handle)
+  public DefaultOperationHandle<?, ?> put(final int id, final DefaultOperationHandle<?, ?> handle)
     throws LdapException
   {
     if (!open) {
@@ -152,7 +151,7 @@ final class HandleMap
    *
    * @return  all operation handles
    */
-  public Collection<DefaultOperationHandle> handles()
+  public Collection<DefaultOperationHandle<?, ?>> handles()
   {
     return pending.values();
   }
@@ -220,9 +219,9 @@ final class HandleMap
   {
     if (notificationLock.compareAndSet(false, true)) {
       try {
-        final Iterator<DefaultOperationHandle> i = pending.values().iterator();
+        final Iterator<DefaultOperationHandle<?, ?>> i = pending.values().iterator();
         while (i.hasNext()) {
-          final DefaultOperationHandle h = i.next();
+          final DefaultOperationHandle<?, ?> h = i.next();
           if (h.getSentTime() != null && h.getReceivedTime() == null) {
             i.remove();
             releaseThrottle(1);
@@ -248,9 +247,9 @@ final class HandleMap
   {
     if (notificationLock.compareAndSet(false, true)) {
       try {
-        final Iterator<DefaultOperationHandle> i = pending.values().iterator();
+        final Iterator<DefaultOperationHandle<?, ?>> i = pending.values().iterator();
         while (i.hasNext()) {
-          final DefaultOperationHandle h = i.next();
+          final DefaultOperationHandle<?, ?> h = i.next();
           i.remove();
           releaseThrottle(1);
           h.exception(e);

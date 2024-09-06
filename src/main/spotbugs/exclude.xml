@@ -57,7 +57,7 @@
 
   <!-- Duplicate code is more readable here -->
   <Match>
-    <Class name="org.ldaptive.transport.TransportFactory" />
+    <Class name="org.ldaptive.transport.netty.NettyTransportFactory" />
     <Bug pattern="DB_DUPLICATE_BRANCHES" />
   </Match>
 

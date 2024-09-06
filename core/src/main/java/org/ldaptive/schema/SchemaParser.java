@@ -25,7 +25,7 @@ public final class SchemaParser
   private static final SchemaFunction SCHEMA_FUNCTION = getSchemaFunction();
 
   /** Custom schema parser constructor. */
-  private static final Constructor<?> SCHEMA_FUNCTION_CONSTRUCTOR;
+  private static final Constructor<SchemaFunction> SCHEMA_FUNCTION_CONSTRUCTOR;
 
   static {
     // Initialize a custom attribute type function if a system property is found
@@ -50,7 +50,7 @@ public final class SchemaParser
   {
     if (SCHEMA_FUNCTION_CONSTRUCTOR != null) {
       try {
-        return (SchemaFunction) SCHEMA_FUNCTION_CONSTRUCTOR.newInstance();
+        return SCHEMA_FUNCTION_CONSTRUCTOR.newInstance();
       } catch (Exception e) {
         LOGGER.error("Error creating new schema function instance with {}", SCHEMA_FUNCTION_CONSTRUCTOR, e);
         throw new IllegalStateException(e);
