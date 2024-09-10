@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.beans.persistence;
 
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.AddOperation;
 import org.ldaptive.AddRequest;
 import org.ldaptive.AddResponse;
@@ -33,7 +34,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
+public class DefaultLdapEntryManager<T> extends AbstractFreezable implements LdapEntryManager<T>
 {
 
   /** Logger for this class. */
@@ -47,6 +48,18 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
 
   /** Additional attributes to include in searches. */
   private final String[] returnAttributes;
+
+  /** Search operation used to find an entry. */
+  private SearchOperation searchOperation;
+
+  /** Add operation used to add a new entry. */
+  private AddOperation addOperation;
+
+  /** Merge operation used to merge an entry. */
+  private MergeOperation mergeOperation;
+
+  /** Delete operation used to remove an entry. */
+  private DeleteOperation deleteOperation;
 
 
   /**
@@ -106,7 +119,59 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
    */
   public String[] getReturnAttributes()
   {
-    return returnAttributes;
+    return LdapUtils.copyArray(returnAttributes);
+  }
+
+
+  public SearchOperation getSearchOperation()
+  {
+    return SearchOperation.copy(searchOperation);
+  }
+
+
+  public void setSearchOperation(final SearchOperation operation)
+  {
+    assertMutable();
+    searchOperation = operation;
+  }
+
+
+  public AddOperation getAddOperation()
+  {
+    return AddOperation.copy(addOperation);
+  }
+
+
+  public void setAddOperation(final AddOperation operation)
+  {
+    assertMutable();
+    addOperation = operation;
+  }
+
+
+  public MergeOperation getMergeOperation()
+  {
+    return MergeOperation.copy(mergeOperation);
+  }
+
+
+  public void setMergeOperation(final MergeOperation operation)
+  {
+    assertMutable();
+    mergeOperation = operation;
+  }
+
+
+  public DeleteOperation getDeleteOperation()
+  {
+    return DeleteOperation.copy(deleteOperation);
+  }
+
+
+  public void setDeleteOperation(final DeleteOperation operation)
+  {
+    assertMutable();
+    deleteOperation = operation;
   }
 
 
@@ -120,7 +185,9 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
       attrs = LdapUtils.concatArrays(attrs, returnAttributes);
     }
     final SearchRequest request = SearchRequest.objectScopeSearchRequest(dn, attrs);
-    final SearchOperation search = new SearchOperation(connectionFactory);
+    final SearchOperation search = searchOperation != null ?
+      SearchOperation.copy(searchOperation) : new SearchOperation();
+    search.setConnectionFactory(connectionFactory);
     final SearchResponse response = search.execute(request);
     if (!response.isSuccess() || response.entrySize() == 0) {
       throw new IllegalArgumentException(
@@ -158,7 +225,8 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   {
     final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
-    final AddOperation add = new AddOperation(connectionFactory);
+    final AddOperation add = addOperation != null ? AddOperation.copy(addOperation) : new AddOperation();
+    add.setConnectionFactory(connectionFactory);
     if (predicate != null) {
       add.setThrowCondition(predicate);
     }
@@ -189,7 +257,8 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
   {
     final LdapEntry entry = new LdapEntry();
     getLdapEntryMapper().map(object, entry);
-    final MergeOperation merge = new MergeOperation(connectionFactory);
+    final MergeOperation merge = mergeOperation != null ? MergeOperation.copy(mergeOperation) : new MergeOperation();
+    merge.setConnectionFactory(connectionFactory);
     if (predicate != null) {
       merge.setThrowCondition(predicate);
     }
@@ -219,7 +288,9 @@ public class DefaultLdapEntryManager<T> implements LdapEntryManager<T>
     throws LdapException
   {
     final String dn = getLdapEntryMapper().mapDn(object);
-    final DeleteOperation delete = new DeleteOperation(connectionFactory);
+    final DeleteOperation delete = deleteOperation != null ?
+      DeleteOperation.copy(deleteOperation) : new DeleteOperation();
+    delete.setConnectionFactory(connectionFactory);
     if (predicate != null) {
       delete.setThrowCondition(predicate);
     }

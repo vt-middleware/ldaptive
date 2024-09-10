@@ -344,4 +344,38 @@ public class MergeOperation
     logger.info("Delete entry {} for request {}", entry, request);
     return result;
   }
+
+
+  /**
+   * Returns a new merge operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   *
+   * @return  copy of the supplied merge operation
+   */
+  public static MergeOperation copy(final MergeOperation operation)
+  {
+    return copy(operation, false);
+  }
+
+
+  /**
+   * Returns a new merge operation with the same properties as the supplied operation.
+   *
+   * @param  operation  to copy
+   * @param  deep  whether to make a deep copy
+   *
+   * @return  copy of the supplied merge operation
+   */
+  public static MergeOperation copy(final MergeOperation operation, final boolean deep)
+  {
+    final MergeOperation copy = new MergeOperation();
+    copy.connectionFactory = operation.connectionFactory;
+    copy.searchOperation = SearchOperation.copy(operation.searchOperation, deep);
+    copy.addOperation = AddOperation.copy(operation.addOperation, deep);
+    copy.modifyOperation = ModifyOperation.copy(operation.modifyOperation, deep);
+    copy.deleteOperation = DeleteOperation.copy(operation.deleteOperation, deep);
+    copy.throwCondition = operation.throwCondition;
+    return copy;
+  }
 }
