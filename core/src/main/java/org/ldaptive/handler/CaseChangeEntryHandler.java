@@ -5,6 +5,8 @@ import java.util.Arrays;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.dn.DefaultRDnNormalizer;
+import org.ldaptive.dn.Dn;
 
 /**
  * Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.
@@ -42,9 +44,9 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
     {
       String s = null;
       if (LOWER == cc) {
-        s = string.toLowerCase();
+        s = LdapUtils.toLowerCase(string);
       } else if (UPPER == cc) {
-        s = string.toUpperCase();
+        s = LdapUtils.toUpperCase(string);
       } else if (NONE == cc) {
         s = string;
       }
@@ -193,7 +195,26 @@ public class CaseChangeEntryHandler extends AbstractEntryHandler implements Ldap
   @Override
   protected String handleDn(final LdapEntry entry)
   {
-    return CaseChange.perform(dnCaseChange, entry.getDn());
+    final String dn;
+    if (dnCaseChange == CaseChange.NONE) {
+      dn = entry.getDn();
+    } else {
+      final Dn parsedDn = entry.getParsedDn();
+      if (parsedDn == null) {
+        dn = CaseChange.perform(dnCaseChange, entry.getDn());
+      } else {
+        if (dnCaseChange == CaseChange.LOWER) {
+          dn = parsedDn.format(
+            new DefaultRDnNormalizer(
+              s -> s, LdapUtils::toLowerCase, LdapUtils::toLowerCase, (nv1, nv2) -> 0));
+        } else {
+          dn = parsedDn.format(
+            new DefaultRDnNormalizer(
+              s -> s, LdapUtils::toUpperCase, LdapUtils::toUpperCase, (nv1, nv2) -> 0));
+        }
+      }
+    }
+    return dn;
   }
 
 

@@ -68,6 +68,7 @@ public abstract class AbstractEntryHandler extends AbstractFreezable
   {
     if (attr != null) {
       attr.setName(handleAttributeName(attr.getName()));
+      // use set semantics to remove potential duplicates introduced by the handler
       if (attr.isBinary()) {
         final Set<byte[]> newValues = attr.getBinaryValues().stream().map(
           this::handleAttributeValue).collect(Collectors.toSet());

@@ -88,6 +88,28 @@ public class CaseChangeEntryHandlerTest
         },
         new Object[] {
           CaseChangeEntryHandler.builder()
+            .attributeNameCaseChange(CaseChangeEntryHandler.CaseChange.LOWER)
+            .attributeNames("cn", "mail")
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("CN").values("Homer").build(),
+              LdapAttribute.builder().name("SN").values("Simpson").build(),
+              LdapAttribute.builder().name("UID").values("101").build(),
+              LdapAttribute.builder().name("MAIL").values("hsimpson@tv.com", "pieman@tv.com").build())
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("Homer").build(),
+              LdapAttribute.builder().name("SN").values("Simpson").build(),
+              LdapAttribute.builder().name("UID").values("101").build(),
+              LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
+            .build(),
+        },
+        new Object[] {
+          CaseChangeEntryHandler.builder()
             .attributeValueCaseChange(CaseChangeEntryHandler.CaseChange.LOWER)
             .attributeNames("cn", "sn")
             .build(),
@@ -108,6 +130,70 @@ public class CaseChangeEntryHandlerTest
               LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
             .build(),
         },
+        new Object[] {
+          CaseChangeEntryHandler.builder()
+            .attributeValueCaseChange(CaseChangeEntryHandler.CaseChange.LOWER)
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("Homer", "homer").build())
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("homer").build())
+            .build(),
+        },
+        new Object[] {
+          CaseChangeEntryHandler.builder()
+            .attributeValueCaseChange(CaseChangeEntryHandler.CaseChange.UPPER)
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("Homer", "homer").build())
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("HOMER").build())
+            .build(),
+        },
+        new Object[] {
+          CaseChangeEntryHandler.builder()
+            .dnCaseChange(CaseChangeEntryHandler.CaseChange.LOWER)
+            .attributeNameCaseChange(CaseChangeEntryHandler.CaseChange.LOWER)
+            .attributeValueCaseChange(CaseChangeEntryHandler.CaseChange.LOWER)
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,OU=People+C=US,DC=LDAPTIVE,DC=ORG")
+            .attributes(
+              LdapAttribute.builder().name("TITLE").values("Nuclear Safety Inspector").build())
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=homer simpson,ou=people+c=us,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("title").values("nuclear safety inspector").build())
+            .build(),
+        },
+        new Object[] {
+          CaseChangeEntryHandler.builder()
+            .dnCaseChange(CaseChangeEntryHandler.CaseChange.UPPER)
+            .attributeNameCaseChange(CaseChangeEntryHandler.CaseChange.UPPER)
+            .attributeValueCaseChange(CaseChangeEntryHandler.CaseChange.UPPER)
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,c=US+ou=People,dc=LDAPTIVE,DC=ORG")
+            .attributes(
+              LdapAttribute.builder().name("TITLE").values("Nuclear Safety Inspector").build())
+            .build(),
+          LdapEntry.builder()
+            .dn("CN=HOMER SIMPSON,C=US+OU=PEOPLE,DC=LDAPTIVE,DC=ORG")
+            .attributes(
+              LdapAttribute.builder().name("TITLE").values("NUCLEAR SAFETY INSPECTOR").build())
+            .build(),
+        },
       };
   }
 
@@ -120,6 +206,8 @@ public class CaseChangeEntryHandlerTest
   @Test(groups = "handler", dataProvider = "entries")
   public void apply(final CaseChangeEntryHandler handler, final LdapEntry actual, final LdapEntry expected)
   {
-    assertThat(handler.apply(actual)).isEqualTo(expected);
+    final LdapEntry changed = handler.apply(actual);
+    assertThat(changed.getDn()).isEqualTo(expected.getDn());
+    assertThat(changed.getAttributes()).hasSameElementsAs(expected.getAttributes());
   }
 }

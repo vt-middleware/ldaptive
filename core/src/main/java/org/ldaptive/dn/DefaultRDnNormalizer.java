@@ -71,6 +71,21 @@ public class DefaultRDnNormalizer implements RDnNormalizer
     }
   };
 
+  /** Comparator that compares name values by name. */
+  public static final Comparator<NameValue> COMPARE_BY_NAME = new Comparator<>() {
+    @Override
+    public int compare(final NameValue nv1, final NameValue nv2)
+    {
+      return nv1.getName().compareTo(nv2.getName());
+    }
+
+    @Override
+    public String toString()
+    {
+      return "COMPARE_BY_NAME";
+    }
+  };
+
   /** Attribute name function. */
   private final Function<String, String> attributeNameFunction;
 
@@ -79,6 +94,9 @@ public class DefaultRDnNormalizer implements RDnNormalizer
 
   /** Attribute value escaper. */
   private final AttributeValueEscaper attributeValueEscaper;
+
+  /** Name value comparator for sorting. */
+  private final Comparator<NameValue> nameValueComparator;
 
 
   /**
@@ -113,9 +131,28 @@ public class DefaultRDnNormalizer implements RDnNormalizer
     final Function<String, String> nameNormalizer,
     final Function<String, String> valueNormalizer)
   {
+    this(escaper, nameNormalizer, valueNormalizer, COMPARE_BY_NAME);
+  }
+
+
+  /**
+   * Creates a new default RDN normalizer.
+   *
+   * @param  escaper  to escape attribute values
+   * @param  nameNormalizer  to normalize attribute names
+   * @param  valueNormalizer  to normalize attribute values
+   * @param  comparator  for sorting RDN name values
+   */
+  public DefaultRDnNormalizer(
+    final AttributeValueEscaper escaper,
+    final Function<String, String> nameNormalizer,
+    final Function<String, String> valueNormalizer,
+    final Comparator<NameValue> comparator)
+  {
     attributeValueEscaper = escaper;
     attributeNameFunction = nameNormalizer;
     attributeValueFunction = valueNormalizer;
+    nameValueComparator = comparator;
   }
 
 
@@ -160,7 +197,7 @@ public class DefaultRDnNormalizer implements RDnNormalizer
         nv -> new NameValue(
           attributeNameFunction.apply(nv.getName()),
           attributeValueEscaper.escape(attributeValueFunction.apply(nv.getStringValue()))))
-      .sorted(Comparator.comparing(NameValue::getName))
+      .sorted(nameValueComparator)
       .collect(Collectors.toCollection(LinkedHashSet::new));
     return new RDn(nameValues);
   }
@@ -172,6 +209,7 @@ public class DefaultRDnNormalizer implements RDnNormalizer
     return getClass().getName() + "@" + hashCode() + "::" +
       "attributeNameFunction=" + attributeNameFunction + ", " +
       "attributeValueFunction=" + attributeValueFunction + ", " +
-      "attributeValueEscaper=" + attributeValueEscaper;
+      "attributeValueEscaper=" + attributeValueEscaper + ", " +
+      "nameValueComparator=" + nameValueComparator;
   }
 }
