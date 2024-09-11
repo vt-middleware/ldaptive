@@ -238,7 +238,7 @@ public abstract class TransportConnection implements Connection
    *
    * @param  handle  for the operation write
    */
-  protected abstract void write(DefaultOperationHandle handle);
+  protected abstract void write(DefaultOperationHandle<?, ?> handle);
 
 
   /**
@@ -247,5 +247,5 @@ public abstract class TransportConnection implements Connection
    *
    * @param  handle  that has completed
    */
-  protected abstract void complete(DefaultOperationHandle handle);
+  protected abstract void complete(DefaultOperationHandle<?, ?> handle);
 }

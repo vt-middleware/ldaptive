@@ -905,7 +905,7 @@ public final class NettyConnection extends TransportConnection
 
   @Override
   @SuppressWarnings("unchecked")
-  protected void write(final DefaultOperationHandle handle)
+  protected void write(final DefaultOperationHandle<?, ?> handle)
   {
     if (LOGGER.isTraceEnabled()) {
       LOGGER.trace("write handle {} with pending responses {}", handle, pendingResponses);
@@ -985,7 +985,7 @@ public final class NettyConnection extends TransportConnection
 
 
   @Override
-  protected void complete(final DefaultOperationHandle handle)
+  protected void complete(final DefaultOperationHandle<?, ?> handle)
   {
     if (handle != null && handle.getMessageID() != null) {
       pendingResponses.remove(handle.getMessageID());
