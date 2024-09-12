@@ -178,7 +178,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
    */
   public Collection<LdapAttribute> getAttributes()
   {
-    return Collections.unmodifiableCollection(attributes.values());
+    return immutable ? Collections.unmodifiableCollection(attributes.values()) : attributes.values();
   }
 
 

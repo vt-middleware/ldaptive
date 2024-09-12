@@ -111,7 +111,7 @@ public final class SearchResponse extends AbstractResult implements Freezable
    */
   public Collection<LdapEntry> getEntries()
   {
-    return Collections.unmodifiableCollection(resultEntries);
+    return immutable ? Collections.unmodifiableCollection(resultEntries) : resultEntries;
   }
 
 
@@ -226,7 +226,7 @@ public final class SearchResponse extends AbstractResult implements Freezable
    */
   public Collection<SearchResultReference> getReferences()
   {
-    return Collections.unmodifiableCollection(resultReferences);
+    return immutable ? Collections.unmodifiableCollection(resultReferences) : resultReferences;
   }
 
 
