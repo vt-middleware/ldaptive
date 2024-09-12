@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import org.ldaptive.ad.control.ForceUpdateControl;
 import org.ldaptive.ad.control.GetStatsControl;
@@ -42,6 +45,7 @@ import org.ldaptive.handler.MergeResultHandler;
 import org.ldaptive.handler.NoOpEntryHandler;
 import org.ldaptive.handler.RecursiveResultHandler;
 import org.ldaptive.handler.ResultPredicate;
+import org.ldaptive.handler.SearchResultHandler;
 import org.ldaptive.referral.DefaultReferralConnectionFactory;
 import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
@@ -1091,6 +1095,33 @@ public class SearchOperationTest extends AbstractTest
     final SearchResponse result = search.execute(sr);
     // ignore the case of member and contactPerson; some directories return those in mixed case
     LdapEntryAssert.assertThat(result.getEntry()).isSame(convertLdifToEntry(expected), "member", "contactPerson");
+
+    // perform search again using send operation
+    final CountDownLatch latch = new CountDownLatch(1);
+    final AtomicReference<SearchResponse> ref = new AtomicReference<>();
+    search.setSearchResultHandlers(
+      new MergeResultHandler(SearchResultHandler.Usage.ASYNC),
+      new SearchResultHandler() {
+        @Override
+        public SearchResponse apply(final SearchResponse sr)
+        {
+          ref.set(sr);
+          latch.countDown();
+          return sr;
+        }
+        @Override
+        public Usage getUsage()
+        {
+          return Usage.ASYNC;
+        }
+      });
+
+    search.send(sr);
+    if (!latch.await(Duration.ofSeconds(5).toMillis(), TimeUnit.MILLISECONDS)) {
+      fail("No results received");
+    }
+    // ignore the case of member and contactPerson; some directories return those in mixed case
+    LdapEntryAssert.assertThat(ref.get().getEntry()).isSame(convertLdifToEntry(expected), "member", "contactPerson");
   }
 
 

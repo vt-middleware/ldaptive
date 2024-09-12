@@ -9,4 +9,27 @@ import org.ldaptive.SearchResponse;
  *
  * @author  Middleware Services
  */
-public interface SearchResultHandler extends Function<SearchResponse, SearchResponse> {}
+public interface SearchResultHandler extends Function<SearchResponse, SearchResponse>
+{
+
+
+  /** Intended usage of the handler. */
+  enum Usage {
+    /** Use this handler with {@link org.ldaptive.SearchOperation#send()}*/
+    ASYNC,
+
+    /** Use this handler with {@link org.ldaptive.SearchOperation#execute()}*/
+    SYNC
+  }
+
+
+  /**
+   * Returns the usage for this handler.
+   *
+   * @return  handler usage
+   */
+  default Usage getUsage()
+  {
+    return Usage.SYNC;
+  }
+}

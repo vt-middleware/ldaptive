@@ -9,11 +9,29 @@ import org.ldaptive.SearchResponse;
  *
  * @author  Middleware Services
  */
-public class FreezeResultHandler implements SearchResultHandler
+public class FreezeResultHandler extends AbstractSearchResultHandler
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 859;
+
+
+  /** Default constructor. */
+  public FreezeResultHandler()
+  {
+    this(Usage.SYNC);
+  }
+
+
+  /**
+   * Creates a new freeze result handler.
+   *
+   * @param  u  handler usage
+   */
+  public FreezeResultHandler(final Usage u)
+  {
+    super(u);
+  }
 
 
   @Override
@@ -30,20 +48,24 @@ public class FreezeResultHandler implements SearchResultHandler
     if (o == this) {
       return true;
     }
-    return o instanceof FreezeResultHandler;
+    if (o instanceof FreezeResultHandler) {
+      final FreezeResultHandler v = (FreezeResultHandler) o;
+      return LdapUtils.areEqual(getUsage(), v.getUsage());
+    }
+    return false;
   }
 
 
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getUsage());
   }
 
 
   @Override
   public String toString()
   {
-    return "[" + getClass().getName() + "@" + hashCode() + "]";
+    return "[" + super.toString() + "]";
   }
 }

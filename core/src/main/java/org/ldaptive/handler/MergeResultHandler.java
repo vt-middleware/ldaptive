@@ -12,11 +12,29 @@ import org.ldaptive.SearchResultReference;
  *
  * @author  Miguel Martinez de Espronceda
  */
-public class MergeResultHandler implements SearchResultHandler
+public class MergeResultHandler extends AbstractSearchResultHandler
 {
 
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 857;
+
+
+  /** Default constructor. */
+  public MergeResultHandler()
+  {
+    this(Usage.SYNC);
+  }
+
+
+  /**
+   * Creates a new merge result handler.
+   *
+   * @param  u  handler usage
+   */
+  public MergeResultHandler(final Usage u)
+  {
+    super(u);
+  }
 
 
   @Override
@@ -82,20 +100,24 @@ public class MergeResultHandler implements SearchResultHandler
     if (o == this) {
       return true;
     }
-    return o instanceof MergeResultHandler;
+    if (o instanceof MergeResultHandler) {
+      final MergeResultHandler v = (MergeResultHandler) o;
+      return LdapUtils.areEqual(getUsage(), v.getUsage());
+    }
+    return false;
   }
 
 
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED);
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getUsage());
   }
 
 
   @Override
   public String toString()
   {
-    return "[" + getClass().getName() + "@" + hashCode() + "]";
+    return "[" + super.toString() + "]";
   }
 }
