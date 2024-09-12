@@ -106,11 +106,6 @@ public final class DefaultSearchOperationHandle
     throws LdapException
   {
     SearchResponse done = super.await();
-    done.addEntries(result.getEntries());
-    done.addReferences(result.getReferences());
-    if (SORT_RESULTS) {
-      done = SearchResponse.sort(done);
-    }
     if (onSearchResult != null) {
       for (SearchResultHandler func : onSearchResult) {
         final SearchResponse handlerResponse;
@@ -320,6 +315,20 @@ public final class DefaultSearchOperationHandle
     }
     result.addReferences(r);
     consumedMessage(r);
+  }
+
+
+  @Override
+  public void result(final SearchResponse r)
+  {
+    processResult(r);
+    r.addEntries(result.getEntries());
+    r.addReferences(result.getReferences());
+    if (SORT_RESULTS) {
+      finalizeResult(SearchResponse.sort(r));
+    } else {
+      finalizeResult(r);
+    }
   }
 
 

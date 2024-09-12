@@ -604,6 +604,18 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   public void result(final S r)
   {
+    processResult(r);
+    finalizeResult(r);
+  }
+
+
+  /**
+   * Perform checks on the supplied result and invoke any configured {@link #onResult} handlers.
+   *
+   * @param  r  to process
+   */
+  protected void processResult(final S r)
+  {
     if (result != null) {
       throw new IllegalStateException("Result already received.");
     }
@@ -626,6 +638,16 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         }
       }
     }
+  }
+
+
+  /**
+   * Sets {@link #result}, notifies that message has been consumed and invokes {@link #complete()}.
+   *
+   * @param  r  to finalize
+   */
+  protected void finalizeResult(final S r)
+  {
     result = r;
     consumedMessage(r);
     complete();
