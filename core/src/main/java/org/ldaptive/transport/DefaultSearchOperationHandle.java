@@ -108,25 +108,27 @@ public final class DefaultSearchOperationHandle
     SearchResponse done = super.await();
     if (onSearchResult != null) {
       for (SearchResultHandler func : onSearchResult) {
-        final SearchResponse handlerResponse;
-        try {
-          handlerResponse = func.apply(done);
-        } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            throw (LdapException) ex.getCause();
+        if (func.getUsage() == SearchResultHandler.Usage.SYNC) {
+          final SearchResponse handlerResponse;
+          try {
+            handlerResponse = func.apply(done);
+          } catch (Exception ex) {
+            if (ex.getCause() instanceof LdapException) {
+              throw (LdapException) ex.getCause();
+            }
+            throw new IllegalStateException("Search result handler " + func + " threw exception", ex);
           }
-          throw new IllegalStateException("Search result handler " + func + " threw exception", ex);
+          if (handlerResponse == null) {
+            throw new IllegalStateException("Search result handler " + func + " returned null result");
+          } else if (!handlerResponse.equalsResult(done) &&
+            // FollowSearchReferralHandler can be used as a referral handler and a search result handler for convenience
+            // allow it to modify the search response
+            !(ResultCode.REFERRAL == done.getResultCode() && FollowSearchReferralHandler.class.equals(func.getClass())))
+          {
+            throw new IllegalStateException("Cannot modify search result instance with handler " + func);
+          }
+          done = handlerResponse;
         }
-        if (handlerResponse == null) {
-          throw new IllegalStateException("Search result handler " + func + " returned null result");
-        } else if (!handlerResponse.equalsResult(done) &&
-          // FollowSearchReferralHandler can be used as a referral handler and a search result handler for convenience
-          // allow it to modify the search response
-          !(ResultCode.REFERRAL == done.getResultCode() && FollowSearchReferralHandler.class.equals(func.getClass())))
-        {
-          throw new IllegalStateException("Cannot modify search result instance with handler " + func);
-        }
-        done = handlerResponse;
       }
     }
     super.evaluateThrowCondition(done);
@@ -324,11 +326,33 @@ public final class DefaultSearchOperationHandle
     processResult(r);
     r.addEntries(result.getEntries());
     r.addReferences(result.getReferences());
+    SearchResponse done = r;
     if (SORT_RESULTS) {
-      finalizeResult(SearchResponse.sort(r));
-    } else {
-      finalizeResult(r);
+      done = SearchResponse.sort(r);
     }
+    if (onSearchResult != null) {
+      for (SearchResultHandler func : onSearchResult) {
+        if (func.getUsage() == SearchResultHandler.Usage.ASYNC) {
+          final SearchResponse handlerResponse;
+          try {
+            handlerResponse = func.apply(done);
+            if (handlerResponse == null) {
+              throw new IllegalStateException("Search result handler " + func + " returned null result");
+            } else if (!handlerResponse.equalsResult(done)) {
+              throw new IllegalStateException("Cannot modify search result instance with handler " + func);
+            }
+            done = handlerResponse;
+          } catch (Exception ex) {
+            if (ex.getCause() instanceof LdapException) {
+              exception((LdapException) ex.getCause());
+            } else {
+              logger.warn("Search result function {} in handle {} threw an exception", func, this, ex);
+            }
+          }
+        }
+      }
+    }
+    finalizeResult(done);
   }
 
 
