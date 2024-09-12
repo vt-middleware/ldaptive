@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.Message;
+import org.ldaptive.Result;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
@@ -133,8 +134,13 @@ public final class DefaultSearchOperationHandle
         done = handlerResponse;
       }
     }
+    super.evaluateThrowCondition(done);
     return done;
   }
+
+
+  @Override
+  protected void evaluateThrowCondition(final Result r) {}
 
 
   @Override

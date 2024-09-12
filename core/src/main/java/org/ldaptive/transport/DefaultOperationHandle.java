@@ -220,14 +220,10 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       logger.trace("await received result {} for handle {}", result, this);
       if (ResultCode.REFERRAL == result.getResultCode() && onReferralResult != null) {
         final S referralResult = processReferralResult(result, onReferralResult);
-        if (throwCondition != null) {
-          throwCondition.testAndThrow(referralResult);
-        }
+        evaluateThrowCondition(referralResult);
         return referralResult;
       }
-      if (throwCondition != null) {
-        throwCondition.testAndThrow(result);
-      }
+      evaluateThrowCondition(result);
       return result;
     }
     if (exception == null) {
@@ -236,6 +232,22 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         "Response completed for handle " + this + " without a result or exception");
     }
     throw exception;
+  }
+
+
+  /**
+   * Invokes {@link #throwCondition}, if it exists, for the supplied result.
+   *
+   * @param  r  to evaluate
+   *
+   * @throws  LdapException  if the condition fails
+   */
+  protected void evaluateThrowCondition(final Result r)
+    throws LdapException
+  {
+    if (throwCondition != null) {
+      throwCondition.testAndThrow(r);
+    }
   }
 
 

@@ -41,6 +41,7 @@ import org.ldaptive.handler.MergeAttributeEntryHandler;
 import org.ldaptive.handler.MergeResultHandler;
 import org.ldaptive.handler.NoOpEntryHandler;
 import org.ldaptive.handler.RecursiveResultHandler;
+import org.ldaptive.handler.ResultPredicate;
 import org.ldaptive.referral.DefaultReferralConnectionFactory;
 import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
@@ -1656,6 +1657,7 @@ public class SearchOperationTest extends AbstractTest
       refConfig.setLdapUrl(url.replace("localhost", new LdapURL(cc.getLdapUrl()).getHostname()));
       return new DefaultConnectionFactory(refConfig);
     }));
+    search.setThrowCondition(ResultPredicate.NOT_SUCCESS);
     response = search.execute(request);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     assertThat(response.getEntries().isEmpty()).isFalse();
