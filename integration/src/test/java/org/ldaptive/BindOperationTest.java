@@ -6,6 +6,7 @@ import org.ldaptive.control.AuthorizationIdentityRequestControl;
 import org.ldaptive.control.AuthorizationIdentityResponseControl;
 import org.ldaptive.control.SessionTrackingControl;
 import org.ldaptive.dn.Dn;
+import org.ldaptive.handler.ResultPredicate;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -62,6 +63,13 @@ public class BindOperationTest extends AbstractTest
     final BindOperation bind = new BindOperation(TestUtils.createConnectionFactory());
     final BindResponse response = bind.execute(new SimpleBindRequest(dn, "INVALID-PASSWD"));
     assertThat(response.getResultCode()).isEqualTo(ResultCode.INVALID_CREDENTIALS);
+
+    try {
+      bind.setThrowCondition(ResultPredicate.NOT_SUCCESS);
+      bind.execute(new SimpleBindRequest(dn, "INVALID-PASSWD"));
+    } catch (LdapException e) {
+      assertThat(e.getResultCode()).isEqualTo(ResultCode.INVALID_CREDENTIALS);
+    }
   }
 
 

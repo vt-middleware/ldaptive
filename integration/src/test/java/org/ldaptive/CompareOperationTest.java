@@ -112,6 +112,15 @@ public class CompareOperationTest extends AbstractTest
     assertThat(res.isTrue()).isFalse();
     assertThat(res.isFalse()).isFalse();
 
+    try {
+      compare.setThrowCondition(result -> result.getResultCode() != ResultCode.COMPARE_TRUE);
+      compare.execute(new CompareRequest(referralDn, attrName, attrValue));
+    } catch (LdapException e) {
+      assertThat(e.getResultCode()).isEqualTo(ResultCode.REFERRAL);
+    } finally {
+      compare.setThrowCondition(null);
+    }
+
     compare.setReferralResultHandler(new FollowCompareReferralHandler(url -> {
       final ConnectionConfig refConfig = ConnectionConfig.copy(cf.getConnectionConfig());
       refConfig.setLdapUrl(url.replace("localhost", new LdapURL(cf.getConnectionConfig().getLdapUrl()).getHostname()));

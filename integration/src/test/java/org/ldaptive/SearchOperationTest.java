@@ -909,6 +909,16 @@ public class SearchOperationTest extends AbstractTest
       response = search.execute(request);
       assertThat(response.getResultCode()).isEqualTo(ResultCode.AUTHORIZATION_DENIED);
 
+      // authz denied with throw condition
+      try {
+        search.setThrowCondition(ResultPredicate.NOT_SUCCESS);
+        search.execute(request);
+      } catch (LdapException e) {
+        assertThat(e.getResultCode()).isEqualTo(ResultCode.AUTHORIZATION_DENIED);
+      } finally {
+        search.setThrowCondition(null);
+      }
+
       // add authzTo
       final ModifyOperation modify = new ModifyOperation(createConnectionFactory());
       modify.execute(
@@ -1605,6 +1615,15 @@ public class SearchOperationTest extends AbstractTest
     SearchResponse response = search.execute(request);
     assertThat(response.entrySize()).isEqualTo(resultsSize);
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SIZE_LIMIT_EXCEEDED);
+
+    try {
+      search.setThrowCondition(ResultPredicate.NOT_SUCCESS);
+      search.execute(request);
+    } catch (LdapException e) {
+      assertThat(e.getResultCode()).isEqualTo(ResultCode.SIZE_LIMIT_EXCEEDED);
+    } finally {
+      search.setThrowCondition(null);
+    }
 
     request.setFilter(filter);
     response = search.execute(request);
