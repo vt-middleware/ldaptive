@@ -125,7 +125,7 @@ public class DefaultLdapEntryManager<T> extends AbstractFreezable implements Lda
 
   public SearchOperation getSearchOperation()
   {
-    return SearchOperation.copy(searchOperation);
+    return isFrozen() ? SearchOperation.copy(searchOperation) : searchOperation;
   }
 
 
@@ -138,7 +138,7 @@ public class DefaultLdapEntryManager<T> extends AbstractFreezable implements Lda
 
   public AddOperation getAddOperation()
   {
-    return AddOperation.copy(addOperation);
+    return isFrozen() ? AddOperation.copy(addOperation) : addOperation;
   }
 
 
@@ -151,7 +151,7 @@ public class DefaultLdapEntryManager<T> extends AbstractFreezable implements Lda
 
   public MergeOperation getMergeOperation()
   {
-    return MergeOperation.copy(mergeOperation);
+    return isFrozen() ? MergeOperation.copy(mergeOperation) : mergeOperation;
   }
 
 
@@ -164,7 +164,7 @@ public class DefaultLdapEntryManager<T> extends AbstractFreezable implements Lda
 
   public DeleteOperation getDeleteOperation()
   {
-    return DeleteOperation.copy(deleteOperation);
+    return isFrozen() ? DeleteOperation.copy(deleteOperation) : deleteOperation;
   }
 
 
