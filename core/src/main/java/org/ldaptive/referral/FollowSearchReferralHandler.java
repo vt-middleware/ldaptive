@@ -89,7 +89,7 @@ public class FollowSearchReferralHandler extends AbstractFollowSearchReferralHan
    * @param  factory  referral connection factory
    * @param  tf  whether to throw on failure to chase referrals
    */
-  private FollowSearchReferralHandler(
+  FollowSearchReferralHandler(
     final int limit, final int depth, final ReferralConnectionFactory factory, final boolean tf)
   {
     super(limit, depth, factory, tf);
@@ -97,10 +97,12 @@ public class FollowSearchReferralHandler extends AbstractFollowSearchReferralHan
 
 
   @Override
-  protected FollowSearchReferralHandler createNextSearchResultHandler()
+  protected SearchResultHandler[] createNextSearchResultHandler()
   {
-    return new FollowSearchReferralHandler(
-      getReferralLimit(), getReferralDepth() + 1, getReferralConnectionFactory(), getThrowOnFailure());
+    return new SearchResultHandler[] {
+      new FollowSearchReferralHandler(
+        getReferralLimit(), getReferralDepth() + 1, getReferralConnectionFactory(), getThrowOnFailure()),
+    };
   }
 
 

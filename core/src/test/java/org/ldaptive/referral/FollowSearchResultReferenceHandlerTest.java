@@ -251,6 +251,111 @@ public class FollowSearchResultReferenceHandlerTest
 
 
   @Test(groups = "referral")
+  public void applyReferenceAndReferral()
+  {
+    final AtomicInteger count = new AtomicInteger(0);
+    final ConnectionConfig config = ConnectionConfig.builder().url("ldap://directory.ldaptive.org").build();
+    final MockConnection<SearchRequest, SearchResponse> conn = new MockConnection<>(config);
+    conn.setOpenPredicate(ldapURL -> true);
+    conn.setSearchOperationFunction(req -> new DefaultSearchOperationHandle(req, conn, Duration.ofSeconds(5)));
+    conn.setWriteConsumer(h -> {
+      count.incrementAndGet();
+      if (count.get() == 1) {
+        h.messageID(3);
+        h.sent();
+        h.result(
+          SearchResponse.builder()
+            .messageID(3)
+            .resultCode(ResultCode.REFERRAL)
+            .referralURLs("ldap://ds" + count.get() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+            .build());
+      } else if (count.get() == 2) {
+        h.messageID(3);
+        h.sent();
+        ((DefaultSearchOperationHandle) h).entry(
+          LdapEntry.builder()
+            .messageID(3)
+            .dn("uid=" + count.get() + ",ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values(String.valueOf(count.get())).build())
+            .build());
+        ((DefaultSearchOperationHandle) h).reference(
+          SearchResultReference.builder()
+            .messageID(3)
+            .uris("ldap://ds" + count.get() + ".ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+            .build());
+        h.result(
+          SearchResponse.builder()
+            .messageID(3)
+            .resultCode(ResultCode.SUCCESS)
+            .build());
+      } else {
+        h.messageID(5);
+        h.sent();
+        ((DefaultSearchOperationHandle) h).entry(LdapEntry.builder()
+          .messageID(5)
+          .dn("uid=" + count.get() + ",ou=test,dc=ldaptive,dc=org")
+          .attributes(LdapAttribute.builder().name("uid").values(String.valueOf(count.get())).build())
+          .build());
+        h.result(
+          SearchResponse.builder().messageID(5).resultCode(ResultCode.SUCCESS).build());
+      }
+      // close connection since it will be reused by the next handler invocation
+      conn.close();
+    });
+    final SearchRequest request = SearchRequest.builder()
+      .dn("ou=test,dc=ldaptive,dc=org")
+      .filter("(uid=1)")
+      .build();
+    final DefaultSearchOperationHandle handle = new DefaultSearchOperationHandle(
+      request, MockConnection.builder(config).openPredicate(ldapURL -> true).build(), Duration.ofSeconds(5));
+
+    final FollowSearchReferralHandler referralHandler = new FollowSearchReferralHandler(
+      url -> new MockConnectionFactory(conn));
+    final FollowSearchResultReferenceHandler handler = new FollowSearchResultReferenceHandler(
+      url -> new MockConnectionFactory(conn));
+    handle.onSearchResult(referralHandler, handler);
+    handler.setRequest(request);
+    handler.setHandle(handle);
+    final SearchResponse response = SearchResponse.builder()
+      .messageID(1)
+      .resultCode(ResultCode.SUCCESS)
+      .entry(LdapEntry.builder()
+        .messageID(1)
+        .dn("uid=1,ou=test,dc=ldaptive,dc=org")
+        .attributes(LdapAttribute.builder().name("uid").values("1").build())
+        .build())
+      .reference(SearchResultReference.builder()
+        .messageID(1)
+        .uris(
+          "ldap://ds1.ldaptive.org:389/dc=ldaptive,dc=org??sub?")
+        .build())
+      .build();
+    final SearchResponse sr = handler.apply(response);
+    assertThat(sr).isEqualTo(
+      SearchResponse.builder()
+        .messageID(1)
+        .resultCode(ResultCode.SUCCESS)
+        .entry(
+          LdapEntry.builder()
+            .messageID(1)
+            .dn("uid=1,ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values("1").build())
+            .build(),
+          LdapEntry.builder()
+            .messageID(3)
+            .dn("uid=2,ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values("2").build())
+            .build(),
+          LdapEntry.builder()
+            .messageID(5)
+            .dn("uid=3,ou=test,dc=ldaptive,dc=org")
+            .attributes(LdapAttribute.builder().name("uid").values("3").build())
+            .build())
+        .build());
+  }
+
+
+  @Test(groups = "referral")
   public void applyReferenceLimit()
   {
     final AtomicInteger count = new AtomicInteger(1);

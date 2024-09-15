@@ -2,6 +2,7 @@
 package org.ldaptive.referral;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -9,6 +10,7 @@ import org.ldaptive.ResultCode;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.handler.SearchResultHandler;
+import org.ldaptive.transport.DefaultSearchOperationHandle;
 
 /**
  * Provides handling of an ldap continuation reference for search operations.
@@ -94,7 +96,7 @@ public class FollowSearchResultReferenceHandler extends AbstractFollowSearchRefe
    * @param  factory  referral connection factory
    * @param  tf  whether to throw on failure to chase references
    */
-  private FollowSearchResultReferenceHandler(
+  FollowSearchResultReferenceHandler(
     final int limit, final int depth, final ReferralConnectionFactory factory, final boolean tf)
   {
     super(limit, depth, factory, tf);
@@ -102,13 +104,31 @@ public class FollowSearchResultReferenceHandler extends AbstractFollowSearchRefe
 
 
   @Override
-  protected FollowSearchResultReferenceHandler createNextSearchResultHandler()
+  protected SearchResultHandler[] createNextSearchResultHandler()
   {
-    return new FollowSearchResultReferenceHandler(
-      getReferralLimit(),
-      getReferralDepth() + 1,
-      getReferralConnectionFactory(),
-      getThrowOnFailure());
+    final DefaultSearchOperationHandle handle = (DefaultSearchOperationHandle) getHandle();
+    final boolean hasSearchReferralHandler =
+      handle.getOnReferralResult() instanceof FollowSearchReferralHandler ||
+      handle.getOnSearchResult() != null &&
+        Arrays.stream(handle.getOnSearchResult()).anyMatch(h -> h instanceof FollowSearchReferralHandler);
+    if (hasSearchReferralHandler) {
+      return new SearchResultHandler[] {
+        new FollowSearchReferralHandler(
+          getReferralLimit(), getReferralDepth() + 1, getReferralConnectionFactory(), getThrowOnFailure()),
+        new FollowSearchResultReferenceHandler(
+          getReferralLimit(),
+          getReferralDepth() + 1,
+          getReferralConnectionFactory(),
+          getThrowOnFailure()),
+      };
+    }
+    return new SearchResultHandler[] {
+      new FollowSearchResultReferenceHandler(
+        getReferralLimit(),
+        getReferralDepth() + 1,
+        getReferralConnectionFactory(),
+        getThrowOnFailure()),
+    };
   }
 
 

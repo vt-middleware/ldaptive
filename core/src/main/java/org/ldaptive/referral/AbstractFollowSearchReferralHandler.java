@@ -78,5 +78,5 @@ public abstract class AbstractFollowSearchReferralHandler
    *
    * @return  search result handler
    */
-  protected abstract SearchResultHandler createNextSearchResultHandler();
+  protected abstract SearchResultHandler[] createNextSearchResultHandler();
 }
