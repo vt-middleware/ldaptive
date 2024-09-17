@@ -330,9 +330,10 @@ public abstract class AbstractFollowReferralHandlerTest<Q extends Request, S ext
       handler.apply(referralResponse);
       fail("Should have thrown exception");
     } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+      assertThat(e).isExactlyInstanceOf(RuntimeException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(LdapException.class);
       assertThat(
-        e.getMessage())
+        e.getCause().getMessage())
         .containsPattern("[Referral|Search] result handler org.ldaptive.referral.Follow.* threw exception");
     }
   }

@@ -115,16 +115,16 @@ public final class DefaultSearchOperationHandle
           if (ex.getCause() instanceof LdapException) {
             throw (LdapException) ex.getCause();
           }
-          throw new IllegalStateException("Search result handler " + func + " threw exception", ex);
+          throw new LdapException("Search result handler " + func + " threw exception", ex);
         }
         if (handlerResponse == null) {
-          throw new IllegalStateException("Search result handler " + func + " returned null result");
+          throw new LdapException("Search result handler " + func + " returned null result");
         } else if (!handlerResponse.equalsResult(done) &&
           // FollowSearchReferralHandler can be used as a referral handler and a search result handler for convenience
           // allow it to modify the search response
           !(ResultCode.REFERRAL == done.getResultCode() && FollowSearchReferralHandler.class.equals(func.getClass())))
         {
-          throw new IllegalStateException("Cannot modify search result instance with handler " + func);
+          throw new LdapException("Cannot modify search result instance with handler " + func);
         }
         done = handlerResponse;
       }
@@ -280,7 +280,7 @@ public final class DefaultSearchOperationHandle
           if (ex.getCause() instanceof LdapException) {
             exception((LdapException) ex.getCause());
           } else {
-            logger.warn("Entry function {} in handle {} threw an exception", func, this, ex);
+            exception(new LdapException(ex));
           }
         }
       }
@@ -309,7 +309,11 @@ public final class DefaultSearchOperationHandle
         try {
           func.accept(r);
         } catch (Exception ex) {
-          logger.warn("Reference consumer {} in handle {} threw an exception", func, this, ex);
+          if (ex.getCause() instanceof LdapException) {
+            exception((LdapException) ex.getCause());
+          } else {
+            exception(new LdapException(ex));
+          }
         }
       }
     }

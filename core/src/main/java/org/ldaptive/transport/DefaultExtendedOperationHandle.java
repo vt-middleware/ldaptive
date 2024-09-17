@@ -159,7 +159,11 @@ public final class DefaultExtendedOperationHandle
         try {
           func.accept(response.getResponseName(), response.getResponseValue());
         } catch (Exception ex) {
-          logger.warn("Extended response biconsumer {} threw an exception", func, ex);
+          if (ex.getCause() instanceof LdapException) {
+            exception((LdapException) ex.getCause());
+          } else {
+            exception(new LdapException(ex));
+          }
         }
       }
     }

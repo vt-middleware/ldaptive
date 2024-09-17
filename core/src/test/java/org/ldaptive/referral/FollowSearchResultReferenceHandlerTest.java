@@ -706,8 +706,9 @@ public class FollowSearchResultReferenceHandlerTest
       handler.apply(response);
       fail("Should have thrown exception");
     } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
-      assertThat(e.getMessage())
+      assertThat(e).isExactlyInstanceOf(RuntimeException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(LdapException.class);
+      assertThat(e.getCause().getMessage())
         .startsWith("Search result handler org.ldaptive.referral.FollowSearchResultReferenceHandler");
     }
   }

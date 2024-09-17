@@ -634,7 +634,11 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(r);
         } catch (Exception ex) {
-          logger.warn("Result function {} in handle {} threw an exception", func, this, ex);
+          if (ex.getCause() instanceof LdapException) {
+            exception((LdapException) ex.getCause());
+          } else {
+            exception(new LdapException(ex));
+          }
         }
       }
     }
@@ -666,7 +670,11 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(c);
         } catch (Exception ex) {
-          logger.warn("Control consumer {} in handle {} threw an exception", func, this, ex);
+          if (ex.getCause() instanceof LdapException) {
+            exception((LdapException) ex.getCause());
+          } else {
+            exception(new LdapException(ex));
+          }
         }
       }
     }
@@ -685,7 +693,11 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(url);
         } catch (Exception ex) {
-          logger.warn("Referral consumer {} in handle {} threw an exception", func, this, ex);
+          if (ex.getCause() instanceof LdapException) {
+            exception((LdapException) ex.getCause());
+          } else {
+            exception(new LdapException(ex));
+          }
         }
       }
     }
@@ -710,7 +722,11 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(r);
         } catch (Exception ex) {
-          logger.warn("Intermediate response consumer {} in handle {} threw an exception", func, this, ex);
+          if (ex.getCause() instanceof LdapException) {
+            exception((LdapException) ex.getCause());
+          } else {
+            exception(new LdapException(ex));
+          }
         }
       }
     }
@@ -730,7 +746,11 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(u);
         } catch (Exception ex) {
-          logger.warn("Unsolicited notification consumer {} in handle {} threw an exception", func, this, ex);
+          if (ex.getCause() instanceof LdapException) {
+            exception((LdapException) ex.getCause());
+          } else {
+            exception(new LdapException(ex));
+          }
         }
       }
     }
@@ -849,7 +869,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
     throws LdapException
   {
     if (ResultCode.REFERRAL != original.getResultCode()) {
-      throw new IllegalArgumentException("Cannot process referral result for " + original);
+      throw new LdapException("Cannot process referral result for " + original);
     }
     final S handlerResponse;
     try {
@@ -858,10 +878,10 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       if (ex.getCause() instanceof LdapException) {
         throw (LdapException) ex.getCause();
       }
-      throw new IllegalStateException("Referral result handler " + handler + " threw exception", ex);
+      throw new LdapException("Referral result handler " + handler + " threw exception", ex);
     }
     if (handlerResponse == null) {
-      throw new IllegalStateException("Referral result handler " + handler + " returned null result");
+      throw new LdapException("Referral result handler " + handler + " returned null result");
     }
     return handlerResponse;
   }

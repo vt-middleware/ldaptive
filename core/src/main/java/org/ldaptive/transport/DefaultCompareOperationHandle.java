@@ -161,7 +161,11 @@ public final class DefaultCompareOperationHandle
             func.accept(Boolean.FALSE);
           }
         } catch (Exception ex) {
-          logger.warn("Compare response consumer {} threw an exception", func, ex);
+          if (ex.getCause() instanceof LdapException) {
+            exception((LdapException) ex.getCause());
+          } else {
+            exception(new LdapException(ex));
+          }
         }
       }
     }
