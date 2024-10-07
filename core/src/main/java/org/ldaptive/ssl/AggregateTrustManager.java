@@ -4,11 +4,15 @@ package org.ldaptive.ssl;
 import java.net.Socket;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.X509ExtendedTrustManager;
@@ -23,6 +27,9 @@ import org.slf4j.LoggerFactory;
  */
 public class AggregateTrustManager extends X509ExtendedTrustManager
 {
+
+  /** Maximum number of certificates to log. */
+  private static final int DEFAULT_CHAIN_LOG_DEPTH = 3;
 
   /** Enum to define how trust managers should be processed. */
   public enum Strategy {
@@ -68,6 +75,11 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
     if (managers == null || managers.length == 0) {
       throw new IllegalArgumentException("Trust managers cannot be empty or null");
     }
+    for (X509TrustManager tm : managers) {
+      if (tm.getAcceptedIssuers() == null) {
+        throw new IllegalArgumentException("Trust manager " + tm + " cannot return null accepted issuers");
+      }
+    }
     trustManagers = Stream.of(managers)
       .map(tm -> {
         if (tm instanceof X509ExtendedTrustManager) {
@@ -106,7 +118,11 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
   public void checkClientTrusted(final X509Certificate[] chain, final String authType, final Socket socket)
     throws CertificateException
   {
-    trustManagerCheck(tm -> tm.checkClientTrusted(chain, authType, socket));
+    try {
+      trustManagerCheck(tm -> tm.checkClientTrusted(chain, authType, socket));
+    } catch (CertificateException e) {
+      throw new CertificateException(createCertificateExceptionMessage(chain), e);
+    }
   }
 
 
@@ -114,7 +130,11 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
   public void checkClientTrusted(final X509Certificate[] chain, final String authType, final SSLEngine engine)
     throws CertificateException
   {
-    trustManagerCheck(tm -> tm.checkClientTrusted(chain, authType, engine));
+    try {
+      trustManagerCheck(tm -> tm.checkClientTrusted(chain, authType, engine));
+    } catch (CertificateException e) {
+      throw new CertificateException(createCertificateExceptionMessage(chain), e);
+    }
   }
 
 
@@ -122,7 +142,11 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
   public void checkClientTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
-    trustManagerCheck(tm -> tm.checkClientTrusted(chain, authType));
+    try {
+      trustManagerCheck(tm -> tm.checkClientTrusted(chain, authType));
+    } catch (CertificateException e) {
+      throw new CertificateException(createCertificateExceptionMessage(chain), e);
+    }
   }
 
 
@@ -130,7 +154,11 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
   public void checkServerTrusted(final X509Certificate[] chain, final String authType, final Socket socket)
     throws CertificateException
   {
-    trustManagerCheck(tm -> tm.checkServerTrusted(chain, authType, socket));
+    try {
+      trustManagerCheck(tm -> tm.checkServerTrusted(chain, authType, socket));
+    } catch (CertificateException e) {
+      throw new CertificateException(createCertificateExceptionMessage(chain), e);
+    }
   }
 
 
@@ -138,7 +166,11 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
   public void checkServerTrusted(final X509Certificate[] chain, final String authType, final SSLEngine engine)
     throws CertificateException
   {
-    trustManagerCheck(tm -> tm.checkServerTrusted(chain, authType, engine));
+    try {
+      trustManagerCheck(tm -> tm.checkServerTrusted(chain, authType, engine));
+    } catch (CertificateException e) {
+      throw new CertificateException(createCertificateExceptionMessage(chain), e);
+    }
   }
 
 
@@ -146,7 +178,11 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
   public void checkServerTrusted(final X509Certificate[] chain, final String authType)
     throws CertificateException
   {
-    trustManagerCheck(tm -> tm.checkServerTrusted(chain, authType));
+    try {
+      trustManagerCheck(tm -> tm.checkServerTrusted(chain, authType));
+    } catch (CertificateException e) {
+      throw new CertificateException(createCertificateExceptionMessage(chain), e);
+    }
   }
 
 
@@ -168,6 +204,82 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
       getClass().getName() + "@" + hashCode() + "::" +
       "trustManagers=" + Arrays.toString(trustManagers) + ", " +
       "trustStrategy=" + trustStrategy + "]";
+  }
+
+
+  /**
+   * Creates an exception message for the supplied certificate chain.
+   *
+   * @param  chain  to create message for
+   *
+   * @return  string representation of certificate chain
+   */
+  protected String createCertificateExceptionMessage(final X509Certificate[] chain)
+  {
+    final X509Certificate[] issuers = getAcceptedIssuers();
+    if (chain == null) {
+      return "Trust check failed with null chain";
+    } else if (issuers == null) {
+      return "Trust check failed with null trust anchors";
+    } else {
+      return "Trust check failed for chain [" +
+        certsToString(chain, true) + "] using trust anchors [" + certsToString(issuers, false) + "]";
+    }
+  }
+
+
+  /**
+   * Returns a simple string representation of the supplied certificate chain.
+   *
+   * @param  chain  to log
+   * @param  withIssuer  whether to include the certificate issuer
+   *
+   * @return  string representation of certificate chain
+   */
+  private String certsToString(final X509Certificate[] chain, final boolean withIssuer)
+  {
+    final String s = IntStream.range(0, Math.min(chain.length, DEFAULT_CHAIN_LOG_DEPTH))
+      .mapToObj(i -> i + "=" + certToString(chain[i], withIssuer))
+      .collect(Collectors.joining(", "));
+    return chain.length > DEFAULT_CHAIN_LOG_DEPTH ? s + ", ..." : s;
+  }
+
+
+  /**
+   * Returns a simple string representation of the supplied certificate.
+   *
+   * @param  cert  to convert to string format
+   * @param  withIssuer  whether to include the certificate issuer
+   *
+   * @return  string representation of the certificate
+   */
+  private String certToString(final X509Certificate cert, final boolean withIssuer)
+  {
+    final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault(Locale.Category.FORMAT));
+    final StringBuilder sb = new StringBuilder("{s:");
+    if (cert.getSubjectX500Principal() != null) {
+      sb.append(cert.getSubjectX500Principal().getName());
+    } else {
+      sb.append("null");
+    }
+    sb.append(", ");
+    if (withIssuer) {
+      sb.append("i:");
+      if (cert.getIssuerX500Principal() != null) {
+        sb.append(cert.getIssuerX500Principal().getName());
+      } else {
+        sb.append("null");
+      }
+      sb.append(", ");
+    }
+    sb.append("e:");
+    if (cert.getNotAfter() != null) {
+      sb.append(df.format(cert.getNotAfter()));
+    } else {
+      sb.append("null");
+    }
+    sb.append("}");
+    return sb.toString();
   }
 
 

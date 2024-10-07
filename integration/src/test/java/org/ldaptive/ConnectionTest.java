@@ -2,7 +2,11 @@
 package org.ldaptive;
 
 import java.net.InetSocketAddress;
+import java.security.cert.CertificateException;
 import java.time.Duration;
+import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
 import org.ldaptive.dn.Dn;
 import org.ldaptive.ssl.AllowAnyHostnameVerifier;
 import org.ldaptive.ssl.AllowAnyTrustManager;
@@ -424,7 +428,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -446,7 +455,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -469,7 +483,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -513,7 +532,10 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLPeerUnverifiedException: Hostname verification failed for");
     }
   }
 
@@ -620,7 +642,10 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLPeerUnverifiedException: Hostname verification failed for");
     }
   }
 
@@ -643,7 +668,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -667,7 +697,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -692,7 +727,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -740,7 +780,10 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLPeerUnverifiedException: Hostname verification failed for");
     }
   }
 
@@ -788,7 +831,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -831,7 +879,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -854,7 +907,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -878,7 +936,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -924,7 +987,10 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLPeerUnverifiedException: Hostname verification failed for");
     }
   }
 
@@ -1036,7 +1102,10 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLPeerUnverifiedException: Hostname verification failed for");
     }
   }
 
@@ -1060,7 +1129,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -1084,7 +1158,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -1109,7 +1188,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 
@@ -1157,7 +1241,10 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLPeerUnverifiedException: Hostname verification failed for");
     }
   }
 
@@ -1205,7 +1292,12 @@ public class ConnectionTest
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
       fail("Should have thrown Exception, no exception thrown");
     } catch (Exception e) {
-      assertThat(e).isNotNull();
+      assertThat(e).isExactlyInstanceOf(ConnectException.class);
+      assertThat(e.getCause()).isExactlyInstanceOf(SSLException.class);
+      assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
+      assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
+      assertThat(e.getMessage())
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
     }
   }
 

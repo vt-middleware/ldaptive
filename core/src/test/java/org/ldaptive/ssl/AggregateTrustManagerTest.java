@@ -548,6 +548,67 @@ public class AggregateTrustManagerTest
   }
 
 
+  @Test(groups = "ssl")
+  public void createCertificateExceptionMessage()
+    throws Exception
+  {
+    final CertificateFactory cf = CertificateFactory.getInstance("X.509");
+    final X509Certificate aFooComCert = (X509Certificate) cf.generateCertificate(
+      new ByteArrayInputStream(LdapUtils.base64Decode(A_FOO_COM_CERT)));
+
+    final AggregateTrustManager allowAnyTm = new AggregateTrustManager(Strategy.ALL, new AllowAnyTrustManager());
+    final AggregateTrustManager defaultTm = new AggregateTrustManager(Strategy.ALL, new DefaultTrustManager());
+
+    assertThat(allowAnyTm.createCertificateExceptionMessage(null))
+      .isEqualTo("Trust check failed with null chain");
+    assertThat(defaultTm.createCertificateExceptionMessage(null))
+      .isEqualTo("Trust check failed with null chain");
+
+    assertThat(allowAnyTm.createCertificateExceptionMessage(new X509Certificate[0]))
+      .isEqualTo("Trust check failed for chain [] using trust anchors []");
+    assertThat(defaultTm.createCertificateExceptionMessage(new X509Certificate[0]))
+      .isEqualTo("Trust check failed for chain [] using trust anchors " +
+        "[0={s:CN=Certainly Root E1,O=Certainly,C=US, e:2046-03-31}, " +
+        "1={s:CN=Trustwave Global ECC P256 Certification Authority,O=Trustwave Holdings\\, Inc.," +
+        "L=Chicago,ST=Illinois,C=US, e:2042-08-23}, " +
+        "2={s:CN=SecureTrust CA,O=SecureTrust Corporation,C=US, e:2029-12-31}, ...]");
+
+    assertThat(allowAnyTm.createCertificateExceptionMessage(new X509Certificate[]{aFooComCert}))
+      .isEqualTo(
+        "Trust check failed for chain " +
+          "[0={s:DC=org,DC=ldaptive,CN=a.foo.com, i:DC=org,DC=ldaptive,CN=CA ONE, e:2043-05-04}] " +
+          "using trust anchors []");
+    assertThat(defaultTm.createCertificateExceptionMessage(new X509Certificate[]{aFooComCert}))
+      .isEqualTo(
+        "Trust check failed for chain " +
+          "[0={s:DC=org,DC=ldaptive,CN=a.foo.com, i:DC=org,DC=ldaptive,CN=CA ONE, e:2043-05-04}] " +
+          "using trust anchors " +
+          "[0={s:CN=Certainly Root E1,O=Certainly,C=US, e:2046-03-31}, " +
+          "1={s:CN=Trustwave Global ECC P256 Certification Authority,O=Trustwave Holdings\\, Inc.," +
+          "L=Chicago,ST=Illinois,C=US, e:2042-08-23}, " +
+          "2={s:CN=SecureTrust CA,O=SecureTrust Corporation,C=US, e:2029-12-31}, ...]");
+
+    assertThat(allowAnyTm.createCertificateExceptionMessage(LdapUtils.concatArrays(A_FOO_COM_CHAIN, BAR_CLIENT_CHAIN)))
+      .isEqualTo(
+        "Trust check failed for chain " +
+          "[0={s:DC=org,DC=ldaptive,CN=a.foo.com, i:DC=org,DC=ldaptive,CN=CA ONE, e:2043-05-04}, " +
+          "1={s:DC=org,DC=ldaptive,CN=CA ONE, i:DC=org,DC=ldaptive,CN=CA ONE, e:2123-04-15}, " +
+          "2={s:CN=bar-client,DC=middleware,DC=vt,DC=edu, i:DC=org,DC=ldaptive,CN=CA TWO, e:2043-05-05}, " +
+          "...] using trust anchors []");
+    assertThat(defaultTm.createCertificateExceptionMessage(LdapUtils.concatArrays(A_FOO_COM_CHAIN, BAR_CLIENT_CHAIN)))
+      .isEqualTo(
+        "Trust check failed for chain " +
+          "[0={s:DC=org,DC=ldaptive,CN=a.foo.com, i:DC=org,DC=ldaptive,CN=CA ONE, e:2043-05-04}, " +
+          "1={s:DC=org,DC=ldaptive,CN=CA ONE, i:DC=org,DC=ldaptive,CN=CA ONE, e:2123-04-15}, " +
+          "2={s:CN=bar-client,DC=middleware,DC=vt,DC=edu, i:DC=org,DC=ldaptive,CN=CA TWO, e:2043-05-05}, " +
+          "...] using trust anchors " +
+          "[0={s:CN=Certainly Root E1,O=Certainly,C=US, e:2046-03-31}, " +
+          "1={s:CN=Trustwave Global ECC P256 Certification Authority,O=Trustwave Holdings\\, Inc.," +
+          "L=Chicago,ST=Illinois,C=US, e:2042-08-23}, " +
+          "2={s:CN=SecureTrust CA,O=SecureTrust Corporation,C=US, e:2029-12-31}, ...]");
+  }
+
+
   /**
    * Creates trust managers for the supplied certificates.
    *
