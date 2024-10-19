@@ -69,6 +69,7 @@
     <module>core</module>
     <module>beans</module>
     <module>beans-spring</module>
+    <module>shade</module>
   </modules>
 
   <dependencyManagement>
@@ -101,6 +102,11 @@
       <dependency>
         <groupId>org.ldaptive</groupId>
         <artifactId>ldaptive-beans-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.ldaptive</groupId>
+        <artifactId>ldaptive-shade</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

@@ -4,6 +4,10 @@ if [ -z "${TEST_GROUP}" ]; then
   TEST_GROUP="core"
 fi
 
+if [ -z "${USE_SHADED}" ]; then
+  USE_SHADED="false"
+fi
+
 if [ -z "${JDK}" ]; then
   JDK="11"
 fi
@@ -12,4 +16,4 @@ COMPOSE_FILE="integration/docker-compose-jdk${JDK}.yml"
 docker compose -f ${COMPOSE_FILE} down && \
   docker network prune -f && \
   docker compose -f ${COMPOSE_FILE} pull && \
-  TEST_GROUP="${TEST_GROUP}" docker compose -f ${COMPOSE_FILE} up --build --abort-on-container-exit --attach ldaptive
+  TEST_GROUP="${TEST_GROUP}" USE_SHADED="${USE_SHADED}" docker compose -f ${COMPOSE_FILE} up --build --abort-on-container-exit --attach ldaptive

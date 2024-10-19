@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>ldaptive-shade</artifactId>
+  <packaging>jar</packaging>
+  <name>LDAPTIVE SHADE</name>
+  <description>Ldaptive API</description>
+  <parent>
+    <groupId>org.ldaptive</groupId>
+    <artifactId>ldaptive-parent</artifactId>
+    <version>2.5.0-SNAPSHOT</version>
+  </parent>
+
+  <properties>
+    <module.name>org.ldaptive.shade</module.name>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-native</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>unpack-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeGroupIds>io.netty</includeGroupIds>
+              <includeArtifactIds>netty-transport-native-epoll,netty-transport-native-kqueue</includeArtifactIds>
+              <includeClassifiers>linux-x86_64,linux-aarch_64,osx-x86_64,osx-aarch_64</includeClassifiers>
+              <includes>**/*.so,**/*.jnilib</includes>
+              <fileMappers>
+                <fileMapper implementation="org.codehaus.plexus.components.io.filemappers.RegExpFileMapper">
+                  <pattern>libnetty_transport</pattern>
+                  <replacement>liborg_ldaptive_shade_netty_transport</replacement>
+                </fileMapper>
+              </fileMappers>
+              <outputDirectory>${project.build.directory}/classes</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <excludes>
+                  <exclude>org.slf4j:*</exclude>
+                </excludes>
+              </artifactSet>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer" />
+              </transformers>
+              <filters>
+                <filter>
+                  <artifact>io.netty:netty-transport-native-epoll</artifact>
+                  <excludes>
+                    <exclude>**/*</exclude>
+                  </excludes>
+                </filter>
+                <filter>
+                  <artifact>io.netty:netty-transport-native-kqueue</artifact>
+                  <excludes>
+                    <exclude>**/*</exclude>
+                  </excludes>
+                </filter>
+              </filters>
+              <relocations>
+                <relocation>
+                  <pattern>io.netty.</pattern>
+                  <shadedPattern>org.ldaptive.shade.io.netty.</shadedPattern>
+                </relocation>
+              </relocations>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

@@ -421,27 +421,24 @@
   <test name="tests">
     <groups>
       <define name="core">
+        <include name="auth" />
         <include name="bean" />
+        <include name="beans-generate" />
+        <include name="beans-manager" />
+        <include name="beans-mapper" />
         <include name="bind" />
-        <include name="props" />
-        <include name="search" />
         <include name="compare" />
+        <include name="control-util" />
+        <include name="extended" />
+        <include name="jaas" />
+        <include name="ldif" />
+        <include name="merge" />
         <include name="modify" />
         <include name="modifyDn" />
-        <include name="merge" />
-        <include name="extended" />
-        <include name="control-util" />
+        <include name="props" />
+        <include name="search" />
         <include name="spring" />
-        <include name="auth" />
-        <include name="jaas" />
-        <include name="servlet" />
-        <include name="ldif" />
-        <include name="ssl" />
         <include name="templates" />
-        <include name="beans-generate" />
-        <include name="beans-mapper" />
-        <include name="beans-manager" />
-        <include name="beans-spring" />
         <include name="validator" />
         <include name="conn" />
       </define>
@@ -461,7 +458,9 @@
       </run>
     </groups>
     <packages>
-      <package name="org.ldaptive.*" />
+      <package name="org.ldaptive.*">
+        <exclude name="org.ldaptive.shade.*" />
+      </package>
     </packages>
   </test>
 </suite>

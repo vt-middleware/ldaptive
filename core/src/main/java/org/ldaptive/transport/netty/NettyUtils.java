@@ -51,6 +51,13 @@ final class NettyUtils
 
 
   static {
+    try {
+      Class.forName("org.ldaptive.shade.io.netty.channel.Channel");
+      LOGGER.debug("Using shaded netty libraries");
+    } catch (Exception e) {
+      LOGGER.debug("Using unshaded netty libraries");
+    }
+
     boolean epollAvailable;
     try {
       Class.forName("io.netty.channel.epoll.Epoll");
@@ -60,7 +67,10 @@ final class NettyUtils
       epollAvailable = false;
     }
     EPOLL_AVAILABLE = epollAvailable;
-    LOGGER.debug("Detected Epoll transport: {}", EPOLL_AVAILABLE);
+    LOGGER.debug(
+      "Detected Epoll transport: {} with cause {}",
+      EPOLL_AVAILABLE,
+      Epoll.unavailabilityCause() != null ? Epoll.unavailabilityCause().getMessage() : null);
 
     boolean kqueueAvailable;
     try {
@@ -71,7 +81,11 @@ final class NettyUtils
       kqueueAvailable = false;
     }
     KQUEUE_AVAILABLE = kqueueAvailable;
-    LOGGER.debug("Detected KQueue transport: {}", KQUEUE_AVAILABLE);
+    LOGGER.debug(
+      "Detected KQueue transport: {} with cause {}",
+      KQUEUE_AVAILABLE,
+      KQueue.unavailabilityCause() != null ? KQueue.unavailabilityCause().getMessage() : null);
+
     LOGGER.debug("Overriding to use Nio transport: {}", USE_NIO);
   }
 

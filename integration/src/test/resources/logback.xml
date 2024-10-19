@@ -23,6 +23,7 @@
   <logger name="io.netty.handler.logging.LoggingHandler" level="DEBUG" />
   -->
 
+  <logger name="org.ldaptive.transport.netty.NettyUtils" level="DEBUG" />
   <logger name="org.ldaptive.io" level="DEBUG" />
   <logger name="org.springframework" level="ERROR" />
   <logger name="io.netty.channel" level="DEBUG" />
