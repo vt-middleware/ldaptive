@@ -1,8 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transport;
 
-import org.ldaptive.ConnectionFactory;
-
 /**
  * Provides an abstraction layer for different {@link Transport} implementations used by {@link TransportFactory}.
  *
@@ -13,11 +11,11 @@ public interface DelegateTransportFactory
 
 
   /**
-   * Creates a {@link Transport} for the supplied connection factory type.
+   * Creates a {@link Transport} for the supplied transport configuration.
    *
-   * @param  clazz  to create transport for
+   * @param  config  transport configuration
    *
    * @return  new transport
    */
-  Transport createTransport(Class<? extends ConnectionFactory> clazz);
+  Transport createTransport(ThreadPoolConfig config);
 }

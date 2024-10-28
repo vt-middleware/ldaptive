@@ -37,7 +37,7 @@ public final class LdapURLActivatorService
     final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(
       1,
       r -> {
-        final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
+        final Thread t = new Thread(r, "ldaptive-ldap-url-activator");
         t.setDaemon(true);
         return t;
       });

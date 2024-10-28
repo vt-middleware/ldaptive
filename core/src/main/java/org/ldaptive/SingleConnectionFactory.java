@@ -11,6 +11,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import org.ldaptive.transport.ThreadPoolConfig;
 import org.ldaptive.transport.Transport;
 import org.ldaptive.transport.TransportFactory;
 
@@ -50,7 +51,9 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
   /** Default constructor. */
   public SingleConnectionFactory()
   {
-    super(TransportFactory.getTransport(SingleConnectionFactory.class));
+    super(
+      TransportFactory.getTransport(
+        ThreadPoolConfig.singleIoThread("single", ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)));
   }
 
 
@@ -72,7 +75,10 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public SingleConnectionFactory(final String ldapUrl)
   {
-    super(ldapUrl, TransportFactory.getTransport(SingleConnectionFactory.class));
+    super(
+      ldapUrl,
+      TransportFactory.getTransport(
+        ThreadPoolConfig.singleIoThread("single", ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)));
   }
 
 
@@ -95,7 +101,10 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    */
   public SingleConnectionFactory(final ConnectionConfig cc)
   {
-    super(cc, TransportFactory.getTransport(SingleConnectionFactory.class));
+    super(
+      cc,
+      TransportFactory.getTransport(
+        ThreadPoolConfig.singleIoThread("single", ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)));
   }
 
 
@@ -261,14 +270,14 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
         if (validator != null) {
           factoryExecutor = Executors.newSingleThreadScheduledExecutor(
             r -> {
-              final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
+              final Thread t = new Thread(r, "ldaptive-single-connection-factory");
               t.setDaemon(true);
               return t;
             });
         } else {
           factoryExecutor = Executors.newCachedThreadPool(
             r -> {
-              final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
+              final Thread t = new Thread(r, "ldaptive-single-connection-factory");
               t.setDaemon(true);
               return t;
             });
@@ -287,7 +296,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
       if (validator != null) {
         factoryExecutor = Executors.newSingleThreadScheduledExecutor(
           r -> {
-            final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
+            final Thread t = new Thread(r, "ldaptive-single-connection-factory");
             t.setDaemon(true);
             return t;
           });
@@ -309,7 +318,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
     LdapException initializeEx = null;
     try {
       initializeConnectionProxy();
-      logger.debug("Factory initialized {}", this);
+      logger.trace("factory initialized {}", this);
     } catch (LdapException e) {
       initializeEx = e;
       logger.warn("Could not initialize connection factory for {}", SingleConnectionFactory.this, e);

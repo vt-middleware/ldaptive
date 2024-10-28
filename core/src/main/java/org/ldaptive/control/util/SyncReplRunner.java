@@ -15,8 +15,9 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.extended.SyncInfoMessage;
+import org.ldaptive.transport.ThreadPoolConfig;
 import org.ldaptive.transport.Transport;
-import org.ldaptive.transport.netty.ConnectionFactoryTransport;
+import org.ldaptive.transport.TransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -169,9 +170,9 @@ public final class SyncReplRunner
    * Configures the supplied factory for use with a {@link SyncReplRunner}. The factory's configuration will have the
    * following modifications:
    * <ul>
-   *   <li>{@link ConnectionConfig#setTransportOption(String, Object)} of AUTO_READ to false</li>
    *   <li>{@link ConnectionConfig#setAutoReconnect(boolean)} to false</li>
    *   <li>{@link ConnectionConfig#setAutoReplay(boolean)} to false</li>
+   *   <li>{@link ConnectionConfig#setAutoRead(boolean)} to false</li>
    *   <li>{@link SingleConnectionFactory#setFailFastInitialize(boolean)} to false</li>
    *   <li>{@link SingleConnectionFactory#setNonBlockingInitialize(boolean)} to false</li>
    *   <li>{@link AbstractConnectionValidator#setOnFailure(Consumer)} to
@@ -183,9 +184,9 @@ public final class SyncReplRunner
   public static void configureConnectionFactory(final SingleConnectionFactory factory)
   {
     final ConnectionConfig newConfig = ConnectionConfig.copy(factory.getConnectionConfig());
-    newConfig.setTransportOption("AUTO_READ", false);
     newConfig.setAutoReconnect(false);
     newConfig.setAutoReplay(false);
+    newConfig.setAutoRead(false);
     factory.setConnectionConfig(newConfig);
     factory.setFailFastInitialize(false);
     factory.setNonBlockingInitialize(false);
@@ -199,8 +200,8 @@ public final class SyncReplRunner
 
 
   /**
-   * Returns a transport configured to use for sync repl. Uses its own event loop groups with auto_read set to false.
-   * Detects whether Epoll or KQueue transports are available, otherwise uses NIO.
+   * Returns a transport configured to use for sync repl. Use {@link #IO_WORKER_THREADS} number of I/O threads and
+   * {@link #MESSAGE_WORKER_THREADS} number of message threads. This transport is configured never to be shutdown.
    *
    * @return  transport
    */
@@ -209,12 +210,14 @@ public final class SyncReplRunner
     // message thread pool size must be >2 since exceptions are reported on the messages thread pool and flow control
     // requires a thread to signal reads and pass user events
     // startTLS and connection initializers will require additional threads
-    final ConnectionFactoryTransport transport = new ConnectionFactoryTransport(
-      SyncReplRunner.class.getSimpleName(),
-      IO_WORKER_THREADS,
-      MESSAGE_WORKER_THREADS);
-    transport.setShutdownOnClose(false);
-    return transport;
+    return TransportFactory.getTransport(
+      ThreadPoolConfig.builder()
+        .threadPoolName("ldaptive-sync-repl-runner")
+        .ioThreads(IO_WORKER_THREADS)
+        .messageThreads(MESSAGE_WORKER_THREADS)
+        .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.NEVER)
+        .freeze()
+        .build());
   }
 
 

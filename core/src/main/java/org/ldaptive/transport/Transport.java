@@ -23,6 +23,16 @@ public interface Transport
   Connection create(ConnectionConfig cc);
 
 
-  /** Free any resources associated with this transport. */
-  default void close() {}
+  /**
+   * Free any resources associated with this transport. This method is invoked by the connection factory using this
+   * transport.
+   */
+  void close();
+
+
+  /**
+   * Force shutdown of this transport. This method is only needed in cases where the connection factory is configured
+   * not to close the transport. See {@link ThreadPoolConfig#setShutdownStrategy(ThreadPoolConfig.ShutdownStrategy)}.
+   */
+  void shutdown();
 }

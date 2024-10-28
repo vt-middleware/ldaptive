@@ -40,7 +40,7 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
   /** Default constructor. */
   public AggregateDnResolver()
   {
-    callableWorker = new CallableWorker<>(AggregateDnResolver.class.getSimpleName());
+    callableWorker = new CallableWorker<>("ldaptive-aggregate-dn-resolver");
   }
 
 
@@ -52,7 +52,7 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
   public AggregateDnResolver(final Map<String, DnResolver> resolvers)
   {
     setDnResolvers(resolvers);
-    callableWorker = new CallableWorker<>(AggregateDnResolver.class.getSimpleName());
+    callableWorker = new CallableWorker<>("ldaptive-aggregate-dn-resolver");
   }
 
 

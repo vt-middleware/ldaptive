@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import org.ldaptive.transport.ThreadPoolConfig;
 import org.ldaptive.transport.Transport;
 import org.ldaptive.transport.TransportFactory;
 import org.slf4j.Logger;
@@ -27,7 +28,9 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
   /** Default constructor. */
   public DefaultConnectionFactory()
   {
-    this(TransportFactory.getTransport(DefaultConnectionFactory.class));
+    this(
+      TransportFactory.getTransport(
+        ThreadPoolConfig.singleIoThread("default", ThreadPoolConfig.ShutdownStrategy.CONNECTION_CLOSE)));
   }
 
 
@@ -74,7 +77,10 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
    */
   public DefaultConnectionFactory(final ConnectionConfig cc)
   {
-    this(cc, TransportFactory.getTransport(DefaultConnectionFactory.class));
+    this(
+      cc,
+      TransportFactory.getTransport(
+        ThreadPoolConfig.singleIoThread("default", ThreadPoolConfig.ShutdownStrategy.CONNECTION_CLOSE)));
   }
 
 

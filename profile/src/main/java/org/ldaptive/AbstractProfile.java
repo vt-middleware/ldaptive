@@ -17,7 +17,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
-import org.ldaptive.transport.netty.SingletonTransport;
 
 /**
  * Base class for profiling.
@@ -155,7 +154,6 @@ public abstract class AbstractProfile
     test.shutdown();
     executor.shutdown();
     executor.awaitTermination(10, TimeUnit.SECONDS);
-    SingletonTransport.shutdown();
   }
   // CheckStyle:MagicNumber ON
 

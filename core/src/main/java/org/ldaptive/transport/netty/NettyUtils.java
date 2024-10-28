@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public final class NettyUtils
+final class NettyUtils
 {
 
   /** Time in milliseconds for graceful shutdown quiet period. */
@@ -104,18 +104,19 @@ public final class NettyUtils
    */
   public static EventLoopGroup createDefaultEventLoopGroup(final String name, final int numThreads)
   {
+    final String poolName = name.startsWith("ldaptive-") ? name : "ldaptive-" + name;
     if (EPOLL_AVAILABLE && !USE_NIO) {
       return new EpollEventLoopGroup(
         numThreads,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory("ldaptive-" + name, true, Thread.NORM_PRIORITY)));
+        new ThreadPerTaskExecutor(new DefaultThreadFactory(poolName, true, Thread.NORM_PRIORITY)));
     } else if (KQUEUE_AVAILABLE && !USE_NIO) {
       return new KQueueEventLoopGroup(
         numThreads,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory("ldaptive-" + name, true, Thread.NORM_PRIORITY)));
+        new ThreadPerTaskExecutor(new DefaultThreadFactory(poolName, true, Thread.NORM_PRIORITY)));
     } else {
       return new NioEventLoopGroup(
         numThreads,
-        new ThreadPerTaskExecutor(new DefaultThreadFactory("ldaptive-" + name, true, Thread.NORM_PRIORITY)));
+        new ThreadPerTaskExecutor(new DefaultThreadFactory(poolName, true, Thread.NORM_PRIORITY)));
     }
   }
 

@@ -82,7 +82,7 @@ public abstract class TransportConnection implements Connection
   public void open()
     throws LdapException
   {
-    LOGGER.debug("Strategy {} opening connection {}", connectionStrategy, this);
+    LOGGER.trace("strategy {} opening connection {}", connectionStrategy, this);
     if (openLock.tryLock()) {
       try {
         if (isOpen()) {
@@ -108,7 +108,7 @@ public abstract class TransportConnection implements Connection
         } else {
           throw new ConnectException(ResultCode.CONNECT_ERROR, "Channel closed immediately after open");
         }
-        LOGGER.debug("Strategy {} finished open for connection {}", connectionStrategy, this);
+        LOGGER.trace("strategy {} finished open for connection {}", connectionStrategy, this);
       } finally {
         openLock.unlock();
       }
@@ -130,7 +130,7 @@ public abstract class TransportConnection implements Connection
   protected void reopen(final RetryMetadata metadata)
     throws LdapException
   {
-    LOGGER.debug("Strategy {} reopening connection {}", connectionStrategy, this);
+    LOGGER.trace("strategy {} reopening connection {}", connectionStrategy, this);
     if (openLock.tryLock()) {
       try {
         if (isOpen()) {
@@ -153,7 +153,7 @@ public abstract class TransportConnection implements Connection
         if (isOpen()) {
           lastSuccessfulOpen = Instant.now();
         }
-        LOGGER.debug("Finished reopen for connection {} using strategy {}", this, connectionStrategy);
+        LOGGER.trace("finished reopen for connection {} using strategy {}", this, connectionStrategy);
       } finally {
         openLock.unlock();
       }
