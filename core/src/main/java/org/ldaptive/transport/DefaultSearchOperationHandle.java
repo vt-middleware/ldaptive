@@ -63,6 +63,9 @@ public final class DefaultSearchOperationHandle
   /** Synthetic result that is built as entries and references are received. */
   private final SearchResponse result = new SearchResponse();
 
+  /** Number of entries received. */
+  private int entryCount;
+
   /** Functions to handle response entries. */
   private LdapEntryHandler[] onEntry;
 
@@ -285,6 +288,7 @@ public final class DefaultSearchOperationHandle
         }
       }
     }
+    entryCount++;
     if (e != null) {
       result.addEntries(e);
     }
@@ -341,6 +345,7 @@ public final class DefaultSearchOperationHandle
   {
     // do not log the result object, it is not thread safe
     return super.toString() + ", " +
+      "entryCount=" + entryCount + ", " +
       "onEntry=" + Arrays.toString(onEntry) + ", " +
       "onReference=" + Arrays.toString(onReference) + ", " +
       "onSearchResult=" + Arrays.toString(onSearchResult);
