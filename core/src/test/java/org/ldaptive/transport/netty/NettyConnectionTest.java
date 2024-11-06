@@ -119,7 +119,8 @@ public class NettyConnectionTest
     final NettyConnection conn = new NettyConnection(
       ConnectionConfig.builder()
         .url("ldap://localhost:10389")
-        .transportOption("AUTO_READ", "false")
+        .connectTimeout(Duration.ofSeconds(2))
+        .autoRead(false)
         .transportOption("TCP_NODELAY", true)
         .transportOption("SO_SNDBUF", "1024")
         .transportOption("SO_RCVBUF", 1024)
@@ -132,6 +133,7 @@ public class NettyConnectionTest
       true);
     final Map<ChannelOption, Object> options = conn.getChannelOptions();
     assertThat(options).isNotNull();
+    assertThat(options.get(ChannelOption.CONNECT_TIMEOUT_MILLIS)).isEqualTo(2000);
     assertThat(options.get(ChannelOption.AUTO_READ)).isEqualTo(false);
     assertThat(options.get(ChannelOption.TCP_NODELAY)).isEqualTo(true);
     assertThat(options.get(ChannelOption.SO_SNDBUF)).isEqualTo(1024);

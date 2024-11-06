@@ -14,11 +14,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class AutoReadFlowControlHandler extends ChannelDuplexHandler
+final class AutoReadFlowControlHandler extends ChannelDuplexHandler
 {
 
   /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Number of messages in the pipeline. */
   private final AtomicInteger messageCount = new AtomicInteger();

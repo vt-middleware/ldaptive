@@ -11,16 +11,19 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Creates netty connections using the best fit event loop group based on the operating system. See {@link
- * io.netty.channel.epoll.Epoll#isAvailable()} and {@link io.netty.channel.kqueue.KQueue#isAvailable()}. The event loop
- * group is shutdown when the connection is closed.
+ * io.netty.channel.epoll.Epoll#isAvailable()} and {@link io.netty.channel.kqueue.KQueue#isAvailable()}. New event loop
+ * groups are created for every connection. The event loop groups are shutdown when the connection is closed.
  *
  * @author  Middleware Services
  */
-public class ConnectionTransport implements Transport
+class DefaultNettyTransport implements Transport
 {
 
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+  /** Name of the event loop group. */
+  private final String threadPoolName;
 
   /** Number of I/O threads. */
   private final int numIoThreads;
@@ -30,33 +33,47 @@ public class ConnectionTransport implements Transport
 
 
   /**
-   * Creates a new connection transport.
+   * Creates a new default netty transport.
    */
-  public ConnectionTransport()
+  DefaultNettyTransport()
   {
     this(0);
   }
 
 
   /**
-   * Creates a new connection transport.
+   * Creates a new default netty transport.
    *
    * @param  ioThreads  number of threads used for I/O in the event loop group
    */
-  public ConnectionTransport(final int ioThreads)
+  DefaultNettyTransport(final int ioThreads)
   {
-    this(ioThreads, -1);
+    this(null, ioThreads, -1);
   }
 
 
   /**
-   * Creates a new connection transport.
+   * Creates a new default netty transport.
    *
    * @param  ioThreads  number of threads used for I/O in the event loop group
    * @param  messageThreads  number of threads for LDAP message handling in the event loop group
    */
-  public ConnectionTransport(final int ioThreads, final int messageThreads)
+  DefaultNettyTransport(final int ioThreads, final int messageThreads)
   {
+    this(null, ioThreads, messageThreads);
+  }
+
+
+  /**
+   * Creates a new default netty transport.
+   *
+   * @param  name  of the thread pool
+   * @param  ioThreads  number of threads used for I/O in the event loop group
+   * @param  messageThreads  number of threads for LDAP message handling in the event loop group
+   */
+  DefaultNettyTransport(final String name, final int ioThreads, final int messageThreads)
+  {
+    threadPoolName = name == null ? "default-netty-transport" : name;
     numIoThreads = ioThreads;
     numMessageThreads = messageThreads;
   }
@@ -94,17 +111,25 @@ public class ConnectionTransport implements Transport
       return new NettyConnection(
         cc,
         getSocketChannelType(),
-        createEventLoopGroup(getClass().getSimpleName() + "@" + hashCode() + "-io", numIoThreads),
-        createEventLoopGroup(getClass().getSimpleName() + "@" + hashCode() + "-messages", numMessageThreads),
+        createEventLoopGroup(threadPoolName + "-io", numIoThreads),
+        createEventLoopGroup(threadPoolName + "-messages", numMessageThreads),
         true);
     }
     return new NettyConnection(
       cc,
       getSocketChannelType(),
-      createEventLoopGroup(getClass().getSimpleName() + "@" + hashCode() + "-io", numIoThreads),
+      createEventLoopGroup(threadPoolName + "-io", numIoThreads),
       null,
       true);
   }
+
+
+  @Override
+  public void close() {}
+
+
+  @Override
+  public void shutdown() {}
 
 
   @Override
@@ -112,37 +137,8 @@ public class ConnectionTransport implements Transport
   {
     return "[" +
       getClass().getName() + "@" + hashCode() + "::" +
+      "threadPoolName" + threadPoolName + ", " +
       "numIoThreads=" + numIoThreads + ", " +
       "numMessageThreads=" + numMessageThreads + "]";
-  }
-
-
-  /** A {@link ConnectionTransport} configured with a single underlying thread. */
-  public static class SingleThread extends ConnectionTransport
-  {
-
-
-    /**
-     * Default constructor.
-     */
-    public SingleThread()
-    {
-      super(1);
-    }
-  }
-
-
-  /** A {@link ConnectionTransport} configured with two underlying threads. */
-  public static class DualThread extends ConnectionTransport
-  {
-
-
-    /**
-     * Default constructor.
-     */
-    public DualThread()
-    {
-      super(2);
-    }
   }
 }

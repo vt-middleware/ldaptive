@@ -10,7 +10,7 @@ import org.ldaptive.asn1.DERBuffer;
  *
  * @author  Middleware Services
  */
-public class NettyDERBuffer implements DERBuffer
+final class NettyDERBuffer implements DERBuffer
 {
 
   /** Underlying byte buffer. */
@@ -22,7 +22,7 @@ public class NettyDERBuffer implements DERBuffer
    *
    * @param  buf  existing byte buf
    */
-  public NettyDERBuffer(final ByteBuf buf)
+  NettyDERBuffer(final ByteBuf buf)
   {
     this(buf, 0, buf.capacity());
   }
@@ -35,7 +35,7 @@ public class NettyDERBuffer implements DERBuffer
    * @param  pos  initial buffer position
    * @param  lim  initial buffer limit
    */
-  public NettyDERBuffer(final ByteBuf buf, final int pos, final int lim)
+  NettyDERBuffer(final ByteBuf buf, final int pos, final int lim)
   {
     buffer = buf;
     buffer.setIndex(pos, lim);

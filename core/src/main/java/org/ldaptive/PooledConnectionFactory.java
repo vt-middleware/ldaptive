@@ -11,6 +11,7 @@ import org.ldaptive.pool.PoolException;
 import org.ldaptive.pool.PruneStrategy;
 import org.ldaptive.pool.ValidationException;
 import org.ldaptive.pool.ValidationExceptionHandler;
+import org.ldaptive.transport.ThreadPoolConfig;
 import org.ldaptive.transport.Transport;
 import org.ldaptive.transport.TransportFactory;
 
@@ -30,7 +31,9 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
   public PooledConnectionFactory()
   {
     setDefaultConnectionFactory(
-      new DefaultConnectionFactory(TransportFactory.getTransport(PooledConnectionFactory.class)));
+      new DefaultConnectionFactory(
+        TransportFactory.getTransport(
+          ThreadPoolConfig.defaultIoThreads("pool", ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE))));
   }
 
 
@@ -53,7 +56,10 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
   public PooledConnectionFactory(final String ldapUrl)
   {
     setDefaultConnectionFactory(
-      new DefaultConnectionFactory(ldapUrl, TransportFactory.getTransport(PooledConnectionFactory.class)));
+      new DefaultConnectionFactory(
+        ldapUrl,
+        TransportFactory.getTransport(
+          ThreadPoolConfig.defaultIoThreads("pool", ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE))));
   }
 
 
@@ -77,7 +83,10 @@ public final class PooledConnectionFactory extends BlockingConnectionPool implem
   public PooledConnectionFactory(final ConnectionConfig cc)
   {
     setDefaultConnectionFactory(
-      new DefaultConnectionFactory(cc, TransportFactory.getTransport(PooledConnectionFactory.class)));
+      new DefaultConnectionFactory(
+        cc,
+        TransportFactory.getTransport(
+          ThreadPoolConfig.defaultIoThreads("pool", ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE))));
   }
 
 

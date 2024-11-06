@@ -52,14 +52,6 @@
             </systemProperty>
             <!--
             <systemProperty>
-              <key>org.ldaptive.transport.pooledConnectionFactory</key>
-              <value>org.ldaptive.transport.netty.ConnectionTransport$SingleThread</value>
-            </systemProperty>
-            <systemProperty>
-              <key>org.ldaptive.transport.singleConnectionFactory</key>
-              <value>org.ldaptive.transport.netty.SingletonTransport</value>
-            </systemProperty>
-            <systemProperty>
               <key>org.ldaptive.transport.netty.throttleRequests</key>
               <value>50</value>
             </systemProperty>

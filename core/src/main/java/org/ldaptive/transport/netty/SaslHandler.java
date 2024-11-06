@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class SaslHandler extends ByteToMessageDecoder implements ChannelOutboundHandler
+final class SaslHandler extends ByteToMessageDecoder implements ChannelOutboundHandler
 {
 
   /** Logger for this class. */
@@ -41,7 +41,7 @@ public class SaslHandler extends ByteToMessageDecoder implements ChannelOutbound
    *
    * @param  sc  SASL client
    */
-  public SaslHandler(final SaslClient sc)
+  SaslHandler(final SaslClient sc)
   {
     saslClient = sc;
   }

@@ -88,10 +88,11 @@ public class PropertiesTest
     assertThat(cc.getLdapUrl()).isEqualTo(host);
     assertThat(ci.getBindDn()).isEqualTo(bindDn);
     assertThat(cc.getConnectTimeout()).isEqualTo(Duration.ofSeconds(8));
+    assertThat(cc.getAutoRead()).isFalse();
     assertThat(cc.getUseStartTLS()).isFalse();
     assertThat(cc.getConnectionStrategy().getClass()).isEqualTo(RoundRobinConnectionStrategy.class);
     assertThat(cc.getTransportOptions())
-      .isEqualTo(Map.of("SO_LINGER", "false", "TCP_NODELAY", "false", "SO_RCVBUF", "1024", "AUTO_READ", "false"));
+      .isEqualTo(Map.of("SO_LINGER", "false", "TCP_NODELAY", "false", "SO_RCVBUF", "1024"));
 
     final SearchRequest sr = new SearchRequest();
     final SearchRequestPropertySource srSource = new SearchRequestPropertySource(

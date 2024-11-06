@@ -16,11 +16,11 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public class MessageFrameDecoder extends ByteToMessageDecoder
+final class MessageFrameDecoder extends ByteToMessageDecoder
 {
 
   /** Logger for this class. */
-  protected final Logger logger = LoggerFactory.getLogger(getClass());
+  private final Logger logger = LoggerFactory.getLogger(getClass());
 
 
   @Override

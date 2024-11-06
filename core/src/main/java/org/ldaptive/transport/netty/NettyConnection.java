@@ -108,7 +108,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author  Middleware Services
  */
-public final class NettyConnection extends TransportConnection
+final class NettyConnection extends TransportConnection
 {
 
   /** Logger for this class. */
@@ -180,7 +180,7 @@ public final class NettyConnection extends TransportConnection
    * @param  messageGroup  event loop group that handles inbound messages, can be null
    * @param  shutdownGroups  whether to shutdown the event loop groups when the connection is closed
    */
-  public NettyConnection(
+  NettyConnection(
     final ConnectionConfig config,
     final Class<? extends Channel> type,
     final EventLoopGroup ioGroup,
@@ -195,6 +195,7 @@ public final class NettyConnection extends TransportConnection
     channelOptions = new HashMap<>();
     channelOptions.put(ChannelOption.SO_KEEPALIVE, true);
     channelOptions.put(ChannelOption.CONNECT_TIMEOUT_MILLIS, (int) config.getConnectTimeout().toMillis());
+    channelOptions.put(ChannelOption.AUTO_READ, config.getAutoRead());
     if (config.getTransportOptions() != null && !config.getTransportOptions().isEmpty()) {
       for (Map.Entry<String, ?> e : config.getTransportOptions().entrySet()) {
         final ChannelOption<?> option = ChannelOption.valueOf(e.getKey());
@@ -294,7 +295,7 @@ public final class NettyConnection extends TransportConnection
         if (connectionExecutor == null) {
           connectionExecutor = Executors.newCachedThreadPool(
             r -> {
-              final Thread t = new Thread(r, "ldaptive-" + getClass().getSimpleName() + "@" + hashCode());
+              final Thread t = new Thread(r, "ldaptive-netty-connection-@" + hashCode());
               t.setDaemon(true);
               return t;
             });
@@ -1041,6 +1042,28 @@ public final class NettyConnection extends TransportConnection
 
 
   /**
+   * Returns the I/O worker group.
+   *
+   * @return  I/O worker group
+   */
+  EventLoopGroup getIoWorkerGroup()
+  {
+    return ioWorkerGroup;
+  }
+
+
+  /**
+   * Returns the message worker group.
+   *
+   * @return  message worker group
+   */
+  EventLoopGroup getMessageWorkerGroup()
+  {
+    return messageWorkerGroup;
+  }
+
+
+  /**
    * Closes this connection. Abandons all pending responses and sends an unbind to the LDAP server if the connection is
    * open when this method is invoked.
    *
@@ -1073,7 +1096,21 @@ public final class NettyConnection extends TransportConnection
           req.setControls(controls);
           operation(req);
           if (channel != null) {
-            channel.close().addListener(new LogFutureListener());
+            if (messageWorkerGroup != null) {
+              // wait until handlers have been removed before attempting to shutdown message worker group
+              final CountDownLatch handlersLatch = new CountDownLatch(2);
+              channel.pipeline().addFirst(new AddRemoveHandler(handlersLatch, handlersLatch));
+              channel.close().addListener(new LogFutureListener());
+              try {
+                if (!handlersLatch.await(1, TimeUnit.SECONDS)) {
+                  LOGGER.debug("Removing handlers took longer than 1 second for {}", this);
+                }
+              } catch (InterruptedException e) {
+                LOGGER.debug("Interrupted waiting on channel remove latch", e);
+              }
+            } else {
+              channel.close().addListener(new LogFutureListener());
+            }
           }
         } else {
           LOGGER.trace("connection {} already closed", this);
@@ -1170,7 +1207,7 @@ public final class NettyConnection extends TransportConnection
         try {
           try {
             reopen(new ClosedRetryMetadata(lastSuccessfulOpen, inboundException));
-            LOGGER.debug("Auto reconnect finished for connection {}", this);
+            LOGGER.trace("auto reconnect finished for connection {}", this);
           } catch (Exception e) {
             LOGGER.debug("Auto reconnect failed for connection {}", this, e);
           }
@@ -1761,6 +1798,58 @@ public final class NettyConnection extends TransportConnection
       if (channel != null && !isClosing()) {
         channel.close().addListener(new LogFutureListener());
       }
+    }
+  }
+
+
+  /**
+   * Invokes a latch when this handler is added or removed from a pipeline.
+   */
+  private static final class AddRemoveHandler implements ChannelHandler
+  {
+
+    /** Latch to count down when this handler is added. */
+    private final CountDownLatch handlerAddedLatch;
+
+    /** Latch to count down when this handler is removed. */
+    private final CountDownLatch handlerRemovedLatch;
+
+
+    /**
+     * Creates a new add remove handler.
+     *
+     * @param  addedLatch  to invoke {@link #handlerAdded(ChannelHandlerContext)}
+     * @param  removedLatch  to invoke {@link #handlerRemoved(ChannelHandlerContext)}
+     */
+    AddRemoveHandler(final CountDownLatch addedLatch, final CountDownLatch removedLatch)
+    {
+      handlerAddedLatch = addedLatch;
+      handlerRemovedLatch = removedLatch;
+    }
+
+
+    @Override
+    public void handlerAdded(final ChannelHandlerContext ctx)
+      throws Exception
+    {
+      handlerAddedLatch.countDown();
+    }
+
+
+    @Override
+    public void handlerRemoved(final ChannelHandlerContext ctx)
+      throws Exception
+    {
+      handlerRemovedLatch.countDown();
+    }
+
+
+    @Override
+    @SuppressWarnings("deprecation")
+    public void exceptionCaught(final ChannelHandlerContext ctx, final Throwable cause)
+      throws Exception
+    {
+      ctx.fireExceptionCaught(cause);
     }
   }
 }

@@ -2,14 +2,13 @@
 package org.ldaptive.transport;
 
 import java.lang.reflect.Constructor;
-import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.transport.netty.NettyTransportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Factory for creating connection transports based on the type of {@link ConnectionFactory} being used.
+ * Factory for creating connection transports.
  *
  * @author  Middleware Services
  */
@@ -48,14 +47,14 @@ public final class TransportFactory
 
 
   /**
-   * Returns a transport for the supplied connection factory type.
+   * Returns a transport for the supplied transport configuration.
    *
-   * @param  clazz  to return transport for
+   * @param  config  transport configuration
    *
    * @return  transport
    */
-  public static Transport getTransport(final Class<? extends ConnectionFactory> clazz)
+  public static Transport getTransport(final ThreadPoolConfig config)
   {
-    return TRANSPORT_FACTORY.createTransport(clazz);
+    return TRANSPORT_FACTORY.createTransport(config);
   }
 }

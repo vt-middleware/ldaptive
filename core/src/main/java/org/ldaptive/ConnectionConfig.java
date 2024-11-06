@@ -117,6 +117,12 @@ public final class ConnectionConfig extends AbstractConfig
   /** Whether pending operations should be replayed after a reconnect. Default is false. */
   private boolean autoReplay;
 
+  /**
+   * Whether data will be read from the socket as it arrives or only after each LDAP message is consumed. Default is
+   * true.
+   */
+  private boolean autoRead = true;
+
   /** Configuration for SSL and startTLS connections. */
   private SslConfig sslConfig;
 
@@ -368,6 +374,30 @@ public final class ConnectionConfig extends AbstractConfig
 
 
   /**
+   * Returns whether data will be read from the socket as it arrives or only after each LDAP message is consumed.
+   *
+   * @return  whether to auto read data from the socket
+   */
+  public boolean getAutoRead()
+  {
+    return autoRead;
+  }
+
+
+  /**
+   * Sets whether data will be read from the socket as it arrives or only after each LDAP message is consumed.
+   *
+   * @param  b  whether to auto read data from the socket
+   */
+  public void setAutoRead(final boolean b)
+  {
+    assertMutable();
+    logger.trace("setting autoRead: {}", b);
+    autoRead = b;
+  }
+
+
+  /**
    * Returns the ssl config.
    *
    * @return  ssl config
@@ -557,6 +587,7 @@ public final class ConnectionConfig extends AbstractConfig
     copy.setAutoReconnect(config.autoReconnect);
     copy.setAutoReconnectCondition(config.autoReconnectCondition);
     copy.setAutoReplay(config.autoReplay);
+    copy.setAutoRead(config.autoRead);
     copy.setSslConfig(config.sslConfig != null ? SslConfig.copy(config.sslConfig) : null);
     copy.setUseStartTLS(config.useStartTLS);
     copy.setConnectionInitializers(
@@ -581,6 +612,7 @@ public final class ConnectionConfig extends AbstractConfig
       "autoReconnect=" + autoReconnect + ", " +
       "autoReconnectCondition=" + autoReconnectCondition + ", " +
       "autoReplay=" + autoReplay + ", " +
+      "autoRead=" + autoRead + ", " +
       "sslConfig=" + sslConfig + ", " +
       "useStartTLS=" + useStartTLS + ", " +
       "connectionInitializers=" + Arrays.toString(connectionInitializers) + ", " +
@@ -663,6 +695,13 @@ public final class ConnectionConfig extends AbstractConfig
     public Builder autoReplay(final boolean b)
     {
       object.setAutoReplay(b);
+      return this;
+    }
+
+
+    public Builder autoRead(final boolean b)
+    {
+      object.setAutoRead(b);
       return this;
     }
 
