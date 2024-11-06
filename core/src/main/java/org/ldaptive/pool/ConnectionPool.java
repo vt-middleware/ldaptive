@@ -13,38 +13,6 @@ public interface ConnectionPool
 {
 
 
-  /**
-   * Returns the activator for this pool.
-   *
-   * @return  activator
-   */
-  ConnectionActivator getActivator();
-
-
-  /**
-   * Sets the activator for this pool.
-   *
-   * @param  a  activator
-   */
-  void setActivator(ConnectionActivator a);
-
-
-  /**
-   * Returns the passivator for this pool.
-   *
-   * @return  passivator
-   */
-  ConnectionPassivator getPassivator();
-
-
-  /**
-   * Sets the passivator for this pool.
-   *
-   * @param  p  passivator
-   */
-  void setPassivator(ConnectionPassivator p);
-
-
   /** Initialize this pool for use. */
   void initialize();
 

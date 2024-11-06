@@ -2,6 +2,7 @@
 package org.ldaptive.pool;
 
 import java.lang.reflect.InvocationHandler;
+import java.time.Instant;
 import org.ldaptive.Connection;
 
 /**
@@ -34,7 +35,7 @@ public interface PooledConnectionProxy extends InvocationHandler
    *
    * @return  creation timestamp in milliseconds
    */
-  long getCreatedTime();
+  Instant getCreatedTime();
 
 
   /**
@@ -43,4 +44,20 @@ public interface PooledConnectionProxy extends InvocationHandler
    * @return  pooled connection statistics
    */
   PooledConnectionStatistics getPooledConnectionStatistics();
+
+
+  /**
+   * Returns the minimum size of the connection pool that this proxy is participating in.
+   *
+   * @return  minimum pool size
+   */
+  int getMinPoolSize();
+
+
+  /**
+   * Returns the maximum size of the connection pool that this proxy is participating in.
+   *
+   * @return  mqximum pool size
+   */
+  int getMaxPoolSize();
 }

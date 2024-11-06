@@ -157,7 +157,7 @@ public class EqualsTest
     EqualsVerifier.forClass(LdapURL.class)
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
-      .withIgnoredFields("retryMetadata", "active")
+      .withIgnoredFields("retryMetadata", "active", "priority")
       .verify();
   }
 

@@ -33,6 +33,8 @@ public final class LdapURL
   /** IP address resolved for this URL. */
   private InetAddress inetAddress;
 
+  /** Priority of this URL. Lower numbers indicate higher priority. */
+  private long priority;
 
   /** Private constructor. */
   private LdapURL() {}
@@ -229,6 +231,31 @@ public final class LdapURL
   void setInetAddress(final InetAddress address)
   {
     inetAddress = address;
+  }
+
+
+  /**
+   * Returns the priority of this URL. Lower numbers indicate a higher priority.
+   *
+   * @return  priority for this URL.
+   */
+  public long getPriority()
+  {
+    return priority;
+  }
+
+
+  /**
+   * Sets the priority of this URL.
+   *
+   * @param  p  priority for this URL
+   */
+  void setPriority(final long p)
+  {
+    if (p < 0) {
+      throw new IllegalArgumentException("Priority cannot be negative");
+    }
+    priority = p;
   }
 
 
