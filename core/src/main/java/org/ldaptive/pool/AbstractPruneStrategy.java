@@ -14,9 +14,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractPruneStrategy extends AbstractFreezable implements PruneStrategy
 {
 
-  /** Default prune period in seconds. Value is 5 minutes. */
-  protected static final Duration DEFAULT_PRUNE_PERIOD = Duration.ofMinutes(5);
-
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 

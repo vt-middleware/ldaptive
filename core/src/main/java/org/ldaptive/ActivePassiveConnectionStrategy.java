@@ -11,7 +11,7 @@ import java.util.function.Function;
  *
  * @author  Middleware Services
  */
-public class ActivePassiveConnectionStrategy extends AbstractConnectionStrategy
+public class ActivePassiveConnectionStrategy extends AbstractPassiveConnectionStrategy
 {
 
   /** Custom iterator function. */

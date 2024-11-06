@@ -2,6 +2,7 @@
 package org.ldaptive.pool;
 
 import java.lang.reflect.InvocationHandler;
+import java.time.Instant;
 import org.ldaptive.Connection;
 
 /**
@@ -11,14 +12,6 @@ import org.ldaptive.Connection;
  */
 public interface PooledConnectionProxy extends InvocationHandler
 {
-
-
-  /**
-   * Returns the connection pool that this proxy is participating in.
-   *
-   * @return  connection pool
-   */
-  ConnectionPool getConnectionPool();
 
 
   /**
@@ -34,7 +27,7 @@ public interface PooledConnectionProxy extends InvocationHandler
    *
    * @return  creation timestamp in milliseconds
    */
-  long getCreatedTime();
+  Instant getCreatedTime();
 
 
   /**

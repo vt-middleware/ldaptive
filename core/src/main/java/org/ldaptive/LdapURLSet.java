@@ -33,6 +33,11 @@ public final class LdapURLSet
   }
 
 
+  /**
+   * Returns the URLs in this set with active URLs ordered before inactive.
+   *
+   * @return  URLs with active ordered before inactive
+   */
   public List<LdapURL> getUrls()
   {
     final List<LdapURL> l = new ArrayList<>(getActiveUrls());

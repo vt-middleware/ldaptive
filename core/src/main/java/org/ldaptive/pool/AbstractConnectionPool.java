@@ -4,6 +4,7 @@ package org.ldaptive.pool;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -19,7 +20,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 import org.ldaptive.AbstractFreezable;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionValidator;
@@ -1061,56 +1064,54 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     poolLock.lock();
     try {
       if (!available.isEmpty()) {
-        final int currentPoolSize = active.size() + available.size();
-        if (currentPoolSize > minPoolSize) {
-          logger.debug("Pruning available pool of size {} for {}", available.size(), this);
-
-          final int numConnAboveMin = currentPoolSize - minPoolSize;
-          final int numConnToPrune = available.size() < numConnAboveMin ? available.size() : numConnAboveMin;
-          final List<Callable<PooledConnectionProxy>> callables = new ArrayList<>(numConnToPrune);
-          for (PooledConnectionProxy pc : available) {
-            logger.trace("pruning {} for {}", pc, this);
-            callables.add(() -> {
-              if (pruneStrategy.apply(pc)) {
-                logger.trace("prune approved on {} with {} for {}", pc, pruneStrategy, AbstractConnectionPool.this);
-                return pc;
+        final CallableWorker<Function<PoolState, PooledConnectionProxy>> callableWorker =
+          new CallableWorker<>(name + "-prune");
+        final AtomicInteger numConnPruned = new AtomicInteger();
+        try {
+          final int size = pruneStrategy.getPredicateSize();
+          logger.trace("prune strategy has {} predicates", size);
+          // prune all available connections for each predicate supplied by the prune strategy
+          IntStream.range(0, size)
+            .forEach(i -> {
+              final List<Callable<Function<PoolState, PooledConnectionProxy>>> callables =
+                new ArrayList<>();
+              for (PooledConnectionProxy pc : available) {
+                callables.add(() -> poolState -> {
+                  if (pruneStrategy.apply(pc).get(i).test(poolState)) {
+                    logger.trace("prune approved on {} with {} at index {} for {}",
+                      pc, pruneStrategy, i, AbstractConnectionPool.this);
+                    return pc;
+                  }
+                  logger.trace("prune denied on {} with {} at index {} for {}",
+                    pc, pruneStrategy, i, AbstractConnectionPool.this);
+                  return null;
+                });
               }
-              logger.trace("prune denied on {} with {} for {}", pc, pruneStrategy, AbstractConnectionPool.this);
-              return null;
-            });
-          }
-
-          final AtomicInteger numConnPruned = new AtomicInteger();
-          final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>(name + "-prune");
-          try {
-            final List<ExecutionException> exceptions = callableWorker.execute(
-              callables,
-              pc -> {
-                if (pc != null) {
-                  if (numConnPruned.get() < numConnToPrune) {
-                    logger.trace("prune removing {} from {}", pc, this);
+              final PoolState poolState = new DefaultPoolState(this, minPoolSize, maxPoolSize);
+              final List<ExecutionException> exceptions = callableWorker.execute(
+                callables,
+                func -> {
+                  // note that this function is not invoked concurrently
+                  final PooledConnectionProxy pc = func.apply(poolState);
+                  if (pc != null) {
                     available.remove(pc);
                     pc.getConnection().close();
                     logger.trace("prune removed {} from {}", pc, this);
                     numConnPruned.getAndIncrement();
-                  } else {
-                    logger.trace("prune ignored {} from {}", pc, this);
                   }
-                }
-              });
-            for (ExecutionException e : exceptions) {
-              logger.debug("Error pruning connection for {}", this, e.getCause() != null ? e.getCause() : e);
-            }
-          } finally {
-            callableWorker.shutdown();
-          }
-          if (numConnToPrune == available.size()) {
-            logger.debug("Prune strategy did not remove any connections for {}", this);
-          } else {
-            logger.info("Available pool size pruned to {} for {}", available.size(), this);
-          }
+                });
+              for (ExecutionException e : exceptions) {
+                logger.debug("Error pruning connection for {}", this, e.getCause() != null ? e.getCause() : e);
+              }
+            });
+        } finally {
+          callableWorker.shutdown();
+        }
+        if (numConnPruned.get() == 0) {
+          logger.debug("Prune strategy {} did not remove any connections for {}", pruneStrategy, this);
         } else {
-          logger.debug("Pool size is {}, no connections pruned for {}", currentPoolSize, this);
+          grow(minPoolSize, false);
+          logger.info("Available pool size pruned to {} for {}", available.size(), this);
         }
       } else {
         logger.debug("No available connections, no connections pruned for {}", this);
@@ -1155,8 +1156,8 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
             remove.add(entry.getKey());
           }
         }
+        // validation failures are all closed together after all validation is complete
         for (PooledConnectionProxy pc : remove) {
-          logger.trace("validate removing {} from {}", pc, this);
           available.remove(pc);
           pc.getConnection().close();
           logger.trace("validate removed {} from {}", pc, this);
@@ -1276,7 +1277,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     private final Connection conn;
 
     /** Time this connection was created. */
-    private final long createdTime = System.currentTimeMillis();
+    private final Instant createdTime = Instant.now();
 
     /** Statistics for this connection. */
     private final PooledConnectionStatistics statistics = new PooledConnectionStatistics(
@@ -1295,13 +1296,6 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
 
 
     @Override
-    public ConnectionPool getConnectionPool()
-    {
-      return AbstractConnectionPool.this;
-    }
-
-
-    @Override
     public Connection getConnection()
     {
       return conn;
@@ -1309,7 +1303,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
 
 
     @Override
-    public long getCreatedTime()
+    public Instant getCreatedTime()
     {
       return createdTime;
     }
