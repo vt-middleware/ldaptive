@@ -1,16 +1,24 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import io.netty.channel.Channel;
 import org.ldaptive.concurrent.SearchOperationWorker;
 import org.ldaptive.pool.BindConnectionPassivator;
 import org.ldaptive.pool.IdlePruneStrategy;
+import org.ldaptive.pool.PoolException;
+import org.ldaptive.pool.PooledConnectionProxy;
 import org.ldaptive.transport.ThreadPoolConfig;
 import org.ldaptive.transport.TransportFactory;
 import org.ldaptive.transport.netty.SimpleNettyServer;
@@ -44,7 +52,7 @@ public class PooledConnectionFactoryTest
           ThreadPoolConfig.builder()
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()));
-      factory.setName("pooled-connection-factory-test-open-and-close");
+      factory.setName("pooled-connection-factory-test");
       try {
         factory.initialize();
         assertThat(factory.availableCount()).isEqualTo(3);
@@ -78,7 +86,7 @@ public class PooledConnectionFactoryTest
             .messageThreads(1)
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()));
-      factory.setName("pooled-connection-factory-test-open-and-close");
+      factory.setName("pooled-connection-factory-test");
       try {
         factory.initialize();
         assertThat(factory.availableCount()).isEqualTo(3);
@@ -131,7 +139,7 @@ public class PooledConnectionFactoryTest
             .ioThreads(1)
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()));
-      factory.setName("pooled-connection-factory-test-open-and-reconnect");
+      factory.setName("pooled-connection-factory-test");
       factory.setMinPoolSize(10);
       factory.setMaxPoolSize(10);
       try {
@@ -149,6 +157,8 @@ public class PooledConnectionFactoryTest
             assertThat(e).isExactlyInstanceOf(LdapException.class);
           }
         }
+        // allow time for reconnects to occur
+        Thread.sleep(10);
         assertThat(factory.availableCount()).isEqualTo(10);
       } finally {
         if (factory.isInitialized()) {
@@ -170,7 +180,19 @@ public class PooledConnectionFactoryTest
   public void validatePeriodically()
     throws Exception
   {
-    final SimpleNettyServer server = new SimpleNettyServer();
+    final Map<Channel, AtomicInteger> msgIds = new ConcurrentHashMap<>();
+    final SimpleNettyServer server = new SimpleNettyServer(
+      null,
+      (ctx, msg) -> {
+        if (msg instanceof SearchRequest) {
+          msgIds.putIfAbsent(ctx.channel(), new AtomicInteger());
+          ctx.channel().writeAndFlush(SearchResponse.builder()
+            .messageID(msgIds.get(ctx.channel()).incrementAndGet())
+            .resultCode(ResultCode.SUCCESS)
+            .build());
+        }
+      },
+      null);
     try {
       final InetSocketAddress address = server.start();
       final PooledConnectionFactory factory = PooledConnectionFactory.builder(
@@ -182,9 +204,10 @@ public class PooledConnectionFactoryTest
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
         .validator(SearchConnectionValidator.builder()
+          .timeout(Duration.ofSeconds(5))
           .build())
         .build();
-      factory.setName("pooled-connection-factory-test-validate-periodically");
+      factory.setName("pooled-connection-factory-test");
       try {
         factory.initialize();
         assertThat(factory.availableCount()).isEqualTo(3);
@@ -207,7 +230,19 @@ public class PooledConnectionFactoryTest
   public void validatePeriodicallyRestart()
     throws Exception
   {
-    final SimpleNettyServer server = new SimpleNettyServer();
+    final Map<Channel, AtomicInteger> msgIds = new ConcurrentHashMap<>();
+    final SimpleNettyServer server = new SimpleNettyServer(
+      null,
+      (ctx, msg) -> {
+        if (msg instanceof SearchRequest) {
+          msgIds.putIfAbsent(ctx.channel(), new AtomicInteger());
+          ctx.channel().writeAndFlush(SearchResponse.builder()
+            .messageID(msgIds.get(ctx.channel()).incrementAndGet())
+            .resultCode(ResultCode.SUCCESS)
+            .build());
+        }
+      },
+      null);
     try {
       final InetSocketAddress address = server.start();
       final PooledConnectionFactory factory = PooledConnectionFactory.builder(
@@ -215,11 +250,12 @@ public class PooledConnectionFactoryTest
           ThreadPoolConfig.builder()
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()))
-        .name("pooled-connection-factory-test-validate-periodically-restart")
+        .name("pooled-connection-factory-test")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
         .validator(SearchConnectionValidator.builder()
+          .timeout(Duration.ofSeconds(5))
           .build())
         .build();
       try {
@@ -249,6 +285,7 @@ public class PooledConnectionFactoryTest
     throws Exception
   {
     final AtomicReference<Duration> serverWait = new AtomicReference<>(Duration.ofSeconds(30));
+    final Map<Channel, AtomicInteger> msgIds = new ConcurrentHashMap<>();
     final SimpleNettyServer server = new SimpleNettyServer(
       null,
       (ctx, msg) -> {
@@ -258,8 +295,9 @@ public class PooledConnectionFactoryTest
           } catch (InterruptedException e) {
             throw new RuntimeException(e);
           }
+          msgIds.putIfAbsent(ctx.channel(), new AtomicInteger());
           ctx.channel().writeAndFlush(SearchResponse.builder()
-            .messageID(1)
+            .messageID(msgIds.get(ctx.channel()).incrementAndGet())
             .resultCode(ResultCode.SUCCESS)
             .build());
         }
@@ -272,7 +310,7 @@ public class PooledConnectionFactoryTest
           ThreadPoolConfig.builder()
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()))
-        .name("pooled-connection-factory-test-validate-periodically-with-timeout")
+        .name("pooled-connection-factory-test")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -319,7 +357,19 @@ public class PooledConnectionFactoryTest
   public void validateOnCheckout()
     throws Exception
   {
-    final SimpleNettyServer server = new SimpleNettyServer();
+    final Map<Channel, AtomicInteger> msgIds = new ConcurrentHashMap<>();
+    final SimpleNettyServer server = new SimpleNettyServer(
+      null,
+      (ctx, msg) -> {
+        if (msg instanceof SearchRequest) {
+          msgIds.putIfAbsent(ctx.channel(), new AtomicInteger());
+          ctx.channel().writeAndFlush(SearchResponse.builder()
+            .messageID(msgIds.get(ctx.channel()).incrementAndGet())
+            .resultCode(ResultCode.SUCCESS)
+            .build());
+        }
+      },
+      null);
     try {
       final InetSocketAddress address = server.start();
       final AtomicInteger validateCount = new AtomicInteger();
@@ -328,7 +378,7 @@ public class PooledConnectionFactoryTest
           ThreadPoolConfig.builder()
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()))
-        .name("pooled-connection-factory-test-validate-one-checkout")
+        .name("pooled-connection-factory-test")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -399,7 +449,76 @@ public class PooledConnectionFactoryTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = "netty")
-  public void pruneBelowMin()
+  public void validateLargePool()
+    throws Exception
+  {
+    final Map<Channel, AtomicInteger> msgIds = new ConcurrentHashMap<>();
+    final SimpleNettyServer server = new SimpleNettyServer(
+      null,
+      (ctx, msg) -> {
+        if (msg instanceof SearchRequest) {
+          msgIds.putIfAbsent(ctx.channel(), new AtomicInteger());
+          ctx.channel().writeAndFlush(SearchResponse.builder()
+            .messageID(msgIds.get(ctx.channel()).incrementAndGet())
+            .resultCode(ResultCode.SUCCESS)
+            .build());
+        }
+      },
+      null);
+    try {
+      final InetSocketAddress address = server.start();
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(
+          TransportFactory.getTransport(
+            ThreadPoolConfig.builder()
+              .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
+              .build()))
+        .config(ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          .build())
+        .min(10)
+        .max(1000)
+        .validator(SearchConnectionValidator.builder()
+          .timeout(Duration.ofSeconds(5))
+          .build())
+        .build();
+      factory.setName("pooled-connection-factory-test");
+      try {
+        factory.initialize();
+        assertThat(factory.availableCount()).isEqualTo(10);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        factory.validate();
+        assertThat(factory.availableCount()).isEqualTo(10);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        final List<Connection> conns = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+          conns.add(factory.getConnection());
+        }
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(1000);
+        factory.validate();
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(1000);
+        conns.forEach(Connection::close);
+        assertThat(factory.availableCount()).isEqualTo(1000);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        factory.validate();
+        assertThat(factory.availableCount()).isEqualTo(1000);
+        assertThat(factory.activeCount()).isEqualTo(0);
+      } finally {
+        factory.close();
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
+  public void pruneNoOp()
     throws Exception
   {
     final SimpleNettyServer server = new SimpleNettyServer();
@@ -410,7 +529,7 @@ public class PooledConnectionFactoryTest
           ThreadPoolConfig.builder()
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()))
-        .name("pooled-connection-factory-test-prune-below-min")
+        .name("pooled-connection-factory-test")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -423,11 +542,84 @@ public class PooledConnectionFactoryTest
       try {
         factory.initialize();
         assertThat(factory.availableCount()).isEqualTo(2);
-        final Connection c1 = factory.getConnection();
-        c1.close();
-        Thread.sleep(50);
-        factory.prune();
+        assertThat(factory.activeCount()).isEqualTo(0);
+        waitAndPrune(factory, Duration.ofMillis(50));
         assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        final Connection c1 = factory.getConnection();
+        assertThat(factory.availableCount()).isEqualTo(1);
+        assertThat(factory.activeCount()).isEqualTo(1);
+        waitAndPrune(factory, Duration.ofMillis(50));
+        assertThat(factory.availableCount()).isEqualTo(1);
+        assertThat(factory.activeCount()).isEqualTo(1);
+        c1.close();
+        waitAndPrune(factory, Duration.ofMillis(50));
+        assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        // no connections should have been pruned
+        assertThat(hasConnection(factory, c1)).isTrue();
+      } finally {
+        factory.close();
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
+  public void pruneMaxAge()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(
+          TransportFactory.getTransport(
+            ThreadPoolConfig.builder()
+              .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
+              .build()))
+        .name("pooled-connection-factory-test")
+        .config(ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          .build())
+        .min(2)
+        .max(5)
+        .pruneStrategy(IdlePruneStrategy.builder()
+          .idle(Duration.ofMillis(25))
+          .age(Duration.ofMillis(250))
+          .build())
+        .build();
+      try {
+        factory.initialize();
+        assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        final Connection c1 = factory.getConnection();
+        assertThat(factory.availableCount()).isEqualTo(1);
+        assertThat(factory.activeCount()).isEqualTo(1);
+        waitAndPrune(factory, Duration.ofMillis(50));
+        assertThat(factory.availableCount()).isEqualTo(1);
+        assertThat(factory.activeCount()).isEqualTo(1);
+        c1.close();
+        assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        waitAndPrune(factory, Duration.ofMillis(50));
+        assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        // idle prune will not go below the minimum, same connection should still exist in the pool
+        assertThat(hasConnection(factory, c1)).isTrue();
+
+        waitAndPrune(factory, Duration.ofMillis(200));
+        assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        // age prune will go below the minimum, same connection should not exist in the pool
+        assertThat(hasConnection(factory, c1)).isFalse();
+        assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
       } finally {
         factory.close();
         assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
@@ -453,7 +645,7 @@ public class PooledConnectionFactoryTest
           ThreadPoolConfig.builder()
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()))
-        .name("pooled-connection-factory-test-prune-above-min")
+        .name("pooled-connection-factory-test")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -461,21 +653,41 @@ public class PooledConnectionFactoryTest
         .max(5)
         .pruneStrategy(IdlePruneStrategy.builder()
           .idle(Duration.ofMillis(25))
+          .age(Duration.ofMillis(250))
           .build())
         .build();
       try {
         factory.initialize();
         assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
         final Connection c1 = factory.getConnection();
         final Connection c2 = factory.getConnection();
         final Connection c3 = factory.getConnection();
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(3);
+        waitAndPrune(factory, Duration.ofMillis(50));
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(3);
         c1.close();
         c2.close();
         c3.close();
         assertThat(factory.availableCount()).isEqualTo(3);
-        Thread.sleep(50);
-        factory.prune();
+        assertThat(factory.activeCount()).isEqualTo(0);
+        waitAndPrune(factory, Duration.ofMillis(50));
         assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        // idle prune will not go below the minimum, two of the same connections should still exist in the pool
+        int count = 0;
+        if (hasConnection(factory, c1)) {
+          count++;
+        }
+        if (hasConnection(factory, c2)) {
+          count++;
+        }
+        if (hasConnection(factory, c3)) {
+          count++;
+        }
+        assertThat(count).isEqualTo(2);
       } finally {
         factory.close();
         assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
@@ -490,7 +702,7 @@ public class PooledConnectionFactoryTest
    * @throws  Exception  On test failure.
    */
   @Test(groups = "netty")
-  public void pruneAllActive()
+  public void pruneAllActiveDuringPrune()
     throws Exception
   {
     final SimpleNettyServer server = new SimpleNettyServer();
@@ -501,7 +713,7 @@ public class PooledConnectionFactoryTest
           ThreadPoolConfig.builder()
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()))
-        .name("pooled-connection-factory-test-prune-all-active")
+        .name("pooled-connection-factory-test")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -509,24 +721,28 @@ public class PooledConnectionFactoryTest
         .max(5)
         .pruneStrategy(IdlePruneStrategy.builder()
           .idle(Duration.ofMillis(25))
+          .age(Duration.ofMillis(250))
           .build())
         .build();
       try {
         factory.initialize();
         assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
         final Connection c1 = factory.getConnection();
         final Connection c2 = factory.getConnection();
         final Connection c3 = factory.getConnection();
         assertThat(factory.availableCount()).isEqualTo(0);
         assertThat(factory.activeCount()).isEqualTo(3);
-        Thread.sleep(50);
-        factory.prune();
+        waitAndPrune(factory, Duration.ofMillis(50));
         assertThat(factory.availableCount()).isEqualTo(0);
         assertThat(factory.activeCount()).isEqualTo(3);
         c1.close();
         c2.close();
         c3.close();
         assertThat(factory.availableCount()).isEqualTo(3);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        waitAndPrune(factory, Duration.ofMillis(50));
+        assertThat(factory.availableCount()).isEqualTo(2);
         assertThat(factory.activeCount()).isEqualTo(0);
       } finally {
         factory.close();
@@ -553,7 +769,7 @@ public class PooledConnectionFactoryTest
           ThreadPoolConfig.builder()
             .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
             .build()))
-        .name("pooled-connection-factory-test-prune-active-above-min")
+        .name("pooled-connection-factory-test")
         .config(ConnectionConfig.builder()
           .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
           .build())
@@ -566,6 +782,7 @@ public class PooledConnectionFactoryTest
       try {
         factory.initialize();
         assertThat(factory.availableCount()).isEqualTo(2);
+        assertThat(factory.activeCount()).isEqualTo(0);
         final Connection c1 = factory.getConnection();
         final Connection c2 = factory.getConnection();
         final Connection c3 = factory.getConnection();
@@ -573,12 +790,15 @@ public class PooledConnectionFactoryTest
         final Connection c5 = factory.getConnection();
         assertThat(factory.availableCount()).isEqualTo(0);
         assertThat(factory.activeCount()).isEqualTo(5);
+        waitAndPrune(factory, Duration.ofMillis(50));
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(5);
         c1.close();
         c2.close();
         assertThat(factory.availableCount()).isEqualTo(2);
         assertThat(factory.activeCount()).isEqualTo(3);
-        Thread.sleep(50);
-        factory.prune();
+        // prune will remove idle connections while other connections are active
+        waitAndPrune(factory, Duration.ofMillis(50));
         assertThat(factory.availableCount()).isEqualTo(0);
         assertThat(factory.activeCount()).isEqualTo(3);
         c3.close();
@@ -590,6 +810,106 @@ public class PooledConnectionFactoryTest
       }
     } finally {
       server.stop();
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "netty")
+  public void pruneLargePool()
+    throws Exception
+  {
+    final SimpleNettyServer server = new SimpleNettyServer();
+    try {
+      final InetSocketAddress address = server.start();
+      final PooledConnectionFactory factory = PooledConnectionFactory.builder(
+          TransportFactory.getTransport(
+            ThreadPoolConfig.builder()
+              .shutdownStrategy(ThreadPoolConfig.ShutdownStrategy.CONNECTION_FACTORY_CLOSE)
+              .build()))
+        .name("pooled-connection-factory-test")
+        .config(ConnectionConfig.builder()
+          .url(new LdapURL(address.getHostName(), address.getPort()).getHostnameWithSchemeAndPort())
+          .build())
+        .min(10)
+        .max(1000)
+        .pruneStrategy(IdlePruneStrategy.builder()
+          .idle(Duration.ofMillis(25))
+          .build())
+        .build();
+      try {
+        factory.initialize();
+        assertThat(factory.availableCount()).isEqualTo(10);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        final List<Connection> conns = new ArrayList<>();
+        for (int i = 0; i < 1000; i++) {
+          conns.add(factory.getConnection());
+        }
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(1000);
+        waitAndPrune(factory, Duration.ofMillis(50));
+        assertThat(factory.availableCount()).isEqualTo(0);
+        assertThat(factory.activeCount()).isEqualTo(1000);
+        conns.forEach(Connection::close);
+        assertThat(factory.availableCount()).isEqualTo(1000);
+        assertThat(factory.activeCount()).isEqualTo(0);
+        // prune will remove idle connections down to min size
+        waitAndPrune(factory, Duration.ofMillis(50));
+        assertThat(factory.availableCount()).isEqualTo(10);
+        assertThat(factory.activeCount()).isEqualTo(0);
+      } finally {
+        factory.close();
+        assertThat(factory.availableCount() + factory.activeCount()).isEqualTo(0);
+      }
+    } finally {
+      server.stop();
+    }
+  }
+
+
+  /**
+   * Waits the supplied time and then invokes {@link PooledConnectionFactory#prune()}.
+   *
+   * @param  factory  to prune
+   * @param  wait  before pruning
+   *
+   * @throws  InterruptedException  if waiting is interrupted
+   */
+  private static void waitAndPrune(final PooledConnectionFactory factory, final Duration wait)
+    throws InterruptedException
+  {
+    Thread.sleep(wait.toMillis());
+    factory.prune();
+  }
+
+
+  /**
+   * Returns whether the supplied factory contains the supplied connection.
+   *
+   * @param  factory  to inspect
+   * @param  conn  connection to test for
+   *
+   * @return  whether factory contains connection
+   */
+  private static boolean hasConnection(final PooledConnectionFactory factory, final Connection conn)
+  {
+    final List<Connection> available = new ArrayList<>(factory.availableCount());
+    try {
+      while (factory.availableCount() > 0) {
+        try {
+          available.add(factory.getConnection());
+        } catch (PoolException e) {
+          throw new RuntimeException(e);
+        }
+      }
+      return available.stream()
+        .anyMatch(
+          c -> ((PooledConnectionProxy) Proxy.getInvocationHandler(conn)).getConnection().equals(
+            ((PooledConnectionProxy) Proxy.getInvocationHandler(c)).getConnection()));
+    } finally {
+      available.forEach(Connection::close);
     }
   }
 

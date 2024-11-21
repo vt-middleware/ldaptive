@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  *
  * @author  Middleware Services
  */
-public class DnsResolverConnectionStrategy extends AbstractConnectionStrategy
+public class DnsResolverConnectionStrategy extends AbstractPassiveConnectionStrategy
 {
 
   /** Default time to live for DNS results. */

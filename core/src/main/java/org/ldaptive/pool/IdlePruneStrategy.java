@@ -3,18 +3,21 @@ package org.ldaptive.pool;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * Removes connections from the pool based on how long they have been idle in the available queue. By default, this
- * implementation executes every 5 minutes and prunes connections that have been idle for more than 10 minutes.
+ * implementation executes every 5 minutes and prunes connections that have been idle for more than 10 minutes. This
+ * strategy will not prune available connections below the minimum pool size unless an age time is configured.
+ * Connections will be pruned by age before they are pruned by idle time.
  *
  * @author  Middleware Services
  */
-public class IdlePruneStrategy extends AbstractPruneStrategy
+public class IdlePruneStrategy extends AgePruneStrategy
 {
-
-  /** Default number of statistics to store. Value is {@value}. */
-  private static final int DEFAULT_STATISTICS_SIZE = 1;
 
   /** Default idle time. Value is 10 minutes. */
   private static final Duration DEFAULT_IDLE_TIME = Duration.ofMinutes(10);
@@ -26,7 +29,7 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
   /** Creates a new idle prune strategy. */
   public IdlePruneStrategy()
   {
-    this(DEFAULT_PRUNE_PERIOD, DEFAULT_IDLE_TIME);
+    this(DEFAULT_IDLE_TIME);
   }
 
 
@@ -37,8 +40,7 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
    */
   public IdlePruneStrategy(final Duration idle)
   {
-    setPrunePeriod(idle.dividedBy(2));
-    setIdleTime(idle);
+    this(idle.dividedBy(2), idle);
   }
 
 
@@ -50,24 +52,49 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
    */
   public IdlePruneStrategy(final Duration period, final Duration idle)
   {
+    this(period, idle, Duration.ZERO);
+  }
+
+
+  /**
+   * Creates a new idle prune strategy.
+   *
+   * @param  period  to execute the prune task
+   * @param  idle  time at which a connection should be pruned
+   * @param  age  time at which a connection should be pruned
+   */
+  public IdlePruneStrategy(final Duration period, final Duration idle, final Duration age)
+  {
     setPrunePeriod(period);
     setIdleTime(idle);
+    setAgeTime(age);
   }
 
 
   @Override
-  public Boolean apply(final PooledConnectionProxy conn)
+  public List<Predicate<PooledConnectionProxy>> getPruneConditions()
   {
-    final Instant timeAvailable = conn.getPooledConnectionStatistics().getLastAvailableStat();
-    logger.trace("evaluating timestamp {} for connection {}", timeAvailable, conn);
-    return timeAvailable == null || timeAvailable.plus(idleTime).isBefore(Instant.now());
+    final List<Predicate<PooledConnectionProxy>> predicates = new ArrayList<>(super.getPruneConditions());
+    predicates.add(proxy -> {
+      final int totalSize = proxy.getConnectionPool().activeCount() + proxy.getConnectionPool().availableCount();
+      final int numConnAboveMin = totalSize - proxy.getMinPoolSize();
+      final int numConnToPrune = Math.min(proxy.getConnectionPool().availableCount(), numConnAboveMin);
+      logger.trace("number of connections to prune {}", numConnToPrune);
+      if (numConnToPrune > 0) {
+        final Instant timeAvailable = proxy.getPooledConnectionStatistics().getLastAvailableStat();
+        logger.trace("evaluating time available {} for connection {}", timeAvailable, proxy);
+        return timeAvailable == null || timeAvailable.plus(idleTime).isBefore(Instant.now());
+      }
+      return false;
+    });
+    return Collections.unmodifiableList(predicates);
   }
 
 
   @Override
   public int getStatisticsSize()
   {
-    return DEFAULT_STATISTICS_SIZE;
+    return 1;
   }
 
 
@@ -103,6 +130,8 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
     return "[" +
       getClass().getName() + "@" + hashCode() + "::" +
       "prunePeriod=" + getPrunePeriod() + ", " +
+      "ageTime=" + getAgeTime() + ", " +
+      "prunePriority=" + getPrunePriority() + ", " +
       "idleTime=" + idleTime + "]";
   }
 
@@ -112,15 +141,14 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
    *
    * @return  new builder
    */
-  public static IdlePruneStrategy.Builder builder()
+  public static Builder builder()
   {
-    return new IdlePruneStrategy.Builder();
+    return new Builder();
   }
 
 
   /** Idle prune strategy builder. */
-  public static class Builder extends
-    AbstractPruneStrategy.AbstractBuilder<IdlePruneStrategy.Builder, IdlePruneStrategy>
+  public static class Builder extends AgePruneStrategy.Builder
   {
 
 
@@ -134,7 +162,7 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
 
 
     @Override
-    protected IdlePruneStrategy.Builder self()
+    protected Builder self()
     {
       return this;
     }
@@ -147,9 +175,25 @@ public class IdlePruneStrategy extends AbstractPruneStrategy
      *
      * @return  this builder
      */
-    public IdlePruneStrategy.Builder idle(final Duration time)
+    public Builder idle(final Duration time)
     {
-      object.setIdleTime(time);
+      ((IdlePruneStrategy) object).setIdleTime(time);
+      return self();
+    }
+
+
+    @Override
+    public Builder age(final Duration time)
+    {
+      object.setAgeTime(time);
+      return self();
+    }
+
+
+    @Override
+    public Builder priority(final long l)
+    {
+      object.setPrunePriority(l);
       return self();
     }
   }
