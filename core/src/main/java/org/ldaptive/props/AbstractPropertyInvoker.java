@@ -47,7 +47,10 @@ public abstract class AbstractPropertyInvoker implements PropertyInvoker
       // look for get, is, and initialize
       for (Method method : c.getMethods()) {
         if (!method.isBridge()) {
-          if (method.getName().startsWith("get") && method.getParameterTypes().length == 0) {
+          if (method.getName().startsWith("get") &&
+              method.getName().length() > "get".length() &&
+              method.getParameterTypes().length == 0)
+          {
             final String mName = method.getName().substring(3);
             final String pName = Character.toLowerCase(mName.charAt(0)) + mName.substring(1);
             if (properties.containsKey(pName)) {
