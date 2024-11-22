@@ -1,8 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.SortResponseControl;
 import org.testng.annotations.DataProvider;
@@ -233,6 +238,7 @@ public class LdapEntryTest
       .isEqualTo(le.getAttribute("sn"))
       .isEqualTo(le.getAttribute("SN"));
     assertThat(le.getAttributeNames().length).isEqualTo(2);
+    assertThat(le.getAttributeNames()).containsExactly("sn", "givenName");
     assertThat(le.size()).isEqualTo(2);
     assertThat(le).isEqualTo(LdapEntry.builder().dn("uid=1").attributes(attr1, attr2).build());
     le.removeAttributes(attr2);
@@ -545,10 +551,214 @@ public class LdapEntryTest
     final LdapEntry entry = new LdapEntry();
     entry.setDn("uid=1,ou=people,dc=vt,dc=edu");
     entry.addAttributes(new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones"));
-    entry.addAttributes(new LdapAttribute("giveName", "Bobby", "Bob", "Robert", "John", "James"));
+    entry.addAttributes(new LdapAttribute("givenName", "Bobby", "Bob", "Robert", "John", "James"));
     final LdapEntry sort = LdapEntry.sort(entry);
     assertThat(sort).isEqualTo(entry);
-    assertThat(sort.getAttribute().getName()).isEqualTo("giveName");
+    assertThat(sort.getAttribute().getName()).isEqualTo("givenName");
     assertThat(sort.getAttribute().getStringValues()).containsExactly("Bob", "Bobby", "James", "John", "Robert");
+  }
+
+
+  /** Test for has attribute. */
+  @Test
+  public void hasAttribute()
+  {
+    final LdapEntry entry = new LdapEntry();
+    entry.setDn("uid=1,ou=people,dc=vt,dc=edu");
+    entry.addAttributes(new LdapAttribute("uid", "1"));
+    entry.addAttributes(new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones"));
+    entry.addAttributes(new LdapAttribute("givenName", "Bobby", "Bob", "Robert", "John", "James"));
+
+    assertThat(entry.hasAttribute(null)).isFalse();
+    assertThat(entry.hasAttribute("dne")).isFalse();
+    assertThat(entry.hasAttribute("DNe")).isFalse();
+    assertThat(entry.hasAttribute("uid")).isTrue();
+    assertThat(entry.hasAttribute("Uid")).isTrue();
+    assertThat(entry.hasAttribute("UID")).isTrue();
+    assertThat(entry.hasAttribute("sn")).isTrue();
+    assertThat(entry.hasAttribute("SN")).isTrue();
+  }
+
+
+  /** Test for get attribute. */
+  @Test
+  public void getAttribute()
+  {
+    final LdapEntry entry = new LdapEntry();
+    final LdapAttribute uid = new LdapAttribute("uid", "1");
+    entry.addAttributes(uid);
+    final LdapAttribute sn = new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones");
+    entry.addAttributes(sn);
+    final LdapAttribute givenName = new LdapAttribute("givenName", "Bobby", "Bob", "Robert", "John", "James");
+    entry.addAttributes(givenName);
+
+    assertThat(entry.getAttribute()).isEqualTo(uid);
+    assertThat(entry.getAttribute(null)).isNull();
+    assertThat(entry.getAttribute("dne")).isNull();
+    assertThat(entry.getAttribute("DNe")).isNull();
+    assertThat(entry.getAttribute("uid")).isEqualTo(uid);
+    assertThat(entry.getAttribute("Uid")).isEqualTo(uid);
+    assertThat(entry.getAttribute("UID")).isEqualTo(uid);
+    assertThat(entry.getAttribute("sn")).isEqualTo(sn);
+    assertThat(entry.getAttribute("SN")).isEqualTo(sn);
+  }
+
+
+  /** Test for get attribute. */
+  @Test
+  public void getAttributeValue()
+  {
+    final LdapEntry entry = new LdapEntry();
+    final LdapAttribute uid = new LdapAttribute("uid", "1");
+    entry.addAttributes(uid);
+    final LdapAttribute sn = new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones");
+    entry.addAttributes(sn);
+    final LdapAttribute givenName = new LdapAttribute("givenName", "Bobby", "Bob", "Robert", "John", "James");
+    entry.addAttributes(givenName);
+
+    assertThat(entry.getAttributeBinaryValue(null)).isNull();
+    assertThat(entry.getAttributeBinaryValues(null)).isEmpty();
+    assertThat(entry.getAttributeStringValue(null)).isNull();
+    assertThat(entry.getAttributeStringValues(null)).isEmpty();
+
+    assertThat(entry.getAttributeBinaryValue("dne")).isNull();
+    assertThat(entry.getAttributeBinaryValues("dne")).isEmpty();
+    assertThat(entry.getAttributeStringValue("dne")).isNull();
+    assertThat(entry.getAttributeStringValues("dne")).isEmpty();
+
+    assertThat(entry.getAttributeBinaryValue("DNe")).isNull();
+    assertThat(entry.getAttributeBinaryValues("DNe")).isEmpty();
+    assertThat(entry.getAttributeStringValue("DNe")).isNull();
+    assertThat(entry.getAttributeStringValues("DNe")).isEmpty();
+
+    assertThat(entry.getAttributeBinaryValue("uid")).isEqualTo(LdapUtils.utf8Encode("1"));
+    assertThat(entry.getAttributeBinaryValues("uid")).containsExactly(LdapUtils.utf8Encode("1"));
+    assertThat(entry.getAttributeStringValue("uid")).isEqualTo("1");
+    assertThat(entry.getAttributeStringValues("uid")).containsExactly("1");
+
+    assertThat(entry.getAttributeBinaryValue("Uid")).isEqualTo(LdapUtils.utf8Encode("1"));
+    assertThat(entry.getAttributeBinaryValues("Uid")).containsExactly(LdapUtils.utf8Encode("1"));
+    assertThat(entry.getAttributeStringValue("Uid")).isEqualTo("1");
+    assertThat(entry.getAttributeStringValues("Uid")).containsExactly("1");
+
+    assertThat(entry.getAttributeBinaryValue("UID")).isEqualTo(LdapUtils.utf8Encode("1"));
+    assertThat(entry.getAttributeBinaryValues("UID")).containsExactly(LdapUtils.utf8Encode("1"));
+    assertThat(entry.getAttributeStringValue("UID")).isEqualTo("1");
+    assertThat(entry.getAttributeStringValues("UID")).containsExactly("1");
+
+    assertThat(entry.getAttributeBinaryValue("sn")).isEqualTo(LdapUtils.utf8Encode("Smith"));
+    assertThat(entry.getAttributeBinaryValues("sn")).containsExactly(
+      LdapUtils.utf8Encode("Smith"),
+      LdapUtils.utf8Encode("Johnson"),
+      LdapUtils.utf8Encode("Williams"),
+      LdapUtils.utf8Encode("Brown"),
+      LdapUtils.utf8Encode("Jones"));
+    assertThat(entry.getAttributeStringValue("sn")).isEqualTo("Smith");
+    assertThat(entry.getAttributeStringValues("sn")).containsExactly("Smith", "Johnson", "Williams", "Brown", "Jones");
+
+    assertThat(entry.getAttributeBinaryValue("SN")).isEqualTo(LdapUtils.utf8Encode("Smith"));
+    assertThat(entry.getAttributeBinaryValues("SN")).containsExactly(
+      LdapUtils.utf8Encode("Smith"),
+      LdapUtils.utf8Encode("Johnson"),
+      LdapUtils.utf8Encode("Williams"),
+      LdapUtils.utf8Encode("Brown"),
+      LdapUtils.utf8Encode("Jones"));
+    assertThat(entry.getAttributeStringValue("SN")).isEqualTo("Smith");
+    assertThat(entry.getAttributeStringValues("SN")).containsExactly("Smith", "Johnson", "Williams", "Brown", "Jones");
+  }
+
+
+  /** Test for has attribute value. */
+  @Test
+  public void hasAttributeValue()
+  {
+    final LdapEntry entry = new LdapEntry();
+    entry.setDn("uid=1,ou=people,dc=vt,dc=edu");
+    entry.addAttributes(new LdapAttribute("uid", "1"));
+    entry.addAttributes(new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones"));
+    entry.addAttributes(new LdapAttribute("givenName", "Bobby", "Bob", "Robert", "John", "James"));
+
+    assertThat(entry.hasAttributeValue(null, (byte[]) null)).isFalse();
+    assertThat(entry.hasAttributeValue(null, new byte[] {0x00})).isFalse();
+    assertThat(entry.hasAttributeValue(null, (String) null)).isFalse();
+    assertThat(entry.hasAttributeValue(null, "")).isFalse();
+    assertThat(entry.hasAttributeValue("dne", new byte[] {0x00})).isFalse();
+    assertThat(entry.hasAttributeValue("DNe", "")).isFalse();
+    assertThat(entry.hasAttributeValue("uid", "1")).isTrue();
+    assertThat(entry.hasAttributeValue("Uid", "1")).isTrue();
+    assertThat(entry.hasAttributeValue("UID", "1")).isTrue();
+    assertThat(entry.hasAttributeValue("uid", "2")).isFalse();
+    assertThat(entry.hasAttributeValue("Uid", "2")).isFalse();
+    assertThat(entry.hasAttributeValue("UID", "2")).isFalse();
+    assertThat(entry.hasAttributeValue("givenName", "Bobby")).isTrue();
+    assertThat(entry.hasAttributeValue("GIVENNAME", "Bob")).isTrue();
+    assertThat(entry.hasAttributeValue("givenName", "Timmy")).isFalse();
+    assertThat(entry.hasAttributeValue("GIVENNAME", "Tim")).isFalse();
+  }
+
+
+  /** Test for process attribute. */
+  @Test
+  public void processAttribute()
+  {
+    final LdapEntry entry = new LdapEntry();
+    entry.setDn("uid=1,ou=people,dc=vt,dc=edu");
+    final LdapAttribute uid = new LdapAttribute("uid", "1");
+    entry.addAttributes(uid);
+    final LdapAttribute sn = new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones");
+    entry.addAttributes(sn);
+    final LdapAttribute givenName = new LdapAttribute("givenName", "Bobby", "Bob", "Robert", "John", "James");
+    entry.addAttributes(givenName);
+
+    final AtomicBoolean b = new AtomicBoolean();
+    entry.processAttribute(null, a -> b.set(true));
+    assertThat(b.get()).isFalse();
+    entry.processAttribute("dne", a -> b.set(true));
+    assertThat(b.get()).isFalse();
+    entry.processAttribute("uid", a -> a.removeStringValues("1"));
+    assertThat(uid.getStringValues()).isEmpty();
+    entry.processAttribute("givenName", a -> a.addStringValues("Jimmy"));
+    assertThat(givenName.getStringValues())
+      .containsExactly("Bobby", "Bob", "Robert", "John", "James", "Jimmy");
+
+    entry.processAttribute(null, a -> b.set(true));
+    assertThat(b.get()).isFalse();
+    entry.processAttribute("dne", a -> b.set(true));
+    assertThat(b.get()).isFalse();
+    entry.processAttribute("uid", a -> a.removeStringValues("1"));
+    assertThat(uid.getStringValues()).isEmpty();
+    entry.processAttribute("givenName", a -> a.addStringValues("Jimmy"));
+    assertThat(givenName.getStringValues())
+      .containsExactly("Bobby", "Bob", "Robert", "John", "James", "Jimmy");
+  }
+
+
+  /** Test for map attribute. */
+  @Test
+  public void mapAttribute()
+  {
+    final LdapEntry entry = new LdapEntry();
+    entry.setDn("uid=1,ou=people,dc=vt,dc=edu");
+    entry.addAttributes(new LdapAttribute("uid", "1"));
+    entry.addAttributes(new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones"));
+    entry.addAttributes(new LdapAttribute("givenName", "Bobby", "Bob", "Robert", "John", "James"));
+
+    assertThat(entry.mapAttribute(null, LdapAttribute::getBinaryValue)).isNull();
+    assertThat(entry.mapAttribute(null, LdapAttribute::getBinaryValue, null)).isNull();
+    assertThat(entry.mapAttribute(null, LdapAttribute::getBinaryValues, Collections.emptyList())).isEmpty();
+    assertThat(entry.mapAttribute("dne", (Function<LdapAttribute, String>) attr -> "")).isNull();
+    assertThat(entry.mapAttribute("dne", (Function<LdapAttribute, String>) attr -> "", null)).isNull();
+    assertThat(
+      entry.mapAttribute(
+        "dne",
+        (Function<LdapAttribute, Collection<String>>) attr -> List.of(""), Collections.emptyList())).isEmpty();
+    assertThat(entry.mapAttribute("uid", LdapAttribute::getStringValue)).isEqualTo("1");
+    assertThat(entry.mapAttribute("uid", LdapAttribute::getStringValue, null)).isEqualTo("1");
+    assertThat(entry.mapAttribute(
+      "uid", LdapAttribute::getStringValues, Collections.emptyList())).containsExactly("1");
+    assertThat(entry.mapAttribute("sn", LdapAttribute::getStringValue)).isEqualTo("Smith");
+    assertThat(entry.mapAttribute("sn", LdapAttribute::getStringValue, null)).isEqualTo("Smith");
+    assertThat(entry.mapAttribute("sn", LdapAttribute::getStringValues, Collections.emptyList()))
+      .containsExactly("Smith", "Johnson", "Williams", "Brown", "Jones");
   }
 }

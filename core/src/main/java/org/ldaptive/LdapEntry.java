@@ -10,6 +10,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.ldaptive.asn1.AbstractParseHandler;
 import org.ldaptive.asn1.DERBuffer;
@@ -172,7 +174,59 @@ public class LdapEntry extends AbstractMessage implements Freezable
 
 
   /**
-   * Returns the ldap attributes.
+   * Returns whether this entry contains an attribute with the supplied name.
+   *
+   * @param  name  of the attribute to match
+   *
+   * @return  whether this entry contains an attribute with the supplied name
+   */
+  public boolean hasAttribute(final String name)
+  {
+    if (name != null) {
+      return attributes.containsKey(LdapUtils.toLowerCase(name));
+    }
+    return false;
+  }
+
+
+  /**
+   * Provides a null safe invocation of {@link LdapAttribute#hasValue(byte[])}.
+   *
+   * @param  name  of the attribute containing a value
+   * @param  value  to find
+   *
+   * @return  whether value exists in the attribute with the supplied name
+   */
+  public boolean hasAttributeValue(final String name, final byte[] value)
+  {
+    final LdapAttribute attr = getAttribute(name);
+    if (attr != null) {
+      return attr.hasValue(value);
+    }
+    return false;
+  }
+
+
+  /**
+   * Provides a null safe invocation of {@link LdapAttribute#hasValue(String)}.
+   *
+   * @param  name  of the attribute containing a value
+   * @param  value  to find
+   *
+   * @return  whether value exists in the attribute with the supplied name
+   */
+  public boolean hasAttributeValue(final String name, final String value)
+  {
+    final LdapAttribute attr = getAttribute(name);
+    if (attr != null) {
+      return attr.hasValue(value);
+    }
+    return false;
+  }
+
+
+  /**
+   * Returns the ldap attributes in this entry. Collection will be immutable if {@link #immutable} is true.
    *
    * @return  ldap attributes
    */
@@ -202,7 +256,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
    *
    * @param  name  of the attribute to return
    *
-   * @return  ldap attribute
+   * @return  ldap attribute or null if the attribute does not exist
    */
   public LdapAttribute getAttribute(final String name)
   {
@@ -210,6 +264,130 @@ public class LdapEntry extends AbstractMessage implements Freezable
       return attributes.get(LdapUtils.toLowerCase(name));
     }
     return null;
+  }
+
+
+  /**
+   * Provides a null safe invocation of {@link LdapAttribute#getBinaryValue()}.
+   *
+   * @param  name  of the attribute whose values should be returned
+   *
+   * @return  single byte array attribute value or null if the attribute does not exist
+   */
+  public byte[] getAttributeBinaryValue(final String name)
+  {
+    final LdapAttribute attr = getAttribute(name);
+    if (attr != null) {
+      return attr.getBinaryValue();
+    }
+    return null;
+  }
+
+
+  /**
+   * Provides a null safe invocation of {@link LdapAttribute#getBinaryValues()}.
+   *
+   * @param  name  of the attribute whose values should be returned
+   *
+   * @return  collection of byte array attribute values or an empty collection if the attribute does not exist
+   */
+  public Collection<byte[]> getAttributeBinaryValues(final String name)
+  {
+    final LdapAttribute attr = getAttribute(name);
+    if (attr != null) {
+      return attr.getBinaryValues();
+    }
+    return Collections.emptyList();
+  }
+
+
+  /**
+   * Provides a null safe invocation of {@link LdapAttribute#getStringValue()}.
+   *
+   * @param  name  of the attribute whose values should be returned
+   *
+   * @return  single string attribute value or null if the attribute does not exist
+   */
+  public String getAttributeStringValue(final String name)
+  {
+    final LdapAttribute attr = getAttribute(name);
+    if (attr != null) {
+      return attr.getStringValue();
+    }
+    return null;
+  }
+
+
+  /**
+   * Provides a null safe invocation of {@link LdapAttribute#getStringValues()}.
+   *
+   * @param  name  of the attribute whose values should be returned
+   *
+   * @return  collection of string attribute values or an empty collection if the attribute does not exist
+   */
+  public Collection<String> getAttributeStringValues(final String name)
+  {
+    final LdapAttribute attr = getAttribute(name);
+    if (attr != null) {
+      return attr.getStringValues();
+    }
+    return Collections.emptyList();
+  }
+
+
+  /**
+   * Processes an attribute using the supplied consumer. The consumer is invoked only if the attribute exists.
+   *
+   * @param  name  of the attribute
+   * @param  func  to process the attribute if it exists
+   *
+   * @return  whether the consumer was invoked
+   */
+  public boolean processAttribute(final String name, final Consumer<LdapAttribute> func)
+  {
+    return mapAttribute(
+      name,
+      attr -> {
+        func.accept(attr);
+        return true;
+      },
+      false);
+  }
+
+
+  /**
+   * Returns a mapped value from an attribute using the supplied function or null if the attribute doesn't exist.
+   *
+   * @param  <T>  type of mapped value
+   * @param  name  of the attribute
+   * @param  func  to map the attribute with
+   *
+   * @return  mapped ldap attribute
+   */
+  public <T> T mapAttribute(final String name, final Function<LdapAttribute, T> func)
+  {
+    return mapAttribute(name, func, null);
+  }
+
+
+  /**
+   * Returns a mapped value from an attribute using the supplied function or defaultValue if the attribute doesn't
+   * exist.
+   *
+   * @param  <T>  type of mapped value
+   * @param  name  of the attribute
+   * @param  func  to map the attribute with
+   * @param  defaultValue  to return if no attribute with name exists
+   *
+   * @return  mapped ldap attribute
+   */
+  public <T> T mapAttribute(final String name, final Function<LdapAttribute, T> func, final T defaultValue)
+  {
+    final LdapAttribute attr = getAttribute(name);
+    if (attr != null) {
+      return func.apply(attr);
+    }
+    return defaultValue;
   }
 
 
@@ -225,7 +403,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
 
 
   /**
-   * Adds attributes to the entry.
+   * Adds attributes to the entry. If an attribute with the same name already exists, it is replaced.
    *
    * @param  attrs  attributes to add
    */
@@ -239,7 +417,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
 
 
   /**
-   * Adds attributes to the entry.
+   * Adds attributes to the entry. If an attribute with the same name already exists, it is replaced.
    *
    * @param  attrs  attributes to add
    */
@@ -299,7 +477,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   }
 
 
-  /** Removes all the attributes. */
+  /** Removes all the attributes from this entry. */
   public final void clear()
   {
     assertMutable();
