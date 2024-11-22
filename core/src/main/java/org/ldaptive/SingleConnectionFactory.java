@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.function.Predicate;
 import org.ldaptive.transport.ThreadPoolConfig;
 import org.ldaptive.transport.Transport;
 import org.ldaptive.transport.TransportFactory;
@@ -36,10 +36,10 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
   private boolean nonBlockingInitialize;
 
   /** To run when a connection is opened. */
-  private Function<Connection, Boolean> onOpen;
+  private Predicate<Connection> onOpen;
 
   /** To run when a connection is closed. */
-  private Function<Connection, Boolean> onClose;
+  private Predicate<Connection> onClose;
 
   /** For validating the connection. */
   private ConnectionValidator validator;
@@ -179,7 +179,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    *
    * @return  on open function
    */
-  public Function<Connection, Boolean> getOnOpen()
+  public Predicate<Connection> getOnOpen()
   {
     return onOpen;
   }
@@ -190,7 +190,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    *
    * @param  function  to run on connection open
    */
-  public void setOnOpen(final Function<Connection, Boolean> function)
+  public void setOnOpen(final Predicate<Connection> function)
   {
     assertMutable();
     onOpen = function;
@@ -202,7 +202,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    *
    * @return  on close function
    */
-  public Function<Connection, Boolean> getOnClose()
+  public Predicate<Connection> getOnClose()
   {
     return onClose;
   }
@@ -213,7 +213,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
    *
    * @param  function  to run on connection close
    */
-  public void setOnClose(final Function<Connection, Boolean> function)
+  public void setOnClose(final Predicate<Connection> function)
   {
     assertMutable();
     onClose = function;
@@ -358,7 +358,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
     connection.open();
     proxy = new ConnectionProxy(connection);
     initialized = true;
-    if (onOpen != null && !onOpen.apply(proxy.getConnection())) {
+    if (onOpen != null && !onOpen.test(proxy.getConnection())) {
       connection.close();
       proxy = null;
       initialized = false;
@@ -373,7 +373,7 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
   private synchronized void destroyConnectionProxy()
   {
     if (proxy != null) {
-      if (onClose != null && !onClose.apply(proxy.getConnection())) {
+      if (onClose != null && !onClose.test(proxy.getConnection())) {
         logger.warn("On close function {} failed for {}", onClose, this);
       }
       proxy.getConnection().close();
@@ -551,14 +551,14 @@ public final class SingleConnectionFactory extends DefaultConnectionFactory
     }
 
 
-    public Builder onOpen(final Function<Connection, Boolean> function)
+    public Builder onOpen(final Predicate<Connection> function)
     {
       object.setOnOpen(function);
       return this;
     }
 
 
-    public Builder onClose(final Function<Connection, Boolean> function)
+    public Builder onClose(final Predicate<Connection> function)
     {
       object.setOnClose(function);
       return this;
