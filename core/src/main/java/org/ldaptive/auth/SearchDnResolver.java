@@ -314,19 +314,23 @@ public class SearchDnResolver extends AbstractSearchOperationFactory implements 
    */
   protected String performResolveFromAttribute(final LdapEntry entry)
   {
+    String value = null;
     final LdapAttribute attr = entry.getAttribute(resolveFromAttribute);
-    if (attr.size() != 1) {
+    if (attr == null) {
+      logger.warn(
+        "Skipping attribute as it could not be found on the entry, " +
+          "in dn: {} resolveDnFromAttribute: {}", entry.getDn(), resolveFromAttribute);
+    } else if (attr.size() != 1) {
       logger.warn(
         "Skipping attribute as it does not meet cardinality (must contain a single value), " +
           "in dn: {} resolveDnFromAttribute: {}", entry.getDn(), resolveFromAttribute);
-      return null;
-    }
-    if (attr.isBinary()) {
+    } else if (attr.isBinary()) {
       logger.warn("Skipping attribute as it is binary, " +
         "in dn: {} resolveDnFromAttribute: {}", entry.getDn(), resolveFromAttribute);
-      return null;
+    } else {
+      value = attr.getStringValue();
     }
-    return attr.getStringValue();
+    return value;
   }
 
 
