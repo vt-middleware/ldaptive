@@ -361,21 +361,29 @@ public class LdapAttributeTest
 
   /** Test for add and then remove methods. */
   @Test
-  public void testAddValues()
+  public void testAddRemoveValues()
   {
     final LdapAttribute la = new LdapAttribute("sn");
     la.addValues(s -> s.getBytes(StandardCharsets.UTF_8), "Smith", "Johnson");
     assertThat(la.size()).isEqualTo(2);
+    assertThat(la.getStringValues()).containsExactly("Smith", "Johnson");
     la.addValues(s -> s.getBytes(StandardCharsets.UTF_8), List.of("Williams", "Brown"));
+    assertThat(la.getStringValues()).containsExactly("Smith", "Johnson", "Williams", "Brown");
     assertThat(la.size()).isEqualTo(4);
     la.addValues(s -> s.getBytes(StandardCharsets.UTF_8), "Jones");
+    assertThat(la.getStringValues()).containsExactly("Smith", "Johnson", "Williams", "Brown", "Jones");
     assertThat(la.size()).isEqualTo(5);
-    la.removeStringValues("Smith", "Johnson");
+    la.removeValues(s -> s.getBytes(StandardCharsets.UTF_8), "Smith", "Johnson");
     assertThat(la.size()).isEqualTo(3);
-    la.removeStringValues(List.of("Williams", "Brown"));
+    assertThat(la.getStringValues()).containsExactly("Williams", "Brown", "Jones");
+    la.removeValues(s -> s.getBytes(StandardCharsets.UTF_8), List.of("Williams", "Brown"));
     assertThat(la.size()).isEqualTo(1);
-    la.removeStringValues("Jones");
+    assertThat(la.getStringValues()).containsExactly("Jones");
+    la.removeValues(s -> s.getBytes(StandardCharsets.UTF_8), "Jones");
     assertThat(la.size()).isEqualTo(0);
+    assertThat(la.getStringValues()).isEmpty();
+    assertThat(la.getBinaryValues()).isEmpty();
+    assertThat(la.getValues(o -> new byte[0])).isEmpty();
   }
 
 

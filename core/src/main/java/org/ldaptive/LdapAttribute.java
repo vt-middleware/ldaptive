@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -212,7 +211,7 @@ public class LdapAttribute extends AbstractFreezable
     if (attributeName.indexOf(';') > 0) {
       final String[] split = attributeName.split(";");
       if (split.length > 1) {
-        return IntStream.range(1, split.length).mapToObj(i -> split[i]).collect(Collectors.toUnmodifiableList());
+        return Arrays.stream(split, 1, split.length).collect(Collectors.toUnmodifiableList());
       }
     }
     return Collections.emptyList();
@@ -233,7 +232,7 @@ public class LdapAttribute extends AbstractFreezable
   /**
    * Returns the values of this attribute as byte arrays. The return collection cannot be modified.
    *
-   * @return  collection of string attribute values
+   * @return  collection of byte array attribute values
    */
   public Collection<byte[]> getBinaryValues()
   {
@@ -464,6 +463,46 @@ public class LdapAttribute extends AbstractFreezable
     values.stream()
       .filter(Objects::nonNull)
       .map(s -> AttributeValue.fromString(s, binary))
+      .forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Removes the supplied values for this attribute by encoding them with the supplied function.
+   *
+   * @param  <T>  type attribute to encode
+   * @param  func  to encode value with
+   * @param  value  to encode and remove, null values are discarded
+   */
+  @SuppressWarnings("unchecked")
+  public <T> void removeValues(final Function<T, byte[]> func, final T... value)
+  {
+    assertMutable();
+    Stream.of(value)
+      .filter(Objects::nonNull)
+      .map(func)
+      .filter(Objects::nonNull)
+      .map(b -> new AttributeValue(b, false))
+      .forEach(attributeValues::remove);
+  }
+
+
+  /**
+   * Removes all the values in the supplied collection for this attribute by encoding them with the supplied function.
+   * See {@link #removeValues(Function, Object...)}.
+   *
+   * @param  <T>  type attribute to encode
+   * @param  func  to encode value with
+   * @param  values  to encode and remove, null values are discarded
+   */
+  public <T> void removeValues(final Function<T, byte[]> func, final Collection<T> values)
+  {
+    assertMutable();
+    values.stream()
+      .filter(Objects::nonNull)
+      .map(func)
+      .filter(Objects::nonNull)
+      .map(b -> new AttributeValue(b, false))
       .forEach(attributeValues::remove);
   }
 
