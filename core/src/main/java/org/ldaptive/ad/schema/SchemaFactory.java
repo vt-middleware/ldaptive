@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import org.ldaptive.ConnectionFactory;
@@ -85,13 +84,16 @@ public final class SchemaFactory
     final Set<AttributeType> attributeTypes = new HashSet<>();
     final Set<ObjectClass> objectClasses = new HashSet<>();
     for (LdapEntry entry : schemaResult.getEntries()) {
-      final LdapAttribute la = entry.getAttribute("objectClass");
-      if (la != null && la.getStringValues().contains("attributeSchema")) {
-        attributeTypes.add(createAttributeType(entry));
-      }
-      if (la != null && la.getStringValues().contains("classSchema")) {
-        objectClasses.add(createObjectClass(entry));
-      }
+      entry.processAttribute(
+        "objectClass",
+        attr -> {
+          if (attr.getStringValues().contains("attributeSchema")) {
+            attributeTypes.add(createAttributeType(entry));
+          }
+          if (attr.getStringValues().contains("classSchema")) {
+            objectClasses.add(createObjectClass(entry));
+          }
+        });
     }
 
     final Schema schema = new Schema();
@@ -211,15 +213,13 @@ public final class SchemaFactory
    */
   private static String getAttributeValue(final LdapEntry entry, final String... names)
   {
-    String value = null;
     for (String name : names) {
       final LdapAttribute la = entry.getAttribute(name);
       if (la != null) {
-        value = la.getStringValue();
-        break;
+        return la.getStringValue();
       }
     }
-    return value;
+    return null;
   }
 
 
@@ -233,14 +233,12 @@ public final class SchemaFactory
    */
   private static String[] getAttributeValues(final LdapEntry entry, final String... names)
   {
-    Collection<String> values = null;
     for (String name : names) {
       final LdapAttribute la = entry.getAttribute(name);
       if (la != null) {
-        values = la.getStringValues();
-        break;
+        return la.getStringValues().toArray(new String[0]);
       }
     }
-    return values != null ? values.toArray(new String[0]) : null;
+    return null;
   }
 }

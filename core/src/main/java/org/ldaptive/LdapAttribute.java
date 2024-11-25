@@ -238,7 +238,7 @@ public class LdapAttribute extends AbstractFreezable
   public Collection<byte[]> getBinaryValues()
   {
     if (attributeValues.isEmpty()) {
-      return Collections.emptySet();
+      return Collections.emptyList();
     }
     return attributeValues.stream().map(av -> av.getValue(true)).collect(Collectors.toUnmodifiableList());
   }
@@ -267,7 +267,7 @@ public class LdapAttribute extends AbstractFreezable
   public Collection<String> getStringValues()
   {
     if (attributeValues.isEmpty()) {
-      return Collections.emptySet();
+      return Collections.emptyList();
     }
     return attributeValues.stream().map(v -> v.getStringValue(binary)).collect(Collectors.toUnmodifiableList());
   }

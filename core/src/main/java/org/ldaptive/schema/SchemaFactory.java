@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import org.ldaptive.ConnectionFactory;
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
@@ -135,47 +134,30 @@ public final class SchemaFactory
     }
 
     final Schema schema = new Schema();
-
-    final LdapAttribute atAttr = schemaEntry.getAttribute(ATTRIBUTE_TYPES_ATTR_NAME);
-    if (atAttr != null) {
-      schema.setAttributeTypes(atAttr.getValues(new AttributeTypeValueTranscoder().decoder()));
-    }
-
-    final LdapAttribute dcrAttr = schemaEntry.getAttribute(DIT_CONTENT_RULES_ATTR_NAME);
-    if (dcrAttr != null) {
-      schema.setDitContentRules(dcrAttr.getValues(new DITContentRuleValueTranscoder().decoder()));
-    }
-
-    final LdapAttribute dsrAttr = schemaEntry.getAttribute(DIT_STRUCTURE_RULES_ATTR_NAME);
-    if (dsrAttr != null) {
-      schema.setDitStructureRules(dsrAttr.getValues(new DITStructureRuleValueTranscoder().decoder()));
-    }
-
-    final LdapAttribute sAttr = schemaEntry.getAttribute(LDAP_SYNTAXES_ATTR_NAME);
-    if (sAttr != null) {
-      schema.setSyntaxes(sAttr.getValues(new SyntaxValueTranscoder().decoder()));
-    }
-
-    final LdapAttribute mrAttr = schemaEntry.getAttribute(MATCHING_RULES_ATTR_NAME);
-    if (mrAttr != null) {
-      schema.setMatchingRules(mrAttr.getValues(new MatchingRuleValueTranscoder().decoder()));
-    }
-
-    final LdapAttribute mruAttr = schemaEntry.getAttribute(MATCHING_RULE_USE_ATTR_NAME);
-    if (mruAttr != null) {
-      schema.setMatchingRuleUses(mruAttr.getValues(new MatchingRuleUseValueTranscoder().decoder()));
-    }
-
-    final LdapAttribute nfAttr = schemaEntry.getAttribute(NAME_FORMS_ATTR_NAME);
-    if (nfAttr != null) {
-      schema.setNameForms(nfAttr.getValues(new NameFormValueTranscoder().decoder()));
-    }
-
-    final LdapAttribute ocAttr = schemaEntry.getAttribute(OBJECT_CLASS_ATTR_NAME);
-    if (ocAttr != null) {
-      schema.setObjectClasses(ocAttr.getValues(new ObjectClassValueTranscoder().decoder()));
-    }
-
+    schemaEntry.processAttribute(
+      ATTRIBUTE_TYPES_ATTR_NAME,
+      attr -> schema.setAttributeTypes(attr.getValues(new AttributeTypeValueTranscoder().decoder())));
+    schemaEntry.processAttribute(
+      DIT_CONTENT_RULES_ATTR_NAME,
+      attr -> schema.setDitContentRules(attr.getValues(new DITContentRuleValueTranscoder().decoder())));
+    schemaEntry.processAttribute(
+      DIT_STRUCTURE_RULES_ATTR_NAME,
+      attr -> schema.setDitStructureRules(attr.getValues(new DITStructureRuleValueTranscoder().decoder())));
+    schemaEntry.processAttribute(
+      LDAP_SYNTAXES_ATTR_NAME,
+      attr -> schema.setSyntaxes(attr.getValues(new SyntaxValueTranscoder().decoder())));
+    schemaEntry.processAttribute(
+      MATCHING_RULES_ATTR_NAME,
+      attr -> schema.setMatchingRules(attr.getValues(new MatchingRuleValueTranscoder().decoder())));
+    schemaEntry.processAttribute(
+      MATCHING_RULE_USE_ATTR_NAME,
+      attr -> schema.setMatchingRuleUses(attr.getValues(new MatchingRuleUseValueTranscoder().decoder())));
+    schemaEntry.processAttribute(
+      NAME_FORMS_ATTR_NAME,
+      attr -> schema.setNameForms(attr.getValues(new NameFormValueTranscoder().decoder())));
+    schemaEntry.processAttribute(
+      OBJECT_CLASS_ATTR_NAME,
+      attr -> schema.setObjectClasses(attr.getValues(new ObjectClassValueTranscoder().decoder())));
     return schema;
   }
 
