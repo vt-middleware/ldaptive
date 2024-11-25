@@ -509,7 +509,43 @@ public class LdapEntryTest
       assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
     try {
+      entry.addAttributes(List.of(LdapAttribute.builder().name("cn").values("robert baker").build()));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      entry.getAttributes().add(LdapAttribute.builder().name("cn").values("robert baker").build());
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(UnsupportedOperationException.class);
+    }
+    try {
       entry.getAttribute("givenName").addStringValues("rob");
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      entry.removeAttributes(LdapAttribute.builder().name("cn").values("robert baker").build());
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      entry.removeAttributes(List.of(LdapAttribute.builder().name("cn").values("robert baker").build()));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      entry.getAttributes().remove(LdapAttribute.builder().name("cn").values("robert baker").build());
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(UnsupportedOperationException.class);
+    }
+    try {
+      entry.removeAttribute("givenName");
       fail("Should have thrown exception");
     } catch (Exception e) {
       assertThat(e).isExactlyInstanceOf(IllegalStateException.class);

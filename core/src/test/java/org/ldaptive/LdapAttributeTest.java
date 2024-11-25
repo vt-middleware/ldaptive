@@ -464,6 +464,65 @@ public class LdapAttributeTest
     } catch (Exception e) {
       assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
+    try {
+      attr.removeStringValues("foo");
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      attr.removeStringValues(List.of("foo"));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      attr.removeBinaryValues("foo".getBytes(StandardCharsets.UTF_8));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      attr.removeBinaryValues(List.of("foo".getBytes(StandardCharsets.UTF_8)));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      attr.removeValues((Function<Object, byte[]>) o -> o.toString().getBytes(StandardCharsets.UTF_8), "foo");
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      attr.removeValues((Function<Object, byte[]>) o -> o.toString().getBytes(StandardCharsets.UTF_8), List.of("foo"));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      attr.getStringValues().add("foo");
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(UnsupportedOperationException.class);
+    }
+    try {
+      attr.getBinaryValues().add("foo".getBytes(StandardCharsets.UTF_8));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(UnsupportedOperationException.class);
+    }
+    try {
+      attr.getValues((Function<byte[], Object>) bytes -> bytes).add("foo".getBytes(StandardCharsets.UTF_8));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(UnsupportedOperationException.class);
+    }
+
+    final byte[] value = attr.getBinaryValue();
+    value[0] = 0x01;
+    assertThat(attr.getBinaryValue()).containsOnly(attr.getBinaryValue());
+    assertThat(attr.getBinaryValue()).doesNotContain(0x01, 0);
   }
 
 
