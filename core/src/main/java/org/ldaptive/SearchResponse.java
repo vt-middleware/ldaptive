@@ -105,7 +105,7 @@ public final class SearchResponse extends AbstractResult implements Freezable
 
 
   /**
-   * Returns a collection of ldap entry.
+   * Returns the entries in this search result. Collection will be immutable if {@link #immutable} is true.
    *
    * @return  collection of ldap entry
    */
@@ -116,7 +116,7 @@ public final class SearchResponse extends AbstractResult implements Freezable
 
 
   /**
-   * Returns a single entry of this result. If multiple entries exist the first entry returned by the underlying
+   * Returns a single entry of this search result. If multiple entries exist the first entry returned by the underlying
    * iterator is used. If no entries exist null is returned.
    *
    * @return  search result entry
@@ -150,11 +150,11 @@ public final class SearchResponse extends AbstractResult implements Freezable
   /**
    * Returns the entry DNs in this result.
    *
-   * @return  string array of entry DNs
+   * @return  entry DNs
    */
-  public Set<String> getEntryDns()
+  public Collection<String> getEntryDns()
   {
-    return resultEntries.stream().map(LdapEntry::getDn).collect(Collectors.toUnmodifiableSet());
+    return resultEntries.stream().map(LdapEntry::getDn).collect(Collectors.toUnmodifiableList());
   }
 
 
