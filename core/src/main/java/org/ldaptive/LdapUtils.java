@@ -537,24 +537,45 @@ public final class LdapUtils
 
 
   /**
-   * Converts the supplied string to lower case. If the string contains non-ascii characters, {@link Locale#ROOT} is
+   * Converts the supplied value to lower case. If the string contains non-ascii characters, {@link Locale#ROOT} is
    * used.
    *
-   * @param  s  to lower case
+   * @param  value  to lower case
    *
    * @return  new lower case string
    */
-  public static String toLowerCase(final String s)
+  public static String toLowerCase(final String value)
   {
-    if (s == null || s.isEmpty()) {
-      return s;
+    return toLowerCase(value, true);
+  }
+
+
+  /**
+   * Converts the supplied value to lower case. If the string contains non-ascii characters, {@link Locale#ROOT} is
+   * used.
+   *
+   * @param  value  to lower case
+   * @param  allowNull  whether to throw {@link NullPointerException} if value is null
+   *
+   * @return  new lower case string
+   *
+   * @throws  NullPointerException  if allowNull is false and value is null
+   */
+  public static String toLowerCase(final String value, final boolean allowNull)
+  {
+    if (!allowNull) {
+      Objects.requireNonNull(value, "Cannot lower case null value");
+    }
+    if (value == null || value.isEmpty()) {
+      return value;
     }
     // CheckStyle:MagicNumber OFF
     // if string contains non-ascii, use locale specific lowercase
-    if (s.chars().anyMatch(c -> c > 0x7F)) {
-      return s.toLowerCase(Locale.ROOT);
+    if (value.chars().anyMatch(c -> c > 0x7F)) {
+      return value.toLowerCase(Locale.ROOT);
     }
-    return toLowerCaseAscii(s);
+    // CheckStyle:MagicNumber ON
+    return toLowerCaseAscii(value);
   }
 
 
@@ -575,6 +596,7 @@ public final class LdapUtils
     char ch;
     for (int i = 0; i < len; i++) {
       ch = s.charAt(i);
+      // CheckStyle:MagicNumber OFF
       if (ch <= 0x7F) {
         if (ch >= 'A' && ch <= 'Z') {
           sb.append((char) (ch + 32));
@@ -597,6 +619,7 @@ public final class LdapUtils
           sb.append(ch);
         }
       }
+      // CheckStyle:MagicNumber ON
     }
     return sb.toString();
   }

@@ -518,6 +518,12 @@ public class LdapAttributeTest
     } catch (Exception e) {
       assertThat(e).isExactlyInstanceOf(UnsupportedOperationException.class);
     }
+    try {
+      attr.merge(new LdapAttribute("foo"));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
 
     final byte[] value = attr.getBinaryValue();
     value[0] = 0x01;
@@ -552,10 +558,55 @@ public class LdapAttributeTest
   @Test
   public void sort()
   {
-    final LdapAttribute la = new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones");
-    final LdapAttribute sort = LdapAttribute.sort(la);
-    assertThat(sort).isEqualTo(la);
-    assertThat(sort.getStringValues())
+    final LdapAttribute la1 = new LdapAttribute("sn", "Smith", "Johnson", "Williams", "Brown", "Jones");
+    final LdapAttribute sort1 = LdapAttribute.sort(la1);
+    assertThat(sort1).isEqualTo(la1);
+    assertThat(sort1.getStringValues())
       .containsExactly("Brown", "Johnson", "Jones", "Smith", "Williams");
+
+    final LdapAttribute la2 = new LdapAttribute(
+      "bytes",
+      new byte[] {0x05, 0x06, 0x07}, new byte[] {0x08, 0x09, 0x10}, new byte[] {0x02, 0x03, 0x04});
+    final LdapAttribute sort2 = LdapAttribute.sort(la2);
+    assertThat(sort2).isEqualTo(la2);
+    assertThat(sort2.getBinaryValues())
+      .containsExactly(new byte[] {0x02, 0x03, 0x04}, new byte[] {0x05, 0x06, 0x07}, new byte[] {0x08, 0x09, 0x10});
+  }
+
+
+  /** Test for merge method. */
+  @Test
+  public void merge()
+  {
+    final LdapAttribute la1 = LdapAttribute.builder().name("sn").values("Smith").build();
+    la1.merge(new LdapAttribute());
+    assertThat(la1).isEqualTo(LdapAttribute.builder().name("sn").values("Smith").build());
+    la1.merge(LdapAttribute.builder().name("sn").values("Johnson", "Smith").build());
+    assertThat(la1).isEqualTo(LdapAttribute.builder().name("sn").values("Smith", "Johnson").build());
+
+    la1.merge(LdapAttribute.builder().name("Sn").values("Williams", "Brown").build());
+    assertThat(la1)
+      .isEqualTo(LdapAttribute.builder().name("sn").values("Smith", "Johnson",  "Williams", "Brown").build());
+
+    la1.merge(LdapAttribute.builder().name("gn").values("Johnson", "Bob").build());
+    assertThat(la1)
+      .isEqualTo(LdapAttribute.builder().name("sn").values("Smith", "Johnson",  "Williams", "Brown", "Bob").build());
+
+    final LdapAttribute la2 = LdapAttribute.builder()
+      .name("jpegPhoto")
+      .values("image1".getBytes())
+      .binary(true)
+      .build();
+    la2.merge(LdapAttribute.builder().name("JPEGPHOTO").values("image2".getBytes()).binary(true).build());
+    assertThat(la2)
+      .isEqualTo(LdapAttribute.builder().name("jpegPhoto").values("image1".getBytes(), "image2".getBytes()).build());
+
+    la2.merge(LdapAttribute.builder().name("jpegphoto").values("image3").binary(false).build());
+    assertThat(la2)
+      .isEqualTo(
+        LdapAttribute.builder()
+          .name("jpegPhoto")
+          .values("image1".getBytes(), "image2".getBytes(), "image3".getBytes())
+          .build());
   }
 }

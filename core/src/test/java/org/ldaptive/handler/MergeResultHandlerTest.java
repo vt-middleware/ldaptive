@@ -35,15 +35,19 @@ public class MergeResultHandlerTest
                 LdapAttribute.builder().name("cn").values("Homer").build(),
                 LdapAttribute.builder().name("sn").values("Simpson").build(),
                 LdapAttribute.builder().name("uid").values("101").build(),
-                LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
+                LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build(),
+                LdapAttribute.builder().name("jpegPhoto").values("image1".getBytes()).binary(true).build(),
+                LdapAttribute.builder().name("pngPhoto").values("image1".getBytes()).binary(true).build())
               .build(),
             LdapEntry.builder()
               .dn("cn=Bart Simpson,ou=People,dc=ldaptive,dc=org")
               .attributes(
                 LdapAttribute.builder().name("sn").values("Simpson").build(),
-                LdapAttribute.builder().name("cn").values("Bart").build(),
+                LdapAttribute.builder().name("cn").values("Bart".getBytes()).binary(true).build(),
                 LdapAttribute.builder().name("uid").values("102").build(),
-                LdapAttribute.builder().name("mail").values("bsimpson@tv.com", "bartman@tv.com").build())
+                LdapAttribute.builder().name("mail").values("bsimpson@tv.com", "bartman@tv.com").build(),
+                LdapAttribute.builder().name("jpegPhoto").values("image2".getBytes()).binary(true).build(),
+                LdapAttribute.builder().name("pngPhoto").values("image2".getBytes()).binary(false).build())
               .build(),
             LdapEntry.builder()
               .dn("cn=Lisa Simpson,ou=People,dc=ldaptive,dc=org")
@@ -61,7 +65,17 @@ public class MergeResultHandlerTest
                 LdapAttribute.builder().name("mail")
                   .values("hsimpson@tv.com", "pieman@tv.com", "bartman@tv.com", "bsimpson@tv.com").build(),
                 LdapAttribute.builder().name("sn").values("Simpson").build(),
-                LdapAttribute.builder().name("uid").values("101", "102", "103").build())
+                LdapAttribute.builder().name("uid").values("101", "102", "103").build(),
+                LdapAttribute.builder()
+                  .name("jpegPhoto")
+                  .values("image1".getBytes(), "image2".getBytes())
+                  .binary(true)
+                  .build(),
+                LdapAttribute.builder()
+                  .name("pngPhoto")
+                  .values("image1".getBytes(), "image2".getBytes())
+                  .binary(true)
+                  .build())
               .build(),
           },
         },

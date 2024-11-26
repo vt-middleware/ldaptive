@@ -107,12 +107,8 @@ public class MergeAttributeEntryHandler extends AbstractEntryHandler implements 
     }
     for (String s : attributeNames) {
       final LdapAttribute la = entry.getAttribute(s);
-      if (la != null) {
-        if (la.isBinary()) {
-          mergedAttribute.addBinaryValues(la.getBinaryValues());
-        } else {
-          mergedAttribute.addStringValues(la.getStringValues());
-        }
+      if (la != null && !mergedAttribute.equals(la)) {
+        mergedAttribute.merge(la);
       }
     }
 

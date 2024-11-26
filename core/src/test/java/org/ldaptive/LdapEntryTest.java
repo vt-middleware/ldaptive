@@ -3,7 +3,6 @@ package org.ldaptive;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -248,21 +247,100 @@ public class LdapEntryTest
   }
 
 
-  /** Test for {@link LdapEntry#removeAttribute(String)}. */
+  /** Test for add attributes. */
   @Test
-  public void removeAttribute()
+  public void addAttributes()
   {
-    final LdapAttribute attr1 = new LdapAttribute("givenName", "John");
-    final LdapAttribute attr2 = new LdapAttribute("sn", "Doe");
-    final Set<LdapAttribute> s = new HashSet<>();
-    s.add(attr1);
+    final LdapEntry le = LdapEntry.builder().dn("uid=1").build();
+    try {
+      le.addAttributes(LdapAttribute.builder().build());
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+    }
+    try {
+      le.addAttributes(List.of(LdapAttribute.builder().build()));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+    }
 
-    final LdapEntry le = LdapEntry.builder().dn("uid=1").attributes(s).build();
-    le.addAttributes(attr2);
-    le.removeAttribute("GIVENNAME");
+    le.addAttributes(new LdapAttribute("sn", "Doe"));
     assertThat(le.size()).isEqualTo(1);
-    le.clear();
+    assertThat(le)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1")
+        .attributes(LdapAttribute.builder().name("sn").values("Doe").build())
+        .build());
+
+    le.addAttributes(Set.of(new LdapAttribute("givenName", "John")));
+    assertThat(le)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1")
+        .attributes(
+          LdapAttribute.builder().name("sn").values("Doe").build(),
+          LdapAttribute.builder().name("givenName").values("John").build())
+        .build());
+    assertThat(le.size()).isEqualTo(2);
+  }
+
+
+  /** Test for remove attributes. */
+  @Test
+  public void removeAttributes()
+  {
+    final LdapEntry le = LdapEntry.builder()
+      .dn("uid=1")
+      .attributes(Set.of(new LdapAttribute("givenName", "John")))
+      .attributes(new LdapAttribute("uid", "1"), new LdapAttribute("sn", "Doe"))
+      .build();
+    try {
+      le.removeAttributes(LdapAttribute.builder().build());
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+    }
+    try {
+      le.removeAttributes(List.of(LdapAttribute.builder().build()));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+    }
+
+    le.removeAttributes(LdapAttribute.builder().name("displayName").values("John Doe").build());
+    assertThat(le.size()).isEqualTo(3);
+    assertThat(le)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1")
+        .attributes(
+          LdapAttribute.builder().name("givenName").values("John").build(),
+          LdapAttribute.builder().name("uid").values("1").build(),
+          LdapAttribute.builder().name("sn").values("Doe").build())
+        .build());
+
+    le.removeAttribute("GIVENNAME");
+    assertThat(le.size()).isEqualTo(2);
+    assertThat(le)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1")
+        .attributes(
+          LdapAttribute.builder().name("uid").values("1").build(),
+          LdapAttribute.builder().name("sn").values("Doe").build())
+        .build());
+
+    le.removeAttributes(new LdapAttribute("sn", "Doe"));
+    assertThat(le.size()).isEqualTo(1);
+    assertThat(le)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1")
+        .attributes(LdapAttribute.builder().name("uid").values("1").build())
+        .build());
+    le.removeAttributes(List.of(new LdapAttribute("uid")));
     assertThat(le.size()).isEqualTo(0);
+    assertThat(le)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1")
+        .build());
   }
 
 
@@ -550,6 +628,18 @@ public class LdapEntryTest
     } catch (Exception e) {
       assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
     }
+    try {
+      entry.mergeAttributes(new LdapAttribute("givenName"));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+    try {
+      entry.mergeAttributes(List.of(new LdapAttribute("givenName")));
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
   }
 
 
@@ -796,5 +886,69 @@ public class LdapEntryTest
     assertThat(entry.mapAttribute("sn", LdapAttribute::getStringValue, null)).isEqualTo("Smith");
     assertThat(entry.mapAttribute("sn", LdapAttribute::getStringValues, Collections.emptyList()))
       .containsExactly("Smith", "Johnson", "Williams", "Brown", "Jones");
+  }
+
+
+  /** Test for merge attributes. */
+  @Test
+  public void mergeAttributes()
+  {
+    final LdapEntry entry = LdapEntry.builder()
+      .dn("uid=1,ou=people,dc=vt,dc=edu")
+      .attributes(
+        LdapAttribute.builder().name("uid").values("1").build(),
+        LdapAttribute.builder().name("sn").values("Smith").build(),
+        LdapAttribute.builder().name("givenName").values("Bobby").build())
+      .build();
+
+    try {
+      entry.mergeAttributes(LdapAttribute.builder().build());
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+    }
+
+    entry.mergeAttributes(Collections.emptyList());
+    assertThat(entry)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1,ou=people,dc=vt,dc=edu")
+        .attributes(
+          LdapAttribute.builder().name("uid").values("1").build(),
+          LdapAttribute.builder().name("sn").values("Smith").build(),
+          LdapAttribute.builder().name("givenName").values("Bobby").build())
+        .build());
+
+    entry.mergeAttributes(LdapAttribute.builder().name("sn").values("Johnson", "Williams").build());
+    assertThat(entry)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1,ou=people,dc=vt,dc=edu")
+        .attributes(
+          LdapAttribute.builder().name("uid").values("1").build(),
+          LdapAttribute.builder().name("sn").values("Smith", "Johnson", "Williams").build(),
+          LdapAttribute.builder().name("givenName").values("Bobby").build())
+        .build());
+
+    entry.mergeAttributes(List.of(
+      LdapAttribute.builder().name("SN").values("Brown", "Jones").build(),
+      LdapAttribute.builder().name("givenName").values("Bob", "Robert").build()));
+    assertThat(entry)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1,ou=people,dc=vt,dc=edu")
+        .attributes(
+          LdapAttribute.builder().name("uid").values("1").build(),
+          LdapAttribute.builder().name("sn").values("Smith", "Johnson", "Williams", "Brown", "Jones").build(),
+          LdapAttribute.builder().name("givenName").values("Bobby", "Bob", "Robert").build())
+        .build());
+
+    entry.mergeAttributes(LdapAttribute.builder().name("displayName").values("Bob Smith").build());
+    assertThat(entry)
+      .isEqualTo(LdapEntry.builder()
+        .dn("uid=1,ou=people,dc=vt,dc=edu")
+        .attributes(
+          LdapAttribute.builder().name("uid").values("1").build(),
+          LdapAttribute.builder().name("sn").values("Smith", "Johnson", "Williams", "Brown", "Jones").build(),
+          LdapAttribute.builder().name("givenName").values("Bobby", "Bob", "Robert").build(),
+          LdapAttribute.builder().name("displayName").values("Bob Smith").build())
+        .build());
   }
 }

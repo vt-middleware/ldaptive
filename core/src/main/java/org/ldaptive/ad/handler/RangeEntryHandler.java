@@ -95,11 +95,7 @@ public class RangeEntryHandler extends AbstractMessageFunctionalEntryHandler<Sea
       }
 
       // Copy values
-      if (la.isBinary()) {
-        newAttr.addBinaryValues(la.getBinaryValues());
-      } else {
-        newAttr.addStringValues(la.getStringValues());
-      }
+      newAttr.merge(la);
 
       // Remove original attribute with range syntax from returned attributes
       entry.removeAttributes(la);

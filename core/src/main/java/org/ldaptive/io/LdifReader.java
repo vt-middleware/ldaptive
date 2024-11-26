@@ -140,16 +140,7 @@ public class LdifReader implements SearchResultReader
       if ("dn".equals(newAttr.getName())) {
         entry.setDn(newAttr.getStringValue());
       } else {
-        final LdapAttribute existingAttr = entry.getAttribute(newAttr.getName());
-        if (existingAttr == null) {
-          entry.addAttributes(newAttr);
-        } else {
-          if (existingAttr.isBinary()) {
-            existingAttr.addBinaryValues(newAttr.getBinaryValue());
-          } else {
-            existingAttr.addStringValues(newAttr.getStringValue());
-          }
-        }
+        entry.mergeAttributes(newAttr);
       }
     }
     return entry;

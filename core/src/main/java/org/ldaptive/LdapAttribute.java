@@ -9,7 +9,6 @@ import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -408,6 +407,18 @@ public class LdapAttribute extends AbstractFreezable
 
 
   /**
+   * Merges the values in the supplied attribute with this attribute. Duplicate values are not merged.
+   *
+   * @param  attr  to merge
+   */
+  public void merge(final LdapAttribute attr)
+  {
+    assertMutable();
+    attr.attributeValues.stream().map(AttributeValue::copy).forEach(attributeValues::add);
+  }
+
+
+  /**
    * Removes the supplied byte array as a value from this attribute.
    *
    * @param  value  to remove, null values are discarded
@@ -626,24 +637,20 @@ public class LdapAttribute extends AbstractFreezable
    * Returns a new attribute whose values are sorted. String values are sorted naturally. Binary values are sorted using
    * {@link Arrays#compare(byte[], byte[])}.
    *
-   * @param  la  attribute to sort
+   * @param  attr  attribute to sort
    *
    * @return  new ldap attribute with sorted values
    */
-  public static LdapAttribute sort(final LdapAttribute la)
+  public static LdapAttribute sort(final LdapAttribute attr)
   {
-    final LdapAttribute sorted = new LdapAttribute(la.getName());
-    if (la.isBinary()) {
+    final LdapAttribute sorted = new LdapAttribute(attr.getName());
+    if (attr.isBinary()) {
       sorted.setBinary(true);
-      final Set<byte[]> newValues = la.getBinaryValues().stream()
-        .sorted(new ByteArrayComparator()).collect(Collectors.toCollection(LinkedHashSet::new));
-      sorted.addBinaryValues(newValues);
+      attr.getBinaryValues().stream().sorted(new ByteArrayComparator()).forEach(sorted::addBinaryValues);
     } else {
-      final Set<String> newValues = la.getStringValues().stream()
-        .sorted(new StringComparator()).collect(Collectors.toCollection(LinkedHashSet::new));
-      sorted.addStringValues(newValues);
+      attr.getStringValues().stream().sorted(new StringComparator()).forEach(sorted::addStringValues);
     }
-    if (la.isFrozen()) {
+    if (attr.isFrozen()) {
       sorted.freeze();
     }
     return sorted;

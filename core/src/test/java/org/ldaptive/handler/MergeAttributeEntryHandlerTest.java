@@ -65,6 +65,88 @@ public class MergeAttributeEntryHandlerTest
               LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
             .build(),
         },
+        new Object[] {
+          MergeAttributeEntryHandler.builder()
+            .mergeAttributeName("jpegPhoto")
+            .attributeNames("jpegPhoto", "pngPhoto")
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("Homer").build(),
+              LdapAttribute.builder().name("sn").values("Simpson").build(),
+              LdapAttribute.builder().name("uid").values("101").build(),
+              LdapAttribute.builder().name("jpegPhoto").values("image1".getBytes()).binary(true).build(),
+              LdapAttribute.builder().name("pngPhoto").values("image2".getBytes()).binary(true).build(),
+              LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("Homer").build(),
+              LdapAttribute.builder().name("sn").values("Simpson").build(),
+              LdapAttribute.builder().name("uid").values("101").build(),
+              LdapAttribute.builder()
+                .name("jpegPhoto")
+                .values("image1".getBytes(), "image2".getBytes())
+                .binary(true)
+                .build(),
+              LdapAttribute.builder().name("pngPhoto").values("image2".getBytes()).binary(true).build(),
+              LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
+            .build(),
+        },
+        new Object[] {
+          MergeAttributeEntryHandler.builder()
+            .mergeAttributeName("jpegPhoto")
+            .attributeNames("jpegPhoto", "uid")
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("Homer").build(),
+              LdapAttribute.builder().name("sn").values("Simpson").build(),
+              LdapAttribute.builder().name("uid").values("101").build(),
+              LdapAttribute.builder().name("jpegPhoto").values("image1".getBytes()).binary(true).build(),
+              LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("Homer").build(),
+              LdapAttribute.builder().name("sn").values("Simpson").build(),
+              LdapAttribute.builder().name("uid").values("101").build(),
+              LdapAttribute.builder()
+                .name("jpegPhoto")
+                .values("image1".getBytes(), "101".getBytes())
+                .binary(true)
+                .build(),
+              LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
+            .build(),
+        },
+        new Object[] {
+          MergeAttributeEntryHandler.builder()
+            .mergeAttributeName("uid")
+            .attributeNames("jpegPhoto", "uid")
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("Homer").build(),
+              LdapAttribute.builder().name("sn").values("Simpson").build(),
+              LdapAttribute.builder().name("uid").values("101").build(),
+              LdapAttribute.builder().name("jpegPhoto").values("image1".getBytes()).binary(true).build(),
+              LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
+            .build(),
+          LdapEntry.builder()
+            .dn("cn=Homer Simpson,ou=People,dc=ldaptive,dc=org")
+            .attributes(
+              LdapAttribute.builder().name("cn").values("Homer").build(),
+              LdapAttribute.builder().name("sn").values("Simpson").build(),
+              LdapAttribute.builder().name("uid").values("101").values("image1".getBytes()).build(),
+              LdapAttribute.builder().name("jpegPhoto").values("image1".getBytes()).binary(true).build(),
+              LdapAttribute.builder().name("mail").values("hsimpson@tv.com", "pieman@tv.com").build())
+            .build(),
+        },
       };
   }
 

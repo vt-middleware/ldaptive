@@ -224,16 +224,7 @@ public class RecursiveResultHandler extends AbstractMessageFunctionalEntryHandle
         for (String s : mergeAttributes) {
           final LdapAttribute newAttr = newEntry.getAttribute(s);
           if (newAttr != null) {
-            final LdapAttribute oldAttr = entry.getAttribute(s);
-            if (oldAttr == null) {
-              entry.addAttributes(LdapAttribute.copy(newAttr));
-            } else {
-              if (newAttr.isBinary()) {
-                newAttr.getBinaryValues().forEach(oldAttr::addBinaryValues);
-              } else {
-                newAttr.getStringValues().forEach(oldAttr::addStringValues);
-              }
-            }
+            entry.mergeAttributes(newAttr);
           }
         }
       }

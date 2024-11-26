@@ -411,7 +411,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   {
     assertMutable();
     for (LdapAttribute a : attrs) {
-      attributes.put(LdapUtils.toLowerCase(a.getName()), a);
+      attributes.put(LdapUtils.toLowerCase(a.getName(), false), a);
     }
   }
 
@@ -424,7 +424,49 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void addAttributes(final Collection<LdapAttribute> attrs)
   {
     assertMutable();
-    attrs.forEach(a -> attributes.put(LdapUtils.toLowerCase(a.getName()), a));
+    attrs.forEach(a -> attributes.put(LdapUtils.toLowerCase(a.getName(), false), a));
+  }
+
+
+  /**
+   * Merges attributes into this entry. If an attribute with the same name already exists, the values of the supplied
+   * attribute are added to the existing attribute. If the supplied attribute doesn't exist, the attribute is added to
+   * this entry.
+   *
+   * @param  attrs  attributes to merge
+   */
+  public void mergeAttributes(final LdapAttribute... attrs)
+  {
+    assertMutable();
+    for (LdapAttribute a : attrs) {
+      final String lowerName = LdapUtils.toLowerCase(a.getName(), false);
+      if (!attributes.containsKey(lowerName)) {
+        attributes.put(lowerName, LdapAttribute.copy(a));
+      } else {
+        attributes.get(lowerName).merge(a);
+      }
+    }
+  }
+
+
+  /**
+   * Merges attributes into this entry. If an attribute with the same name already exists, the values of the supplied
+   * attribute are added to the existing attribute. If the supplied attribute doesn't exist, the attribute is added to
+   * this entry.
+   *
+   * @param  attrs  attributes to merge
+   */
+  public void mergeAttributes(final Collection<LdapAttribute> attrs)
+  {
+    assertMutable();
+    attrs.forEach(a -> {
+      final String lowerName = LdapUtils.toLowerCase(a.getName(), false);
+      if (!attributes.containsKey(lowerName)) {
+        attributes.put(lowerName, LdapAttribute.copy(a));
+      } else {
+        attributes.get(lowerName).merge(a);
+      }
+    });
   }
 
 
@@ -436,7 +478,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void removeAttribute(final String name)
   {
     assertMutable();
-    attributes.remove(LdapUtils.toLowerCase(name));
+    attributes.remove(LdapUtils.toLowerCase(name, false));
   }
 
 
@@ -449,7 +491,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   {
     assertMutable();
     for (LdapAttribute a : attrs) {
-      attributes.remove(LdapUtils.toLowerCase(a.getName()));
+      attributes.remove(LdapUtils.toLowerCase(a.getName(), false));
     }
   }
 
@@ -462,7 +504,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void removeAttributes(final Collection<LdapAttribute> attrs)
   {
     assertMutable();
-    attrs.forEach(a -> attributes.remove(LdapUtils.toLowerCase(a.getName())));
+    attrs.forEach(a -> attributes.remove(LdapUtils.toLowerCase(a.getName(), false)));
   }
 
 

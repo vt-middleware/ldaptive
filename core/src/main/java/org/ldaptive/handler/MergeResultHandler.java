@@ -1,7 +1,6 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.handler;
 
-import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchResponse;
@@ -43,18 +42,7 @@ public class MergeResultHandler implements SearchResultHandler
       if (mergedEntry == null) {
         mergedEntry = LdapEntry.copy(entry);
       } else {
-        for (LdapAttribute la : entry.getAttributes()) {
-          final LdapAttribute oldAttr = mergedEntry.getAttribute(la.getName());
-          if (oldAttr == null) {
-            mergedEntry.addAttributes(LdapAttribute.copy(la));
-          } else {
-            if (oldAttr.isBinary()) {
-              oldAttr.addBinaryValues(la.getBinaryValues());
-            } else {
-              oldAttr.addStringValues(la.getStringValues());
-            }
-          }
-        }
+        mergedEntry.mergeAttributes(entry.getAttributes());
       }
     }
     if (mergedEntry != null) {
