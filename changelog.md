@@ -6,6 +6,19 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.4.0 - 01Dec2024
+
+Issue | Description
+:---- | :----------
+[ldaptive-273]({{ site.issueURL }}273) | Improve flexibility of prune strategy.
+[ldaptive-272]({{ site.issueURL }}272) | Refactor netty transport creation.
+[ldaptive-267]({{ site.issueURL }}267) | Add referral support for non-search operations.
+[ldaptive-266]({{ site.issueURL }}266) | Remove serializable interface from JAAS principals.
+[ldaptive-264]({{ site.issueURL }}264) | Improve logging in response handlers.
+[ldaptive-258]({{ site.issueURL }}258) | Add notion of immutability to configuration objects.
+[ldaptive-256]({{ site.issueURL }}256) | Separate URL parsing concerns from URL state management in connections.
+[ldaptive-255]({{ site.issueURL }}255) | Add spotbugs maven plugin.
+
 ## Version 2.3.2 - 11Apr2024
 
 Issue | Description
