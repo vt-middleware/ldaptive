@@ -91,7 +91,7 @@ Connections can be validated when they are returned to the pool. If a connection
 Extra connections are removed from the pool using a *PruneStrategy*. The interface for prune strategy looks like:
 
 {% highlight java %}
-public interface PruneStrategy extends Function<PooledConnectionProxy, Boolean>
+public interface PruneStrategy extends Consumer<Supplier<Iterator<PooledConnectionProxy>>>
 {
   /** Returns the statistical sample size to store for this prune strategy. */
   int getStatisticsSize();
@@ -108,6 +108,10 @@ Prunes connections from the pool based on how long they have been idle. This is 
 Name | Default Value | Description
 prunePeriod | PT5M | period at which pool should be pruned
 idleTime | PT10M | time at which a connection should be considered idle and become a candidate for removal from the pool
+ageTime | PT0 | time at which a connection has aged out and should be removed from the pool. Zero means no age is enforced.
+prunePriority | -1 | for prioritized connections, these should be pruned using the age time. -1 means no prune priority is enforced.
+
+Only available connections can be pruned from a pool, if a pool is under heavy load the prune strategy will not attempt to alter the pool size. Idle connections will be removed until the minimum pool size is reached. This may produce undesirable results if you're using a connection strategy that will connect to standby servers and you want to reduce the time that those specific connections stay in the pool. If you are using an `ActivePassiveConnectionStrategy` or a `DnsResolverConnectionStrategy` the prunePriority can be used to prioritize the removal of less desirable connections. For instance, by setting prunePriority=1 and ageTime=PT30M with an `ActivePassiveConnectionStrategy`, you can guarantee that connections with a priority >= 1 are removed from the pool after 30 minutes (if load allows). Setting an ageTime may prune the pool below its minimum size, but it will attempt to grow back to its minimum at the end of the prune process.
 
 A custom idle prune strategy can be configured by setting the prune strategy on the connection pool.
 

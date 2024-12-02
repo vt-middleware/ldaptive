@@ -3,6 +3,9 @@ SearchOperation search = SearchOperation.builder()
   .onEntry(entry -> {
     // process the entry
     String uid = entry.getAttribute("uid").getStringValue();
+    // if your application is memory constrained, you can return null here
+    // in that case the entry will not be availble in the search response
+    // but presumably you no longer need a reference to it
     return entry;
   })
   .onResult(result -> {
