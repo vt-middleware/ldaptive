@@ -28,7 +28,7 @@ public class AgePruneStrategy extends AbstractPruneStrategy
    * Threshold at which to prune connections based on their priority. Connections with a priority &gt;= to this value
    * will be pruned.
    */
-  private long prunePriority = -1L;
+  private int prunePriority = -1;
 
 
   /** Creates a new age prune strategy. */
@@ -124,7 +124,7 @@ public class AgePruneStrategy extends AbstractPruneStrategy
    *
    * @return  priority value at which to prune
    */
-  public long getPrunePriority()
+  public int getPrunePriority()
   {
     return prunePriority;
   }
@@ -133,15 +133,15 @@ public class AgePruneStrategy extends AbstractPruneStrategy
   /**
    * Sets the prune priority.
    *
-   * @param  l  priority value at which to prune
+   * @param  i  priority value at which to prune
    */
-  public void setPrunePriority(final long l)
+  public void setPrunePriority(final int i)
   {
     assertMutable();
-    if (l < -1) {
-      throw new IllegalArgumentException("Prune by priority must be greater than or equal to -1");
+    if (i < -1) {
+      throw new IllegalArgumentException("Prune priority must be greater than or equal to -1");
     }
-    prunePriority = l;
+    prunePriority = i;
   }
 
 
@@ -212,13 +212,13 @@ public class AgePruneStrategy extends AbstractPruneStrategy
     /**
      * Sets the prune priority.
      *
-     * @param  l  prune priority
+     * @param  i  prune priority
      *
      * @return  this builder
      */
-    public Builder priority(final long l)
+    public Builder priority(final int i)
     {
-      object.setPrunePriority(l);
+      object.setPrunePriority(i);
       return self();
     }
   }

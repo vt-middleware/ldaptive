@@ -273,6 +273,7 @@ public final class LdapURL
     url.retryMetadata = ldapURL.retryMetadata;
     url.active = ldapURL.active;
     url.inetAddress = ldapURL.inetAddress;
+    url.priority = ldapURL.priority;
     return url;
   }
 
