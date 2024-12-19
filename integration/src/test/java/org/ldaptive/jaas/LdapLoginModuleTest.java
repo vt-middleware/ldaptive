@@ -14,6 +14,7 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
+import org.ldaptive.TestControl;
 import org.ldaptive.dn.Dn;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -155,8 +156,10 @@ public class LdapLoginModuleTest extends AbstractTest
       assertThat(e).isNotNull();
     }
     try {
-      SpringAuthenticatorFactory.close();
-    } catch (UnsupportedOperationException e) {
+      // use reflection so this test can execute under java 11
+      final Class<?> clazz = Class.forName("org.ldaptive.jaas.spring.SpringAuthenticatorFactory");
+      clazz.getMethod("close").invoke(null);
+    } catch (ClassNotFoundException | UnsupportedOperationException e) {
       // ignore if not supported
       assertThat(e).isNotNull();
     }
@@ -252,6 +255,10 @@ public class LdapLoginModuleTest extends AbstractTest
   public void springPooledDnResolverContextTest(final String dn, final String user, final String credential)
     throws Exception
   {
+    if (TestControl.isJava11()) {
+      // ignore this test on java 11, it uses spring which requires at least java 17
+      return;
+    }
     doContextTest("ldaptive-pooled-dnr-spring", dn, user, "", credential, false);
   }
 

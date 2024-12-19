@@ -17,6 +17,17 @@ public class TestControl
 
 
   /**
+   * Used by tests to determine if tests are being run with JDK11.
+   *
+   * @return  whether JDK11 is being used
+   */
+  public static boolean isJava11()
+  {
+    return System.getProperty("java.version").startsWith("11.");
+  }
+
+
+  /**
    * Used by tests to determine if Active Directory is being tested.
    *
    * @return  whether active directory is being tested

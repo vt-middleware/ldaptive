@@ -1,19 +1,25 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.beans.reflect;
+package org.ldaptive.beans.spring;
 
 import org.ldaptive.LdapEntry;
 import org.ldaptive.beans.LdapEntryMapper;
-import org.ldaptive.beans.spring.SpringLdapEntryMapper;
+import org.ldaptive.beans.reflect.BinaryCustomObject;
+import org.ldaptive.beans.reflect.BooleanCustomObject;
+import org.ldaptive.beans.reflect.CustomObject;
+import org.ldaptive.beans.reflect.FloatCustomObject;
+import org.ldaptive.beans.reflect.IntCustomObject;
+import org.ldaptive.beans.reflect.IntegerCustomObject;
+import org.ldaptive.beans.reflect.StringCustomObject;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * Unit tests for {@link LdapEntryMapper} implementations.
+ * Unit tests for {@link SpringLdapEntryMapper} implementations.
  *
  * @author  Middleware Services
  */
-public class LdapEntryMapperTest
+public class SpringLdapEntryMapperTest
 {
 
 
@@ -25,7 +31,6 @@ public class LdapEntryMapperTest
   @DataProvider(name = "objects")
   public Object[][] createCustomObjects()
   {
-    final DefaultLdapEntryMapper defaultMapper = new DefaultLdapEntryMapper();
     final SpringLdapEntryMapper springMapper = new SpringLdapEntryMapper();
 
     final LdapEntry stringEntry = StringCustomObject.createLdapEntry();
@@ -44,24 +49,9 @@ public class LdapEntryMapperTest
     return
       new Object[][] {
         new Object[] {
-          StringCustomObject.createCustomObject(StringCustomObject.Default.class),
-          stringEntry,
-          defaultMapper,
-        },
-        new Object[] {
           StringCustomObject.createCustomObject(StringCustomObject.Spring.class),
           stringEntry,
           springMapper,
-        },
-        new Object[] {
-          CharCustomObject.createCustomObject(CharCustomObject.Default.class),
-          charEntry,
-          defaultMapper,
-        },
-        new Object[] {
-          IntegerCustomObject.createCustomObject(IntegerCustomObject.Default.class),
-          integerEntry,
-          defaultMapper,
         },
         new Object[] {
           IntegerCustomObject.createCustomObject(IntegerCustomObject.Spring.class),
@@ -69,19 +59,9 @@ public class LdapEntryMapperTest
           springMapper,
         },
         new Object[] {
-          IntCustomObject.createCustomObject(IntCustomObject.Default.class),
-          integerEntry,
-          defaultMapper,
-        },
-        new Object[] {
           IntCustomObject.createCustomObject(IntCustomObject.Spring.class),
           integerEntry,
           springMapper,
-        },
-        new Object[] {
-          FloatCustomObject.createCustomObject(FloatCustomObject.Default.class),
-          floatEntry,
-          defaultMapper,
         },
         new Object[] {
           FloatCustomObject.createCustomObject(FloatCustomObject.Spring.class),
@@ -89,19 +69,9 @@ public class LdapEntryMapperTest
           springMapper,
         },
         new Object[] {
-          BooleanCustomObject.createCustomObject(BooleanCustomObject.Default.class),
-          booleanEntry,
-          defaultMapper,
-        },
-        new Object[] {
           BooleanCustomObject.createCustomObject(BooleanCustomObject.Spring.class),
           booleanEntry,
           springMapper,
-        },
-        new Object[] {
-          BinaryCustomObject.createCustomObject(BinaryCustomObject.Default.class),
-          binaryEntry,
-          defaultMapper,
         },
         new Object[] {
           BinaryCustomObject.createCustomObject(BinaryCustomObject.Spring.class),

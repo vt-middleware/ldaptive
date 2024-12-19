@@ -1,9 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.jaas;
+package org.ldaptive.jaas.spring;
 
 import java.util.Map;
 import org.ldaptive.auth.AuthenticationRequest;
 import org.ldaptive.auth.Authenticator;
+import org.ldaptive.jaas.AuthenticatorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;

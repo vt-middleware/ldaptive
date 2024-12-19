@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive;
+package org.ldaptive.spring;
 
+import org.ldaptive.Connection;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.pool.BlockingConnectionPool;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.testng.annotations.Test;

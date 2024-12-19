@@ -1,5 +1,5 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
-package org.ldaptive.beans;
+package org.ldaptive.beans.reflect;
 
 import org.ldaptive.AbstractTest;
 import org.ldaptive.BindConnectionInitializer;
@@ -9,10 +9,9 @@ import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.TestControl;
+import org.ldaptive.beans.LdapEntryMapper;
 import org.ldaptive.beans.generate.InetOrgPerson;
 import org.ldaptive.beans.generate.OrganizationalPerson;
-import org.ldaptive.beans.reflect.DefaultLdapEntryMapper;
-import org.ldaptive.beans.spring.SpringLdapEntryMapper;
 import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
 import org.ldaptive.transcode.UUIDValueTranscoder;
 import org.testng.annotations.DataProvider;
@@ -21,11 +20,11 @@ import static org.assertj.core.api.Assertions.*;
 import static org.ldaptive.TestUtils.*;
 
 /**
- * Unit test for {@link LdapEntryMapper} implementations.
+ * Unit test for {@link DefaultLdapEntryMapper} implementations.
  *
  * @author  Middleware Services
  */
-public class LdapEntryMapperTest extends AbstractTest
+public class DefaultLdapEntryMapperTest extends AbstractTest
 {
 
 
@@ -51,7 +50,6 @@ public class LdapEntryMapperTest extends AbstractTest
     return
       new Object[][] {
         new Object[] {new DefaultLdapEntryMapper(), entry},
-        new Object[] {new SpringLdapEntryMapper(), entry},
       };
   }
 
