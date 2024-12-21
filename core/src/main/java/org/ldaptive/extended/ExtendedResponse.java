@@ -78,7 +78,11 @@ public class ExtendedResponse extends AbstractResult
     parser.registerHandler(NAME_PATH, new ResponseNameHandler(this));
     parser.registerHandler(VALUE_PATH, new ResponseValueHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
-    parser.parse(buffer);
+    try {
+      parser.parse(buffer);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

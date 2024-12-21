@@ -127,6 +127,10 @@ public class GenericControl extends AbstractControl implements RequestControl, R
   @Override
   public void decode(final DERBuffer encoded)
   {
-    value = encoded.getRemainingBytes();
+    try {
+      value = encoded.getRemainingBytes();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 }

@@ -28,39 +28,42 @@ public final class SecurityIdentifier
    */
   public static String toString(final byte[] sid)
   {
-    // CheckStyle:MagicNumber OFF
-
     // format of SID: S-R-X-Y1-Y2...-Yn
     // S: static 'S', indicating string
     // R: revision
     // X: authority
     // Yn: sub-authority
 
-    // create a byte buffer for reading the sid
-    final ByteBuffer sidBuffer = ByteBuffer.wrap(sid);
+    // CheckStyle:MagicNumber OFF
+    try {
+      // create a byte buffer for reading the sid
+      final ByteBuffer sidBuffer = ByteBuffer.wrap(sid);
 
-    // string identifier
-    final StringBuilder sb = new StringBuilder("S");
+      // string identifier
+      final StringBuilder sb = new StringBuilder("S");
 
-    // byte[0] is the revision
-    sb.append('-').append(sidBuffer.get() & 0xFF);
+      // byte[0] is the revision
+      sb.append('-').append(sidBuffer.get() & 0xFF);
 
-    // byte[1] is the count of sub-authorities
-    final int countSubAuth = sidBuffer.get() & 0xFF;
+      // byte[1] is the count of sub-authorities
+      final int countSubAuth = sidBuffer.get() & 0xFF;
 
-    // byte[2] - byte[7] is the authority (48 bits)
-    sidBuffer.limit(8);
-    sb.append('-').append(getLong(sidBuffer, true));
+      // byte[2] - byte[7] is the authority (48 bits)
+      sidBuffer.limit(8);
+      sb.append('-').append(getLong(sidBuffer, true));
 
-    // byte[8] - ? is the sub-authorities,
-    // (32 bits per authority, little endian)
-    for (int i = 0; i < countSubAuth; i++) {
-      // values are unsigned, so get 4 bytes as a long
-      sidBuffer.limit(sidBuffer.position() + 4);
-      sb.append('-').append(getLong(sidBuffer, false));
+      // byte[8] - ? is the sub-authorities,
+      // (32 bits per authority, little endian)
+      for (int i = 0; i < countSubAuth; i++) {
+        // values are unsigned, so get 4 bytes as a long
+        sidBuffer.limit(sidBuffer.position() + 4);
+        sb.append('-').append(getLong(sidBuffer, false));
+      }
+
+      return sb.toString();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid sid", e);
     }
-
-    return sb.toString();
     // CheckStyle:MagicNumber ON
   }
 
@@ -74,44 +77,47 @@ public final class SecurityIdentifier
    */
   public static byte[] toBytes(final String sid)
   {
-    // CheckStyle:MagicNumber OFF
-
     // format of SID: S-R-X-Y1-Y2...-Yn
     // S: static 'S', indicating string
     // R: revision
     // X: authority
     // Yn: sub-authority
 
-    final StringTokenizer st = new StringTokenizer(sid, "-");
-    // first token is the 'S'
-    st.nextToken();
+    // CheckStyle:MagicNumber OFF
+    try {
+      final StringTokenizer st = new StringTokenizer(sid, "-");
+      // first token is the 'S'
+      st.nextToken();
 
-    // second token is the revision
-    final int revision = Integer.parseInt(st.nextToken());
-    // third token is the authority
-    final long authority = Long.parseLong(st.nextToken());
-    // remaining token are the sub authorities
-    final List<String> subAuthorities = new ArrayList<>();
-    while (st.hasMoreTokens()) {
-      subAuthorities.add(st.nextToken());
+      // second token is the revision
+      final int revision = Integer.parseInt(st.nextToken());
+      // third token is the authority
+      final long authority = Long.parseLong(st.nextToken());
+      // remaining token are the sub authorities
+      final List<String> subAuthorities = new ArrayList<>();
+      while (st.hasMoreTokens()) {
+        subAuthorities.add(st.nextToken());
+      }
+
+      // revision is 1 byte
+      // sub-authorities count is 1 byte
+      // authority is 6 bytes
+      // 4 bytes for each sub-authority
+      final int size = 8 + (4 * subAuthorities.size());
+      final ByteBuffer sidBuffer = ByteBuffer.allocate(size);
+      sidBuffer.put((byte) (revision & 0xFF));
+      sidBuffer.put((byte) (subAuthorities.size() & 0xFF));
+      sidBuffer.limit(8);
+      putLong(sidBuffer, authority, true);
+      for (String subAuthority : subAuthorities) {
+        sidBuffer.limit(sidBuffer.position() + 4);
+        putLong(sidBuffer, Long.parseLong(subAuthority), false);
+      }
+
+      return sidBuffer.array();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid sid: " + sid, e);
     }
-
-    // revision is 1 byte
-    // sub-authorities count is 1 byte
-    // authority is 6 bytes
-    // 4 bytes for each sub-authority
-    final int size = 8 + (4 * subAuthorities.size());
-    final ByteBuffer sidBuffer = ByteBuffer.allocate(size);
-    sidBuffer.put((byte) (revision & 0xFF));
-    sidBuffer.put((byte) (subAuthorities.size() & 0xFF));
-    sidBuffer.limit(8);
-    putLong(sidBuffer, authority, true);
-    for (String subAuthority : subAuthorities) {
-      sidBuffer.limit(sidBuffer.position() + 4);
-      putLong(sidBuffer, Long.parseLong(subAuthority), false);
-    }
-
-    return sidBuffer.array();
     // CheckStyle:MagicNumber ON
   }
 

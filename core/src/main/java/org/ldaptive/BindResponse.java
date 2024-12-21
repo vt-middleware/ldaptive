@@ -66,7 +66,11 @@ public final class BindResponse extends AbstractResult
     parser.registerHandler(REFERRAL_PATH, new ReferralHandler(this));
     parser.registerHandler(SASL_CREDENTIALS_PATH, new SASLCredsHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
-    parser.parse(buffer);
+    try {
+      parser.parse(buffer);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

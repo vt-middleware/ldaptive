@@ -1,0 +1,67 @@
+#!/bin/bash
+
+set -e
+
+# maximum time in seconds for each fuzzer
+MAX_FUZZ_TIME=30
+
+mvn -pl fuzz -Pfuzz -Dmaven.javadoc.skip=true clean package
+tar xzf fuzz/jazzer-linux-0.23.0.tar.gz -C fuzz/target
+
+for i in fuzz/target/lib/*.jar; do
+  CLASSPATH=$CLASSPATH:$i
+done
+
+# recommended java options
+export JAVA_OPTS="-XX:-OmitStackTraceInFastThrow -XX:+UseParallelGC -XX:+CriticalJNINatives -XX:+EnableDynamicAgentLoading"
+
+# jazzer can't generate input for these classes
+#"org.ldaptive.io.LdifWriter::write"
+#"org.ldaptive.url.UrlFormatter::format"
+AUTO_FUZZ=(
+"org.ldaptive.Request::encode"
+"org.ldaptive.AddResponse::new"
+"org.ldaptive.BindResponse::new"
+"org.ldaptive.CompareResponse::new"
+"org.ldaptive.DeleteResponse::new"
+"org.ldaptive.FilterTemplate::format"
+"org.ldaptive.LdapAttribute::new"
+"org.ldaptive.LdapEntry::new"
+"org.ldaptive.LdapURL::new"
+"org.ldaptive.ModifyDnResponse::new"
+"org.ldaptive.ModifyResponse::new"
+"org.ldaptive.SearchResponse::new"
+"org.ldaptive.SearchResultReference::new"
+"org.ldaptive.ad.GlobalIdentifier::toBytes"
+"org.ldaptive.ad.GlobalIdentifier::toString"
+"org.ldaptive.ad.SecurityIdentifier::toBytes"
+"org.ldaptive.ad.SecurityIdentifier::toString"
+"org.ldaptive.asn1.DERParser::parse"
+"org.ldaptive.control.RequestControl::encode"
+"org.ldaptive.control.ResponseControl::decode"
+"org.ldaptive.dn.AttributeValueEscaper::escape"
+"org.ldaptive.dn.DnParser::parse"
+"org.ldaptive.dn.RDnNormalizer::normalize"
+"org.ldaptive.extended.ExtendedResponse::new"
+"org.ldaptive.filter.Filter::getEncoder"
+"org.ldaptive.filter.FilterFunction::parse"
+"org.ldaptive.io.Hex::encode"
+"org.ldaptive.io.Hex::decode"
+"org.ldaptive.io.LdifReader::read"
+"org.ldaptive.transcode.ValueTranscoder::decodeStringValue"
+"org.ldaptive.transcode.ValueTranscoder::decodeBinaryValue"
+"org.ldaptive.transport.ResponseParser::parse"
+"org.ldaptive.url.Url::new"
+"org.ldaptive.url.UrlParser::parse"
+)
+
+# ignore these exceptions types
+# IllegalArgument and NullPointer are expected for invalid input
+# ClassCast can occur through instrumentation when jazzer casts generics to raw types
+FUZZ_IGNORE="java.lang.IllegalArgumentException,java.lang.NullPointerException,java.lang.ClassCastException"
+for FUZZ in ${AUTO_FUZZ[@]}; do
+  echo "-------------------------"
+  echo "  begin autofuzz: $FUZZ  "
+  echo "-------------------------"
+  fuzz/target/jazzer -max_total_time="$MAX_FUZZ_TIME" --cp="$CLASSPATH" --reproducer_path=fuzz/target --autofuzz="$FUZZ" --autofuzz_ignore="$FUZZ_IGNORE" --coverage_report="fuzz/target/jazzer_report_$FUZZ.txt"
+done

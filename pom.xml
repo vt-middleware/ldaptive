@@ -562,6 +562,12 @@
       </modules>
     </profile>
     <profile>
+      <id>fuzz</id>
+      <modules>
+        <module>fuzz</module>
+      </modules>
+    </profile>
+    <profile>
       <id>distribution</id>
       <modules>
         <module>distribution</module>

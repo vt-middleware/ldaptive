@@ -59,7 +59,11 @@ public final class SearchResultReference extends AbstractMessage implements Free
     parser.registerHandler(MessageIDHandler.PATH, new MessageIDHandler(this));
     parser.registerHandler(REFERRAL_URI_PATH, new ReferralUriHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
-    parser.parse(buffer);
+    try {
+      parser.parse(buffer);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

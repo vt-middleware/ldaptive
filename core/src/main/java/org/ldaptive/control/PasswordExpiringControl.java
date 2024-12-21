@@ -127,7 +127,11 @@ public class PasswordExpiringControl extends AbstractControl implements Response
   @Override
   public void decode(final DERBuffer encoded)
   {
-    final String time = OctetStringType.decode(encoded);
-    setTimeBeforeExpiration(Integer.parseInt(time));
+    try {
+      final String time = OctetStringType.decode(encoded);
+      setTimeBeforeExpiration(Integer.parseInt(time));
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 }

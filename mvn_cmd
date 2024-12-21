@@ -26,7 +26,7 @@ ARG=$2
 
 case "$CMD" in
   clean)
-    run_mvn "integration,benchmark,profile,distribution" "clean"
+    run_mvn "integration,benchmark,profile,fuzz,distribution" "clean"
     ;;
   javadoc)
     run_mvn "" "javadoc:javadoc"
@@ -48,10 +48,10 @@ case "$CMD" in
     run_mvn "distribution" "versions:set" "-DnewVersion=${ARG} -DgenerateBackupPoms=false"
     ;;
   versions-display-dependency)
-    run_mvn "integration,benchmark,profile,distribution" "versions:display-dependency-updates"
+    run_mvn "integration,benchmark,profile,fuzz,distribution" "versions:display-dependency-updates"
     ;;
   versions-display-plugin)
-    run_mvn "integration,benchmark,profile,distribution" "versions:display-plugin-updates"
+    run_mvn "integration,benchmark,profile,fuzz,distribution" "versions:display-plugin-updates"
     ;;
   deploy)
     if [ -z "${ARG}" ]; then

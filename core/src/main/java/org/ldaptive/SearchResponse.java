@@ -75,7 +75,11 @@ public final class SearchResponse extends AbstractResult implements Freezable
     parser.registerHandler(DIAGNOSTIC_MESSAGE_PATH, new DiagnosticMessageHandler(this));
     parser.registerHandler(REFERRAL_PATH, new ReferralHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
-    parser.parse(buffer);
+    try {
+      parser.parse(buffer);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

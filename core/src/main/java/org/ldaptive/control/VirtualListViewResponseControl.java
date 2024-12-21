@@ -272,7 +272,11 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
     parser.registerHandler(ContentCountHandler.PATH, new ContentCountHandler(this));
     parser.registerHandler(ViewResultHandler.PATH, new ViewResultHandler(this));
     parser.registerHandler(ContextIDHandler.PATH, new ContextIDHandler(this));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

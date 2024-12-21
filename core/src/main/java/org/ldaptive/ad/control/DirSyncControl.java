@@ -342,7 +342,11 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
     parser.registerHandler(FlagHandler.PATH, new FlagHandler(this));
     parser.registerHandler(MaxAttrCountHandler.PATH, new MaxAttrCountHandler(this));
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

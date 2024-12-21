@@ -197,7 +197,11 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
     parser.registerHandler(PAGES_REDIRTIED_PATH, new IntegerHandler(this, "pagesRedirtied"));
     parser.registerHandler(LOG_RECORD_COUNT_PATH, new IntegerHandler(this, "logRecordCount"));
     parser.registerHandler(LOG_RECORD_BYTES_PATH, new IntegerHandler(this, "logRecordBytes"));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

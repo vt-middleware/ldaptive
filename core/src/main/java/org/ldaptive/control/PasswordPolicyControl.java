@@ -320,7 +320,11 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     parser.registerHandler(TimeBeforeExpirationHandler.PATH, new TimeBeforeExpirationHandler(this));
     parser.registerHandler(GraceAuthnsRemainingHandler.PATH, new GraceAuthnsRemainingHandler(this));
     parser.registerHandler(ErrorHandler.PATH, new ErrorHandler(this));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

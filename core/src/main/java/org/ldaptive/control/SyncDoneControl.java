@@ -177,7 +177,11 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
     final DERParser parser = new DERParser();
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
     parser.registerHandler(RefreshDeletesHandler.PATH, new RefreshDeletesHandler(this));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

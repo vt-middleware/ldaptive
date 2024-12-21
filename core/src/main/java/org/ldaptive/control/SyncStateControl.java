@@ -289,7 +289,11 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
     parser.registerHandler(StateHandler.PATH, new StateHandler(this));
     parser.registerHandler(EntryUuidHandler.PATH, new EntryUuidHandler(this));
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

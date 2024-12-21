@@ -63,7 +63,12 @@ public class PasswordExpiredControl extends AbstractControl implements ResponseC
   @Override
   public void decode(final DERBuffer encoded)
   {
-    final String value = OctetStringType.decode(encoded);
+    final String value;
+    try {
+      value = OctetStringType.decode(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
     if (!"0".equals(value)) {
       throw new IllegalArgumentException("Response control value should always be '0'");
     }

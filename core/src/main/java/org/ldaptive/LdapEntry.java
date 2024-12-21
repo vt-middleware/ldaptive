@@ -87,7 +87,11 @@ public class LdapEntry extends AbstractMessage implements Freezable
     parser.registerHandler(LDAP_DN_PATH, new LdapDnHandler(this));
     parser.registerHandler(ATTRIBUTES_PATH, new AttributesHandler(this));
     parser.registerHandler(ControlsHandler.PATH, new ControlsHandler(this));
-    parser.parse(buffer);
+    try {
+      parser.parse(buffer);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

@@ -231,7 +231,11 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
     parser.registerHandler(ChangeTypeHandler.PATH, new ChangeTypeHandler(this));
     parser.registerHandler(PreviousDnHandler.PATH, new PreviousDnHandler(this));
     parser.registerHandler(ChangeNumberHandler.PATH, new ChangeNumberHandler(this));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

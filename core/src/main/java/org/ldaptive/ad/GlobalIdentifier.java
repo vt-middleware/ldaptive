@@ -28,33 +28,36 @@ public final class GlobalIdentifier
   public static String toString(final byte[] guid)
   {
     // CheckStyle:MagicNumber OFF
+    try {
+      // create a byte buffer for reading the guid
+      final ByteBuffer guidBuffer = ByteBuffer.wrap(guid);
 
-    // create a byte buffer for reading the guid
-    final ByteBuffer guidBuffer = ByteBuffer.wrap(guid);
+      // string identifier
+      final StringBuilder sb = new StringBuilder("{");
+      // encode the first 4 bytes, big endian
+      guidBuffer.limit(4);
+      sb.append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
 
-    // string identifier
-    final StringBuilder sb = new StringBuilder("{");
-    // encode the first 4 bytes, big endian
-    guidBuffer.limit(4);
-    sb.append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
+      // encode the next 2 bytes, big endian
+      guidBuffer.limit(6);
+      sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
 
-    // encode the next 2 bytes, big endian
-    guidBuffer.limit(6);
-    sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
+      // encode the next 2 bytes, big endian
+      guidBuffer.limit(8);
+      sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
 
-    // encode the next 2 bytes, big endian
-    guidBuffer.limit(8);
-    sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, true)));
+      // encode the next 2 bytes, little endian
+      guidBuffer.limit(10);
+      sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, false)));
 
-    // encode the next 2 bytes, little endian
-    guidBuffer.limit(10);
-    sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, false)));
+      // encode the last 6 bytes, little endian
+      guidBuffer.limit(guidBuffer.capacity());
+      sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, false))).append('}');
 
-    // encode the last 6 bytes, little endian
-    guidBuffer.limit(guidBuffer.capacity());
-    sb.append('-').append(LdapUtils.hexEncode(getBytes(guidBuffer, false))).append('}');
-
-    return sb.toString();
+      return sb.toString();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid guid", e);
+    }
     // CheckStyle:MagicNumber ON
   }
 
@@ -69,28 +72,31 @@ public final class GlobalIdentifier
   public static byte[] toBytes(final String guid)
   {
     // CheckStyle:MagicNumber OFF
+    try {
+      // remove the enclosing brackets {...}
+      final StringTokenizer st = new StringTokenizer(guid.substring(1, guid.length() - 1), "-");
+      // first token is 4 bytes, big endian
+      final String data1 = st.nextToken();
+      // second token is 2 bytes, big endian
+      final String data2 = st.nextToken();
+      // third token is 2 bytes, big endian
+      final String data3 = st.nextToken();
+      // fourth token is 2 bytes, little endian
+      final String data4 = st.nextToken();
+      // fifth token is 6 bytes, little endian
+      final String data5 = st.nextToken();
 
-    // remove the enclosing brackets {...}
-    final StringTokenizer st = new StringTokenizer(guid.substring(1, guid.length() - 1), "-");
-    // first token is 4 bytes, big endian
-    final String data1 = st.nextToken();
-    // second token is 2 bytes, big endian
-    final String data2 = st.nextToken();
-    // third token is 2 bytes, big endian
-    final String data3 = st.nextToken();
-    // fourth token is 2 bytes, little endian
-    final String data4 = st.nextToken();
-    // fifth token is 6 bytes, little endian
-    final String data5 = st.nextToken();
+      final ByteBuffer guidBuffer = ByteBuffer.allocate(16);
+      putBytes(guidBuffer, LdapUtils.hexDecode(data1.toCharArray()), true);
+      putBytes(guidBuffer, LdapUtils.hexDecode(data2.toCharArray()), true);
+      putBytes(guidBuffer, LdapUtils.hexDecode(data3.toCharArray()), true);
+      putBytes(guidBuffer, LdapUtils.hexDecode(data4.toCharArray()), false);
+      putBytes(guidBuffer, LdapUtils.hexDecode(data5.toCharArray()), false);
 
-    final ByteBuffer guidBuffer = ByteBuffer.allocate(16);
-    putBytes(guidBuffer, LdapUtils.hexDecode(data1.toCharArray()), true);
-    putBytes(guidBuffer, LdapUtils.hexDecode(data2.toCharArray()), true);
-    putBytes(guidBuffer, LdapUtils.hexDecode(data3.toCharArray()), true);
-    putBytes(guidBuffer, LdapUtils.hexDecode(data4.toCharArray()), false);
-    putBytes(guidBuffer, LdapUtils.hexDecode(data5.toCharArray()), false);
-
-    return guidBuffer.array();
+      return guidBuffer.array();
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Invalid guid: " + guid, e);
+    }
     // CheckStyle:MagicNumber ON
   }
 

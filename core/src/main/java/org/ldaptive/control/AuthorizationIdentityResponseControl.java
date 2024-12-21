@@ -121,6 +121,10 @@ public class AuthorizationIdentityResponseControl extends AbstractControl implem
   @Override
   public void decode(final DERBuffer encoded)
   {
-    setAuthorizationId(OctetStringType.decode(encoded));
+    try {
+      setAuthorizationId(OctetStringType.decode(encoded));
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 }

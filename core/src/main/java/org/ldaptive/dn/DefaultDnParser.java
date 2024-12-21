@@ -69,7 +69,11 @@ public final class DefaultDnParser implements DnParser
         parser.registerHandler(HEX_PATH, handler);
 
         final String hexData = attrValue.substring(1);
-        parser.parse(new DefaultDERBuffer(decodeHexValue(hexData.toCharArray())));
+        try {
+          parser.parse(new DefaultDERBuffer(decodeHexValue(hexData.toCharArray())));
+        } catch (Exception e) {
+          throw new IllegalArgumentException("Invalid HEX value: " + hexData, e);
+        }
         nameValues.add(new NameValue(attrName, handler.getDecodedValue()));
       } else {
         nameValues.add(new NameValue(attrName, decodeStringValue(attrValue)));

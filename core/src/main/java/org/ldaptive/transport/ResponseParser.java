@@ -141,7 +141,13 @@ public class ResponseParser
    */
   public Optional<Message> parse(final DERBuffer buffer)
   {
-    parser.parse(buffer);
+    try {
+      parser.parse(buffer);
+    } catch (IllegalArgumentException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
     return Optional.ofNullable(message);
   }
 }

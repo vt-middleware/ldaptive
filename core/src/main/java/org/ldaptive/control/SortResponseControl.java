@@ -186,7 +186,11 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
     final DERParser parser = new DERParser();
     parser.registerHandler(SortResultHandler.PATH, new SortResultHandler(this));
     parser.registerHandler(AttributeTypeHandler.PATH, new AttributeTypeHandler(this));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

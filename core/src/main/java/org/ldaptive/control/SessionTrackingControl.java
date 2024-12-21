@@ -286,7 +286,11 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     parser.registerHandler(SourceNameHandler.PATH, new SourceNameHandler(this));
     parser.registerHandler(FormatOIDHandler.PATH, new FormatOIDHandler(this));
     parser.registerHandler(TrackingIdentifierHandler.PATH, new TrackingIdentifierHandler(this));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 

@@ -205,7 +205,11 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
     final DERParser parser = new DERParser();
     parser.registerHandler(SizeHandler.PATH, new SizeHandler(this));
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
-    parser.parse(encoded);
+    try {
+      parser.parse(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Error parsing response", e);
+    }
   }
 
 
