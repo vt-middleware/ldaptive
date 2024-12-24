@@ -6,7 +6,9 @@ import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.Message;
 import org.ldaptive.ResultCode;
+import org.ldaptive.SearchResponse;
 import org.ldaptive.asn1.DefaultDERBuffer;
+import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.extended.ExtendedResponse;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -88,6 +90,25 @@ public class ResponseParserTest
             .matchedDN("")
             .diagnosticMessage("")
             .responseValue("dn:cn=John Quincy Adams,ou=test,dc=vt,dc=edu".getBytes(StandardCharsets.UTF_8)).build(),
+        },
+        new Object[] {
+          // search response with paged results control
+          new byte[] {
+            0x30, 0x39, 0x02, 0x01, 0x02,
+            0x65, 0x07, 0x0A, 0x01, 0x00,
+            0x04, 0x00,
+            0x04, 0x00,
+            (byte) 0xA0, 0x2B,
+            0x30, 0x29,
+            0x04, 0x16, 0x31, 0x2E, 0x32, 0x2E, 0x38, 0x34, 0x30, 0x2E, 0x31, 0x31, 0x33, 0x35, 0x35, 0x36, 0x2E, 0x31,
+            0x2E, 0x34, 0x2E, 0x33, 0x31, 0x39,
+            0x04, 0x0F, 0x30, 0x0D, 0x02, 0x01, 0x00, 0x04, 0x08, 0x69, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00},
+          SearchResponse.builder().messageID(2)
+            .resultCode(ResultCode.SUCCESS)
+            .matchedDN("")
+            .diagnosticMessage("")
+            .controls(
+              new PagedResultsControl(0, new byte[] {0x69, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, false)).build(),
         },
       };
   }
