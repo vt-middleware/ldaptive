@@ -42,6 +42,10 @@ public class PasswordPolicyControlTest
     final PasswordPolicyControl accountLocked = new PasswordPolicyControl();
     accountLocked.setError(PasswordPolicyControl.Error.ACCOUNT_LOCKED);
 
+    final PasswordPolicyControl changeAfterReset = new PasswordPolicyControl();
+    changeAfterReset.setTimeBeforeExpiration(2513067);
+    changeAfterReset.setError(PasswordPolicyControl.Error.CHANGE_AFTER_RESET);
+
     return
       new Object[][] {
         // timeBeforeExpiration is set
@@ -73,6 +77,13 @@ public class PasswordPolicyControlTest
         new Object[] {
           new DefaultDERBuffer(new byte[] {0x30, 0x03, (byte) 0x81, 0x01, 0x01}),
           accountLocked,
+        },
+        // error=changeAfterReset and timeBeforeExpiration is set
+        new Object[] {
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x0A, (byte) 0xA0, 0x05, (byte) 0x80, 0x03, 0x26, 0x58, (byte) 0xAB, (byte) 0x81, 0x01, 0x02}),
+          changeAfterReset,
         },
         // empty control
         new Object[] {
