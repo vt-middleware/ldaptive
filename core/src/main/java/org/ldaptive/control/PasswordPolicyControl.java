@@ -191,6 +191,93 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   }
 
 
+  /**
+   * Creates a new password policy control.
+   *
+   * @param  time  time before expiration
+   * @param  count  grace authns remaining
+   */
+  public PasswordPolicyControl(final int time, final int count)
+  {
+    super(OID);
+    setTimeBeforeExpiration(time);
+    setGraceAuthNsRemaining(count);
+  }
+
+
+  /**
+   * Creates a new password policy control.
+   *
+   * @param  time  time before expiration
+   * @param  count  grace authns remaining
+   * @param  critical  whether this control is critical
+   */
+  public PasswordPolicyControl(final int time, final int count, final boolean critical)
+  {
+    super(OID, critical);
+    setTimeBeforeExpiration(time);
+    setGraceAuthNsRemaining(count);
+  }
+
+
+  /**
+   * Creates a new password policy control.
+   *
+   * @param  err  ppolicy error
+   */
+  public PasswordPolicyControl(final Error err)
+  {
+    super(OID);
+    setError(err);
+  }
+
+
+  /**
+   * Creates a new password policy control.
+   *
+   * @param  err  ppolicy error
+   * @param  critical  whether this control is critical
+   */
+  public PasswordPolicyControl(final Error err, final boolean critical)
+  {
+    super(OID, critical);
+    setError(err);
+  }
+
+
+  /**
+   * Creates a new password policy control.
+   *
+   * @param  time  time before expiration
+   * @param  count  grace authns remaining
+   * @param  err  ppolicy error
+   */
+  public PasswordPolicyControl(final int time, final int count, final Error err)
+  {
+    super(OID);
+    setTimeBeforeExpiration(time);
+    setGraceAuthNsRemaining(count);
+    setError(err);
+  }
+
+
+  /**
+   * Creates a new password policy control.
+   *
+   * @param  time  time before expiration
+   * @param  count  grace authns remaining
+   * @param  err  ppolicy error
+   * @param  critical  whether this control is critical
+   */
+  public PasswordPolicyControl(final int time, final int count, final Error err, final boolean critical)
+  {
+    super(OID, critical);
+    setTimeBeforeExpiration(time);
+    setGraceAuthNsRemaining(count);
+    setError(err);
+  }
+
+
   @Override
   public boolean hasValue()
   {

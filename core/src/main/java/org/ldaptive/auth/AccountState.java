@@ -7,8 +7,7 @@ import javax.security.auth.login.LoginException;
 import org.ldaptive.LdapUtils;
 
 /**
- * Represents the state of an LDAP account based on account policies for that LDAP. Note that only warning(s) or
- * error(s) may be set, not both.
+ * Represents the state of an LDAP account based on account policies for that LDAP.
  *
  * @author  Middleware Services
  */
@@ -20,6 +19,32 @@ public class AccountState
 
   /** account error. */
   private final AccountState.Error[] accountErrors;
+
+
+  /**
+   * Creates a new account state.
+   *
+   * @param  warning  associated with the account
+   * @param  error  associated with the account
+   */
+  public AccountState(final AccountState.Warning warning, final AccountState.Error error)
+  {
+    accountWarnings = warning != null ? new AccountState.Warning[] {warning} : null;
+    accountErrors = error != null ? new AccountState.Error[] {error} : null;
+  }
+
+
+  /**
+   * Creates a new account state.
+   *
+   * @param  warnings  associated with the account
+   * @param  errors  associated with the account
+   */
+  public AccountState(final AccountState.Warning[] warnings, final AccountState.Error[] errors)
+  {
+    accountWarnings = LdapUtils.copyArray(warnings);
+    accountErrors = LdapUtils.copyArray(errors);
+  }
 
 
   /**

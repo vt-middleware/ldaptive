@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
+import java.time.Clock;
 import java.time.Period;
 import java.time.ZonedDateTime;
 import org.ldaptive.AbstractFreezable;
@@ -31,12 +32,31 @@ public class EDirectoryAuthenticationResponseHandler extends AbstractFreezable
   /** Logger for this class. */
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Clock to calculate current date for comparison with expiration time. */
+  private final Clock expirationClock;
+
   /** Amount of time before expiration to produce a warning. */
   private Period warningPeriod;
 
 
-  /** Default constructor. */
-  public EDirectoryAuthenticationResponseHandler() {}
+  /**
+   * Creates a new edirectory authentication response handler.
+   *
+   * @param  clock  used to convert time before expiration to a datetime
+   */
+  EDirectoryAuthenticationResponseHandler(final Clock clock)
+  {
+    expirationClock = clock;
+  }
+
+
+  /**
+   * Creates a new edirectory authentication response handler.
+   */
+  public EDirectoryAuthenticationResponseHandler()
+  {
+    expirationClock = Clock.systemDefaultZone();
+  }
 
 
   /**
@@ -46,6 +66,7 @@ public class EDirectoryAuthenticationResponseHandler extends AbstractFreezable
    */
   public EDirectoryAuthenticationResponseHandler(final Period warning)
   {
+    expirationClock = Clock.systemDefaultZone();
     setWarningPeriod(warning);
   }
 
@@ -53,7 +74,7 @@ public class EDirectoryAuthenticationResponseHandler extends AbstractFreezable
   @Override
   public void handle(final AuthenticationResponse response)
   {
-    if (response.getDiagnosticMessage() != null) {
+    if (response.getDiagnosticMessage() != null && !response.getDiagnosticMessage().isEmpty()) {
       logger.debug("Parsing response diagnostic message: {}", response.getDiagnosticMessage());
       final EDirectoryAccountState.Error edError = EDirectoryAccountState.Error.parse(response.getDiagnosticMessage());
       if (edError != null) {
@@ -62,8 +83,8 @@ public class EDirectoryAuthenticationResponseHandler extends AbstractFreezable
       }
     } else if (response.isSuccess()) {
       final LdapEntry entry = response.getLdapEntry();
-      final LdapAttribute expTime = entry.getAttribute("passwordExpirationTime");
-      final LdapAttribute loginRemaining = entry.getAttribute("loginGraceRemaining");
+      final LdapAttribute expTime = entry != null ? entry.getAttribute("passwordExpirationTime") : null;
+      final LdapAttribute loginRemaining = entry != null ? entry.getAttribute("loginGraceRemaining") : null;
       final int loginRemainingValue = loginRemaining != null ? Integer.parseInt(loginRemaining.getStringValue()) : 0;
 
       logger.debug("Read attributes passwordExpirationTime: {}, loginGraceRemaining: {}", expTime, loginRemaining);
@@ -72,7 +93,7 @@ public class EDirectoryAuthenticationResponseHandler extends AbstractFreezable
         logger.debug("Transcoded passwordExpirationTime to {}", exp);
         if (warningPeriod != null) {
           final ZonedDateTime warn = exp.minus(warningPeriod);
-          final ZonedDateTime now = ZonedDateTime.now();
+          final ZonedDateTime now = ZonedDateTime.now(expirationClock);
           logger.debug("Warning period is: {}, current datetime is {}", warn, now);
           if (now.isAfter(warn)) {
             response.setAccountState(new EDirectoryAccountState(exp, loginRemainingValue));
