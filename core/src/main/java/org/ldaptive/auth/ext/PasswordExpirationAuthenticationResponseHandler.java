@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
+import java.time.Clock;
 import java.time.ZonedDateTime;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResponseHandler;
@@ -21,6 +22,29 @@ public class PasswordExpirationAuthenticationResponseHandler implements Authenti
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Clock to convert time before expiration seconds to a datetime. */
+  private final Clock expirationClock;
+
+
+  /**
+   * Creates a new password expiration authentication response handler.
+   */
+  public PasswordExpirationAuthenticationResponseHandler()
+  {
+    this(Clock.systemDefaultZone());
+  }
+
+
+  /**
+   * Creates a new password expiration authentication response handler.
+   *
+   * @param  clock  used to convert time before expiration to a datetime
+   */
+  PasswordExpirationAuthenticationResponseHandler(final Clock clock)
+  {
+    expirationClock = clock;
+  }
+
 
   @Override
   public void handle(final AuthenticationResponse response)
@@ -29,7 +53,8 @@ public class PasswordExpirationAuthenticationResponseHandler implements Authenti
       PasswordExpiringControl.OID);
     if (expiringControl != null) {
       if (expiringControl.getTimeBeforeExpiration() > 0) {
-        final ZonedDateTime exp = ZonedDateTime.now().plusSeconds(expiringControl.getTimeBeforeExpiration());
+        final ZonedDateTime exp = ZonedDateTime.now(expirationClock)
+          .plusSeconds(expiringControl.getTimeBeforeExpiration());
         response.setAccountState(new PasswordExpirationAccountState(exp));
       } else {
         logger.warn("Received password expiring control with non-positive value: {}", expiringControl);

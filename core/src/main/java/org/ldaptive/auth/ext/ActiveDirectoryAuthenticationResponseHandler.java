@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth.ext;
 
+import java.time.Clock;
 import java.time.Period;
 import java.time.ZonedDateTime;
 import org.ldaptive.AbstractFreezable;
@@ -32,6 +33,9 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
   /** Logger for this class. */
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
+  /** Clock to calculate current date for comparison with expiration time. */
+  private final Clock expirationClock;
+
   /** Amount of time since a password was set until it will expire. Used if msDS-UserPasswordExpiryTimeComputed cannot
    * be read. */
   private Period expirationPeriod;
@@ -40,8 +44,24 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
   private Period warningPeriod;
 
 
-  /** Default constructor. */
-  public ActiveDirectoryAuthenticationResponseHandler() {}
+  /**
+   * Creates a new active directory authentication response handler.
+   *
+   * @param  clock  used to convert time before expiration to a datetime
+   */
+  ActiveDirectoryAuthenticationResponseHandler(final Clock clock)
+  {
+    expirationClock = clock;
+  }
+
+
+  /**
+   * Creates a new active directory authentication response handler.
+   */
+  public ActiveDirectoryAuthenticationResponseHandler()
+  {
+    expirationClock = Clock.systemDefaultZone();
+  }
 
 
   /**
@@ -51,6 +71,7 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
    */
   public ActiveDirectoryAuthenticationResponseHandler(final Period warning)
   {
+    expirationClock = Clock.systemDefaultZone();
     setWarningPeriod(warning);
   }
 
@@ -63,6 +84,7 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
    */
   public ActiveDirectoryAuthenticationResponseHandler(final Period expiration, final Period warning)
   {
+    expirationClock = Clock.systemDefaultZone();
     setExpirationPeriod(expiration);
     setWarningPeriod(warning);
   }
@@ -73,8 +95,8 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
   {
     if (response.isSuccess()) {
       final LdapEntry entry = response.getLdapEntry();
-      final LdapAttribute expTime = entry.getAttribute("msDS-UserPasswordExpiryTimeComputed");
-      final LdapAttribute pwdLastSet = entry.getAttribute("pwdLastSet");
+      final LdapAttribute expTime = entry != null ? entry.getAttribute("msDS-UserPasswordExpiryTimeComputed") : null;
+      final LdapAttribute pwdLastSet = entry != null ? entry.getAttribute("pwdLastSet") : null;
 
       logger.debug("Read attributes msDS-UserPasswordExpiryTimeComputed: {}, pwdLastSet: {}", expTime, pwdLastSet);
       ZonedDateTime exp = null;
@@ -89,7 +111,7 @@ public class ActiveDirectoryAuthenticationResponseHandler extends AbstractFreeza
         logger.debug("Transcoded passwordExpirationTime to {}", exp);
         if (warningPeriod != null) {
           final ZonedDateTime warn = exp.minus(warningPeriod);
-          final ZonedDateTime now = ZonedDateTime.now();
+          final ZonedDateTime now = ZonedDateTime.now(expirationClock);
           logger.debug("Warning period is: {}, current datetime is {}", warn, now);
           if (now.isAfter(warn)) {
             response.setAccountState(new ActiveDirectoryAccountState(exp));
