@@ -47,18 +47,19 @@ public class PasswordPolicyAuthenticationResponseHandler implements Authenticati
     if (ppc != null) {
       final ZonedDateTime exp = getTimeBeforeExpiration(ppc);
       if (exp != null) {
-        if (ppc.getError() != null) {
+        if (ppc.hasError()) {
           response.setAccountState(new PasswordPolicyAccountState(exp, ppc.getError()));
         } else {
           response.setAccountState(new PasswordPolicyAccountState(exp));
         }
-      } else if (ppc.getGraceAuthNsRemaining() >= 0) {
-        if (ppc.getError() != null) {
-          response.setAccountState(new PasswordPolicyAccountState(ppc.getGraceAuthNsRemaining(), ppc.getError()));
+      } else if (ppc.hasWarning(PasswordPolicyControl.WarningType.GRACE_AUTHNS_REMAINING)) {
+        final int graceAuthnsRemaining = ppc.getWarning().getValue();
+        if (ppc.hasError()) {
+          response.setAccountState(new PasswordPolicyAccountState(graceAuthnsRemaining, ppc.getError()));
         } else {
-          response.setAccountState(new PasswordPolicyAccountState(ppc.getGraceAuthNsRemaining()));
+          response.setAccountState(new PasswordPolicyAccountState(graceAuthnsRemaining));
         }
-      } else if (ppc.getError() != null) {
+      } else if (ppc.hasError()) {
         response.setAccountState(new PasswordPolicyAccountState(ppc.getError()));
       }
     }
@@ -74,8 +75,8 @@ public class PasswordPolicyAuthenticationResponseHandler implements Authenticati
    */
   private ZonedDateTime getTimeBeforeExpiration(final PasswordPolicyControl ppc)
   {
-    if (ppc.getTimeBeforeExpiration() >= 0) {
-      return ZonedDateTime.now(expirationClock).plusSeconds(ppc.getTimeBeforeExpiration());
+    if (ppc.hasWarning(PasswordPolicyControl.WarningType.TIME_BEFORE_EXPIRATION)) {
+      return ZonedDateTime.now(expirationClock).plusSeconds(ppc.getWarning().getValue());
     }
     return null;
   }

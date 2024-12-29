@@ -47,6 +47,16 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 719;
 
+  /** Enum for ppolicy warnings. */
+  public enum WarningType {
+
+    /** timeBeforeExpiration. */
+    TIME_BEFORE_EXPIRATION,
+
+    /** graceAuthNsRemaining. */
+    GRACE_AUTHNS_REMAINING,
+  }
+
   /** Enum for ppolicy errors. */
   public enum Error implements AccountState.Error {
 
@@ -164,10 +174,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   }
 
   /** Ppolicy warning. */
-  private int timeBeforeExpiration = -1;
-
-  /** Ppolicy warning. */
-  private int graceAuthNsRemaining = -1;
+  private Warning warning;
 
   /** Ppolicy error. */
   private Error error;
@@ -194,29 +201,13 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   /**
    * Creates a new password policy control.
    *
-   * @param  time  time before expiration
-   * @param  count  grace authns remaining
+   * @param  type  warning type
+   * @param  value warning value
    */
-  public PasswordPolicyControl(final int time, final int count)
+  public PasswordPolicyControl(final WarningType type, final int value)
   {
     super(OID);
-    setTimeBeforeExpiration(time);
-    setGraceAuthNsRemaining(count);
-  }
-
-
-  /**
-   * Creates a new password policy control.
-   *
-   * @param  time  time before expiration
-   * @param  count  grace authns remaining
-   * @param  critical  whether this control is critical
-   */
-  public PasswordPolicyControl(final int time, final int count, final boolean critical)
-  {
-    super(OID, critical);
-    setTimeBeforeExpiration(time);
-    setGraceAuthNsRemaining(count);
+    setWarning(type, value);
   }
 
 
@@ -229,6 +220,35 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   {
     super(OID);
     setError(err);
+  }
+
+
+  /**
+   * Creates a new password policy control.
+   *
+   * @param  type  warning type
+   * @param  value  warning value
+   * @param  err  ppolicy error
+   */
+  public PasswordPolicyControl(final WarningType type, final int value, final Error err)
+  {
+    super(OID);
+    setWarning(type, value);
+    setError(err);
+  }
+
+
+  /**
+   * Creates a new password policy control.
+   *
+   * @param  type  warning type
+   * @param  value  warning value
+   * @param  critical  whether this control is critical
+   */
+  public PasswordPolicyControl(final WarningType type, final int value, final boolean critical)
+  {
+    super(OID, critical);
+    setWarning(type, value);
   }
 
 
@@ -248,32 +268,15 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   /**
    * Creates a new password policy control.
    *
-   * @param  time  time before expiration
-   * @param  count  grace authns remaining
-   * @param  err  ppolicy error
-   */
-  public PasswordPolicyControl(final int time, final int count, final Error err)
-  {
-    super(OID);
-    setTimeBeforeExpiration(time);
-    setGraceAuthNsRemaining(count);
-    setError(err);
-  }
-
-
-  /**
-   * Creates a new password policy control.
-   *
-   * @param  time  time before expiration
-   * @param  count  grace authns remaining
+   * @param  type  warning type
+   * @param  value  warning value
    * @param  err  ppolicy error
    * @param  critical  whether this control is critical
    */
-  public PasswordPolicyControl(final int time, final int count, final Error err, final boolean critical)
+  public PasswordPolicyControl(final WarningType type, final int value, final Error err, final boolean critical)
   {
     super(OID, critical);
-    setTimeBeforeExpiration(time);
-    setGraceAuthNsRemaining(count);
+    setWarning(type, value);
     setError(err);
   }
 
@@ -286,46 +289,38 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
 
 
   /**
-   * Returns the time before expiration in seconds.
+   * Returns the warning.
    *
-   * @return  time before expiration
+   * @return  warning
    */
-  public int getTimeBeforeExpiration()
+  public Warning getWarning()
   {
-    return timeBeforeExpiration;
+    return warning;
   }
 
 
   /**
-   * Sets the time before expiration in seconds.
+   * Returns whether this control has a warning of the supplied type.
    *
-   * @param  time  before expiration
+   * @param  type  of warning to inspect this control for
+   *
+   * @return  whether this control has a warning of the supplied type
    */
-  public void setTimeBeforeExpiration(final int time)
+  public boolean hasWarning(final WarningType type)
   {
-    timeBeforeExpiration = time;
+    return warning != null && warning.getWarningType() == type;
   }
 
 
   /**
-   * Returns the number of grace authentications remaining.
+   * Sets the warning.
    *
-   * @return  number of grace authentications remaining
+   * @param  type  warning type
+   * @param  value  warning value
    */
-  public int getGraceAuthNsRemaining()
+  public void setWarning(final WarningType type, final int value)
   {
-    return graceAuthNsRemaining;
-  }
-
-
-  /**
-   * Sets the number of grace authentications remaining.
-   *
-   * @param  count  number of grace authentications remaining
-   */
-  public void setGraceAuthNsRemaining(final int count)
-  {
-    graceAuthNsRemaining = count;
+    warning = new Warning(type, value);
   }
 
 
@@ -351,6 +346,17 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   }
 
 
+  /**
+   * Returns whether this control has an error set.
+   *
+   * @return  whether this control has an error set
+   */
+  public boolean hasError()
+  {
+    return error != null;
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {
@@ -359,9 +365,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     }
     if (o instanceof PasswordPolicyControl && super.equals(o)) {
       final PasswordPolicyControl v = (PasswordPolicyControl) o;
-      return LdapUtils.areEqual(timeBeforeExpiration, v.timeBeforeExpiration) &&
-             LdapUtils.areEqual(graceAuthNsRemaining, v.graceAuthNsRemaining) &&
-             LdapUtils.areEqual(error, v.error);
+      return LdapUtils.areEqual(warning, v.warning) && LdapUtils.areEqual(error, v.error);
     }
     return false;
   }
@@ -375,8 +379,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
         HASH_CODE_SEED,
         getOID(),
         getCriticality(),
-        timeBeforeExpiration,
-        graceAuthNsRemaining,
+        warning,
         error);
   }
 
@@ -387,8 +390,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     return "[" +
       getClass().getName() + "@" + hashCode() + "::" +
       "criticality=" + getCriticality() + ", " +
-      "timeBeforeExpiration=" + timeBeforeExpiration + ", " +
-      "graceAuthNsRemaining=" + graceAuthNsRemaining + ", " +
+      "warning=" + warning + ", " +
       "error=" + error + "]";
   }
 
@@ -415,6 +417,84 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   }
 
 
+  /** Inner class to represent a ppolicy warning. */
+  public static final class Warning
+  {
+
+    /** Warning type. */
+    private final WarningType warningType;
+
+    /** Warning value. */
+    private final int value;
+
+
+    /**
+     * Creates a new warning.
+     *
+     * @param  type  warning type
+     * @param  i  warning value
+     */
+    private Warning(final WarningType type, final int i)
+    {
+      warningType = type;
+      value = i;
+    }
+
+
+    /**
+     * Returns the warning type.
+     *
+     * @return  warning type
+     */
+    public WarningType getWarningType()
+    {
+      return warningType;
+    }
+
+
+    /**
+     * Returns the warning value.
+     *
+     * @return  warning value
+     */
+    public int getValue()
+    {
+      return value;
+    }
+
+
+    @Override
+    public boolean equals(final Object o)
+    {
+      if (o == this) {
+        return true;
+      }
+      if (o instanceof Warning) {
+        final Warning v = (Warning) o;
+        return LdapUtils.areEqual(warningType, v.warningType) && LdapUtils.areEqual(value, v.value);
+      }
+      return false;
+    }
+
+
+    @Override
+    public int hashCode()
+    {
+      return LdapUtils.computeHashCode(HASH_CODE_SEED, warningType, value);
+    }
+
+
+    @Override
+    public String toString()
+    {
+      return "[" +
+        getClass().getName() + "@" + hashCode() + "::" +
+        "warningType=" + warningType + ", " +
+        "value=" + value + "]";
+    }
+  }
+
+
   /** Parse handler implementation for the time before expiration. */
   private static class TimeBeforeExpirationHandler extends AbstractParseHandler<PasswordPolicyControl>
   {
@@ -437,7 +517,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setTimeBeforeExpiration(IntegerType.decode(encoded).intValue());
+      getObject().setWarning(WarningType.TIME_BEFORE_EXPIRATION, IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -464,7 +544,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setGraceAuthNsRemaining(IntegerType.decode(encoded).intValue());
+      getObject().setWarning(WarningType.GRACE_AUTHNS_REMAINING, IntegerType.decode(encoded).intValue());
     }
   }
 

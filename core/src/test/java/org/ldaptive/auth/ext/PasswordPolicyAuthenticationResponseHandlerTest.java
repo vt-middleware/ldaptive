@@ -53,28 +53,34 @@ public class PasswordPolicyAuthenticationResponseHandlerTest extends AbstractAut
           handler,
           createAuthenticationResponse(
             AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
-            new PasswordPolicyControl(-1, 5)),
+            new PasswordPolicyControl(PasswordPolicyControl.WarningType.GRACE_AUTHNS_REMAINING, 5)),
           new PasswordPolicyAccountState(5),
         },
         new Object[] {
           handler,
           createAuthenticationResponse(
             AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
-            new PasswordPolicyControl(-1, 5, PasswordPolicyControl.Error.PASSWORD_EXPIRED)),
+            new PasswordPolicyControl(
+              PasswordPolicyControl.WarningType.GRACE_AUTHNS_REMAINING,
+              5,
+              PasswordPolicyControl.Error.PASSWORD_EXPIRED)),
           new PasswordPolicyAccountState(5, PasswordPolicyControl.Error.PASSWORD_EXPIRED),
         },
         new Object[] {
           handler,
           createAuthenticationResponse(
             AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
-            new PasswordPolicyControl(expirationTimeSeconds, -1)),
+            new PasswordPolicyControl(PasswordPolicyControl.WarningType.TIME_BEFORE_EXPIRATION, expirationTimeSeconds)),
           new PasswordPolicyAccountState(exp),
         },
         new Object[] {
           handler,
           createAuthenticationResponse(
             AuthenticationResultCode.AUTHENTICATION_HANDLER_SUCCESS,
-            new PasswordPolicyControl(expirationTimeSeconds, -1, PasswordPolicyControl.Error.PASSWORD_EXPIRED)),
+            new PasswordPolicyControl(
+              PasswordPolicyControl.WarningType.TIME_BEFORE_EXPIRATION,
+              expirationTimeSeconds,
+              PasswordPolicyControl.Error.PASSWORD_EXPIRED)),
           new PasswordPolicyAccountState(exp, PasswordPolicyControl.Error.PASSWORD_EXPIRED),
         },
       };
