@@ -24,27 +24,26 @@ public class PasswordPolicyControlTest
   @DataProvider(name = "response")
   public Object[][] createData()
   {
-    final PasswordPolicyControl timeBeforeExp = new PasswordPolicyControl();
-    timeBeforeExp.setTimeBeforeExpiration(2513067);
+    final PasswordPolicyControl timeBeforeExp = new PasswordPolicyControl(
+      PasswordPolicyControl.WarningType.TIME_BEFORE_EXPIRATION, 2513067);
 
-    final PasswordPolicyControl timeBeforeExpZero = new PasswordPolicyControl();
-    timeBeforeExpZero.setTimeBeforeExpiration(0);
+    final PasswordPolicyControl timeBeforeExpZero = new PasswordPolicyControl(
+      PasswordPolicyControl.WarningType.TIME_BEFORE_EXPIRATION, 0);
 
-    final PasswordPolicyControl graceAuthns = new PasswordPolicyControl();
-    graceAuthns.setGraceAuthNsRemaining(4);
+    final PasswordPolicyControl graceAuthns = new PasswordPolicyControl(
+      PasswordPolicyControl.WarningType.GRACE_AUTHNS_REMAINING, 4);
 
-    final PasswordPolicyControl graceAuthnsZero = new PasswordPolicyControl();
-    graceAuthnsZero.setGraceAuthNsRemaining(0);
+    final PasswordPolicyControl graceAuthnsZero = new PasswordPolicyControl(
+      PasswordPolicyControl.WarningType.GRACE_AUTHNS_REMAINING, 0);
 
-    final PasswordPolicyControl passExpired = new PasswordPolicyControl();
-    passExpired.setError(PasswordPolicyControl.Error.PASSWORD_EXPIRED);
+    final PasswordPolicyControl passExpired = new PasswordPolicyControl(PasswordPolicyControl.Error.PASSWORD_EXPIRED);
 
-    final PasswordPolicyControl accountLocked = new PasswordPolicyControl();
-    accountLocked.setError(PasswordPolicyControl.Error.ACCOUNT_LOCKED);
+    final PasswordPolicyControl accountLocked = new PasswordPolicyControl(PasswordPolicyControl.Error.ACCOUNT_LOCKED);
 
-    final PasswordPolicyControl changeAfterReset = new PasswordPolicyControl();
-    changeAfterReset.setTimeBeforeExpiration(2513067);
-    changeAfterReset.setError(PasswordPolicyControl.Error.CHANGE_AFTER_RESET);
+    final PasswordPolicyControl changeAfterReset = new PasswordPolicyControl(
+      PasswordPolicyControl.WarningType.TIME_BEFORE_EXPIRATION,
+      2513067,
+      PasswordPolicyControl.Error.CHANGE_AFTER_RESET);
 
     return
       new Object[][] {

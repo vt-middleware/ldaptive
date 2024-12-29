@@ -22,19 +22,6 @@ public class PasswordPolicyAccountState extends AccountState
    * Creates a new password policy account state with a timeBeforeExpiration warning.
    *
    * @param  exp  account expiration
-   * @param  remaining  number of logins available
-   */
-  public PasswordPolicyAccountState(final ZonedDateTime exp, final int remaining)
-  {
-    super(new AccountState.DefaultWarning(exp, remaining));
-    ppError = null;
-  }
-
-
-  /**
-   * Creates a new password policy account state.
-   *
-   * @param  exp  account expiration
    */
   public PasswordPolicyAccountState(final ZonedDateTime exp)
   {

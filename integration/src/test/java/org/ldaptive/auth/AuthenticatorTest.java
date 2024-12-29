@@ -1274,8 +1274,7 @@ public class AuthenticatorTest extends AbstractTest
 
     assertThat(ppcResponse.getError()).isNull();
     assertThat(response.getAccountState()).isNull();
-    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
-    assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
+    assertThat(ppcResponse.getWarning()).isNull();
 
     final ModifyOperation modify = new ModifyOperation(cf);
     final ModifyResponse modifyResponse = modify.execute(
@@ -1293,8 +1292,7 @@ public class AuthenticatorTest extends AbstractTest
     ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
     assertThat(ppcResponse.getError()).isNull();
     assertThat(response.getAccountState()).isNull();
-    assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
-    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
+    assertThat(ppcResponse.getWarning()).isNull();
 
     // test bind with expiration time
     final String newCredential = credential + "-new";
@@ -1312,8 +1310,8 @@ public class AuthenticatorTest extends AbstractTest
     }
     assertThat(response.isSuccess()).isTrue();
     ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
-    assertThat(ppcResponse.getTimeBeforeExpiration() > 0).isTrue();
-    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
+    assertThat(ppcResponse.hasWarning(PasswordPolicyControl.WarningType.TIME_BEFORE_EXPIRATION)).isTrue();
+    assertThat(ppcResponse.getWarning().getValue() > 0).isTrue();
     assertThat(response.getAccountState().getWarning().getExpiration()).isNotNull();
     assertThat(response.getAccountState().getError()).isNull();
 
@@ -1331,8 +1329,7 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(ppcResponse.getError()).isEqualTo(PasswordPolicyControl.Error.ACCOUNT_LOCKED);
     assertThat(response.getAccountState().getError().getCode())
       .isEqualTo(PasswordPolicyControl.Error.ACCOUNT_LOCKED.getCode());
-    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
-    assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
+    assertThat(ppcResponse.getWarning()).isNull();
 
     modify.execute(
       new ModifyRequest(
@@ -1354,8 +1351,8 @@ public class AuthenticatorTest extends AbstractTest
     do {
       ppcResponse = (PasswordPolicyControl) response.getControl(PasswordPolicyControl.OID);
       assertThat(response.isSuccess()).isTrue();
-      assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
-      assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(graceLogins);
+      assertThat(ppcResponse.hasWarning(PasswordPolicyControl.WarningType.GRACE_AUTHNS_REMAINING)).isTrue();
+      assertThat(ppcResponse.getWarning().getValue()).isEqualTo(graceLogins);
       assertThat(response.getAccountState().getWarning().getLoginsRemaining()).isEqualTo(graceLogins);
       assertThat(response.getAccountState().getWarning().getExpiration()).isNull();
       assertThat(response.getAccountState().getError()).isNull();
@@ -1370,8 +1367,7 @@ public class AuthenticatorTest extends AbstractTest
     assertThat(ppcResponse.getError()).isEqualTo(PasswordPolicyControl.Error.PASSWORD_EXPIRED);
     assertThat(response.getAccountState().getError().getCode())
       .isEqualTo(PasswordPolicyControl.Error.PASSWORD_EXPIRED.getCode());
-    assertThat(ppcResponse.getGraceAuthNsRemaining()).isEqualTo(-1);
-    assertThat(ppcResponse.getTimeBeforeExpiration()).isEqualTo(-1);
+    assertThat(ppcResponse.getWarning()).isNull();
 
     modify.execute(
       new ModifyRequest(
