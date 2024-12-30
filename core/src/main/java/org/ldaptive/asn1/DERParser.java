@@ -20,6 +20,12 @@ import org.slf4j.LoggerFactory;
 public class DERParser
 {
 
+  /** Maximum supported path depth. */
+  private static final int MAX_PATH_DEPTH = 16;
+
+  /** Maximum number of tag permutations allowed. */
+  private static final int MAX_PERMUTATIONS = (int) Math.pow(2, MAX_PATH_DEPTH);
+
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -168,15 +174,15 @@ public class DERParser
     for (DERPath p : permutations) {
       handler = handlerMap.get(p);
       if (handler != null) {
-        encoded.limit(end).position(start);
+        encoded.positionAndLimit(start, end);
         handler.handle(this, encoded);
       }
     }
 
     if (tag.isConstructed()) {
-      parseTags(encoded);
+      parseTags(encoded.positionAndLimit(start, end));
     }
-    encoded.limit(limit).position(end);
+    encoded.positionAndLimit(end, limit);
   }
 
 
@@ -197,6 +203,9 @@ public class DERParser
       permutations.add(new DERPath().pushNode(tag.name()));
       permutations.add(new DERPath().pushNode(tag.name(), index));
     } else {
+      if (permutations.size() * 2 > MAX_PERMUTATIONS) {
+        throw new IllegalArgumentException("Maximum permutations exceeded.");
+      }
       final Collection<DERPath> generation = new ArrayDeque<>(permutations.size());
       for (DERPath p : permutations) {
         generation.add(new DERPath(p).pushNode(tag.name()));

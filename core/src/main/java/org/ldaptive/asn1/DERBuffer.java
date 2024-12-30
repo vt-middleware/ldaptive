@@ -55,6 +55,25 @@ public interface DERBuffer
 
 
   /**
+   * Sets this buffer's position and limit at the same time. Different buffer implementations may impose different
+   * constraints when moving both the position and limit indexes at the same time. Consequently, you may not be able to
+   * chain the {@link #position(int)} and {@link #limit(int)} methods correctly for all implementations.
+   *
+   * @param  newPosition
+   *         The new position value; must be non-negative
+   *         and no larger than the current limit
+   * @param  newLimit
+   *         The new limit value; must be non-negative
+   *         and no larger than this buffer's capacity
+   *
+   * @return  This buffer
+   *
+   * @throws  IllegalArgumentException  if the preconditions on newPosition and newLimit do not hold
+   */
+  DERBuffer positionAndLimit(int newPosition, int newLimit);
+
+
+  /**
    * Sets the position to zero and the limit to the capacity.
    *
    * <p>This method does not actually erase the data in the buffer.</p>
