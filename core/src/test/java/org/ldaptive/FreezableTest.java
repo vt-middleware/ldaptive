@@ -5,10 +5,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import org.ldaptive.ad.control.DirSyncControl;
+import org.ldaptive.ad.control.GetStatsControl;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
 import org.ldaptive.ad.handler.RangeEntryHandler;
+import org.ldaptive.asn1.DERBuffer;
+import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.auth.AggregateAuthenticationHandler;
 import org.ldaptive.auth.AggregateAuthenticationResponseHandler;
 import org.ldaptive.auth.AggregateDnResolver;
@@ -25,7 +29,19 @@ import org.ldaptive.auth.WhoAmIEntryResolver;
 import org.ldaptive.auth.ext.ActiveDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
+import org.ldaptive.control.AuthorizationIdentityResponseControl;
+import org.ldaptive.control.EntryChangeNotificationControl;
+import org.ldaptive.control.GenericControl;
+import org.ldaptive.control.PagedResultsControl;
+import org.ldaptive.control.PasswordExpiredControl;
+import org.ldaptive.control.PasswordExpiringControl;
+import org.ldaptive.control.PasswordPolicyControl;
+import org.ldaptive.control.SessionTrackingControl;
 import org.ldaptive.control.SortKey;
+import org.ldaptive.control.SortResponseControl;
+import org.ldaptive.control.SyncDoneControl;
+import org.ldaptive.control.SyncStateControl;
+import org.ldaptive.control.VirtualListViewResponseControl;
 import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.control.util.VirtualListViewClient;
 import org.ldaptive.dn.Dn;
@@ -215,6 +231,45 @@ public class FreezableTest
         new Object[] {
           FollowSearchResultReferenceHandler.class,
         },
+        new Object[] {
+          AuthorizationIdentityResponseControl.class,
+        },
+        new Object[] {
+          EntryChangeNotificationControl.class,
+        },
+        new Object[] {
+          PagedResultsControl.class,
+        },
+        new Object[] {
+          PasswordExpiredControl.class,
+        },
+        new Object[] {
+          PasswordExpiringControl.class,
+        },
+        new Object[] {
+          PasswordPolicyControl.class,
+        },
+        new Object[] {
+          SessionTrackingControl.class,
+        },
+        new Object[] {
+          SortResponseControl.class,
+        },
+        new Object[] {
+          SyncDoneControl.class,
+        },
+        new Object[] {
+          SyncStateControl.class,
+        },
+        new Object[] {
+          VirtualListViewResponseControl.class,
+        },
+        new Object[] {
+          DirSyncControl.class,
+        },
+        new Object[] {
+          GetStatsControl.class,
+        },
       };
   }
 
@@ -240,6 +295,10 @@ public class FreezableTest
     final VirtualListViewClient virtualListViewClient = new VirtualListViewClient(null, (SortKey) null);
     virtualListViewClient.freeze();
     invokeMethods(VirtualListViewClient.class, virtualListViewClient);
+
+    final GenericControl genericControl = new GenericControl("1.2.3.4.5", new byte[] {0x00, 0x01, 0x02, 0x03, 0x04});
+    genericControl.freeze();
+    invokeMethods(GenericControl.class, genericControl);
   }
 
 
@@ -255,7 +314,9 @@ public class FreezableTest
     for (Method method : clazz.getMethods()) {
       if (!method.isBridge()) {
         final boolean invokeMethod =
-          (method.getName().startsWith("set") || method.getName().startsWith("add")) &&
+          (method.getName().startsWith("set") ||
+            method.getName().startsWith("add") ||
+            method.getName().equals("decode")) &&
             method.getParameterTypes().length == 1;
         if (invokeMethod) {
           try {
@@ -297,6 +358,8 @@ public class FreezableTest
       newValue = Boolean.valueOf("false");
     } else if (Duration.class == type) {
       newValue = Duration.ofSeconds(1);
+    } else if (DERBuffer.class == type) {
+      newValue = new DefaultDERBuffer(new byte[] {0x00, 0x01, 0x02, 0x03, 0x04, 0x05});
     }
     return newValue;
   }

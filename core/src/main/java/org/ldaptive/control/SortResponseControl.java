@@ -41,7 +41,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class SortResponseControl extends AbstractControl implements ResponseControl
+public class SortResponseControl extends AbstractResponseControl
 {
 
   /** OID of this control. */
@@ -84,7 +84,8 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
   public SortResponseControl(final ResultCode code, final boolean critical)
   {
     super(OID, critical);
-    setSortResult(code);
+    sortResult = code;
+    freeze();
   }
 
 
@@ -98,8 +99,9 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
   public SortResponseControl(final ResultCode code, final String attrName, final boolean critical)
   {
     super(OID, critical);
-    setSortResult(code);
-    setAttributeName(attrName);
+    sortResult = code;
+    attributeName = attrName;
+    freeze();
   }
 
 
@@ -115,17 +117,6 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
 
 
   /**
-   * Sets the result code of the server side sort.
-   *
-   * @param  code  result code
-   */
-  public void setSortResult(final ResultCode code)
-  {
-    sortResult = code;
-  }
-
-
-  /**
    * Returns the attribute name that caused the sort to fail.
    *
    * @return  attribute name
@@ -133,17 +124,6 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
   public String getAttributeName()
   {
     return attributeName;
-  }
-
-
-  /**
-   * Sets the attribute name that caused the sort to fail.
-   *
-   * @param  name  of an attribute
-   */
-  public void setAttributeName(final String name)
-  {
-    attributeName = name;
   }
 
 
@@ -183,6 +163,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(SortResultHandler.PATH, new SortResultHandler(this));
     parser.registerHandler(AttributeTypeHandler.PATH, new AttributeTypeHandler(this));
@@ -221,7 +202,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
       if (rc == null) {
         throw new IllegalArgumentException("Unknown result code " + resultValue);
       }
-      getObject().setSortResult(rc);
+      getObject().sortResult = rc;
     }
   }
 
@@ -248,7 +229,7 @@ public class SortResponseControl extends AbstractControl implements ResponseCont
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setAttributeName(OctetStringType.decode(encoded));
+      getObject().attributeName = OctetStringType.decode(encoded);
     }
   }
 }

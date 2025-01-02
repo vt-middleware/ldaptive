@@ -20,7 +20,7 @@ import org.ldaptive.asn1.DERPath;
  *
  * @author  Middleware Services
  */
-public class SyncDoneControl extends AbstractControl implements ResponseControl
+public class SyncDoneControl extends AbstractResponseControl
 {
 
   /** OID of this control. */
@@ -62,7 +62,8 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   public SyncDoneControl(final byte[] value)
   {
     super(OID);
-    setCookie(value);
+    cookie = value;
+    freeze();
   }
 
 
@@ -75,7 +76,8 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   public SyncDoneControl(final byte[] value, final boolean critical)
   {
     super(OID, critical);
-    setCookie(value);
+    cookie = value;
+    freeze();
   }
 
 
@@ -89,8 +91,9 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   public SyncDoneControl(final byte[] value, final boolean refresh, final boolean critical)
   {
     super(OID, critical);
-    setCookie(value);
-    setRefreshDeletes(refresh);
+    cookie = value;
+    refreshDeletes = refresh;
+    freeze();
   }
 
 
@@ -106,17 +109,6 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
 
 
   /**
-   * Sets the sync done cookie.
-   *
-   * @param  value  sync done cookie
-   */
-  public void setCookie(final byte[] value)
-  {
-    cookie = value;
-  }
-
-
-  /**
    * Returns whether to refresh deletes.
    *
    * @return  refresh deletes
@@ -124,17 +116,6 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   public boolean getRefreshDeletes()
   {
     return refreshDeletes;
-  }
-
-
-  /**
-   * Sets whether to refresh deletes.
-   *
-   * @param  b  refresh deletes
-   */
-  public void setRefreshDeletes(final boolean b)
-  {
-    refreshDeletes = b;
   }
 
 
@@ -174,6 +155,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
     parser.registerHandler(RefreshDeletesHandler.PATH, new RefreshDeletesHandler(this));
@@ -209,7 +191,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getObject().cookie = cookie;
       }
     }
   }
@@ -237,7 +219,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setRefreshDeletes(BooleanType.decode(encoded));
+      getObject().refreshDeletes = BooleanType.decode(encoded);
     }
   }
 }

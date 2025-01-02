@@ -28,7 +28,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class EntryChangeNotificationControl extends AbstractControl implements ResponseControl
+public class EntryChangeNotificationControl extends AbstractResponseControl
 {
 
   /** OID of this control. */
@@ -85,7 +85,8 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
   public EntryChangeNotificationControl(final PersistentSearchChangeType type, final boolean critical)
   {
     super(OID, critical);
-    setChangeType(type);
+    changeType = type;
+    freeze();
   }
 
 
@@ -117,9 +118,10 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
     final boolean critical)
   {
     super(OID, critical);
-    setChangeType(type);
-    setPreviousDn(dn);
-    setChangeNumber(number);
+    changeType = type;
+    previousDn = dn;
+    changeNumber = number;
+    freeze();
   }
 
 
@@ -135,17 +137,6 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
 
 
   /**
-   * Sets the change type.
-   *
-   * @param  type  change type
-   */
-  public void setChangeType(final PersistentSearchChangeType type)
-  {
-    changeType = type;
-  }
-
-
-  /**
    * Returns the previous dn.
    *
    * @return  previous dn
@@ -157,17 +148,6 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
 
 
   /**
-   * Sets the previous dn.
-   *
-   * @param  dn  previous dn
-   */
-  public void setPreviousDn(final String dn)
-  {
-    previousDn = dn;
-  }
-
-
-  /**
    * Returns the change number.
    *
    * @return  change number
@@ -175,17 +155,6 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
   public long getChangeNumber()
   {
     return changeNumber;
-  }
-
-
-  /**
-   * Sets the change number.
-   *
-   * @param  number  change number
-   */
-  public void setChangeNumber(final long number)
-  {
-    changeNumber = number;
   }
 
 
@@ -227,6 +196,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(ChangeTypeHandler.PATH, new ChangeTypeHandler(this));
     parser.registerHandler(PreviousDnHandler.PATH, new PreviousDnHandler(this));
@@ -266,7 +236,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
       if (ct == null) {
         throw new IllegalArgumentException("Unknown change type code " + typeValue);
       }
-      getObject().setChangeType(ct);
+      getObject().changeType = ct;
     }
   }
 
@@ -293,7 +263,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setPreviousDn(OctetStringType.decode(encoded));
+      getObject().previousDn = OctetStringType.decode(encoded);
     }
   }
 
@@ -320,7 +290,7 @@ public class EntryChangeNotificationControl extends AbstractControl implements R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setChangeNumber(IntegerType.decode(encoded).intValue());
+      getObject().changeNumber = IntegerType.decode(encoded).intValue();
     }
   }
 }

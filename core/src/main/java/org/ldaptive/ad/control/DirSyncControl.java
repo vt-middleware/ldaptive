@@ -11,9 +11,8 @@ import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.UniversalDERTag;
-import org.ldaptive.control.AbstractControl;
+import org.ldaptive.control.AbstractResponseControl;
 import org.ldaptive.control.RequestControl;
-import org.ldaptive.control.ResponseControl;
 
 /**
  * Request/response control for active directory synchronization. Control is defined as:
@@ -30,7 +29,7 @@ import org.ldaptive.control.ResponseControl;
  *
  * @author  Middleware Services
  */
-public class DirSyncControl extends AbstractControl implements RequestControl, ResponseControl
+public class DirSyncControl extends AbstractResponseControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -125,7 +124,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
    */
   public DirSyncControl(final boolean critical)
   {
-    this(null, null, critical);
+    super(OID, critical);
   }
 
 
@@ -208,10 +207,10 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
           l += flag.value();
         }
       }
-      setFlags(l);
+      flags = l;
     }
-    setCookie(value);
-    setMaxAttributeCount(count);
+    cookie = value;
+    maxAttributeCount = count;
   }
 
 
@@ -240,6 +239,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
    */
   public void setFlags(final long l)
   {
+    assertMutable();
     flags = l;
   }
 
@@ -262,6 +262,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
    */
   public void setMaxAttributeCount(final int count)
   {
+    assertMutable();
     maxAttributeCount = count;
   }
 
@@ -284,6 +285,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
    */
   public void setCookie(final byte[] value)
   {
+    assertMutable();
     cookie = value;
   }
 
@@ -338,6 +340,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(FlagHandler.PATH, new FlagHandler(this));
     parser.registerHandler(MaxAttrCountHandler.PATH, new MaxAttrCountHandler(this));
@@ -372,7 +375,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setFlags(IntegerType.decode(encoded).longValue());
+      getObject().flags = IntegerType.decode(encoded).longValue();
     }
   }
 
@@ -399,7 +402,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setMaxAttributeCount(IntegerType.decode(encoded).intValue());
+      getObject().maxAttributeCount = IntegerType.decode(encoded).intValue();
     }
   }
 
@@ -428,7 +431,7 @@ public class DirSyncControl extends AbstractControl implements RequestControl, R
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getObject().cookie = cookie;
       }
     }
   }

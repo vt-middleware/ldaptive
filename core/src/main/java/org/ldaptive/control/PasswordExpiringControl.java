@@ -15,7 +15,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class PasswordExpiringControl extends AbstractControl implements ResponseControl
+public class PasswordExpiringControl extends AbstractResponseControl
 {
 
   /** OID of this control. */
@@ -54,7 +54,8 @@ public class PasswordExpiringControl extends AbstractControl implements Response
   public PasswordExpiringControl(final int time)
   {
     super(OID);
-    setTimeBeforeExpiration(time);
+    timeBeforeExpiration = time;
+    freeze();
   }
 
 
@@ -67,7 +68,8 @@ public class PasswordExpiringControl extends AbstractControl implements Response
   public PasswordExpiringControl(final int time, final boolean critical)
   {
     super(OID, critical);
-    setTimeBeforeExpiration(time);
+    timeBeforeExpiration = time;
+    freeze();
   }
 
 
@@ -79,17 +81,6 @@ public class PasswordExpiringControl extends AbstractControl implements Response
   public int getTimeBeforeExpiration()
   {
     return timeBeforeExpiration;
-  }
-
-
-  /**
-   * Sets the time in seconds until password expiration.
-   *
-   * @param  time  in seconds until expiration
-   */
-  public void setTimeBeforeExpiration(final int time)
-  {
-    timeBeforeExpiration = time;
   }
 
 
@@ -127,9 +118,10 @@ public class PasswordExpiringControl extends AbstractControl implements Response
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     try {
       final String time = OctetStringType.decode(encoded);
-      setTimeBeforeExpiration(Integer.parseInt(time));
+      timeBeforeExpiration = Integer.parseInt(time);
     } catch (Exception e) {
       throw new IllegalArgumentException("Error parsing response", e);
     }

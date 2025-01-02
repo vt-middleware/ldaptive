@@ -10,7 +10,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class AuthorizationIdentityResponseControl extends AbstractControl implements ResponseControl
+public class AuthorizationIdentityResponseControl extends AbstractResponseControl
 {
 
   /** OID of this control. */
@@ -61,7 +61,8 @@ public class AuthorizationIdentityResponseControl extends AbstractControl implem
   public AuthorizationIdentityResponseControl(final String id, final boolean critical)
   {
     super(OID, critical);
-    setAuthorizationId(id);
+    authorizationId = id;
+    freeze();
   }
 
 
@@ -73,17 +74,6 @@ public class AuthorizationIdentityResponseControl extends AbstractControl implem
   public String getAuthorizationId()
   {
     return authorizationId;
-  }
-
-
-  /**
-   * Sets the authorization identity.
-   *
-   * @param  id  authorization id
-   */
-  public void setAuthorizationId(final String id)
-  {
-    authorizationId = id;
   }
 
 
@@ -121,8 +111,9 @@ public class AuthorizationIdentityResponseControl extends AbstractControl implem
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     try {
-      setAuthorizationId(OctetStringType.decode(encoded));
+      authorizationId = OctetStringType.decode(encoded);
     } catch (Exception e) {
       throw new IllegalArgumentException("Error parsing response", e);
     }

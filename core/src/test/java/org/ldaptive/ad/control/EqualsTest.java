@@ -3,6 +3,7 @@ package org.ldaptive.ad.control;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
+import org.ldaptive.control.ResponseControl;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -71,10 +72,18 @@ public class EqualsTest
   @Test(dataProvider = "control-classes")
   public void controls(final Class<?> clazz)
   {
-    EqualsVerifier.forClass(clazz)
-      .suppress(Warning.STRICT_INHERITANCE)
-      .suppress(Warning.NONFINAL_FIELDS)
-      .withIgnoredFields("logger")
-      .verify();
+    if (ResponseControl.class.isAssignableFrom(clazz)) {
+      EqualsVerifier.forClass(clazz)
+        .suppress(Warning.STRICT_INHERITANCE)
+        .suppress(Warning.NONFINAL_FIELDS)
+        .withIgnoredFields("logger", "immutable")
+        .verify();
+    } else {
+      EqualsVerifier.forClass(clazz)
+        .suppress(Warning.STRICT_INHERITANCE)
+        .suppress(Warning.NONFINAL_FIELDS)
+        .withIgnoredFields("logger")
+        .verify();
+    }
   }
 }

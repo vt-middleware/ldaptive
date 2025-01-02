@@ -25,7 +25,7 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class PagedResultsControl extends AbstractControl implements RequestControl, ResponseControl
+public class PagedResultsControl extends AbstractResponseControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -70,7 +70,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   public PagedResultsControl(final int size)
   {
     super(OID);
-    setSize(size);
+    resultSize = size;
   }
 
 
@@ -83,7 +83,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   public PagedResultsControl(final int size, final boolean critical)
   {
     super(OID, critical);
-    setSize(size);
+    resultSize = size;
   }
 
 
@@ -97,8 +97,8 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   public PagedResultsControl(final int size, final byte[] value, final boolean critical)
   {
     super(OID, critical);
-    setSize(size);
-    setCookie(value);
+    resultSize = size;
+    cookie = value;
   }
 
 
@@ -129,6 +129,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
    */
   public void setSize(final int size)
   {
+    assertMutable();
     resultSize = size;
   }
 
@@ -151,6 +152,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
    */
   public void setCookie(final byte[] value)
   {
+    assertMutable();
     cookie = value;
   }
 
@@ -202,6 +204,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(SizeHandler.PATH, new SizeHandler(this));
     parser.registerHandler(CookieHandler.PATH, new CookieHandler(this));
@@ -235,7 +238,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setSize(IntegerType.decode(encoded).intValue());
+      getObject().resultSize = IntegerType.decode(encoded).intValue();
     }
   }
 
@@ -264,7 +267,7 @@ public class PagedResultsControl extends AbstractControl implements RequestContr
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getObject().cookie = cookie;
       }
     }
   }

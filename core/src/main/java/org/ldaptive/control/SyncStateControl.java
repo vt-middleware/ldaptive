@@ -28,7 +28,7 @@ import org.ldaptive.asn1.UuidType;
  *
  * @author  Middleware Services
  */
-public class SyncStateControl extends AbstractControl implements ResponseControl
+public class SyncStateControl extends AbstractResponseControl
 {
 
   /** OID of this control. */
@@ -132,7 +132,8 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   public SyncStateControl(final State state)
   {
     super(OID);
-    setSyncState(state);
+    syncState = state;
+    freeze();
   }
 
 
@@ -145,7 +146,8 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   public SyncStateControl(final State state, final boolean critical)
   {
     super(OID, critical);
-    setSyncState(state);
+    syncState = state;
+    freeze();
   }
 
 
@@ -159,8 +161,9 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   public SyncStateControl(final State state, final UUID uuid, final boolean critical)
   {
     super(OID, critical);
-    setSyncState(state);
-    setEntryUuid(uuid);
+    syncState = state;
+    entryUuid = uuid;
+    freeze();
   }
 
 
@@ -175,9 +178,10 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   public SyncStateControl(final State state, final UUID uuid, final byte[] value, final boolean critical)
   {
     super(OID, critical);
-    setSyncState(state);
-    setEntryUuid(uuid);
-    setCookie(value);
+    syncState = state;
+    entryUuid = uuid;
+    cookie = value;
+    freeze();
   }
 
 
@@ -193,17 +197,6 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
   /**
-   * Sets the sync state.
-   *
-   * @param  state  sync state
-   */
-  public void setSyncState(final State state)
-  {
-    syncState = state;
-  }
-
-
-  /**
    * Returns the entry uuid.
    *
    * @return  entry uuid
@@ -215,17 +208,6 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
 
 
   /**
-   * Sets the entry uuid.
-   *
-   * @param  uuid  entry uuid
-   */
-  public void setEntryUuid(final UUID uuid)
-  {
-    entryUuid = uuid;
-  }
-
-
-  /**
    * Returns the sync state cookie.
    *
    * @return  sync state cookie
@@ -233,17 +215,6 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   public byte[] getCookie()
   {
     return cookie;
-  }
-
-
-  /**
-   * Sets the sync state cookie.
-   *
-   * @param  value  sync state cookie
-   */
-  public void setCookie(final byte[] value)
-  {
-    cookie = value;
   }
 
 
@@ -285,6 +256,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(StateHandler.PATH, new StateHandler(this));
     parser.registerHandler(EntryUuidHandler.PATH, new EntryUuidHandler(this));
@@ -324,7 +296,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
       if (s == null) {
         throw new IllegalArgumentException("Unknown state value " + stateValue);
       }
-      getObject().setSyncState(s);
+      getObject().syncState = s;
     }
   }
 
@@ -352,7 +324,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
       if (encoded.hasRemaining()) {
-        getObject().setEntryUuid(UuidType.decode(encoded));
+        getObject().entryUuid = UuidType.decode(encoded);
       }
     }
   }
@@ -382,7 +354,7 @@ public class SyncStateControl extends AbstractControl implements ResponseControl
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setCookie(cookie);
+        getObject().cookie = cookie;
       }
     }
   }

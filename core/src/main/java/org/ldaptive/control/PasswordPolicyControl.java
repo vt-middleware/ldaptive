@@ -38,7 +38,7 @@ import org.ldaptive.auth.AccountState;
  *
  * @author  Middleware Services
  */
-public class PasswordPolicyControl extends AbstractControl implements RequestControl, ResponseControl
+public class PasswordPolicyControl extends AbstractResponseControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -207,7 +207,8 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   public PasswordPolicyControl(final WarningType type, final int value)
   {
     super(OID);
-    setWarning(type, value);
+    warning = new Warning(type, value);
+    freeze();
   }
 
 
@@ -219,7 +220,8 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   public PasswordPolicyControl(final Error err)
   {
     super(OID);
-    setError(err);
+    error = err;
+    freeze();
   }
 
 
@@ -233,8 +235,9 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   public PasswordPolicyControl(final WarningType type, final int value, final Error err)
   {
     super(OID);
-    setWarning(type, value);
-    setError(err);
+    warning = new Warning(type, value);
+    error = err;
+    freeze();
   }
 
 
@@ -248,7 +251,8 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   public PasswordPolicyControl(final WarningType type, final int value, final boolean critical)
   {
     super(OID, critical);
-    setWarning(type, value);
+    warning = new Warning(type, value);
+    freeze();
   }
 
 
@@ -261,7 +265,8 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   public PasswordPolicyControl(final Error err, final boolean critical)
   {
     super(OID, critical);
-    setError(err);
+    error = err;
+    freeze();
   }
 
 
@@ -276,8 +281,9 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   public PasswordPolicyControl(final WarningType type, final int value, final Error err, final boolean critical)
   {
     super(OID, critical);
-    setWarning(type, value);
-    setError(err);
+    warning = new Warning(type, value);
+    error = err;
+    freeze();
   }
 
 
@@ -313,18 +319,6 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
 
 
   /**
-   * Sets the warning.
-   *
-   * @param  type  warning type
-   * @param  value  warning value
-   */
-  public void setWarning(final WarningType type, final int value)
-  {
-    warning = new Warning(type, value);
-  }
-
-
-  /**
    * Returns the password policy error.
    *
    * @return  password policy error
@@ -332,17 +326,6 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   public Error getError()
   {
     return error;
-  }
-
-
-  /**
-   * Sets the password policy error.
-   *
-   * @param  e  password policy error
-   */
-  public void setError(final Error e)
-  {
-    error = e;
   }
 
 
@@ -405,6 +388,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(TimeBeforeExpirationHandler.PATH, new TimeBeforeExpirationHandler(this));
     parser.registerHandler(GraceAuthnsRemainingHandler.PATH, new GraceAuthnsRemainingHandler(this));
@@ -517,7 +501,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setWarning(WarningType.TIME_BEFORE_EXPIRATION, IntegerType.decode(encoded).intValue());
+      getObject().warning = new Warning(WarningType.TIME_BEFORE_EXPIRATION, IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -544,7 +528,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setWarning(WarningType.GRACE_AUTHNS_REMAINING, IntegerType.decode(encoded).intValue());
+      getObject().warning = new Warning(WarningType.GRACE_AUTHNS_REMAINING, IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -576,7 +560,7 @@ public class PasswordPolicyControl extends AbstractControl implements RequestCon
       if (e == null) {
         throw new IllegalArgumentException("Unknown error code " + errValue);
       }
-      getObject().setError(e);
+      getObject().error = e;
     }
   }
 }

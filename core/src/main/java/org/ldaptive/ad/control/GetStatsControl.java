@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.control;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.LdapUtils;
@@ -10,9 +11,8 @@ import org.ldaptive.asn1.DERParser;
 import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.IntegerType;
 import org.ldaptive.asn1.OctetStringType;
-import org.ldaptive.control.AbstractControl;
+import org.ldaptive.control.AbstractResponseControl;
 import org.ldaptive.control.RequestControl;
-import org.ldaptive.control.ResponseControl;
 
 /**
  * Request/response control for active directory servers to return statistics along with search results. This
@@ -54,7 +54,7 @@ import org.ldaptive.control.ResponseControl;
  *
  * @author  Middleware Services
  */
-public class GetStatsControl extends AbstractControl implements RequestControl, ResponseControl
+public class GetStatsControl extends AbstractResponseControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -124,6 +124,33 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
   }
 
 
+  /**
+   * Creates a new get stats control.
+   *
+   * @param  stats  statistics
+   */
+  public GetStatsControl(final Map<String, Object> stats)
+  {
+    super(OID);
+    statistics.putAll(stats);
+    freeze();
+  }
+
+
+  /**
+   * Creates a new get stats control.
+   *
+   * @param  stats  statistics
+   * @param  critical  whether this control is critical
+   */
+  public GetStatsControl(final Map<String, Object> stats, final boolean critical)
+  {
+    super(OID, critical);
+    statistics.putAll(stats);
+    freeze();
+  }
+
+
   @Override
   public boolean hasValue()
   {
@@ -138,7 +165,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
    */
   public Map<String, Object> getStatistics()
   {
-    return statistics;
+    return Collections.unmodifiableMap(statistics);
   }
 
 
@@ -183,6 +210,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(THREAD_COUNT_PATH, new IntegerHandler(this, "threadCount"));
     parser.registerHandler(CALL_TIME_PATH, new IntegerHandler(this, "callTime"));
@@ -229,7 +257,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().getStatistics().put(statName, IntegerType.decode(encoded).intValue());
+      getObject().statistics.put(statName, IntegerType.decode(encoded).intValue());
     }
   }
 
@@ -259,7 +287,7 @@ public class GetStatsControl extends AbstractControl implements RequestControl, 
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
       // strings are terminated with 0x00(null), use trim to remove
-      getObject().getStatistics().put(statName, OctetStringType.decode(encoded).trim());
+      getObject().statistics.put(statName, OctetStringType.decode(encoded).trim());
     }
   }
 }

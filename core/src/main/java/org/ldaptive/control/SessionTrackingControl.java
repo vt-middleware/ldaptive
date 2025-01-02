@@ -33,7 +33,7 @@ import org.ldaptive.asn1.UniversalDERTag;
  *
  * @author  Middleware Services
  */
-public class SessionTrackingControl extends AbstractControl implements RequestControl, ResponseControl
+public class SessionTrackingControl extends AbstractResponseControl implements RequestControl
 {
 
   /** OID of this control. */
@@ -117,10 +117,10 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     final boolean critical)
   {
     super(OID, critical);
-    setSessionSourceIp(sourceIP);
-    setSessionSourceName(sourceName);
-    setFormatOID(oid);
-    setSessionTrackingIdentifier(trackingIdentifier);
+    sessionSourceIp = sourceIP;
+    sessionSourceName = sourceName;
+    formatOID = oid;
+    sessionTrackingIdentifier = trackingIdentifier;
   }
 
 
@@ -149,6 +149,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
    */
   public void setSessionSourceIp(final String s)
   {
+    assertMutable();
     sessionSourceIp = s;
   }
 
@@ -171,6 +172,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
    */
   public void setSessionSourceName(final String s)
   {
+    assertMutable();
     sessionSourceName = s;
   }
 
@@ -193,6 +195,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
    */
   public void setFormatOID(final String s)
   {
+    assertMutable();
     formatOID = s;
   }
 
@@ -215,6 +218,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
    */
   public void setSessionTrackingIdentifier(final String s)
   {
+    assertMutable();
     sessionTrackingIdentifier = s;
   }
 
@@ -281,6 +285,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(SourceIpHandler.PATH, new SourceIpHandler(this));
     parser.registerHandler(SourceNameHandler.PATH, new SourceNameHandler(this));
@@ -316,7 +321,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setSessionSourceIp(OctetStringType.decode(encoded));
+      getObject().sessionSourceIp = OctetStringType.decode(encoded);
     }
   }
 
@@ -343,7 +348,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setSessionSourceName(OctetStringType.decode(encoded));
+      getObject().sessionSourceName = OctetStringType.decode(encoded);
     }
   }
 
@@ -370,7 +375,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setFormatOID(OctetStringType.decode(encoded));
+      getObject().formatOID = OctetStringType.decode(encoded);
     }
   }
 
@@ -397,7 +402,7 @@ public class SessionTrackingControl extends AbstractControl implements RequestCo
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setSessionTrackingIdentifier(OctetStringType.decode(encoded));
+      getObject().sessionTrackingIdentifier = OctetStringType.decode(encoded);
     }
   }
 }

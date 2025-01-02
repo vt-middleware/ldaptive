@@ -15,7 +15,7 @@ import org.ldaptive.asn1.OctetStringType;
  *
  * @author  Middleware Services
  */
-public class PasswordExpiredControl extends AbstractControl implements ResponseControl
+public class PasswordExpiredControl extends AbstractResponseControl
 {
 
   /** OID of this control. */
@@ -63,6 +63,7 @@ public class PasswordExpiredControl extends AbstractControl implements ResponseC
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final String value;
     try {
       value = OctetStringType.decode(encoded);

@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.control;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.ldaptive.asn1.DERBuffer;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.testng.annotations.DataProvider;
@@ -24,20 +26,21 @@ public class GetStatsControlTest
   @DataProvider(name = "response")
   public Object[][] createData()
   {
-    final GetStatsControl ctrl = new GetStatsControl();
-    ctrl.getStatistics().put("pagesReferenced", 45094);
-    ctrl.getStatistics().put("index", "Ancestors_index:0:N;");
-    ctrl.getStatistics().put("pagesRedirtied", 2);
-    ctrl.getStatistics().put("entriesVisited", 5010);
-    ctrl.getStatistics().put("logRecordCount", 0);
-    ctrl.getStatistics().put("pagesDirtied", 0);
-    ctrl.getStatistics().put("entriesReturned", 1);
-    ctrl.getStatistics().put("callTime", 15);
-    ctrl.getStatistics().put("logRecordBytes", 0);
-    ctrl.getStatistics().put("threadCount", 1);
-    ctrl.getStatistics().put("pagesPreread", 0);
-    ctrl.getStatistics().put("pagesRead", 0);
-    ctrl.getStatistics().put("filter", "(uid=2)");
+    final Map<String, Object> stats = new HashMap<>();
+    stats.put("pagesReferenced", 45094);
+    stats.put("index", "Ancestors_index:0:N;");
+    stats.put("pagesRedirtied", 2);
+    stats.put("entriesVisited", 5010);
+    stats.put("logRecordCount", 0);
+    stats.put("pagesDirtied", 0);
+    stats.put("entriesReturned", 1);
+    stats.put("callTime", 15);
+    stats.put("logRecordBytes", 0);
+    stats.put("threadCount", 1);
+    stats.put("pagesPreread", 0);
+    stats.put("pagesRead", 0);
+    stats.put("filter", "(uid=2)");
+    final GetStatsControl ctrl = new GetStatsControl(stats);
     return
       new Object[][] {
         new Object[] {

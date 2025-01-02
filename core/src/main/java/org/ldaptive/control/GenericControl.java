@@ -16,7 +16,7 @@ import org.ldaptive.asn1.DERBuffer;
  *
  * @author  Middleware Services
  */
-public class GenericControl extends AbstractControl implements RequestControl, ResponseControl
+public class GenericControl extends AbstractResponseControl implements RequestControl
 {
 
   /** hash code seed. */
@@ -61,6 +61,7 @@ public class GenericControl extends AbstractControl implements RequestControl, R
   {
     super(oid, critical);
     value = encoded;
+    freeze();
   }
 
 
@@ -127,6 +128,7 @@ public class GenericControl extends AbstractControl implements RequestControl, R
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     try {
       value = encoded.getRemainingBytes();
     } catch (Exception e) {

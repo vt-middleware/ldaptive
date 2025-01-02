@@ -35,7 +35,7 @@ import org.ldaptive.asn1.IntegerType;
  *
  * @author  Middleware Services
  */
-public class VirtualListViewResponseControl extends AbstractControl implements ResponseControl
+public class VirtualListViewResponseControl extends AbstractResponseControl
 {
 
   /** OID of this control. */
@@ -113,10 +113,11 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
     final boolean critical)
   {
     super(OID, critical);
-    setTargetPosition(position);
-    setContentCount(count);
-    setViewResult(code);
-    setContextID(context);
+    targetPosition = position;
+    contentCount = count;
+    viewResult = code;
+    contextID = context;
+    freeze();
   }
 
 
@@ -128,17 +129,6 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   public int getTargetPosition()
   {
     return targetPosition;
-  }
-
-
-  /**
-   * Sets the target position.
-   *
-   * @param  position  target position
-   */
-  public void setTargetPosition(final int position)
-  {
-    targetPosition = position;
   }
 
 
@@ -159,17 +149,6 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
 
 
   /**
-   * Sets the content count.
-   *
-   * @param  count  content count
-   */
-  public void setContentCount(final int count)
-  {
-    contentCount = count;
-  }
-
-
-  /**
    * Returns the result code of the virtual list view.
    *
    * @return  result code
@@ -177,17 +156,6 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   public ResultCode getViewResult()
   {
     return viewResult;
-  }
-
-
-  /**
-   * Sets the result code of the virtual list view.
-   *
-   * @param  code  result code
-   */
-  public void setViewResult(final ResultCode code)
-  {
-    viewResult = code;
   }
 
 
@@ -205,17 +173,6 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   public byte[] getContextID()
   {
     return contextID;
-  }
-
-
-  /**
-   * Sets the context id.
-   *
-   * @param  id  context id
-   */
-  public void setContextID(final byte[] id)
-  {
-    contextID = id;
   }
 
 
@@ -267,6 +224,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
   @Override
   public void decode(final DERBuffer encoded)
   {
+    freezeAndAssertMutable();
     final DERParser parser = new DERParser();
     parser.registerHandler(TargetPositionHandler.PATH, new TargetPositionHandler(this));
     parser.registerHandler(ContentCountHandler.PATH, new ContentCountHandler(this));
@@ -302,7 +260,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setTargetPosition(IntegerType.decode(encoded).intValue());
+      getObject().targetPosition = IntegerType.decode(encoded).intValue();
     }
   }
 
@@ -329,7 +287,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().setContentCount(IntegerType.decode(encoded).intValue());
+      getObject().contentCount = IntegerType.decode(encoded).intValue();
     }
   }
 
@@ -361,7 +319,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
       if (rc == null) {
         throw new IllegalArgumentException("Unknown result code " + resultValue);
       }
-      getObject().setViewResult(rc);
+      getObject().viewResult = rc;
     }
   }
 
@@ -390,7 +348,7 @@ public class VirtualListViewResponseControl extends AbstractControl implements R
     {
       final byte[] cookie = encoded.getRemainingBytes();
       if (cookie != null && cookie.length > 0) {
-        getObject().setContextID(cookie);
+        getObject().contextID = cookie;
       }
     }
   }
