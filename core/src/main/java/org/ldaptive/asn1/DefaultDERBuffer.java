@@ -16,17 +16,6 @@ public class DefaultDERBuffer implements DERBuffer
 
 
   /**
-   * Creates a new default DER buffer. See {@link ByteBuffer#allocate(int)}.
-   *
-   * @param  capacity  of this buffer
-   */
-  public DefaultDERBuffer(final int capacity)
-  {
-    buffer = ByteBuffer.allocate(capacity);
-  }
-
-
-  /**
    * Creates a new default DER buffer. See {@link ByteBuffer#wrap(byte[])}.
    *
    * @param  array  contents of the buffer
@@ -73,6 +62,8 @@ public class DefaultDERBuffer implements DERBuffer
   @Override
   public DERBuffer position(final int newPosition)
   {
+    // will throw if you attempt to set the position index greater than the limit
+    // prefer #positionAndLimit if chaining #position and #limit
     buffer.position(newPosition);
     return this;
   }
@@ -95,7 +86,20 @@ public class DefaultDERBuffer implements DERBuffer
   @Override
   public DERBuffer limit(final int newLimit)
   {
+    // prefer #positionAndLimit if chaining #position and #limit
     buffer.limit(newLimit);
+    return this;
+  }
+
+
+  @Override
+  public DERBuffer positionAndLimit(final int newPosition, final int newLimit)
+  {
+    if (newPosition > newLimit) {
+      throw new IllegalArgumentException("newPosition must be less than or equal to newLimit");
+    }
+    // set the limit first to avoid position > limit exception
+    buffer.limit(newLimit).position(newPosition);
     return this;
   }
 
