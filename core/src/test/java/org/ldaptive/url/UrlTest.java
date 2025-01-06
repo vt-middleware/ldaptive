@@ -872,7 +872,8 @@ public class UrlTest
         new Object[] {"ldap:///dc=%y", },
         new Object[] {"ldap:///dc=%oy", },
         new Object[] {"ldap:///dc=%aa%", },
-        new Object[] {"ldap:///a=#666666666666666666666666666666666666666666666666666666666666666666", },
+        new Object[] {"ldap:///a=#6666", },
+        new Object[] {"ldap:///a=#661F661D661B66196617661566136611660F660D660B6609660766056603660166", },
       };
   }
 
