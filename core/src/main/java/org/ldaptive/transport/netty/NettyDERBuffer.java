@@ -52,7 +52,13 @@ final class NettyDERBuffer implements DERBuffer
   @Override
   public DERBuffer position(final int newPosition)
   {
-    buffer.readerIndex(newPosition);
+    // will throw if you attempt to set the reader index greater than the writer index
+    // prefer #positionAndLimit if chaining #position and #limit
+    try {
+      buffer.readerIndex(newPosition);
+    } catch (IndexOutOfBoundsException e) {
+      throw new IllegalArgumentException(e);
+    }
     return this;
   }
 
@@ -74,11 +80,34 @@ final class NettyDERBuffer implements DERBuffer
   @Override
   public DERBuffer limit(final int newLimit)
   {
-    buffer.writerIndex(newLimit);
-    if (buffer.readerIndex() > newLimit) {
-      buffer.readerIndex(newLimit);
+    // will throw if you attempt to set the writer index less than the reader index
+    // prefer #positionAndLimit if chaining #position and #limit
+    try {
+      buffer.writerIndex(newLimit);
+    } catch (IndexOutOfBoundsException e) {
+      throw new IllegalArgumentException(e);
     }
     return this;
+  }
+
+
+  @Override
+  public DERBuffer positionAndLimit(final int newPosition, final int newLimit)
+  {
+    if (newPosition > newLimit) {
+      throw new IllegalArgumentException("newPosition must be less than or equal to newLimit");
+    }
+    try {
+      // avoid reader > writer and writer < reader exceptions
+      if (newPosition > buffer.writerIndex()) {
+        buffer.writerIndex(newLimit).readerIndex(newPosition);
+      } else {
+        buffer.readerIndex(newPosition).writerIndex(newLimit);
+      }
+      return this;
+    } catch (IndexOutOfBoundsException e) {
+      throw new IllegalArgumentException(e);
+    }
   }
 
 
