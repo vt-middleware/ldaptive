@@ -234,7 +234,7 @@ public class ConnectionTest
     try {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      Thread.sleep(Duration.ofSeconds(17).toMillis());
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
     } finally {
       conn.close();
@@ -258,7 +258,7 @@ public class ConnectionTest
     final Connection conn = connFactory.getConnection();
     try {
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      Thread.sleep(Duration.ofSeconds(17).toMillis());
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
     } finally {
       connFactory.close();
@@ -282,7 +282,7 @@ public class ConnectionTest
     final Connection conn = connFactory.getConnection();
     try {
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      Thread.sleep(Duration.ofSeconds(17).toMillis());
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
     } finally {
       connFactory.close();
@@ -306,7 +306,7 @@ public class ConnectionTest
     try {
       conn.open();
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      Thread.sleep(Duration.ofSeconds(17).toMillis());
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
     } finally {
       conn.close();
@@ -330,7 +330,7 @@ public class ConnectionTest
     final Connection conn = connFactory.getConnection();
     try {
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      Thread.sleep(Duration.ofSeconds(17).toMillis());
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
     } finally {
       connFactory.close();
@@ -354,7 +354,7 @@ public class ConnectionTest
     final Connection conn = connFactory.getConnection();
     try {
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
-      Thread.sleep(Duration.ofSeconds(15).toMillis());
+      Thread.sleep(Duration.ofSeconds(17).toMillis());
       conn.operation(SearchRequest.objectScopeSearchRequest("")).execute();
     } finally {
       connFactory.close();
