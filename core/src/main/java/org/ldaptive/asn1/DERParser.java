@@ -166,8 +166,20 @@ public class DERParser
   private void parseTag(final DERTag tag, final DERBuffer encoded)
   {
     final int limit = encoded.limit();
-    final int end = readLength(encoded) + encoded.position();
+    final int lengthPos = encoded.position();
+    final int length;
+    try {
+      length = readLength(encoded);
+    } catch (Exception e) {
+      throw new IllegalArgumentException("Could not parse length of tag " + tag + " at position " + lengthPos, e);
+    }
+    final int end = length + encoded.position();
     final int start = encoded.position();
+
+    if (end > limit) {
+      throw new IllegalArgumentException(
+        "Tag " + tag + " with length " + length + " at position " + encoded.position() + " exceeds limit " + limit);
+    }
 
     // Invoke handlers for all permutations of current path
     ParseHandler handler;

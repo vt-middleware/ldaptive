@@ -22,7 +22,7 @@ public class DERParserTest
    */
   // CheckStyle:MethodLength OFF
   @DataProvider(name = "parserData")
-  public Object[][] createTestParams()
+  public Object[][] createBufferData()
   {
     return
       new Object[][] {
@@ -355,6 +355,93 @@ public class DERParserTest
 
 
   /**
+   * DER parser test data.
+   *
+   * @return  der parser data
+   */
+  @DataProvider(name = "invalid-data")
+  public Object[][] invalidBufferData()
+  {
+    return
+      new Object[][] {
+        new Object[] {
+          // unknown tag
+          new DefaultDERBuffer(
+            new byte[] {(byte) 0xFF, 0x00}),
+        },
+        new Object[] {
+          // incorrect length at /SEQ
+          new DefaultDERBuffer(
+            new byte[] {0x30, 0x0F, 0x04, 0x09, 0x31, 0x39, 0x32, 0x2e, 0x30, 0x2e, 0x32, 0x2e, 0x31}),
+        },
+        new Object[] {
+          // incorrect length at /SEQ/OCTSTR
+          new DefaultDERBuffer(
+            new byte[] {0x30, 0x0B, 0x04, 0x0F, 0x31, 0x39, 0x32, 0x2e, 0x30, 0x2e, 0x32, 0x2e, 0x31}),
+        },
+        new Object[] {
+          // incorrect length at /SEQ/CTX(0)
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x0C,
+              (byte) 0xA0, 0x08,
+              (byte) 0x80, 0x02, 0x30, 0x39,
+              (byte) 0x81, 0x01, 0x04,
+              (byte) 0x81, 0x01, 0x02}),
+        },
+        new Object[] {
+          // incorrect length at /SEQ/CTX(0)
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x0C,
+              (byte) 0xA0, 0x0C,
+              (byte) 0x80, 0x02, 0x30, 0x39,
+              (byte) 0x81, 0x01, 0x04,
+              (byte) 0x81, 0x01, 0x02}),
+        },
+        new Object[] {
+          // incorrect length at /SEQ/CTX(0)/CTX(0)
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x0C,
+              (byte) 0xA0, 0x07,
+              (byte) 0x80, 0x03, 0x30, 0x39,
+              (byte) 0x81, 0x01, 0x04,
+              (byte) 0x81, 0x01, 0x02}),
+        },
+        new Object[] {
+          // incorrect length at /SEQ/CTX(0)/CTX(1)
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x0C,
+              (byte) 0xA0, 0x07,
+              (byte) 0x80, 0x02, 0x30, 0x39,
+              (byte) 0x81, 0x02, 0x04,
+              (byte) 0x81, 0x01, 0x02}),
+        },
+        new Object[] {
+          // incorrect length at /SEQ/CTX(1)
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x0C,
+              (byte) 0xA0, 0x07,
+              (byte) 0x80, 0x02, 0x30, 0x39,
+              (byte) 0x81, 0x01, 0x04,
+              (byte) 0x81, 0x02, 0x02}),
+        },
+        new Object[] {
+          // max permutations (17) exceeded
+          new DefaultDERBuffer(
+            new byte[] {
+              0x30, 0x1F, 0x30, 0x1D, 0x30, 0x1B, 0x30, 0x19, 0x30, 0x17, 0x30, 0x15, 0x30, 0x13, 0x30, 0x11,
+              0x30, 0x0F, 0x30, 0x0D, 0x30, 0x0B, 0x30, 0x09, 0x30, 0x07, 0x30, 0x05, 0x30, 0x03, 0x30, 0x01,
+              0x30, 0x00}),
+        },
+      };
+  }
+
+
+  /**
    * @param  encoded  to test
    * @param  handlers  to test
    */
@@ -371,6 +458,26 @@ public class DERParserTest
       .forEach(h -> assertThat(h.getActualCount())
         .withFailMessage("Path %s expected %s but was %s", h.getDerPath(), h.getExpectedCount(), h.getActualCount())
         .isEqualTo(h.getExpectedCount()));
+  }
+
+
+  /**
+   * @param  encoded  to parse
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "asn1", dataProvider = "invalid-data")
+  public void testInvalidParse(final DERBuffer encoded)
+    throws Exception
+  {
+    final DERParser parser = new DERParser();
+    parser.registerHandler(new DERPath(), new TestParseHandler("", 0));
+    try {
+      parser.parse(encoded);
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isInstanceOf(IllegalArgumentException.class);
+    }
   }
 
 
