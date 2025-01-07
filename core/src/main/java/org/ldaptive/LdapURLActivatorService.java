@@ -20,9 +20,16 @@ public final class LdapURLActivatorService
   /** Ldap activator period system property. */
   private static final String ACTIVATOR_PERIOD_PROPERTY = "org.ldaptive.urlActivatorPeriod";
 
-  /** How often to test inactive connections. */
+  /** Ldap activator stale period system property. */
+  private static final String STALE_PERIOD_PROPERTY = "org.ldaptive.urlActivatorStalePeriod";
+
+  /** How often to test inactive connections. Default is 5 minutes. */
   private static final Duration ACTIVATOR_PERIOD = Duration.ofMinutes(
     Long.parseLong(System.getProperty(ACTIVATOR_PERIOD_PROPERTY, "5")));
+
+  /** Length of time to consider inactive connections stale. Default is 4 hours. */
+  private static final Duration STALE_PERIOD = Duration.ofHours(
+    Long.parseLong(System.getProperty(STALE_PERIOD_PROPERTY, "4")));
 
   /** Instance of this singleton. */
   private static final LdapURLActivatorService INSTANCE = new LdapURLActivatorService();
@@ -78,7 +85,9 @@ public final class LdapURLActivatorService
    */
   public void registerUrl(final LdapURL url)
   {
-    inactiveUrls.add(url);
+    synchronized (inactiveUrls) {
+      inactiveUrls.add(url);
+    }
   }
 
 
@@ -98,17 +107,46 @@ public final class LdapURLActivatorService
    */
   void testInactiveUrls()
   {
-    for (LdapURL url : inactiveUrls) {
+    final List<LdapURL> copy;
+    synchronized (inactiveUrls) {
+      copy = new ArrayList<>(inactiveUrls);
+    }
+    for (LdapURL url : copy) {
       if (!url.isActive() && url.getRetryMetadata().getConnectionStrategy().getRetryCondition().test(url)) {
         // note that the activate condition may block
         if (url.getRetryMetadata().getConnectionStrategy().getActivateCondition().test(url)) {
           url.getRetryMetadata().getConnectionStrategy().success(url);
         } else {
           url.getRetryMetadata().recordFailure(Instant.now());
+          activateIfStale(url);
         }
       }
     }
-    inactiveUrls.removeIf(LdapURL::isActive);
+    synchronized (inactiveUrls) {
+      inactiveUrls.removeIf(LdapURL::isActive);
+    }
+  }
+
+
+  /**
+   * Inspects the supplied url to determine how long it has been awaiting activation. For urls that have been attempting
+   * activation for a long period, activate them to potentially free the memory. URLs will return to this service if
+   * they are still in use and failing. See {@link #STALE_PERIOD}
+   *
+   * @param  url  to inspect
+   */
+  private void activateIfStale(final LdapURL url)
+  {
+    final Instant now = Instant.now();
+    if (url.getRetryMetadata().getSuccessTime() == null) {
+      if (url.getRetryMetadata().getCreateTime().plus(STALE_PERIOD).isBefore(now)) {
+        // URL stale period has elapsed, activate as it may no longer be in use
+        url.activate();
+      }
+    } else if (url.getRetryMetadata().getSuccessTime().plus(STALE_PERIOD).isBefore(now)) {
+      // URL stale period has elapsed, activate as it may no longer be in use
+      url.activate();
+    }
   }
 
 
@@ -117,6 +155,8 @@ public final class LdapURLActivatorService
    */
   void clear()
   {
-    inactiveUrls.clear();
+    synchronized (inactiveUrls) {
+      inactiveUrls.clear();
+    }
   }
 }

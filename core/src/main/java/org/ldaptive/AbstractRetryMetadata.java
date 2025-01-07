@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -18,8 +19,22 @@ public abstract class AbstractRetryMetadata implements RetryMetadata
   /** Time at which the failure occurred. */
   protected Instant failureTime;
 
+  /** Time at which this metadata was created. */
+  private final Instant createTime;
+
   /** Attempt count. */
   private final AtomicInteger attempts = new AtomicInteger();
+
+
+  /**
+   * Creates a new abstract retry metadata.
+   *
+   * @param  clock  to set the create time
+   */
+  protected AbstractRetryMetadata(final Clock clock)
+  {
+    createTime = Instant.now(clock);
+  }
 
 
   @Override
@@ -33,6 +48,13 @@ public abstract class AbstractRetryMetadata implements RetryMetadata
   public Instant getFailureTime()
   {
     return failureTime;
+  }
+
+
+  @Override
+  public Instant getCreateTime()
+  {
+    return createTime;
   }
 
 
