@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.time.Clock;
+
 /**
  * Retry metadata used by {@link LdapURL}.
  *
@@ -16,11 +18,24 @@ public class LdapURLRetryMetadata extends AbstractRetryMetadata
   /**
    * Creates a new LDAP URL retry metadata.
    *
+   * @param  clock  to set the create time
+   * @param  strategy  connection strategy
+   */
+  LdapURLRetryMetadata(final Clock clock, final ConnectionStrategy strategy)
+  {
+    super(clock);
+    connectionStrategy = strategy;
+  }
+
+
+  /**
+   * Creates a new LDAP URL retry metadata.
+   *
    * @param  strategy  connection strategy
    */
   public LdapURLRetryMetadata(final ConnectionStrategy strategy)
   {
-    connectionStrategy = strategy;
+    this(Clock.systemDefaultZone(), strategy);
   }
 
 
