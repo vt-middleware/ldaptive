@@ -29,6 +29,14 @@ public interface RetryMetadata
 
 
   /**
+   * Returns the create time.
+   *
+   * @return  time that the metadata was created
+   */
+  Instant getCreateTime();
+
+
+  /**
    * Number of attempts for this retry.
    *
    * @return  retry attempts
