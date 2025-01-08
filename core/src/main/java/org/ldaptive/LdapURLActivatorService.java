@@ -26,11 +26,11 @@ public final class LdapURLActivatorService
 
   /** How often to test inactive connections. Default is 5 minutes. */
   private static final Duration ACTIVATOR_PERIOD = Duration.ofMinutes(
-    Long.parseLong(System.getProperty(ACTIVATOR_PERIOD_PROPERTY, "5")));
+    LdapUtils.parseLong(System.getProperty(ACTIVATOR_PERIOD_PROPERTY, "5"), l -> l > 0, 5));
 
   /** Length of time to consider inactive connections stale. Default is 4 hours. */
   private static final Duration STALE_PERIOD = Duration.ofHours(
-    Long.parseLong(System.getProperty(STALE_PERIOD_PROPERTY, "4")));
+    LdapUtils.parseLong(System.getProperty(STALE_PERIOD_PROPERTY, "4"), l -> l > 0, 4));
 
   /** Instance of this singleton. */
   private static final LdapURLActivatorService INSTANCE = new LdapURLActivatorService();
