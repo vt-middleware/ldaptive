@@ -410,7 +410,7 @@
           <version>true</version>
           <doctitle>Ldaptive ${project.version} API</doctitle>
           <windowtitle>Ldaptive ${project.version} API</windowtitle>
-          <bottom><![CDATA[<i>Copyright &#169; 2003-2024 Virginia Tech. All Rights Reserved.</i>]]></bottom>
+          <bottom><![CDATA[<i>Copyright &#169; 2003-2025 Virginia Tech. All Rights Reserved.</i>]]></bottom>
           <archive>
             <manifestEntries>
               <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
