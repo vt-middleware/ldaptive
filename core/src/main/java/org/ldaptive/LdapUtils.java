@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.Queue;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.io.Hex;
@@ -983,5 +984,49 @@ public final class LdapUtils
       }
     }
     return null;
+  }
+
+
+  /**
+   * Parse the supplied value as an integer. Returns the default value if the predicate is not met or if the value
+   * cannot be parsed.
+   *
+   * @param  value  to parse
+   * @param  require  predicate to enforce
+   * @param  defaultValue  to return if predicate is false
+   *
+   * @return  parsed integer or default
+   */
+  public static int parseInt(final String value, final Predicate<Integer> require, final int defaultValue)
+  {
+    final int i;
+    try {
+      i = Integer.parseInt(value);
+    } catch (NumberFormatException e) {
+      return defaultValue;
+    }
+    return require.test(i) ? i : defaultValue;
+  }
+
+
+  /**
+   * Parse the supplied value as a long. Returns the default value if the predicate is not met or if the value
+   * cannot be parsed.
+   *
+   * @param  value  to parse
+   * @param  require  predicate to enforce
+   * @param  defaultValue  to return if predicate is false
+   *
+   * @return  parsed long or default
+   */
+  public static long parseLong(final String value, final Predicate<Long> require, final long defaultValue)
+  {
+    final long l;
+    try {
+      l = Long.parseLong(value);
+    } catch (NumberFormatException e) {
+      return defaultValue;
+    }
+    return require.test(l) ? l : defaultValue;
   }
 }

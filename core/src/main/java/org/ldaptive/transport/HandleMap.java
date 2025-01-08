@@ -10,6 +10,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.extended.UnsolicitedNotification;
 import org.slf4j.Logger;
@@ -33,11 +34,12 @@ public final class HandleMap
   private static final String THROTTLE_TIMEOUT_PROPERTY = "org.ldaptive.transport.throttleTimeout";
 
   /** If property is greater than zero, use the throttle semaphore. */
-  private static final int THROTTLE_REQUESTS = Integer.parseInt(System.getProperty(THROTTLE_REQUESTS_PROPERTY, "0"));
+  private static final int THROTTLE_REQUESTS = LdapUtils.parseInt(
+    System.getProperty(THROTTLE_REQUESTS_PROPERTY, "0"), i -> i >= 0, 0);
 
   /** Maximum time to wait for the throttle semaphore. Default is 60 seconds. */
   private static final Duration THROTTLE_TIMEOUT = Duration.ofSeconds(
-    Long.parseLong(System.getProperty(THROTTLE_TIMEOUT_PROPERTY, "60")));
+    LdapUtils.parseLong(System.getProperty(THROTTLE_TIMEOUT_PROPERTY, "60"), l -> l >= 0, 60));
 
   /** Map of message IDs to their operation handle. */
   private final Map<Integer, DefaultOperationHandle<?, ?>> pending = new ConcurrentHashMap<>();
