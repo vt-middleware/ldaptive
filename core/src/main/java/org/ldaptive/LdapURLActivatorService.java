@@ -3,9 +3,10 @@ package org.ldaptive;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -35,7 +36,7 @@ public final class LdapURLActivatorService
   private static final LdapURLActivatorService INSTANCE = new LdapURLActivatorService();
 
   /** List of inactive URLs to test. */
-  private final List<LdapURL> inactiveUrls = new ArrayList<>();
+  private final Queue<LdapURL> inactiveUrls = new ConcurrentLinkedQueue<>();
 
 
   /** Default constructor. */
@@ -85,20 +86,18 @@ public final class LdapURLActivatorService
    */
   public void registerUrl(final LdapURL url)
   {
-    synchronized (inactiveUrls) {
-      inactiveUrls.add(url);
-    }
+    inactiveUrls.add(url);
   }
 
 
   /**
-   * Returns the list of inactive urls.
+   * Returns the collection of inactive urls.
    *
    * @return  inactive urls
    */
-  public List<LdapURL> getInactiveUrls()
+  public Collection<LdapURL> getInactiveUrls()
   {
-    return Collections.unmodifiableList(inactiveUrls);
+    return Collections.unmodifiableCollection(inactiveUrls);
   }
 
 
@@ -107,11 +106,7 @@ public final class LdapURLActivatorService
    */
   void testInactiveUrls()
   {
-    final List<LdapURL> copy;
-    synchronized (inactiveUrls) {
-      copy = new ArrayList<>(inactiveUrls);
-    }
-    for (LdapURL url : copy) {
+    for (LdapURL url : inactiveUrls) {
       if (!url.isActive() && url.getRetryMetadata().getConnectionStrategy().getRetryCondition().test(url)) {
         // note that the activate condition may block
         if (url.getRetryMetadata().getConnectionStrategy().getActivateCondition().test(url)) {
@@ -122,9 +117,7 @@ public final class LdapURLActivatorService
         }
       }
     }
-    synchronized (inactiveUrls) {
-      inactiveUrls.removeIf(LdapURL::isActive);
-    }
+    inactiveUrls.removeIf(LdapURL::isActive);
   }
 
 
@@ -155,8 +148,6 @@ public final class LdapURLActivatorService
    */
   void clear()
   {
-    synchronized (inactiveUrls) {
-      inactiveUrls.clear();
-    }
+    inactiveUrls.clear();
   }
 }
