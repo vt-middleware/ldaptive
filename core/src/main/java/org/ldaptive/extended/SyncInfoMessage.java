@@ -258,7 +258,7 @@ public final class SyncInfoMessage extends IntermediateResponse
    */
   public Set<UUID> getEntryUuids()
   {
-    return entryUuids;
+    return Collections.unmodifiableSet(entryUuids);
   }
 
 
@@ -594,7 +594,7 @@ public final class SyncInfoMessage extends IntermediateResponse
     @Override
     public void handle(final DERParser parser, final DERBuffer encoded)
     {
-      getObject().getEntryUuids().add(UuidType.decode(encoded));
+      getObject().addEntryUuids(UuidType.decode(encoded));
     }
   }
 
