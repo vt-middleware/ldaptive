@@ -264,8 +264,8 @@ public class FreezableTest
           } catch (Exception e) {
             assertThat(e).isExactlyInstanceOf(InvocationTargetException.class);
             assertThat(((InvocationTargetException) e).getTargetException())
-              .isExactlyInstanceOf(IllegalStateException.class)
-              .withFailMessage("Method %s should have thrown illegal state exception for %s", method, clazz);
+              .withFailMessage("Method %s should have thrown illegal state exception for %s", method, clazz)
+              .isExactlyInstanceOf(IllegalStateException.class);
           }
         }
       }

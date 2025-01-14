@@ -1526,7 +1526,7 @@ public class RDnTest
     final RDn rdn = new RDn(parse);
     assertThat(rdn).isEqualTo(match);
     for (RDnNormalizer normalizer : normalizers) {
-      assertThat(rdn.format(normalizer)).isEqualTo(normalized).withFailMessage("Normalizer: %s", normalizer);
+      assertThat(rdn.format(normalizer)).withFailMessage("Normalizer: %s", normalizer).isEqualTo(normalized);
     }
   }
 
