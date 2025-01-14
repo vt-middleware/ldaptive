@@ -323,7 +323,7 @@ public class DnTest
     final Dn dn = new Dn(parse);
     assertThat(dn).isEqualTo(match);
     for (RDnNormalizer normalizer : normalizers) {
-      assertThat(dn.format(normalizer)).isEqualTo(normalized).withFailMessage("Normalizer: %s", normalizer);
+      assertThat(dn.format(normalizer)).withFailMessage("Normalizer: %s", normalizer).isEqualTo(normalized);
     }
   }
 
