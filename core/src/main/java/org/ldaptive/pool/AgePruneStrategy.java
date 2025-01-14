@@ -30,6 +30,11 @@ public class AgePruneStrategy extends AbstractPruneStrategy
    */
   private long prunePriority = -1L;
 
+  /**
+   * Factor to apply to {@link org.ldaptive.LdapURL#getPriority()} in order to provide inverse backoff of the ageTime
+   * based on priority.
+   */
+  private int prunePriorityFactor;
 
   /** Creates a new age prune strategy. */
   public AgePruneStrategy()
@@ -71,10 +76,15 @@ public class AgePruneStrategy extends AbstractPruneStrategy
     if (prunePriority >= 0) {
       return List.of(proxy -> {
         final long priority = proxy.getConnection().getLdapURL().getPriority();
-        if (prunePriority >= priority) {
+        if (priority >= prunePriority) {
           final Instant timeCreated = proxy.getCreatedTime();
           logger.trace("evaluating created time {} for connection {}", timeCreated, proxy);
-          return timeCreated == null || timeCreated.plus(ageTime.dividedBy(priority + 1)).isBefore(Instant.now());
+          if (prunePriorityFactor > 0) {
+            final long factor = prunePriorityFactor * (priority + 1);
+            return timeCreated == null || timeCreated.plus(ageTime.dividedBy(factor)).isBefore(Instant.now());
+          } else {
+            return timeCreated == null || timeCreated.plus(ageTime).isBefore(Instant.now());
+          }
         }
         return false;
       });
@@ -145,6 +155,32 @@ public class AgePruneStrategy extends AbstractPruneStrategy
   }
 
 
+  /**
+   * Returns the prune priority factor.
+   *
+   * @return  factor to multiply by URL priority for inverse backoff of ageTime
+   */
+  public int getPrunePriorityFactor()
+  {
+    return prunePriorityFactor;
+  }
+
+
+  /**
+   * Sets the prune priority factor.
+   *
+   * @param  i  prune priority factor
+   */
+  public void setPrunePriorityFactor(final int i)
+  {
+    assertMutable();
+    if (i < 0) {
+      throw new IllegalArgumentException("Prune priority factor must be greater than or equal to zero");
+    }
+    prunePriorityFactor = i;
+  }
+
+
   @Override
   public String toString()
   {
@@ -152,7 +188,8 @@ public class AgePruneStrategy extends AbstractPruneStrategy
       getClass().getName() + "@" + hashCode() + "::" +
       "prunePeriod=" + getPrunePeriod() + ", " +
       "ageTime=" + ageTime + ", " +
-      "prunePriority=" + prunePriority + "]";
+      "prunePriority=" + prunePriority + ", " +
+      "prunePriorityFactor=" + prunePriorityFactor + "]";
   }
 
 
@@ -219,6 +256,20 @@ public class AgePruneStrategy extends AbstractPruneStrategy
     public Builder priority(final long l)
     {
       object.setPrunePriority(l);
+      return self();
+    }
+
+
+    /**
+     * Sets the prune priority factor.
+     *
+     * @param  i  prune priority factor
+     *
+     * @return  this builder
+     */
+    public Builder priorityFactor(final int i)
+    {
+      object.setPrunePriorityFactor(i);
       return self();
     }
   }

@@ -196,5 +196,13 @@ public class IdlePruneStrategy extends AgePruneStrategy
       object.setPrunePriority(l);
       return self();
     }
+
+
+    @Override
+    public Builder priorityFactor(final int i)
+    {
+      object.setPrunePriorityFactor(i);
+      return self();
+    }
   }
 }
