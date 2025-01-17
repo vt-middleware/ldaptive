@@ -183,6 +183,14 @@ public class IdlePruneStrategy extends AgePruneStrategy
 
 
     @Override
+    public Builder period(final Duration time)
+    {
+      object.setPrunePeriod(time);
+      return self();
+    }
+
+
+    @Override
     public Builder age(final Duration time)
     {
       object.setAgeTime(time);
