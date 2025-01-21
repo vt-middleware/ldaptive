@@ -33,11 +33,23 @@ public class GlobalIdentifierTest
           LdapUtils.base64Decode("yjzbsb1yMU+ev8cM1EvaMg=="),
         },
         new Object[] {
+          "B1DB3CCA-72BD-4F31-9EBF-C70CD44BDA32",
+          LdapUtils.base64Decode("yjzbsb1yMU+ev8cM1EvaMg=="),
+        },
+        new Object[] {
           "{0F0BF778-1C43-4D0C-82E6-BAD22D6AB646}",
           LdapUtils.base64Decode("ePcLD0McDE2C5rrSLWq2Rg=="),
         },
         new Object[] {
+          "0F0BF778-1C43-4D0C-82E6-BAD22D6AB646",
+          LdapUtils.base64Decode("ePcLD0McDE2C5rrSLWq2Rg=="),
+        },
+        new Object[] {
           "{36B403E2-BA7F-4A83-8049-B3CD202C7032}",
+          LdapUtils.base64Decode("4gO0Nn+6g0qASbPNICxwMg=="),
+        },
+        new Object[] {
+          "36B403E2-BA7F-4A83-8049-B3CD202C7032",
           LdapUtils.base64Decode("4gO0Nn+6g0qASbPNICxwMg=="),
         },
       };
@@ -54,7 +66,11 @@ public class GlobalIdentifierTest
   public void testToString(final String guidString, final byte[] guid)
     throws Exception
   {
-    assertThat(GlobalIdentifier.toString(guid)).isEqualTo(guidString);
+    if (guidString.startsWith("{")) {
+      assertThat(GlobalIdentifier.toString(guid)).isEqualTo(guidString);
+    } else {
+      assertThat(GlobalIdentifier.toString(guid, false)).isEqualTo(guidString);
+    }
   }
 
 

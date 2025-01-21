@@ -77,4 +77,21 @@ public class ObjectGuidHandlerTest
     handler.setRequest(SearchRequest.builder().binaryAttributes("jpegPhoto").build());
     assertThat(handler.getRequest().getBinaryAttributes()).isEqualTo(new String[] {"jpegPhoto", "objectGUID"});
   }
+
+
+  @Test
+  public void newInstance()
+  {
+    ObjectGuidHandler handler = new ObjectGuidHandler();
+    assertThat(handler.newInstance()).isEqualTo(handler);
+
+    handler = new ObjectGuidHandler("foo");
+    assertThat(handler.newInstance()).isEqualTo(handler);
+
+    handler = new ObjectGuidHandler(false);
+    assertThat(handler.newInstance()).isEqualTo(handler);
+
+    handler = new ObjectGuidHandler("foo", true);
+    assertThat(handler.newInstance()).isEqualTo(handler);
+  }
 }

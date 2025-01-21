@@ -78,4 +78,15 @@ public class ObjectSidHandlerTest
     handler.setRequest(SearchRequest.builder().binaryAttributes("jpegPhoto").build());
     assertThat(handler.getRequest().getBinaryAttributes()).isEqualTo(new String[] {"jpegPhoto", "objectSid"});
   }
+
+
+  @Test
+  public void newInstance()
+  {
+    ObjectSidHandler handler = new ObjectSidHandler();
+    assertThat(handler.newInstance()).isEqualTo(handler);
+
+    handler = new ObjectSidHandler("foo");
+    assertThat(handler.newInstance()).isEqualTo(handler);
+  }
 }

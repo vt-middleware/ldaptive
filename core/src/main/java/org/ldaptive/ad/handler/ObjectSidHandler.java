@@ -58,7 +58,9 @@ public class ObjectSidHandler extends AbstractBinaryAttributeHandler<LdapEntry> 
   @Override
   public ObjectSidHandler newInstance()
   {
-    return new ObjectSidHandler();
+    final ObjectSidHandler handler = new ObjectSidHandler();
+    handler.setAttributeName(getAttributeName());
+    return handler;
   }
 
 
