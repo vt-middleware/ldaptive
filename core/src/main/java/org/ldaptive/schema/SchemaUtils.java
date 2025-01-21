@@ -1,6 +1,13 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
+import org.ldaptive.ConnectionFactory;
+import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapException;
+import org.ldaptive.SearchOperation;
+import org.ldaptive.SearchRequest;
+import org.ldaptive.SearchResponse;
+
 /**
  * Provides utility methods for this package.
  *
@@ -150,5 +157,33 @@ public final class SchemaUtils
       sb.append(") ");
     }
     return sb.toString();
+  }
+
+
+  /**
+   * Searches for the supplied dn and returns its ldap entry.
+   *
+   * @param  factory  to obtain an LDAP connection from
+   * @param  dn  to search for
+   * @param  filter  search filter
+   * @param  retAttrs  attributes to return
+   *
+   * @return  ldap entry
+   *
+   * @throws LdapException  if the search fails
+   */
+  public static LdapEntry getLdapEntry(
+    final ConnectionFactory factory,
+    final String dn,
+    final String filter,
+    final String... retAttrs)
+    throws LdapException
+  {
+    final SearchOperation search = new SearchOperation(factory);
+    final SearchResponse result = search.execute(SearchRequest.objectScopeSearchRequest(dn, retAttrs, filter));
+    if (!result.isSuccess()) {
+      throw new LdapException("Unsuccessful search for schema: " + result);
+    }
+    return result.getEntry();
   }
 }
