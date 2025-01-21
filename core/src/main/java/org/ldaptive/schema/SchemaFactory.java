@@ -9,10 +9,6 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
-import org.ldaptive.SearchOperation;
-import org.ldaptive.SearchRequest;
-import org.ldaptive.SearchResponse;
-import org.ldaptive.SearchScope;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.schema.transcode.AttributeTypeValueTranscoder;
 import org.ldaptive.schema.transcode.DITContentRuleValueTranscoder;
@@ -93,13 +89,14 @@ public final class SchemaFactory
   public static Schema createSchema(final ConnectionFactory factory)
     throws LdapException
   {
-    final LdapEntry rootDSE = getLdapEntry(
+    final LdapEntry rootDSE = SchemaUtils.getLdapEntry(
       factory,
       "",
       "(objectClass=*)",
       SUBSCHEMA_SUBENTRY_ATTR_NAME);
     final String entryDn = rootDSE.getAttribute(SUBSCHEMA_SUBENTRY_ATTR_NAME).getStringValue();
-    return createSchema(getLdapEntry(factory, entryDn, "(objectClass=subSchema)", ReturnAttributes.ALL.value()));
+    return createSchema(
+      SchemaUtils.getLdapEntry(factory, entryDn, "(objectClass=subSchema)", ReturnAttributes.ALL.value()));
   }
 
 
@@ -116,7 +113,8 @@ public final class SchemaFactory
   public static Schema createSchema(final ConnectionFactory factory, final String entryDn)
     throws LdapException
   {
-    return createSchema(getLdapEntry(factory, entryDn, "(objectClass=subSchema)", ReturnAttributes.ALL.value()));
+    return createSchema(
+      SchemaUtils.getLdapEntry(factory, entryDn, "(objectClass=subSchema)", ReturnAttributes.ALL.value()));
   }
 
 
@@ -159,34 +157,5 @@ public final class SchemaFactory
       OBJECT_CLASS_ATTR_NAME,
       attr -> schema.setObjectClasses(attr.getValues(new ObjectClassValueTranscoder().decoder())));
     return schema;
-  }
-
-
-  /**
-   * Searches for the supplied dn and returns its ldap entry.
-   *
-   * @param  factory  to obtain an LDAP connection from
-   * @param  dn  to search for
-   * @param  filter  search filter
-   * @param  retAttrs  attributes to return
-   *
-   * @return  ldap entry
-   *
-   * @throws  LdapException  if the search fails
-   */
-  private static LdapEntry getLdapEntry(
-    final ConnectionFactory factory,
-    final String dn,
-    final String filter,
-    final String... retAttrs)
-    throws LdapException
-  {
-    final SearchOperation search = new SearchOperation(factory);
-    final SearchResponse result = search.execute(
-      SearchRequest.builder().dn(dn).scope(SearchScope.OBJECT).filter(filter).returnAttributes(retAttrs).build());
-    if (!result.isSuccess()) {
-      throw new LdapException("Unsuccessful search for schema: " + result);
-    }
-    return result.getEntry();
   }
 }
