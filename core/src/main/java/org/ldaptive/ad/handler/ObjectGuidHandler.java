@@ -20,11 +20,25 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler<LdapEntry>
   /** objectGuid attribute name. */
   private static final String ATTRIBUTE_NAME = "objectGUID";
 
+  /** whether to enclose the guid in brackets. */
+  private boolean withBrackets = true;
 
   /** Creates a new object guid handler. */
   public ObjectGuidHandler()
   {
     setAttributeName(ATTRIBUTE_NAME);
+  }
+
+
+  /**
+   * Creates a new object guid handler.
+   *
+   * @param brackets whether to enclose the GUID in brackets
+   */
+  public ObjectGuidHandler(final boolean brackets)
+  {
+    setAttributeName(ATTRIBUTE_NAME);
+    setWithBrackets(brackets);
   }
 
 
@@ -39,6 +53,42 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler<LdapEntry>
   }
 
 
+  /**
+   * Creates a new object guid handler.
+   *
+   * @param  attrName  name of the attribute which is encoded as an objectGUID
+   * @param brackets whether to enclose the GUID in brackets
+   */
+  public ObjectGuidHandler(final String attrName, final boolean brackets)
+  {
+    setAttributeName(attrName);
+    setWithBrackets(brackets);
+  }
+
+
+  /**
+   * Returns whether the guid will be enclosed in brackets.
+   *
+   * @return whether the guid will be enclosed in brackets
+   */
+  public boolean getWithBrackets()
+  {
+    return withBrackets;
+  }
+
+
+  /**
+   * Sets whether to enclose the GUID in brackets.
+   *
+   * @param brackets whether to enclose the GUID in brackets
+   */
+  public void setWithBrackets(final boolean brackets)
+  {
+    assertMutable();
+    withBrackets = brackets;
+  }
+
+
   @Override
   public LdapEntry apply(final LdapEntry entry)
   {
@@ -50,14 +100,17 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler<LdapEntry>
   @Override
   protected String convertValue(final byte[] value)
   {
-    return GlobalIdentifier.toString(value);
+    return GlobalIdentifier.toString(value, withBrackets);
   }
 
 
   @Override
   public ObjectGuidHandler newInstance()
   {
-    return new ObjectGuidHandler();
+    final ObjectGuidHandler handler = new ObjectGuidHandler();
+    handler.setAttributeName(getAttributeName());
+    handler.setWithBrackets(withBrackets);
+    return handler;
   }
 
 
@@ -67,13 +120,17 @@ public class ObjectGuidHandler extends AbstractBinaryAttributeHandler<LdapEntry>
     if (o == this) {
       return true;
     }
-    return o instanceof ObjectGuidHandler && super.equals(o);
+    if (o instanceof ObjectGuidHandler && super.equals(o)) {
+      final ObjectGuidHandler v = (ObjectGuidHandler) o;
+      return LdapUtils.areEqual(withBrackets, v.withBrackets);
+    }
+    return false;
   }
 
 
   @Override
   public int hashCode()
   {
-    return LdapUtils.computeHashCode(HASH_CODE_SEED, getAttributeName());
+    return LdapUtils.computeHashCode(HASH_CODE_SEED, getAttributeName(), withBrackets);
   }
 }
