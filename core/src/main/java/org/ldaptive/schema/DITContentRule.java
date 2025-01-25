@@ -126,6 +126,7 @@ public final class DITContentRule extends AbstractNamedSchemaElement
    */
   public void setAuxiliaryClasses(final String[] s)
   {
+    assertMutable();
     auxiliaryClasses = s;
   }
 
@@ -148,6 +149,7 @@ public final class DITContentRule extends AbstractNamedSchemaElement
    */
   public void setRequiredAttributes(final String[] s)
   {
+    assertMutable();
     requiredAttributes = s;
   }
 
@@ -170,6 +172,7 @@ public final class DITContentRule extends AbstractNamedSchemaElement
    */
   public void setOptionalAttributes(final String[] s)
   {
+    assertMutable();
     optionalAttributes = s;
   }
 
@@ -192,6 +195,7 @@ public final class DITContentRule extends AbstractNamedSchemaElement
    */
   public void setRestrictedAttributes(final String[] s)
   {
+    assertMutable();
     restrictedAttributes = s;
   }
 

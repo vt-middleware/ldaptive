@@ -1,12 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -14,7 +14,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public final class Extensions
+public final class Extensions extends AbstractFreezable
 {
 
   /** hash code seed. */
@@ -47,7 +47,7 @@ public final class Extensions
    */
   public Set<String> getNames()
   {
-    return extensions.keySet();
+    return Collections.unmodifiableSet(extensions.keySet());
   }
 
 
@@ -99,7 +99,8 @@ public final class Extensions
    */
   public void addExtension(final String name)
   {
-    extensions.put(name, new ArrayList<>(0));
+    assertMutable();
+    extensions.put(name, Collections.emptyList());
   }
 
 
@@ -111,7 +112,8 @@ public final class Extensions
    */
   public void addExtension(final String name, final List<String> values)
   {
-    extensions.put(name, values);
+    assertMutable();
+    extensions.put(name, Collections.unmodifiableList(values));
   }
 
 

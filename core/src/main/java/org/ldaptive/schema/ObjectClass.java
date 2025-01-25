@@ -126,6 +126,7 @@ public final class ObjectClass extends AbstractNamedSchemaElement
    */
   public void setSuperiorClasses(final String[] s)
   {
+    assertMutable();
     superiorClasses = s;
   }
 
@@ -148,6 +149,7 @@ public final class ObjectClass extends AbstractNamedSchemaElement
    */
   public void setObjectClassType(final ObjectClassType type)
   {
+    assertMutable();
     objectClassType = type;
   }
 
@@ -170,6 +172,7 @@ public final class ObjectClass extends AbstractNamedSchemaElement
    */
   public void setRequiredAttributes(final String[] s)
   {
+    assertMutable();
     requiredAttributes = s;
   }
 
@@ -192,6 +195,7 @@ public final class ObjectClass extends AbstractNamedSchemaElement
    */
   public void setOptionalAttributes(final String[] s)
   {
+    assertMutable();
     optionalAttributes = s;
   }
 

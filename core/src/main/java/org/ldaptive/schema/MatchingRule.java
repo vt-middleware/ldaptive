@@ -105,6 +105,7 @@ public final class MatchingRule extends AbstractNamedSchemaElement
    */
   public void setSyntaxOID(final String s)
   {
+    assertMutable();
     syntaxOID = s;
   }
 

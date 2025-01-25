@@ -161,6 +161,7 @@ public final class AttributeType extends AbstractNamedSchemaElement
    */
   public void setSuperiorType(final String s)
   {
+    assertMutable();
     superiorType = s;
   }
 
@@ -183,6 +184,7 @@ public final class AttributeType extends AbstractNamedSchemaElement
    */
   public void setEqualityMatchingRule(final String s)
   {
+    assertMutable();
     equalityMatchingRule = s;
   }
 
@@ -205,6 +207,7 @@ public final class AttributeType extends AbstractNamedSchemaElement
    */
   public void setOrderingMatchingRule(final String s)
   {
+    assertMutable();
     orderingMatchingRule = s;
   }
 
@@ -227,6 +230,7 @@ public final class AttributeType extends AbstractNamedSchemaElement
    */
   public void setSubstringMatchingRule(final String s)
   {
+    assertMutable();
     substringMatchingRule = s;
   }
 
@@ -280,6 +284,7 @@ public final class AttributeType extends AbstractNamedSchemaElement
    */
   public void setSyntaxOID(final String s)
   {
+    assertMutable();
     syntaxOID = s;
   }
 
@@ -302,6 +307,7 @@ public final class AttributeType extends AbstractNamedSchemaElement
    */
   public void setSingleValued(final boolean b)
   {
+    assertMutable();
     singleValued = b;
   }
 
@@ -324,6 +330,7 @@ public final class AttributeType extends AbstractNamedSchemaElement
    */
   public void setCollective(final boolean b)
   {
+    assertMutable();
     collective = b;
   }
 
@@ -346,6 +353,7 @@ public final class AttributeType extends AbstractNamedSchemaElement
    */
   public void setNoUserModification(final boolean b)
   {
+    assertMutable();
     noUserModification = b;
   }
 
@@ -368,6 +376,7 @@ public final class AttributeType extends AbstractNamedSchemaElement
    */
   public void setUsage(final AttributeUsage u)
   {
+    assertMutable();
     usage = u;
   }
 

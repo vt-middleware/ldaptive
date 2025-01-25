@@ -48,6 +48,7 @@ public abstract class AbstractNamedSchemaElement extends AbstractSchemaElement
    */
   public void setNames(final String[] s)
   {
+    assertMutable();
     names = s;
   }
 
@@ -90,6 +91,7 @@ public abstract class AbstractNamedSchemaElement extends AbstractSchemaElement
    */
   public void setObsolete(final boolean b)
   {
+    assertMutable();
     obsolete = b;
   }
 }

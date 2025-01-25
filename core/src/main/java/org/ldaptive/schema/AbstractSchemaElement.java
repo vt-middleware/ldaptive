@@ -1,12 +1,14 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.schema;
 
+import org.ldaptive.AbstractFreezable;
+
 /**
  * Base class for schema elements.
  *
  * @author  Middleware Services
  */
-public abstract class AbstractSchemaElement implements SchemaElement
+public abstract class AbstractSchemaElement extends AbstractFreezable implements SchemaElement
 {
 
   /** Description. */
@@ -14,6 +16,14 @@ public abstract class AbstractSchemaElement implements SchemaElement
 
   /** Extensions. */
   private Extensions extensions;
+
+
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    freeze(extensions);
+  }
 
 
   /**
@@ -34,6 +44,7 @@ public abstract class AbstractSchemaElement implements SchemaElement
    */
   public void setDescription(final String s)
   {
+    assertMutable();
     description = s;
   }
 
@@ -56,6 +67,7 @@ public abstract class AbstractSchemaElement implements SchemaElement
    */
   public void setExtensions(final Extensions e)
   {
+    assertMutable();
     extensions = e;
   }
 

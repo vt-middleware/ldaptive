@@ -5,6 +5,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.util.Map;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
 import org.ldaptive.ad.handler.ObjectSidHandler;
 import org.ldaptive.ad.handler.PrimaryGroupIdHandler;
@@ -39,6 +40,16 @@ import org.ldaptive.pool.IdlePruneStrategy;
 import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
 import org.ldaptive.sasl.SaslConfig;
+import org.ldaptive.schema.AttributeType;
+import org.ldaptive.schema.DITContentRule;
+import org.ldaptive.schema.DITStructureRule;
+import org.ldaptive.schema.Extensions;
+import org.ldaptive.schema.MatchingRule;
+import org.ldaptive.schema.MatchingRuleUse;
+import org.ldaptive.schema.NameForm;
+import org.ldaptive.schema.ObjectClass;
+import org.ldaptive.schema.Schema;
+import org.ldaptive.schema.Syntax;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
@@ -53,6 +64,12 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class FreezableTest
 {
+
+  /** Default constructor params. */
+  private static final Map<Class<?>, Object> CONSTRUCTOR_PARAMS = Map.of(
+    String.class, "",
+    int.class, 0,
+    Integer.class, 0);
 
 
   /**
@@ -215,6 +232,36 @@ public class FreezableTest
         new Object[] {
           FollowSearchResultReferenceHandler.class,
         },
+        new Object[] {
+          AttributeType.class,
+        },
+        new Object[] {
+          DITContentRule.class,
+        },
+        new Object[] {
+          DITStructureRule.class,
+        },
+        new Object[] {
+          Extensions.class,
+        },
+        new Object[] {
+          MatchingRule.class,
+        },
+        new Object[] {
+          MatchingRuleUse.class,
+        },
+        new Object[] {
+          NameForm.class,
+        },
+        new Object[] {
+          ObjectClass.class,
+        },
+        new Object[] {
+          Schema.class,
+        },
+        new Object[] {
+          Syntax.class,
+        },
       };
   }
 
@@ -222,9 +269,21 @@ public class FreezableTest
   @Test(dataProvider = "immutable-classes")
   public void immutables(final Class<? extends Freezable> clazz) throws Exception
   {
-    final Constructor<? extends Freezable> constructor = clazz.getDeclaredConstructor();
+    Constructor<? extends Freezable> constructor = null;
+    Object[] params = null;
+    try {
+      constructor = clazz.getDeclaredConstructor();
+    } catch (NoSuchMethodException e) {
+      for (Map.Entry<Class<?>, Object> entry : CONSTRUCTOR_PARAMS.entrySet()) {
+        try {
+          constructor = clazz.getDeclaredConstructor(entry.getKey());
+          params = new Object[] {entry.getValue()};
+        } catch (NoSuchMethodException e2) {}
+      }
+    }
+    assertThat(constructor).withFailMessage("Could not find constructor for %s", clazz).isNotNull();
     constructor.setAccessible(true);
-    final Freezable i = constructor.newInstance();
+    final Freezable i = constructor.newInstance(params);
     i.freeze();
     invokeMethods(clazz, i);
   }
