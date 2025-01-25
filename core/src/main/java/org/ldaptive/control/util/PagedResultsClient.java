@@ -237,6 +237,9 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
    */
   public PagedResultsControl getResponseControl(final SearchResponse result)
   {
+    if (result == null) {
+      return null;
+    }
     return (PagedResultsControl) result.getControl(PagedResultsControl.OID);
   }
 
@@ -250,6 +253,9 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
    */
   protected byte[] getPagedResultsCookie(final SearchResponse result)
   {
+    if (result == null) {
+      return null;
+    }
     byte[] cookie = null;
     final PagedResultsControl ctl = (PagedResultsControl) result.getControl(PagedResultsControl.OID);
     if (ctl != null && ctl.getCookie() != null && ctl.getCookie().length > 0) {

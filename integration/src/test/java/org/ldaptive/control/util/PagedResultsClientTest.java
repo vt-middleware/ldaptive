@@ -9,6 +9,7 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SingleConnectionFactory;
 import org.ldaptive.dn.Dn;
+import org.ldaptive.handler.AbandonOperationException;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -138,6 +139,73 @@ public class PagedResultsClientTest extends AbstractTest
       assertThat(new Dn(i.next().getDn()).format()).isEqualTo(new Dn(testLdapEntries[1].getDn()).format());
       assertThat(new Dn(i.next().getDn()).format()).isEqualTo(new Dn(testLdapEntries[0].getDn()).format());
       assertThat(new Dn(i.next().getDn()).format()).isEqualTo(new Dn(testLdapEntries[2].getDn()).format());
+    } finally {
+      cf.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "prSearchDn",
+    "prSearchFilter"
+  })
+  @Test(groups = "control-util")
+  public void throwsHandler(final String dn, final String filter)
+    throws Exception
+  {
+    final SingleConnectionFactory cf = createSingleConnectionFactory();
+    try {
+      final PagedResultsClient client = new PagedResultsClient(cf, 1);
+      client.setEntryHandlers(le -> {
+        throw new IllegalStateException("Test handler exception");
+      });
+
+      final SearchRequest request = new SearchRequest(dn, filter);
+      try {
+        client.executeToCompletion(request);
+      } catch (Exception e) {
+        fail("Should not have thrown exception");
+      }
+    } finally {
+      cf.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "prSearchDn",
+    "prSearchFilter"
+  })
+  @Test(groups = "control-util")
+  public void throwsHandlerAbandon(final String dn, final String filter)
+    throws Exception
+  {
+    final SingleConnectionFactory cf = createSingleConnectionFactory();
+    try {
+      final PagedResultsClient client = new PagedResultsClient(cf, 1);
+      client.setEntryHandlers(le -> {
+        throw new IllegalStateException(new AbandonOperationException("Test handler exception"));
+      });
+
+      final SearchRequest request = new SearchRequest(dn, filter);
+      try {
+        client.executeToCompletion(request);
+        fail("Should have thrown exception");
+      } catch (Exception e) {
+        assertThat(e).isExactlyInstanceOf(AbandonOperationException.class);
+      }
     } finally {
       cf.close();
     }

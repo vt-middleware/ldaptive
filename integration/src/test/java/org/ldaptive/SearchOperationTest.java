@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.ldaptive.ad.control.ForceUpdateControl;
 import org.ldaptive.ad.control.GetStatsControl;
@@ -33,6 +34,7 @@ import org.ldaptive.control.SortResponseControl;
 import org.ldaptive.control.VirtualListViewRequestControl;
 import org.ldaptive.control.VirtualListViewResponseControl;
 import org.ldaptive.dn.Dn;
+import org.ldaptive.handler.AbandonOperationException;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
 import org.ldaptive.handler.DnAttributeEntryHandler;
@@ -947,6 +949,70 @@ public class SearchOperationTest extends AbstractTest
           fail(e.getMessage());
         }
       }
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   * @param  filterParameters  to replace parameters in filter with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "searchDn",
+    "searchFilter",
+    "searchFilterParameters",
+    "searchReturnAttrs",
+    "searchResults"
+  })
+  @Test(groups = "search")
+  public void throwsHandler(
+    final String dn,
+    final String filter,
+    final String filterParameters,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    final String expected = readFileIntoString(ldifFile);
+
+    // illegal state exception
+    final SearchOperation search = new SearchOperation(createConnectionFactory());
+    final AtomicBoolean onException1 = new AtomicBoolean();
+    search.setExceptionHandler(e -> onException1.set(true));
+    search.setEntryHandlers(le -> {
+      throw new IllegalStateException("Test handler exception");
+    });
+
+    final SearchResponse result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    assertThat(onException1.get()).isTrue();
+    SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
+
+    // abandon connection exception
+    final AtomicBoolean onException2 = new AtomicBoolean();
+    search.setExceptionHandler(e -> onException2.set(true));
+    search.setEntryHandlers(le -> {
+      throw new IllegalStateException(new AbandonOperationException("Test handler exception"));
+    });
+
+    try {
+      search.execute(
+        SearchRequest.builder()
+          .dn(dn)
+          .filter(new FilterTemplate(filter, filterParameters.split("\\|")))
+          .returnAttributes(returnAttrs.split("\\|")).build());
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(onException2.get()).isTrue();
+      assertThat(e).isExactlyInstanceOf(AbandonOperationException.class);
     }
   }
 

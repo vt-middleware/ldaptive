@@ -38,6 +38,7 @@ import org.ldaptive.extended.ExtendedResponse;
 import org.ldaptive.extended.IntermediateResponse;
 import org.ldaptive.extended.StartTLSRequest;
 import org.ldaptive.extended.UnsolicitedNotification;
+import org.ldaptive.handler.AbandonOperationException;
 import org.ldaptive.handler.CompleteHandler;
 import org.ldaptive.handler.ExceptionHandler;
 import org.ldaptive.handler.IntermediateResponseHandler;
@@ -131,6 +132,9 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   /** Timestamp when the result was received or an exception occurred. */
   private Instant receivedTime;
 
+  /** Timestamp when the request was abandoned. */
+  private Instant abandonedTime;
+
   /** Whether this handle has consumed any messages. */
   private boolean consumedMessage;
 
@@ -214,7 +218,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
       }
     } catch (InterruptedException e) {
       logger.trace("await interrupted acquiring {} for handle {} waiting for response", responseSemaphore, this, e);
-      exception(new LdapException(ResultCode.LOCAL_ERROR, e));
+      abandon(new LdapException(ResultCode.LOCAL_ERROR, e));
     }
     if (result != null && exception == null) {
       logger.trace("await received result {} for handle {}", result, this);
@@ -388,6 +392,10 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
    */
   public void abandon(final LdapException cause)
   {
+    if (abandonedTime != null) {
+      logger.warn("Request has already been abandoned for {}.", this);
+      return;
+    }
     if (sentTime == null) {
       logger.warn("Request has not been sent for {}.", this);
     }
@@ -403,6 +411,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         } catch (Exception e) {
           logger.debug("Could not abandon operation for {}", this, e);
         } finally {
+          abandonedTime = Instant.now();
           exception(cause);
         }
       } else {
@@ -492,6 +501,13 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   public Instant getReceivedTime()
   {
     return receivedTime;
+  }
+
+
+  @Override
+  public Instant getAbandonedTime()
+  {
+    return abandonedTime;
   }
 
 
@@ -621,12 +637,12 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
     }
     if (r == null) {
       final IllegalArgumentException e = new IllegalArgumentException("Result cannot be null for handle " + this);
-      exception(new LdapException(e));
+      notifyExceptionHandlers(new LdapException(e));
       throw e;
     }
     if (!supports(r)) {
       final IllegalArgumentException e = new IllegalArgumentException("Invalid result " + r + " for handle " + this);
-      exception(new LdapException(e));
+      notifyExceptionHandlers(new LdapException(e));
       throw e;
     }
     if (onResult != null) {
@@ -634,11 +650,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(r);
         } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            exception((LdapException) ex.getCause());
-          } else {
-            exception(new LdapException(ex));
-          }
+          processHandlerException(ex);
         }
       }
     }
@@ -670,11 +682,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(c);
         } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            exception((LdapException) ex.getCause());
-          } else {
-            exception(new LdapException(ex));
-          }
+          processHandlerException(ex);
         }
       }
     }
@@ -693,11 +701,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(url);
         } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            exception((LdapException) ex.getCause());
-          } else {
-            exception(new LdapException(ex));
-          }
+          processHandlerException(ex);
         }
       }
     }
@@ -714,7 +718,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
     if (getMessageID() != r.getMessageID()) {
       final IllegalArgumentException e = new IllegalArgumentException(
         "Invalid intermediate response " + r + " for handle " + this);
-      exception(new LdapException(e));
+      notifyExceptionHandlers(new LdapException(e));
       throw e;
     }
     if (onIntermediate != null) {
@@ -722,11 +726,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(r);
         } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            exception((LdapException) ex.getCause());
-          } else {
-            exception(new LdapException(ex));
-          }
+          processHandlerException(ex);
         }
       }
     }
@@ -746,11 +746,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         try {
           func.accept(u);
         } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            exception((LdapException) ex.getCause());
-          } else {
-            exception(new LdapException(ex));
-          }
+          processHandlerException(ex);
         }
       }
     }
@@ -759,19 +755,39 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
 
 
   /**
-   * Invokes {@link #onException} followed by {@link #complete()}.
+   * Invokes {@link #notifyExceptionHandlers(LdapException)} by wrapping the supplied exception in
+   * {@link LdapException}. If the supplied exception is an instance of {@link AbandonOperationException},
+   * {@link #abandon(LdapException)} is invoked.
+   *
+   * @param  e  to process
+   */
+  protected void processHandlerException(final Exception e)
+  {
+    if (e.getCause() instanceof LdapException) {
+      final LdapException ldapEx = (LdapException) e.getCause();
+      if (ldapEx instanceof AbandonOperationException) {
+        abandon(ldapEx);
+      } else {
+        notifyExceptionHandlers(ldapEx);
+      }
+    } else {
+      notifyExceptionHandlers(new LdapException(e));
+    }
+  }
+
+
+  /**
+   * Invokes any configured exception handlers with the supplied exception.
    *
    * @param  e  exception
    */
-  public void exception(final LdapException e)
+  protected void notifyExceptionHandlers(final LdapException e)
   {
     if (exception != null) {
       throw new IllegalStateException("Exception already received.");
     }
     if (e == null) {
-      final IllegalArgumentException ex = new IllegalArgumentException("Exception cannot be null for handle " + this);
-      exception(new LdapException(ex));
-      throw ex;
+      throw new IllegalArgumentException("Exception cannot be null for handle " + this);
     }
     if (onException != null) {
       try {
@@ -780,6 +796,17 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
         logger.warn("Exception consumer {} in handle {} threw an exception", onException, this, ex);
       }
     }
+  }
+
+
+  /**
+   * Invokes {@link #notifyExceptionHandlers(LdapException)} followed by {@link #complete()}.
+   *
+   * @param  e  exception
+   */
+  public void exception(final LdapException e)
+  {
+    notifyExceptionHandlers(e);
     exception = e;
     consumedMessage();
     complete();

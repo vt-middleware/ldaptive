@@ -151,7 +151,7 @@ public final class DefaultExtendedOperationHandle
     if (getMessageID() != response.getMessageID()) {
       final IllegalArgumentException e = new IllegalArgumentException(
         "Invalid extended response " + response + " for handle " + this);
-      exception(new LdapException(e));
+      notifyExceptionHandlers(new LdapException(e));
       throw e;
     }
     if (onExtended != null) {
@@ -159,11 +159,7 @@ public final class DefaultExtendedOperationHandle
         try {
           func.accept(response.getResponseName(), response.getResponseValue());
         } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            exception((LdapException) ex.getCause());
-          } else {
-            exception(new LdapException(ex));
-          }
+          processHandlerException(ex);
         }
       }
     }

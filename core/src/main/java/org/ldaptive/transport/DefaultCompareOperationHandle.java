@@ -149,7 +149,7 @@ public final class DefaultCompareOperationHandle
     if (getMessageID() != response.getMessageID()) {
       final IllegalArgumentException e = new IllegalArgumentException(
         "Invalid compare response " + response + " for handle " + this);
-      exception(new LdapException(e));
+      notifyExceptionHandlers(new LdapException(e));
       throw e;
     }
     if (onCompare != null) {
@@ -161,11 +161,7 @@ public final class DefaultCompareOperationHandle
             func.accept(Boolean.FALSE);
           }
         } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            exception((LdapException) ex.getCause());
-          } else {
-            exception(new LdapException(ex));
-          }
+          processHandlerException(ex);
         }
       }
     }
