@@ -182,4 +182,12 @@ public interface OperationHandle<Q extends Request, S extends Result>
    * @return  received time
    */
   Instant getReceivedTime();
+
+
+  /**
+   * Returns the time this operation was abandoned.
+   *
+   * @return  abandoned time
+   */
+  Instant getAbandonedTime();
 }

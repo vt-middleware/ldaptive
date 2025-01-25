@@ -264,7 +264,7 @@ public final class DefaultSearchOperationHandle
   {
     if (getMessageID() != r.getMessageID()) {
       final IllegalArgumentException e = new IllegalArgumentException("Invalid entry " + r + " for handle " + this);
-      exception(new LdapException(e));
+      notifyExceptionHandlers(new LdapException(e));
       throw e;
     }
     LdapEntry e = r;
@@ -280,11 +280,7 @@ public final class DefaultSearchOperationHandle
           }
           e = handlerEntry;
         } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            exception((LdapException) ex.getCause());
-          } else {
-            exception(new LdapException(ex));
-          }
+          processHandlerException(ex);
         }
       }
     }
@@ -305,7 +301,7 @@ public final class DefaultSearchOperationHandle
   {
     if (getMessageID() != r.getMessageID()) {
       final IllegalArgumentException e = new IllegalArgumentException("Invalid reference " + r + " for handle " + this);
-      exception(new LdapException(e));
+      notifyExceptionHandlers(new LdapException(e));
       throw e;
     }
     if (onReference != null) {
@@ -313,11 +309,7 @@ public final class DefaultSearchOperationHandle
         try {
           func.accept(r);
         } catch (Exception ex) {
-          if (ex.getCause() instanceof LdapException) {
-            exception((LdapException) ex.getCause());
-          } else {
-            exception(new LdapException(ex));
-          }
+          processHandlerException(ex);
         }
       }
     }

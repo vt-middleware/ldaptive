@@ -1661,8 +1661,8 @@ final class NettyConnection extends TransportConnection
           LOGGER.debug("Received UnsolicitedNotification {} for {}", msg, NettyConnection.this);
           pendingResponses.notifyOperationHandles((UnsolicitedNotification) msg);
         } else {
-          LOGGER.warn(
-            "Received message {} without matching request in {} for {}",
+          LOGGER.debug(
+            "Received message {} without matching request in {} for {}, request abandoned?",
             msg,
             pendingResponses,
             NettyConnection.this);

@@ -202,6 +202,9 @@ public class VirtualListViewClient extends AbstractSearchOperationFactory
    */
   public VirtualListViewResponseControl getResponseControl(final SearchResponse result)
   {
+    if (result == null) {
+      return null;
+    }
     return (VirtualListViewResponseControl) result.getControl(VirtualListViewResponseControl.OID);
   }
 
@@ -215,6 +218,9 @@ public class VirtualListViewClient extends AbstractSearchOperationFactory
    */
   protected byte[] getVirtualListViewCookie(final SearchResponse result)
   {
+    if (result == null) {
+      return null;
+    }
     byte[] cookie = null;
     final VirtualListViewResponseControl ctl = (VirtualListViewResponseControl) result.getControl(
       VirtualListViewResponseControl.OID);

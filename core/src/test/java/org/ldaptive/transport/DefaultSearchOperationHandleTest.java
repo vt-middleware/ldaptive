@@ -21,6 +21,7 @@ import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.ad.handler.AbstractBinaryAttributeHandler;
 import org.ldaptive.extended.IntermediateResponse;
+import org.ldaptive.handler.AbandonOperationException;
 import org.ldaptive.handler.FreezeResultHandler;
 import org.ldaptive.handler.LdapEntryHandler;
 import org.ldaptive.handler.MergeResultHandler;
@@ -419,6 +420,81 @@ public class DefaultSearchOperationHandleTest
       fail("Should have thrown exception");
     } catch (Exception e) {
       assertThat(e).isExactlyInstanceOf(IllegalStateException.class);
+    }
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "transport")
+  public void exceptionHandler()
+    throws Exception
+  {
+    final DefaultSearchOperationHandle searchHandle = new DefaultSearchOperationHandle(
+      SearchRequest.builder().build(),
+      MockConnection.builder(
+        ConnectionConfig.builder().url("ldap://ds1.ldaptive.org").build()).abandonConsumer(req -> {}).build(),
+      Duration.ofSeconds(1));
+    searchHandle.messageID(1);
+
+    searchHandle.onEntry(entry -> {
+      throw new IllegalStateException("Test exception");
+    });
+    final AtomicBoolean resultExecuted = new AtomicBoolean();
+    searchHandle.onSearchResult(result -> {
+      assertThat(resultExecuted.compareAndSet(false, true)).isTrue();
+      return result;
+    });
+    final AtomicBoolean exceptionExecuted = new AtomicBoolean();
+    searchHandle.onException(e -> assertThat(exceptionExecuted.compareAndSet(false, true)).isTrue());
+    searchHandle.entry(LdapEntry.builder().messageID(1).build());
+    searchHandle.result(SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
+    final SearchResponse response = searchHandle.await();
+    assertThat(exceptionExecuted.get()).isTrue();
+    assertThat(resultExecuted.get()).isTrue();
+    assertThat(response)
+      .isEqualTo(SearchResponse.builder()
+        .messageID(1)
+        .resultCode(ResultCode.SUCCESS)
+        .entry(LdapEntry.builder().messageID(1).build()).build());
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "transport")
+  public void exceptionHandlerAbandon()
+    throws Exception
+  {
+    final DefaultSearchOperationHandle searchHandle = new DefaultSearchOperationHandle(
+      SearchRequest.builder().build(),
+      MockConnection.builder(
+        ConnectionConfig.builder().url("ldap://ds1.ldaptive.org").build()).abandonConsumer(req -> {}).build(),
+      Duration.ofSeconds(1));
+    searchHandle.sent();
+    searchHandle.messageID(1);
+
+    searchHandle.onEntry(entry -> {
+      throw new IllegalStateException(new AbandonOperationException("Test exception"));
+    });
+    final AtomicBoolean resultExecuted = new AtomicBoolean();
+    searchHandle.onSearchResult(result -> {
+      assertThat(resultExecuted.compareAndSet(false, true)).isTrue();
+      return result;
+    });
+    final AtomicBoolean exceptionExecuted = new AtomicBoolean();
+    searchHandle.onException(e -> assertThat(exceptionExecuted.compareAndSet(false, true)).isTrue());
+    searchHandle.entry(LdapEntry.builder().messageID(1).build());
+    searchHandle.result(SearchResponse.builder().messageID(1).resultCode(ResultCode.SUCCESS).build());
+    try {
+      searchHandle.await();
+      fail("Should have thrown exception");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(AbandonOperationException.class);
+      assertThat(exceptionExecuted.get()).isTrue();
+      assertThat(resultExecuted.get()).isFalse();
     }
   }
 
