@@ -105,6 +105,7 @@ public final class MatchingRuleUse extends AbstractNamedSchemaElement
    */
   public void setAppliesAttributeTypes(final String[] s)
   {
+    assertMutable();
     appliesAttributeTypes = s;
   }
 

@@ -112,6 +112,7 @@ public final class DITStructureRule extends AbstractNamedSchemaElement
    */
   public void setNameForm(final String s)
   {
+    assertMutable();
     nameForm = s;
   }
 
@@ -134,6 +135,7 @@ public final class DITStructureRule extends AbstractNamedSchemaElement
    */
   public void setSuperiorRules(final int[] i)
   {
+    assertMutable();
     superiorRules = i;
   }
 

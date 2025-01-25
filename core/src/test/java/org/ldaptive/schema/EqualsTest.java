@@ -65,6 +65,7 @@ public class EqualsTest
     EqualsVerifier.forClass(clazz)
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
+      .withIgnoredFields("immutable")
       .verify();
   }
 }

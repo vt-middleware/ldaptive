@@ -119,6 +119,7 @@ public final class NameForm extends AbstractNamedSchemaElement
    */
   public void setStructuralClass(final String s)
   {
+    assertMutable();
     structuralClass = s;
   }
 
@@ -141,6 +142,7 @@ public final class NameForm extends AbstractNamedSchemaElement
    */
   public void setRequiredAttributes(final String[] s)
   {
+    assertMutable();
     requiredAttributes = s;
   }
 
@@ -163,6 +165,7 @@ public final class NameForm extends AbstractNamedSchemaElement
    */
   public void setOptionalAttributes(final String[] s)
   {
+    assertMutable();
     optionalAttributes = s;
   }
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapUtils;
 
 /**
@@ -12,7 +13,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public final class Schema
+public final class Schema extends AbstractFreezable
 {
 
   /** hash code seed. */
@@ -82,6 +83,21 @@ public final class Schema
   // CheckStyle:ParameterNumber|HiddenField ON
 
 
+  @Override
+  public void freeze()
+  {
+    super.freeze();
+    attributeTypes.forEach(f -> f.freeze());
+    ditContentRules.forEach(f -> f.freeze());
+    ditStructureRules.forEach(f -> f.freeze());
+    syntaxes.forEach(f -> f.freeze());
+    matchingRules.forEach(f -> f.freeze());
+    matchingRuleUses.forEach(f -> f.freeze());
+    nameForms.forEach(f -> f.freeze());
+    objectClasses.forEach(f -> f.freeze());
+  }
+
+
   /**
    * Returns the attribute types.
    *
@@ -118,7 +134,8 @@ public final class Schema
    */
   public void setAttributeTypes(final Collection<AttributeType> c)
   {
-    attributeTypes = c;
+    assertMutable();
+    attributeTypes = Collections.unmodifiableCollection(c);
   }
 
 
@@ -186,7 +203,8 @@ public final class Schema
    */
   public void setDitContentRules(final Collection<DITContentRule> c)
   {
-    ditContentRules = c;
+    assertMutable();
+    ditContentRules = Collections.unmodifiableCollection(c);
   }
 
 
@@ -244,7 +262,8 @@ public final class Schema
    */
   public void setDitStructureRules(final Collection<DITStructureRule> c)
   {
-    ditStructureRules = c;
+    assertMutable();
+    ditStructureRules = Collections.unmodifiableCollection(c);
   }
 
 
@@ -284,7 +303,8 @@ public final class Schema
    */
   public void setSyntaxes(final Collection<Syntax> c)
   {
-    syntaxes = c;
+    assertMutable();
+    syntaxes = Collections.unmodifiableCollection(c);
   }
 
 
@@ -324,7 +344,8 @@ public final class Schema
    */
   public void setMatchingRules(final Collection<MatchingRule> c)
   {
-    matchingRules = c;
+    assertMutable();
+    matchingRules = Collections.unmodifiableCollection(c);
   }
 
 
@@ -364,7 +385,8 @@ public final class Schema
    */
   public void setMatchingRuleUses(final Collection<MatchingRuleUse> c)
   {
-    matchingRuleUses = c;
+    assertMutable();
+    matchingRuleUses = Collections.unmodifiableCollection(c);
   }
 
 
@@ -404,7 +426,8 @@ public final class Schema
    */
   public void setNameForms(final Collection<NameForm> c)
   {
-    nameForms = c;
+    assertMutable();
+    nameForms = Collections.unmodifiableCollection(c);
   }
 
 
@@ -444,7 +467,8 @@ public final class Schema
    */
   public void setObjectClasses(final Collection<ObjectClass> c)
   {
-    objectClasses = c;
+    assertMutable();
+    objectClasses = Collections.unmodifiableCollection(c);
   }
 
 
