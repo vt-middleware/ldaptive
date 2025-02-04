@@ -122,6 +122,9 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
   public void setConnectionConfig(final ConnectionConfig cc)
   {
     assertMutable();
+    if (cc == null) {
+      throw new IllegalArgumentException("Connection config cannot be null");
+    }
     config = cc;
     config.freeze();
   }
