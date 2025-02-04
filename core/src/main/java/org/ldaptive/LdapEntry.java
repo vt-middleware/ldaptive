@@ -268,6 +268,44 @@ public class LdapEntry extends AbstractMessage implements Freezable
 
 
   /**
+   * Provides a null safe invocation of {@link LdapAttribute#getValue(Function)}.
+   *
+   * @param  <T>  type of decoded attribute
+   * @param  name  of the attribute whose values should be returned
+   * @param  func  to decode attribute value with
+   *
+   * @return  single attribute value or null if the attribute does not exist
+   */
+  public <T> T getAttributeValue(final String name, final Function<byte[], T> func)
+  {
+    final LdapAttribute attr = getAttribute(name);
+    if (attr != null) {
+      return attr.getValue(func);
+    }
+    return null;
+  }
+
+
+  /**
+   * Provides a null safe invocation of {@link LdapAttribute#getValues(Function)}.
+   *
+   * @param  <T>  type of decoded attribute
+   * @param  name  of the attribute whose values should be returned
+   * @param  func  to decode attribute value with
+   *
+   * @return  collection of attribute values or an empty collection if the attribute does not exist
+   */
+  public <T> Collection<T> getAttributeValues(final String name, final Function<byte[], T> func)
+  {
+    final LdapAttribute attr = getAttribute(name);
+    if (attr != null) {
+      return attr.getValues(func);
+    }
+    return Collections.emptyList();
+  }
+
+
+  /**
    * Provides a null safe invocation of {@link LdapAttribute#getBinaryValue()}.
    *
    * @param  name  of the attribute whose values should be returned
