@@ -60,7 +60,7 @@
     <spotbugs.dir>src/main/spotbugs</spotbugs.dir>
     <pmd.dir>src/main/pmd</pmd.dir>
     <org.slf4j.version>2.0.16</org.slf4j.version>
-    <io.netty.version>4.1.116.Final</io.netty.version>
+    <io.netty.version>4.1.118.Final</io.netty.version>
     <org.springframework.version>5.3.39</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.4.0</japicmp.oldVersion>
@@ -107,13 +107,13 @@
       <dependency>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-core</artifactId>
-        <version>3.27.2</version>
+        <version>3.27.3</version>
         <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>3.18.1</version>
+        <version>3.19</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -227,7 +227,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>10.21.1</version>
+              <version>10.21.2</version>
             </dependency>
           </dependencies>
         </plugin>
