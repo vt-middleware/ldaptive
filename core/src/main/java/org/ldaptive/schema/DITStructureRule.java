@@ -24,7 +24,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public final class DITStructureRule extends AbstractNamedSchemaElement
+public final class DITStructureRule extends AbstractNamedSchemaElement<Integer>
 {
 
   /** hash code seed. */
@@ -81,6 +81,13 @@ public final class DITStructureRule extends AbstractNamedSchemaElement
     setExtensions(extensions);
   }
   // CheckStyle:ParameterNumber|HiddenField ON
+
+
+  @Override
+  public Integer getElementKey()
+  {
+    return getID();
+  }
 
 
   /**

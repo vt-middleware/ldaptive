@@ -367,11 +367,14 @@ public class BeanGenerator
   public void generate()
   {
     for (String objectClass : objectClasses) {
+      final ObjectClass oc = schema.getObjectClass(objectClass);
+      if (oc == null) {
+        continue;
+      }
       final JDefinedClass definedClass = createClass(packageName, objectClass);
       final JDocComment jDocComment = definedClass.javadoc();
       jDocComment.add(String.format("Ldaptive generated bean for objectClass '%s'", objectClass));
 
-      final ObjectClass oc = schema.getObjectClass(objectClass);
       final Set<String> attributeNames = getAttributeNames(oc);
       if (useOperationalAttributes) {
         attributeNames.addAll(
@@ -383,7 +386,7 @@ public class BeanGenerator
       final Map<String, AttributeType> mutators = new TreeMap<>();
       for (String name : attributeNames) {
         final AttributeType type = schema.getAttributeType(name);
-        if (!isNameExcluded(type)) {
+        if (type != null && !isNameExcluded(type)) {
           if (nameMappings.containsKey(type.getName())) {
             mutators.put(nameMappings.get(type.getName()), type);
           } else {

@@ -6,9 +6,11 @@ import org.ldaptive.AbstractFreezable;
 /**
  * Base class for schema elements.
  *
+ * @param  <T>  type of element identifier key
+ *
  * @author  Middleware Services
  */
-public abstract class AbstractSchemaElement extends AbstractFreezable implements SchemaElement
+public abstract class AbstractSchemaElement<T> extends AbstractFreezable implements SchemaElement<T>
 {
 
   /** Description. */

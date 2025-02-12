@@ -19,7 +19,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public class Syntax extends AbstractSchemaElement
+public class Syntax extends AbstractSchemaElement<String>
 {
 
   /** hash code seed. */
@@ -55,6 +55,13 @@ public class Syntax extends AbstractSchemaElement
     setExtensions(extensions);
   }
   // CheckStyle:HiddenField ON
+
+
+  @Override
+  public String getElementKey()
+  {
+    return getOID();
+  }
 
 
   /**

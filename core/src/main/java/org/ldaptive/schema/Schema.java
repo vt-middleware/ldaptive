@@ -19,29 +19,32 @@ public final class Schema extends AbstractFreezable
   /** hash code seed. */
   private static final int HASH_CODE_SEED = 1181;
 
+  /** Binary syntax oid. */
+  private static final String BINARY_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.5";
+
   /** Attribute types. */
-  private Collection<AttributeType> attributeTypes = Collections.emptySet();
+  private final SchemaElementRegistry<String, AttributeType> attributeTypes = new SchemaElementRegistry<>();
 
   /** DIT content rules. */
-  private Collection<DITContentRule> ditContentRules = Collections.emptySet();
+  private final SchemaElementRegistry<String, DITContentRule> ditContentRules = new SchemaElementRegistry<>();
 
   /** DIT structure rules. */
-  private Collection<DITStructureRule> ditStructureRules = Collections.emptySet();
+  private final SchemaElementRegistry<Integer, DITStructureRule> ditStructureRules = new SchemaElementRegistry<>();
 
   /** Syntaxes. */
-  private Collection<Syntax> syntaxes = Collections.emptySet();
+  private final SchemaElementRegistry<String, Syntax> syntaxes = new SchemaElementRegistry<>();
 
   /** Matching rules. */
-  private Collection<MatchingRule> matchingRules = Collections.emptySet();
+  private final SchemaElementRegistry<String, MatchingRule> matchingRules = new SchemaElementRegistry<>();
 
   /** Matching rule uses. */
-  private Collection<MatchingRuleUse> matchingRuleUses = Collections.emptySet();
+  private final SchemaElementRegistry<String, MatchingRuleUse> matchingRuleUses = new SchemaElementRegistry<>();
 
   /** Name forms. */
-  private Collection<NameForm> nameForms = Collections.emptySet();
+  private final SchemaElementRegistry<String, NameForm> nameForms = new SchemaElementRegistry<>();
 
   /** Object classes. */
-  private Collection<ObjectClass> objectClasses = Collections.emptySet();
+  private final SchemaElementRegistry<String, ObjectClass> objectClasses = new SchemaElementRegistry<>();
 
 
   /** Default constructor. */
@@ -58,7 +61,7 @@ public final class Schema extends AbstractFreezable
    * @param  matchingRules  matching rules
    * @param  matchingRuleUses  matching rule uses
    * @param  nameForms  name forms
-   * @param  objectClasses  object classses
+   * @param  objectClasses  object classes
    */
   // CheckStyle:ParameterNumber|HiddenField OFF
   public Schema(
@@ -72,8 +75,8 @@ public final class Schema extends AbstractFreezable
     final Collection<ObjectClass> objectClasses)
   {
     setAttributeTypes(attributeTypes);
-    setDitContentRules(ditContentRules);
-    setDitStructureRules(ditStructureRules);
+    setDITContentRules(ditContentRules);
+    setDITStructureRules(ditStructureRules);
     setSyntaxes(syntaxes);
     setMatchingRules(matchingRules);
     setMatchingRuleUses(matchingRuleUses);
@@ -87,14 +90,14 @@ public final class Schema extends AbstractFreezable
   public void freeze()
   {
     super.freeze();
-    attributeTypes.forEach(f -> f.freeze());
-    ditContentRules.forEach(f -> f.freeze());
-    ditStructureRules.forEach(f -> f.freeze());
-    syntaxes.forEach(f -> f.freeze());
-    matchingRules.forEach(f -> f.freeze());
-    matchingRuleUses.forEach(f -> f.freeze());
-    nameForms.forEach(f -> f.freeze());
-    objectClasses.forEach(f -> f.freeze());
+    attributeTypes.freeze();
+    ditContentRules.freeze();
+    ditStructureRules.freeze();
+    syntaxes.freeze();
+    matchingRules.freeze();
+    matchingRuleUses.freeze();
+    nameForms.freeze();
+    objectClasses.freeze();
   }
 
 
@@ -105,7 +108,7 @@ public final class Schema extends AbstractFreezable
    */
   public Collection<AttributeType> getAttributeTypes()
   {
-    return attributeTypes;
+    return attributeTypes.getElements();
   }
 
 
@@ -118,12 +121,11 @@ public final class Schema extends AbstractFreezable
    */
   public AttributeType getAttributeType(final String name)
   {
-    for (AttributeType at : attributeTypes) {
-      if (at.getOID().equals(name) || at.hasName(name)) {
-        return at;
-      }
+    final AttributeType attributeType = attributeTypes.getElementByKey(name);
+    if (attributeType == null) {
+      return attributeTypes.getElementByName(name);
     }
-    return null;
+    return attributeType;
   }
 
 
@@ -135,7 +137,7 @@ public final class Schema extends AbstractFreezable
   public void setAttributeTypes(final Collection<AttributeType> c)
   {
     assertMutable();
-    attributeTypes = Collections.unmodifiableCollection(c);
+    attributeTypes.setElements(c);
   }
 
 
@@ -148,10 +150,10 @@ public final class Schema extends AbstractFreezable
   public String[] getBinaryAttributeNames()
   {
     final List<String> binaryAttrs = new ArrayList<>();
-    for (AttributeType type : attributeTypes) {
+    for (AttributeType type : attributeTypes.getElements()) {
       boolean isBinary = false;
       final String syntaxOid = type.getSyntaxOID(false);
-      if ("1.3.6.1.4.1.1466.115.121.1.5".equals(syntaxOid)) {
+      if (BINARY_SYNTAX.equals(syntaxOid)) {
         isBinary = true;
       } else {
         final Syntax syntax = getSyntax(syntaxOid);
@@ -172,9 +174,9 @@ public final class Schema extends AbstractFreezable
    *
    * @return  DIT content rules
    */
-  public Collection<DITContentRule> getDitContentRules()
+  public Collection<DITContentRule> getDITContentRules()
   {
-    return ditContentRules;
+    return ditContentRules.getElements();
   }
 
 
@@ -187,12 +189,11 @@ public final class Schema extends AbstractFreezable
    */
   public DITContentRule getDITContentRule(final String name)
   {
-    for (DITContentRule rule : ditContentRules) {
-      if (rule.getOID().equals(name) || rule.hasName(name)) {
-        return rule;
-      }
+    final DITContentRule ditContentRule = ditContentRules.getElementByKey(name);
+    if (ditContentRule == null) {
+      return ditContentRules.getElementByName(name);
     }
-    return null;
+    return ditContentRule;
   }
 
 
@@ -201,10 +202,10 @@ public final class Schema extends AbstractFreezable
    *
    * @param  c  DIT content rules
    */
-  public void setDitContentRules(final Collection<DITContentRule> c)
+  public void setDITContentRules(final Collection<DITContentRule> c)
   {
     assertMutable();
-    ditContentRules = Collections.unmodifiableCollection(c);
+    ditContentRules.setElements(c);
   }
 
 
@@ -213,9 +214,9 @@ public final class Schema extends AbstractFreezable
    *
    * @return  DIT structure rules
    */
-  public Collection<DITStructureRule> getDitStructureRules()
+  public Collection<DITStructureRule> getDITStructureRules()
   {
-    return ditStructureRules;
+    return ditStructureRules.getElements();
   }
 
 
@@ -228,12 +229,7 @@ public final class Schema extends AbstractFreezable
    */
   public DITStructureRule getDITStructureRule(final int id)
   {
-    for (DITStructureRule rule : ditStructureRules) {
-      if (rule.getID() == id) {
-        return rule;
-      }
-    }
-    return null;
+    return ditStructureRules.getElementByKey(id);
   }
 
 
@@ -246,12 +242,7 @@ public final class Schema extends AbstractFreezable
    */
   public DITStructureRule getDITStructureRule(final String name)
   {
-    for (DITStructureRule rule : ditStructureRules) {
-      if (rule.hasName(name)) {
-        return rule;
-      }
-    }
-    return null;
+    return ditStructureRules.getElementByName(name);
   }
 
 
@@ -260,10 +251,10 @@ public final class Schema extends AbstractFreezable
    *
    * @param  c  DIT structure rules
    */
-  public void setDitStructureRules(final Collection<DITStructureRule> c)
+  public void setDITStructureRules(final Collection<DITStructureRule> c)
   {
     assertMutable();
-    ditStructureRules = Collections.unmodifiableCollection(c);
+    ditStructureRules.setElements(c);
   }
 
 
@@ -274,7 +265,7 @@ public final class Schema extends AbstractFreezable
    */
   public Collection<Syntax> getSyntaxes()
   {
-    return syntaxes;
+    return syntaxes.getElements();
   }
 
 
@@ -287,12 +278,7 @@ public final class Schema extends AbstractFreezable
    */
   public Syntax getSyntax(final String oid)
   {
-    for (Syntax syntax : syntaxes) {
-      if (syntax.getOID().equals(oid)) {
-        return syntax;
-      }
-    }
-    return null;
+    return syntaxes.getElementByKey(oid);
   }
 
 
@@ -304,7 +290,7 @@ public final class Schema extends AbstractFreezable
   public void setSyntaxes(final Collection<Syntax> c)
   {
     assertMutable();
-    syntaxes = Collections.unmodifiableCollection(c);
+    syntaxes.setElements(c);
   }
 
 
@@ -315,7 +301,7 @@ public final class Schema extends AbstractFreezable
    */
   public Collection<MatchingRule> getMatchingRules()
   {
-    return matchingRules;
+    return matchingRules.getElements();
   }
 
 
@@ -328,12 +314,11 @@ public final class Schema extends AbstractFreezable
    */
   public MatchingRule getMatchingRule(final String name)
   {
-    for (MatchingRule rule : matchingRules) {
-      if (rule.getOID().equals(name) || rule.hasName(name)) {
-        return rule;
-      }
+    final MatchingRule matchingRule = matchingRules.getElementByKey(name);
+    if (matchingRule == null) {
+      return matchingRules.getElementByName(name);
     }
-    return null;
+    return matchingRule;
   }
 
 
@@ -345,7 +330,7 @@ public final class Schema extends AbstractFreezable
   public void setMatchingRules(final Collection<MatchingRule> c)
   {
     assertMutable();
-    matchingRules = Collections.unmodifiableCollection(c);
+    matchingRules.setElements(c);
   }
 
 
@@ -356,7 +341,7 @@ public final class Schema extends AbstractFreezable
    */
   public Collection<MatchingRuleUse> getMatchingRuleUses()
   {
-    return matchingRuleUses;
+    return matchingRuleUses.getElements();
   }
 
 
@@ -369,12 +354,11 @@ public final class Schema extends AbstractFreezable
    */
   public MatchingRuleUse getMatchingRuleUse(final String name)
   {
-    for (MatchingRuleUse rule : matchingRuleUses) {
-      if (rule.getOID().equals(name) || rule.hasName(name)) {
-        return rule;
-      }
+    final MatchingRuleUse matchingRuleUse = matchingRuleUses.getElementByKey(name);
+    if (matchingRuleUse == null) {
+      return matchingRuleUses.getElementByName(name);
     }
-    return null;
+    return matchingRuleUse;
   }
 
 
@@ -386,7 +370,7 @@ public final class Schema extends AbstractFreezable
   public void setMatchingRuleUses(final Collection<MatchingRuleUse> c)
   {
     assertMutable();
-    matchingRuleUses = Collections.unmodifiableCollection(c);
+    matchingRuleUses.setElements(c);
   }
 
 
@@ -397,7 +381,7 @@ public final class Schema extends AbstractFreezable
    */
   public Collection<NameForm> getNameForms()
   {
-    return nameForms;
+    return nameForms.getElements();
   }
 
 
@@ -410,12 +394,11 @@ public final class Schema extends AbstractFreezable
    */
   public NameForm getNameForm(final String name)
   {
-    for (NameForm form : nameForms) {
-      if (form.getOID().equals(name) || form.hasName(name)) {
-        return form;
-      }
+    final NameForm nameForm = nameForms.getElementByKey(name);
+    if (nameForm == null) {
+      return nameForms.getElementByName(name);
     }
-    return null;
+    return nameForm;
   }
 
 
@@ -427,7 +410,7 @@ public final class Schema extends AbstractFreezable
   public void setNameForms(final Collection<NameForm> c)
   {
     assertMutable();
-    nameForms = Collections.unmodifiableCollection(c);
+    nameForms.setElements(c);
   }
 
 
@@ -438,7 +421,7 @@ public final class Schema extends AbstractFreezable
    */
   public Collection<ObjectClass> getObjectClasses()
   {
-    return objectClasses;
+    return objectClasses.getElements();
   }
 
 
@@ -451,12 +434,11 @@ public final class Schema extends AbstractFreezable
    */
   public ObjectClass getObjectClass(final String name)
   {
-    for (ObjectClass oc : objectClasses) {
-      if (oc.getOID().equals(name) || oc.hasName(name)) {
-        return oc;
-      }
+    final ObjectClass objectClass = objectClasses.getElementByKey(name);
+    if (objectClass == null) {
+      return objectClasses.getElementByName(name);
     }
-    return null;
+    return objectClass;
   }
 
 
@@ -468,7 +450,7 @@ public final class Schema extends AbstractFreezable
   public void setObjectClasses(final Collection<ObjectClass> c)
   {
     assertMutable();
-    objectClasses = Collections.unmodifiableCollection(c);
+    objectClasses.setElements(c);
   }
 
 

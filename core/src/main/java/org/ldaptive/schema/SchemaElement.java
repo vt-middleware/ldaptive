@@ -4,10 +4,20 @@ package org.ldaptive.schema;
 /**
  * Interface for schema elements.
  *
+ * @param  <T>  type of element identifier key
+ *
  * @author  Middleware Services
  */
-public interface SchemaElement
+public interface SchemaElement<T>
 {
+
+
+  /**
+   * Returns the key for this element. Typically, an OID but may also be an integer.
+   *
+   * @return  element key
+   */
+  T getElementKey();
 
 
   /**

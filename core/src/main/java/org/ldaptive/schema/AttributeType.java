@@ -31,7 +31,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public final class AttributeType extends AbstractNamedSchemaElement
+public final class AttributeType extends AbstractNamedSchemaElement<String>
 {
 
   /** hash code seed. */
@@ -130,6 +130,13 @@ public final class AttributeType extends AbstractNamedSchemaElement
     setExtensions(extensions);
   }
   // CheckStyle:ParameterNumber|HiddenField ON
+
+
+  @Override
+  public String getElementKey()
+  {
+    return getOID();
+  }
 
 
   /**

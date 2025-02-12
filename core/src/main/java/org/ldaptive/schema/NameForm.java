@@ -25,7 +25,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public final class NameForm extends AbstractNamedSchemaElement
+public final class NameForm extends AbstractNamedSchemaElement<String>
 {
 
   /** hash code seed. */
@@ -88,6 +88,13 @@ public final class NameForm extends AbstractNamedSchemaElement
     setExtensions(extensions);
   }
   // CheckStyle:ParameterNumber|HiddenField ON
+
+
+  @Override
+  public String getElementKey()
+  {
+    return getOID();
+  }
 
 
   /**

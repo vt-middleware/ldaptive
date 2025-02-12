@@ -4,9 +4,11 @@ package org.ldaptive.schema;
 /**
  * Base schema bean for named schema elements.
  *
+ * @param  <T>  type of element identifier key
+ *
  * @author  Middleware Services
  */
-public abstract class AbstractNamedSchemaElement extends AbstractSchemaElement
+public abstract class AbstractNamedSchemaElement<T> extends AbstractSchemaElement<T> implements NamedElement
 {
 
   /** Names. */
@@ -16,11 +18,7 @@ public abstract class AbstractNamedSchemaElement extends AbstractSchemaElement
   private boolean obsolete;
 
 
-  /**
-   * Returns the first name defined or null if no names are defined.
-   *
-   * @return  first name in the list
-   */
+  @Override
   public String getName()
   {
     if (names != null && names.length > 0) {
@@ -30,11 +28,7 @@ public abstract class AbstractNamedSchemaElement extends AbstractSchemaElement
   }
 
 
-  /**
-   * Returns the names.
-   *
-   * @return  names
-   */
+  @Override
   public String[] getNames()
   {
     return names;

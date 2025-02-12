@@ -26,7 +26,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public final class DITContentRule extends AbstractNamedSchemaElement
+public final class DITContentRule extends AbstractNamedSchemaElement<String>
 {
 
   /** hash code seed. */
@@ -95,6 +95,13 @@ public final class DITContentRule extends AbstractNamedSchemaElement
     setExtensions(extensions);
   }
   // CheckStyle:ParameterNumber|HiddenField ON
+
+
+  @Override
+  public String getElementKey()
+  {
+    return getOID();
+  }
 
 
   /**

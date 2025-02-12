@@ -137,10 +137,10 @@ public final class SchemaFactory
       attr -> schema.setAttributeTypes(attr.getValues(new AttributeTypeValueTranscoder().decoder())));
     schemaEntry.processAttribute(
       DIT_CONTENT_RULES_ATTR_NAME,
-      attr -> schema.setDitContentRules(attr.getValues(new DITContentRuleValueTranscoder().decoder())));
+      attr -> schema.setDITContentRules(attr.getValues(new DITContentRuleValueTranscoder().decoder())));
     schemaEntry.processAttribute(
       DIT_STRUCTURE_RULES_ATTR_NAME,
-      attr -> schema.setDitStructureRules(attr.getValues(new DITStructureRuleValueTranscoder().decoder())));
+      attr -> schema.setDITStructureRules(attr.getValues(new DITStructureRuleValueTranscoder().decoder())));
     schemaEntry.processAttribute(
       LDAP_SYNTAXES_ATTR_NAME,
       attr -> schema.setSyntaxes(attr.getValues(new SyntaxValueTranscoder().decoder())));
