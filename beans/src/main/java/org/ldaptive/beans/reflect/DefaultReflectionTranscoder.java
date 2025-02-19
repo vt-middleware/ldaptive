@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.ldaptive.transcode.BigIntegerValueTranscoder;
 import org.ldaptive.transcode.BooleanValueTranscoder;
 import org.ldaptive.transcode.ByteArrayValueTranscoder;
 import org.ldaptive.transcode.CertificateValueTranscoder;
@@ -144,6 +145,7 @@ public class DefaultReflectionTranscoder implements ReflectionTranscoder
     transcoders.add(new SingleValueReflectionTranscoder<>(new CertificateValueTranscoder()));
     transcoders.add(new SingleValueReflectionTranscoder<>(new GeneralizedTimeValueTranscoder()));
     transcoders.add(new SingleValueReflectionTranscoder<>(new UUIDValueTranscoder()));
+    transcoders.add(new SingleValueReflectionTranscoder<>(new BigIntegerValueTranscoder()));
     return transcoders;
   }
 
