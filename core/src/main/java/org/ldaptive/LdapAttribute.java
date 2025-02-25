@@ -120,7 +120,7 @@ public class LdapAttribute extends AbstractFreezable
       throw new IllegalArgumentException("Attribute type cannot be null");
     }
     attributeName = type;
-    if (getOptions().contains("binary") || Stream.of(BINARY_ATTRIBUTES).anyMatch(attributeName::equals)) {
+    if (getOptions().contains("binary") || Stream.of(BINARY_ATTRIBUTES).anyMatch(attributeName::equalsIgnoreCase)) {
       setBinary(true);
     }
   }
