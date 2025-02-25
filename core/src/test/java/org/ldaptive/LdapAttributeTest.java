@@ -601,7 +601,7 @@ public class LdapAttributeTest
     assertThat(la2)
       .isEqualTo(LdapAttribute.builder().name("jpegPhoto").values("image1".getBytes(), "image2".getBytes()).build());
 
-    la2.merge(LdapAttribute.builder().name("jpegphoto").values("image3").binary(false).build());
+    la2.merge(LdapAttribute.builder().name("jpegphoto").binary(false).values("image3").build());
     assertThat(la2)
       .isEqualTo(
         LdapAttribute.builder()
