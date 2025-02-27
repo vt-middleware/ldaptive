@@ -609,4 +609,26 @@ public class LdapAttributeTest
           .values("image1".getBytes(), "image2".getBytes(), "image3".getBytes())
           .build());
   }
+
+
+  /** Test for toString method. */
+  @Test
+  public void testToString()
+  {
+    assertThat(LdapAttribute.builder()
+      .name("cn").values("William Wallace", "Bill Wallace").build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@-1809968692::name=cn, values=[William Wallace, Bill Wallace], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("cn").binary(true).values("William Wallace".getBytes(), "Bill Wallace".getBytes()).build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@-1809968692::" +
+          "name=cn, values=[V2lsbGlhbSBXYWxsYWNl, QmlsbCBXYWxsYWNl], binary=true");
+
+    assertThat(LdapAttribute.builder()
+      .name("jpegPhoto").values("image".getBytes()).build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@-1523536282::name=jpegPhoto, values=[aW1hZ2U=], binary=true");
+  }
 }
