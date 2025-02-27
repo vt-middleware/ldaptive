@@ -88,7 +88,8 @@ public class EDirectoryAuthenticationResponseHandlerTest extends AbstractAuthent
             "",
             LdapAttribute.builder()
               .name("passwordExpirationTime")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(10)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(10)))
               .build()),
           new EDirectoryAccountState(
             ZonedDateTime.now(clock)
@@ -105,7 +106,8 @@ public class EDirectoryAuthenticationResponseHandlerTest extends AbstractAuthent
             "",
             LdapAttribute.builder()
               .name("passwordExpirationTime")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(10)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(10)))
               .build(),
           LdapAttribute.builder().name("loginGraceRemaining").values("3").build()),
           new EDirectoryAccountState(
@@ -123,7 +125,8 @@ public class EDirectoryAuthenticationResponseHandlerTest extends AbstractAuthent
             "",
             LdapAttribute.builder()
               .name("passwordExpirationTime")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(10)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(10)))
               .build()),
           null,
         },
@@ -135,7 +138,8 @@ public class EDirectoryAuthenticationResponseHandlerTest extends AbstractAuthent
             "",
             LdapAttribute.builder()
               .name("passwordExpirationTime")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(4)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(4)))
               .build()),
           new EDirectoryAccountState(
             ZonedDateTime.now(clock)
@@ -152,7 +156,8 @@ public class EDirectoryAuthenticationResponseHandlerTest extends AbstractAuthent
             "",
             LdapAttribute.builder()
               .name("passwordExpirationTime")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(10)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(10)))
               .build(),
           LdapAttribute.builder().name("loginGraceRemaining").values("3").build()),
           null,
@@ -165,7 +170,8 @@ public class EDirectoryAuthenticationResponseHandlerTest extends AbstractAuthent
             "",
             LdapAttribute.builder()
               .name("passwordExpirationTime")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(4)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(4)))
               .build(),
           LdapAttribute.builder().name("loginGraceRemaining").values("3").build()),
           new EDirectoryAccountState(

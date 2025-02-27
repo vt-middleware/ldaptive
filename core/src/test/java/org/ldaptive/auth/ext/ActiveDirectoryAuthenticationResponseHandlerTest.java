@@ -79,7 +79,9 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("pwdLastSet")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(10)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(10)))
               .build()),
           null,
         },
@@ -91,7 +93,9 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("pwdLastSet")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(10)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(10)))
               .build()),
           new ActiveDirectoryAccountState(
             ZonedDateTime.now(clock)
@@ -108,7 +112,9 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("pwdLastSet")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(26)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(26)))
               .build()),
           new ActiveDirectoryAccountState(
             ZonedDateTime.now(clock)
@@ -125,7 +131,9 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("pwdLastSet")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(24)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(24)))
               .build()),
           null,
         },
@@ -137,7 +145,9 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("msDS-UserPasswordExpiryTimeComputed")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(13)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(13)))
               .build()),
           new ActiveDirectoryAccountState(
             ZonedDateTime.now(clock)
@@ -153,7 +163,9 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("msDS-UserPasswordExpiryTimeComputed")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(13)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(13)))
               .build()),
           new ActiveDirectoryAccountState(
             ZonedDateTime.now(clock)
@@ -169,11 +181,15 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("pwdLastSet")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(24)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(24)))
               .build(),
             LdapAttribute.builder()
               .name("msDS-UserPasswordExpiryTimeComputed")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(13)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(13)))
               .build()),
           new ActiveDirectoryAccountState(
             ZonedDateTime.now(clock)
@@ -190,11 +206,15 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("pwdLastSet")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(24)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(24)))
               .build(),
             LdapAttribute.builder()
               .name("msDS-UserPasswordExpiryTimeComputed")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(13)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(13)))
               .build()),
           new ActiveDirectoryAccountState(
             ZonedDateTime.now(clock)
@@ -210,7 +230,9 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("msDS-UserPasswordExpiryTimeComputed")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(4)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(4)))
               .build()),
           new ActiveDirectoryAccountState(
             ZonedDateTime.now(clock)
@@ -226,7 +248,9 @@ public class ActiveDirectoryAuthenticationResponseHandlerTest extends AbstractAu
             "",
             LdapAttribute.builder()
               .name("msDS-UserPasswordExpiryTimeComputed")
-              .values(new FileTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(13)))
+              .values(
+                new FileTimeValueTranscoder().encodeStringValue(
+                  ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(13)))
               .build()),
           null,
         },
