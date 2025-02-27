@@ -609,8 +609,27 @@ public class LdapAttribute extends AbstractFreezable
   {
     return getClass().getName() + "@" + hashCode() + "::" +
       "name=" + attributeName + ", " +
-      "values=" + getStringValues() + ", " +
+      "values=" + getEncodedAttributeValues() + ", " +
       "binary=" + binary;
+  }
+
+
+  /**
+   * Returns the attribute values base64 encoded if {@link Result#ENCODE_CNTRL_CHARS} is true. See
+   * {@link LdapUtils#shouldBase64Encode(byte[])}. Note that {@link #binary} attributes are base64 encoded by default.
+   *
+   * @return  encoded values
+   */
+  private Collection<String> getEncodedAttributeValues()
+  {
+    if (Result.ENCODE_CNTRL_CHARS && !binary) {
+      final boolean shouldBase64Encode = attributeValues.stream()
+        .anyMatch(av -> LdapUtils.shouldBase64Encode(av.value));
+      if (shouldBase64Encode) {
+        return attributeValues.stream().map(v -> v.getStringValue(true)).collect(Collectors.toUnmodifiableList());
+      }
+    }
+    return getStringValues();
   }
 
 

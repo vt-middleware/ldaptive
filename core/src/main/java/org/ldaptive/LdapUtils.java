@@ -16,7 +16,6 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.function.Predicate;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ldaptive.io.Hex;
 
@@ -46,9 +45,6 @@ public final class LdapUtils
   private static final Pattern IPV6_HEX_COMPRESSED_PATTERN = Pattern.compile(
     "^((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)::" +
     "((?:[0-9A-Fa-f]{1,4}(?::[0-9A-Fa-f]{1,4})*)?)$");
-
-  /** Pattern that matches control characters. */
-  private static final Pattern CNTRL_PATTERN = Pattern.compile("\\p{Cntrl}");
 
 
   /** Default constructor. */
@@ -282,23 +278,24 @@ public final class LdapUtils
    */
   public static String percentEncodeControlChars(final String value)
   {
-    if (value != null) {
-      final Matcher m = CNTRL_PATTERN.matcher(value);
-      if (m.find()) {
-        final StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < value.length(); i++) {
-          final char ch = value.charAt(i);
-          // CheckStyle:MagicNumber OFF
-          if (ch <= 0x1F || ch == 0x7F) {
-            sb.append('%').append(hexEncode((byte) (ch & 0x7F)));
-          } else {
-            sb.append(ch);
-          }
-          // CheckStyle:MagicNumber ON
-        }
-        return sb.toString();
-      }
+    if (value == null || value.isEmpty()) {
+      return value;
     }
+    // CheckStyle:MagicNumber OFF
+    final boolean hasControlChars = value.chars().anyMatch(c -> c <= 0x1F || c == 0x7F);
+    if (hasControlChars) {
+      final StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < value.length(); i++) {
+        final char ch = value.charAt(i);
+        if (ch <= 0x1F || ch == 0x7F) {
+          sb.append('%').append(hexEncode((byte) (ch & 0x7F)));
+        } else {
+          sb.append(ch);
+        }
+      }
+      return sb.toString();
+    }
+    // CheckStyle:MagicNumber ON
     return value;
   }
 
@@ -466,19 +463,106 @@ public final class LdapUtils
    */
   public static boolean shouldBase64Encode(final String value)
   {
-    return shouldBase64Encode(value.getBytes(StandardCharsets.UTF_8));
+    return shouldBase64Encode(value, false);
   }
 
 
   /**
-   * Determines whether the supplied value should be base64 encoded. See http://www.faqs.org/rfcs/rfc2849.html for more
-   * details.
+   * See {@link #shouldBase64Encode(byte[])}.
+   *
+   * @param  value  to inspect
+   * @param  strict  whether to strictly encode what RFC 2849 requires
+   *
+   * @return  whether the value should be base64 encoded
+   */
+  public static boolean shouldBase64Encode(final String value, final boolean strict)
+  {
+    if (value == null || value.isEmpty()) {
+      return false;
+    }
+
+    boolean encode = false;
+
+    // CheckStyle:MagicNumber OFF
+    // check first char in value
+    switch (value.charAt(0)) {
+    // check for SP
+    case ' ':
+    // check for colon(:)
+    case ':':
+    // check for left arrow(<)
+    case '<':
+      encode = true;
+      break;
+    default:
+      break;
+    }
+
+    if (!encode) {
+      // check for SP at last char in value
+      if (value.charAt(value.length() - 1) == ' ') {
+        encode = true;
+      } else {
+        // check remaining chars in the value
+        int i = 0;
+        while (i < value.length()) {
+          final int codePoint = value.codePointAt(i);
+          if (codePoint <= 0x1F) {
+            switch (codePoint) {
+            // check for NUL
+            case 0x00:
+            // check for LF
+            case 0x0A:
+            // check for CR
+            case 0x0D:
+              encode = true;
+              break;
+            default:
+              if (!strict) {
+                encode = true;
+              }
+              break;
+            }
+          } else if (codePoint >= 0x7F && !strict) {
+            encode = true;
+          }
+          if (encode) {
+            break;
+          }
+          i += Character.charCount(codePoint);
+        }
+      }
+    }
+    // CheckStyle:MagicNumber ON
+
+    return encode;
+  }
+
+
+  /**
+   * Determines whether the supplied value should be base64 encoded. See {@link #shouldBase64Encode(byte[], boolean)}.
    *
    * @param  value  to inspect
    *
    * @return  whether the value should be base64 encoded
    */
   public static boolean shouldBase64Encode(final byte[] value)
+  {
+    return shouldBase64Encode(value, false);
+  }
+
+
+  /**
+   * Determines whether the supplied value should be base64 encoded. See http://www.faqs.org/rfcs/rfc2849.html for more
+   * details. A false strict flag will return true if the string contains a character outside of [0x20, 0x7F) that
+   * should not be encoded as defined by RFC 2849
+   *
+   * @param  value  to inspect
+   * @param  strict  whether to strictly encode what RFC 2849 requires
+   *
+   * @return  whether the value should be base64 encoded
+   */
+  public static boolean shouldBase64Encode(final byte[] value, final boolean strict)
   {
     if (value == null || value.length == 0) {
       return false;
@@ -488,7 +572,7 @@ public final class LdapUtils
 
     // CheckStyle:MagicNumber OFF
     // check first byte in value
-    switch (value[0] & 0xFF) {
+    switch (value[0]) {
     // check for SP
     case 0x20:
     // check for colon(:)
@@ -503,27 +587,29 @@ public final class LdapUtils
 
     if (!encode) {
       // check for SP at last byte in value
-      if ((value[value.length - 1] & 0xFF) == 0x20) {
+      if (value[value.length - 1] == 0x20) {
         encode = true;
       } else {
         // check remaining bytes in the value
         for (final byte b : value) {
-          switch (b & 0xFF) {
-          // check for NUL
-          case 0x00:
+          if (b >= 0x00 && b <= 0x1F) {
+            switch (b) {
+            // check for NUL
+            case 0x00:
             // check for LF
-          case 0x0A:
+            case 0x0A:
             // check for CR
-          case 0x0D:
-            encode = true;
-            break;
-
-          default:
-            // check for any character above 127
-            if ((b & 0x80) != 0x00) {
+            case 0x0D:
               encode = true;
+              break;
+            default:
+              if (!strict) {
+                encode = true;
+              }
+              break;
             }
-            break;
+          } else if ((b == 0x7F || (b & 0x80) != 0x00) && !strict) {
+            encode = true;
           }
           if (encode) {
             break;
