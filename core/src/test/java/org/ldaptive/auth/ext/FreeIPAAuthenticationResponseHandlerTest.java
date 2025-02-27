@@ -98,7 +98,8 @@ public class FreeIPAAuthenticationResponseHandlerTest extends AbstractAuthentica
             "",
             LdapAttribute.builder()
               .name("krbPasswordExpiration")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(10)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(10)))
               .build()),
           new FreeIPAAccountState(
             ZonedDateTime.now(clock)
@@ -116,7 +117,8 @@ public class FreeIPAAuthenticationResponseHandlerTest extends AbstractAuthentica
             LdapAttribute.builder().name("krbLoginFailedCount").values("3").build(),
             LdapAttribute.builder()
               .name("krbPasswordExpiration")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(10)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(10)))
               .build()),
           new FreeIPAAccountState(
             ZonedDateTime.now(clock)
@@ -133,7 +135,8 @@ public class FreeIPAAuthenticationResponseHandlerTest extends AbstractAuthentica
             "",
             LdapAttribute.builder()
               .name("krbLastPwdChange")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(14)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(14)))
               .build()),
           new FreeIPAAccountState(
             ZonedDateTime.now(clock)
@@ -151,7 +154,8 @@ public class FreeIPAAuthenticationResponseHandlerTest extends AbstractAuthentica
             LdapAttribute.builder().name("krbLoginFailedCount").values("3").build(),
             LdapAttribute.builder()
               .name("krbLastPwdChange")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(14)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(14)))
               .build()),
           new FreeIPAAccountState(
             ZonedDateTime.now(clock)
@@ -169,7 +173,8 @@ public class FreeIPAAuthenticationResponseHandlerTest extends AbstractAuthentica
             LdapAttribute.builder().name("krbLoginFailedCount").values("3").build(),
             LdapAttribute.builder()
               .name("krbPasswordExpiration")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(10)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(10)))
               .build()),
           null,
         },
@@ -182,7 +187,8 @@ public class FreeIPAAuthenticationResponseHandlerTest extends AbstractAuthentica
             LdapAttribute.builder().name("krbLoginFailedCount").values("3").build(),
             LdapAttribute.builder()
               .name("krbPasswordExpiration")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).plusDays(4)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).plusDays(4)))
               .build()),
           new FreeIPAAccountState(
             ZonedDateTime.now(clock)
@@ -200,7 +206,8 @@ public class FreeIPAAuthenticationResponseHandlerTest extends AbstractAuthentica
             LdapAttribute.builder().name("krbLoginFailedCount").values("3").build(),
             LdapAttribute.builder()
               .name("krbLastPwdChange")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(14)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(14)))
               .build()),
           null,
         },
@@ -213,7 +220,8 @@ public class FreeIPAAuthenticationResponseHandlerTest extends AbstractAuthentica
             LdapAttribute.builder().name("krbLoginFailedCount").values("3").build(),
             LdapAttribute.builder()
               .name("krbLastPwdChange")
-              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(ZonedDateTime.now(clock).minusDays(26)))
+              .values(new GeneralizedTimeValueTranscoder().encodeStringValue(
+                ZonedDateTime.now(clock).withZoneSameInstant(ZoneId.of("Z")).minusDays(26)))
               .build()),
           new FreeIPAAccountState(
             ZonedDateTime.now(clock)
