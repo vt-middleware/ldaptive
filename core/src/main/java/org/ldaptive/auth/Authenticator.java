@@ -390,6 +390,9 @@ public final class Authenticator extends AbstractFreezable
       }
     }
 
+    if (response == null) {
+      throw new IllegalStateException("Authentication response is null");
+    }
     logger.info("Authentication {} for dn: {}", response.isSuccess() ? "succeeded" : "failed", dn);
 
     final AuthenticationResponse authResponse = new AuthenticationResponse(response, dn, entry);

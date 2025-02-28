@@ -12,10 +12,10 @@
         <ignoreVersion type="regex">^5.*$</ignoreVersion>
       </ignoreVersions>
     </rule>
-    <!-- Pin this project to springframework v5  -->
+    <!-- Pin this project to springframework v6  -->
     <rule groupId="org.springframework">
       <ignoreVersions>
-        <ignoreVersion type="regex">^6.*$</ignoreVersion>
+        <ignoreVersion type="regex">^7.*$</ignoreVersion>
       </ignoreVersions>
     </rule>
     <!-- Pin this project to slf4j v2.0  -->
