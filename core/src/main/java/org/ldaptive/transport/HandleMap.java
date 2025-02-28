@@ -51,7 +51,7 @@ public final class HandleMap
   private final Semaphore throttle;
 
   /** Whether this queue is currently accepting new handles. */
-  private boolean open;
+  private volatile boolean open;
 
 
   /**

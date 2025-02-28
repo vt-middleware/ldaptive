@@ -136,7 +136,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   private Instant abandonedTime;
 
   /** Whether this handle has consumed any messages. */
-  private boolean consumedMessage;
+  private volatile boolean consumedMessage;
 
   /** Protocol response result. */
   private S result;

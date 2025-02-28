@@ -37,12 +37,6 @@
     <Bug pattern="DMI_RANDOM_USED_ONLY_ONCE" />
   </Match>
 
-  <!-- Instance is a static final variable, access does not need to be synchronized -->
-  <Match>
-    <Class name="org.ldaptive.LdapURLActivatorService" />
-    <Bug pattern="SING_SINGLETON_GETTER_NOT_SYNCHRONIZED" />
-  </Match>
-
   <!-- Inconsistent synchronization -->
   <Match>
     <!-- access to the complete method is synchronized, not access to the connection -->
@@ -55,31 +49,11 @@
     <Bug pattern="IS2_INCONSISTENT_SYNC" />
   </Match>
 
-  <!-- Duplicate code is more readable here -->
-  <Match>
-    <Class name="org.ldaptive.transport.netty.NettyTransportFactory" />
-    <Bug pattern="DB_DUPLICATE_BRANCHES" />
-  </Match>
-
-  <!-- Need to catch all exceptions in order to report back to the handle -->
-  <Match>
-    <Class name="org.ldaptive.transport.netty.NettyConnection" />
-    <Method name="write" />
-    <Bug pattern="REC_CATCH_EXCEPTION" />
-  </Match>
-
   <!-- Return value isn't needed -->
   <Match>
     <Class name="org.ldaptive.beans.generate.BeanGenerator" />
     <Method name="write" />
     <Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" />
-  </Match>
-
-  <!-- Authentication response cannot be null -->
-  <Match>
-    <Class name="org.ldaptive.auth.Authenticator" />
-    <Method name="authenticate" />
-    <Bug pattern="NP_NULL_ON_SOME_PATH" />
   </Match>
 
   <!-- Cannot cleanup null object -->
@@ -89,4 +63,17 @@
     <Bug pattern="OBL_UNSATISFIED_OBLIGATION_EXCEPTION_EDGE" />
   </Match>
 
+  <!-- Primitives should not be mutated once they are initialized -->
+  <Match>
+    <Class name="org.ldaptive.SingleConnectionFactory" />
+    <Bug pattern="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" />
+  </Match>
+  <Match>
+    <Class name="org.ldaptive.AbstractConnectionValidator" />
+    <Bug pattern="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" />
+  </Match>
+  <Match>
+    <Class name="org.ldaptive.pool.AbstractConnectionPool" />
+    <Bug pattern="AT_STALE_THREAD_WRITE_OF_PRIMITIVE" />
+  </Match>
 </FindBugsFilter>
