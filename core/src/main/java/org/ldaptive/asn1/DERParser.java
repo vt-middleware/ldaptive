@@ -56,6 +56,9 @@ public class DERParser
    */
   public void parse(final DERBuffer encoded)
   {
+    if (encoded == null) {
+      throw new IllegalArgumentException("Buffer cannot be null");
+    }
     parseTags(encoded);
   }
 
@@ -70,6 +73,9 @@ public class DERParser
    */
   public DERTag readTag(final DERBuffer encoded)
   {
+    if (encoded == null) {
+      throw new IllegalArgumentException("Buffer cannot be null");
+    }
     if (encoded.position() >= encoded.limit()) {
       return null;
     }
@@ -119,19 +125,26 @@ public class DERParser
    */
   public int readLength(final DERBuffer encoded)
   {
-    int length = 0;
+    if (encoded == null) {
+      throw new IllegalArgumentException("Buffer cannot be null");
+    }
+    final int length;
     final byte b = encoded.get();
     // CheckStyle:MagicNumber OFF
     if ((b & 0x80) == 0x80) {
       final int len = b & 0x7F;
-      if (len > 0) {
-        final int limit = encoded.limit();
-        encoded.limit(encoded.position() + len);
-        length = IntegerType.decodeUnsignedPrimitive(encoded);
-        encoded.limit(limit);
+      if (len < 1 || len > 4) {
+        throw new IllegalArgumentException("Invalid length: " + len + " at position " + encoded.position());
       }
+      final int limit = encoded.limit();
+      encoded.limit(encoded.position() + len);
+      length = IntegerType.decodeUnsignedPrimitive(encoded);
+      encoded.limit(limit);
     } else {
       length = b;
+    }
+    if (length < 0) {
+      throw new IllegalArgumentException("Invalid length: " + length + " at position " + encoded.position());
     }
     // CheckStyle:MagicNumber ON
     return length;

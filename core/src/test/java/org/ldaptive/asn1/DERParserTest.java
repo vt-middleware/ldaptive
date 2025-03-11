@@ -365,6 +365,28 @@ public class DERParserTest
     return
       new Object[][] {
         new Object[] {
+          // no length
+          new DefaultDERBuffer(new byte[] {0x30}),
+        },
+        new Object[] {
+          // multi-byte length too short
+          new DefaultDERBuffer(new byte[] {0x30, (byte) 0x80}),
+        },
+        new Object[] {
+          // multi-byte length too long
+          new DefaultDERBuffer(new byte[] {0x30, (byte) 0x85}),
+        },
+        new Object[] {
+          // partial multi-byte length
+          new DefaultDERBuffer(new byte[] {0x30, (byte) 0x81}),
+        },
+        new Object[] {
+          // invalid length
+          new DefaultDERBuffer(
+            new byte[] {
+              (byte) 0x80, (byte) 0x80, (byte) 0x80, (byte) 0x80, 0x0A}),
+        },
+        new Object[] {
           // unknown tag
           new DefaultDERBuffer(
             new byte[] {(byte) 0xFF, 0x00}),
