@@ -52,7 +52,7 @@ public abstract class AbstractRequestMessage implements Request
 
   public void setControls(final RequestControl... cntrls)
   {
-    controls = cntrls;
+    controls = LdapUtils.assertNotContainsNullArg(cntrls, "Controls cannot contain null");
   }
 
 
@@ -74,9 +74,7 @@ public abstract class AbstractRequestMessage implements Request
    */
   public void setResponseTimeout(final Duration time)
   {
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Response timeout cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Response timeout cannot be null or negative");
     responseTimeout = time;
   }
 

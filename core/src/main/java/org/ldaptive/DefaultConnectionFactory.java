@@ -42,7 +42,7 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
    */
   public DefaultConnectionFactory(final Transport t)
   {
-    transport = t;
+    transport = LdapUtils.assertNotNullArg(t, "Transport cannot be null");
   }
 
 
@@ -93,7 +93,7 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
    */
   public DefaultConnectionFactory(final ConnectionConfig cc, final Transport t)
   {
-    transport = t;
+    transport = LdapUtils.assertNotNullArg(t, "Transport cannot be null");
     setConnectionConfig(cc);
   }
 
@@ -122,9 +122,7 @@ public class DefaultConnectionFactory extends AbstractFreezable implements Conne
   public void setConnectionConfig(final ConnectionConfig cc)
   {
     assertMutable();
-    if (cc == null) {
-      throw new IllegalArgumentException("Connection config cannot be null");
-    }
+    LdapUtils.assertNotNullArg(cc, "Connection config cannot be null");
     config = cc;
     config.freeze();
   }

@@ -24,7 +24,7 @@ public class LdapURLRetryMetadata extends AbstractRetryMetadata
   LdapURLRetryMetadata(final Clock clock, final ConnectionStrategy strategy)
   {
     super(clock);
-    connectionStrategy = strategy;
+    connectionStrategy = LdapUtils.assertNotNullArg(strategy, "Connection strategy cannot be null");
   }
 
 

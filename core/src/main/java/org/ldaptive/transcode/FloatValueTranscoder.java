@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transcode;
 
+import org.ldaptive.LdapUtils;
+
 /**
  * Decodes and encodes a float for use in an ldap attribute value.
  *
@@ -28,7 +30,7 @@ public class FloatValueTranscoder extends AbstractPrimitiveValueTranscoder<Float
   @Override
   public Float decodeStringValue(final String value)
   {
-    return Float.valueOf(value);
+    return Float.valueOf(LdapUtils.assertNotNullArg(value, "Value cannot be null"));
   }
 
 

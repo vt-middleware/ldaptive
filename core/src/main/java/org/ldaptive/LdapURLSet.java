@@ -29,6 +29,7 @@ public final class LdapURLSet
    */
   public LdapURLSet(final ConnectionStrategy strategy, final String ldapUrls)
   {
+    LdapUtils.assertNotNullArg(strategy, "Connection strategy cannot be null");
     strategy.populate(ldapUrls, this);
   }
 

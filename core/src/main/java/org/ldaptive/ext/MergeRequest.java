@@ -9,6 +9,7 @@ import java.util.function.Function;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.LdapUtils;
 
 /**
  * Contains the data required to perform a merge operation.
@@ -86,7 +87,7 @@ public class MergeRequest
    */
   public void setEntry(final LdapEntry entry)
   {
-    ldapEntry = entry;
+    ldapEntry = LdapUtils.assertNotNullArg(entry, "LDAP entry cannot be null");
   }
 
 

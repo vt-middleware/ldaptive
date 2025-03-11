@@ -84,12 +84,10 @@ public abstract class AbstractSSLContextInitializer implements SSLContextInitial
    */
   protected TrustManager[] aggregateTrustManagers(final TrustManager... managers)
   {
-    X509TrustManager[] x509Managers = null;
-    if (managers != null) {
-      x509Managers = new X509TrustManager[managers.length];
-      for (int i = 0; i < managers.length; i++) {
-        x509Managers[i] = (X509TrustManager) managers[i];
-      }
+    LdapUtils.assertNotNullArg(managers, "Trust managers cannot be null");
+    final X509TrustManager[] x509Managers = new X509TrustManager[managers.length];
+    for (int i = 0; i < managers.length; i++) {
+      x509Managers[i] = (X509TrustManager) managers[i];
     }
     return new TrustManager[] {new AggregateTrustManager(x509Managers)};
   }

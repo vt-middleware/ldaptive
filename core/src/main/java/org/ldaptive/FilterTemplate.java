@@ -71,7 +71,7 @@ public class FilterTemplate
    */
   public void setFilter(final String filter)
   {
-    searchFilter = filter;
+    searchFilter = LdapUtils.assertNotNullArg(filter, "Filter cannot be null");
   }
 
 
@@ -131,9 +131,7 @@ public class FilterTemplate
    */
   public String format()
   {
-    if (searchFilter == null) {
-      throw new IllegalStateException("Search filter cannot be null");
-    }
+    LdapUtils.assertNotNullState(searchFilter, "Search filter cannot be null");
     String filter = searchFilter;
     if (!parameters.isEmpty()) {
       for (Map.Entry<String, Object> e : parameters.entrySet()) {

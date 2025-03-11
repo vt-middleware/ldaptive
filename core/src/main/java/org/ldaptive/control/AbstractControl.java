@@ -30,7 +30,7 @@ public abstract class AbstractControl implements Control
    */
   public AbstractControl(final String id)
   {
-    oid = id;
+    oid = LdapUtils.assertNotNullArgOr(id, String::isEmpty, "Control ID cannot be null or empty");
     criticality = false;
   }
 
@@ -43,7 +43,7 @@ public abstract class AbstractControl implements Control
    */
   public AbstractControl(final String id, final boolean b)
   {
-    oid = id;
+    oid = LdapUtils.assertNotNullArgOr(id, String::isEmpty, "Control ID cannot be null or empty");
     criticality = b;
   }
 

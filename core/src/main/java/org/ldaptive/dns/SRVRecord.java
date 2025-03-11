@@ -39,6 +39,7 @@ public class SRVRecord
    */
   public SRVRecord(final String record, final boolean ssl)
   {
+    LdapUtils.assertNotNullArg(record, "SRV record cannot be null");
     final String[] parts = record.split(" ");
     int i = 0;
     priority = Long.parseLong(parts[i++]);

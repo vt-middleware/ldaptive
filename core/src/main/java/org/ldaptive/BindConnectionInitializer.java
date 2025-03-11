@@ -189,14 +189,14 @@ public class BindConnectionInitializer extends AbstractFreezable implements Conn
         result = c.operation(new DigestMD5BindRequest(
           bindDn,
           bindSaslConfig.getAuthorizationId(),
-          bindCredential != null ? bindCredential.getString() : null,
+          LdapUtils.assertNotNullArg(bindCredential, "DigestMD5 bind credential cannot be null").getString(),
           bindSaslConfig.getRealm(),
           DigestMD5BindRequest.createProperties(bindSaslConfig)));
         break;
       case CRAM_MD5:
         result = c.operation(new CramMD5BindRequest(
           bindDn,
-          bindCredential != null ? bindCredential.getString() : null));
+          LdapUtils.assertNotNullArg(bindCredential, "CramMD5 bind credential cannot be null").getString()));
         break;
       case GSSAPI:
         result = c.operation(new GssApiBindRequest(

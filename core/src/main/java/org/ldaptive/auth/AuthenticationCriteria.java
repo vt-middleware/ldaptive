@@ -2,6 +2,7 @@
 package org.ldaptive.auth;
 
 import org.ldaptive.Credential;
+import org.ldaptive.LdapUtils;
 
 /**
  * Contains the properties used to perform authentication.
@@ -29,7 +30,7 @@ public class AuthenticationCriteria
    */
   public AuthenticationCriteria(final String dn)
   {
-    authenticationDn = dn;
+    setDn(dn);
   }
 
 
@@ -41,8 +42,8 @@ public class AuthenticationCriteria
    */
   public AuthenticationCriteria(final String dn, final AuthenticationRequest request)
   {
-    authenticationDn = dn;
-    authenticationRequest = request;
+    setDn(dn);
+    setAuthenticationRequest(request);
   }
 
 
@@ -64,7 +65,7 @@ public class AuthenticationCriteria
    */
   public void setDn(final String dn)
   {
-    authenticationDn = dn;
+    authenticationDn = LdapUtils.assertNotNullArg(dn, "DN cannot be null");
   }
 
 
@@ -97,7 +98,7 @@ public class AuthenticationCriteria
    */
   public void setAuthenticationRequest(final AuthenticationRequest request)
   {
-    authenticationRequest = request;
+    authenticationRequest = LdapUtils.assertNotNullArg(request, "Authentication request cannot be null");
   }
 
 

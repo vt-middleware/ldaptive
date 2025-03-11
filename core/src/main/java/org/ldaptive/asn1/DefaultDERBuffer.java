@@ -2,6 +2,7 @@
 package org.ldaptive.asn1;
 
 import java.nio.ByteBuffer;
+import org.ldaptive.LdapUtils;
 
 /**
  * {@link DERBuffer} that uses a {@link ByteBuffer}.
@@ -33,7 +34,7 @@ public class DefaultDERBuffer implements DERBuffer
    */
   public DefaultDERBuffer(final ByteBuffer buf)
   {
-    buffer = buf;
+    buffer = LdapUtils.assertNotNullArg(buf, "Buffer cannot be null");
   }
 
 
@@ -46,7 +47,7 @@ public class DefaultDERBuffer implements DERBuffer
    */
   public DefaultDERBuffer(final ByteBuffer buf, final int pos, final int lim)
   {
-    buffer = buf;
+    buffer = LdapUtils.assertNotNullArg(buf, "Buffer cannot be null");
     buffer.position(pos);
     buffer.limit(lim);
   }

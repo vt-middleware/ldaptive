@@ -330,9 +330,9 @@ public class DirSyncControl extends AbstractResponseControl implements RequestCo
   {
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      new IntegerType(BigInteger.valueOf(getFlags())),
-      new IntegerType(getMaxAttributeCount()),
-      new OctetStringType(getCookie() != null ? getCookie() : EMPTY_COOKIE));
+      new IntegerType(BigInteger.valueOf(flags)),
+      new IntegerType(maxAttributeCount),
+      new OctetStringType(cookie != null ? cookie : EMPTY_COOKIE));
     return se.encode();
   }
 

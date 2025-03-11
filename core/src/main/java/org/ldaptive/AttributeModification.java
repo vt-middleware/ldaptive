@@ -47,8 +47,9 @@ public class AttributeModification
    */
   public AttributeModification(final Type type, final LdapAttribute attr)
   {
-    operation = type;
-    attribute = attr;
+    operation = LdapUtils.assertNotNullArg(type, "Modification type cannot be null");
+    attribute = LdapUtils.assertNotNullArgOr(
+      attr, a -> a.getName() == null, "Modification attribute cannot be null or have a null name");
   }
 
 

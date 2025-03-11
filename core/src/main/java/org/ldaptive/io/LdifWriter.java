@@ -32,7 +32,7 @@ public class LdifWriter implements SearchResultWriter
    */
   public LdifWriter(final Writer writer)
   {
-    ldifWriter = writer;
+    ldifWriter = LdapUtils.assertNotNullArg(writer, "Writer cannot be null");
   }
 
 

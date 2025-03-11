@@ -21,7 +21,7 @@ public class MergeResultHandler implements SearchResultHandler
   @Override
   public SearchResponse apply(final SearchResponse searchResponse)
   {
-    return merge(searchResponse);
+    return merge(LdapUtils.assertNotNullArg(searchResponse, "Search response cannot be null"));
   }
 
 

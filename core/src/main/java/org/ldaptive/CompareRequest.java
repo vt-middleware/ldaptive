@@ -50,9 +50,9 @@ public class CompareRequest extends AbstractRequestMessage
    */
   public CompareRequest(final String dn, final String name, final String value)
   {
-    ldapDn = dn;
-    attributeDesc = name;
-    assertionValue = value;
+    setDn(dn);
+    setName(name);
+    setValue(value);
   }
 
 
@@ -74,7 +74,7 @@ public class CompareRequest extends AbstractRequestMessage
    */
   public void setDn(final String dn)
   {
-    ldapDn = dn;
+    ldapDn = LdapUtils.assertNotNullArg(dn, "LDAP DN cannot be null");
   }
 
 
@@ -96,7 +96,7 @@ public class CompareRequest extends AbstractRequestMessage
    */
   public void setName(final String name)
   {
-    attributeDesc = name;
+    attributeDesc = LdapUtils.assertNotNullArg(name, "Attribute name cannot be null");
   }
 
 
@@ -118,7 +118,7 @@ public class CompareRequest extends AbstractRequestMessage
    */
   public void setValue(final String value)
   {
-    assertionValue = value;
+    assertionValue = LdapUtils.assertNotNullArg(value, "Assertion value cannot be null");
   }
 
 

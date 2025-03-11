@@ -84,7 +84,7 @@ public class OctetStringType extends AbstractDERType implements DEREncoder
    * @param  encoded  buffer containing DER-encoded data where the buffer is positioned at the start of string bytes and
    *                  the limit is set beyond the last byte of string data.
    *
-   * @return  decoded bytes as an string
+   * @return  decoded bytes as a string
    */
   public static String decode(final DERBuffer encoded)
   {

@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -163,16 +164,14 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public final void setDn(final String dn)
   {
     assertMutable();
-    ldapDn = dn;
-    if (ldapDn != null) {
-      try {
-        parsedDn = new Dn(ldapDn);
-      } catch (Exception e) {
-        parsedDn = null;
-      }
-      if (parsedDn != null) {
-        normalizedDn = parsedDn.format();
-      }
+    ldapDn = LdapUtils.assertNotNullArg(dn, "DN cannot be null");
+    try {
+      parsedDn = new Dn(ldapDn);
+    } catch (Exception e) {
+      parsedDn = null;
+    }
+    if (parsedDn != null) {
+      normalizedDn = parsedDn.format();
     }
   }
 
@@ -452,6 +451,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void addAttributes(final LdapAttribute... attrs)
   {
     assertMutable();
+    LdapUtils.assertNotContainsNullArgOr(attrs, Objects::isNull, "Attributes cannot be null or contain null");
     for (LdapAttribute a : attrs) {
       attributes.put(LdapUtils.toLowerCase(a.getName(), false), a);
     }
@@ -466,6 +466,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void addAttributes(final Collection<LdapAttribute> attrs)
   {
     assertMutable();
+    LdapUtils.assertNotContainsNullArgOr(attrs, Objects::isNull, "Attributes cannot be null or contain null");
     attrs.forEach(a -> attributes.put(LdapUtils.toLowerCase(a.getName(), false), a));
   }
 
@@ -480,6 +481,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void mergeAttributes(final LdapAttribute... attrs)
   {
     assertMutable();
+    LdapUtils.assertNotContainsNullArgOr(attrs, Objects::isNull, "Attributes cannot be null or contain null");
     for (LdapAttribute a : attrs) {
       final String lowerName = LdapUtils.toLowerCase(a.getName(), false);
       if (!attributes.containsKey(lowerName)) {
@@ -501,6 +503,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void mergeAttributes(final Collection<LdapAttribute> attrs)
   {
     assertMutable();
+    LdapUtils.assertNotContainsNullArgOr(attrs, Objects::isNull, "Attributes cannot be null or contain null");
     attrs.forEach(a -> {
       final String lowerName = LdapUtils.toLowerCase(a.getName(), false);
       if (!attributes.containsKey(lowerName)) {
@@ -520,6 +523,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void removeAttribute(final String name)
   {
     assertMutable();
+    LdapUtils.assertNotNullArg(name, "Attribute name cannot be null");
     attributes.remove(LdapUtils.toLowerCase(name, false));
   }
 
@@ -532,6 +536,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void removeAttributes(final LdapAttribute... attrs)
   {
     assertMutable();
+    LdapUtils.assertNotContainsNullArgOr(attrs, Objects::isNull, "Attributes cannot be null or contain null");
     for (LdapAttribute a : attrs) {
       attributes.remove(LdapUtils.toLowerCase(a.getName(), false));
     }
@@ -546,6 +551,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public void removeAttributes(final Collection<LdapAttribute> attrs)
   {
     assertMutable();
+    LdapUtils.assertNotContainsNullArgOr(attrs, Objects::isNull, "Attributes cannot be null or contain null");
     attrs.forEach(a -> attributes.remove(LdapUtils.toLowerCase(a.getName(), false)));
   }
 
@@ -618,6 +624,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
    */
   public static LdapEntry copy(final LdapEntry entry)
   {
+    LdapUtils.assertNotNullArg(entry, "Entry cannot be null");
     final LdapEntry copy = new LdapEntry();
     copy.copyValues(entry);
     copy.ldapDn = entry.ldapDn;
@@ -639,6 +646,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
    */
   public static LdapEntry sort(final LdapEntry le)
   {
+    LdapUtils.assertNotNullArg(le, "Entry cannot be null");
     final LdapEntry sorted = new LdapEntry();
     sorted.copyValues(le);
     sorted.setDn(le.getDn());
@@ -681,6 +689,8 @@ public class LdapEntry extends AbstractMessage implements Freezable
   public static AttributeModification[] computeModifications(
     final LdapEntry source, final LdapEntry target, final boolean useReplace)
   {
+    LdapUtils.assertNotNullArg(source, "Source entry cannot be null");
+    LdapUtils.assertNotNullArg(target, "Target entry cannot be null");
     final List<AttributeModification> mods = new ArrayList<>();
     for (LdapAttribute sourceAttr : source.getAttributes()) {
       final LdapAttribute targetAttr = target.getAttribute(sourceAttr.getName());

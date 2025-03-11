@@ -272,10 +272,10 @@ public class SessionTrackingControl extends AbstractResponseControl implements R
   public byte[] encode()
   {
     final List<DEREncoder> l = new ArrayList<>();
-    l.add(new OctetStringType(getSessionSourceIp()));
-    l.add(new OctetStringType(getSessionSourceName()));
-    l.add(new OctetStringType(getFormatOID()));
-    l.add(new OctetStringType(getSessionTrackingIdentifier()));
+    l.add(new OctetStringType(sessionSourceIp));
+    l.add(new OctetStringType(sessionSourceName));
+    l.add(new OctetStringType(formatOID));
+    l.add(new OctetStringType(sessionTrackingIdentifier));
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(UniversalDERTag.SEQ, l.toArray(new DEREncoder[0]));
     return se.encode();

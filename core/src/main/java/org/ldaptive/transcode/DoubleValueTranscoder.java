@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.transcode;
 
+import org.ldaptive.LdapUtils;
+
 /**
  * Decodes and encodes a double for use in an ldap attribute value.
  *
@@ -28,7 +30,7 @@ public class DoubleValueTranscoder extends AbstractPrimitiveValueTranscoder<Doub
   @Override
   public Double decodeStringValue(final String value)
   {
-    return Double.valueOf(value);
+    return Double.valueOf(LdapUtils.assertNotNullArg(value, "Value cannot be null"));
   }
 
 

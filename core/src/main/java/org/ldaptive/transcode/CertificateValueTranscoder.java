@@ -33,6 +33,7 @@ public class CertificateValueTranscoder implements ValueTranscoder<Certificate>
   @Override
   public Certificate decodeBinaryValue(final byte[] value)
   {
+    LdapUtils.assertNotNullArg(value, "Value cannot be null");
     try {
       final CertificateFactory cf = CertificateFactory.getInstance("X.509");
       return cf.generateCertificate(new ByteArrayInputStream(value));
@@ -52,6 +53,7 @@ public class CertificateValueTranscoder implements ValueTranscoder<Certificate>
   @Override
   public byte[] encodeBinaryValue(final Certificate value)
   {
+    LdapUtils.assertNotNullArg(value, "Value cannot be null");
     try {
       return value.getEncoded();
     } catch (CertificateEncodingException e) {

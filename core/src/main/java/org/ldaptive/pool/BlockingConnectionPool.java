@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import org.ldaptive.Connection;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapUtils;
 
 /**
  * Implements a pool of connections that has a set minimum and maximum size. The pool will not grow beyond the maximum
@@ -58,9 +59,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   public void setBlockWaitTime(final Duration time)
   {
     assertMutable();
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Block wait time cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Block wait time cannot be null or negative");
     blockWaitTime = time;
   }
 

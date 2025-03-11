@@ -70,8 +70,8 @@ public class ModifyDnRequest extends AbstractRequestMessage
    */
   public ModifyDnRequest(final String oldDN, final String newRDN, final boolean delete, final String newSuperior)
   {
-    oldModifyDn = oldDN;
-    newModifyRDn = newRDN;
+    oldModifyDn = LdapUtils.assertNotNullArg(oldDN, "old DN cannot be null");
+    newModifyRDn = LdapUtils.assertNotNullArg(newRDN, "new RDN cannot be null");
     deleteOldRDn = delete;
     newSuperiorDn = newSuperior;
   }

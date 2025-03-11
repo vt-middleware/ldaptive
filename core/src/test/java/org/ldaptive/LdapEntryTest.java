@@ -256,13 +256,13 @@ public class LdapEntryTest
       le.addAttributes(LdapAttribute.builder().build());
       fail("Should have thrown exception");
     } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
     try {
       le.addAttributes(List.of(LdapAttribute.builder().build()));
       fail("Should have thrown exception");
     } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     le.addAttributes(new LdapAttribute("sn", "Doe"));
@@ -298,13 +298,13 @@ public class LdapEntryTest
       le.removeAttributes(LdapAttribute.builder().build());
       fail("Should have thrown exception");
     } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
     try {
       le.removeAttributes(List.of(LdapAttribute.builder().build()));
       fail("Should have thrown exception");
     } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     le.removeAttributes(LdapAttribute.builder().name("displayName").values("John Doe").build());
@@ -905,7 +905,7 @@ public class LdapEntryTest
       entry.mergeAttributes(LdapAttribute.builder().build());
       fail("Should have thrown exception");
     } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
 
     entry.mergeAttributes(Collections.emptyList());

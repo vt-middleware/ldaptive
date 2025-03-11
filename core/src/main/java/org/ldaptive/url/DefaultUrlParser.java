@@ -18,9 +18,7 @@ public final class DefaultUrlParser implements UrlParser
   @Override
   public Url parse(final String url)
   {
-    if (url == null || url.isEmpty()) {
-      throw new IllegalArgumentException("LDAP URL cannot be empty or null");
-    }
+    LdapUtils.assertNotNullArgOr(url, String::isEmpty, "LDAP URL cannot be null or empty");
 
     int currentPos = url.indexOf("://");
     if (currentPos < 0) {
@@ -86,9 +84,7 @@ public final class DefaultUrlParser implements UrlParser
    */
   private static Object[] parseHostAndPort(final String hostAndPort)
   {
-    if (hostAndPort == null) {
-      throw new IllegalArgumentException("Host and port cannot be empty or null");
-    }
+    LdapUtils.assertNotNullArg(hostAndPort, "Host and port cannot be null or empty");
     if (hostAndPort.isEmpty()) {
       return new Object[] {null, -1};
     }

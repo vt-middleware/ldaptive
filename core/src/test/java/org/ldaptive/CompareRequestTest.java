@@ -68,25 +68,6 @@ public class CompareRequestTest
     assertThat(CompareRequest.builder().build())
       .asString()
       .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=null");
-    assertThat(new CompareRequest(null, null, null))
-      .asString()
-      .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=null");
-    assertThat(new CompareRequest("uid=1", null, null))
-      .asString()
-      .endsWith("::controls=null, responseTimeout=null, dn=uid=1, attributeDesc=null, assertionValue=null");
-    assertThat(new CompareRequest(null, "name", null))
-      .asString()
-      .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=name, assertionValue=null");
-    assertThat(new CompareRequest(null, null, "value"))
-      .asString()
-      .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=null, assertionValue=value");
-    assertThat(new CompareRequest(null, "name", "value"))
-      .asString()
-      .endsWith("::controls=null, responseTimeout=null, dn=null, attributeDesc=name, assertionValue=value");
-    assertThat(new CompareRequest(null, "userPassword", "password"))
-      .asString()
-      .endsWith(
-        "::controls=null, responseTimeout=null, dn=null, attributeDesc=userPassword, assertionValue=<suppressed>");
     assertThat(new CompareRequest("uid=1", "userPassword", "password"))
       .asString()
       .endsWith(

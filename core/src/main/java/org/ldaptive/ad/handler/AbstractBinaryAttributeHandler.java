@@ -44,10 +44,7 @@ public abstract class AbstractBinaryAttributeHandler<T> extends AbstractMessageF
   public void setAttributeName(final String name)
   {
     assertMutable();
-    if (name == null) {
-      throw new IllegalArgumentException("Attribute name cannot be null");
-    }
-    attributeName = name;
+    attributeName = LdapUtils.assertNotNullArg(name, "Attribute name cannot be null");
   }
 
 

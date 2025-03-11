@@ -2,6 +2,7 @@
 package org.ldaptive.dns;
 
 import java.util.function.Function;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.dn.Dn;
 import org.ldaptive.dn.RDn;
 
@@ -18,6 +19,7 @@ public class DNSDomainFunction implements Function<Dn, String>
   @Override
   public String apply(final Dn dn)
   {
+    LdapUtils.assertNotNullArg(dn, "DN cannot be null");
     final StringBuilder domain = new StringBuilder();
     for (RDn rdn : dn.getRDns()) {
       if (rdn.size() == 1 && rdn.getNameValue().hasName("DC")) {

@@ -116,9 +116,7 @@ public class LdapAttribute extends AbstractFreezable
   public final void setName(final String type)
   {
     assertMutable();
-    if (type == null) {
-      throw new IllegalArgumentException("Attribute type cannot be null");
-    }
+    LdapUtils.assertNotNullArg(type, "Attribute type cannot be null");
     attributeName = type;
     if (getOptions().contains("binary") || Stream.of(BINARY_ATTRIBUTES).anyMatch(attributeName::equalsIgnoreCase)) {
       setBinary(true);
@@ -307,7 +305,11 @@ public class LdapAttribute extends AbstractFreezable
   public void addBinaryValues(final byte[]... value)
   {
     assertMutable();
-    Stream.of(value).filter(Objects::nonNull).map(b -> new AttributeValue(b, true)).forEach(attributeValues::add);
+    LdapUtils.assertNotNullArgOr(
+      value,
+      v -> Stream.of(v).anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
+    Stream.of(value).map(b -> new AttributeValue(b, true)).forEach(attributeValues::add);
   }
 
 
@@ -319,7 +321,11 @@ public class LdapAttribute extends AbstractFreezable
   public void addBinaryValues(final Collection<byte[]> values)
   {
     assertMutable();
-    values.stream().filter(Objects::nonNull).map(b -> new AttributeValue(b, true)).forEach(attributeValues::add);
+    LdapUtils.assertNotNullArgOr(
+      values,
+      v -> v.stream().anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
+    values.stream().map(b -> new AttributeValue(b, true)).forEach(attributeValues::add);
   }
 
 
@@ -344,10 +350,11 @@ public class LdapAttribute extends AbstractFreezable
   public void addStringValues(final String... value)
   {
     assertMutable();
-    Stream.of(value)
-      .filter(Objects::nonNull)
-      .map(s -> AttributeValue.fromString(s, binary))
-      .forEach(attributeValues::add);
+    LdapUtils.assertNotNullArgOr(
+      value,
+      v -> Stream.of(v).anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
+    Stream.of(value).map(s -> AttributeValue.fromString(s, binary)).forEach(attributeValues::add);
   }
 
 
@@ -359,10 +366,11 @@ public class LdapAttribute extends AbstractFreezable
   public void addStringValues(final Collection<String> values)
   {
     assertMutable();
-    values.stream()
-      .filter(Objects::nonNull)
-      .map(s -> AttributeValue.fromString(s, binary))
-      .forEach(attributeValues::add);
+    LdapUtils.assertNotNullArgOr(
+      values,
+      v -> v.stream().anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
+    values.stream().map(s -> AttributeValue.fromString(s, binary)).forEach(attributeValues::add);
   }
 
 
@@ -377,8 +385,11 @@ public class LdapAttribute extends AbstractFreezable
   public <T> void addValues(final Function<T, byte[]> func, final T... value)
   {
     assertMutable();
+    LdapUtils.assertNotNullArgOr(
+      value,
+      v -> Stream.of(v).anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
     Stream.of(value)
-      .filter(Objects::nonNull)
       .map(func)
       .filter(Objects::nonNull)
       .map(b -> new AttributeValue(b, true))
@@ -397,8 +408,11 @@ public class LdapAttribute extends AbstractFreezable
   public <T> void addValues(final Function<T, byte[]> func, final Collection<T> values)
   {
     assertMutable();
+    LdapUtils.assertNotNullArgOr(
+      values,
+      v -> v.stream().anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
     values.stream()
-      .filter(Objects::nonNull)
       .map(func)
       .filter(Objects::nonNull)
       .map(b -> new AttributeValue(b, true))
@@ -426,10 +440,11 @@ public class LdapAttribute extends AbstractFreezable
   public void removeBinaryValues(final byte[]... value)
   {
     assertMutable();
-    Stream.of(value)
-      .filter(Objects::nonNull)
-      .map(b -> new AttributeValue(b, false))
-      .forEach(attributeValues::remove);
+    LdapUtils.assertNotNullArgOr(
+      value,
+      v -> Stream.of(v).anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
+    Stream.of(value).map(b -> new AttributeValue(b, false)).forEach(attributeValues::remove);
   }
 
 
@@ -441,10 +456,11 @@ public class LdapAttribute extends AbstractFreezable
   public void removeBinaryValues(final Collection<byte[]> values)
   {
     assertMutable();
-    values.stream()
-      .filter(Objects::nonNull)
-      .map(b -> new AttributeValue(b, false))
-      .forEach(attributeValues::remove);
+    LdapUtils.assertNotNullArgOr(
+      values,
+      v -> v.stream().anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
+    values.stream().map(b -> new AttributeValue(b, false)).forEach(attributeValues::remove);
   }
 
 
@@ -456,10 +472,11 @@ public class LdapAttribute extends AbstractFreezable
   public void removeStringValues(final String... value)
   {
     assertMutable();
-    Stream.of(value)
-      .filter(Objects::nonNull)
-      .map(s -> AttributeValue.fromString(s, binary))
-      .forEach(attributeValues::remove);
+    LdapUtils.assertNotNullArgOr(
+      value,
+      v -> Stream.of(v).anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
+    Stream.of(value).map(s -> AttributeValue.fromString(s, binary)).forEach(attributeValues::remove);
   }
 
 
@@ -471,10 +488,11 @@ public class LdapAttribute extends AbstractFreezable
   public void removeStringValues(final Collection<String> values)
   {
     assertMutable();
-    values.stream()
-      .filter(Objects::nonNull)
-      .map(s -> AttributeValue.fromString(s, binary))
-      .forEach(attributeValues::remove);
+    LdapUtils.assertNotNullArgOr(
+      values,
+      v -> v.stream().anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
+    values.stream().map(s -> AttributeValue.fromString(s, binary)).forEach(attributeValues::remove);
   }
 
 
@@ -489,8 +507,11 @@ public class LdapAttribute extends AbstractFreezable
   public <T> void removeValues(final Function<T, byte[]> func, final T... value)
   {
     assertMutable();
+    LdapUtils.assertNotNullArgOr(
+      value,
+      v -> Stream.of(v).anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
     Stream.of(value)
-      .filter(Objects::nonNull)
       .map(func)
       .filter(Objects::nonNull)
       .map(b -> new AttributeValue(b, false))
@@ -509,8 +530,11 @@ public class LdapAttribute extends AbstractFreezable
   public <T> void removeValues(final Function<T, byte[]> func, final Collection<T> values)
   {
     assertMutable();
+    LdapUtils.assertNotNullArgOr(
+      values,
+      v -> v.stream().anyMatch(Objects::isNull),
+      "Attribute values cannot be null or contain null");
     values.stream()
-      .filter(Objects::nonNull)
       .map(func)
       .filter(Objects::nonNull)
       .map(b -> new AttributeValue(b, false))
@@ -710,9 +734,7 @@ public class LdapAttribute extends AbstractFreezable
      */
     AttributeValue(final byte[] bytes, final boolean copy)
     {
-      if (bytes == null) {
-        throw new IllegalArgumentException("Attribute value cannot be null");
-      }
+      LdapUtils.assertNotNullArg(bytes, "Attribute value cannot be null");
       value = copy ? LdapUtils.copyArray(bytes) : bytes;
     }
 
@@ -742,6 +764,7 @@ public class LdapAttribute extends AbstractFreezable
      * Returns the value of this attribute value.
      *
      * @param copy whether to create a copy of the underlying value
+     *
      * @return value
      */
     byte[] getValue(final boolean copy)
@@ -754,6 +777,7 @@ public class LdapAttribute extends AbstractFreezable
      * Returns the value of this attribute value as a string.
      *
      * @param base64 whether value should be a base64 encoded string
+     *
      * @return string value
      */
     String getStringValue(final boolean base64)
@@ -766,6 +790,7 @@ public class LdapAttribute extends AbstractFreezable
      * Returns whether the supplied byte array equals this attribute value.
      *
      * @param bytes to compare
+     *
      * @return whether the supplied byte array equals this attribute value
      */
     boolean equalsValue(final byte[] bytes)
@@ -779,6 +804,7 @@ public class LdapAttribute extends AbstractFreezable
      *
      * @param string to compare
      * @param base64 whether the string is base64 encoded
+     *
      * @return whether the supplied string equals this attribute value
      */
     boolean equalsValue(final String string, final boolean base64)
@@ -793,6 +819,7 @@ public class LdapAttribute extends AbstractFreezable
      *
      * @param string to create attribute value from
      * @param base64 whether string should be base64 decoded
+     *
      * @return new attribute value
      */
     static AttributeValue fromString(final String string, final boolean base64)
@@ -822,6 +849,7 @@ public class LdapAttribute extends AbstractFreezable
      *
      * @param string       to decode
      * @param throwOnError whether throw if string cannot be decoded
+     *
      * @return base64 decoded bytes or null if throwOnError if false and string cannot be decoded
      */
     private static byte[] base64Decode(final String string, final boolean throwOnError)

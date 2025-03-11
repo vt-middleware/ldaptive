@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.schema.transcode.AttributeTypeValueTranscoder;
@@ -127,9 +128,7 @@ public final class SchemaFactory
    */
   public static Schema createSchema(final LdapEntry schemaEntry)
   {
-    if (schemaEntry == null) {
-      throw new IllegalArgumentException("Schema entry cannot be null");
-    }
+    LdapUtils.assertNotNullArg(schemaEntry, "Schema entry cannot be null");
 
     final Schema schema = new Schema();
     schemaEntry.processAttribute(

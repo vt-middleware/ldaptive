@@ -2,6 +2,7 @@
 package org.ldaptive.auth;
 
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.control.AuthorizationIdentityResponseControl;
@@ -24,6 +25,7 @@ public class AuthorizationIdentityEntryResolver extends AbstractSearchEntryResol
     final AuthenticationHandlerResponse response)
     throws LdapException
   {
+    LdapUtils.assertNotNullArg(response, "Authentication response cannot be null");
     final AuthorizationIdentityResponseControl ctrl = (AuthorizationIdentityResponseControl) response.getControl(
       AuthorizationIdentityResponseControl.OID);
     if (ctrl == null) {

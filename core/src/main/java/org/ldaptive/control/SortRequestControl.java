@@ -4,6 +4,7 @@ package org.ldaptive.control;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextType;
@@ -93,7 +94,7 @@ public class SortRequestControl extends AbstractControl implements RequestContro
    */
   public void setSortKeys(final SortKey[] keys)
   {
-    sortKeys = keys;
+    sortKeys = LdapUtils.assertNotContainsNullArgOr(keys, Objects::isNull, "Sort keys cannot be null or contain null");
   }
 
 
@@ -131,6 +132,7 @@ public class SortRequestControl extends AbstractControl implements RequestContro
   @Override
   public byte[] encode()
   {
+    LdapUtils.assertNotContainsNullStateOr(sortKeys, Objects::isNull, "Sort keys cannot be null or contain null");
     final DEREncoder[] keyEncoders = new DEREncoder[sortKeys.length];
     for (int i = 0; i < sortKeys.length; i++) {
       final List<DEREncoder> l = new ArrayList<>();

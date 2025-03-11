@@ -6,6 +6,7 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Result;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchOperationHandle;
@@ -92,7 +93,7 @@ public class SyncReplClient
    */
   public SyncReplClient(final ConnectionFactory cf, final boolean persist, final boolean hint)
   {
-    factory = cf;
+    factory = LdapUtils.assertNotNullArg(cf, "Connection factory cannot be null");
     refreshAndPersist = persist;
     reloadHint = hint;
   }

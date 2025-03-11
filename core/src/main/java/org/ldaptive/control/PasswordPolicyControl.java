@@ -420,7 +420,7 @@ public class PasswordPolicyControl extends AbstractResponseControl implements Re
      */
     private Warning(final WarningType type, final int i)
     {
-      warningType = type;
+      warningType = LdapUtils.assertNotNullArg(type, "Warning type cannot be null");
       value = i;
     }
 

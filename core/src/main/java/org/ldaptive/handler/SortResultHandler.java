@@ -19,6 +19,7 @@ public class SortResultHandler implements SearchResultHandler
   @Override
   public SearchResponse apply(final SearchResponse response)
   {
+    LdapUtils.assertNotNullArg(response, "Search response cannot be null");
     return SearchResponse.sort(response);
   }
 

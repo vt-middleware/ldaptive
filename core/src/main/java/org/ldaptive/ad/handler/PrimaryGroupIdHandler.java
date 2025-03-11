@@ -106,6 +106,7 @@ public class PrimaryGroupIdHandler extends AbstractMessageFunctionalEntryHandler
   @Override
   public SearchResponse apply(final SearchResponse response)
   {
+    LdapUtils.assertNotNullArg(response, "Search response cannot be null");
     response.getEntries().forEach(this::handleEntry);
     return response;
   }

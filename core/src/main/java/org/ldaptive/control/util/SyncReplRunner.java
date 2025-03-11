@@ -9,6 +9,7 @@ import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionValidator;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Result;
 import org.ldaptive.SearchConnectionValidator;
 import org.ldaptive.SearchRequest;
@@ -85,8 +86,8 @@ public final class SyncReplRunner
   public SyncReplRunner(final SingleConnectionFactory cf, final SearchRequest request, final CookieManager manager)
   {
     syncReplClient = new SyncReplClient(cf, true);
-    searchRequest = request;
-    cookieManager = manager;
+    searchRequest = LdapUtils.assertNotNullArg(request, "Search request cannot be null");
+    cookieManager = LdapUtils.assertNotNullArg(manager, "Cookie manager cannot be null");
     cf.setOnOpen(conn -> {
       try {
         syncReplClient.send(searchRequest, cookieManager);

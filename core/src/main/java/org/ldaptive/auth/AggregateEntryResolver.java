@@ -7,6 +7,7 @@ import java.util.Map;
 import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +96,8 @@ public final class AggregateEntryResolver extends AbstractFreezable implements E
   public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response)
     throws LdapException
   {
+    LdapUtils.assertNotNullArg(criteria, "Authentication criteria cannot be null");
+    LdapUtils.assertNotNullArg(criteria.getDn(), "Authentication criteria DN cannot be null");
     final String[] labeledDn = criteria.getDn().split(":", 2);
     final EntryResolver er = entryResolvers.get(labeledDn[0]);
     if (er == null) {

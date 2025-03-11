@@ -50,6 +50,9 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   /** Default max pool size, value is {@value}. */
   public static final int DEFAULT_MAX_POOL_SIZE = 10;
 
+  /** Allowed pool size for both max and min, value is {@value}. */
+  private static final int ALLOWED_POOL_SIZE = 65535;
+
   /** ID used for pool name. */
   private static final AtomicInteger POOL_ID = new AtomicInteger();
 
@@ -175,9 +178,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   public void setName(final String s)
   {
     assertMutable();
-    if (s == null) {
-      throw new IllegalArgumentException("Pool name cannot be null");
-    }
+    LdapUtils.assertNotNullArg(s, "Pool name cannot be null");
     logger.trace("setting name: {}", s);
     name = s;
   }
@@ -205,6 +206,9 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     assertMutable();
     if (size < 0) {
       throw new IllegalArgumentException("Minimum pool size must be greater than or equal to 0 for pool " + name);
+    }
+    if (size > ALLOWED_POOL_SIZE) {
+      throw new IllegalArgumentException("Minimum pool size cannot exceed " + ALLOWED_POOL_SIZE + " for pool " + name);
     }
     logger.trace("setting minPoolSize: {}", size);
     minPoolSize = size;
@@ -234,6 +238,9 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     // allow a max size of zero for configurations that need to create a pool but don't want it to function
     if (size < 0) {
       throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 0 for pool " + name);
+    }
+    if (size > ALLOWED_POOL_SIZE) {
+      throw new IllegalArgumentException("Maximum pool size cannot exceed " + ALLOWED_POOL_SIZE + " for pool " + name);
     }
     logger.trace("setting maxPoolSize: {}", size);
     maxPoolSize = size;
@@ -428,7 +435,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   {
     assertMutable();
     logger.trace("setting defaultConnectionFactory: {}", cf);
-    connectionFactory = cf;
+    connectionFactory = LdapUtils.assertNotNullArg(cf, "Connection factory cannot be null");
   }
 
 
@@ -477,7 +484,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   {
     assertMutable();
     logger.trace("setting queueType: {}", type);
-    queueType = type;
+    queueType = LdapUtils.assertNotNullArg(type, "Queue type cannot be null");
   }
 
 
@@ -552,6 +559,11 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     }
     if (passivator == null) {
       throw new IllegalStateException("No passivator configured for pool " + name);
+    }
+
+    if (maxPoolSize < minPoolSize) {
+      throw new IllegalStateException(
+        "Max pool size " + maxPoolSize + " must be greater than or equal to min pool size " + minPoolSize);
     }
 
     available = new Queue<>(queueType);

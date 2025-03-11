@@ -295,6 +295,8 @@ public abstract class AbstractSearchEntryResolver extends AbstractSearchOperatio
   public LdapEntry resolve(final AuthenticationCriteria criteria, final AuthenticationHandlerResponse response)
     throws LdapException
   {
+    LdapUtils.assertNotNullArg(criteria, "Authentication criteria cannot be null");
+    LdapUtils.assertNotNullArg(response, "Authentication response cannot be null");
     logger.trace("resolve criteria={}", criteria);
 
     final SearchResponse result = performLdapSearch(criteria, response);

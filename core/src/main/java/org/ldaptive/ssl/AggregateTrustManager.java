@@ -10,13 +10,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.X509ExtendedTrustManager;
 import javax.net.ssl.X509TrustManager;
+import org.ldaptive.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,15 +70,12 @@ public class AggregateTrustManager extends X509ExtendedTrustManager
    */
   public AggregateTrustManager(final Strategy strategy, final X509TrustManager... managers)
   {
-    Objects.requireNonNull(strategy, "Strategy cannot be null");
+    LdapUtils.assertNotNullArg(strategy, "Strategy cannot be null");
+    LdapUtils.assertNotNullArgOr(managers, m -> m.length == 0, "Trust managers cannot be null or empty");
     trustStrategy = strategy;
-    if (managers == null || managers.length == 0) {
-      throw new IllegalArgumentException("Trust managers cannot be empty or null");
-    }
     for (X509TrustManager tm : managers) {
-      if (tm.getAcceptedIssuers() == null) {
-        throw new IllegalArgumentException("Trust manager " + tm + " cannot return null accepted issuers");
-      }
+      LdapUtils.assertNotNullArg(
+        tm.getAcceptedIssuers(), "Trust manager " + tm + " cannot return null accepted issuers");
     }
     trustManagers = Stream.of(managers)
       .map(tm -> {

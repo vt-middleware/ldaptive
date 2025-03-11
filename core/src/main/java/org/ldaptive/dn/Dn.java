@@ -55,6 +55,7 @@ public final class Dn extends AbstractFreezable
    */
   public Dn(final String dn, final DnParser parser)
   {
+    LdapUtils.assertNotNullArg(parser, "DN parser cannot be null");
     rdnComponents.addAll(parser.parse(dn));
   }
 
@@ -66,7 +67,8 @@ public final class Dn extends AbstractFreezable
    */
   public Dn(final RDn... rdn)
   {
-    this(Arrays.asList(rdn));
+    this(
+      Arrays.asList(LdapUtils.assertNotContainsNullArgOr(rdn, Objects::isNull, "RDNs cannot be null or contain null")));
   }
 
 
@@ -77,7 +79,8 @@ public final class Dn extends AbstractFreezable
    */
   public Dn(final List<RDn> rdns)
   {
-    rdnComponents.addAll(rdns);
+    rdnComponents.addAll(
+      LdapUtils.assertNotContainsNullArgOr(rdns, Objects::isNull, "RDNs cannot be null or contain null"));
   }
 
 

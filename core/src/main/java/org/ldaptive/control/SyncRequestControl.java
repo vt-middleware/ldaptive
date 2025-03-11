@@ -187,7 +187,7 @@ public class SyncRequestControl extends AbstractControl implements RequestContro
    */
   public void setRequestMode(final Mode mode)
   {
-    requestMode = mode;
+    requestMode = LdapUtils.assertNotNullArg(mode, "Request mode cannot be null");
   }
 
 
@@ -273,18 +273,19 @@ public class SyncRequestControl extends AbstractControl implements RequestContro
   @Override
   public byte[] encode()
   {
+    LdapUtils.assertNotNullState(requestMode, "Request mode cannot be null");
     final ConstructedDEREncoder se;
-    if (getCookie() != null) {
+    if (cookie != null) {
       se = new ConstructedDEREncoder(
         UniversalDERTag.SEQ,
-        new IntegerType(getRequestMode().value()),
-        new OctetStringType(getCookie()),
-        new BooleanType(getReloadHint()));
+        new IntegerType(requestMode.value()),
+        new OctetStringType(cookie),
+        new BooleanType(reloadHint));
     } else {
       se = new ConstructedDEREncoder(
         UniversalDERTag.SEQ,
-        new IntegerType(getRequestMode().value()),
-        new BooleanType(getReloadHint()));
+        new IntegerType(requestMode.value()),
+        new BooleanType(reloadHint));
     }
     return se.encode();
   }

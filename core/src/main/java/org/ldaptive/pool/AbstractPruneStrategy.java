@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import org.ldaptive.AbstractFreezable;
+import org.ldaptive.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +41,8 @@ public abstract class AbstractPruneStrategy extends AbstractFreezable implements
   public void setPrunePeriod(final Duration period)
   {
     assertMutable();
-    if (period == null || period.isNegative() || period.isZero()) {
-      throw new IllegalArgumentException("Prune period cannot be null, negative or zero");
-    }
+    LdapUtils.assertNotNullArgOr(
+      period, p -> p.isNegative() || p.isZero(), "Prune period cannot be null, negative or zero");
     prunePeriod = period;
   }
 

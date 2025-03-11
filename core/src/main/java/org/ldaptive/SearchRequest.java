@@ -4,7 +4,6 @@ package org.ldaptive;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.stream.Stream;
 import org.ldaptive.asn1.ApplicationDERTag;
 import org.ldaptive.asn1.BooleanType;
@@ -245,9 +244,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setSearchScope(final SearchScope scope)
   {
-    if (scope == null) {
-      throw new IllegalArgumentException("Scope cannot be null");
-    }
+    LdapUtils.assertNotNullArg(scope, "Scope cannot be null");
     logger.trace("setting searchScope: {}", scope);
     searchScope = scope;
   }
@@ -271,9 +268,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setDerefAliases(final DerefAliases aliases)
   {
-    if (aliases == null) {
-      throw new IllegalArgumentException("Aliases cannot be null");
-    }
+    LdapUtils.assertNotNullArg(aliases, "Aliases cannot be null");
     logger.trace("setting derefAliases: {}", aliases);
     derefAliases = aliases;
   }
@@ -327,9 +322,7 @@ public class SearchRequest extends AbstractRequestMessage
    */
   public void setTimeLimit(final Duration limit)
   {
-    if (limit == null || limit.isNegative()) {
-      throw new IllegalArgumentException("Time limit cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(limit, Duration::isNegative, "Time limit cannot be null or negative");
     logger.trace("setting timeLimit: {}", limit);
     timeLimit = limit;
   }
@@ -482,8 +475,8 @@ public class SearchRequest extends AbstractRequestMessage
   @Override
   protected DEREncoder[] getRequestEncoders(final int id)
   {
-    Objects.requireNonNull(baseDn, "No baseDn defined in " + this);
-    Objects.requireNonNull(searchFilter, "No search filter defined in " + this);
+    LdapUtils.assertNotNullState(baseDn, "No baseDn defined in " + this);
+    LdapUtils.assertNotNullState(searchFilter, "No search filter defined in " + this);
     return new DEREncoder[] {
       new IntegerType(id),
       new ConstructedDEREncoder(

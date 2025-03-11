@@ -19,6 +19,7 @@ public class FreezeResultHandler implements SearchResultHandler
   @Override
   public SearchResponse apply(final SearchResponse response)
   {
+    LdapUtils.assertNotNullArg(response, "Search response cannot be null");
     response.freeze();
     return response;
   }

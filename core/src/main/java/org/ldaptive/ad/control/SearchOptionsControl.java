@@ -101,7 +101,7 @@ public class SearchOptionsControl extends AbstractControl implements RequestCont
    */
   public void setFlag(final Flag f)
   {
-    flag = f;
+    flag = LdapUtils.assertNotNullArg(f, "Flag cannot be null");
   }
 
 
@@ -139,9 +139,10 @@ public class SearchOptionsControl extends AbstractControl implements RequestCont
   @Override
   public byte[] encode()
   {
+    LdapUtils.assertNotNullState(flag, "Flag cannot be null");
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      new IntegerType(getFlag().ordinal()));
+      new IntegerType(flag.ordinal()));
     return se.encode();
   }
 }

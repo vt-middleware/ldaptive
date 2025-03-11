@@ -28,9 +28,7 @@ public final class RegexUrlParser implements UrlParser
   @Override
   public Url parse(final String url)
   {
-    if (url == null || url.isEmpty()) {
-      throw new IllegalArgumentException("LDAP URL cannot be empty or null");
-    }
+    LdapUtils.assertNotNullArgOr(url, String::isEmpty, "LDAP URL cannot be null or empty");
     final Matcher m = URL_PATTERN.matcher(url);
     if (!m.matches()) {
       throw new IllegalArgumentException("Invalid LDAP URL: " + url);

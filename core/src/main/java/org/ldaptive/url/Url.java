@@ -178,7 +178,7 @@ public final class Url
    */
   public Url(final String url, final UrlParser parser)
   {
-    this(parser.parse(url));
+    this(LdapUtils.assertNotNullArg(parser, "URL parser cannot be null").parse(url));
   }
 
 

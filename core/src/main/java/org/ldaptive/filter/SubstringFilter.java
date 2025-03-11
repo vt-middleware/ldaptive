@@ -67,6 +67,7 @@ public class SubstringFilter implements Filter
     attributeDesc = name;
     byte[][] containsBytes = null;
     if (contains != null) {
+      LdapUtils.assertNotContainsNullArg(contains, "Any match cannot contain null");
       containsBytes = new byte[contains.length][];
       for (int i = 0; i < contains.length; i++) {
         containsBytes[i] = LdapUtils.utf8Encode(contains[i], false);
@@ -93,7 +94,7 @@ public class SubstringFilter implements Filter
     }
     attributeDesc = name;
     subInitial = startsWith;
-    subAny = contains;
+    subAny = LdapUtils.assertNotContainsNullArg(contains, "Any match cannot contain null");
     subFinal = endsWith;
   }
 

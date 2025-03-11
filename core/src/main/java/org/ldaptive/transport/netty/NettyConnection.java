@@ -8,7 +8,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -66,6 +65,7 @@ import org.ldaptive.DeleteResponse;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Message;
 import org.ldaptive.ModifyDnRequest;
 import org.ldaptive.ModifyDnResponse;
@@ -188,7 +188,7 @@ final class NettyConnection extends TransportConnection
     final boolean shutdownGroups)
   {
     super(config);
-    Objects.requireNonNull(ioGroup, "I/O worker group cannot be null");
+    LdapUtils.assertNotNullArg(ioGroup, "I/O worker group cannot be null");
     channelType = type;
     ioWorkerGroup = ioGroup;
     messageWorkerGroup = messageGroup;

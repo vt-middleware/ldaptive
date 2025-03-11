@@ -123,6 +123,7 @@ public abstract class AbstractSearchOperationFactory extends AbstractOperationFa
    */
   protected SearchOperation createSearchOperation(final ConnectionFactory cf)
   {
+    LdapUtils.assertNotNullArg(cf, "Connection factory cannot be null");
     final SearchOperation op = new SearchOperation(cf);
     initializeOperation(op);
     if (entryHandlers != null) {

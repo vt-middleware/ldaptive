@@ -94,7 +94,7 @@ public class VerifyNameControl extends AbstractControl implements RequestControl
    */
   public void setServerName(final String name)
   {
-    serverName = name;
+    serverName = LdapUtils.assertNotNullArg(name, "Server name cannot be null");
   }
 
 
@@ -132,6 +132,7 @@ public class VerifyNameControl extends AbstractControl implements RequestControl
   @Override
   public byte[] encode()
   {
+    LdapUtils.assertNotNullState(serverName, "Server name cannot be null");
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
       new IntegerType(0),

@@ -8,6 +8,7 @@ import java.util.Set;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Operation;
 import org.ldaptive.Request;
 import org.ldaptive.Result;
@@ -194,6 +195,7 @@ public abstract class AbstractFollowReferralHandler<Q extends Request, S extends
   @Override
   public S apply(final S result)
   {
+    LdapUtils.assertNotNullArg(result, "Response cannot be null");
     if (!ResultCode.REFERRAL.equals(result.getResultCode()) ||
         result.getReferralURLs() == null ||
         result.getReferralURLs().length == 0)

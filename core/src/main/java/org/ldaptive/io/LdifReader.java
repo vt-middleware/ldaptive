@@ -40,7 +40,7 @@ public class LdifReader implements SearchResultReader
    */
   public LdifReader(final Reader reader)
   {
-    ldifReader = reader;
+    ldifReader = LdapUtils.assertNotNullArg(reader, "Reader cannot be null");
   }
 
 

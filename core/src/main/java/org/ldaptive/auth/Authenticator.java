@@ -100,7 +100,7 @@ public final class Authenticator extends AbstractFreezable
   public void setDnResolver(final DnResolver resolver)
   {
     assertMutable();
-    dnResolver = resolver;
+    dnResolver = LdapUtils.assertNotNullArg(resolver, "DN resolver cannot be null");
   }
 
 
@@ -123,7 +123,7 @@ public final class Authenticator extends AbstractFreezable
   public void setAuthenticationHandler(final AuthenticationHandler handler)
   {
     assertMutable();
-    authenticationHandler = handler;
+    authenticationHandler = LdapUtils.assertNotNullArg(handler, "Authentication handler cannot be null");
   }
 
 
@@ -255,6 +255,7 @@ public final class Authenticator extends AbstractFreezable
   public String resolveDn(final User user)
     throws LdapException
   {
+    LdapUtils.assertNotNullState(dnResolver, "DN resolver cannot be null");
     return dnResolver.resolve(user);
   }
 
@@ -271,6 +272,7 @@ public final class Authenticator extends AbstractFreezable
   public AuthenticationResponse authenticate(final AuthenticationRequest request)
     throws LdapException
   {
+    LdapUtils.assertNotNullArg(request, "Authentication request cannot be null");
     return authenticate(resolveDn(request.getUser()), request);
   }
 
@@ -366,6 +368,7 @@ public final class Authenticator extends AbstractFreezable
   private AuthenticationResponse authenticate(final String dn, final AuthenticationRequest request)
     throws LdapException
   {
+    LdapUtils.assertNotNullState(authenticationHandler, "Authentication handler cannot be null");
     logger.trace("authenticate dn={} with request={}", dn, request);
 
     final AuthenticationResponse invalidInput = validateInput(dn, request);
@@ -381,7 +384,7 @@ public final class Authenticator extends AbstractFreezable
       final AuthenticationCriteria ac = new AuthenticationCriteria(dn, processedRequest);
 
       // attempt to authenticate as this dn
-      response = getAuthenticationHandler().authenticate(ac);
+      response = authenticationHandler.authenticate(ac);
       // resolve the entry
       entry = resolveEntry(ac, response);
     } finally {
@@ -391,7 +394,7 @@ public final class Authenticator extends AbstractFreezable
     }
 
     if (response == null) {
-      throw new IllegalStateException("Authentication response is null");
+      throw new IllegalStateException("Authentication response cannot be null");
     }
     logger.info("Authentication {} for dn: {}", response.isSuccess() ? "succeeded" : "failed", dn);
 

@@ -133,6 +133,7 @@ public class MatchedValuesRequestControl extends AbstractControl implements Requ
    */
   public void setMatchedValuesFilters(final String... filters)
   {
+    LdapUtils.assertNotNullArg(filters, "Matched values filters cannot be null");
     final Filter[] parsedFilters = new Filter[filters.length];
     for (int i = 0; i < filters.length; i++) {
       try {
@@ -154,6 +155,7 @@ public class MatchedValuesRequestControl extends AbstractControl implements Requ
    */
   public void setMatchedValuesFilters(final Filter... filters)
   {
+    LdapUtils.assertNotNullArg(filters, "Matched values filters cannot be null");
     for (Filter filter : filters) {
       validateFilter(filter);
     }
@@ -221,6 +223,7 @@ public class MatchedValuesRequestControl extends AbstractControl implements Requ
   @Override
   public byte[] encode()
   {
+    LdapUtils.assertNotNullState(matchedValuesFilters, "Matched values filters cannot be null");
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
       Stream.of(matchedValuesFilters).map(Filter::getEncoder).toArray(DEREncoder[]::new));

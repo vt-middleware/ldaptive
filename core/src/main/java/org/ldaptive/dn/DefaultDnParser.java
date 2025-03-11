@@ -38,6 +38,7 @@ public final class DefaultDnParser implements DnParser
   @Override
   public List<RDn> parse(final String dn)
   {
+    LdapUtils.assertNotNullArg(dn, "DN cannot be null");
     if (LdapUtils.trimSpace(dn).isEmpty()) {
       return Collections.emptyList();
     }
@@ -102,9 +103,7 @@ public final class DefaultDnParser implements DnParser
    */
   private static byte[] decodeHexValue(final char[] value)
   {
-    if (value == null || value.length == 0) {
-      throw new IllegalArgumentException("Invalid HEX value: value cannot be null or empty");
-    }
+    LdapUtils.assertNotNullArgOr(value, v -> v.length == 0, "Invalid HEX value: value cannot be null or empty");
     return LdapUtils.hexDecode(value);
   }
 

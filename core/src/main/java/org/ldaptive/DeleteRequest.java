@@ -38,7 +38,7 @@ public class DeleteRequest extends AbstractRequestMessage
    */
   public DeleteRequest(final String dn)
   {
-    ldapDn = dn;
+    ldapDn = LdapUtils.assertNotNullArg(dn, "DN cannot be null");
   }
 
 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.ldaptive.LdapUtils;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextDERTag;
@@ -43,7 +44,12 @@ public class OrFilter implements FilterSet
    */
   public OrFilter(final Filter... components)
   {
-    filterComponents.addAll(Arrays.asList(components));
+    filterComponents.addAll(
+      Arrays.asList(
+        LdapUtils.assertNotContainsNullArgOr(
+          components,
+          Objects::isNull,
+          "Filter components cannot be null or contain null")));
   }
 
 
@@ -57,7 +63,7 @@ public class OrFilter implements FilterSet
   @Override
   public void add(final Filter component)
   {
-    filterComponents.add(component);
+    filterComponents.add(LdapUtils.assertNotNullArg(component, "Filter component cannot be null"));
   }
 
 
@@ -75,6 +81,7 @@ public class OrFilter implements FilterSet
   @Override
   public DEREncoder getEncoder()
   {
+    LdapUtils.assertNotContainsNullArg(filterComponents, "Filter components cannot contain null");
     if (filterComponents.isEmpty()) {
       return new NullType(new ContextDERTag(Type.OR.ordinal(), true));
     } else {

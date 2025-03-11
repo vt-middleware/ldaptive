@@ -81,7 +81,7 @@ public class FormatDnResolver extends AbstractFreezable implements DnResolver
   public final void setFormat(final String format)
   {
     assertMutable();
-    formatString = format;
+    formatString = LdapUtils.assertNotNullArg(format, "Format string cannot be null");
   }
 
 
@@ -144,9 +144,7 @@ public class FormatDnResolver extends AbstractFreezable implements DnResolver
   public String resolve(final User user)
     throws LdapException
   {
-    if (formatString == null) {
-      throw new IllegalStateException("Format string cannot be null");
-    }
+    LdapUtils.assertNotNullState(formatString, "Format string cannot be null");
     String dn = null;
     if (user != null && user.getIdentifier() != null && !"".equals(user.getIdentifier())) {
       final String escapedUser = escapeUser ? attributeValueEscaper.escape(user.getIdentifier()) : user.getIdentifier();

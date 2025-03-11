@@ -212,9 +212,7 @@ public final class ConnectionConfig extends AbstractConfig
   public void setConnectTimeout(final Duration time)
   {
     assertMutable();
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Connect timeout cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Connect timeout cannot be null or negative");
     logger.trace("setting connectTimeout: {}", time);
     connectTimeout = time;
   }
@@ -239,9 +237,7 @@ public final class ConnectionConfig extends AbstractConfig
   public void setStartTLSTimeout(final Duration time)
   {
     assertMutable();
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("StartTLS timeout cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "StartTLS timeout cannot be null or negative");
     logger.trace("setting startTLSTimeout: {}", time);
     startTLSTimeout = time;
   }
@@ -266,9 +262,7 @@ public final class ConnectionConfig extends AbstractConfig
   public void setResponseTimeout(final Duration time)
   {
     assertMutable();
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Response timeout cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Response timeout cannot be null or negative");
     logger.trace("setting responseTimeout: {}", time);
     responseTimeout = time;
   }
@@ -293,9 +287,7 @@ public final class ConnectionConfig extends AbstractConfig
   public void setReconnectTimeout(final Duration time)
   {
     assertMutable();
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Reconnect timeout cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Reconnect timeout cannot be null or negative");
     logger.trace("setting reconnectTimeout: {}", time);
     reconnectTimeout = time;
   }

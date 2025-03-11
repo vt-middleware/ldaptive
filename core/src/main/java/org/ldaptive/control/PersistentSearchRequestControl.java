@@ -137,7 +137,7 @@ public class PersistentSearchRequestControl extends AbstractControl implements R
    */
   public void setChangeTypes(final EnumSet<PersistentSearchChangeType> types)
   {
-    changeTypes = types;
+    changeTypes = LdapUtils.assertNotNullArg(types, "Change types cannot be null");
   }
 
 
@@ -223,16 +223,17 @@ public class PersistentSearchRequestControl extends AbstractControl implements R
   @Override
   public byte[] encode()
   {
+    LdapUtils.assertNotNullState(changeTypes, "Change types cannot be null");
     int types = 0;
-    for (PersistentSearchChangeType type : getChangeTypes()) {
+    for (PersistentSearchChangeType type : changeTypes) {
       types |= type.value();
     }
 
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
       new IntegerType(types),
-      new BooleanType(getChangesOnly()),
-      new BooleanType(getReturnEcs()));
+      new BooleanType(changesOnly),
+      new BooleanType(returnEcs));
     return se.encode();
   }
 }

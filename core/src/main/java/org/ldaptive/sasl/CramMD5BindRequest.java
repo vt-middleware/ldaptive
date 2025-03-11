@@ -5,6 +5,7 @@ import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import org.ldaptive.LdapUtils;
 
 /**
  * LDAP CRAM-MD5 bind request.
@@ -32,14 +33,8 @@ public class CramMD5BindRequest extends DefaultSaslClientRequest
    */
   public CramMD5BindRequest(final String authID, final String pass)
   {
-    if (authID == null) {
-      throw new IllegalArgumentException("Authentication ID cannot be null");
-    }
-    authenticationID = authID;
-    if (pass == null) {
-      throw new IllegalArgumentException("Password cannot be null");
-    }
-    password = pass;
+    authenticationID = LdapUtils.assertNotNullArg(authID, "Authentication ID cannot be null");
+    password = LdapUtils.assertNotNullArg(pass, "Password cannot be null");
   }
 
 

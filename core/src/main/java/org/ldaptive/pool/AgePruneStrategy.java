@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.function.Predicate;
+import org.ldaptive.LdapUtils;
 
 /**
  * Removes connections from the pool based on how long they have existed. By default, this implementation executes every
@@ -122,9 +123,7 @@ public class AgePruneStrategy extends AbstractPruneStrategy
   public void setAgeTime(final Duration time)
   {
     assertMutable();
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Age time cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Age time cannot be null or negative");
     ageTime = time;
   }
 

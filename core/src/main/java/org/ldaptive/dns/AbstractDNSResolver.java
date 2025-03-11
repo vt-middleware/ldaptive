@@ -3,12 +3,16 @@ package org.ldaptive.dns;
 
 import java.util.HashSet;
 import java.util.Set;
+import javax.naming.CannotProceedException;
+import javax.naming.ConfigurationException;
+import javax.naming.InvalidNameException;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
+import org.ldaptive.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +40,7 @@ public abstract class AbstractDNSResolver<T> implements DNSResolver<T>
    */
   public AbstractDNSResolver(final DNSContextFactory factory)
   {
-    contextFactory = factory;
+    contextFactory = LdapUtils.assertNotNullArg(factory, "DNS context factory cannot be null");
   }
 
 
@@ -53,6 +57,8 @@ public abstract class AbstractDNSResolver<T> implements DNSResolver<T>
       final Set<T> results = processRecords(records);
       logger.debug("Resolved {} for domain {} using {}", results, name, ctx);
       return results;
+    } catch (ConfigurationException e) {
+      throw new IllegalArgumentException(e);
     } catch (NamingException e) {
       throw new RuntimeException("DNS lookup failed for " + name, e);
     } finally {
@@ -110,8 +116,10 @@ public abstract class AbstractDNSResolver<T> implements DNSResolver<T>
           }
         }
       }
-    } catch (final NameNotFoundException e) {
+    } catch (NameNotFoundException e) {
       logger.debug("No DNS records of type {} found for {}.", attrId, name);
+    } catch (InvalidNameException | CannotProceedException e) {
+      throw new IllegalArgumentException(e);
     } finally {
       if (en != null) {
         en.close();

@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.ldaptive.LdapUtils;
 
 /**
  * Decodes and encodes a generalized time for use in an ldap attribute value. See
@@ -110,6 +111,7 @@ public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscode
   @Override
   public String encodeStringValue(final ZonedDateTime value)
   {
+    LdapUtils.assertNotNullArg(value, "Value cannot be null");
     if (value.getZone().normalized().equals(ZoneOffset.UTC)) {
       return value.format(DATE_FORMAT);
     } else {
@@ -137,9 +139,7 @@ public class GeneralizedTimeValueTranscoder extends AbstractStringValueTranscode
   protected ZonedDateTime parseGeneralizedTime(final String value)
     throws ParseException
   {
-    if (value == null) {
-      throw new IllegalArgumentException("String to parse cannot be null.");
-    }
+    LdapUtils.assertNotNullArg(value, "String to parse cannot be null");
 
     final Matcher m = TIME_REGEX.matcher(value);
     if (!m.matches()) {

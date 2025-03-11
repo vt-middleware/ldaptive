@@ -12,6 +12,7 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.ldaptive.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +73,7 @@ public class CallableWorker<T>
    */
   public CallableWorker(final ExecutorService es)
   {
-    executorService = es;
+    executorService = LdapUtils.assertNotNullArg(es, "Executor service cannot be null");
   }
 
 

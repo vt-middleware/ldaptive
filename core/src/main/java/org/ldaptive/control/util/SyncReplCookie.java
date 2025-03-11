@@ -3,6 +3,7 @@ package org.ldaptive.control.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.ldaptive.LdapUtils;
 
 /**
  * Class for parsing a sync repl cookie.
@@ -28,7 +29,7 @@ public class SyncReplCookie
    */
   public SyncReplCookie(final String cookie)
   {
-    final Map<String, String> nameValues  = parseCookie(cookie);
+    final Map<String, String> nameValues  = parseCookie(LdapUtils.assertNotNullArg(cookie, "Cookie cannot be null"));
     if (!nameValues.containsKey("rid")) {
       throw new IllegalArgumentException("Could not parse 'rid' from " + cookie);
     }

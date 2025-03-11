@@ -18,9 +18,7 @@ public abstract class AbstractPassiveConnectionStrategy extends AbstractConnecti
   @Override
   public void populate(final String urls, final LdapURLSet urlSet)
   {
-    if (urls == null || urls.isEmpty()) {
-      throw new IllegalArgumentException("urls cannot be empty or null");
-    }
+    LdapUtils.assertNotNullArgOr(urls, String::isEmpty, "Urls cannot be null or empty");
     if (urls.contains(" ")) {
       final String[] urlArray = urls.split(" ");
       urlSet.populate(IntStream.range(0, urlArray.length)

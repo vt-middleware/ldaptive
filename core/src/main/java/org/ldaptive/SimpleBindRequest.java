@@ -64,10 +64,7 @@ public final class SimpleBindRequest extends AbstractRequestMessage implements B
    */
   private void setLdapDN(final String name)
   {
-    if (name == null || name.isEmpty()) {
-      throw new IllegalArgumentException("bind request name cannot be null or empty");
-    }
-    ldapDN = name;
+    ldapDN = LdapUtils.assertNotNullArgOr(name, String::isEmpty, "Bind request name cannot be null or empty");
   }
 
 
@@ -80,9 +77,7 @@ public final class SimpleBindRequest extends AbstractRequestMessage implements B
    */
   private void setPassword(final String pass)
   {
-    if (pass == null || pass.isEmpty()) {
-      throw new IllegalArgumentException("bind request password cannot be null or empty");
-    }
+    LdapUtils.assertNotNullArgOr(pass, String::isEmpty, "Bind request password cannot be null or empty");
     setPassword(LdapUtils.utf8Encode(pass, false));
   }
 
@@ -96,22 +91,15 @@ public final class SimpleBindRequest extends AbstractRequestMessage implements B
    */
   private void setPassword(final byte[] pass)
   {
-    if (pass == null || pass.length == 0) {
-      throw new IllegalArgumentException("bind request password cannot be null or empty");
-    }
-    password = pass;
+    password = LdapUtils.assertNotNullArgOr(pass, p -> p.length == 0, "Bind request password cannot be null or empty");
   }
 
 
   @Override
   protected DEREncoder[] getRequestEncoders(final int id)
   {
-    if (ldapDN == null || ldapDN.isEmpty()) {
-      throw new IllegalStateException("bind request DN cannot be null or empty");
-    }
-    if (password == null || password.length == 0) {
-      throw new IllegalStateException("bind request password cannot be null or empty");
-    }
+    LdapUtils.assertNotNullStateOr(ldapDN, String::isEmpty, "Bind request DN cannot be null or empty");
+    LdapUtils.assertNotNullStateOr(password, p -> p.length == 0, "Bind request password cannot be null or empty");
     return new DEREncoder[] {
       new IntegerType(id),
       new ConstructedDEREncoder(

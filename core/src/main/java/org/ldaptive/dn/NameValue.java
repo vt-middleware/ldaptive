@@ -41,7 +41,7 @@ public final class NameValue
    */
   public NameValue(final String name, final byte[] value)
   {
-    attributeName = name;
+    attributeName = LdapUtils.assertNotNullArg(name, "Name cannot be null");
     attributeValue = value;
   }
 

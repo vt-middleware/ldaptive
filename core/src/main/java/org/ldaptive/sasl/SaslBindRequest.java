@@ -69,7 +69,7 @@ public class SaslBindRequest extends AbstractRequestMessage implements BindReque
    */
   public SaslBindRequest(final String mechanism, final byte[] credentials)
   {
-    saslMechanism = mechanism;
+    saslMechanism = LdapUtils.assertNotNullArg(mechanism, "SASL mechanism cannot be null");
     saslCredentials = LdapUtils.copyArray(credentials);
   }
 

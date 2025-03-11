@@ -102,7 +102,7 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
    */
   public void setFlag(final Flag f)
   {
-    flag = f;
+    flag = LdapUtils.assertNotNullArg(f, "Flag cannot be null");
   }
 
 
@@ -140,9 +140,10 @@ public class ExtendedDnControl extends AbstractControl implements RequestControl
   @Override
   public byte[] encode()
   {
+    LdapUtils.assertNotNullState(flag, "Flag cannot be null");
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      new IntegerType(getFlag().ordinal()));
+      new IntegerType(flag.ordinal()));
     return se.encode();
   }
 }

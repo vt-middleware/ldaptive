@@ -38,7 +38,6 @@ import org.ldaptive.control.PasswordExpiredControl;
 import org.ldaptive.control.PasswordExpiringControl;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.SessionTrackingControl;
-import org.ldaptive.control.SortKey;
 import org.ldaptive.control.SortResponseControl;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncStateControl;
@@ -347,11 +346,11 @@ public class FreezableTest
   @Test
   public void noDefaultConstructor()
   {
-    final PagedResultsClient pagedResultsClient = new PagedResultsClient(null, 0);
+    final PagedResultsClient pagedResultsClient = new PagedResultsClient(new DefaultConnectionFactory(), 0);
     pagedResultsClient.freeze();
     invokeMethods(PagedResultsClient.class, pagedResultsClient);
 
-    final VirtualListViewClient virtualListViewClient = new VirtualListViewClient(null, (SortKey) null);
+    final VirtualListViewClient virtualListViewClient = new VirtualListViewClient(new DefaultConnectionFactory());
     virtualListViewClient.freeze();
     invokeMethods(VirtualListViewClient.class, virtualListViewClient);
 

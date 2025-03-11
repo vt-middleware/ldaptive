@@ -2,6 +2,7 @@
 package org.ldaptive.ad.transcode;
 
 import java.nio.charset.StandardCharsets;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.transcode.AbstractBinaryValueTranscoder;
 
 /**
@@ -16,7 +17,7 @@ public class UnicodePwdValueTranscoder extends AbstractBinaryValueTranscoder<Str
   @Override
   public String decodeBinaryValue(final byte[] value)
   {
-    final String pwd = new String(value, StandardCharsets.UTF_16LE);
+    final String pwd = new String(LdapUtils.assertNotNullArg(value, "Value cannot be null"), StandardCharsets.UTF_16LE);
     if (pwd.length() < 2) {
       throw new IllegalArgumentException("unicodePwd must be at least 2 characters long");
     }
@@ -27,10 +28,7 @@ public class UnicodePwdValueTranscoder extends AbstractBinaryValueTranscoder<Str
   @Override
   public byte[] encodeBinaryValue(final String value)
   {
-    if (value == null) {
-      throw new IllegalArgumentException("Cannot encode null value");
-    }
-
+    LdapUtils.assertNotNullArg(value, "Cannot encode null value");
     final String pwd = String.format("\"%s\"", value);
     return pwd.getBytes(StandardCharsets.UTF_16LE);
   }

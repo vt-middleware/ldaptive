@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import org.ldaptive.LdapUtils;
 
 /**
  * Removes connections from the pool based on how long they have been idle in the available queue. By default, this
@@ -117,9 +118,7 @@ public class IdlePruneStrategy extends AgePruneStrategy
   public void setIdleTime(final Duration time)
   {
     assertMutable();
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Idle time cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Idle time cannot be null or negative");
     idleTime = time;
   }
 

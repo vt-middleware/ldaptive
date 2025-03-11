@@ -13,7 +13,6 @@ import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Queue;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
@@ -94,16 +93,16 @@ public final class LdapUtils
    * This will convert the supplied value to a UTF-8 encoded string.
    *
    * @param  value  to UTF-8 encode
-   * @param  allowNull  whether to throw {@link NullPointerException} if value is null
+   * @param  allowNull  whether to throw {@link IllegalArgumentException} if value is null
    *
    * @return  UTF-8 encoded value
    *
-   * @throws  NullPointerException  if allowNull is false and value is null
+   * @throws  IllegalArgumentException  if allowNull is false and value is null
    */
   public static String utf8Encode(final byte[] value, final boolean allowNull)
   {
     if (!allowNull) {
-      Objects.requireNonNull(value, "Cannot UTF-8 encode null value");
+      assertNotNullArg(value, "Cannot UTF-8 encode null value");
     }
     return value != null ? new String(value, StandardCharsets.UTF_8) : null;
   }
@@ -126,16 +125,16 @@ public final class LdapUtils
    * This will convert the supplied value to a UTF-8 encoded byte array.
    *
    * @param  value  to UTF-8 encode
-   * @param  allowNull  whether to throw {@link NullPointerException} if value is null
+   * @param  allowNull  whether to throw {@link IllegalArgumentException} if value is null
    *
    * @return  UTF-8 encoded value
    *
-   * @throws  NullPointerException  if allowNull is false and value is null
+   * @throws  IllegalArgumentException  if allowNull is false and value is null
    */
   public static byte[] utf8Encode(final String value, final boolean allowNull)
   {
     if (!allowNull) {
-      Objects.requireNonNull(value, "Cannot UTF-8 encode null value");
+      assertNotNullArg(value, "Cannot UTF-8 encode null value");
     }
     return value != null ? value.getBytes(StandardCharsets.UTF_8) : null;
   }
@@ -158,16 +157,16 @@ public final class LdapUtils
    * This will convert the supplied value to a UTF-8 encoded byte array.
    *
    * @param  value  to UTF-8 encode
-   * @param  allowNull  whether to throw {@link NullPointerException} if value is null
+   * @param  allowNull  whether to throw {@link IllegalArgumentException} if value is null
    *
    * @return  UTF-8 encoded value
    *
-   * @throws  NullPointerException  if allowNull is false and value is null
+   * @throws  IllegalArgumentException  if allowNull is false and value is null
    */
   public static byte[] utf8Encode(final char[] value, final boolean allowNull)
   {
     if (!allowNull) {
-      Objects.requireNonNull(value, "Cannot UTF-8 encode null value");
+      assertNotNullArg(value, "Cannot UTF-8 encode null value");
     }
     if (value == null) {
       return null;
@@ -642,16 +641,16 @@ public final class LdapUtils
    * used.
    *
    * @param  value  to lower case
-   * @param  allowNull  whether to throw {@link NullPointerException} if value is null
+   * @param  allowNull  whether to throw {@link IllegalArgumentException} if value is null
    *
    * @return  new lower case string
    *
-   * @throws  NullPointerException  if allowNull is false and value is null
+   * @throws  IllegalArgumentException  if allowNull is false and value is null
    */
   public static String toLowerCase(final String value, final boolean allowNull)
   {
     if (!allowNull) {
-      Objects.requireNonNull(value, "Cannot lower case null value");
+      assertNotNullArg(value, "Cannot lower case null value");
     }
     if (value == null || value.isEmpty()) {
       return value;
@@ -1024,5 +1023,257 @@ public final class LdapUtils
       return defaultValue;
     }
     return require.test(l) ? l : defaultValue;
+  }
+
+
+  /**
+   * Throws {@link IllegalArgumentException} if the supplied object is null.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> T assertNotNullArg(final T o, final String msg)
+  {
+    if (o == null) {
+      throw new IllegalArgumentException(msg);
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalArgumentException} if the supplied object is null or the supplied predicate returns true.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  predicate  to test
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> T assertNotNullArgOr(final T o, final Predicate<T> predicate, final String msg)
+  {
+    if (o == null || predicate.test(o)) {
+      throw new IllegalArgumentException(msg);
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalArgumentException} if the supplied array contains a null value. If a null array is supplied,
+   * it will be returned to the caller.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> T[] assertNotContainsNullArg(final T[] o, final String msg)
+  {
+    if (o != null) {
+      for (T t : o) {
+        if (t == null) {
+          throw new IllegalArgumentException(msg);
+        }
+      }
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalArgumentException} if the supplied array contains a null value or the supplied predicate
+   * returns true. If a null array is supplied, it will only be passed to the predicate.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  predicate  to test
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> T[] assertNotContainsNullArgOr(final T[] o, final Predicate<T[]> predicate, final String msg)
+  {
+    assertNotContainsNullArg(o, msg);
+    if (predicate.test(o)) {
+      throw new IllegalArgumentException(msg);
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalArgumentException} if the supplied collection contains a null value. If a null collection is
+   * supplied, it will be returned to the caller.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  msg to include in the exception
+   *
+   * @return  supplied collection
+   */
+  public static <T> Collection<T> assertNotContainsNullArg(final Collection<T> o, final String msg)
+  {
+    if (o != null) {
+      for (T t : o) {
+        if (t == null) {
+          throw new IllegalArgumentException(msg);
+        }
+      }
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalArgumentException} if the supplied collection contains a null value or the supplied predicate
+   * returns true. If a null collection is supplied, it will only be passed to the predicate.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  predicate  to test
+   * @param  msg to include in the exception
+   *
+   * @return  supplied collection
+   */
+  public static <T> Collection<T> assertNotContainsNullArgOr(
+    final Collection<T> o, final Predicate<Collection<T>> predicate, final String msg)
+  {
+    assertNotContainsNullArg(o, msg);
+    if (predicate.test(o)) {
+      throw new IllegalArgumentException(msg);
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalStateException} if the supplied object is null.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> T assertNotNullState(final T o, final String msg)
+  {
+    if (o == null) {
+      throw new IllegalStateException(msg);
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalStateException} if the supplied object is null or the supplied predicate returns true.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  predicate  to test
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> T assertNotNullStateOr(final T o, final Predicate<T> predicate, final String msg)
+  {
+    if (o == null || predicate.test(o)) {
+      throw new IllegalStateException(msg);
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalStateException} if the supplied array contains a null value. If a null array is supplied, it
+   * will be returned to the caller.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> T[] assertNotContainsNullState(final T[] o, final String msg)
+  {
+    if (o != null) {
+      for (T t : o) {
+        if (t == null) {
+          throw new IllegalStateException(msg);
+        }
+      }
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalStateException} if the supplied array contains a null value or the supplied predicate
+   * returns true. If a null array is supplied, it will only be passed to the predicate.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  predicate  to test
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> T[] assertNotContainsNullStateOr(final T[] o, final Predicate<T[]> predicate, final String msg)
+  {
+    assertNotContainsNullState(o, msg);
+    if (predicate.test(o)) {
+      throw new IllegalArgumentException(msg);
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalStateException} if the supplied collection contains a null value. If a null collection is
+   * supplied, it will be returned to the caller.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> Collection<T> assertNotContainsNullState(final Collection<T> o, final String msg)
+  {
+    if (o != null) {
+      for (T t : o) {
+        if (t == null) {
+          throw new IllegalStateException(msg);
+        }
+      }
+    }
+    return o;
+  }
+
+
+  /**
+   * Throws {@link IllegalStateException} if the supplied collection contains a null value or the supplied predicate
+   * returns true. If a null collection is supplied, it will only be passed to the predicate.
+   *
+   * @param  <T>  type of object
+   * @param  o to check
+   * @param  predicate  to test
+   * @param  msg to include in the exception
+   *
+   * @return  supplied object
+   */
+  public static <T> Collection<T> assertNotContainsNullStateOr(
+    final Collection<T> o, final Predicate<Collection<T>> predicate, final String msg)
+  {
+    assertNotContainsNullState(o, msg);
+    if (predicate.test(o)) {
+      throw new IllegalArgumentException(msg);
+    }
+    return o;
   }
 }

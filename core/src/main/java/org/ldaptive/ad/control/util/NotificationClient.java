@@ -6,6 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.Result;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchOperationHandle;
@@ -39,7 +40,7 @@ public class NotificationClient
    */
   public NotificationClient(final ConnectionFactory cf)
   {
-    factory = cf;
+    factory = LdapUtils.assertNotNullArg(cf, "Connection factory cannot be null");
   }
 
 

@@ -69,9 +69,7 @@ public abstract class AbstractConnectionStrategy extends AbstractFreezable imple
   @Override
   public void populate(final String urls, final LdapURLSet urlSet)
   {
-    if (urls == null || urls.isEmpty()) {
-      throw new IllegalArgumentException("urls cannot be empty or null");
-    }
+    LdapUtils.assertNotNullArgOr(urls, String::isEmpty, "Urls cannot be null or empty");
     if (urls.contains(" ")) {
       urlSet.populate(Stream.of(urls.split(" "))
         .map(s -> {

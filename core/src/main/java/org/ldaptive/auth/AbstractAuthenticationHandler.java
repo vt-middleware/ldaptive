@@ -50,7 +50,7 @@ public abstract class AbstractAuthenticationHandler extends AbstractFreezable
   public final void setConnectionFactory(final ConnectionFactory cf)
   {
     assertMutable();
-    factory = cf;
+    factory = LdapUtils.assertNotNullArg(cf, "Connection factory cannot be null");
   }
 
 
@@ -81,6 +81,7 @@ public abstract class AbstractAuthenticationHandler extends AbstractFreezable
   public AuthenticationHandlerResponse authenticate(final AuthenticationCriteria ac)
     throws LdapException
   {
+    LdapUtils.assertNotNullState(factory, "Connection factory cannot be null");
     logger.trace("authenticate criteria={}", ac);
 
     final AuthenticationHandlerResponse response;

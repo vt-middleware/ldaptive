@@ -33,6 +33,7 @@ public abstract class AbstractRetryMetadata implements RetryMetadata
    */
   protected AbstractRetryMetadata(final Clock clock)
   {
+    LdapUtils.assertNotNullArg(clock, "Clock cannot be null");
     createTime = Instant.now(clock);
   }
 

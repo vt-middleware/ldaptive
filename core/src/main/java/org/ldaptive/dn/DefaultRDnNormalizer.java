@@ -76,6 +76,8 @@ public class DefaultRDnNormalizer implements RDnNormalizer
     @Override
     public int compare(final NameValue nv1, final NameValue nv2)
     {
+      LdapUtils.assertNotNullArgOr(nv1, nv -> nv.getName() == null, "Name value cannot be null");
+      LdapUtils.assertNotNullArgOr(nv2, nv -> nv.getName() == null, "Name value cannot be null");
       return nv1.getName().compareTo(nv2.getName());
     }
 
@@ -149,10 +151,10 @@ public class DefaultRDnNormalizer implements RDnNormalizer
     final Function<String, String> valueNormalizer,
     final Comparator<NameValue> comparator)
   {
-    attributeValueEscaper = escaper;
-    attributeNameFunction = nameNormalizer;
-    attributeValueFunction = valueNormalizer;
-    nameValueComparator = comparator;
+    attributeValueEscaper = LdapUtils.assertNotNullArg(escaper, "Attribute value escaper cannot be null");
+    attributeNameFunction = LdapUtils.assertNotNullArg(nameNormalizer, "Name normalizer cannot be null");
+    attributeValueFunction = LdapUtils.assertNotNullArg(valueNormalizer, "Attribute value normalizer cannot be null");
+    nameValueComparator = LdapUtils.assertNotNullArg(comparator, "Name value comparator cannot be null");
   }
 
 
@@ -192,6 +194,7 @@ public class DefaultRDnNormalizer implements RDnNormalizer
   @Override
   public RDn normalize(final RDn rdn)
   {
+    LdapUtils.assertNotNullArg(rdn, "RDN cannot be null");
     final Set<NameValue> nameValues = rdn.getNameValues().stream()
       .map(
         nv -> new NameValue(

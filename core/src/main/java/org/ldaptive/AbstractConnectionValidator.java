@@ -53,9 +53,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
   public void setValidatePeriod(final Duration period)
   {
     assertMutable();
-    if (period == null || period.isNegative() || period.isZero()) {
-      throw new IllegalArgumentException("Period cannot be null, negative or zero");
-    }
+    LdapUtils.assertNotNullArgOr(period, p -> p.isNegative() || p.isZero(), "Period cannot be null, negative or zero");
     validatePeriod = period;
   }
 
@@ -74,9 +72,7 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
   public void setValidateTimeout(final Duration timeout)
   {
     assertMutable();
-    if (timeout == null || timeout.isNegative()) {
-      throw new IllegalArgumentException("Timeout cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(timeout, Duration::isNegative, "Timeout cannot be null or negative");
     validateTimeout = timeout;
   }
 

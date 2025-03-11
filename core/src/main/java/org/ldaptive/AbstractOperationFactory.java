@@ -93,7 +93,7 @@ public abstract class AbstractOperationFactory<Q extends Request, S extends Resu
   public void setConnectionFactory(final ConnectionFactory cf)
   {
     assertMutable();
-    factory = cf;
+    factory = LdapUtils.assertNotNullArg(cf, "Connection factory cannot be null");
   }
 
 

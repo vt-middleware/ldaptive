@@ -17,6 +17,7 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
+import org.ldaptive.LdapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -102,6 +103,8 @@ public abstract class AbstractLoginModule implements LoginModule
     final Map<String, ?> state,
     final Map<String, ?> options)
   {
+    LdapUtils.assertNotNullArg(subj, "JAAS subject cannot be null");
+    LdapUtils.assertNotNullArg(options, "JAAS options cannot be null");
     logger.trace("begin initialize");
     subject = subj;
     callbackHandler = handler;
@@ -109,6 +112,9 @@ public abstract class AbstractLoginModule implements LoginModule
 
     for (Map.Entry<String, ?> entry : options.entrySet()) {
       final String key = entry.getKey();
+      if (!(entry.getValue() instanceof String)) {
+        throw new IllegalArgumentException("JAAS options must contain string values");
+      }
       final String value = (String) entry.getValue();
       if ("useFirstPass".equalsIgnoreCase(key)) {
         useFirstPass = Boolean.parseBoolean(value);
@@ -238,9 +244,13 @@ public abstract class AbstractLoginModule implements LoginModule
     throws LoginException
   {
     logger.trace("begin logout");
+    if (subject == null) {
+      clearState();
+      throw new LoginException("Subject is null");
+    }
     if (subject.isReadOnly()) {
       clearState();
-      throw new LoginException("Subject is read-only.");
+      throw new LoginException("Subject is read-only");
     }
 
     for (LdapPrincipal ldapPrincipal : subject.getPrincipals(LdapPrincipal.class)) {
@@ -276,10 +286,16 @@ public abstract class AbstractLoginModule implements LoginModule
    */
   protected void clearState()
   {
-    principals.clear();
-    credentials.clear();
-    roles.clear();
-    if (clearPass) {
+    if (principals != null) {
+      principals.clear();
+    }
+    if (credentials != null) {
+      credentials.clear();
+    }
+    if (roles != null) {
+      roles.clear();
+    }
+    if (clearPass && sharedState != null) {
       sharedState.remove(LOGIN_NAME);
       sharedState.remove(LOGIN_PASSWORD);
       sharedState.remove(LOGIN_DN);

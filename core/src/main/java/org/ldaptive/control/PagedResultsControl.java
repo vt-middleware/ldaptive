@@ -195,8 +195,8 @@ public class PagedResultsControl extends AbstractResponseControl implements Requ
   {
     final ConstructedDEREncoder se = new ConstructedDEREncoder(
       UniversalDERTag.SEQ,
-      new IntegerType(getSize()),
-      new OctetStringType(getCookie() != null ? getCookie() : EMPTY_COOKIE));
+      new IntegerType(resultSize),
+      new OctetStringType(cookie != null ? cookie : EMPTY_COOKIE));
     return se.encode();
   }
 

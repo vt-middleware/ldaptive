@@ -2,6 +2,7 @@
 package org.ldaptive.auth;
 
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.extended.ExtendedResponse;
@@ -24,6 +25,7 @@ public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
     final AuthenticationHandlerResponse response)
     throws LdapException
   {
+    LdapUtils.assertNotNullArg(response, "Authentication response cannot be null");
     final ExtendedResponse whoamiRes = response.getConnection().operation(new WhoAmIRequest()).execute();
     logger.debug("whoami operation returned {}", whoamiRes);
 

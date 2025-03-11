@@ -12,6 +12,7 @@ import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.sasl.RealmCallback;
 import javax.security.sasl.RealmChoiceCallback;
+import org.ldaptive.LdapUtils;
 
 /**
  * LDAP DIGEST-MD5 bind request.
@@ -56,15 +57,9 @@ public class DigestMD5BindRequest extends DefaultSaslClientRequest
     final String realm,
     final Map<String, Object> props)
   {
-    if (authID == null) {
-      throw new IllegalArgumentException("Authentication ID cannot be null");
-    }
-    authenticationID = authID;
+    authenticationID = LdapUtils.assertNotNullArg(authID, "Authentication ID cannot be null");
     authorizationID = authzID;
-    if (pass == null) {
-      throw new IllegalArgumentException("Password cannot be null");
-    }
-    password = pass;
+    password = LdapUtils.assertNotNullArg(pass, "Password cannot be null");
     saslRealm = realm;
     saslProperties = props.entrySet().stream()
       .collect(

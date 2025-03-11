@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.concurrent.CallableWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -98,6 +99,10 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
   public void setDnResolvers(final Map<String, DnResolver> resolvers)
   {
     assertMutable();
+    LdapUtils.assertNotNullArgOr(
+      resolvers,
+      r -> r.entrySet().stream().anyMatch(e -> e.getKey() == null || e.getValue() == null),
+      "DN resolvers cannot be null or contain null");
     logger.trace("setting dnResolvers: {}", resolvers);
     dnResolvers.putAll(resolvers);
   }
@@ -112,6 +117,7 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
   public void addDnResolver(final String label, final DnResolver resolver)
   {
     assertMutable();
+    LdapUtils.assertNotNullArg(resolver, "DN resolver cannot be null");
     logger.trace("adding dnResolver: {}:{}", label, resolver);
     dnResolvers.put(label, resolver);
   }
@@ -151,6 +157,7 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
    */
   public EntryResolver createEntryResolver(final EntryResolver resolver)
   {
+    LdapUtils.assertNotNullArg(resolver, "Entry resolver cannot be null");
     final Map<String, EntryResolver> resolvers = new HashMap<>(dnResolvers.size());
     for (String label : dnResolvers.keySet()) {
       resolvers.put(label, resolver);

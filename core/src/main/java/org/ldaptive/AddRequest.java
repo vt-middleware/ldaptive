@@ -3,6 +3,7 @@ package org.ldaptive;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.stream.Stream;
 import org.ldaptive.asn1.ApplicationDERTag;
 import org.ldaptive.asn1.ConstructedDEREncoder;
@@ -52,7 +53,8 @@ public class AddRequest extends AbstractRequestMessage
   public AddRequest(final String dn, final LdapAttribute... attrs)
   {
     ldapDn = dn;
-    attributes = attrs;
+    attributes = LdapUtils.assertNotContainsNullArgOr(
+      attrs, Objects::isNull, "Attributes cannot be null or contain null");
   }
 
 
@@ -65,7 +67,8 @@ public class AddRequest extends AbstractRequestMessage
   public AddRequest(final String dn, final Collection<LdapAttribute> attrs)
   {
     ldapDn = dn;
-    attributes = attrs.toArray(LdapAttribute[]::new);
+    attributes = LdapUtils.assertNotContainsNullArgOr(
+      attrs, Objects::isNull, "Attributes cannot be null or contain null").toArray(LdapAttribute[]::new);
   }
 
 

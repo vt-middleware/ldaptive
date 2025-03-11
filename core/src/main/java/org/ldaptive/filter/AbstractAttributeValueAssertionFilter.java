@@ -34,9 +34,9 @@ public abstract class AbstractAttributeValueAssertionFilter implements Filter
    */
   public AbstractAttributeValueAssertionFilter(final Filter.Type type, final String name, final byte[] value)
   {
-    filterType = type;
-    attributeDesc = name;
-    assertionValue = value;
+    filterType = LdapUtils.assertNotNullArg(type, "Filter type cannot be null");
+    attributeDesc = LdapUtils.assertNotNullArg(name, "Attribute description cannot be null");
+    assertionValue = LdapUtils.assertNotNullArg(value, "Assertion value cannot be null");
   }
 
 

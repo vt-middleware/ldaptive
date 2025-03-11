@@ -3,6 +3,7 @@ package org.ldaptive.jaas;
 
 import java.util.Map;
 import java.util.Properties;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.props.PropertySource.PropertyDomain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,10 @@ public abstract class AbstractPropertiesFactory
    */
   protected static Properties createProperties(final Map<String, ?> options)
   {
+    LdapUtils.assertNotNullArgOr(
+      options,
+      o -> o.entrySet().stream().anyMatch(e -> e.getKey() == null || e.getValue() == null),
+      "JAAS options cannot be null or contain null");
     final Properties p = new Properties();
     for (Map.Entry<String, ?> entry : options.entrySet()) {
       // if property name contains a dot, it isn't an ldaptive property

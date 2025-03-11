@@ -3,6 +3,7 @@ package org.ldaptive.ad.control.util;
 
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
@@ -95,7 +96,7 @@ public class DirSyncClient
    */
   public DirSyncClient(final ConnectionFactory cf, final DirSyncControl.Flag[] dsFlags, final int count)
   {
-    factory = cf;
+    factory = LdapUtils.assertNotNullArg(cf, "Connection factory cannot be null");
     dirSyncFlags = dsFlags;
     maxAttributeCount = count;
   }
@@ -267,6 +268,7 @@ public class DirSyncClient
   public SearchResponse execute(final SearchRequest request, final CookieManager manager)
     throws LdapException
   {
+    LdapUtils.assertNotNullArg(manager, "Cookie manager cannot be null");
     request.setControls(createRequestControls(manager.readCookie()));
     final SearchOperation search = createSearchOperation();
     final SearchResponse result = search.execute(request);
@@ -332,6 +334,7 @@ public class DirSyncClient
   public SearchResponse executeToCompletion(final SearchRequest request, final CookieManager manager)
     throws LdapException
   {
+    LdapUtils.assertNotNullArg(manager, "Cookie manager cannot be null");
     SearchResponse response = null;
     final SearchResponse combinedResponse = new SearchResponse();
     final SearchOperation search = createSearchOperation();

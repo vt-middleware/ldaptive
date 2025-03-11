@@ -269,9 +269,7 @@ public final class SslConfig extends AbstractConfig
   public void setHandshakeTimeout(final Duration time)
   {
     assertMutable();
-    if (time == null || time.isNegative()) {
-      throw new IllegalArgumentException("Handshake timeout cannot be null or negative");
-    }
+    LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Handshake timeout cannot be null or negative");
     logger.trace("setting handshakeTimeout: {}", time);
     handshakeTimeout = time;
   }

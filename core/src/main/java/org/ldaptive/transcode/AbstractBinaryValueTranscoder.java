@@ -18,7 +18,7 @@ public abstract class AbstractBinaryValueTranscoder<T> implements ValueTranscode
   @Override
   public T decodeStringValue(final String value)
   {
-    return decodeBinaryValue(LdapUtils.utf8Encode(value));
+    return decodeBinaryValue(LdapUtils.utf8Encode(value, false));
   }
 
 

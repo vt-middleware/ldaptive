@@ -20,9 +20,7 @@ public final class Credential
    */
   public Credential(final String password)
   {
-    if (password == null) {
-      throw new IllegalArgumentException("Password cannot be null");
-    }
+    LdapUtils.assertNotNullArg(password, "Password cannot be null");
     bytes = LdapUtils.utf8Encode(password, false);
   }
 
@@ -34,9 +32,7 @@ public final class Credential
    */
   public Credential(final char[] password)
   {
-    if (password == null) {
-      throw new IllegalArgumentException("Password cannot be null");
-    }
+    LdapUtils.assertNotNullArg(password, "Password cannot be null");
     bytes = LdapUtils.utf8Encode(password, false);
   }
 
@@ -48,9 +44,7 @@ public final class Credential
    */
   public Credential(final byte[] password)
   {
-    if (password == null) {
-      throw new IllegalArgumentException("Password cannot be null");
-    }
+    LdapUtils.assertNotNullArg(password, "Password cannot be null");
     bytes = password;
   }
 

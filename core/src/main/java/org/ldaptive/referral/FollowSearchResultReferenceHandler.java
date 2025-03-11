@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.SearchResultReference;
@@ -135,6 +136,7 @@ public class FollowSearchResultReferenceHandler extends AbstractFollowSearchRefe
   @Override
   public SearchResponse apply(final SearchResponse result)
   {
+    LdapUtils.assertNotNullArg(result, "Response cannot be null");
     if (!result.isSuccess() || result.getReferences().isEmpty()) {
       return result;
     }

@@ -66,11 +66,11 @@ public class ModifyRequest extends AbstractRequestMessage
    */
   public ModifyRequest(final String entry, final AttributeModification... mod)
   {
-    if (mod == null || mod.length == 0) {
-      throw new IllegalArgumentException("modifications cannot be null or empty");
-    }
-    ldapDn = entry;
-    modifications = mod;
+    ldapDn = LdapUtils.assertNotNullArg(entry, "Entry DN cannot be null");
+    modifications = LdapUtils.assertNotContainsNullArgOr(
+      mod,
+      m-> m == null || m.length == 0,
+      "Modifications cannot be null, contain null or be empty");
   }
 
 

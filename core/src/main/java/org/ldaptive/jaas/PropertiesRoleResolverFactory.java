@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.ldaptive.ConnectionFactoryManager;
 import org.ldaptive.DefaultConnectionFactory;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.props.DefaultConnectionFactoryPropertySource;
 import org.ldaptive.props.PropertySource.PropertyDomain;
@@ -26,8 +27,12 @@ public class PropertiesRoleResolverFactory extends AbstractPropertiesFactory imp
   @Override
   public RoleResolver createRoleResolver(final Map<String, ?> jaasOptions)
   {
+    LdapUtils.assertNotNullArg(jaasOptions, "JAAS options cannot be null");
     final RoleResolver rr;
     if (jaasOptions.containsKey(CACHE_ID)) {
+      if (!(jaasOptions.get(CACHE_ID) instanceof String)) {
+        throw new IllegalArgumentException("JAAS options must contain a string");
+      }
       final String cacheId = (String) jaasOptions.get(CACHE_ID);
       synchronized (CACHE) {
         if (!CACHE.containsKey(cacheId)) {

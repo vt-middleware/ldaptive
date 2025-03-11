@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -30,6 +29,7 @@ import com.sun.codemodel.JInvocation;
 import com.sun.codemodel.JMethod;
 import com.sun.codemodel.JMod;
 import com.sun.codemodel.JVar;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.beans.generate.props.BeanGeneratorPropertySource;
 import org.ldaptive.schema.AttributeType;
 import org.ldaptive.schema.AttributeUsage;
@@ -279,12 +279,11 @@ public class BeanGenerator
    *
    * @param  m  name mappings
    *
-   * @throws  NullPointerException  if m is null
+   * @throws  IllegalArgumentException  if m is null
    */
   public void setNameMappings(final Map<String, String> m)
   {
-    Objects.requireNonNull(m, "Name mappings cannot be null");
-    nameMappings = m;
+    nameMappings = LdapUtils.assertNotNullArg(m, "Name mappings cannot be null");
   }
 
 
@@ -305,12 +304,11 @@ public class BeanGenerator
    *
    * @param  names  to exclude
    *
-   * @throws  NullPointerException  if names is null
+   * @throws  IllegalArgumentException  if names is null
    */
   public void setExcludedNames(final String... names)
   {
-    Objects.requireNonNull(names, "Excluded names cannot be null");
-    excludedNames = names;
+    excludedNames = LdapUtils.assertNotNullArg(names, "Excluded names cannot be null");
   }
 
 
@@ -585,14 +583,13 @@ public class BeanGenerator
 
 
   /**
-   * Creates the hashCode method on the supplied class. Leverages {@link org.ldaptive.LdapUtils#computeHashCode(int,
-   * Object...)}.
+   * Creates the hashCode method on the supplied class. Leverages {@link LdapUtils#computeHashCode(int, Object...)}.
    *
    * @param  clazz  to put hashCode method on
    */
   private void createHashCode(final JDefinedClass clazz)
   {
-    final JClass ldapUtilsClass = codeModel.ref(org.ldaptive.LdapUtils.class);
+    final JClass ldapUtilsClass = codeModel.ref(LdapUtils.class);
     final JInvocation computeHashCode = ldapUtilsClass.staticInvoke("computeHashCode");
     final JMethod hashCode = clazz.method(JMod.PUBLIC, int.class, "hashCode");
     hashCode.annotate(Override.class);
@@ -607,7 +604,7 @@ public class BeanGenerator
 
 
   /**
-   * Creates the equals method on the supplied class. Leverages {@link org.ldaptive.LdapUtils#areEqual(Object, Object)}.
+   * Creates the equals method on the supplied class. Leverages {@link LdapUtils#areEqual(Object, Object)}.
    *
    * @param  clazz  to put equals method on
    */
@@ -624,7 +621,7 @@ public class BeanGenerator
     final JVar v = ifInstance._then().decl(clazz, "v", JExpr.cast(clazz, o));
     JExpression propertyComparison = null;
     for (Map.Entry<String, JFieldVar> entry : clazz.fields().entrySet()) {
-      final JClass ldapUtilsClass = codeModel.ref(org.ldaptive.LdapUtils.class);
+      final JClass ldapUtilsClass = codeModel.ref(LdapUtils.class);
       final JInvocation areEqual = ldapUtilsClass.staticInvoke("areEqual");
       areEqual.arg(entry.getValue());
       areEqual.arg(v.ref(entry.getValue()));

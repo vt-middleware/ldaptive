@@ -38,7 +38,7 @@ public class NotFilter implements FilterSet
    */
   public NotFilter(final Filter component)
   {
-    filterComponent = component;
+    add(component);
   }
 
 
@@ -55,7 +55,7 @@ public class NotFilter implements FilterSet
     if (filterComponent != null) {
       throw new IllegalStateException("Filter component has already been set");
     }
-    filterComponent = component;
+    filterComponent = LdapUtils.assertNotNullArg(component, "Filter component cannot be null");
   }
 
 
@@ -73,6 +73,7 @@ public class NotFilter implements FilterSet
   @Override
   public DEREncoder getEncoder()
   {
+    LdapUtils.assertNotNullState(filterComponent, "Filter component cannot be null");
     return new ConstructedDEREncoder(
       new ContextDERTag(Type.NOT.ordinal(), true),
       filterComponent.getEncoder());

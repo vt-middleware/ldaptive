@@ -2,7 +2,6 @@
 package org.ldaptive.transport;
 
 import java.time.Instant;
-import java.util.Objects;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Predicate;
 import org.ldaptive.ActivePassiveConnectionStrategy;
@@ -13,6 +12,7 @@ import org.ldaptive.ConnectionStrategy;
 import org.ldaptive.InitialRetryMetadata;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapURL;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.ResultCode;
 import org.ldaptive.RetryMetadata;
 import org.ldaptive.UnbindRequest;
@@ -55,9 +55,9 @@ public abstract class TransportConnection implements Connection
    */
   public TransportConnection(final ConnectionConfig config)
   {
-    Objects.requireNonNull(config, "Connection config cannot be null");
-    connectionConfig = config;
-    connectionStrategy = connectionConfig.getConnectionStrategy();
+    connectionConfig = LdapUtils.assertNotNullArg(config, "Connection config cannot be null");
+    connectionStrategy = LdapUtils.assertNotNullArg(
+      connectionConfig.getConnectionStrategy(), "Connection strategy cannot be null");
     synchronized (connectionStrategy) {
       if (!connectionStrategy.isInitialized()) {
         connectionStrategy.initialize(connectionConfig.getLdapUrl(), new Predicate<>() {

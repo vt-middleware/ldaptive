@@ -5,6 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -50,7 +51,7 @@ public class LdapAttributeTest
 
   /** Tests create with no value. */
   @Test
-  public void noValue()
+  public void emptyValue()
   {
     final LdapAttribute la = new LdapAttribute("givenName");
     assertThat(la.getName()).isEqualTo("givenName");
@@ -62,14 +63,89 @@ public class LdapAttributeTest
     assertThat(la.getBinaryValues()).isEmpty();
     assertThat(la.getValues((Function<byte[], Object>) b -> b)).isEmpty();
     assertThat(la).isEqualTo(new LdapAttribute("givenName"));
-    try {
-      la.addStringValues((String[]) null);
-      fail("Should have thrown NullPointerException");
-    } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
-    }
     assertThat(la.size()).isEqualTo(0);
     la.clear();
+    assertThat(la.size()).isEqualTo(0);
+  }
+
+
+  /** Tests create with null value(s). */
+  @Test
+  public void nullValue()
+  {
+    final LdapAttribute la = new LdapAttribute("givenName");
+    try {
+      la.addStringValues((String) null);
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addStringValues((String[]) null);
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addStringValues("a", null, "b");
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addStringValues((Collection<String>) null);
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addStringValues(Collections.singletonList(null));
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addStringValues(Arrays.asList("a", null, "b"));
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addBinaryValues((byte[][]) null);
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addBinaryValues((byte[]) null);
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addBinaryValues(new byte[] {0x0A}, null, new byte[] {0x0B});
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addBinaryValues((Collection<byte[]>) null);
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addBinaryValues(Collections.singletonList(null));
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
+    try {
+      la.addBinaryValues(Arrays.asList(new byte[] {0x0A}, null, new byte[] {0x0B}));
+      fail("Should have thrown IllegalArgumentException");
+    } catch (Exception e) {
+      assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
+    }
     assertThat(la.size()).isEqualTo(0);
   }
 
@@ -91,13 +167,6 @@ public class LdapAttributeTest
       .containsExactly("William Wallace".getBytes(StandardCharsets.UTF_8));
     assertThat(la.size()).isEqualTo(1);
     assertThat(la).isEqualTo(new LdapAttribute("cn", "William Wallace"));
-    try {
-      la.addStringValues((String[]) null);
-      fail("Should have thrown NullPointerException");
-    } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
-    }
-    la.addStringValues((String) null);
     assertThat(la.size()).isEqualTo(1);
     la.clear();
     assertThat(la.size()).isEqualTo(0);
@@ -143,13 +212,6 @@ public class LdapAttributeTest
     assertThat(la.getStringValues()).hasSize(1);
     assertThat(la.getBinaryValues()).hasSize(1);
     assertThat(la).isEqualTo(new LdapAttribute("cn", "William Wallace"));
-    try {
-      la.addStringValues((String[]) null);
-      fail("Should have thrown NullPointerException");
-    } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
-    }
-    la.addStringValues((String) null);
     la.addBinaryValues("Bill".getBytes(StandardCharsets.UTF_8));
     assertThat(la.getBinaryValues()).hasSize(2);
     assertThat(la.getStringValues())
@@ -173,13 +235,6 @@ public class LdapAttributeTest
     assertThat(la.getBinaryValues()).hasSize(1);
     assertThat(la.getStringValues()).hasSize(1);
     assertThat(la).isEqualTo(new LdapAttribute("jpegPhoto", "image".getBytes()));
-    try {
-      la.addBinaryValues((byte[][]) null);
-      fail("Should have thrown NullPointerException");
-    } catch (Exception e) {
-      assertThat(e).isExactlyInstanceOf(NullPointerException.class);
-    }
-    la.addBinaryValues((byte[]) null);
     la.addStringValues("QmlsbA==");
     assertThat(la.getBinaryValues()).hasSize(2);
     assertThat(la.getStringValues())

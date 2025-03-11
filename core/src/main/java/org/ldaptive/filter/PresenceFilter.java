@@ -32,7 +32,7 @@ public class PresenceFilter implements Filter
    */
   public PresenceFilter(final String name)
   {
-    attributeDesc = name;
+    attributeDesc = LdapUtils.assertNotNullArg(name, "Attribute name cannot be null");
   }
 
 

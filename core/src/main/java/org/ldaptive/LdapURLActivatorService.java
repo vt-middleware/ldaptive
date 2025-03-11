@@ -86,7 +86,7 @@ public final class LdapURLActivatorService
    */
   public void registerUrl(final LdapURL url)
   {
-    inactiveUrls.add(url);
+    inactiveUrls.add(LdapUtils.assertNotNullArg(url, "URL cannot be null"));
   }
 
 

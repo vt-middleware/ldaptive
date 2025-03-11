@@ -4,6 +4,7 @@ package org.ldaptive.pool;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import org.ldaptive.LdapUtils;
 
 /**
  * Provides a wrapper around a {@link Deque} to support LIFO and FIFO operations.
@@ -29,7 +30,7 @@ public class Queue<T> implements Iterable<T>
    */
   public Queue(final QueueType type)
   {
-    queueType = type;
+    queueType = LdapUtils.assertNotNullArg(type, "Queue type cannot be null");
     queue = new LinkedList<>();
   }
 

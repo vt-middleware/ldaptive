@@ -47,9 +47,7 @@ public final class LdapURL
    */
   private LdapURL(final Url ldapURL)
   {
-    if (ldapURL.getHostname() == null) {
-      throw new IllegalArgumentException("Hostname cannot be null");
-    }
+    LdapUtils.assertNotNullArgOr(ldapURL, u -> u.getHostname() == null, "URL and hostname cannot be null");
     url = ldapURL;
   }
 
@@ -85,7 +83,7 @@ public final class LdapURL
    */
   public LdapURL(final String ldapUrl, final UrlParser parser)
   {
-    this(parser.parse(ldapUrl));
+    this(LdapUtils.assertNotNullArg(parser, "URL parser cannot be null").parse(ldapUrl));
   }
 
 

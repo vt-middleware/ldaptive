@@ -54,6 +54,7 @@ public final class RDn
    */
   public RDn(final String rdn, final DnParser parser)
   {
+    LdapUtils.assertNotNullArg(parser, "DN parser cannot be null");
     final List<RDn> rdns = parser.parse(rdn);
     if (rdns.isEmpty()) {
       throw new IllegalArgumentException("Invalid RDN: no RDNs found in " + rdn);
@@ -72,6 +73,7 @@ public final class RDn
    */
   public RDn(final NameValue... value)
   {
+    LdapUtils.assertNotContainsNullArgOr(value, Objects::isNull, "Name values cannot be null or contain null");
     nameValues = Stream.of(value).filter(Objects::nonNull).collect(
       Collectors.collectingAndThen(Collectors.toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
   }
@@ -84,6 +86,7 @@ public final class RDn
    */
   public RDn(final Collection<NameValue> values)
   {
+    LdapUtils.assertNotContainsNullArgOr(values, Objects::isNull, "Name values cannot be null or contain null");
     nameValues = values.stream().filter(Objects::nonNull).collect(
       Collectors.collectingAndThen(Collectors.toCollection(LinkedHashSet::new), Collections::unmodifiableSet));
   }

@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchResponse;
 import org.ldaptive.control.VirtualListViewRequestControl;
 import org.ldaptive.control.VirtualListViewResponseControl;
@@ -65,7 +66,7 @@ public class VirtualListViewParams
     beforeCount = before;
     afterCount = after;
     assertionValue = null;
-    cookieManager = manager;
+    cookieManager = LdapUtils.assertNotNullArg(manager, "Cookie manager cannot be null");
   }
 
 
@@ -100,7 +101,7 @@ public class VirtualListViewParams
     beforeCount = before;
     afterCount = after;
     targetOffset = 0;
-    cookieManager = manager;
+    cookieManager = LdapUtils.assertNotNullArg(manager, "Cookie manager cannot be null");
   }
 
 
@@ -188,6 +189,7 @@ public class VirtualListViewParams
    */
   public VirtualListViewRequestControl createRequestControl(final boolean critical, final CookieManager manager)
   {
+    LdapUtils.assertNotNullArg(manager, "Cookie manager cannot be null");
     if (assertionValue != null) {
       return new VirtualListViewRequestControl(assertionValue, beforeCount, afterCount, manager.readCookie(), critical);
     } else {
