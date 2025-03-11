@@ -131,6 +131,9 @@ public class FilterTemplate
    */
   public String format()
   {
+    if (searchFilter == null) {
+      throw new IllegalStateException("Search filter cannot be null");
+    }
     String s = searchFilter;
     if (!parameters.isEmpty()) {
       for (Map.Entry<String, Object> e : parameters.entrySet()) {

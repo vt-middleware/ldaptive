@@ -19,6 +19,9 @@ public abstract class AbstractFilterFunction implements FilterFunction
   public Filter parse(final String filter)
     throws FilterParseException
   {
+    if (filter == null) {
+      throw new IllegalArgumentException("Filter cannot be null");
+    }
     final String balancedFilter;
     // Check for balanced parentheses
     if (filter.startsWith("(")) {
