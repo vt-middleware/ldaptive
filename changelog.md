@@ -6,6 +6,31 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.5.0-SNAPSHOT - DDMMM20YY
+
+Issue | Description
+:---- | :----------
+[2fd8380]({{ site.commitURL }}2fd8380) | Produce a core jar with shaded netty dependencies.
+[084b4a2]({{ site.commitURL }}084b4a2) | Add support for freezable response controls.
+[0b8da14]({{ site.commitURL }}0b8da14) | Refactor PasswordPolicyControl; continuation of 276.
+[32d93b2]({{ site.commitURL }}32d93b2) | Add Jazzer fuzzer module.
+[31caaea]({{ site.commitURL }}31caaea) | Create a beans-spring module; move spring classes into separate maven module.
+
+## Version 2.4.1 - 17Mar2025
+
+Issue | Description
+:---- | :----------
+[d33d59b]({{ site.commitURL }}d33d59b) | Improve shouldBase64Encode implementation.
+[c1cd920]({{ site.commitURL }}c1cd920) | Add BigIntegerValueTranscoder.
+[0f43077]({{ site.commitURL }}0f43077) | Improve AD schema factory to use schemaNamingContext.
+[0c982c3]({{ site.commitURL }}0c982c3) | Update GlobalIdentifier to optionally support brackets.
+[73c1d0f]({{ site.commitURL }}73c1d0f) | Add prunePriorityFactory to AgePruneStrategy.
+[ldaptive-279]({{ site.issueURL }}279) | Fix thread safety issues in LdapURLActivatorService.
+[ldaptive-278]({{ site.issueURL }}278) | Change AccountState to allow both errors and warnings.
+[ldaptive-277]({{ site.issueURL }}277) | Avoid excessive memory consumption in DERParser.
+[ldaptive-276]({{ site.issueURL }}276) | PasswordPolicyAuthenticationResponseHandler should load both warnings and errors.
+[ldaptive-275]({{ site.issueURL }}275) | Add LdapEntry#mapAttribute methods.
+
 ## Version 2.4.0 - 01Dec2024
 
 Issue | Description
