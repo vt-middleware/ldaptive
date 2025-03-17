@@ -118,13 +118,13 @@ This example shows a reconnect condition that tries 5 times with a backoff.
 
 ## Connection Strategies
 
-Ldaptive provides several different strategies for connecting to multiple hosts with a single connection factory.
+Ldaptive provides several different strategies for connecting to multiple hosts with a single connection factory. Each strategy produces an ordered list of URLs based on the space delimited property in `ConnectionConfig#ldapUrl`. Those URLs are tried in the order supplied by the connection strategy. If a URL fails to connect, it will be marked inactive and moved towards the end of the list for subsequent connection attempts. This promotes the use of active URLs over inactive URLs. By default inactive URLs are inspected every 5 minutes for reactivation. All inactive URLs are reactivated after 4 hours of inactivity.
 
 Name | Behavior
-`ActivePassiveConnectionStrategy` | attempt each URL in the order provided for each connection; the URLs are always tried in the order in which they were provided
-`RandomConnectionStrategy` | attempt a random URL from a list of URLs;
-`RoundRobinConnectionStrategy` | attempt the next URL in the order provided for each connection; URLs are rotated regardless of connection success or failure
-`DnsSrvConnectionStrategy` | queries a DNS server for SRV records and uses those records to construct a list of URLs; When configuring this strategy you must use your DNS server for `ConnectionConfig#ldapUrl` in the form dns://my.server.com.
+`ActivePassiveConnectionStrategy` | Attempt each URL in the order provided for each connection. The URLs are tried in the order in which they are provided such that the first URL has the highest priority and the last URL has the lowest priority.
+`RandomConnectionStrategy` | Attempt a random URL from the list of URLs such that all URLs have the same priority.
+`RoundRobinConnectionStrategy` | Attempt the next URL from the list of URLs in the order provided such that all URLs have the same priority.
+`DnsSrvConnectionStrategy` | Queries a DNS server for SRV records and uses those records to construct a list of URLs. The URLs will be ordered by the priority designated in the SRV record. When configuring this strategy you must use your DNS server for `ConnectionConfig#ldapUrl` in the form dns://my.server.com.
 
 {% highlight java %}
 {% include source/connections/8.java %}
