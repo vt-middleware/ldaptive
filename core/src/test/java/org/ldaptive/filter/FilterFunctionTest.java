@@ -1087,6 +1087,16 @@ public class FilterFunctionTest
           new EqualityFilter("member", "uid=username,ou=Лаборатория,ou=Университет,dc=company,dc=com"),
           false,
         },
+        new Object[] {
+          "(flag=\uD808\uDF34)",
+          new EqualityFilter("flag", "\uD808\uDF34"),
+          false,
+        },
+        new Object[] {
+          "(flag=\uD83C\uDFF4\u200D\u2620\uFE0F)",
+          new EqualityFilter("flag", "\uD83C\uDFF4\u200D\u2620\uFE0F"),
+          false,
+        },
       };
   }
   // CheckStyle:MethodLength ON

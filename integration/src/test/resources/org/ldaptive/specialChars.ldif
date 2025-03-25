@@ -1,6 +1,6 @@
 dn: cn=Test/User/ #1,${ldapBaseDn}
 cn: Test/User/ #1
-givenName: Test
+givenName: 😈Test😈
 objectClass: inetOrgPerson
 objectClass: organizationalPerson
 objectClass: person

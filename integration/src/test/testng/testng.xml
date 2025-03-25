@@ -196,7 +196,8 @@
   <parameter name="specialCharSearchFilter" value="(&amp;(uid=17893)(sn={0}))"/>
   <parameter name="specialCharSearchFilterParameters" value="(Us\er)*"/>
   <parameter name="specialCharBinarySearchFilter" value="(&amp;(uid=17893)(givenName={0}))"/>
-  <parameter name="specialCharBinarySearchFilterParameters" value="VGVzdA=="/>
+  <parameter name="specialCharBinarySearchFilterParameters" value="😈Test😈"/>
+  <parameter name="specialCharBinarySearchFilterParametersBase64" value="8J+YiFRlc3Twn5iI"/>
   <parameter name="specialCharReturnAttrs" value="cn|givenName|sn|uid"/>
   <parameter name="specialCharSearchResults"
              value="/org/ldaptive/specialCharsResults.ldif"/>
