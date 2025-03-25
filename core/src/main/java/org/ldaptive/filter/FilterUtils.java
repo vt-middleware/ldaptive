@@ -107,7 +107,8 @@ public final class FilterUtils
     throws FilterParseException
   {
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream(value.length());
-    for (int i = 0; i < value.length(); i++) {
+    final int len = value.length();
+    for (int i = 0; i < len; i++) {
       final char c = value.charAt(i);
       if (c == '\0' || c == '(' || c == ')' || c == '*') {
         throw new FilterParseException(ResultCode.FILTER_ERROR, "Assertion value contains unescaped characters");
@@ -124,7 +125,11 @@ public final class FilterUtils
           bytes.write(c);
         } else {
           try {
-            bytes.write(LdapUtils.utf8Encode(String.valueOf(c), false));
+            if (i + 1 < len && Character.isSurrogatePair(c, value.charAt(i + 1))) {
+              bytes.write(LdapUtils.utf8Encode(Character.toString(Character.toCodePoint(c, value.charAt(++i))), false));
+            } else {
+              bytes.write(LdapUtils.utf8Encode(Character.toString(c), false));
+            }
           } catch (IOException e) {
             throw new FilterParseException(ResultCode.FILTER_ERROR, "Could not write multi-byte character", e);
           }

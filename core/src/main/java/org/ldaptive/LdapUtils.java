@@ -667,52 +667,6 @@ public final class LdapUtils
 
 
   /**
-   * Converts the supplied string to lower case. Uses {@link Character#isUpperCase(int)} for non ascii characters.
-   *
-   * @param  s  to lower case
-   *
-   * @return  new lower case string
-   */
-  private static String toLowerCaseNonAscii(final String s)
-  {
-    if (s == null || s.isEmpty()) {
-      return s;
-    }
-    final int len = s.length();
-    final StringBuilder sb = new StringBuilder(len);
-    char ch;
-    for (int i = 0; i < len; i++) {
-      ch = s.charAt(i);
-      // CheckStyle:MagicNumber OFF
-      if (ch <= 0x7F) {
-        if (ch >= 'A' && ch <= 'Z') {
-          sb.append((char) (ch + 32));
-        } else {
-          sb.append(ch);
-        }
-      } else {
-        if (i + 1 < len && Character.isHighSurrogate(ch)) {
-          final char lowSurr = s.charAt(++i);
-          final int codePoint = Character.toCodePoint(ch, lowSurr);
-          if (Character.isUpperCase(codePoint)) {
-            final int lowerCodePoint = Character.toLowerCase(codePoint);
-            sb.append(Character.highSurrogate(lowerCodePoint)).append(Character.lowSurrogate(lowerCodePoint));
-          } else {
-            sb.append(Character.highSurrogate(codePoint)).append(Character.lowSurrogate(codePoint));
-          }
-        } else if (Character.isUpperCase(ch)) {
-          sb.append(Character.toLowerCase(ch));
-        } else {
-          sb.append(ch);
-        }
-      }
-      // CheckStyle:MagicNumber ON
-    }
-    return sb.toString();
-  }
-
-
-  /**
    * Converts the characters A-Z to a-z.
    *
    * @param  s  to lower case
@@ -760,50 +714,6 @@ public final class LdapUtils
       return s.toUpperCase(Locale.ROOT);
     }
     return toUpperCaseAscii(s);
-  }
-
-
-  /**
-   * Converts the supplied string to upper case. Uses {@link Character#isLowerCase(int)} for non ascii characters.
-   *
-   * @param  s  to upper case
-   *
-   * @return  new upper case string
-   */
-  private static String toUpperCaseNonAscii(final String s)
-  {
-    if (s == null || s.isEmpty()) {
-      return s;
-    }
-    final int len = s.length();
-    final StringBuilder sb = new StringBuilder(len);
-    char ch;
-    for (int i = 0; i < len; i++) {
-      ch = s.charAt(i);
-      if (ch <= 0x7F) {
-        if (ch >= 'a' && ch <= 'z') {
-          sb.append((char) (ch - 32));
-        } else {
-          sb.append(ch);
-        }
-      } else {
-        if (i + 1 < len && Character.isHighSurrogate(ch)) {
-          final char lowSurr = s.charAt(++i);
-          final int codePoint = Character.toCodePoint(ch, lowSurr);
-          if (Character.isLowerCase(codePoint)) {
-            final int upperCodePoint = Character.toUpperCase(codePoint);
-            sb.append(Character.highSurrogate(upperCodePoint)).append(Character.lowSurrogate(upperCodePoint));
-          } else {
-            sb.append(Character.highSurrogate(codePoint)).append(Character.lowSurrogate(codePoint));
-          }
-        } else if (Character.isLowerCase(ch)) {
-          sb.append(Character.toUpperCase(ch));
-        } else {
-          sb.append(ch);
-        }
-      }
-    }
-    return sb.toString();
   }
 
 

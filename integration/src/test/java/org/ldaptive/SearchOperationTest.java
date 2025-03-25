@@ -34,6 +34,8 @@ import org.ldaptive.control.SortResponseControl;
 import org.ldaptive.control.VirtualListViewRequestControl;
 import org.ldaptive.control.VirtualListViewResponseControl;
 import org.ldaptive.dn.Dn;
+import org.ldaptive.filter.DefaultFilterFunction;
+import org.ldaptive.filter.EqualityFilter;
 import org.ldaptive.handler.AbandonOperationException;
 import org.ldaptive.handler.CaseChangeEntryHandler;
 import org.ldaptive.handler.CaseChangeEntryHandler.CaseChange;
@@ -1512,6 +1514,7 @@ public class SearchOperationTest extends AbstractTest
    * @param  filterParameters  to replace parameters in filter with.
    * @param  binaryFilter  to search for binary attributes.
    * @param  binaryFilterParameters  to replace parameters in binary filter with.
+   * @param  binaryFilterParametersBase64  to replace parameters in binary filter with.
    * @param  returnAttrs  to return from search.
    * @param  ldifFile  to compare with.
    *
@@ -1523,16 +1526,19 @@ public class SearchOperationTest extends AbstractTest
     "specialCharSearchFilterParameters",
     "specialCharBinarySearchFilter",
     "specialCharBinarySearchFilterParameters",
+    "specialCharBinarySearchFilterParametersBase64",
     "specialCharReturnAttrs",
     "specialCharSearchResults"
   })
   @Test(groups = "search")
+  // CheckStyle:ParameterNumber OFF
   public void specialCharsSearch(
     final String dn,
     final String filter,
     final String filterParameters,
     final String binaryFilter,
     final String binaryFilterParameters,
+    final String binaryFilterParametersBase64,
     final String returnAttrs,
     final String ldifFile)
     throws Exception
@@ -1551,10 +1557,32 @@ public class SearchOperationTest extends AbstractTest
     result = search.execute(
       SearchRequest.builder()
         .dn(dn)
-        .filter(new FilterTemplate(binaryFilter, new Object[] {LdapUtils.base64Decode(binaryFilterParameters)}))
+        .filter(new FilterTemplate(binaryFilter, new Object[] {binaryFilterParameters}))
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter(new DefaultFilterFunction().parse("(givenName=" + binaryFilterParameters + ")"))
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter(new EqualityFilter("givenName", binaryFilterParameters))
+        .returnAttributes(returnAttrs.split("\\|")).build());
+    SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
+
+    result = search.execute(
+      SearchRequest.builder()
+        .dn(dn)
+        .filter(new FilterTemplate(binaryFilter, new Object[] {LdapUtils.base64Decode(binaryFilterParametersBase64)}))
         .returnAttributes(returnAttrs.split("\\|")).build());
     SearchResponseAssert.assertThat(result).isSame(specialCharsResult);
   }
+  // CheckStyle:ParameterNumber ON
 
 
   /**
