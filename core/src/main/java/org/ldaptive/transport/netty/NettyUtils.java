@@ -62,29 +62,29 @@ final class NettyUtils
     try {
       Class.forName("io.netty.channel.epoll.Epoll");
       epollAvailable = Epoll.isAvailable();
+      LOGGER.debug(
+        "Detected Epoll transport: {} with cause {}",
+        epollAvailable,
+        Epoll.unavailabilityCause() != null ? Epoll.unavailabilityCause().getMessage() : null);
     } catch (Exception e) {
       LOGGER.debug("Error detecting Epoll: {}:{}", e.getClass(), e.getMessage());
       epollAvailable = false;
     }
     EPOLL_AVAILABLE = epollAvailable;
-    LOGGER.debug(
-      "Detected Epoll transport: {} with cause {}",
-      EPOLL_AVAILABLE,
-      Epoll.unavailabilityCause() != null ? Epoll.unavailabilityCause().getMessage() : null);
 
     boolean kqueueAvailable;
     try {
       Class.forName("io.netty.channel.kqueue.KQueue");
       kqueueAvailable = KQueue.isAvailable();
+      LOGGER.debug(
+        "Detected KQueue transport: {} with cause {}",
+        kqueueAvailable,
+        KQueue.unavailabilityCause() != null ? KQueue.unavailabilityCause().getMessage() : null);
     } catch (Exception e) {
       LOGGER.debug("Error detecting KQueue: {}:{}", e.getClass(), e.getMessage());
       kqueueAvailable = false;
     }
     KQUEUE_AVAILABLE = kqueueAvailable;
-    LOGGER.debug(
-      "Detected KQueue transport: {} with cause {}",
-      KQUEUE_AVAILABLE,
-      KQueue.unavailabilityCause() != null ? KQueue.unavailabilityCause().getMessage() : null);
 
     LOGGER.debug("Overriding to use Nio transport: {}", USE_NIO);
   }
