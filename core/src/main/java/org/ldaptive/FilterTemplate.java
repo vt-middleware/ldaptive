@@ -2,7 +2,7 @@
 package org.ldaptive;
 
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.ldaptive.filter.FilterUtils;
 
@@ -22,7 +22,7 @@ public class FilterTemplate
   private String searchFilter;
 
   /** filter parameters. */
-  private final Map<String, Object> parameters = new HashMap<>();
+  private final Map<String, Object> parameters = new LinkedHashMap<>();
 
 
   /** Default constructor. */
@@ -134,16 +134,16 @@ public class FilterTemplate
     if (searchFilter == null) {
       throw new IllegalStateException("Search filter cannot be null");
     }
-    String s = searchFilter;
+    String filter = searchFilter;
     if (!parameters.isEmpty()) {
       for (Map.Entry<String, Object> e : parameters.entrySet()) {
-        final String encoded = encode(e.getValue());
+        final String encoded = escapeBrackets(encode(e.getValue()));
         if (encoded != null) {
-          s = s.replace("{" + e.getKey() + "}", encoded);
+          filter = filter.replace("{" + e.getKey() + "}", encoded);
         }
       }
     }
-    return s;
+    return filter;
   }
 
 
@@ -209,6 +209,33 @@ public class FilterTemplate
       str = encodeValue(obj.toString());
     }
     return str;
+  }
+
+
+  /**
+   * Replaces any brackets in the supplied string with their hex encoding.
+   *
+   * @param  s  to escape
+   *
+   * @return  string with escaped brackets
+   */
+  private static String escapeBrackets(final String s)
+  {
+    if (s == null || s.chars().noneMatch(c -> c == '{' || c == '}')) {
+      return s;
+    }
+    final StringBuilder sb = new StringBuilder(s.length());
+    for (int i = 0; i < s.length(); i++) {
+      final char c = s.charAt(i);
+      if (c == '{' || c == '}') {
+        // CheckStyle:MagicNumber OFF
+        sb.append('\\').append(LdapUtils.hexEncode((byte) (c & 0x7F)));
+        // CheckStyle:MagicNumber ON
+      } else {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
   }
 
 
