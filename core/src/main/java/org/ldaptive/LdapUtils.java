@@ -274,7 +274,7 @@ public final class LdapUtils
    *
    * @param  value  to encode control characters in
    *
-   * @return  string with percent encoded hex characters
+   * @return  string with percent encoded hex characters or original string if no character need encoding
    */
   public static String percentEncodeControlChars(final String value)
   {
@@ -471,7 +471,7 @@ public final class LdapUtils
    * See {@link #shouldBase64Encode(byte[])}.
    *
    * @param  value  to inspect
-   * @param  strict  whether to strictly encode what RFC 2849 requires
+   * @param  strict  whether to strictly enforce what RFC 2849 requires
    *
    * @return  whether the value should be base64 encoded
    */
@@ -558,7 +558,7 @@ public final class LdapUtils
    * should not be encoded as defined by RFC 2849
    *
    * @param  value  to inspect
-   * @param  strict  whether to strictly encode what RFC 2849 requires
+   * @param  strict  whether to strictly enforce what RFC 2849 requires
    *
    * @return  whether the value should be base64 encoded
    */

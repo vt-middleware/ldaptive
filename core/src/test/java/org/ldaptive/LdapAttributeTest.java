@@ -630,5 +630,41 @@ public class LdapAttributeTest
       .name("jpegPhoto").values("image".getBytes()).build().toString())
       .isEqualTo(
         "org.ldaptive.LdapAttribute@-1523536282::name=jpegPhoto, values=[aW1hZ2U=], binary=true");
+
+    assertThat(LdapAttribute.builder()
+      .name("givenName").values("Bill Wallace").build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@-288513493::name=givenName, values=[Bill Wallace], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("givenName").values("Bill Wallače").build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@-1149615129::name=givenName, values=[Bill Wallače], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("givenName").values("Bill W\u16C8ll\u16C8ce").build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@-1025044725::name=givenName, values=[Bill Wᛈllᛈce], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("givenName").values("Bill \uD808\uDF34allace").build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@-889488818::name=givenName, values=[Bill \uD808\uDF34allace], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("givenName").values("Bill\0Wallace").build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@-223869365::name=givenName, values=[Bill%00Wallace], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("givenName").values("Bill Wallace\uD83D\uDE08").build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@708119178::name=givenName, values=[Bill Wallace\uD83D\uDE08], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("givenName").values("Bill\uD83C\uDDEE\uD83C\uDDF8Wallace").build().toString())
+      .isEqualTo(
+        "org.ldaptive.LdapAttribute@-1981327803::name=givenName, " +
+          "values=[Bill\uD83C\uDDEE\uD83C\uDDF8Wallace], binary=false");
   }
 }

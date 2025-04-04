@@ -9,10 +9,6 @@ package org.ldaptive;
 public interface Result extends Message
 {
 
-  /** Whether to encode control characters. */
-  boolean ENCODE_CNTRL_CHARS = Boolean.parseBoolean(
-    System.getProperty("org.ldaptive.response.ENCODE_CNTRL_CHARS", "false"));
-
 
   /**
    * Returns the result code.
@@ -58,17 +54,17 @@ public interface Result extends Message
 
 
   /**
-   * Returns the diagnostic message percent encoded if {@link #ENCODE_CNTRL_CHARS} is true. See {@link
-   * LdapUtils#percentEncodeControlChars(String)}.
+   * Returns the diagnostic message with special characters encoded. See
+   * {@link LdapUtils#percentEncodeControlChars(String)}.
    *
    * @return  encoded message
    */
   default String getEncodedDiagnosticMessage()
   {
-    if (ENCODE_CNTRL_CHARS && getDiagnosticMessage() != null && !"".equals(getDiagnosticMessage())) {
-      return LdapUtils.percentEncodeControlChars(getDiagnosticMessage());
-    } else {
-      return getDiagnosticMessage();
+    final String msg = getDiagnosticMessage();
+    if (msg != null && !msg.isEmpty()) {
+      return LdapUtils.percentEncodeControlChars(msg);
     }
+    return msg;
   }
 }
