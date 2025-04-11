@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -113,14 +114,7 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
     throws LdapException
   {
     final SearchOperation search = createSearchOperation();
-    if (request.getControls() != null && request.getControls().length > 0) {
-      final List<RequestControl> requestControls = Arrays.stream(
-        request.getControls()).filter(c -> !(c instanceof PagedResultsControl)).collect(Collectors.toList());
-      requestControls.add(new PagedResultsControl(resultSize, manager.readCookie(), true));
-      request.setControls(requestControls.toArray(RequestControl[]::new));
-    } else {
-      request.setControls(new PagedResultsControl(resultSize, manager.readCookie(), true));
-    }
+    request.setControls(appendRequestControls(request, manager.readCookie()));
     final SearchResponse result = search.execute(request);
     final byte[] cookie = getPagedResultsCookie(result);
     if (cookie != null) {
@@ -207,14 +201,7 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
         combinedResults.addEntries(result.getEntries());
         combinedResults.addReferences(result.getReferences());
       }
-      if (request.getControls() != null && request.getControls().length > 0) {
-        final List<RequestControl> requestControls = Arrays.stream(
-          request.getControls()).filter(c -> !(c instanceof PagedResultsControl)).collect(Collectors.toList());
-        requestControls.add(new PagedResultsControl(resultSize, cookie, true));
-        request.setControls(requestControls.toArray(RequestControl[]::new));
-      } else {
-        request.setControls(new PagedResultsControl(resultSize, cookie, true));
-      }
+      request.setControls(appendRequestControls(request, cookie));
       result = search.execute(request);
       cookie = getPagedResultsCookie(result);
       if (cookie != null) {
@@ -262,5 +249,26 @@ public class PagedResultsClient extends AbstractSearchOperationFactory
       cookie = ctl.getCookie();
     }
     return cookie;
+  }
+
+
+  /**
+   * Creates a new array of request controls which includes the paged results control. Any other request controls are
+   * included.
+   *
+   * @param  request  to read controls from
+   * @param  cookie  to add to the paged results control or null
+   *
+   * @return  array of request controls ready to be used in a search operation
+   */
+  private RequestControl[] appendRequestControls(final SearchRequest request, final byte[] cookie)
+  {
+    if (request.getControls() != null && request.getControls().length > 0) {
+      final List<RequestControl> requestControls = Arrays.stream(request.getControls())
+        .filter(c -> !(c instanceof PagedResultsControl)).collect(Collectors.toCollection(ArrayList::new));
+      requestControls.add(new PagedResultsControl(resultSize, cookie, true));
+      return requestControls.toArray(RequestControl[]::new);
+    }
+    return new RequestControl[] {new PagedResultsControl(resultSize, cookie, true)};
   }
 }

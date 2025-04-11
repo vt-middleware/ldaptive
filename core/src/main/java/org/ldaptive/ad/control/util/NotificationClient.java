@@ -1,8 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.control.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -11,6 +15,7 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.ad.control.NotificationControl;
+import org.ldaptive.control.RequestControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +87,7 @@ public class NotificationClient
   {
     final BlockingQueue<NotificationItem> queue = new LinkedBlockingQueue<>(capacity);
 
-    request.setControls(new NotificationControl());
+    request.setControls(appendRequestControls(request));
     final SearchOperation search = new SearchOperation(factory, request);
     search.setResultHandlers(result -> {
       logger.debug("Received {}", result);
@@ -258,5 +263,25 @@ public class NotificationClient
       }
       return sb.toString();
     }
+  }
+
+
+  /**
+   * Creates a new array of request controls which includes the notification control. Any other request controls are
+   * included.
+   *
+   * @param  request  to read controls from
+   *
+   * @return  search request controls
+   */
+  private RequestControl[] appendRequestControls(final SearchRequest request)
+  {
+    if (request.getControls() != null && request.getControls().length > 0) {
+      final List<RequestControl> requestControls = Arrays.stream(request.getControls())
+        .filter(c -> !(c instanceof NotificationControl)).collect(Collectors.toCollection(ArrayList::new));
+      requestControls.add(new NotificationControl());
+      return requestControls.toArray(RequestControl[]::new);
+    }
+    return new RequestControl[] {new NotificationControl()};
   }
 }

@@ -1,8 +1,12 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
@@ -12,6 +16,7 @@ import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.control.PersistentSearchChangeType;
 import org.ldaptive.control.PersistentSearchRequestControl;
+import org.ldaptive.control.RequestControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +130,7 @@ public class PersistentSearchClient
   public SearchOperationHandle send(final SearchRequest request)
     throws LdapException
   {
-    request.setControls(new PersistentSearchRequestControl(changeTypes, changesOnly, returnEcs, true));
+    request.setControls(appendRequestControls(request));
     final SearchOperation search = new SearchOperation(factory, request);
     search.setResultHandlers(result -> {
       logger.debug("Received {}", result);
@@ -173,5 +178,25 @@ public class PersistentSearchClient
   public void abandon()
   {
     handle.abandon();
+  }
+
+
+  /**
+   * Creates a new array of request controls which includes the persistent search request control. Any other request
+   * controls are included.
+   *
+   * @param  request  to read controls from
+   *
+   * @return  search request controls
+   */
+  private RequestControl[] appendRequestControls(final SearchRequest request)
+  {
+    if (request.getControls() != null && request.getControls().length > 0) {
+      final List<RequestControl> requestControls = Arrays.stream(request.getControls())
+        .filter(c -> !(c instanceof PersistentSearchRequestControl)).collect(Collectors.toCollection(ArrayList::new));
+      requestControls.add(new PersistentSearchRequestControl(changeTypes, changesOnly, returnEcs, true));
+      return requestControls.toArray(RequestControl[]::new);
+    }
+    return new RequestControl[] {new PersistentSearchRequestControl(changeTypes, changesOnly, returnEcs, true)};
   }
 }

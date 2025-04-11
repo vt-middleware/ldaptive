@@ -1,7 +1,11 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import org.ldaptive.ConnectionConfig;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
@@ -12,6 +16,7 @@ import org.ldaptive.SearchOperationHandle;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResultReference;
 import org.ldaptive.SingleConnectionFactory;
+import org.ldaptive.control.RequestControl;
 import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.SyncRequestControl;
 import org.ldaptive.control.SyncStateControl;
@@ -260,13 +265,7 @@ public class SyncReplClient
   public SearchOperationHandle send(final SearchRequest request, final CookieManager manager)
     throws LdapException
   {
-    request.setControls(
-      new SyncRequestControl(
-        refreshAndPersist ? SyncRequestControl.Mode.REFRESH_AND_PERSIST : SyncRequestControl.Mode.REFRESH_ONLY,
-        manager.readCookie(),
-        reloadHint,
-        true));
-
+    request.setControls(appendRequestControls(request, manager));
     final SearchOperation search = new SearchOperation(factory, request);
     search.setResultHandlers(result -> {
       logger.debug("Received {}", result);
@@ -441,5 +440,37 @@ public class SyncReplClient
       "onMessage=" + onMessage + ", " +
       "onException=" + onException + ", " +
       "handle=" + handle;
+  }
+
+
+  /**
+   * Creates a new array of request controls which includes the sync request control. Any other request controls are
+   * included.
+   *
+   * @param  request  to read controls from
+   * @param  manager  to read the cookie from
+   *
+   * @return  array of request controls ready to be used in a search operation
+   */
+  private RequestControl[] appendRequestControls(final SearchRequest request, final CookieManager manager)
+  {
+    if (request.getControls() != null && request.getControls().length > 0) {
+      final List<RequestControl> requestControls = Arrays.stream(request.getControls())
+        .filter(c -> !(c instanceof SyncRequestControl)).collect(Collectors.toCollection(ArrayList::new));
+      requestControls.add(
+        new SyncRequestControl(
+          refreshAndPersist ? SyncRequestControl.Mode.REFRESH_AND_PERSIST : SyncRequestControl.Mode.REFRESH_ONLY,
+          manager.readCookie(),
+          reloadHint,
+          true));
+      return requestControls.toArray(RequestControl[]::new);
+    }
+    return new RequestControl[] {
+      new SyncRequestControl(
+        refreshAndPersist ? SyncRequestControl.Mode.REFRESH_AND_PERSIST : SyncRequestControl.Mode.REFRESH_ONLY,
+        manager.readCookie(),
+        reloadHint,
+        true),
+    };
   }
 }
