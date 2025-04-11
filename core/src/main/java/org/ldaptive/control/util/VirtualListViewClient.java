@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.control.util;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -233,7 +234,7 @@ public class VirtualListViewClient extends AbstractSearchOperationFactory
 
   /**
    * Creates a new array of request controls which includes the VLV and sort controls. Any other request controls are
-   * in included
+   * included.
    *
    * @param  request  to read controls from
    * @param  cntrl  VLV control to include
@@ -245,12 +246,11 @@ public class VirtualListViewClient extends AbstractSearchOperationFactory
     if (request.getControls() != null && request.getControls().length > 0) {
       final List<RequestControl> requestControls = Arrays.stream(
           request.getControls()).filter(c -> !(c instanceof VirtualListViewRequestControl) && !c.equals(sortControl))
-        .collect(Collectors.toList());
+        .collect(Collectors.toCollection(ArrayList::new));
       requestControls.add(sortControl);
       requestControls.add(cntrl);
       return requestControls.toArray(RequestControl[]::new);
-    } else {
-      return new RequestControl[] {sortControl, cntrl};
     }
+    return new RequestControl[] {sortControl, cntrl};
   }
 }

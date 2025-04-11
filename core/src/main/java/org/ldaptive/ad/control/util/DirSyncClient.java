@@ -1,6 +1,10 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.ad.control.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapException;
 import org.ldaptive.LdapUtils;
@@ -269,7 +273,7 @@ public class DirSyncClient
     throws LdapException
   {
     LdapUtils.assertNotNullArg(manager, "Cookie manager cannot be null");
-    request.setControls(createRequestControls(manager.readCookie()));
+    request.setControls(appendRequestControls(request, manager.readCookie()));
     final SearchOperation search = createSearchOperation();
     final SearchResponse result = search.execute(request);
     final byte[] cookie = getDirSyncCookie(result);
@@ -345,7 +349,7 @@ public class DirSyncClient
         combinedResponse.addEntries(response.getEntries());
         combinedResponse.addReferences(response.getReferences());
       }
-      request.setControls(createRequestControls(cookie));
+      request.setControls(appendRequestControls(request, cookie));
       response = search.execute(request);
       flags = getDirSyncFlags(response);
       cookie = getDirSyncCookie(response);
@@ -414,14 +418,26 @@ public class DirSyncClient
 
 
   /**
-   * Returns the list of request controls configured for this client.
+   * Creates a new array of request controls which includes the dir sync control, extended DN control and show deleted
+   * control. Any other request controls are included.
    *
+   * @param  request  to read controls from
    * @param  cookie  to add to the dir sync control or null
    *
    * @return  search request controls
    */
-  private RequestControl[] createRequestControls(final byte[] cookie)
+  private RequestControl[] appendRequestControls(final SearchRequest request, final byte[] cookie)
   {
+    if (request.getControls() != null && request.getControls().length > 0) {
+      final List<RequestControl> requestControls = Arrays.stream(request.getControls())
+        .filter(c -> !(c instanceof DirSyncControl) &&
+                     !(c instanceof ExtendedDnControl) &&
+                     !(c instanceof ShowDeletedControl)).collect(Collectors.toCollection(ArrayList::new));
+      requestControls.add(new DirSyncControl(dirSyncFlags, cookie, maxAttributeCount, true));
+      requestControls.add(new ExtendedDnControl(extendedDnFlag));
+      requestControls.add(new ShowDeletedControl());
+      return requestControls.toArray(RequestControl[]::new);
+    }
     return
       new RequestControl[] {
         new DirSyncControl(dirSyncFlags, cookie, maxAttributeCount, true),
