@@ -273,7 +273,7 @@ public class EntryChangeNotificationControl extends AbstractResponseControl
   {
 
     /** DER path to change number. */
-    public static final DERPath PATH = new DERPath("/SEQ/INT[2]");
+    public static final DERPath PATH = new DERPath("/SEQ/INT");
 
 
     /**

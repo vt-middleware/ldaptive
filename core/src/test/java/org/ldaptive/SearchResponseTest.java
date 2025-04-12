@@ -6,6 +6,7 @@ import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.control.PagedResultsControl;
 import org.ldaptive.control.PasswordPolicyControl;
 import org.ldaptive.control.SortResponseControl;
+import org.ldaptive.control.SyncDoneControl;
 import org.ldaptive.control.VirtualListViewResponseControl;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -284,6 +285,40 @@ public class SearchResponseTest
             .diagnosticMessage("")
             .controls(
               new PagedResultsControl(0, new byte[] {0x5a, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}, false))
+            .build(),
+        },
+        new Object[] {
+          // success search result done response with sync done control and sort response control
+          new byte[] {
+            // preamble
+            0x30, 0x52, 0x02, 0x01, 0x03,
+            // search result done
+            0x65, 0x07,
+            // success result
+            0x0a, 0x01, 0x00,
+            // no matched DN
+            0x04, 0x00,
+            // no diagnostic message
+            0x04, 0x00,
+            // response controls
+            (byte) 0xa0, 0x44, 0x30, 0x21,
+            // sync done control oid
+            0x04, 0x18, 0x31, 0x2e, 0x33, 0x2e, 0x36, 0x2e, 0x31, 0x2e, 0x34, 0x2e, 0x31, 0x2e, 0x34, 0x32, 0x30, 0x33,
+            0x2e, 0x31, 0x2e, 0x39, 0x2e, 0x31, 0x2e, 0x33,
+            // sync done value
+            0x04, 0x05, 0x30, 0x03, 0x01, 0x01, (byte) 0xff,
+            // sort response control OID
+            0x30, 0x1f, 0x04, 0x16, 0x31, 0x2e, 0x32, 0x2e, 0x38, 0x34, 0x30, 0x2e, 0x31, 0x31, 0x33, 0x35, 0x35, 0x36,
+            0x2e, 0x31, 0x2e, 0x34, 0x2e, 0x34, 0x37, 0x34,
+            // sort response value
+            0x04, 0x05, 0x30, 0x03, 0x0a, 0x01, 0x00},
+          SearchResponse.builder().messageID(3)
+            .resultCode(ResultCode.SUCCESS)
+            .matchedDN("")
+            .diagnosticMessage("")
+            .controls(
+              new SyncDoneControl(null, true, false),
+              new SortResponseControl(ResultCode.SUCCESS, false))
             .build(),
         },
       };
