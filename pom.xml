@@ -60,7 +60,7 @@
     <pmd.dir>src/main/pmd</pmd.dir>
     <org.slf4j.version>2.0.17</org.slf4j.version>
     <io.netty.version>4.1.119.Final</io.netty.version>
-    <org.springframework.version>6.2.3</org.springframework.version>
+    <org.springframework.version>6.2.5</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.3.0</japicmp.oldVersion>
   </properties>
@@ -87,7 +87,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.5.17</version>
+        <version>1.5.18</version>
       </dependency>
       <dependency>
         <groupId>org.ldaptive</groupId>
@@ -124,7 +124,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>3.19.1</version>
+        <version>3.19.3</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -238,14 +238,14 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>10.21.3</version>
+              <version>10.23.0</version>
             </dependency>
           </dependencies>
         </plugin>
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.9.1.0</version>
+          <version>4.9.3.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -255,7 +255,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.2</version>
+          <version>3.5.3</version>
           <configuration>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
           </configuration>
