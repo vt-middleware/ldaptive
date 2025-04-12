@@ -216,7 +216,7 @@ public class SyncDoneControl extends AbstractControl implements ResponseControl
   {
 
     /** DER path to the boolean. */
-    public static final DERPath PATH = new DERPath("/SEQ/BOOL[1]");
+    public static final DERPath PATH = new DERPath("/SEQ/BOOL");
 
 
     /**

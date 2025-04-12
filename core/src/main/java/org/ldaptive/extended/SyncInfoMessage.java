@@ -63,7 +63,7 @@ public final class SyncInfoMessage extends IntermediateResponse
   private static final DERPath REFRESH_DELETE_COOKIE_PATH = new DERPath("/CTX(1)/OCTSTR[0]");
 
   /** DER path to refresh delete done. */
-  private static final DERPath REFRESH_DELETE_DONE_PATH = new DERPath("/CTX(1)/BOOL[1]");
+  private static final DERPath REFRESH_DELETE_DONE_PATH = new DERPath("/CTX(1)/BOOL");
 
   /** DER path to refresh present. */
   private static final DERPath REFRESH_PRESENT_PATH = new DERPath("/CTX(2)");
@@ -72,7 +72,7 @@ public final class SyncInfoMessage extends IntermediateResponse
   private static final DERPath REFRESH_PRESENT_COOKIE_PATH = new DERPath("/CTX(2)/OCTSTR[0]");
 
   /** DER path to refresh present done. */
-  private static final DERPath REFRESH_PRESENT_DONE_PATH = new DERPath("/CTX(2)/BOOL[1]");
+  private static final DERPath REFRESH_PRESENT_DONE_PATH = new DERPath("/CTX(2)/BOOL");
 
   /** DER path to sync ID set. */
   private static final DERPath SYNC_ID_SET_PATH = new DERPath("/CTX(3)");
@@ -81,7 +81,7 @@ public final class SyncInfoMessage extends IntermediateResponse
   private static final DERPath SYNC_ID_SET_COOKIE_PATH = new DERPath("/CTX(3)/OCTSTR[0]");
 
   /** DER path to sync ID set deletes. */
-  private static final DERPath SYNC_ID_SET_DELETES_PATH = new DERPath("/CTX(3)/BOOL[1]");
+  private static final DERPath SYNC_ID_SET_DELETES_PATH = new DERPath("/CTX(3)/BOOL");
 
   /** DER path to sync ID set UUIDS. */
   private static final DERPath SYNC_ID_SET_UUIDS_PATH = new DERPath("/CTX(3)/SET/OCTSTR");

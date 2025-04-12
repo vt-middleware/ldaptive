@@ -157,6 +157,7 @@ public class SyncInfoMessageTest
             .messageID(4)
             .responseName(SyncInfoMessage.OID)
             .type(SyncInfoMessage.Type.SYNC_ID_SET)
+            .refreshDeletes(true)
             .uuids(UUID.fromString("a1407114-b51f-103c-8093-83ef8d930509")).build(),
         },
       };
