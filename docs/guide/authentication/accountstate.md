@@ -17,7 +17,7 @@ The AuthenticationResponseHandler can be leveraged to solve this type of problem
 #### Warnings
 
 expiration | date this account will expire
-loginsRemaining | number of logins allowed until the account will start failing
+loginsRemaining | number of logins allowed until the account will not be allowed to bind successfully
 
 #### Errors
 
@@ -36,7 +36,7 @@ This request/response control is defined in the following draft: [http://tools.i
 
 ## Active Directory
 
-Active Directory returns account state as part of the ldap result message when a bind fails (error 49). Warnings are supported by leveraging either the 'msDS-UserPasswordExpiryTimeComputed' or 'pwdLastSet' attributes. A list of common bind errors can be found at [http://ldapwiki.willeke.com/wiki/Common%20Active%20Directory%20Bind%20Errors](http://ldapwiki.willeke.com/wiki/Common%20Active%20Directory%20Bind%20Errors)
+Active Directory returns account state as part of the ldap result message when a bind fails (error 49). Warnings are supported by leveraging either the 'msDS-UserPasswordExpiryTimeComputed' or 'pwdLastSet' attributes. A list of common bind errors can be found at [Common Active Directory Bind Errors](https://ldapwiki.com/wiki/Wiki.jsp?page=Common%20Active%20Directory%20Bind%20Errors)
 
 {% highlight java %}
 {% include source/authentication/accountstate/2.java %}
