@@ -27,8 +27,8 @@ public class ActiveDirectoryAccountState extends AccountState
 
 
   /**
-   * Enum to define active directory errors. See http://ldapwiki.willeke.com/wiki/
-   * Common%20Active%20Directory%20Bind%20Errors
+   * Enum to define active directory errors. See https://ldapwiki.com/wiki/
+   * Wiki.jsp?page=Common%20Active%20Directory%20Bind%20Errors
    */
   public enum Error implements AccountState.Error {
 
@@ -37,6 +37,9 @@ public class ActiveDirectoryAccountState extends AccountState
 
     /** logon failure. 0x52e. */
     LOGON_FAILURE(1326),
+
+    /** account restriction. 0x52f. */
+    ACCOUNT_RESTRICTION(1327),
 
     /** invalid logon hours. 0x530. */
     INVALID_LOGON_HOURS(1328),
@@ -49,6 +52,9 @@ public class ActiveDirectoryAccountState extends AccountState
 
     /** account disabled. 0x533. */
     ACCOUNT_DISABLED(1331),
+
+    /** too many context IDs. 0x568. */
+    TOO_MANY_CONTEXT_IDS(1384),
 
     /** account expired. 0x701. */
     ACCOUNT_EXPIRED(1793),
