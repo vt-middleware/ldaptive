@@ -20,6 +20,7 @@ public class AttributeTypeTest
    *
    * @return  attribute type and string definition
    */
+  // CheckStyle:MethodLength OFF
   @DataProvider(name = "definitions")
   public Object[][] createDefinitions()
   {
@@ -44,9 +45,9 @@ public class AttributeTypeTest
             false,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             null),
-          "( 2.5.4.0 )",
+          "( 2.5.4.0 USAGE userApplications )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -66,9 +67,9 @@ public class AttributeTypeTest
             false,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             null),
-          "( 2.5.4.0 SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 )",
+          "( 2.5.4.0 SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 USAGE userApplications )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -88,9 +89,9 @@ public class AttributeTypeTest
             false,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             null),
-          "( 2.5.4.0 NAME 'objectClass' SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 )",
+          "( 2.5.4.0 NAME 'objectClass' SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 USAGE userApplications )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -110,9 +111,9 @@ public class AttributeTypeTest
             false,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             null),
-          "( 2.5.4.0 DESC 'RFC4512: object classes of the entity' )",
+          "( 2.5.4.0 DESC 'RFC4512: object classes of the entity' USAGE userApplications )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -132,9 +133,10 @@ public class AttributeTypeTest
             false,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             null),
-          "( 2.5.4.0 NAME 'objectClass' EQUALITY objectIdentifierMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 )",
+          "( 2.5.4.0 NAME 'objectClass' EQUALITY objectIdentifierMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 " +
+            "USAGE userApplications )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -154,10 +156,10 @@ public class AttributeTypeTest
             false,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             null),
           "( 2.5.4.0 NAME 'objectClass' DESC 'RFC4512: object classes of the entity' EQUALITY objectIdentifierMatch " +
-            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 )",
+            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.38 USAGE userApplications )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -225,9 +227,9 @@ public class AttributeTypeTest
             false,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             null),
-          "( 2.5.4.1 NAME ( 'aliasedObjectName' 'aliasedEntryName' ) )",
+          "( 2.5.4.1 NAME ( 'aliasedObjectName' 'aliasedEntryName' ) USAGE userApplications )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -247,10 +249,11 @@ public class AttributeTypeTest
             true,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             null),
           "( 2.5.4.1 NAME ( 'aliasedObjectName' 'aliasedEntryName' ) DESC 'RFC4512: name of aliased object' " +
-            "EQUALITY distinguishedNameMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 SINGLE-VALUE )",
+            "EQUALITY distinguishedNameMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 SINGLE-VALUE " +
+            "USAGE userApplications )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -270,10 +273,10 @@ public class AttributeTypeTest
             false,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             new Extensions("X-ORIGIN", Collections.singletonList("RFC 1274"))),
           "( 0.9.2342.19200300.100.1.1 NAME 'uid' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch " +
-            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} X-ORIGIN 'RFC 1274' )",
+            "SYNTAX 1.3.6.1.4.1.1466.115.121.1.15{256} USAGE userApplications X-ORIGIN 'RFC 1274' )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -293,10 +296,33 @@ public class AttributeTypeTest
             true,
             false,
             false,
-            null,
+            AttributeUsage.USER_APPLICATIONS,
             ext),
           "( 2.5.4.1 NAME 'aliasedObjectName' SYNTAX 1.3.6.1.4.1.1466.115.121.1.12 SINGLE-VALUE " +
-            "X-NDS_NAME 'Aliased Object Name' X-NDS_NONREMOVABLE '1' X-NDS_FILTERED_REQUIRED '1' )",
+            "USAGE userApplications X-NDS_NAME 'Aliased Object Name' X-NDS_NONREMOVABLE '1' " +
+            "X-NDS_FILTERED_REQUIRED '1' )",
+          new DefinitionFunction[] {
+            new AttributeType.DefaultDefinitionFunction(),
+            new AttributeType.RegexDefinitionFunction(),
+          },
+        },
+        new Object[] {
+          new AttributeType(
+            "1.10.101.555",
+            null,
+            "Dòn '\\' Quìxotè '\\'",
+            false,
+            null,
+            null,
+            null,
+            null,
+            null,
+            false,
+            false,
+            false,
+            AttributeUsage.USER_APPLICATIONS,
+            null),
+          "( 1.10.101.555 DESC 'D\\C3\\B2n \\27\\5C\\27 Qu\\C3\\ACxot\\C3\\A8 \\27\\5C\\27' USAGE userApplications )",
           new DefinitionFunction[] {
             new AttributeType.DefaultDefinitionFunction(),
             new AttributeType.RegexDefinitionFunction(),
@@ -304,6 +330,7 @@ public class AttributeTypeTest
         },
       };
   }
+  // CheckStyle:MethodLength ON
 
 
   /**

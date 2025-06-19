@@ -63,6 +63,21 @@ public final class Hex
 
 
   /**
+   * Returns whether the supplied character is a hexidecimal character. Valid characters include 0-9, a-f and A-F
+   *
+   * @param  c  to inspect
+   *
+   * @return  whether the supplied character is hexidecimal
+   */
+  public static boolean isValidChar(final char c)
+  {
+    // CheckStyle:UnnecessaryParentheses OFF
+    return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F');
+    // CheckStyle:UnnecessaryParentheses ON
+  }
+
+
+  /**
    * This will convert the supplied value to a hex encoded string. Returns null if the supplied value is null.
    *
    * @param  value  to hex encode

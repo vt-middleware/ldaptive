@@ -65,7 +65,7 @@ public final class AttributeType extends AbstractNamedSchemaElement<String>
   private boolean noUserModification;
 
   /** Usage. */
-  private AttributeUsage usage;
+  private AttributeUsage usage = AttributeUsage.USER_APPLICATIONS;
 
 
   /**
@@ -372,7 +372,7 @@ public final class AttributeType extends AbstractNamedSchemaElement<String>
    */
   public AttributeUsage getUsage()
   {
-    return usage != null ? usage : AttributeUsage.USER_APPLICATIONS;
+    return usage;
   }
 
 
@@ -407,49 +407,20 @@ public final class AttributeType extends AbstractNamedSchemaElement<String>
   @Override
   public String format()
   {
-    final StringBuilder sb = new StringBuilder("( ");
-    sb.append(oid).append(" ");
-    if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
-    }
-    if (getDescription() != null) {
-      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
-    }
-    if (isObsolete()) {
-      sb.append("OBSOLETE ");
-    }
-    if (superiorType != null) {
-      sb.append("SUP ").append(superiorType).append(" ");
-    }
-    if (equalityMatchingRule != null) {
-      sb.append("EQUALITY ").append(equalityMatchingRule).append(" ");
-    }
-    if (orderingMatchingRule != null) {
-      sb.append("ORDERING ").append(orderingMatchingRule).append(" ");
-    }
-    if (substringMatchingRule != null) {
-      sb.append("SUBSTR ").append(substringMatchingRule).append(" ");
-    }
-    if (syntaxOID != null) {
-      sb.append("SYNTAX ").append(syntaxOID).append(" ");
-    }
-    if (singleValued) {
-      sb.append("SINGLE-VALUE ");
-    }
-    if (collective) {
-      sb.append("COLLECTIVE ");
-    }
-    if (noUserModification) {
-      sb.append("NO-USER-MODIFICATION ");
-    }
-    if (usage != null) {
-      sb.append("USAGE ").append(usage.getName()).append(" ");
-    }
-    if (getExtensions() != null) {
-      sb.append(getExtensions().format());
-    }
-    sb.append(")");
-    return sb.toString();
+    return format(new DefaultSchemaElementFormatter());
+  }
+
+
+  /**
+   * Returns a string representation of this element.
+   *
+   * @param  formatter  to format this element
+   *
+   * @return  formatted schema element
+   */
+  public String format(final SchemaElementFormatter<AttributeType> formatter)
+  {
+    return formatter.format(this);
   }
 
 
@@ -522,6 +493,61 @@ public final class AttributeType extends AbstractNamedSchemaElement<String>
       "noUserModification=" + noUserModification + ", " +
       "usage=" + usage + ", " +
       "extensions=" + getExtensions() + "]";
+  }
+
+
+  /** Creates a string representation of an attribute type. */
+  public static class DefaultSchemaElementFormatter implements SchemaElementFormatter<AttributeType>
+  {
+
+
+    @Override
+    public String format(final AttributeType element)
+    {
+      final StringBuilder sb = new StringBuilder("( ");
+      sb.append(element.getOID()).append(" ");
+      if (element.getNames() != null && element.getNames().length > 0) {
+        sb.append("NAME ").append(SchemaUtils.formatDescriptors(element.getNames()));
+      }
+      if (element.getDescription() != null) {
+        sb.append("DESC ").append(SchemaUtils.formatDescriptors(element.getDescription()));
+      }
+      if (element.isObsolete()) {
+        sb.append("OBSOLETE ");
+      }
+      if (element.getSuperiorType() != null) {
+        sb.append("SUP ").append(element.getSuperiorType()).append(" ");
+      }
+      if (element.getEqualityMatchingRule() != null) {
+        sb.append("EQUALITY ").append(element.getEqualityMatchingRule()).append(" ");
+      }
+      if (element.getOrderingMatchingRule() != null) {
+        sb.append("ORDERING ").append(element.getOrderingMatchingRule()).append(" ");
+      }
+      if (element.getSubstringMatchingRule() != null) {
+        sb.append("SUBSTR ").append(element.getSubstringMatchingRule()).append(" ");
+      }
+      if (element.getSyntaxOID() != null) {
+        sb.append("SYNTAX ").append(element.getSyntaxOID()).append(" ");
+      }
+      if (element.isSingleValued()) {
+        sb.append("SINGLE-VALUE ");
+      }
+      if (element.isCollective()) {
+        sb.append("COLLECTIVE ");
+      }
+      if (element.isNoUserModification()) {
+        sb.append("NO-USER-MODIFICATION ");
+      }
+      if (element.getUsage() != null) {
+        sb.append("USAGE ").append(element.getUsage().getName()).append(" ");
+      }
+      if (element.getExtensions() != null) {
+        sb.append(element.getExtensions().format());
+      }
+      sb.append(")");
+      return sb.toString();
+    }
   }
 
 
@@ -642,7 +668,7 @@ public final class AttributeType extends AbstractNamedSchemaElement<String>
         atd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
       }
 
-      atd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      atd.setDescription(m.group(4) != null ? SchemaUtils.parseQDString(m.group(4).trim()) : null);
       atd.setObsolete(m.group(5) != null);
       atd.setSuperiorType(m.group(6) != null ? m.group(6).trim() : null);
       atd.setEqualityMatchingRule(m.group(7) != null ? m.group(7).trim() : null);

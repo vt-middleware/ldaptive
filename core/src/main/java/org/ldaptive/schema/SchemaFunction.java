@@ -23,5 +23,5 @@ public interface SchemaFunction
    *
    * @throws  SchemaParseException  if the supplied schema definition is invalid
    */
-  <T extends SchemaElement> T parse(Class<? extends T> type, String definition) throws SchemaParseException;
+  <T extends SchemaElement<?>> T parse(Class<? extends T> type, String definition) throws SchemaParseException;
 }

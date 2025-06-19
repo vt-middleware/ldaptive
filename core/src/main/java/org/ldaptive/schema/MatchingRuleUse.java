@@ -110,7 +110,7 @@ public final class MatchingRuleUse extends AbstractNamedSchemaElement<String>
    *
    * @param  s  attribute types
    */
-  public void setAppliesAttributeTypes(final String[] s)
+  public void setAppliesAttributeTypes(final String... s)
   {
     assertMutable();
     appliesAttributeTypes = s;
@@ -136,25 +136,20 @@ public final class MatchingRuleUse extends AbstractNamedSchemaElement<String>
   @Override
   public String format()
   {
-    final StringBuilder sb = new StringBuilder("( ");
-    sb.append(oid).append(" ");
-    if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
-    }
-    if (getDescription() != null) {
-      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
-    }
-    if (isObsolete()) {
-      sb.append("OBSOLETE ");
-    }
-    if (appliesAttributeTypes != null && appliesAttributeTypes.length > 0) {
-      sb.append("APPLIES ").append(SchemaUtils.formatOids(appliesAttributeTypes));
-    }
-    if (getExtensions() != null) {
-      sb.append(getExtensions().format());
-    }
-    sb.append(")");
-    return sb.toString();
+    return format(new DefaultSchemaElementFormatter());
+  }
+
+
+  /**
+   * Returns a string representation of this element.
+   *
+   * @param  formatter  to format this element
+   *
+   * @return  formatted schema element
+   */
+  public String format(final SchemaElementFormatter<MatchingRuleUse> formatter)
+  {
+    return formatter.format(this);
   }
 
 
@@ -203,6 +198,37 @@ public final class MatchingRuleUse extends AbstractNamedSchemaElement<String>
       "obsolete=" + isObsolete() + ", " +
       "appliesAttributeTypes=" + Arrays.toString(appliesAttributeTypes) + ", " +
       "extensions=" + getExtensions() + "]";
+  }
+
+
+  /** Creates a string representation of a matching rule use. */
+  public static class DefaultSchemaElementFormatter implements SchemaElementFormatter<MatchingRuleUse>
+  {
+
+
+    @Override
+    public String format(final MatchingRuleUse element)
+    {
+      final StringBuilder sb = new StringBuilder("( ");
+      sb.append(element.getOID()).append(" ");
+      if (element.getNames() != null && element.getNames().length > 0) {
+        sb.append("NAME ").append(SchemaUtils.formatDescriptors(element.getNames()));
+      }
+      if (element.getDescription() != null) {
+        sb.append("DESC ").append(SchemaUtils.formatDescriptors(element.getDescription()));
+      }
+      if (element.isObsolete()) {
+        sb.append("OBSOLETE ");
+      }
+      if (element.getAppliesAttributeTypes() != null && element.getAppliesAttributeTypes().length > 0) {
+        sb.append("APPLIES ").append(SchemaUtils.formatOids(element.getAppliesAttributeTypes()));
+      }
+      if (element.getExtensions() != null) {
+        sb.append(element.getExtensions().format());
+      }
+      sb.append(")");
+      return sb.toString();
+    }
   }
 
 
@@ -291,7 +317,7 @@ public final class MatchingRuleUse extends AbstractNamedSchemaElement<String>
         mrud.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
       }
 
-      mrud.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      mrud.setDescription(m.group(4) != null ? SchemaUtils.parseQDString(m.group(4).trim()) : null);
       mrud.setObsolete(m.group(5) != null);
 
       // parse applies attribute types

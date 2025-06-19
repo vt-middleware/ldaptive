@@ -131,7 +131,7 @@ public final class ObjectClass extends AbstractNamedSchemaElement<String>
    *
    * @param  s  superior classes
    */
-  public void setSuperiorClasses(final String[] s)
+  public void setSuperiorClasses(final String... s)
   {
     assertMutable();
     superiorClasses = s;
@@ -177,7 +177,7 @@ public final class ObjectClass extends AbstractNamedSchemaElement<String>
    *
    * @param  s  required attributes
    */
-  public void setRequiredAttributes(final String[] s)
+  public void setRequiredAttributes(final String... s)
   {
     assertMutable();
     requiredAttributes = s;
@@ -200,7 +200,7 @@ public final class ObjectClass extends AbstractNamedSchemaElement<String>
    *
    * @param  s  optional attributes
    */
-  public void setOptionalAttributes(final String[] s)
+  public void setOptionalAttributes(final String... s)
   {
     assertMutable();
     optionalAttributes = s;
@@ -226,34 +226,20 @@ public final class ObjectClass extends AbstractNamedSchemaElement<String>
   @Override
   public String format()
   {
-    final StringBuilder sb = new StringBuilder("( ");
-    sb.append(oid).append(" ");
-    if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
-    }
-    if (getDescription() != null) {
-      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
-    }
-    if (isObsolete()) {
-      sb.append("OBSOLETE ");
-    }
-    if (superiorClasses != null && superiorClasses.length > 0) {
-      sb.append("SUP ").append(SchemaUtils.formatOids(superiorClasses));
-    }
-    if (objectClassType != null) {
-      sb.append(objectClassType.name()).append(" ");
-    }
-    if (requiredAttributes != null && requiredAttributes.length > 0) {
-      sb.append("MUST ").append(SchemaUtils.formatOids(requiredAttributes));
-    }
-    if (optionalAttributes != null && optionalAttributes.length > 0) {
-      sb.append("MAY ").append(SchemaUtils.formatOids(optionalAttributes));
-    }
-    if (getExtensions() != null) {
-      sb.append(getExtensions().format());
-    }
-    sb.append(")");
-    return sb.toString();
+    return format(new DefaultSchemaElementFormatter());
+  }
+
+
+  /**
+   * Returns a string representation of this element.
+   *
+   * @param  formatter  to format this element
+   *
+   * @return  formatted schema element
+   */
+  public String format(final SchemaElementFormatter<ObjectClass> formatter)
+  {
+    return formatter.format(this);
   }
 
 
@@ -311,6 +297,46 @@ public final class ObjectClass extends AbstractNamedSchemaElement<String>
       "requiredAttributes=" + Arrays.toString(requiredAttributes) + ", " +
       "optionalAttributes=" + Arrays.toString(optionalAttributes) + ", " +
       "extensions=" + getExtensions() + "]";
+  }
+
+
+  /** Creates a string representation of an object class. */
+  public static class DefaultSchemaElementFormatter implements SchemaElementFormatter<ObjectClass>
+  {
+
+
+    @Override
+    public String format(final ObjectClass element)
+    {
+      final StringBuilder sb = new StringBuilder("( ");
+      sb.append(element.getOID()).append(" ");
+      if (element.getNames() != null && element.getNames().length > 0) {
+        sb.append("NAME ").append(SchemaUtils.formatDescriptors(element.getNames()));
+      }
+      if (element.getDescription() != null) {
+        sb.append("DESC ").append(SchemaUtils.formatDescriptors(element.getDescription()));
+      }
+      if (element.isObsolete()) {
+        sb.append("OBSOLETE ");
+      }
+      if (element.getSuperiorClasses() != null && element.getSuperiorClasses().length > 0) {
+        sb.append("SUP ").append(SchemaUtils.formatOids(element.getSuperiorClasses()));
+      }
+      if (element.getObjectClassType() != null) {
+        sb.append(element.getObjectClassType().name()).append(" ");
+      }
+      if (element.getRequiredAttributes() != null && element.getRequiredAttributes().length > 0) {
+        sb.append("MUST ").append(SchemaUtils.formatOids(element.getRequiredAttributes()));
+      }
+      if (element.getOptionalAttributes() != null && element.getOptionalAttributes().length > 0) {
+        sb.append("MAY ").append(SchemaUtils.formatOids(element.getOptionalAttributes()));
+      }
+      if (element.getExtensions() != null) {
+        sb.append(element.getExtensions().format());
+      }
+      sb.append(")");
+      return sb.toString();
+    }
   }
 
 
@@ -417,7 +443,7 @@ public final class ObjectClass extends AbstractNamedSchemaElement<String>
         ocd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
       }
 
-      ocd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      ocd.setDescription(m.group(4) != null ? SchemaUtils.parseQDString(m.group(4).trim()) : null);
       ocd.setObsolete(m.group(5) != null);
 
       // parse superior classes

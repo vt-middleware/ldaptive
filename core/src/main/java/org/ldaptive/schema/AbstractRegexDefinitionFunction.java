@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractRegexDefinitionFunction<T extends SchemaElement> implements DefinitionFunction<T>
+public abstract class AbstractRegexDefinitionFunction<T extends SchemaElement<?>> implements DefinitionFunction<T>
 {
 
   /** Regex to match zero or more spaces. */

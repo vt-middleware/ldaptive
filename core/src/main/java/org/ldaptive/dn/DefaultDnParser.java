@@ -11,6 +11,7 @@ import org.ldaptive.asn1.DERPath;
 import org.ldaptive.asn1.DefaultDERBuffer;
 import org.ldaptive.asn1.OctetStringType;
 import org.ldaptive.asn1.ParseHandler;
+import org.ldaptive.io.Hex;
 
 /**
  * Parses DNs following the rules in <a href="http://www.ietf.org/rfc/rfc4514.txt">RFC 4514</a>. Attempts to be as
@@ -20,9 +21,6 @@ import org.ldaptive.asn1.ParseHandler;
  */
 public final class DefaultDnParser implements DnParser
 {
-
-  /** Hexadecimal radix. */
-  private static final int HEX_RADIX = 16;
 
   /** DER path for hex values. */
   private static final DERPath HEX_PATH = new DERPath("/OCTSTR[0]");
@@ -133,7 +131,7 @@ public final class DefaultDnParser implements DnParser
         if (pos + 1 < value.length()) {
           c = value.charAt(++pos);
           // if hexadecimal character add to buffer to decode later
-          if (Character.digit(c, HEX_RADIX) != -1) {
+          if (Hex.isValidChar(c)) {
             if (pos + 1 < value.length()) {
               hexValue.append(c).append(value.charAt(++pos));
               if (pos + 1 == value.length()) {

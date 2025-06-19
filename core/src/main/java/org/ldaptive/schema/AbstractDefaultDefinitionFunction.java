@@ -16,7 +16,7 @@ import org.ldaptive.LdapUtils;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement> implements DefinitionFunction<T>
+public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement<?>> implements DefinitionFunction<T>
 {
 
 
@@ -193,7 +193,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
     final int endPos = cb.position() - 1;
     final CharBuffer slice = cb.limit(endPos).position(startPos).slice();
     cb.limit(limit).position(endPos + 1);
-    return slice.toString();
+    return SchemaUtils.parseQDString(slice.toString());
   }
 
 
@@ -236,7 +236,7 @@ public abstract class AbstractDefaultDefinitionFunction<T extends SchemaElement>
         final int endPos = cb.position() - 1;
         final CharBuffer slice = cb.limit(endPos).position(startValue).slice();
         cb.limit(limit).position(endPos + 1);
-        values.add(slice.toString());
+        values.add(SchemaUtils.parseQDString(slice.toString()));
       }
     }
     if (c != ')') {

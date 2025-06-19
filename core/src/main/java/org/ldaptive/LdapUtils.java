@@ -273,7 +273,7 @@ public final class LdapUtils
    *
    * @param  value  to encode control characters in
    *
-   * @return  string with percent encoded hex characters or original string if no character need encoding
+   * @return  string with percent encoded hex characters or original string if no character needs encoding
    */
   public static String percentEncodeControlChars(final String value)
   {

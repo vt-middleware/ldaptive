@@ -83,7 +83,7 @@ public abstract class AbstractSchemaElement<T> extends AbstractFreezable impleme
    *
    * @return  whether syntax has this boolean extension
    */
-  public static <T extends AbstractSchemaElement> boolean containsBooleanExtension(
+  public static <T extends AbstractSchemaElement<?>> boolean containsBooleanExtension(
     final T schemaElement,
     final String extensionName)
   {

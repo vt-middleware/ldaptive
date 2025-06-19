@@ -94,16 +94,20 @@ public class Syntax extends AbstractSchemaElement<String>
   @Override
   public String format()
   {
-    final StringBuilder sb = new StringBuilder("( ");
-    sb.append(oid).append(" ");
-    if (getDescription() != null) {
-      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
-    }
-    if (getExtensions() != null) {
-      sb.append(getExtensions().format());
-    }
-    sb.append(")");
-    return sb.toString();
+    return format(new DefaultSchemaElementFormatter());
+  }
+
+
+  /**
+   * Returns a string representation of this element.
+   *
+   * @param  formatter  to format this element
+   *
+   * @return  formatted schema element
+   */
+  public String format(final SchemaElementFormatter<Syntax> formatter)
+  {
+    return formatter.format(this);
   }
 
 
@@ -141,9 +145,29 @@ public class Syntax extends AbstractSchemaElement<String>
   }
 
 
-  /**
-   * Parses a syntax definition using a char buffer.
-   */
+  /** Creates a string representation of a syntax. */
+  public static class DefaultSchemaElementFormatter implements SchemaElementFormatter<Syntax>
+  {
+
+
+    @Override
+    public String format(final Syntax element)
+    {
+      final StringBuilder sb = new StringBuilder("( ");
+      sb.append(element.getOID()).append(" ");
+      if (element.getDescription() != null) {
+        sb.append("DESC ").append(SchemaUtils.formatDescriptors(element.getDescription()));
+      }
+      if (element.getExtensions() != null) {
+        sb.append(element.getExtensions().format());
+      }
+      sb.append(")");
+      return sb.toString();
+    }
+  }
+
+
+  /** Parses a syntax definition using a char buffer.*/
   public static class DefaultDefinitionFunction extends AbstractDefaultDefinitionFunction<Syntax>
   {
 
@@ -208,7 +232,7 @@ public class Syntax extends AbstractSchemaElement<String>
       final Syntax asd = new Syntax(m.group(1).trim());
 
       // CheckStyle:MagicNumber OFF
-      asd.setDescription(m.group(2) != null ? m.group(2).trim() : null);
+      asd.setDescription(m.group(2) != null ? SchemaUtils.parseQDString(m.group(2).trim()) : null);
 
       // parse extensions
       if (m.group(3) != null) {

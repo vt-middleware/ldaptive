@@ -140,7 +140,7 @@ public final class DITStructureRule extends AbstractNamedSchemaElement<Integer>
    *
    * @param  i  superior rules
    */
-  public void setSuperiorRules(final int[] i)
+  public void setSuperiorRules(final int... i)
   {
     assertMutable();
     superiorRules = i;
@@ -166,28 +166,20 @@ public final class DITStructureRule extends AbstractNamedSchemaElement<Integer>
   @Override
   public String format()
   {
-    final StringBuilder sb = new StringBuilder("( ");
-    sb.append(id).append(" ");
-    if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
-    }
-    if (getDescription() != null) {
-      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
-    }
-    if (isObsolete()) {
-      sb.append("OBSOLETE ");
-    }
-    if (nameForm != null) {
-      sb.append("FORM ").append(nameForm).append(" ");
-    }
-    if (superiorRules != null && superiorRules.length > 0) {
-      sb.append("SUP ").append(SchemaUtils.formatNumbers(superiorRules));
-    }
-    if (getExtensions() != null) {
-      sb.append(getExtensions().format());
-    }
-    sb.append(")");
-    return sb.toString();
+    return format(new DefaultSchemaElementFormatter());
+  }
+
+
+  /**
+   * Returns a string representation of this element.
+   *
+   * @param  formatter  to format this element
+   *
+   * @return  formatted schema element
+   */
+  public String format(final SchemaElementFormatter<DITStructureRule> formatter)
+  {
+    return formatter.format(this);
   }
 
 
@@ -238,6 +230,40 @@ public final class DITStructureRule extends AbstractNamedSchemaElement<Integer>
       "nameForm=" + nameForm + ", " +
       "superiorRules=" + Arrays.toString(superiorRules) + ", " +
       "extensions=" + getExtensions() + "]";
+  }
+
+
+  /** Creates a string representation of a DIT structure rule. */
+  public static class DefaultSchemaElementFormatter implements SchemaElementFormatter<DITStructureRule>
+  {
+
+
+    @Override
+    public String format(final DITStructureRule element)
+    {
+      final StringBuilder sb = new StringBuilder("( ");
+      sb.append(element.getID()).append(" ");
+      if (element.getNames() != null && element.getNames().length > 0) {
+        sb.append("NAME ").append(SchemaUtils.formatDescriptors(element.getNames()));
+      }
+      if (element.getDescription() != null) {
+        sb.append("DESC ").append(SchemaUtils.formatDescriptors(element.getDescription()));
+      }
+      if (element.isObsolete()) {
+        sb.append("OBSOLETE ");
+      }
+      if (element.getNameForm() != null) {
+        sb.append("FORM ").append(element.getNameForm()).append(" ");
+      }
+      if (element.getSuperiorRules() != null && element.getSuperiorRules().length > 0) {
+        sb.append("SUP ").append(SchemaUtils.formatNumbers(element.getSuperiorRules()));
+      }
+      if (element.getExtensions() != null) {
+        sb.append(element.getExtensions().format());
+      }
+      sb.append(")");
+      return sb.toString();
+    }
   }
 
 
@@ -330,7 +356,7 @@ public final class DITStructureRule extends AbstractNamedSchemaElement<Integer>
         dsrd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
       }
 
-      dsrd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      dsrd.setDescription(m.group(4) != null ? SchemaUtils.parseQDString(m.group(4).trim()) : null);
       dsrd.setObsolete(m.group(5) != null);
       dsrd.setNameForm(m.group(6) != null ? m.group(6).trim() : null);
 

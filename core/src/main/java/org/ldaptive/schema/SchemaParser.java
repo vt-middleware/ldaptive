@@ -71,7 +71,7 @@ public final class SchemaParser
    *
    * @throws  SchemaParseException  if definition is invalid
    */
-  public static <T extends SchemaElement> T parse(final Class<T> type, final String definition)
+  public static <T extends SchemaElement<?>> T parse(final Class<T> type, final String definition)
     throws SchemaParseException
   {
     return SCHEMA_FUNCTION.parse(type, definition);
@@ -116,7 +116,7 @@ public final class SchemaParser
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends SchemaElement> T parse(final Class<? extends T> type, final String definition)
+    public <T extends SchemaElement<?>> T parse(final Class<? extends T> type, final String definition)
       throws SchemaParseException
     {
       final T element;
@@ -181,7 +181,7 @@ public final class SchemaParser
 
     @Override
     @SuppressWarnings("unchecked")
-    public <T extends SchemaElement> T parse(final Class<? extends T> type, final String definition)
+    public <T extends SchemaElement<?>> T parse(final Class<? extends T> type, final String definition)
       throws SchemaParseException
     {
       final T element;

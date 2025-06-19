@@ -56,7 +56,7 @@ public final class Extensions extends AbstractFreezable
    *
    * @param  name  of the extension
    *
-   * @return  values
+   * @return  values or null if name is not found
    */
   public List<String> getValues(final String name)
   {
@@ -69,7 +69,7 @@ public final class Extensions extends AbstractFreezable
    *
    * @param  name  of the extension
    *
-   * @return  single string extension value
+   * @return  single string extension value or null
    */
   public String getValue(final String name)
   {
@@ -100,6 +100,7 @@ public final class Extensions extends AbstractFreezable
   public void addExtension(final String name)
   {
     assertMutable();
+    LdapUtils.assertNotNullArg(name, "Name cannot be null");
     extensions.put(name, Collections.emptyList());
   }
 
@@ -113,6 +114,8 @@ public final class Extensions extends AbstractFreezable
   public void addExtension(final String name, final List<String> values)
   {
     assertMutable();
+    LdapUtils.assertNotNullArg(name, "Name cannot be null");
+    LdapUtils.assertNotNullArg(values, "Values cannot be null");
     extensions.put(name, Collections.unmodifiableList(values));
   }
 

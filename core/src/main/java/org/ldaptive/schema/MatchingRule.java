@@ -136,25 +136,20 @@ public final class MatchingRule extends AbstractNamedSchemaElement<String>
   @Override
   public String format()
   {
-    final StringBuilder sb = new StringBuilder("( ");
-    sb.append(oid).append(" ");
-    if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
-    }
-    if (getDescription() != null) {
-      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
-    }
-    if (isObsolete()) {
-      sb.append("OBSOLETE ");
-    }
-    if (syntaxOID != null) {
-      sb.append("SYNTAX ").append(syntaxOID).append(" ");
-    }
-    if (getExtensions() != null) {
-      sb.append(getExtensions().format());
-    }
-    sb.append(")");
-    return sb.toString();
+    return format(new DefaultSchemaElementFormatter());
+  }
+
+
+  /**
+   * Returns a string representation of this element.
+   *
+   * @param  formatter  to format this element
+   *
+   * @return  formatted schema element
+   */
+  public String format(final SchemaElementFormatter<MatchingRule> formatter)
+  {
+    return formatter.format(this);
   }
 
 
@@ -203,6 +198,37 @@ public final class MatchingRule extends AbstractNamedSchemaElement<String>
       "obsolete=" + isObsolete() + ", " +
       "syntaxOID=" + syntaxOID + ", " +
       "extensions=" + getExtensions() + "]";
+  }
+
+
+  /** Creates a string representation of a matching rule. */
+  public static class DefaultSchemaElementFormatter implements SchemaElementFormatter<MatchingRule>
+  {
+
+
+    @Override
+    public String format(final MatchingRule element)
+    {
+      final StringBuilder sb = new StringBuilder("( ");
+      sb.append(element.getOID()).append(" ");
+      if (element.getNames() != null && element.getNames().length > 0) {
+        sb.append("NAME ").append(SchemaUtils.formatDescriptors(element.getNames()));
+      }
+      if (element.getDescription() != null) {
+        sb.append("DESC ").append(SchemaUtils.formatDescriptors(element.getDescription()));
+      }
+      if (element.isObsolete()) {
+        sb.append("OBSOLETE ");
+      }
+      if (element.getSyntaxOID() != null) {
+        sb.append("SYNTAX ").append(element.getSyntaxOID()).append(" ");
+      }
+      if (element.getExtensions() != null) {
+        sb.append(element.getExtensions().format());
+      }
+      sb.append(")");
+      return sb.toString();
+    }
   }
 
 
@@ -291,7 +317,7 @@ public final class MatchingRule extends AbstractNamedSchemaElement<String>
         mrd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
       }
 
-      mrd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      mrd.setDescription(m.group(4) != null ? SchemaUtils.parseQDString(m.group(4).trim()) : null);
       mrd.setObsolete(m.group(5) != null);
       mrd.setSyntaxOID(m.group(6) != null ? m.group(6).trim() : null);
 

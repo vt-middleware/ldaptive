@@ -40,7 +40,7 @@ public abstract class AbstractNamedSchemaElement<T> extends AbstractSchemaElemen
    *
    * @param  s  names
    */
-  public void setNames(final String[] s)
+  public void setNames(final String... s)
   {
     assertMutable();
     names = s;

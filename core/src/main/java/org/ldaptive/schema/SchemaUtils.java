@@ -4,9 +4,11 @@ package org.ldaptive.schema;
 import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapException;
+import org.ldaptive.LdapUtils;
 import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
+import org.ldaptive.io.Hex;
 
 /**
  * Provides utility methods for this package.
@@ -36,12 +38,53 @@ public final class SchemaUtils
       final String[] quotedDescr = descrs.split(" ");
       final String[] s = new String[quotedDescr.length];
       for (int i = 0; i < s.length; i++) {
-        s[i] = quotedDescr[i].substring(1, quotedDescr[i].length() - 1).trim();
+        s[i] = parseQDString(quotedDescr[i].substring(1, quotedDescr[i].length() - 1).trim());
       }
       return s;
     } else {
-      return new String[] {descrs};
+      return new String[] {parseQDString(descrs)};
     }
+  }
+
+
+  /**
+   * Returns a string with any HEX escaped characters encoded.
+   *
+   * @param  value  to parse
+   *
+   * @return  parsed value
+   */
+  public static String parseQDString(final String value)
+  {
+    if (value == null || !value.contains("\\")) {
+      return value;
+    }
+
+    final int len = value.length();
+    final StringBuilder sb = new StringBuilder(len);
+    final StringBuilder hexValue = new StringBuilder();
+    for (int i = 0; i < len; i++) {
+      final char c = value.charAt(i);
+      boolean appendHex = false;
+      boolean appendValue = false;
+      if (c == '\\' && i + 2 < len && Hex.isValidChar(value.charAt(i + 1)) && Hex.isValidChar(value.charAt(i + 2))) {
+        hexValue.append(value.charAt(++i)).append(value.charAt(++i));
+        if (i + 1 == len) {
+          appendHex = true;
+        }
+      } else {
+        appendHex = hexValue.length() > 0;
+        appendValue = true;
+      }
+      if (appendHex) {
+        sb.append(LdapUtils.utf8Encode(LdapUtils.hexDecode(hexValue.toString().toCharArray())));
+        hexValue.setLength(0);
+      }
+      if (appendValue) {
+        sb.append(c);
+      }
+    }
+    return sb.toString();
   }
 
 
@@ -97,15 +140,44 @@ public final class SchemaUtils
   {
     final StringBuilder sb = new StringBuilder();
     if (descrs.length == 1) {
-      sb.append("'").append(descrs[0].replace("'", "\\27")).append("' ");
+      sb.append("'");
+      encodeDescriptor(sb, descrs[0]);
+      sb.append("' ");
     } else {
       sb.append("( ");
       for (String descr : descrs) {
-        sb.append("'").append(descr.replace("'", "\\27")).append("' ");
+        sb.append("'");
+        encodeDescriptor(sb, descr);
+        sb.append("' ");
       }
       sb.append(") ");
     }
     return sb.toString();
+  }
+
+
+  /**
+   * Encodes the supplied descriptor. Hex encodes non-printable ASCII, including backslash and single quote.
+   *
+   * @param  sb  to append encoded descriptor to
+   * @param  descr  to encode
+   */
+  private static void encodeDescriptor(final StringBuilder sb, final String descr)
+  {
+    final int len = descr.length();
+    for (int i = 0; i < len; i++) {
+      final char ch = descr.charAt(i);
+      // CheckStyle:MagicNumber OFF
+      if (ch <= 0x1F || ch >= 0x7F || ch == 0x5C || ch == 0x27) {
+        final char[] hex = LdapUtils.hexEncode(ch);
+        for (int j = 0; j < hex.length; j += 2) {
+          sb.append('\\').append(hex[j]).append(hex[j + 1]);
+        }
+      } else {
+        sb.append(ch);
+      }
+      // CheckStyle:MagicNumber ON
+    }
   }
 
 

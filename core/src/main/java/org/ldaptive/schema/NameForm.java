@@ -147,7 +147,7 @@ public final class NameForm extends AbstractNamedSchemaElement<String>
    *
    * @param  s  required attributes
    */
-  public void setRequiredAttributes(final String[] s)
+  public void setRequiredAttributes(final String... s)
   {
     assertMutable();
     requiredAttributes = s;
@@ -170,7 +170,7 @@ public final class NameForm extends AbstractNamedSchemaElement<String>
    *
    * @param  s  optional attributes
    */
-  public void setOptionalAttributes(final String[] s)
+  public void setOptionalAttributes(final String... s)
   {
     assertMutable();
     optionalAttributes = s;
@@ -196,31 +196,20 @@ public final class NameForm extends AbstractNamedSchemaElement<String>
   @Override
   public String format()
   {
-    final StringBuilder sb = new StringBuilder("( ");
-    sb.append(oid).append(" ");
-    if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
-    }
-    if (getDescription() != null) {
-      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
-    }
-    if (isObsolete()) {
-      sb.append("OBSOLETE ");
-    }
-    if (structuralClass != null) {
-      sb.append("OC ").append(structuralClass).append(" ");
-    }
-    if (requiredAttributes != null && requiredAttributes.length > 0) {
-      sb.append("MUST ").append(SchemaUtils.formatOids(requiredAttributes));
-    }
-    if (optionalAttributes != null && optionalAttributes.length > 0) {
-      sb.append("MAY ").append(SchemaUtils.formatOids(optionalAttributes));
-    }
-    if (getExtensions() != null) {
-      sb.append(getExtensions().format());
-    }
-    sb.append(")");
-    return sb.toString();
+    return format(new DefaultSchemaElementFormatter());
+  }
+
+
+  /**
+   * Returns a string representation of this element.
+   *
+   * @param  formatter  to format this element
+   *
+   * @return  formatted schema element
+   */
+  public String format(final SchemaElementFormatter<NameForm> formatter)
+  {
+    return formatter.format(this);
   }
 
 
@@ -275,6 +264,43 @@ public final class NameForm extends AbstractNamedSchemaElement<String>
       "requiredAttributes=" + Arrays.toString(requiredAttributes) + ", " +
       "optionalAttributes=" + Arrays.toString(optionalAttributes) + ", " +
       "extensions=" + getExtensions() + "]";
+  }
+
+
+  /** Creates a string representation of a name form. */
+  public static class DefaultSchemaElementFormatter implements SchemaElementFormatter<NameForm>
+  {
+
+
+    @Override
+    public String format(final NameForm element)
+    {
+      final StringBuilder sb = new StringBuilder("( ");
+      sb.append(element.getOID()).append(" ");
+      if (element.getNames() != null && element.getNames().length > 0) {
+        sb.append("NAME ").append(SchemaUtils.formatDescriptors(element.getNames()));
+      }
+      if (element.getDescription() != null) {
+        sb.append("DESC ").append(SchemaUtils.formatDescriptors(element.getDescription()));
+      }
+      if (element.isObsolete()) {
+        sb.append("OBSOLETE ");
+      }
+      if (element.getStructuralClass() != null) {
+        sb.append("OC ").append(element.getStructuralClass()).append(" ");
+      }
+      if (element.getRequiredAttributes() != null && element.getRequiredAttributes().length > 0) {
+        sb.append("MUST ").append(SchemaUtils.formatOids(element.getRequiredAttributes()));
+      }
+      if (element.getOptionalAttributes() != null && element.getOptionalAttributes().length > 0) {
+        sb.append("MAY ").append(SchemaUtils.formatOids(element.getOptionalAttributes()));
+      }
+      if (element.getExtensions() != null) {
+        sb.append(element.getExtensions().format());
+      }
+      sb.append(")");
+      return sb.toString();
+    }
   }
 
 
@@ -371,7 +397,7 @@ public final class NameForm extends AbstractNamedSchemaElement<String>
         nfd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
       }
 
-      nfd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      nfd.setDescription(m.group(4) != null ? SchemaUtils.parseQDString(m.group(4).trim()) : null);
       nfd.setObsolete(m.group(5) != null);
       nfd.setStructuralClass(m.group(6) != null ? m.group(6).trim() : null);
 

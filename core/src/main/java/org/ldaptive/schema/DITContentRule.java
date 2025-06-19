@@ -131,7 +131,7 @@ public final class DITContentRule extends AbstractNamedSchemaElement<String>
    *
    * @param  s  auxiliary classes
    */
-  public void setAuxiliaryClasses(final String[] s)
+  public void setAuxiliaryClasses(final String... s)
   {
     assertMutable();
     auxiliaryClasses = s;
@@ -154,7 +154,7 @@ public final class DITContentRule extends AbstractNamedSchemaElement<String>
    *
    * @param  s  required attributes
    */
-  public void setRequiredAttributes(final String[] s)
+  public void setRequiredAttributes(final String... s)
   {
     assertMutable();
     requiredAttributes = s;
@@ -177,7 +177,7 @@ public final class DITContentRule extends AbstractNamedSchemaElement<String>
    *
    * @param  s  optional attributes
    */
-  public void setOptionalAttributes(final String[] s)
+  public void setOptionalAttributes(final String... s)
   {
     assertMutable();
     optionalAttributes = s;
@@ -200,7 +200,7 @@ public final class DITContentRule extends AbstractNamedSchemaElement<String>
    *
    * @param  s  restricted attributes
    */
-  public void setRestrictedAttributes(final String[] s)
+  public void setRestrictedAttributes(final String... s)
   {
     assertMutable();
     restrictedAttributes = s;
@@ -226,34 +226,20 @@ public final class DITContentRule extends AbstractNamedSchemaElement<String>
   @Override
   public String format()
   {
-    final StringBuilder sb = new StringBuilder("( ");
-    sb.append(oid).append(" ");
-    if (getNames() != null && getNames().length > 0) {
-      sb.append("NAME ").append(SchemaUtils.formatDescriptors(getNames()));
-    }
-    if (getDescription() != null) {
-      sb.append("DESC ").append(SchemaUtils.formatDescriptors(getDescription()));
-    }
-    if (isObsolete()) {
-      sb.append("OBSOLETE ");
-    }
-    if (auxiliaryClasses != null && auxiliaryClasses.length > 0) {
-      sb.append("AUX ").append(SchemaUtils.formatOids(auxiliaryClasses));
-    }
-    if (requiredAttributes != null && requiredAttributes.length > 0) {
-      sb.append("MUST ").append(SchemaUtils.formatOids(requiredAttributes));
-    }
-    if (optionalAttributes != null && optionalAttributes.length > 0) {
-      sb.append("MAY ").append(SchemaUtils.formatOids(optionalAttributes));
-    }
-    if (restrictedAttributes != null && restrictedAttributes.length > 0) {
-      sb.append("NOT ").append(SchemaUtils.formatOids(restrictedAttributes));
-    }
-    if (getExtensions() != null) {
-      sb.append(getExtensions().format());
-    }
-    sb.append(")");
-    return sb.toString();
+    return format(new DefaultSchemaElementFormatter());
+  }
+
+
+  /**
+   * Returns a string representation of this element.
+   *
+   * @param  formatter  to format this element
+   *
+   * @return  formatted schema element
+   */
+  public String format(final SchemaElementFormatter<DITContentRule> formatter)
+  {
+    return formatter.format(this);
   }
 
 
@@ -311,6 +297,46 @@ public final class DITContentRule extends AbstractNamedSchemaElement<String>
       "optionalAttributes=" + Arrays.toString(optionalAttributes) + ", " +
       "restrictedAttributes=" + Arrays.toString(restrictedAttributes) + ", " +
       "extensions=" + getExtensions() + "]";
+  }
+
+
+  /** Creates a string representation of a DIT content rule. */
+  public static class DefaultSchemaElementFormatter implements SchemaElementFormatter<DITContentRule>
+  {
+
+
+    @Override
+    public String format(final DITContentRule element)
+    {
+      final StringBuilder sb = new StringBuilder("( ");
+      sb.append(element.getOID()).append(" ");
+      if (element.getNames() != null && element.getNames().length > 0) {
+        sb.append("NAME ").append(SchemaUtils.formatDescriptors(element.getNames()));
+      }
+      if (element.getDescription() != null) {
+        sb.append("DESC ").append(SchemaUtils.formatDescriptors(element.getDescription()));
+      }
+      if (element.isObsolete()) {
+        sb.append("OBSOLETE ");
+      }
+      if (element.getAuxiliaryClasses() != null && element.getAuxiliaryClasses().length > 0) {
+        sb.append("AUX ").append(SchemaUtils.formatOids(element.getAuxiliaryClasses()));
+      }
+      if (element.getRequiredAttributes() != null && element.getRequiredAttributes().length > 0) {
+        sb.append("MUST ").append(SchemaUtils.formatOids(element.getRequiredAttributes()));
+      }
+      if (element.getOptionalAttributes() != null && element.getOptionalAttributes().length > 0) {
+        sb.append("MAY ").append(SchemaUtils.formatOids(element.getOptionalAttributes()));
+      }
+      if (element.getRestrictedAttributes() != null && element.getRestrictedAttributes().length > 0) {
+        sb.append("NOT ").append(SchemaUtils.formatOids(element.getRequiredAttributes()));
+      }
+      if (element.getExtensions() != null) {
+        sb.append(element.getExtensions().format());
+      }
+      sb.append(")");
+      return sb.toString();
+    }
   }
 
 
@@ -411,7 +437,7 @@ public final class DITContentRule extends AbstractNamedSchemaElement<String>
         dcrd.setNames(SchemaUtils.parseDescriptors(m.group(3).trim()));
       }
 
-      dcrd.setDescription(m.group(4) != null ? m.group(4).trim() : null);
+      dcrd.setDescription(m.group(4) != null ? SchemaUtils.parseQDString(m.group(4).trim()) : null);
       dcrd.setObsolete(m.group(5) != null);
 
       // parse auxiliary classes

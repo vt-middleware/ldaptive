@@ -11,7 +11,7 @@ import org.ldaptive.transcode.AbstractStringValueTranscoder;
  *
  * @author  Middleware Services
  */
-public abstract class AbstractSchemaElementValueTranscoder<T extends SchemaElement>
+public abstract class AbstractSchemaElementValueTranscoder<T extends SchemaElement<?>>
   extends AbstractStringValueTranscoder<T>
 {
 

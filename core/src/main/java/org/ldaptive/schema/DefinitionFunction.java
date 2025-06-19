@@ -8,7 +8,7 @@ package org.ldaptive.schema;
  *
  * @author  Middleware Services
  */
-public interface DefinitionFunction<T extends SchemaElement>
+public interface DefinitionFunction<T extends SchemaElement<?>>
 {
 
 
