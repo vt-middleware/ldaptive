@@ -21,6 +21,8 @@
       <exclude name="GuardLogStatement" />
       <exclude name="MethodReturnsInternalArray" />
       <exclude name="UseVarargs" />
+      <exclude name="ImplicitFunctionalInterface" />
+      <exclude name="ExhaustiveSwitchHasDefault" />
     </rule>
     <rule ref="category/java/codestyle.xml">
       <exclude name="AtLeastOneConstructor" />
