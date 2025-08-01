@@ -16,6 +16,16 @@ Issue | Description
 [32d93b2]({{ site.commitURL }}32d93b2) | Add Jazzer fuzzer module.
 [31caaea]({{ site.commitURL }}31caaea) | Create a beans-spring module; move spring classes into separate maven module.
 
+## Version 2.4.2 - 01Aug2025
+
+Issue | Description
+:---- | :----------
+[c4c9598]({{ site.commitURL }}c4c9598) | Add additional account state errors.
+[71177ee]({{ site.commitURL }}71177ee) | Fix DER paths surrounding optional elements.
+[b23e7e9]({{ site.commitURL }}b23e7e9) | Conform request control handling in clients.
+[c743bf8]({{ site.commitURL }}c743bf8) | Escape brackets in parameter values.
+[fa9e21c]({{ site.commitURL }}fa9e21c) | Fix assertion values for chars using >2 bytes.
+
 ## Version 2.4.1 - 17Mar2025
 
 Issue | Description
@@ -24,7 +34,7 @@ Issue | Description
 [c1cd920]({{ site.commitURL }}c1cd920) | Add BigIntegerValueTranscoder.
 [0f43077]({{ site.commitURL }}0f43077) | Improve AD schema factory to use schemaNamingContext.
 [0c982c3]({{ site.commitURL }}0c982c3) | Update GlobalIdentifier to optionally support brackets.
-[73c1d0f]({{ site.commitURL }}73c1d0f) | Add prunePriorityFactory to AgePruneStrategy.
+[73c1d0f]({{ site.commitURL }}73c1d0f) | Add prunePriorityFactor to AgePruneStrategy.
 [ldaptive-279]({{ site.issueURL }}279) | Fix thread safety issues in LdapURLActivatorService.
 [ldaptive-278]({{ site.issueURL }}278) | Change AccountState to allow both errors and warnings.
 [ldaptive-277]({{ site.issueURL }}277) | Avoid excessive memory consumption in DERParser.
