@@ -97,8 +97,10 @@ echo "Switched to the tag version ${RELEASE_VERSION}"
 user_continue
 
 # build the release distribution
-./mvn_cmd install
-./mvn_cmd bundle-create
+echo "Prime gpg-agent caches"
+echo "prime" | gpg --clearsign
+./mvn_cmd deploy-dist
+jar cMf distribution/target/ldaptive-${RELEASE_VERSION}-maven.zip -C distribution/target/deploy-maven .
 gpg --armor --detach-sign distribution/target/ldaptive-${RELEASE_VERSION}-dist.tar.gz
 gpg --armor --detach-sign distribution/target/ldaptive-${RELEASE_VERSION}-dist.zip
 
@@ -144,15 +146,11 @@ git push origin gh-pages
 echo "Uploading bundle jars to sonatype"
 user_continue
 
-curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
-  -F "file=@target/ldaptive-parent-"${RELEASE_VERSION}"-bundle.jar" \
-  "https://oss.sonatype.org/service/local/staging/bundle_upload"
-curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
-  -F "file=@core/target/ldaptive-"${RELEASE_VERSION}"-bundle.jar" \
-  "https://oss.sonatype.org/service/local/staging/bundle_upload"
-curl -i -u ${SONATYPE_USER}:${SONATYPE_PASSWORD} \
-  -F "file=@beans/target/ldaptive-beans-"${RELEASE_VERSION}"-bundle.jar" \
-  "https://oss.sonatype.org/service/local/staging/bundle_upload"
+SONATYPE_TOKEN=$(echo "${SONATYPE_USER}:${SONATYPE_PASSWORD} " | base64)
+curl --verbose --request POST \
+  --header "Authorization: Bearer ${SONATYPE_TOKEN}" \
+  -F "file=@distribution/target/ldaptive-${RELEASE_VERSION}-maven.zip" \
+  "https://central.sonatype.com/api/v1/publisher/upload?name=ldaptive-${RELEASE_VERSION}&publishingType=USER_MANAGED"
 
-echo "Finished release ${RELEASE_VERSION} for ldaptive."
+echo "Finished ldaptive release ${RELEASE_VERSION}."
 
