@@ -59,14 +59,14 @@ case "$CMD" in
       exit 1
     fi
     run_mvn "" clean
-    run_mvn "" "deploy" "-DaltDeploymentRepository=snapshot::default::file://${ARG}"
+    run_mvn "" "deploy" "-DaltDeploymentRepository=snapshot::file:${ARG}"
     ;;
-  bundle-create)
-    run_mvn "distribution" "repository:bundle-create" "-Dsign=true"
+  deploy-dist)
+    run_mvn "distribution" "deploy" "-Dmaven.test.skip=true -Daether.checksums.algorithms=MD5,SHA-1,SHA-256,SHA-512 -Dsign=true -DaltDeploymentRepository=local::file:distribution/target/deploy-maven"
     ;;
   *)
     if [ -n "$1" ]; then
       echo "Invalid command"
     fi
-    echo "USAGE: `basename $0` clean|javadoc|package|verify|install|versions-set|versions-display-dependency|versions-display-plugin|deploy|bundle-create"
+    echo "USAGE: `basename $0` clean|javadoc|package|verify|install|versions-set|versions-display-dependency|versions-display-plugin|deploy|deploy-dist"
 esac
