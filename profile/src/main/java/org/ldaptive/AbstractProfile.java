@@ -82,7 +82,7 @@ public abstract class AbstractProfile
     System.out.println("#   iterations: " + iterations);
     System.out.println("##############################");
     System.out.println();
-    final ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+    final ExecutorService executor = Executors.newWorkStealingPool(threadCount);
     if (iterations == -1) {
       final ScheduledExecutorService counter = Executors.newSingleThreadScheduledExecutor();
       counter.scheduleAtFixedRate(

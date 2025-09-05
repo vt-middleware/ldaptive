@@ -7,6 +7,8 @@
 # ITERATIONS: number of operations to invoke, no value means execute indefinitely
 # USE_YOURKIT: whether to set MAVEN_OPTS for the yourkit profiler, default is for jconsole
 
+mvn -Dmaven.javadoc.skip=true -B -V -e -pl profile -Pprofile clean package
+
 docker compose -f profile/docker-compose.yml down && \
   docker network prune -f && \
   docker compose -f profile/docker-compose.yml pull && \

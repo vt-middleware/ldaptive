@@ -58,6 +58,7 @@ public class AuthenticatorProfile extends AbstractProfile
             .build())
         .build())
       .blockWaitTime(Duration.ofSeconds(5))
+      .failFastInitialize(false)
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .build();
@@ -69,6 +70,7 @@ public class AuthenticatorProfile extends AbstractProfile
       .connectTimeout(Duration.ofSeconds(5))
       .build())
     .blockWaitTime(Duration.ofSeconds(5))
+      .failFastInitialize(false)
     .min(POOL_SIZE)
     .max(POOL_SIZE)
     .build();

@@ -37,6 +37,7 @@ public final class RoundRobinPooledSearchOperationProfile extends AbstractSearch
             .build())
         .build())
       .blockWaitTime(iterations > 0 ? Duration.ofSeconds(5) : Duration.ofSeconds(threadSleep / 2))
+      .failFastInitialize(false)
       .min(POOL_SIZE)
       .max(POOL_SIZE)
       .validator(SearchConnectionValidator.builder()

@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.concurrent;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -8,7 +9,11 @@ import java.util.concurrent.CompletionService;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -29,11 +34,17 @@ public class CallableWorker<T>
   /** Default size of the thread pool. */
   private static final int DEFAULT_NUM_THREADS = Runtime.getRuntime().availableProcessors() * 2;
 
+  /** Maximum task queue size, value is {@value}. */
+  private static final int MAX_QUEUE_SIZE = 65535;
+
   /** Logger for this class. */
   protected final Logger logger = LoggerFactory.getLogger(getClass());
 
   /** Executor service. */
   private final ExecutorService executorService;
+
+  /** Time to wait for results. */
+  private final Duration timeout;
 
 
   /**
@@ -44,7 +55,20 @@ public class CallableWorker<T>
    */
   public CallableWorker(final String poolName)
   {
-    this(poolName, DEFAULT_NUM_THREADS);
+    this(poolName, DEFAULT_NUM_THREADS, Duration.ZERO);
+  }
+
+
+  /**
+   * Creates a new callable worker with a fixed sized thread pool. The size of the thread pool is set to twice the
+   * number of available processors. See {@link Runtime#availableProcessors()}.
+   *
+   * @param  poolName  name to designate on the thread pool
+   * @param  time  to wait for a result before interrupting execution
+   */
+  public CallableWorker(final String poolName, final Duration time)
+  {
+    this(poolName, DEFAULT_NUM_THREADS, time);
   }
 
 
@@ -56,13 +80,32 @@ public class CallableWorker<T>
    */
   public CallableWorker(final String poolName, final int numThreads)
   {
-    executorService = Executors.newFixedThreadPool(
+    this(poolName, numThreads, Duration.ZERO);
+  }
+
+
+  /**
+   * Creates a new callable worker with a fixed sized thread pool.
+   *
+   * @param  poolName  name to designate on the thread pool
+   * @param  numThreads  size of the thread pool
+   * @param  time  to wait for a result before interrupting execution
+   */
+  public CallableWorker(final String poolName, final int numThreads, final Duration time)
+  {
+    timeout = LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Timeout cannot be null or negative");
+    executorService = new ThreadPoolExecutor(
       numThreads,
+      numThreads,
+      0L,
+      TimeUnit.MILLISECONDS,
+      new LinkedBlockingQueue<>(MAX_QUEUE_SIZE),
       r -> {
         final Thread t = new Thread(r, "ldaptive-" + poolName + "@" + hashCode());
         t.setDaemon(true);
         return t;
-      });
+      },
+      new ThreadPoolExecutor.AbortPolicy());
   }
 
 
@@ -73,6 +116,19 @@ public class CallableWorker<T>
    */
   public CallableWorker(final ExecutorService es)
   {
+    this(es, Duration.ZERO);
+  }
+
+
+  /**
+   * Creates a new callable worker.
+   *
+   * @param  es  executor service to run callables
+   * @param  time  to wait for a result before interrupting execution
+   */
+  public CallableWorker(final ExecutorService es, final Duration time)
+  {
+    timeout = LdapUtils.assertNotNullArgOr(time, Duration::isNegative, "Timeout cannot be null or negative");
     executorService = LdapUtils.assertNotNullArg(es, "Executor service cannot be null");
   }
 
@@ -104,15 +160,24 @@ public class CallableWorker<T>
   public List<ExecutionException> execute(final List<Callable<T>> callables, final Consumer<T> consumer)
   {
     final CompletionService<T> cs = new ExecutorCompletionService<>(executorService);
-    callables.forEach(cs::submit);
+    final List<Future<T>> futures = new ArrayList<>(callables.size());
+    callables.forEach(c -> futures.add(cs.submit(c)));
     final List<ExecutionException> exceptions = new ArrayList<>(callables.size());
-    for (int i = 0; i < callables.size(); i++) {
+    for (Future<T> f : futures) {
       try {
-        // blocks until a result is received
-        final T result = cs.take().get();
+        final T result;
+        if (Duration.ZERO.equals(timeout)) {
+          // blocks until a result is received
+          result = f.get();
+        } else {
+          result = f.get(timeout.toMillis(), TimeUnit.MILLISECONDS);
+        }
         consumer.accept(result);
       } catch (ExecutionException e) {
         exceptions.add(e);
+      } catch (TimeoutException e) {
+        f.cancel(false);
+        exceptions.add(new ExecutionException(e));
       } catch (InterruptedException e) {
         logger.warn("Concurrent execution interrupted", e);
         exceptions.add(new ExecutionException(e));

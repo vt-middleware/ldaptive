@@ -6,6 +6,7 @@ if [ -z "${PROFILE_CLASS}" ]; then
   #PROFILE_CLASS="org.ldaptive.DefaultSearchOperationProfile"
   #PROFILE_CLASS="org.ldaptive.RoundRobinPooledSearchOperationProfile"
   #PROFILE_CLASS="org.ldaptive.MultiPooledSearchOperationProfile"
+  #PROFILE_CLASS="org.ldaptive.PooledRandomWaitSearchOperationProfile"
   #PROFILE_CLASS="org.ldaptive.auth.AuthenticatorProfile"
   #PROFILE_CLASS="org.ldaptive.auth.RoundRobinAuthenticatorProfile"
 fi
@@ -30,14 +31,28 @@ else
   export MAVEN_OPTS="-agentpath:profile/yourkit_2020.9/bin/linux-x86-64/libyjpagent.so=port=10001,listen=all"
 fi
 
+for i in profile/target/*.jar; do
+  CLASSPATH=$CLASSPATH:$i
+done
+for i in profile/target/lib/*.jar; do
+  CLASSPATH=$CLASSPATH:$i
+done
+
 echo ""
 echo "####################################"
 echo "# Attach profiler to localhost:10001"
 echo "####################################"
 echo ""
 
-mvn -Dmaven.javadoc.skip=true -B -V -e \
+# wait for LDAP to start
+sleep 10
+
+# -Dorg.ldaptive.transport.netty.throttleRequests=50
+# -Dio.netty.eventLoopThreads=10
+
+java -cp ${CLASSPATH} \
+  -Dio.netty.leakDetectionLevel=paranoid \
   -DldapBaseDn="${BASE_DN}" \
   -DldapBindDn="${BIND_DN}" \
   -DldapBindCredential="${BIND_CREDENTIAL}" \
-  -pl profile -Pprofile clean compile exec:java -Dexec.mainClass=${PROFILE_CLASS} -Dexec.args="${PROFILE_CLASS} ${HOST} ${PORT} ${THREAD_COUNT} ${THREAD_SLEEP} ${ITERATIONS}"
+  ${PROFILE_CLASS} ${PROFILE_CLASS} ${HOST} ${PORT} ${THREAD_COUNT} ${THREAD_SLEEP} ${ITERATIONS}
