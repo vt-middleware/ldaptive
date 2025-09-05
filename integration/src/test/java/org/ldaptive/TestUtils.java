@@ -350,7 +350,7 @@ public final class TestUtils
    */
   public static LdapEntry convertStringToEntry(final String dn, final String attrs)
   {
-    final LdapEntry le = LdapEntry.builder().dn(dn).build();
+    final LdapEntry le = dn != null ? LdapEntry.builder().dn(dn).build() : new LdapEntry();
     for (String s : attrs.split("\\|")) {
       final String[] nameValuePairs = s.trim().split("=", 2);
       if (le.getAttribute(nameValuePairs[0]) != null) {
