@@ -69,13 +69,12 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   public Connection getConnection()
     throws PoolException
   {
-    throwIfNotInitialized();
-
     PooledConnectionProxy pc = null;
     boolean create = false;
     logger.trace("waiting on pool lock for check out {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
+      throwIfNotInitialized();
       // if an available connection exists, use it
       // if no available connections and the pool can grow, attempt to create
       // otherwise the pool is full, block until a connection is returned
@@ -118,6 +117,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
           boolean b = true;
           poolLock.lock();
           try {
+            throwIfNotInitialized();
             logger.trace("create connection in pool of size {}", available.size() + active.size());
             if (available.size() + active.size() == getMaxPoolSize()) {
               logger.trace("pool at maximum size, create not allowed");
@@ -169,6 +169,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     logger.trace("waiting on pool lock for retrieve available {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
+      throwIfNotInitialized();
       pc = available.remove();
       active.add(pc);
       pc.getPooledConnectionStatistics().addActiveStat();
@@ -195,6 +196,7 @@ public class BlockingConnectionPool extends AbstractConnectionPool
     logger.trace("waiting on pool lock for block available {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
+      throwIfNotInitialized();
       while (pc == null) {
         logger.trace("available pool is empty, waiting for pool not empty");
         if (Duration.ZERO.equals(blockWaitTime)) {
@@ -226,13 +228,12 @@ public class BlockingConnectionPool extends AbstractConnectionPool
   @Override
   public void putConnection(final Connection c)
   {
-    throwIfNotInitialized();
-
     final PooledConnectionProxy pc = retrieveConnectionProxy(c);
     final boolean valid = passivateAndValidateConnection(pc);
     logger.trace("waiting on pool lock for check in {}", poolLock.getQueueLength());
     poolLock.lock();
     try {
+      throwIfNotInitialized();
       if (!valid) {
         removeAvailableAndActiveConnection(pc);
       } else if (active.remove(pc)) {

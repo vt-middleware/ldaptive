@@ -1,6 +1,8 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive;
 
+import java.time.Duration;
+
 /**
  * Class for profiling {@link SingleConnectionFactory}.
  *
@@ -11,6 +13,7 @@ public final class SingleSearchOperationProfile extends AbstractSearchOperationP
 
 
   @Override
+  // CheckStyle:MagicNumber OFF
   protected void initialize(final String host, final int port)
   {
     connectionFactory = SingleConnectionFactory.builder()
@@ -22,11 +25,18 @@ public final class SingleSearchOperationProfile extends AbstractSearchOperationP
             .credential(bindCredential)
             .build())
         .build())
+      .failFastInitialize(false)
       .build();
+    ((SingleConnectionFactory) connectionFactory).setValidator(
+      SearchConnectionValidator.builder()
+        .period(Duration.ofSeconds(5))
+        .onFailure(((SingleConnectionFactory) connectionFactory).new ReinitializeConnectionConsumer())
+        .build());
     try {
       ((SingleConnectionFactory) connectionFactory).initialize();
     } catch (LdapException e) {
       throw new IllegalStateException("Could not initialize connection factory", e);
     }
   }
+  // CheckStyle:MagicNumber ON
 }

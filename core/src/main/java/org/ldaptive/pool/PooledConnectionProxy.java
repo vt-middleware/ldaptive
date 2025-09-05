@@ -57,7 +57,7 @@ public interface PooledConnectionProxy extends InvocationHandler
   /**
    * Returns the maximum size of the connection pool that this proxy is participating in.
    *
-   * @return  mqximum pool size
+   * @return  maximum pool size
    */
   int getMaxPoolSize();
 }

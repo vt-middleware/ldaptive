@@ -56,6 +56,8 @@ public class PooledConnectionFactoryTest
       try {
         factory.initialize();
         assertThat(factory.availableCount()).isEqualTo(3);
+      } catch (Exception e) {
+        fail("Should not have thrown an exception", e);
       } finally {
         factory.close();
         assertThat(factory.availableCount()).isEqualTo(0);

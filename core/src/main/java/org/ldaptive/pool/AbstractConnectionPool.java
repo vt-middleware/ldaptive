@@ -4,6 +4,7 @@ package org.ldaptive.pool;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,6 +50,12 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
 
   /** Default max pool size, value is {@value}. */
   public static final int DEFAULT_MAX_POOL_SIZE = 10;
+
+  /** Allowed pool size for both max and min, value is {@value}. */
+  private static final int ALLOWED_POOL_SIZE = 65535;
+
+  /** Maximum task execution time for worker threads. */
+  private static final Duration MAX_WORKER_TIME = Duration.ofMinutes(5);
 
   /** ID used for pool name. */
   private static final AtomicInteger POOL_ID = new AtomicInteger();
@@ -138,7 +145,7 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   private ScheduledExecutorService poolExecutor;
 
   /** Whether {@link #initialize()} has been successfully invoked. */
-  private boolean initialized;
+  private volatile boolean initialized;
 
   /** Whether {@link #initialize()} should throw if pooling configuration requirements are not met. */
   private boolean failFastInitialize = true;
@@ -206,6 +213,9 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     if (size < 0) {
       throw new IllegalArgumentException("Minimum pool size must be greater than or equal to 0 for pool " + name);
     }
+    if (size > ALLOWED_POOL_SIZE) {
+      throw new IllegalArgumentException("Minimum pool size cannot exceed " + ALLOWED_POOL_SIZE + " for pool " + name);
+    }
     logger.trace("setting minPoolSize: {}", size);
     minPoolSize = size;
   }
@@ -234,6 +244,9 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
     // allow a max size of zero for configurations that need to create a pool but don't want it to function
     if (size < 0) {
       throw new IllegalArgumentException("Maximum pool size must be greater than or equal to 0 for pool " + name);
+    }
+    if (size > ALLOWED_POOL_SIZE) {
+      throw new IllegalArgumentException("Maximum pool size cannot exceed " + ALLOWED_POOL_SIZE + " for pool " + name);
     }
     logger.trace("setting maxPoolSize: {}", size);
     maxPoolSize = size;
@@ -427,6 +440,9 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   public void setDefaultConnectionFactory(final DefaultConnectionFactory cf)
   {
     assertMutable();
+    if (cf == null) {
+      throw new IllegalArgumentException("Connection factory cannot be null");
+    }
     logger.trace("setting defaultConnectionFactory: {}", cf);
     connectionFactory = cf;
   }
@@ -476,6 +492,9 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   public void setQueueType(final QueueType type)
   {
     assertMutable();
+    if (type == null) {
+      throw new IllegalArgumentException("Queue type cannot be null");
+    }
     logger.trace("setting queueType: {}", type);
     queueType = type;
   }
@@ -554,12 +573,17 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
       throw new IllegalStateException("No passivator configured for pool " + name);
     }
 
+    if (maxPoolSize < minPoolSize) {
+      throw new IllegalStateException(
+        "Max pool size " + maxPoolSize + " must be greater than or equal to min pool size " + minPoolSize);
+    }
+
     available = new Queue<>(queueType);
     active = new Queue<>(queueType);
 
     IllegalStateException growException = null;
     try {
-      grow(minPoolSize, true);
+      createAvailableConnections(minPoolSize, true, false);
     } catch (IllegalStateException e) {
       growException = e;
     }
@@ -628,29 +652,33 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    * @param  throwOnFailure  whether to throw illegal state exception
    *
    * @throws  IllegalStateException  if the pool cannot grow to the supplied size and {@link
-   *                                 #createAvailableConnection(boolean)} throws
+   *                                 #createAvailableConnections(int, boolean, boolean)}  throws
    */
   protected void grow(final int size, final boolean throwOnFailure)
   {
     if (checkOutLock.tryLock()) {
       try {
+        final int numConnsToAdd;
         logger.trace("waiting for pool lock to initialize pool {}", poolLock.getQueueLength());
         poolLock.lock();
         try {
+          if (!initialized) {
+            return;
+          }
           final int currentPoolSize = active.size() + available.size();
           logger.debug("Checking connection pool size >= {} for {}", size, this);
-
-          final int numConnsToAdd = size - currentPoolSize;
-          if (numConnsToAdd > 0) {
-            createAvailableConnections(numConnsToAdd, throwOnFailure);
-          } else {
+          numConnsToAdd = size - currentPoolSize;
+          if (numConnsToAdd <= 0) {
             logger.debug(
               "Current pool size {} exceeds requested size {}, grow not performed for {}", currentPoolSize, size, this);
           }
-          logger.debug("Pool size after grow is {} for {}", available.size() + active.size(), this);
         } finally {
           poolLock.unlock();
         }
+        if (numConnsToAdd > 0) {
+          createAvailableConnections(numConnsToAdd, throwOnFailure, true);
+        }
+        logger.debug("Pool size after grow is {} for {}", available.size() + active.size(), this);
       } finally {
         checkOutLock.unlock();
       }
@@ -668,18 +696,18 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   @Override
   public synchronized void close()
   {
-    throwIfNotInitialized();
     logger.debug("Closing {} of size {}", this, available.size() + active.size());
     poolLock.lock();
     try {
       closeAllConnections();
+      if (poolExecutor != null && !poolExecutor.isShutdown()) {
+        poolExecutor.shutdown();
+      }
+      initialized = false;
+      logger.info("Pool {} closed", this);
     } finally {
       poolLock.unlock();
     }
-
-    poolExecutor.shutdown();
-    logger.info("Pool {} closed", this);
-    initialized = false;
   }
 
 
@@ -690,37 +718,53 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   {
     poolLock.lock();
     try {
-      final List<Callable<PooledConnectionProxy>> removeConns = new ArrayList<>(available.size() + active.size());
+      if (available.isEmpty() && active.isEmpty()) {
+        return;
+      }
+      final List<PooledConnectionProxy> removeConns = new ArrayList<>(available.size() + active.size());
       while (!available.isEmpty()) {
-        final PooledConnectionProxy pc = available.remove();
-        removeConns.add(() -> {
-          pc.getConnection().close();
-          return pc;
-        });
+        removeConns.add(available.remove());
       }
       while (!active.isEmpty()) {
-        final PooledConnectionProxy pc = active.remove();
-        removeConns.add(() -> {
-          pc.getConnection().close();
-          return pc;
-        });
+        removeConns.add(active.remove());
       }
-
-      if (!removeConns.isEmpty()) {
-        final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>(name + "-close");
-        try {
-          final List<ExecutionException> exceptions = callableWorker.execute(
-            removeConns,
-            pc -> logger.trace("removed {} from {}", pc, AbstractConnectionPool.this));
-          for (ExecutionException e : exceptions) {
-            logger.debug("Error closing connection for {}", this, e.getCause() != null ? e.getCause() : e);
-          }
-        } finally {
-          callableWorker.shutdown();
-        }
+      final CallableWorker<PooledConnectionProxy> callableWorker =
+        new CallableWorker<>(name + "-close", MAX_WORKER_TIME);
+      try {
+        closeConnections(callableWorker, removeConns);
+      } finally {
+        callableWorker.shutdown();
       }
     } finally {
       poolLock.unlock();
+    }
+  }
+
+
+  /**
+   * Asynchronously closes all the connections in the supplied list.
+   *
+   * @param  callableWorker  to execute async tasks
+   * @param  connections  to close
+   */
+  private void closeConnections(
+    final CallableWorker<PooledConnectionProxy> callableWorker, final List<PooledConnectionProxy> connections)
+  {
+    if (connections.isEmpty()) {
+      return;
+    }
+    final List<Callable<PooledConnectionProxy>> removeConns = new ArrayList<>(connections.size());
+    connections.forEach(pc ->
+      removeConns.add(() -> {
+        pc.getConnection().close();
+        return pc;
+      }
+    ));
+    final List<ExecutionException> exceptions = callableWorker.execute(
+      removeConns,
+      pc -> logger.trace("removed {} from {}", pc, AbstractConnectionPool.this));
+    for (ExecutionException e : exceptions) {
+      logger.debug("Error closing connection for {}", this, e.getCause() != null ? e.getCause() : e);
     }
   }
 
@@ -782,72 +826,140 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
 
 
   /**
-   * Asynchronously creates new connections and adds them to the available queue if the connection can be successfully
-   * passivated and validated. See {@link #passivateAndValidateConnection(PooledConnectionProxy)}. This method can make
-   * up to (count * 2) attempts in a best effort to create the number of connections requested.
+   * Asynchronously creates new connections and confirms that the connections can be passivated and validated. See
+   * {@link #passivateAndValidateConnection(PooledConnectionProxy)}. This method can make up to (count * 2) attempts in
+   * a best effort to create the number of connections requested.
+   *
+   * @param  callableWorker  to execute async tasks
+   * @param  count  number of connections to attempt to create
+   * @param  throwOnFailure  whether to throw illegal state exception on any connection creation failure
+   *
+   * @return  list of new connections
+   *
+   * @throws  IllegalStateException  if throwOnFailure is true and count connections are not successfully created
+   */
+  private List<PooledConnectionProxy> createConnections(
+    final CallableWorker<PooledConnectionProxy> callableWorker, final int count, final boolean throwOnFailure)
+  {
+    if (count <= 0) {
+      return Collections.emptyList();
+    }
+    final List<PooledConnectionProxy> connections = new ArrayList<>(count);
+    final List<ExecutionException> exceptions = callableWorker.execute(
+      () -> {
+        PooledConnectionProxy pc = null;
+        int i = 0;
+        // make two attempts on each thread to open a connection
+        while (pc == null && i < 2) {
+          try {
+            pc = createConnection(true);
+            if (pc != null && connectOnCreate) {
+              if (!passivateAndValidateConnection(pc)) {
+                pc.getConnection().close();
+                pc = null;
+              }
+            }
+          } catch (IllegalStateException e) {
+            if (i == 1) {
+              throw e;
+            }
+            pc = null;
+          }
+          i++;
+        }
+        return pc;
+      },
+      count,
+      pc -> {
+        if (pc != null) {
+          connections.add(pc);
+        }
+      });
+    if (connections.size() < count && throwOnFailure) {
+      try {
+        if (!exceptions.isEmpty()) {
+          final ExecutionException e = exceptions.get(0);
+          if (e.getCause() instanceof IllegalStateException) {
+            throw (IllegalStateException) e.getCause();
+          }
+          throw new IllegalStateException(e.getCause() == null ? e : e.getCause());
+        }
+        throw new IllegalStateException("Could not create the requested number of connections");
+      } finally {
+        closeConnections(callableWorker, connections);
+      }
+    }
+    return connections;
+  }
+
+
+  /**
+   * See {@link #createAvailableConnections(int, boolean, boolean)}.
    *
    * @param  count  number of connections to attempt to create
    * @param  throwOnFailure  whether to throw illegal state exception on any connection creation failure
    *
    * @throws  IllegalStateException  if throwOnFailure is true and count connections are not successfully created
+   *
+   * @deprecated use {@link #createAvailableConnections(int, boolean, boolean)}
    */
+  @Deprecated
   protected void createAvailableConnections(final int count, final boolean throwOnFailure)
   {
-    poolLock.lock();
+    createAvailableConnections(count, throwOnFailure, true);
+  }
+
+
+  /**
+   * Asynchronously creates new connections and adds them to the available queue. See
+   * {@link #createConnections(CallableWorker, int, boolean)} .
+   *
+   * @param  count  number of connections to attempt to create
+   * @param  throwOnFailure  whether to throw illegal state exception on any connection creation failure
+   * @param  throwIfNotInitialized  whether to throw illegal state exception if the pool is not initialized
+   *
+   * @throws  IllegalStateException  if throwOnFailure is true and count connections are not successfully created
+   */
+  protected void createAvailableConnections(
+    final int count, final boolean throwOnFailure, final boolean throwIfNotInitialized)
+  {
+    if (count <= 0) {
+      return;
+    }
+    final CallableWorker<PooledConnectionProxy> callableWorker =
+      new CallableWorker<>(name + "-create", MAX_WORKER_TIME);
+    List<PooledConnectionProxy> connections = null;
     try {
-      final CallableWorker<PooledConnectionProxy> callableWorker = new CallableWorker<>(name + "-create");
+      connections = createConnections(callableWorker, count, throwOnFailure);
+      final List<PooledConnectionProxy> closeConnections = new ArrayList<>();
+      poolLock.lock();
       try {
-        final AtomicInteger createdCount = new AtomicInteger();
-        final List<ExecutionException> exceptions = callableWorker.execute(
-          () -> {
-            PooledConnectionProxy pc = null;
-            int i = 0;
-            // make two attempts on each thread to open a connection
-            while (pc == null && i < 2) {
-              try {
-                pc = createConnection(true);
-                if (pc != null && connectOnCreate) {
-                  if (!passivateAndValidateConnection(pc)) {
-                    pc.getConnection().close();
-                    pc = null;
-                  }
-                }
-              } catch (IllegalStateException e) {
-                if (i == 1) {
-                  throw e;
-                }
-                pc = null;
-              }
-              i++;
-            }
-            return pc;
-          },
-          count,
-          pc -> {
-            if (pc != null) {
-              available.add(pc);
-              pc.getPooledConnectionStatistics().addAvailableStat();
-              logger.debug("Added available connection {} for {}", pc.getConnection(), this);
-              createdCount.incrementAndGet();
-            }
-          });
-        if (createdCount.get() < count && throwOnFailure) {
-          if (!exceptions.isEmpty()) {
-            final ExecutionException e = exceptions.get(0);
-            if (e.getCause() instanceof IllegalStateException) {
-              throw (IllegalStateException) e.getCause();
-            } else {
-              throw new IllegalStateException(e.getCause() == null ? e : e.getCause());
-            }
+        if (throwIfNotInitialized) {
+          throwIfNotInitialized();
+        }
+        for (PooledConnectionProxy pc : connections) {
+          if (available.size() + active.size() < maxPoolSize) {
+            available.add(pc);
+            poolNotEmpty.signal();
+            pc.getPooledConnectionStatistics().addAvailableStat();
+            logger.debug("Added available connection {} for {}", pc.getConnection(), this);
           } else {
-            throw new IllegalStateException("Could not create the requested number of connections");
+            closeConnections.add(pc);
           }
         }
       } finally {
-        callableWorker.shutdown();
+        poolLock.unlock();
       }
+      if (!closeConnections.isEmpty()) {
+        closeConnections(callableWorker, closeConnections);
+      }
+    } catch (Exception e) {
+      if (connections != null) {
+        closeConnections(callableWorker, connections);
+      }
+      throw e;
     } finally {
-      poolLock.unlock();
+      callableWorker.shutdown();
     }
   }
 
@@ -863,13 +975,20 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    */
   protected PooledConnectionProxy createAvailableConnection(final boolean throwOnFailure)
   {
-    final PooledConnectionProxy pc = createConnection(throwOnFailure);
+    PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
       poolLock.lock();
       try {
-        available.add(pc);
-        pc.getPooledConnectionStatistics().addAvailableStat();
-        logger.debug("Added available connection {} for {}", pc.getConnection(), this);
+        if (initialized && available.size() + active.size() < maxPoolSize) {
+          available.add(pc);
+          poolNotEmpty.signal();
+          pc.getPooledConnectionStatistics().addAvailableStat();
+          logger.debug("Added available connection {} for {}", pc.getConnection(), this);
+        } else {
+          // pool was closed while the connection was created or max pool size was reached
+          pc.getConnection().close();
+          pc = null;
+        }
       } finally {
         poolLock.unlock();
       }
@@ -893,13 +1012,19 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    */
   protected PooledConnectionProxy createActiveConnection(final boolean throwOnFailure)
   {
-    final PooledConnectionProxy pc = createConnection(throwOnFailure);
+    PooledConnectionProxy pc = createConnection(throwOnFailure);
     if (pc != null) {
       poolLock.lock();
       try {
-        active.add(pc);
-        pc.getPooledConnectionStatistics().addActiveStat();
-        logger.debug("Added active connection {} for {}", pc.getConnection(), this);
+        if (initialized && available.size() + active.size() < maxPoolSize) {
+          active.add(pc);
+          pc.getPooledConnectionStatistics().addActiveStat();
+          logger.debug("Added active connection {} for {}", pc.getConnection(), this);
+        } else {
+          // pool was closed while the connection was created or max pool size was reached
+          pc.getConnection().close();
+          pc = null;
+        }
       } finally {
         poolLock.unlock();
       }
@@ -1053,25 +1178,28 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    */
   public void prune()
   {
-    throwIfNotInitialized();
     logger.trace("waiting for pool lock to prune {} for {}", poolLock.getQueueLength(), this);
+    int numConnPruned = 0;
     poolLock.lock();
     try {
+      if (!initialized) {
+        return;
+      }
       if (!available.isEmpty()) {
         final int numAvailable = available.size();
         pruneStrategy.accept(available::iterator);
-        final int numConnPruned = numAvailable - available.size();
-        if (numConnPruned == 0) {
-          logger.debug("Prune strategy {} did not remove any connections for {}", pruneStrategy, this);
-        } else {
-          grow(minPoolSize, false);
-          logger.info("Available pool size pruned to {} for {}", available.size(), this);
-        }
+        numConnPruned = numAvailable - available.size();
       } else {
         logger.debug("No available connections, no connections pruned for {}", this);
       }
     } finally {
       poolLock.unlock();
+    }
+    if (numConnPruned == 0) {
+      logger.debug("Prune strategy {} did not remove any connections for {}", pruneStrategy, this);
+    } else {
+      grow(minPoolSize, false);
+      logger.info("Available pool size pruned to {} for {}", available.size(), this);
     }
   }
 
@@ -1083,13 +1211,16 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
    */
   public void validate()
   {
-    throwIfNotInitialized();
+    final List<PooledConnectionProxy> remove = new ArrayList<>();
     poolLock.lock();
     try {
+      if (!initialized) {
+        return;
+      }
+      final int initialPoolSize = available.size() + active.size();
       if (!available.isEmpty()) {
         logger.debug("Validate available pool of size {} for {}", available.size(), this);
 
-        final List<PooledConnectionProxy> remove = new ArrayList<>();
         final Map<PooledConnectionProxy, Supplier<Boolean>> results = new HashMap<>(available.size());
         for (PooledConnectionProxy pc : available) {
           logger.trace("validating {} for {}", pc, this);
@@ -1110,21 +1241,25 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
             remove.add(entry.getKey());
           }
         }
-        // validation failures are all closed together after all validation is complete
+        // validation failures are all removed and closed together after all validation is complete
         for (PooledConnectionProxy pc : remove) {
           logger.trace("validate removing {} from {}", pc, this);
           available.remove(pc);
-          pc.getConnection().close();
           logger.trace("validate removed {} from {}", pc, this);
         }
       } else {
         logger.debug("No available connections, no validation performed for {}", this);
       }
-      grow(minPoolSize, false);
-      logger.debug("Pool size after validation is {} for {}", available.size() + active.size(), this);
+      if (initialPoolSize == available.size() + active.size()) {
+        logger.debug("Pool size of {} unchanged after validation for {}", available.size() + active.size(), this);
+      } else {
+        logger.info("Pool size after validation is {} for {}", available.size() + active.size(), this);
+      }
     } finally {
       poolLock.unlock();
     }
+    remove.forEach(pc -> pc.getConnection().close());
+    grow(minPoolSize, false);
   }
 
 
@@ -1151,21 +1286,19 @@ public abstract class AbstractConnectionPool extends AbstractFreezable implement
   @Override
   public Set<PooledConnectionStatistics> getPooledConnectionStatistics()
   {
-    throwIfNotInitialized();
-
-    final Set<PooledConnectionStatistics> stats = new HashSet<>();
     poolLock.lock();
     try {
+      final Set<PooledConnectionStatistics> stats = new HashSet<>();
       for (PooledConnectionProxy cp : available) {
         stats.add(cp.getPooledConnectionStatistics());
       }
       for (PooledConnectionProxy cp : active) {
         stats.add(cp.getPooledConnectionStatistics());
       }
+      return Collections.unmodifiableSet(stats);
     } finally {
       poolLock.unlock();
     }
-    return Collections.unmodifiableSet(stats);
   }
 
 

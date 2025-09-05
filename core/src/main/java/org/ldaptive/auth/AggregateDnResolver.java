@@ -1,6 +1,7 @@
 /* See LICENSE for licensing and NOTICE for copyright. */
 package org.ldaptive.auth;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,6 +25,9 @@ import org.slf4j.LoggerFactory;
 public final class AggregateDnResolver extends AbstractFreezable implements DnResolver
 {
 
+  /** Maximum task execution time for worker threads. */
+  private static final Duration MAX_WORKER_TIME = Duration.ofMinutes(5);
+
   /** Logger for this class. */
   private final Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -40,7 +44,7 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
   /** Default constructor. */
   public AggregateDnResolver()
   {
-    callableWorker = new CallableWorker<>("ldaptive-aggregate-dn-resolver");
+    callableWorker = new CallableWorker<>("ldaptive-aggregate-dn-resolver", MAX_WORKER_TIME);
   }
 
 
@@ -52,7 +56,7 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
   public AggregateDnResolver(final Map<String, DnResolver> resolvers)
   {
     setDnResolvers(resolvers);
-    callableWorker = new CallableWorker<>("ldaptive-aggregate-dn-resolver");
+    callableWorker = new CallableWorker<>("ldaptive-aggregate-dn-resolver", MAX_WORKER_TIME);
   }
 
 
@@ -65,7 +69,7 @@ public final class AggregateDnResolver extends AbstractFreezable implements DnRe
   public AggregateDnResolver(final Map<String, DnResolver> resolvers, final ExecutorService es)
   {
     setDnResolvers(resolvers);
-    callableWorker = new CallableWorker<>(es);
+    callableWorker = new CallableWorker<>(es, MAX_WORKER_TIME);
   }
 
 
