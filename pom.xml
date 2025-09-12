@@ -59,8 +59,8 @@
     <spotbugs.dir>src/main/spotbugs</spotbugs.dir>
     <pmd.dir>src/main/pmd</pmd.dir>
     <org.slf4j.version>2.0.17</org.slf4j.version>
-    <io.netty.version>4.1.126.Final</io.netty.version>
-    <org.springframework.version>6.2.10</org.springframework.version>
+    <io.netty.version>4.1.127.Final</io.netty.version>
+    <org.springframework.version>6.2.11</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.3.0</japicmp.oldVersion>
   </properties>
@@ -245,7 +245,7 @@
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.9.4.1</version>
+          <version>4.9.4.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
