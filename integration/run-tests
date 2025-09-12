@@ -1,0 +1,37 @@
+#!/bin/bash
+
+set -e
+
+HOST="ldap-test:389"
+SSL_HOST=`echo ${HOST} |sed 's/389/636/'`
+BASE_DN="ou=test,dc=vt,dc=edu"
+BIND_DN="uid=1,ou=test,dc=vt,dc=edu"
+BIND_CREDENTIAL="VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2"
+
+if [ -z "${TEST_GROUP}" ]; then
+  TEST_GROUP="core"
+fi
+
+if [ -z "${USE_SHADED}" ]; then
+  USE_SHADED="false"
+fi
+
+if [ -z "${JDK}" ]; then
+  JDK="11"
+fi
+COMPOSE_FILE="integration/docker-compose-jdk${JDK}.yml"
+
+mvn -Dmaven.javadoc.skip=true -B -V -e \
+  -DldapTestHost=ldap://${HOST} \
+  -DldapSslTestHost=ldaps://${SSL_HOST} \
+  -DldapBaseDn="${BASE_DN}" \
+  -DldapBindDn="${BIND_DN}" \
+  -DldapBindCredential="${BIND_CREDENTIAL}" \
+  -DldapTestGroup="${TEST_GROUP}" \
+  -DuseShaded="${USE_SHADED}" \
+  -pl integration -Pintegration clean package
+
+docker compose -f ${COMPOSE_FILE} down && \
+  docker network prune -f && \
+  docker compose -f ${COMPOSE_FILE} pull && \
+  BIND_DN="${BIND_DN}" BIND_CREDENTIAL="${BIND_CREDENTIAL}" JDK="${JDK}" docker compose -f ${COMPOSE_FILE} up --build --abort-on-container-exit --attach ldaptive

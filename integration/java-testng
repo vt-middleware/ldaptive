@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e
+
+wait_for_process_completion() {
+  echo "Waiting for process completion "
+  local i=0
+  while ps -p $1 >/dev/null; do
+    sleep 5
+    i=$((i+5))
+    echo "${i}s"
+  done
+}
+
+CLASSPATH=integration/target/test-classes
+for i in integration/target/lib/*.jar; do
+  if [ "${JDK}" = 11 ]; then
+    # don't include JDK17 compiled jars
+    if [[ "${i}" != *"-spring-"*.jar ]]; then
+      CLASSPATH=$CLASSPATH:$i
+    fi
+  else
+    CLASSPATH=$CLASSPATH:$i
+  fi
+done
+
+echo "Running integration tests with $(java --version)"
+
+LOG_OUTPUT="integration/target/test-logging"
+java -Xms1g -Xmx2g -cp ${CLASSPATH} \
+  -Dio.netty.leakDetectionLevel=advanced \
+  org.testng.TestNG \
+  -d integration/target/test-output \
+  integration/target/test-classes/testng.xml 2>&1 >${LOG_OUTPUT} &
+
+wait_for_process_completion $!
+echo ""
+tail -5 ${LOG_OUTPUT}
+echo "Integration tests complete, see ${LOG_OUTPUT}"

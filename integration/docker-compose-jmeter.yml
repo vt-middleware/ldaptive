@@ -7,9 +7,10 @@ services:
       - $HOME/.m2:/root/.m2
       - $PWD:/apps/ldaptive
     environment:
-      - BIND_DN
-      - BIND_CREDENTIAL
-      - JDK
+      - HOST=ldap-test:389
+      - BASE_DN=ou=test,dc=vt,dc=edu
+      - BIND_DN=uid=1,ou=test,dc=vt,dc=edu
+      - BIND_CREDENTIAL=VKSxXwlU7YssGl1foLMH2mGMWkifbODb1djfJ4t2
     networks:
       ldap_net:
         ipv4_address: 172.28.1.10
@@ -17,7 +18,7 @@ services:
       bash -c "export DEBIAN_FRONTEND=noninteractive &&
       /apps/ldaptive/integration/wait_for_ldap &&
       /apps/ldaptive/integration/krb5_init &&
-      cd /apps/ldaptive && integration/java-testng"
+      cd /apps/ldaptive && integration/mvn-jmeter"
 
   ldap-test:
     image: dhawes/ldap-test-openldap:latest

@@ -23,6 +23,8 @@ public class SkipTestInvokedMethodListener implements IInvokedMethodListener
       testResult.setStatus(ITestResult.SKIP);
     } else if (msg != null && msg.startsWith(UnsupportedOperationException.class.getName())) {
       testResult.setStatus(ITestResult.SKIP);
+    } else if (t instanceof UnsupportedClassVersionError) {
+      testResult.setStatus(ITestResult.SKIP);
     }
   }
 

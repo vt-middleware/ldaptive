@@ -2428,7 +2428,7 @@ public class SearchOperationTest extends AbstractTest
       return;
     }
 
-    System.setProperty("java.security.auth.login.config", "target/test-classes/ldap_jaas.config");
+    System.setProperty("java.security.auth.login.config", "integration/target/test-classes/ldap_jaas.config");
     System.setProperty("javax.security.auth.useSubjectCredsOnly", "false");
 
     final String expected = readFileIntoString(ldifFile);

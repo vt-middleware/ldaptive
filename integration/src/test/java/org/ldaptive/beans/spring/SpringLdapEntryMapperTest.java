@@ -47,10 +47,16 @@ public class SpringLdapEntryMapperTest extends AbstractTest
     request.setReturnAttributes(ReturnAttributes.ALL.value());
     final LdapEntry entry = op.execute(request).getEntry();
 
-    return
-      new Object[][] {
-        new Object[] {new SpringLdapEntryMapper(), entry},
-      };
+    try {
+      return
+        new Object[][] {
+          new Object[] {new SpringLdapEntryMapper<>(), entry},
+        };
+    } catch (NoClassDefFoundError e) {
+      // ignore this test if running under java < 17
+      assertThat(e).isNotNull();
+    }
+    return new Object[][] {};
   }
 
 

@@ -39,7 +39,7 @@ public class PropertiesTest
   public void init()
     throws Exception
   {
-    System.setProperty("java.security.auth.login.config", "target/test-classes/ldap_jaas.config");
+    System.setProperty("java.security.auth.login.config", "integration/target/test-classes/ldap_jaas.config");
   }
 
 

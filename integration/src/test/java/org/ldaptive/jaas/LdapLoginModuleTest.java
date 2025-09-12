@@ -62,7 +62,7 @@ public class LdapLoginModuleTest extends AbstractTest
     testLdapEntry = convertLdifToResult(ldif).getEntry();
     super.createLdapEntry(testLdapEntry);
 
-    System.setProperty("java.security.auth.login.config", "target/test-classes/ldap_jaas.config");
+    System.setProperty("java.security.auth.login.config", "integration/target/test-classes/ldap_jaas.config");
   }
 
 

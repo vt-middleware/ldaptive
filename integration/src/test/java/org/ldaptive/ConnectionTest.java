@@ -371,7 +371,7 @@ public class ConnectionTest
     throws Exception
   {
     final X509CredentialConfig config = new X509CredentialConfig();
-    config.setTrustCertificates("file:target/test-classes/ldaptive.trust.crt");
+    config.setTrustCertificates("file:integration/target/test-classes/ldaptive.trust.crt");
     return new SslConfig(config);
   }
 

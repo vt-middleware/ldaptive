@@ -20,6 +20,21 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive-beans</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive-beans-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
       <scope>test</scope>
@@ -114,6 +129,23 @@
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-depends</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <includeScope>test</includeScope>
+              <outputDirectory>${basedir}/target/lib</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
@@ -137,12 +169,6 @@
                 </requireProperty>
                 <requireProperty>
                   <property>ldapBindCredential</property>
-                </requireProperty>
-                <requireProperty>
-                  <property>ldapTestGroup</property>
-                </requireProperty>
-                <requireProperty>
-                  <property>useShaded</property>
                 </requireProperty>
               </rules>
               <fail>true</fail>
@@ -174,18 +200,31 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <fork>true</fork>
+          <debug>true</debug>
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+          <compilerArgs>
+            <arg>-Xlint:unchecked</arg>
+          </compilerArgs>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <failIfNoTests>true</failIfNoTests>
-          <failIfNoSpecifiedTests>true</failIfNoSpecifiedTests>
-          <redirectTestOutputToFile>true</redirectTestOutputToFile>
-          <argLine>-Xms1g -Xmx2g -Dio.netty.leakDetectionLevel=advanced</argLine>
-          <suiteXmlFiles>
-            <suiteXmlFile>${project.build.directory}/test-classes/testng.xml</suiteXmlFile>
-          </suiteXmlFiles>
-          <!-- sometimes useful if testng runs out of memory
-          <disableXmlReport>true</disableXmlReport>
-          -->
+          <!-- tests are run using docker outside maven-->
+          <skipTests>true</skipTests>
         </configuration>
       </plugin>
       <plugin>
@@ -243,6 +282,7 @@
           <!-- Run JMeter tests -->
           <execution>
             <id>jmeter-tests</id>
+            <phase>integration-test</phase>
             <goals>
               <goal>jmeter</goal>
             </goals>
@@ -250,6 +290,7 @@
           <!-- Fail build on errors in test -->
           <execution>
             <id>jmeter-check-results</id>
+            <phase>post-integration-test</phase>
             <goals>
               <goal>results</goal>
             </goals>
@@ -360,108 +401,6 @@
           </exclusions>
         </dependency>
       </dependencies>
-    </profile>
-    <profile>
-      <id>jdk11</id>
-      <activation>
-        <jdk>11</jdk>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>testCompile</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <testExcludes>
-                <!-- exclude classes that require jdk17 -->
-                <testExclude>org/ldaptive/spring/*</testExclude>
-                <testExclude>org/ldaptive/jaas/spring/*</testExclude>
-                <testExclude>org/ldaptive/beans/spring/*</testExclude>
-              </testExcludes>
-              <fork>true</fork>
-              <debug>true</debug>
-              <showDeprecation>true</showDeprecation>
-              <showWarnings>true</showWarnings>
-              <compilerArgs>
-                <arg>-Xlint:unchecked</arg>
-              </compilerArgs>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-    <profile>
-      <id>jdk17</id>
-      <activation>
-        <jdk>17</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.ldaptive</groupId>
-          <artifactId>ldaptive-beans-spring</artifactId>
-          <scope>test</scope>
-          <exclusions>
-            <exclusion>
-              <groupId>org.ldaptive</groupId>
-              <artifactId>ldaptive</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.ldaptive</groupId>
-              <artifactId>ldaptive-beans</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-        <dependency>
-          <groupId>org.ldaptive</groupId>
-          <artifactId>ldaptive-beans-spring</artifactId>
-          <version>${project.version}</version>
-          <classifier>tests</classifier>
-          <scope>test</scope>
-          <exclusions>
-            <exclusion>
-              <groupId>org.ldaptive</groupId>
-              <artifactId>ldaptive</artifactId>
-            </exclusion>
-            <exclusion>
-              <groupId>org.ldaptive</groupId>
-              <artifactId>ldaptive-beans</artifactId>
-            </exclusion>
-          </exclusions>
-        </dependency>
-      </dependencies>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-compiler-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>integration-test</phase>
-                <goals>
-                  <goal>testCompile</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <fork>true</fork>
-              <debug>true</debug>
-              <showDeprecation>true</showDeprecation>
-              <showWarnings>true</showWarnings>
-              <compilerArgs>
-                <arg>-Xlint:unchecked</arg>
-              </compilerArgs>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
   </profiles>
 </project>

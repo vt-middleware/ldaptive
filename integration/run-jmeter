@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -e
+
+COMPOSE_FILE="integration/docker-compose-jmeter.yml"
+docker compose -f ${COMPOSE_FILE} down && \
+  docker network prune -f && \
+  docker compose -f ${COMPOSE_FILE} pull && \
+  docker compose -f ${COMPOSE_FILE} up --build --abort-on-container-exit --attach ldaptive
