@@ -146,7 +146,7 @@ git push origin gh-pages
 echo "Uploading bundle jars to sonatype"
 user_continue
 
-SONATYPE_TOKEN=$(echo "${SONATYPE_USER}:${SONATYPE_PASSWORD} " | base64)
+SONATYPE_TOKEN=$(echo "${SONATYPE_USER}:${SONATYPE_PASSWORD}" | base64)
 curl --verbose --request POST \
   --header "Authorization: Bearer ${SONATYPE_TOKEN}" \
   -F "file=@distribution/target/ldaptive-${RELEASE_VERSION}-maven.zip" \

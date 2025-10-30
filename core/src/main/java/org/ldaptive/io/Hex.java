@@ -4,14 +4,14 @@ package org.ldaptive.io;
 import java.util.Arrays;
 
 /**
- * Utility for hexidecimal encoding and decoding.
+ * Utility for hexadecimal encoding and decoding.
  *
  * @author  Middleware Services
  */
 public final class Hex
 {
 
-  /** Hexidecimal characters. */
+  /** Hexadecimal characters. */
   private static final char[] HEX_CHARS = {
     '0',
     '1',
@@ -63,11 +63,11 @@ public final class Hex
 
 
   /**
-   * Returns whether the supplied character is a hexidecimal character. Valid characters include 0-9, a-f and A-F
+   * Returns whether the supplied character is a hexadecimal character. Valid characters include 0-9, a-f and A-F
    *
    * @param  c  to inspect
    *
-   * @return  whether the supplied character is hexidecimal
+   * @return  whether the supplied character is hexadecimal
    */
   public static boolean isValidChar(final char c)
   {
@@ -109,7 +109,7 @@ public final class Hex
    *
    * @return  hex decoded value
    *
-   * @throws  IllegalArgumentException  if value is not valid hexidecimal
+   * @throws  IllegalArgumentException  if value is not valid hexadecimal
    */
   public static byte[] decode(final char... value)
   {

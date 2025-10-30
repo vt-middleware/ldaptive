@@ -10,4 +10,4 @@ cd ldaptive
 ```
 
 ### Documentation
-See the website: http://www.ldaptive.org
+See the website: https://www.ldaptive.org

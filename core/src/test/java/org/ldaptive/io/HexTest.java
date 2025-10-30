@@ -120,4 +120,46 @@ public class HexTest
       assertThat(e).isExactlyInstanceOf(IllegalArgumentException.class);
     }
   }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "io")
+  public void encodeDecodeAllChars()
+    throws Exception
+  {
+    char c = Character.MIN_VALUE;
+    do {
+      final byte[] charBytes = String.valueOf(c).getBytes(StandardCharsets.UTF_8);
+      final char[] encoded = Hex.encode(charBytes);
+      assertThat(Hex.decode(encoded)).isEqualTo(charBytes);
+      c++;
+      // the value of c will wrap around to the min value
+    } while (c > Character.MIN_VALUE);
+  }
+
+
+  /**
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "io")
+  public void isValidHex()
+    throws Exception
+  {
+    char c = Character.MIN_VALUE;
+    do {
+      if (c >= '0' && c <= '9') {
+        assertThat(Hex.isValidChar(c)).isTrue();
+      } else if (c >= 'a' && c <= 'f') {
+        assertThat(Hex.isValidChar(c)).isTrue();
+      } else if (c >= 'A' && c <= 'F') {
+        assertThat(Hex.isValidChar(c)).isTrue();
+      } else {
+        assertThat(Hex.isValidChar(c)).isFalse();
+      }
+      c++;
+      // the value of c will wrap around to the min value
+    } while (c > Character.MIN_VALUE);
+  }
 }
