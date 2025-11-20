@@ -60,7 +60,7 @@
     <pmd.dir>src/main/pmd</pmd.dir>
     <org.slf4j.version>2.0.17</org.slf4j.version>
     <io.netty.version>4.1.128.Final</io.netty.version>
-    <org.springframework.version>6.2.12</org.springframework.version>
+    <org.springframework.version>6.2.14</org.springframework.version>
     <japicmp.enabled>false</japicmp.enabled>
     <japicmp.oldVersion>2.3.0</japicmp.oldVersion>
   </properties>
@@ -87,7 +87,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.5.20</version>
+        <version>1.5.21</version>
       </dependency>
       <dependency>
         <groupId>org.ldaptive</groupId>
@@ -124,7 +124,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>4.2.1</version>
+        <version>4.2.3</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -238,7 +238,7 @@
             <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>12.1.1</version>
+              <version>12.1.2</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -283,7 +283,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.4.2</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.felix</groupId>
