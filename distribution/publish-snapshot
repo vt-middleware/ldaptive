@@ -26,6 +26,13 @@ if ! ./mvn_cmd clean; then
   exit
 fi
 mvn package -Dmaven.javadoc.skip=true -B -V
+POM_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+COMPILE_VERSION=$(javap -classpath core/target/ldaptive-${POM_VERSION}.jar -verbose org.ldaptive.LdapException |grep "major version:" |tr -d '[:space:]' |cut -d':' -f2)
+echo "Class compile version is ${COMPILE_VERSION}"
+if [ "${COMPILE_VERSION}" != "55" ]; then
+  echo "Snapshot must be compiled for Java 11"
+  exit
+fi
 
 # Pull latest from the maven repo
 pushd ${REPO_PATH}

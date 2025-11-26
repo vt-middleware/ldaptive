@@ -100,6 +100,12 @@ user_continue
 echo "Prime gpg-agent caches"
 echo "prime" | gpg --clearsign
 ./mvn_cmd deploy-dist
+COMPILE_VERSION=$(javap -classpath core/target/ldaptive-${RELEASE_VERSION}.jar -verbose org.ldaptive.LdapException |grep "major version:" |tr -d '[:space:]' |cut -d':' -f2)
+echo "Class compile version is ${COMPILE_VERSION}"
+if [ "${COMPILE_VERSION}" != "55" ]; then
+  echo "Release must be compiled for Java 11"
+  exit
+fi
 jar cMf distribution/target/ldaptive-${RELEASE_VERSION}-maven.zip -C distribution/target/deploy-maven .
 gpg --armor --detach-sign distribution/target/ldaptive-${RELEASE_VERSION}-dist.tar.gz
 gpg --armor --detach-sign distribution/target/ldaptive-${RELEASE_VERSION}-dist.zip
