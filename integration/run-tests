@@ -29,7 +29,7 @@ mvn -Dmaven.javadoc.skip=true -B -V -e \
   -DldapBindCredential="${BIND_CREDENTIAL}" \
   -DldapTestGroup="${TEST_GROUP}" \
   -DuseShaded="${USE_SHADED}" \
-  -pl integration -Pintegration clean package
+  -pl integration -Pshade,integration package
 
 docker compose -f ${COMPOSE_FILE} down && \
   docker network prune -f && \

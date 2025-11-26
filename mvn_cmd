@@ -26,19 +26,19 @@ ARG=$2
 
 case "$CMD" in
   clean)
-    run_mvn "integration,benchmark,profile,fuzz,distribution" "clean"
+    run_mvn "shade,integration,benchmark,profile,fuzz,distribution" "clean"
     ;;
   javadoc)
     run_mvn "" "javadoc:javadoc"
     ;;
   package)
-    run_mvn "distribution" "package"
+    run_mvn "shade,distribution" "package"
     ;;
   verify)
-    run_mvn "distribution" "verify"
+    run_mvn "shade,distribution" "verify"
     ;;
   install)
-    run_mvn "distribution" "install"
+    run_mvn "shade,distribution" "install"
     ;;
   versions-set)
     if [ -z "${ARG}" ]; then
@@ -48,10 +48,10 @@ case "$CMD" in
     run_mvn "distribution" "versions:set" "-DnewVersion=${ARG} -DgenerateBackupPoms=false"
     ;;
   versions-display-dependency)
-    run_mvn "integration,benchmark,profile,fuzz,distribution" "versions:display-dependency-updates"
+    run_mvn "shade,integration,benchmark,profile,fuzz,distribution" "versions:display-dependency-updates"
     ;;
   versions-display-plugin)
-    run_mvn "integration,benchmark,profile,fuzz,distribution" "versions:display-plugin-updates"
+    run_mvn "shade,integration,benchmark,profile,fuzz,distribution" "versions:display-plugin-updates"
     ;;
   deploy)
     if [ -z "${ARG}" ]; then

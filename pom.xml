@@ -69,7 +69,6 @@
     <module>core</module>
     <module>beans</module>
     <module>beans-spring</module>
-    <module>shade</module>
   </modules>
 
   <dependencyManagement>
@@ -78,16 +77,6 @@
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
         <version>${org.slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-nop</artifactId>
-        <version>${org.slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>ch.qos.logback</groupId>
-        <artifactId>logback-classic</artifactId>
-        <version>1.5.21</version>
       </dependency>
       <dependency>
         <groupId>org.ldaptive</groupId>
@@ -105,9 +94,16 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.ldaptive</groupId>
-        <artifactId>ldaptive-shade</artifactId>
-        <version>${project.version}</version>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-nop</artifactId>
+        <version>${org.slf4j.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>ch.qos.logback</groupId>
+        <artifactId>logback-classic</artifactId>
+        <version>1.5.21</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.testng</groupId>
@@ -549,6 +545,21 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>shade</id>
+      <modules>
+        <module>shade</module>
+      </modules>
+      <dependencyManagement>
+        <dependencies>
+          <dependency>
+            <groupId>org.ldaptive</groupId>
+            <artifactId>ldaptive-shade</artifactId>
+            <version>${project.version}</version>
+          </dependency>
+        </dependencies>
+      </dependencyManagement>
+    </profile>
     <profile>
       <id>integration</id>
       <modules>

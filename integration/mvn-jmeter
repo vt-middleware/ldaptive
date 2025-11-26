@@ -3,7 +3,7 @@
 set -e
 
 SSL_HOST=`echo ${HOST} |sed 's/389/636/'`
-MVN_OPTS="-pl integration -Pintegration clean verify"
+MVN_OPTS="-pl integration -Pshade,integration clean verify"
 
 mvn -Dmaven.javadoc.skip=true -B -V -e \
   -DldapTestHost=ldap://${HOST} \
