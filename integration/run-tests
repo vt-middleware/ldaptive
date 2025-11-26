@@ -19,7 +19,15 @@ fi
 if [ -z "${JDK}" ]; then
   JDK="11"
 fi
-COMPOSE_FILE="integration/docker-compose-jdk${JDK}.yml"
+
+mvn -pl integration -Pintegration clean
+if [ ! -d "integration/target" ]; then
+  mkdir integration/target
+fi
+DOCKER_FILE="integration/target/Dockerfile-jdk${JDK}"
+sed "s/__JDK__/${JDK}/" "integration/Dockerfile" >"$DOCKER_FILE"
+COMPOSE_FILE="integration/target/docker-compose-jdk${JDK}.yml"
+sed "s/__JDK__/${JDK}/" "integration/docker-compose.yml" >"$COMPOSE_FILE"
 
 mvn -Dmaven.javadoc.skip=true -B -V -e \
   -DldapTestHost=ldap://${HOST} \
@@ -30,6 +38,13 @@ mvn -Dmaven.javadoc.skip=true -B -V -e \
   -DldapTestGroup="${TEST_GROUP}" \
   -DuseShaded="${USE_SHADED}" \
   -pl integration -Pshade,integration package
+
+echo "================================"
+echo "Begin integration tests"
+echo "TEST_GROUP: ${TEST_GROUP}"
+echo "USE_SHADED: ${USE_SHADED}"
+echo "JDK: ${JDK}"
+echo "================================"
 
 docker compose -f ${COMPOSE_FILE} down && \
   docker network prune -f && \

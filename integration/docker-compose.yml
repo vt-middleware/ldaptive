@@ -2,7 +2,7 @@ services:
   ldaptive:
     build:
       context: .
-      dockerfile: Dockerfile-jdk17
+      dockerfile: Dockerfile-jdk__JDK__
     volumes:
       - $HOME/.m2:/root/.m2
       - $PWD:/apps/ldaptive

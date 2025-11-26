@@ -433,7 +433,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -460,7 +461,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -488,7 +490,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -673,7 +676,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -702,7 +706,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -732,7 +737,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -836,7 +842,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -884,7 +891,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -912,7 +920,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -941,7 +950,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -1134,7 +1144,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -1163,7 +1174,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -1193,7 +1205,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 
@@ -1297,7 +1310,8 @@ public class ConnectionTest
       assertThat(e.getCause().getCause()).isExactlyInstanceOf(SSLHandshakeException.class);
       assertThat(e.getCause().getCause().getCause()).isExactlyInstanceOf(CertificateException.class);
       assertThat(e.getMessage())
-        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException: Trust check failed for chain");
+        .startsWith("javax.net.ssl.SSLException: javax.net.ssl.SSLHandshakeException:")
+        .contains("Trust check failed for chain");
     }
   }
 

@@ -2,7 +2,15 @@
 
 set -e
 
-COMPOSE_FILE="integration/docker-compose-jmeter.yml"
+JDK="17"
+if [ ! -d "integration/target" ]; then
+  mkdir integration/target
+fi
+DOCKER_FILE="integration/target/Dockerfile-jdk${JDK}"
+sed "s/__JDK__/${JDK}/" "integration/Dockerfile" >"$DOCKER_FILE"
+COMPOSE_FILE="integration/target/docker-compose-jmeter-jdk${JDK}.yml"
+sed "s/__JDK__/${JDK}/" "integration/docker-compose-jmeter.yml" >"$COMPOSE_FILE"
+
 docker compose -f ${COMPOSE_FILE} down && \
   docker network prune -f && \
   docker compose -f ${COMPOSE_FILE} pull && \
