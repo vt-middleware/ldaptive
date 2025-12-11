@@ -91,7 +91,7 @@ class StatefulNettyTransport implements Transport
 
 
   /**
-   * Creates a new netty connection factory transport.
+   * Creates a new stateful netty transport.
    *
    * @param  type  of channel
    * @param  ioGroup  event loop group to handle I/O
