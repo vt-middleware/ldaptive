@@ -36,6 +36,9 @@ public class SearchOperationLoadTest extends AbstractTest
   private String searchBaseDn;
 
   /** Search operation instance for concurrency testing. */
+  private SearchOperation defaultTLSSearch;
+
+  /** Search operation instance for concurrency testing. */
   private SearchOperation singleTLSSearch;
 
   /** Search operation instance for concurrency testing. */
@@ -83,7 +86,13 @@ public class SearchOperationLoadTest extends AbstractTest
     final String ldifFile10)
     throws Exception
   {
-    singleTLSSearch = new SearchOperation(createConnectionFactory());
+    defaultTLSSearch = new SearchOperation(createConnectionFactory());
+    defaultTLSSearch.setEntryHandlers(
+      CaseChangeEntryHandler.builder().dnCaseChange(CaseChangeEntryHandler.CaseChange.LOWER).build());
+    defaultTLSSearch.setSearchResultHandlers(
+      new FollowSearchReferralHandler(),
+      new FollowSearchResultReferenceHandler());
+    singleTLSSearch = new SearchOperation(createSingleConnectionFactory());
     singleTLSSearch.setEntryHandlers(
       CaseChangeEntryHandler.builder().dnCaseChange(CaseChangeEntryHandler.CaseChange.LOWER).build());
     singleTLSSearch.setSearchResultHandlers(
@@ -131,14 +140,16 @@ public class SearchOperationLoadTest extends AbstractTest
     super.deleteLdapEntry(ENTRIES.get("9")[0].getDn());
     super.deleteLdapEntry(ENTRIES.get("10")[0].getDn());
 
+    defaultTLSSearch.getConnectionFactory().close();
+    singleTLSSearch.getConnectionFactory().close();
     pooledTLSSearch.getConnectionFactory().close();
   }
 
 
   /**
-   * Sample authentication data.
+   * Sample search data.
    *
-   * @return  user authentication data
+   * @return  user search data
    */
   @DataProvider(name = "search-data")
   public Object[][] createAuthData()
@@ -248,7 +259,38 @@ public class SearchOperationLoadTest extends AbstractTest
    */
   @Test(
     groups = "searchload", dataProvider = "search-data", threadPoolSize = 3, invocationCount = 100, timeOut = 60000)
-  public void search(
+  public void searchDefault(
+    final String filter,
+    final String returnAttrs,
+    final String expectedAttrs)
+    throws Exception
+  {
+    if (returnAttrs == null) {
+      final SearchResponse response = defaultTLSSearch.execute(new SearchRequest(searchBaseDn, filter));
+      assertThat(response.isSuccess()).isTrue();
+      assertThat(response.getEntry()).isNull();
+      return;
+    }
+    // test search with return attributes
+    final LdapEntry expected = convertStringToEntry(null, expectedAttrs);
+    final SearchResponse response = defaultTLSSearch.execute(
+      new SearchRequest(searchBaseDn, filter, returnAttrs.split("\\|")));
+    assertThat(response.isSuccess()).isTrue();
+    expected.setDn(response.getEntry().getDn());
+    LdapEntryAssert.assertThat(response.getEntry()).isSame(expected);
+  }
+
+
+  /**
+   * @param  filter  to execute.
+   * @param  returnAttrs  to search for.
+   * @param  expectedAttrs  to expect from the search.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(
+    groups = "searchload", dataProvider = "search-data", threadPoolSize = 8, invocationCount = 10000, timeOut = 60000)
+  public void searchSingle(
     final String filter,
     final String returnAttrs,
     final String expectedAttrs)
@@ -278,7 +320,7 @@ public class SearchOperationLoadTest extends AbstractTest
    * @throws  Exception  On test failure.
    */
   @Test(
-    groups = "searchload", dataProvider = "search-data", threadPoolSize = 3, invocationCount = 100, timeOut = 60000)
+    groups = "searchload", dataProvider = "search-data", threadPoolSize = 8, invocationCount = 10000, timeOut = 60000)
   public void searchPooled(
     final String filter,
     final String returnAttrs,
