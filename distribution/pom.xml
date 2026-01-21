@@ -39,6 +39,16 @@
       <classifier>sources</classifier>
     </dependency>
     <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive-beans-spring</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.ldaptive</groupId>
+      <artifactId>ldaptive-beans-spring</artifactId>
+      <version>${project.version}</version>
+      <classifier>sources</classifier>
+    </dependency>
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
     </dependency>
