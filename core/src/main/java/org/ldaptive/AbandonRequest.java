@@ -41,6 +41,11 @@ public class AbandonRequest extends AbstractRequestMessage
   }
 
 
+  /**
+   * Returns the message ID.
+   *
+   * @return  message ID
+   */
   public int getMessageID()
   {
     return messageID;

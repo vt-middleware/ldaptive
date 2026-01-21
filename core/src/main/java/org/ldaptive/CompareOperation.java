@@ -33,12 +33,22 @@ public class CompareOperation extends AbstractOperation<CompareRequest, CompareR
   }
 
 
+  /**
+   * Return compare value handlers.
+   *
+   * @return  compare value handlers
+   */
   public CompareValueHandler[] getCompareValueHandlers()
   {
     return compareValueHandlers;
   }
 
 
+  /**
+   * Sets the compare value handlers.
+   *
+   * @param  handlers  compare value handlers
+   */
   public void setCompareValueHandlers(final CompareValueHandler... handlers)
   {
     compareValueHandlers = handlers;

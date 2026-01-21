@@ -98,12 +98,22 @@ public final class AuthenticationResponse extends AbstractResult implements Free
   }
 
 
+  /**
+   * Return authentication result code.
+   *
+   * @return  authentication result code
+   */
   public AuthenticationResultCode getAuthenticationResultCode()
   {
     return authenticationHandlerResponse.getAuthenticationResultCode();
   }
 
 
+  /**
+   * Return authentication handler response.
+   *
+   * @return  authentication handler response
+   */
   public AuthenticationHandlerResponse getAuthenticationHandlerResponse()
   {
     return authenticationHandlerResponse;

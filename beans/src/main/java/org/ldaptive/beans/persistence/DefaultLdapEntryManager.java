@@ -123,12 +123,22 @@ public class DefaultLdapEntryManager<T> extends AbstractFreezable implements Lda
   }
 
 
+  /**
+   * Returns the search operation.
+   *
+   * @return  search operation
+   */
   public SearchOperation getSearchOperation()
   {
     return isFrozen() ? SearchOperation.copy(searchOperation) : searchOperation;
   }
 
 
+  /**
+   * Sets the search operation.
+   *
+   * @param  operation  search operation
+   */
   public void setSearchOperation(final SearchOperation operation)
   {
     assertMutable();
@@ -136,12 +146,22 @@ public class DefaultLdapEntryManager<T> extends AbstractFreezable implements Lda
   }
 
 
+  /**
+   * Returns the add operation.
+   *
+   * @return  add operation
+   */
   public AddOperation getAddOperation()
   {
     return isFrozen() ? AddOperation.copy(addOperation) : addOperation;
   }
 
 
+  /**
+   * Sets the add operation.
+   *
+   * @param  operation  add operation
+   */
   public void setAddOperation(final AddOperation operation)
   {
     assertMutable();
@@ -149,12 +169,22 @@ public class DefaultLdapEntryManager<T> extends AbstractFreezable implements Lda
   }
 
 
+  /**
+   * Returns the merge operation.
+   *
+   * @return  merge operation
+   */
   public MergeOperation getMergeOperation()
   {
     return isFrozen() ? MergeOperation.copy(mergeOperation) : mergeOperation;
   }
 
 
+  /**
+   * Sets the merge operation.
+   *
+   * @param  operation  merge operation
+   */
   public void setMergeOperation(final MergeOperation operation)
   {
     assertMutable();
@@ -162,12 +192,22 @@ public class DefaultLdapEntryManager<T> extends AbstractFreezable implements Lda
   }
 
 
+  /**
+   * Returns the delete operation.
+   *
+   * @return  delete operation
+   */
   public DeleteOperation getDeleteOperation()
   {
     return isFrozen() ? DeleteOperation.copy(deleteOperation) : deleteOperation;
   }
 
 
+  /**
+   * Sets the delete operation.
+   *
+   * @param  operation  delete operation
+   */
   public void setDeleteOperation(final DeleteOperation operation)
   {
     assertMutable();

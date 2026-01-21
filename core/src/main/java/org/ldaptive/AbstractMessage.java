@@ -50,6 +50,11 @@ public abstract class AbstractMessage implements Message
   }
 
 
+  /**
+   * Sets the message ID.
+   *
+   * @param  id  of the message
+   */
   protected void setMessageID(final int id)
   {
     messageID = id;

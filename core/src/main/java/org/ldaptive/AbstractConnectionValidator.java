@@ -50,6 +50,11 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
   }
 
 
+  /**
+   * Sets the validate period.
+   *
+   * @param  period  at which to validate
+   */
   public void setValidatePeriod(final Duration period)
   {
     assertMutable();
@@ -278,6 +283,13 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
     }
 
 
+    /**
+     * Sets the on success consumer.
+     *
+     * @param  consumer  to invoke on success
+     *
+     * @return  this builder
+     */
     public B onSuccess(final Consumer<Connection> consumer)
     {
       object.setOnSuccess(consumer);
@@ -285,6 +297,13 @@ public abstract class AbstractConnectionValidator extends AbstractFreezable impl
     }
 
 
+    /**
+     * Sets the on failure consumer.
+     *
+     * @param  consumer  to invoke on failure
+     *
+     * @return  this builder
+     */
     public B onFailure(final Consumer<Connection> consumer)
     {
       object.setOnFailure(consumer);

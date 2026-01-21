@@ -48,12 +48,22 @@ public final class AuthenticationHandlerResponse extends AbstractResult
   }
 
 
+  /**
+   * Returns the authentication result code.
+   *
+   * @return  authentication result code
+   */
   public AuthenticationResultCode getAuthenticationResultCode()
   {
     return authenticationResultCode;
   }
 
 
+  /**
+   * Returns the connection that authentication occurred on.
+   *
+   * @return  connection
+   */
   public Connection getConnection()
   {
     return connection;

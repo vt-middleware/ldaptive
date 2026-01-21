@@ -218,6 +218,11 @@ public class AgePruneStrategy extends AbstractPruneStrategy
     }
 
 
+    /**
+     * Creates a new builder with the supplied strategy.
+     *
+     * @param  strategy  age prune strategy
+     */
     protected Builder(final AgePruneStrategy strategy)
     {
       super(strategy);

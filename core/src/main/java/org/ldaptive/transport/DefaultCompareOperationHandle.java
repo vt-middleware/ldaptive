@@ -133,6 +133,11 @@ public final class DefaultCompareOperationHandle
   }
 
 
+  /**
+   * Return the compare value handler.
+   *
+   * @return  compare value handler
+   */
   public CompareValueHandler[] getOnCompare()
   {
     return onCompare;

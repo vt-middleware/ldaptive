@@ -135,6 +135,11 @@ public final class DefaultExtendedOperationHandle
   }
 
 
+  /**
+   * Return the extended value handler.
+   *
+   * @return  extended value handler
+   */
   public ExtendedValueHandler[] getOnExtended()
   {
     return onExtended;

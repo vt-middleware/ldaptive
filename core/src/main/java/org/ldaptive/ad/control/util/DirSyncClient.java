@@ -106,72 +106,132 @@ public class DirSyncClient
   }
 
 
+  /**
+   * Returns the result handlers.
+   *
+   * @return  result handlers
+   */
   public ResultHandler[] getResultHandlers()
   {
     return resultHandlers;
   }
 
 
+  /**
+   * Sets the result handlers.
+   *
+   * @param  handlers  result handlers
+   */
   public void setResultHandlers(final ResultHandler... handlers)
   {
     resultHandlers = handlers;
   }
 
 
+  /**
+   * Returns the exception handler.
+   *
+   * @return  exception handler
+   */
   public ExceptionHandler getExceptionHandler()
   {
     return exceptionHandler;
   }
 
 
+  /**
+   * Sets the exception handler.
+   *
+   * @param  handler  exception handler
+   */
   public void setExceptionHandler(final ExceptionHandler handler)
   {
     exceptionHandler = handler;
   }
 
 
+  /**
+   * Returns the throw condition.
+   *
+   * @return  throw condition
+   */
   public ResultPredicate getThrowCondition()
   {
     return throwCondition;
   }
 
 
+  /**
+   * Sets the throw condition.
+   *
+   * @param  function  throw condition
+   */
   public void setThrowCondition(final ResultPredicate function)
   {
     throwCondition = function;
   }
 
 
+  /**
+   * Returns the entry handlers.
+   *
+   * @return  entry handlers
+   */
   public LdapEntryHandler[] getEntryHandlers()
   {
     return entryHandlers;
   }
 
 
+  /**
+   * Sets the entry handlers.
+   *
+   * @param  handlers  entry handlers
+   */
   public void setEntryHandlers(final LdapEntryHandler... handlers)
   {
     entryHandlers = handlers;
   }
 
 
+  /**
+   * Returns the reference handlers.
+   *
+   * @return  reference handlers
+   */
   public SearchReferenceHandler[] getReferenceHandlers()
   {
     return referenceHandlers;
   }
 
 
+  /**
+   * Sets the reference handlers.
+   *
+   * @param  handlers  reference handlers
+   */
   public void setReferenceHandlers(final SearchReferenceHandler... handlers)
   {
     referenceHandlers = handlers;
   }
 
 
+  /**
+   * Returns the search result handlers.
+   *
+   * @return  search result handlers
+   */
   public SearchResultHandler[] getSearchResultHandlers()
   {
     return searchResultHandlers;
   }
 
 
+  /**
+   * Sets the search result handlers.
+   *
+   * @param  handlers  search result handlers
+   */
   public void setSearchResultHandlers(final SearchResultHandler... handlers)
   {
     searchResultHandlers = handlers;

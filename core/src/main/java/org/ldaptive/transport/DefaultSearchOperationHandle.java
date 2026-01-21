@@ -237,18 +237,33 @@ public final class DefaultSearchOperationHandle
   }
 
 
+  /**
+   * Returns the ldap entry handlers.
+   *
+   * @return  ldap entry handlers
+   */
   public LdapEntryHandler[] getOnEntry()
   {
     return onEntry;
   }
 
 
+  /**
+   * Returns the search reference handlers.
+   *
+   * @return  search reference handlers
+   */
   public SearchReferenceHandler[] getOnReference()
   {
     return onReference;
   }
 
 
+  /**
+   * Returns the search result handlers.
+   *
+   * @return  search result handlers
+   */
   public SearchResultHandler[] getOnSearchResult()
   {
     return onSearchResult;

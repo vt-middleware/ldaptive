@@ -27,12 +27,22 @@ public abstract class DefaultSaslClientRequest implements CallbackHandler
   private RequestControl[] controls;
 
 
+  /**
+   * Returns the request controls.
+   *
+   * @return  request controls
+   */
   public RequestControl[] getControls()
   {
     return controls;
   }
 
 
+  /**
+   * Sets the request controls.
+   *
+   * @param  cntrls  request controls
+   */
   public void setControls(final RequestControl... cntrls)
   {
     controls = cntrls;

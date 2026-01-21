@@ -53,12 +53,22 @@ public class AttributeModification
   }
 
 
+  /**
+   * Returns the operation type.
+   *
+   * @return  operation type
+   */
   public Type getOperation()
   {
     return operation;
   }
 
 
+  /**
+   * Sets the operation type.
+   *
+   * @return  operation type
+   */
   public LdapAttribute getAttribute()
   {
     return attribute;

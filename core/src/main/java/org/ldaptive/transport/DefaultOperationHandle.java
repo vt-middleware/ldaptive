@@ -511,54 +511,99 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   }
 
 
+  /**
+   * Return the result handlers.
+   *
+   * @return  result handlers
+   */
   public ResultHandler[] getOnResult()
   {
     return onResult;
   }
 
 
+  /**
+   * Return the response control handlers.
+   *
+   * @return  response control handlers
+   */
   public ResponseControlHandler[] getOnControl()
   {
     return onControl;
   }
 
 
+  /**
+   * Return the referral handlers.
+   *
+   * @return  referral handlers
+   */
   public ReferralHandler[] getOnReferral()
   {
     return onReferral;
   }
 
 
+  /**
+   * Return the intermediate response handlers.
+   *
+   * @return  intermediate response handlers
+   */
   public IntermediateResponseHandler[] getOnIntermediate()
   {
     return onIntermediate;
   }
 
 
+  /**
+   * Return the exception handler.
+   *
+   * @return  exception handler
+   */
   public ExceptionHandler getOnException()
   {
     return onException;
   }
 
 
+  /**
+   * Return the complete handler.
+   *
+   * @return  complete handler
+   */
   public CompleteHandler getOnComplete()
   {
     return onComplete;
   }
 
 
+  /**
+   * Return the throw condition.
+   *
+   * @return  throw condition
+   */
   public ResultPredicate getThrowCondition()
   {
     return throwCondition;
   }
 
 
+  /**
+   * Return the unsolicited notification handlers
+   *
+   * @return  unsolicited notification handlers
+   */
   public UnsolicitedNotificationHandler[] getOnUnsolicitedNotification()
   {
     return onUnsolicitedNotification;
   }
 
 
+  /**
+   * Return the referral result handler.
+   *
+   * @return  referral result handler
+   */
   public ReferralResultHandler<S> getOnReferralResult()
   {
     return onReferralResult;

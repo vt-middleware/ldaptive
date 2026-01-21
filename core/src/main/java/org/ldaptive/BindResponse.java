@@ -74,12 +74,22 @@ public final class BindResponse extends AbstractResult
   }
 
 
+  /**
+   * Returns the server SASL credentials.
+   *
+   * @return  server SASL credentials
+   */
   public byte[] getServerSaslCreds()
   {
     return serverSaslCreds;
   }
 
 
+  /**
+   * Sets the server SASL credentials.
+   *
+   * @param  creds  server SASL credentials
+   */
   private void setServerSaslCreds(final byte[] creds)
   {
     serverSaslCreds = creds;

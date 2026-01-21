@@ -29,12 +29,22 @@ public abstract class MessageFunctional<Q extends Request, S extends Result> ext
   private OperationHandle<Q, S> handle;
 
 
+  /**
+   * Returns the connection.
+   *
+   * @return  connection
+   */
   public Connection getConnection()
   {
     return connection;
   }
 
 
+  /**
+   * Sets the connection.
+   *
+   * @param  conn  connection
+   */
   public void setConnection(final Connection conn)
   {
     assertMutable();
@@ -42,12 +52,22 @@ public abstract class MessageFunctional<Q extends Request, S extends Result> ext
   }
 
 
+  /**
+   * Returns the request.
+   *
+   * @return  request
+   */
   public Q getRequest()
   {
     return request;
   }
 
 
+  /**
+   * Sets the request.
+   *
+   * @param  req  request
+   */
   public void setRequest(final Q req)
   {
     assertMutable();
@@ -55,12 +75,22 @@ public abstract class MessageFunctional<Q extends Request, S extends Result> ext
   }
 
 
+  /**
+   * Returns the handle.
+   *
+   * @return  handle
+   */
   public OperationHandle<Q, S> getHandle()
   {
     return handle;
   }
 
 
+  /**
+   * Sets the handle.
+   *
+   * @param  h  handle
+   */
   public void setHandle(final OperationHandle<Q, S> h)
   {
     assertMutable();

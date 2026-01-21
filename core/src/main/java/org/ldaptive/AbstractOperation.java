@@ -71,24 +71,44 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
   }
 
 
+  /**
+   * Returns the connection factory.
+   *
+   * @return  connection factory
+   */
   public ConnectionFactory getConnectionFactory()
   {
     return connectionFactory;
   }
 
 
+  /**
+   * Sets the connection factory.
+   *
+   * @param  factory  connection factory
+   */
   public void setConnectionFactory(final ConnectionFactory factory)
   {
     connectionFactory = factory;
   }
 
 
+  /**
+   * Returns the request handlers.
+   *
+   * @return  request handlers
+   */
   public RequestHandler<Q>[] getRequestHandlers()
   {
     return requestHandlers;
   }
 
 
+  /**
+   * Sets the request handlers.
+   *
+   * @param  handlers  request handlers
+   */
   @SuppressWarnings("unchecked")
   public void setRequestHandlers(final RequestHandler<Q>... handlers)
   {
@@ -96,96 +116,176 @@ public abstract class AbstractOperation<Q extends Request, S extends Result> imp
   }
 
 
+  /**
+   * Returns the result handlers.
+   *
+   * @return  result handlers
+   */
   public ResultHandler[] getResultHandlers()
   {
     return resultHandlers;
   }
 
 
+  /**
+   * Sets the result handlers.
+   *
+   * @param  handlers  result handlers
+   */
   public void setResultHandlers(final ResultHandler... handlers)
   {
     resultHandlers = handlers;
   }
 
 
+  /**
+   * Returns the control handlers.
+   *
+   * @return  control handlers
+   */
   public ResponseControlHandler[] getControlHandlers()
   {
     return controlHandlers;
   }
 
 
+  /**
+   * Sets the control handlers.
+   *
+   * @param  handlers  control handlers
+   */
   public void setControlHandlers(final ResponseControlHandler... handlers)
   {
     controlHandlers = handlers;
   }
 
 
+  /**
+   * Returns the referral handlers.
+   *
+   * @return  referral handlers
+   */
   public ReferralHandler[] getReferralHandlers()
   {
     return referralHandlers;
   }
 
 
+  /**
+   * Sets the referral handlers.
+   *
+   * @param  handlers  referral handlers
+   */
   public void setReferralHandlers(final ReferralHandler... handlers)
   {
     referralHandlers = handlers;
   }
 
 
+  /**
+   * Returns the intermediate response handlers.
+   *
+   * @return  intermediate response handlers
+   */
   public IntermediateResponseHandler[] getIntermediateResponseHandlers()
   {
     return intermediateResponseHandlers;
   }
 
 
+  /**
+   * Sets the intermediate response handlers.
+   *
+   * @param  handlers  intermediate response handlers
+   */
   public void setIntermediateResponseHandlers(final IntermediateResponseHandler... handlers)
   {
     intermediateResponseHandlers = handlers;
   }
 
 
+  /**
+   * Returns the exception handler.
+   *
+   * @return  exception handler
+   */
   public ExceptionHandler getExceptionHandler()
   {
     return exceptionHandler;
   }
 
 
+  /**
+   * Sets the exception handler.
+   *
+   * @param  handler  exception handler
+   */
   public void setExceptionHandler(final ExceptionHandler handler)
   {
     exceptionHandler = handler;
   }
 
 
+  /**
+   * Returns the throw condition.
+   *
+   * @return  throw condition
+   */
   public ResultPredicate getThrowCondition()
   {
     return throwCondition;
   }
 
 
+  /**
+   * Sets the throw condition.
+   *
+   * @param  function  throw condition
+   */
   public void setThrowCondition(final ResultPredicate function)
   {
     throwCondition = function;
   }
 
 
+  /**
+   * Returns the unsolicited notification handlers.
+   *
+   * @return  unsolicited notification handlers
+   */
   public UnsolicitedNotificationHandler[] getUnsolicitedNotificationHandlers()
   {
     return unsolicitedNotificationHandlers;
   }
 
 
+  /**
+   * Sets the unsolicited notification handlers.
+   *
+   * @param  handlers  unsolicited notification handlers
+   */
   public void setUnsolicitedNotificationHandlers(final UnsolicitedNotificationHandler... handlers)
   {
     unsolicitedNotificationHandlers = handlers;
   }
 
 
+  /**
+   * Returns the referral result handler.
+   *
+   * @return  referral result handler
+   */
   public ReferralResultHandler<S> getReferralResultHandler()
   {
     return referralResultHandler;
   }
 
 
+  /**
+   * Sets the referral result handler.
+   *
+   * @param  handler  referral result handler
+   */
   public void setReferralResultHandler(final ReferralResultHandler<S> handler)
   {
     referralResultHandler = handler;

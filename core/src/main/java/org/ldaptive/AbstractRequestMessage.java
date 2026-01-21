@@ -44,12 +44,22 @@ public abstract class AbstractRequestMessage implements Request
   private Duration responseTimeout;
 
 
+  /**
+   * Returns the controls for this request message.
+   *
+   * @return  request controls
+   */
   public RequestControl[] getControls()
   {
     return controls;
   }
 
 
+  /**
+   * Sets the controls for this request message.
+   *
+   * @param  cntrls  request controls
+   */
   public void setControls(final RequestControl... cntrls)
   {
     controls = LdapUtils.assertNotContainsNullArg(cntrls, "Controls cannot contain null");
