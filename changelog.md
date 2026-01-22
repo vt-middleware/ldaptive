@@ -6,10 +6,12 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
-## Version 2.5.0-SNAPSHOT - DDMMM20YY
+## Version 2.5.0 - 21Jan2026
 
 Issue | Description
 :---- | :----------
+[e93899c]({{ site.commitURL }}e93899c) | Cancel tasks if threads are unavailable.
+[51c2fb8]({{ site.commitURL }}51c2fb8) | Add SchemaElementFormatter interface.
 [2fd8380]({{ site.commitURL }}2fd8380) | Produce a core jar with shaded netty dependencies.
 [084b4a2]({{ site.commitURL }}084b4a2) | Add support for freezable response controls.
 [0b8da14]({{ site.commitURL }}0b8da14) | Refactor PasswordPolicyControl; continuation of 276.
