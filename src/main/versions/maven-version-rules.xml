@@ -24,5 +24,11 @@
         <ignoreVersion type="regex">^2\.1\..*$</ignoreVersion>
       </ignoreVersions>
     </rule>
+    <!-- Pin this project to checkstyle v12  -->
+    <rule groupId="com.puppycrawl.tools">
+      <ignoreVersions>
+        <ignoreVersion type="regex">^13.*$</ignoreVersion>
+      </ignoreVersions>
+    </rule>
   </rules>
 </ruleset>
