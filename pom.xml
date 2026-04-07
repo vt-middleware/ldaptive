@@ -59,8 +59,8 @@
     <spotbugs.dir>src/main/spotbugs</spotbugs.dir>
     <pmd.dir>src/main/pmd</pmd.dir>
     <org.slf4j.version>2.0.17</org.slf4j.version>
-    <io.netty.version>4.1.131.Final</io.netty.version>
-    <org.springframework.version>6.2.15</org.springframework.version>
+    <io.netty.version>4.1.132.Final</io.netty.version>
+    <org.springframework.version>6.2.17</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.5.0</japicmp.oldVersion>
   </properties>
@@ -102,7 +102,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.5.28</version>
+        <version>1.5.32</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -120,7 +120,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>4.3.1</version>
+        <version>4.4.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -214,12 +214,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.9.0</version>
+          <version>3.10.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>3.4.0</version>
+          <version>3.5.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -241,7 +241,7 @@
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.9.8.2</version>
+          <version>4.9.8.3</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -251,7 +251,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.5.4</version>
+          <version>3.5.5</version>
           <configuration>
             <redirectTestOutputToFile>true</redirectTestOutputToFile>
           </configuration>
@@ -284,7 +284,7 @@
         <plugin>
           <groupId>org.apache.felix</groupId>
           <artifactId>maven-bundle-plugin</artifactId>
-          <version>6.0.0</version>
+          <version>6.0.2</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -304,7 +304,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
-          <version>3.6.1</version>
+          <version>3.6.2</version>
         </plugin>
       </plugins>
     </pluginManagement>
