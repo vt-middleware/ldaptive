@@ -51,6 +51,7 @@ public class EqualsTest
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
       .withIgnoredFields("ldapEntry")
+      .withIgnoredFields("accountState")
       .verify();
   }
 
@@ -62,6 +63,7 @@ public class EqualsTest
       .suppress(Warning.STRICT_INHERITANCE)
       .suppress(Warning.NONFINAL_FIELDS)
       .withIgnoredFields("ldapEntry")
+      .withIgnoredFields("accountState")
       .verify();
   }
 }

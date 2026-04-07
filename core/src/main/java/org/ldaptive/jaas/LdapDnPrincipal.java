@@ -4,6 +4,7 @@ package org.ldaptive.jaas;
 import java.security.Principal;
 import org.ldaptive.LdapEntry;
 import org.ldaptive.LdapUtils;
+import org.ldaptive.auth.AccountState;
 
 /**
  * Provides a custom implementation for adding LDAP principals to a subject.
@@ -22,6 +23,9 @@ public class LdapDnPrincipal implements Principal, Comparable<Principal>
   /** User ldap entry. */
   private final LdapEntry ldapEntry;
 
+  /** User account state. */
+  private final AccountState accountState;
+
 
   /**
    * Creates a new ldap principal with the supplied name.
@@ -31,8 +35,22 @@ public class LdapDnPrincipal implements Principal, Comparable<Principal>
    */
   public LdapDnPrincipal(final String name, final LdapEntry entry)
   {
-    ldapDn = name;
+    this(name, entry, null);
+  }
+
+
+  /**
+   * Creates a new ldap principal with the supplied name.
+   *
+   * @param  name  of an ldap DN
+   * @param  entry  ldap entry associated with this principal
+   * @param  state  account state associated with this principal
+   */
+  public LdapDnPrincipal(final String name, final LdapEntry entry, final AccountState state)
+  {
+    ldapDn = LdapUtils.assertNotNullArgOr(name, String::isEmpty, "Name cannot be null or empty");
     ldapEntry = entry;
+    accountState = state;
   }
 
 
@@ -51,6 +69,17 @@ public class LdapDnPrincipal implements Principal, Comparable<Principal>
   public LdapEntry getLdapEntry()
   {
     return ldapEntry;
+  }
+
+
+  /**
+   * Returns the account state for this ldap principal.
+   *
+   * @return  account state
+   */
+  public AccountState getAccountState()
+  {
+    return accountState;
   }
 
 
@@ -81,7 +110,8 @@ public class LdapDnPrincipal implements Principal, Comparable<Principal>
     return "[" +
       getClass().getName() + "@" + hashCode() + "::" +
       "ldapDn=" + ldapDn + ", " +
-      "ldapEntry=" + (ldapEntry != null ? ldapEntry : "") + "]";
+      "ldapEntry=" + (ldapEntry != null ? ldapEntry : "") + ", " +
+      "accountState=" + (accountState != null ? accountState : "") + "]";
   }
 
 

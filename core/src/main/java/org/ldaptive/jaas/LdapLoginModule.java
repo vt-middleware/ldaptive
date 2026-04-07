@@ -135,16 +135,16 @@ public class LdapLoginModule extends AbstractLoginModule
       response.freeze();
 
       if (!loginSuccess) {
-        logger.debug("Authentication failed: " + response);
+        logger.debug("Authentication failed: {}", response);
         throw new LoginException("Authentication failed: " + response);
       } else {
         if (setLdapPrincipal) {
-          principals.add(new LdapPrincipal(nameCb.getName(), entry));
+          principals.add(new LdapPrincipal(nameCb.getName(), entry, response.getAccountState()));
         }
 
         final String loginDn = response.getResolvedDn();
         if (loginDn != null && setLdapDnPrincipal) {
-          principals.add(new LdapDnPrincipal(loginDn, entry));
+          principals.add(new LdapDnPrincipal(loginDn, entry, response.getAccountState()));
         }
 
         if (setLdapCredential) {
