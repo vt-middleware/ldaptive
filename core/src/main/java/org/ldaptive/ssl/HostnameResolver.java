@@ -55,7 +55,7 @@ public class HostnameResolver
           try {
             hostname = new SNIHostName(sniName.getEncoded()).getAsciiName();
           } catch (IllegalArgumentException e) {
-            logger.warn("Illegal server name " + sniName, e);
+            logger.warn("Illegal server name {}", sniName, e);
           }
         }
       }
