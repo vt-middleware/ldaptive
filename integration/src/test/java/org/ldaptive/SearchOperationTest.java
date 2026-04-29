@@ -1007,6 +1007,7 @@ public class SearchOperationTest extends AbstractTest
       throw new IllegalStateException(new AbandonOperationException("Test handler exception"));
     });
 
+    // note that this test will cause a WARN log to be emitted
     try {
       search.execute(
         SearchRequest.builder()
