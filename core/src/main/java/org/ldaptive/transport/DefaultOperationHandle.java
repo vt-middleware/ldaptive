@@ -678,7 +678,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   protected void processResult(final S r)
   {
     if (result != null) {
-      throw new IllegalStateException("Result already received.");
+      throw new IllegalStateException("Ignoring " + r + ". Result already received: " + result);
     }
     if (r == null) {
       final IllegalArgumentException e = new IllegalArgumentException("Result cannot be null for handle " + this);
@@ -829,7 +829,7 @@ public class DefaultOperationHandle<Q extends Request, S extends Result> impleme
   protected void notifyExceptionHandlers(final LdapException e)
   {
     if (exception != null) {
-      throw new IllegalStateException("Exception already received.");
+      throw new IllegalStateException("Ignoring " + e + ". Exception already received: " + exception, exception);
     }
     if (e == null) {
       throw new IllegalArgumentException("Exception cannot be null for handle " + this);

@@ -69,7 +69,7 @@ public final class BindResponse extends AbstractResult
     try {
       parser.parse(buffer);
     } catch (Exception e) {
-      throw new IllegalArgumentException("Error parsing response", e);
+      throw new IllegalArgumentException("Error parsing response for buffer " + buffer, e);
     }
   }
 

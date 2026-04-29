@@ -91,7 +91,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
     try {
       parser.parse(buffer);
     } catch (Exception e) {
-      throw new IllegalArgumentException("Error parsing response", e);
+      throw new IllegalArgumentException("Error parsing response for buffer " + buffer, e);
     }
   }
 
@@ -783,7 +783,7 @@ public class LdapEntry extends AbstractMessage implements Freezable
       p.parse(encoded);
 
       if (p.getName().isEmpty()) {
-        throw new IllegalArgumentException("Could not parse attribute");
+        throw new IllegalArgumentException("Could not parse attribute for buffer " + encoded);
       }
       if (p.getValues().isEmpty()) {
         getObject().addAttributes(LdapAttribute.builder().name(p.getName().get()).build());
