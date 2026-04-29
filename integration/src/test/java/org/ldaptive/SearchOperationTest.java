@@ -51,6 +51,8 @@ import org.ldaptive.referral.FollowSearchReferralHandler;
 import org.ldaptive.referral.FollowSearchResultReferenceHandler;
 import org.ldaptive.referral.PooledReferralConnectionFactory;
 import org.ldaptive.transcode.GeneralizedTimeValueTranscoder;
+import org.ldaptive.transport.ThreadPoolConfig;
+import org.ldaptive.transport.TransportFactory;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -1909,6 +1911,39 @@ public class SearchOperationTest extends AbstractTest
     assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
     assertThat(response.getEntries().isEmpty()).isFalse();
     assertThat(response.getReferences().isEmpty()).isTrue();
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters("ldapBaseDn")
+  @Test(groups = "search")
+  public void messageThreadsSearch(final String dn)
+    throws Exception
+  {
+    if (TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    final ConnectionFactory cf = DefaultConnectionFactory.builder(
+        TransportFactory.getTransport(ThreadPoolConfig.builder().ioThreads(1).messageThreads(5).build()))
+      .config(readConnectionConfig(null))
+      .build();
+    final SearchOperation search = new SearchOperation(cf);
+    search.setEntryHandlers(entry -> {
+      try {
+        Thread.sleep(Duration.ofSeconds(1).toMillis());
+      } catch (InterruptedException e) {
+        fail("Sleeping thread interrupted", e);
+      }
+      return entry;
+    });
+    final SearchRequest request = new SearchRequest(dn, "(|(uid=2002)(uid=2003)(uid=2004)(uid=2005))");
+    final SearchResponse result = search.execute(request);
+    assertThat(result.entrySize()).withFailMessage("Expected 4 entries, result is %s", result).isEqualTo(4);
   }
 
 
