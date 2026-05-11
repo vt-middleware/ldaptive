@@ -206,6 +206,17 @@ public final class TestUtils
   /**
    * @return  connection factory
    */
+  public static ConnectionFactory createGssApiQopAuthIntTLSConnectionFactory()
+  {
+    return DefaultConnectionFactory.builder()
+      .config(readConnectionConfig("classpath:/org/ldaptive/ldap.gssapi-qop-auth-int-tls.properties"))
+      .build();
+  }
+
+
+  /**
+   * @return  connection factory
+   */
   public static ConnectionFactory createGssApiUseConfigConnectionFactory()
   {
     return DefaultConnectionFactory.builder()

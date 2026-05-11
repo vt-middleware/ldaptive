@@ -2451,6 +2451,51 @@ public class SearchOperationTest extends AbstractTest
     "gssApiSearchResults"
   })
   @Test(groups = "search")
+  public void gssApiSearchQopAuthIntStartTLS(
+    final String dn,
+    final String filter,
+    final String filterParameters,
+    final String returnAttrs,
+    final String ldifFile)
+    throws Exception
+  {
+    // ignore directory until it's configured
+    if (TestControl.isActiveDirectory() || TestControl.isOracleDirectory()) {
+      return;
+    }
+
+    final String expected = readFileIntoString(ldifFile);
+    try {
+      final SearchOperation search = new SearchOperation(createGssApiQopAuthIntTLSConnectionFactory());
+      final SearchResponse result = search.execute(
+        new SearchRequest(
+          dn,
+          new FilterTemplate(filter, filterParameters.split("\\|")), returnAttrs.split("\\|")));
+      SearchResponseAssert.assertThat(result).isSame(convertLdifToResult(expected));
+    } catch (UnsupportedOperationException e) {
+      // ignore this test if not supported
+      assertThat(e).isNotNull();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   * @param  filterParameters  to replace parameters in filter with.
+   * @param  returnAttrs  to return from search.
+   * @param  ldifFile  to compare with
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "gssApiSearchDn",
+    "gssApiSearchFilter",
+    "gssApiSearchFilterParameters",
+    "gssApiSearchReturnAttrs",
+    "gssApiSearchResults"
+  })
+  @Test(groups = "search")
   public void gssApiSearchUsingConfig(
     final String dn,
     final String filter,
