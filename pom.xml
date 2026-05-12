@@ -59,8 +59,8 @@
     <spotbugs.dir>src/main/spotbugs</spotbugs.dir>
     <pmd.dir>src/main/pmd</pmd.dir>
     <org.slf4j.version>2.0.17</org.slf4j.version>
-    <io.netty.version>4.1.132.Final</io.netty.version>
-    <org.springframework.version>6.2.17</org.springframework.version>
+    <io.netty.version>4.1.133.Final</io.netty.version>
+    <org.springframework.version>6.2.18</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.5.0</japicmp.oldVersion>
   </properties>
@@ -120,7 +120,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>4.4.1</version>
+        <version>4.5</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -294,7 +294,7 @@
         <plugin>
           <groupId>com.github.siom79.japicmp</groupId>
           <artifactId>japicmp-maven-plugin</artifactId>
-          <version>0.25.4</version>
+          <version>0.25.7</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
