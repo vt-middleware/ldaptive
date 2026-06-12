@@ -25,10 +25,10 @@ fi
 
 if [ -z "${USE_YOURKIT}" ]; then
   # jconsole options
-  export MAVEN_OPTS="-Djava.rmi.server.hostname=0.0.0.0 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10001 -Dcom.sun.management.jmxremote.rmi.port=9003 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -XX:NativeMemoryTracking=summary"
+  export JAVA_OPTS="-Djava.rmi.server.hostname=0.0.0.0 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=10001 -Dcom.sun.management.jmxremote.rmi.port=9003 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -XX:NativeMemoryTracking=summary"
 else
   # yourkit options
-  export MAVEN_OPTS="-agentpath:profile/yourkit_2020.9/bin/linux-x86-64/libyjpagent.so=port=10001,listen=all"
+  export JAVA_OPTS="-agentpath:profile/yourkit_2020.9/bin/linux-x86-64/libyjpagent.so=port=10001,listen=all"
 fi
 
 for i in profile/target/*.jar; do
@@ -50,7 +50,7 @@ sleep 10
 # -Dorg.ldaptive.transport.netty.throttleRequests=50
 # -Dio.netty.eventLoopThreads=10
 
-java -cp ${CLASSPATH} \
+java ${JAVA_OPTS} -cp ${CLASSPATH} \
   -Dio.netty.leakDetectionLevel=paranoid \
   -DldapBaseDn="${BASE_DN}" \
   -DldapBindDn="${BIND_DN}" \
