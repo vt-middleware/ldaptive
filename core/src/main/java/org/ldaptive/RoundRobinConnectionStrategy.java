@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Function;
 
 /**
@@ -14,6 +15,9 @@ import java.util.function.Function;
  */
 public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy
 {
+
+  /** Synchronize access to {@link #iterator()}. */
+  private final ReentrantLock iteratorLock = new ReentrantLock();
 
   /** Usage counter. */
   private final AtomicInteger counter = new AtomicInteger();
@@ -41,23 +45,28 @@ public class RoundRobinConnectionStrategy extends AbstractConnectionStrategy
 
 
   @Override
-  public synchronized Iterator<LdapURL> iterator()
+  public Iterator<LdapURL> iterator()
   {
-    if (!isInitialized()) {
-      throw new IllegalStateException("Strategy is not initialized");
-    }
-    final List<LdapURL> urls = new ArrayList<>(ldapURLSet.getActiveUrls());
-    if (urls.size() > 1) {
-      for (int i = 0; i < counter.get(); i++) {
-        urls.add(urls.remove(0));
+    iteratorLock.lock();
+    try {
+      if (!isInitialized()) {
+        throw new IllegalStateException("Strategy is not initialized");
       }
+      final List<LdapURL> urls = new ArrayList<>(ldapURLSet.getActiveUrls());
+      if (urls.size() > 1) {
+        for (int i = 0; i < counter.get(); i++) {
+          urls.add(urls.remove(0));
+        }
+      }
+      urls.addAll(ldapURLSet.getInactiveUrls());
+      counter.incrementAndGet();
+      if (iterFunction != null) {
+        return iterFunction.apply(ldapURLSet.getUrls());
+      }
+      return new DefaultLdapURLIterator(urls);
+    } finally {
+      iteratorLock.unlock();
     }
-    urls.addAll(ldapURLSet.getInactiveUrls());
-    counter.incrementAndGet();
-    if (iterFunction != null) {
-      return iterFunction.apply(ldapURLSet.getUrls());
-    }
-    return new DefaultLdapURLIterator(urls);
   }
 
 

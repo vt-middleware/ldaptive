@@ -58,9 +58,9 @@
     <checkstyle.dir>src/main/checkstyle</checkstyle.dir>
     <spotbugs.dir>src/main/spotbugs</spotbugs.dir>
     <pmd.dir>src/main/pmd</pmd.dir>
-    <org.slf4j.version>2.0.17</org.slf4j.version>
-    <io.netty.version>4.1.133.Final</io.netty.version>
-    <org.springframework.version>6.2.18</org.springframework.version>
+    <org.slf4j.version>2.0.18</org.slf4j.version>
+    <io.netty.version>4.1.135.Final</io.netty.version>
+    <org.springframework.version>6.2.19</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.5.0</japicmp.oldVersion>
   </properties>
@@ -102,7 +102,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.5.32</version>
+        <version>1.5.34</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -209,12 +209,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-enforcer-plugin</artifactId>
-          <version>3.6.2</version>
+          <version>3.6.3</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-dependency-plugin</artifactId>
-          <version>3.10.0</version>
+          <version>3.11.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -241,7 +241,7 @@
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.9.8.3</version>
+          <version>4.10.2.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -294,7 +294,7 @@
         <plugin>
           <groupId>com.github.siom79.japicmp</groupId>
           <artifactId>japicmp-maven-plugin</artifactId>
-          <version>0.25.7</version>
+          <version>0.26.1</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.mojo</groupId>

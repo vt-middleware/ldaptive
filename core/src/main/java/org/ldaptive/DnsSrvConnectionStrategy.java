@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 import org.ldaptive.dn.Dn;
 import org.ldaptive.dns.DNSContextFactory;
@@ -30,6 +31,9 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
 
   /** Default time to live for DNS results. */
   protected static final Duration DEFAULT_TTL = Duration.ofHours(6);
+
+  /** Synchronize access to {@link #iterator()}. */
+  private final ReentrantLock iteratorLock = new ReentrantLock();
 
   /** DNS context factory to override initialization parameters. */
   private final DNSContextFactory dnsContextFactory;
@@ -214,15 +218,20 @@ public class DnsSrvConnectionStrategy extends AbstractConnectionStrategy
    * @return  list of URLs to attempt connections to
    */
   @Override
-  public synchronized Iterator<LdapURL> iterator()
+  public Iterator<LdapURL> iterator()
   {
-    if (!isInitialized()) {
-      throw new IllegalStateException("Strategy is not initialized");
+    iteratorLock.lock();
+    try {
+      if (!isInitialized()) {
+        throw new IllegalStateException("Strategy is not initialized");
+      }
+      if (Instant.now().isAfter(expirationTime)) {
+        populate(ldapUrls, ldapURLSet);
+      }
+      return new DefaultLdapURLIterator(ldapURLSet.getUrls());
+    } finally {
+      iteratorLock.unlock();
     }
-    if (Instant.now().isAfter(expirationTime)) {
-      populate(ldapUrls, ldapURLSet);
-    }
-    return new DefaultLdapURLIterator(ldapURLSet.getUrls());
   }
 
 
