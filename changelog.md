@@ -6,6 +6,13 @@ redirect_from: "/changelog/"
 
 # Release Notes
 
+## Version 2.5.1 - 15Jun2026
+
+Issue | Description
+:---- | :----------
+[bce7899]({{ site.commitURL }}bce7899) | Update netty to v4.1.135 to address CVEs.
+[9d5e341]({{ site.commitURL }}9d5e341) | Add account state to ldap principal.
+
 ## Version 2.5.0 - 21Jan2026
 
 Issue | Description
