@@ -539,6 +539,9 @@ final class NettyConnection extends TransportConnection
     // socket is connected, wait for SSL handshake to complete
     final CountDownLatch sslLatch = new CountDownLatch(1);
     final SslHandler handler = ch.pipeline().get(SslHandler.class);
+    if (handler == null) {
+      throw new SSLException("SSL handler not found in the channel pipeline");
+    }
     final Future<Channel> sslFuture = handler.handshakeFuture();
     sslFuture.addListener(f -> sslLatch.countDown());
     try {
