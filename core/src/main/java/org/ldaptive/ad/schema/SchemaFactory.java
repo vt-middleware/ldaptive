@@ -16,6 +16,7 @@ import org.ldaptive.LdapException;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
+import org.ldaptive.SingleConnectionFactoryWrapper;
 import org.ldaptive.control.util.PagedResultsClient;
 import org.ldaptive.io.LdifReader;
 import org.ldaptive.schema.AttributeType;
@@ -212,20 +213,22 @@ public final class SchemaFactory
   {
     final Set<AttributeType> attributeTypes = new HashSet<>();
     final Set<ObjectClass> objectClasses = new HashSet<>();
-    final PagedResultsClient client = new PagedResultsClient(factory, 100);
-    client.setEntryHandlers(entry -> {
-      final LdapAttribute attr = entry.getAttribute(OBJECT_CLASS_ATTR_NAME);
-      if (attr != null) {
-        if (attr.getStringValues().contains(ATTRIBUTE_SCHEMA_ATTR_NAME)) {
-          attributeTypes.add(createAttributeType(entry));
+    try (SingleConnectionFactoryWrapper cf = new SingleConnectionFactoryWrapper(factory)) {
+      final PagedResultsClient client = new PagedResultsClient(cf, 100);
+      client.setEntryHandlers(entry -> {
+        final LdapAttribute attr = entry.getAttribute(OBJECT_CLASS_ATTR_NAME);
+        if (attr != null) {
+          if (attr.getStringValues().contains(ATTRIBUTE_SCHEMA_ATTR_NAME)) {
+            attributeTypes.add(createAttributeType(entry));
+          }
+          if (attr.getStringValues().contains(CLASS_SCHEMA_ATTR_NAME)) {
+            objectClasses.add(createObjectClass(entry));
+          }
         }
-        if (attr.getStringValues().contains(CLASS_SCHEMA_ATTR_NAME)) {
-          objectClasses.add(createObjectClass(entry));
-        }
-      }
-      return null;
-    });
-    client.executeToCompletion(SearchRequest.builder().dn(dn).filter(filter).returnAttributes(retAttrs).build());
+        return null;
+      });
+      client.executeToCompletion(SearchRequest.builder().dn(dn).filter(filter).returnAttributes(retAttrs).build());
+    }
 
     final Schema schema = new Schema();
     schema.setAttributeTypes(attributeTypes);

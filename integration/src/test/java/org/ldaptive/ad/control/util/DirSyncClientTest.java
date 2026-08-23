@@ -2,13 +2,18 @@
 package org.ldaptive.ad.control.util;
 
 import org.ldaptive.AbstractTest;
+import org.ldaptive.ConnectionFactory;
 import org.ldaptive.LdapEntry;
+import org.ldaptive.PooledConnectionFactory;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResponse;
+import org.ldaptive.SingleConnectionFactory;
+import org.ldaptive.SingleConnectionFactoryWrapper;
 import org.ldaptive.TestControl;
 import org.ldaptive.ad.control.DirSyncControl;
 import org.ldaptive.ad.handler.ObjectGuidHandler;
+import org.ldaptive.pool.QueueType;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Parameters;
@@ -83,16 +88,67 @@ public class DirSyncClientTest extends AbstractTest
       return;
     }
 
-    final DirSyncClient client = new DirSyncClient(
-      createConnectionFactory(),
-      new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
-    client.setEntryHandlers(new ObjectGuidHandler());
+    final SingleConnectionFactory cf = createSingleConnectionFactory();
+    try {
+      executeAssertions(cf, dn, filter);
+    } finally {
+      cf.close();
+    }
+  }
 
-    final SearchRequest request = new SearchRequest(dn.substring(dn.indexOf(",") + 1), filter, "uid");
-    final SearchResponse response = client.execute(request);
-    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
-    assertThat(response.entrySize()).isGreaterThan(0);
-    assertThat(client.hasMore(response)).isFalse();
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "dsSearchDn",
+    "dsSearchFilter"
+  })
+  @Test(groups = "control-util")
+  public void executeWithPooledConnectionFactory(final String dn, final String filter)
+    throws Exception
+  {
+    if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      .config(readConnectionConfig(null))
+      .build();
+    factory.setQueueType(QueueType.FIFO);
+    factory.initialize();
+    try (SingleConnectionFactoryWrapper cf = new SingleConnectionFactoryWrapper(factory)) {
+      executeAssertions(cf, dn, filter);
+    } finally {
+      factory.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "dsSearchDn",
+    "dsSearchFilter"
+  })
+  @Test(groups = "control-util")
+  public void executeWithDefaultConnectionFactory(final String dn, final String filter)
+    throws Exception
+  {
+    if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    try (SingleConnectionFactoryWrapper cf = new SingleConnectionFactoryWrapper(createConnectionFactory())) {
+      executeAssertions(cf, dn, filter);
+    }
   }
 
 
@@ -114,8 +170,105 @@ public class DirSyncClientTest extends AbstractTest
       return;
     }
 
+    final SingleConnectionFactory cf = createSingleConnectionFactory();
+    try {
+      executeToCompletionAssertions(cf, dn, filter);
+    } finally {
+      cf.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "dsSearchDn",
+    "dsSearchFilter"
+  })
+  @Test(groups = "control-util")
+  public void executeToCompletionWithPooledConnectionFactory(final String dn, final String filter)
+    throws Exception
+  {
+    if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    final PooledConnectionFactory factory = PooledConnectionFactory.builder()
+      .config(readConnectionConfig(null))
+      .build();
+    factory.setQueueType(QueueType.FIFO);
+    factory.initialize();
+    try (SingleConnectionFactoryWrapper cf = new SingleConnectionFactoryWrapper(factory)) {
+      executeToCompletionAssertions(cf, dn, filter);
+    } finally {
+      factory.close();
+    }
+  }
+
+
+  /**
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Parameters({
+    "dsSearchDn",
+    "dsSearchFilter"
+  })
+  @Test(groups = "control-util")
+  public void executeToCompletionWithDefaultConnectionFactory(final String dn, final String filter)
+    throws Exception
+  {
+    if (!TestControl.isActiveDirectory()) {
+      return;
+    }
+
+    try (SingleConnectionFactoryWrapper cf = new SingleConnectionFactoryWrapper(createConnectionFactory())) {
+      executeToCompletionAssertions(cf, dn, filter);
+    }
+  }
+
+
+  /**
+   * @param  cf  connection factory
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  private void executeAssertions(final ConnectionFactory cf, final String dn, final String filter)
+    throws Exception
+  {
     final DirSyncClient client = new DirSyncClient(
-      createConnectionFactory(),
+      cf,
+      new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
+    client.setEntryHandlers(new ObjectGuidHandler());
+
+    final SearchRequest request = new SearchRequest(dn.substring(dn.indexOf(",") + 1), filter, "uid");
+    final SearchResponse response = client.execute(request);
+    assertThat(response.getResultCode()).isEqualTo(ResultCode.SUCCESS);
+    assertThat(response.entrySize()).isGreaterThan(0);
+    assertThat(client.hasMore(response)).isFalse();
+  }
+
+
+  /**
+   * @param  cf  connection factory
+   * @param  dn  to search on.
+   * @param  filter  to search with.
+   *
+   * @throws  Exception  On test failure.
+   */
+  private void executeToCompletionAssertions(final ConnectionFactory cf, final String dn, final String filter)
+    throws Exception
+  {
+    final DirSyncClient client = new DirSyncClient(
+      cf,
       new DirSyncControl.Flag[] {DirSyncControl.Flag.ANCESTORS_FIRST_ORDER, });
     client.setEntryHandlers(new ObjectGuidHandler());
 
