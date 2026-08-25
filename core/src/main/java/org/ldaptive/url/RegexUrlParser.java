@@ -41,7 +41,7 @@ public final class RegexUrlParser implements UrlParser
     if (hostname != null) {
       // check for ipv6 address
       if (hostname.startsWith("[") && hostname.endsWith("]")) {
-        hostname = hostname.substring(1, hostname.length() - 1).trim();
+        hostname = hostname.substring(1, hostname.length() - 1);
       }
       if (hostname.isEmpty()) {
         throw new IllegalArgumentException("Invalid hostname: " + hostname);

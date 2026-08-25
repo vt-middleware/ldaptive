@@ -34,7 +34,7 @@ public class AuthorizationIdentityEntryResolver extends AbstractSearchEntryResol
     logger.debug("Found authorization identity response control {}", ctrl);
 
     final String authzId = ctrl.getAuthorizationId();
-    final String dn = authzId.split(":", 2)[1].trim();
+    final String dn = authzId.split(":", 2)[1];
     return response.getConnection().operation(createSearchRequest(criteria, dn)).execute();
   }
 

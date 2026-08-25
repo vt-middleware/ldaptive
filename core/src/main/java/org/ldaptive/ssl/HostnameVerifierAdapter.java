@@ -45,9 +45,9 @@ public class HostnameVerifierAdapter implements HostnameVerifier
         if (hostname != null) {
           // if IPv6 strip off the "[]"
           if (hostname.startsWith("[") && hostname.endsWith("]")) {
-            name = hostname.substring(1, hostname.length() - 1).trim();
+            name = hostname.substring(1, hostname.length() - 1);
           } else {
-            name = hostname.trim();
+            name = hostname;
           }
         }
         b = hostnameVerifier.verify(name, (X509Certificate) session.getPeerCertificates()[0]);

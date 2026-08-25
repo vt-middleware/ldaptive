@@ -37,7 +37,7 @@ public class WhoAmIEntryResolver extends AbstractSearchEntryResolver
       throw new IllegalStateException("WhoAmI operation returned illegal authorization ID: '" + authzId + "'");
     }
 
-    final String dn = authzId.split(":", 2)[1].trim();
+    final String dn = authzId.split(":", 2)[1];
     return response.getConnection().operation(createSearchRequest(criteria, dn)).execute();
   }
 

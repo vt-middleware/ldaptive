@@ -132,7 +132,7 @@ public abstract class AbstractLoginModule implements LoginModule
         setLdapCredential = Boolean.parseBoolean(value);
       } else if ("defaultRole".equalsIgnoreCase(key)) {
         for (String s : value.split(",")) {
-          defaultRole.add(new LdapRole(s.trim()));
+          defaultRole.add(new LdapRole(s));
         }
       } else if ("principalGroupName".equalsIgnoreCase(key)) {
         principalGroupName = value;
