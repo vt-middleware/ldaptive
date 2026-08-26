@@ -59,7 +59,7 @@
     <spotbugs.dir>src/main/spotbugs</spotbugs.dir>
     <pmd.dir>src/main/pmd</pmd.dir>
     <org.slf4j.version>2.0.18</org.slf4j.version>
-    <io.netty.version>4.1.135.Final</io.netty.version>
+    <io.netty.version>4.1.137.Final</io.netty.version>
     <org.springframework.version>6.2.19</org.springframework.version>
     <japicmp.enabled>true</japicmp.enabled>
     <japicmp.oldVersion>2.5.0</japicmp.oldVersion>
@@ -102,7 +102,7 @@
       <dependency>
         <groupId>ch.qos.logback</groupId>
         <artifactId>logback-classic</artifactId>
-        <version>1.5.34</version>
+        <version>1.6.3</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -120,7 +120,7 @@
       <dependency>
         <groupId>nl.jqno.equalsverifier</groupId>
         <artifactId>equalsverifier</artifactId>
-        <version>4.5</version>
+        <version>4.5.1</version>
         <scope>test</scope>
       </dependency>
       <dependency>
@@ -241,7 +241,7 @@
         <plugin>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
-          <version>4.10.2.0</version>
+          <version>4.10.4.0</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -279,7 +279,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-jar-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>3.5.1</version>
         </plugin>
         <plugin>
           <groupId>org.apache.felix</groupId>
