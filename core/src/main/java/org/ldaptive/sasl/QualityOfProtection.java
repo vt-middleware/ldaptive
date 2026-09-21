@@ -48,7 +48,7 @@ public enum QualityOfProtection {
    *
    * @param  s  to find quality of protection for
    *
-   * @return  quality of protection
+   * @return  quality of protection or null
    */
   public static QualityOfProtection fromString(final String s)
   {

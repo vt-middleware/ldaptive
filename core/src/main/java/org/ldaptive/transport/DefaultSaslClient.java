@@ -65,7 +65,9 @@ public class DefaultSaslClient implements SaslClient<DefaultSaslClientRequest>
 
       byte[] bytes = client.hasInitialResponse() ? client.evaluateChallenge(new byte[0]) : null;
       response = conn.operation(request.createBindRequest(bytes)).execute();
-      if (ResultCode.SASL_BIND_IN_PROGRESS != response.getResultCode()) {
+      if (ResultCode.SASL_BIND_IN_PROGRESS != response.getResultCode() &&
+          ResultCode.SUCCESS != response.getResultCode())
+      {
         return response;
       }
       while (!client.isComplete() && ResultCode.SASL_BIND_IN_PROGRESS == response.getResultCode()) {
