@@ -50,6 +50,16 @@ public class LdapAttribute extends AbstractFreezable
   /** List of custom binary attribute names. */
   private static final String[] BINARY_ATTRIBUTES;
 
+  /** List of attribute names known to contain sensitive values. */
+  private static final String[] DEFAULT_SENSITIVE_ATTRIBUTES = {
+    "userPassword",
+    "authPassword",
+    "unicodePwd",
+  };
+
+  /** List of custom sensitive attribute names. */
+  private static final String[] SENSITIVE_ATTRIBUTES;
+
   /** Attribute values. */
   private final Collection<AttributeValue> attributeValues = new LinkedHashSet<>();
 
@@ -61,8 +71,19 @@ public class LdapAttribute extends AbstractFreezable
 
   static {
     // Configure custom binary attribute names
-    final String[] split = System.getProperty("org.ldaptive.attribute.binary", "").split(",");
-    BINARY_ATTRIBUTES = LdapUtils.concatArrays(DEFAULT_BINARY_ATTRIBUTES, split);
+    String prop = System.getProperty("org.ldaptive.attribute.binary");
+    if (prop != null && !prop.isEmpty()) {
+      BINARY_ATTRIBUTES = LdapUtils.concatArrays(DEFAULT_BINARY_ATTRIBUTES, prop.split(","));
+    } else {
+      BINARY_ATTRIBUTES = DEFAULT_BINARY_ATTRIBUTES;
+    }
+    // Configure custom sensitive attribute names
+    prop = System.getProperty("org.ldaptive.attribute.sensitive");
+    if (prop != null && !prop.isEmpty()) {
+      SENSITIVE_ATTRIBUTES = LdapUtils.concatArrays(DEFAULT_SENSITIVE_ATTRIBUTES, prop.split(","));
+    } else {
+      SENSITIVE_ATTRIBUTES = DEFAULT_SENSITIVE_ATTRIBUTES;
+    }
   }
 
 
@@ -631,6 +652,12 @@ public class LdapAttribute extends AbstractFreezable
   @Override
   public String toString()
   {
+    if (isSensitive(attributeName)) {
+      return getClass().getName() + "@" + hashCode() + "::" +
+        "name=" + attributeName + ", " +
+        "values=[<suppressed>], " +
+        "binary=" + binary;
+    }
     return getClass().getName() + "@" + hashCode() + "::" +
       "name=" + attributeName + ", " +
       "values=" + getEncodedAttributeValues() + ", " +
@@ -696,6 +723,22 @@ public class LdapAttribute extends AbstractFreezable
       sorted.freeze();
     }
     return sorted;
+  }
+
+
+  /**
+   * Returns whether the supplied attribute name has values that are considered sensitive.
+   *
+   * @param  attributeName  to inspect
+   *
+   * @return  whether the supplied attribute name has values that are considered sensitive
+   */
+  static boolean isSensitive(final String attributeName)
+  {
+    if (attributeName == null || attributeName.isEmpty()) {
+      return false;
+    }
+    return Stream.of(SENSITIVE_ATTRIBUTES).anyMatch(attributeName::equalsIgnoreCase);
   }
 
 

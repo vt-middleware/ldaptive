@@ -2,6 +2,7 @@
 package org.ldaptive.extended;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.ldaptive.asn1.ConstructedDEREncoder;
 import org.ldaptive.asn1.ContextType;
@@ -83,5 +84,16 @@ public class PasswordModifyRequest extends ExtendedRequest
       UniversalDERTag.SEQ,
       l.toArray(DEREncoder[]::new));
     setRequestValue(se.encode());
+  }
+
+
+  @Override
+  public String toString()
+  {
+    return getClass().getName() + "@" + hashCode() + "::" +
+      "controls=" + Arrays.toString(getControls()) + ", " +
+      "responseTimeout=" + getResponseTimeout() + ", " +
+      "requestName=" + OID + ", " +
+      "requestValue=<suppressed>";
   }
 }

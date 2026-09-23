@@ -721,5 +721,17 @@ public class LdapAttributeTest
       .isEqualTo(
         "org.ldaptive.LdapAttribute@-1981327803::name=givenName, " +
           "values=[Bill\uD83C\uDDEE\uD83C\uDDF8Wallace], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("userPassword").values("p@ssw0rd").build().toString())
+      .isEqualTo("org.ldaptive.LdapAttribute@807311108::name=userPassword, values=[<suppressed>], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("authPassword").values("p@ssw0rd").build().toString())
+      .isEqualTo("org.ldaptive.LdapAttribute@-1309770607::name=authPassword, values=[<suppressed>], binary=false");
+
+    assertThat(LdapAttribute.builder()
+      .name("unicodePwd").values("p@ssw0rd").build().toString())
+      .isEqualTo("org.ldaptive.LdapAttribute@-1783494082::name=unicodePwd, values=[<suppressed>], binary=false");
   }
 }
