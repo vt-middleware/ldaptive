@@ -33,18 +33,31 @@ public class LdapAttribute extends AbstractFreezable
   /** List of attribute names known to use binary syntax. */
   private static final String[] DEFAULT_BINARY_ATTRIBUTES = {
     "photo",
+    "0.9.2342.19200300.100.1.7",
     "personalSignature",
+    "0.9.2342.19200300.100.1.53",
     "audio",
+    "0.9.2342.19200300.100.1.55",
     "jpegPhoto",
+    "0.9.2342.19200300.100.1.60",
     "javaSerializedData",
+    "1.3.6.1.4.1.42.2.27.4.1.8",
     "thumbnailPhoto",
+    "1.3.6.1.4.1.1466.101.120.35",
     "thumbnailLogo",
+    "1.3.6.1.4.1.1466.101.120.36",
     "userCertificate",
+    "2.5.4.36",
     "cACertificate",
+    "2.5.4.37",
     "authorityRevocationList",
+    "2.5.4.38",
     "certificateRevocationList",
+    "2.5.4.39",
     "crossCertificatePair",
+    "2.5.4.40",
     "x500UniqueIdentifier",
+    "2.5.4.45",
   };
 
   /** List of custom binary attribute names. */
@@ -53,8 +66,11 @@ public class LdapAttribute extends AbstractFreezable
   /** List of attribute names known to contain sensitive values. */
   private static final String[] DEFAULT_SENSITIVE_ATTRIBUTES = {
     "userPassword",
+    "2.5.4.35",
     "authPassword",
+    "1.3.6.1.4.1.4203.1.3.4",
     "unicodePwd",
+    "1.2.840.113556.1.4.90",
   };
 
   /** List of custom sensitive attribute names. */
