@@ -181,7 +181,7 @@ public class MergeOperation
     final Result result;
     if (searchResult.entrySize() == 0) {
       if (request.getDeleteEntry()) {
-        logger.info("Target entry does not exist, no delete performed for request {}", request);
+        logger.debug("Target entry does not exist, no delete performed for request {}", request);
         result = null;
       } else {
         // entry does not exist, add it
@@ -262,12 +262,21 @@ public class MergeOperation
             processedModifications = processor.apply(processedModifications);
           }
         }
-        logger.debug(
-          "Modifying target entry {} with modifications {} from source entry {} for request {}",
-          target,
-          processedModifications,
-          source,
-          request);
+        if (logger.isDebugEnabled()) {
+          logger.debug(
+            "Modifying target entry {} with modifications {} from source entry {} for request {}",
+            target.getDn(),
+            processedModifications,
+            source.getDn(),
+            request);
+        } else if (logger.isTraceEnabled()) {
+          logger.trace(
+            "Modifying target entry {} with modifications {} from source entry {} for request {}",
+            target,
+            processedModifications,
+            source,
+            request);
+        }
 
         Result result = null;
         for (List<AttributeModification> batch : processedModifications) {
@@ -280,20 +289,37 @@ public class MergeOperation
               .modifications(batch.toArray(AttributeModification[]::new))
               .build());
         }
-        logger.info(
-          "Modified target entry {} with modifications {} from source entry {} for request {}",
-          target,
-          processedModifications,
-          source,
-          request);
+        if (logger.isDebugEnabled()) {
+          logger.debug(
+            "Modified target entry {} with modifications {} from source entry {} for request {}",
+            target.getDn(),
+            processedModifications,
+            source.getDn(),
+            request);
+        } else if (logger.isTraceEnabled()) {
+          logger.trace(
+            "Modified target entry {} with modifications {} from source entry {} for request {}",
+            target,
+            processedModifications,
+            source,
+            request);
+        }
         return result;
       }
     }
-    logger.info(
-      "Target entry {} equals source entry {}, no modification performed for request {}",
-      target,
-      source,
-      request);
+    if (logger.isDebugEnabled()) {
+      logger.debug(
+        "Target entry {} equals source entry {}, no modification performed for request {}",
+        target.getDn(),
+        source.getDn(),
+        request);
+    } else if (logger.isTraceEnabled()) {
+      logger.trace(
+        "Target entry {} equals source entry {}, no modification performed for request {}",
+        target,
+        source,
+        request);
+    }
     return null;
   }
 
@@ -319,7 +345,11 @@ public class MergeOperation
         .dn(entry.getDn())
         .attributes(entry.getAttributes())
         .build());
-    logger.info("Added entry {} for request {}", entry, request);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Added entry {} for request {}", entry.getDn(), request);
+    } else if (logger.isTraceEnabled()) {
+      logger.trace("Added entry {} for request {}", entry, request);
+    }
     return result;
   }
 
@@ -341,7 +371,11 @@ public class MergeOperation
       DeleteOperation.copy(deleteOperation) : new DeleteOperation();
     operation.setConnectionFactory(connectionFactory);
     final Result result = operation.execute(new DeleteRequest(entry.getDn()));
-    logger.info("Delete entry {} for request {}", entry, request);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Delete entry {} for request {}", entry.getDn(), request);
+    } else if (logger.isTraceEnabled()) {
+      logger.trace("Delete entry {} for request {}", entry, request);
+    }
     return result;
   }
 

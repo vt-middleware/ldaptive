@@ -73,7 +73,11 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
         }
       }
     }
-    logger.debug("Mapped {} to {}", source, dest);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Mapped {} to {}", source, dest.getDn());
+    } else if (logger.isTraceEnabled()) {
+      logger.trace("Mapped {} to {}", source, dest);
+    }
   }
 
 
@@ -137,7 +141,11 @@ public abstract class AbstractLdapEntryMapper<T> implements LdapEntryMapper<T>
         }
       }
     }
-    logger.debug("Mapped {} to {}", source, dest);
+    if (logger.isDebugEnabled()) {
+      logger.debug("Mapped {} to {}", source.getDn(), dest);
+    } else if (logger.isTraceEnabled()) {
+      logger.trace("Mapped {} to {}", source, dest);
+    }
   }
 
 

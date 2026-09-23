@@ -1089,7 +1089,7 @@ final class NettyConnection extends TransportConnection
           if (pendingResponses.size() > 0) {
             if (LOGGER.isTraceEnabled()) {
               LOGGER.trace("abandoning requests {} for {} to close connection", pendingResponses, this);
-            } else if (LOGGER.isInfoEnabled()) {
+            } else if (LOGGER.isDebugEnabled()) {
               LOGGER.debug("Abandoning {} requests for {} to close connection", pendingResponses.size(), this);
             }
             pendingResponses.abandonRequests();
