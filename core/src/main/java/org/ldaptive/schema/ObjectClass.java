@@ -243,6 +243,28 @@ public final class ObjectClass extends AbstractNamedSchemaElement<String>
   }
 
 
+  /**
+   * Returns a new object class with the same properties as the supplied object class.
+   *
+   * @param  objectClass  to copy
+   *
+   * @return  copy of the supplied object class
+   */
+  public static ObjectClass copy(final ObjectClass objectClass)
+  {
+    return new ObjectClass(
+      objectClass.oid,
+      LdapUtils.copyArray(objectClass.getNames()),
+      objectClass.getDescription(),
+      objectClass.isObsolete(),
+      LdapUtils.copyArray(objectClass.superiorClasses),
+      objectClass.objectClassType,
+      LdapUtils.copyArray(objectClass.requiredAttributes),
+      LdapUtils.copyArray(objectClass.optionalAttributes),
+      objectClass.getExtensions() != null ? Extensions.copy(objectClass.getExtensions()) : null);
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {

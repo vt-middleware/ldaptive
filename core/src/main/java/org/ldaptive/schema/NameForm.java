@@ -213,6 +213,27 @@ public final class NameForm extends AbstractNamedSchemaElement<String>
   }
 
 
+  /**
+   * Returns a new name form with the same properties as the supplied name form.
+   *
+   * @param  form  to copy
+   *
+   * @return  copy of the supplied name form
+   */
+  public static NameForm copy(final NameForm form)
+  {
+    return new NameForm(
+      form.oid,
+      LdapUtils.copyArray(form.getNames()),
+      form.getDescription(),
+      form.isObsolete(),
+      form.structuralClass,
+      LdapUtils.copyArray(form.requiredAttributes),
+      LdapUtils.copyArray(form.optionalAttributes),
+      form.getExtensions() != null ? Extensions.copy(form.getExtensions()) : null);
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {

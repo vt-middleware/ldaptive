@@ -350,6 +350,7 @@ public class AttributeTypeTest
       assertThat(parsed).isEqualTo(type);
       assertThat(parsed.format()).isEqualTo(definition);
       assertThat(parsed.format()).isEqualTo(type.format());
+      assertThat(AttributeType.copy(parsed)).isEqualTo(parsed);
     }
   }
 }

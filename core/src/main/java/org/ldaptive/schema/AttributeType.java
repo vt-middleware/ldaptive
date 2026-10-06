@@ -451,6 +451,33 @@ public final class AttributeType extends AbstractNamedSchemaElement<String>
   }
 
 
+  /**
+   * Returns a new attribute type with the same properties as the supplied attribute type.
+   *
+   * @param  type  to copy
+   *
+   * @return  copy of the supplied attribute type
+   */
+  public static AttributeType copy(final AttributeType type)
+  {
+    return new AttributeType(
+      type.oid,
+      LdapUtils.copyArray(type.getNames()),
+      type.getDescription(),
+      type.isObsolete(),
+      type.superiorType,
+      type.equalityMatchingRule,
+      type.orderingMatchingRule,
+      type.substringMatchingRule,
+      type.syntaxOID,
+      type.singleValued,
+      type.collective,
+      type.noUserModification,
+      type.usage,
+      type.getExtensions() != null ? Extensions.copy(type.getExtensions()) : null);
+  }
+
+
   @Override
   public int hashCode()
   {

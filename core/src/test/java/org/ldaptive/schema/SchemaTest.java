@@ -288,6 +288,19 @@ public class SchemaTest
 
 
   /**
+   * @param  schema  to test
+   *
+   * @throws  Exception  On test failure.
+   */
+  @Test(groups = "schema", dataProvider = "schemas")
+  public void copy(final Schema schema)
+    throws Exception
+  {
+    assertThat(Schema.copy(schema)).isEqualTo(schema);
+  }
+
+
+  /**
    * @throws  Exception  On test failure.
    */
   @Test(groups = "schema")

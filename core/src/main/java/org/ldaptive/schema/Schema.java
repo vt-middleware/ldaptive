@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.ldaptive.AbstractFreezable;
 import org.ldaptive.LdapUtils;
 
@@ -451,6 +452,36 @@ public final class Schema extends AbstractFreezable
   {
     assertMutable();
     objectClasses.setElements(c);
+  }
+
+
+  /**
+   * Returns a new schema with the same properties as the supplied schema.
+   *
+   * @param  schema  to copy
+   *
+   * @return  copy of the supplied schema
+   */
+  public static Schema copy(final Schema schema)
+  {
+    final Schema copy = new Schema();
+    copy.setAttributeTypes(
+      schema.getAttributeTypes().stream().map(AttributeType::copy).collect(Collectors.toList()));
+    copy.setDITContentRules(
+      schema.getDITContentRules().stream().map(DITContentRule::copy).collect(Collectors.toList()));
+    copy.setDITStructureRules(
+      schema.getDITStructureRules().stream().map(DITStructureRule::copy).collect(Collectors.toList()));
+    copy.setSyntaxes(
+      schema.getSyntaxes().stream().map(Syntax::copy).collect(Collectors.toList()));
+    copy.setMatchingRules(
+      schema.getMatchingRules().stream().map(MatchingRule::copy).collect(Collectors.toList()));
+    copy.setMatchingRuleUses(
+      schema.getMatchingRuleUses().stream().map(MatchingRuleUse::copy).collect(Collectors.toList()));
+    copy.setNameForms(
+      schema.getNameForms().stream().map(NameForm::copy).collect(Collectors.toList()));
+    copy.setObjectClasses(
+      schema.getObjectClasses().stream().map(ObjectClass::copy).collect(Collectors.toList()));
+    return copy;
   }
 
 

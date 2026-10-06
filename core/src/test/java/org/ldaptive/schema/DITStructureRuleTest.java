@@ -162,6 +162,7 @@ public class DITStructureRuleTest
       assertThat(parsed).isEqualTo(structureRule);
       assertThat(parsed.format()).isEqualTo(definition);
       assertThat(parsed.format()).isEqualTo(structureRule.format());
+      assertThat(DITStructureRule.copy(parsed)).isEqualTo(parsed);
     }
   }
 }

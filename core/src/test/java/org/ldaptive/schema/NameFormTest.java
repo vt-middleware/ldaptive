@@ -103,6 +103,7 @@ public class NameFormTest
       assertThat(parsed).isEqualTo(nameForm);
       assertThat(parsed.format()).isEqualTo(definition);
       assertThat(parsed.format()).isEqualTo(nameForm.format());
+      assertThat(NameForm.copy(parsed)).isEqualTo(parsed);
     }
   }
 }

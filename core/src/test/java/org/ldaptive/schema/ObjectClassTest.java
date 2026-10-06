@@ -264,6 +264,7 @@ public class ObjectClassTest
       assertThat(parsed).isEqualTo(objectClass);
       assertThat(parsed.format()).isEqualTo(definition);
       assertThat(parsed.format()).isEqualTo(objectClass.format());
+      assertThat(ObjectClass.copy(parsed)).isEqualTo(parsed);
     }
   }
 }

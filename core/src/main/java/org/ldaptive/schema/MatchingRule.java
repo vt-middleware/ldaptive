@@ -153,6 +153,25 @@ public final class MatchingRule extends AbstractNamedSchemaElement<String>
   }
 
 
+  /**
+   * Returns a new matching rule with the same properties as the supplied matching rule.
+   *
+   * @param  rule  to copy
+   *
+   * @return  copy of the supplied matching rule
+   */
+  public static MatchingRule copy(final MatchingRule rule)
+  {
+    return new MatchingRule(
+      rule.oid,
+      LdapUtils.copyArray(rule.getNames()),
+      rule.getDescription(),
+      rule.isObsolete(),
+      rule.syntaxOID,
+      rule.getExtensions() != null ? Extensions.copy(rule.getExtensions()) : null);
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {

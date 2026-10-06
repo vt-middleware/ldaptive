@@ -160,6 +160,21 @@ public final class Extensions extends AbstractFreezable
   }
 
 
+  /**
+   * Returns a new extensions with the same properties as the supplied extensions.
+   *
+   * @param  ext  to copy
+   *
+   * @return  copy of the supplied extensions
+   */
+  public static Extensions copy(final Extensions ext)
+  {
+    final Extensions copy = new Extensions();
+    copy.extensions.putAll(ext.extensions);
+    return copy;
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {

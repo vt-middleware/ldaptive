@@ -97,6 +97,7 @@ public class MatchingRuleTest
       assertThat(parsed).isEqualTo(matchingRule);
       assertThat(parsed.format()).isEqualTo(definition);
       assertThat(parsed.format()).isEqualTo(matchingRule.format());
+      assertThat(MatchingRule.copy(parsed)).isEqualTo(parsed);
     }
   }
 }

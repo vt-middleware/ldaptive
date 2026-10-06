@@ -243,6 +243,28 @@ public final class DITContentRule extends AbstractNamedSchemaElement<String>
   }
 
 
+  /**
+   * Returns a new DIT content rule with the same properties as the supplied DIT content rule.
+   *
+   * @param  rule  to copy
+   *
+   * @return  copy of the supplied DIT content rule
+   */
+  public static DITContentRule copy(final DITContentRule rule)
+  {
+    return new DITContentRule(
+      rule.oid,
+      LdapUtils.copyArray(rule.getNames()),
+      rule.getDescription(),
+      rule.isObsolete(),
+      LdapUtils.copyArray(rule.auxiliaryClasses),
+      LdapUtils.copyArray(rule.requiredAttributes),
+      LdapUtils.copyArray(rule.optionalAttributes),
+      LdapUtils.copyArray(rule.restrictedAttributes),
+      rule.getExtensions() != null ? Extensions.copy(rule.getExtensions()) : null);
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {

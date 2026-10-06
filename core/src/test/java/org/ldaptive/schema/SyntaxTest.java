@@ -64,6 +64,7 @@ public class SyntaxTest
       assertThat(parsed).isEqualTo(attributeSyntax);
       assertThat(parsed.format()).isEqualTo(definition);
       assertThat(parsed.format()).isEqualTo(attributeSyntax.format());
+      assertThat(Syntax.copy(parsed)).isEqualTo(parsed);
     }
   }
 }

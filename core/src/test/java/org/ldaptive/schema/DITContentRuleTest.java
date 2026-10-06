@@ -106,6 +106,7 @@ public class DITContentRuleTest
       assertThat(parsed).isEqualTo(contentRule);
       assertThat(parsed.format()).isEqualTo(definition);
       assertThat(parsed.format()).isEqualTo(contentRule.format());
+      assertThat(DITContentRule.copy(parsed)).isEqualTo(parsed);
     }
   }
 }

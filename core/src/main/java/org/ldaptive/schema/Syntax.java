@@ -111,6 +111,22 @@ public class Syntax extends AbstractSchemaElement<String>
   }
 
 
+  /**
+   * Returns a new syntax with the same properties as the supplied syntax.
+   *
+   * @param  syntax  to copy
+   *
+   * @return  copy of the supplied syntax
+   */
+  public static Syntax copy(final Syntax syntax)
+  {
+    return new Syntax(
+      syntax.oid,
+      syntax.getDescription(),
+      syntax.getExtensions() != null ? Extensions.copy(syntax.getExtensions()) : null);
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {

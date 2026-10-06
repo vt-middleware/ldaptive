@@ -183,6 +183,26 @@ public final class DITStructureRule extends AbstractNamedSchemaElement<Integer>
   }
 
 
+  /**
+   * Returns a new DIT structure rule with the same properties as the supplied DIT structure rule.
+   *
+   * @param  rule  to copy
+   *
+   * @return  copy of the supplied DIT structure rule
+   */
+  public static DITStructureRule copy(final DITStructureRule rule)
+  {
+    return new DITStructureRule(
+      rule.id,
+      LdapUtils.copyArray(rule.getNames()),
+      rule.getDescription(),
+      rule.isObsolete(),
+      rule.nameForm,
+      rule.superiorRules != null ? Arrays.copyOf(rule.superiorRules, rule.superiorRules.length) : null,
+      rule.getExtensions() != null ? Extensions.copy(rule.getExtensions()) : null);
+  }
+
+
   @Override
   public boolean equals(final Object o)
   {
