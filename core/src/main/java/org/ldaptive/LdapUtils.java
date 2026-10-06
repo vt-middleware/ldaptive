@@ -308,7 +308,7 @@ public final class LdapUtils
    */
   public static String trimSpace(final String value)
   {
-    if (value == null || value.isEmpty()) {
+    if (value == null || value.indexOf(' ') == -1) {
       return value;
     }
 
@@ -333,11 +333,11 @@ public final class LdapUtils
    * @param  value  to compress spaces
    * @param  trim  whether to remove any leading or trailing space characters
    *
-   * @return  normalized value or value if no compress was performed
+   * @return  compressed value or value if no compress was performed
    */
   public static String compressSpace(final String value, final boolean trim)
   {
-    if (value == null || value.isEmpty()) {
+    if (value == null || value.indexOf(' ') == -1) {
       return value;
     }
 
